@@ -1,0 +1,3 @@
+
+#include "zmc-config/swift.xcconfig"
+PRODUCT_NAME = ZMUtilities
