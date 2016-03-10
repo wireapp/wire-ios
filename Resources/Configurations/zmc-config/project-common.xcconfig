@@ -1,0 +1,84 @@
+//
+//  project-common.xcconfig
+//  zmessaging-cocoa
+//
+//  Created by Daniel Eggert on 12/05/14.
+//  Copyright (c) 2014 Zeta Project Gmbh. All rights reserved.
+//
+
+#include "warnings.xcconfig"
+#include "../../../Resources/Configurations/version.xcconfig"
+
+
+// Swift
+//
+DEFINES_MODULE = YES
+
+
+// Linking
+//
+DYLIB_COMPATIBILITY_VERSION = $(MAJOR_VERSION).0
+DYLIB_CURRENT_VERSION = $(MAJOR_VERSION).$(CURRENT_PROJECT_VERSION)
+
+
+
+// Search Paths
+//
+ALWAYS_SEARCH_USER_PATHS = NO
+
+
+
+// Deployment
+//
+COMBINE_HIDPI_IMAGES = YES
+ENABLE_BITCODE = NO
+
+
+// Versioning
+//
+VERSIONING_SYSTEM = apple-generic
+
+// Linking
+//
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PLATFORM_DIR)/Developer/Library/Frameworks
+
+// LLVM - Code Generation
+//
+GCC_DYNAMIC_NO_PIC = NO
+
+
+// LLVM - Language
+//
+GCC_C_LANGUAGE_STANDARD = gnu99
+
+
+
+// LLVM - Language - C++
+//
+CLANG_CXX_LANGUAGE_STANDARD = gnu++0x
+CLANG_CXX_LIBRARY = libc++
+GCC_ENABLE_CPP_EXCEPTIONS = NO
+
+
+
+// LLVM - Language - Modules
+//
+CLANG_ENABLE_MODULES = YES
+CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
+
+
+
+// LLVM - Language - Objective C
+//
+GCC_ENABLE_OBJC_EXCEPTIONS = YES
+CLANG_ENABLE_OBJC_ARC = YES
+ENABLE_STRICT_OBJC_MSGSEND = YES
+
+
+// LLVM - Preprocessing
+//
+ENABLE_NS_ASSERTIONS = YES
+
+
+
