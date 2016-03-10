@@ -1,0 +1,817 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09BCDB691BC7CFFC0020DCC7 /* MockTransportSession+OTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */; };
+		09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */; };
+		09BCDB6C1BC7FC100020DCC7 /* zimages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09BCDB6B1BC7FC0D0020DCC7 /* zimages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09CA4E1D1B9739C60060548D /* ZMTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54CE5E6B1B7534C4007F3065 /* ZMTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09CA4E1F1B9739FB0060548D /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09CA4E1E1B9739F80060548D /* ZMTransport.framework */; };
+		09CA4E201B973A000060548D /* ZMTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09CA4E1E1B9739F80060548D /* ZMTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09E393C51BAC3F7B00F3EA1B /* ZMProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09E393C41BAC3F7B00F3EA1B /* ZMProtos.framework */; };
+		09E393C61BAC3F8D00F3EA1B /* ZMProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09E393C41BAC3F7B00F3EA1B /* ZMProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09E393C91BAC3FA300F3EA1B /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09E393E71BB010A500F3EA1B /* MockUserClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393E51BB010A500F3EA1B /* MockUserClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		09E393EA1BB010B700F3EA1B /* MockUserClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393E91BB010B700F3EA1B /* MockUserClient.m */; };
+		09E393ED1BB012EA00F3EA1B /* MockTransportSession+Clients.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393EB1BB012EA00F3EA1B /* MockTransportSession+Clients.h */; };
+		09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393EC1BB012EA00F3EA1B /* MockTransportSession+Clients.m */; };
+		09E393F51BB0336A00F3EA1B /* MockPreKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393F31BB0336A00F3EA1B /* MockPreKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393F71BB0339200F3EA1B /* MockPreKey.m */; };
+		09E393FA1BB0485300F3EA1B /* MockTransportSessionClientsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393F91BB0485300F3EA1B /* MockTransportSessionClientsTests.m */; };
+		54AE5A711B78FA43002757E9 /* MockTransportSession+assets.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A4D1B78FA43002757E9 /* MockTransportSession+assets.h */; };
+		54AE5A721B78FA43002757E9 /* MockTransportSession+assets.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A4E1B78FA43002757E9 /* MockTransportSession+assets.m */; };
+		54AE5A731B78FA43002757E9 /* MockTransportSession+connections.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A4F1B78FA43002757E9 /* MockTransportSession+connections.h */; };
+		54AE5A741B78FA43002757E9 /* MockTransportSession+connections.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A501B78FA43002757E9 /* MockTransportSession+connections.m */; };
+		54AE5A751B78FA43002757E9 /* MockTransportSession+conversations.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A511B78FA43002757E9 /* MockTransportSession+conversations.h */; };
+		54AE5A761B78FA43002757E9 /* MockTransportSession+conversations.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A521B78FA43002757E9 /* MockTransportSession+conversations.m */; };
+		54AE5A771B78FA43002757E9 /* MockTransportSession+PushToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A531B78FA43002757E9 /* MockTransportSession+PushToken.h */; };
+		54AE5A781B78FA43002757E9 /* MockTransportSession+PushToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A541B78FA43002757E9 /* MockTransportSession+PushToken.m */; };
+		54AE5A791B78FA43002757E9 /* MockTransportSession+registration.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A551B78FA43002757E9 /* MockTransportSession+registration.h */; };
+		54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A561B78FA43002757E9 /* MockTransportSession+registration.m */; };
+		54AE5A7B1B78FA43002757E9 /* MockTransportSession+users.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A571B78FA43002757E9 /* MockTransportSession+users.h */; };
+		54AE5A7C1B78FA43002757E9 /* MockTransportSession+users.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A581B78FA43002757E9 /* MockTransportSession+users.m */; };
+		54AE5A7D1B78FA43002757E9 /* MockFlowManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A591B78FA43002757E9 /* MockFlowManager.m */; };
+		54AE5A7E1B78FA43002757E9 /* MockTransportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */; };
+		54AE5A7F1B78FA43002757E9 /* MockTransportSession+internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */; };
+		54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A5D1B78FA43002757E9 /* MockAsset.m */; };
+		54AE5A811B78FA43002757E9 /* MockConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A5E1B78FA43002757E9 /* MockConnection.m */; };
+		54AE5A821B78FA43002757E9 /* MockConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A5F1B78FA43002757E9 /* MockConversation.m */; };
+		54AE5A831B78FA43002757E9 /* MockEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A601B78FA43002757E9 /* MockEvent.m */; };
+		54AE5A841B78FA43002757E9 /* MockPicture.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A611B78FA43002757E9 /* MockPicture.m */; };
+		54AE5A851B78FA43002757E9 /* MockPushEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A621B78FA43002757E9 /* MockPushEvent.m */; };
+		54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */; };
+		54AE5A871B78FA43002757E9 /* MockUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A651B78FA43002757E9 /* MockUser.m */; };
+		54AE5A881B78FA43002757E9 /* MockAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A671B78FA43002757E9 /* MockAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A891B78FA43002757E9 /* MockConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A681B78FA43002757E9 /* MockConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A8A1B78FA43002757E9 /* MockConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A691B78FA43002757E9 /* MockConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A8B1B78FA43002757E9 /* MockEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6A1B78FA43002757E9 /* MockEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A8C1B78FA43002757E9 /* MockFlowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6B1B78FA43002757E9 /* MockFlowManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A8D1B78FA43002757E9 /* MockPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6C1B78FA43002757E9 /* MockPicture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A8E1B78FA43002757E9 /* MockPushEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6D1B78FA43002757E9 /* MockPushEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A8F1B78FA43002757E9 /* MockTransportSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A901B78FA43002757E9 /* MockUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6F1B78FA43002757E9 /* MockUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5A911B78FA43002757E9 /* ZMCMockTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A701B78FA43002757E9 /* ZMCMockTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54AE5AA11B78FA62002757E9 /* MockTransportSessionAddressBookTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */; };
+		54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */; };
+		54AE5AA31B78FA62002757E9 /* MockTransportSessionCallingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A941B78FA62002757E9 /* MockTransportSessionCallingTests.m */; };
+		54AE5AA41B78FA62002757E9 /* MockTransportSessionConnectionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */; };
+		54AE5AA51B78FA62002757E9 /* MockTransportSessionConversationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */; };
+		54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */; };
+		54AE5AA71B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A981B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m */; };
+		54AE5AA81B78FA62002757E9 /* MockTransportSessionLoginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */; };
+		54AE5AA91B78FA62002757E9 /* MockTransportSessionPushChannelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */; };
+		54AE5AAA1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */; };
+		54AE5AAB1B78FA62002757E9 /* MockTransportSessionRequestsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9C1B78FA62002757E9 /* MockTransportSessionRequestsTests.m */; };
+		54AE5AAC1B78FA62002757E9 /* MockTransportSessionSearchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9D1B78FA62002757E9 /* MockTransportSessionSearchTests.m */; };
+		54AE5AAD1B78FA62002757E9 /* MockTransportSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */; };
+		54AE5AAE1B78FA62002757E9 /* MockTransportSessionUsersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */; };
+		54C9023F1B7532DD007162A8 /* ZMCMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* ZMCMockTransport.framework */; };
+		54C902461B7532DD007162A8 /* ZMCMockTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C902451B7532DD007162A8 /* ZMCMockTransportTests.m */; };
+		54CE5E6E1B7534C4007F3065 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E6A1B7534C4007F3065 /* ZMCSystem.framework */; };
+		54CE5E701B7534C4007F3065 /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E6C1B7534C4007F3065 /* ZMUtilities.framework */; };
+		54CE5E711B7534C8007F3065 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E691B7534C4007F3065 /* ocmock.framework */; };
+		54CE5E741B753570007F3065 /* ocmock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54CE5E691B7534C4007F3065 /* ocmock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		54CE5E751B753570007F3065 /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54CE5E6A1B7534C4007F3065 /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		54CE5E771B753570007F3065 /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54CE5E6C1B7534C4007F3065 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CE471AF31C19AC670040802B /* MockTransportSessionInvitationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE471AF21C19AC670040802B /* MockTransportSessionInvitationTests.m */; };
+		CE4750291C19F73500848CCB /* MockPersonalInvitation.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4750281C19F73500848CCB /* MockPersonalInvitation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE89FED31C19780D0093C3B6 /* MockPersonalInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */; };
+		CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */ = {isa = PBXBuildFile; fileRef = CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */; };
+		CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		54C902401B7532DD007162A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 54C9022A1B7532DD007162A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 54C902321B7532DD007162A8;
+			remoteInfo = ZMCMockTransport;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		54CE5E731B753568007F3065 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				54CE5E741B753570007F3065 /* ocmock.framework in CopyFiles */,
+				54CE5E751B753570007F3065 /* ZMCSystem.framework in CopyFiles */,
+				54CE5E771B753570007F3065 /* ZMUtilities.framework in CopyFiles */,
+				09CA4E1D1B9739C60060548D /* ZMTesting.framework in CopyFiles */,
+				09CA4E201B973A000060548D /* ZMTransport.framework in CopyFiles */,
+				09E393C61BAC3F8D00F3EA1B /* ZMProtos.framework in CopyFiles */,
+				09E393C91BAC3FA300F3EA1B /* ProtocolBuffers.framework in CopyFiles */,
+				09BCDB6C1BC7FC100020DCC7 /* zimages.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0928E1FA1B975CCE0057232E /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		0928E1FB1B975CFE0057232E /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+OTR.h"; sourceTree = "<group>"; };
+		09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+OTR.m"; sourceTree = "<group>"; };
+		09BCDB6B1BC7FC0D0020DCC7 /* zimages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = zimages.framework; path = Carthage/Build/iOS/zimages.framework; sourceTree = "<group>"; };
+		09CA4E1E1B9739F80060548D /* ZMTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTransport.framework; path = Carthage/Build/iOS/ZMTransport.framework; sourceTree = "<group>"; };
+		09E393C41BAC3F7B00F3EA1B /* ZMProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMProtos.framework; path = Carthage/Build/iOS/ZMProtos.framework; sourceTree = "<group>"; };
+		09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
+		09E393E51BB010A500F3EA1B /* MockUserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockUserClient.h; sourceTree = "<group>"; };
+		09E393E91BB010B700F3EA1B /* MockUserClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockUserClient.m; sourceTree = "<group>"; };
+		09E393EB1BB012EA00F3EA1B /* MockTransportSession+Clients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+Clients.h"; sourceTree = "<group>"; };
+		09E393EC1BB012EA00F3EA1B /* MockTransportSession+Clients.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+Clients.m"; sourceTree = "<group>"; };
+		09E393F31BB0336A00F3EA1B /* MockPreKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPreKey.h; sourceTree = "<group>"; };
+		09E393F71BB0339200F3EA1B /* MockPreKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPreKey.m; sourceTree = "<group>"; };
+		09E393F91BB0485300F3EA1B /* MockTransportSessionClientsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionClientsTests.m; sourceTree = "<group>"; };
+		54ABF47B1B7B1D9F0055148B /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Cartfile; path = "../../zmc-transport/Cartfile"; sourceTree = "<group>"; };
+		54AE5A4D1B78FA43002757E9 /* MockTransportSession+assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+assets.h"; sourceTree = "<group>"; };
+		54AE5A4E1B78FA43002757E9 /* MockTransportSession+assets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+assets.m"; sourceTree = "<group>"; };
+		54AE5A4F1B78FA43002757E9 /* MockTransportSession+connections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+connections.h"; sourceTree = "<group>"; };
+		54AE5A501B78FA43002757E9 /* MockTransportSession+connections.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+connections.m"; sourceTree = "<group>"; };
+		54AE5A511B78FA43002757E9 /* MockTransportSession+conversations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+conversations.h"; sourceTree = "<group>"; };
+		54AE5A521B78FA43002757E9 /* MockTransportSession+conversations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+conversations.m"; sourceTree = "<group>"; };
+		54AE5A531B78FA43002757E9 /* MockTransportSession+PushToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+PushToken.h"; sourceTree = "<group>"; };
+		54AE5A541B78FA43002757E9 /* MockTransportSession+PushToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+PushToken.m"; sourceTree = "<group>"; };
+		54AE5A551B78FA43002757E9 /* MockTransportSession+registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+registration.h"; sourceTree = "<group>"; };
+		54AE5A561B78FA43002757E9 /* MockTransportSession+registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+registration.m"; sourceTree = "<group>"; };
+		54AE5A571B78FA43002757E9 /* MockTransportSession+users.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+users.h"; sourceTree = "<group>"; };
+		54AE5A581B78FA43002757E9 /* MockTransportSession+users.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+users.m"; sourceTree = "<group>"; };
+		54AE5A591B78FA43002757E9 /* MockFlowManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockFlowManager.m; sourceTree = "<group>"; };
+		54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSession.m; sourceTree = "<group>"; };
+		54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+internal.h"; sourceTree = "<group>"; };
+		54AE5A5D1B78FA43002757E9 /* MockAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockAsset.m; sourceTree = "<group>"; };
+		54AE5A5E1B78FA43002757E9 /* MockConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockConnection.m; sourceTree = "<group>"; };
+		54AE5A5F1B78FA43002757E9 /* MockConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MockConversation.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		54AE5A601B78FA43002757E9 /* MockEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockEvent.m; sourceTree = "<group>"; };
+		54AE5A611B78FA43002757E9 /* MockPicture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPicture.m; sourceTree = "<group>"; };
+		54AE5A621B78FA43002757E9 /* MockPushEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPushEvent.m; sourceTree = "<group>"; };
+		54AE5A641B78FA43002757E9 /* TestTransportSession.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestTransportSession.xcdatamodel; sourceTree = "<group>"; };
+		54AE5A651B78FA43002757E9 /* MockUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockUser.m; sourceTree = "<group>"; };
+		54AE5A671B78FA43002757E9 /* MockAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockAsset.h; sourceTree = "<group>"; };
+		54AE5A681B78FA43002757E9 /* MockConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockConnection.h; sourceTree = "<group>"; };
+		54AE5A691B78FA43002757E9 /* MockConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockConversation.h; sourceTree = "<group>"; };
+		54AE5A6A1B78FA43002757E9 /* MockEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEvent.h; sourceTree = "<group>"; };
+		54AE5A6B1B78FA43002757E9 /* MockFlowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockFlowManager.h; sourceTree = "<group>"; };
+		54AE5A6C1B78FA43002757E9 /* MockPicture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPicture.h; sourceTree = "<group>"; };
+		54AE5A6D1B78FA43002757E9 /* MockPushEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPushEvent.h; sourceTree = "<group>"; };
+		54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTransportSession.h; sourceTree = "<group>"; };
+		54AE5A6F1B78FA43002757E9 /* MockUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockUser.h; sourceTree = "<group>"; };
+		54AE5A701B78FA43002757E9 /* ZMCMockTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMCMockTransport.h; sourceTree = "<group>"; };
+		54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAddressBookTests.m; sourceTree = "<group>"; };
+		54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAPNSTokenTests.m; sourceTree = "<group>"; };
+		54AE5A941B78FA62002757E9 /* MockTransportSessionCallingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionCallingTests.m; sourceTree = "<group>"; };
+		54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionConnectionsTests.m; sourceTree = "<group>"; };
+		54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionConversationsTests.m; sourceTree = "<group>"; };
+		54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionEmailPhoneVerificationTests.m; sourceTree = "<group>"; };
+		54AE5A981B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionFlowManagerTests.m; sourceTree = "<group>"; };
+		54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionLoginTests.m; sourceTree = "<group>"; };
+		54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MockTransportSessionPushChannelTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionRegistrationTests.m; sourceTree = "<group>"; };
+		54AE5A9C1B78FA62002757E9 /* MockTransportSessionRequestsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionRequestsTests.m; sourceTree = "<group>"; };
+		54AE5A9D1B78FA62002757E9 /* MockTransportSessionSearchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionSearchTests.m; sourceTree = "<group>"; };
+		54AE5A9E1B78FA62002757E9 /* MockTransportSessionTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTransportSessionTests.h; sourceTree = "<group>"; };
+		54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionTests.m; sourceTree = "<group>"; };
+		54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionUsersTests.m; sourceTree = "<group>"; };
+		54C902331B7532DD007162A8 /* ZMCMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZMCMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		54C902371B7532DD007162A8 /* ZMCMockTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMCMockTransport-Info.plist"; sourceTree = "<group>"; };
+		54C9023E1B7532DD007162A8 /* ZMMockTransportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZMMockTransportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		54C902441B7532DD007162A8 /* ZMCMockTransport-Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMCMockTransport-Tests-Info.plist"; sourceTree = "<group>"; };
+		54C902451B7532DD007162A8 /* ZMCMockTransportTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMCMockTransportTests.m; sourceTree = "<group>"; };
+		54C902511B7532F6007162A8 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		54C902541B7532F6007162A8 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		54C902551B7532F6007162A8 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		54C902561B7532F6007162A8 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		54C902571B7532F6007162A8 /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
+		54C902581B7532F6007162A8 /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
+		54C902591B7532F6007162A8 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		54C9025A1B7532F6007162A8 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		54C9025B1B7532F6007162A8 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		54C9025D1B7532F6007162A8 /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		54C9025E1B7532F6007162A8 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
+		54C9025F1B7532F6007162A8 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		54C902601B7532F6007162A8 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		54C902611B7532F6007162A8 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		54C902621B7532F6007162A8 /* ZMCMockTransport-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ZMCMockTransport-ios.xcconfig"; sourceTree = "<group>"; };
+		54C902631B7532F6007162A8 /* ZMCMockTransport-osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ZMCMockTransport-osx.xcconfig"; sourceTree = "<group>"; };
+		54C902641B7532F6007162A8 /* ZMCMockTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ZMCMockTransport.xcconfig; sourceTree = "<group>"; };
+		54CE5E691B7534C4007F3065 /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ocmock.framework; path = Carthage/Build/iOS/ocmock.framework; sourceTree = "<group>"; };
+		54CE5E6A1B7534C4007F3065 /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
+		54CE5E6B1B7534C4007F3065 /* ZMTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTesting.framework; path = Carthage/Build/iOS/ZMTesting.framework; sourceTree = "<group>"; };
+		54CE5E6C1B7534C4007F3065 /* ZMUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMUtilities.framework; path = Carthage/Build/iOS/ZMUtilities.framework; sourceTree = "<group>"; };
+		CE471AF21C19AC670040802B /* MockTransportSessionInvitationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionInvitationTests.m; sourceTree = "<group>"; };
+		CE4750281C19F73500848CCB /* MockPersonalInvitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPersonalInvitation.h; sourceTree = "<group>"; };
+		CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPersonalInvitation.m; sourceTree = "<group>"; };
+		CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+invitations.h"; sourceTree = "<group>"; };
+		CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+invitations.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		54C9022F1B7532DD007162A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09E393C51BAC3F7B00F3EA1B /* ZMProtos.framework in Frameworks */,
+				54CE5E701B7534C4007F3065 /* ZMUtilities.framework in Frameworks */,
+				54CE5E6E1B7534C4007F3065 /* ZMCSystem.framework in Frameworks */,
+				09CA4E1F1B9739FB0060548D /* ZMTransport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54C9023B1B7532DD007162A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				54CE5E711B7534C8007F3065 /* ocmock.framework in Frameworks */,
+				54C9023F1B7532DD007162A8 /* ZMCMockTransport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		54AE5A4C1B78FA43002757E9 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				54AE5A4D1B78FA43002757E9 /* MockTransportSession+assets.h */,
+				54AE5A4E1B78FA43002757E9 /* MockTransportSession+assets.m */,
+				54AE5A4F1B78FA43002757E9 /* MockTransportSession+connections.h */,
+				54AE5A501B78FA43002757E9 /* MockTransportSession+connections.m */,
+				54AE5A511B78FA43002757E9 /* MockTransportSession+conversations.h */,
+				54AE5A521B78FA43002757E9 /* MockTransportSession+conversations.m */,
+				54AE5A531B78FA43002757E9 /* MockTransportSession+PushToken.h */,
+				54AE5A541B78FA43002757E9 /* MockTransportSession+PushToken.m */,
+				54AE5A551B78FA43002757E9 /* MockTransportSession+registration.h */,
+				54AE5A561B78FA43002757E9 /* MockTransportSession+registration.m */,
+				54AE5A571B78FA43002757E9 /* MockTransportSession+users.h */,
+				54AE5A581B78FA43002757E9 /* MockTransportSession+users.m */,
+				09E393EB1BB012EA00F3EA1B /* MockTransportSession+Clients.h */,
+				09E393EC1BB012EA00F3EA1B /* MockTransportSession+Clients.m */,
+				09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */,
+				09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */,
+				CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */,
+				CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		54AE5A5C1B78FA43002757E9 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				54AE5A5D1B78FA43002757E9 /* MockAsset.m */,
+				54AE5A5E1B78FA43002757E9 /* MockConnection.m */,
+				54AE5A5F1B78FA43002757E9 /* MockConversation.m */,
+				54AE5A601B78FA43002757E9 /* MockEvent.m */,
+				54AE5A611B78FA43002757E9 /* MockPicture.m */,
+				54AE5A621B78FA43002757E9 /* MockPushEvent.m */,
+				54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */,
+				54AE5A651B78FA43002757E9 /* MockUser.m */,
+				09E393E91BB010B700F3EA1B /* MockUserClient.m */,
+				09E393F71BB0339200F3EA1B /* MockPreKey.m */,
+				CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		54AE5A661B78FA43002757E9 /* Public */ = {
+			isa = PBXGroup;
+			children = (
+				CE4750281C19F73500848CCB /* MockPersonalInvitation.h */,
+				54AE5A671B78FA43002757E9 /* MockAsset.h */,
+				54AE5A681B78FA43002757E9 /* MockConnection.h */,
+				54AE5A691B78FA43002757E9 /* MockConversation.h */,
+				54AE5A6A1B78FA43002757E9 /* MockEvent.h */,
+				54AE5A6B1B78FA43002757E9 /* MockFlowManager.h */,
+				54AE5A6C1B78FA43002757E9 /* MockPicture.h */,
+				54AE5A6D1B78FA43002757E9 /* MockPushEvent.h */,
+				54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */,
+				54AE5A6F1B78FA43002757E9 /* MockUser.h */,
+				09E393E51BB010A500F3EA1B /* MockUserClient.h */,
+				09E393F31BB0336A00F3EA1B /* MockPreKey.h */,
+				54AE5A701B78FA43002757E9 /* ZMCMockTransport.h */,
+			);
+			path = Public;
+			sourceTree = "<group>";
+		};
+		54C902291B7532DD007162A8 = {
+			isa = PBXGroup;
+			children = (
+				0928E1FA1B975CCE0057232E /* Cartfile */,
+				0928E1FB1B975CFE0057232E /* Cartfile.private */,
+				54C902351B7532DD007162A8 /* Source */,
+				54C902421B7532DD007162A8 /* Tests */,
+				54C9024F1B7532F6007162A8 /* Resources */,
+				54C902341B7532DD007162A8 /* Products */,
+				54C902651B753419007162A8 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		54C902341B7532DD007162A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				54C902331B7532DD007162A8 /* ZMCMockTransport.framework */,
+				54C9023E1B7532DD007162A8 /* ZMMockTransportTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		54C902351B7532DD007162A8 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				54AE5A4C1B78FA43002757E9 /* Helpers */,
+				54AE5A591B78FA43002757E9 /* MockFlowManager.m */,
+				54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */,
+				54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */,
+				54AE5A5C1B78FA43002757E9 /* Model */,
+				54AE5A661B78FA43002757E9 /* Public */,
+				54C902361B7532DD007162A8 /* Supporting Files */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		54C902361B7532DD007162A8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				54C902371B7532DD007162A8 /* ZMCMockTransport-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		54C902421B7532DD007162A8 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */,
+				54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */,
+				54AE5A941B78FA62002757E9 /* MockTransportSessionCallingTests.m */,
+				54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */,
+				54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */,
+				54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */,
+				54AE5A981B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m */,
+				54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */,
+				54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */,
+				54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */,
+				54AE5A9C1B78FA62002757E9 /* MockTransportSessionRequestsTests.m */,
+				54AE5A9D1B78FA62002757E9 /* MockTransportSessionSearchTests.m */,
+				54AE5A9E1B78FA62002757E9 /* MockTransportSessionTests.h */,
+				54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */,
+				54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */,
+				54C902451B7532DD007162A8 /* ZMCMockTransportTests.m */,
+				CE471AF21C19AC670040802B /* MockTransportSessionInvitationTests.m */,
+				09E393F91BB0485300F3EA1B /* MockTransportSessionClientsTests.m */,
+				54C902431B7532DD007162A8 /* Supporting Files */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		54C902431B7532DD007162A8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				54C902441B7532DD007162A8 /* ZMCMockTransport-Tests-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		54C9024F1B7532F6007162A8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				54ABF47B1B7B1D9F0055148B /* Cartfile */,
+				54C902501B7532F6007162A8 /* Configurations */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		54C902501B7532F6007162A8 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				54C902511B7532F6007162A8 /* version.xcconfig */,
+				54C902521B7532F6007162A8 /* zmc-config */,
+				54C902621B7532F6007162A8 /* ZMCMockTransport-ios.xcconfig */,
+				54C902631B7532F6007162A8 /* ZMCMockTransport-osx.xcconfig */,
+				54C902641B7532F6007162A8 /* ZMCMockTransport.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		54C902521B7532F6007162A8 /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				54C902541B7532F6007162A8 /* ios-test-host.xcconfig */,
+				54C902551B7532F6007162A8 /* ios-test-target.xcconfig */,
+				54C902561B7532F6007162A8 /* ios.xcconfig */,
+				54C902571B7532F6007162A8 /* osx-test-target.xcconfig */,
+				54C902581B7532F6007162A8 /* osx.xcconfig */,
+				54C902591B7532F6007162A8 /* project-common.xcconfig */,
+				54C9025A1B7532F6007162A8 /* project-debug.xcconfig */,
+				54C9025B1B7532F6007162A8 /* project.xcconfig */,
+				54C9025D1B7532F6007162A8 /* simulator.xcconfig */,
+				54C9025E1B7532F6007162A8 /* swift.xcconfig */,
+				54C9025F1B7532F6007162A8 /* tests.xcconfig */,
+				54C902601B7532F6007162A8 /* warnings-debug.xcconfig */,
+				54C902611B7532F6007162A8 /* warnings.xcconfig */,
+			);
+			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+		54C902651B753419007162A8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */,
+				09E393C41BAC3F7B00F3EA1B /* ZMProtos.framework */,
+				09BCDB6B1BC7FC0D0020DCC7 /* zimages.framework */,
+				09CA4E1E1B9739F80060548D /* ZMTransport.framework */,
+				54CE5E691B7534C4007F3065 /* ocmock.framework */,
+				54CE5E6A1B7534C4007F3065 /* ZMCSystem.framework */,
+				54CE5E6B1B7534C4007F3065 /* ZMTesting.framework */,
+				54CE5E6C1B7534C4007F3065 /* ZMUtilities.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		54C902301B7532DD007162A8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE4750291C19F73500848CCB /* MockPersonalInvitation.h in Headers */,
+				54AE5A8C1B78FA43002757E9 /* MockFlowManager.h in Headers */,
+				CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */,
+				54AE5A891B78FA43002757E9 /* MockConnection.h in Headers */,
+				54AE5A791B78FA43002757E9 /* MockTransportSession+registration.h in Headers */,
+				54AE5A711B78FA43002757E9 /* MockTransportSession+assets.h in Headers */,
+				54AE5A8A1B78FA43002757E9 /* MockConversation.h in Headers */,
+				54AE5A8F1B78FA43002757E9 /* MockTransportSession.h in Headers */,
+				54AE5A751B78FA43002757E9 /* MockTransportSession+conversations.h in Headers */,
+				54AE5A8B1B78FA43002757E9 /* MockEvent.h in Headers */,
+				54AE5A881B78FA43002757E9 /* MockAsset.h in Headers */,
+				54AE5A911B78FA43002757E9 /* ZMCMockTransport.h in Headers */,
+				09E393E71BB010A500F3EA1B /* MockUserClient.h in Headers */,
+				54AE5A901B78FA43002757E9 /* MockUser.h in Headers */,
+				09BCDB691BC7CFFC0020DCC7 /* MockTransportSession+OTR.h in Headers */,
+				09E393F51BB0336A00F3EA1B /* MockPreKey.h in Headers */,
+				54AE5A7F1B78FA43002757E9 /* MockTransportSession+internal.h in Headers */,
+				54AE5A771B78FA43002757E9 /* MockTransportSession+PushToken.h in Headers */,
+				54AE5A8D1B78FA43002757E9 /* MockPicture.h in Headers */,
+				54AE5A7B1B78FA43002757E9 /* MockTransportSession+users.h in Headers */,
+				54AE5A731B78FA43002757E9 /* MockTransportSession+connections.h in Headers */,
+				09E393ED1BB012EA00F3EA1B /* MockTransportSession+Clients.h in Headers */,
+				54AE5A8E1B78FA43002757E9 /* MockPushEvent.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		54C902321B7532DD007162A8 /* ZMCMockTransport-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 54C902491B7532DD007162A8 /* Build configuration list for PBXNativeTarget "ZMCMockTransport-ios" */;
+			buildPhases = (
+				54C9022E1B7532DD007162A8 /* Sources */,
+				54C9022F1B7532DD007162A8 /* Frameworks */,
+				54C902301B7532DD007162A8 /* Headers */,
+				54C902311B7532DD007162A8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ZMCMockTransport-ios";
+			productName = ZMCMockTransport;
+			productReference = 54C902331B7532DD007162A8 /* ZMCMockTransport.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		54C9023D1B7532DD007162A8 /* ZMCMockTransportTests-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 54C9024C1B7532DD007162A8 /* Build configuration list for PBXNativeTarget "ZMCMockTransportTests-ios" */;
+			buildPhases = (
+				54C9023A1B7532DD007162A8 /* Sources */,
+				54C9023B1B7532DD007162A8 /* Frameworks */,
+				54C9023C1B7532DD007162A8 /* Resources */,
+				54CE5E731B753568007F3065 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				54C902411B7532DD007162A8 /* PBXTargetDependency */,
+			);
+			name = "ZMCMockTransportTests-ios";
+			productName = ZMCMockTransportTests;
+			productReference = 54C9023E1B7532DD007162A8 /* ZMMockTransportTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		54C9022A1B7532DD007162A8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Zeta Project";
+				TargetAttributes = {
+					54C902321B7532DD007162A8 = {
+						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = W5KEQBF9B5;
+					};
+					54C9023D1B7532DD007162A8 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = 54C9022D1B7532DD007162A8 /* Build configuration list for PBXProject "ZMCMockTransport" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 54C902291B7532DD007162A8;
+			productRefGroup = 54C902341B7532DD007162A8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				54C902321B7532DD007162A8 /* ZMCMockTransport-ios */,
+				54C9023D1B7532DD007162A8 /* ZMCMockTransportTests-ios */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		54C902311B7532DD007162A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54C9023C1B7532DD007162A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		54C9022E1B7532DD007162A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE89FED31C19780D0093C3B6 /* MockPersonalInvitation.m in Sources */,
+				54AE5A7D1B78FA43002757E9 /* MockFlowManager.m in Sources */,
+				54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */,
+				54AE5A851B78FA43002757E9 /* MockPushEvent.m in Sources */,
+				09E393EA1BB010B700F3EA1B /* MockUserClient.m in Sources */,
+				CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */,
+				09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */,
+				09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */,
+				54AE5A781B78FA43002757E9 /* MockTransportSession+PushToken.m in Sources */,
+				09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */,
+				54AE5A741B78FA43002757E9 /* MockTransportSession+connections.m in Sources */,
+				54AE5A821B78FA43002757E9 /* MockConversation.m in Sources */,
+				54AE5A7E1B78FA43002757E9 /* MockTransportSession.m in Sources */,
+				54AE5A721B78FA43002757E9 /* MockTransportSession+assets.m in Sources */,
+				54AE5A761B78FA43002757E9 /* MockTransportSession+conversations.m in Sources */,
+				54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */,
+				54AE5A811B78FA43002757E9 /* MockConnection.m in Sources */,
+				54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */,
+				54AE5A831B78FA43002757E9 /* MockEvent.m in Sources */,
+				54AE5A7C1B78FA43002757E9 /* MockTransportSession+users.m in Sources */,
+				54AE5A871B78FA43002757E9 /* MockUser.m in Sources */,
+				54AE5A841B78FA43002757E9 /* MockPicture.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54C9023A1B7532DD007162A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m in Sources */,
+				09E393FA1BB0485300F3EA1B /* MockTransportSessionClientsTests.m in Sources */,
+				54AE5AA11B78FA62002757E9 /* MockTransportSessionAddressBookTests.m in Sources */,
+				54AE5AAC1B78FA62002757E9 /* MockTransportSessionSearchTests.m in Sources */,
+				54AE5AA71B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m in Sources */,
+				54AE5AAD1B78FA62002757E9 /* MockTransportSessionTests.m in Sources */,
+				54AE5AA51B78FA62002757E9 /* MockTransportSessionConversationsTests.m in Sources */,
+				54AE5AAB1B78FA62002757E9 /* MockTransportSessionRequestsTests.m in Sources */,
+				54AE5AAA1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m in Sources */,
+				54AE5AAE1B78FA62002757E9 /* MockTransportSessionUsersTests.m in Sources */,
+				54AE5AA41B78FA62002757E9 /* MockTransportSessionConnectionsTests.m in Sources */,
+				54AE5AA31B78FA62002757E9 /* MockTransportSessionCallingTests.m in Sources */,
+				CE471AF31C19AC670040802B /* MockTransportSessionInvitationTests.m in Sources */,
+				54AE5AA81B78FA62002757E9 /* MockTransportSessionLoginTests.m in Sources */,
+				54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */,
+				54AE5AA91B78FA62002757E9 /* MockTransportSessionPushChannelTests.m in Sources */,
+				54C902461B7532DD007162A8 /* ZMCMockTransportTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		54C902411B7532DD007162A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 54C902321B7532DD007162A8 /* ZMCMockTransport-ios */;
+			targetProxy = 54C902401B7532DD007162A8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		54C902471B7532DD007162A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54C9025A1B7532F6007162A8 /* project-debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 29;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		54C902481B7532DD007162A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54C9025B1B7532F6007162A8 /* project.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 29;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		54C9024A1B7532DD007162A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54C902621B7532F6007162A8 /* ZMCMockTransport-ios.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 29;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Source/ZMCMockTransport-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+			};
+			name = Debug;
+		};
+		54C9024B1B7532DD007162A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54C902621B7532F6007162A8 /* ZMCMockTransport-ios.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 29;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Source/ZMCMockTransport-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+			};
+			name = Release;
+		};
+		54C9024D1B7532DD007162A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54C902551B7532F6007162A8 /* ios-test-target.xcconfig */;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Tests/ZMCMockTransport-Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = ZMMockTransportTests;
+			};
+			name = Debug;
+		};
+		54C9024E1B7532DD007162A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54C902551B7532F6007162A8 /* ios-test-target.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = "Tests/ZMCMockTransport-Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = ZMMockTransportTests;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		54C9022D1B7532DD007162A8 /* Build configuration list for PBXProject "ZMCMockTransport" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54C902471B7532DD007162A8 /* Debug */,
+				54C902481B7532DD007162A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54C902491B7532DD007162A8 /* Build configuration list for PBXNativeTarget "ZMCMockTransport-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54C9024A1B7532DD007162A8 /* Debug */,
+				54C9024B1B7532DD007162A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54C9024C1B7532DD007162A8 /* Build configuration list for PBXNativeTarget "ZMCMockTransportTests-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54C9024D1B7532DD007162A8 /* Debug */,
+				54C9024E1B7532DD007162A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				54AE5A641B78FA43002757E9 /* TestTransportSession.xcdatamodel */,
+			);
+			currentVersion = 54AE5A641B78FA43002757E9 /* TestTransportSession.xcdatamodel */;
+			path = MockTransportSession.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 54C9022A1B7532DD007162A8 /* Project object */;
+}
