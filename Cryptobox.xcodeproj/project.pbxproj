@@ -1,0 +1,643 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0928E25A1BA078120057232E /* NSError+Cryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = BA7EF9B71B710BB000204A8E /* NSError+Cryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0928E25B1BA078120057232E /* CBCryptoBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BA7EF9BD1B71132000204A8E /* CBCryptoBox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0928E25C1BA078120057232E /* CBSession.h in Headers */ = {isa = PBXBuildFile; fileRef = BA7EF9BA1B7112FD00204A8E /* CBSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0928E25D1BA078120057232E /* CBVector.h in Headers */ = {isa = PBXBuildFile; fileRef = BA7584051B7CFB120048FD6A /* CBVector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0928E25E1BA078120057232E /* CBPreKey.h in Headers */ = {isa = PBXBuildFile; fileRef = BA7EF9C01B71136600204A8E /* CBPreKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0928E25F1BA078120057232E /* CBSessionMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = BA74487B1B7A7F75002D9941 /* CBSessionMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
+		0928E2611BA0785F0057232E /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
+		0928E3541BA08E3D0057232E /* NSError+Cryptobox.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7EF9B81B710BB000204A8E /* NSError+Cryptobox.m */; };
+		0928E3551BA08E3D0057232E /* CBCryptoBox.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7EF9BE1B71132000204A8E /* CBCryptoBox.m */; };
+		0928E3561BA08E3D0057232E /* CBSession.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7EF9BB1B7112FD00204A8E /* CBSession.m */; };
+		0928E3571BA08E3D0057232E /* CBVector.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7584061B7CFB120048FD6A /* CBVector.m */; };
+		0928E3581BA08E3D0057232E /* CBPreKey.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7EF9C11B71136600204A8E /* CBPreKey.m */; };
+		0928E3591BA08E3D0057232E /* CBSessionMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = BA74487C1B7A7F75002D9941 /* CBSessionMessage.m */; };
+		0928E36D1BA0908F0057232E /* Cryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* Cryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		09E393C31BAC2E5600F3EA1B /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* Cryptobox.framework */; };
+		BA025F981B79F62A00139D15 /* CBCryptoBoxInitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BA025F971B79F62A00139D15 /* CBCryptoBoxInitTest.m */; };
+		BA7583EE1B7B82030048FD6A /* CBCryptoBoxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7583ED1B7B82030048FD6A /* CBCryptoBoxTests.m */; };
+		BADF92111B80C35300766380 /* CBBasicCryptoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BADF92101B80C35300766380 /* CBBasicCryptoTest.m */; };
+		BADF92211B80DD9200766380 /* CBLastPreKeyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BADF92201B80DD9200766380 /* CBLastPreKeyTest.m */; };
+		BADF92241B80DDEB00766380 /* CBTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = BADF92231B80DDEB00766380 /* CBTestCase.m */; };
+		BADF92261B80F00700766380 /* CBPreKeyRemovalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BADF92251B80F00700766380 /* CBPreKeyRemovalTest.m */; };
+		F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
+		F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0928E2341BA0777A0057232E /* Cryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Cryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0928E36C1BA0908F0057232E /* Cryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cryptobox.h; sourceTree = "<group>"; };
+		0928E36E1BA0909D0057232E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Cryptobox-ios.xcconfig"; sourceTree = "<group>"; };
+		0928E3751BA17E300057232E /* Cryptobox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Cryptobox.xcconfig; sourceTree = "<group>"; };
+		0928E3761BA17E300057232E /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		0928E3771BA17E300057232E /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		0928E3781BA17E300057232E /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		0928E3791BA17E300057232E /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
+		0928E37A1BA17E300057232E /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
+		0928E37B1BA17E300057232E /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		0928E37C1BA17E300057232E /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		0928E37D1BA17E300057232E /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		0928E37E1BA17E300057232E /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		0928E37F1BA17E300057232E /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
+		0928E3801BA17E300057232E /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		0928E3811BA17E300057232E /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		0928E3821BA17E300057232E /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		0928E3831BA17E300057232E /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		BA025F921B79DAAE00139D15 /* CBTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBTypes.h; sourceTree = "<group>"; };
+		BA025F971B79F62A00139D15 /* CBCryptoBoxInitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBCryptoBoxInitTest.m; sourceTree = "<group>"; };
+		BA74487A1B7A69D7002D9941 /* CBMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBMacros.h; sourceTree = "<group>"; };
+		BA74487B1B7A7F75002D9941 /* CBSessionMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBSessionMessage.h; sourceTree = "<group>"; };
+		BA74487C1B7A7F75002D9941 /* CBSessionMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBSessionMessage.m; sourceTree = "<group>"; };
+		BA7583ED1B7B82030048FD6A /* CBCryptoBoxTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBCryptoBoxTests.m; sourceTree = "<group>"; };
+		BA7584051B7CFB120048FD6A /* CBVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBVector.h; sourceTree = "<group>"; };
+		BA7584061B7CFB120048FD6A /* CBVector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBVector.m; sourceTree = "<group>"; };
+		BA7EF9691B7109B600204A8E /* CryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BA7EF9B71B710BB000204A8E /* NSError+Cryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+Cryptobox.h"; sourceTree = "<group>"; };
+		BA7EF9B81B710BB000204A8E /* NSError+Cryptobox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+Cryptobox.m"; sourceTree = "<group>"; };
+		BA7EF9BA1B7112FD00204A8E /* CBSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBSession.h; sourceTree = "<group>"; };
+		BA7EF9BB1B7112FD00204A8E /* CBSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBSession.m; sourceTree = "<group>"; };
+		BA7EF9BD1B71132000204A8E /* CBCryptoBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBCryptoBox.h; sourceTree = "<group>"; };
+		BA7EF9BE1B71132000204A8E /* CBCryptoBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBCryptoBox.m; sourceTree = "<group>"; };
+		BA7EF9C01B71136600204A8E /* CBPreKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBPreKey.h; sourceTree = "<group>"; };
+		BA7EF9C11B71136600204A8E /* CBPreKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBPreKey.m; sourceTree = "<group>"; };
+		BADF92101B80C35300766380 /* CBBasicCryptoTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBBasicCryptoTest.m; sourceTree = "<group>"; };
+		BADF92141B80D6F600766380 /* CBVector+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CBVector+Internal.h"; sourceTree = "<group>"; };
+		BADF92171B80D7E400766380 /* CBPreKey+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CBPreKey+Internal.h"; sourceTree = "<group>"; };
+		BADF921A1B80D83500766380 /* CBSession+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CBSession+Internal.h"; sourceTree = "<group>"; };
+		BADF921D1B80D89400766380 /* CBCryptoBox+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CBCryptoBox+Internal.h"; sourceTree = "<group>"; };
+		BADF92201B80DD9200766380 /* CBLastPreKeyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBLastPreKeyTest.m; sourceTree = "<group>"; };
+		BADF92221B80DDEB00766380 /* CBTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBTestCase.h; sourceTree = "<group>"; };
+		BADF92231B80DDEB00766380 /* CBTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBTestCase.m; sourceTree = "<group>"; };
+		BADF92251B80F00700766380 /* CBPreKeyRemovalTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBPreKeyRemovalTest.m; sourceTree = "<group>"; };
+		F50302F11B8CFA230053E406 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
+		F50302F31B8CFA230053E406 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
+		F50302F41B8CFA230053E406 /* crypto_aead_chacha20poly1305.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_aead_chacha20poly1305.h; sourceTree = "<group>"; };
+		F50302F51B8CFA230053E406 /* crypto_auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth.h; sourceTree = "<group>"; };
+		F50302F61B8CFA230053E406 /* crypto_auth_hmacsha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth_hmacsha256.h; sourceTree = "<group>"; };
+		F50302F71B8CFA230053E406 /* crypto_auth_hmacsha512.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth_hmacsha512.h; sourceTree = "<group>"; };
+		F50302F81B8CFA230053E406 /* crypto_auth_hmacsha512256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth_hmacsha512256.h; sourceTree = "<group>"; };
+		F50302F91B8CFA230053E406 /* crypto_box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_box.h; sourceTree = "<group>"; };
+		F50302FA1B8CFA230053E406 /* crypto_box_curve25519xsalsa20poly1305.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_box_curve25519xsalsa20poly1305.h; sourceTree = "<group>"; };
+		F50302FB1B8CFA230053E406 /* crypto_core_hsalsa20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_core_hsalsa20.h; sourceTree = "<group>"; };
+		F50302FC1B8CFA230053E406 /* crypto_core_salsa20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_core_salsa20.h; sourceTree = "<group>"; };
+		F50302FD1B8CFA230053E406 /* crypto_core_salsa2012.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_core_salsa2012.h; sourceTree = "<group>"; };
+		F50302FE1B8CFA230053E406 /* crypto_core_salsa208.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_core_salsa208.h; sourceTree = "<group>"; };
+		F50302FF1B8CFA230053E406 /* crypto_generichash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_generichash.h; sourceTree = "<group>"; };
+		F50303001B8CFA230053E406 /* crypto_generichash_blake2b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_generichash_blake2b.h; sourceTree = "<group>"; };
+		F50303011B8CFA230053E406 /* crypto_hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_hash.h; sourceTree = "<group>"; };
+		F50303021B8CFA230053E406 /* crypto_hash_sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_hash_sha256.h; sourceTree = "<group>"; };
+		F50303031B8CFA230053E406 /* crypto_hash_sha512.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_hash_sha512.h; sourceTree = "<group>"; };
+		F50303041B8CFA230053E406 /* crypto_int32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_int32.h; sourceTree = "<group>"; };
+		F50303051B8CFA230053E406 /* crypto_int64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_int64.h; sourceTree = "<group>"; };
+		F50303061B8CFA230053E406 /* crypto_onetimeauth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_onetimeauth.h; sourceTree = "<group>"; };
+		F50303071B8CFA230053E406 /* crypto_onetimeauth_poly1305.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_onetimeauth_poly1305.h; sourceTree = "<group>"; };
+		F50303081B8CFA230053E406 /* crypto_pwhash_scryptsalsa208sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_pwhash_scryptsalsa208sha256.h; sourceTree = "<group>"; };
+		F50303091B8CFA230053E406 /* crypto_scalarmult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_scalarmult.h; sourceTree = "<group>"; };
+		F503030A1B8CFA230053E406 /* crypto_scalarmult_curve25519.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_scalarmult_curve25519.h; sourceTree = "<group>"; };
+		F503030B1B8CFA230053E406 /* crypto_secretbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_secretbox.h; sourceTree = "<group>"; };
+		F503030C1B8CFA230053E406 /* crypto_secretbox_xsalsa20poly1305.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_secretbox_xsalsa20poly1305.h; sourceTree = "<group>"; };
+		F503030D1B8CFA230053E406 /* crypto_shorthash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_shorthash.h; sourceTree = "<group>"; };
+		F503030E1B8CFA230053E406 /* crypto_shorthash_siphash24.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_shorthash_siphash24.h; sourceTree = "<group>"; };
+		F503030F1B8CFA230053E406 /* crypto_sign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_sign.h; sourceTree = "<group>"; };
+		F50303101B8CFA230053E406 /* crypto_sign_ed25519.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_sign_ed25519.h; sourceTree = "<group>"; };
+		F50303111B8CFA230053E406 /* crypto_sign_edwards25519sha512batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_sign_edwards25519sha512batch.h; sourceTree = "<group>"; };
+		F50303121B8CFA230053E406 /* crypto_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream.h; sourceTree = "<group>"; };
+		F50303131B8CFA230053E406 /* crypto_stream_aes128ctr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_aes128ctr.h; sourceTree = "<group>"; };
+		F50303141B8CFA230053E406 /* crypto_stream_chacha20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_chacha20.h; sourceTree = "<group>"; };
+		F50303151B8CFA230053E406 /* crypto_stream_salsa20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_salsa20.h; sourceTree = "<group>"; };
+		F50303161B8CFA230053E406 /* crypto_stream_salsa2012.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_salsa2012.h; sourceTree = "<group>"; };
+		F50303171B8CFA230053E406 /* crypto_stream_salsa208.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_salsa208.h; sourceTree = "<group>"; };
+		F50303181B8CFA230053E406 /* crypto_stream_xsalsa20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_xsalsa20.h; sourceTree = "<group>"; };
+		F50303191B8CFA230053E406 /* crypto_uint16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_uint16.h; sourceTree = "<group>"; };
+		F503031A1B8CFA230053E406 /* crypto_uint32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_uint32.h; sourceTree = "<group>"; };
+		F503031B1B8CFA230053E406 /* crypto_uint64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_uint64.h; sourceTree = "<group>"; };
+		F503031C1B8CFA230053E406 /* crypto_uint8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_uint8.h; sourceTree = "<group>"; };
+		F503031D1B8CFA230053E406 /* crypto_verify_16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_verify_16.h; sourceTree = "<group>"; };
+		F503031E1B8CFA230053E406 /* crypto_verify_32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_verify_32.h; sourceTree = "<group>"; };
+		F503031F1B8CFA230053E406 /* crypto_verify_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_verify_64.h; sourceTree = "<group>"; };
+		F50303201B8CFA230053E406 /* export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = export.h; sourceTree = "<group>"; };
+		F50303211B8CFA230053E406 /* randombytes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = randombytes.h; sourceTree = "<group>"; };
+		F50303221B8CFA230053E406 /* randombytes_salsa20_random.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = randombytes_salsa20_random.h; sourceTree = "<group>"; };
+		F50303231B8CFA230053E406 /* randombytes_sysrandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = randombytes_sysrandom.h; sourceTree = "<group>"; };
+		F50303241B8CFA230053E406 /* runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = runtime.h; sourceTree = "<group>"; };
+		F50303251B8CFA230053E406 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		F50303261B8CFA230053E406 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		F50303271B8CFA230053E406 /* sodium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sodium.h; sourceTree = "<group>"; };
+		F50303291B8CFA2C0053E406 /* libcryptobox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcryptobox.a; sourceTree = "<group>"; };
+		F503032A1B8CFA2C0053E406 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsodium.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0928E2301BA0777A0057232E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */,
+				0928E2611BA0785F0057232E /* libsodium.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BA7EF9661B7109B600204A8E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09E393C31BAC2E5600F3EA1B /* Cryptobox.framework in Frameworks */,
+				F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */,
+				F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0928E35A1BA090620057232E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0928E35B1BA090620057232E /* Configurations */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		0928E35B1BA090620057232E /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */,
+				0928E3751BA17E300057232E /* Cryptobox.xcconfig */,
+				0928E3761BA17E300057232E /* ios-test-host.xcconfig */,
+				0928E3771BA17E300057232E /* ios-test-target.xcconfig */,
+				0928E3781BA17E300057232E /* ios.xcconfig */,
+				0928E3791BA17E300057232E /* osx-test-target.xcconfig */,
+				0928E37A1BA17E300057232E /* osx.xcconfig */,
+				0928E37B1BA17E300057232E /* project-common.xcconfig */,
+				0928E37C1BA17E300057232E /* project-debug.xcconfig */,
+				0928E37D1BA17E300057232E /* project.xcconfig */,
+				0928E37E1BA17E300057232E /* simulator.xcconfig */,
+				0928E37F1BA17E300057232E /* swift.xcconfig */,
+				0928E3801BA17E300057232E /* tests.xcconfig */,
+				0928E3811BA17E300057232E /* version.xcconfig */,
+				0928E3821BA17E300057232E /* warnings-debug.xcconfig */,
+				0928E3831BA17E300057232E /* warnings.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		0928E36F1BA090A00057232E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0928E36E1BA0909D0057232E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BA7EF9551B7109B600204A8E = {
+			isa = PBXGroup;
+			children = (
+				BA7EF9601B7109B600204A8E /* Cryptobox */,
+				0928E35A1BA090620057232E /* Resources */,
+				BA7EF9781B710B4D00204A8E /* Libraries */,
+				BA7EF96D1B7109B600204A8E /* CryptoboxTests */,
+				BA7EF95F1B7109B600204A8E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BA7EF95F1B7109B600204A8E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BA7EF9691B7109B600204A8E /* CryptoboxTests.xctest */,
+				0928E2341BA0777A0057232E /* Cryptobox.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BA7EF9601B7109B600204A8E /* Cryptobox */ = {
+			isa = PBXGroup;
+			children = (
+				0928E36C1BA0908F0057232E /* Cryptobox.h */,
+				BA025F921B79DAAE00139D15 /* CBTypes.h */,
+				BA74487A1B7A69D7002D9941 /* CBMacros.h */,
+				BA7EF9B71B710BB000204A8E /* NSError+Cryptobox.h */,
+				BA7EF9B81B710BB000204A8E /* NSError+Cryptobox.m */,
+				BA7EF9BD1B71132000204A8E /* CBCryptoBox.h */,
+				BA7EF9BE1B71132000204A8E /* CBCryptoBox.m */,
+				BADF921D1B80D89400766380 /* CBCryptoBox+Internal.h */,
+				BA7EF9BA1B7112FD00204A8E /* CBSession.h */,
+				BA7EF9BB1B7112FD00204A8E /* CBSession.m */,
+				BADF921A1B80D83500766380 /* CBSession+Internal.h */,
+				BA7584051B7CFB120048FD6A /* CBVector.h */,
+				BA7584061B7CFB120048FD6A /* CBVector.m */,
+				BADF92141B80D6F600766380 /* CBVector+Internal.h */,
+				BA7EF9C01B71136600204A8E /* CBPreKey.h */,
+				BA7EF9C11B71136600204A8E /* CBPreKey.m */,
+				BADF92171B80D7E400766380 /* CBPreKey+Internal.h */,
+				BA74487B1B7A7F75002D9941 /* CBSessionMessage.h */,
+				BA74487C1B7A7F75002D9941 /* CBSessionMessage.m */,
+				0928E36F1BA090A00057232E /* Supporting Files */,
+			);
+			path = Cryptobox;
+			sourceTree = "<group>";
+		};
+		BA7EF96D1B7109B600204A8E /* CryptoboxTests */ = {
+			isa = PBXGroup;
+			children = (
+				BA7EF96E1B7109B600204A8E /* Supporting Files */,
+				BADF92221B80DDEB00766380 /* CBTestCase.h */,
+				BADF92231B80DDEB00766380 /* CBTestCase.m */,
+				BA025F971B79F62A00139D15 /* CBCryptoBoxInitTest.m */,
+				BA7583ED1B7B82030048FD6A /* CBCryptoBoxTests.m */,
+				BADF92101B80C35300766380 /* CBBasicCryptoTest.m */,
+				BADF92201B80DD9200766380 /* CBLastPreKeyTest.m */,
+				BADF92251B80F00700766380 /* CBPreKeyRemovalTest.m */,
+			);
+			path = CryptoboxTests;
+			sourceTree = "<group>";
+		};
+		BA7EF96E1B7109B600204A8E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BA7EF96F1B7109B600204A8E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BA7EF9781B710B4D00204A8E /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				F50303281B8CFA2C0053E406 /* lib */,
+				F50302F01B8CFA230053E406 /* include */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		F50302F01B8CFA230053E406 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F50302F11B8CFA230053E406 /* cbox.h */,
+				F50302F21B8CFA230053E406 /* sodium */,
+				F50303271B8CFA230053E406 /* sodium.h */,
+			);
+			name = include;
+			path = build/include;
+			sourceTree = "<group>";
+		};
+		F50302F21B8CFA230053E406 /* sodium */ = {
+			isa = PBXGroup;
+			children = (
+				F50302F31B8CFA230053E406 /* core.h */,
+				F50302F41B8CFA230053E406 /* crypto_aead_chacha20poly1305.h */,
+				F50302F51B8CFA230053E406 /* crypto_auth.h */,
+				F50302F61B8CFA230053E406 /* crypto_auth_hmacsha256.h */,
+				F50302F71B8CFA230053E406 /* crypto_auth_hmacsha512.h */,
+				F50302F81B8CFA230053E406 /* crypto_auth_hmacsha512256.h */,
+				F50302F91B8CFA230053E406 /* crypto_box.h */,
+				F50302FA1B8CFA230053E406 /* crypto_box_curve25519xsalsa20poly1305.h */,
+				F50302FB1B8CFA230053E406 /* crypto_core_hsalsa20.h */,
+				F50302FC1B8CFA230053E406 /* crypto_core_salsa20.h */,
+				F50302FD1B8CFA230053E406 /* crypto_core_salsa2012.h */,
+				F50302FE1B8CFA230053E406 /* crypto_core_salsa208.h */,
+				F50302FF1B8CFA230053E406 /* crypto_generichash.h */,
+				F50303001B8CFA230053E406 /* crypto_generichash_blake2b.h */,
+				F50303011B8CFA230053E406 /* crypto_hash.h */,
+				F50303021B8CFA230053E406 /* crypto_hash_sha256.h */,
+				F50303031B8CFA230053E406 /* crypto_hash_sha512.h */,
+				F50303041B8CFA230053E406 /* crypto_int32.h */,
+				F50303051B8CFA230053E406 /* crypto_int64.h */,
+				F50303061B8CFA230053E406 /* crypto_onetimeauth.h */,
+				F50303071B8CFA230053E406 /* crypto_onetimeauth_poly1305.h */,
+				F50303081B8CFA230053E406 /* crypto_pwhash_scryptsalsa208sha256.h */,
+				F50303091B8CFA230053E406 /* crypto_scalarmult.h */,
+				F503030A1B8CFA230053E406 /* crypto_scalarmult_curve25519.h */,
+				F503030B1B8CFA230053E406 /* crypto_secretbox.h */,
+				F503030C1B8CFA230053E406 /* crypto_secretbox_xsalsa20poly1305.h */,
+				F503030D1B8CFA230053E406 /* crypto_shorthash.h */,
+				F503030E1B8CFA230053E406 /* crypto_shorthash_siphash24.h */,
+				F503030F1B8CFA230053E406 /* crypto_sign.h */,
+				F50303101B8CFA230053E406 /* crypto_sign_ed25519.h */,
+				F50303111B8CFA230053E406 /* crypto_sign_edwards25519sha512batch.h */,
+				F50303121B8CFA230053E406 /* crypto_stream.h */,
+				F50303131B8CFA230053E406 /* crypto_stream_aes128ctr.h */,
+				F50303141B8CFA230053E406 /* crypto_stream_chacha20.h */,
+				F50303151B8CFA230053E406 /* crypto_stream_salsa20.h */,
+				F50303161B8CFA230053E406 /* crypto_stream_salsa2012.h */,
+				F50303171B8CFA230053E406 /* crypto_stream_salsa208.h */,
+				F50303181B8CFA230053E406 /* crypto_stream_xsalsa20.h */,
+				F50303191B8CFA230053E406 /* crypto_uint16.h */,
+				F503031A1B8CFA230053E406 /* crypto_uint32.h */,
+				F503031B1B8CFA230053E406 /* crypto_uint64.h */,
+				F503031C1B8CFA230053E406 /* crypto_uint8.h */,
+				F503031D1B8CFA230053E406 /* crypto_verify_16.h */,
+				F503031E1B8CFA230053E406 /* crypto_verify_32.h */,
+				F503031F1B8CFA230053E406 /* crypto_verify_64.h */,
+				F50303201B8CFA230053E406 /* export.h */,
+				F50303211B8CFA230053E406 /* randombytes.h */,
+				F50303221B8CFA230053E406 /* randombytes_salsa20_random.h */,
+				F50303231B8CFA230053E406 /* randombytes_sysrandom.h */,
+				F50303241B8CFA230053E406 /* runtime.h */,
+				F50303251B8CFA230053E406 /* utils.h */,
+				F50303261B8CFA230053E406 /* version.h */,
+			);
+			path = sodium;
+			sourceTree = "<group>";
+		};
+		F50303281B8CFA2C0053E406 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				F50303291B8CFA2C0053E406 /* libcryptobox.a */,
+				F503032A1B8CFA2C0053E406 /* libsodium.a */,
+			);
+			name = lib;
+			path = build/lib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0928E2311BA0777A0057232E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0928E25D1BA078120057232E /* CBVector.h in Headers */,
+				0928E25E1BA078120057232E /* CBPreKey.h in Headers */,
+				0928E25A1BA078120057232E /* NSError+Cryptobox.h in Headers */,
+				0928E36D1BA0908F0057232E /* Cryptobox.h in Headers */,
+				0928E25B1BA078120057232E /* CBCryptoBox.h in Headers */,
+				0928E25C1BA078120057232E /* CBSession.h in Headers */,
+				0928E25F1BA078120057232E /* CBSessionMessage.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0928E2331BA0777A0057232E /* Cryptobox-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "Cryptobox-ios" */;
+			buildPhases = (
+				5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */,
+				0928E2621BA078750057232E /* Check for dependencies  */,
+				0928E22F1BA0777A0057232E /* Sources */,
+				0928E2301BA0777A0057232E /* Frameworks */,
+				0928E2311BA0777A0057232E /* Headers */,
+				0928E2321BA0777A0057232E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Cryptobox-ios";
+			productName = "Cryptobox-ios";
+			productReference = 0928E2341BA0777A0057232E /* Cryptobox.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		BA7EF9681B7109B600204A8E /* CryptoboxTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BA7EF9751B7109B600204A8E /* Build configuration list for PBXNativeTarget "CryptoboxTests" */;
+			buildPhases = (
+				BA7EF9651B7109B600204A8E /* Sources */,
+				BA7EF9661B7109B600204A8E /* Frameworks */,
+				BA7EF9671B7109B600204A8E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CryptoboxTests;
+			productName = CryptoboxTests;
+			productReference = BA7EF9691B7109B600204A8E /* CryptoboxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BA7EF9561B7109B600204A8E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = Cryptobox;
+				TargetAttributes = {
+					0928E2331BA0777A0057232E = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					BA7EF9681B7109B600204A8E = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = BA7EF9591B7109B600204A8E /* Build configuration list for PBXProject "Cryptobox" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = BA7EF9551B7109B600204A8E;
+			productRefGroup = BA7EF95F1B7109B600204A8E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0928E2331BA0777A0057232E /* Cryptobox-ios */,
+				BA7EF9681B7109B600204A8E /* CryptoboxTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0928E2321BA0777A0057232E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BA7EF9671B7109B600204A8E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0928E2621BA078750057232E /* Check for dependencies  */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check for dependencies ";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\n";
+		};
+		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Placeholder Carthage folder";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p Carthage/Build/iOS";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0928E22F1BA0777A0057232E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0928E3541BA08E3D0057232E /* NSError+Cryptobox.m in Sources */,
+				0928E3591BA08E3D0057232E /* CBSessionMessage.m in Sources */,
+				0928E3581BA08E3D0057232E /* CBPreKey.m in Sources */,
+				0928E3571BA08E3D0057232E /* CBVector.m in Sources */,
+				0928E3561BA08E3D0057232E /* CBSession.m in Sources */,
+				0928E3551BA08E3D0057232E /* CBCryptoBox.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BA7EF9651B7109B600204A8E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA025F981B79F62A00139D15 /* CBCryptoBoxInitTest.m in Sources */,
+				BADF92261B80F00700766380 /* CBPreKeyRemovalTest.m in Sources */,
+				BADF92111B80C35300766380 /* CBBasicCryptoTest.m in Sources */,
+				BADF92241B80DDEB00766380 /* CBTestCase.m in Sources */,
+				BADF92211B80DD9200766380 /* CBLastPreKeyTest.m in Sources */,
+				BA7583EE1B7B82030048FD6A /* CBCryptoBoxTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0928E2471BA0777A0057232E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */;
+			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CRYPTOBOX_VERSION = 0.8.1;
+				CURRENT_PROJECT_VERSION = 5;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Cryptobox/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pkaboo.cryptobox;
+				PRODUCT_NAME = Cryptobox;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		0928E2481BA0777A0057232E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */;
+			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CRYPTOBOX_VERSION = 0.8.1;
+				CURRENT_PROJECT_VERSION = 5;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Cryptobox/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pkaboo.cryptobox;
+				PRODUCT_NAME = Cryptobox;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		BA7EF9701B7109B600204A8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928E37C1BA17E300057232E /* project-debug.xcconfig */;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+			};
+			name = Debug;
+		};
+		BA7EF9711B7109B600204A8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928E37D1BA17E300057232E /* project.xcconfig */;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+			};
+			name = Release;
+		};
+		BA7EF9761B7109B600204A8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928E3771BA17E300057232E /* ios-test-target.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = CryptoboxTests/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"${SRCROOT}/build/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		BA7EF9771B7109B600204A8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928E3771BA17E300057232E /* ios-test-target.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = CryptoboxTests/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"${SRCROOT}/build/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "Cryptobox-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0928E2471BA0777A0057232E /* Debug */,
+				0928E2481BA0777A0057232E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BA7EF9591B7109B600204A8E /* Build configuration list for PBXProject "Cryptobox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BA7EF9701B7109B600204A8E /* Debug */,
+				BA7EF9711B7109B600204A8E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BA7EF9751B7109B600204A8E /* Build configuration list for PBXNativeTarget "CryptoboxTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BA7EF9761B7109B600204A8E /* Debug */,
+				BA7EF9771B7109B600204A8E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BA7EF9561B7109B600204A8E /* Project object */;
+}
