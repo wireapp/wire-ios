@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "1497EB633F63A2F47AA6C7761721BEF14C7CEDFE",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "1347160C75A6703EB38A694E7969A0A6A2DA63C4" : 0,
+    "1497EB633F63A2F47AA6C7761721BEF14C7CEDFE" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "A0A9E8D2-8BD7-4963-A7CC-4096D0F623EC",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "1347160C75A6703EB38A694E7969A0A6A2DA63C4" : "zmc-transport",
+    "1497EB633F63A2F47AA6C7761721BEF14C7CEDFE" : "zmc-mocktransport"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ZMCMockTransport",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ZMCMockTransport.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:wearezeta\/zmc-transport.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "1347160C75A6703EB38A694E7969A0A6A2DA63C4"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:wearezeta\/zmc-mocktransport.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "1497EB633F63A2F47AA6C7761721BEF14C7CEDFE"
+    }
+  ]
+}
