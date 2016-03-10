@@ -1,0 +1,17 @@
+//
+//  ios-test-target.xcconfig
+//  zmessaging-cocoa
+//
+//  Created by Daniel Eggert on 12/05/14.
+//  Copyright (c) 2014 Zeta Project Gmbh. All rights reserved.
+//
+
+
+#include "ios.xcconfig"
+#include "tests.xcconfig"
+#include "swift.xcconfig"
+
+
+// Linking
+//
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS
