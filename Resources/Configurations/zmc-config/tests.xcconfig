@@ -1,0 +1,14 @@
+//
+//  tests.xcconfig
+//  zmessaging-cocoa
+//
+//  Created by Daniel Eggert on 03/11/14.
+//  Copyright (c) 2014 Zeta Project Gmbh. All rights reserved.
+//
+
+
+// Preprocessing
+//
+GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
+
+
