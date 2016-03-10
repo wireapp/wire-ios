@@ -1,0 +1,35 @@
+//
+//  project.xcconfig
+//  zmessaging-cocoa
+//
+//  Created by Daniel Eggert on 12/05/14.
+//  Copyright (c) 2014 Zeta Project Gmbh. All rights reserved.
+//
+
+#include "warnings.xcconfig"
+#include "project-common.xcconfig"
+
+// Build Options
+//
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+VALIDATE_PRODUCT = YES
+
+// Packaging
+//
+INFOPLIST_PREPROCESS = YES
+
+// Deployment
+//
+COPY_PHASE_STRIP = YES
+
+
+// LLVM - Preprocessing
+//
+GCC_PREPROCESSOR_DEFINITIONS = DEBUG=0 ZM_MAJOR_VERSION=$(MAJOR_VERSION) $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_shared)
+
+
+// Swift Compiler - Code Generation
+//
+// this causes a crash - must leave it commented for now
+// SWIFT_WHOLE_MODULE_OPTIMIZATION = YES
+

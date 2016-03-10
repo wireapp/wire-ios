@@ -1,0 +1,21 @@
+//
+//  simulator.xcconfig
+//  zmessaging-cocoa
+//
+//  Created by Daniel Eggert on 08/08/14.
+//  Copyright (c) 2014 Zeta Project Gmbh. All rights reserved.
+//
+
+
+
+//
+// This file is used to build a version for the iOS simulator
+// from the command line.
+//
+
+
+
+// Architectures
+//
+SDKROOT = iphonesimulator
+ARCHS = i386 x86_64
