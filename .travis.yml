@@ -1,0 +1,3 @@
+language: objective-c
+osx_image: xcode6.4
+script: xctool -project Cryptobox/Cryptobox.xcodeproj -scheme Cryptobox-ios -sdk iphonesimulator test

@@ -1,0 +1,7 @@
+
+#include "zmc-config/swift.xcconfig"
+PRODUCT_NAME = Cryptobox
+
+LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/build/lib
+
+CRYPTOBOX_VERSION = 0.8.0
