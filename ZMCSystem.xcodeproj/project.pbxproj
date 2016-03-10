@@ -1,0 +1,554 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		096A3A211B67CEF700565001 /* ZMSLogging.mm in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1D1B67CEF700565001 /* ZMSLogging.mm */; };
+		544CFC511B70B933007AA694 /* ZMSLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1E1B67CEF700565001 /* ZMSLogging.swift */; };
+		5457426C1BA9C50C0009409B /* ZMDefinesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5457426B1BA9C50C0009409B /* ZMDefinesTest.m */; };
+		546E9AB51B7252B100769771 /* ZMSAppleSystemLoggerWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */; };
+		546E9AB61B72536F00769771 /* ZMSLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 096A3A1C1B67CEF700565001 /* ZMSLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5473E7CA1B31A95A00C6A937 /* ZMCSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5473E7C71B31A95A00C6A937 /* ZMCSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5473E7CC1B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		548662461B344AAB00298EFD /* ZMSAsserts.h in Headers */ = {isa = PBXBuildFile; fileRef = 548662451B344AAB00298EFD /* ZMSAsserts.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5486624C1B344BA900298EFD /* ZMSActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = 5486624B1B344BA900298EFD /* ZMSActivity.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5486624F1B344BB800298EFD /* ZMSActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5486624E1B344BB800298EFD /* ZMSActivity.m */; };
+		548662521B344CB400298EFD /* ZMSDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 548662511B344CB400298EFD /* ZMSDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54A327321B99A3190004EB95 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* ZMCSystem.framework */; };
+		54A3273A1B99A3840004EB95 /* ZMLogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54A327391B99A3840004EB95 /* ZMLogTests.m */; };
+		54A3273C1B99C04F0004EB95 /* ZMLogSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A3273B1B99C04F0004EB95 /* ZMLogSwiftTests.swift */; };
+		54A3273F1B99C2860004EB95 /* ZMSLogging+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 54A3273D1B99C13B0004EB95 /* ZMSLogging+Testing.h */; };
+		54C5DF8A1BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C5DF891BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m */; };
+		54DAE8FB1BA839EB009403F8 /* ZMCSystemTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 54DAE8FA1BA839EB009403F8 /* ZMCSystemTestHelper.m */; };
+		54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F249C61BB9242900040600 /* ZMSDispatchGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F249C71BB9242900040600 /* ZMSDispatchGroup.m */; };
+		54F5148C1B7377CA00FACDAA /* ZMSGroupQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54F9BC4D1C48F55900BC09DB /* ZMSTestDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F9BC4B1C48F55900BC09DB /* ZMSTestDetection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54F9BC4E1C48F55900BC09DB /* ZMSTestDetection.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F9BC4C1C48F55900BC09DB /* ZMSTestDetection.m */; };
+		54FF9F111C48F67300B29ACE /* ZMSTimePoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF9F0F1C48F67300B29ACE /* ZMSTimePoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */; };
+		54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */; };
+		54FF9F161C4914D100B29ACE /* ZMSTestDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		54A327331B99A3190004EB95 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3ECC34C41AD430BB0089FD4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3ECC350F1AD436750089FD4B;
+			remoteInfo = "ZMCSystem-ios";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		092758691B70E68F00AD5A78 /* ZMCSystem.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ZMCSystem.xcconfig; sourceTree = "<group>"; };
+		096A3A1C1B67CEF700565001 /* ZMSLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSLogging.h; sourceTree = "<group>"; };
+		096A3A1D1B67CEF700565001 /* ZMSLogging.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZMSLogging.mm; sourceTree = "<group>"; };
+		096A3A1E1B67CEF700565001 /* ZMSLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSLogging.swift; sourceTree = "<group>"; };
+		09F186211B68FD52007A3DA6 /* ZMCSystem-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ZMCSystem-Info.plist"; sourceTree = "<group>"; };
+		3ECC35191AD436750089FD4B /* ZMCSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZMCSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		540CD8A31B737017006677DE /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		540CD8A41B737017006677DE /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		540CD8A51B737017006677DE /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		540CD8A61B737017006677DE /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
+		540CD8A71B737017006677DE /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
+		540CD8A81B737017006677DE /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		540CD8A91B737017006677DE /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		540CD8AA1B737017006677DE /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		540CD8AB1B737017006677DE /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		540CD8AC1B737017006677DE /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
+		540CD8AD1B737017006677DE /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		540CD8AE1B737017006677DE /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		540CD8AF1B737017006677DE /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		5457426B1BA9C50C0009409B /* ZMDefinesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDefinesTest.m; sourceTree = "<group>"; };
+		5473E7C71B31A95A00C6A937 /* ZMCSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMCSystem.h; sourceTree = "<group>"; };
+		5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAppleSystemLoggerWrapper.h; sourceTree = "<group>"; };
+		5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSAppleSystemLoggerWrapper.m; sourceTree = "<group>"; };
+		5473E7D51B31A9C300C6A937 /* ZMCSystem-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ZMCSystem-ios.xcconfig"; sourceTree = "<group>"; };
+		5473E7D61B31A9C300C6A937 /* ZMCSystem-osx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ZMCSystem-osx.xcconfig"; sourceTree = "<group>"; };
+		5473E7E41B31AA2600C6A937 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		548662451B344AAB00298EFD /* ZMSAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAsserts.h; sourceTree = "<group>"; };
+		5486624B1B344BA900298EFD /* ZMSActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSActivity.h; sourceTree = "<group>"; };
+		5486624E1B344BB800298EFD /* ZMSActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSActivity.m; sourceTree = "<group>"; };
+		548662511B344CB400298EFD /* ZMSDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSDefines.h; sourceTree = "<group>"; };
+		54A3272C1B99A3190004EB95 /* ZMCSystem-ios Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ZMCSystem-ios Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		54A327391B99A3840004EB95 /* ZMLogTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLogTests.m; sourceTree = "<group>"; };
+		54A3273B1B99C04F0004EB95 /* ZMLogSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMLogSwiftTests.swift; sourceTree = "<group>"; };
+		54A3273D1B99C13B0004EB95 /* ZMSLogging+Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMSLogging+Testing.h"; sourceTree = "<group>"; };
+		54C5DF891BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSDispatchGroupTests.m; sourceTree = "<group>"; };
+		54DAE8F91BA839EB009403F8 /* ZMCSystemTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMCSystemTestHelper.h; sourceTree = "<group>"; };
+		54DAE8FA1BA839EB009403F8 /* ZMCSystemTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMCSystemTestHelper.m; sourceTree = "<group>"; };
+		54DAE8FC1BA83B01009403F8 /* Test-Bridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Test-Bridging.h"; sourceTree = "<group>"; };
+		54F249C61BB9242900040600 /* ZMSDispatchGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSDispatchGroup.h; sourceTree = "<group>"; };
+		54F249C71BB9242900040600 /* ZMSDispatchGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSDispatchGroup.m; sourceTree = "<group>"; };
+		54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSGroupQueue.h; sourceTree = "<group>"; };
+		54F6FD891B31BB5A000EC9BB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		54F9BC4B1C48F55900BC09DB /* ZMSTestDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSTestDetection.h; sourceTree = "<group>"; };
+		54F9BC4C1C48F55900BC09DB /* ZMSTestDetection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTestDetection.m; sourceTree = "<group>"; };
+		54FF9F0F1C48F67300B29ACE /* ZMSTimePoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSTimePoint.h; sourceTree = "<group>"; };
+		54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTimePoint.m; sourceTree = "<group>"; };
+		54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimePointTests.m; sourceTree = "<group>"; };
+		54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTestDetectionTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3ECC35131AD436750089FD4B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54A327291B99A3190004EB95 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				54A327321B99A3190004EB95 /* ZMCSystem.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0927585B1B70E61C00AD5A78 /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				540CD8A31B737017006677DE /* ios-test-host.xcconfig */,
+				540CD8A41B737017006677DE /* ios-test-target.xcconfig */,
+				540CD8A51B737017006677DE /* ios.xcconfig */,
+				540CD8A61B737017006677DE /* osx-test-target.xcconfig */,
+				540CD8A71B737017006677DE /* osx.xcconfig */,
+				540CD8A81B737017006677DE /* project-common.xcconfig */,
+				540CD8A91B737017006677DE /* project-debug.xcconfig */,
+				540CD8AA1B737017006677DE /* project.xcconfig */,
+				540CD8AB1B737017006677DE /* simulator.xcconfig */,
+				540CD8AC1B737017006677DE /* swift.xcconfig */,
+				540CD8AD1B737017006677DE /* tests.xcconfig */,
+				540CD8AE1B737017006677DE /* warnings-debug.xcconfig */,
+				540CD8AF1B737017006677DE /* warnings.xcconfig */,
+			);
+			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+		3ECC34C31AD430BB0089FD4B = {
+			isa = PBXGroup;
+			children = (
+				54F6FD891B31BB5A000EC9BB /* README.md */,
+				5473E7D01B31A9C300C6A937 /* Resources */,
+				5473E7C61B31A95A00C6A937 /* Source */,
+				54A327381B99A3650004EB95 /* Tests */,
+				3ECC34E61AD433520089FD4B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3ECC34E61AD433520089FD4B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3ECC35191AD436750089FD4B /* ZMCSystem.framework */,
+				54A3272C1B99A3190004EB95 /* ZMCSystem-ios Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5473E7C61B31A95A00C6A937 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */,
+				548662511B344CB400298EFD /* ZMSDefines.h */,
+				548662451B344AAB00298EFD /* ZMSAsserts.h */,
+				5473E7C71B31A95A00C6A937 /* ZMCSystem.h */,
+				5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */,
+				5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */,
+				5486624B1B344BA900298EFD /* ZMSActivity.h */,
+				5486624E1B344BB800298EFD /* ZMSActivity.m */,
+				096A3A1C1B67CEF700565001 /* ZMSLogging.h */,
+				54A3273D1B99C13B0004EB95 /* ZMSLogging+Testing.h */,
+				096A3A1D1B67CEF700565001 /* ZMSLogging.mm */,
+				096A3A1E1B67CEF700565001 /* ZMSLogging.swift */,
+				54F249C61BB9242900040600 /* ZMSDispatchGroup.h */,
+				54F249C71BB9242900040600 /* ZMSDispatchGroup.m */,
+				54F9BC4B1C48F55900BC09DB /* ZMSTestDetection.h */,
+				54F9BC4C1C48F55900BC09DB /* ZMSTestDetection.m */,
+				54FF9F0F1C48F67300B29ACE /* ZMSTimePoint.h */,
+				54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		5473E7D01B31A9C300C6A937 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				09F186211B68FD52007A3DA6 /* ZMCSystem-Info.plist */,
+				5473E7D11B31A9C300C6A937 /* Configurations */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5473E7D11B31A9C300C6A937 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				0927585B1B70E61C00AD5A78 /* zmc-config */,
+				5473E7E41B31AA2600C6A937 /* version.xcconfig */,
+				092758691B70E68F00AD5A78 /* ZMCSystem.xcconfig */,
+				5473E7D51B31A9C300C6A937 /* ZMCSystem-ios.xcconfig */,
+				5473E7D61B31A9C300C6A937 /* ZMCSystem-osx.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		54A327381B99A3650004EB95 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				54A327391B99A3840004EB95 /* ZMLogTests.m */,
+				5457426B1BA9C50C0009409B /* ZMDefinesTest.m */,
+				54A3273B1B99C04F0004EB95 /* ZMLogSwiftTests.swift */,
+				54DAE8F91BA839EB009403F8 /* ZMCSystemTestHelper.h */,
+				54DAE8FA1BA839EB009403F8 /* ZMCSystemTestHelper.m */,
+				54DAE8FC1BA83B01009403F8 /* Test-Bridging.h */,
+				54C5DF891BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m */,
+				54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */,
+				54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		3ECC35141AD436750089FD4B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				548662521B344CB400298EFD /* ZMSDefines.h in Headers */,
+				546E9AB61B72536F00769771 /* ZMSLogging.h in Headers */,
+				5473E7CA1B31A95A00C6A937 /* ZMCSystem.h in Headers */,
+				54F9BC4D1C48F55900BC09DB /* ZMSTestDetection.h in Headers */,
+				5473E7CC1B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h in Headers */,
+				54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */,
+				54A3273F1B99C2860004EB95 /* ZMSLogging+Testing.h in Headers */,
+				5486624C1B344BA900298EFD /* ZMSActivity.h in Headers */,
+				54F5148C1B7377CA00FACDAA /* ZMSGroupQueue.h in Headers */,
+				548662461B344AAB00298EFD /* ZMSAsserts.h in Headers */,
+				54FF9F111C48F67300B29ACE /* ZMSTimePoint.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		3ECC350F1AD436750089FD4B /* ZMCSystem-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3ECC35161AD436750089FD4B /* Build configuration list for PBXNativeTarget "ZMCSystem-ios" */;
+			buildPhases = (
+				54CD53321AE6E8E6001CE59A /* Delay */,
+				3ECC35121AD436750089FD4B /* Sources */,
+				3ECC35131AD436750089FD4B /* Frameworks */,
+				3ECC35141AD436750089FD4B /* Headers */,
+				3ECC35151AD436750089FD4B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ZMCSystem-ios";
+			productName = SyncEngineSystem;
+			productReference = 3ECC35191AD436750089FD4B /* ZMCSystem.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		54A3272B1B99A3190004EB95 /* ZMCSystem-ios Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 54A327351B99A3190004EB95 /* Build configuration list for PBXNativeTarget "ZMCSystem-ios Tests" */;
+			buildPhases = (
+				54A327281B99A3190004EB95 /* Sources */,
+				54A327291B99A3190004EB95 /* Frameworks */,
+				54A3272A1B99A3190004EB95 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				54A327341B99A3190004EB95 /* PBXTargetDependency */,
+			);
+			name = "ZMCSystem-ios Tests";
+			productName = "ZMCSystem-ios Tests";
+			productReference = 54A3272C1B99A3190004EB95 /* ZMCSystem-ios Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3ECC34C41AD430BB0089FD4B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0720;
+				TargetAttributes = {
+					3ECC350F1AD436750089FD4B = {
+						DevelopmentTeam = W5KEQBF9B5;
+					};
+					54A3272B1B99A3190004EB95 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = 3ECC34C71AD430BB0089FD4B /* Build configuration list for PBXProject "ZMCSystem" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3ECC34C31AD430BB0089FD4B;
+			productRefGroup = 3ECC34E61AD433520089FD4B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3ECC350F1AD436750089FD4B /* ZMCSystem-ios */,
+				54A3272B1B99A3190004EB95 /* ZMCSystem-ios Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3ECC35151AD436750089FD4B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54A3272A1B99A3190004EB95 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		54CD53321AE6E8E6001CE59A /* Delay */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Delay;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# artificial delay or file won't be seen by the next step\nsleep 1";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3ECC35121AD436750089FD4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				544CFC511B70B933007AA694 /* ZMSLogging.swift in Sources */,
+				54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */,
+				54F9BC4E1C48F55900BC09DB /* ZMSTestDetection.m in Sources */,
+				096A3A211B67CEF700565001 /* ZMSLogging.mm in Sources */,
+				546E9AB51B7252B100769771 /* ZMSAppleSystemLoggerWrapper.m in Sources */,
+				54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */,
+				5486624F1B344BB800298EFD /* ZMSActivity.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54A327281B99A3190004EB95 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				54C5DF8A1BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m in Sources */,
+				54A3273C1B99C04F0004EB95 /* ZMLogSwiftTests.swift in Sources */,
+				54FF9F161C4914D100B29ACE /* ZMSTestDetectionTests.m in Sources */,
+				54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */,
+				54DAE8FB1BA839EB009403F8 /* ZMCSystemTestHelper.m in Sources */,
+				54A3273A1B99A3840004EB95 /* ZMLogTests.m in Sources */,
+				5457426C1BA9C50C0009409B /* ZMDefinesTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		54A327341B99A3190004EB95 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3ECC350F1AD436750089FD4B /* ZMCSystem-ios */;
+			targetProxy = 54A327331B99A3190004EB95 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3ECC34C81AD430BB0089FD4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 540CD8A91B737017006677DE /* project-debug.xcconfig */;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 24;
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+			};
+			name = Debug;
+		};
+		3ECC34C91AD430BB0089FD4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 540CD8AA1B737017006677DE /* project.xcconfig */;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 24;
+			};
+			name = Release;
+		};
+		3ECC35171AD436750089FD4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5473E7D51B31A9C300C6A937 /* ZMCSystem-ios.xcconfig */;
+			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMCSystem-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+			};
+			name = Debug;
+		};
+		3ECC35181AD436750089FD4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5473E7D51B31A9C300C6A937 /* ZMCSystem-ios.xcconfig */;
+			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMCSystem-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+			};
+			name = Release;
+		};
+		54A327361B99A3190004EB95 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 540CD8A41B737017006677DE /* ios-test-target.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Test-Bridging.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		54A327371B99A3190004EB95 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 540CD8A41B737017006677DE /* ios-test-target.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Test-Bridging.h";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3ECC34C71AD430BB0089FD4B /* Build configuration list for PBXProject "ZMCSystem" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3ECC34C81AD430BB0089FD4B /* Debug */,
+				3ECC34C91AD430BB0089FD4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3ECC35161AD436750089FD4B /* Build configuration list for PBXNativeTarget "ZMCSystem-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3ECC35171AD436750089FD4B /* Debug */,
+				3ECC35181AD436750089FD4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54A327351B99A3190004EB95 /* Build configuration list for PBXNativeTarget "ZMCSystem-ios Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54A327361B99A3190004EB95 /* Debug */,
+				54A327371B99A3190004EB95 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3ECC34C41AD430BB0089FD4B /* Project object */;
+}
