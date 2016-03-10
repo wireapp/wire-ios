@@ -1,0 +1,11 @@
+.DS_Store
+zsyncTests/OCMock/OCMock.xcodeproj/xcuserdata
+zmessaging-cocoa.xcodeproj/project.xcworkspace/xcuserdata
+zmessaging-cocoa.xcodeproj/xcuserdata
+xcuserdata
+*.xccheckout
+*.xcscmblueprint
+workspace.xml
+*.pyc
+Carthage
+zmessaging.framework.zip

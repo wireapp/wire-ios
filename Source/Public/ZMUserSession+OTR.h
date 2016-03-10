@@ -1,0 +1,62 @@
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
+#import <zmessaging/zmessaging.h>
+
+@class UserClient;
+
+
+
+@protocol ZMClientUpdateObserver <NSObject>
+
+- (void)finishedFetchingClients:(NSArray<UserClient *>*)userClients;
+- (void)failedToFetchClientsWithError:(NSError *)error;
+- (void)finishedDeletingClients:(NSArray<UserClient *>*)remainingClients;
+- (void)failedToDeleteClientsWithError:(NSError *)error;
+
+@end
+
+@protocol ZMClientUpdateObserverToken <NSObject>
+@end
+
+
+
+@interface ZMUserSession (OTR)
+
+/// Deletes selfUser clients from the BE if there are too many clients on startup
+- (void)deleteClient:(UserClient *)client;
+
+/// Fetch all selfUser clients to manage them from the settings screen
+/// The current client must be already registered
+/// Calling this method without a registered client will throw an error
+- (void)fetchAllClients;
+
+
+/// Deletes selfUser clients from the BE when managing them from the settings screen
+- (void)deleteClients:(NSArray<UserClient *> *)clients withCredentials:(ZMEmailCredentials *)emailCredentials;
+
+
+/// Adds an observer that is notified when the selfUser clients were successfully fetched and deleted
+/// Returns a token that needs to be stored and used when unregistering as an observer with removeClientUpdateObserver:
+- (id<ZMClientUpdateObserverToken>)addClientUpdateObserver:(id<ZMClientUpdateObserver>)observer;
+
+
+/// Removes an observer that notified when the selfUser clients were successfully fetched and deleted
+/// Must pass in token that was received when registering as an observer via addClientUpdateObserver:
+- (void)removeClientUpdateObserver:(id<ZMClientUpdateObserverToken>)token;
+
+@end

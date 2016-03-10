@@ -1,0 +1,6 @@
+github "wireapp/zmc-cryptobox" ~> 2.1
+github "wireapp/zmc-images" ~> 4.4
+github "wireapp/zmc-transport" ~> 5.5
+github "wireapp/zmc-system" ~> 14.2
+github "wireapp/zmc-protos" ~> 3.16
+github "iziz/libPhoneNumber-iOS" ~> 0.8

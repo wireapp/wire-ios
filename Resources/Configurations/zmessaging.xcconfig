@@ -1,0 +1,6 @@
+
+#include "zmc-config/swift.xcconfig"
+#include "libs.xcconfig"
+
+PRODUCT_NAME = zmessaging
+
