@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "ZMConversationTests.h"
@@ -380,6 +382,39 @@
     // then
     ZMSystemMessage *message = conversation.messages.lastObject;
     XCTAssertNotNil(message.serverTimestamp);
+}
+
+
+- (void)testThatItAppendsASystemMessageOfTypeRemoteIDChangedForCBErrorCodeRemoteIdentityChanged
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.name = @"Fancy One";
+    
+    // when
+    [conversation appendDecryptionFailedSystemMessageAtTime:[NSDate date] sender:user client:nil errorCode:CBErrorCodeRemoteIdentityChanged];
+    
+    // then
+    ZMSystemMessage *lastMessage = conversation.messages.lastObject;
+    XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged);
+}
+
+- (void)testThatItAppendsASystemMessageOfGeneralTypeForCBErrorCodeInvalidMessage
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.name = @"Fancy One";
+    
+    // when
+    [conversation appendDecryptionFailedSystemMessageAtTime:[NSDate date] sender:user client:nil errorCode:CBErrorCodeInvalidMessage];
+    
+    // then
+    ZMSystemMessage *lastMessage = conversation.messages.lastObject;
+    XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageTypeDecryptionFailed);
 }
 
 @end

@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "ModelObjectsTests.h"
@@ -108,10 +110,10 @@ static NSString *const ValidEmail = @"foo77@example.com";
 - (NSMutableDictionary *)samplePayloadForUserID:(NSUUID *)userID
 {
     return [@{
-              @"name" : @"Manuel Garcia O'Kelly-Davis",
+              @"name" : @"Manuel Rodriguez",
               @"id" : userID.transportString,
               @"email" : @"mannie@example.com",
-              @"phone" : @"555-986-45789",
+              @"phone" : @"000-000-45789",
               @"accent_id" : @3,
               @"picture" : @[]
               } mutableCopy];
@@ -1740,23 +1742,23 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
       @"a.little.lengthy.but.fine@dept.example.com" : @"a.little.lengthy.but.fine@dept.example.com",
       @"disposable.style.email.with+symbol@example.com" : @"disposable.style.email.with+symbol@example.com",
       @"other.email-with-dash@example.com" : @"other.email-with-dash@example.com",
-//      @"user@localserver",
+      //      @"user@localserver",
       @"abc.\"defghi\".xyz@example.com" : @"abc.\"defghi\".xyz@example.com",
       @"\"abcdefghixyz\"@example.com" : @"\"abcdefghixyz\"@example.com",
-      @"a@b.c" : @"a@b.c.example.com",
-      @"a@3b.c": @"a@3b.c.example.com",
-      @"a@b-c.d" : @"a@b-c.d.example.com",
-      @"a@b-c.d-c" : @"a@b-c.d-c.example.com",
-      @"a@b3-c.d4" : @"a@b3-c.d4.example.com",
-      @"a@b-4c.d-c4" : @"a@b-4c.d-c4.example.com",
-      @"Meep Møøp <Meep.Moop@EMail.me>" : @"meep.moop@example.com",
-      @"=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?= <keld@some.domain>" : @"keld@some.domain.example.com",
-      @"=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=@some.domain" : @"=?iso-8859-1?q?keld_j=f8rn_simonsen?=@some.domain.example.com",
-      @"\"Meep Møøp\" <Meep.Moop@EMail.me>" : @"meep.moop@example.com",
-      @"Meep   Møøp  <Meep.Moop@EMail.me>" : @"meep.moop@example.com",
-      @"Meep \"_the_\" Møøp <Meep.Moop@EMail.me>" : @"meep.moop@example.com",
-      @"   white@space.com    " : @"white@example.com",
-      @"मानक \"हिन्दी\" <manaka.hindi@langua.ge>" : @"manaka.hindi@example.com",
+      @"a@b.c.example.com" : @"a@b.c.example.com",
+      @"a@3b.c.example.com": @"a@3b.c.example.com",
+      @"a@b-c.d.example.com" : @"a@b-c.d.example.com",
+      @"a@b-c.d-c.example.com" : @"a@b-c.d-c.example.com",
+      @"a@b3-c.d4.example.com" : @"a@b3-c.d4.example.com",
+      @"a@b-4c.d-c4.example.com" : @"a@b-4c.d-c4.example.com",
+      @"Meep Møøp <Meep.Moop@example.com>" : @"meep.moop@example.com",
+      @"=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?= <keld@example.com>" : @"keld@example.com",
+      @"=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=@example.com" : @"=?iso-8859-1?q?keld_j=f8rn_simonsen?=@example.com",
+      @"\"Meep Møøp\" <Meep.Moop@example.com>" : @"meep.moop@example.com",
+      @"Meep   Møøp  <Meep.Moop@EXample.com>" : @"meep.moop@example.com",
+      @"Meep \"_the_\" Møøp <Meep.Moop@ExAmple.com>" : @"meep.moop@example.com",
+      @"   whitespace@example.com    " : @"whitespace@example.com",
+      @"मानक \"हिन्दी\" <manaka.hindi@example.com>" : @"manaka.hindi@example.com",
 
 //      these cases are also possible but are very unlikely to appear
 //      currently they don't pass validation
@@ -1786,8 +1788,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     // C.f. <https://en.wikipedia.org/wiki/Email_address#Valid_email_addresses>
     
     NSArray *invalidEmailAddresses =
-    @[
-      @"Abc.example.com", // (an @ character must separate the local and domain parts)
+    @[@"Abc.example.com", // (an @ character must separate the local and domain parts)
       @"A@b@c@example.com", // (only one @ is allowed outside quotation marks)
       @"a\"b(c)d,e:f;g<h>i[j\\k]l@example.com", // (none of the special characters in this local part is allowed outside quotation marks)
       @"just\"not\"right@example.com", // (quoted strings must be dot separated or the only element making up the local-part)
@@ -1800,12 +1801,12 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
       @"a@b",
       @"a@b3",
       @"a@b.c-",
-//      @"a@3b.c", //unclear why this should be not valid
+      //      @"a@3b.c", //unclear why this should be not valid
       @"two words@something.org",
       @"\"Meep Moop\" <\"The =^.^= Meeper\"@x.y",
       @"mailbox@[11.22.33.44]",
-      @"some prefix with <two words@something.org>",
-      @"x@something_odd.com",
+      @"some prefix with <two words@example.com>",
+      @"x@something_odd.example.com",
       @"x@host.with?query=23&parameters=42",
       @"some.mail@host.with.port:12345",
       @"comments(inside the address)@are(actually).not(supported, but nobody uses them anyway)",
@@ -1813,10 +1814,11 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
       @"\"you need\" <to.close@angle-brackets.too",
       @"\"you need\" >to.open@angle-brackets.first",
       @"\"you need\" <to.close@angle-brackets>.right",
-      @"some<stran>ge@email.com",
-      @"Mr. Stranger <some<stran>ge@email.com>",
-      @"<Meep.Moop@EMail.me>"
+      @"some<stran>ge@example.com",
+      @"Mr. Stranger <some<stran>ge@example.com>",
+      @"<Meep.Moop@EXample.com>"
       ];
+
     
     
     for (NSString *invalid in invalidEmailAddresses) {

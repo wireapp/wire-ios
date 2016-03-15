@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "IntegrationTestBase.h"
@@ -731,14 +733,14 @@
     XCTAssertEqualObjects(currentMessageSet, windowMessageSet);
     
     for(NSUInteger i = 0; i < observer.window.size; ++ i) {
-        if(i == observer.window.size -1) {
+        if(i == 0) {
             ZMAssetClientMessage *windowMessage = currentMessageSet[i];
             XCTAssertEqualObjects([windowMessage genericMessageForFormat:format], message);
             NSData *recievedImageData = [[[AssetDirectory alloc] init] assetData:windowMessage.nonce format:format encrypted:NO];
             XCTAssertEqualObjects(recievedImageData, imageData);
         }
         else {
-            XCTAssertEqual(currentMessageSet[i], initialMessageSet[i+1]);
+            XCTAssertEqual(currentMessageSet[i], initialMessageSet[i-1]);
         }
     }
 }

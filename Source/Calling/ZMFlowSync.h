@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import <Foundation/Foundation.h>
@@ -50,5 +52,6 @@ extern id ZMFlowSyncInternalDeploymentEnvironmentOverride;
 - (void)appendLogForConversationID:(NSUUID *)conversationID message:(NSString *)message;
 - (void)addJoinedCallParticipant:(ZMUser *)user inConversation:(ZMConversation *)conversation;
 - (void)accessTokenDidChangeWithToken:(NSString *)token ofType:(NSString *)type;
+- (void)updateFlowsForConversation:(ZMConversation *)conversation;
 
 @end

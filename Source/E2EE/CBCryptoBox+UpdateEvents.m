@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMTransport;
@@ -88,7 +90,6 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
     if(didFailBecauseDuplicated) {
         return;
     }
-    ZMLogError(@"Unable to decrypt event %@, decryption error: %@", event, error);
     [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationFailedToDecryptMessageNotificationName object:self userInfo:@{@"cause" : CBErrorCodeToString(error.code)}];
     
     NSString *senderClientID = [[event.payload.asDictionary optionalDictionaryForKey:@"data"] optionalStringForKey:@"sender"];
@@ -97,9 +98,13 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
         ZMConversation *conversation = [ZMConversation conversationWithRemoteID:event.conversationUUID createIfNeeded:NO inContext:managedObjectContext];
         ZMUser *sender = [ZMUser userWithRemoteID:event.senderUUID createIfNeeded:NO inContext:managedObjectContext];
         UserClient *client = [UserClient fetchUserClientWithRemoteId:senderClientID forUser:sender createIfNeeded:NO];
-        
-        if (conversation != nil && sender != nil && client != nil) {
-            [conversation appendDecryptionFailedSystemMessageAtTime:event.timeStamp sender:sender client:client];
+        if (client != nil) {
+            ZMLogError(@"Unable to decrypt event %@, client: %@", event, client.description);
+        } else {
+            ZMLogError(@"Unable to decrypt event %@, unknown client for user: %@", event, sender.name);
+        }
+        if (conversation != nil && sender != nil) {
+            [conversation appendDecryptionFailedSystemMessageAtTime:event.timeStamp sender:sender client:client errorCode:error.code];
         }
     }
 }
@@ -107,10 +112,6 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
 - (ZMUpdateEvent *)decryptOTRClientMessageUpdateEvent:(ZMUpdateEvent *)event newSessionId:(NSString *__autoreleasing *)newSessionId error:(NSError **)error
 {
     NSData *decryptedData = [self decryptOTRMessageUpdateEvent:event valueForKey:@"text" newSessionId:newSessionId error:error];
-    if (decryptedData == nil) {
-        ZMLogError(@"Update Event: %@ failed with error: %@", event.debugInformation, *error);
-        
-    }
     VerifyReturnNil(decryptedData != nil);
 
     NSMutableDictionary *payload = [event.payload.asDictionary mutableCopy];
@@ -122,10 +123,6 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
 - (ZMUpdateEvent *)decryptOTRAssetUpdateEvent:(ZMUpdateEvent *)event newSessionId:(NSString *__autoreleasing *)newSessionId error:(NSError **)error
 {
     NSData *decryptedData = [self decryptOTRMessageUpdateEvent:event valueForKey:@"key" newSessionId:newSessionId error:error];
-    if (decryptedData == nil) {
-        ZMLogError(@"Update Event: %@ failed with error: %@", event.debugInformation, *error);
-        
-    }
     VerifyReturnNil(decryptedData != nil);
 
     NSMutableDictionary *payload = [event.payload.asDictionary mutableCopy];
@@ -142,16 +139,26 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
     NSString *senderClientId = [eventData optionalStringForKey:@"sender"];
     NSString *dataString = [eventData optionalStringForKey:dataKey];
     VerifyReturnNil(dataString != nil);
-    
+
+    if([dataString isEqualToString:[ZMFailedToCreateEncryptedMessagePayloadString dataUsingEncoding:NSUTF8StringEncoding].base64String]) {
+        ZMLogError(@"Received a message with a \"failed to encrypt for your client\" special payload. Current device might have invalid prekeys on the BE.");
+        return nil;
+    }
     NSData *data = [[NSData alloc] initWithBase64EncodedString:dataString options:0];
+    
     
     VerifyReturnNil(senderClientId != nil);
     VerifyReturnNil(data != nil);
     
     NSData *decryptedData;
     BOOL createdNewSession = [self decryptedMessageDataFromData:data sessionId:senderClientId decryptedData:&decryptedData error:error];
+    
     if (createdNewSession) {
         *newSessionId = senderClientId;
+    }
+    
+    if (nil == decryptedData) {
+        ZMLogError(@"Failed to decrypt message <%@>: %@, update Event: %@", CBErrorCodeToString((*error).code), *error, event.debugInformation);
     }
     
     return decryptedData;
@@ -165,18 +172,11 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
     CBSession *session = [self sessionById:sessionId error:error];
     if (session != nil) {
         *decryptedData = [session decrypt:data error:error];
-        if(decryptedData == nil) {
-            ZMLogWarn(@"Failed to decrypt message: %@", *error);
-        }
         createdNewSession = NO;
     }
     else {
         //if we don't have session with sender yet we create it
         CBSessionMessage *sessionMessage = [self sessionMessageWithId:sessionId fromMessage:data error:error];
-
-        if(sessionMessage == nil || sessionMessage.session == nil) {
-            ZMLogWarn(@"Failed to decrypt message: %@", *error);
-        }
         
         VerifyReturnValue(sessionMessage != nil, NO);
         VerifyReturnValue(sessionMessage.session != nil, NO);
@@ -247,6 +247,8 @@ CBErrorCodeToString(CBErrorCode errorCode)
             return @"CBErrorCodeEncodeError";
         case CBErrorCodePanic:
             return @"CBErrorCodePanic";
+        default:
+            return [NSString stringWithFormat:@"Unknown error code: %lu", (long)errorCode];
     }
 
 }

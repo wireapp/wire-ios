@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "IntegrationTestBase.h"
@@ -303,6 +305,76 @@
     NSString *expectedPath = [NSString stringWithFormat:@"/push/fallback/%@/cancel", identifier.transportString];
     XCTAssertTrue([lastRequest.path containsString:expectedPath]);
     
+}
+
+
+- (void)testThatItFetchesTheNotificationAndPingsBackToTheBackendWhenReceivingAVoIPNotificationOfTypeNotice
+{
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.2);
+    
+    [self.mockTransportSession closePushChannelAndRemoveConsumer]; // do not use websocket
+    ZMUser *selfUser = [self userForMockUser:self.selfUser];
+    XCTAssertEqual(selfUser.clients.count, 1u);
+
+    __block NSDictionary *conversationTransportData;
+    
+    __block NSString *convIdentifier;
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        MockConversation *conversation = [session insertGroupConversationWithSelfUser:self.selfUser otherUsers:@[self.user1]];
+        conversationTransportData = (NSDictionary *)conversation.transportData;
+        convIdentifier = conversation.identifier;
+    }];
+    WaitForAllGroupsToBeEmpty(0.2);
+    NSUUID *notificationID = NSUUID.createUUID;
+    NSUUID *conversationID = [NSUUID uuidWithTransportString:convIdentifier];
+    
+    NSDictionary *eventPayload = @{@"id" :notificationID.transportString,
+                                   @"payload" : @[@{
+                                           @"conversation" : convIdentifier,
+                                           @"data" : conversationTransportData,
+                                           @"from" : self.user1.identifier,
+                                           @"time" : @"2015-03-11T09:34:00.436Z",
+                                           @"type" : @"conversation.create"
+                                           }]
+                                   };
+    
+    NSDictionary *noticePayload = @{@"aps" : @{},
+                                    @"data" : @{
+                                            @"data" : @{ @"id" : notificationID.transportString },
+                                            @"type" : @"notice"
+                                            }
+                                    };
+    
+    // expect
+    [[[(id)self.userSession.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    
+    // when
+    XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
+    XCTestExpectation *pingbackExpectation = [self expectationWithDescription:@"pinging backend"];
+
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        NSString *path = [NSString stringWithFormat:@"/notifications/%@?client=%@", notificationID.transportString,selfUser.selfClient.remoteIdentifier];
+        if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
+            [fetchingExpectation fulfill];
+            return [ZMTransportResponse responseWithPayload:eventPayload HTTPstatus:200 transportSessionError:nil];
+        };
+        NSString *fallbackPath = [NSString stringWithFormat:@"/push/fallback/%@/cancel", notificationID.transportString];
+        if ([request.path isEqualToString:fallbackPath] && request.method == ZMMethodPOST) {
+            [pingbackExpectation fulfill];
+        }
+        return nil;
+    };
+    
+    [self.mockTransportSession resetReceivedRequests];
+    NSDictionary *apnsPayload =  noticePayload;
+    [self.userSession receivedPushNotificationWithPayload:apnsPayload completionHandler:nil source:ZMPushNotficationTypeVoIP];
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    WaitForEverythingToBeDone();
+    
+    // then
+    ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversationID inManagedObjectContext:self.uiMOC];
+    XCTAssertNotNil(conversation);
 }
 
 @end

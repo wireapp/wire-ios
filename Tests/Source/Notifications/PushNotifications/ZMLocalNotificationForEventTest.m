@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "ZMLocalNotificationForEventTest.h"
@@ -320,30 +322,6 @@
     
     NSString *returnedNonceString = notification.userInfo[ZMLocalNotificationUserInfoSenderKey];
     XCTAssertEqualObjects(returnedNonceString, self.sender.remoteIdentifier.transportString);
-}
-
-- (void)testThatItDoesNotCreateNotificationIfItHasPreviousMessageWithSameNonce
-{
-    // given
-    NSUUID *nonce = [NSUUID createUUID];
-    [self.syncMOC performGroupedBlockAndWait:^{
-        ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.syncMOC];
-        message.nonce = nonce;
-        message.visibleInConversation = self.oneOnOneConversation;
-        [self.syncMOC saveOrRollback];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSString *nonceString = nonce.transportString;
-    NSString *text = @"Hello Hello!";
-    NSDictionary *data = @{@"content": text,
-                           ZMLocalNotificationUserInfoNonceKey: nonceString};
-    
-    // when
-    ZMLocalNotificationForEvent *note = [self noteWithPayload:data fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAdd];
-    
-    // then
-    XCTAssertNil(note);
 }
 
 @end

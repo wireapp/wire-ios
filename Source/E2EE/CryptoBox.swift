@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 import Foundation
@@ -70,11 +72,11 @@ public class UserClientKeysStore: NSObject {
             
             let otrDirectoryURL = UserClientKeysStore.otrDirectory
             box = try CBCryptoBox(pathURL: otrDirectoryURL)
-            do {
-                try otrDirectoryURL.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
-            } catch {
-                fatalError("Can not disable backups for the OTR folder")
-            }
+            try otrDirectoryURL.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
+
+            let attributes = [NSFileProtectionKey: NSFileProtectionCompleteUntilFirstUserAuthentication]
+            try NSFileManager.defaultManager().setAttributes(attributes, ofItemAtPath: otrDirectoryURL.path!)
+
             return box
         }
         catch let error as NSError {

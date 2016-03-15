@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import <CoreData/CoreData.h>
@@ -36,9 +38,11 @@
 + (BOOL)needsToPrepareLocalStore;
 
 /// Creates persistent store coordinator and migrates store if needed
+/// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
+///         synchronously when @c +needsToPrepareLocalStore is YES)
 /// @param backupCorruptedDatabase: if true, will copy a corrupted database to another folder for later investigation
-+ (void)prepareLocalStoreBackingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase completionHandler:(void(^)())completionHandler;
-
+/// @param completionHandler callback to be executed on completion (nullable)
++ (void)prepareLocalStoreSync:(BOOL)sync backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase completionHandler:(void(^)())completionHandler;
 /// Returns whether the store is ready to be opened
 + (BOOL)storeIsReady;
 

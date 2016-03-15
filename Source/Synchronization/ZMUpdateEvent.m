@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMTransport;
@@ -107,11 +109,10 @@
     NSDictionary *dictionary = [transportData asDictionary];
     
     NSUUID *uuid = [[dictionary stringForKey:@"id"] UUID];
-    NSArray *payloadArray = [dictionary arrayForKey:@"payload"];
+    NSArray *payloadArray = [dictionary optionalArrayForKey:@"payload"];
     BOOL transient = [dictionary optionalNumberForKey:@"transient"].boolValue;
 
     if(payloadArray == nil) {
-        ZMLogError(@"Push event payload is invalid: %@", dictionary);
         return nil;
     }
     
@@ -468,7 +469,12 @@ struct TypeMap {
             if (self.type == ZMUpdateEventConversationOtrAssetAdd) {
                 base64Content = [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"info"];
             } else {
-                base64Content = [self.payload optionalStringForKey:@"data"];
+                id dataPayload = self.payload[@"data"];
+                if ([dataPayload isKindOfClass:NSDictionary.class]) {
+                    base64Content = [[self.payload dictionaryForKey:@"data"] optionalStringForKey:@"text"];
+                } else {
+                    base64Content = [self.payload optionalStringForKey:@"data"];
+                }
             }
             if(base64Content == nil) {
                 return nil;

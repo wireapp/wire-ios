@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import zmessaging;
@@ -35,7 +37,7 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
     self.conversation.isVideoCall = YES;
     
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
     [[[flowManagerMock stub] andReturnValue:@(YES)] isSendingVideoInConversation:[OCMArg checkWithBlock:^BOOL(id obj) {
         XCTAssertEqualObjects(obj, self.conversation.remoteIdentifier.transportString);
         [callExpectation fulfill];
@@ -75,13 +77,32 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
     ZMFlowSyncInternalFlowManagerOverride = nil;
 }
 
+- (void)testThatItCallsIsSendingVideoForParticipantAndReturnValue_FlowManagerNotReady
+{
+    // given
+    id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
+    [[[flowManagerMock stub] andReturnValue:@(NO)] isReady];
+    ZMFlowSyncInternalFlowManagerOverride = flowManagerMock;
+
+    // when
+    NSError *error = nil;
+    BOOL result = [self.conversation.voiceChannel isSendingVideoForParticipant:self.conversation.connection.to error:&error];
+    
+    // then
+    XCTAssertFalse(result);
+    XCTAssertNotNil(error);
+    
+    ZMFlowSyncInternalFlowManagerOverride = nil;
+}
+
 - (void)testThatItCallsSetVideoSendActiveAndReturnValue_hasFlowManager
 {
     // given
     XCTestExpectation *callExpectation = [self expectationWithDescription:@"Method called"];
     
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [(MockFlowManager *)[[flowManagerMock stub] andDo:^(NSInvocation *invocation __unused) {
         [callExpectation fulfill];
     }] setVideoSendState:FLOWMANAGER_VIDEO_SEND
@@ -126,7 +147,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
 {
     // given
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [[[flowManagerMock stub] andReturnValue:@(NO)] isMediaEstablishedInConversation:OCMOCK_ANY];
     [[[flowManagerMock stub] andReturnValue:@(YES)] canSendVideoForConversation:OCMOCK_ANY];
     
@@ -147,7 +169,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
 {
     // given
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [[[flowManagerMock stub] andReturnValue:@(YES)] isMediaEstablishedInConversation:OCMOCK_ANY];
     [[[flowManagerMock stub] andReturnValue:@(NO)] canSendVideoForConversation:OCMOCK_ANY];
     
@@ -170,7 +193,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
     XCTestExpectation *callExpectation = [self expectationWithDescription:@"Method called"];
     UIView *view = [UIView new];
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [[[flowManagerMock stub] andDo:^(NSInvocation *invocation __unused) {
         [callExpectation fulfill];
     }] setVideoPreview:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -223,7 +247,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
     XCTestExpectation *callExpectation = [self expectationWithDescription:@"Method called"];
     UIView *view = [UIView new];
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [[[flowManagerMock stub] andDo:^(NSInvocation *invocation __unused) {
         [callExpectation fulfill];
     }] setVideoView:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -281,7 +306,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
     self.conversation.isVideoCall = YES;
 
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [[[flowManagerMock stub] andDo:^(NSInvocation *invocation __unused) {
         [callExpectation fulfill];
     }] setVideoCaptureDevice:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -336,7 +362,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
 {
     // given
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [(MockFlowManager *)[flowManagerMock stub] setVideoSendState:FLOWMANAGER_VIDEO_SEND forConversation:OCMOCK_ANY];
     
     [[[flowManagerMock stub] andReturnValue:@(YES)] isMediaEstablishedInConversation:OCMOCK_ANY];
@@ -363,7 +390,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
     self.conversation.isVideoCall = YES;
 
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [(MockFlowManager *)[flowManagerMock expect] setVideoSendState:FLOWMANAGER_VIDEO_SEND forConversation:OCMOCK_ANY];
     
     [[[flowManagerMock stub] andReturnValue:@(YES)] isMediaEstablishedInConversation:OCMOCK_ANY];
@@ -389,7 +417,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
 {
     // given
     id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-    
+    [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
     [(MockFlowManager *)[flowManagerMock expect] setVideoSendState:FLOWMANAGER_VIDEO_SEND forConversation:OCMOCK_ANY];
     
     [[[flowManagerMock stub] andReturnValue:@(YES)] isMediaEstablishedInConversation:OCMOCK_ANY];
@@ -508,7 +537,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
         // given
         
         id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-        
+        [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
         XCTestExpectation *callExpectation = [self expectationWithDescription:@"Did set video to preview"];
         
         [(MockFlowManager *)[[flowManagerMock expect] andDo:^(NSInvocation *inv) {
@@ -545,7 +575,8 @@ extern id ZMFlowSyncInternalFlowManagerOverride;
         // given
         
         id flowManagerMock = [OCMockObject mockForClass:[MockFlowManager class]];
-        
+        [[[flowManagerMock stub] andReturnValue:@(YES)] isReady];
+
         XCTestExpectation *callExpectationPreview = [self expectationWithDescription:@"Did set video to preview"];
         XCTestExpectation *callExpectationSendNone = [self expectationWithDescription:@"Did set video to preview"];
         

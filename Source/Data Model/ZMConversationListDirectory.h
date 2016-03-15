@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import Foundation;
@@ -29,7 +31,6 @@
 @property (nonatomic, readonly) ZMConversationList* pendingConnectionConversations; ///< pending
 @property (nonatomic, readonly) ZMConversationList* nonIdleVoiceChannelConversations; ///< calling, ringing, someone else in call for group conversations, actively talking
 @property (nonatomic, readonly) ZMConversationList* activeCallConversations; ///< actively taking. barring bugs, this will have at most one conversation.
-@property (nonatomic, readonly) ZMSharableConversations* sharableConversations;
 @property (nonatomic, readonly) ZMConversationList *clearedConversations; /// conversations with deleted messages (clearedEventId is set)
 
 - (NSArray *)allConversationLists;

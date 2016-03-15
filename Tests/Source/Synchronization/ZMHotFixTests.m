@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMTransport;
@@ -457,6 +459,29 @@
     
     // then
     XCTAssertEqual(observer.notificationCount, 1lu);
+}
+
+- (void)testThatItRemovesTheSharingExtensionURLs
+{
+    // given
+    NSURL *directoryURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:[NSUserDefaults groupName]];
+    NSURL *imageURL = [directoryURL URLByAppendingPathComponent:@"profile_images"];
+    NSURL *conversationUrl = [directoryURL URLByAppendingPathComponent:@"conversations"];
+    
+    [[NSFileManager defaultManager] createDirectoryAtURL:imageURL withIntermediateDirectories:YES attributes:nil error:nil];
+    [[NSFileManager defaultManager] createDirectoryAtURL:conversationUrl withIntermediateDirectories:YES attributes:nil error:nil];
+
+    XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:[imageURL relativePath]]);
+    XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:[conversationUrl relativePath]]);
+    
+    // when
+    self.sut = [[ZMHotFix alloc] initWithSyncMOC:self.syncMOC];
+    [self.sut applyPatchesForCurrentVersion:@"40.23"];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    // then
+    XCTAssertFalse([[NSFileManager defaultManager] fileExistsAtPath:[imageURL relativePath]]);
+    XCTAssertFalse([[NSFileManager defaultManager] fileExistsAtPath:[conversationUrl relativePath]]);
 }
 
 

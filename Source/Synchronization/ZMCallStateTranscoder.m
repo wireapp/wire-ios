@@ -91,14 +91,6 @@ static NSTimeInterval const UpstreamRequestTimeout = 30;
 
 
 
-@interface ZMCallStateTranscoder (Flows)
-
-- (void)updateFlowsForConversation:(ZMConversation *)conversation;
-
-@end
-
-
-
 @implementation ZMCallStateTranscoder
 
 _Pragma("clang diagnostic push") \
@@ -188,18 +180,19 @@ _Pragma("clang diagnostic pop")
 - (void)objectsDidChange:(NSSet *)objects
 {
     for (ZMConversation *conv in objects) {
+        ZMFlowSync *strongSync= self.flowSync;
         if ([conv isKindOfClass:[ZMConversation class]]){
             if ([self.upstreamFetchPredicate evaluateWithObject:conv] && !conv.callDeviceIsActive && conv.hasLocalModificationsForCallDeviceIsActive) {
                 // we need to release the flows as soon as the user wants to leave the call
                 // under bad network conditions we might not be able to send out the request to leave a call,
                 // but we should still be able to stop the audio stream
-                [self updateFlowsForConversation:conv];
+                [strongSync updateFlowsForConversation:conv];
                 [conv.voiceChannel resetTimer];
             }
             if ([conv hasLocalModificationsForKey:ZMConversationIsSelfAnActiveMemberKey] && !conv.isSelfAnActiveMember) {
                 // when the selfUser leaves a conversation with an ongoing call, we should reset the conversations's state
                 conv.callDeviceIsActive = NO;
-                [self updateFlowsForConversation:conv];
+                [strongSync updateFlowsForConversation:conv];
                 [conv.voiceChannel resetCallState];
                 [conv.voiceChannel resetTimer];
             }
@@ -322,7 +315,7 @@ _Pragma("clang diagnostic pop")
                 // when the selfuser was removed from a conversation while in a call (which should not happen), we should reset the call state locally
                 // we are not able to set the call state on the be because the be would refuse requests
                 conversation.callDeviceIsActive = NO;
-                [self updateFlowsForConversation:conversation];
+                [self.flowSync updateFlowsForConversation:conversation];
                 [conversation.voiceChannel resetCallState];
                 [conversation.voiceChannel resetTimer];
             }
@@ -567,7 +560,7 @@ _Pragma("clang diagnostic pop")
     }
     
     if(!conversation.callDeviceIsActive) { // do not "force join"
-        [self updateFlowsForConversation:conversation];
+        [self.flowSync updateFlowsForConversation:conversation];
         [self.gsmCallHandler setActiveCallSyncConversation:nil];
     }
     
@@ -592,7 +585,7 @@ _Pragma("clang diagnostic pop")
             return;
         }
         ZMUser *participant = [ZMUser userWithRemoteID:userID createIfNeeded:YES inContext:self.managedObjectContext];
-        [self setCallStateFromPayload:participantInfo forCallParticipant:participant inConversation:conversation];
+        [self setCallStateFromPayload:participantInfo forCallParticipant:participant inConversation:conversation eventSource:eventSource];
         [self addOrRemoveVideoParticipant:participantInfo forCallParticipant:participant inConversation:conversation];
         [currentParticipants removeObject:participant];
 
@@ -626,7 +619,7 @@ _Pragma("clang diagnostic pop")
     }
 }
 
-- (void)setCallStateFromPayload:(NSDictionary *)payload forCallParticipant:(ZMUser *)participant inConversation:(ZMConversation *)conversation
+- (void)setCallStateFromPayload:(NSDictionary *)payload forCallParticipant:(ZMUser *)participant inConversation:(ZMConversation *)conversation eventSource:(ZMCallEventSource)eventSource
 {
     NSString *state = [payload optionalStringForKey:StateKey];
     BOOL isIgnoringCall = (participant.isSelfUser) && ([payload optionalNumberForKey:SelfStateIgnoredKey].boolValue == YES);
@@ -644,7 +637,9 @@ _Pragma("clang diagnostic pop")
     }
     if(changeToActive && !participantWasJoined) {
         [conversation.voiceChannel addCallParticipant:participant];
-        [self.flowSync addJoinedCallParticipant:participant inConversation:conversation];
+        if (eventSource == ZMCallEventSourceUpstream && conversation.callDeviceIsActive && !participant.isSelfUser) {
+            [self.flowSync addJoinedCallParticipant:participant inConversation:conversation];
+        }
     }
     else if(changeToIdle && participantWasJoined) {
         [conversation.voiceChannel removeCallParticipant:participant];
@@ -662,31 +657,6 @@ _Pragma("clang diagnostic pop")
 }
 
 @end
-
-
-
-@implementation ZMCallStateTranscoder (Flows)
-
-- (void)updateFlowsForConversation:(ZMConversation *)conversation;
-{
-    ZMFlowSync *strongSync = self.flowSync;
-    
-    if (conversation.callDeviceIsActive) {
-        if(!conversation.isFlowActive) {
-            [strongSync appendLogForConversationID:conversation.remoteIdentifier message:@"Acquiring Flows"];
-        }
-        [strongSync acquireFlowsForConversation:conversation];
-    } else {
-        if(conversation.isFlowActive) {
-            [strongSync appendLogForConversationID:conversation.remoteIdentifier message:@"Releasing Flows"];
-        }
-        [strongSync releaseFlowsForConversation:conversation];
-    }
-}
-
-@end
-
-
 
 
 
@@ -718,7 +688,7 @@ _Pragma("clang diagnostic pop")
     // If the user left the voice channel, we are supposed to release the flow immediately, before getting a
     // reply from the backend.
     if (!conversation.callDeviceIsActive) {
-        [self.flowSync releaseFlowsForConversation:conversation];
+        [self.flowSync updateFlowsForConversation:conversation];
     }
     
     ZMTraceTranscoderCallStateRequestUpdateIsJoined(0, conversation.remoteIdentifier, conversation.callDeviceIsActive);
@@ -786,7 +756,7 @@ _Pragma("clang diagnostic pop")
                 [conversation.voiceChannel resetTimer];
             }
         }
-        [self updateFlowsForConversation:conversation];
+        [self.flowSync updateFlowsForConversation:conversation];
     }
 }
 
@@ -835,7 +805,7 @@ _Pragma("clang diagnostic pop")
             [self.upstreamSync objectsDidChange:[NSSet setWithObject:conversation]];
         }
         // we dont need to set hasLocalModifications since it was never reset, the upstreamsync will pick this object up again
-        [self updateFlowsForConversation:conversation];
+        [self.flowSync updateFlowsForConversation:conversation];
     }
 }
 
@@ -865,7 +835,7 @@ _Pragma("clang diagnostic pop")
     
     [self updateObject:conversation withPayload:response.payload eventSource:ZMCallEventSourceUpstream];
     if (![self.gsmCallHandler isInterruptedCallConversation:conversation]) {
-        [self updateFlowsForConversation:conversation];
+        [self.flowSync updateFlowsForConversation:conversation];
     }
     [self.gsmCallHandler setActiveCallSyncConversation:(conversation.callDeviceIsActive) ? conversation : nil];
     

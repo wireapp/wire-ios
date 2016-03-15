@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,15 +14,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 import Foundation
-import ZMUtilities
-import ZMTransport
 
 
 @objc
-public class PingBackRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy {
+public class PushNoticeRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy {
     
     weak private(set) var authenticationStatus: ZMAuthenticationStatus?
     weak private(set) var pingBackStatus: BackgroundAPNSPingBackStatus?
@@ -30,10 +30,10 @@ public class PingBackRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy {
     
     public init(managedObjectContext moc: NSManagedObjectContext, backgroundAPNSPingBackStatus: BackgroundAPNSPingBackStatus,
         authenticationStatus: ZMAuthenticationStatus) {
-        self.authenticationStatus = authenticationStatus
-        pingBackStatus = backgroundAPNSPingBackStatus
-        super.init(managedObjectContext: moc)
-        pingBackSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: moc)
+            self.authenticationStatus = authenticationStatus
+            pingBackStatus = backgroundAPNSPingBackStatus
+            super.init(managedObjectContext: moc)
+            pingBackSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: moc)
     }
     
     public var isSlowSyncDone: Bool {
@@ -49,8 +49,10 @@ public class PingBackRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy {
     }
     
     public func nextRequest() -> ZMTransportRequest? {
-        guard authenticationStatus?.currentPhase == .Authenticated else { return nil }
-        guard let hasNotification = pingBackStatus?.hasNotificationIDs where hasNotification else { return nil }
+        guard authenticationStatus?.currentPhase == .Authenticated && pingBackStatus?.status == .FetchingNotice,
+              let hasNotification = pingBackStatus?.hasNoticeNotificationIDs where hasNotification
+        else { return nil }
+        
         pingBackSync.readyForNextRequest()
         return pingBackSync.nextRequest()
     }
@@ -67,16 +69,26 @@ public class PingBackRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy {
 
 // MARK: - ZMSingleRequestTranscoder
 
-extension PingBackRequestStrategy: ZMSingleRequestTranscoder {
+extension PushNoticeRequestStrategy: ZMSingleRequestTranscoder {
     
     public func requestForSingleRequestSync(sync: ZMSingleRequestSync!) -> ZMTransportRequest! {
-        guard sync == pingBackSync else { return nil }
-        guard let nextNotificationID = pingBackStatus?.nextNotificationID() else { return nil }
-        let path = "/push/fallback/\(nextNotificationID.transportString())/cancel"
-        let request = ZMTransportRequest(path: path, method: .MethodPOST, payload: nil)
+        guard sync == pingBackSync,
+              let nextNotificationID = pingBackStatus?.nextNoticeNotificationID(),
+              let selfClientID = ZMUser.selfUserInContext(self.managedObjectContext).selfClient()?.remoteIdentifier
+        else { return nil }
+        
+        
+        let path = "/notifications/\(nextNotificationID.transportString())?client=\(selfClientID)"
+        let request = ZMTransportRequest(path: path, method: .MethodGET, payload: nil)
         request.forceToForegroundSession()
+        
         let completion = ZMCompletionHandler(onGroupQueue: managedObjectContext)  { [weak self] response in
-            self?.pingBackStatus?.didPerfomPingBackRequest(nextNotificationID, success: response.result == .Success)
+            let success = response.result == .Success
+            var events : [ZMUpdateEvent] = []
+            if success {
+                events = ZMUpdateEvent.eventsArrayFromTransportData(response.payload, source: ZMUpdateEventSource.PushNotification) ?? []
+            }
+            self?.pingBackStatus?.didFetchNoticeNotification(nextNotificationID, success: success, events: events)
         }
         
         request.addCompletionHandler(completion)
@@ -88,3 +100,5 @@ extension PingBackRequestStrategy: ZMSingleRequestTranscoder {
     }
     
 }
+
+

@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 import Foundation
@@ -107,7 +109,7 @@ class MessageWindowChangeTokenTests : MessagingTest
             // then
             XCTAssertEqual(observer.notifications.count, 1)
             if let note = observer.notifications.first {
-                XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 0))
+                XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 1))
             }
             
             window.removeConversationWindowObserverToken(token)
@@ -136,7 +138,7 @@ class MessageWindowChangeTokenTests : MessagingTest
         // then
         XCTAssertEqual(observer.notifications.count, 1)
         if let note = observer.notifications.first {
-            XCTAssertEqual(note.updatedIndexes, NSIndexSet(index: 1))
+            XCTAssertEqual(note.updatedIndexes, NSIndexSet(index: 0))
         }
         
         window.removeConversationWindowObserverToken(token)
@@ -189,7 +191,7 @@ class MessageWindowChangeTokenTests : MessagingTest
         // then
         if let note = observer.notifications.first {
             XCTAssertEqual(note.conversationMessageWindow, window)
-            XCTAssertEqual(note.insertedIndexes, NSIndexSet(index: 2))
+            XCTAssertEqual(note.insertedIndexes, NSIndexSet(index: 0))
             XCTAssertEqual(note.deletedIndexes, NSIndexSet())
             XCTAssertEqual(note.updatedIndexes, NSIndexSet())
             XCTAssertEqual(note.movedIndexPairs.count, 0)
@@ -221,7 +223,7 @@ class MessageWindowChangeTokenTests : MessagingTest
         if let note = observer.notifications.first {
             XCTAssertEqual(note.conversationMessageWindow, window)
             XCTAssertEqual(note.insertedIndexes, NSIndexSet())
-            XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 1))
+            XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 0))
             XCTAssertEqual(note.updatedIndexes, NSIndexSet())
             XCTAssertEqual(note.movedIndexPairs.count, 0)
         }
@@ -294,7 +296,7 @@ class MessageWindowChangeTokenTests : MessagingTest
         // then
         if let note = observer.notifications.first {
             XCTAssertEqual(note.conversationMessageWindow, window)
-            XCTAssertEqual(note.insertedIndexes, NSIndexSet(index: 0))
+            XCTAssertEqual(note.insertedIndexes, NSIndexSet(index: 2))
             XCTAssertEqual(note.deletedIndexes, NSIndexSet())
             XCTAssertEqual(note.updatedIndexes, NSIndexSet())
             XCTAssertEqual(note.movedIndexPairs.count, 0)

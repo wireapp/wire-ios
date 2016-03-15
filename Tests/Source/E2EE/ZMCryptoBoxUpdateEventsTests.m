@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "MessagingTest.h"
@@ -115,4 +117,48 @@
     XCTAssertEqualObjects(decryptedEvent.uuid, notificationID);
 }
 
+- (void)testThatItInsertsAUnableToDecryptMessageIfItCanNotEstablishASession
+{
+    // given
+    NSUUID *notificationID = [NSUUID createUUID];
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+    UserClient *selfClient = [self createSelfClient];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.remoteIdentifier = [NSUUID UUID];
+    conversation.conversationType = ZMConversationTypeGroup;
+    
+    //create encrypted message
+    NSUUID *messageNonce = [NSUUID createUUID];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"text" nonce:messageNonce.transportString];
+    
+    NSDictionary *payload = @{
+                              @"recipient": selfClient.remoteIdentifier,
+                              @"sender": [NSUUID UUID].transportString,
+                              @"id": [NSUUID createUUID].transportString,
+                              @"key": message.data.base64String // wrong message content
+                              };
+    
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:@{
+                                                                        @"time": [[NSDate new] transportString],
+                                                                        @"data": payload,
+                                                                        @"conversation": conversation.remoteIdentifier.transportString,
+                                                                        @"from": selfUser.remoteIdentifier.transportString,
+                                                                        @"type": @"conversation.otr-asset-add"
+                                                                        } uuid:notificationID];
+    
+    // when
+    __block ZMUpdateEvent *decryptedEvent;
+    [self performIgnoringZMLogError:^{
+         decryptedEvent = [selfClient.keysStore.box decryptUpdateEventAndAddClient:event managedObjectContext:self.syncMOC];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    // then
+    XCTAssertNil(decryptedEvent);
+    ZMSystemMessage *lastMessages = conversation.messages.lastObject;
+    XCTAssertTrue([lastMessages isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(lastMessages.systemMessageType, ZMSystemMessageTypeDecryptionFailed);
+}
+
 @end
+

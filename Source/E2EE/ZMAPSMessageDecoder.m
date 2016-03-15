@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import CoreFoundation;
@@ -61,7 +63,7 @@ static NSString * const MacKey = @"mac";
     NSData *encodedData = [[NSData alloc] initWithBase64EncodedString:dataString options:0];
     
     if (![self isValidHash:hashData encodedData:encodedData]) {
-        ZMLogError(@"Provided invalid hash: %@", hashString);
+        ZMLogError(@"Provided invalid hash: %@ for data: %@ with mac key: %@ encryption key: %@", hashString, dataString, self.macKey, self.encryptionKey);
         return nil;
     }
     

@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import <ZMTesting/ZMTesting.h>
@@ -69,8 +71,10 @@
 - (void)testThatItMovesTheDatabaseFromCachesToApplicationSupportDirectory
 {
     // given
-    XCTAssertTrue([self moveDatabaseToCachesDirectory]);
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self moveDatabaseToCachesDirectory]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+    }];
     
     for (NSString *extension in self.databaseFileExtensions) {
         NSString *fromPath = [self.cachesDirectoryStoreURL.path stringByAppendingString:extension];
@@ -82,11 +86,13 @@
     // when
     XCTestExpectation *moveExpectation = [self expectationWithDescription:@"It should move the database files"];
     
-    [NSManagedObjectContext prepareLocalStoreBackingUpCorruptedDatabase:NO completionHandler:^{
-        [moveExpectation fulfill];
-    }];
+    [self performIgnoringZMLogError:^{
+        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
+            [moveExpectation fulfill];
+        }];
     
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
+        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
+    }];
     
     // then
     for (NSString *extension in self.databaseFileExtensions) {
@@ -103,8 +109,10 @@
 - (void)testThatItWipesTheLocalStoreWhenItIsUnreadable
 {
     // given
-    XCTAssertTrue([self createdUnredableLocalStore]);
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self createdUnredableLocalStore]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+    }];
     
     NSString *storeFile = [self.applicationSupportStoreURL.path stringByAppendingString:@""];
     NSData *oldStoreFileData = [NSData dataWithContentsOfFile:storeFile];
@@ -115,7 +123,7 @@
     XCTestExpectation *donePreparing = [self expectationWithDescription:@"It is done preparing"];
     
     [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreBackingUpCorruptedDatabase:NO completionHandler:^{
+        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
             [donePreparing fulfill];
         }];
         
@@ -132,8 +140,10 @@
 - (void)testThatItCreatesACopyOfTheLocalStoreWhenItIsUnreadable
 {
     // given
-    XCTAssertTrue([self createdUnredableLocalStore]);
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self createdUnredableLocalStore]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+    }];
     
     NSString *storeFile = [self.applicationSupportStoreURL.path stringByAppendingString:@""];
     NSData *oldStoreFileData = [NSData dataWithContentsOfFile:storeFile];
@@ -143,7 +153,7 @@
     XCTestExpectation *donePreparing = [self expectationWithDescription:@"It is done preparing"];
     
     [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreBackingUpCorruptedDatabase:YES completionHandler:^{
+        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:YES completionHandler:^{
             [donePreparing fulfill];
         }];
         XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);

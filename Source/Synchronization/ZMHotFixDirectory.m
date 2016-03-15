@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "ZMHotFixDirectory.h"
@@ -59,6 +61,11 @@
                      patchWithVersion:@"40.4"
                      patchCode:^(__unused NSManagedObjectContext *context){
                          [ZMHotFixDirectory resetPushTokens];
+                     }],
+                    [ZMHotFixPatch
+                     patchWithVersion:@"40.23"
+                     patchCode:^(__unused NSManagedObjectContext *context){
+                         [ZMHotFixDirectory removeSharingExtension];
                      }]
                     ];
     });
@@ -110,6 +117,21 @@
 + (void)resetPushTokens
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:ZMUserSessionResetPushTokensNotificationName object:nil];
+}
+
++ (void)removeSharingExtension
+{
+    NSURL *directoryURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:[NSUserDefaults groupName]];
+    if (directoryURL == nil) {
+        ZMLogError(@"File url not valid");
+        return;
+    }
+    
+    NSURL *imageURL = [directoryURL URLByAppendingPathComponent:@"profile_images"];
+    NSURL *conversationUrl = [directoryURL URLByAppendingPathComponent:@"conversations"];
+    
+    [[NSFileManager defaultManager] removeItemAtURL:imageURL error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:conversationUrl error:nil];
 }
 
 

@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import UIKit;
@@ -96,6 +98,8 @@
 @property (nonatomic) ZMRemovedSuggestedPeopleTranscoder *removedSuggestedPeopleTranscoder;
 @property (nonatomic) ZMUserProfileUpdateTranscoder *userProfileUpdateTranscoder;
 @property (nonatomic) PingBackRequestStrategy *pingBackRequestStrategy;
+@property (nonatomic) PushNoticeRequestStrategy *pushNoticeFetchStrategy;
+
 @property (nonatomic) ZMSyncStateMachine *stateMachine;
 @property (nonatomic) ZMUpdateEventsBuffer *eventsBuffer;
 @property (nonatomic) ZMChangeTrackerBootstrap *changeTrackerBootStrap;
@@ -173,7 +177,8 @@ ZM_EMPTY_ASSERTING_INIT()
                                    [[IncomingPersonalInvitationStrategy alloc] initWithManagedObjectContext:self.syncMOC],
                                    [[PersonalInvitationRequestStrategy alloc] initWithContext:self.syncMOC],
                                    [[DeleteAccountRequestStrategy alloc] initWithAuthStatus:authenticationStatus managedObjectContext:self.syncMOC],
-                                   self.pingBackRequestStrategy
+                                   self.pingBackRequestStrategy,
+                                   self.pushNoticeFetchStrategy
                                    ];
         
         self.changeTrackerBootStrap = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.syncMOC changeTrackers:self.allChangeTrackers];
@@ -226,6 +231,7 @@ ZM_EMPTY_ASSERTING_INIT()
     self.userProfileUpdateTranscoder = [[ZMUserProfileUpdateTranscoder alloc] initWithManagedObjectContext:self.syncMOC userProfileUpdateStatus:userProfileStatus];
     self.conversationStatusSync = [[ConversationStatusStrategy alloc] initWithManagedObjectContext:self.syncMOC];
     self.pingBackRequestStrategy = [[PingBackRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus authenticationStatus:authenticationStatus];
+    self.pushNoticeFetchStrategy = [[PushNoticeRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus authenticationStatus:authenticationStatus];
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
@@ -287,6 +293,7 @@ ZM_EMPTY_ASSERTING_INIT()
     
     [self.conversationStatusSync tearDown];
     [self.pingBackRequestStrategy tearDown];
+    [self.pushNoticeFetchStrategy tearDown];
 }
 
 - (void)processAllEventsInBuffer
