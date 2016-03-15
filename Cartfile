@@ -1,4 +1,4 @@
 github "alexeyxo/protobuf-objc"
-github "wireapp/generic-message-proto" "d782d2034c824fbd6ea33c4dd079d69730860c64"
-github "wireapp/backend-api-protobuf" "37e279054ff545b3e9d9191ecc378dd778824eb5"
+github "wireapp/generic-message-proto" “1.0”
+github "wireapp/backend-api-protobuf" “1.0”
 github "wireapp/zmc-images" ~> 4.1
