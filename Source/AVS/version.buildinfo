@@ -1,12 +1,12 @@
 {
     "avs": {
-        "build_number": "61", 
-        "time_rfc3339": "2016-02-10T10:08:41", 
-        "sha": "b987915e0d117bea1a626deb8988ee2f269560b6", 
-        "version": "1.61", 
+        "build_number": "128", 
+        "time_rfc3339": "2016-03-07T18:28:23", 
+        "sha": "0b36a990b97d95a2cdc8a555698159f0863d5b50", 
+        "version": "1.128", 
         "user": "jenkins", 
         "branch": "origin/release-2.1", 
-        "time": 1455098921, 
+        "time": 1457375303, 
         "job_name": "avs-release-2.1"
     }
 }

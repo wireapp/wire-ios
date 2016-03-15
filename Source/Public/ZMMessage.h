@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import <zmessaging/ZMManagedObject.h>
@@ -114,6 +116,7 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeConversationIsSecure,
     ZMSystemMessageTypePotentialGap,
     ZMSystemMessageTypeDecryptionFailed,
+    ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged
 };
 
 

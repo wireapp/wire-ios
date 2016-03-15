@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import <zmessaging/ZMConversation.h>
@@ -44,7 +46,7 @@
 - (void)appendNewPotentialGapSystemMessageWithUsers:(NSSet <ZMUser *> *)users timestamp:(NSDate *)timestamp;
 
 /// Creates the message that warns user about the fact that decryption of incoming message is failed
-- (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client;
+- (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client errorCode:(NSInteger)errorCode;
 
 /// Resend last non sent messages
 - (void)resendLastUnsentMessages;

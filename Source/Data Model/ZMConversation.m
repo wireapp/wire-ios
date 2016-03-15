@@ -2327,12 +2327,12 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     }
 }
 
-- (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client
+- (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client errorCode:(NSInteger)errorCode
 {
     ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    systemMessage.systemMessageType = ZMSystemMessageTypeDecryptionFailed;
+    systemMessage.systemMessageType = (errorCode == CBErrorCodeRemoteIdentityChanged) ? ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged : ZMSystemMessageTypeDecryptionFailed;
     systemMessage.sender = sender;
-    systemMessage.clients = [NSSet setWithObject:client];
+    systemMessage.clients = client != nil ? [NSSet setWithObject:client] : [NSSet set];
     systemMessage.isEncrypted = NO;
     systemMessage.isPlainText = YES;
     systemMessage.nonce = [NSUUID new];

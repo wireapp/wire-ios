@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import UIKit;
@@ -149,7 +151,7 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     ZMDeploymentEnvironmentType environment = [[ZMDeploymentEnvironment alloc] init].environmentType;
     BOOL shouldBackupCorruptedDatabase = environment == ZMDeploymentEnvironmentTypeInternal || DEBUG;
-    [NSManagedObjectContext prepareLocalStoreBackingUpCorruptedDatabase:shouldBackupCorruptedDatabase completionHandler:completionHandler];
+    [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:shouldBackupCorruptedDatabase completionHandler:completionHandler];
 }
 
 + (BOOL)storeIsReady

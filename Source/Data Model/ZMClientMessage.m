@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMCSystem;
@@ -33,6 +35,7 @@
 
 static NSString * const ClientMessageDataSetKey = @"dataSet";
 static NSString * const ClientMessageGenericMessageKey = @"genericMessage";
+NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
 
 @interface ZMClientMessage()
 
@@ -329,7 +332,7 @@ static NSString * const ClientMessageGenericMessageKey = @"genericMessage";
                 client.failedToEstablishSession = NO;
                 
                 if (nil == session && corruptedClient) {
-                    return [self buildClientEntryWithClient:client data:[@"💣" dataUsingEncoding:NSUTF8StringEncoding]];
+                    return [self buildClientEntryWithClient:client data:[ZMFailedToCreateEncryptedMessagePayloadString dataUsingEncoding:NSUTF8StringEncoding]];
                 }
                 
                 NSData *encryptedData = [session encrypt:dataToEncrypt error:&error];

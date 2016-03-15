@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import <XCTest/XCTest.h>
@@ -76,7 +78,7 @@
 {
     NSArray *firstNames = @[@"Jean", @"Jaques", @"Jules", @"Jeane", @"Julie"];
     NSArray *lastNames = @[@"Dupont", @"Dupuit", @"Deschamps", @"Desbois", @"Dujardin"];
-    NSArray *mails = @[@"Jean@example.com", @"Jaques@example.com", @"Jules@example.com", @"Jeane@wire.com", @"Julie@wire.com"];
+    NSArray *mails = @[@"Jean@example.com", @"Jaques@example.com", @"Jules@example.com", @"Jeane@example.com", @"Julie@example.com"];
     NSArray *phoneNumbers = @[@"191295921341", @"123012345349", @"028340980034", @"298403123498", @"109878946541"];
 
     NSMutableArray<ZMAddressBookContact *> *contacts = [NSMutableArray array];

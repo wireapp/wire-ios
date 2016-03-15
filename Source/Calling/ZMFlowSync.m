@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMCSystem;
@@ -36,6 +38,7 @@
 static NSString * const DefaultMediaType = @"application/json";
 id ZMFlowSyncInternalDeploymentEnvironmentOverride;
 
+static char* const ZMLogTag ZM_UNUSED = "Calling";
 
 @interface ZMFlowSync ()
 
@@ -49,6 +52,10 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
 @property (nonatomic, readonly, weak) ZMApplicationLaunchStatus * applicationLaunchStatus;
 @property (nonatomic) id authenticationObserverToken;
 @property (nonatomic, strong) dispatch_queue_t avsLogQueue;
+@property (nonatomic) NSMutableSet <ZMConversation*> *conversationsNeedingUpdate;
+@property (nonatomic) NSMutableDictionary <NSString *, NSMutableSet<ZMUser*>*> *usersNeedingToBeAdded;
+@property (nonatomic) NSMutableSet <ZMUpdateEvent *> *eventsNeedingToBeForwarded;
+
 @end
 
 
@@ -72,7 +79,9 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
         _mediaManager = mediaManager;
         _requestStack = [NSMutableArray array];
         _applicationLaunchStatus = applicationLaunchStatus;
-        
+        self.conversationsNeedingUpdate = [NSMutableSet set];
+        self.eventsNeedingToBeForwarded = [NSMutableSet set];
+        self.usersNeedingToBeAdded = [NSMutableDictionary dictionary];
         self.voiceGainNotificationQueue = [[NSNotificationQueue alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]];
 
         self.onDemandFlowManager = onDemandFlowManager;
@@ -85,7 +94,7 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushChannelDidChange:) name:ZMPushChannelStateChangeNotificationName object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
         ZM_WEAK(self);
         self.authenticationObserverToken = [ZMUserSessionAuthenticationNotification addObserverWithBlock:^(ZMUserSessionAuthenticationNotification *note){
             ZM_STRONG(self);
@@ -107,6 +116,56 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
         [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
 
         [activity endActivity];
+    }];
+}
+
+- (void)appDidBecomeActive:(NSNotification *)note
+{
+    NOT_USED(note);
+    [self.managedObjectContext performGroupedBlock:^{
+
+        if (self.conversationsNeedingUpdate.count > 0) {
+            // update flows for conversations that couldn't be updated while the flow manager was not fully initialized
+
+            NSSet *conversationsToUpdate = [self.conversationsNeedingUpdate copy];
+            for (ZMConversation *conv in conversationsToUpdate) {
+                [self updateFlowsForConversation:conv];
+            }
+            if (self.conversationsNeedingUpdate.count > 0) {
+                // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
+                ZMLogDebug(@"Could not update flows for all conversations: %@", self.conversationsNeedingUpdate);
+                [self.conversationsNeedingUpdate removeAllObjects];
+            }
+        }
+        if (self.usersNeedingToBeAdded.count > 0) {
+            // update users to conversations that couldn't be updated while the flow manager was not fully initialized
+
+            NSDictionary *usersToAdd = [self.usersNeedingToBeAdded copy];
+            [usersToAdd enumerateKeysAndObjectsUsingBlock:^(NSString *conversationID, NSSet *users, __unused  BOOL * _Nonnull stop) {
+                for (ZMUser *user in users) {
+                    [self addJoinedCallParticipant:user inConversationWithIdentifer:conversationID];
+                }
+            }];
+            if (self.usersNeedingToBeAdded.count > 0) {
+                // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
+                ZMLogDebug(@"Could not add allUsers for conversations %@", self.usersNeedingToBeAdded);
+                [self.usersNeedingToBeAdded removeAllObjects];
+            }
+            
+        }
+        if (self.eventsNeedingToBeForwarded.count > 0) {
+            // process buffered events
+            
+            NSSet *eventsToForward = [self.eventsNeedingToBeForwarded copy];
+            for (ZMUpdateEvent *event in eventsToForward) {
+                [self processFlowEvent:event];
+            }
+            if (self.eventsNeedingToBeForwarded.count > 0) {
+                // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
+                ZMLogDebug(@"Could not forward all events %@", self.eventsNeedingToBeForwarded);
+                [self.eventsNeedingToBeForwarded removeAllObjects];
+            }
+        }
     }];
 }
 
@@ -197,13 +256,29 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
     if (self.applicationLaunchStatus.currentState == ZMApplicationLaunchStateForeground) {
         [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
     }
+    if (!self.isFlowManagerReady) {
+        NSArray *eventsToForward = [events filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUpdateEvent *event, __unused id bindings) {
+            return [self.eventTypesToForward containsObject:@(event.type)];
+        }]];
+        [self.eventsNeedingToBeForwarded addObjectsFromArray:eventsToForward];
+        return;
+    }
     for(ZMUpdateEvent *event in events) {
         if (! [self.eventTypesToForward containsObject:@(event.type)]) {
             return;
         }
-        NSData *content = [NSJSONSerialization dataWithJSONObject:event.payload options:0 error:nil];
-        [self.flowManager processEventWithMediaType:DefaultMediaType content:content];
+        [self processFlowEvent:event];
     }
+}
+
+- (void)processFlowEvent:(ZMUpdateEvent *)event
+{
+    if (!self.isFlowManagerReady) {
+        return;
+    }
+    [self.eventsNeedingToBeForwarded removeObject:event];
+    NSData *content = [NSJSONSerialization dataWithJSONObject:event.payload options:0 error:nil];
+    [self.flowManager processEventWithMediaType:DefaultMediaType content:content];
 }
 
 - (void)requestCompletedWithResponse:(ZMTransportResponse *)response forContext:(void const*)context
@@ -217,6 +292,12 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
 
 - (void)acquireFlowsForConversation:(ZMConversation *)conversation;
 {
+    if (!self.isFlowManagerReady) {
+        [self.conversationsNeedingUpdate addObject:conversation];
+        return;
+    }
+    [self.conversationsNeedingUpdate removeObject:conversation];
+
     if (self.applicationLaunchStatus.currentState == ZMApplicationLaunchStateForeground) {
         [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
     }
@@ -232,6 +313,12 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
 
 - (void)releaseFlowsForConversation:(ZMConversation *)conversation;
 {
+    if (!self.isFlowManagerReady) {
+        [self.conversationsNeedingUpdate addObject:conversation];
+        return;
+    }
+    [self.conversationsNeedingUpdate removeObject:conversation];
+
     NSString *identifier = conversation.remoteIdentifier.transportString;
     if (identifier == nil) {
         ZMLogError(@"Trying to release flow for a conversation without a remote ID.");
@@ -275,7 +362,29 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
 
 - (void)addJoinedCallParticipant:(ZMUser *)user inConversation:(ZMConversation *)conversation;
 {
-    [self.flowManager addUser:conversation.remoteIdentifier.transportString userId:user.remoteIdentifier.transportString name:user.name];
+    [self addJoinedCallParticipant:user inConversationWithIdentifer:conversation.remoteIdentifier.transportString];
+}
+
+- (void)addJoinedCallParticipant:(ZMUser *)user inConversationWithIdentifer:(NSString *)remoteIDString;
+{
+    if (!self.isFlowManagerReady) {
+        NSMutableSet *users = self.usersNeedingToBeAdded[remoteIDString] ?: [NSMutableSet set];
+        [users addObject:user];
+        self.usersNeedingToBeAdded[remoteIDString] = users;
+        return;
+    }
+    
+    NSMutableSet *users = self.usersNeedingToBeAdded[remoteIDString];
+    if (users != nil) {
+        [users removeObject:user];
+        if (users.count > 0) {
+            self.usersNeedingToBeAdded[remoteIDString] = users;
+        } else {
+            [self.usersNeedingToBeAdded removeObjectForKey:remoteIDString];
+        }
+    }
+    
+    [self.flowManager addUser:remoteIDString userId:user.remoteIdentifier.transportString name:user.name];
 }
 
 - (void)registerSelfUser
@@ -294,11 +403,36 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
     }
 }
 
+- (BOOL)isFlowManagerReady
+{
+    if (!self.flowManager.isReady) {
+        ZMLogDebug(@"Flowmanager not ready");
+        return NO;
+    }
+    return YES;
+}
+
+- (void)updateFlowsForConversation:(ZMConversation *)conversation;
+{
+    if (conversation.callDeviceIsActive) {
+        if(!conversation.isFlowActive) {
+            [self appendLogForConversationID:conversation.remoteIdentifier message:@"Acquiring Flows"];
+        }
+        [self acquireFlowsForConversation:conversation];
+    } else {
+        if(conversation.isFlowActive) {
+            [self appendLogForConversationID:conversation.remoteIdentifier message:@"Releasing Flows"];
+        }
+        [self releaseFlowsForConversation:conversation];
+    }
+}
+
 @end
 
 
 
 @implementation ZMFlowSync (FlowManagerDelegate)
+
 
 - (BOOL)requestWithPath:(NSString *)path
                  method:(NSString *)methodString
@@ -477,6 +611,11 @@ id ZMFlowSyncInternalDeploymentEnvironmentOverride;
     NOT_USED(is_playing);
     NOT_USED(cur_time_ms);
     NOT_USED(file_length_ms);
+}
+
++ (void)logMessage:(NSString *)msg;
+{
+    NOT_USED(msg);
 }
 
 @end

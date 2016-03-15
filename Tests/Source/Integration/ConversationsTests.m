@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import zmessaging;
@@ -1912,7 +1914,7 @@
     // correct window?
     XCTAssertEqual(conversationWindow.messages.count, 5u);
     {
-        ZMTextMessage *lastMessage = (ZMTextMessage *)conversationWindow.messages.lastObject;
+        ZMTextMessage *lastMessage = (ZMTextMessage *)conversationWindow.messages.firstObject;
         XCTAssertEqualObjects(lastMessage.text, @"Message 19");
     }
     
@@ -1927,12 +1929,12 @@
     // then
     XCTAssertEqual(self.receivedConversationWindowChangeNotifications.count, 1u);
     MessageWindowChangeInfo *note = self.receivedConversationWindowChangeNotifications.firstObject;
-    NSIndexSet *expectedInsertedIndexes = [[NSIndexSet alloc] initWithIndex:4];
-    NSIndexSet *expectedDeletedIndexes = [[NSIndexSet alloc] initWithIndex:0];
+    NSIndexSet *expectedInsertedIndexes = [[NSIndexSet alloc] initWithIndex:0];
+    NSIndexSet *expectedDeletedIndexes = [[NSIndexSet alloc] initWithIndex:4];
     XCTAssertEqualObjects(note.insertedIndexes, expectedInsertedIndexes);
     XCTAssertEqualObjects(note.deletedIndexes, expectedDeletedIndexes);
     {
-        ZMTextMessage *lastMessage = (ZMTextMessage *)conversationWindow.messages.lastObject;
+        ZMTextMessage *lastMessage = (ZMTextMessage *)conversationWindow.messages.firstObject;
         XCTAssertEqualObjects(lastMessage.text, extraMessageText);
     }
     
@@ -1957,8 +1959,8 @@
     
     // then
     NSMutableOrderedSet *expectedMessages = [initialMessageSet mutableCopy];
-    [expectedMessages removeObjectAtIndex:0];
-    [expectedMessages addObject:newMessage];
+    [expectedMessages removeObjectAtIndex:expectedMessages.count-1];
+    [expectedMessages insertObject:newMessage atIndex:0];
     
     NSOrderedSet *currentMessageSet = observer.computedMessages;
     NSOrderedSet *windowMessageSet = observer.window.messages;
@@ -1989,11 +1991,11 @@
     XCTAssertEqualObjects(currentMessageSet, windowMessageSet);
     
     for(NSUInteger i = 0; i < observer.window.size; ++ i) {
-        if(i == observer.window.size -1) {
+        if(i == 0) {
             XCTAssertEqual([(ZMTextMessage *)currentMessageSet[i] text], expectedText);
         }
         else {
-            XCTAssertEqual(currentMessageSet[i], initialMessageSet[i+1]);
+            XCTAssertEqual(currentMessageSet[i], initialMessageSet[i-1]);
         }
     }
 }
@@ -2035,12 +2037,12 @@
     
     
     
-    NSArray *originalFirstPart = [initialMessageSet.array subarrayWithRange:NSMakeRange(2, observer.window.size - 2)];
-    NSArray *currentFirstPart = [currentMessageSet subarrayWithRange:NSMakeRange(0, observer.window.size - 2)];
+    NSArray *originalFirstPart = [initialMessageSet.array subarrayWithRange:NSMakeRange(0, observer.window.size - 2)];
+    NSArray *currentFirstPart = [currentMessageSet subarrayWithRange:NSMakeRange(2, observer.window.size - 2)];
     
     XCTAssertEqualObjects(originalFirstPart, currentFirstPart);
-    XCTAssertEqualObjects([(id<ZMConversationMessage>)currentMessageSet[observer.window.size -1] messageText], expectedTextLocal);
-    XCTAssertEqualObjects([(id<ZMConversationMessage> )currentMessageSet[observer.window.size -2] messageText], expectedTextRemote);
+    XCTAssertEqualObjects([(id<ZMConversationMessage>)currentMessageSet[0] messageText], expectedTextLocal);
+    XCTAssertEqualObjects([(id<ZMConversationMessage> )currentMessageSet[1] messageText], expectedTextRemote);
 
 }
 

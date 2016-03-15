@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMTransport;
@@ -23,7 +25,7 @@
 #import <zmessaging/ZMUserSession.h>
 #import "NSManagedObjectContext+zmessaging.h"
 #import "MockModelObjectContextFactory.h"
-#import "MockEntity.h"
+#import "ZMClientMessage.h"
 #import "ZMManagedObject+Internal.h"
 #import "MockModelObjectContextFactory.h"
 #import "ZMUpdateEvent.h"
@@ -46,7 +48,6 @@
 @property (nonatomic) ZMOperationLoop *sut;
 @property (nonatomic) id transportSession;
 @property (nonatomic) id syncStrategy;
-@property (nonatomic) id localNotificationDispatcher;
 @property (nonatomic) id badge;
 @property (nonatomic) id pingBackStatus;
 @property (nonatomic) NSMutableArray *pushChannelNotifications;
@@ -59,30 +60,25 @@
 {
     [super setUp];
     self.pushChannelNotifications = [NSMutableArray array];
-    self.transportSession = [OCMockObject mockForClass:[ZMTransportSession class]];
+    self.transportSession = [OCMockObject niceMockForClass:[ZMTransportSession class]];
     [[self.transportSession stub] openPushChannelWithConsumer:OCMOCK_ANY groupQueue:OCMOCK_ANY];
     [[self.transportSession stub] closePushChannelAndRemoveConsumer];
     self.syncStrategy = [OCMockObject mockForClass:[ZMSyncStrategy class]];
     
     [self verifyMockLater:self.syncStrategy];
     [self verifyMockLater:self.transportSession];
-    
-    self.localNotificationDispatcher = [OCMockObject mockForClass:[ZMLocalNotificationDispatcher class]];
-    [self verifyMockLater:self.localNotificationDispatcher];
-    [[self.localNotificationDispatcher stub] tearDown];
+
     self.badge = [[ZMBadge alloc] init];
     
-    //id authenticationStatus = [OCMockObject niceMockForClass:ZMAuthenticationStatus.class];
-//    BackgroundAPNSPingBackStatus *pingbackStatus = [[BackgroundAPNSPingBackStatus alloc] initWithSyncManagedObjectContext:self.syncMOC authenticationProvider:authenticationStatus localNotificationDispatcher:self.localNotificationDispatcher];
     self.pingBackStatus = [OCMockObject mockForClass:BackgroundAPNSPingBackStatus.class];
     
     // I expect this to be called, at least until we implement the soft sync
-    [[[self.syncStrategy stub] andReturn:self.alternativeTestMOC] syncMOC];
+    [[[self.syncStrategy stub] andReturn:self.syncMOC] syncMOC];
     
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.transportSession
                                                     syncStrategy:self.syncStrategy
-                                                           uiMOC:self.testMOC
-                                                         syncMOC:self.alternativeTestMOC
+                                                           uiMOC:self.uiMOC
+                                                         syncMOC:self.syncMOC
                                     backgroundAPNSPingBackStatus:self.pingBackStatus];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushChannelDidChange:) name:ZMPushChannelStateChangeNotificationName object:nil];
 }
@@ -126,8 +122,8 @@
             backgroundAPNSPingBackStatus:nil
             mediaManager:mediaManager
             onDemandFlowManager:nil
-            syncMOC:self.alternativeTestMOC
-            uiMOC:self.testMOC
+            syncMOC:self.syncMOC
+            uiMOC:self.uiMOC
             syncStateDelegate:nil
             backgroundableSession:transportSession
             localNotificationsDispatcher:OCMOCK_ANY
@@ -145,8 +141,8 @@
                                                 localNotificationdispatcher:nil
                                                                mediaManager:mediaManager
                                                         onDemandFlowManager:nil
-                                                                      uiMOC:self.testMOC
-                                                                    syncMOC:self.alternativeTestMOC
+                                                                      uiMOC:self.uiMOC
+                                                                    syncMOC:self.syncMOC
                                                           syncStateDelegate:nil];
     XCTAssertNotNil(ol);
     [ol tearDown];
@@ -199,8 +195,8 @@
     // when
     ZMOperationLoop *op = [[ZMOperationLoop alloc] initWithTransportSession:self.transportSession
                                                                syncStrategy:self.syncStrategy
-                                                                      uiMOC:self.testMOC
-                                                                    syncMOC:self.alternativeTestMOC
+                                                                      uiMOC:self.uiMOC
+                                                                    syncMOC:self.syncMOC
                                                backgroundAPNSPingBackStatus:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -357,7 +353,7 @@
 {
     // given
     id mockObserver = [OCMockObject observerMock];
-    [[NSNotificationCenter defaultCenter] addMockObserver:mockObserver name:NSManagedObjectContextDidSaveNotification object:self.alternativeTestMOC];
+    [[NSNotificationCenter defaultCenter] addMockObserver:mockObserver name:NSManagedObjectContextDidSaveNotification object:self.syncMOC];
     [[self.syncStrategy stub] dataDidChange];
 
     ZMTransportEnqueueResult *resultYES = [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:YES didGenerateNonNullRequest:YES];
@@ -385,8 +381,8 @@
     [ZMOperationLoop notifyNewRequestsAvailable:self]; // this will enqueue `request`
     WaitForAllGroupsToBeEmpty(0.5);
     
-    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.alternativeTestMOC block:^(ZMTransportResponse *resp ZM_UNUSED) {
-        [MockEntity insertNewObjectInManagedObjectContext:self.alternativeTestMOC];
+    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.syncMOC block:^(ZMTransportResponse *resp ZM_UNUSED) {
+        [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
     }]];
     
     // when
@@ -408,7 +404,7 @@
 {
     // given
     id mockObserver = [OCMockObject observerMock];
-    [[NSNotificationCenter defaultCenter] addMockObserver:mockObserver name:NSManagedObjectContextDidSaveNotification object:self.alternativeTestMOC];
+    [[NSNotificationCenter defaultCenter] addMockObserver:mockObserver name:NSManagedObjectContextDidSaveNotification object:self.syncMOC];
     [[self.syncStrategy stub] dataDidChange];
     
     ZMTransportEnqueueResult *resultYES = [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:YES didGenerateNonNullRequest:YES];
@@ -435,8 +431,8 @@
     [ZMOperationLoop notifyNewRequestsAvailable:self]; // this will enqueue `request`
     WaitForAllGroupsToBeEmpty(0.5);
     
-    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.alternativeTestMOC block:^(ZMTransportResponse *resp ZM_UNUSED) {
-        [MockEntity insertNewObjectInManagedObjectContext:self.alternativeTestMOC];
+    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.syncMOC block:^(ZMTransportResponse *resp ZM_UNUSED) {
+        [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
     }]];
     
     // when
@@ -458,7 +454,7 @@
 - (void)testThatWhenThereIsAnInsertionItAsksForNextRequest
 {
     // given
-    [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
+    [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMTransportEnqueueResult *resultNO = [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:NO didGenerateNonNullRequest:NO];
 
     [[[self.syncStrategy stub] andReturnValue:@NO] slowSyncInProgress];
@@ -484,13 +480,13 @@
 
     // when
     NSError *error;
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (void)testThatWhenThereIsAnUpdateItAsksForNextRequest
 {
-    MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
+    ZMClientMessage *entity = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
 
     [[[self.syncStrategy expect] andReturnValue:@YES]
      processSaveWithInsertedObjects:OCMOCK_ANY updateObjects:OCMOCK_ANY];
@@ -500,10 +496,10 @@
     [[self.syncStrategy stub] dataDidChange];
     
     NSError *error;
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
     WaitForAllGroupsToBeEmpty(0.5);
     
-    entity.field2 = @"test-weo8r7sdkjn";
+    entity.nonce = NSUUID.createUUID;
 
     BOOL(^checkGenerator)(ZMTransportRequestGenerator) = ^BOOL(ZMTransportRequestGenerator generator) {
         if(generator) {
@@ -522,7 +518,7 @@
     [self verifyMockLater:self.transportSession];
 
     // when
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -539,7 +535,7 @@
     
     // when
     NSError *error;
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -549,8 +545,8 @@
     // given
     [[self.syncStrategy stub] dataDidChange];
     
-    MockEntity *entity1 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
-    MockEntity *entity2 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
+    ZMClientMessage *entity1 = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *entity2 = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     NSSet *insertSet = [NSSet setWithObjects:entity1, entity2, nil];
 
@@ -568,7 +564,7 @@
     
     // when
     NSError *error;
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -577,16 +573,16 @@
     // given
     [[self.syncStrategy stub] dataDidChange];
     
-    [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
-    MockEntity *entity2 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
+    [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *entity2 = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
 
     [[[self.syncStrategy expect] andReturnValue:@NO]
      processSaveWithInsertedObjects:OCMOCK_ANY updateObjects:OCMOCK_ANY];
     
     __block NSError *error;
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
 
-    entity2.field2 = @"aoidjlaksd";
+    entity2.nonce = NSUUID.createUUID;
     
     NSSet *updatedSet = [NSSet setWithObjects:entity2, nil];
 
@@ -604,7 +600,7 @@
     [self verifyMockLater:self.syncStrategy];
     
     // when
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -613,8 +609,8 @@
     // given
     [[self.syncStrategy stub] dataDidChange];
     
-    MockEntity *entity1 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
-    MockEntity *entity2 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
+    ZMClientMessage *entity1 = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *entity2 = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     NSSet *insertSet = [NSSet setWithObjects:entity1, entity2, nil];
 
@@ -633,7 +629,7 @@
     
     // when
     NSError *error;
-    XCTAssertTrue([self.testMOC save:&error], @"Error in saving %@", error);
+    XCTAssertTrue([self.uiMOC save:&error], @"Error in saving %@", error);
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -642,7 +638,7 @@
     
     XCTAssertEqual(expected.count, actualObjects.count);
     for(NSManagedObject *obj in actualObjects){
-        XCTAssertEqualObjects(obj.managedObjectContext, self.alternativeTestMOC);
+        XCTAssertEqualObjects(obj.managedObjectContext, self.syncMOC);
         NSSet *matches = [expected objectsPassingTest:^BOOL(NSManagedObject *expectedObj, BOOL *stop) {
             NOT_USED(stop);
             return [expectedObj.objectID isEqual:obj.objectID];
@@ -656,23 +652,23 @@
     // given
     [[self.syncStrategy stub] dataDidChange];
     
-    [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
-    MockEntity *entity2 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
+    [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *entity2 = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
 
     [[[self.syncStrategy expect] andReturnValue:@NO]
      processSaveWithInsertedObjects:OCMOCK_ANY updateObjects:OCMOCK_ANY];
     
     __block NSError *error;
-    XCTAssertTrue([self.testMOC save:&error]);
+    XCTAssertTrue([self.uiMOC save:&error]);
     
-    entity2.field2 = @"aoidjlaksd";
+    entity2.nonce = NSUUID.createUUID;
 
     [[[self.syncStrategy expect] andReturnValue:@NO]
      processSaveWithInsertedObjects:OCMOCK_ANY updateObjects:[OCMArg checkWithBlock:^BOOL(NSSet *updated) {
 
         XCTAssertEqual(1u, updated.count);
         NSManagedObject *obj = [updated anyObject];
-        XCTAssertEqualObjects(obj.managedObjectContext, self.alternativeTestMOC);
+        XCTAssertEqualObjects(obj.managedObjectContext, self.syncMOC);
         XCTAssertEqualObjects(obj.objectID, entity2.objectID);
 
         return YES;
@@ -685,8 +681,8 @@
     [self verifyMockLater:self.syncStrategy];
     
     // when
-    [self.testMOC performBlockAndWait:^{
-        XCTAssertTrue([self.testMOC save:&error]);
+    [self.uiMOC performBlockAndWait:^{
+        XCTAssertTrue([self.uiMOC save:&error]);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 }
@@ -804,8 +800,8 @@
     
     ZMOperationLoop *sut = [[ZMOperationLoop alloc] initWithTransportSession:transportSession
                                                                 syncStrategy:self.syncStrategy
-                                                                       uiMOC:self.testMOC
-                                                                     syncMOC:self.alternativeTestMOC
+                                                                       uiMOC:self.uiMOC
+                                                                     syncMOC:self.syncMOC
                                                 backgroundAPNSPingBackStatus:nil];
     
     // expect
@@ -841,6 +837,7 @@
     id fakeResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     [[[fakeResponse stub] andReturnValue:@(100l)] statusCode];
     [[self.syncStrategy stub] didInterruptUpdateEventsStream];
+    [[self.syncStrategy stub] dataDidChange];
     
     // when
     [(id<ZMPushChannelConsumer>)self.sut pushChannelDidClose:nil withResponse:fakeResponse];
@@ -858,6 +855,7 @@
     id fakeResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     [[[fakeResponse stub] andReturnValue:@(100l)] statusCode];
     [[self.syncStrategy stub] didEstablishUpdateEventsStream];
+    [[self.syncStrategy stub] dataDidChange];
 
     // when
     [(id<ZMPushChannelConsumer>)self.sut pushChannelDidOpen:nil withResponse:fakeResponse];
@@ -942,12 +940,17 @@
 
 - (NSDictionary *)payLoadForMessageAddEvent
 {
+    return [self payLoadForMessageAddEventWithNonce:NSUUID.createUUID];
+}
+
+- (NSDictionary *)payLoadForMessageAddEventWithNonce:(NSUUID *)uuid
+{
     return @{
             @"conversation": [[NSUUID createUUID] transportString],
             @"time": [NSDate date],
             @"data": @{
                     @"content": @"saf",
-                    @"nonce": [[NSUUID createUUID] transportString],
+                    @"nonce": [uuid transportString],
                     },
             @"from": [[NSUUID createUUID] transportString],
             @"type": @"conversation.message-add"
@@ -996,12 +999,17 @@
 }
 
 
-- (void)testThatItForwardsEventsFromEncryptedPushesToTheTransportSessionAndLocalNotificationDispatcherAndPingBackStatus
+- (void)testThatItForwardsEventsFromEncryptedPushesToTheTransportSessionAndPingBackStatus
 {
     // given
     self.sut.apsSignalKeyStore = [self prepareKeyChainForAPSSignalingStore];
     id mockCryptoBox = [OCMockObject niceMockForClass:[CBCryptoBox class]];
     self.sut.cryptoBox = mockCryptoBox;
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    ZMGenericMessageBuilder *builder = [[ZMGenericMessageBuilder alloc] init];
+    builder.messageId = nonce.transportString;
+    ZMGenericMessage *genericMessage = builder.build;
 
     NSDictionary *pushPayload = [self encryptedPushPayload];
     NSDictionary *eventPayload = @{
@@ -1010,7 +1018,7 @@
                                                @"conversation": @"164756de-7768-4cb8-9161-17879013994c",
                                                @"time": @"2015-10-05T15:23:42.159Z",
                                                @"data": @{
-                                                   @"text": @"owABAaEAWCAEKq4le7e3uV7bssXEO7CN3y3xBHj56bM2RJzsWKULUwJYwQKkAAABoQBYIGVLQlKu5Gb0az16kUuC26w4a2u4qft2pZrgpOye8utpAqEAoQBYIOBCQxUxKtH6h8aaF01KqjrZ/gsYbDC0mzfZWyZbU0HiA6UAUI5kE++9fObdjy4sKq5fEnYBGEQCAAOhAFggQcKPBGudflQ2yfK1Mnfyd5lwKjhxkWQ2Uy5vFzzynh0EWDDchvB9JK70hmFLtNsVXP66dfZQigMEHyRosQbnMtDA7W7C6UVoAHKM6XZry+94WTw=",
+                                                   @"text": genericMessage.data.base64String,
                                                    @"sender": @"2867e165364b3b2f",
                                                    @"recipient": @"25667f739870989a"
                                                },
@@ -1083,8 +1091,6 @@
     
     // reject
     [[self.syncStrategy reject] updateBadgeCount];
-
-    [[self.localNotificationDispatcher reject] didReceiveUpdateEvents:OCMOCK_ANY];
     [[self.pingBackStatus reject] didReceiveVoIPNotification:OCMOCK_ANY handler:OCMOCK_ANY];
     
     // when
@@ -1104,7 +1110,6 @@
     XCTAssertNotNil(events);
     
     // expect
-    [[self.localNotificationDispatcher reject] didReceiveUpdateEvents:events];
     [(ZMSyncStrategy *)[self.syncStrategy expect] consumeUpdateEvents:events];
     [(ZMSyncStrategy *)[self.syncStrategy expect] updateBadgeCount];
 
@@ -1113,9 +1118,7 @@
     WaitForAllGroupsToBeEmpty(1.0);
     
     // then
-    [self.localNotificationDispatcher verify];
     [self.syncStrategy verify];
-    
 }
 
 - (void)testThatItForwardsTheBackgroundFetchRequestToTheSyncStrategy
@@ -1140,6 +1143,97 @@
 - (void)forward_startBackgroundFetchWithCompletionHandler:(ZMBackgroundFetchHandler)handler;
 {
     handler(ZMBackgroundFetchResultNewData);
+}
+
+- (void)testThatItFiltersOutPreexisingMessageEventsAndForwardsTheFilteredEventsToTheSyncStrategyAndPingBackStatus
+{
+    // given
+    NSUUID *notificationID = NSUUID.createUUID;
+    NSUUID *newNonce = NSUUID.createUUID;
+    NSUUID *preexistingNonce = NSUUID.createUUID;
+    
+    // We need to stub these for the inserting
+    [[self.syncStrategy stub] processSaveWithInsertedObjects:OCMOCK_ANY updateObjects:OCMOCK_ANY];
+    [[self.syncStrategy stub] dataDidChange];
+    
+    ZMClientMessage *preexistingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+    preexistingMessage.nonce = preexistingNonce;
+    
+    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSArray *updateEventPayload = [self messageAddPayloadWithNonces:@[newNonce, preexistingNonce]];
+    NSDictionary *pushPayload = [self pushPayloadForEventPayload:updateEventPayload identifier:notificationID];
+    NSArray *events = [ZMUpdateEvent eventsArrayFromPushChannelData:@{ @"payload": updateEventPayload, @"id": notificationID.transportString }];
+    
+    NSArray *filteredEvents = [events filterWithBlock:^BOOL(ZMUpdateEvent *event) {
+        if ([event.messageNonce isEqual:preexistingNonce]) {
+            return NO;
+        }
+        return YES;
+    }];
+    
+    XCTAssertNotNil(events);
+    XCTAssertEqual(filteredEvents.count, 1lu);
+    
+    // expect
+    [(ZMSyncStrategy *)[self.syncStrategy expect] consumeUpdateEvents:filteredEvents];
+    [(ZMSyncStrategy *)[self.syncStrategy expect] updateBadgeCount];
+    [[self.pingBackStatus expect] didReceiveVoIPNotification:[OCMArg checkWithBlock:^BOOL(EventsWithIdentifier *eventsWithID) {
+        XCTAssertEqualObjects(eventsWithID.events, filteredEvents);
+        return YES;
+    }] handler:OCMOCK_ANY];
+    
+    
+    // when
+    [self.sut saveEventsAndSendNotificationForPayload:pushPayload fetchCompletionHandler:nil source:ZMPushNotficationTypeVoIP];
+    WaitForAllGroupsToBeEmpty(1.0);
+    
+    // then
+    [self.syncStrategy verify];
+    [self.pingBackStatus verify];
+}
+
+- (void)testThatItForwardsNoticeNotificationsToTheSyncStrategyAndPingBackStatus
+{
+    // given
+    NSUUID *notificationID = NSUUID.createUUID;
+    
+    // We need to stub these for the inserting
+    [[self.syncStrategy stub] processSaveWithInsertedObjects:OCMOCK_ANY updateObjects:OCMOCK_ANY];
+    [[self.syncStrategy stub] dataDidChange];
+    
+    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSDictionary *pushPayload =  @{@"aps" : @{},
+                                   @"data" : @{
+                                           @"data" : @{ @"id" : notificationID.transportString },
+                                           @"type" : @"notice"
+                                           }
+                                   };
+    
+    // expect
+    [[self.pingBackStatus expect] didReceiveVoIPNotification:[OCMArg checkWithBlock:^BOOL(EventsWithIdentifier *eventsWithID) {
+        XCTAssertEqualObjects(eventsWithID.identifier, notificationID);
+        XCTAssertTrue(eventsWithID.isNotice);
+        return YES;
+    }] handler:OCMOCK_ANY];
+    
+    
+    // when
+    [self.sut saveEventsAndSendNotificationForPayload:pushPayload fetchCompletionHandler:nil source:ZMPushNotficationTypeVoIP];
+    WaitForAllGroupsToBeEmpty(1.0);
+    
+    // then
+    [self.pingBackStatus verify];
+}
+
+- (NSArray *)messageAddPayloadWithNonces:(NSArray <NSUUID *>*)nonces
+{
+    return [nonces mapWithBlock:^NSDictionary *(NSUUID *nonce) {
+        return [self payLoadForMessageAddEventWithNonce:nonce];
+    }];
 }
 
 @end

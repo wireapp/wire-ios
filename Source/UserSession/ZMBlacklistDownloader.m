@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMCSystem;
@@ -245,10 +247,10 @@ static NSString * const ExcludeVersionsKey = @"exclude";
                 || [self.dateOfLastUnsuccessfulDownload compare:self.dateOfLastSuccessfulDownload] == NSOrderedAscending // or failure is more recent that success
              );
     if(isFailureMoreRecent) {
-        timeLeft = MAX(0, self.failureCheckInterval +[self.dateOfLastUnsuccessfulDownload timeIntervalSinceNow]);
+        timeLeft = MAX(0, self.failureCheckInterval + [self.dateOfLastUnsuccessfulDownload timeIntervalSinceNow]);
     }
     else {
-        timeLeft = MAX(0, self.successCheckInterval +[self.dateOfLastSuccessfulDownload timeIntervalSinceNow]);
+        timeLeft = MAX(0, self.successCheckInterval + [self.dateOfLastSuccessfulDownload timeIntervalSinceNow]);
     }
     return timeLeft;
 }
@@ -288,8 +290,10 @@ static NSString * const ExcludeVersionsKey = @"exclude";
     
     if(isSuccess) {
         self.dateOfLastSuccessfulDownload = [NSDate date];
+        self.dateOfLastUnsuccessfulDownload = nil;
     }
     else {
+        self.dateOfLastSuccessfulDownload = nil;
         self.dateOfLastUnsuccessfulDownload = [NSDate date];
     }
     [self startTimerIfNeeded];

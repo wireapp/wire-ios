@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 import XCTest
@@ -112,7 +114,7 @@ class String_SplittingTests: XCTestCase {
 
     func testItShouldntSplitLinks() {
         // given
-        let string = "This awesome link: www.google.com"
+        let string = "This awesome link: www.wire.com"
         let maxLength = 15
 
         // when
@@ -120,7 +122,7 @@ class String_SplittingTests: XCTestCase {
 
         // then
         XCTAssertFalse(splitted.containsElementLongerThan(maxLength))
-        let expected = ["This awesome ", "link: ", "www.google.com"]
+        let expected = ["This awesome ", "link: ", "www.wire.com"]
         XCTAssertEqual(splitted.count, expected.count)
         XCTAssertEqual(splitted, expected)
     }

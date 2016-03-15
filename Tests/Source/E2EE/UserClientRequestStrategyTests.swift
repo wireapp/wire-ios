@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 import XCTest
@@ -1183,7 +1185,7 @@ extension UserClientRequestStrategyTests {
         ]
         
         let events = ZMUpdateEvent.eventsArrayFromPushChannelData(payload)
-        guard let event = events!.first as? ZMUpdateEvent else {
+        guard let event = events!.first else {
             XCTFail()
             return
         }
@@ -1241,7 +1243,7 @@ extension UserClientRequestStrategyTests {
         ]
         
         let events = ZMUpdateEvent.eventsArrayFromPushChannelData(payload)
-        guard let event = events!.first as? ZMUpdateEvent else {
+        guard let event = events!.first else {
             XCTFail()
             return
         }
@@ -1275,7 +1277,7 @@ extension UserClientRequestStrategyTests {
         ]
         
         let events = ZMUpdateEvent.eventsArrayFromPushChannelData(payload)
-        guard let event = events!.first as? ZMUpdateEvent else {
+        guard let event = events!.first else {
             XCTFail()
             return
         }
@@ -1311,7 +1313,7 @@ extension UserClientRequestStrategyTests {
         ]
         
         let events = ZMUpdateEvent.eventsArrayFromPushChannelData(payload)
-        guard let event = events!.first as? ZMUpdateEvent else { return XCTFail() }
+        guard let event = events!.first else { return XCTFail() }
         
         // when
         self.sut.processEvents([event], liveEvents:true, prefetchResult: .None)

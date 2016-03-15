@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import Foundation;
@@ -109,8 +111,8 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
 /// Debug information
 @property (nonatomic, readonly, nullable) NSString *debugInformation;
 
-+ (nullable NSArray *)eventsArrayFromPushChannelData:(nonnull id<ZMTransportData>)transportData;
-+ (nullable NSArray *)eventsArrayFromTransportData:(nonnull id<ZMTransportData>)transportData source:(ZMUpdateEventSource)source;
++ (nullable NSArray<ZMUpdateEvent *> *)eventsArrayFromPushChannelData:(nonnull id<ZMTransportData>)transportData;
++ (nullable NSArray<ZMUpdateEvent *> *)eventsArrayFromTransportData:(nonnull id<ZMTransportData>)transportData source:(ZMUpdateEventSource)source;
 
 /// Creates an update event
 + (nonnull instancetype)eventFromEventStreamPayload:(nonnull id<ZMTransportData>)payload uuid:(nullable NSUUID *)uuid;

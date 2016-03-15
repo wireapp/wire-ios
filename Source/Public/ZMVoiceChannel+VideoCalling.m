@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "ZMVoiceChannel+VideoCalling.h"
@@ -58,7 +60,7 @@ NSString * const ZMBackCameraDeviceID = @"com.apple.avfoundation.avcapturedevice
 - (BOOL)isSendingVideoForParticipant:(ZMUser *)participant error:(NSError **)error
 {
     ZMConversation *conversation = self.conversation;
-    if (self.flowManager == nil) {
+    if (self.flowManager == nil || !self.flowManager.isReady) {
         if (error != nil) {
             *error = [ZMVoiceChannelError noFlowManagerError];
         }
@@ -78,7 +80,7 @@ NSString * const ZMBackCameraDeviceID = @"com.apple.avfoundation.avcapturedevice
 
 - (BOOL)isVideoCallingPossibleInConversation:(ZMConversation *)conversation error:(NSError **)error
 {
-    if (self.flowManager == nil) {
+    if (self.flowManager == nil || !self.flowManager.isReady) {
         if (error != nil) {
             *error = [ZMVoiceChannelError noFlowManagerError];
         }
@@ -140,7 +142,7 @@ NSString * const ZMBackCameraDeviceID = @"com.apple.avfoundation.avcapturedevice
 
 - (BOOL)setVideoPreview:(UIView *)view error:(NSError **)error
 {
-    if (self.flowManager == nil) {
+    if (self.flowManager == nil || !self.flowManager.isReady) {
         if (error != nil) {
             *error = [ZMVoiceChannelError noFlowManagerError];
         }
@@ -157,7 +159,7 @@ NSString * const ZMBackCameraDeviceID = @"com.apple.avfoundation.avcapturedevice
 
 - (BOOL)setVideoView:(UIView *)view forParticipant:(ZMUser *)participant error:(NSError **)error
 {
-    if (self.flowManager == nil) {
+    if (self.flowManager == nil || !self.flowManager.isReady) {
         if (error != nil) {
             *error = [ZMVoiceChannelError noFlowManagerError];
         }
@@ -173,7 +175,7 @@ NSString * const ZMBackCameraDeviceID = @"com.apple.avfoundation.avcapturedevice
 - (BOOL)setVideoCaptureDevice:(NSString *)deviceId error:(NSError **)error
 {
     ZMConversation *conversation = self.conversation;
-    if (self.flowManager == nil) {
+    if (self.flowManager == nil || !self.flowManager.isReady) {
         if (error != nil) {
             *error = [ZMVoiceChannelError noFlowManagerError];
         }

@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMCMockTransport;
@@ -263,8 +265,9 @@ static const int32_t Mersenne3 = 8191;
     if (resetPersistentStore) {
         [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     }
-    
-    self.uiMOC = [NSManagedObjectContext createUserInterfaceContext];
+    [self performIgnoringZMLogError:^{
+        self.uiMOC = [NSManagedObjectContext createUserInterfaceContext];
+    }];
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.name;
     

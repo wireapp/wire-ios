@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMTransport;
@@ -136,7 +138,7 @@
     }
     
     /* Here I'm using the fact that all eventIDs are sequential - I know it's true because I just created them myself */
-    NSOrderedSet *expectedMessages = [self messagesUntilEndOfConversation:conversation fromIndex:minExpectedMessage];
+    NSOrderedSet *expectedMessages = [[self messagesUntilEndOfConversation:conversation fromIndex:minExpectedMessage] reversedOrderedSet];
     
     // when
     ZMConversationMessageWindow *window = [conversation conversationWindowWithSize:windowSize];
@@ -329,7 +331,7 @@
     
     // then
     NSOrderedSet *expectedMessages = [self messagesUntilEndOfConversation:conversation fromIndex:4];
-    XCTAssertEqualObjects(sut.messages, expectedMessages);
+    XCTAssertEqualObjects(sut.messages, expectedMessages.reversedOrderedSet);
 }
 
 - (void)testThatAddingAMessageAtTheEndDoesNotPopMessagesOffTheTopIfTheWindowFitsAllMessages
@@ -340,14 +342,14 @@
     conversation.lastReadEventID = lastReadMessage.eventID;
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:10];
     ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    XCTAssertEqualObjects(sut.messages, conversation.messages);
+    XCTAssertEqualObjects(sut.messages.reversedOrderedSet, conversation.messages);
     
     // when
     [conversation.mutableMessages addObject:newMessage];
     [sut recalculateMessages];
     
     // then
-    XCTAssertEqualObjects(sut.messages, conversation.messages);
+    XCTAssertEqualObjects(sut.messages.reversedOrderedSet, conversation.messages);
 }
 
 - (void)testThatWhenAddingAMessageInsideTheWindowTheWindowGrows
@@ -366,7 +368,7 @@
     
     // then
     NSOrderedSet *expectedMessages = [self messagesUntilEndOfConversation:conversation fromIndex:4];
-    XCTAssertEqualObjects(sut.messages, expectedMessages);
+    XCTAssertEqualObjects(sut.messages, expectedMessages.reversedOrderedSet);
 }
 
 - (void)testThatUnsentPendingMessagesAreNotHiddenWhenTheConversationIsCleared

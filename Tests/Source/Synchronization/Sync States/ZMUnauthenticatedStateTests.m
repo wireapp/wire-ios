@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import UIKit;
@@ -369,7 +371,7 @@
 {
     // given
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/mock" method:ZMMethodGET payload:nil];
-    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@bar.cpm" password:@"$#%#$^@21"]];
+    [self.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"foo@@example.com" password:@"$#%#$^@21"]];
     
     // expectations
     id <ZMRequestGenerator> generator  = [self generatorReturningRequest:request];

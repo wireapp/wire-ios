@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 import ZMUtilities
@@ -49,15 +51,6 @@ public class ZMLocalNotificationForPostInConversationEvent : ZMLocalNotification
         }
         return nil
     }
-    
-    func messageAddEventHasPreexistingMessage(event: ZMUpdateEvent) -> Bool {
-        if event.hasEncryptedAndUnencryptedVersion() {
-            let nonce = event.messageNonce()
-            let message = ZMMessage.fetchMessageWithNonce(nonce, forConversation: conversation, inManagedObjectContext: conversation!.managedObjectContext)
-            return message != nil
-        }
-        return false
-    }
 }
 
 
@@ -73,7 +66,7 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
     }
     
     override func canCreateNotification() -> Bool {
-        guard super.canCreateNotification() && !messageAddEventHasPreexistingMessage(lastEvent)
+        guard super.canCreateNotification()
             else { return false }
         
         switch lastEvent.type {
@@ -145,7 +138,7 @@ public class ZMLocalNotificationForKnockMessage : ZMLocalNotificationForPostInCo
     }
     
     override func canCreateNotification() -> Bool {
-        guard super.canCreateNotification() && !messageAddEventHasPreexistingMessage(lastEvent)
+        guard super.canCreateNotification()
             else { return false }
         
         switch lastEvent.type {

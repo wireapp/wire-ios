@@ -528,7 +528,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
 {
     // given
     NSString *phone = @"+4912345678900";
-    NSString *email = @"email@others.com";
+    NSString *email = @"email@example.com";
     NSString *password = @"newPassword";
     
     self.selfUser.phone = phone;

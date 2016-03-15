@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMTransport;
@@ -52,11 +54,13 @@ static const char *ZMLogTag = "Push";
 
 - (void)receivedPushNotificationWithPayload:(NSDictionary *)payload completionHandler:(ZMPushNotificationCompletionHandler)handler source:(ZMPushNotficationType)source
 {
-    if(self.authenticationStatus.currentPhase != ZMAuthenticationPhaseAuthenticated ||
-       self.application.applicationState != UIApplicationStateBackground)
-    {
+    BOOL isNotInBackground = self.application.applicationState != UIApplicationStateBackground;
+    
+    if (self.authenticationStatus.currentPhase != ZMAuthenticationPhaseAuthenticated || isNotInBackground) {
         if (handler != nil) {
-            ZMLogPushKit(@"Not displaying notification because app is not authenticated");
+            if (isNotInBackground) {
+                ZMLogPushKit(@"Not displaying notification because app is not authenticated");
+            }
             handler(ZMPushPayloadResultSuccess);
         }
         return;

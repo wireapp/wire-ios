@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,14 +14,12 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "ZMConversationListDirectory.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversationList+Internal.h"
-
-#import "ZMSharableConversations.h"
-
 
 static NSString * const ConversationListDirectoryKey = @"ZMConversationListDirectory";
 
@@ -39,7 +38,6 @@ static NSString * const PendingKey = @"Pending";
 @property (nonatomic) ZMConversationList* pendingConnectionConversations;
 @property (nonatomic) ZMConversationList* nonIdleVoiceChannelConversations;
 @property (nonatomic) ZMConversationList* activeCallConversations;
-@property (nonatomic) ZMSharableConversations* sharableConversations;
 @property (nonatomic) ZMConversationList* clearedConversations;
 
 @end
@@ -62,7 +60,6 @@ static NSString * const PendingKey = @"Pending";
         self.activeCallConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationWithActiveCalls] moc:moc debugDescription:@"activeCallConversations"];
         self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForClearedConversations] moc:moc debugDescription:@"clearedConversations"];
         
-        self.sharableConversations = [[ZMSharableConversations alloc] initWithConversations:allConversations context:moc];
     }
     return self;
 }

@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,7 +14,12 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
+//
+//  FlowManager.h
+//  zcall-ios
+//
 
 
 #import <Foundation/Foundation.h>
@@ -88,6 +94,7 @@ typedef NS_ENUM(int, AVSFlowManagerVideoSendState) {
 @end
 
 @protocol AVSFlowManagerDelegate<NSObject>
++ (void)logMessage:(NSString *)msg;
 - (BOOL)requestWithPath:(NSString *)path
          method:(NSString *)method
       mediaType:(NSString *)mtype
@@ -125,6 +132,7 @@ struct flowmgr;
 - (instancetype)init;
 - (instancetype)initWithDelegate:(id<AVSFlowManagerDelegate>)delegate mediaManager:(id)mediaManager;
 - (instancetype)initWithDelegate:(id<AVSFlowManagerDelegate>)delegate flowManager:(struct flowmgr *)flowManager mediaManager:(id)mediaManager;
+- (BOOL)isReady;
 
 + (instancetype)getInstance;
 

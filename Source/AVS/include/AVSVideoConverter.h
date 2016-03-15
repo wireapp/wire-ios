@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,7 +14,12 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
+//
+//  AVSVideoConverter.h
+//  zmm
+//
 
 typedef NS_ENUM(NSInteger, AVSVideoConverterQuality) {
         AVSVideoConverterDontReencode,

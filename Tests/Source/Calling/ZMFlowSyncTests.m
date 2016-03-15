@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 @import ZMTransport;
@@ -71,7 +73,7 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
     NSArray *events = @[FlowEventName1, FlowEventName2];
     [(AVSFlowManager *)[[self.internalFlowManager stub] andReturn:events] events];
     [[self.internalFlowManager stub] setValue:OCMOCK_ANY forKey:@"delegate"];
-    
+
     self.flowManagerLoggingEnabled = NO;
     self.flowManagerMetricsEnabled = NO;
     [[[self.internalFlowManager stub] andDo:^(NSInvocation * ZM_UNUSED i) {
@@ -139,6 +141,53 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
 - (void)voiceChannelParticipantVoiceGainDidChange:(ZMVoiceChannelParticipantVoiceGainChangedNotification *)note;
 {
     [self.voiceChannelGainNotifications addObject:note];
+}
+
+- (void)testThatItReleasesTheFlowForCallDeviceIsActive_No
+{
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+        conv.remoteIdentifier = [NSUUID UUID];
+        conv.callDeviceIsActive = NO;
+        
+        // expect
+        [[[self.internalFlowManager expect] andReturnValue:@YES] isReady];
+        [[self.internalFlowManager stub] appendLogForConversation:OCMOCK_ANY message:OCMOCK_ANY];
+        [[self.internalFlowManager expect] releaseFlows:conv.remoteIdentifier.transportString];
+        [[self.internalFlowManager reject] acquireFlows:conv.remoteIdentifier.transportString];
+
+        // when
+        [self.sut updateFlowsForConversation:conv];
+        
+        // then
+        [self.internalFlowManager verify];
+        [conv.voiceChannel tearDown];
+    }];
+}
+
+
+- (void)testThatItAcquiresTheFlowForCallDeviceIsActive_YES
+{
+    [self.syncMOC performBlockAndWait:^{
+        // given
+        ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+        conv.remoteIdentifier = [NSUUID UUID];
+        conv.callDeviceIsActive = YES;
+        
+        // expect
+        [[[self.internalFlowManager expect] andReturnValue:@YES] isReady];
+        [[self.internalFlowManager stub] appendLogForConversation:OCMOCK_ANY message:OCMOCK_ANY];
+        [[self.internalFlowManager reject] releaseFlows:conv.remoteIdentifier.transportString];
+        [[self.internalFlowManager expect] acquireFlows:conv.remoteIdentifier.transportString];
+
+        // when
+        [self.sut updateFlowsForConversation:conv];
+        
+        // then
+        [self.internalFlowManager verify];
+        [conv.voiceChannel tearDown];
+    }];
 }
 
 - (void)testThatItReturnsARequestWhenRequested
@@ -274,6 +323,8 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
 - (void)testThatUpdateEventsAreSentToTheFlowManager
 {
     // given
+    [[[self.internalFlowManager stub] andReturnValue:@YES] isReady];
+
     NSDictionary *payload = @{@"id": @"71bda6aa-bc34-4e9d-bceb-7e4198cc7512",
                               @"payload": @[@{@"conversation": @"1742ca1a-9256-47b1-9459-1e8d4bc9e4a3",
                                               @"data": @{
@@ -298,6 +349,8 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
 - (void)testThatUpdateEventsThatTheFlowManagerIsNotInterestedInAreNotSentToTheFlowManager;
 {
     // given
+    [[[self.internalFlowManager stub] andReturnValue:@YES] isReady];
+
     NSDictionary *payload = @{@"id": @"71bda6aa-bc34-4e9d-bceb-7e4198cc7512",
                               @"payload": @[@{@"conversation": @"1742ca1a-9256-47b1-9459-1e8d4bc9e4a3",
                                               @"data": @{
@@ -358,6 +411,8 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
 - (void)testThatItReleasesAConversationsFlowsInTheFlowManager
 {
     // given
+    [[[self.internalFlowManager stub] andReturnValue:@YES] isReady];
+
     ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conv.remoteIdentifier = [NSUUID createUUID];
     
@@ -372,6 +427,8 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
 - (void)testThatItAcquiresAConversationsFlowsInTheFlowManager
 {
     // given
+    [[[self.internalFlowManager stub] andReturnValue:@YES] isReady];
+
     ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conv.remoteIdentifier = [NSUUID createUUID];
     
@@ -385,6 +442,8 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
 - (void)testThatItDoesNotForwardReleaseOrAquireFlowsWhenTheConversationHasNoRemoteID;
 {
     // given
+    [[[self.internalFlowManager stub] andReturnValue:@YES] isReady];
+
     ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conv.remoteIdentifier = nil;
     
@@ -758,6 +817,8 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
 
 - (void)testThatItForwardsJoinedUsers
 {
+    [[[self.internalFlowManager stub] andReturnValue:@YES] isReady];
+
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -890,6 +951,116 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
         [mockObserver verify];
         [conversation.voiceChannel removeCallingInitialisationObserver:token];
     }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    [self.internalFlowManager verify];
+}
+
+- (void)testThatItDoesNotCallAddUserWhenAVSIsNotReady
+{
+    //given
+    [[[self.internalFlowManager expect] andReturnValue:@NO] isReady];
+    
+    __block ZMConversation *conv;
+    __block ZMUser *user;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conv.remoteIdentifier = [NSUUID createUUID];
+        
+        user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+        user.remoteIdentifier = [NSUUID createUUID];
+        user.name = @"Super User";
+        
+        // when
+        [self.sut addJoinedCallParticipant:user inConversation:conv];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self.internalFlowManager verify];
+
+    // expect
+    [[[self.internalFlowManager expect] andReturnValue:@YES] isReady];
+    [[self.internalFlowManager expect] addUser:conv.remoteIdentifier.transportString userId:user.remoteIdentifier.transportString name:user.name];
+    
+    // and when
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    [self.internalFlowManager verify];
+}
+
+
+- (void)testThatItDoesNotUpdateFlowsWhenAVSIsNotReady
+{
+    //given
+    [[[self.internalFlowManager expect] andReturnValue:@NO] isReady];
+    
+    __block ZMConversation *conv;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conv.remoteIdentifier = [NSUUID createUUID];
+        conv.callDeviceIsActive = NO;
+        
+        // when
+        [self.sut releaseFlowsForConversation:conv];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    // we should not have called release flows yet
+    [self.internalFlowManager verify];
+    
+    // expect
+    [[[self.internalFlowManager expect] andReturnValue:@YES] isReady];
+    [[self.internalFlowManager expect] releaseFlows:conv.remoteIdentifier.transportString];
+
+    // and when
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    [self.internalFlowManager verify];
+}
+
+- (void)testThatItDoesNotForwardEventsIfAVSIsNotReady
+{
+    // given
+    [[[self.internalFlowManager expect] andReturnValue:@NO] isReady];
+    __block NSData *innerPayloadData;
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        NSDictionary *payload = @{@"id": @"71bda6aa-bc34-4e9d-bceb-7e4198cc7512",
+                                  @"payload": @[@{@"conversation": @"1742ca1a-9256-47b1-9459-1e8d4bc9e4a3",
+                                                  @"data": @{
+                                                          @"last_read": @"9.800122000a4aaa0c"
+                                                          },
+                                                  @"from": @"39562cc3-717d-4395-979c-5387ae17f5c3",
+                                                  @"time": @"2014-06-20T14:04:38.133Z",
+                                                  @"type": FlowEventName1,}]
+                                  };
+        ZMUpdateEvent *event = [ZMUpdateEvent eventsArrayFromPushChannelData:payload][0];
+        
+        innerPayloadData = [NSJSONSerialization dataWithJSONObject:event.payload options:0 error:nil];
+        XCTAssertNotNil(innerPayloadData);
+        
+        
+        // when
+        [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
+    }];
+    
+    // then
+    // we should not have called processEventWithMediaType yet
+    [self.internalFlowManager verify];
+    
+    // expect
+    [[[self.internalFlowManager expect] andReturnValue:@YES] isReady];
+    [[self.internalFlowManager expect] processEventWithMediaType:@"application/json" content:innerPayloadData];
+    
+    // and when
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

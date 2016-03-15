@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,6 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import <XCTest/XCTest.h>
@@ -198,7 +200,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSManagedObjectContext *syncContext;
     
     XCTestExpectation *contextExpectation = [self expectationWithDescription:@"It should create context"];
-    [NSManagedObjectContext prepareLocalStoreBackingUpCorruptedDatabase:NO completionHandler:^{
+    [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
         syncContext = [NSManagedObjectContext createSyncContext];
         [contextExpectation fulfill];
     }];
@@ -292,7 +294,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     return @[
              @{
                  @"accentColorValue": @1,
-                 @"emailAddress": @"hello@wexample.com",
+                 @"emailAddress": @"hello@example.com",
                  @"modifiedDataFields": @0,
                  @"name": @"awesome test user",
                  @"normalizedEmailAddress": @"hello@example.com",
