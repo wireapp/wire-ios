@@ -1,3 +1,4 @@
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -13,14 +14,15 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
 
 
 #import "ZMMobileProvisionParser.h"
 
 @import ZMCSystem;
 
-static NSString * const WireTeamIdentifier = @"XXXX";
-static NSString * const ZetaProjectEnterpriseIdentifier = @"XXXX";
+static NSString * const WireTeamIdentifier = @"EDF3JCE8BC";
+static NSString * const ZetaProjectEnterpriseIdentifier = @"W5KEQBF9B5";
 
 @interface ZMMobileProvisionParser ()
 
