@@ -9,3 +9,4 @@ For licensing information, see the attached LICENSE file and the list of third-p
 ## Contributions
 
 Wire is in the process of releasing source code, but is not yet actively developing in all open source repositories. For this reason, we are not able to accept all pull requests at the moment.
+
