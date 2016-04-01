@@ -75,6 +75,7 @@
     self = [super init];
     if (self) {
         self.moc = moc;
+        _identifier = debugDescription;
         self.customDebugDescription = debugDescription;
         self.filteringPredicate = filteringPredicate;
         self.sortDescriptors = [ZMConversation defaultSortDescriptors];

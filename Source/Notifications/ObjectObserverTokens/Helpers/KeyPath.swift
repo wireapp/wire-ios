@@ -53,12 +53,14 @@ public final class KeyPath : Hashable {
         return 1 < count
     }
 
-    public lazy var decompose : (head: KeyPath, tail: KeyPath)? = {
-        if 1 < self.count {
-            let i = self.rawValue.characters.indexOf(".")!
-            let head = self.rawValue[Range(start: self.rawValue.startIndex, end: i)]
-            let tail = self.rawValue[Range(start: i.successor(), end: self.rawValue.endIndex)]
-            return (KeyPath.keyPathForString(head), KeyPath.keyPathForString(tail))
+    public lazy var decompose : (head: KeyPath, tail: KeyPath?)? = {
+        if 1 <= self.count {
+            if let i = self.rawValue.characters.indexOf(".") {
+                let head = self.rawValue[Range(start: self.rawValue.startIndex, end: i)]
+                let tail = self.rawValue[Range(start: i.successor(), end: self.rawValue.endIndex)]
+                return (KeyPath.keyPathForString(head), KeyPath.keyPathForString(tail))
+            }
+            return (self, nil)
         }
         return nil
     }()

@@ -33,7 +33,7 @@
         
         // when
         NSString *messageText = @"foo";
-        id<ZMConversationMessage> message = [conversation appendMessagesWithText:messageText].firstObject;
+        id<ZMConversationMessage> message = [conversation appendMessageWithText:messageText];
         
         // then
         XCTAssertEqualObjects(message.messageText, messageText);
@@ -48,7 +48,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.lastModifiedDate = [[NSDate date] dateByAddingTimeInterval:-90000];
-    ZMMessage *msg = [conversation appendMessagesWithText:@"Foo"].firstObject;
+    ZMMessage *msg = [conversation appendMessageWithText:@"Foo"];
     
     // then
     XCTAssertNotNil(msg.serverTimestamp);
@@ -59,7 +59,7 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMMessage *msg1 = [conversation appendMessagesWithText:@"Foo"].firstObject;
+    ZMMessage *msg1 = [conversation appendMessageWithText:@"Foo"];
     msg1.serverTimestamp = [[NSDate date] dateByAddingTimeInterval:-90000];
     conversation.lastModifiedDate = msg1.serverTimestamp;
     
@@ -80,7 +80,7 @@
     // when
     NSString *originalText = @"foo";
     NSMutableString *messageText = [NSMutableString stringWithString:originalText];
-    id<ZMConversationMessage> message = [conversation appendMessagesWithText:messageText].firstObject;
+    id<ZMConversationMessage> message = [conversation appendMessageWithText:messageText];
     
     // then
     [messageText appendString:@"1234"];
@@ -97,7 +97,7 @@
     // when
     __block ZMTextMessage *message;
     [self performIgnoringZMLogError:^{
-        message = [conversation appendMessagesWithText:nil].firstObject;
+        message = [conversation appendMessageWithText:nil];
     }];
     
     // then

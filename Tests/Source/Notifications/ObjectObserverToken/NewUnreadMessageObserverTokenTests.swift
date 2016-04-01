@@ -69,6 +69,9 @@ class NewUnreadMessageObserverTokenTests : MessagingTest {
         self.syncTestObserver = UnreadMessageTestObserver()
         self.syncNewMessageToken = ZMMessageNotification.addNewMessagesObserver(syncTestObserver, managedObjectContext: self.syncMOC)
         self.syncNewKnocksToken = ZMMessageNotification.addNewKnocksObserver(syncTestObserver, managedObjectContext: self.syncMOC)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
     }
     
     override func tearDown() {

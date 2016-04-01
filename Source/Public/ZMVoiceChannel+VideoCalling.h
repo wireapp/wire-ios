@@ -41,12 +41,6 @@ FOUNDATION_EXPORT NSString * ZMVoiceChannelVideoCallErrorDomain;
 // Set video sending active/inactive
 - (BOOL)setVideoSendActive:(BOOL)active error:(NSError **)error;
 
-// Provide the rendering surface for video preview (self)
-- (BOOL)setVideoPreview:(UIView *)view error:(NSError **)error;
-
-// Provide the rendering surface for incoming video (other)
-- (BOOL)setVideoView:(UIView *)view forParticipant:(ZMUser *)participant error:(NSError **)error;
-
 // Selects camera
 - (BOOL)setVideoCaptureDevice:(NSString *)deviceId error:(NSError **)error;
 

@@ -28,4 +28,6 @@
                          workingGroup:(ZMSDispatchGroup *)workingGroup
                     blacklistCallback:(void (^)(BOOL))blacklistCallback;
 
+- (void)teardown;
+
 @end

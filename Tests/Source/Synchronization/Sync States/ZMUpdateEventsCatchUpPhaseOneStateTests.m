@@ -41,7 +41,6 @@
     [super setUp];
     _sut = [[ZMUpdateEventsCatchUpPhaseOneState alloc] initWithAuthenticationCenter:self.authenticationStatus
                                                            clientRegistrationStatus:self.clientRegistrationStatus
-                                                            applicationLaunchStatus:self.applicationLaunchStatus
                                                             objectStrategyDirectory:self.objectDirectory
                                                                stateMachineDelegate:self.stateMachine];
     
@@ -130,7 +129,7 @@
         [[[(id)self.stateMachine stub] andReturnValue:OCMOCK_VALUE(YES) ]isUpdateEventStreamActive];
         [[[(id)directory.missingUpdateEventsTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] isDownloadingMissingNotifications];
         
-        return [[ZMUpdateEventsCatchUpPhaseOneState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
+        return [[ZMUpdateEventsCatchUpPhaseOneState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
     }];
     
 }

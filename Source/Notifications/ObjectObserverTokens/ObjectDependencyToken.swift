@@ -40,14 +40,15 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate, C
 
     private let keyFromParentObjectToObservedObject : KeyPath?
     private let observedObject : NSObject
-    private let observer : DependentKeyChangeObserver
-    private let internalObserver : DependentKeyChangeObserver
+    private var parentChangeHandler : DependentKeyChangeObserver!
+    private var internalChangeHandler : DependentKeyChangeObserver!
     private var snapshot : ObjectSnapshot
     private let observedKeyPathToAffectedKey : [KeyPath : KeySet]
     private var dependencyTokens : [KeyPath : TokensWithKeyPathsToObserve]
     private weak var managedObjectContextObserver : ManagedObjectContextObserver?
     
     private var accumulatedChanges = KeySet()
+    public var isTornDown : Bool = false
     
     private struct TokensWithKeyPathsToObserve: CustomDebugStringConvertible {
 
@@ -63,7 +64,7 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate, C
         }
         
         func tearDown() {
-            for t in tokens {
+            for t in tokens where !t.isTornDown{
                 t.tearDown();
             }
         }
@@ -79,18 +80,18 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate, C
         observedObject : NSObject,
         keysToObserve: KeySet,
         managedObjectContextObserver: ManagedObjectContextObserver?,
-        observer: DependentKeyChangeObserver) {
+        changeHandler: DependentKeyChangeObserver) {
             
             self.keyFromParentObjectToObservedObject = keyFromParentObjectToObservedObject
             self.observedObject = observedObject
-            self.observer = observer
+            self.parentChangeHandler = changeHandler
             self.snapshot = ObjectSnapshot(object: observedObject, keys: keysToObserve)
             self.dependencyTokens = [:]
             self.managedObjectContextObserver = managedObjectContextObserver
             
             var closureWrapper : (KeysAndOldValues) -> () = { _ in return }
             
-            self.internalObserver = { closureWrapper($0) }
+            self.internalChangeHandler = { closureWrapper($0) }
             
             if let managedObjectContextObserver = managedObjectContextObserver {
                 (self.observedKeyPathToAffectedKey, self.dependencyTokens) = ObjectDependencyToken.tokensForOtherObjectsThatAffectKey(
@@ -110,13 +111,18 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate, C
                 let keys = KeySet(changedKeyPaths.keys)
                 self?.accumulateChangesFromDependentObjects(keys)
             }
-        
             managedObjectContextObserver?.addChangeObserver(self, object: self.observedObject)
     }
     
     public func tearDown() {
+        if isTornDown {return }
+        internalChangeHandler = nil
+        parentChangeHandler = nil
+        isTornDown = true
         if let contextObserver = managedObjectContextObserver {
-            for t in self.dependencyTokens.values {
+            let tokens = dependencyTokens.values
+            dependencyTokens = [:]
+            for t in tokens {
                 t.tearDown();
             }
             contextObserver.removeChangeObserver(self, object: self.observedObject)
@@ -144,23 +150,28 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate, C
         if changes.updated.contains(self.observedObject) {
             self.accumulatedChanges = KeySet()
             self.objectDidChangeKeys(.All)
-        } else if !self.accumulatedChanges.isEmpty {
+        }
+        else if !self.accumulatedChanges.isEmpty {
             let changedKeys = self.accumulatedChanges
             self.accumulatedChanges = KeySet()
             self.objectDidChangeKeys(.Some(changedKeys))
         }
     }
     
+    func keysHaveChanged(keys: [String]) {
+        accumulatedChanges = accumulatedChanges.union(KeySet(keys))
+    }
+    
     func objectDidChangeKeys(affectedKeys: AffectedKeys) {
         if let (newSnapShot, keysAndOldValues) = self.snapshot.updatedSnapshot(self.observedObject, affectedKeys: affectedKeys) {
 
-            self.snapshot = newSnapShot
+            snapshot = newSnapShot
             let changedKeys = keysAndOldValues.mapKeys { (key: KeyPath) -> KeyPath in
                 self.keyFromParentObjectToObservedObject.map { KeyPath.keyPathForString($0.rawValue+"."+key.rawValue) } ?? key
             }
             
-            self.observer(changedKeyPaths : changedKeys)
-            self.createOrDeleteDependendTokensIfNeeded(KeySet(changedKeys.keys))
+            parentChangeHandler(changedKeyPaths : changedKeys)
+            createOrDeleteDependendTokensIfNeeded(KeySet(changedKeys.keys))
         }
     }
     
@@ -197,12 +208,16 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate, C
                     return false
                 }
                 purgedTokens.appendContentsOf(
-                    objectsToInsert.map {ObjectDependencyToken(
+                    objectsToInsert.flatMap {[weak self] in
+                        guard let strongSelf = self
+                            else {return nil}
+                        
+                        return ObjectDependencyToken(
                         keyFromParentObjectToObservedObject: keyPath,
                         observedObject: $0,
                         keysToObserve: keyPathsToObserve,
-                        managedObjectContextObserver : self.managedObjectContextObserver!,
-                        observer: self.internalObserver
+                        managedObjectContextObserver : strongSelf.managedObjectContextObserver!,
+                        changeHandler: strongSelf.internalChangeHandler
                         )}
                 )
                 
@@ -254,17 +269,17 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate, C
                         observedObject: nextObject as! NSObject,
                         keysToObserve: pathsToObserveInObject,
                         managedObjectContextObserver : managedObjectContextObserver,
-                        observer: observer
+                        changeHandler: observer
                     )
                     tokens.append(token)
                 }
-            } else {
+            } else if objectToObserve is ObjectInSnapshot && pathsToObserveInObject.count > 0 {
                 let token = ObjectDependencyToken(
                     keyFromParentObjectToObservedObject: key,
                     observedObject: objectToObserve,
                     keysToObserve: pathsToObserveInObject,
                     managedObjectContextObserver : managedObjectContextObserver,
-                    observer: observer
+                    changeHandler: observer
                 )
                 tokens.append(token)
             }

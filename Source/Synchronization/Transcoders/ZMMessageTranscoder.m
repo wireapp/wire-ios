@@ -166,6 +166,7 @@ typedef NS_ENUM(int8_t, ZMAssetTag) {
 - (ZMUpstreamRequest *)requestForUpdatingObject:(ZMMessage * __unused)message forKeys:(NSSet * __unused)keys;
 {
     ZMTrapUnableToGenerateRequest(keys, self);
+    return nil;
 }
 
 - (ZMUpstreamRequest *)requestForInsertingObject:(ZMMessage *)message forKeys:(NSSet *)keys;

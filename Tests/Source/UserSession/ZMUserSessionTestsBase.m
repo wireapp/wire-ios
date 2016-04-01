@@ -82,7 +82,13 @@
     self.application = [OCMockObject niceMockForClass:NSApplication.class];
 #endif
     
-    self.sut = [[ZMUserSession alloc] initWithTransportSession:self.transportSession syncManagedObjectContext:self.syncMOC mediaManager:self.mediaManager apnsEnvironment:self.apnsEnvironment operationLoop:self.operationLoop application:self.application];
+    self.sut = [[ZMUserSession alloc] initWithTransportSession:self.transportSession
+                                      syncManagedObjectContext:self.syncMOC
+                                                  mediaManager:self.mediaManager
+                                               apnsEnvironment:self.apnsEnvironment
+                                                 operationLoop:self.operationLoop
+                                                   application:self.application
+                                                    appVersion:@"00000"];
     self.sut.thirdPartyServicesDelegate = self.thirdPartyServices;
     
     WaitForAllGroupsToBeEmpty(0.5);

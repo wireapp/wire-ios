@@ -90,7 +90,7 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     
     // when
     [self.userSession performChanges:^{
-        [conversation appendMessagesWithText:@"foo"];
+        [conversation appendMessageWithText:@"foo"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -115,7 +115,7 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     
     // when
     [self.userSession performChanges:^{
-        [conversation appendMessagesWithText:@"foo"];
+        [conversation appendMessageWithText:@"foo"];
     }];
     
     // background
@@ -139,7 +139,7 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     
     // when
     [self.userSession performChanges:^{
-        [conversation appendMessagesWithText:@"foo"];
+        [conversation appendMessageWithText:@"foo"];
     }];
     
     // background

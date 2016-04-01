@@ -25,13 +25,9 @@ public protocol UserClientObserver: NSObjectProtocol {
 }
 
 extension UserClient: ObjectInSnapshot {
-    public var keysToChangeInfoMap : KeyToKeyTransformation {
-        return KeyToKeyTransformation(mapping: [
-                        KeyPath.keyPathForString(ZMUserClientTrusted_ByKey) : .Default,
-                        KeyPath.keyPathForString(ZMUserClientIgnored_ByKey) : .Default,
-                        KeyPath.keyPathForString(ZMUserClientNeedsToNotifyUserKey) : .Default,
-                        KeyPath.keyPathForString(ZMUserClientFingerprintKey) : .Default
-            ])
+
+    public var observableKeys : [String] {
+        return [ZMUserClientTrusted_ByKey, ZMUserClientIgnored_ByKey, ZMUserClientNeedsToNotifyUserKey, ZMUserClientFingerprintKey]
     }
 
     public func keyPathsForValuesAffectingValueForKey(key: String) -> KeySet {
@@ -52,10 +48,21 @@ public enum UserClientChangeInfoKey: String {
         super.init(object: object)
     }
 
-    public var trustedByClientsChanged = false
-    public var ignoredByClientsChanged = false
-    public var fingerprintChanged = false
-    public var needsToNotifyUserChanged = false
+    public var trustedByClientsChanged : Bool {
+        return changedKeysAndOldValues.keys.contains(ZMUserClientTrusted_ByKey)
+    }
+    public var ignoredByClientsChanged : Bool {
+        return changedKeysAndOldValues.keys.contains(ZMUserClientIgnored_ByKey)
+    }
+
+    public var fingerprintChanged : Bool {
+        return changedKeysAndOldValues.keys.contains(ZMUserClientNeedsToNotifyUserKey)
+    }
+
+    public var needsToNotifyUserChanged : Bool {
+        return changedKeysAndOldValues.keys.contains(ZMUserClientFingerprintKey)
+    }
+
     public let userClient: UserClient
 }
 
@@ -70,7 +77,7 @@ public final class UserClientObserverToken: ObjectObserverTokenContainer, UserCl
     public init(observer: UserClientObserver, managedObjectContext: NSManagedObjectContext, userClient: UserClient) {
 
         self.managedObjectContext = managedObjectContext
-        var wrapper : (UserClientObserverToken, UserClientChangeInfo) -> () = { _ in return }
+        var changeHandler : (UserClientObserverToken, UserClientChangeInfo) -> () = { _ in return }
         self.observer = observer
         
         let directory = Directory.directoryInManagedObjectContext(managedObjectContext, keyForDirectoryInUserInfo: "UserClient")
@@ -78,10 +85,9 @@ public final class UserClientObserverToken: ObjectObserverTokenContainer, UserCl
         let innerToken = directory.tokenForObject(userClient, createBlock: {
             let token = InnerTokenType.token(
                 userClient,
-                keyToKeyTransformation: userClient.keysToChangeInfoMap,
-                keysThatNeedPreviousValue: KeyToKeyTransformation(mapping: [:]),
+                observableKeys: userClient.observableKeys,
                 managedObjectContextObserver: userClient.managedObjectContext!.globalManagedObjectContextObserver,
-                observer: { wrapper($0, $1) }
+                changeHandler: { changeHandler($0, $1) }
             )
             return token
         })
@@ -89,7 +95,7 @@ public final class UserClientObserverToken: ObjectObserverTokenContainer, UserCl
         
         // NB! The wrapper closure is created every time @c UserClientObserverToken is created, but only the first one
         // created is actually called, but for every container that been added.
-        wrapper = { container, changeInfo in
+        changeHandler = { container, changeInfo in
             container.observer?.userClientDidChange(changeInfo)
         }
         

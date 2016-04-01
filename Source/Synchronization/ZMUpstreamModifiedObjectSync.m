@@ -261,7 +261,7 @@ ZM_EMPTY_ASSERTING_INIT();
     if (request == nil) {
         RequireString(request != nil, "Transcoder %s returns nil request for keys: %s",
                       NSStringFromClass(transcoder.class).UTF8String,
-                      ((NSString *)objectWithKeys.keysToSync.anyObject).UTF8String);
+                      [objectWithKeys.keysToSync.anyObject componentsJoinedByString:@", "].UTF8String);
     }
     
     ZMModifiedObjectSyncToken *token = [self.updatedObjects didStartSynchronizingKeys:request.keys forObject:objectWithKeys];
@@ -326,4 +326,14 @@ ZM_EMPTY_ASSERTING_INIT();
 }
 
 @end
+
+
+
+void ZMTrapUnableToGenerateRequest(NSSet *keys, id transcoder) {
+    NSString *allKeys = [keys.allObjects componentsJoinedByString:@", "];
+    NSString *classString = NSStringFromClass([transcoder class]);
+    NSString *description = [NSString stringWithFormat:@"Transcoder %@ refuses to create request for keys: %@", classString, allKeys];
+    ZMCrashFormat("Transcoder failed to generate request", __FILE__, __LINE__, "%s", description.UTF8String);
+    assert(false);
+}
 

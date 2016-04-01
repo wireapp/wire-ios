@@ -38,6 +38,10 @@
 
 - (void)setUp {
     [super setUp];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ZMApplicationDidEnterEventProcessingStateNotification" object:nil];
+    WaitForAllGroupsToBeEmpty(0.5);
+
 }
 
 - (void)tearDown {
@@ -229,6 +233,7 @@
     conversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.connection.status = ZMConnectionStatusPending;
     conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    XCTAssert([self.uiMOC saveOrRollback]);
 
     // then
     ZMConversationList *list = [ZMConversation pendingConversationsInContext:self.uiMOC];
@@ -467,7 +472,7 @@
     XCTAssertEqualObjects(list, expectedList2);
     
     // when we insert a message into one of the other conversations
-    [c2 appendMessagesWithText:@"hello"];
+    [c2 appendMessageWithText:@"hello"];
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then the active call stays on top
@@ -484,7 +489,7 @@
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeOneOnOne;
     c1.lastModifiedDate = [NSDate date];
-    ZMTextMessage *message = [c1 appendMessagesWithText:@"message"].firstObject;
+    ZMTextMessage *message = [c1 appendMessageWithText:@"message"];
     message.eventID = self.createEventID;
     message.serverTimestamp = [NSDate date];
     
@@ -521,7 +526,7 @@
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeOneOnOne;
     c1.lastModifiedDate = [NSDate date];
-    ZMTextMessage *message = [c1 appendMessagesWithText:@"message"].firstObject;
+    ZMTextMessage *message = [c1 appendMessageWithText:@"message"];
     message.eventID = self.createEventID;
     message.serverTimestamp = [NSDate date];
     

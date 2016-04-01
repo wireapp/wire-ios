@@ -48,9 +48,9 @@
     
     self.uiConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     self.uiConversation.conversationType = ZMConversationTypeOneOnOne;
-    [(ZMMessage *)[self.uiConversation appendMessagesWithText:@"A"].firstObject setServerTimestamp:[self nextDate]];
-    [(ZMMessage *)[self.uiConversation appendMessagesWithText:@"B"].firstObject setServerTimestamp:[self nextDate]];
-    [(ZMMessage *)[self.uiConversation appendMessagesWithText:@"C"].firstObject setServerTimestamp:[self nextDate]];
+    [(ZMMessage *)[self.uiConversation appendMessageWithText:@"A"] setServerTimestamp:[self nextDate]];
+    [(ZMMessage *)[self.uiConversation appendMessageWithText:@"B"] setServerTimestamp:[self nextDate]];
+    [(ZMMessage *)[self.uiConversation appendMessageWithText:@"C"] setServerTimestamp:[self nextDate]];
     [self.uiConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
     [self.uiMOC saveOrRollback];
     
@@ -137,7 +137,7 @@
 - (void)testThatItMergesConflictingMessagesFromSyncMOCToUiMOC
 {
     // given
-    [(ZMMessage *)[self.uiConversation appendMessagesWithText:@"D"].firstObject setServerTimestamp:[self nextDate]];
+    [(ZMMessage *)[self.uiConversation appendMessageWithText:@"D"] setServerTimestamp:[self nextDate]];
     [self.uiConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
     
     // when
@@ -174,7 +174,7 @@
 - (void)testThatItMergesReorderingOfMessagesFromSyncMOCToUiMOC
 {
     // given
-    [(ZMMessage *)[self.uiConversation appendMessagesWithText:@"D"].firstObject setServerTimestamp:[self nextDate]];
+    [(ZMMessage *)[self.uiConversation appendMessageWithText:@"D"] setServerTimestamp:[self nextDate]];
     [self.uiConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
 
     // when
@@ -212,7 +212,7 @@
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
-        [(ZMMessage *)[self.syncConversation appendMessagesWithText:@"D"].firstObject setServerTimestamp:[self nextDate]];
+        [(ZMMessage *)[self.syncConversation appendMessageWithText:@"D"] setServerTimestamp:[self nextDate]];
         [self.syncConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
     }];
     
@@ -250,7 +250,7 @@
 - (void)testThatItMergesConflictingMessagesFromSyncUiToSyncMOC
 {
     // given
-    [(ZMMessage *)[self.uiConversation appendMessagesWithText:@"D"].firstObject setServerTimestamp:[self nextDate]];
+    [(ZMMessage *)[self.uiConversation appendMessageWithText:@"D"] setServerTimestamp:[self nextDate]];
     [self.uiConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
 
     // when

@@ -30,6 +30,12 @@ class UserClientObserverTokenTests: MessagingTest {
             receivedChangeInfo.append(changes)
         }
     }
+    
+    override func setUp() {
+        super.setUp()
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    }
 
     let userInfoKeys = [
         UserClientChangeInfoKey.TrustedByClientsChanged,

@@ -21,9 +21,8 @@ import Foundation
 
 extension ZMVoiceChannel : ObjectInSnapshot {
     
-    public var keysToChangeInfoMap : KeyToKeyTransformation { return KeyToKeyTransformation(mapping: [:])
-    }
-    
+    public var observableKeys : [String] {return []}
+
     public func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {
         return ZMVoiceChannel.keyPathsForValuesAffectingValueForKey(key) 
     }
@@ -43,11 +42,17 @@ extension ZMVoiceChannel : ObjectInSnapshot {
 @objc public final class VoiceChannelStateChangeInfo : ObjectChangeInfo {
     
     public required init(object: NSObject) {
-        self.previousState = .Invalid
         super.init(object: object)
     }
     
-    public var previousState : ZMVoiceChannelState
+    public var previousState : ZMVoiceChannelState {
+        guard let rawValue = (changedKeysAndOldValues["voiceChannelState"] as? NSInteger),
+              let previousState = ZMVoiceChannelState(rawValue: UInt8(rawValue))
+        else { return .Invalid }
+        
+        return previousState
+    }
+    
     public var currentState : ZMVoiceChannelState {
         if let conversation = object as? ZMConversation,
             let state = conversation.voiceChannel?.state {
@@ -79,26 +84,26 @@ extension ZMVoiceChannelState: CustomStringConvertible {
     }
 }
 
-@objc public final class VoiceChannelStateObserverToken : NSObject, ZMGeneralConversationObserver {
+@objc public final class VoiceChannelStateObserverToken : NSObject, ChangeNotifierToken {
+    
+    typealias Observer = ZMVoiceChannelStateObserver
+    typealias ChangeInfo = VoiceChannelStateChangeInfo
+    typealias GlobalObserver = GlobalConversationObserver
     
     private weak var observer : ZMVoiceChannelStateObserver?
-    private var conversationToken : GeneralConversationObserverToken<VoiceChannelStateObserverToken>?
-    
-    public init(observer: ZMVoiceChannelStateObserver, conversation: ZMConversation){
-        self.observer = observer
-        super.init()
+    weak var globalObserver : GlobalConversationObserver?
 
-        self.conversationToken = GeneralConversationObserverToken(observer: self, conversation: conversation)
+    init(observer: ZMVoiceChannelStateObserver, globalObserver: GlobalConversationObserver){
+        self.observer = observer
+        self.globalObserver = globalObserver
     }
     
-    public func conversationDidChange(note: GeneralConversationChangeInfo) {
-        if let voiceChannelInfo = note.voiceChannelStateChangeInfo {
-            observer?.voiceChannelStateDidChange(voiceChannelInfo)
-        }
+    func notifyObserver(note: VoiceChannelStateChangeInfo) {
+        observer?.voiceChannelStateDidChange(note)
     }
     
     public func tearDown() {
-        conversationToken?.tearDown()
+        globalObserver?.removeVoiceChannelStateObserverForToken(self)
     }
 }
 
@@ -106,13 +111,18 @@ extension ZMVoiceChannelState: CustomStringConvertible {
 public final class GlobalVoiceChannelStateObserverToken : NSObject {
     
     private weak var observer : ZMVoiceChannelStateObserver?
-    
+    weak var globalObserver : GlobalConversationObserver?
+
     public init(observer: ZMVoiceChannelStateObserver) {
         self.observer = observer
     }
     
     public func notifyObserver(changeInfo: VoiceChannelStateChangeInfo?) {
         self.observer?.voiceChannelStateDidChange(changeInfo)
+    }
+    
+    public func tearDown() {
+        globalObserver?.removeGlobalVoiceChannelStateObserver(self)
     }
 }
 
@@ -132,67 +142,88 @@ public final class GlobalVoiceChannelStateObserverToken : NSObject {
         super.init(observedObject: conversation, changeSet: setChangeInfo.changeSet)
     }
     
-    private let conversation : ZMConversation
+    let conversation : ZMConversation
     public var voiceChannel : ZMVoiceChannel { return self.conversation.voiceChannel }
     public var otherActiveVideoCallParticipantsChanged : Bool = false
 }
 
 
-@objc public final class VoiceChannelParticipantsObserverToken: NSObject, ZMGeneralConversationObserver, ObjectsDidChangeDelegate  {
+@objc public final class VoiceChannelParticipantsObserverToken: NSObject, ChangeNotifierToken  {
+    typealias Observer = ZMVoiceChannelParticipantsObserver
+    typealias ChangeInfo = VoiceChannelParticipantsChangeInfo
+    typealias GlobalObserver = GlobalConversationObserver
+
+    private weak var observer : ZMVoiceChannelParticipantsObserver?
+    private weak var globalObserver : GlobalConversationObserver?
+    private var videoParticipantsChanged = false
+    
+    init(observer: ZMVoiceChannelParticipantsObserver, globalObserver: GlobalConversationObserver) {
+        self.observer = observer
+        self.globalObserver = globalObserver
+    }
+    
+    func notifyObserver(note: ChangeInfo) {
+        observer?.voiceChannelParticipantsDidChange(note)
+    }
+    
+    func tearDown() {
+        globalObserver?.removeVoiceChannelParticipantsObserverForToken(self)
+    }
+    
+}
+
+class InternalVoiceChannelParticipantsObserverToken: NSObject, ObjectsDidChangeDelegate  {
 
     private var state : SetSnapshot
     private var activeFlowParticipantsState : OrderedSet<NSObject>
-
-    private weak var observer : ZMVoiceChannelParticipantsObserver?
-    private let conversation : ZMConversation
-
-    private var conversationToken : GeneralConversationObserverToken<VoiceChannelParticipantsObserverToken>?
-    private var shouldRecalculate = false
-    private var videoParticipantsChanged = false
     
-    public init(observer: ZMVoiceChannelParticipantsObserver, voiceChannel: ZMVoiceChannel) {
-        self.observer = observer
-        self.conversation = voiceChannel.conversation!
+    private weak var globalObserver : GlobalConversationObserver?
+    private var conversation : ZMConversation
+    
+    private var shouldRecalculate = false
+    var isTornDown : Bool = false
+    private var videoParticipantsChanged = false
 
+    init(observer: GlobalConversationObserver, conversation: ZMConversation) {
+        self.globalObserver = observer
+        self.conversation = conversation
+        
         self.state = SetSnapshot(set: OrderedSet(orderedSet: self.conversation.voiceChannel.participants()), moveType: .UICollectionView)
         self.activeFlowParticipantsState = OrderedSet(orderedSet: self.conversation.activeFlowParticipants)
         
         super.init()
-        self.conversationToken = GeneralConversationObserverToken(observer: self, conversation:voiceChannel.conversation!)
     }
     
     deinit {
         self.tearDown()
     }
     
-    public func conversationDidChange(note: GeneralConversationChangeInfo) {
+    func conversationDidChange(note: GeneralConversationChangeInfo) {
         if note.callParticipantsChanged { // || note.activeFlowParticipantsChanged {
-            if note.videoParticipantsChanged {
-                self.videoParticipantsChanged = true
-            }
+            self.videoParticipantsChanged = note.videoParticipantsChanged
             self.shouldRecalculate = true
         }
     }
     
-    public func objectsDidChange(changes: ManagedObjectChanges) {
-        if self.shouldRecalculate || self.videoParticipantsChanged {
+    func objectsDidChange(changes: ManagedObjectChanges) {
+        if self.shouldRecalculate {
             self.recalculateSet()
         }
     }
     
-    public func recalculateSet() {
+    func recalculateSet() {
         
         self.shouldRecalculate = false
         let participants = OrderedSet(orderedSet: self.conversation.voiceChannel.participants())
         let activeFlowParticipants = OrderedSet(orderedSet: self.conversation.activeFlowParticipants)
-
+        
         // participants who have an updated flow, but are still in the voiceChannel
         let newConnected = activeFlowParticipants.minus(self.activeFlowParticipantsState)
         let newDisconnected = self.activeFlowParticipantsState.minus(activeFlowParticipants)
         
         // participants who left the voiceChannel / call
-        let newLeft = participants.minus(self.state.set)
-        let newAdded = self.state.set.minus(participants)
+        let newAdded = participants.minus(self.state.set) 
+        let newLeft = self.state.set.minus(participants)
         
         let updated = newConnected.union(newDisconnected).minus(newLeft).minus(newAdded)
         
@@ -200,20 +231,23 @@ public final class GlobalVoiceChannelStateObserverToken : NSObject {
         if let newStateUpdate = self.state.updatedState(updated, observedObject: self.conversation, newSet: participants) {
             self.state = newStateUpdate.newSnapshot
             self.activeFlowParticipantsState = activeFlowParticipants
+            
             let changeInfo = VoiceChannelParticipantsChangeInfo(setChangeInfo: newStateUpdate.changeInfo)
             changeInfo.otherActiveVideoCallParticipantsChanged = videoParticipantsChanged
-            self.observer?.voiceChannelParticipantsDidChange(changeInfo)
+            globalObserver?.notifyVoiceChannelParticipantsObserver(changeInfo)
         } else if videoParticipantsChanged {
             let changeInfo = VoiceChannelParticipantsChangeInfo(setChangeInfo: SetChangeInfo(observedObject: conversation))
             changeInfo.otherActiveVideoCallParticipantsChanged = videoParticipantsChanged
-            self.observer?.voiceChannelParticipantsDidChange(changeInfo)
+            globalObserver?.notifyVoiceChannelParticipantsObserver(changeInfo)
         }
         videoParticipantsChanged = false
     }
-
     
-    public func tearDown() {
-        self.conversationToken?.tearDown()
+    
+    func tearDown() {
+        state = SetSnapshot(set: OrderedSet(), moveType: ZMSetChangeMoveType.None)
+        activeFlowParticipantsState = OrderedSet()
+        isTornDown = true
     }
     
 }

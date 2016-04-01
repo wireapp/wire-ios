@@ -54,7 +54,7 @@ static NSString * const ZMVoiceChannelParticipantVoiceGainChangedNotificationNam
 {
     TokensContainer* token = [[TokensContainer alloc] init];
     ZMConversation *conversation = self.conversation;
-    token.stateToken = [[VoiceChannelStateObserverToken alloc] initWithObserver:observer conversation:conversation];
+    token.stateToken = [conversation.managedObjectContext.globalManagedObjectContextObserver addVoiceChannelStateObserver:observer conversation:conversation];
     NSManagedObjectID *conversationId = conversation.objectID;
     ZM_WEAK(observer);
 

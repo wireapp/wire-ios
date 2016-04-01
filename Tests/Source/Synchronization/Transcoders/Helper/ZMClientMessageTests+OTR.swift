@@ -68,7 +68,6 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func testThatItCreatesPayloadForZMClearedMessages() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            
             self.conversation.clearedTimeStamp = NSDate()
             self.conversation.remoteIdentifier = NSUUID()
             self.message = ZMConversation.appendSelfConversationWithClearedOfConversation(self.conversation)
@@ -81,6 +80,30 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
             // then
             self.assertMessageMetadata(payload)
         }
+    }
+    
+    func testThatItCreatesPayloadForExternalMessage() {
+        
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.message = self.conversation.appendOTRMessageWithText(self.textRequiringExternalMessage, nonce: NSUUID.createUUID())
+            
+            //when
+            let payload = self.message.encryptedMessagePayloadData()
+            
+            //then
+            self.assertMessageMetadata(payload)
+        }
+    }
+    
+    // MARK: - Helper
+    
+    private var textRequiringExternalMessage: String {
+        var text = "Hello"
+        while (text.dataUsingEncoding(NSUTF8StringEncoding)?.length < Int(ZMClientMessageByteSizeExternalThreshold)) {
+            text.appendContentsOf(text)
+        }
+        return text
     }
     
 }

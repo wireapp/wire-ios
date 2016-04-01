@@ -488,7 +488,9 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
     if (self.remoteIdentifier == nil) {
         self.remoteIdentifier = remoteID;
     } else {
-        RequireString([self.remoteIdentifier isEqual:remoteID], "User ids do not match in update");
+        RequireString([self.remoteIdentifier isEqual:remoteID], "User ids do not match in update: %s vs. %s",
+                      remoteID.transportString.UTF8String,
+                      self.remoteIdentifier.transportString.UTF8String);
     }
 
     NSString *name = [transportData optionalStringForKey:@"name"];
@@ -969,11 +971,11 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
     //NOTE: default case is intentionally missing, to trigger a compile error when new image formats are added (so that we can decide whether we want to handle them or not)
     switch (format) {
         case ZMImageFormatMedium:
-            [self setImageData:imageData forKey:ImageMediumDataKey imageRemoteId:self.mediumRemoteIdentifier];
+            [self setImageData:imageData forKey:ImageMediumDataKey format:format];
             break;
             
         case ZMImageFormatProfile:
-            [self setImageData:imageData forKey:ImageSmallProfileDataKey imageRemoteId:self.smallProfileRemoteIdentifier];
+            [self setImageData:imageData forKey:ImageSmallProfileDataKey format:format];
             break;
 
         case ZMImageFormatInvalid:
@@ -984,7 +986,7 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
     }
 }
 
-- (void)setImageData:(NSData *)imageData forKey:(NSString *)key imageRemoteId:(NSUUID *)imageRemoteId
+- (void)setImageData:(NSData *)imageData forKey:(NSString *)key format:(ZMImageFormat)format
 {
     [self willChangeValueForKey:key];
     if (self.isSelfUser) {
@@ -995,7 +997,20 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
         }
     }
     else {
-        [self.managedObjectContext storeUserImage:imageData forRemoteIdentifier:imageRemoteId];
+        switch (format) {
+            case ZMImageFormatMedium: {
+                [self.managedObjectContext.zm_userImageCache setLargeUserImage:self imageData:imageData]; // user image cache is thead safe
+                break;
+                
+            }
+            case ZMImageFormatProfile: {
+                [self.managedObjectContext.zm_userImageCache setSmallUserImage:self imageData:imageData]; // user image cache is thead safe
+                break;
+            }
+            default:
+                RequireString(NO, "Unexpected image format '%lu' set in user", (unsigned long)format);
+                break;
+        }
     }
     [self didChangeValueForKey:key];
     [self.managedObjectContext saveOrRollback];
@@ -1004,13 +1019,21 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
 
 - (NSData *)imageDataForFormat:(ZMImageFormat)format;
 {
-    //NOTE: default case is intentionally missing, to trigger a compile error when new image formats are added (so that we can decide whether we want to handle them or not)
+    
     switch (format) {
         case ZMImageFormatMedium: {
-            return [self imageDataForKey:ImageMediumDataKey imageRemoteId:self.mediumRemoteIdentifier];
+            if(self.isSelfUser) {
+                return [self primitiveValueForKey:ImageMediumDataKey];
+            } else {
+                return [self.managedObjectContext.zm_userImageCache largeUserImage:self]; // user image cache is thead safe
+            }
         }
         case ZMImageFormatProfile: {
-            return [self imageDataForKey:ImageSmallProfileDataKey imageRemoteId:self.smallProfileRemoteIdentifier];
+            if(self.isSelfUser) {
+                return [self primitiveValueForKey:ImageSmallProfileDataKey];
+            } else {
+                return [self.managedObjectContext.zm_userImageCache smallUserImage:self]; // user image cache is thead safe
+            }
         }
             
         case ZMImageFormatInvalid:
@@ -1021,20 +1044,6 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
     }
     
     return nil;
-}
-
-- (NSData *)imageDataForKey:(NSString *)key imageRemoteId:(NSUUID *)imageRemoteId
-{
-    NSData *imageData;
-    [self willAccessValueForKey:key];
-    if (self.isSelfUser) {
-        imageData = [self primitiveValueForKey:key];
-    }
-    else {
-        imageData = [self.managedObjectContext userImageForRemoteIdentifier:imageRemoteId];
-    }
-    [self didAccessValueForKey:key];
-    return imageData;
 }
 
 - (BOOL)isInlineForFormat:(ZMImageFormat)format

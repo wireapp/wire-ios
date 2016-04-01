@@ -33,7 +33,6 @@
 #import "ZMSearchDirectory+Internal.h"
 #import <libkern/OSAtomic.h>
 #import "ZMAuthenticationStatus.h"
-#import "ZMApplicationLaunchStatus.h"
 #import "ZMAddressBookTranscoder.h"
 #import "ZMPushToken.h"
 #import "ZMNotifications+Internal.h"
@@ -55,6 +54,7 @@
 #import "ZMAVSBridge.h"
 #import "ZMOnDemandFlowManager.h"
 #import "ZMCookie.h"
+#import "ZMFlowSync.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 #import "ZMStringLengthValidator.h"
@@ -97,7 +97,6 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ClientUpdateStatus *clientUpdateStatus;
 @property (nonatomic) BackgroundAPNSPingBackStatus *pingBackStatus;
 
-@property (nonatomic) ZMApplicationLaunchStatus *applicationLaunchStatus;
 @property (nonatomic) GiphyRequestsStatus *giphyRequestStatus;
 @property (nonatomic) BOOL isVersionBlacklisted;
 @property (nonatomic) NSArray *cachedAddressBookContacts;
@@ -108,6 +107,9 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ZMApplicationRemoteNotification *applicationRemoteNotification;
 @property (nonatomic) ZMStoredLocalNotification *pendingLocalNotification;
 @property (nonatomic) ZMLocalNotificationDispatcher *localNotificationDispatcher;
+
+/// Build number of the Wire app
+@property (nonatomic) NSString *appVersion;
 
 /// map from NSUUID to ZMCommonContactsSearchCachedEntry
 @property (nonatomic) NSCache *commonContactsCache;
@@ -159,8 +161,8 @@ ZM_EMPTY_ASSERTING_INIT()
     return [NSManagedObjectContext storeIsReady];
 }
 
-- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
-{   
+- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager appVersion:(NSString *)appVersion;
+{
     zmSetupEnvironments();
     ZMBackendEnvironment *environment = [[ZMBackendEnvironment alloc] init];
     NSURL *backendURL = environment.backendURL;
@@ -174,7 +176,13 @@ ZM_EMPTY_ASSERTING_INIT()
 
     UIApplication *application = [UIApplication sharedApplication];
     
-    self = [self initWithTransportSession:session syncManagedObjectContext:syncMOC mediaManager:mediaManager apnsEnvironment:apnsEnvironment operationLoop:nil application:application];
+    self = [self initWithTransportSession:session
+                 syncManagedObjectContext:syncMOC
+                             mediaManager:mediaManager
+                          apnsEnvironment:apnsEnvironment
+                            operationLoop:nil
+                              application:application
+                               appVersion:appVersion];
     if (self != nil) {
         self.ownsQueue = YES;
         self.loadAddressBookContactsOnce = 0;
@@ -182,12 +190,21 @@ ZM_EMPTY_ASSERTING_INIT()
     return self;
 }
 
-- (instancetype)initWithTransportSession:(ZMTransportSession *)session syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext mediaManager:(id<AVSMediaManager>)mediaManager apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment operationLoop:(ZMOperationLoop *)operationLoop application:(ZMApplication *)application;
+- (instancetype)initWithTransportSession:(ZMTransportSession *)session
+                syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext
+                            mediaManager:(id<AVSMediaManager>)mediaManager
+                         apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
+                           operationLoop:(ZMOperationLoop *)operationLoop
+                             application:(ZMApplication *)application
+                              appVersion:(NSString *)appVersion;
+
 {
     self = [super init];
     if(self) {
         zmSetupEnvironments();
         [ZMUserSession enableLogsByEnvironmentVariable];
+        self.appVersion = appVersion;
+        [ZMUserAgent setWireAppVersion:appVersion];
         self.didStartInitialSync = NO;
         self.apnsEnvironment = apnsEnvironment;
         self.networkIsOnline = YES;
@@ -197,6 +214,10 @@ ZM_EMPTY_ASSERTING_INIT()
         
         self.syncManagedObjectContext.zm_userInterfaceContext = self.managedObjectContext;
         self.managedObjectContext.zm_syncContext = self.syncManagedObjectContext;
+        
+        UserImageLocalCache *imageCache = [[UserImageLocalCache alloc] init];
+        self.syncManagedObjectContext.zm_userImageCache = imageCache;
+        self.managedObjectContext.zm_userImageCache = imageCache;
         
         ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.managedObjectContext cookieStorage:session.cookieStorage];
         self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:syncManagedObjectContext cookie:cookie];
@@ -208,8 +229,6 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                                 updateCredentialProvider:self.userProfileUpdateStatus
                                                                                                   cookie:cookie
                                                                               registrationStatusDelegate:self];
-
-        self.applicationLaunchStatus = [[ZMApplicationLaunchStatus alloc] initWithManagedObjectContext:syncManagedObjectContext];
         
         self.giphyRequestStatus = [GiphyRequestsStatus new];
         
@@ -228,16 +247,11 @@ ZM_EMPTY_ASSERTING_INIT()
         
         _application = application;
         
-        NSCache *userImagesCache = [[NSCache alloc] init];
-        [self.managedObjectContext setUserImagesCache:userImagesCache];
-        [self.syncManagedObjectContext setUserImagesCache:userImagesCache];
-        
         self.operationLoop = operationLoop ?: [[ZMOperationLoop alloc] initWithTransportSession:session
                                                                            authenticationStatus:self.authenticationStatus
                                                                         userProfileUpdateStatus:self.userProfileUpdateStatus
                                                                        clientRegistrationStatus:self.clientRegistrationStatus
                                                                              clientUpdateStatus:self.clientUpdateStatus
-                                                                        applicationLaunchStatus:self.applicationLaunchStatus
                                                                              giphyRequestStatus:self.giphyRequestStatus
                                                                    backgroundAPNSPingBackStatus:self.pingBackStatus
                                                                     localNotificationdispatcher:self.localNotificationDispatcher
@@ -279,7 +293,8 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.operationLoop tearDown];
     [self.localNotificationDispatcher tearDown];
     self.localNotificationDispatcher = nil;
-
+    [self.blackList teardown];
+    
     if(self.ownsQueue) {
         [self.transportSession tearDown];
         self.transportSession = nil;
@@ -289,7 +304,6 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.clientRegistrationStatus tearDown];
     self.clientRegistrationStatus = nil;
     self.authenticationStatus = nil;
-    self.applicationLaunchStatus = nil;
     self.userProfileUpdateStatus = nil;
     self.giphyRequestStatus = nil;
     
@@ -387,12 +401,12 @@ ZM_EMPTY_ASSERTING_INIT()
     NOT_USED(delegate);
 }
 
-- (void)startAndCheckClientVersion:(NSString *)appVersion checkInterval:(NSTimeInterval)interval blackListedBlock:(void (^)())blackListed;
+- (void)startAndCheckClientVersionWithCheckInterval:(NSTimeInterval)interval blackListedBlock:(void (^)())blackListed;
 {
     [self start];
     ZM_WEAK(self);
     self.blackList = [[ZMBlacklistVerificator alloc] initWithCheckInterval:interval
-                                                                   version:appVersion
+                                                                   version:self.appVersion
                                                               workingGroup:self.syncManagedObjectContext.dispatchGroup
                                                          blacklistCallback:^(BOOL isBlackListed) {
         ZM_STRONG(self);
@@ -818,6 +832,23 @@ static NSString * const TrackingIdentifierKey = @"ZMTrackingIdentifier";
 
 
 @implementation ZMUserSession (AVSLogging)
+
++ (id<ZMAVSLogObserverToken>)addAVSLogObserver:(id<ZMAVSLogObserver>)observer;
+{
+    ZM_WEAK(observer);
+    return (id<ZMAVSLogObserverToken>)[[NSNotificationCenter defaultCenter] addObserverForName:@"AVSLogMessageNotification"
+                                                                                        object:nil
+                                                                                         queue:nil
+                                                                                    usingBlock:^(NSNotification * _Nonnull note) {
+                                                                                        ZM_STRONG(observer);
+                                                                                        [observer logMessage:note.userInfo[@"message"]];
+                                                                                    }];
+}
+
++ (void)removeAVSLogObserver:(id<ZMAVSLogObserverToken>)token;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:token];
+}
 
 + (void)appendAVSLogMessageForConversation:(ZMConversation *)conversation withMessage:(NSString *)message;
 {

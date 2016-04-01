@@ -39,7 +39,6 @@
 @class ZMUserProfileUpdateStatus;
 @class GiphyRequestsStatus;
 @class ZMClientRegistrationStatus;
-@class ZMApplicationLaunchStatus;
 @class ClientUpdateStatus;
 @class BackgroundAPNSPingBackStatus;
 
@@ -49,7 +48,6 @@
                      userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                           clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                           giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
                 backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                 mediaManager:(id<AVSMediaManager>)mediaManager

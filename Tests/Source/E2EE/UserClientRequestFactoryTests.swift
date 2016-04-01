@@ -312,7 +312,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         client.missesClient(firstMissingClient)
         client.missesClient(secondMissingClient)
         
-        let map = MissingClientsMap(Array(client.missingClients!), pageSize: sut.missingClientsPageSize)
+        let map = MissingClientsMap(Array(client.missingClients!), pageSize: sut.missingClientsUserPageSize)
         let request = sut.fetchMissingClientKeysRequest(map)
         _ = [missingUser.remoteIdentifier!.transportString(): [firstMissingClient.remoteIdentifier, secondMissingClient.remoteIdentifier]]
         

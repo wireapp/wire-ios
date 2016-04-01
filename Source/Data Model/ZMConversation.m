@@ -372,7 +372,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 
 + (NSSet *)keyPathsForValuesAffectingRelatedConnectionState
 {
-    return [NSSet setWithObject:@"connection.status"];
+    return [NSSet setWithObject:@"connection"];
 }
 
 - (NSSet *)ignoredKeys;
@@ -534,10 +534,8 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 
 + (NSSet *)keyPathsForValuesAffectingDisplayName;
 {
-    return [NSSet setWithObjects:ConversationTypeKey, @"connection.status",
-            ZMConversationUserDefinedNameKey,
-            [NSString stringWithFormat:@"%@.%@", ZMConversationOtherActiveParticipantsKey, @"displayName"],
-            nil];
+    return [NSSet setWithObjects:ConversationTypeKey, @"connection",
+            ZMConversationUserDefinedNameKey, nil];
 }
 
 + (instancetype)insertGroupConversationIntoUserSession:(ZMUserSession *)session withParticipants:(NSArray *)participants
@@ -838,30 +836,15 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     }
 }
 
-- (NSArray<id <ZMConversationMessage>> *)appendMessagesWithText:(NSString *)text;
+- (id <ZMConversationMessage>)appendMessageWithText:(NSString *)text;
 {
     VerifyReturnNil(![text zmHasOnlyWhitespaceCharacters]);
     VerifyReturnNil(text != nil);
 
-    NSArray *splittedText = [text splitInSubstringsWithMaxLength:ZMConversationMaxTextMessageLength];
-
-    NSArray *messages = [splittedText mapWithBlock:^id <ZMConversationMessage>(NSString *messageText) {
-        return [self appendSingleMessageWithText:messageText];
-    }];
-
+    NSUUID *nonce = NSUUID.UUID;
+    id <ZMConversationMessage> message = [self appendOTRMessageWithText:text nonce:nonce];
     [ZMTypingTranscoder clearTranscoderStateForTypingInConversation:self];
-    return messages;
-}
-
-- (id <ZMConversationMessage>)appendSingleMessageWithText:(NSString *)text
-{
-    VerifyReturnNil(text != nil);
-    // check generic message size
-    NSUUID *nonce = [NSUUID UUID];
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:text nonce:nonce.transportString];
-    VerifyReturnNil(genericMessage.data.length < ZMConversationMaxEncodedTextMessageLength);
-    
-    return [self appendOTRMessageWithText:text nonce:nonce];
+    return message;
 }
 
 - (id<ZMConversationMessage>)appendMessageWithImageAtURL:(NSURL *)fileURL;
@@ -1351,7 +1334,10 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 - (void)updateWithTransportData:(NSDictionary *)transportData;
 {
     NSUUID *remoteId = [transportData uuidForKey:@"id"];
-    RequireString(remoteId == nil || [remoteId isEqual:self.remoteIdentifier], "Remote IDs not matching for conversation.");
+    RequireString(remoteId == nil || [remoteId isEqual:self.remoteIdentifier],
+                  "Remote IDs not matching for conversation: %s vs. %s",
+                  remoteId.transportString.UTF8String,
+                  self.remoteIdentifier.transportString.UTF8String);
     
     if(transportData[@"name"] != [NSNull null]) {
         self.userDefinedName = [transportData stringForKey:@"name"];
@@ -2006,7 +1992,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 + (void)updateCallStateForOfflineModeInContext:(NSManagedObjectContext *)moc;
 {
     NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];
-    RequireString(entity != nil, "Unable to lcoate Conversation entity");
+    RequireString(entity != nil, "Unable to locate Conversation entity");
     for (ZMConversation *c in moc.registeredObjects) {
         if (c.entity == entity) {
             [c updateCallStateForOfflineMode];

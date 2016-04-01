@@ -46,7 +46,6 @@
     self.backgroundableSession = [OCMockObject mockForProtocol:@protocol(ZMBackgroundable)];
     _sut = [[ZMBackgroundState alloc] initWithAuthenticationCenter:self.authenticationStatus
                                           clientRegistrationStatus:self.clientRegistrationStatus
-                                           applicationLaunchStatus:self.applicationLaunchStatus
                                            objectStrategyDirectory:self.objectDirectory
                                               stateMachineDelegate:self.stateMachine
                                              backgroundableSession:self.backgroundableSession];
@@ -119,7 +118,7 @@
      */
     
     [self checkThatItCallsRequestGeneratorsOnObjectsOfClass:[self syncObjectsUsedByState] creationOfStateBlock:^ZMSyncState *(id<ZMObjectStrategyDirectory> directory) {
-        return [[ZMBackgroundState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus                                                            applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine backgroundableSession:self.backgroundableSession];
+        return [[ZMBackgroundState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine backgroundableSession:self.backgroundableSession];
     }];
     
 }

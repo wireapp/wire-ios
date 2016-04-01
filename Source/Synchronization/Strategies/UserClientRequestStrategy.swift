@@ -158,7 +158,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
     
     public func requestForUpdatingObject(managedObject: ZMManagedObject!, forKeys keys: Set<NSObject>!) -> ZMUpstreamRequest! {
         if let managedObject = managedObject as? UserClient {
-            guard let clientUpdateStatus = self.clientUpdateStatus else { fatalError("clientUpdateStatus is not set") }
+            guard let clientUpdateStatus = self.clientUpdateStatus else { fatal("clientUpdateStatus is not set") }
             
             var request: ZMUpstreamRequest!
             
@@ -166,40 +166,40 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
             case _ where keys.contains(ZMUserClientNumberOfKeysRemainingKey):
                 do {
                     try request = requestsFactory.updateClientPreKeysRequest(managedObject)
-                } catch let error {
-                    fatalError("Couldn't create request for new pre keys: \(error)")
+                } catch let e {
+                    fatal("Couldn't create request for new pre keys: \(e)")
                 }
             case _ where keys.contains(ZMUserClientMarkedToDeleteKey):
                 if clientUpdateStatus.currentPhase == ClientUpdatePhase.DeletingClients && clientUpdateStatus.credentials != nil {
                     request = requestsFactory.deleteClientRequest(managedObject, credentials: clientUpdateStatus.credentials!)
                 }
                 else {
-                    fatalError("No email credentials in memory")
+                    fatal("No email credentials in memory")
                 }
             case _ where keys.contains(ZMUserClientMissingKey):
                 if let missing = managedObject.missingClients where missing.count > 0 {
-                    let map = MissingClientsMap(Array(missing), pageSize: requestsFactory.missingClientsPageSize)
+                    let map = MissingClientsMap(Array(missing), pageSize: requestsFactory.missingClientsUserPageSize)
                     request = requestsFactory.fetchMissingClientKeysRequest(map)
                 }
                 
-            default: fatalError("Unknown keys to sync (\(keys))")
+            default: fatal("Unknown keys to sync (\(keys))")
             }
             
             return request
         }
         else {
-            fatalError("Called requestForUpdatingObject() on \(managedObject) to sync keys: \(keys)")
+            fatal("Called requestForUpdatingObject() on \(managedObject) to sync keys: \(keys)")
         }
     }
     
     public func requestForInsertingObject(managedObject: ZMManagedObject!, forKeys keys: Set<NSObject>!) -> ZMUpstreamRequest! {
         if let managedObject = managedObject as? UserClient {
-            guard let authenticationStatus = self.authenticationStatus else { fatalError("authenticationStatus is not set") }
+            guard let authenticationStatus = self.authenticationStatus else { fatal("authenticationStatus is not set") }
             let request = try? requestsFactory.registerClientRequest(managedObject, credentials: clientRegistrationStatus?.emailCredentials, authenticationStatus: authenticationStatus)
             return request
         }
         else {
-            fatalError("Called requestForInsertingObject() on \(managedObject)")
+            fatal("Called requestForInsertingObject() on \(managedObject)")
         }
     }
     
@@ -245,7 +245,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
             clientRegistrationStatus?.didRegisterClient(client)
         }
         else {
-            fatalError("Called updateInsertedObject() on \(managedObject)")
+            fatal("Called updateInsertedObject() on \(managedObject)")
         }
     }
     
@@ -554,8 +554,9 @@ struct MissingClientsRequestUserInfoKeys {
 
 public struct MissingClientsMap {
 
-    // { <user-id>: [<client-id>] }
+    /// The mapping from user-id's to an array of missing clients for that user `{ <user-id>: [<client-id>] }`
     let payload: [String: [String]]
+    /// The `MissingClientsRequestUserInfoKeys.clients` key holds all missing clients
     let userInfo: [String: [String]]
     
     public init(_ missingClients: [UserClient], pageSize: Int) {
@@ -566,7 +567,13 @@ public struct MissingClientsMap {
             return clientsMap
         }
         
-        let missing = missingClients[0..<min(missingClients.count, pageSize)]
+        var users = Set<ZMUser>()
+        let missing = missingClients.filter {
+            guard let user = $0.user else { return false }
+            users.insert(user)
+            return users.count <= pageSize
+        }
+        
         payload = missing.filter { $0.user?.remoteIdentifier != nil } .reduce([String:[String]](), combine: addClientIdToMap)
         userInfo = [MissingClientsRequestUserInfoKeys.clients: missing.map { $0.remoteIdentifier }]
     }

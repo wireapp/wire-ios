@@ -36,7 +36,8 @@ public protocol ObjectChangeInfoProtocol : NSObjectProtocol {
     init(object: NSObject)
     func setValue(value: AnyObject?, forKey key: String)
     func valueForKey(key: String) -> AnyObject?
-    var changedKeys : KeySet { get set }
+    var changedKeysAndOldValues : [String : NSObject?] {get set}
+
 }
 
 public class ObjectChangeInfo : NSObject, ObjectChangeInfoProtocol {
@@ -46,8 +47,11 @@ public class ObjectChangeInfo : NSObject, ObjectChangeInfoProtocol {
     public required init(object: NSObject) {
         self.object = object
     }
-    public var changedKeys : KeySet = KeySet()
+    public var changedKeysAndOldValues : [String : NSObject?] = [:]
     
+    public func previousValueForKey(key: String) -> NSObject? {
+        return changedKeysAndOldValues[key] ?? nil
+    }
 }
 
 /// This is used to wrap UI observers
@@ -74,127 +78,55 @@ final class ObjectObserverToken<T : ObjectChangeInfoProtocol, B: ObjectObserverT
     
     typealias ObserverCallback = (B, T) -> Void
     
-    /// Mapping from key ("name") to variable in T that should be set ("nameChanged")
-    private let keyToObjectChangeKeyMap : KeyToKeyTransformation
     /// List of keys for which we want to store a previous value
-    private let keyToPreviousValueMap : KeyToKeyTransformation
     private let token : ObjectDependencyToken?
     private let observedObject : NSObject
-    private let externalObserver : ObserverCallback
+    private var parentChangeHandler : ObserverCallback!
     private var tokenContainers: NSHashTable = NSHashTable.weakObjectsHashTable()
+    private var isTornDown : Bool = false
+
     
-    static func tokenWithContainers(
+    static func token(
         observedObject: NSObject,
-        keysToObserve : KeySet,
-        keysThatNeedPreviousValue : KeyToKeyTransformation,
+        observableKeys: [String],
         managedObjectContextObserver: ManagedObjectContextObserver,
-        observer: ObserverCallback)
+        changeHandler: ObserverCallback)
         -> ObjectObserverToken<T, B>
     {
-        return ObjectObserverToken(observedObject: observedObject, keysToObserve: keysToObserve, keysThatNeedPreviousValue: keysThatNeedPreviousValue, managedObjectContextObserver: managedObjectContextObserver, observer: observer)
+        return ObjectObserverToken(observedObject: observedObject, observableKeys:observableKeys, managedObjectContextObserver: managedObjectContextObserver, changeHandler: changeHandler)
             
     }
     
-    static func tokenWithContainers(
+    private init(
         observedObject: NSObject,
-        keyToKeyTransformation : KeyToKeyTransformation,
-        keysThatNeedPreviousValue : KeyToKeyTransformation,
+        observableKeys : [String],
         managedObjectContextObserver: ManagedObjectContextObserver,
-        observer: ObserverCallback)
-        -> ObjectObserverToken<T, B>
-    {
-        return ObjectObserverToken(observedObject: observedObject, keyToKeyTransformation: keyToKeyTransformation, keysThatNeedPreviousValue: keysThatNeedPreviousValue, managedObjectContextObserver: managedObjectContextObserver, observer: observer)
-            
-    }
-    
-    static func token(observedObject: NSObject,
-        keysToObserve : KeySet,
-        keysThatNeedPreviousValue : KeyToKeyTransformation,
-        managedObjectContextObserver: ManagedObjectContextObserver,
-        observer: ObserverCallback)
-        -> ObjectObserverToken<T, B>
-    {
-        let token = ObjectObserverToken(observedObject: observedObject, keysToObserve: keysToObserve, keysThatNeedPreviousValue: keysThatNeedPreviousValue, managedObjectContextObserver: managedObjectContextObserver, observer: observer)
-        return token
-    }
-    
-    
-    static func token(observedObject: NSObject,
-        keyToKeyTransformation : KeyToKeyTransformation,
-        keysThatNeedPreviousValue : KeyToKeyTransformation,
-        managedObjectContextObserver: ManagedObjectContextObserver,
-        observer: ObserverCallback)
-        -> ObjectObserverToken<T, B>
-    {
-        let token = ObjectObserverToken(observedObject: observedObject, keyToKeyTransformation: keyToKeyTransformation, keysThatNeedPreviousValue: keysThatNeedPreviousValue, managedObjectContextObserver: managedObjectContextObserver, observer: observer)
-        return token
-    }
-    
-    private convenience init(
-        observedObject: NSObject,
-        keysToObserve : KeySet,
-        keysThatNeedPreviousValue : KeyToKeyTransformation,
-        managedObjectContextObserver: ManagedObjectContextObserver,
-        observer: ObserverCallback
-        ) {
-        var keyToKeyTransformationMap : [KeyPath : KeyToKeyTransformation.KeyToKeyMappingType] = [:]
-        
-        for key in keysToObserve {
-            keyToKeyTransformationMap[key] = KeyToKeyTransformation.KeyToKeyMappingType.None
-        }
-        
-        self.init(
-            observedObject: observedObject,
-            keyToKeyTransformation: KeyToKeyTransformation(mapping: keyToKeyTransformationMap),
-            keysThatNeedPreviousValue : keysThatNeedPreviousValue,
-            managedObjectContextObserver: managedObjectContextObserver,
-            observer: observer)
-    }
-    
-    private init(observedObject: NSObject,
-        keyToKeyTransformation : KeyToKeyTransformation,
-        keysThatNeedPreviousValue : KeyToKeyTransformation,
-        managedObjectContextObserver: ManagedObjectContextObserver,
-        observer: ObserverCallback
+        changeHandler: ObserverCallback
         )
     {
-        self.externalObserver = observer
-        
+        self.parentChangeHandler = changeHandler
         self.observedObject = observedObject
-        self.keyToObjectChangeKeyMap = keyToKeyTransformation
-        self.keyToPreviousValueMap = keysThatNeedPreviousValue
-        let keysToObserve = keysThatNeedPreviousValue.allKeys().union(keyToKeyTransformation.allKeys())
-        var wrapper : ([KeyPath:NSObject?]) -> () = { _ in return }
+        var internalChangeHandler : ([KeyPath:NSObject?]) -> () = { _ in return }
         
         self.token = ObjectDependencyToken(
             keyFromParentObjectToObservedObject: nil,
             observedObject: observedObject,
-            keysToObserve: keysToObserve,
+            keysToObserve: KeySet(observableKeys),
             managedObjectContextObserver: managedObjectContextObserver,
-            observer: { wrapper($0) }
+            changeHandler : { internalChangeHandler($0) }
         )
         
         super.init()
         
-        wrapper = {
+        internalChangeHandler = {
             [weak self] (changedKeys) in
             self?.keysDidChange(changedKeys)
         }
-
     }
 
     func keysDidChange(affectedKeys: [KeyPath:NSObject?]) {
         let objectChangeInfo = T(object: self.observedObject)
-        objectChangeInfo.changedKeys = KeySet(affectedKeys.keys)
-
-        for (key, oldValue) in affectedKeys {
-            if let fieldName = self.keyToObjectChangeKeyMap.transformKey(key, defaultTransformation: { $0 + "Changed" } ) {
-                objectChangeInfo.setValue(1, forKey: fieldName.rawValue)
-            }
-            if let previousValueFieldName = self.keyToPreviousValueMap.transformKey(key, defaultTransformation: {"previous" + $0.upperCasePreservingCamelCase() } )  {
-                objectChangeInfo.setValue(oldValue, forKey: previousValueFieldName.rawValue)
-            }
-        }
+        affectedKeys.forEach { objectChangeInfo.changedKeysAndOldValues[$0.0.rawValue] = $0.1 }
         
         notifyObservers(objectChangeInfo)
     }
@@ -202,7 +134,7 @@ final class ObjectObserverToken<T : ObjectChangeInfoProtocol, B: ObjectObserverT
     // Sends the given changeInfo to all registered observers for this object
     func notifyObservers(changeInfo: T) {
         for container in tokenContainers.allObjects {
-            self.externalObserver(container as! B, changeInfo)
+            self.parentChangeHandler(container as! B, changeInfo)
         }
     }
     
@@ -220,13 +152,22 @@ final class ObjectObserverToken<T : ObjectChangeInfoProtocol, B: ObjectObserverT
 		return tokenContainers.count == 0
 	}
     
+    func keysHaveChanged(keys: [String]) {
+        self.token?.keysHaveChanged(keys)
+    }
+    
 
     func tearDown() {
-        self.token?.tearDown()
+        if isTornDown {return}
+        isTornDown = true
+        tokenContainers.removeAllObjects()
+        parentChangeHandler = nil
+        token?.tearDown()
     }
     
     deinit {
-        // TODO: Why are we calling tearDown() here? It would be a programming error for it not to have been called at this point.
-        self.tearDown()
+        assert(isTornDown)
     }
 }
+
+

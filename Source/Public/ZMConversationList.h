@@ -22,6 +22,8 @@
 /// Use @c ZMConversationListChangeNotification to get notified about changes.
 @interface ZMConversationList : NSArray
 
+@property (nonatomic, readonly) NSString *identifier;
+
 /// Returns an auto-updating array of all unarchived conversations in the @c session .
 + (ZMConversationList *)conversationsInUserSession:(ZMUserSession *)session;
 

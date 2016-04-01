@@ -35,9 +35,14 @@ class KeyPathTests: MessagingTest {
         XCTAssertTrue(sut.isPath)
     }
     
-    func testThatItDoesNotDecomposeSimpleKeys() {
+    func testThatItDecomposesSimpleKeys() {
         let sut = KeyPath.keyPathForString("name")
-        AssertOptionalNil(sut.decompose)
+        if let (a, b) = sut.decompose {
+            XCTAssertEqual(a, KeyPath.keyPathForString("name"))
+            XCTAssertEqual(b, nil)
+        } else {
+            XCTFail("Did not decompose")
+        }
     }
     
     func testThatItDecomposesKeyPaths() {

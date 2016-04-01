@@ -21,6 +21,12 @@ import Foundation
 
 class ObjectDependencyTokenTests : MessagingTest {
     
+    override func setUp() {
+        super.setUp()
+        NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    }
+    
     func testThatItNotifiesAnObserverThatAKeyChanged() {
         
         // given

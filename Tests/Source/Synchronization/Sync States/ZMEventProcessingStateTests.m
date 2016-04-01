@@ -45,7 +45,7 @@
     
     [super setUp];
     
-    _sut = [[ZMEventProcessingState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
+    _sut = [[ZMEventProcessingState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
 }
 
 - (NSArray *)syncObjectsUsedByState
@@ -114,7 +114,7 @@
      */
     
     [self checkThatItCallsRequestGeneratorsOnObjectsOfClass:[self syncObjectsUsedByState] creationOfStateBlock:^ZMSyncState *(id<ZMObjectStrategyDirectory> directory) {
-        return [[ZMEventProcessingState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
+        return [[ZMEventProcessingState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
     }];
 }
 

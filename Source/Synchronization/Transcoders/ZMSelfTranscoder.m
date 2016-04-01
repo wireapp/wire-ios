@@ -171,9 +171,7 @@ NSTimeInterval ZMSelfTranscoderPendingValidationRequestInterval = 5;
 - (ZMUpstreamRequest *)requestForUpdatingObject:(ZMManagedObject *)managedObject forKeys:(NSSet *)keys;
 {
     ZMUser *user = (ZMUser *)managedObject;
-    if (! user.isSelfUser) {
-        ZMTrap();
-    }
+    Require(user.isSelfUser);
 
     if ([keys containsObject:AccentColorValueKey] || [keys containsObject:NameKey]) {
         return [self requestForSettingBasicProfileDataOfUser:user changedKeys:keys];
@@ -189,6 +187,7 @@ NSTimeInterval ZMSelfTranscoderPendingValidationRequestInterval = 5;
     }
     
     ZMTrapUnableToGenerateRequest(keys, self);
+    return nil;
 }
 
 - (ZMUpstreamRequest *)requestForSettingBasicProfileDataOfUser:(ZMUser *)user changedKeys:(NSSet *)keys

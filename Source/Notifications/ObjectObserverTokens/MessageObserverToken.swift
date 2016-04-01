@@ -22,22 +22,19 @@ import Foundation
 
 extension ZMMessage : ObjectInSnapshot {
     
-    public var keysToChangeInfoMap : KeyToKeyTransformation {
-        
-        var mapping : [KeyPath : KeyToKeyTransformation.KeyToKeyMappingType] = [:]
-        mapping[KeyPath.keyPathForString("deliveryState")] = .Default
+    public var observableKeys : [String] {
+        var keys = ["deliveryState"]
         
         if self is ZMImageMessage {
-            mapping[KeyPath.keyPathForString("mediumData")] = .Custom(KeyPath.keyPathForString("imageChanged"))
-            mapping[KeyPath.keyPathForString("mediumRemoteIdentifier")] = .Custom(KeyPath.keyPathForString("imageChanged"))
+            keys.append("mediumData")
+            keys.append("mediumRemoteIdentifier")
         }
         if self is ZMAssetClientMessage {
-            mapping[KeyPath.keyPathForString("previewGenericMessage")] = .Custom(KeyPath.keyPathForString("imageChanged"))
-            mapping[KeyPath.keyPathForString("mediumGenericMessage")] = .Custom(KeyPath.keyPathForString("imageChanged"))
-            mapping[KeyPath.keyPathForString("loadedMediumData")] = .Custom(KeyPath.keyPathForString("imageChanged"))
+            keys.append("previewGenericMessage")
+            keys.append("mediumGenericMessage")
+            keys.append("loadedMediumData")
         }
-        
-        return KeyToKeyTransformation(mapping: mapping)
+        return keys
     }
 }
 
@@ -47,10 +44,18 @@ extension ZMMessage : ObjectInSnapshot {
         self.message = object as! ZMMessage
         super.init(object: object)
     }
-    public var deliveryStateChanged = false
-    public var imageChanged = false
-    public var knockChanged = false
-    public var usersChanged = false
+    public var deliveryStateChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("deliveryState")
+    }
+
+    public var imageChanged : Bool {
+        return !Set(arrayLiteral: "mediumData", "mediumRemoteIdentifier", "previewGenericMessage", "mediumGenericMessage", "loadedMediumData").isDisjointWith(changedKeysAndOldValues.keys)
+    }
+
+    public var usersChanged : Bool {
+        return userChangeInfo != nil
+    }
+
     public var senderChanged : Bool {
         if self.usersChanged && (self.userChangeInfo?.user as? ZMUser ==  self.message.sender){
             return true
@@ -76,20 +81,19 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         self.observedMessage = object
         self.observer = observer
         
-        var wrapper : (MessageObserverToken, MessageChangeInfo) -> () = { _ in return }
+        var changeHandler : (MessageObserverToken, MessageChangeInfo) -> () = { _ in return }
         let innerToken = InnerTokenType.token(
             object,
-            keyToKeyTransformation: object.keysToChangeInfoMap,
-            keysThatNeedPreviousValue : KeyToKeyTransformation(mapping: [:]),
+            observableKeys: object.observableKeys,
             managedObjectContextObserver : object.managedObjectContext!.globalManagedObjectContextObserver,
-            observer: { wrapper($0, $1) }
+            changeHandler: { changeHandler($0, $1) }
         )
         
         super.init(object:object, token: innerToken)
         
         innerToken.addContainer(self)
         
-        wrapper = {
+        changeHandler = {
             [weak self] (_, changeInfo) in
             self?.observer?.messageDidChange(changeInfo)
         }
@@ -113,7 +117,6 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         if (changes.nameChanged || changes.accentColorValueChanged || changes.imageMediumDataChanged || changes.imageSmallProfileDataChanged) {
             let changeInfo = MessageChangeInfo(object: self.observedMessage)
             changeInfo.userChangeInfo = changes
-            changeInfo.usersChanged = true
             self.observer?.messageDidChange(changeInfo)
         }
     }

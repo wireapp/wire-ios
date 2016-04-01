@@ -53,34 +53,35 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
     ZMConversationListIndicatorPending
 };
 
-extern NSString *const ZMIsDimmedKey; ///< Specifies that a range in an attributed string should be displayed dimmed.
-extern NSString *const ZMConversationIsVerifiedNotificationName;
-extern NSString *const ZMConversationFailedToDecryptMessageNotificationName;
+
+extern NSString * _Null_unspecified const ZMConversationFailedToDecryptMessageNotificationName;
+extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a range in an attributed string should be displayed dimmed.
+extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationName;
 
 
 @interface ZMConversation : ZMManagedObject
 
-@property (nonatomic, copy) NSString *userDefinedName;
-@property (nonatomic, readonly) NSString *displayName;
-@property (nonatomic, readonly) NSAttributedString *attributedDisplayName; ///< Uses @c ZMIsDimmedKey for parts that should be dimmed.
+@property (nonatomic, copy, nullable) NSString *userDefinedName;
+@property (nonatomic, readonly, nonnull) NSString *displayName;
+@property (nonatomic, readonly, nonnull) NSAttributedString *attributedDisplayName; ///< Uses @c ZMIsDimmedKey for parts that should be dimmed.
 
 @property (readonly, nonatomic) ZMConversationType conversationType;
-@property (readonly, nonatomic) NSDate *lastModifiedDate;
-@property (readonly, nonatomic) NSOrderedSet *messages;
-@property (readonly, nonatomic) NSOrderedSet *activeParticipants;
-@property (readonly, nonatomic) NSOrderedSet *inactiveParticipants;
+@property (readonly, nonatomic, nonnull) NSDate *lastModifiedDate;
+@property (readonly, nonatomic, nonnull) NSOrderedSet *messages;
+@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *activeParticipants;
+@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *inactiveParticipants;
 // The union of inactive and active participants.
-@property (readonly, nonatomic) NSOrderedSet *allParticipants;
-@property (readonly, nonatomic) ZMUser *creator;
+@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *allParticipants;
+@property (readonly, nonatomic, nonnull) ZMUser *creator;
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;
 @property (nonatomic, readonly) ZMConversationListIndicator conversationListIndicator;
 @property (nonatomic, readonly) BOOL hasDraftMessageText;
-@property (nonatomic, copy) NSString *draftMessageText;
+@property (nonatomic, copy, nullable) NSString *draftMessageText;
 
 /// This is read only. Use -setVisibleWindowFromMessage:toMessage: to update this.
 /// This will return @c nil if the last read message has not yet been sync'd to this device, or if the conversation has no last read message.
-@property (nonatomic, readonly) ZMMessage *lastReadMessage;
+@property (nonatomic, readonly, nullable) ZMMessage *lastReadMessage;
 
 @property (nonatomic) BOOL isSilenced;
 @property (nonatomic) BOOL isMuted DEPRECATED_ATTRIBUTE;
@@ -96,40 +97,37 @@ extern NSString *const ZMConversationFailedToDecryptMessageNotificationName;
 @property (nonatomic, readonly) BOOL isReadOnly;
 
 /// users that are currently typing in the conversation
-@property (nonatomic, readonly) NSSet *typingUsers;
+@property (nonatomic, readonly, nonnull) NSSet<ZMUser *> *typingUsers;
 
 
 /// For group conversation this will be nil, for one to one or connection conversation this will be the other user
-@property (nonatomic, readonly) ZMUser *connectedUser;
+@property (nonatomic, readonly, nullable) ZMUser *connectedUser;
 
-- (void)addParticipant:(ZMUser *)participant;
-- (void)removeParticipant:(ZMUser *)participant;
+- (void)addParticipant:(nonnull ZMUser *)participant;
+- (void)removeParticipant:(nonnull ZMUser *)participant;
 
 /// This method loads messages in a window when there are visible messages
-- (void)setVisibleWindowFromMessage:(ZMMessage *)oldestMessage toMessage:(ZMMessage *)newestMessage;
+- (void)setVisibleWindowFromMessage:(nullable ZMMessage *)oldestMessage toMessage:(nullable ZMMessage *)newestMessage;
 
-- (id<ZMConversationMessage>)appendKnock;
+- (nonnull id<ZMConversationMessage>)appendKnock;
 
-+ (instancetype)insertGroupConversationIntoUserSession:(ZMUserSession *)session withParticipants:(NSArray *)participants;
++ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull ZMUserSession *)session withParticipants:(nonnull NSArray<ZMUser *> *)participants;
 /// If that conversation exists, it is returned, @c nil otherwise.
-+ (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(ZMUserSession *)session;
++ (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull ZMUserSession *)session;
 
-/// It's safe to pass @c nil. Returns an empty array if no message was inserted.
-/// Returns an array as the message might have to be split depending on its size
-- (NSArray<id <ZMConversationMessage>> *)appendMessagesWithText:(NSString *)text;
+/// It's safe to pass @c nil. Returns @c nil if no message was inserted.
+- (nullable id <ZMConversationMessage>)appendMessageWithText:(nullable NSString *)text;
 
 /// The given URL must be a file URL. It's safe to pass @c nil. Returns @c nil if no message was inserted.
-- (id<ZMConversationMessage>)appendMessageWithImageAtURL:(NSURL *)fileURL;
+- (nullable id<ZMConversationMessage>)appendMessageWithImageAtURL:(nonnull NSURL *)fileURL;
 /// The given data must be compressed image dat, e.g. JPEG data. It's safe to pass @c nil. Returns @c nil if no message was inserted.
-- (id<ZMConversationMessage>)appendMessageWithImageData:(NSData *)imageData;
+- (nullable id<ZMConversationMessage>)appendMessageWithImageData:(nonnull NSData *)imageData;
 
 /// This sends the isTyping information to other members of the conversation.
 /// @c isTyping should be set to
 - (void)setIsTyping:(BOOL)isTyping;
 
 @end
-
-
 
 @interface ZMConversation (History)
 
@@ -152,7 +150,7 @@ extern NSString *const ZMConversationFailedToDecryptMessageNotificationName;
 @interface ZMConversation (Connections)
 
 /// The message that was sent as part of the connection request.
-@property (nonatomic, copy, readonly) NSString *connectionMessage;
+@property (nonatomic, copy, readonly, nonnull) NSString *connectionMessage;
 
 @end
 

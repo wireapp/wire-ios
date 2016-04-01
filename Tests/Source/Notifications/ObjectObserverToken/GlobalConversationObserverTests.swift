@@ -20,6 +20,13 @@
 
 class GlobalConversationObserverTests : MessagingTest {
     
+    override func setUp() {
+        super.setUp()
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
+        NSNotificationCenter.defaultCenter().postNotificationName(UIApplicationDidBecomeActiveNotification, object: nil)
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    }
+    
     private func movedIndexes(changeSet: ConversationListChangeInfo) -> [ZMMovedIndex] {
         var array : [ZMMovedIndex] = []
         changeSet.enumerateMovedIndexes {(x: UInt, y: UInt) in array.append(ZMMovedIndex(from: x, to: y)) }
@@ -612,13 +619,12 @@ class GlobalConversationObserverTests : MessagingTest {
         conversation.connection.status = .Accepted
         conversation.conversationType = .OneOnOne
         conversation.connection.to = user
-        
+        self.uiMOC.saveOrRollback()
+
         let normalList = ZMConversation.conversationsIncludingArchivedInContext(self.uiMOC)
         
         let testObserver = TestObserver()
         let token = normalList.addConversationListObserver(testObserver)
-        
-        self.uiMOC.saveOrRollback()
         
         XCTAssertEqual(normalList.count, 1)
         
@@ -747,6 +753,7 @@ class GlobalConversationObserverTests : MessagingTest {
         // then
         XCTAssertEqual(testObserver.changes.count, 1);
         
+        conversation1.voiceChannel.tearDown()
         self.uiMOC.globalManagedObjectContextObserver.removeGlobalVoiceChannelStateObserverForToken(token)
     }
 }

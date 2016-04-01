@@ -40,7 +40,6 @@
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate
 {
@@ -48,21 +47,18 @@
     NOT_USED(objectStrategyDirectory);
     NOT_USED(stateMachineDelegate);
     NOT_USED(clientRegistrationStatus);
-    NOT_USED(applicationLaunchStatus);
     RequireString(NO, "Should not use this init.");
     return nil;
 }
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate
                        backgroundableSession:(id<ZMBackgroundable>)session
 {
     self = [super initWithAuthenticationCenter:authenticationStatus
                       clientRegistrationStatus:clientRegistrationStatus
-                       applicationLaunchStatus:applicationLaunchStatus
                        objectStrategyDirectory:objectStrategyDirectory
                           stateMachineDelegate:stateMachineDelegate];
     if(self) {

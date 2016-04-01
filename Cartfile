@@ -4,3 +4,4 @@ github "wireapp/zmc-transport" ~> 5.5
 github "wireapp/zmc-system" ~> 14.2
 github "wireapp/zmc-protos" ~> 3.16
 github "iziz/libPhoneNumber-iOS" ~> 0.8
+github "pinterest/PINCache" ~> 2.2.1

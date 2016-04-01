@@ -22,6 +22,9 @@ import Foundation
 /// Used to map keys
 struct DependentObjectsKeysForObservedObjectKeysCache {
     
+    // keyPathsOnDependentObjectForKeyOnObservedObject : [displayName : [userDefinedName, user.name, connection.status]]
+    // affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [connection.status : [displayName, relatedConnectionStatus, etc.]]
+    //
     let keyPathsOnDependentObjectForKeyOnObservedObject : [KeyPath : KeySet]
     let affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [KeyPath : KeySet]
     
@@ -47,9 +50,9 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
             
             for keyPath in keyPaths {
                 
-                if let (objectKey, pathToObserveInObject) = keyPath.decompose {
+                if let (objectKey, pathToObserveInObject) = keyPath.decompose, let pathToObserve = pathToObserveInObject {
                     let previousPathToObserve = objectKeysWithPathsToObserve[objectKey] ?? KeySet()
-                    objectKeysWithPathsToObserve[objectKey] = previousPathToObserve.union(KeySet(key: pathToObserveInObject))
+                    objectKeysWithPathsToObserve[objectKey] = previousPathToObserve.union(KeySet(key: pathToObserve))
                 }
                 if let p = observedKeyPathToAffectedKey[keyPath] {
                     observedKeyPathToAffectedKey[keyPath] = p.union(KeySet(key: key))

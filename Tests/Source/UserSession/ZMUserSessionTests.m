@@ -101,7 +101,6 @@
             userProfileUpdateStatus:OCMOCK_ANY
             clientRegistrationStatus:OCMOCK_ANY
             clientUpdateStatus:OCMOCK_ANY
-            applicationLaunchStatus:OCMOCK_ANY
             giphyRequestStatus:OCMOCK_ANY
             backgroundAPNSPingBackStatus:OCMOCK_ANY
             localNotificationdispatcher:OCMOCK_ANY
@@ -114,7 +113,7 @@
     [[operationLoop expect] tearDown];
 
     // when
-    ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:mediaManager];
+    ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:mediaManager appVersion:@"000000"];
     XCTAssertNotNil(session);
 
     // then
@@ -123,6 +122,30 @@
     
     [transportSession stopMocking];
     [operationLoop stopMocking];
+}
+
+- (void)testThatItSetsTheUserAgentOnStart;
+{
+    // given
+    NSString *version = @"The-version-123";
+    id mediaManager = [OCMockObject niceMockForClass:NSObject.class];
+    id transportSession = [OCMockObject niceMockForClass:ZMTransportSession.class];
+    [[[[transportSession stub] classMethod] andReturn:transportSession] alloc];
+    (void) [[[transportSession expect] andReturn:transportSession] initWithBaseURL:OCMOCK_ANY websocketURL:OCMOCK_ANY keyValueStore:OCMOCK_ANY];
+    
+    // expect
+    id userAgent = [OCMockObject mockForClass:ZMUserAgent.class];
+    [[[userAgent expect] classMethod] setWireAppVersion:version];
+    
+    // when
+    ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:mediaManager appVersion:version];
+    XCTAssertNotNil(session);
+    
+    // then
+    [userAgent verify];
+    [userAgent stopMocking];
+    [session tearDown];
+    [transportSession stopMocking];
 }
 
 - (void)testThatWeCanGetAManagedObjectContext
@@ -250,7 +273,13 @@
     [[transportSession expect] restartPushChannel];
     
     // when
-    ZMUserSession *userSession = [[ZMUserSession alloc] initWithTransportSession:transportSession syncManagedObjectContext:self.syncMOC mediaManager:self.mediaManager apnsEnvironment:self.apnsEnvironment operationLoop:nil application:self.application];
+    ZMUserSession *userSession = [[ZMUserSession alloc] initWithTransportSession:transportSession
+                                                        syncManagedObjectContext:self.syncMOC
+                                                                    mediaManager:self.mediaManager
+                                                                 apnsEnvironment:self.apnsEnvironment
+                                                                   operationLoop:nil
+                                                                     application:self.application
+                                                                      appVersion:@"00000"];
     [userSession didRegisterUserClient:userClient];
     
     // then
@@ -534,7 +563,13 @@
     [[transportSession expect] setClientID:OCMOCK_ANY];
 
     // when
-    ZMUserSession *testSession = [[ZMUserSession alloc] initWithTransportSession:transportSession syncManagedObjectContext:self.syncMOC mediaManager:self.mediaManager apnsEnvironment:self.apnsEnvironment operationLoop:nil application:self.application];
+    ZMUserSession *testSession = [[ZMUserSession alloc] initWithTransportSession:transportSession
+                                                        syncManagedObjectContext:self.syncMOC
+                                                                    mediaManager:self.mediaManager
+                                                                 apnsEnvironment:self.apnsEnvironment
+                                                                   operationLoop:nil
+                                                                     application:self.application
+                                                                      appVersion:@"00000"];
     
     // then
     [transportSession verify];
@@ -1692,6 +1727,87 @@
     XCTAssertEqualObjects(requestedConversation.objectID, conversationID);
     XCTAssertEqual(requestedConversation.managedObjectContext, self.uiMOC);
     
+}
+
+@end
+
+@interface ZMFlowSync (FlowManagerDelegate) <AVSFlowManagerDelegate>
+@end
+
+@implementation ZMUserSessionTests (AVSLogObserver)
+
+- (void)testThatNotificationTriggersLogCallback
+{
+    // given
+    NSString *testMessage = @"Sample AVS Log";
+    id logObserver = [OCMockObject mockForProtocol:@protocol(ZMAVSLogObserver)];
+    [[logObserver expect] logMessage:testMessage];
+    
+    id token = [ZMUserSession addAVSLogObserver:logObserver];
+    
+    // when
+    [ZMFlowSync logMessage:testMessage];
+    
+    // then
+    [logObserver verify];
+    [ZMUserSession removeAVSLogObserver:token];
+}
+
+- (void)testThatMultipleNotificationsAreTriggeringTheLogCallback
+{
+    // given
+    NSString *testMessage1 = @"Sample AVS Log 1";
+    NSString *testMessage2 = @"Sample AVS Log 2";
+    
+    id logObserver = [OCMockObject mockForProtocol:@protocol(ZMAVSLogObserver)];
+    [[logObserver expect] logMessage:testMessage1];
+    [[logObserver expect] logMessage:testMessage2];
+    
+    // when
+    id token = [ZMUserSession addAVSLogObserver:logObserver];
+    
+    [ZMFlowSync logMessage:testMessage1];
+    [ZMFlowSync logMessage:testMessage2];
+    // then
+    [logObserver verify];
+    [ZMUserSession removeAVSLogObserver:token];
+}
+
+- (void)testThatSubscriberIsNotRetained
+{
+    // given
+    id token = nil;
+    id __weak weakLogObserver = nil;
+    @autoreleasepool {
+        id logObserver = [OCMockObject mockForProtocol:@protocol(ZMAVSLogObserver)];
+        
+        token = [ZMUserSession addAVSLogObserver:logObserver];
+        
+        // when
+        weakLogObserver = logObserver;
+        XCTAssertNotNil(weakLogObserver);
+        logObserver = nil;
+    }
+    // then
+    XCTAssertNil(weakLogObserver);
+    [ZMUserSession removeAVSLogObserver:token];
+}
+
+- (void)testThatLogCallbackIsNotTriggeredAfterUnsubscribe
+{
+    // given
+    NSString *testMessage = @"Sample AVS Log";
+    id logObserver = [OCMockObject mockForProtocol:@protocol(ZMAVSLogObserver)];
+    [[logObserver reject] logMessage:nil];
+    
+    id token = [ZMUserSession addAVSLogObserver:logObserver];
+    [ZMUserSession removeAVSLogObserver:token];
+    
+    // when
+    [ZMFlowSync logMessage:testMessage];
+    
+    // then
+    [logObserver verify];
 }
 
 @end

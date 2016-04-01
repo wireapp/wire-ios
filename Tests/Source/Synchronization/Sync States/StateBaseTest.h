@@ -25,7 +25,6 @@
 #import "ZMStateMachineDelegate.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMClientRegistrationStatus.h"
-#import "ZMApplicationLaunchStatus.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 @protocol ZMRequestGenerator;
@@ -39,7 +38,6 @@
 @property (nonatomic, readonly) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic, readonly) ZMClientRegistrationStatus *clientRegistrationStatus;
 @property (nonatomic, readonly) ClientUpdateStatus *clientUpdateStatus;
-@property (nonatomic, readonly) ZMApplicationLaunchStatus *applicationLaunchStatus;
 @property (nonatomic, readonly) ZMApplication *mockApplication;
 
 - (void)checkThatItCallsRequestGeneratorsOnObjectsOfClass:(NSArray *)objectsToTest creationOfStateBlock:(ZMSyncState *(^)(id<ZMObjectStrategyDirectory> directory))creationBlock;

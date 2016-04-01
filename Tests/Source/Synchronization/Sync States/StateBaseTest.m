@@ -61,9 +61,7 @@
     _authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:self.uiMOC cookie:cookie];
     _clientRegistrationStatus = [[ZMClientRegistrationStatus alloc] initWithManagedObjectContext:self.uiMOC loginCredentialProvider:self.authenticationStatus updateCredentialProvider:nil cookie:cookie registrationStatusDelegate:nil];
     _clientUpdateStatus = [[ClientUpdateStatus alloc] initWithSyncManagedObjectContext:self.uiMOC];
-    
-    _applicationLaunchStatus = [[ZMApplicationLaunchStatus alloc] initWithManagedObjectContext:self.uiMOC];
-    
+        
     _stateMachine = [OCMockObject mockForProtocol:@protocol(ZMStateMachineDelegate)];
 
     id eventProcessingState = [OCMockObject mockForClass:ZMEventProcessingState.class];

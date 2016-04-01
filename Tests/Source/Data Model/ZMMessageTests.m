@@ -573,7 +573,7 @@ NSString * const IsExpiredKey = @"isExpired";
     NSDate *newerDate = [NSDate date];
     
     [conversation appendNewPotentialGapSystemMessageWithUsers:nil timestamp:olderDate];
-    [conversation appendMessagesWithText:@"Awesome Text"];
+    [conversation appendMessageWithText:@"Awesome Text"];
     [otherConversation appendNewPotentialGapSystemMessageWithUsers:nil timestamp:newerDate];
     
     // when
@@ -1417,7 +1417,7 @@ NSString * const IsExpiredKey = @"isExpired";
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *oldMessage = [conversation appendMessagesWithText:@"Hi!"].firstObject;
+    ZMMessage *oldMessage = [conversation appendMessageWithText:@"Hi!"];
     oldMessage.serverTimestamp = [NSDate dateWithTimeIntervalSince1970:1234567];
     conversation.lastServerTimeStamp = oldMessage.serverTimestamp;
     conversation.lastReadServerTimeStamp = oldMessage.serverTimestamp;
@@ -2110,7 +2110,7 @@ NSString * const IsExpiredKey = @"isExpired";
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *pendingMessage1 = [conversation appendMessagesWithText:@"P1"].firstObject;
+    ZMTextMessage *pendingMessage1 = [conversation appendMessageWithText:@"P1"];
     pendingMessage1.visibleInConversation = conversation;
     
     ZMTextMessage *lastServerMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -2128,10 +2128,10 @@ NSString * const IsExpiredKey = @"isExpired";
     middleServerMessage.visibleInConversation = conversation;
     middleServerMessage.serverTimestamp = [NSDate dateWithTimeIntervalSince1970:5*1000];
     
-    ZMTextMessage *pendingMessage2 = [conversation appendMessagesWithText:@"P2"].firstObject;
+    ZMTextMessage *pendingMessage2 = [conversation appendMessageWithText:@"P2"];
     pendingMessage2.visibleInConversation = conversation;
 
-    ZMTextMessage *pendingMessage3 = [conversation appendMessagesWithText:@"P3"].firstObject;
+    ZMTextMessage *pendingMessage3 = [conversation appendMessageWithText:@"P3"];
     pendingMessage2.visibleInConversation = conversation;
     
     NSArray *expectedOrder = @[firstServerMessage, middleServerMessage, lastServerMessage, pendingMessage1, pendingMessage2, pendingMessage3];

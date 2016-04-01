@@ -66,20 +66,5 @@
 
 @end
 
-
-
-
-/// Assert macro to be used when the transcoder can not generate a request for the given keys.
-/// We can not log strings, hence we'll simply log the hash of the first 3 keys.
-#define ZMTrapUnableToGenerateRequest(keys, transcoder) do { \
-		NSSet *_s = keys; \
-        NSString *_transcoder = transcoder != nil ? NSStringFromClass(transcoder.class) : nil; \
-		NSArray * NS_VALID_UNTIL_END_OF_SCOPE _a; \
-		_a = [_s allObjects]; \
-		NSObject * __unsafe_unretained _objs[3] = {}; \
-		NSUInteger _count = MIN(_a.count, (NSUInteger) 3); \
-		[_a getObjects:_objs range:NSMakeRange(0, _count)]; \
-		ZMCrashFormat("Unable to generate request.", "Keys: %llu %llu %llu. Transcoder: ", \
-                (long long unsigned) [_objs[0] hash], (long long unsigned) [_objs[1] hash], (long long unsigned) [_objs[2] hash], \
-        (long long unsigned) (_transcoder != nil ? [_transcoder hash] : 0u)); \
-	} while (0)
+/// Asserts with a description of how it failed to generate a request from a transcoder
+void ZMTrapUnableToGenerateRequest(NSSet *keys, id transcoder);

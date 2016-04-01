@@ -222,12 +222,12 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
     
-    ZMTextMessage *message = [conversation appendMessagesWithText:@"message a1"].firstObject;
+    ZMTextMessage *message = [conversation appendMessageWithText:@"message a1"];
     message.nonce = [NSUUID createUUID];
     message.serverTimestamp = zeroTime;
     message.eventID = [self createEventID]; // already delivered message
     
-    ZMTextMessage *nextMessage = [conversation appendMessagesWithText:@"message a2"].firstObject;
+    ZMTextMessage *nextMessage = [conversation appendMessageWithText:@"message a2"];
     nextMessage.serverTimestamp = [NSDate dateWithTimeInterval:100 sinceDate:zeroTime];
     nextMessage.nonce = [NSUUID createUUID]; // undelivered
     
@@ -468,13 +468,19 @@
     XCTAssertEqual(noncesToFetch.count, 1lu);
 }
 
+- (void)testThatItGeneratesARequestToSendAClientMessageExternalWithExternalBlob
+{
+    NSString *longText = [@"Hello" stringByPaddingToLength:10000 withString:@"?" startingAtIndex:0];
+    [self checkThatItGeneratesARequestToSendOTRMessageWhenAMessageIsInsertedWithText:longText block:^(ZMMessage *message) {
+        [self.sut.contextChangeTrackers[0] objectsDidChange:@[message].set];
+    }];
+}
+
 - (void)testThatItGeneratesARequestToSendAClientMessageWhenAMessageIsInsertedWithBlock:(void(^)(ZMMessage *message))block
 {
     // given
     ZMConversation *conversation = [self insertGroupConversation];
-    NSString *messageText = @"foo";
-    
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"foo" nonce:[NSUUID createUUID].transportString];
     
     ZMClientMessage *message = [conversation appendClientMessageWithData:genericMessage.data];
     XCTAssertTrue([self.uiMOC saveOrRollback]);
@@ -492,51 +498,68 @@
     XCTAssertEqualObjects(request.payload.asDictionary, @{@"content": message.genericMessage.data.base64String});
 }
 
+
 - (void)checkThatItGeneratesARequestToSendOTRMessageWhenAMessageIsInsertedWithBlock:(void(^)(ZMMessage *message))block
 {
+    [self checkThatItGeneratesARequestToSendOTRMessageWhenAMessageIsInsertedWithText:@"foo" block:block];
+}
+
+- (void)checkThatItGeneratesARequestToSendOTRMessageWhenAMessageIsInsertedWithText:(NSString *)messageText block:(void(^)(ZMMessage *message))block
+{
     // given
-    ZMConversation *conversation = [self insertGroupConversation];
-    NSString *messageText = @"foo";
+    __block ZMConversation *conversation;
+    __block ZMClientMessage *message;
     
-    ZMClientMessage *message = [conversation appendOTRMessageWithText:messageText nonce:[NSUUID createUUID]];
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    //self client
-    conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversation.remoteIdentifier inManagedObjectContext:self.syncMOC];
-    UserClient *selfClient = [self createSelfClient];
-    
-    //other user client
-    NSError *error = nil;
-    CBCryptoBox *otherClientsBox = [CBCryptoBox cryptoBoxWithPathURL:[UserClientKeysStore otrDirectory] error:&error];
-    [conversation.otherActiveParticipants enumerateObjectsUsingBlock:^(ZMUser *user, NSUInteger idx, BOOL *__unused stop) {
-        UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-        userClient.remoteIdentifier = [NSString createAlphanumericalString];
-        userClient.user = user;
-        
-        NSError *keyError;
-        CBPreKey *key = [otherClientsBox generatePreKeys:NSMakeRange(idx, 1) error:&keyError].firstObject;
-        __unused CBSession *session = [selfClient.keysStore.box sessionWithId:userClient.remoteIdentifier fromPreKey:key error:&keyError];
+    [self.syncMOC performGroupedBlock:^{
+        conversation = self.insertGroupConversation;
+        message = [conversation appendOTRMessageWithText:messageText nonce:[NSUUID createUUID]];
     }];
     
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
     WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertNotNil(message);
+    XCTAssertNotNil(conversation);
+    
+    __block UserClient *selfClient;
+    
+    [self.syncMOC performGroupedBlock:^{
+        conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversation.remoteIdentifier inManagedObjectContext:self.syncMOC];
+        selfClient = self.createSelfClient;
+        
+        //other user client
+        NSError *error = nil;
+        CBCryptoBox *otherClientsBox = [CBCryptoBox cryptoBoxWithPathURL:[UserClientKeysStore otrDirectory] error:&error];
+        [conversation.otherActiveParticipants enumerateObjectsUsingBlock:^(ZMUser *user, NSUInteger idx, BOOL *__unused stop) {
+            UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+            userClient.remoteIdentifier = [NSString createAlphanumericalString];
+            userClient.user = user;
+            
+            NSError *keyError;
+            CBPreKey *key = [otherClientsBox generatePreKeys:NSMakeRange(idx, 1) error:&keyError].firstObject;
+            __unused CBSession *session = [selfClient.keysStore.box sessionWithId:userClient.remoteIdentifier fromPreKey:key error:&keyError];
+        }];
+    }];
+
+    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertNotNil(selfClient);
     
     // when
     block(message);
-    ZMTransportRequest *request = [self.sut.requestGenerators nextRequest];
     
-    // then
-    //POST /conversations/{cnv}/messages
-    NSString *expectedPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.remoteIdentifier.transportString, @"otr", @"messages"]];
+    __block ZMTransportRequest *request;
+    [self.syncMOC performGroupedBlock:^{
+        request = [self.sut.requestGenerators nextRequest];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then we expect a POST request to /conversations/{cnv}/otr/messages
+    NSArray *pathComponents = @[@"/", @"conversations", conversation.remoteIdentifier.transportString, @"otr", @"messages"];
+    NSString *expectedPath = [NSString pathWithComponents:pathComponents];
     XCTAssertNotNil(request);
     XCTAssertEqualObjects(expectedPath, request.path);
     
     ZMClientMessage *syncMessage = (ZMClientMessage *)[self.sut.managedObjectContext objectWithID:message.objectID];
-    
-    ZMNewOtrMessage *expectedOtrMessageMetadata = (ZMNewOtrMessage *)[[[ZMNewOtrMessage builder] mergeFromData: [syncMessage encryptedMessagePayloadData]] build];
-    ZMNewOtrMessage *otrMessageMetadata = (ZMNewOtrMessage *)[[[ZMNewOtrMessage builder] mergeFromData:request.binaryData] build];
-    
+    ZMNewOtrMessage *expectedOtrMessageMetadata = (ZMNewOtrMessage *)[ZMNewOtrMessage.builder mergeFromData:syncMessage.encryptedMessagePayloadData].build;
+    ZMNewOtrMessage *otrMessageMetadata = (ZMNewOtrMessage *)[ZMNewOtrMessage.builder mergeFromData:request.binaryData].build;
     [self assertNewOtrMessageMetadata:otrMessageMetadata expected:expectedOtrMessageMetadata conversation:conversation];
 }
 
@@ -1189,7 +1212,7 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    ZMAssetClientMessage *message = [conversation appendOTRMessageWithImageData:[self dataForResource:@"1900x1500_medium" extension:@"jpg"] nonce:[NSUUID createUUID]];
+    ZMAssetClientMessage *message = [conversation appendOTRMessageWithImageData:[self dataForResource:@"1900x1500" extension:@"jpg"] nonce:[NSUUID createUUID]];
     [[(id)self.upstreamObjectSync stub] objectsDidChange:OCMOCK_ANY];
     [[(id)self.mockExpirationTimer stub] objectsDidChange:OCMOCK_ANY];
     // when

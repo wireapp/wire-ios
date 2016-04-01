@@ -108,7 +108,7 @@
 
 - (void)addPossibleObjectToSynchronize:(ZMManagedObject *)object;
 {
-    RequireString(! object.objectID.isTemporaryID, "Passing in a object with a temporary ID.");
+    RequireString(! object.objectID.isTemporaryID, "Passing in a object with a temporary ID: %s", NSStringFromClass([object class]).UTF8String);
     RequireString(object != nil, "Attempting to add nil.");
    
     ZMLocallyModifiedObjectSyncStatus *preExistingStatus = self.objectIDsToStatus[object.objectID];

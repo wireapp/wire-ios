@@ -73,7 +73,6 @@ public class AssetDirectory : NSObject {
 
         }
         catch let error as NSError {
-            zmLog.warn("Could not delete asset data \(url.pathComponents!.last!)")
             if error.code != NSFileReadNoSuchFileError {
                 zmLog.error("Can't delete file \(url.pathComponents!.last!): \(error)")
             }
@@ -96,16 +95,6 @@ public class AssetDirectory : NSObject {
     /// Returns the URL for a file path
     private func URLForFile(fileName: String) -> NSURL {
         return self.cacheFolderURL.URLByAppendingPathComponent(fileName).URLByAppendingPathExtension("zass")
-    }
-    
-    /// Lists the file for a given message. Used for debugging
-    public func assetFilesForMessage(messageID: NSUUID) -> [NSURL] {
-        return allFiles().filter { (url : NSURL) in
-            if let last = url.pathComponents?.last {
-                return last.hasPrefix(messageID.transportString())
-            }
-            return false;
-        }
     }
     
     /// List all files in the cache. Used for debugging

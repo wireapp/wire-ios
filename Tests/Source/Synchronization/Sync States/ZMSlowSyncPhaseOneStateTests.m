@@ -39,7 +39,6 @@
     [super setUp];
     _sut = [[ZMSlowSyncPhaseOneState alloc] initWithAuthenticationCenter:self.authenticationStatus
                                                 clientRegistrationStatus:self.clientRegistrationStatus
-                                                 applicationLaunchStatus:self.applicationLaunchStatus
                                                  objectStrategyDirectory:self.objectDirectory
                                                     stateMachineDelegate:self.stateMachine];
     
@@ -99,7 +98,7 @@
         [[[(id)directory.connectionTranscoder stub] andReturnValue:@NO] isSlowSyncDone];
         [[[(id)directory.conversationTranscoder stub] andReturnValue:@NO] isSlowSyncDone];
         
-        return [[ZMSlowSyncPhaseOneState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
+        return [[ZMSlowSyncPhaseOneState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
     }];
     
 }

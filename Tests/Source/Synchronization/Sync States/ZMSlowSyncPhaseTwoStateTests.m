@@ -39,7 +39,7 @@
 {
     [super setUp];
     
-    _sut = [[ZMSlowSyncPhaseTwoState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus                                                                       applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
+    _sut = [[ZMSlowSyncPhaseTwoState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
     
     [self stubRequestsOnHighPriorityObjectSync];
 
@@ -84,7 +84,7 @@
         
         [[[(id) directory.userTranscoder stub] andReturnValue:@NO] isSlowSyncDone];
         
-        return [[ZMSlowSyncPhaseTwoState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
+        return [[ZMSlowSyncPhaseTwoState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
     }];
     
 }

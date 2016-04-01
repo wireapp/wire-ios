@@ -30,12 +30,17 @@
 #import "ZMGenericMessageData.h"
 #import "ZMUser+Internal.h"
 #import "ZMOTRMessage.h"
+#import "ZMGenericMessage+External.h"
 #import <zmessaging/zmessaging-Swift.h>
-
 
 static NSString * const ClientMessageDataSetKey = @"dataSet";
 static NSString * const ClientMessageGenericMessageKey = @"genericMessage";
+
 NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
+// From https://github.com/wearezeta/generic-message-proto:
+// "If payload is smaller then 256KB then OM can be sent directly"
+// Just to be sure we set the limit lower, to 128KB (base 10)
+NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 @interface ZMClientMessage()
 
@@ -204,16 +209,26 @@ NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
         updateEvent.type == ZMUpdateEventConversationOtrMessageAdd)
     {
         NSString *base64Content = [updateEvent.payload stringForKey:@"data"];
-        VerifyReturnNil(base64Content != nil);
-        @try {
-            message = [ZMGenericMessage messageWithBase64String:base64Content];
-        }
-        @catch(NSException *e) {
-            ZMLogError(@"Cannot create message from protobuffer: %@ event: %@", e, updateEvent);
-            return nil;
-        }
-        
+        message = [self genericMessageWithBase64String:base64Content updateEvent:updateEvent];
         VerifyReturnNil(message != nil);
+    }
+    
+    if (message.hasExternal) {
+        return [self genericMessageFromUpdateEventWithExternal:updateEvent external:message.external];
+    }
+    
+    return message;
+}
+
++ (ZMGenericMessage *)genericMessageWithBase64String:(NSString *)string updateEvent:(ZMUpdateEvent *)event
+{
+    VerifyReturnNil(nil != string);
+    ZMGenericMessage *message;
+    @try {
+        message = [ZMGenericMessage messageWithBase64String:string];
+    } @catch (NSException *exception) {
+        ZMLogError(@"Cannot create message from protobuffer: %@ event: %@", exception, event);
+        return nil;
     }
     return message;
 }
@@ -296,31 +311,41 @@ NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
 
 - (NSData *)encryptedMessagePayloadData
 {
-    UserClient *selfClient = [ZMUser selfUserInContext:self.managedObjectContext].selfClient;
+    return [ZMClientMessage encryptedMessagePayloadDataWithGenericMessage:self.genericMessage
+                                                             conversation:self.conversation
+                                                     managedObjectContext:self.managedObjectContext
+                                                             externalData:nil];
+}
+
++ (NSData *)encryptedMessagePayloadDataWithGenericMessage:(ZMGenericMessage *)genericMessage conversation:(ZMConversation *)conversation managedObjectContext:(NSManagedObjectContext *)moc externalData:(NSData *)externalData
+{
+    UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
     if (selfClient.remoteIdentifier == nil) {
         return nil;
     }
     
-    ZMNewOtrMessageBuilder *builder = [ZMNewOtrMessage builder];
+    NSArray <ZMUserEntry *>*recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
+                                                                           selfClient:selfClient
+                                                                         conversation:conversation];
+    ZMNewOtrMessage *message = [ZMNewOtrMessage messageWithSender:selfClient nativePush:YES recipients:recipients blob:externalData];
     
-    [builder setNativePush:YES];
     
-    [builder setSender:selfClient.clientId];
+    NSData *messageData = message.data;
+    if (messageData.length > ZMClientMessageByteSizeExternalThreshold && nil == externalData) {
+        return [self encryptedMessageDataWithExternalDataBlobFromMessage:genericMessage
+                                                          inConversation:conversation
+                                                    managedObjectContext:moc];
+    }
     
-    NSArray *recipients = [ZMClientMessage recipientsWithDataToEncrypt:self.genericMessage.data selfClient:selfClient conversation:self.conversation];
-    [builder setRecipientsArray:recipients];
-    
-    ZMNewOtrMessage *message = [builder build];
-    
-    return [message data];
+    return messageData;
 }
 
-+ (NSArray *)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt selfClient:(UserClient *)selfClient conversation:(ZMConversation *)conversation;
++ (NSArray <ZMUserEntry *>*)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt selfClient:(UserClient *)selfClient conversation:(ZMConversation *)conversation;
 {
     CBCryptoBox *box = selfClient.keysStore.box;
     
-    NSArray *recipients = [conversation.activeParticipants.array mapWithBlock:^ ZMUserEntry *(ZMUser *user) {
-        NSArray *clientsEntries = [user.clients.allObjects mapWithBlock:^ZMClientEntry *(UserClient *client) {
+    NSArray <ZMUserEntry *>*recipients = [conversation.activeParticipants.array mapWithBlock:^ ZMUserEntry *(ZMUser *user) {
+        NSArray <ZMClientEntry *>*clientsEntries = [user.clients.allObjects mapWithBlock:^ZMClientEntry *(UserClient *client) {
             
             NSError *error;
             if (![client.remoteIdentifier isEqual:selfClient.remoteIdentifier]) {
@@ -332,13 +357,14 @@ NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
                 client.failedToEstablishSession = NO;
                 
                 if (nil == session && corruptedClient) {
-                    return [self buildClientEntryWithClient:client data:[ZMFailedToCreateEncryptedMessagePayloadString dataUsingEncoding:NSUTF8StringEncoding]];
+                    NSData *data = [ZMFailedToCreateEncryptedMessagePayloadString dataUsingEncoding:NSUTF8StringEncoding];
+                    return [ZMClientEntry entryWithClient:client data:data];
                 }
                 
                 NSData *encryptedData = [session encrypt:dataToEncrypt error:&error];
                 if (encryptedData != nil) {
                     [box setSessionToRequireSave:session];
-                    return [self buildClientEntryWithClient:client data:encryptedData];
+                    return [ZMClientEntry entryWithClient:client data:encryptedData];
                 }
             }
 
@@ -348,26 +374,58 @@ NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
         if (clientsEntries.count == 0) {
             return nil;
         }
-        else {
-            ZMUserEntryBuilder *entryBuilder = [ZMUserEntry builder];
-            [entryBuilder setUser:[user userId]];
-            [entryBuilder setClientsArray:clientsEntries];
-            return [entryBuilder build];
-        }
+        
+        return [ZMUserEntry entryWithUser:user clientEntries:clientsEntries];
     }];
 
     return recipients;
 }
 
-+ (ZMClientEntry *)buildClientEntryWithClient:(UserClient *)client data:(NSData *)data
+@end
+
+
+
+@implementation ZMClientMessage (External)
+
++ (ZMGenericMessage *)genericMessageFromUpdateEventWithExternal:(ZMUpdateEvent *)updateEvent external:(ZMExternal *)external
 {
-    ZMClientEntryBuilder *clientEntryBuilder = [ZMClientEntry builder];
-    [clientEntryBuilder setClient:client.clientId];
-    [clientEntryBuilder setText:data];
-    return [clientEntryBuilder build];
+    NSData *sha256 = external.sha256;
+    NSData *otrKey = external.otrKey;
+    VerifyReturnNil(nil != sha256);
+    VerifyReturnNil(nil != otrKey);
+    
+    NSString *externalDataString = [updateEvent.payload optionalStringForKey:@"external"];
+    VerifyReturnNil(nil != externalDataString);
+    NSData *externalData = [[NSData alloc] initWithBase64EncodedString:externalDataString options:0];
+    NSData *externalSha256 = externalData.zmSHA256Digest;
+    
+    if (! [externalSha256 isEqualToData:sha256]) {
+        ZMLogError(@"Invalid hash for external data: %@ != %@, updateEvent: %@", externalSha256, sha256, updateEvent);
+        return nil;
+    }
+    
+    NSData *decryptedData = [externalData zmDecryptPrefixedPlainTextIVWithKey:otrKey];
+    VerifyReturnNil(nil != decryptedData);
+    
+    return [self genericMessageWithBase64String:decryptedData.base64String updateEvent:updateEvent];
+}
+
++ (NSData *)encryptedMessageDataWithExternalDataBlobFromMessage:(ZMGenericMessage *)message
+                                                 inConversation:(ZMConversation *)conversation
+                                           managedObjectContext:(NSManagedObjectContext *)context
+{
+    ZMExternalEncryptedDataWithKeys *encryptedDataWithKeys = [ZMGenericMessage encryptedDataWithKeysFromMessage:message];
+    ZMGenericMessage *externalGenericMessage = [ZMGenericMessage genericMessageWithKeyWithChecksum:encryptedDataWithKeys.keys
+                                                                                         messageID:NSUUID.UUID.transportString];
+    
+    return [self encryptedMessagePayloadDataWithGenericMessage:externalGenericMessage
+                                                  conversation:conversation
+                                          managedObjectContext:context
+                                                  externalData:encryptedDataWithKeys.data];
 }
 
 @end
+
 
 
 @implementation ZMClientMessage (ZMKnockMessage)

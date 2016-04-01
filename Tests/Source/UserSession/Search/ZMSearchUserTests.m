@@ -350,6 +350,7 @@
 {
     // given
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
     XCTAssert([self.uiMOC saveOrRollback]);
 
     __block ZMSearchUser *searchUser;

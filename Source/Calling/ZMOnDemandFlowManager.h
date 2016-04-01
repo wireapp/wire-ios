@@ -20,7 +20,6 @@
 #import <Foundation/Foundation.h>
 
 @class AVSFlowManager;
-@class ZMApplicationLaunchStatus;
 @protocol AVSFlowManagerDelegate;
 
 

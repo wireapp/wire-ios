@@ -95,6 +95,8 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     self.conversationChangeObserver = [[ConversationChangeObserver alloc] init];
     self.userChangeObserver = [[UserChangeObserver alloc] init];
     self.messageChangeObserver = [[MessageChangeObserver alloc] init];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    WaitForEverythingToBeDoneWithTimeout(0.5);
 }
 
 - (ZMGSMCallHandler *)gsmCallHandler
@@ -104,6 +106,9 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
 
 - (void)tearDown
 {
+    [self.uiMOC.globalManagedObjectContextObserver tearDown];
+    [self.syncMOC.globalManagedObjectContextObserver tearDown];
+
     [self.conversationChangeObserver tearDown];
     [self.userChangeObserver tearDown];
     [self.messageChangeObserver tearDown];
@@ -322,7 +327,14 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
         [self.searchMOC setPersistentStoreMetadata:@YES forKey:RegisteredOnThisDeviceKey];
     }
     
-    self.userSession = [[ZMUserSession alloc] initWithTransportSession:(id)self.mockTransportSession syncManagedObjectContext:self.syncMOC mediaManager:nil apnsEnvironment:mockAPNSEnrvironment operationLoop:nil application:application];
+    self.userSession = [[ZMUserSession alloc]
+                        initWithTransportSession:(id)self.mockTransportSession
+                        syncManagedObjectContext:self.syncMOC
+                        mediaManager:nil
+                        apnsEnvironment:mockAPNSEnrvironment
+                        operationLoop:nil
+                        application:application
+                        appVersion:@"00000"];
     WaitForEverythingToBeDone();
     
     [self.syncMOC zm_tearDownCallTimer];

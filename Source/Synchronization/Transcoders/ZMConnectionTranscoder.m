@@ -159,7 +159,10 @@ NSUInteger ZMConnectionTranscoderPageSize = 90;
 
 - (ZMUpstreamRequest *)requestForUpdatingObject:(ZMConnection *)connection forKeys:(NSSet *)keys;
 {
-    RequireString([keys isEqualToSet:[NSSet setWithObject:@"status"]], "Unexpected set of changed keys");
+    RequireString([keys isEqualToSet:[NSSet setWithObject:@"status"]],
+                  "Unexpected set of changed keys: %s",
+                  [keys.allObjects componentsJoinedByString:@","].UTF8String
+                  );
     NSString *path = [NSString pathWithComponents:@[PathConnections, connection.to.remoteIdentifier.transportString]];
     NSDictionary *payload = @{@"status": connection.statusAsString};
     

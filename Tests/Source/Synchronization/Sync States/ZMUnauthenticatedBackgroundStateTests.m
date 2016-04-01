@@ -34,7 +34,6 @@
     _sut = [[ZMUnauthenticatedBackgroundState alloc]
             initWithAuthenticationCenter:self.authenticationStatus
             clientRegistrationStatus:self.clientRegistrationStatus
-            applicationLaunchStatus:self.applicationLaunchStatus
             objectStrategyDirectory:self.objectDirectory
             stateMachineDelegate:self.stateMachine];
 }

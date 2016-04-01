@@ -199,7 +199,6 @@ static NSString *const ZMIncomingPersonalInvitationNotificationName = @"ZMIncomi
 - (void)removeConversationWindowObserverToken:(id<ZMConversationMessageWindowObserverOpaqueToken>)token
 {
     [self.conversation.managedObjectContext.globalManagedObjectContextObserver removeConversationWindowObserverForToken:(id)token];
-    [(MessageWindowChangeToken *)token tearDown];
 }
 
 
@@ -287,7 +286,7 @@ static NSString *const ZMIncomingPersonalInvitationNotificationName = @"ZMIncomi
 
 - (id<ZMConversationObserverOpaqueToken>)addConversationObserver:(id<ZMConversationObserver>)observer;
 {
-    return (id)[[ConversationObserverToken alloc] initWithObserver:observer conversation:self];
+    return [self.managedObjectContext.globalManagedObjectContextObserver addConversationObserver:observer conversation:self];
 }
 
 + (void)removeConversationObserverForToken:(id<ZMConversationObserverOpaqueToken>)token;
@@ -370,7 +369,7 @@ static NSString *const ZMIncomingPersonalInvitationNotificationName = @"ZMIncomi
 
 + (void)removeUserObserverForToken:(id<ZMUserObserverOpaqueToken>)token
 {
-    [(UserCollectionObserverToken *)token tearDown];
+    [(id)token tearDown];
 }
 
 + (id<ZMUserObserverOpaqueToken>)addUserObserver:(id<ZMUserObserver>)observer forUsers:(NSArray *)users managedObjectContext:(NSManagedObjectContext *)managedObjectContext;

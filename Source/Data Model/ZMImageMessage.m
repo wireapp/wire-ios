@@ -250,7 +250,7 @@
             
         case ZMImageFormatOriginal:
         case ZMImageFormatInvalid:
-            RequireString(NO, "Invalid image format");
+            RequireString(NO, "Invalid image format: %ld", (long)format);
             return NO;
     }
 }

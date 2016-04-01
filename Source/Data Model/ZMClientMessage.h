@@ -24,7 +24,7 @@
 @class UserClient;
 
 extern NSString * const ZMFailedToCreateEncryptedMessagePayloadString;
-
+extern NSUInteger const ZMClientMessageByteSizeExternalThreshold;
 
 @interface ZMClientMessage : ZMOTRMessage <ZMConversationMessage>
 
@@ -51,5 +51,16 @@ extern NSString * const ZMFailedToCreateEncryptedMessagePayloadString;
 
 - (NSData *)encryptedMessagePayloadData;
 + (NSArray *)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt selfClient:(UserClient *)selfClient conversation:(ZMConversation *)converation;
++ (NSData *)encryptedMessagePayloadDataWithGenericMessage:(ZMGenericMessage *)genericMessage conversation:(ZMConversation *)conversation managedObjectContext:(NSManagedObjectContext *)moc externalData:(NSData *)externalData;
+
+@end
+
+@interface ZMClientMessage (External)
+
++ (ZMGenericMessage *)genericMessageFromUpdateEventWithExternal:(ZMUpdateEvent *)updateEvent external:(ZMExternal *)external;
+
++ (NSData *)encryptedMessageDataWithExternalDataBlobFromMessage:(ZMGenericMessage *)message
+                                                 inConversation:(ZMConversation *)conversation
+                                           managedObjectContext:(NSManagedObjectContext *)context;
 
 @end

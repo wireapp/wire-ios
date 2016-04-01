@@ -294,9 +294,7 @@ static NSString * const AssetClientMessageDataSetKey = @"dataSet";
                 decrypted = [AssetEncryption decryptFileIfItMatchesDigest:self.nonce
                                                                    format:imageAsset.imageFormat
                                                             encryptionKey:imageAsset.otrKey
-                                                             sha256Digest:imageAsset.sha256
-                             
-                             ];
+                                                             sha256Digest:imageAsset.sha256];
             }
             else if(imageAsset.hasMac) {
                 decrypted = [AssetEncryption decryptFileIfItMatchesDigest:self.nonce

@@ -28,4 +28,6 @@
                             workingGroup:(ZMSDispatchGroup *)workingGroup
                        completionHandler:(void (^)(NSString *minVersion, NSArray *excludedVersions))completionHandler;
 
+- (void)teardown;
+
 @end

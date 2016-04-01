@@ -22,54 +22,13 @@ import ZMCSystem
 import ZMUtilities
 
 
-/// Map from a key to another
-public final class KeyToKeyTransformation {
-    
-    let mapping : [KeyPath : KeyToKeyMappingType]
-    
-    public enum KeyToKeyMappingType {
-        case Custom(KeyPath)
-        case Default
-        case None
-    }
-    
-    public init(mapping: [KeyPath : KeyToKeyMappingType]) {
-        self.mapping = mapping
-    }
-    
-    func transformKey(key: KeyPath, defaultTransformation: (String) -> String) -> KeyPath? {
-        if let transformation = self.mapping[key] {
-            switch(transformation) {
-            case .Default:
-                return KeyPath.keyPathForString(defaultTransformation(key.rawValue))
-            case let .Custom(customName):
-                return customName
-            case .None:
-                return nil
-            }
-        }
-        return nil
-    }
-    
-    func allKeys() -> KeySet {
-        return KeySet(self.mapping.keys)
-    }
-    
-    func contains(key: KeyPath) -> Bool {
-        return self.mapping[key] != nil
-    }
-    
-}
 
 // Objects that need to be in a snapshot should implement this protocol. It will be used to
 // set flags on the ObjectChangeInfo
 public protocol ObjectInSnapshot : NSObjectProtocol {
     
-    // This mapping indicates which keys we should keep track of, and what variable
-    // of the final ObjectChangeInfo should be set to true if the value changed
-    // e.g. name -> "nameDidChange"
-    var keysToChangeInfoMap : KeyToKeyTransformation { get }
-    
+    var observableKeys : [String] { get }
+
     // Needed because NSObjectProtocol != NSObject
     func valueForKey(key: String) -> AnyObject?
 }
@@ -117,12 +76,12 @@ public struct ObjectSnapshot : Equatable, CustomDebugStringConvertible
                     if let copy = set.copyWithZone(nil) as? NSObject {
                         snapshotValues[key] = copy
                     } else {
-                        fatalError("Can't copy snapshot value for key \(key)")
+                        fatal("Can't copy snapshot value for key \(key)")
                     }
                 case let objectValue as NSObject:
                     snapshotValues[key] = objectValue
                 default:
-                    fatalError("Can't snapshot value \(key)")
+                    fatal("Can't snapshot value \(key)")
                 }
             }
         }

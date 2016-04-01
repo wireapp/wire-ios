@@ -513,3 +513,117 @@
 
 
 @end
+
+
+@implementation ZMClientMessageTests (ExternalMessage)
+
+- (void)testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob
+{
+    // given
+    [self createSelfClient];
+    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+    otherUser.remoteIdentifier = NSUUID.createUUID;
+    UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
+    UserClient *secondClient =[self createClientForUser:otherUser createSessionWithSelfUser:YES];
+    NSUUID *nonce = NSUUID.createUUID;
+    ZMGenericMessageBuilder *builder = ZMGenericMessage.builder;
+    ZMTextBuilder *textBuilder = ZMText.builder;
+    textBuilder.content = [self textMessageRequiringExternalMessageWithNumberOfClients:2];
+    builder.text = textBuilder.build;
+    builder.messageId = nonce.transportString;
+    ZMGenericMessage *textMessage = builder.build;
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    conversation.remoteIdentifier = NSUUID.createUUID;
+    [conversation addParticipant:otherUser];
+    
+    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    
+    // when
+    NSData *data = [ZMClientMessage encryptedMessagePayloadDataWithGenericMessage:textMessage
+                                                                     conversation:conversation
+                                                             managedObjectContext:self.syncMOC
+                                                                     externalData:nil];
+    
+    // then
+    ZMNewOtrMessage *createdMessage = (ZMNewOtrMessage *)[ZMNewOtrMessage.builder mergeFromData:data].build;
+    XCTAssertNotNil(createdMessage);
+    XCTAssertTrue(createdMessage.hasBlob);
+    
+    NSArray <ZMClientId *>* clientIds = [createdMessage.recipients flattenWithBlock:^NSArray *(ZMUserEntry *userEntry) {
+        return [userEntry.clients mapWithBlock:^ZMClientId *(ZMClientEntry *clientEntry) {
+            return clientEntry.client;
+        }];
+    }];
+    
+    XCTAssertEqual(clientIds.count, 2lu);
+    XCTAssertTrue([clientIds containsObject:firstClient.clientId]);
+    XCTAssertTrue([clientIds containsObject:secondClient.clientId]);
+}
+
+
+- (void)testThatItDecryptsMessageWithExternalBlobCorrectly
+{
+    // given
+    [self createSelfClient];
+    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+    otherUser.remoteIdentifier = NSUUID.createUUID;
+    UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
+    
+    ZMUpdateEvent *messageEvent = [self encryptedExternalMessageFixtureWithBlobFromClient:firstClient];
+    NSString *base64SHA = @"kKSSlbMxXEdd+7fekxB8Qr67/mpjjboBsr2wLcW7wzE=";
+    NSString *base64OTRKey = @"4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7w=";
+    ZMExternalBuilder *builder = ZMExternal.builder;
+    builder.sha256 = [[NSData alloc] initWithBase64EncodedString:base64SHA options:0];
+    builder.otrKey = [[NSData alloc] initWithBase64EncodedString:base64OTRKey options:0];
+
+    // when
+    ZMGenericMessage *message = [ZMClientMessage genericMessageFromUpdateEventWithExternal:messageEvent external:builder.build];
+    
+    // then
+    XCTAssertNotNil(message);
+    XCTAssertEqualObjects(message.text.content, self.expectedExternalMessageText);
+}
+
+#pragma mark - Helper
+
+- (NSString *)textMessageRequiringExternalMessageWithNumberOfClients:(NSUInteger)count
+{
+    NSMutableString *text = @"Long Text".mutableCopy;
+    while ([text dataUsingEncoding:NSUTF8StringEncoding].length < ZMClientMessageByteSizeExternalThreshold / count) {
+        [text appendString:text];
+    }
+    return text;
+}
+
+- (ZMUpdateEvent *)encryptedExternalMessageFixtureWithBlobFromClient:(UserClient *)fromClient
+{
+    NSError *error;
+    NSURL *encryptedMessageURL = [self fileURLForResource:@"EncryptedBase64EncondedExternalMessageTestFixture" extension:@"txt"];
+    NSString *encryptedMessageFixtureString = [[NSString alloc] initWithContentsOfURL:encryptedMessageURL encoding:NSUTF8StringEncoding error:&error];
+    XCTAssertNil(error);
+    
+    NSDictionary *payload = @{
+                              @"conversation": NSUUID.createUUID.transportString,
+                              @"data": @"CiQzMzRmN2Y3Yi1hNDk5LTQ1MTMtOTJhOC1hZTg4MDI0OTQ0ZTlCRAog4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7wSIJCkkpWzMVxHXfu33pMQfEK+u/5qY426AbK9sC3Fu8Mx",
+                              @"external": encryptedMessageFixtureString,
+                              @"from": fromClient.remoteIdentifier,
+                              @"time": NSDate.date.transportString,
+                              @"type": @"conversation.otr-message-add"
+                              };
+    
+    return [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:NSUUID.createUUID];
+}
+
+- (NSString *)expectedExternalMessageText
+{
+    NSError *error;
+    NSURL *messageFixtureURL = [self fileURLForResource:@"ExternalMessageTextFixture" extension:@"txt"];
+    NSString *messageFixtureString = [[NSString alloc] initWithContentsOfURL:messageFixtureURL encoding:NSUTF8StringEncoding error:&error];
+    XCTAssertNil(error);
+
+    return messageFixtureString;
+}
+
+@end

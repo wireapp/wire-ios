@@ -41,7 +41,6 @@
 #import "ZMRegistrationTranscoder.h"
 #import "ZMPhoneNumberVerificationTranscoder.h"
 #import "ZMUserProfileUpdateTranscoder.h"
-#import "ZMApplicationLaunchStatus.h"
 
 static NSString *const TimerInfoOriginalCredentialsKey = @"originalCredentials";
 NSTimeInterval DebugLoginFailureTimerOverride = 0;
@@ -56,6 +55,7 @@ static NSTimeInterval const RequestFailureTimeIntervalBufferTime = 0.05;
 @property (nonatomic) ZMTimer* loginFailureTimer;
 @property (nonatomic) NSDate* lastTimerStart;
 @property (nonatomic, weak) ZMApplication *application;
+@property (nonatomic) BOOL didLaunchInForeground;
 
 @end
 
@@ -73,20 +73,17 @@ static NSTimeInterval const RequestFailureTimeIntervalBufferTime = 0.05;
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate
 {
     return [self initWithAuthenticationCenter:authenticationStatus
                      clientRegistrationStatus:clientRegistrationStatus
-                      applicationLaunchStatus:applicationLaunchStatus
                       objectStrategyDirectory:objectStrategyDirectory
                          stateMachineDelegate:stateMachineDelegate application:nil];
 }
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate
                                  application:(ZMApplication *)application;
@@ -94,7 +91,6 @@ static NSTimeInterval const RequestFailureTimeIntervalBufferTime = 0.05;
     application = application ?: [UIApplication sharedApplication];
     self = [super initWithAuthenticationCenter:authenticationStatus
                       clientRegistrationStatus:clientRegistrationStatus
-                       applicationLaunchStatus:applicationLaunchStatus
                        objectStrategyDirectory:objectStrategyDirectory
                           stateMachineDelegate:stateMachineDelegate];
     if(self) {
@@ -132,20 +128,23 @@ static NSTimeInterval const RequestFailureTimeIntervalBufferTime = 0.05;
 
 - (void)dataDidChange
 {
-    if(self.isDoneWithLogin && self.applicationLaunchStatus.currentState == ZMApplicationLaunchStateForeground) {
+    if(self.shouldStartQuickSync) {
         [self.stateMachineDelegate startQuickSync];
     }
 }
 
 - (BOOL)shouldStartQuickSync;
 {
-    return self.isLoggedIn;
+    if (!self.didLaunchInForeground && self.application.applicationState != UIApplicationStateBackground) {
+        self.didLaunchInForeground = YES;
+    }
+    return (self.isDoneWithLogin && self.didLaunchInForeground);
 }
 
 - (ZMTransportRequest *)nextRequest
 {
     if([self isDoneWithLogin]) {
-        if (self.applicationLaunchStatus.currentState == ZMApplicationLaunchStateForeground) {
+        if (self.shouldStartQuickSync) {
             [self.stateMachineDelegate startQuickSync];
         }
         return nil;
@@ -230,6 +229,8 @@ static NSTimeInterval const RequestFailureTimeIntervalBufferTime = 0.05;
 
 - (void)didEnterForeground
 {
+    self.didLaunchInForeground = YES;
+
     if ([self isDoneWithLogin]) {
         [self.stateMachineDelegate startQuickSync];
     }

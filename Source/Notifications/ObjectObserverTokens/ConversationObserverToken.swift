@@ -24,53 +24,17 @@ public protocol ZMGeneralConversationObserver {
     func tearDown()
 }
 
-extension ZMConnection : ObjectInSnapshot {
-    
-    public var keysToChangeInfoMap : KeyToKeyTransformation { return KeyToKeyTransformation(mapping: [:]) }
-    
-    public func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {
-        return ZMConnection.keyPathsForValuesAffectingValueForKey(key) 
-    }
-}
-
 extension ZMConversation : ObjectInSnapshot {
     
-    var defaultMappedKeys: [String] {
-        return ["messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "activeFlowParticipants", "callParticipants", "isSilenced", "securityLevel", "otherActiveVideoCallParticipants"]
-    }
-    
-    var customMappedKeys : [String: String] {
-        return [ "otherActiveParticipants" : "participantsChanged",
-                    "isSelfAnActiveMember" : "participantsChanged",
-                             "displayName" : "nameChanged",
-                   "attributedDisplayName" : "nameChanged",
-                  "relatedConnectionState" : "connectionStateChanged",
-                    "estimatedUnreadCount" : "unreadCountChanged",
-                        "clearedTimeStamp" : "clearedChanged",
-             "hasDownloadedMessageHistory" : "downloadHistoryCompleted"]
-    }
-    
-    public var keysToChangeInfoMap : KeyToKeyTransformation {
-        var mapping : [KeyPath : KeyToKeyTransformation.KeyToKeyMappingType] = [:]
-        for aKey in defaultMappedKeys {
-            mapping[KeyPath.keyPathForString(aKey)] = .Default
+    public var observableKeys : [String] {
+        var keys = ["messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "activeFlowParticipants", "callParticipants", "isSilenced", "securityLevel", "otherActiveVideoCallParticipants", "displayName", "estimatedUnreadCount", "clearedTimeStamp"]
+        if self.conversationType == .Group {
+            keys.append("otherActiveParticipants")
+            keys.append("isSelfAnActiveMember")
+            return keys
         }
-        for (key, value) in customMappedKeys {
-            mapping[KeyPath.keyPathForString(key)] = .Custom(KeyPath.keyPathForString(value))
-        }
-        return KeyToKeyTransformation(mapping:mapping)
-    }
-    
-    var internalKeysToChangeInfoMap : KeyToKeyTransformation {
-        var mapping : [KeyPath : KeyToKeyTransformation.KeyToKeyMappingType] = [:]
-        for aKey in defaultMappedKeys+Array(customMappedKeys.keys) {
-            mapping[KeyPath.keyPathForString(aKey)] = KeyToKeyTransformation.KeyToKeyMappingType.None
-        }
-        return KeyToKeyTransformation(mapping:mapping)
-    }
-    
-    public var keysToPreviousValueInfoMap : KeyToKeyTransformation {
-        return KeyToKeyTransformation(mapping: [KeyPath.keyPathForString("voiceChannelState"): .Custom(KeyPath.keyPathForString("previousVoiceChannelState"))])
+        keys.append("relatedConnectionState")
+        return keys
     }
     
     public func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {
@@ -78,114 +42,132 @@ extension ZMConversation : ObjectInSnapshot {
     }
 }
 
-//////////////////////
-////
-//// GeneralConversationObserver
-//// This should be used by all observer token types that observe a ZMConversation
-//// It makes sure we only create one token per conversation
-////
-/////////////////////
+
 
 
 public class GeneralConversationChangeInfo : ObjectChangeInfo {
     
     var conversation : ZMConversation { return self.object as! ZMConversation }
-    var conversationChangeInfo : ConversationChangeInfo?
-    var voiceChannelStateChangeInfo : VoiceChannelStateChangeInfo?
-    var callParticipantsChanged = false
-    var videoParticipantsChanged = false
-    var previousVoiceChannelState : ZMVoiceChannelState = .Invalid {
-        didSet {
-            if let conv = self.object as? ZMConversation where !conv.isZombieObject {
-                createVoiceChannelStateChangeInfoAndSet(previousVoiceChannelState)
-            }
-        }
+    
+    
+    internal var internalConversationChangeInfo : ConversationChangeInfo?
+    internal var internalVoiceChannelStateChangeInfo : VoiceChannelStateChangeInfo?
+    var callParticipantsChanged : Bool {
+        return !keysForCallParticipantsChangeInfo.isDisjointWith(changedKeysAndOldValues.keys)
+    }
+    var videoParticipantsChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("otherActiveVideoCallParticipants")
     }
     
     private var keysForConversationChangeInfo : Set<String> {
-        return Set(arrayLiteral: "messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "isSilenced", "otherActiveParticipants", "isSelfAnActiveMember", "displayName", "attributedDisplayName", "relatedConnectionState", "estimatedUnreadCount", "clearedTimeStamp", "securityLevel", "hasDownloadedMessageHistory")
+        return Set(arrayLiteral: "messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "isSilenced", "otherActiveParticipants", "isSelfAnActiveMember", "displayName", "attributedDisplayName", "relatedConnectionState", "estimatedUnreadCount", "clearedTimeStamp", "securityLevel")
     }
     
     private var keysForCallParticipantsChangeInfo : Set <String> {
         return Set(arrayLiteral: "activeFlowParticipants", "callParticipants", "otherActiveVideoCallParticipants")
     }
     
-    public override var changedKeys : KeySet {
-        didSet {
-            for key in changedKeys {
-                if keysForConversationChangeInfo.contains(key.rawValue)  {
-                    if let conv = self.object as? ZMConversation where !conv.isZombieObject {
-                        createConversationChangeInfoAndSet(key)
-                    }
-                }
-                if keysForCallParticipantsChangeInfo.contains(key.rawValue) {
-                    callParticipantsChanged = true
-                    if key.rawValue == "otherActiveVideoCallParticipants" {
-                        videoParticipantsChanged = true
-                    }
-                }
-            }
+    func setAllKeys() {
+        // we register conversation observers lazily when we receive a change from a save notification
+        // in this case we don't know which keys changed nor their previous value, therefore we set all of them to true
+        let keys = keysForConversationChangeInfo.union(keysForCallParticipantsChangeInfo)
+        changedKeysAndOldValues = keys.reduce([:]){ (var dict, value) in
+            dict[value] = ""
+            return dict
         }
     }
-    
-    private func createConversationChangeInfoAndSet(key: KeyPath) {
-        if conversationChangeInfo == nil {
-            conversationChangeInfo = ConversationChangeInfo(object: object)
-            conversationChangeInfo!.changedKeys = changedKeys
+
+    var conversationChangeInfo : ConversationChangeInfo? {
+        if internalConversationChangeInfo == nil && !keysForConversationChangeInfo.isDisjointWith(changedKeysAndOldValues.keys) {
+            internalConversationChangeInfo = ConversationChangeInfo(object: object)
+            internalConversationChangeInfo!.changedKeysAndOldValues = changedKeysAndOldValues
         }
-        if let fieldName = conversation.keysToChangeInfoMap.transformKey(key, defaultTransformation: { $0 + "Changed" } ) {
-            conversationChangeInfo!.setValue(1, forKey: fieldName.rawValue)
-        }
+        return internalConversationChangeInfo
     }
     
-    private func createVoiceChannelStateChangeInfoAndSet(state: ZMVoiceChannelState) {
-        voiceChannelStateChangeInfo = VoiceChannelStateChangeInfo(object: object)
-        voiceChannelStateChangeInfo!.previousState = state
+    var voiceChannelStateChangeInfo : VoiceChannelStateChangeInfo? {
+        if internalVoiceChannelStateChangeInfo == nil && changedKeysAndOldValues.keys.contains("voiceChannelState") {
+            internalVoiceChannelStateChangeInfo = VoiceChannelStateChangeInfo(object: object)
+            internalVoiceChannelStateChangeInfo!.changedKeysAndOldValues = changedKeysAndOldValues
+        }
+        return internalVoiceChannelStateChangeInfo
     }
     
     override public var description : String { return self.debugDescription }
     override public var debugDescription : String {
-        return "changedKeys: \(changedKeys), " +
-        "previousState \(previousVoiceChannelState),"
+        return "changedKeys and old values: \(changedKeysAndOldValues), "
     }
 }
 
 
-public final class GeneralConversationObserverToken<T: NSObject where T : ZMGeneralConversationObserver> : ObjectObserverTokenContainer {
+//////////////////////
+////
+//// GeneralConversationObserver
+////
+/////////////////////
+
+/// This class is an internal class and should not be used to create tokens directly.
+/// If you want to register a conversation observer use the GlobalConversationObserver
+class GeneralConversationObserverToken<T: NSObject where T : ZMGeneralConversationObserver> : ObjectObserverTokenContainer, DisplayNameObserver  {
     
     typealias InnerTokenType = ObjectObserverToken<GeneralConversationChangeInfo, GeneralConversationObserverToken>
     
+    var isTornDown : Bool = false
     private weak var observer : T?
+    var conversation : ZMConversation? {
+        return self.object as? ZMConversation
+    }    
     
-    public init(observer: T, conversation: ZMConversation) {
+    init(observer: T, conversation: ZMConversation) {
         self.observer = observer
-        
-        var wrapper : (NSObject, GeneralConversationChangeInfo) -> () = { _ in return }
+
+        var changeHandler : (NSObject, GeneralConversationChangeInfo) -> () = { _ in return }
         let innerToken = InnerTokenType.token(
             conversation,
-            keyToKeyTransformation: conversation.internalKeysToChangeInfoMap,
-            keysThatNeedPreviousValue : conversation.keysToPreviousValueInfoMap,
+            observableKeys: conversation.observableKeys,
             managedObjectContextObserver : conversation.managedObjectContext!.globalManagedObjectContextObserver,
-            observer: { wrapper($0, $1) })
+            changeHandler: { changeHandler($0, $1) })
         
         super.init(object:conversation, token:innerToken)
         
-        wrapper = {
+        changeHandler = {
             [weak self] (_, changeInfo) in
             self?.observer?.conversationDidChange(changeInfo)
         }
         innerToken.addContainer(self)
+        conversation.managedObjectContext?.globalManagedObjectContextObserver.addDisplayNameObserver(self)
     }
     
-    override public func tearDown() {
+     override func tearDown() {
+        if isTornDown { return }
+        isTornDown = true
         if let t = self.token as? InnerTokenType {
-            t.removeContainer(self)
+            if !t.hasNoContainers  {
+                t.removeContainer(self)
+            }
             if t.hasNoContainers {
                 t.tearDown()
             }
         }
+        conversation?.managedObjectContext?.globalManagedObjectContextObserver.removeDisplayNameObserver(self)
     }
+    
+    func displayNameMightChange(users: Set<NSObject>) {
+        guard users.count > 0,
+            let conversation = conversation
+            where (conversation.userDefinedName == nil || conversation.userDefinedName!.isEmpty || conversation.conversationType != .Group) && conversation.activeParticipants.intersectsSet(users)
+            else { return }
 
+        (self.token as? InnerTokenType)?.keysHaveChanged(["displayName"])
+    }
+    
+    func connectionDidChange(changedConversations: [ZMConversation]) {
+        guard let conversation = conversation where conversation.conversationType != .Group && changedConversations.indexOf(conversation) != nil,
+            let token = token as? InnerTokenType
+            else { return }
+        
+        token.keysHaveChanged(["connection"])
+    }
 }
 
 
@@ -198,19 +180,54 @@ public final class GeneralConversationObserverToken<T: NSObject where T : ZMGene
 
 @objc public final class ConversationChangeInfo : ObjectChangeInfo {
     
-    public var messagesChanged = false
-    public var participantsChanged = false
-    public var nameChanged = false
-    public var lastModifiedDateChanged = false
-    public var unreadCountChanged = false
-    public var connectionStateChanged = false
-    public var isArchivedChanged = false
-    public var isSilencedChanged = false
-    public var conversationListIndicatorChanged = false
-    public var voiceChannelStateChanged = false
-    public var clearedChanged = false
-    public var securityLevelChanged = false
-    public var downloadHistoryCompleted = false
+    public var messagesChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("messages")
+    }
+
+    public var participantsChanged : Bool {
+        return !Set(arrayLiteral: "otherActiveParticipants", "isSelfAnActiveMember").isDisjointWith(changedKeysAndOldValues.keys)
+    }
+
+    public var nameChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("displayName")
+    }
+
+    public var lastModifiedDateChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("lastModifiedDate")
+    }
+
+    public var unreadCountChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("estimatedUnreadCount")
+    }
+
+    public var connectionStateChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("relatedConnectionState")
+    }
+
+    public var isArchivedChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("isArchived")
+    }
+
+    public var isSilencedChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("isSilenced")
+    }
+
+    public var conversationListIndicatorChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("conversationListIndicator")
+    }
+
+    public var voiceChannelStateChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("voiceChannelState")
+    }
+
+    public var clearedChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("clearedTimeStamp")
+    }
+
+    public var securityLevelChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("securityLevel")
+    }
+
     
     public var conversation : ZMConversation { return self.object as! ZMConversation }
     
@@ -227,8 +244,7 @@ public final class GeneralConversationObserverToken<T: NSObject where T : ZMGene
         "conversationListIndicatorChanged \(conversationListIndicatorChanged)," +
         "voiceChannelStateChanged \(voiceChannelStateChanged)," +
         "clearedChanged \(clearedChanged)," +
-        "securityLevelChanged \(securityLevelChanged)," +
-        "downloadHistoryCompleted \(downloadHistoryCompleted)"
+        "securityLevelChanged \(securityLevelChanged),"
     }
     
     public required init(object: NSObject) {
@@ -283,27 +299,26 @@ extension ConversationChangeInfo {
 }
 
 
-@objc public final class ConversationObserverToken : NSObject, ZMGeneralConversationObserver {
+@objc public final class ConversationObserverToken: NSObject, ChangeNotifierToken {
+   
+    typealias Observer = ZMConversationObserver
+    typealias ChangeInfo = ConversationChangeInfo
+    typealias GlobalObserver = GlobalConversationObserver
     
     private weak var observer : ZMConversationObserver?
-    private var conversationToken : GeneralConversationObserverToken<ConversationObserverToken>?
+    private weak var globalObserver: GlobalConversationObserver?
     
-    public init(observer: ZMConversationObserver, conversation: ZMConversation) {
+    init(observer: Observer, globalObserver: GlobalConversationObserver) {
         self.observer = observer
+        self.globalObserver = globalObserver
         super.init()
-        self.conversationToken = GeneralConversationObserverToken(observer: self, conversation: conversation)
     }
     
-    public func conversationDidChange(note: GeneralConversationChangeInfo) {
-        if let conversationInfo = note.conversationChangeInfo {
-            if let observer = observer {
-                observer.conversationDidChange(conversationInfo)
-            }
-        }
+    func notifyObserver(change: ConversationChangeInfo) {
+        observer?.conversationDidChange(change)
     }
-    
     public func tearDown() {
-        conversationToken?.tearDown()
+        globalObserver?.removeConversationObserverForToken(self)
     }
 }
 

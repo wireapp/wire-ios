@@ -45,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *organization;
 
 @property (nonatomic, copy) NSArray *emailAddresses;
+@property (nonatomic, copy) NSArray *rawPhoneNumbers;
 @property (nonatomic, copy) NSArray *phoneNumbers;
 
 /// a list of contact field to send invitation to (currently its both phone numbers and emails)

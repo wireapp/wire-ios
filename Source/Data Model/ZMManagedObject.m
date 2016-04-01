@@ -365,7 +365,7 @@ NSString * const ZMManagedObjectValidationErrorDomain = @"ZMManagedObjectValidat
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", [self remoteIdentifierDataKey], uuid.data];
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
     NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
-    RequireString([fetchResult count] <= 1, "More than one object with the same UUID");
+    RequireString([fetchResult count] <= 1, "More than one object with the same UUID: %s", uuid.transportString.UTF8String);
     return fetchResult.firstObject;
 }
 
@@ -481,7 +481,9 @@ NSString * const ZMManagedObjectValidationErrorDomain = @"ZMManagedObjectValidat
 - (void)setLocallyModifiedKeys:(NSSet *)keys;
 {
     VerifyReturn(keys != nil);
-    RequireString([keys isSubsetOfSet:[NSSet setWithArray:self.keysTrackedForLocalModifications]], "Trying to set keys that are not being tracked.");
+    RequireString([keys isSubsetOfSet:[NSSet setWithArray:self.keysTrackedForLocalModifications]],
+                  "Trying to set keys that are not being tracked: %s",
+                  [keys.allObjects componentsJoinedByString:@", "].UTF8String);
     
     NSMutableSet *newKeys = [self.keysThatHaveLocalModifications mutableCopy];
     for (NSString *key in keys) {

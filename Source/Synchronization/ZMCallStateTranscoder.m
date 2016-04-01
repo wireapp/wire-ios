@@ -678,6 +678,7 @@ _Pragma("clang diagnostic pop")
         return [self requestForUpdatingCallIsJoinedInConversation:conversation keysToUpdate:keys];
     }
     ZMTrapUnableToGenerateRequest(keys, self);
+    return nil;
 }
 
 - (ZMUpstreamRequest *)requestForUpdatingCallIsJoinedInConversation:(ZMConversation *)conversation keysToUpdate:(NSSet *)keys

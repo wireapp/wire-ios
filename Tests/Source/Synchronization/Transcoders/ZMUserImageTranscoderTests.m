@@ -424,24 +424,6 @@
     }];
 }
 
-- (void)testThatItDoesNotPersistMediumImageDataForNotSelfUser
-{
-    // given
-    NSUUID *imageID = [NSUUID createUUID];
-    self.user1.mediumRemoteIdentifier = imageID;
-    NSData *imageData = [self verySmallJPEGData];
-    self.user1.imageMediumData = imageData;
-    XCTAssertEqual(self.user1.imageMediumData, imageData);
-    
-    [self.syncMOC saveOrRollback];
-
-    //when
-    [self.syncMOC storeUserImage:nil forRemoteIdentifier:imageID];
-
-    //then
-    XCTAssertNil(self.user1.imageMediumData);
-}
-
 - (void)testThatItUdpatesTheMediumImageFromAResponse;
 {
     // TODO: There's a race condition here.

@@ -567,9 +567,7 @@ static dispatch_queue_t lastSessionIdentifierIsolation(void)
     if (self.conversation.isVideoCall) {
         NSError *error = nil;
         if (self.state == ZMVoiceChannelStateIncomingCall || self.state == ZMVoiceChannelStateOutgoingCall) {
-
-            [self setVideoSendState:FLOWMANAGER_VIDEO_PREVIEW error:&error];
-            
+           
             if (nil != error) {
                 ZMLogError(@"Cannot set video send state: %@", error);
             }

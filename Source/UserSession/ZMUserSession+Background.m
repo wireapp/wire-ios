@@ -35,7 +35,6 @@
 #import "ZMConnection+Internal.h"
 #import "ZMUserSession+UserNotificationCategories.h"
 #import "ZMStoredLocalNotification.h"
-#import "ZMApplicationLaunchStatus.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 static const char *ZMLogTag = "Push";
@@ -160,7 +159,6 @@ static const char *ZMLogTag = "Push";
             NOT_USED(result);
         }];
     }
-    [self.applicationLaunchStatus application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 
@@ -198,24 +196,25 @@ static const char *ZMLogTag = "Push";
         [self ignoreCallForNotification:notification withCompletionHandler:completionHandler];
     }
     
-    NSString *textInput = [responseInfo optionalStringForKey:UIUserNotificationActionResponseTypedTextKey];
-    if ([identifier isEqualToString:ZMConversationDirectReplyAction]) {
-        [self replyToNotification:notification withReply:textInput completionHandler:completionHandler];
-
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
+        NSString *textInput = [responseInfo optionalStringForKey:UIUserNotificationActionResponseTypedTextKey];
+        if ([identifier isEqualToString:ZMConversationDirectReplyAction]) {
+            [self replyToNotification:notification withReply:textInput completionHandler:completionHandler];
+            return;
+        }
     }
-    else {
-        if (application.applicationState == UIApplicationStateInactive) {
-            self.pendingLocalNotification = [[ZMStoredLocalNotification alloc] initWithNotification:notification
-                                                                               managedObjectContext:self.managedObjectContext
-                                                                                   actionIdentifier:identifier
-                                                                                          textInput:[textInput copy]];
-            if (self.didStartInitialSync && !self.isPerformingSync) {
-                [self didEnterEventProcessingState:nil];
-            }
+    
+    if (application.applicationState == UIApplicationStateInactive) {
+        self.pendingLocalNotification = [[ZMStoredLocalNotification alloc] initWithNotification:notification
+                                                                           managedObjectContext:self.managedObjectContext
+                                                                               actionIdentifier:identifier
+                                                                                      textInput:nil];
+        if (self.didStartInitialSync && !self.isPerformingSync) {
+            [self didEnterEventProcessingState:nil];
         }
-        if (completionHandler != nil) {
-            completionHandler();
-        }
+    }
+    if (completionHandler != nil) {
+        completionHandler();
     }
 }
 
@@ -225,8 +224,6 @@ static const char *ZMLogTag = "Push";
     // The OS is telling us to fetch new data from the backend.
     // Wrap the handler:
     ZMBackgroundFetchHandler handler = ^(ZMBackgroundFetchResult const result){
-        [self.applicationLaunchStatus finishedBackgroundFetch];
-        
         dispatch_async(dispatch_get_main_queue(), ^{
 
             switch (result) {
@@ -244,7 +241,6 @@ static const char *ZMLogTag = "Push";
     };
     
     // Transition into the ZMBackgroundFetchState which will do the fetching:
-    [self.applicationLaunchStatus startedBackgroundFetch];
     [self.operationLoop startBackgroundFetchWithCompletionHandler:handler];
 }
 
@@ -266,7 +262,6 @@ static const char *ZMLogTag = "Push";
 {
     NOT_USED(note);
     self.didNotifyThirdPartyServices = NO;
-    [self.applicationLaunchStatus appWillEnterForeground];
 }
 
 @end
@@ -391,7 +386,7 @@ static const char *ZMLogTag = "Push";
             });
         }];
         [self.managedObjectContext performGroupedBlock:^{
-            [conversation appendMessagesWithText:reply];
+            [conversation appendMessageWithText:reply];
             [self.managedObjectContext saveOrRollback];
         }];
     }

@@ -53,6 +53,12 @@ class UserObserverTokenTests : MessagingTest {
         .ConnectionState,
         .TrustLevel
     ]
+    
+    override func setUp() {
+        super.setUp()
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    }
 
     func checkThatItNotifiesTheObserverOfAChange(user : ZMUser, modifier: ZMUser -> Void, expectedChangedField: UserInfoChangeKey, customAffectedKeys: AffectedKeys? = nil) {
 
@@ -149,6 +155,7 @@ class UserObserverTokenTests : MessagingTest {
     {
         // given
         let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        user.remoteIdentifier = NSUUID.createUUID()
         user.mediumRemoteIdentifier = NSUUID.createUUID()
         user.imageMediumData = self.verySmallJPEGData()
 
@@ -162,6 +169,7 @@ class UserObserverTokenTests : MessagingTest {
     {
         // given
         let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        user.remoteIdentifier = NSUUID.createUUID()
         user.smallProfileRemoteIdentifier = NSUUID.createUUID()
         user.imageSmallProfileData = self.verySmallJPEGData()
 
@@ -202,7 +210,8 @@ class UserObserverTokenTests : MessagingTest {
         let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
         user.connection = ZMConnection.insertNewObjectInManagedObjectContext(self.uiMOC)
         user.connection!.status = ZMConnectionStatus.Pending
-
+        self.uiMOC.saveOrRollback()
+        
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
             modifier : { $0.connection!.status = ZMConnectionStatus.Accepted },
@@ -214,6 +223,7 @@ class UserObserverTokenTests : MessagingTest {
     {
         // given
         let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        self.uiMOC.saveOrRollback()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
@@ -229,6 +239,7 @@ class UserObserverTokenTests : MessagingTest {
     {
         // given
         let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        self.uiMOC.saveOrRollback()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
@@ -238,22 +249,6 @@ class UserObserverTokenTests : MessagingTest {
             },
             expectedChangedField: .ConnectionState,
             customAffectedKeys: AffectedKeys.All)
-    }
-
-    func testThatItNotifiesTheObserverOfAChangeInTheConnectionText()
-    {
-        // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.connection = ZMConnection.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.connection!.message = "Boring"
-
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-            modifier : {
-                $0.connection!.message = "Hello!"
-            },
-            expectedChangedField: .ConnectionState,
-            customAffectedKeys: AffectedKeys.All )
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
@@ -341,7 +336,7 @@ class UserObserverTokenTests : MessagingTest {
         // then
         guard let changeInfo = observer.receivedChangeInfo.firstObject as? UserChangeInfo else { return XCTFail("Should receive a changeInfo for the added client") }
         XCTAssertTrue(changeInfo.clientsChanged)
-        XCTAssertTrue(changeInfo.changedKeys.contains(UserClientsKey))
+        XCTAssertTrue(changeInfo.changedKeysAndOldValues.keys.contains(UserClientsKey))
 
         // after
         ZMUser.removeUserObserverForToken(token)
@@ -369,7 +364,7 @@ class UserObserverTokenTests : MessagingTest {
         // then
         guard let changeInfo = observer.receivedChangeInfo.firstObject as? UserChangeInfo else { return XCTFail("Should receive a changeInfo for the added client") }
         XCTAssertTrue(changeInfo.clientsChanged)
-        XCTAssertTrue(changeInfo.changedKeys.contains(UserClientsKey))
+        XCTAssertTrue(changeInfo.changedKeysAndOldValues.keys.contains(UserClientsKey))
         XCTAssertEqual(selfUser.clients, Set(arrayLiteral: selfClient))
         XCTAssertEqual(selfUser.clients.count, 1)
 
