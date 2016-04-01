@@ -85,6 +85,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property (strong) ZMCleared* cleared;
 @property (strong) ZMExternal* external;
 @property ZMClientAction clientAction;
+@property (strong) ZMCalling* calling;
 @end
 
 @implementation ZMGenericMessage
@@ -152,6 +153,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasClientAction_ = !!_value_;
 }
 @synthesize clientAction;
+- (BOOL) hasCalling {
+  return !!hasCalling_;
+}
+- (void) setHasCalling:(BOOL) _value_ {
+  hasCalling_ = !!_value_;
+}
+@synthesize calling;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -163,6 +171,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.cleared = [ZMCleared defaultInstance];
     self.external = [ZMExternal defaultInstance];
     self.clientAction = ZMClientActionRESETSESSION;
+    self.calling = [ZMCalling defaultInstance];
   }
   return self;
 }
@@ -212,6 +221,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasCalling) {
+    if (!self.calling.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -241,6 +255,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasClientAction) {
     [output writeEnum:9 value:self.clientAction];
+  }
+  if (self.hasCalling) {
+    [output writeMessage:10 value:self.calling];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -277,6 +294,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasClientAction) {
     size_ += computeEnumSize(9, self.clientAction);
+  }
+  if (self.hasCalling) {
+    size_ += computeMessageSize(10, self.calling);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -358,6 +378,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (self.hasClientAction) {
     [output appendFormat:@"%@%@: %@\n", indent, @"clientAction", NSStringFromZMClientAction(self.clientAction)];
   }
+  if (self.hasCalling) {
+    [output appendFormat:@"%@%@ {\n", indent, @"calling"];
+    [self.calling writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -400,6 +426,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (self.hasClientAction) {
     [dictionary setObject: @(self.clientAction) forKey: @"clientAction"];
   }
+  if (self.hasCalling) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.calling storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"calling"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -429,6 +460,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasExternal || [self.external isEqual:otherMessage.external]) &&
       self.hasClientAction == otherMessage.hasClientAction &&
       (!self.hasClientAction || self.clientAction == otherMessage.clientAction) &&
+      self.hasCalling == otherMessage.hasCalling &&
+      (!self.hasCalling || [self.calling isEqual:otherMessage.calling]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -459,6 +492,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasClientAction) {
     hashCode = hashCode * 31 + self.clientAction;
+  }
+  if (self.hasCalling) {
+    hashCode = hashCode * 31 + [self.calling hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -529,6 +565,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasClientAction) {
     [self setClientAction:other.clientAction];
+  }
+  if (other.hasCalling) {
+    [self mergeCalling:other.calling];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -625,6 +664,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         } else {
           [unknownFields mergeVarintField:9 value:value];
         }
+        break;
+      }
+      case 82: {
+        ZMCallingBuilder* subBuilder = [ZMCalling builder];
+        if (self.hasCalling) {
+          [subBuilder mergeFrom:self.calling];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setCalling:[subBuilder buildPartial]];
         break;
       }
     }
@@ -856,6 +904,36 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearClientAction {
   resultGenericMessage.hasClientAction = NO;
   resultGenericMessage.clientAction = ZMClientActionRESETSESSION;
+  return self;
+}
+- (BOOL) hasCalling {
+  return resultGenericMessage.hasCalling;
+}
+- (ZMCalling*) calling {
+  return resultGenericMessage.calling;
+}
+- (ZMGenericMessageBuilder*) setCalling:(ZMCalling*) value {
+  resultGenericMessage.hasCalling = YES;
+  resultGenericMessage.calling = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setCallingBuilder:(ZMCallingBuilder*) builderForValue {
+  return [self setCalling:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeCalling:(ZMCalling*) value {
+  if (resultGenericMessage.hasCalling &&
+      resultGenericMessage.calling != [ZMCalling defaultInstance]) {
+    resultGenericMessage.calling =
+      [[[ZMCalling builderWithPrototype:resultGenericMessage.calling] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.calling = value;
+  }
+  resultGenericMessage.hasCalling = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearCalling {
+  resultGenericMessage.hasCalling = NO;
+  resultGenericMessage.calling = [ZMCalling defaultInstance];
   return self;
 }
 @end
@@ -3109,6 +3187,215 @@ static ZMExternal* defaultZMExternalInstance = nil;
 - (ZMExternalBuilder*) clearSha256 {
   resultExternal.hasSha256 = NO;
   resultExternal.sha256 = [NSData data];
+  return self;
+}
+@end
+
+@interface ZMCalling ()
+@property (strong) NSString* content;
+@end
+
+@implementation ZMCalling
+
+- (BOOL) hasContent {
+  return !!hasContent_;
+}
+- (void) setHasContent:(BOOL) _value_ {
+  hasContent_ = !!_value_;
+}
+@synthesize content;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.content = @"";
+  }
+  return self;
+}
+static ZMCalling* defaultZMCallingInstance = nil;
++ (void) initialize {
+  if (self == [ZMCalling class]) {
+    defaultZMCallingInstance = [[ZMCalling alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMCallingInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMCallingInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasContent) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasContent) {
+    [output writeString:1 value:self.content];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasContent) {
+    size_ += computeStringSize(1, self.content);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMCalling*) parseFromData:(NSData*) data {
+  return (ZMCalling*)[[[ZMCalling builder] mergeFromData:data] build];
+}
++ (ZMCalling*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMCalling*)[[[ZMCalling builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMCalling*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMCalling*)[[[ZMCalling builder] mergeFromInputStream:input] build];
+}
++ (ZMCalling*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMCalling*)[[[ZMCalling builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMCalling*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMCalling*)[[[ZMCalling builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMCalling*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMCalling*)[[[ZMCalling builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMCallingBuilder*) builder {
+  return [[ZMCallingBuilder alloc] init];
+}
++ (ZMCallingBuilder*) builderWithPrototype:(ZMCalling*) prototype {
+  return [[ZMCalling builder] mergeFrom:prototype];
+}
+- (ZMCallingBuilder*) builder {
+  return [ZMCalling builder];
+}
+- (ZMCallingBuilder*) toBuilder {
+  return [ZMCalling builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasContent) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"content", self.content];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasContent) {
+    [dictionary setObject: self.content forKey: @"content"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMCalling class]]) {
+    return NO;
+  }
+  ZMCalling *otherMessage = other;
+  return
+      self.hasContent == otherMessage.hasContent &&
+      (!self.hasContent || [self.content isEqual:otherMessage.content]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasContent) {
+    hashCode = hashCode * 31 + [self.content hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMCallingBuilder()
+@property (strong) ZMCalling* resultCalling;
+@end
+
+@implementation ZMCallingBuilder
+@synthesize resultCalling;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultCalling = [[ZMCalling alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultCalling;
+}
+- (ZMCallingBuilder*) clear {
+  self.resultCalling = [[ZMCalling alloc] init];
+  return self;
+}
+- (ZMCallingBuilder*) clone {
+  return [ZMCalling builderWithPrototype:resultCalling];
+}
+- (ZMCalling*) defaultInstance {
+  return [ZMCalling defaultInstance];
+}
+- (ZMCalling*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMCalling*) buildPartial {
+  ZMCalling* returnMe = resultCalling;
+  self.resultCalling = nil;
+  return returnMe;
+}
+- (ZMCallingBuilder*) mergeFrom:(ZMCalling*) other {
+  if (other == [ZMCalling defaultInstance]) {
+    return self;
+  }
+  if (other.hasContent) {
+    [self setContent:other.content];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMCallingBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMCallingBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setContent:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasContent {
+  return resultCalling.hasContent;
+}
+- (NSString*) content {
+  return resultCalling.content;
+}
+- (ZMCallingBuilder*) setContent:(NSString*) value {
+  resultCalling.hasContent = YES;
+  resultCalling.content = value;
+  return self;
+}
+- (ZMCallingBuilder*) clearContent {
+  resultCalling.hasContent = NO;
+  resultCalling.content = @"";
   return self;
 }
 @end
