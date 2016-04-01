@@ -17,7 +17,6 @@
 // 
 
 
-
 @import ZMCSystem;
 @import ZMUtilities;
 @import UIKit;
@@ -378,7 +377,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     // TODO: Need to set up a timer such that we can fail expired requests before they hit this point of the code -> namely when offline
     
-    ZMURLSession *session = request.shouldUseOnlyForegroundSession ? self.urlSessionSwitch.foregroundSession :  self.urlSessionSwitch.currentSession;
+    ZMURLSession *session = request.shouldUseOnlyBackgroundSession ? self.urlSessionSwitch.backgroundSession :  self.urlSessionSwitch.currentSession;
     if (session.configuration.timeoutIntervalForRequest < expirationDate.timeIntervalSinceNow) {
         ZMLogWarn(@"May not be able to time out request. timeoutIntervalForRequest (%g) is too low (%g).",
                   session.configuration.timeoutIntervalForRequest, expirationDate.timeIntervalSinceNow);
@@ -409,7 +408,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
-    ZMLogInfo(@"----> Request: %@", request);
+    ZMLogInfo(@"----> Request: %@\n%@", URLRequest.allHTTPHeaderFields, request);
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
@@ -623,7 +622,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)sendAccessTokenRequest;
 {
-    [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.urlSessionSwitch.currentSession];
+    [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.urlSessionSwitch.foregroundSession];
 }
 
 - (BOOL)accessTokenIsAboutToExpire {

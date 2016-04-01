@@ -17,7 +17,6 @@
 // 
 
 
-
 #import <Foundation/Foundation.h>
 
 
@@ -32,6 +31,7 @@
 @property (nonatomic, readonly) ZMURLSession *currentSession;
 /// The foreground session
 @property (nonatomic, readonly) ZMURLSession *foregroundSession;
+@property (nonatomic, readonly) ZMURLSession *backgroundSession;
 
 - (instancetype)initWithForegroundSession:(ZMURLSession *)foregroundSession backgroundSession:(ZMURLSession *)backgroundSession;
 - (instancetype)initWithForegroundSession:(ZMURLSession *)foregroundSession backgroundSession:(ZMURLSession *)backgroundSession sessionCancelTimerClass:(Class)sessionCancelTimerClass NS_DESIGNATED_INITIALIZER;

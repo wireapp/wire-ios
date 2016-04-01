@@ -18,7 +18,6 @@
 
 
 
-
 #include "EventBlock.h"
 
 namespace {

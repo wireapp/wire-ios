@@ -17,7 +17,6 @@
 // 
 
 
-
 #include "EventUID.h"
 
 const EventUID EventUID::UID_NONE(-1, 0);

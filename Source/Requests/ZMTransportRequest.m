@@ -17,7 +17,6 @@
 // 
 
 
-
 @import ZMUtilities;
 @import ZMCSystem;
 @import ImageIO;
@@ -85,7 +84,7 @@ static BOOL hasUTJSONSupport(void)
 @property (nonatomic) NSMutableArray<NSString *>* debugInformation;
 @property (nonatomic) BOOL shouldCompress;
 @property (nonatomic) NSDate *startOfUploadTimestamp;
-@property (nonatomic) BOOL shouldUseOnlyForegroundSession;
+@property (nonatomic) BOOL shouldUseOnlyBackgroundSession;
 
 @end
 
@@ -397,9 +396,9 @@ static BOOL hasUTJSONSupport(void)
     }];
 }
 
-- (void)forceToForegroundSession
+- (void)forceToBackgroundSession
 {
-    self.shouldUseOnlyForegroundSession = YES;
+    self.shouldUseOnlyBackgroundSession = YES;
 }
 
 - (NSString *)completionHandlerDescription;

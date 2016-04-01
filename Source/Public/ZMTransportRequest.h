@@ -18,7 +18,6 @@
 
 
 
-
 #import <Foundation/Foundation.h>
 #import <ZMCSystem/ZMCSystem.h>
 
@@ -99,8 +98,8 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @property (nonatomic, readonly) NSDate *expirationDate;
 @property (nonatomic, readonly) BOOL shouldCompress;
 
-/// If true, the request should only be sent through foreground session
-@property (nonatomic, readonly) BOOL shouldUseOnlyForegroundSession;
+/// If true, the request should only be sent through background session
+@property (nonatomic, readonly) BOOL shouldUseOnlyBackgroundSession;
 
 @property (nonatomic, readonly, copy) NSDictionary *contentDisposition; ///< C.f. <https://tools.ietf.org/html/rfc2183>
 
@@ -113,8 +112,8 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 
 - (BOOL)hasRequiredPayload;
 
-/// If this is called, the request is going to be executed only on a foreground session
-- (void)forceToForegroundSession;
+/// If this is called, the request is going to be executed only on a background session
+- (void)forceToBackgroundSession;
 
 @property (nonatomic, readonly) ZMTransportAccept acceptedResponseMediaTypes; ///< C.f. RFC 7231 section 5.3.2 <http://tools.ietf.org/html/rfc7231#section-5.3.2>
 

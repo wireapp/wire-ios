@@ -17,7 +17,6 @@
 // 
 
 
-
 import Foundation
 
 // This is needed for dynamic linking (?). If there is no swift, it crashes.

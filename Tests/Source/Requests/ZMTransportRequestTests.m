@@ -17,7 +17,6 @@
 // 
 
 
-
 @import XCTest;
 @import ZMTesting;
 @import ZMTransport;
@@ -336,25 +335,25 @@
     XCTAssertEqualObjects(responses, @"abc");
 }
 
-- (void)testThatARequestShouldNotBeExecutedOnlyOnForegroundSessionByDefault
+- (void)testThatARequestShouldBeExecutedOnlyOnForegroundSessionByDefault
 {
     // given
     ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
     
     // then
-    XCTAssertFalse(request.shouldUseOnlyForegroundSession);
+    XCTAssertFalse(request.shouldUseOnlyBackgroundSession);
 }
 
-- (void)testThatARequestShouldUseOnlyForegroundSessionWhenForced
+- (void)testThatARequestShouldUseOnlyBackgroundSessionWhenForced
 {
     // given
     ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
 
     // when
-    [request forceToForegroundSession];
+    [request forceToBackgroundSession];
     
     // then
-    XCTAssertTrue(request.shouldUseOnlyForegroundSession);
+    XCTAssertTrue(request.shouldUseOnlyBackgroundSession);
 }
 
 @end
