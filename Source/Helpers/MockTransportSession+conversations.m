@@ -329,6 +329,32 @@ static NSString * const IdleString = @"idle";
     return muted != nil;
 }
 
+// returns YES if the payload contains "muted" information
+- (BOOL)updateConversation:(MockConversation *)conversation isOTRMutedFromPutSelfConversationPayload:(NSDictionary *)payload
+{
+    NSString *mutedRef = [payload optionalStringForKey:@"otr_muted_ref"];
+    if (mutedRef != nil) {
+        NSNumber *muted = [payload optionalNumberForKey:@"otr_muted"];
+        conversation.otrMuted = ([muted isEqual:@1]);
+        conversation.otrMutedRef = mutedRef;
+    }
+    
+    return mutedRef != nil;
+}
+
+// returns YES if the payload contains "muted" information
+- (BOOL)updateConversation:(MockConversation *)conversation isOTRArchivedFromPutSelfConversationPayload:(NSDictionary *)payload
+{
+    NSString *archivedRef = [payload optionalStringForKey:@"otr_archived_ref"];
+    if (archivedRef != nil) {
+        NSNumber *archived = [payload optionalNumberForKey:@"otr_archived"];
+        conversation.otrArchived = ([archived isEqual:@1]);
+        conversation.otrArchivedRef = archivedRef;
+    }
+    
+    return archivedRef != nil;
+}
+
 // returns YES if the payload contains "last_read" information
 - (BOOL)updateConversation:(MockConversation *)conversation lastReadFromPutSelfConversationPayload:(NSDictionary *)payload
 {
@@ -352,10 +378,13 @@ static NSString * const IdleString = @"idle";
     
     BOOL hadArchived = [self updateConversation:conversation isArchivedFromPutSelfConversationPayload:payload];
     BOOL hadMuted = [self updateConversation:conversation isMutedFromPutSelfConversationPayload:payload];
+    BOOL hadOTRMuted = [self updateConversation:conversation isOTRMutedFromPutSelfConversationPayload:payload];
+    BOOL hadOTRArchived = [self updateConversation:conversation isOTRArchivedFromPutSelfConversationPayload:payload];
+
     BOOL hadLastRead = [self updateConversation:conversation lastReadFromPutSelfConversationPayload:payload];
     BOOL hadCleared = [self updateConversation:conversation clearedEventIDFromPutSelfConversationPayload:payload];
 
-    if( ! hadMuted && ! hadArchived && ! hadLastRead && !hadCleared) {
+    if( ! hadMuted && ! hadArchived && ! hadLastRead && !hadCleared && !hadOTRArchived && !hadOTRMuted) {
         return [ZMTransportResponse responseWithPayload:@{@"error":@"no useful payload"} HTTPstatus:400 transportSessionError:nil];
     }
     

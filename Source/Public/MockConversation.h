@@ -37,6 +37,11 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @interface MockConversation : NSManagedObject
 
 @property (nonatomic) NSString *archived;
+@property (nonatomic) NSString *otrArchivedRef;
+@property (nonatomic) NSString *otrMutedRef;
+@property (nonatomic) BOOL otrArchived;
+@property (nonatomic) BOOL otrMuted;
+
 @property (nonatomic) NSString *clearedEventID;
 @property (nonatomic) MockUser *creator;
 @property (nonatomic) NSString *identifier;
@@ -90,9 +95,9 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 - (MockEvent *)insertKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce;
 - (MockEvent *)insertHotKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce ref:(NSString *)eventID;
 - (MockEvent *)insertTypingEventFromUser:(MockUser *)fromUser isTyping:(BOOL)isTyping;
-- (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser;
-- (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser;
-- (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser;
+- (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
+- (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
+- (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
 
 - (void)insertImageEventsFromUser:(MockUser *)fromUser;
 - (void)insertPreviewImageEventFromUser:(MockUser *)fromUser correlationID:(NSUUID *)correlationID none:(NSUUID *)nonce;
