@@ -336,8 +336,8 @@ public class ZMCallState : NSObject, SequenceType, CustomDebugStringConvertible 
         if (conversation.objectID.temporaryID) {
             do {
                 try conversation.managedObjectContext!.obtainPermanentIDsForObjects([conversation])
-            } catch {
-                fatalError("Could not obtain permanent object ID from conversation - error: \(error)")
+            } catch let err {
+                fatal("Could not obtain permanent object ID from conversation - error: \(err)")
             }
         }
         return stateForConversationID(conversation.objectID)

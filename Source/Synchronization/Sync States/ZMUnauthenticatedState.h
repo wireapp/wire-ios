@@ -37,7 +37,6 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate
                                  application:(ZMApplication *)application NS_DESIGNATED_INITIALIZER;

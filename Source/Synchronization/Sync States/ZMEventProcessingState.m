@@ -52,14 +52,12 @@
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate
 {
     
     self = [super initWithAuthenticationCenter:authenticationStatus
                       clientRegistrationStatus:clientRegistrationStatus
-                       applicationLaunchStatus:applicationLaunchStatus
                        objectStrategyDirectory:objectStrategyDirectory
                           stateMachineDelegate:stateMachineDelegate];
     if (self) {

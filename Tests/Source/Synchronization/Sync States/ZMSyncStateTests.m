@@ -33,7 +33,8 @@
     
     // given
     ZMSyncState *sut = [[ZMSyncState alloc] initWithAuthenticationCenter:self.authenticationStatus
-                                                clientRegistrationStatus:self.clientRegistrationStatus                                                             applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory
+                                                clientRegistrationStatus:self.clientRegistrationStatus
+                                                 objectStrategyDirectory:self.objectDirectory
                                                     stateMachineDelegate:self.stateMachine];
     
     // expectation
@@ -46,7 +47,7 @@
 - (void)testThatItSwitchesToLoginState
 {
     // given
-    ZMSyncState *sut = [[ZMSyncState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus                                                             applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
+    ZMSyncState *sut = [[ZMSyncState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
     
     // expectation
     [[(id)self.stateMachine expect] goToState:self.stateMachine.unauthenticatedState];

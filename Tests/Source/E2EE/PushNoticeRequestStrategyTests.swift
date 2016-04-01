@@ -66,9 +66,6 @@ class PushNoticeRequestStrategyTests: MessagingTest {
         XCTAssertEqual(request?.method, .MethodGET)
         XCTAssertEqual(request?.path, "/notifications/\(notificationID.transportString())?client=\(selfClient.remoteIdentifier)")
         XCTAssertNil(request?.payload)
-        if let request = request {
-            XCTAssertTrue(request.shouldUseOnlyForegroundSession)
-        }
     }
     
     func testThatItDoesNotGenerateARequestWhenThePingBackStatusReturnsANotificationIDButTheStatusIsNotFetching() {

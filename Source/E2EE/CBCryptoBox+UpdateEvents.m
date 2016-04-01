@@ -115,6 +115,14 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
     VerifyReturnNil(decryptedData != nil);
 
     NSMutableDictionary *payload = [event.payload.asDictionary mutableCopy];
+    
+    NSDictionary *eventData = [event.payload.asDictionary optionalDictionaryForKey:@"data"];
+    if ([eventData.allKeys containsObject:@"data"]) {
+        NSString *inlineData = [eventData optionalStringForKey:@"data"];
+        VerifyReturnNil(nil != inlineData);
+        payload[@"external"] = inlineData;
+    }
+
     payload[@"data"] = decryptedData.base64String;
 
     return [ZMUpdateEvent decryptedUpdateEventFromEventStreamPayload:payload uuid:event.uuid source:event.source];

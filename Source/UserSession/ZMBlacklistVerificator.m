@@ -74,4 +74,9 @@
     }
 }
 
+- (void)teardown
+{
+    [self.downloader teardown];
+}
+
 @end

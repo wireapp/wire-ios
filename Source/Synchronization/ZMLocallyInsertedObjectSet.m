@@ -20,6 +20,7 @@
 @import ZMUtilities;
 
 #import "ZMLocallyInsertedObjectSet.h"
+#import "ZMManagedObject.h"
 
 
 @interface ZMLocallyInsertedObjectSet ()
@@ -68,13 +69,13 @@
 
 - (void)didStartSynchronizingObject:(ZMManagedObject *)object
 {
-    RequireString([self.insertedObjects containsObject:object], "Synced object was never added");
+    RequireString([self.insertedObjects containsObject:object], "Synced object was never added: %s", NSStringFromClass([object class]).UTF8String);
     [self.currentlySynchronizedObjects addObject:object];
 }
 
 - (void)didFailSynchronizingObject:(ZMManagedObject *)object
 {
-    RequireString([self.currentlySynchronizedObjects containsObject:object], "Finished to sync object that was never started");
+    RequireString([self.currentlySynchronizedObjects containsObject:object], "Finished to sync object that was never started: %s", NSStringFromClass([object class]).UTF8String);
     [self.currentlySynchronizedObjects removeObject:object];
 }
 

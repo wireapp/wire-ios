@@ -121,6 +121,13 @@
 
 - (void)assertOtrTextMessageIsDelivered:(ZMClientMessage *)message withExpectedMessageText:(NSString *)messageText lastEvent:(MockPushEvent *)lastEvent box:(CBCryptoBox *)box
 {
+    [self assertOtrMessageIsDelivered:message lastEvent:lastEvent box:box verifyBlock:^(ZMGenericMessage *genericMessage) {
+        XCTAssertEqualObjects(genericMessage.text.content, messageText);
+    }];
+}
+
+- (void)assertOtrMessageIsDelivered:(ZMClientMessage *)message lastEvent:(MockPushEvent *)lastEvent box:(CBCryptoBox *)box verifyBlock:(void(^)(ZMGenericMessage *))verifyBlock
+{
     NSDictionary *lastEventPayload = lastEvent.payload.asDictionary;
     ZMTUpdateEventType lastEventType = [MockEvent typeFromString:lastEventPayload[@"type"]];
     
@@ -142,9 +149,8 @@
     }
     
     NSData *decryptedData = sessionMessage.data;
-    ZMGenericMessage *generycMessage = (ZMGenericMessage *)[[[ZMGenericMessage builder] mergeFromData:decryptedData] build];
-    XCTAssertEqualObjects(generycMessage.text.content, messageText);
-    
+    ZMGenericMessage *genericMessage = (ZMGenericMessage *)[[[ZMGenericMessage builder] mergeFromData:decryptedData] build];
+    verifyBlock(genericMessage);
     XCTAssertEqual(selfClient.missingClients.count, 0u);
 }
 
@@ -253,7 +259,7 @@
     
     __block id <ZMConversationMessage> message;
     [self.userSession performChanges:^{
-        message = [conversation appendMessagesWithText:@"Hello World"].firstObject;
+        message = [conversation appendMessageWithText:@"Hello World"];
     }];
     WaitForEverythingToBeDoneWithTimeout(5);
     
@@ -699,6 +705,26 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         appendMessageBlock(remoteClientMock, localClientMock, messageData);
+    }];
+}
+
+- (void)testThatItCreatesAnExternalMessageIfThePayloadIsToLargeAndAddsTheGenericMessageAsDataBlob
+{
+    // given
+    __block ZMClientMessage *message;
+    
+    NSMutableString *text = @"Very Long Text!".mutableCopy;
+    while ([text dataUsingEncoding:NSUTF8StringEncoding].length < ZMClientMessageByteSizeExternalThreshold) {
+        [text appendString:text];
+    }
+    
+    [self testThatOtrMessageIsDelivered:YES shouldEstablishSessionBetweenUsers:YES createMessage:^ZMMessage *(ZMConversation *conversation) {
+        message = [conversation appendOTRMessageWithText:text nonce:NSUUID.createUUID];
+        return message;
+    } withReadMessageBlock:^(MockPushEvent *lastEvent, CBCryptoBox *user1Box) {
+        [self assertOtrMessageIsDelivered:message lastEvent:lastEvent box:user1Box verifyBlock:^(ZMGenericMessage *genericMessage) {
+            XCTAssertTrue(genericMessage.hasExternal);
+        }];
     }];
 }
 
@@ -2020,7 +2046,7 @@
     
     // send a message in the trusted conversation
     [self.userSession performChanges:^{
-        [conversation2 appendMessagesWithText:@"Hello"];
+        [conversation2 appendMessageWithText:@"Hello"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -2030,7 +2056,7 @@
 
     // and when sending a message in the not safe conversation
     [self.userSession performChanges:^{
-        [conversation1 appendMessagesWithText:@"Hello"];
+        [conversation1 appendMessageWithText:@"Hello"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     

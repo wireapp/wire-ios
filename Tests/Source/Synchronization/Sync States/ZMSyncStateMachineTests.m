@@ -44,14 +44,12 @@
 #import "ZMBackgroundTaskState.h"
 
 #import "ZMUserSessionAuthenticationNotification.h"
-#import "ZMApplicationLaunchStatus.h"
 
 @interface ZMSyncStateMachineTests : MessagingTest
 
 @property (nonatomic, readonly) id objectDirectory;
 @property (nonatomic, readonly) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic, readonly) ZMClientRegistrationStatus *clientRegistrationStatus;
-@property (nonatomic, readonly) ZMApplicationLaunchStatus *applicationLaunchStatus;
 @property (nonatomic, readonly) id mockApplication;
 @property (nonatomic, readonly) id backgroundableSession;
 @property (nonatomic, readonly) ZMSyncStateMachine *sut;
@@ -88,65 +86,64 @@
     
     _authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:self.uiMOC cookie:cookie];
     _clientRegistrationStatus = [[ZMClientRegistrationStatus alloc] initWithManagedObjectContext:self.uiMOC loginCredentialProvider:self.authenticationStatus updateCredentialProvider:nil cookie:cookie registrationStatusDelegate:nil];
-    _applicationLaunchStatus = [[ZMApplicationLaunchStatus alloc] initWithManagedObjectContext:self.uiMOC];
     
     _eventProcessingState = [OCMockObject mockForClass:ZMEventProcessingState.class];
     [[[[self.eventProcessingState expect] andReturn:self.eventProcessingState] classMethod] alloc];
-    (void) [[[self.eventProcessingState expect] andReturn:self.eventProcessingState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.eventProcessingState expect] andReturn:self.eventProcessingState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.eventProcessingState stub] tearDown];
     [self verifyMockLater:self.eventProcessingState];
     
     _unauthenticatedState = [OCMockObject mockForClass:ZMUnauthenticatedState.class];
     [[[[self.unauthenticatedState expect] andReturn:self.unauthenticatedState] classMethod] alloc];
-    (void) [[[self.unauthenticatedState expect] andReturn:self.unauthenticatedState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.unauthenticatedState expect] andReturn:self.unauthenticatedState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.unauthenticatedState stub] tearDown];
     [self verifyMockLater:self.unauthenticatedState];
     
     _slowSyncPhaseOneState = [OCMockObject mockForClass:ZMSlowSyncPhaseOneState.class];
     [[[[self.slowSyncPhaseOneState expect] andReturn:self.slowSyncPhaseOneState] classMethod] alloc];
-    (void) [[[self.slowSyncPhaseOneState expect] andReturn:self.slowSyncPhaseOneState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.slowSyncPhaseOneState expect] andReturn:self.slowSyncPhaseOneState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.slowSyncPhaseOneState stub] tearDown];
     [self verifyMockLater:self.slowSyncPhaseOneState];
     
     _slowSyncPhaseTwoState = [OCMockObject mockForClass:ZMSlowSyncPhaseTwoState.class];
     [[[[self.slowSyncPhaseTwoState expect] andReturn:self.slowSyncPhaseTwoState] classMethod] alloc];
-    (void) [[[self.slowSyncPhaseTwoState expect] andReturn:self.slowSyncPhaseTwoState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.slowSyncPhaseTwoState expect] andReturn:self.slowSyncPhaseTwoState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.slowSyncPhaseTwoState stub] tearDown];
     [self verifyMockLater:self.slowSyncPhaseTwoState];
     
     _updateEventsCatchUpPhaseOneState = [OCMockObject mockForClass:ZMUpdateEventsCatchUpPhaseOneState.class];
     [[[[self.updateEventsCatchUpPhaseOneState expect] andReturn:self.updateEventsCatchUpPhaseOneState] classMethod] alloc];
-    (void) [[[self.updateEventsCatchUpPhaseOneState expect] andReturn:self.updateEventsCatchUpPhaseOneState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.updateEventsCatchUpPhaseOneState expect] andReturn:self.updateEventsCatchUpPhaseOneState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.updateEventsCatchUpPhaseOneState stub] tearDown];
     [self verifyMockLater:self.updateEventsCatchUpPhaseOneState];
     
     _updateEventsCatchUpPhaseTwoState = [OCMockObject mockForClass:ZMUpdateEventsCatchUpPhaseTwoState.class];
     [[[[self.updateEventsCatchUpPhaseTwoState expect] andReturn:self.updateEventsCatchUpPhaseTwoState] classMethod] alloc];
-    (void) [[[self.updateEventsCatchUpPhaseTwoState expect] andReturn:self.updateEventsCatchUpPhaseTwoState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.updateEventsCatchUpPhaseTwoState expect] andReturn:self.updateEventsCatchUpPhaseTwoState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.updateEventsCatchUpPhaseTwoState stub] tearDown];
     [self verifyMockLater:self.updateEventsCatchUpPhaseTwoState];
     
     _downloadLastUpdateEventIDState = [OCMockObject mockForClass:ZMDownloadLastUpdateEventIDState.class];
     [[[[self.downloadLastUpdateEventIDState expect] andReturn:self.downloadLastUpdateEventIDState] classMethod] alloc];
-    (void) [[[self.downloadLastUpdateEventIDState expect] andReturn:self.downloadLastUpdateEventIDState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.downloadLastUpdateEventIDState expect] andReturn:self.downloadLastUpdateEventIDState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.downloadLastUpdateEventIDState stub] tearDown];
     [self verifyMockLater:self.downloadLastUpdateEventIDState];
     
     _backgroundState = [OCMockObject mockForClass:ZMBackgroundState.class];
     [[[[self.backgroundState expect] andReturn:self.backgroundState] classMethod] alloc];
-    (void) [[[self.backgroundState expect] andReturn:self.backgroundState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY backgroundableSession:self.backgroundableSession];
+    (void) [[[self.backgroundState expect] andReturn:self.backgroundState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY backgroundableSession:self.backgroundableSession];
     [[self.backgroundState stub] tearDown];
     [self verifyMockLater:self.backgroundState];
     
     _backgroundFetchState = [OCMockObject mockForClass:ZMBackgroundFetchState.class];
     [[[[self.backgroundFetchState expect] andReturn:self.backgroundFetchState] classMethod] alloc];
-    (void) [[[self.backgroundFetchState expect] andReturn:self.backgroundFetchState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.backgroundFetchState expect] andReturn:self.backgroundFetchState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.backgroundFetchState stub] tearDown];
     [self verifyMockLater:self.backgroundFetchState];
     
     _backgroundTaskState = [OCMockObject mockForClass:ZMBackgroundTaskState.class];
     [[[[self.backgroundTaskState expect] andReturn:self.backgroundTaskState] classMethod] alloc];
-    (void) [[[self.backgroundTaskState expect] andReturn:self.backgroundTaskState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
+    (void) [[[self.backgroundTaskState expect] andReturn:self.backgroundTaskState] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:OCMOCK_ANY];
     [[self.backgroundTaskState stub] tearDown];
     [self verifyMockLater:self.backgroundTaskState];
     
@@ -157,7 +154,6 @@
     
     _sut = [[ZMSyncStateMachine alloc] initWithAuthenticationStatus:self.authenticationStatus
                                            clientRegistrationStatus:self.clientRegistrationStatus
-                                            applicationLaunchStatus:self.applicationLaunchStatus
                                             objectStrategyDirectory:self.objectDirectory
                                                   syncStateDelegate:self.syncStateDelegate
                                               backgroundableSession:self.backgroundableSession];

@@ -22,13 +22,8 @@ import Foundation
 
 extension ZMSearchUser : ObjectInSnapshot {
     
-    public var keysToChangeInfoMap : KeyToKeyTransformation { return KeyToKeyTransformation(mapping: [
-        KeyPath.keyPathForString("imageMediumData"): .Default,
-        KeyPath.keyPathForString("imageSmallProfileData"): .Default,
-        KeyPath.keyPathForString("isConnected"): .Custom(KeyPath.keyPathForString("connectionStateChanged")),
-        KeyPath.keyPathForString("user"): .Custom(KeyPath.keyPathForString("connectionStateChanged")),
-        KeyPath.keyPathForString("isPendingApprovalByOtherUser"): .Custom(KeyPath.keyPathForString("connectionStateChanged"))
-        ])
+    public var observableKeys: [String] {
+        return ["imageMediumData", "imageSmallProfileData", "isConnected", "user", "isPendingApprovalByOtherUser"]
     }
     
     public func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {

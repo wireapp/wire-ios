@@ -237,7 +237,9 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     if (conversation == nil) {
         // if the conversation already exist, it will pick it up here and hook it up to the connection
         conversation = [ZMConversation conversationWithRemoteID:convRemoteID createIfNeeded:YES inContext:self.managedObjectContext created:&conversationCreated];
-        RequireString(conversation.conversationType != ZMConversationTypeGroup, "Conversation for connection is a group conversation.");
+        RequireString(conversation.conversationType != ZMConversationTypeGroup,
+                      "Conversation for connection is a group conversation: %s",
+                      convRemoteID.transportString.UTF8String);
         user.connection.conversation = conversation;
     } else {
         // check if a conversation already exists with that ID

@@ -30,8 +30,6 @@
 #import "ZMNotifications.h"
 #import "ZMConversationMessageWindow.h"
 
-static NSUInteger LeadingEventIDWindowBleed = 50;
-
 @interface TestConversationObserver : NSObject <ZMConversationObserver>
 
 @property (nonatomic) NSMutableArray* conversationChangeNotifications;
@@ -77,7 +75,8 @@ static NSUInteger LeadingEventIDWindowBleed = 50;
 - (void)testThatAfterSendingALongMessageAllMessagesGetSentAndReceived
 {
     // given
-    NSString *messageText = [@"BEGIN" stringByPaddingToLength:2000 withString:@"A" startingAtIndex:0];
+    NSString *firstMessageText = [[@"BEGIN\n" stringByPaddingToLength:2000 withString:@"A" startingAtIndex:0] stringByAppendingString:@"\nEND"];
+    NSString *secondMessageText = @"other message";
 
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
     WaitForEverythingToBeDone();
@@ -88,15 +87,15 @@ static NSUInteger LeadingEventIDWindowBleed = 50;
     [self.mockTransportSession resetReceivedRequests];
 
     // when
-    __block NSArray *messages;
+    __block id<ZMConversationMessage> firstMessage, secondMessage;
     [self.userSession performChanges:^{
-        messages = [groupConversation appendMessagesWithText:messageText];
+        firstMessage = [groupConversation appendMessageWithText:firstMessageText];
+        secondMessage = [groupConversation appendMessageWithText:secondMessageText];
     }];
 
     WaitForAllGroupsToBeEmpty(0.5);
-    for (id<ZMConversationMessage> message in messages) {
-        XCTAssertEqual(message.deliveryState, ZMDeliveryStateDelivered);
-    }
+    XCTAssertEqual(firstMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(secondMessage.deliveryState, ZMDeliveryStateDelivered);
 
     NSUInteger otrResponseCount = 0;
     NSString *otrConversationPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", self.groupConversation.identifier];
@@ -108,8 +107,9 @@ static NSUInteger LeadingEventIDWindowBleed = 50;
     }
 
     // then
-    XCTAssertEqual(otrResponseCount, 2u);
-
+    XCTAssertEqual(otrResponseCount, 2lu);
+    XCTAssertEqualObjects(firstMessage.messageText, firstMessageText);
+    XCTAssertEqualObjects(secondMessage.messageText, secondMessageText);
 }
 
 - (void)testThatWeReceiveAMessageSentRemotely
@@ -129,63 +129,6 @@ static NSUInteger LeadingEventIDWindowBleed = 50;
     // then
     id<ZMConversationMessage> lastMessage = conversation.messages.lastObject;
     XCTAssertEqualObjects(lastMessage.messageText, messageText);
-}
-
-- (void)DISABLED_testThatOnConversationWithALotOfMessagesWeDownloadOnlyALimitedNumber
-{
-    // given
-    const NSUInteger numberOfMessages = 0x259; // or 600
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        NOT_USED(session);
-        for(NSUInteger i = 0; i < numberOfMessages; ++i) {
-            NSString *text = [NSString stringWithFormat:@"Conversation test message %lu", (unsigned long)i];
-            [self.groupConversation insertTextMessageFromUser:self.user2 text:text nonce:[NSUUID createUUID]];
-        }
-    }];
-    
-    XCTAssertTrue([self logInAndWaitForSyncToBeCompleteWithTimeout:0.6]);
-    
-    // when
-    ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
-    
-    // then
-    XCTAssertNotNil(conversation);
-    XCTAssertEqual(conversation.messages.count, LeadingEventIDWindowBleed+1);
-}
-
-- (void)DISABLED_testThatOnConversationWithALotOfMessagesWeDownloadOnlyALimitedNumberWeDownloadMoreWhenWeMoveTheWindow
-{
-    // given
-    const NSUInteger numberOfMessages = 0x259; // or 600
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        NOT_USED(session);
-        for(NSUInteger i = 0; i < numberOfMessages; ++i) {
-            NSString *text = [NSString stringWithFormat:@"Conversation test message %lu", (unsigned long)i];
-            [self.groupConversation insertTextMessageFromUser:self.user2 text:text nonce:[NSUUID createUUID]];
-        }
-    }];
-    
-    NSUInteger initialExpectedEventNumber = LeadingEventIDWindowBleed+1;
-    NSUInteger afterWindowChangeExpectedEventNumber = initialExpectedEventNumber + LeadingEventIDWindowBleed;
-    
-    XCTAssertTrue([self logInAndWaitForSyncToBeCompleteWithTimeout:0.6]);
-    WaitForAllGroupsToBeEmpty(0.6);
-    
-    // when
-    ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
-    
-    // then
-    XCTAssertNotNil(conversation);
-    XCTAssertEqual(conversation.messages.count, initialExpectedEventNumber);
-    // when
-    initialExpectedEventNumber += LeadingEventIDWindowBleed;
-    [conversation setVisibleWindowFromMessage:conversation.messages.firstObject toMessage:conversation.messages.lastObject];
-    
-    // then
-    XCTAssertTrue([self waitOnMainLoopUntilBlock:^BOOL{
-        return conversation.messages.count >= afterWindowChangeExpectedEventNumber;
-    } timeout:2]);
-    XCTAssertEqual(conversation.messages.count, afterWindowChangeExpectedEventNumber);
 }
 
 - (ZMConversation *)setUpStateAndConversation {
@@ -234,8 +177,7 @@ static NSUInteger LeadingEventIDWindowBleed = 50;
     
     __block ZMMessage *message;
     [self.userSession performChanges:^{
-        NSArray *messages = [conversation appendMessagesWithText:@"test"];
-        message = messages.firstObject;
+        message = [conversation appendMessageWithText:@"test"];
         [message setServerTimestamp:pastDate];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -322,7 +264,7 @@ static NSUInteger LeadingEventIDWindowBleed = 50;
     // when
     __block ZMMessage *message;
     [self.userSession performChanges:^{
-        message = [conversation appendMessagesWithText:@"oh hallo"].firstObject;
+        message = [conversation appendMessageWithText:@"oh hallo"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     

@@ -102,13 +102,7 @@
     // given
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
     
-    XCTestExpectation *expectSetVideoPreviewOn = [self expectationWithDescription:@"Set video preview on"];
-    
     id mockFlowManager = [OCMockObject partialMockForObject:self.mockFlowManager];
-    
-    [(MockFlowManager *)[[mockFlowManager expect] andDo:^(NSInvocation *inv __unused) {
-        [expectSetVideoPreviewOn fulfill];
-    }] setVideoSendState:FLOWMANAGER_VIDEO_PREVIEW forConversation:OCMOCK_ANY];
     
     // when
     [self otherJoinVideoCall];
@@ -116,7 +110,6 @@
     
     // then
     XCTAssertTrue(self.conversationUnderTest.isVideoCall);
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     [mockFlowManager stopMocking];
 }
 

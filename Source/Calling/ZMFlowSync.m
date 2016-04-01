@@ -20,7 +20,7 @@
 @import ZMCSystem;
 @import ZMUtilities;
 
-#import "ZMFlowSync.h"
+#import "ZMFlowSync+Internal.h"
 #import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUpdateEvent.h"
 #import "ZMConversation+Internal.h"
@@ -29,7 +29,6 @@
 #import "ZMTracing.h"
 #import "ZMOperationLoop.h"
 #import "ZMAVSBridge.h"
-#import "ZMApplicationLaunchStatus.h"
 #import <zmessaging/zmessaging-Swift.h>
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMOnDemandFlowManager.h"
@@ -46,15 +45,15 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
 @property (nonatomic) ZMOnDemandFlowManager *onDemandFlowManager;
 @property (nonatomic, readonly) id mediaManager;
 @property (nonatomic) NSNotificationQueue *voiceGainNotificationQueue;
-@property (nonatomic, readonly) NSArray *eventTypesToForward;
+@property (nonatomic, copy) NSArray *eventTypesToForward;
 @property (nonatomic) BOOL pushChannelIsOpen;
 @property (nonatomic, readonly) NSManagedObjectContext *uiManagedObjectContext;
-@property (nonatomic, readonly, weak) ZMApplicationLaunchStatus * applicationLaunchStatus;
 @property (nonatomic) id authenticationObserverToken;
 @property (nonatomic, strong) dispatch_queue_t avsLogQueue;
 @property (nonatomic) NSMutableSet <ZMConversation*> *conversationsNeedingUpdate;
 @property (nonatomic) NSMutableDictionary <NSString *, NSMutableSet<ZMUser*>*> *usersNeedingToBeAdded;
 @property (nonatomic) NSMutableSet <ZMUpdateEvent *> *eventsNeedingToBeForwarded;
+@property (nonatomic, readonly, weak) ZMApplication *application;
 
 @end
 
@@ -69,31 +68,36 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
 
 - (instancetype)initWithMediaManager:(id)mediaManager
                  onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager
-             applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
             syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext
               uiManagedObjectContext:(NSManagedObjectContext *)uiManagedObjectContext
+{
+    return [self initWithMediaManager:mediaManager onDemandFlowManager:onDemandFlowManager syncManagedObjectContext:syncManagedObjectContext uiManagedObjectContext:uiManagedObjectContext application:nil];
+}
+
+
+- (instancetype)initWithMediaManager:(id)mediaManager
+                 onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager
+            syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext
+              uiManagedObjectContext:(NSManagedObjectContext *)uiManagedObjectContext
+                         application:(ZMApplication *)application
 {
     self = [super initWithManagedObjectContext:syncManagedObjectContext];
     if(self != nil) {
         _uiManagedObjectContext = uiManagedObjectContext;
         _mediaManager = mediaManager;
         _requestStack = [NSMutableArray array];
-        _applicationLaunchStatus = applicationLaunchStatus;
+        _application = application ?: [UIApplication sharedApplication];
         self.conversationsNeedingUpdate = [NSMutableSet set];
         self.eventsNeedingToBeForwarded = [NSMutableSet set];
         self.usersNeedingToBeAdded = [NSMutableDictionary dictionary];
         self.voiceGainNotificationQueue = [[NSNotificationQueue alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]];
 
         self.onDemandFlowManager = onDemandFlowManager;
-        if (applicationLaunchStatus.currentState == ZMApplicationLaunchStateForeground) {
-            [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
+        if (self.application.applicationState == UIApplicationStateActive) {
+            [self setUpFlowManagerIfNeeded];
         }
         
-        [self createEventTypesToForward];
-        [self configureAVSLogging];
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushChannelDidChange:) name:ZMPushChannelStateChangeNotificationName object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
         ZM_WEAK(self);
         self.authenticationObserverToken = [ZMUserSessionAuthenticationNotification addObserverWithBlock:^(ZMUserSessionAuthenticationNotification *note){
@@ -108,64 +112,20 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
     return self;
 }
 
-- (void)appWillEnterForeground:(NSNotification *)note
+- (void)setUpFlowManagerIfNeeded
 {
-    NOT_USED(note);
-    ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"enter foreground"];
-    [self.managedObjectContext performGroupedBlock:^{
-        [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
-
-        [activity endActivity];
-    }];
+    [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
+    if (self.eventTypesToForward == nil) {
+        [self createEventTypesToForward];
+    }
 }
 
 - (void)appDidBecomeActive:(NSNotification *)note
 {
     NOT_USED(note);
     [self.managedObjectContext performGroupedBlock:^{
-
-        if (self.conversationsNeedingUpdate.count > 0) {
-            // update flows for conversations that couldn't be updated while the flow manager was not fully initialized
-
-            NSSet *conversationsToUpdate = [self.conversationsNeedingUpdate copy];
-            for (ZMConversation *conv in conversationsToUpdate) {
-                [self updateFlowsForConversation:conv];
-            }
-            if (self.conversationsNeedingUpdate.count > 0) {
-                // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
-                ZMLogDebug(@"Could not update flows for all conversations: %@", self.conversationsNeedingUpdate);
-                [self.conversationsNeedingUpdate removeAllObjects];
-            }
-        }
-        if (self.usersNeedingToBeAdded.count > 0) {
-            // update users to conversations that couldn't be updated while the flow manager was not fully initialized
-
-            NSDictionary *usersToAdd = [self.usersNeedingToBeAdded copy];
-            [usersToAdd enumerateKeysAndObjectsUsingBlock:^(NSString *conversationID, NSSet *users, __unused  BOOL * _Nonnull stop) {
-                for (ZMUser *user in users) {
-                    [self addJoinedCallParticipant:user inConversationWithIdentifer:conversationID];
-                }
-            }];
-            if (self.usersNeedingToBeAdded.count > 0) {
-                // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
-                ZMLogDebug(@"Could not add allUsers for conversations %@", self.usersNeedingToBeAdded);
-                [self.usersNeedingToBeAdded removeAllObjects];
-            }
-            
-        }
-        if (self.eventsNeedingToBeForwarded.count > 0) {
-            // process buffered events
-            
-            NSSet *eventsToForward = [self.eventsNeedingToBeForwarded copy];
-            for (ZMUpdateEvent *event in eventsToForward) {
-                [self processFlowEvent:event];
-            }
-            if (self.eventsNeedingToBeForwarded.count > 0) {
-                // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
-                ZMLogDebug(@"Could not forward all events %@", self.eventsNeedingToBeForwarded);
-                [self.eventsNeedingToBeForwarded removeAllObjects];
-            }
-        }
+        [self setUpFlowManagerIfNeeded];
+        [self processBufferedEventsIfNeeded];
     }];
 }
 
@@ -181,25 +141,6 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
     return self.onDemandFlowManager.flowManager;
 }
 
-- (void)configureAVSLogging;
-{
-    ZMDeploymentEnvironment *env = ZMFlowSyncInternalDeploymentEnvironmentOverride ?: [[ZMDeploymentEnvironment alloc] init];
-    ZMDeploymentEnvironmentType type = env.environmentType;
-    if (type == ZMDeploymentEnvironmentTypeInternal) {
-        if(!zm_isTesting()) {
-            ZMLogWarn(@"AVS is configured for environment Internal");
-        }
-        [self.flowManager setEnableLogging:YES];
-        [self.flowManager setEnableMetrics:YES];
-    } else {
-        if(!zm_isTesting()) {
-            ZMLogWarn(@"AVS is configured for environment unknown/public");
-        }
-        [self.flowManager setEnableLogging:NO];
-        [self.flowManager setEnableMetrics:NO];
-    }
-}
-
 - (void)createEventTypesToForward;
 {
     NSMutableArray *types = [NSMutableArray array];
@@ -209,7 +150,7 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
             [types addObject:@(type)];
         }
     }
-    _eventTypesToForward = [types copy];
+    self.eventTypesToForward = [types copy];
 }
 
 - (BOOL)isSlowSyncDone
@@ -237,13 +178,65 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
     if (!self.pushChannelIsOpen) {
         return nil;
     }
-    if (self.applicationLaunchStatus == ZMApplicationLaunchStateForeground && self.onDemandFlowManager.flowManager == nil) {
-        [self.onDemandFlowManager initializeFlowManagerWithDelegate:self]; // this should not happen, but we should recover after all
+    if (self.application.applicationState != UIApplicationStateBackground && self.flowManager == nil) {
+        [self setUpFlowManagerIfNeeded];  // this should not happen, but we should recover after all
     }
+    
+    // we clean up buffered events that might not have been processed yet
+    if (self.flowManager.isReady) {
+        [self processBufferedEventsIfNeeded];
+    }
+    
     id firstRequest = [self.requestStack lastObject];
     [firstRequest setDebugInformationTranscoder:self];
     [self.requestStack removeLastObject];
     return firstRequest;
+}
+
+- (void)processBufferedEventsIfNeeded
+{
+    if (self.conversationsNeedingUpdate.count > 0) {
+        // update flows for conversations that couldn't be updated while the flow manager was not fully initialized
+        
+        NSSet *conversationsToUpdate = [self.conversationsNeedingUpdate copy];
+        for (ZMConversation *conv in conversationsToUpdate) {
+            [self updateFlowsForConversation:conv];
+        }
+        if (self.conversationsNeedingUpdate.count > 0) {
+            // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
+            ZMLogDebug(@"Could not update flows for all conversations: %@", self.conversationsNeedingUpdate);
+            [self.conversationsNeedingUpdate removeAllObjects];
+        }
+    }
+    if (self.usersNeedingToBeAdded.count > 0) {
+        // update users to conversations that couldn't be updated while the flow manager was not fully initialized
+        
+        NSDictionary *usersToAdd = [self.usersNeedingToBeAdded copy];
+        [usersToAdd enumerateKeysAndObjectsUsingBlock:^(NSString *conversationID, NSSet *users, __unused  BOOL * _Nonnull stop) {
+            for (ZMUser *user in users) {
+                [self addJoinedCallParticipant:user inConversationWithIdentifer:conversationID];
+            }
+        }];
+        if (self.usersNeedingToBeAdded.count > 0) {
+            // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
+            ZMLogDebug(@"Could not add allUsers for conversations %@", self.usersNeedingToBeAdded);
+            [self.usersNeedingToBeAdded removeAllObjects];
+        }
+        
+    }
+    if (self.eventsNeedingToBeForwarded.count > 0) {
+        // process buffered events
+        
+        NSSet *eventsToForward = [self.eventsNeedingToBeForwarded copy];
+        for (ZMUpdateEvent *event in eventsToForward) {
+            [self processFlowEvent:event];
+        }
+        if (self.eventsNeedingToBeForwarded.count > 0) {
+            // by now AVS should be ready. If that's not the case, we still want to clear whatever is stored
+            ZMLogDebug(@"Could not forward all events %@", self.eventsNeedingToBeForwarded);
+            [self.eventsNeedingToBeForwarded removeAllObjects];
+        }
+    }
 }
 
 - (void)processEvents:(NSArray<ZMUpdateEvent *> *)events
@@ -253,8 +246,8 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
     if(!liveEvents) {
         return;
     }
-    if (self.applicationLaunchStatus.currentState == ZMApplicationLaunchStateForeground) {
-        [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
+    if (self.application.applicationState != UIApplicationStateBackground) {
+        [self setUpFlowManagerIfNeeded];
     }
     if (!self.isFlowManagerReady) {
         NSArray *eventsToForward = [events filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUpdateEvent *event, __unused id bindings) {
@@ -292,16 +285,15 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
 
 - (void)acquireFlowsForConversation:(ZMConversation *)conversation;
 {
+    if (self.application.applicationState != UIApplicationStateBackground) {
+        [self setUpFlowManagerIfNeeded];
+    }
     if (!self.isFlowManagerReady) {
         [self.conversationsNeedingUpdate addObject:conversation];
         return;
     }
     [self.conversationsNeedingUpdate removeObject:conversation];
 
-    if (self.applicationLaunchStatus.currentState == ZMApplicationLaunchStateForeground) {
-        [self.onDemandFlowManager initializeFlowManagerWithDelegate:self];
-    }
-    
     NSString *identifier = conversation.remoteIdentifier.transportString;
     if (identifier == nil) {
         ZMLogError(@"Trying to acquire flow for a conversation without a remote ID.");
@@ -313,6 +305,9 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
 
 - (void)releaseFlowsForConversation:(ZMConversation *)conversation;
 {
+    if (self.application.applicationState != UIApplicationStateBackground) {
+        [self setUpFlowManagerIfNeeded];
+    }
     if (!self.isFlowManagerReady) {
         [self.conversationsNeedingUpdate addObject:conversation];
         return;

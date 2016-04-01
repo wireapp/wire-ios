@@ -46,7 +46,7 @@
 {
     [super setUp];
     _sut = [[ZMBackgroundFetchState alloc] initWithAuthenticationCenter:self.authenticationStatus
-                                               clientRegistrationStatus:self.clientRegistrationStatus                                                                         applicationLaunchStatus:self.applicationLaunchStatus
+                                               clientRegistrationStatus:self.clientRegistrationStatus
                                                 objectStrategyDirectory:self.objectDirectory
                                                    stateMachineDelegate:self.stateMachine];
     
@@ -387,7 +387,7 @@
         [[[(id) directory.missingUpdateEventsTranscoder stub] andCall:@selector(missingUpdateEventsTranscoderLastUpdateEventID) onObject:self] lastUpdateEventID];
         (void)[(ZMMissingUpdateEventsTranscoder *) [[(id) directory.missingUpdateEventsTranscoder stub] andReturnValue:@(YES)] isDownloadingMissingNotifications];
         (void)[(ZMAssetTranscoder *) [[(id) directory.assetTranscoder stub] andReturnValue:@(YES)] hasOutstandingItems];
-        return [[ZMBackgroundFetchState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
+        return [[ZMBackgroundFetchState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
     }];
 }
 

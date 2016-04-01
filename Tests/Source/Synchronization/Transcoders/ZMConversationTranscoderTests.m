@@ -2467,7 +2467,7 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         conversation.isSelfAnActiveMember = NO;
         [conversation setLocallyModifiedKeys:keys];
 
-        ZMTextMessage *message1 = [conversation appendMessagesWithText:@"message 1"].firstObject;
+        ZMTextMessage *message1 = [conversation appendMessageWithText:@"message 1"];
         message1.eventID = [self createEventID];
         message1.serverTimestamp = [NSDate date];
         
@@ -2543,10 +2543,10 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         conversation.isSelfAnActiveMember = NO;
         [conversation setLocallyModifiedKeys:keys];
         
-        ZMTextMessage *message1 = [conversation appendMessagesWithText:@"message 1"].firstObject;
+        ZMTextMessage *message1 = [conversation appendMessageWithText:@"message 1"];
         message1.eventID = [self createEventID];
         
-        ZMTextMessage *message2 = [conversation appendMessagesWithText:@"message 2"].firstObject;
+        ZMTextMessage *message2 = [conversation appendMessageWithText:@"message 2"];
         message2.eventID = [self createEventID];
         
         conversation.clearedEventID = message1.eventID;

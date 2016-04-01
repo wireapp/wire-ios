@@ -21,7 +21,7 @@
 
 #import "ZMConnection+Internal.h"
 #import "ZMConversation+Internal.h"
-
+#import "ZMNotifications.h"
 
 @interface ChangeObserver ()
 @end

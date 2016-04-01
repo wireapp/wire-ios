@@ -33,7 +33,6 @@
 @protocol AVSMediaManager;
 @class ZMOnDemandFlowManager;
 @class GiphyRequestsStatus;
-@class ZMApplicationLaunchStatus;
 @class ClientUpdateStatus;
 
 @class BackgroundAPNSPingBackStatus;
@@ -53,7 +52,6 @@ extern NSString * const ZMPushChannelResponseStatusKey;
                  userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileUpdateStatus
                 clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                       clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
-                 applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                       giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
             backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
              localNotificationdispatcher:(ZMLocalNotificationDispatcher *)dispatcher

@@ -37,13 +37,14 @@ enum UserClientRequestError: ErrorType {
 
 public class UserClientRequestFactory {
     
-    public init(keysCount: UInt = 100, missingClientsPageSize: Int = 128) {
+    public init(keysCount: UInt = 100, missingClientsUserPageSize pageSize: Int = 128) {
         self.keyCount = keysCount
-        self.missingClientsPageSize = missingClientsPageSize
+        missingClientsUserPageSize = pageSize
     }
     
     public let keyCount : UInt
-    public let missingClientsPageSize : Int
+    ///  The number of users that can be contained in a single request to get missing clients
+    public let missingClientsUserPageSize : Int
 
     public func registerClientRequest(client: UserClient, credentials: ZMEmailCredentials?, authenticationStatus: ZMAuthenticationStatus) throws -> ZMUpstreamRequest {
         

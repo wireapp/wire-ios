@@ -41,7 +41,7 @@
 {
     [super setUp];
     _sut = [[ZMBackgroundTaskState alloc] initWithAuthenticationCenter:self.authenticationStatus
-                                               clientRegistrationStatus:self.clientRegistrationStatus                                                                         applicationLaunchStatus:self.applicationLaunchStatus
+                                               clientRegistrationStatus:self.clientRegistrationStatus
                                                 objectStrategyDirectory:self.objectDirectory
                                                    stateMachineDelegate:self.stateMachine];
     

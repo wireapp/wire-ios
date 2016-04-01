@@ -120,7 +120,7 @@
     
     // when
     ZMConversation *conversation2 = (id) [self.uiMOC objectWithID:conversationID];
-    [conversation2 appendMessagesWithText:@"Test Message"];
+    [conversation2 appendMessageWithText:@"Test Message"];
     
     // then
     XCTAssertTrue([self.uiMOC saveOrRollback]);

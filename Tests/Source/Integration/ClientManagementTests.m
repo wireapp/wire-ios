@@ -255,7 +255,7 @@
     // and when
     __block id<ZMConversationMessage> message;
     [self.userSession performChanges:^{
-        message = [conversation appendMessagesWithText:@"ar! ar!"].firstObject;
+        message = [conversation appendMessageWithText:@"ar! ar!"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     

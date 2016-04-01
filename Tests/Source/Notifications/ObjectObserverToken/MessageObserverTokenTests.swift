@@ -29,6 +29,12 @@ class MessageObserverTokenTests : MessagingTest {
             receivedChangeInfo.append(changes)
         }
     }
+    
+    override func setUp() {
+        super.setUp()
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    }
 
     func checkThatItNotifiesTheObserverOfAChange(message : ZMMessage, modifier: (ZMMessage) -> Void, expectedChangedField : String?, customAffectedKeys: AffectedKeys? = nil) {
         
@@ -59,7 +65,6 @@ class MessageObserverTokenTests : MessagingTest {
             "imageChanged",
             "deliveryStateChanged",
             "senderChanged",
-            "knockChanged"
         ]
         
         if let changedField = expectedChangedField {
@@ -146,6 +151,7 @@ class MessageObserverTokenTests : MessagingTest {
     func testThatItNotifiesObserverWhenTheSenderSmallProfileImageChanges() {
         // given
         let sender = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        sender.remoteIdentifier = NSUUID.createUUID()
         sender.mediumRemoteIdentifier = NSUUID.createUUID()
         let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
         message.sender = sender
@@ -160,6 +166,7 @@ class MessageObserverTokenTests : MessagingTest {
     func testThatItNotifiesObserverWhenTheSenderMediumProfileImageChanges() {
         // given
         let sender = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        sender.remoteIdentifier = NSUUID.createUUID()
         let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
         message.sender = sender
         sender.smallProfileRemoteIdentifier = NSUUID.createUUID()

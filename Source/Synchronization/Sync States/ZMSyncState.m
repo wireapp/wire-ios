@@ -35,14 +35,12 @@
     RequireString(NO, "Do not use.");
     return [self initWithAuthenticationCenter:nil
                      clientRegistrationStatus:nil
-                      applicationLaunchStatus:nil
                       objectStrategyDirectory:nil
                          stateMachineDelegate:nil];
 }
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate;
 {
@@ -53,7 +51,6 @@
         _stateMachineDelegate = stateMachineDelegate;
         _objectStrategyDirectory = objectStrategyDirectory;
         _clientRegistrationStatus= clientRegistrationStatus;
-        _applicationLaunchStatus = applicationLaunchStatus;
     }
     return self;
 }

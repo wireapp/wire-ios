@@ -197,7 +197,7 @@
     {
         [self.userSession performChanges:^{ // I save multiple times so that it is inserted in the mocktransportsession in the order I expect
             NSString *text = [NSString stringWithFormat:@"Message %d", i+1];
-            [conversation appendMessagesWithText:text];
+            [conversation appendMessageWithText:text];
         }];
         WaitForAllGroupsToBeEmpty(0.5);
     }

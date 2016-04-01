@@ -121,7 +121,7 @@ static NSString * const ExcludeVersionsKey = @"exclude";
               successCheckInterval:(NSTimeInterval)successCheckInterval
               failureCheckInterval:(NSTimeInterval)failureCheckInterval
                       userDefaults:(NSUserDefaults *)userDefaults
-                      workingGroup:(ZMSDispatchGroup *)workingGroup
+                      workingGroup:(__unused ZMSDispatchGroup *)workingGroup
                  completionHandler:(void (^)(NSString *, NSArray *))completionHandler
 {
     self = [super init];
@@ -150,7 +150,7 @@ static NSString * const ExcludeVersionsKey = @"exclude";
     return self;
 }
 
-- (void)dealloc
+- (void)teardown
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.inBackground = YES;
@@ -158,6 +158,14 @@ static NSString * const ExcludeVersionsKey = @"exclude";
         [self.currentTimer invalidate];
         self.currentTimer = nil;
     });
+    self.queue = nil;
+    self.workingGroup = nil;
+    self.completionHandler = nil;
+}
+
+- (void)dealloc
+{
+    [self teardown];
 }
 
 - (NSURLSession *)defaultSession
@@ -165,7 +173,7 @@ static NSString * const ExcludeVersionsKey = @"exclude";
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     configuration.requestCachePolicy = NSURLRequestReloadIgnoringCacheData;
     return [NSURLSession sessionWithConfiguration:configuration];
-}
+}	
 
 - (void)willResignActive:(NSNotification * __unused)note
 {
@@ -194,29 +202,36 @@ static NSString * const ExcludeVersionsKey = @"exclude";
 
 - (void)startTimerIfNeeded
 {
+    if(self.inBackground || self.currentTimer != nil) {
+        return;
+    }
+    
     ZM_WEAK(self);
     [self.workingGroup enter];
     dispatch_async(self.queue, ^{
         ZM_STRONG(self);
-        if(self != nil && !self.inBackground && self.currentTimer == nil)
-        {
-            NSTimeInterval timeLeftSinceNextDownload = [self timeToNextDownload];
-            if(timeLeftSinceNextDownload == 0) {
-                [self fetchBlackList];
-            }
-            else {
-                NSTimer *timer = [NSTimer timerWithTimeInterval:timeLeftSinceNextDownload target:self selector:@selector(timerDidFire) userInfo:nil repeats:NO];
-                self.currentTimer = timer;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    ZM_STRONG(self);
-                    if(self) {
-                        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
-                    }
-                });
-            }
+        if (self == nil) {
+            [self.workingGroup leave];
+            return;
+        }
+        
+        NSTimeInterval timeLeftSinceNextDownload = [self timeToNextDownload];
+        if(timeLeftSinceNextDownload == 0) {
+            [self fetchBlackList];
+        }
+        else {
+            NSTimer *timer = [NSTimer timerWithTimeInterval:timeLeftSinceNextDownload target:self selector:@selector(timerDidFire) userInfo:nil repeats:NO];
+            self.currentTimer = timer;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                ZM_STRONG(self);
+                if(self) {
+                    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+                }
+            });
         }
         [self.workingGroup leave];
     });
+    
 }
 
 - (void)timerDidFire
@@ -307,10 +322,10 @@ static NSString * const ExcludeVersionsKey = @"exclude";
         
         if (self.completionHandler) {
             void(^completionHandler)(NSString *, NSArray *) = self.completionHandler;
-            [self.workingGroup enter];
+//            [self.workingGroup enter];
             dispatch_async(dispatch_get_main_queue(), ^ void () {
                 completionHandler(minVersion, exclude);
-                [self.workingGroup leave];
+//                [self.workingGroup leave];
             });
         }
     }

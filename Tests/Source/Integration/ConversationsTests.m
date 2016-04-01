@@ -413,7 +413,7 @@
     XCTAssertNotNil(conversation);
     
     [self.userSession performChanges:^{
-        [conversation appendMessagesWithText:@"lalala"];
+        [conversation appendMessageWithText:@"lalala"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -421,7 +421,7 @@
     // no pending pessages in conversation
     __block id<ZMConversationMessage> message;
     [self.userSession performChanges:^{
-        message = [conversation appendMessagesWithText:@"bar"].firstObject;
+        message = [conversation appendMessageWithText:@"bar"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -448,7 +448,7 @@
     //when
     __block ZMMessage *textMessage;
     [self.userSession performChanges:^{
-        textMessage = [conversation appendMessagesWithText:@"lalala"].firstObject;
+        textMessage = [conversation appendMessageWithText:@"lalala"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -486,9 +486,9 @@
     __block id<ZMConversationMessage> message;
     __block id<ZMConversationMessage> secondMessage;
     [self.userSession performChanges:^{
-        message = [conversation appendMessagesWithText:@"foo1"].firstObject;
+        message = [conversation appendMessageWithText:@"foo1"];
         [self spinMainQueueWithTimeout:0.5];
-        secondMessage = [conversation appendMessagesWithText:@"foo2"].firstObject;
+        secondMessage = [conversation appendMessageWithText:@"foo2"];
     }];
     
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5f]);
@@ -608,8 +608,8 @@
     __block ZMMessage *message;
     __block ZMMessage *secondMessage;
     [self.userSession performChanges:^{
-        message = [conversation appendMessagesWithText:@"lalala"].firstObject;
-        secondMessage = [anotherConversation appendMessagesWithText:@"lalala"].firstObject;
+        message = [conversation appendMessageWithText:@"lalala"];
+        secondMessage = [anotherConversation appendMessageWithText:@"lalala"];
     }];
     
     //expect
@@ -1262,7 +1262,7 @@
     [ZMMessage setDefaultExpirationTime:0.1]; //We don't want to wait 60 seconds
     __block ZMMessage *message;
     [self.userSession performChanges:^{
-        message = [groupConversation appendMessagesWithText:@"lalala"].firstObject;
+        message = [groupConversation appendMessageWithText:@"lalala"];
     }];
     XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
     
@@ -1299,7 +1299,7 @@
     [ZMMessage setDefaultExpirationTime:0.1]; //We don't want to wait 60 seconds
     __block ZMMessage *message;
     [self.userSession performChanges:^{
-        message = [groupConversation appendMessagesWithText:@"lalala"].firstObject;
+        message = [groupConversation appendMessageWithText:@"lalala"];
     }];
     XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
     
@@ -1345,7 +1345,7 @@
     [ZMMessage setDefaultExpirationTime:0.1]; //We don't want to wait 60 seconds
     __block ZMMessage *message;
     [self.userSession performChanges:^{
-        message = [groupConversation appendMessagesWithText:@"lalala"].firstObject;
+        message = [groupConversation appendMessageWithText:@"lalala"];
     }];
     XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
     
@@ -1391,7 +1391,7 @@
     [ZMMessage setDefaultExpirationTime:0.1]; //We don't want to wait 60 seconds
     __block id<ZMConversationMessage> message;
     [self.userSession performChanges:^{
-        message = [groupConversation appendMessagesWithText:@"lalala"].firstObject;
+        message = [groupConversation appendMessageWithText:@"lalala"];
     }];
     XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
     
@@ -1422,7 +1422,7 @@
     
     __block ZMMessage *message;
     [self.userSession performChanges:^{
-        message = [groupConversation appendMessagesWithText:@"lalala"].firstObject;
+        message = [groupConversation appendMessageWithText:@"lalala"];
     }];
     XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
     
@@ -1452,7 +1452,6 @@
         MessageChangeInfo *note = observer.notifications.firstObject;
         XCTAssertTrue(note.deliveryStateChanged);
         XCTAssertFalse(note.imageChanged);
-        XCTAssertFalse(note.knockChanged);
         XCTAssertFalse(note.senderChanged);
         
         XCTAssertEqual(message.deliveryState, ZMDeliveryStatePending);
@@ -1480,7 +1479,7 @@
     
     __block id<ZMConversationMessage> message;
     [self.userSession performChanges:^{
-        message = [groupConversation appendMessagesWithText:@"lalala"].firstObject;
+        message = [groupConversation appendMessageWithText:@"lalala"];
     }];
     XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
     
@@ -1953,7 +1952,7 @@
     // when
     __block ZMMessage *newMessage;
     [self.userSession performChanges:^{
-        newMessage = [observer.window.conversation appendMessagesWithText:expectedText].firstObject;
+        newMessage = [observer.window.conversation appendMessageWithText:expectedText];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -2011,11 +2010,11 @@
     
     // when
     ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
-    [conversation appendMessagesWithText:expectedTextLocal];
+    [conversation appendMessageWithText:expectedTextLocal];
     
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *syncConversation = [ZMConversation conversationWithRemoteID:[NSUUID uuidWithTransportString:self.groupConversation.identifier] createIfNeeded:NO inContext:self.syncMOC];
-        [syncConversation appendMessagesWithText:expectedTextRemote];
+        [syncConversation appendMessageWithText:expectedTextRemote];
         [self.syncMOC saveOrRollback];
     }];
     
@@ -3052,7 +3051,7 @@
     
     [self.userSession performChanges:^{
         [self spinMainQueueWithTimeout:1]; // if the message is sent within the same second of clearing the window, it will not be added when resyncing
-        [conversation appendMessagesWithText:@"lalala"];
+        [conversation appendMessageWithText:@"lalala"];
         [conversation setVisibleWindowFromMessage:conversation.messages.lastObject toMessage:conversation.messages.lastObject];
     }];
     WaitForEverythingToBeDone();
@@ -3393,7 +3392,7 @@
     
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
     [self.userSession performChanges:^{
-        ZMMessage *message = [conversation appendMessagesWithText:@"lalala"].firstObject;
+        ZMMessage *message = [conversation appendMessageWithText:@"lalala"];
         conversation.lastReadServerTimeStamp = message.serverTimestamp;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -3421,15 +3420,15 @@
     __block ZMMessage *message3;
 
     [self.userSession performChanges:^{
-        [conversation appendMessagesWithText:@"lalala"];
+        [conversation appendMessageWithText:@"lalala"];
         [self spinMainQueueWithTimeout:0.1]; // this is needed so the timeStamps are at least a millisecond appart
-        [conversation appendMessagesWithText:@"boohoohoo"];
+        [conversation appendMessageWithText:@"boohoohoo"];
         [self spinMainQueueWithTimeout:0.1]; // this is needed so the timeStamps are at least a millisecond appart
-        message1 = [conversation appendMessagesWithText:@"hehehe"].firstObject;
+        message1 = [conversation appendMessageWithText:@"hehehe"];
         [NSThread sleepForTimeInterval:0.2]; // this is needed so the timeStamps are at least a millisecond appart
-        message2 = [conversation appendMessagesWithText:@"I will not go away"].firstObject;
+        message2 = [conversation appendMessageWithText:@"I will not go away"];
         [self spinMainQueueWithTimeout:0.1]; // this is needed so the timeStamps are at least a millisecond appart
-        message3 = [conversation appendMessagesWithText:@"I will stay for sure"].firstObject;
+        message3 = [conversation appendMessageWithText:@"I will stay for sure"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     

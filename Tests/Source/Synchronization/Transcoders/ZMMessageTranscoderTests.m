@@ -112,8 +112,8 @@ static NSString const *GetConversationURL = @"/conversations/%@/events?start=%@&
 
 - (ZMConversation *)insertGroupConversation
 {
-    ZMConversation *result = [self insertGroupConversationInMoc:self.uiMOC];
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
+    ZMConversation *result = [self insertGroupConversationInMoc:self.syncMOC];
+    XCTAssertTrue([self.syncMOC saveOrRollback]);
     return result;
 }
 

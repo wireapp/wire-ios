@@ -78,7 +78,6 @@ extension PingBackRequestStrategy: ZMSingleRequestTranscoder {
         guard let nextNotificationID = pingBackStatus?.nextNotificationID() else { return nil }
         let path = "/push/fallback/\(nextNotificationID.transportString())/cancel"
         let request = ZMTransportRequest(path: path, method: .MethodPOST, payload: nil)
-        request.forceToForegroundSession()
         let completion = ZMCompletionHandler(onGroupQueue: managedObjectContext)  { [weak self] response in
             self?.pingBackStatus?.didPerfomPingBackRequest(nextNotificationID, success: response.result == .Success)
         }

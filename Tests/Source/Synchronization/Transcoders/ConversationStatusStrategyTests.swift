@@ -70,7 +70,7 @@ class ConversationStatusStrategyTests: MessagingTest {
             conversation.lastReadServerTimeStamp = NSDate()
             conversation.remoteIdentifier = NSUUID.createUUID()
             conversation.setLocallyModifiedKeys(Set(arrayLiteral: "lastReadServerTimeStamp"))
-            conversation.appendMessagesWithText("hey")
+            conversation.appendMessageWithText("hey")
             
             conversation.fetchUnreadMessages()
             conversation.lastUnreadMissedCallDate = conversation.lastReadServerTimeStamp.dateByAddingTimeInterval(-10)

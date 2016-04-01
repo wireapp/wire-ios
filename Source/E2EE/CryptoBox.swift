@@ -29,7 +29,7 @@ extension NSManagedObjectContext {
     /// Returns the cryptobox instance associated with this managed object context
     public var zm_cryptKeyStore : UserClientKeysStore! {
         if !self.zm_isSyncContext {
-            fatalError("Can't initiliazie crypto box on non-sync context")
+            fatal("Can't initiliazie crypto box on non-sync context")
         }
         let keyStore: AnyObject? = self.userInfo.objectForKey(NSManagedObjectContext.ZMUserClientKeysStoreKey)
         if let keyStore = keyStore as? UserClientKeysStore {
@@ -65,8 +65,8 @@ public class UserClientKeysStore: NSObject {
                 do {
                     try NSFileManager.defaultManager().moveItemAtURL(self.legacyOtrDirectory, toURL: self.otrDirectoryURL)
                 }
-                catch let error as NSError {
-                    fatalError("Cannot move legacy directory: \(error)")
+                catch let err {
+                    fatal("Cannot move legacy directory: \(err)")
                 }
             }
             
@@ -79,8 +79,8 @@ public class UserClientKeysStore: NSObject {
 
             return box
         }
-        catch let error as NSError {
-            fatalError("failed to init cryptobox: \(error)")
+        catch let err {
+            fatal("failed to init cryptobox: \(err)")
         }
         
         return nil
@@ -117,9 +117,9 @@ public class UserClientKeysStore: NSObject {
             url = self.otrDirectoryURL
             try NSFileManager.defaultManager().createDirectoryAtURL(url!, withIntermediateDirectories: true, attributes: nil)
         }
-        catch let error as NSError {
+        catch let err as NSError {
             if (url == nil) {
-                fatalError("Unable to initialize otrDirectory = error: \(error)")
+                fatal("Unable to initialize otrDirectory = error: \(err)")
             }
         }
         return url!
@@ -145,10 +145,10 @@ public class UserClientKeysStore: NSObject {
         do {
             try NSFileManager.defaultManager().removeItemAtPath(oldIdentityPath)
         }
-        catch {
+        catch let err {
             // if it's still there, we failed to delete. Critical error.
             if self.isPreviousOTRDirectoryPresent {
-                fatalError("Failed to remove identity from previous folder")
+                fatal("Failed to remove identity from previous folder: \(err)")
             }
         }
     }

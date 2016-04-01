@@ -215,13 +215,17 @@
     NSMutableSet *updated = [NSMutableSet set];
     
     // if the new displayName is the same as the old one or when the old map did not contain the user, add it to updated
-    [newGenerator.idToDisplayNameMap enumerateKeysAndObjectsUsingBlock:^(id userManagedObjectID, NSString *newDisplayName, BOOL *__unused stop) {
-        NSString *oldDisplayName = self.idToDisplayNameMap[userManagedObjectID];
-        if ([oldDisplayName isEqualToString:newDisplayName] ||
-            oldDisplayName == nil) {
-            return;
+    [newGenerator.idToFullNameMap enumerateKeysAndObjectsUsingBlock:^(id userManagedObjectID, NSString *newFullName, BOOL *__unused stop) {
+        NSString *oldFullName = self.idToFullNameMap[userManagedObjectID];
+        if (![newFullName isEqualToString:oldFullName]) {
+            [updated addObject:userManagedObjectID];
         }
-        [updated addObject:userManagedObjectID];
+        
+        NSString *oldDisplayName = self.idToDisplayNameMap[userManagedObjectID];
+        NSString *newDisplayName = newGenerator.idToDisplayNameMap[userManagedObjectID];
+        if (![newDisplayName isEqualToString:oldDisplayName]) {
+            [updated addObject:userManagedObjectID];
+        }
     }];
 
     return updated;

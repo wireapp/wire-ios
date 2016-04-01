@@ -61,20 +61,15 @@ extension ZMConversationMessageWindow {
     private var messageChangeInfos : [MessageChangeInfo] = []
     private var messageTokens: [ZMMessage : MessageObserverToken] = [:]
     
-    
+    public var isTornDown : Bool = false
+
     private var currentlyFetchingMessages = false
     
     public init(window: ZMConversationMessageWindow, observer: ZMConversationMessageWindowObserver?) {
         
         self.conversationWindow = window
         self.observer = observer
-
-        #if os(iOS)
-            let moveType: ZMSetChangeMoveType = .UICollectionView
-        #else
-            let moveType: ZMSetChangeMoveType = .NSTableView
-        #endif
-        self.state = SetSnapshot(set: conversationWindow.toOrderedSet(), moveType: moveType)
+        self.state = SetSnapshot(set: conversationWindow.toOrderedSet(), moveType: .UICollectionView)
         
         super.init()
         
@@ -96,6 +91,7 @@ extension ZMConversationMessageWindow {
         }
         self.messageTokens = [:]
         self.updatedMessages = []
+        isTornDown = true
     }
     
     deinit {
@@ -135,9 +131,9 @@ extension ZMConversationMessageWindow {
     public func messagesDidStopFetching(note: NSNotification) {
         guard let userInfo = note.userInfo,
             let conversationWatched = userInfo[ZMNotificationConversationKey] as? ZMConversation where
-            conversationWatched.objectID == self.conversationWindow.conversation.objectID else {
-                return
-        }
+            conversationWatched.objectID == self.conversationWindow.conversation.objectID
+            else { return }
+        
         if (self.currentlyFetchingMessages) {
             self.currentlyFetchingMessages = false
             if let observer = self.observer {
@@ -147,21 +143,18 @@ extension ZMConversationMessageWindow {
     }
     
     public func objectsDidChange(changes: ManagedObjectChanges) {
-
         if(self.shouldRecalculate || self.updatedMessages.count > 0) {
             self.computeChanges()
         }
     }
     
     public func conversationDidChange(changeInfo: ConversationChangeInfo) {
-        if(changeInfo.messagesChanged || changeInfo.clearedChanged || changeInfo.downloadHistoryCompleted) {
+        if(changeInfo.messagesChanged || changeInfo.clearedChanged) {
             self.shouldRecalculate = true
         }
     }
     
     public func computeChanges() {
-
-        
         let currentlyUpdatedMessaged = self.updatedMessages
         
         self.updatedMessages = []
@@ -173,22 +166,16 @@ extension ZMConversationMessageWindow {
         
         if let newStateUpdate = self.state.updatedState(updatedSet, observedObject: self.conversationWindow, newSet: self.conversationWindow.toOrderedSet()) {
             self.state = newStateUpdate.newSnapshot
-            if let anObserver = self.observer {
-                anObserver.conversationWindowDidChange(MessageWindowChangeInfo(setChangeInfo: newStateUpdate.changeInfo))
-            }
-            // Swift 1.1 workaround:
-            let a = newStateUpdate.insertedObjects.array as! [ZMMessage]
-            self.registerObserversForMessages(Set<ZMMessage>(a))
-            let b = newStateUpdate.removedObjects.array as! [ZMMessage]
-            self.removeObserverForMessages(Set<ZMMessage>(b))
+            self.observer?.conversationWindowDidChange(MessageWindowChangeInfo(setChangeInfo: newStateUpdate.changeInfo))
+            
+            let a = newStateUpdate.insertedObjects.set() as! Set<ZMMessage>
+            self.registerObserversForMessages(a)
+            let b = newStateUpdate.removedObjects.set() as! Set<ZMMessage>
+            self.removeObserverForMessages(b)
         }
         
         if self.messageChangeInfos.count > 0 {
-            if let anObserver = self.observer {
-                if anObserver.respondsToSelector("messagesInsideWindowDidChange:") {
-                    anObserver.messagesInsideWindowDidChange!(self.messageChangeInfos)
-                }
-            }
+            self.observer?.messagesInsideWindowDidChange?(self.messageChangeInfos)
         }
         
         self.messageChangeInfos = []
@@ -202,6 +189,7 @@ extension ZMConversationMessageWindow {
     
     private func removeObserverForMessages(messages: Set<ZMMessage>) {
         for message in messages {
+            (self.messageTokens[message])?.tearDown()
             self.messageTokens.removeValueForKey(message)
         }
     }

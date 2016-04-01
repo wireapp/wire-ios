@@ -33,7 +33,6 @@
 @class ZMTransportSession;
 @protocol ZMBackgroundable;
 @protocol HistorySynchronizationStatus;
-@class ZMApplicationLaunchStatus;
 
 @interface ZMSyncStateMachine : NSObject <ZMStateMachineDelegate, ZMBackgroundable>
 
@@ -41,7 +40,6 @@
 
 - (instancetype)initWithAuthenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                            syncStateDelegate:(id<ZMSyncStateDelegate>)syncStateDelegate
                        backgroundableSession:(id<ZMBackgroundable>)backgroundableSession;

@@ -80,7 +80,6 @@ extension PushNoticeRequestStrategy: ZMSingleRequestTranscoder {
         
         let path = "/notifications/\(nextNotificationID.transportString())?client=\(selfClientID)"
         let request = ZMTransportRequest(path: path, method: .MethodGET, payload: nil)
-        request.forceToForegroundSession()
         
         let completion = ZMCompletionHandler(onGroupQueue: managedObjectContext)  { [weak self] response in
             let success = response.result == .Success

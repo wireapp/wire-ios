@@ -39,20 +39,19 @@
     ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
     UserClient *selfClient = [self createSelfClient];
     
-    //create encrypted message
+    // create encrypted message
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:[NSUUID createUUID].transportString];
     NSError *error;
     CBSession *session = [selfClient.keysStore.box sessionWithId:selfClient.remoteIdentifier fromPreKey:[selfClient.keysStore lastPreKeyAndReturnError:&error] error:&error];
     NSData *encryptedData = [session encrypt:message.data error:&error];
     
-    NSDictionary *payload = @{@"recipient": selfClient.remoteIdentifier, @"sender": selfClient.remoteIdentifier, @"text": [encryptedData base64String]};
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:@{
-                                                 @"time": [[NSDate new] transportString],
-                                                 @"data": payload,
-                                                 @"conversation": [NSUUID createUUID].transportString,
-                                                 @"from": selfUser.remoteIdentifier.transportString,
-                                                 @"type": @"conversation.otr-message-add"
-                                                 } uuid:notificationID];
+    NSDictionary *payload = @{
+                              @"recipient": selfClient.remoteIdentifier,
+                              @"sender": selfClient.remoteIdentifier,
+                              @"text": [encryptedData base64String]
+                              };
+    NSDictionary *streamPayload = [self eventStreamPayloadWithSender:selfUser internalPayload:payload type:@"conversation.otr-message-add"];
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:streamPayload uuid:notificationID];
     
     // when
     ZMUpdateEvent *decryptedEvent = [selfClient.keysStore.box decryptUpdateEventAndAddClient:event managedObjectContext:self.syncMOC];
@@ -98,13 +97,8 @@
                               @"key": encryptedData.base64String
                               };
     
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:@{
-                                                                        @"time": [[NSDate new] transportString],
-                                                                        @"data": payload,
-                                                                        @"conversation": [NSUUID createUUID].transportString,
-                                                                        @"from": selfUser.remoteIdentifier.transportString,
-                                                                        @"type": @"conversation.otr-asset-add"
-                                                                        } uuid:notificationID];
+    NSDictionary *streamPayload = [self eventStreamPayloadWithSender:selfUser internalPayload:payload type:@"conversation.otr-asset-add"];
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:streamPayload uuid:notificationID];
     
     // when
     ZMUpdateEvent *decryptedEvent = [selfClient.keysStore.box decryptUpdateEventAndAddClient:event managedObjectContext:self.syncMOC];
@@ -149,15 +143,82 @@
     // when
     __block ZMUpdateEvent *decryptedEvent;
     [self performIgnoringZMLogError:^{
-         decryptedEvent = [selfClient.keysStore.box decryptUpdateEventAndAddClient:event managedObjectContext:self.syncMOC];
+        decryptedEvent = [selfClient.keysStore.box decryptUpdateEventAndAddClient:event managedObjectContext:self.syncMOC];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-
+    
     // then
     XCTAssertNil(decryptedEvent);
     ZMSystemMessage *lastMessages = conversation.messages.lastObject;
     XCTAssertTrue([lastMessages isKindOfClass:[ZMSystemMessage class]]);
     XCTAssertEqual(lastMessages.systemMessageType, ZMSystemMessageTypeDecryptionFailed);
+}
+
+- (void)testThatItCanDecryptOTRMessageAddEventWithExternalData
+{
+    // given
+    NSUUID *notificationID = NSUUID.createUUID;
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+    UserClient *selfClient = self.createSelfClient;
+    
+    // create symmetrically encrypted text message and encrypt external message holding the keys using cryptobox
+    NSError *error = nil;
+    ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:NSUUID.createUUID.transportString];
+    ZMExternalEncryptedDataWithKeys *dataWithKeys = [ZMGenericMessage encryptedDataWithKeysFromMessage:textMessage];
+    
+    ZMGenericMessage *externalMessage = [ZMGenericMessage genericMessageWithKeyWithChecksum:dataWithKeys.keys messageID:NSUUID.createUUID.transportString];
+    CBSession *session = [selfClient.keysStore.box sessionWithId:selfClient.remoteIdentifier fromPreKey:[selfClient.keysStore lastPreKeyAndReturnError:&error] error:&error];
+    NSData *encryptedData = [session encrypt:externalMessage.data error:&error];
+    XCTAssertNil(error);
+    
+    // create encrypted update event
+    NSDictionary *payload = @{
+                              @"recipient": selfClient.remoteIdentifier,
+                              @"sender": selfClient.remoteIdentifier,
+                              @"text": encryptedData.base64String,
+                              @"data": dataWithKeys.data.base64String
+                              };
+    
+    
+    NSDictionary *streamPayload = [self eventStreamPayloadWithSender:selfUser internalPayload:payload type:@"conversation.otr-message-add"];
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:streamPayload uuid:notificationID];
+    
+    // when
+    ZMUpdateEvent *decryptedEvent = [selfClient.keysStore.box decryptUpdateEventAndAddClient:event managedObjectContext:self.syncMOC];
+    
+    // then
+    NSDictionary *eventPayload = decryptedEvent.payload.asDictionary;
+    NSData *externalData = eventPayload[@"external"];
+    NSData *text = eventPayload[@"data"];
+    
+    XCTAssertTrue(decryptedEvent.isEncrypted);
+    XCTAssertTrue(decryptedEvent.wasDecrypted);
+    XCTAssertNotNil(externalData);
+    XCTAssertNotNil(text);
+    
+    // when
+    ZMClientMessage *decryptedMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:decryptedEvent
+                                                                       inManagedObjectContext:self.syncMOC
+                                                                               prefetchResult:nil];
+    
+    // then
+    XCTAssertFalse(decryptedMessage.genericMessage.hasExternal);
+    XCTAssertEqualObjects(decryptedMessage.nonce.transportString, textMessage.messageId);
+    XCTAssertEqualObjects(decryptedMessage.messageText, textMessage.text.content);
+    XCTAssertEqualObjects(decryptedEvent.uuid, notificationID);
+}
+
+#pragma mark - Helper
+
+- (NSDictionary *)eventStreamPayloadWithSender:(ZMUser *)sender internalPayload:(NSDictionary *)payload type:(NSString *)type
+{
+    return @{
+        @"time": NSDate.date.transportString,
+        @"data": payload,
+        @"conversation": NSUUID.createUUID.transportString,
+        @"from": sender.remoteIdentifier.transportString,
+        @"type": type
+        };
 }
 
 @end

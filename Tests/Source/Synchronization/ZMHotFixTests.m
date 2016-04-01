@@ -338,7 +338,7 @@
         addedMessage.eventID = [ZMEventID eventIDWithMajor:1 minor:3];
         [conversation sortedAppendMessage:addedMessage];
         
-        [conversation appendMessagesWithText:text];
+        [conversation appendMessageWithText:text];
         ZMSystemMessage *secondAddedMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
         secondAddedMessage.systemMessageType = ZMSystemMessageTypeParticipantsAdded;
         secondAddedMessage.eventID = [ZMEventID eventIDWithMajor:3 minor:3];
@@ -379,7 +379,7 @@
         addedMessage.systemMessageType = ZMSystemMessageTypeConnectionRequest;
         [conversation sortedAppendMessage:addedMessage];
         
-        [conversation appendMessagesWithText:text];
+        [conversation appendMessageWithText:text];
         messages = conversation.messages;
     }];
     
@@ -412,8 +412,8 @@
         conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID UUID];
         conversation.conversationType = ZMConversationTypeGroup;
-        [conversation appendMessagesWithText:@"foo"];
-        [conversation appendMessagesWithText:@"bar"];
+        [conversation appendMessageWithText:@"foo"];
+        [conversation appendMessageWithText:@"bar"];
         conversation.isSelfAnActiveMember = NO;
         
         conversation.clearedEventID = lastReadEventID;

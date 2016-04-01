@@ -76,6 +76,8 @@ static NSString *const ValidEmail = @"foo77@example.com";
     self.validPhoneNumbers = @[@"+491621312533", @"+4901756698655", @"+49 152 22824948", @"+49 157 71898972", @"+49 176 35791100", @"+49 1721496444", @"+79263387698", @"+79160546401", @"+7(927)674-59-42", @"+71231234567", @"+491234567890123456", @"+49123456789012345678901", @"+49123456"];
     self.shortPhoneNumbers = @[@"+", @"4", @"+4", @"+49", @"+491", @"+4912", @"+49123", @"+491234", @"+491235"];
     self.longPhoneNumbers = @[@"+491234567890123456789015", @"+4912345678901234567890156"];
+    self.syncMOC.zm_userImageCache = [[UserImageLocalCache alloc] init];
+    self.uiMOC.zm_userImageCache = self.syncMOC.zm_userImageCache;
 }
 
 - (void)testThatItHasLocallyModifiedDataFields
@@ -97,15 +99,6 @@ static NSString *const ValidEmail = @"foo77@example.com";
     [self checkUserAttributeForKey:@"localMediumRemoteIdentifier" value:[NSUUID createUUID]];
     [self checkUserAttributeForKey:@"localSmallProfileRemoteIdentifier" value:[NSUUID createUUID]];
 }
-
-- (void)DISABLED_testThatWeCanStoreImageDataForSelfUser
-{
-    NSData *tinyImageData = [self dataForResource:@"tiny_smallProfile" extension:@"jpg"];
-    [self checkUserAttributeForKey:@"imageSmallProfileData" value:tinyImageData];
-    NSData *mediumImageData = [self dataForResource:@"medium" extension:@"jpg"];
-    [self checkUserAttributeForKey:@"imageMediumData" value:mediumImageData];
-}
-
 
 - (NSMutableDictionary *)samplePayloadForUserID:(NSUUID *)userID
 {
@@ -394,6 +387,63 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertEqualObjects(user.smallProfileRemoteIdentifier, smallProfileImageRemoteID);
     XCTAssertNil(user.localSmallProfileRemoteIdentifier, @"Must not be set");
     XCTAssertNil(user.localMediumRemoteIdentifier, @"Must not be set");
+}
+
+- (void)testThatItDoesPersistMediumImageDataForNotSelfUserToCache
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.mediumRemoteIdentifier = [NSUUID createUUID];
+    NSData *imageData = [self verySmallJPEGData];
+    user.imageMediumData = imageData;
+    XCTAssertEqual(user.imageMediumData, imageData);
+    
+    [self.syncMOC saveOrRollback];
+    
+    //when
+    NSData* extractedData = [self.syncMOC.zm_userImageCache largeUserImage:user];
+    
+    //then
+    XCTAssertEqualObjects(imageData, extractedData);
+}
+
+- (void)testThatItDoesPersistSmallImageDataForNotSelfUserToCache
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.smallProfileRemoteIdentifier = [NSUUID createUUID];
+    NSData *imageData = [self verySmallJPEGData];
+    user.imageSmallProfileData = imageData;
+    XCTAssertEqual(user.imageSmallProfileData, imageData);
+    
+    [self.syncMOC saveOrRollback];
+    
+    //when
+    NSData* extractedData = [self.syncMOC.zm_userImageCache smallUserImage:user];
+    
+    //then
+    XCTAssertEqualObjects(imageData, extractedData);
+}
+
+- (void)testThatItDoesNotStoreMediumImageDataInCacheForSelfUser
+{
+    // given
+    ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.mediumRemoteIdentifier = [NSUUID createUUID];
+    NSData *imageData = [self verySmallJPEGData];
+    user.imageMediumData = imageData;
+    XCTAssertEqual(user.imageMediumData, imageData);
+    
+    [self.syncMOC saveOrRollback];
+    
+    //when
+    NSData* extractedData = [self.syncMOC.zm_userImageCache largeUserImage:user];
+    
+    //then
+    XCTAssertNil(extractedData);
 }
 
 - (void)testThatItHandlesRemovingPictures
@@ -903,7 +953,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertNotNil(user);
     XCTAssertNil(user.imageCorrelationIdentifier);
     
-    NSData *tinyImageData = [self dataForResource:@"tiny_smallProfile" extension:@"jpg"];
+    NSData *tinyImageData = [self dataForResource:@"tiny" extension:@"jpg"];
 
     // when
     user.originalProfileImageData = tinyImageData;

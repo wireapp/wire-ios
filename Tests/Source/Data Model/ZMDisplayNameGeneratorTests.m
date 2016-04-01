@@ -250,7 +250,7 @@
 
     NSString *displayNameForKey6 = [nameGenerator displayNameForKey:@"A"];
     NSString *displayNameForKey7 = [nameGenerator displayNameForKey:@"B"];
-    NSSet *updatedSet = [NSSet setWithArray:@[@"B"]];
+    NSSet *updatedSet = [NSSet setWithArray:@[@"B", @"C"]];
     
     
     // then
@@ -292,7 +292,7 @@
     NSString *displayNameForKey5 = [nameGenerator displayNameForKey:@"B"];
     NSString *displayNameForKey6 = [nameGenerator displayNameForKey:@"C"];
     
-    NSSet *expectedUpdated = [NSSet set];
+    NSSet *expectedUpdated = [NSSet setWithArray:@[@"A", @"B", @"C"]];
     
     // then
     XCTAssertEqualObjects(displayNameForKey1, @"\u00C5ron M");
@@ -304,6 +304,36 @@
     XCTAssertEqualObjects(displayNameForKey5, emptyString);
     XCTAssertEqualObjects(displayNameForKey6, emptyString);
 
+    XCTAssertEqualObjects(updated, expectedUpdated);
+}
+
+
+- (void)testThatItReturnsUpdatedFullNames
+{
+    // given
+    NSString *name1 = @"Hans Meister";
+    NSString *name2 = @"Hans Master";
+
+    NSDictionary *map1 = @{@"A": name1};
+    NSDictionary *map2 = @{@"A": name2};
+
+    // when
+    
+    ZMDisplayNameGenerator *nameGenerator = [[ZMDisplayNameGenerator alloc] init];
+    nameGenerator.idToFullNameMap = map1;
+    
+    NSSet *updated = [NSSet set];
+    ZMDisplayNameGenerator *newGenerator = [nameGenerator createCopyWithMap:map2 updatedKeys:&updated];
+    
+    NSString *displayNameForKey1 = [newGenerator displayNameForKey:@"A"];
+    NSString *displayNameForKey2 = [nameGenerator displayNameForKey:@"A"];
+    
+    NSSet *expectedUpdated = [NSSet setWithArray:@[@"A"]];
+    
+    // then
+    XCTAssertEqualObjects(displayNameForKey1, @"Hans");
+    XCTAssertEqualObjects(displayNameForKey2, @"Hans");
+    
     XCTAssertEqualObjects(updated, expectedUpdated);
 }
 

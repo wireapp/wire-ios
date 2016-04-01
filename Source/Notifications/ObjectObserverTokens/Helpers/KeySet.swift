@@ -36,7 +36,7 @@ public struct KeySet : SequenceType {
             if let ss = s as? String {
                 a.append(KeyPath.keyPathForString(ss))
             } else {
-                fatalError("\(s) is not a string")
+                fatal("\(s) is not a string")
             }
         }
         backing = Set(a)
@@ -75,6 +75,10 @@ public struct KeySet : SequenceType {
     }
     public func generate() -> Set<KeyPath>.Generator {
         return backing.generate()
+    }
+    
+    public var count : Int {
+        return backing.count
     }
 }
 

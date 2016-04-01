@@ -120,6 +120,5 @@
 #import <zmessaging/ZMLocalNotificationDispatcher.h>
 #import <zmessaging/ZMLocalNotificationLocalization.h>
 #import <zmessaging/UILocalNotification+StringProcessing.h>
-
-
+#import <zmessaging/ZMGenericMessage+External.h>
 

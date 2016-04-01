@@ -195,6 +195,7 @@ static const int32_t Mersenne3 = 8191;
     [self.uiMOC zm_tearDownCallTimer];
     [self.testMOC zm_tearDownCallTimer];
 
+    [self.syncMOC.globalManagedObjectContextObserver tearDown];
     [self.uiMOC.globalManagedObjectContextObserver tearDown];
 
     self.uiMOC = nil;
@@ -217,6 +218,7 @@ static const int32_t Mersenne3 = 8191;
     NSManagedObjectContext *refTestMOC = self.testMOC;
     NSManagedObjectContext *refAlternativeTestMOC = self.alternativeTestMOC;
     NSManagedObjectContext *refSearchMoc = self.searchMOC;
+    NSManagedObjectContext *refSyncMoc = self.syncMOC;
     
     WaitForAllGroupsToBeEmpty(2);
     
@@ -228,6 +230,9 @@ static const int32_t Mersenne3 = 8191;
     
     [refUiMOC performBlockAndWait:^{
         // Do nothing.
+    }];
+    [refSyncMoc performBlockAndWait:^{
+        
     }];
     [self.mockTransportSession.managedObjectContext performBlockAndWait:^{
         // Do nothing
@@ -241,6 +246,9 @@ static const int32_t Mersenne3 = 8191;
     [refSearchMoc performBlockAndWait:^{
         // Do nothing
     }];
+    
+    [refUiMOC.globalManagedObjectContextObserver tearDown];
+    [refSyncMoc.globalManagedObjectContextObserver tearDown];
 }
 
 - (void)cleanUpAndVerify {
@@ -253,6 +261,9 @@ static const int32_t Mersenne3 = 8191;
 {
     [self.uiMOC zm_tearDownCallTimer];
     [self.syncMOC zm_tearDownCallTimer];
+    
+    [self.syncMOC.globalManagedObjectContextObserver tearDown];
+    [self.uiMOC.globalManagedObjectContextObserver tearDown];
     
     NSString *clientID = [self.uiMOC persistentStoreMetadataForKey:ZMPersistedClientIdKey];
     self.uiMOC = nil;
@@ -282,10 +293,6 @@ static const int32_t Mersenne3 = 8191;
     [self.uiMOC setPersistentStoreMetadata:clientID forKey:ZMPersistedClientIdKey];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(2);
-    
-    NSCache *userImagesCache = [NSCache new];
-    [self.uiMOC setUserImagesCache:userImagesCache];
-    [self.syncMOC setUserImagesCache:userImagesCache];
     
     [self.syncMOC setZm_userInterfaceContext:self.uiMOC];
     [self.uiMOC setZm_syncContext:self.syncMOC];

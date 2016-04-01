@@ -153,11 +153,15 @@ extension EventsWithIdentifier: CustomDebugStringConvertible {
     
     
     public func didFetchNoticeNotification(notificationID: NSUUID, success: Bool, events: [ZMUpdateEvent]) {
+        var finalEvents = events
         if let idx = notificationIDs.indexOf(notificationID) where idx != NSNotFound {
             if success {
                 // we fetched the event and want to ping back
                 status = .Pinging
-                notificationIDToEventsMap[notificationID] = events
+                let cryptoBox = syncManagedObjectContext.zm_cryptKeyStore.box
+                let decryptedEvents = events.flatMap{cryptoBox.decryptUpdateEventAndAddClient($0, managedObjectContext: syncManagedObjectContext)}
+                finalEvents = decryptedEvents
+                notificationIDToEventsMap[notificationID] = decryptedEvents
             } else {
                 // we could't fetch the event and want the fallback
                 notificationIDs.removeAtIndex(idx)
@@ -170,9 +174,8 @@ extension EventsWithIdentifier: CustomDebugStringConvertible {
             updateStatus()
         }
         
-
         zmLog.debug("Fetching notification \(success ? "succeeded" : "failed") for notification ID: \(notificationID)")
-        notificationDispatcher?.didReceiveUpdateEvents(events)
+        notificationDispatcher?.didReceiveUpdateEvents(finalEvents)
     }
     
     func updateStatus() {

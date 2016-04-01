@@ -174,6 +174,7 @@ class ClientMessageRequestFactoryTests: MessagingTest {
                 XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
                 XCTAssertEqual(request.path, expectedPath)
                 XCTAssertNotNil(request.binaryData)
+                XCTAssertTrue(request.shouldUseOnlyBackgroundSession)
             }
         }
     }

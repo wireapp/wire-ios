@@ -35,6 +35,14 @@
 @protocol ZMRequestsToOpenViewsDelegate;
 @protocol ZMThirdPartyServicesDelegate;
 
+@protocol ZMAVSLogObserver <NSObject>
+@required
+- (void)logMessage:(NSString *)msg;
+@end
+
+@protocol ZMAVSLogObserverToken <NSObject>
+@end
+
 
 /// C.f. -[ZMUserSession trackingIdentifier]
 extern NSString * const ZMUserSessionTrackingIdentifierDidChangeNotification;
@@ -58,9 +66,15 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
  */
 + (void)prepareLocalStore:(void (^)())completionHandler;
 
+/// Whether the local store is ready to be opened. If it returns false, the user session can't be started yet
 + (BOOL)storeIsReady;
 
-- (instancetype)initWithMediaManager:(id<AVSMediaManager>)delegate;
+/**
+ Intended initializer to be used by the UI
+ @param mediaManager: the media manager delegate
+ @param appVersion: the application version (build number)
+*/
+- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager appVersion:(NSString *)appVersion;
 
 @property (nonatomic, weak) id<ZMRequestsToOpenViewsDelegate> requestToOpenViewDelegate;
 @property (nonatomic, weak) id<ZMThirdPartyServicesDelegate> thirdPartyServicesDelegate;
@@ -71,7 +85,7 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
  Version should be a build number. blackListedBlock is retained and called only if passed version is black listed. The block is 
  called only once, even if the file is downloaded multiple times.
  */
-- (void)startAndCheckClientVersion:(NSString *)appVersion checkInterval:(NSTimeInterval)interval blackListedBlock:(void (^)())blackListed;
+- (void)startAndCheckClientVersionWithCheckInterval:(NSTimeInterval)interval blackListedBlock:(void (^)())blackListed;
 
 - (void)start;
 
@@ -131,6 +145,11 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 
 
 @interface ZMUserSession (AVSLogging)
+
+/// Add observer for AVS logging
++ (id<ZMAVSLogObserverToken>)addAVSLogObserver:(id<ZMAVSLogObserver>)observer;
+/// Remove observer for AVS logging
++ (void)removeAVSLogObserver:(id<ZMAVSLogObserverToken>)token;
 
 + (void)appendAVSLogMessageForConversation:(ZMConversation *)conversation withMessage:(NSString *)message;
 

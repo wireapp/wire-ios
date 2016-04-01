@@ -26,6 +26,11 @@ import XCTest
 
 class MessageWindowChangeTokenTests : MessagingTest
 {
+    override func setUp() {
+        super.setUp()
+        NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    }
     
     func createMessagesWithCount(messageCount: UInt, startEventIDMajor: UInt) -> [ZMTextMessage] {
         
@@ -84,36 +89,40 @@ class MessageWindowChangeTokenTests : MessagingTest
     func testThatItNotifiesForClearingMessageHistory()
     {
         // given
+        let observer = FakeObserver()
+        
+        let message1 = zmessaging.ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = zmessaging.ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let window = self.createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
+        let conversation = window.conversation
+        message1.serverTimestamp = NSDate()
+        message1.eventID = self.createEventID()
+        message2.serverTimestamp = message1.serverTimestamp.dateByAddingTimeInterval(5);
+        message2.eventID = self.createEventID()
+        conversation.lastServerTimeStamp = message2.serverTimestamp
+        
+        self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        let token = window.addConversationWindowObserver(observer)
+
         self.syncMOC.performGroupedBlockAndWait{
-            let message1 = zmessaging.ZMTextMessage.insertNewObjectInManagedObjectContext(self.syncMOC)!
-            let message2 = zmessaging.ZMTextMessage.insertNewObjectInManagedObjectContext(self.syncMOC)!
-            let window = self.createConversationWindowWithMessages([message1, message2], uiMoc: self.syncMOC)
-            let conversation = window.conversation
-            message1.serverTimestamp = NSDate()
-            message1.eventID = self.createEventID()
-            message2.serverTimestamp = message1.serverTimestamp.dateByAddingTimeInterval(5);
-            message2.eventID = self.createEventID()
-            conversation.lastServerTimeStamp = message2.serverTimestamp
-            
-            self.syncMOC.saveOrRollback()
-            
-            let observer = FakeObserver()
-            self.syncMOC.saveOrRollback()
-            
-            let token = window.addConversationWindowObserver(observer)
+            let syncConv = self.syncMOC.objectWithID(conversation.objectID) as! ZMConversation
             
             // when
-            conversation.clearedTimeStamp = message1.serverTimestamp;
-            self.syncMOC.processPendingChanges()
-            
-            // then
-            XCTAssertEqual(observer.notifications.count, 1)
-            if let note = observer.notifications.first {
-                XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 1))
-            }
-            
-            window.removeConversationWindowObserverToken(token)
+            syncConv.clearedTimeStamp = message1.serverTimestamp;
+            self.syncMOC.saveOrRollback()
         }
+        self.uiMOC.refreshObject(conversation, mergeChanges:true)
+        self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertEqual(observer.notifications.count, 1)
+        if let note = observer.notifications.first {
+            XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 1))
+        }
+        
+        window.removeConversationWindowObserverToken(token)
     }
     
     func testThatItNotifiesForAMessageUpdate()

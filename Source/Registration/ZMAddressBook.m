@@ -160,12 +160,14 @@ static NSString * const ZMSentAddressBookInvitationsKey = @"ZMSentAddressBookInv
         
         // Phone numbers:
         NSMutableArray *phoneNumbers = [NSMutableArray array];
+        NSMutableArray *rawPhoneNumbers = [NSMutableArray array];
         {
             ABMultiValueRef multi = ABRecordCopyValue(record, PersonPhoneProperty);
             if (multi != NULL) {
                 for (CFIndex i = 0; i < ABMultiValueCount(multi); i++) {
                     NSString *phoneNumber = CFBridgingRelease(ABMultiValueCopyValueAtIndex(multi, i));
                     if (0 < phoneNumber.length) {
+                        [rawPhoneNumbers addObject:phoneNumber];
                         NSString *normalized = [self.phoneNumberUtil zm_normalizePhoneNumber:phoneNumber];
                         if (0 < normalized.length) {
                             [phoneNumbers addObject:normalized];
@@ -206,6 +208,7 @@ static NSString * const ZMSentAddressBookInvitationsKey = @"ZMSentAddressBookInv
         
         person.emailAddresses = emailAddresses;
         person.phoneNumbers = phoneNumbers;
+        person.rawPhoneNumbers = rawPhoneNumbers;
         person.firstName = CFBridgingRelease(ABRecordCopyValue(record, kABPersonFirstNameProperty));
         person.middleName = CFBridgingRelease(ABRecordCopyValue(record, kABPersonMiddleNameProperty));
         person.lastName = CFBridgingRelease(ABRecordCopyValue(record, kABPersonLastNameProperty));

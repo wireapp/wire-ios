@@ -38,7 +38,7 @@
 
 @interface ZMUnauthenticatedStateTests : StateBaseTest
 
-@property (nonatomic, readonly) ZMUnauthenticatedState *sut;
+@property (nonatomic) ZMUnauthenticatedState *sut;
 @property (nonatomic) id mockTimer;
 @property (nonatomic) id<ZMTimerClient> timerTarget;
 @property (nonatomic) NSUInteger timerCreationCount;
@@ -105,7 +105,7 @@
 }
 
 
-- (void) setUp
+- (void)setUp
 {
     [super setUp];
     
@@ -119,19 +119,19 @@
     
     [self verifyMockLater:self.staticMockedTimer];
     
-#if TARGET_OS_IPHONE
-    self.application = [OCMockObject mockForClass:UIApplication.class];
-#endif
+    [self recreateSUT];
     
+    XCTAssertEqual(self.mockTimer, self.sut.loginFailureTimer);
+}
+
+- (void)recreateSUT
+{
     _sut = [[ZMUnauthenticatedState alloc]
             initWithAuthenticationCenter:self.authenticationStatus
             clientRegistrationStatus:self.clientRegistrationStatus
-            applicationLaunchStatus:self.applicationLaunchStatus
             objectStrategyDirectory:self.objectDirectory
             stateMachineDelegate:self.stateMachine
             application:self.application];
-
-    XCTAssertEqual(self.mockTimer, self.sut.loginFailureTimer);
 }
 
 - (void)tearDown
@@ -139,9 +139,8 @@
     self.timerTarget = nil;
     _staticMockedTimer = nil;
     _sut = nil;
- 
-    [self verifyAndRemoveTimer];
     
+    [self verifyAndRemoveTimer];
     [self.staticMockedTimer stopMocking];
     [super tearDown];
 }
@@ -223,13 +222,16 @@
 - (void)testThatWeSwitchToTheNotificationCatchUpStateWhenEnteringTheStateAndAlreadyLoggedIn
 {
     // given
+    self.application = self.mockApplication;
+    [self recreateSUT];
+    
     [ZMUser selfUserInContext:self.uiMOC].remoteIdentifier = [NSUUID createUUID];
     [self.uiMOC setPersistentStoreMetadata:@"someD" forKey:ZMPersistedClientIdKey];
     
     [self.authenticationStatus setAuthenticationCookieData:[@"foo" dataUsingEncoding:NSUTF8StringEncoding]];
     
     // expect
-    (void)[(UIApplication *) [[(id) self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+    (void)[(UIApplication *) [[(id) self.application expect] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
     [[(id)self.stateMachine expect] startQuickSync];
     [[[(id)self.objectDirectory.selfTranscoder stub] andReturnValue:@YES] isSelfUserComplete]; //we also check for remoteIdentifier directly
     
@@ -240,13 +242,16 @@
 - (void)testThatWeSwitchToTheBackgroundStateWhenEnteringTheStateAndAlreadyLoggedInAndInTheBackground;
 {
     // given
+    self.application = self.mockApplication;
+    [self recreateSUT];
+    
     [ZMUser selfUserInContext:self.uiMOC].remoteIdentifier = [NSUUID createUUID];
     [self.uiMOC setPersistentStoreMetadata:@"someD" forKey:ZMPersistedClientIdKey];
 
     [self.authenticationStatus setAuthenticationCookieData:[@"foo" dataUsingEncoding:NSUTF8StringEncoding]];
     
     // expect
-    (void)[(UIApplication *) [[(id) self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    (void)[(UIApplication *) [[(id) self.application expect] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
     [[(id)self.stateMachine expect] goToState:self.stateMachine.backgroundState];
     [[[(id)self.objectDirectory.selfTranscoder stub] andReturnValue:@YES] isSelfUserComplete];
     
@@ -640,11 +645,10 @@
 
 
 
-- (ZMUnauthenticatedState *)mockedSUTWithLaunchState:(ZMApplicationLaunchState)launchState isLoggedIn:(BOOL)isLoggedIn
+- (ZMUnauthenticatedState *)mockedSUTWithLaunchInForeground:(BOOL)launchInForeground isLoggedIn:(BOOL)isLoggedIn
 {
     // given
     id mockAuthCenter = [OCMockObject niceMockForClass:[ZMAuthenticationStatus class]];
-    id mockApplicationStatus = [OCMockObject niceMockForClass:[ZMApplicationLaunchStatus class]];
     id mockClientRegStatus = [OCMockObject niceMockForClass:[ZMClientRegistrationStatus class]];
     
     // stub
@@ -652,20 +656,23 @@
     ZMClientRegistrationPhase clientPhase = isLoggedIn ? ZMClientRegistrationPhaseRegistered : ZMClientRegistrationPhaseUnregistered;
     
     [(ZMAuthenticationStatus *)[[mockAuthCenter stub] andReturnValue:OCMOCK_VALUE(authenticationPhase)] currentPhase];
-    [(ZMApplicationLaunchStatus *)[[mockApplicationStatus stub] andReturnValue:OCMOCK_VALUE(launchState)] currentState];
     [(ZMClientRegistrationStatus *)[[mockClientRegStatus stub] andReturnValue:OCMOCK_VALUE(clientPhase)] currentPhase];
     [[[(id)self.objectDirectory.selfTranscoder stub] andReturnValue:@YES] isSelfUserComplete];
     
     
-    
-    ZMUnauthenticatedState *sut = [[ZMUnauthenticatedState alloc] initWithAuthenticationCenter:mockAuthCenter clientRegistrationStatus:mockClientRegStatus applicationLaunchStatus:mockApplicationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
+    ZMUnauthenticatedState *sut = [[ZMUnauthenticatedState alloc] initWithAuthenticationCenter:mockAuthCenter clientRegistrationStatus:mockClientRegStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine application:self.mockApplication];
+    if (launchInForeground) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:nil];
+    } else {
+        [[[(id)self.mockApplication expect] andReturnValue:@(UIApplicationStateBackground)] applicationState];
+    }
     return sut;
 }
 
 - (void)testThatItStartsQuickSyncIfApplicationLaunchStateIsForeground
 {
     // given
-    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchState:ZMApplicationLaunchStateForeground isLoggedIn:YES];
+    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchInForeground:YES isLoggedIn:YES];
 
     // expect
     [[(id)self.stateMachine expect] startQuickSync];
@@ -677,7 +684,7 @@
 - (void)testThatItDoesNotStartQuickSyncIfApplicationLaunchStateIsInBackground
 {
     // when
-    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchState:ZMApplicationLaunchStateBackground isLoggedIn:YES];
+    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchInForeground:NO isLoggedIn:YES];
     
     // expect
     [[(id)self.stateMachine reject] startQuickSync];
@@ -689,7 +696,7 @@
 - (void)testThatItReturnsNilRequest_AndStartsQuickSync_IfApplicationIsLoggedInAndLaunchStateIsForeground
 {
     // when
-    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchState:ZMApplicationLaunchStateForeground isLoggedIn:YES];
+    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchInForeground:YES isLoggedIn:YES];
     
     // expect
     [[(id)self.stateMachine expect] startQuickSync];
@@ -704,7 +711,7 @@
 - (void)testThatItReturnsNilRequest_AndDoesNotStartQuickSync_IfApplicationIsLoggedInAndLaunchStateIsBackground
 {
     // when
-    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchState:ZMApplicationLaunchStateBackground isLoggedIn:YES];
+    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchInForeground:NO isLoggedIn:YES];
     
     // expect
     [[(id)self.stateMachine reject] startQuickSync];
@@ -719,7 +726,7 @@
 - (void)testThatItStartsQuickSyncWhenEnteringForeground_LoggedIn
 {
     // when
-    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchState:ZMApplicationLaunchStateForeground isLoggedIn:YES];
+    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchInForeground:YES isLoggedIn:YES];
     
     // expect
     [[(id)self.stateMachine expect] startQuickSync];
@@ -731,13 +738,36 @@
 - (void)testThatItDoesNotStartQuickSyncWhenEnteringForeground_NotLoggedIn
 {
     // when
-    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchState:ZMApplicationLaunchStateForeground isLoggedIn:NO];
+    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchInForeground:YES isLoggedIn:NO];
     
     // expect
     [[(id)self.stateMachine reject] startQuickSync];
     
     // when
     [sut didEnterForeground];
+}
+
+
+- (void)testThatItStartsQuickSyncWhenApplicationStateChanges
+{
+    // when
+    ZMUnauthenticatedState *sut = [self mockedSUTWithLaunchInForeground:NO isLoggedIn:YES];
+
+    // when
+    ZMTransportRequest *request1 = [sut nextRequest];
+    
+    // then
+    XCTAssertNil(request1);
+    
+    // expect
+    [[(id)self.stateMachine expect] startQuickSync];
+    
+    // and when
+    [[[(id)self.mockApplication expect] andReturnValue:@(UIApplicationStateActive)] applicationState];
+    ZMTransportRequest *request2 = [sut nextRequest];
+    
+    // then
+    XCTAssertNil(request2);
 }
 
 @end

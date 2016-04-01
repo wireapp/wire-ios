@@ -64,7 +64,7 @@ public class ZMVoiceChannelError: NSError {
     }
     
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatal("init(coder:) has not been implemented")
     }
     
     public static func noFlowManagerError() -> ZMVoiceChannelError {

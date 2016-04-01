@@ -238,15 +238,14 @@ static NSString * const RequestUserProfileSmallAssetNotificationName = @"ZMReque
 
 - (ZMUpstreamRequest *)requestForUpdatingObject:(ZMUser *)user forKeys:(NSSet *)keys;
 {
-    if (!user.isSelfUser) {
-        ZMTrap();
-    }
+    Require(user.isSelfUser);
     
     if ([keys containsObject:ImageSmallProfileDataKey] || [keys containsObject:ImageMediumDataKey]) {
         return [self requestForUploadingImageToSelfConversationOnSelfUser:user keys:keys];
     }
 
     ZMTrapUnableToGenerateRequest(keys, self);
+    return nil;
 }
 
 - (ZMUpstreamRequest *)requestForUploadingImageToSelfConversationOnSelfUser:(ZMUser *)user keys:(NSSet *)keys

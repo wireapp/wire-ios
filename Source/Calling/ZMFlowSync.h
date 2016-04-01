@@ -23,7 +23,6 @@
 #import "AVSFlowManager.h"
 #import "ZMObjectSyncStrategy.h"
 @class ZMConversation;
-@class ZMApplicationLaunchStatus;
 @class ZMUser;
 @class ZMOnDemandFlowManager;
 
@@ -35,13 +34,10 @@ typedef NS_ENUM(int16_t, ZMFlowManagerCategory) {
 extern id ZMFlowSyncInternalFlowManagerOverride;
 extern id ZMFlowSyncInternalDeploymentEnvironmentOverride;
 
-
-
 @interface ZMFlowSync : ZMObjectSyncStrategy <ZMObjectStrategy>
 
 - (instancetype)initWithMediaManager:(id)mediaManager
                  onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager
-             applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
             syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext
               uiManagedObjectContext:(NSManagedObjectContext *)uiManagedObjectContext;
 

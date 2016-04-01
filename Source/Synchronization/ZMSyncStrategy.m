@@ -129,7 +129,6 @@ ZM_EMPTY_ASSERTING_INIT()
                      userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                           clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                           giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
                 backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                 mediaManager:(id<AVSMediaManager>)mediaManager
@@ -153,7 +152,6 @@ ZM_EMPTY_ASSERTING_INIT()
                                     userProfileUpdateStatus:userProfileStatus
                                localNotificationsDispatcher:localNotificationsDispatcher
                                        authenticationStatus:authenticationStatus
-                                    applicationLaunchStatus:applicationLaunchStatus
                                backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus
                                                mediaManager:mediaManager
                                         onDemandFlowManager:onDemandFlowManager
@@ -161,7 +159,6 @@ ZM_EMPTY_ASSERTING_INIT()
         
         self.stateMachine = [[ZMSyncStateMachine alloc] initWithAuthenticationStatus:authenticationStatus
                                                             clientRegistrationStatus:clientRegistrationStatus
-                                                             applicationLaunchStatus:applicationLaunchStatus
                                                              objectStrategyDirectory:self
                                                                    syncStateDelegate:syncStateDelegate
                                                                backgroundableSession:backgroundableSession];
@@ -197,7 +194,6 @@ ZM_EMPTY_ASSERTING_INIT()
                               userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileStatus
                          localNotificationsDispatcher:(ZMLocalNotificationDispatcher *)localNotificationsDispatcher
                                  authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
-                              applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                          backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                          mediaManager:(id<AVSMediaManager>)mediaManager
                                   onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager
@@ -216,7 +212,7 @@ ZM_EMPTY_ASSERTING_INIT()
     self.registrationTranscoder = [[ZMRegistrationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus];
     self.missingUpdateEventsTranscoder = [[ZMMissingUpdateEventsTranscoder alloc] initWithSyncStrategy:self];
     self.lastUpdateEventIDTranscoder = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.syncMOC objectDirectory:self];
-    self.flowTranscoder = [[ZMFlowSync alloc] initWithMediaManager:mediaManager onDemandFlowManager:onDemandFlowManager applicationLaunchStatus:applicationLaunchStatus syncManagedObjectContext:self.syncMOC uiManagedObjectContext:uiMOC];
+    self.flowTranscoder = [[ZMFlowSync alloc] initWithMediaManager:mediaManager onDemandFlowManager:onDemandFlowManager syncManagedObjectContext:self.syncMOC uiManagedObjectContext:uiMOC];
     self.addressBookTranscoder = [[ZMAddressBookTranscoder alloc] initWithManagedObjectContext:self.syncMOC];
     self.pushTokenTranscoder = [[ZMPushTokenTranscoder alloc] initWithManagedObjectContext:self.syncMOC clientRegistrationStatus:clientRegistrationStatus];
     self.callStateTranscoder = [[ZMCallStateTranscoder alloc] initWithSyncManagedObjectContext:self.syncMOC uiManagedObjectContext:uiMOC objectStrategyDirectory:self];

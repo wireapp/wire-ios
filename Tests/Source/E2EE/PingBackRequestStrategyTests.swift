@@ -117,9 +117,6 @@ class PingBackRequestStrategyTests: MessagingTest {
         XCTAssertEqual(request?.method, .MethodPOST)
         XCTAssertEqual(request?.path, "/push/fallback/\(notificationID.transportString())/cancel")
         XCTAssertNil(request?.payload)
-        if let request = request {
-            XCTAssertTrue(request.shouldUseOnlyForegroundSession)
-        }
     }
     
     func testThatItDoesNotGenerateARequestWhenThePingBackStatusReturnsANotificationIDButTheStatusIsNotPinging() {

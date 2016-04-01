@@ -44,7 +44,6 @@
 #import "ZMSyncStateMachine.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMClientRegistrationStatus.h"
-#import "ZMApplicationLaunchStatus.h"
 #import "ZMUpdateEventsBuffer.h"
 #import "ZMMissingUpdateEventsTranscoder.h"
 #import "ZMRegistrationTranscoder.h"
@@ -79,7 +78,6 @@
 @property (nonatomic) ZMClientRegistrationStatus *clientRegistrationStatus;
 @property (nonatomic) ClientUpdateStatus *clientUpdateStatus;
 
-@property (nonatomic) ZMApplicationLaunchStatus *applicationLaunchStatus;
 @property (nonatomic) id mockApplication;
 
 @property (nonatomic) id stateMachine;
@@ -120,7 +118,6 @@
     self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:self.syncMOC cookie:nil];
     self.userProfileUpdateStatus = [[ZMUserProfileUpdateStatus alloc] initWithManagedObjectContext:self.syncMOC];
     self.clientRegistrationStatus = [[ZMClientRegistrationStatus alloc] initWithManagedObjectContext:self.syncMOC loginCredentialProvider:self.authenticationStatus updateCredentialProvider:self.userProfileUpdateStatus cookie:nil registrationStatusDelegate:nil];
-    self.applicationLaunchStatus = [[ZMApplicationLaunchStatus alloc] initWithManagedObjectContext:self.syncMOC];
     self.clientUpdateStatus = [[ClientUpdateStatus alloc] initWithSyncManagedObjectContext:self.syncMOC];
     
     self.backgroundableSession = [OCMockObject mockForProtocol:@protocol(ZMBackgroundable)];
@@ -169,7 +166,7 @@
     
     id flowTranscoder = [OCMockObject mockForClass:ZMFlowSync.class];
     [[[[flowTranscoder expect] andReturn:flowTranscoder] classMethod] alloc];
-    (void)[[[flowTranscoder expect] andReturn:flowTranscoder] initWithMediaManager:mediaManager onDemandFlowManager:nil applicationLaunchStatus:self.applicationLaunchStatus syncManagedObjectContext:self.syncMOC uiManagedObjectContext:self.uiMOC];
+    (void)[[[flowTranscoder expect] andReturn:flowTranscoder] initWithMediaManager:mediaManager onDemandFlowManager:nil syncManagedObjectContext:self.syncMOC uiManagedObjectContext:self.uiMOC];
 
     id userImageTranscoder = [OCMockObject mockForClass:ZMUserImageTranscoder.class];
     [[[[userImageTranscoder expect] andReturn:userImageTranscoder] classMethod] alloc];
@@ -216,7 +213,6 @@
     [[self.stateMachine stub] tearDown];
     (void) [[[self.stateMachine expect] andReturn:self.stateMachine] initWithAuthenticationStatus:self.authenticationStatus
                                                                          clientRegistrationStatus:self.clientRegistrationStatus
-                                                                          applicationLaunchStatus:self.applicationLaunchStatus
                                                                           objectStrategyDirectory:OCMOCK_ANY
                                                                                 syncStateDelegate:OCMOCK_ANY
                                                                             backgroundableSession:self.backgroundableSession];
@@ -268,7 +264,6 @@
                                             userProfileUpdateStatus:self.userProfileUpdateStatus
                                            clientRegistrationStatus:self.clientRegistrationStatus
                                                  clientUpdateStatus:self.clientUpdateStatus
-                                            applicationLaunchStatus:self.applicationLaunchStatus
                                                  giphyRequestStatus:nil
                                        backgroundAPNSPingBackStatus:nil
                                                        mediaManager:mediaManager

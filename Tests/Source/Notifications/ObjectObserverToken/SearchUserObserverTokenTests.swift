@@ -30,6 +30,12 @@ class SearchUserObserverTokenTests : MessagingTest {
         }
     }
     
+    override func setUp() {
+        super.setUp()
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    }
+    
     func testThatItNotifiesTheObserverOfASmallProfilePictureChange() {
         
         // given

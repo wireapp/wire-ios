@@ -106,19 +106,8 @@ NSString * const ZMBackCameraDeviceID = @"com.apple.avfoundation.avcapturedevice
 
 - (BOOL)setVideoSendActive:(BOOL)active error:(NSError **)error;
 {
-    AVSFlowManagerVideoSendState sendState = FLOWMANAGER_VIDEO_SEND_NONE;
-    if (active) {
-        if (self.state == ZMVoiceChannelStateSelfConnectedToActiveChannel) {
-            sendState = FLOWMANAGER_VIDEO_SEND;
-        }
-        else {
-            sendState = FLOWMANAGER_VIDEO_PREVIEW;
-        }
-    }
-    else {
-        sendState = FLOWMANAGER_VIDEO_SEND_NONE;
-    }
-    
+    AVSFlowManagerVideoSendState sendState = active ? FLOWMANAGER_VIDEO_SEND : FLOWMANAGER_VIDEO_SEND_NONE;
+
     return [self setVideoSendState:sendState error:error];
 }
 
@@ -136,39 +125,6 @@ NSString * const ZMBackCameraDeviceID = @"com.apple.avfoundation.avcapturedevice
     
     [self.flowManager setVideoSendState:state
                                 forConversation:conversation.remoteIdentifier.transportString];
-    return YES;
-}
-
-
-- (BOOL)setVideoPreview:(UIView *)view error:(NSError **)error
-{
-    if (self.flowManager == nil || !self.flowManager.isReady) {
-        if (error != nil) {
-            *error = [ZMVoiceChannelError noFlowManagerError];
-        }
-        return NO;
-    }
-    
-    ZMConversation *conversation = self.conversation;
-
-    [self.flowManager setVideoPreview:view
-                             forConversation:conversation.remoteIdentifier.transportString];
-    
-    return YES;
-}
-
-- (BOOL)setVideoView:(UIView *)view forParticipant:(ZMUser *)participant error:(NSError **)error
-{
-    if (self.flowManager == nil || !self.flowManager.isReady) {
-        if (error != nil) {
-            *error = [ZMVoiceChannelError noFlowManagerError];
-        }
-        return NO;
-    }
-    
-    [self.flowManager setVideoView:view
-                          forConversation:self.conversation.remoteIdentifier.transportString
-                           forParticipant:participant.remoteIdentifier.transportString];
     return YES;
 }
 

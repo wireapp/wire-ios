@@ -17,9 +17,10 @@
 // 
 
 
-#import <CoreData/CoreData.h>
-#import <ZMCSystem/ZMCSystem.h>
-#import <ZMUtilities/ZMUtilities.h>
+@import CoreData;
+@import ZMCSystem;
+@import ZMUtilities;
+@import PINCache;
 
 @class NSOperationQueue;
 
@@ -115,11 +116,3 @@
 
 @end
 
-@interface NSManagedObjectContext (UserImagesCache)
-
-- (void)setUserImagesCache:(NSCache *)cache;
-- (NSData *)userImageForRemoteIdentifier:(NSUUID *)remoteId;
-- (void)storeUserImage:(NSData *)imageData forRemoteIdentifier:(NSUUID *)remoteId;
-
-
-@end

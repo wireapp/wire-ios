@@ -330,7 +330,7 @@
     [self.voiceChannelStateDidChangeNotes removeAllObjects];
     
     XCTAssertEqual(self.voiceChannelParticipantStateDidChangeNotes.count, 0u);
-    
+    [self.voiceChannelParticipantStateDidChangeNotes removeAllObjects];
     // (2) other party joins
     //
     // when
@@ -366,7 +366,7 @@
     XCTAssertEqual(self.voiceChannelParticipantStateDidChangeNotes.count, 1u);
     VoiceChannelParticipantsChangeInfo *partInfo3 = self.voiceChannelParticipantStateDidChangeNotes.lastObject;
     XCTAssertEqualObjects(partInfo3.insertedIndexes, [NSIndexSet indexSet]);
-    XCTAssertEqualObjects(partInfo3.updatedIndexes, [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 1)]);
+    XCTAssertEqualObjects(partInfo3.updatedIndexes, [NSIndexSet indexSetWithIndex:0]);
     XCTAssertEqualObjects(partInfo3.deletedIndexes, [NSIndexSet indexSet]);
     XCTAssertEqualObjects(partInfo3.movedIndexPairs, @[]);
     [self.voiceChannelParticipantStateDidChangeNotes removeAllObjects];
@@ -1925,6 +1925,9 @@
     {
         [self selfJoinCall];
         WaitForAllGroupsToBeEmpty(0.5);
+        
+        XCTAssertEqual(self.voiceChannelParticipantStateDidChangeNotes.count, 0u);
+        [self.voiceChannelParticipantStateDidChangeNotes removeAllObjects];
     }
     
     /////
@@ -1935,7 +1938,7 @@
         
         // then
         // we should see an insert
-        NSMutableIndexSet *expectedInsert = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)];
+        NSMutableIndexSet *expectedInsert = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, joinedUsers.count)];
         XCTAssertEqual(self.voiceChannelParticipantStateDidChangeNotes.count, 1u);
         VoiceChannelParticipantsChangeInfo *lastChange = self.voiceChannelParticipantStateDidChangeNotes.lastObject;
         XCTAssertEqualObjects(lastChange.updatedIndexes, [NSIndexSet indexSet]);
@@ -1954,7 +1957,7 @@
         // we should see an update
         XCTAssertEqual(self.voiceChannelParticipantStateDidChangeNotes.count, 1u);
         VoiceChannelParticipantsChangeInfo *lastChange = self.voiceChannelParticipantStateDidChangeNotes.lastObject;
-        XCTAssertEqualObjects(lastChange.updatedIndexes, [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)]);
+        XCTAssertEqualObjects(lastChange.updatedIndexes, [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, joinedUsers.count)]);
         XCTAssertEqualObjects(lastChange.insertedIndexes, [NSIndexSet indexSet]);
         XCTAssertEqualObjects(lastChange.deletedIndexes, [NSIndexSet indexSet]);
 
@@ -2715,28 +2718,17 @@
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
     WaitForEverythingToBeDone();
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"voiceChannelChanged"];
-    id observer = [OCMockObject niceMockForProtocol:@protocol(ZMVoiceChannelStateObserver)];
-    id token = [self.conversationUnderTest.voiceChannel addVoiceChannelStateObserver:observer];
-    [[observer expect] voiceChannelStateDidChange:[OCMArg checkWithBlock:^BOOL(VoiceChannelStateChangeInfo *changeInfo) {
-        if (changeInfo.currentState == ZMVoiceChannelStateIncomingCallInactive) {
-            [expectation fulfill];
-            return YES;
-        }
-        return NO;
-    }]];
-    
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session simulatePushChannelOpened];
     }];
     WaitForEverythingToBeDone();
     
     // then
-    [observer verify];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
     XCTAssertEqual(self.conversationUnderTest.callParticipants.count, 3u);
+    XCTAssertEqual(self.conversationUnderTest.voiceChannelState, ZMVoiceChannelStateIncomingCallInactive);
+
     XCTAssertTrue([self lastRequestContainsSelfStateIdle]);
-    [self.conversationUnderTest.voiceChannel removeVoiceChannelStateObserverForToken:token];
 }
 
 

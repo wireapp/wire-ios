@@ -43,7 +43,8 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
 @objc public final class NewUnreadMessagesObserverToken: NSObject, MessageToken {
 
     private weak var observer : ZMNewUnreadMessagesObserver?
-    
+    public var isTornDown : Bool = false
+
     public init(observer: ZMNewUnreadMessagesObserver) {
         self.observer = observer
     }
@@ -57,7 +58,7 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
     }
     
     public func tearDown() {
-
+        isTornDown = true
     }
 }
 
@@ -85,19 +86,21 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
 @objc public final class NewUnreadKnockMessagesObserverToken: NSObject, MessageToken {
     
     private weak var observer : ZMNewUnreadKnocksObserver?
-    
+    public var isTornDown : Bool = false
+
     public init(observer: ZMNewUnreadKnocksObserver) {
         self.observer = observer
     }
     
-    private func filterUnreadKnocks(array: [ZMMessage]) -> [ZMConversationMessage] {
-        var unreadMessages = [ZMMessage]()
+    private func filterUnreadKnocks(set: [ZMMessage]) -> [ZMConversationMessage] {
+        var unreadMessages : Set<ZMMessage> = Set()
         
-        for message in array where message.isUnreadMessage && message.knockMessageData != nil {
-            unreadMessages.append(message)
+        for i in set {
+            if i.isUnreadMessage && i.knockMessageData != nil {
+                unreadMessages.insert(i)
+            }
         }
-        
-        return unreadMessages
+        return Array(unreadMessages)
     }
     
     public func objectsDidChange(changes: ManagedObjectChanges) {
@@ -110,6 +113,7 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
     }
     
     public func tearDown() {
+        isTornDown = true
     }
 }
 
@@ -136,13 +140,15 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
 @objc public final class NewUnreadUnsentMessageObserverToken: NSObject, MessageToken {
     
     private weak var observer : ZMNewUnreadUnsentMessageObserver?
-    
+    public var isTornDown : Bool = false
+
     public init(observer: ZMNewUnreadUnsentMessageObserver) {
         self.observer = observer
     }
     
-    private func filterUnsentMessage(array: [ZMMessage]) -> [ZMMessage] {
-        return array.filter { $0.deliveryState == .FailedToSend }
+    private func filterUnsentMessage(set: [ZMMessage]) -> [ZMMessage] {
+        let unreadMessages = set.filter {$0.deliveryState == .FailedToSend}
+        return unreadMessages
     }
     
     public func objectsDidChange(changes: ManagedObjectChanges) {
@@ -155,7 +161,7 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
     }
     
     public func tearDown() {
-        // no op
+        isTornDown = true
     }
 }
 

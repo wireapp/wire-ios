@@ -84,7 +84,7 @@ typedef NS_ENUM(NSUInteger, ZMPersonNameOrder) {
     // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for god
     NSLinguisticTagger *tagger = [[NSLinguisticTagger alloc] initWithTagSchemes:@[NSLinguisticTagSchemeScript] options:0];
     tagger.string = string;
-    NSArray *tags = [tagger tagsInRange:NSMakeRange(0, tagger.string.length) scheme:NSLinguisticTagSchemeScript options:0 tokenRanges:nil];
+    NSArray *tags = [tagger tagsInRange:NSMakeRange(0, tagger.string.length) scheme:NSLinguisticTagSchemeScript options:NSLinguisticTaggerOmitPunctuation | NSLinguisticTaggerOmitWhitespace | NSLinguisticTaggerOmitOther | NSLinguisticTaggerJoinNames tokenRanges:nil];
     
     ZMPersonNameOrder nameOrder;
     

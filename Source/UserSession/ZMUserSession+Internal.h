@@ -36,7 +36,6 @@
 @class ZMStoredLocalNotification;
 @class ZMUserProfileUpdateStatus;
 @class ZMAPNSEnvironment;
-@class ZMApplicationLaunchStatus;
 @class ClientUpdateStatus;
 @class AVSFlowManager;
 
@@ -47,7 +46,6 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 @property (nonatomic, readonly) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic, readonly) ZMUserProfileUpdateStatus *userProfileUpdateStatus;
 @property (nonatomic, readonly) ZMClientRegistrationStatus *clientRegistrationStatus;
-@property (nonatomic, readonly) ZMApplicationLaunchStatus *applicationLaunchStatus;
 @property (nonatomic, readonly) ClientUpdateStatus *clientUpdateStatus;
 
 @end
@@ -82,7 +80,13 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 @property (nonatomic, readonly) AVSFlowManager *flowManager;
 @property (nonatomic, readonly) ZMLocalNotificationDispatcher *localNotificationDispatcher;
 
-- (instancetype)initWithTransportSession:(ZMTransportSession *)session syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext mediaManager:(id<AVSMediaManager>)mediaManager apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment operationLoop:(ZMOperationLoop *)operationLoop application:(ZMApplication *)application;
+- (instancetype)initWithTransportSession:(ZMTransportSession *)session
+                syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext
+                            mediaManager:(id<AVSMediaManager>)mediaManager
+                         apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
+                           operationLoop:(ZMOperationLoop *)operationLoop
+                             application:(ZMApplication *)application
+                              appVersion:(NSString *)appVersion;
 
 - (void)tearDown;
 

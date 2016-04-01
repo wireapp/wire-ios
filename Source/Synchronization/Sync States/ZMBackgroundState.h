@@ -25,7 +25,6 @@
 
 - (instancetype) initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                      clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                      applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                       objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                          stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate
                         backgroundableSession:(id<ZMBackgroundable>)session;

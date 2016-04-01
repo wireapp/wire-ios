@@ -48,14 +48,14 @@ class OTRTests : IntegrationTestBase
         self.mockTransportSession.resetReceivedRequests()
         
         // when
-        var messages: [ZMConversationMessage] = []
+        var message: ZMConversationMessage?
         userSession.performChanges {
-            messages = conversation.appendMessagesWithText(text)
+            message = conversation.appendMessageWithText(text)
         }
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertGreaterThan(messages.count, 0)
+        XCTAssertNotNil(message)
         XCTAssertTrue(self.hasMockTransportRequest(.MethodPOST, path: "/conversations/\(conversation.remoteIdentifier.transportString())/otr/messages"))
     }
     

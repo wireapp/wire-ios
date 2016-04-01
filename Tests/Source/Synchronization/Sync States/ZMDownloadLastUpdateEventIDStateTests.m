@@ -36,7 +36,7 @@
 
 - (void)setUp {
     [super setUp];
-    _sut = [[ZMDownloadLastUpdateEventIDState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
+    _sut = [[ZMDownloadLastUpdateEventIDState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:self.objectDirectory stateMachineDelegate:self.stateMachine];
 }
 
 - (void)tearDown {
@@ -78,7 +78,7 @@
      {
          [[[(id) directory.missingUpdateEventsTranscoder stub] andReturnValue:@NO] hasLastUpdateEventID];
          [[[(id) directory.lastUpdateEventIDTranscoder stub] andReturnValue:@YES] isDownloadingLastUpdateEventID];
-         return [[ZMDownloadLastUpdateEventIDState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus applicationLaunchStatus:self.applicationLaunchStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
+         return [[ZMDownloadLastUpdateEventIDState alloc] initWithAuthenticationCenter:self.authenticationStatus clientRegistrationStatus:self.clientRegistrationStatus objectStrategyDirectory:directory stateMachineDelegate:self.stateMachine];
      }];
 }
 

@@ -43,14 +43,8 @@ class ObjectSnapshotTests : MessagingTest
             string = NSMutableString()
         }
         
-        var keysToChangeInfoMap : KeyToKeyTransformation { return KeyToKeyTransformation(mapping: [
-            KeyPath.keyPathForString("array") : .Default,
-            KeyPath.keyPathForString("set") : .Default,
-            KeyPath.keyPathForString("dict") : .Default,
-            KeyPath.keyPathForString("orderedSet") : .Default,
-            KeyPath.keyPathForString("data") : .Default,
-            KeyPath.keyPathForString("string") : .Default,
-            ])
+        var observableKeys : [String] {
+            return ["array", "set", "dict", "orderedSet", "data", "string"]
         }
     }
     
@@ -193,7 +187,7 @@ class ObjectSnapshotTests : MessagingTest
         let sut = ObjectSnapshot(object:conversation, keys:observedKeys)
         
         // when
-        conversation.appendMessagesWithText("foo");
+        conversation.appendMessageWithText("foo");
         
         if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(conversation, affectedKeys: AffectedKeys.Some(observedKeys)) {
             let allKeys = Array(keysAndOldValues.keys)

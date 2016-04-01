@@ -27,7 +27,6 @@
 @class ZMTransportRequest;
 @class ZMSyncStrategy;
 @class ZMClientRegistrationStatus;
-@class ZMApplicationLaunchStatus;
 @protocol ZMObjectStrategyDirectory;
 
 @interface ZMSyncState : NSObject
@@ -37,13 +36,11 @@
 @property (nonatomic, readonly, weak) id<ZMObjectStrategyDirectory> objectStrategyDirectory;
 @property (nonatomic, readonly, weak) ZMAuthenticationStatus * authenticationStatus;
 @property (nonatomic, readonly, weak) ZMClientRegistrationStatus *clientRegistrationStatus;
-@property (nonatomic, readonly, weak) ZMApplicationLaunchStatus *applicationLaunchStatus;
 @property (nonatomic, readonly) id<ZMUpdateEventsFlushableCollection> eventBuffer;
 @property (nonatomic, readonly) BOOL supportsBackgroundFetch;
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                         stateMachineDelegate:(id<ZMStateMachineDelegate>)stateMachineDelegate NS_DESIGNATED_INITIALIZER;
 

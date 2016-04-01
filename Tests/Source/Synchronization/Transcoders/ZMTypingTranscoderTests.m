@@ -373,7 +373,7 @@ typedef NS_ENUM(int, TestTyping_t) {
             [ZMTypingTranscoder clearTranscoderStateForTypingInConversation:conversation];
             WaitForAllGroupsToBeEmpty(0.1);
         } else if (delay == TestTyping_AppendMessage) {
-            [conversation appendMessagesWithText:@"ABABABABA"];
+            [conversation appendMessageWithText:@"ABABABABA"];
             WaitForAllGroupsToBeEmpty(0.1);
         }
     }
@@ -409,7 +409,7 @@ typedef NS_ENUM(int, TestTyping_t) {
     }];
     
     // when
-    (void) [conversation appendMessagesWithText:@"foo bar baz"];
+    (void) [conversation appendMessageWithText:@"foo bar baz"];
     
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.1]);

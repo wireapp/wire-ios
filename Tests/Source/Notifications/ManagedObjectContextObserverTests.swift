@@ -22,6 +22,13 @@ import Foundation
 
 class ManagedObjectContextObserverTests : MessagingTest {
     
+    override func setUp(){
+        super.setUp()
+        NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+
+    }
+    
     class TestObserver : NSObject, ZMConversationObserver, ZMUserObserver, ZMVoiceChannelStateObserver {
     
         var conversationNotes: [ConversationChangeInfo] = []
@@ -39,8 +46,6 @@ class ManagedObjectContextObserverTests : MessagingTest {
             voiceChannelNotes.append(note)
         }
     }
-    
-    #if os(iOS)
     
     func testThatItDoesNotPropagateChangesWhenAppIsInTheBackground() {
         
@@ -76,7 +81,9 @@ class ManagedObjectContextObserverTests : MessagingTest {
 
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
         conversation.conversationType = .OneOnOne
-        conversation.mutableOtherActiveParticipants.addObject(user)
+        conversation.connection = ZMConnection.insertNewObjectInManagedObjectContext(self.uiMOC)
+        conversation.connection.to =  user
+        conversation.connection.status = .Accepted
         self.uiMOC.saveOrRollback()
         
         let observer = TestObserver()
@@ -94,7 +101,9 @@ class ManagedObjectContextObserverTests : MessagingTest {
         XCTAssertEqual(observer.userNotes.count, 0)
         
         // and when
+        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .Active
         NSNotificationCenter.defaultCenter().postNotificationName(UIApplicationDidBecomeActiveNotification, object: nil)
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
 
         // then
         XCTAssertEqual(observer.conversationNotes.count, 1)
@@ -103,8 +112,6 @@ class ManagedObjectContextObserverTests : MessagingTest {
         ZMConversation.removeConversationObserverForToken(conversationToken)
         ZMUser.removeUserObserverForToken(userToken)
     }
-    #endif
-
     
     
     func testThatItAddsCallStateChangesAndProcessThemLater() {
@@ -195,5 +202,66 @@ class ManagedObjectContextObserverTests : MessagingTest {
         XCTAssertEqual(filteredChanges.deleted.count, 3)
     }
     
+    func testThatItAddsTheGlobalConversationObserverToItsObserversWhenEnteringTheForeground()  {
+    
+        // given
+        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
+        
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        conversation.conversationType = .Group
+        self.uiMOC.saveOrRollback()
+        
+        let observer = TestObserver()
+        let conversationToken = conversation.addConversationObserver(observer)
+        
+        // when
+        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .Background
+        conversation.userDefinedName = "New name"
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(observer.conversationNotes.count, 0)
+        
+        // when
+        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .Active
+        conversation.userDefinedName = "Newer name"
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(observer.conversationNotes.count, 1)
+        
+        ZMConversation.removeConversationObserverForToken(conversationToken)
+    }
+    
+    
+    func testThatItAddsTheGlobalUserObserverToItsObserversWhenEnteringTheForeground()  {
+        
+        // given
+        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
+        
+        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        user.name = "Hans"
+        
+        let observer = TestObserver()
+        let userToken = ZMUser.addUserObserver(observer, forUsers: [user], managedObjectContext: self.uiMOC)
+        
+        // when
+        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .Background
+        user.name = "New name"
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(observer.userNotes.count, 0)
+        
+        // when
+        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .Active
+        user.name = "Newer name"
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(observer.userNotes.count, 1)
+        
+        ZMUser.removeUserObserverForToken(userToken)
+    }
     
 }

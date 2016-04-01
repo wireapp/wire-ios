@@ -39,8 +39,6 @@
 #import "ZMBackgroundFetchState.h"
 #import "ZMBackgroundTaskState.h"
 
-#import "ZMApplicationLaunchStatus.h"
-
 #import "ZMObjectStrategyDirectory.h"
 #import "ZMObjectSyncStrategy.h"
 #import "ZMAuthenticationStatus.h"
@@ -91,7 +89,6 @@ static void traceLeaveState(ZMSyncState * const state);
 
 - (instancetype)initWithAuthenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                     applicationLaunchStatus:(ZMApplicationLaunchStatus *)applicationLaunchStatus
                      objectStrategyDirectory:(id<ZMObjectStrategyDirectory>)objectStrategyDirectory
                            syncStateDelegate:(id<ZMSyncStateDelegate>)syncStateDelegate
                             backgroundableSession:(id<ZMBackgroundable>)backgroundableSession
@@ -102,18 +99,18 @@ static void traceLeaveState(ZMSyncState * const state);
         self.authenticationStatus = authenticationStatus;
         self.clientRegistrationStatus = clientRegistrationStatus;
         
-        self.unauthenticatedState = [[ZMUnauthenticatedState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.unauthenticatedBackgroundState = [[ZMUnauthenticatedBackgroundState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.slowSyncPhaseOneState = [[ZMSlowSyncPhaseOneState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.slowSyncPhaseTwoState = [[ZMSlowSyncPhaseTwoState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.eventProcessingState = [[ZMEventProcessingState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.updateEventsCatchUpPhaseOneState = [[ZMUpdateEventsCatchUpPhaseOneState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.updateEventsCatchUpPhaseTwoState = [[ZMUpdateEventsCatchUpPhaseTwoState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.downloadLastUpdateEventIDState = [[ZMDownloadLastUpdateEventIDState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.backgroundState = [[ZMBackgroundState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self backgroundableSession:backgroundableSession];
-        self.preBackgroundState = [[ZMPreBackgroundState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.backgroundFetchState = [[ZMBackgroundFetchState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
-        self.backgroundTaskState = [[ZMBackgroundTaskState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus applicationLaunchStatus:applicationLaunchStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.unauthenticatedState = [[ZMUnauthenticatedState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.unauthenticatedBackgroundState = [[ZMUnauthenticatedBackgroundState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus  objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.slowSyncPhaseOneState = [[ZMSlowSyncPhaseOneState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.slowSyncPhaseTwoState = [[ZMSlowSyncPhaseTwoState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus  objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.eventProcessingState = [[ZMEventProcessingState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus  objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.updateEventsCatchUpPhaseOneState = [[ZMUpdateEventsCatchUpPhaseOneState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus  objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.updateEventsCatchUpPhaseTwoState = [[ZMUpdateEventsCatchUpPhaseTwoState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus  objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.downloadLastUpdateEventIDState = [[ZMDownloadLastUpdateEventIDState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus  objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.backgroundState = [[ZMBackgroundState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self backgroundableSession:backgroundableSession];
+        self.preBackgroundState = [[ZMPreBackgroundState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.backgroundFetchState = [[ZMBackgroundFetchState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
+        self.backgroundTaskState = [[ZMBackgroundTaskState alloc] initWithAuthenticationCenter:authenticationStatus clientRegistrationStatus:clientRegistrationStatus objectStrategyDirectory:objectStrategyDirectory stateMachineDelegate:self];
         
         self.syncStateDelegate = syncStateDelegate;
         
