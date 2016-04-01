@@ -30,10 +30,13 @@ static const int ZMLogSnapshotCount = 10000;
 // used to debug
 void (^ZMLoggingDebuggingHook)(char const *tag, char const * const filename, int linenumber, NSString *output) = 0;
 
-
+/// Allows to debug invocations of logs, by invoking the custom log debug hook
 void ZMLogDebugger(char const *tag, char const * const filename, int linenumber, char const * const output, NSString * objcOutput) __attribute__((noinline)) __attribute__((visibility("default")));
 const char *
-ZMLogStringFromMessageValue(const char *value);
+
+/// Returns the ASL string matching the passed log level (0 to 9)
+ZMLogStringFromMessageValue(const char *logLevel);
+
 
 static dispatch_group_t logGroup = dispatch_group_create();
 
@@ -261,23 +264,23 @@ void ZMLogTestingResetLogLevels() {
 }
 
 const char *
-ZMLogStringFromMessageValue(const char *value)
+ZMLogStringFromMessageValue(const char *logLevel)
 {
-    if (0 == strcmp(value, "0")) {
+    if (0 == strcmp(logLevel, "0")) {
         return ASL_STRING_EMERG;
-    } else if (0 == strcmp(value, "1")) {
+    } else if (0 == strcmp(logLevel, "1")) {
         return ASL_STRING_ALERT;
-    } else if (0 == strcmp(value, "2")) {
+    } else if (0 == strcmp(logLevel, "2")) {
         return ASL_STRING_CRIT;
-    } else if (0 == strcmp(value, "3")) {
+    } else if (0 == strcmp(logLevel, "3")) {
         return ASL_STRING_ERR;
-    } else if (0 == strcmp(value, "4")) {
+    } else if (0 == strcmp(logLevel, "4")) {
         return ASL_STRING_WARNING;
-    } else if (0 == strcmp(value, "5")) {
+    } else if (0 == strcmp(logLevel, "5")) {
         return ASL_STRING_NOTICE;
-    } else if (0 == strcmp(value, "6")) {
+    } else if (0 == strcmp(logLevel, "6")) {
         return ASL_STRING_INFO;
-    } else if (0 == strcmp(value, "7")) {
+    } else if (0 == strcmp(logLevel, "7")) {
         return ASL_STRING_DEBUG;
     }
     return NULL;

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		096A3A211B67CEF700565001 /* ZMSLogging.mm in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1D1B67CEF700565001 /* ZMSLogging.mm */; };
+		5442AB7F1CA29CC000BC099C /* ZMSAsserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */; };
 		544CFC511B70B933007AA694 /* ZMSLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1E1B67CEF700565001 /* ZMSLogging.swift */; };
 		5457426C1BA9C50C0009409B /* ZMDefinesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5457426B1BA9C50C0009409B /* ZMDefinesTest.m */; };
 		546E9AB51B7252B100769771 /* ZMSAppleSystemLoggerWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */; };
@@ -22,6 +23,8 @@
 		54A3273A1B99A3840004EB95 /* ZMLogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54A327391B99A3840004EB95 /* ZMLogTests.m */; };
 		54A3273C1B99C04F0004EB95 /* ZMLogSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A3273B1B99C04F0004EB95 /* ZMLogSwiftTests.swift */; };
 		54A3273F1B99C2860004EB95 /* ZMSLogging+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 54A3273D1B99C13B0004EB95 /* ZMSLogging+Testing.h */; };
+		54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C0CC3F1C9C7635000A9286 /* ZMSAsserts.m */; };
+		54C0CC431C9C7862000A9286 /* ZMSAssertionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C0CC421C9C7862000A9286 /* ZMSAssertionTests.m */; };
 		54C5DF8A1BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C5DF891BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m */; };
 		54DAE8FB1BA839EB009403F8 /* ZMCSystemTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 54DAE8FA1BA839EB009403F8 /* ZMCSystemTestHelper.m */; };
 		54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F249C61BB9242900040600 /* ZMSDispatchGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -65,6 +68,7 @@
 		540CD8AD1B737017006677DE /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		540CD8AE1B737017006677DE /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		540CD8AF1B737017006677DE /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSAsserts.swift; sourceTree = "<group>"; };
 		5457426B1BA9C50C0009409B /* ZMDefinesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDefinesTest.m; sourceTree = "<group>"; };
 		5473E7C71B31A95A00C6A937 /* ZMCSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMCSystem.h; sourceTree = "<group>"; };
 		5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAppleSystemLoggerWrapper.h; sourceTree = "<group>"; };
@@ -80,6 +84,8 @@
 		54A327391B99A3840004EB95 /* ZMLogTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLogTests.m; sourceTree = "<group>"; };
 		54A3273B1B99C04F0004EB95 /* ZMLogSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMLogSwiftTests.swift; sourceTree = "<group>"; };
 		54A3273D1B99C13B0004EB95 /* ZMSLogging+Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMSLogging+Testing.h"; sourceTree = "<group>"; };
+		54C0CC3F1C9C7635000A9286 /* ZMSAsserts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSAsserts.m; sourceTree = "<group>"; };
+		54C0CC421C9C7862000A9286 /* ZMSAssertionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSAssertionTests.m; sourceTree = "<group>"; };
 		54C5DF891BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSDispatchGroupTests.m; sourceTree = "<group>"; };
 		54DAE8F91BA839EB009403F8 /* ZMCSystemTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMCSystemTestHelper.h; sourceTree = "<group>"; };
 		54DAE8FA1BA839EB009403F8 /* ZMCSystemTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMCSystemTestHelper.m; sourceTree = "<group>"; };
@@ -161,6 +167,8 @@
 				54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */,
 				548662511B344CB400298EFD /* ZMSDefines.h */,
 				548662451B344AAB00298EFD /* ZMSAsserts.h */,
+				5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */,
+				54C0CC3F1C9C7635000A9286 /* ZMSAsserts.m */,
 				5473E7C71B31A95A00C6A937 /* ZMCSystem.h */,
 				5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */,
 				5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */,
@@ -213,6 +221,7 @@
 				54C5DF891BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m */,
 				54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */,
 				54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */,
+				54C0CC421C9C7862000A9286 /* ZMSAssertionTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -354,11 +363,13 @@
 			files = (
 				544CFC511B70B933007AA694 /* ZMSLogging.swift in Sources */,
 				54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */,
+				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
 				54F9BC4E1C48F55900BC09DB /* ZMSTestDetection.m in Sources */,
 				096A3A211B67CEF700565001 /* ZMSLogging.mm in Sources */,
 				546E9AB51B7252B100769771 /* ZMSAppleSystemLoggerWrapper.m in Sources */,
 				54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */,
 				5486624F1B344BB800298EFD /* ZMSActivity.m in Sources */,
+				5442AB7F1CA29CC000BC099C /* ZMSAsserts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,6 +380,7 @@
 				54C5DF8A1BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m in Sources */,
 				54A3273C1B99C04F0004EB95 /* ZMLogSwiftTests.swift in Sources */,
 				54FF9F161C4914D100B29ACE /* ZMSTestDetectionTests.m in Sources */,
+				54C0CC431C9C7862000A9286 /* ZMSAssertionTests.m in Sources */,
 				54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */,
 				54DAE8FB1BA839EB009403F8 /* ZMCSystemTestHelper.m in Sources */,
 				54A3273A1B99A3840004EB95 /* ZMLogTests.m in Sources */,
@@ -391,7 +403,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 540CD8A91B737017006677DE /* project-debug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 30;
 				ENABLE_TESTABILITY = YES;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -401,7 +413,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 540CD8AA1B737017006677DE /* project.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 30;
 			};
 			name = Release;
 		};

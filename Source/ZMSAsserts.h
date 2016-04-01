@@ -53,7 +53,7 @@
 
 
 #define ZMTrap() do { \
-		ZMCrash("Trap"); \
+		ZMCrash("Trap", __FILE__, __LINE__); \
 	} while (0)
 
 
@@ -63,7 +63,7 @@
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
 			ZMDebugAssertMessage( "Require", #assertion, __FILE__, __LINE__, nil); \
-			ZMCrash(#assertion); \
+			ZMCrash(#assertion, __FILE__, __LINE__); \
 		} \
 	} while (0)
 
@@ -71,7 +71,7 @@
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
 			ZMDebugAssertMessage( "RequireString", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-			ZMCrashFormat(#assertion, frmt, ##__VA_ARGS__); \
+			ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 		} \
 	} while (0)
 
@@ -82,17 +82,17 @@
 
 #   define Require(assertion) do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMCrash(#assertion); \
+			ZMCrash(#assertion, __FILE__, __LINE__); \
 		} \
 	} while (0)
 #   define RequireString(assertion, frmt, ...) do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMCrashFormat(#assertion, frmt, ##__VA_ARGS__); \
+			ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 		} \
 	} while (0)
 #   define RequireC(assertion) do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMCrash(#assertion); \
+			ZMCrash(#assertion, __FILE__, __LINE__); \
 		} \
 	} while (0)
 
@@ -177,11 +177,27 @@
 
 #pragma mark -
 
-# define ZMCrash(reason) \
+# define ZMCrash(reason, file, line) \
+do { \
 	ZMTraceFaultMessage(reason); \
-	__builtin_trap();
+    ZMAssertionDump(reason, file, line, nil); \
+	__builtin_trap(); \
+} while(0)
 
-# define ZMCrashFormat(reason, format, ...) \
+# define ZMCrashFormat(reason, file, line, format, ...) \
+do { \
 	ZMTraceFaultMessage(reason); \
 	ZMTraceFaultMessage(format, ##__VA_ARGS__); \
-	__builtin_trap();
+    ZMAssertionDump(reason, file, line, format, ##__VA_ARGS__); \
+	__builtin_trap(); \
+} while(0)
+
+
+#pragma mark - Assert reporting
+
+/// URL of the "last assertion" log file
+ZM_EXTERN NSURL* ZMLastAssertionFile(void);
+/// Dump a crash to the crash dump file
+ZM_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
+/// Dump a crash to the crash dump file
+ZM_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);
