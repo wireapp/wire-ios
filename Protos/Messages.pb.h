@@ -65,6 +65,8 @@
 @class UninterpretedOptionBuilder;
 @class UninterpretedOptionNamePart;
 @class UninterpretedOptionNamePartBuilder;
+@class ZMCalling;
+@class ZMCallingBuilder;
 @class ZMCleared;
 @class ZMClearedBuilder;
 @class ZMExternal;
@@ -114,6 +116,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 #define GenericMessage_cleared @"cleared"
 #define GenericMessage_external @"external"
 #define GenericMessage_clientAction @"clientAction"
+#define GenericMessage_calling @"calling"
 @interface ZMGenericMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasMessageId_:1;
@@ -123,6 +126,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
   BOOL hasLastRead_:1;
   BOOL hasCleared_:1;
   BOOL hasExternal_:1;
+  BOOL hasCalling_:1;
   BOOL hasLiking_:1;
   BOOL hasClientAction_:1;
   NSString* messageId;
@@ -132,6 +136,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
   ZMLastRead* lastRead;
   ZMCleared* cleared;
   ZMExternal* external;
+  ZMCalling* calling;
   ZMLikeAction liking;
   ZMClientAction clientAction;
 }
@@ -144,6 +149,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 - (BOOL) hasCleared;
 - (BOOL) hasExternal;
 - (BOOL) hasClientAction;
+- (BOOL) hasCalling;
 @property (readonly, strong) NSString* messageId;
 @property (readonly, strong) ZMText* text;
 @property (readonly, strong) ZMImageAsset* image;
@@ -153,6 +159,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 @property (readonly, strong) ZMCleared* cleared;
 @property (readonly, strong) ZMExternal* external;
 @property (readonly) ZMClientAction clientAction;
+@property (readonly, strong) ZMCalling* calling;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -245,6 +252,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 - (ZMClientAction) clientAction;
 - (ZMGenericMessageBuilder*) setClientAction:(ZMClientAction) value;
 - (ZMGenericMessageBuilder*) clearClientAction;
+
+- (BOOL) hasCalling;
+- (ZMCalling*) calling;
+- (ZMGenericMessageBuilder*) setCalling:(ZMCalling*) value;
+- (ZMGenericMessageBuilder*) setCallingBuilder:(ZMCallingBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeCalling:(ZMCalling*) value;
+- (ZMGenericMessageBuilder*) clearCalling;
 @end
 
 #define Text_content @"content"
@@ -745,6 +759,56 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 - (NSData*) sha256;
 - (ZMExternalBuilder*) setSha256:(NSData*) value;
 - (ZMExternalBuilder*) clearSha256;
+@end
+
+#define Calling_content @"content"
+@interface ZMCalling : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasContent_:1;
+  NSString* content;
+}
+- (BOOL) hasContent;
+@property (readonly, strong) NSString* content;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMCallingBuilder*) builder;
++ (ZMCallingBuilder*) builder;
++ (ZMCallingBuilder*) builderWithPrototype:(ZMCalling*) prototype;
+- (ZMCallingBuilder*) toBuilder;
+
++ (ZMCalling*) parseFromData:(NSData*) data;
++ (ZMCalling*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMCalling*) parseFromInputStream:(NSInputStream*) input;
++ (ZMCalling*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMCalling*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMCalling*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMCallingBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMCalling* resultCalling;
+}
+
+- (ZMCalling*) defaultInstance;
+
+- (ZMCallingBuilder*) clear;
+- (ZMCallingBuilder*) clone;
+
+- (ZMCalling*) build;
+- (ZMCalling*) buildPartial;
+
+- (ZMCallingBuilder*) mergeFrom:(ZMCalling*) other;
+- (ZMCallingBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMCallingBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasContent;
+- (NSString*) content;
+- (ZMCallingBuilder*) setContent:(NSString*) value;
+- (ZMCallingBuilder*) clearContent;
 @end
 
 
