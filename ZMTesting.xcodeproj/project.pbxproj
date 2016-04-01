@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		091799581B7DFBD100E60DD9 /* NSUUID+ZMTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 091799561B7DFBD100E60DD9 /* NSUUID+ZMTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		091799591B7DFBD100E60DD9 /* NSUUID+ZMTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 091799571B7DFBD100E60DD9 /* NSUUID+ZMTesting.m */; };
-		0917995B1B7DFD1700E60DD9 /* verySmallJPEGs in Resources */ = {isa = PBXBuildFile; fileRef = 0917995A1B7DFD1700E60DD9 /* verySmallJPEGs */; };
 		096AD7EA1B68D6D300E007A8 /* ZMTestingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 096AD7E51B68D6BD00E007A8 /* ZMTestingTests.m */; };
 		098CFBC11B7BA68C000B02B1 /* NSObject+ZMTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098CFBC01B7BA68C000B02B1 /* NSObject+ZMTesting.swift */; };
 		098CFBC41B7BAA2D000B02B1 /* XCTestCase+Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -72,7 +71,6 @@
 /* Begin PBXFileReference section */
 		091799561B7DFBD100E60DD9 /* NSUUID+ZMTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUUID+ZMTesting.h"; sourceTree = "<group>"; };
 		091799571B7DFBD100E60DD9 /* NSUUID+ZMTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+ZMTesting.m"; sourceTree = "<group>"; };
-		0917995A1B7DFD1700E60DD9 /* verySmallJPEGs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = verySmallJPEGs; sourceTree = "<group>"; };
 		096AD7BB1B68D41D00E007A8 /* ZMTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZMTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		096AD7C61B68D41D00E007A8 /* ZMTesting-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ZMTesting-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		096AD7DC1B68D6BD00E007A8 /* ZMTesting-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMTesting-iOS.plist"; sourceTree = "<group>"; };
@@ -173,7 +171,6 @@
 		096AD7DB1B68D6BD00E007A8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0917995A1B7DFD1700E60DD9 /* verySmallJPEGs */,
 				09F1862E1B6903A4007A3DA6 /* Configurations */,
 				096AD7DC1B68D6BD00E007A8 /* ZMTesting-iOS.plist */,
 			);
@@ -307,10 +304,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE6B7B311C11ED5F00FC4C2E /* ZMMockEntity2.h in Headers */,
 				091799581B7DFBD100E60DD9 /* NSUUID+ZMTesting.h in Headers */,
 				09A217FC1B78DFAF0076547A /* ZMTAsserts.h in Headers */,
-				CEB8FD691C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.h in Headers */,
 				09A217F61B78DFAF0076547A /* ZMTImageComparator.h in Headers */,
 				098CFBC41B7BAA2D000B02B1 /* XCTestCase+Helpers.h in Headers */,
 				CEF709D81C1599D600AF3718 /* ZMMockManagedObjectContextFactory.h in Headers */,
@@ -320,7 +315,6 @@
 				09A217F81B78DFAF0076547A /* NSData+ZMTesting.h in Headers */,
 				CEF709DA1C1599ED00AF3718 /* ZMMockEntity2.h in Headers */,
 				09A217F41B78DFAF0076547A /* ZMTExpectation.h in Headers */,
-				CE6B7B2F1C11ED5F00FC4C2E /* ZMMockEntity.h in Headers */,
 				09A217FF1B78DFAF0076547A /* ZMTesting.h in Headers */,
 				09A217FD1B78DFAF0076547A /* ZMTBaseTest.h in Headers */,
 			);
@@ -409,7 +403,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0917995B1B7DFD1700E60DD9 /* verySmallJPEGs in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,7 +477,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -532,7 +525,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

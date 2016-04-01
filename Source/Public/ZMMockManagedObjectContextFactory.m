@@ -48,6 +48,7 @@
     NSError *error = nil;
     NSPersistentStore *store = [psc addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:&error];
     NSAssert(store != nil, @"Unable to create in-memory Core Data store: %@", error);
+    (void)store;
     
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:concurencyType];
     [moc setPersistentStoreCoordinator:psc];
