@@ -32,14 +32,14 @@
 + (NSURL *)fileURLForResource:(NSString *)name extension:(NSString *)extension;
 {
     NSURL *fileURL = [self.bundle URLForResource:name withExtension:extension];
-    RequireString(fileURL != nil, "Unable to find resource");
+    RequireString(fileURL != nil, "Unable to find resource '%s' with extension '%s'", name.UTF8String, extension.UTF8String);
     return fileURL;
 }
 
 - (NSURL *)fileURLForResource:(NSString *)name extension:(NSString *)extension;
 {
     NSURL *fileURL = [self.class fileURLForResource:name extension:extension];
-    RequireString(fileURL != nil, "Unable to find resource");
+    RequireString(fileURL != nil, "Unable to find resource '%s' with extension '%s'", name.UTF8String, extension.UTF8String);
     return fileURL;
 }
 

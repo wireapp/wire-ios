@@ -31,7 +31,7 @@ class ZMTExpectationTests: ZMTBaseTest {
             return true;
         })
         
-        let receivedBeforeSending = self.waitForCustomExpectationsWithTimeout(0.1)
+        let receivedBeforeSending = self.waitForCustomExpectationsWithTimeout(0.01)
         XCTAssertFalse(receivedBeforeSending);
         XCTAssertFalse(handlerIsCalled);
     }
