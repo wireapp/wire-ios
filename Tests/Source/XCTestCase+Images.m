@@ -17,7 +17,6 @@
 // 
 
 
-
 #import "XCTestCase+Images.h"
 
 #if TARGET_OS_IPHONE

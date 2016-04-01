@@ -17,7 +17,6 @@
 // 
 
 
-
 #import <XCTest/XCTest.h>
 
 @interface XCTestCase (Images)

@@ -17,14 +17,13 @@
 // 
 
 
-
 #import <Foundation/Foundation.h>
-
 
 
 @interface ZMUserAgent : NSObject
 
 + (void)setUserAgentOnRequest:(NSMutableURLRequest *)request;
 + (NSString *)userAgentValue;
++ (void)setWireAppVersion:(NSString *)appVersion;
 
 @end

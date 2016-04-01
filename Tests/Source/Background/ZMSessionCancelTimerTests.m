@@ -17,7 +17,6 @@
 // 
 
 
-
 @import XCTest;
 @import ZMTesting;
 @import OCMock;
@@ -136,8 +135,7 @@
 - (void)testThatitEndsTheBackgroundActivityWhenItIsCancelled;
 {
     // given
-    ZMBackgroundActivity *backgroundActivity = [OCMockObject mockForClass:ZMBackgroundActivity.class];
-    ZMURLSession *session = [OCMockObject mockForClass:ZMURLSession.class];
+    id session = [OCMockObject mockForClass:ZMURLSession.class];
     ZMSessionCancelTimer *sut = [[ZMSessionCancelTimer alloc] initWithURLSession:session timeout:2];
     
     NOT_USED(sut);
@@ -145,14 +143,14 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"cancel was called"];
     
     id activity = [OCMockObject mockForClass:ZMBackgroundActivity.class];
-    [[[[(OCMockObject *)backgroundActivity expect] classMethod] andReturn:activity] beginBackgroundActivityWithName:OCMOCK_ANY];
+    [[[activity stub] andReturn:activity] beginBackgroundActivityWithName:[OCMArg any]];
     
     // expectations
-    [[(OCMockObject *)session stub] cancelAllTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(dispatch_block_t block) {
+    [[session stub] cancelAllTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(dispatch_block_t block) {
         block();
         return YES;
     }]];
-    [[[activity expect] andDo:^(NSInvocation *inv) {
+    [[[activity stub] andDo:^(NSInvocation *inv) {
         NOT_USED(inv);
         [expectation fulfill];
     }] endActivity];
@@ -161,34 +159,31 @@
     // when
     [sut start];
     [sut cancel];
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.05]);
     
     // then
-    [(OCMockObject *)backgroundActivity stopMocking];
-    [(OCMockObject *)backgroundActivity verify];
-    [activity verify];
+    [activity stopMocking];
 }
 
 - (void)testThatItEndsABackgroundActivityWhenTheTimerFires
 {
     // given
-    ZMBackgroundActivity *backgroundActivity = [OCMockObject mockForClass:ZMBackgroundActivity.class];
-    ZMURLSession *session = [OCMockObject niceMockForClass:ZMURLSession.class];
-    ZMSessionCancelTimer *sut = [[ZMSessionCancelTimer alloc] initWithURLSession:session timeout:0.05];
+    id session = [OCMockObject mockForClass:ZMURLSession.class];
+    ZMSessionCancelTimer *sut = [[ZMSessionCancelTimer alloc] initWithURLSession:session timeout:0.01];
     
     NOT_USED(sut);
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"cancel was called"];
     
     id activity = [OCMockObject mockForClass:ZMBackgroundActivity.class];
-    [[[[(OCMockObject *)backgroundActivity expect] classMethod] andReturn:activity] beginBackgroundActivityWithName:OCMOCK_ANY];
+    [[[activity stub] andReturn:activity] beginBackgroundActivityWithName:[OCMArg any]];
     
     // expectations
-    [[(OCMockObject *)session stub] cancelAllTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(dispatch_block_t block) {
+    [[session stub] cancelAllTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(dispatch_block_t block) {
         block();
         return YES;
     }]];
-    [[[activity expect] andDo:^(NSInvocation *inv) {
+    [[[activity stub] andDo:^(NSInvocation *inv) {
         NOT_USED(inv);
         [expectation fulfill];
     }] endActivity];
@@ -196,12 +191,10 @@
     
     // when
     [sut start];
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.05]);
     
     // then
-    [(OCMockObject *)backgroundActivity stopMocking];
-    [(OCMockObject *)backgroundActivity verify];
-    [activity verify];
+    [activity stopMocking];
 }
 
 @end

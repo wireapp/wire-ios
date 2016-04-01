@@ -17,7 +17,6 @@
 // 
 
 
-
 @import XCTest;
 @import ZMCSystem;
 @import OCMock;
@@ -814,12 +813,12 @@ static __weak FakeReachability *currentReachability;
     [urlSwitch switchToBackgroundSession];
     
     // expect
-    [[(id)backgroundSession reject] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:OCMOCK_ANY];
-    [[[(id)foregroundSession expect] andReturn:nil] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:OCMOCK_ANY];
+    [[(id)backgroundSession expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:OCMOCK_ANY];
+    [[[(id)foregroundSession reject] andReturn:nil] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodPOST payload:payload];
-    [request forceToForegroundSession];
+    [request forceToBackgroundSession];
     [sut sendSchedulerItem:request];
     
     // then
@@ -1468,6 +1467,9 @@ static __weak FakeReachability *currentReachability;
         return testResponse;
     }];
     
+    // expect
+    [[[(id)self.URLSessionSwitch expect] andReturn:self.URLSession ] foregroundSession];
+
     // when
     [self.sut sendAccessTokenRequest];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1498,6 +1500,9 @@ static __weak FakeReachability *currentReachability;
         
         return testResponse;
     }];
+    
+    // expect
+    [[[(id)self.URLSessionSwitch expect] andReturn:self.URLSession ] foregroundSession];
     
     // when
     [self.sut sendAccessTokenRequest];
@@ -2253,6 +2258,9 @@ static __weak FakeReachability *currentReachability;
         [accessToken fulfill];
         return testResponse;
     }];
+    
+    // expect
+    [[[(id)self.URLSessionSwitch expect] andReturn:self.URLSession ] foregroundSession];
     
     // when
     countHandler(1);

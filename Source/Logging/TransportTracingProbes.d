@@ -22,7 +22,6 @@
 
 
 
-
 /* ZMTransportSession and related classes. */
 
 provider syncengine_transport {
