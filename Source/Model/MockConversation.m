@@ -64,6 +64,10 @@ static NSString * const IdleString = @"idle";
 @dynamic callParticipants;
 @dynamic isVideoCall;
 @dynamic usersIgnoringCall;
+@dynamic otrArchived;
+@dynamic otrArchivedRef;
+@dynamic otrMuted;
+@dynamic otrMutedRef;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
 {
@@ -240,6 +244,10 @@ static NSString * const IdleString = @"idle";
     selfInfo[@"id"] = self.selfIdentifier;
     selfInfo[@"last_read"] = self.lastRead ?: [NSNull null];
     selfInfo[@"cleared"] = self.clearedEventID ?: [NSNull null];
+    selfInfo[@"otr_muted_ref"] = self.otrMutedRef ?: [NSNull null];
+    selfInfo[@"otr_muted"] = @(self.otrMuted);
+    selfInfo[@"otr_archived_ref"] = self.otrArchivedRef ?: [NSNull null];
+    selfInfo[@"otr_archived"] = @(self.otrArchived);
     
     return selfInfo;
 }
@@ -293,23 +301,31 @@ static NSString * const IdleString = @"idle";
     return [self eventIfNeededByUser:fromClient.user type:ZMTUpdateEventConversationOTRAssetAdd data:eventData];
 }
 
-- (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser;
+- (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;
 {
     self.archived = self.lastEvent;
+    if (shouldIncludeOTR) {
+        self.otrArchivedRef = self.lastEventTime.transportString;
+        self.otrArchived = YES;
+    }
     return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
 }
 
-- (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser
+- (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR
 {
     self.clearedEventID = self.lastEvent;
     self.lastRead = self.lastEvent;
+    if (shouldIncludeOTR) {
+        self.otrArchivedRef = self.lastEventTime.transportString;
+        self.otrArchived = YES;
+    }
     return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
 }
 
-- (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser;
+- (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;
 {
     self.archived = self.lastEvent;
-    return [self remotelyClearHistoryFromUser:fromUser];
+    return [self remotelyClearHistoryFromUser:fromUser includeOTR:shouldIncludeOTR];
 }
 
 - (MockEvent *)insertKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce;

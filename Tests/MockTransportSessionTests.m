@@ -457,7 +457,7 @@ static int32_t eventIdCounter;
         
         NSDictionary *selfMember = members[@"self"];
         XCTAssertTrue([selfMember isKindOfClass:[NSDictionary class]]);
-        keys = @[@"archived", @"id", @"muted", @"muted_time", @"status", @"last_read", @"cleared"];
+        keys = @[@"archived", @"id", @"muted", @"muted_time", @"status", @"last_read", @"cleared", @"otr_muted", @"otr_muted_ref", @"otr_archived", @"otr_archived_ref"];
         AssertDictionaryHasKeys(selfMember, keys);
         
         XCTAssertEqualObjects(selfMember[@"status"], @(conversation.status));
@@ -466,6 +466,11 @@ static int32_t eventIdCounter;
         XCTAssertEqualObjects(selfMember[@"last_read"], [NSNull null]);
         XCTAssertEqualObjects(selfMember[@"muted_time"], conversation.mutedTime ? [conversation.mutedTime transportString] : [NSNull null]);
         XCTAssertEqualObjects(selfMember[@"muted"], @(conversation.muted));
+        XCTAssertEqualObjects(selfMember[@"otr_muted"], @(conversation.otrMuted));
+        XCTAssertEqualObjects(selfMember[@"otr_muted_ref"], conversation.otrMutedRef ?: [NSNull null]);
+        XCTAssertEqualObjects(selfMember[@"otr_archived"], @(conversation.otrArchived));
+        XCTAssertEqualObjects(selfMember[@"otr_archived_ref"], conversation.otrArchivedRef ?: [NSNull null]);
+        
         XCTAssertEqualObjects(selfMember[@"archived"], [NSNull null]);
         XCTAssertEqualObjects(selfMember[@"id"], conversation.selfIdentifier);
         XCTAssertEqualObjects(selfMember[@"cleared"], conversation.clearedEventID ? conversation.clearedEventID : [NSNull null]);

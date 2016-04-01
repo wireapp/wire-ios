@@ -26,6 +26,10 @@
         <attribute name="muted" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="mutedTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="otrArchived" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="otrArchivedRef" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="otrMuted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="otrMutedRef" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="selfIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="statusRef" optional="YES" attributeType="String" syncable="YES"/>
@@ -109,7 +113,7 @@
     <elements>
         <element name="Asset" positionX="0" positionY="0" width="128" height="105"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="Conversation" positionX="0" positionY="0" width="128" height="390"/>
+        <element name="Conversation" positionX="0" positionY="0" width="128" height="450"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="135"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
