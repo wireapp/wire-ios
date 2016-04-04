@@ -3034,7 +3034,7 @@
     // when removing messages remotely
     {
         [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-            [self.groupConversation remotelyClearHistoryFromUser:self.selfUser];
+            [self.groupConversation remotelyClearHistoryFromUser:self.selfUser includeOTR:NO];
         }];
         WaitForEverythingToBeDone();
         
@@ -3099,7 +3099,7 @@
     // when deleting the conversation remotely
     {
         [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-            [self.groupConversation remotelyDeleteFromUser:self.selfUser];
+            [self.groupConversation remotelyDeleteFromUser:self.selfUser includeOTR:NO];
         }];
         WaitForEverythingToBeDone();
         
@@ -3148,12 +3148,12 @@
     NSManagedObjectID *conversationID = conversation.objectID;
     
     [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-        [self.groupConversation remotelyArchiveFromUser:self.selfUser];
+        [self.groupConversation remotelyArchiveFromUser:self.selfUser includeOTR:NO];
     }];
     WaitForEverythingToBeDone();
     
     [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-        [self.groupConversation remotelyClearHistoryFromUser:self.selfUser];
+        [self.groupConversation remotelyClearHistoryFromUser:self.selfUser includeOTR:NO];
     }];
     WaitForEverythingToBeDone();
     
@@ -3172,12 +3172,12 @@
     NSManagedObjectID *conversationID = conversation.objectID;
     
     [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-        [self.groupConversation remotelyClearHistoryFromUser:self.selfUser];
+        [self.groupConversation remotelyClearHistoryFromUser:self.selfUser includeOTR:NO];
     }];
     WaitForEverythingToBeDone();
     
     [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-        [self.groupConversation remotelyArchiveFromUser:self.selfUser];
+        [self.groupConversation remotelyArchiveFromUser:self.selfUser includeOTR:NO];
         
     }];
     WaitForEverythingToBeDone();
@@ -3197,7 +3197,7 @@
     
     // when archiving the conversation remotely
     [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-        [self.groupConversation remotelyArchiveFromUser:self.selfUser];
+        [self.groupConversation remotelyArchiveFromUser:self.selfUser includeOTR:NO];
     }];
     WaitForEverythingToBeDone();
     
@@ -3219,7 +3219,7 @@
     // when deleting the conversation remotely, whiping the cache and resyncing
     {
         [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
-            [self.groupConversation remotelyArchiveFromUser:self.selfUser];
+            [self.groupConversation remotelyArchiveFromUser:self.selfUser includeOTR:NO];
         }];
         WaitForEverythingToBeDone();
         
