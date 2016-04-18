@@ -26,7 +26,8 @@ struct avs_vidframe;
 
 @interface AVSVideoView : UIView
 
+@property (nonatomic) BOOL shouldFill;
+
 - (void) handleFrame:(struct avs_vidframe*) frame;
-- (void) shouldFill:(BOOL)fill;
 
 @end

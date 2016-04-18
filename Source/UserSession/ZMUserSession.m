@@ -678,8 +678,6 @@ ZM_EMPTY_ASSERTING_INIT()
         self.networkIsOnline = NO;
         
         [self changeNetworkStateAndNotify];
-        
-        [ZMConversation updateCallStateForOfflineModeInContext:self.managedObjectContext];
         [self saveOrRollbackChanges];
     }];
 }

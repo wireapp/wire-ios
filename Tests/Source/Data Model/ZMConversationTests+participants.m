@@ -18,6 +18,7 @@
 
 
 #import "ZMConversationTests.h"
+#import "ZMConversation+Transport.h"
 
 
 @implementation ZMConversationTests (Participants)

@@ -127,7 +127,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
         XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
     }];
     
-    WaitForAllGroupsToBeEmpty(15);
+    WaitForAllGroupsToBeEmpty(5);
     
     // then
     XCTAssertEqual(conversationCount, 13lu);
@@ -179,7 +179,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
         XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
     }];
     
-    WaitForAllGroupsToBeEmpty(15);
+    WaitForAllGroupsToBeEmpty(5);
     
     // then
     XCTAssertEqual(conversationCount, 18lu);
@@ -190,7 +190,55 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     
     XCTAssertNotNil(userDictionaries);
     XCTAssertEqual(userDictionaries.count, 7lu);
-    XCTAssertEqualObjects(userDictionaries, self.userDictionaryFixture1_28);
+    XCTAssertEqualObjects(userDictionaries, self.userDictionaryFixture1_27);
+}
+
+- (void)testThatItPerformsMigrationFrom_1_28_ToCurrentModelVersion {
+    // given
+    __block NSManagedObjectContext *syncContext;
+    __block NSUInteger conversationCount;
+    __block NSUInteger messageCount;
+    __block NSUInteger systemMessageCount;
+    __block NSUInteger connectionCount;
+    __block NSArray *userDictionaries;
+    __block NSUInteger userClientCount;
+    
+    // when
+    [self performMockingStoreURLWithVersion:@"1.28" block:^{
+        
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        
+        XCTestExpectation *migrationExpectation = [self expectationWithDescription:@"It should migrate from 1.28 to current mom version"];
+        
+        [syncContext performGroupedBlockAndWait:^{
+            conversationCount = [syncContext countForFetchRequest:ZMConversation.sortedFetchRequest error:nil];
+            messageCount = [syncContext countForFetchRequest:ZMClientMessage.sortedFetchRequest error:nil];
+            systemMessageCount = [syncContext countForFetchRequest:ZMSystemMessage.sortedFetchRequest error:nil];
+            connectionCount = [syncContext countForFetchRequest:ZMConnection.sortedFetchRequest error:nil];
+            userClientCount = [syncContext countForFetchRequest:UserClient.sortedFetchRequest error:nil];
+            
+            NSFetchRequest *userFetchRequest = ZMUser.sortedFetchRequest;
+            userFetchRequest.resultType = NSDictionaryResultType;
+            userFetchRequest.propertiesToFetch = self.userPropertiesToFetch;
+            userDictionaries = [syncContext executeFetchRequestOrAssert:userFetchRequest];
+            [migrationExpectation fulfill];
+        }];
+        
+        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(5);
+    
+    // then
+    XCTAssertEqual(conversationCount, 3lu);
+    XCTAssertEqual(messageCount, 17lu);
+    XCTAssertEqual(systemMessageCount, 1lu);
+    XCTAssertEqual(connectionCount, 2lu);
+    XCTAssertEqual(userClientCount, 3lu);
+    
+    XCTAssertNotNil(userDictionaries);
+    XCTAssertEqual(userDictionaries.count, 3lu);
+    XCTAssertEqualObjects(userDictionaries, self.userDictionaryFixture2_3);
 }
 
 #pragma mark - Helper
@@ -258,7 +306,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 - (void)performMockingStoreURLWithVersion:(NSString *)version block:(dispatch_block_t)block;
 {
     // 1.25 and 1.26 share the same model version of 1.25
-    if (! [@[@"1.24", @"1.25", @"1.27"] containsObject:version]) {
+    if (! [@[@"1.24", @"1.25", @"1.27", @"1.28"] containsObject:version]) {
         XCTFail(@"Can only copy a database version with an existing SQL fixture in the test target");
     }
     
@@ -345,63 +393,93 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              ];
 }
 
-- (NSArray <NSDictionary *>*)userDictionaryFixture1_28
+- (NSArray <NSDictionary *>*)userDictionaryFixture2_3
 {
     return @[
              @{
                  @"accentColorValue": @1,
-                 @"emailAddress": @"email@example.com",
+                 @"emailAddress": @"user1@example.com",
                  @"modifiedDataFields": @0,
-                 @"name": @"Bruno",
-                 @"normalizedEmailAddress": @"email@example.com",
-                 @"normalizedName": @"bruno"
+                 @"name": @"user1",
+                 @"normalizedEmailAddress": @"user1@example.com",
+                 @"normalizedName": @"user1"
                  },
              @{
                  @"accentColorValue": @6,
-                 @"emailAddress": @"secret@example.com",
+                 @"emailAddress": @"user2@example.com",
                  @"modifiedDataFields": @0,
-                 @"name": @"Florian",
-                 @"normalizedEmailAddress": @"secret@example.com",
-                 @"normalizedName": @"florian"
-                 },
-             @{
-                 @"accentColorValue": @4,
-                 @"emailAddress": @"hidden@example.com",
-                 @"modifiedDataFields": @0,
-                 @"name": @"Heinzelmann",
-                 @"normalizedEmailAddress": @"hidden@example.com",
-                 @"normalizedName": @"heinzelmann",
+                 @"name": @"user2",
+                 @"normalizedEmailAddress": @"user2@example.com",
+                 @"normalizedName": @"user2"
                  },
              @{
                  @"accentColorValue": @1,
-                 @"emailAddress": @"censored@example.com",
+                 @"emailAddress": @"user3@example.com",
                  @"modifiedDataFields": @0,
-                 @"name": @"It is me",
-                 @"normalizedEmailAddress": @"censored@example.com",
-                 @"normalizedName": @"it is me",
+                 @"name": @"user3",
+                 @"normalizedEmailAddress": @"user3@example.com",
+                 @"normalizedName": @"user3",
+                 },
+             ];
+}
+
+- (NSArray <NSDictionary *>*)userDictionaryFixture1_27
+{
+    return @[
+             @{
+                 @"accentColorValue" : @(1),
+                 @"emailAddress" : @"email@example.com",
+                 @"modifiedDataFields" : @(0),
+                 @"name" : @"Bruno",
+                 @"normalizedEmailAddress" : @"email@example.com",
+                 @"normalizedName" : @"bruno",
                  },
              @{
-                 @"accentColorValue": @3,
-                 @"emailAddress": @"welcome+23@example.com",
-                 @"modifiedDataFields": @0,
+                 @"accentColorValue" : @(6),
+                 @"emailAddress" : @"secret@example.com",
+                 @"modifiedDataFields" : @(0),
+                 @"name" : @"Florian",
+                 @"normalizedEmailAddress" : @"secret@example.com",
+                 @"normalizedName" : @"florian",
+                 },
+             @{
+                 @"accentColorValue" : @(4),
+                 @"emailAddress" : @"hidden@example.com",
+                 @"modifiedDataFields" : @(0),
+                 @"name" : @"Heinzelmann",
+                 @"normalizedEmailAddress" : @"hidden@example.com",
+                 @"normalizedName" : @"heinzelmann",
+                 },
+             @{
+                 @"accentColorValue" : @(1),
+                 @"emailAddress" : @"censored@example.com",
+                 @"modifiedDataFields" : @(0),
+                 @"name" : @"It is me",
+                 @"normalizedEmailAddress" : @"censored@example.com",
+                 @"normalizedName" : @"it is me",
+                 },
+             @{
+                 @"accentColorValue" : @(3),
+                 @"emailAddress" : @"welcome+23@example.com",
+                 @"modifiedDataFields" : @(0),
                  @"name" : @"Otto the Bot",
-                 @"normalizedEmailAddress": @"welcome+23@example.com",
-                 @"normalizedName": @"otto the bot",
+                 @"normalizedEmailAddress" : @"welcome+23@example.com",
+                 @"normalizedName" : @"otto the bot",
                  },
              @{
-                 @"accentColorValue": @3,
-                 @"modifiedDataFields": @0,
-                 @"name": @"Pierre-Joris",
-                 @"normalizedName": @"pierrejoris"
+                 @"accentColorValue" : @(3),
+                 @"modifiedDataFields" : @(0),
+                 @"name" : @"Pierre-Joris",
+                 @"normalizedName" : @"pierrejoris",
                  },
              @{
-                 @"accentColorValue": @3,
-                 @"emailAddress": @"secret2@example.com",
-                 @"modifiedDataFields": @0,
-                 @"name": @"Test User",
-                 @"normalizedEmailAddress": @"secret2@example.com",
-                 @"normalizedName": @"test user"
-                 },
+                 @"accentColorValue" : @(3),
+                 @"emailAddress" : @"secret2@example.com",
+                 @"modifiedDataFields" : @(0),
+                 @"name" : @"Test User",
+                 @"normalizedEmailAddress" : @"secret2@example.com",
+                 @"normalizedName" : @"test user",
+                 }
              ];
 }
 

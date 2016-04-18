@@ -639,6 +639,7 @@
 		F9C5F8741C90323500BF0219 /* PushNoticeRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9C5F8731C90323500BF0219 /* PushNoticeRequestStrategy.swift */; };
 		F9C5F8771C9062F900BF0219 /* PushNoticeRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9C5F8751C9062F300BF0219 /* PushNoticeRequestStrategyTests.swift */; };
 		F9C92FEF1A5AC18800ED9770 /* MessageWindowChangeToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9C92FEB1A5AC18800ED9770 /* MessageWindowChangeToken.swift */; };
+		F9C9A4F01CAD29190039E10C /* store128.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = F9C9A4ED1CAD290B0039E10C /* store128.wiredatabase */; };
 		F9CA51B71B345F39003AA83A /* ZMStoredLocalNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = F9CA51B41B345F39003AA83A /* ZMStoredLocalNotification.h */; };
 		F9CA51B91B345F39003AA83A /* ZMStoredLocalNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = F9CA51B51B345F39003AA83A /* ZMStoredLocalNotification.m */; };
 		F9CA51BE1B3460B2003AA83A /* ZMStoredLocalNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9CA51BD1B3460B2003AA83A /* ZMStoredLocalNotificationTests.m */; };
@@ -654,6 +655,11 @@
 		F9D6A8431AE8EC8B007E9326 /* ObjectObserverTokenRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D6A8331AE8EC8B007E9326 /* ObjectObserverTokenRegistry.swift */; };
 		F9DAC54F1C2035660001F11E /* ConversationStatusStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DAC54D1C2034E70001F11E /* ConversationStatusStrategyTests.swift */; };
 		F9DF07111B15D593009AB9C0 /* ZMConversation+Trace.h in Headers */ = {isa = PBXBuildFile; fileRef = F9DF070F1B15D593009AB9C0 /* ZMConversation+Trace.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F9DFDDD41CA29CFE00897A4E /* ZMConversation+Transport.h in Headers */ = {isa = PBXBuildFile; fileRef = F9DFDDD21CA29CFE00897A4E /* ZMConversation+Transport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F9DFDDD51CA29CFE00897A4E /* ZMConversation+Transport.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DFDDD31CA29CFE00897A4E /* ZMConversation+Transport.m */; };
+		F9DFDDDA1CA2A51200897A4E /* ZMConversation+Timestamps.h in Headers */ = {isa = PBXBuildFile; fileRef = F9DFDDD81CA2A51200897A4E /* ZMConversation+Timestamps.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F9DFDDDB1CA2A51200897A4E /* ZMConversation+Timestamps.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DFDDD91CA2A51200897A4E /* ZMConversation+Timestamps.m */; };
+		F9DFDDDD1CA2B15400897A4E /* ZMConversationTests+Transport.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DFDDDC1CA2B15400897A4E /* ZMConversationTests+Transport.m */; };
 		F9E5150419BE0FA600CD5DD5 /* ZMPersonNameTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E5150219BE0FA600CD5DD5 /* ZMPersonNameTests.m */; };
 		F9E5150719BE116F00CD5DD5 /* ZMDisplayNameGeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E5150519BE116F00CD5DD5 /* ZMDisplayNameGeneratorTests.m */; };
 		F9F429BB1A9342B200ADF7F8 /* ManagedObjectContextObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F429B91A9342B200ADF7F8 /* ManagedObjectContextObserver.swift */; };
@@ -700,25 +706,6 @@
 			);
 			name = "Embed Framework";
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F97AD39E19E8287F00F0F110 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F9AF58311A247DE2004F8981 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -1518,7 +1505,6 @@
 		F996310D1BFA365400EC1C20 /* ZMLocalNotification+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMLocalNotification+Internal.h"; sourceTree = "<group>"; };
 		F9A82DA919D9B6430060D134 /* ZMUserSession+Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMUserSession+Debug.m"; sourceTree = "<group>"; };
 		F9AB2C1819D1A13700CEE54E /* ZMUserDisplayNameGeneratorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUserDisplayNameGeneratorTest.m; sourceTree = "<group>"; };
-		F9AF58331A247DE2004F8981 /* DatabaseExporter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DatabaseExporter; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9B171F51C0EF21100E6EEC6 /* ClientUpdateStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientUpdateStatus.swift; sourceTree = "<group>"; };
 		F9B171F71C0F00E700E6EEC6 /* ClientUpdateStatusTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientUpdateStatusTests.swift; sourceTree = "<group>"; };
 		F9B171F91C0F320200E6EEC6 /* ClientManagementTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientManagementTests.m; sourceTree = "<group>"; };
@@ -1531,6 +1517,7 @@
 		F9C5F8731C90323500BF0219 /* PushNoticeRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNoticeRequestStrategy.swift; sourceTree = "<group>"; };
 		F9C5F8751C9062F300BF0219 /* PushNoticeRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNoticeRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F9C92FEB1A5AC18800ED9770 /* MessageWindowChangeToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageWindowChangeToken.swift; sourceTree = "<group>"; };
+		F9C9A4ED1CAD290B0039E10C /* store128.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = store128.wiredatabase; sourceTree = "<group>"; };
 		F9CA51B41B345F39003AA83A /* ZMStoredLocalNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMStoredLocalNotification.h; sourceTree = "<group>"; };
 		F9CA51B51B345F39003AA83A /* ZMStoredLocalNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMStoredLocalNotification.m; sourceTree = "<group>"; };
 		F9CA51BD1B3460B2003AA83A /* ZMStoredLocalNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMStoredLocalNotificationTests.m; sourceTree = "<group>"; };
@@ -1547,8 +1534,13 @@
 		F9D8C2C31C9B1968001380DC /* ZMFlowSync+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMFlowSync+Internal.h"; sourceTree = "<group>"; };
 		F9DAC54D1C2034E70001F11E /* ConversationStatusStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationStatusStrategyTests.swift; sourceTree = "<group>"; };
 		F9DF070F1B15D593009AB9C0 /* ZMConversation+Trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMConversation+Trace.h"; sourceTree = "<group>"; };
+		F9DFDDD21CA29CFE00897A4E /* ZMConversation+Transport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMConversation+Transport.h"; sourceTree = "<group>"; };
+		F9DFDDD31CA29CFE00897A4E /* ZMConversation+Transport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMConversation+Transport.m"; sourceTree = "<group>"; };
+		F9DFDDD71CA2A20500897A4E /* zmessaging2.3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.3.xcdatamodel; sourceTree = "<group>"; };
+		F9DFDDD81CA2A51200897A4E /* ZMConversation+Timestamps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMConversation+Timestamps.h"; sourceTree = "<group>"; };
+		F9DFDDD91CA2A51200897A4E /* ZMConversation+Timestamps.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMConversation+Timestamps.m"; sourceTree = "<group>"; };
+		F9DFDDDC1CA2B15400897A4E /* ZMConversationTests+Transport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMConversationTests+Transport.m"; sourceTree = "<group>"; };
 		F9E3AB511BEA017300C1A6AA /* ZMSelfTranscoder+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMSelfTranscoder+Internal.h"; sourceTree = "<group>"; };
-		F9E5149119B5C9D600CD5DD5 /* ZetaScope.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZetaScope.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9E5150219BE0FA600CD5DD5 /* ZMPersonNameTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMPersonNameTests.m; sourceTree = "<group>"; };
 		F9E5150519BE116F00CD5DD5 /* ZMDisplayNameGeneratorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDisplayNameGeneratorTests.m; sourceTree = "<group>"; };
 		F9F11A061A0A630900F1DCEE /* ZMBlacklistVerificatorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMBlacklistVerificatorTest.m; sourceTree = "<group>"; };
@@ -1606,20 +1598,6 @@
 				09CC4ABA1B7CCA1800201C63 /* ZMTransport.framework in Frameworks */,
 				096082A01B8F058C001176DB /* ZMProtos.framework in Frameworks */,
 				BF0D67A41C901DEC007CE00F /* libPhoneNumber.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F9AF58301A247DE2004F8981 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F9E5148E19B5C9D600CD5DD5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1776,6 +1754,7 @@
 				AF6415A01C9C151700A535F5 /* EncryptedBase64EncondedExternalMessageTestFixture.txt */,
 				AF6415A11C9C151700A535F5 /* ExternalMessageTextFixture.txt */,
 				54DFAE211C92D979004B1D15 /* 1900x1500.jpg */,
+				F9C9A4F11CAD2A200039E10C /* DB Ficture 1.28 */,
 				BF44A3521C71D60100C6928E /* DB Fixture 1.27 */,
 				BF72DF111C4D257C002B324F /* DB Fixture 1.24 */,
 				BF72DF101C4D256B002B324F /* DB Fixture 1.25 / 1.26 */,
@@ -1883,7 +1862,11 @@
 				F9DF070F1B15D593009AB9C0 /* ZMConversation+Trace.h */,
 				09E393E21BB006C000F3EA1B /* ZMConversation+Testing.h */,
 				09E393E31BB006C000F3EA1B /* ZMConversation+Testing.m */,
+				F9DFDDD21CA29CFE00897A4E /* ZMConversation+Transport.h */,
+				F9DFDDD31CA29CFE00897A4E /* ZMConversation+Transport.m */,
 				3E89FF9F191B6C3A002D3A3E /* ZMConversation.m */,
+				F9DFDDD81CA2A51200897A4E /* ZMConversation+Timestamps.h */,
+				F9DFDDD91CA2A51200897A4E /* ZMConversation+Timestamps.m */,
 				F98D17C31C031A9000DF95E0 /* ZMConversation+UnreadCount.h */,
 				F98D17C11C031A7200DF95E0 /* ZMConversation+UnreadCount.m */,
 				F943DA5A1A724F770062CAD9 /* NSPredicate+ZMSearch.h */,
@@ -2021,8 +2004,6 @@
 			children = (
 				3E186088191A56F6000FE027 /* zmessaging Test Host.app */,
 				3E1860C3191A649D000FE027 /* zmessaging-iOS-Tests.xctest */,
-				F9E5149119B5C9D600CD5DD5 /* ZetaScope.app */,
-				F9AF58331A247DE2004F8981 /* DatabaseExporter */,
 				549815931A43232400A7CE2E /* zmessaging.framework */,
 			);
 			name = Products;
@@ -2154,6 +2135,7 @@
 				5474C7E21921303400185A3A /* ZMConnectionTests.m */,
 				547E73D61994C62B00F79345 /* ZMConversationTests.h */,
 				5474C7E31921303400185A3A /* ZMConversationTests.m */,
+				F9DFDDDC1CA2B15400897A4E /* ZMConversationTests+Transport.m */,
 				F98D17C51C03249E00DF95E0 /* ZMConversationTests+UnreadCount.m */,
 				3EFFDE281A13744500E80E22 /* ZMConversationListDirectoryTests.m */,
 				547E73DA1994C7A700F79345 /* ZMConversationTests+gapsAndWindows.m */,
@@ -2924,6 +2906,14 @@
 			path = "Push notifications";
 			sourceTree = "<group>";
 		};
+		F9C9A4F11CAD2A200039E10C /* DB Ficture 1.28 */ = {
+			isa = PBXGroup;
+			children = (
+				F9C9A4ED1CAD290B0039E10C /* store128.wiredatabase */,
+			);
+			name = "DB Ficture 1.28";
+			sourceTree = "<group>";
+		};
 		F9D6A82B1AE8EBD8007E9326 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -2977,6 +2967,7 @@
 				092083361BA7216600F82B29 /* ZMContextChangeTracker.h in Headers */,
 				092083381BA721C300F82B29 /* ZMUpstreamTranscoder.h in Headers */,
 				8785CA601C568D1F00FD671C /* ZMVoiceChannel+VideoCalling.h in Headers */,
+				F9DFDDD41CA29CFE00897A4E /* ZMConversation+Transport.h in Headers */,
 				F936DB2D1C11E52B005E93AE /* ZMClientUpdateNotification+Internal.h in Headers */,
 				1EB3810B1BF398A200DB8B5D /* ZMNotifications+Internal.h in Headers */,
 				09E686171ADD6E20002F8586 /* ZMPhoneNumberValidator.h in Headers */,
@@ -2995,6 +2986,7 @@
 				094CDBEE1B84D0A1004AD7BF /* ZMBackgroundFetch.h in Headers */,
 				1EB4B1C91BF3760B003E0128 /* ZMChangeTrackerBootstrap+Testing.h in Headers */,
 				F9DF07111B15D593009AB9C0 /* ZMConversation+Trace.h in Headers */,
+				F9DFDDDA1CA2A51200897A4E /* ZMConversation+Timestamps.h in Headers */,
 				54D1751A1ADE8AA2001AA338 /* ZMUserSession+Registration.h in Headers */,
 				54D9331E1AE1643A00C0B91C /* ZMCredentials.h in Headers */,
 				54D175241ADE9449001AA338 /* ZMUserSession+Authentication.h in Headers */,
@@ -3157,42 +3149,6 @@
 			productReference = 549815931A43232400A7CE2E /* zmessaging.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		F9AF58321A247DE2004F8981 /* DatabaseExporter */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F9AF583B1A247DE2004F8981 /* Build configuration list for PBXNativeTarget "DatabaseExporter" */;
-			buildPhases = (
-				F9AF582F1A247DE2004F8981 /* Sources */,
-				F9AF58301A247DE2004F8981 /* Frameworks */,
-				F9AF58311A247DE2004F8981 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = DatabaseExporter;
-			productName = DatabaseExporter;
-			productReference = F9AF58331A247DE2004F8981 /* DatabaseExporter */;
-			productType = "com.apple.product-type.tool";
-		};
-		F9E5149019B5C9D600CD5DD5 /* ZetaScope */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F9E514AD19B5C9D600CD5DD5 /* Build configuration list for PBXNativeTarget "ZetaScope" */;
-			buildPhases = (
-				F9D9B71A19C842EB00ABDCD3 /* Get Components */,
-				F9E5148D19B5C9D600CD5DD5 /* Sources */,
-				F9E5148E19B5C9D600CD5DD5 /* Frameworks */,
-				F9E5148F19B5C9D600CD5DD5 /* Resources */,
-				F97AD39E19E8287F00F0F110 /* Copy Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ZetaScope;
-			productName = ZetaScope;
-			productReference = F9E5149119B5C9D600CD5DD5 /* ZetaScope.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -3223,12 +3179,6 @@
 						CreatedOnToolsVersion = 6.2;
 						DevelopmentTeam = W5KEQBF9B5;
 					};
-					F9AF58321A247DE2004F8981 = {
-						CreatedOnToolsVersion = 6.1;
-					};
-					F9E5149019B5C9D600CD5DD5 = {
-						CreatedOnToolsVersion = 6.0;
-					};
 				};
 			};
 			buildConfigurationList = 540029AE1918CA8500578793 /* Build configuration list for PBXProject "zmessaging-cocoa" */;
@@ -3248,8 +3198,6 @@
 				549815921A43232400A7CE2E /* zmessaging-ios */,
 				3E1860C2191A649D000FE027 /* zmessaging-iOS-Tests */,
 				3E186087191A56F6000FE027 /* zmessaging Test Host */,
-				F9E5149019B5C9D600CD5DD5 /* ZetaScope */,
-				F9AF58321A247DE2004F8981 /* DatabaseExporter */,
 			);
 		};
 /* End PBXProject section */
@@ -3275,6 +3223,7 @@
 				AF6415A41C9C17FF00A535F5 /* EncryptedBase64EncondedExternalMessageTestFixture.txt in Resources */,
 				54764B991C9303D600BD25E3 /* medium.jpg in Resources */,
 				BF8367311C52651900364B37 /* store125.wiredatabase in Resources */,
+				F9C9A4F01CAD29190039E10C /* store128.wiredatabase in Resources */,
 				54764B9C1C930AEB00BD25E3 /* Lorem Ipsum.txt in Resources */,
 				BFCE9A5B1C4E4C4D00951B3D /* store124.wiredatabase in Resources */,
 				54764BA01C931E9400BD25E3 /* not_animated.gif in Resources */,
@@ -3291,13 +3240,6 @@
 				169AED7B1C8F09A700E5F17E /* version.buildinfo in Resources */,
 				5477CDF11BFE0D2700A36F7A /* Cartfile.resolved in Resources */,
 				0994E1D61B8354E400A51721 /* ZMLocalizable.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F9E5148F19B5C9D600CD5DD5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3330,21 +3272,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-		F9D9B71A19C842EB00ABDCD3 /* Get Components */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Get Components";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/Scripts/getcomponents\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3580,6 +3507,7 @@
 				54AB0D411BC5D31E00442454 /* AssetDirectoryTests.swift in Sources */,
 				54C2F69B1A6FA988003D09D9 /* ZMLocalNotificationForExpiredMessageTest.m in Sources */,
 				54F7217219A5E7E1009A8AF5 /* ZMUpdateEventsCatchUpPhaseTwoStateTests.m in Sources */,
+				F9DFDDDD1CA2B15400897A4E /* ZMConversationTests+Transport.m in Sources */,
 				54B7181719409A4600B798FA /* ZMEventProcessingStateTests.m in Sources */,
 				BF51232F1C905A2500D43EC2 /* ZMGenericMessage_ExternalTests.m in Sources */,
 				54C2F68D1A6FA988003D09D9 /* ObjectObserverTokenRegistryTests.swift in Sources */,
@@ -3794,6 +3722,7 @@
 				549815C31A432BC700A7CE2E /* ZMSpellOutSmallNumbersFormatter.m in Sources */,
 				549815D21A432BC700A7CE2E /* ZMSuggestionSearch.m in Sources */,
 				16F9EB391BCD62390021EF39 /* ZMAddressBookMatcher.m in Sources */,
+				F9DFDDD51CA29CFE00897A4E /* ZMConversation+Transport.m in Sources */,
 				3EDBFD781A65200F0095E2DD /* ZMPushRegistrant.swift in Sources */,
 				549816181A432BC700A7CE2E /* ZMSyncMergePolicy.m in Sources */,
 				F9C5A2AB1C6771C100D1FA9B /* GlobalUserObserver.swift in Sources */,
@@ -3811,6 +3740,7 @@
 				54BFDF681BDA6F9A0034A3DB /* HistorySynchronizationStatus.swift in Sources */,
 				549816381A432BC800A7CE2E /* ZMTypingTranscoder.m in Sources */,
 				5498161D1A432BC800A7CE2E /* ZMTypingUsers.m in Sources */,
+				F9DFDDDB1CA2A51200897A4E /* ZMConversation+Timestamps.m in Sources */,
 				5498161C1A432BC800A7CE2E /* ZMTypingUsersTimeout.m in Sources */,
 				542074FE1A6E9740000FB542 /* UserObserverToken.swift in Sources */,
 				5498164A1A432BC800A7CE2E /* ZMUpdateEvent.m in Sources */,
@@ -3844,20 +3774,6 @@
 				3EE27F831A9F20A4006B7090 /* ZMRemovedSuggestedPeopleTranscoder.m in Sources */,
 				549815C91A432BC700A7CE2E /* ZMVoiceChannelNotifications.m in Sources */,
 				54488C061AF1074300CC24DB /* ZMUserProfileUpdateTranscoder.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F9AF582F1A247DE2004F8981 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F9E5148D19B5C9D600CD5DD5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4036,7 +3952,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1E31B835C4900A51721 /* project-debug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 41;
 				ENABLE_TESTABILITY = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				ONLY_ACTIVE_ARCH = YES;
@@ -4047,7 +3963,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1E41B835C4900A51721 /* project.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 41;
 			};
 			name = Release;
 		};
@@ -4091,174 +4007,6 @@
 			};
 			name = Release;
 		};
-		F9AF58371A247DE2004F8981 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../..";
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		F9AF58391A247DE2004F8981 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../..";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		F9E514AE19B5C9D600CD5DD5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = ZetaScope/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(AVS_LIB)",
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_OBJC_BRIDGING_HEADER = "ZetaScope/ZetaScope-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = Debug;
-		};
-		F9E514B019B5C9D600CD5DD5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = ZetaScope/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(AVS_LIB)",
-					"$(inherited)",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_OBJC_BRIDGING_HEADER = "ZetaScope/ZetaScope-Bridging-Header.h";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4298,35 +4046,18 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F9AF583B1A247DE2004F8981 /* Build configuration list for PBXNativeTarget "DatabaseExporter" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F9AF58371A247DE2004F8981 /* Debug */,
-				F9AF58391A247DE2004F8981 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F9E514AD19B5C9D600CD5DD5 /* Build configuration list for PBXNativeTarget "ZetaScope" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F9E514AE19B5C9D600CD5DD5 /* Debug */,
-				F9E514B019B5C9D600CD5DD5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
 		BF9D3BF21C71E78F00833113 /* zmessaging.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				F9DFDDD71CA2A20500897A4E /* zmessaging2.3.xcdatamodel */,
 				BF9D3BF61C71E7AB00833113 /* zmessaging1.28.xcdatamodel */,
 				BF9D3BF31C71E78F00833113 /* zmessaging.xcdatamodel */,
 				BF9D3BF41C71E78F00833113 /* zmessaging1.27.xcdatamodel */,
 			);
-			currentVersion = BF9D3BF61C71E7AB00833113 /* zmessaging1.28.xcdatamodel */;
+			currentVersion = F9DFDDD71CA2A20500897A4E /* zmessaging2.3.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

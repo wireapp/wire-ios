@@ -1736,43 +1736,6 @@
 
 @implementation ZMUserSessionTests (AVSLogObserver)
 
-- (void)testThatNotificationTriggersLogCallback
-{
-    // given
-    NSString *testMessage = @"Sample AVS Log";
-    id logObserver = [OCMockObject mockForProtocol:@protocol(ZMAVSLogObserver)];
-    [[logObserver expect] logMessage:testMessage];
-    
-    id token = [ZMUserSession addAVSLogObserver:logObserver];
-    
-    // when
-    [ZMFlowSync logMessage:testMessage];
-    
-    // then
-    [logObserver verify];
-    [ZMUserSession removeAVSLogObserver:token];
-}
-
-- (void)testThatMultipleNotificationsAreTriggeringTheLogCallback
-{
-    // given
-    NSString *testMessage1 = @"Sample AVS Log 1";
-    NSString *testMessage2 = @"Sample AVS Log 2";
-    
-    id logObserver = [OCMockObject mockForProtocol:@protocol(ZMAVSLogObserver)];
-    [[logObserver expect] logMessage:testMessage1];
-    [[logObserver expect] logMessage:testMessage2];
-    
-    // when
-    id token = [ZMUserSession addAVSLogObserver:logObserver];
-    
-    [ZMFlowSync logMessage:testMessage1];
-    [ZMFlowSync logMessage:testMessage2];
-    // then
-    [logObserver verify];
-    [ZMUserSession removeAVSLogObserver:token];
-}
-
 - (void)testThatSubscriberIsNotRetained
 {
     // given
