@@ -458,7 +458,7 @@ static dispatch_once_t clearStoreOnceToken;
     // We know that the old mom is a version supporting E2EE when it
     // contains the 'ClientMessage' entity or is at least of version 1.25
     BOOL otrBuild = [[sourceMetadata[NSStoreModelVersionHashesKey] allKeys] containsObject:ZMClientMessage.entityName];
-    BOOL atLeastVersion1_25 = oldModelVersion != nil &&  [oldModelVersion compare:@"1.25" options:NSNumericSearch] != NSOrderedDescending;
+    BOOL atLeastVersion1_25 = oldModelVersion != nil && [oldModelVersion compare:@"1.25" options:NSNumericSearch] != NSOrderedDescending;
     
     // Unfortunately the 1.24 Release has a mom version of 1.3 but we do not want to migrate from it
     // This additional check is also important as the string comparison with NSNumericSearch will return
@@ -473,7 +473,13 @@ static dispatch_once_t clearStoreOnceToken;
     if (shouldMigrate && !isSameAsCurrent) {
         NSDictionary *options = [self persistentStoreOptionsDictionarySupportingMigration:YES];
         NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:[self storeURL] options:options error:&error];
-        RequireString(nil != store, "Unable to perform migration and create SQLite Core Data store: %lu", (long)error.code);
+        NSString *errorString = [NSString stringWithFormat:@"when adding persistent store: %@", error];
+        RequireString(nil != store, "Unable to perform migration and create SQLite Core Data store: %s. "
+                      "-- Old model version was: %s, current version: %s, otr build: %d",
+                      errorString.UTF8String,
+                      oldModelVersion.UTF8String,
+                      currentModelIdentifier.UTF8String,
+                      (int) otrBuild);
         if (nil != store) {
             return psc;
         }

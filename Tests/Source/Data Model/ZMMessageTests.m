@@ -32,6 +32,7 @@
 #import "ZMMessageTests.h"
 #import "MessagingTest+EventFactory.h"
 #import <OCMock/OCMock.h>
+#import "ZMConversation+Transport.h"
 
 NSString * const IsExpiredKey = @"isExpired";
 

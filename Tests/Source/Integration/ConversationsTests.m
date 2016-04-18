@@ -1624,7 +1624,7 @@
 }
 
 
-- (void)testThatWhenLeavingAConversationWeSetAndSynchronizeTheLastReadEventID
+- (void)testThatWhenLeavingAConversationWeSetAndSynchronizeTheLastReadServerTimestamp
 {
     // given
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
@@ -1636,6 +1636,40 @@
     
     [self.mockTransportSession resetReceivedRequests];
     
+    NSString *lastReadPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", user.remoteIdentifier.transportString];
+    NSString *memberLeavePath = [NSString stringWithFormat:@"/conversations/%@/members/%@", conversation.remoteIdentifier.transportString, user.remoteIdentifier.transportString];
+    NSString *archivedPath = [NSString stringWithFormat:@"/conversations/%@/self", conversation.remoteIdentifier.transportString];
+    
+    __block BOOL didSendLastReadMessage = NO;
+    __block BOOL didSendFirstArchivedMessage = NO;
+    __block BOOL didSendMemberLeaveRequest = NO;
+    __block BOOL didSendSecondArchivedMessage = NO;
+    __block NSDate *firstArchivedRef;
+    __block BOOL firstIsArchived;
+    __block NSDate *secondArchivedRef;
+    __block BOOL secondIsArchived;
+
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:lastReadPath] && request.method == ZMMethodPOST) {
+            didSendLastReadMessage = YES;
+        }
+        if ([request.path isEqualToString:memberLeavePath] && request.method == ZMMethodDELETE) {
+            didSendMemberLeaveRequest = YES;
+        }
+        if ([request.path isEqualToString:archivedPath] && request.method == ZMMethodPUT) {
+            if (!didSendMemberLeaveRequest) {
+                didSendFirstArchivedMessage = YES;
+                firstArchivedRef = [[request.payload asDictionary] dateForKey:@"otr_archived_ref"];
+                firstIsArchived = [request.payload[@"otr_archived"] boolValue];
+                XCTAssertEqualObjects(firstArchivedRef, conversation.lastServerTimeStamp);
+            } else {
+                didSendSecondArchivedMessage = YES;
+                secondArchivedRef = [[request.payload asDictionary] dateForKey:@"otr_archived_ref"];
+                secondIsArchived = [request.payload[@"otr_archived"] boolValue];
+            }
+        }
+        return nil;
+    };
     
     // when
     [self.userSession performChanges:^{
@@ -1648,24 +1682,17 @@
     WaitForEverythingToBeDone();
     
     // then
-    XCTAssertNotNil(conversation.lastReadEventID);
     XCTAssertNotNil(conversation.lastReadServerTimeStamp);
-
-    NSMutableArray *receivedRequests = [self.mockTransportSession.receivedRequests mutableCopy];
-
-    ZMTransportRequest *selfConversationRequest = [receivedRequests lastObject];
-    XCTAssertNotNil(selfConversationRequest);
-    NSString *expectedSelfPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", user.remoteIdentifier.transportString];
-    XCTAssertEqualObjects(selfConversationRequest.path, expectedSelfPath);
-    XCTAssertEqual(selfConversationRequest.method, ZMMethodPOST);
+    XCTAssertTrue(didSendFirstArchivedMessage);
+    XCTAssertTrue(didSendLastReadMessage);
+    XCTAssertTrue(didSendMemberLeaveRequest);
+    XCTAssertTrue(didSendSecondArchivedMessage);
+    XCTAssertTrue(firstIsArchived);
+    XCTAssertTrue(secondIsArchived);
     
-    [receivedRequests removeLastObject];
-    
-    ZMTransportRequest *previousRequest = [receivedRequests lastObject];
-    XCTAssertNotNil(previousRequest);
-    NSString *expectedPreviousPath = [NSString stringWithFormat:@"/conversations/%@/members/%@", conversation.remoteIdentifier.transportString, user.remoteIdentifier.transportString];
-    XCTAssertEqualObjects(previousRequest.path, expectedPreviousPath);
-    XCTAssertEqual(previousRequest.method, ZMMethodDELETE);
+    XCTAssertTrue([firstArchivedRef compare:secondArchivedRef] == NSOrderedAscending);
+    XCTAssertEqualObjects(secondArchivedRef, conversation.lastServerTimeStamp);
+    XCTAssertEqualObjects(secondArchivedRef, conversation.lastReadServerTimeStamp);
     
     XCTAssertFalse([conversation hasLocalModificationsForKey:ZMConversationIsSelfAnActiveMemberKey]);
     
@@ -2388,8 +2415,8 @@
         [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
             // set last read
             NOT_USED(session);
-            MockEvent *lastEvent = self.groupConversation.events.lastObject;
-            self.groupConversation.lastRead = lastEvent.identifier;
+            self.groupConversation.otrArchived = NO;
+            self.groupConversation.otrArchivedRef = [[self.groupConversation.lastEventTime dateByAddingTimeInterval:-100] transportString];
         }];
         
         XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
@@ -2397,6 +2424,9 @@
         [self.mockTransportSession resetReceivedRequests];
         
         ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
+        XCTAssertNotNil(conversation.lastServerTimeStamp);
+        XCTAssertFalse(conversation.isArchived);
+        XCTAssertTrue([conversation.lastServerTimeStamp compare:conversation.archivedChangedTimestamp] == NSOrderedDescending);
         
         // when
         [self.userSession performChanges:^{
@@ -2409,8 +2439,8 @@
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
         XCTAssertEqual(request.method, ZMMethodPUT);
-        MockEvent *lastEvent = self.groupConversation.events.lastObject;
-        XCTAssertEqualObjects(request.payload[@"archived"], lastEvent.identifier);
+        XCTAssertEqualObjects(request.payload[@"otr_archived_ref"], conversation.archivedChangedTimestamp.transportString);
+        XCTAssertEqualObjects(request.payload[@"otr_archived"], @(conversation.isArchived));
     }
     
     // Tears down context(s) &
@@ -2454,7 +2484,9 @@
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
     XCTAssertEqual(request.method, ZMMethodPUT);
-    XCTAssertEqualObjects(request.payload[@"archived"], @"false");
+    XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.archivedChangedTimestamp);
+    XCTAssertEqualObjects(request.payload[@"otr_archived_ref"], conversation.archivedChangedTimestamp.transportString);
+    XCTAssertEqualObjects(request.payload[@"otr_archived"], @(conversation.isArchived));
 }
 
 - (void)testThatSilencingAConversationIsSynchronizedToTheBackend
@@ -2478,7 +2510,9 @@
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
         XCTAssertEqualObjects(request.path, expectedPath);
         XCTAssertEqual(request.method, ZMMethodPUT);
-        XCTAssertEqualObjects(request.payload[@"muted"], @1);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, conversation.silencedChangedTimestamp);
+        XCTAssertEqualObjects(request.payload[@"otr_muted_ref"], conversation.silencedChangedTimestamp.transportString);
+        XCTAssertEqualObjects(request.payload[@"otr_muted"], @(conversation.isSilenced));
     }
     
     // Tears down context(s) &
@@ -2522,8 +2556,8 @@
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", self.groupConversation.identifier];
     XCTAssertEqualObjects(request.path, expectedPath);
     XCTAssertEqual(request.method, ZMMethodPUT);
-    XCTAssertEqualObjects(request.payload[@"muted"], @0);
-    
+    XCTAssertEqualObjects(request.payload[@"otr_muted"], @0);
+    XCTAssertEqualObjects(request.payload[@"otr_muted_ref"], conversation.lastServerTimeStamp.transportString);
 }
 
 - (void)testThatWhenBlockingAUserTheOneOnOneConversationIsRemovedFromTheConversationList
@@ -2978,7 +3012,9 @@
         ZMTransportRequest *firstRequest = self.mockTransportSession.receivedRequests.firstObject;
         NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/self", conversation.remoteIdentifier.transportString];
         XCTAssertEqualObjects(firstRequest.payload[@"cleared"], conversation.lastEventID.transportString);
-        XCTAssertEqualObjects(firstRequest.payload[@"archived"], conversation.lastEventID.transportString);
+        XCTAssertEqualObjects(firstRequest.payload[@"otr_archived_ref"], conversation.lastServerTimeStamp.transportString);
+        XCTAssertEqualObjects(firstRequest.payload[@"otr_archived"], @1);
+
         XCTAssertNil(firstRequest.payload[@"last_read"]);
         XCTAssertEqualObjects(firstRequest.path, expectedPath);
         XCTAssertEqual(firstRequest.method, ZMMethodPUT);
@@ -3154,6 +3190,30 @@
     
     [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
         [self.groupConversation remotelyClearHistoryFromUser:self.selfUser includeOTR:NO];
+    }];
+    WaitForEverythingToBeDone();
+    
+    // then
+    XCTAssertFalse([conversationDirectory.conversationsIncludingArchived.objectIDs containsObject:conversationID]);
+}
+
+- (void)testFirstArchivingThenClearingRemotelyShouldDeleteConversation_UseOTRFlags
+{
+    //given
+    const NSUInteger messagesCount = 5;
+    [self loginAndFillConversationWithMessages:self.groupConversation messagesCount:messagesCount];
+    ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
+    
+    ZMConversationListDirectory *conversationDirectory = [self.uiMOC conversationListDirectory];
+    NSManagedObjectID *conversationID = conversation.objectID;
+    
+    [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
+        [self.groupConversation remotelyArchiveFromUser:self.selfUser includeOTR:YES];
+    }];
+    WaitForEverythingToBeDone();
+    
+    [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
+        [self.groupConversation remotelyClearHistoryFromUser:self.selfUser includeOTR:YES];
     }];
     WaitForEverythingToBeDone();
     

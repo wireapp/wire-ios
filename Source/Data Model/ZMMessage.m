@@ -30,7 +30,7 @@
 #import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUpdateEvent.h"
 #import "ZMConversation+Internal.h"
-#import "ZMConversation+Internal.h"
+#import "ZMConversation+Timestamps.h"
 #import "ZMConversation+UnreadCount.h"
 #import <zmessaging/zmessaging-Swift.h>
 

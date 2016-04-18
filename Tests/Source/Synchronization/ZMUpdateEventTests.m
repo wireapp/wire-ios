@@ -606,8 +606,13 @@
 
 - (ZMUpdateEvent *)eventWithType:(NSString *)type conversation:(ZMConversation *)conversation payloadData:(NSDictionary *)data
 {
+    return [self eventWithType:type conversation:conversation payloadData:data time:nil];
+}
+
+- (ZMUpdateEvent *)eventWithType:(NSString *)type conversation:(ZMConversation *)conversation payloadData:(NSDictionary *)data time:(NSDate *)time
+{
     NSDictionary *payload = @{@"conversation" : conversation.remoteIdentifier.transportString,
-                              @"time" : @"2014-06-18T12:36:51.755Z",
+                              @"time" : time ? time.transportString : @"2014-06-18T12:36:51.755Z",
                               @"data" : data ?: @{},
                               @"from" : @"f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
                               @"id" : @"8.800122000a68ee1d",
@@ -716,16 +721,16 @@
     XCTAssertFalse(canUnarchive);
 }
 
-- (void)testThatItReturns_NO_ForEventIDsSmallerThanArchiveEventIDOfConversation
+- (void)testThatItReturns_NO_ForTimestampsSmallerThanArchiveTimestampOfConversation
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-    conversation.lastEventID = [ZMEventID eventIDWithString:@"9.800122000a68ee1d"];
+    conversation.lastServerTimeStamp = [NSDate date];
     conversation.isArchived = YES;
     
     // when
-    ZMUpdateEvent *event = [self eventWithType:@"conversation.message-add" conversation:conversation payloadData:@{}];
+    ZMUpdateEvent *event = [self eventWithType:@"conversation.message-add" conversation:conversation payloadData:@{} time:[conversation.lastServerTimeStamp dateByAddingTimeInterval:-10]];
     BOOL canUnarchive = [event canUnarchiveConversation:conversation];
     
     // then

@@ -41,7 +41,7 @@ static NSString * Key2;
 - (void)setUp {
     [super setUp];
 
-    Key1 = ZMConversationIsSilencedKey;
+    Key1 = ZMConversationSilencedChangedTimeStampKey;
     Key2 = ZMConversationUserDefinedNameKey;
     
     self.trackedKeys = [NSSet setWithObjects:Key1, Key2, nil];

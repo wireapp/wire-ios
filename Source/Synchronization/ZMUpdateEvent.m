@@ -353,9 +353,9 @@ struct TypeMap {
         case ZMUpdateEventConversationMessageAdd:
         case ZMUpdateEventConversationVoiceChannelActivate:
         {
-            ZMEventID *eventID = self.eventID;
-            BOOL olderEventID = eventID != nil && [eventID compare:conversation.archivedEventID] == NSOrderedAscending;
-            return !olderEventID && !olderClearTimestamp;
+            BOOL olderEvent = ((self.timeStamp != nil) &&
+                               ([self.timeStamp compare:conversation.archivedChangedTimestamp] == NSOrderedAscending));
+            return !olderEvent && !olderClearTimestamp;
         }
         
         // these events have no eventID

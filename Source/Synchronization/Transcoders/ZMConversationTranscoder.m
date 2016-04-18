@@ -24,6 +24,9 @@
 #import "ZMConversationTranscoder.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMConversation+Internal.h"
+#import "ZMConversation+Transport.h"
+#import "ZMConversation+Timestamps.h"
+
 #import "ZMUpdateEvent.h"
 #import "ZMConversation.h"
 #import "ZMConversation+OTR.h"
@@ -99,8 +102,8 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
         NSArray<NSString *> *keysToSync = @[ZMConversationUserDefinedNameKey,
                                             ZMConversationUnsyncedInactiveParticipantsKey,
                                             ZMConversationUnsyncedActiveParticipantsKey,
-                                            ZMConversationIsSilencedKey,
-                                            ZMConversationIsArchivedKey,
+                                            ZMConversationArchivedChangedTimeStampKey,
+                                            ZMConversationSilencedChangedTimeStampKey,
                                             ZMConversationIsSelfAnActiveMemberKey,
                                             ZMConversationClearedEventIDDataKey];
         
@@ -532,6 +535,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     return NO;
 }
 
+
 - (ZMUpstreamRequest *)requestForUpdatingObject:(ZMConversation *)updatedConversation forKeys:(NSSet *)keys;
 {
     ZMUpstreamRequest *request = nil;
@@ -544,8 +548,8 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     if (request == nil && [keys containsObject:ZMConversationUnsyncedActiveParticipantsKey]) {
         request = [self requestForUpdatingUnsyncedActiveParticipantsInConversation:updatedConversation];
     }
-    if (request == nil && (   [keys containsObject:ZMConversationIsSilencedKey]
-                           || [keys containsObject:ZMConversationIsArchivedKey]
+    if (request == nil && (   [keys containsObject:ZMConversationArchivedChangedTimeStampKey]
+                           || [keys containsObject:ZMConversationSilencedChangedTimeStampKey]
                            || [keys containsObject:ZMConversationClearedEventIDDataKey]) )
     {
         request = [self requestForUpdatingConversationSelfInfo:updatedConversation];
@@ -627,33 +631,37 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     NSMutableSet *updatedKeys = [NSMutableSet set];
     
-    if ([conversation hasLocalModificationsForKey:ZMConversationIsSilencedKey]) {
-        payload[@"muted"] = @(conversation.isSilenced);
-        [updatedKeys addObject:ZMConversationIsSilencedKey];
+    if ([conversation hasLocalModificationsForKey:ZMConversationSilencedChangedTimeStampKey]) {
+        if( conversation.silencedChangedTimestamp == nil) {
+            conversation.silencedChangedTimestamp = [NSDate date];
+        }
+        payload[ZMConversationInfoOTRMutedValueKey] = @(conversation.isSilenced);
+        payload[ZMConversationInfoMutedValueKey] = @(conversation.isSilenced);
+        payload[ZMConversationInfoOTRMutedReferenceKey] = [conversation.silencedChangedTimestamp transportString];
+        [updatedKeys addObject:ZMConversationSilencedChangedTimeStampKey];
     }
     
     if ([conversation hasLocalModificationsForKey:ZMConversationClearedEventIDDataKey]) {
-        payload[@"cleared"] = conversation.clearedEventID == nil ? [NSNull null] : conversation.clearedEventID.transportString;
+        payload[ZMConversationInfoClearedValueKey] = conversation.clearedEventID == nil ? [NSNull null] : conversation.clearedEventID.transportString;
         [updatedKeys addObject:ZMConversationClearedEventIDDataKey];
     }
     
-    if ([conversation hasLocalModificationsForKey:ZMConversationIsArchivedKey]) {
+    if ([conversation hasLocalModificationsForKey:ZMConversationArchivedChangedTimeStampKey]) {
+        if (conversation.archivedChangedTimestamp == nil) {
+            conversation.archivedChangedTimestamp = [NSDate date];
+        }
         
+        payload[ZMConversationInfoOTRArchivedValueKey] = @(conversation.isArchived);
+        payload[ZMConversationInfoOTRArchivedReferenceKey] = [conversation.archivedChangedTimestamp transportString];
         if (conversation.isArchived) {
-            
-            if( conversation.archivedEventID == nil) {
-                ZMLogError(@"Unable to push isArchive, because archivedEventID is not set. Conversation: %@", conversation);
-                [conversation resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationIsArchivedKey]];
-                [self.managedObjectContext enqueueDelayedSave];
-            } else {
-                payload[ConversationInfoArchivedValueKey] = conversation.archivedEventID.transportString;
-                [updatedKeys addObject:ZMConversationIsArchivedKey];
+            if (conversation.lastEventID != nil) {
+                payload[ZMConversationInfoArchivedValueKey] = conversation.lastEventID.transportString;
             }
+        } else {
+            payload[ZMConversationInfoArchivedValueKey] = @"false";
         }
-        else {
-            payload[ConversationInfoArchivedValueKey] = @"false";
-            [updatedKeys addObject:ZMConversationIsArchivedKey];
-        }
+        [updatedKeys addObject:ZMConversationArchivedChangedTimeStampKey];
+        
     }
     
     if (updatedKeys.count == 0) {
@@ -781,8 +789,8 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     if( keysToParse == nil ||
        [keysToParse isEmpty] ||
        [keysToParse containsObject:ZMConversationLastReadEventIDDataKey] ||
-       [keysToParse containsObject:ZMConversationIsSilencedKey] ||
-       [keysToParse containsObject:ZMConversationIsArchivedKey] ||
+       [keysToParse containsObject:ZMConversationSilencedChangedTimeStampKey] ||
+       [keysToParse containsObject:ZMConversationArchivedChangedTimeStampKey] ||
        [keysToParse containsObject:ZMConversationClearedEventIDDataKey] ||
        [keysToParse containsObject:ZMConversationIsSelfAnActiveMemberKey])
     {

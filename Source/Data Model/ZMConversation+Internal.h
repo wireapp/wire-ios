@@ -23,6 +23,8 @@
 #import "ZMMessage.h"
 #import "ZMConnection.h"
 #import "ZMConversationSecurityLevel.h"
+#import "ZMConversation+Timestamps.h"
+#import "ZMConversation+Transport.h"
 
 @import zimages;
 
@@ -61,9 +63,12 @@ extern NSString *const ZMIsDimmedKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
+
 extern NSString *const ZMConversationLastReadServerTimeStampKey;
 extern NSString *const ZMConversationLastServerTimeStampKey;
 extern NSString *const ZMConversationClearedTimeStampKey;
+extern NSString *const ZMConversationArchivedChangedTimeStampKey;
+extern NSString *const ZMConversationSilencedChangedTimeStampKey;
 
 extern NSString *const ZMConversationClearedEventIDDataKey;
 extern NSString *const ZMConversationClearedEventIDKey;
@@ -97,7 +102,6 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 @interface ZMConversation (Internal)
 
-- (void)updateWithTransportData:(NSDictionary *)transportData;
 + (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc;
 + (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc created:(BOOL *)created;
 + (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc withParticipants:(NSArray *)participants;
@@ -120,7 +124,6 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 + (NSPredicate *)predicateForSearchString:(NSString *)searchString;
 + (NSPredicate *)userDefinedNamePredicateForSearchString:(NSString *)searchString;
 
-+ (ZMConversationType)conversationTypeFromTransportData:(NSNumber *)transportType;
 
 /// Returns a predicate that will match conversations which need their call state updated from the backend.
 + (NSPredicate *)predicateForNeedingCallStateToBeUpdatedFromBackend;
@@ -129,10 +132,20 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 /// Returns a predicate that will match conversations which are not marked yet for being updated from the backend.
 + (NSPredicate *)predicateForUpdatingCallStateDuringSlowSync;
 
+@property (readonly, nonatomic) NSMutableOrderedSet *mutableLastServerSyncedActiveParticipants;
+
+@property (nonatomic) BOOL internalIsArchived;
+
 @property (nonatomic) ZMEventID *lastEventID;
 @property (nonatomic) ZMEventID *lastReadEventID;
+@property (nonatomic, readonly) ZMEventID *archivedEventID;
+@property (nonatomic) ZMEventID *clearedEventID;
+
 @property (nonatomic) NSDate *lastServerTimeStamp;
 @property (nonatomic) NSDate *lastReadServerTimeStamp;
+@property (nonatomic) NSDate *clearedTimeStamp;
+@property (nonatomic) NSDate *archivedChangedTimestamp;
+@property (nonatomic) NSDate *silencedChangedTimestamp;
 
 @property (nonatomic) NSUUID *remoteIdentifier;
 @property (readonly, nonatomic) NSMutableOrderedSet *mutableMessages;
@@ -146,10 +159,8 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 @property (nonatomic, copy) NSString *normalizedUserDefinedName;
 @property (nonatomic) NSTimeInterval lastReadEventIDSaveDelay;
 @property (nonatomic) BOOL callStateNeedsToBeUpdatedFromBackend;
-@property (nonatomic, readonly) ZMEventID *archivedEventID;
 
-@property (nonatomic) NSDate *clearedTimeStamp;
-@property (nonatomic) ZMEventID *clearedEventID;
+
 @property (nonatomic) enum ZMConversationSecurityLevel securityLevel;
 
 
@@ -180,10 +191,6 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 
 - (void)updateWithMessage:(ZMMessage *)message timeStamp:(NSDate *)timeStamp eventID:(ZMEventID *)eventID;
-- (void)unarchiveConversationFromEvent:(ZMUpdateEvent *)event;
-- (void)updateLastReadFromPostPayloadEvent:(ZMUpdateEvent *)event;
-- (void)updateClearedFromPostPayloadEvent:(ZMUpdateEvent *)event;
-- (void)updateSelfStatusFromDictionary:(NSDictionary *)dictionary timeStamp:(NSDate *)timeStamp;
 
 /// This method loads messages in a window when there are NO visible messages
 - (void)startFetchingMessages;
@@ -194,7 +201,7 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 - (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce;
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce;
 
-- (void)updatePotentialGapSystemMessagesIfNeededWithUsers:(NSSet <ZMUser *>*)users;
+- (void)deleteOlderMessages;
 
 @end
 
@@ -255,14 +262,6 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 
 
-@interface ZMConversation (ZMVoiceChannel_Internal)
-
-+ (void)updateCallStateForOfflineModeInContext:(NSManagedObjectContext *)moc;
-- (void)updateCallStateForOfflineMode;
-
-@end
-
-
 
 @interface ZMConversation (ZMConversationMessageWindow)
 
@@ -286,22 +285,3 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 @end
 
-
-@interface ZMConversation (TimeStamps)
-
-- (BOOL)updateLastServerTimeStampIfNeeded:(NSDate *)serverTimeStamp;
-- (BOOL)updateLastReadServerTimeStampIfNeededWithTimeStamp:(NSDate *)timeStamp andSync:(BOOL)shouldSync;
-- (BOOL)updateLastModifiedDateIfNeeded:(NSDate *)date;
-- (BOOL)updateClearedServerTimeStampIfNeeded:(NSDate *)date andSync:(BOOL)shouldSync;
-
-- (BOOL)updateLastReadEventIDIfNeededWithEventID:(ZMEventID *)eventID;
-- (BOOL)updateLastEventIDIfNeededWithEventID:(ZMEventID *)eventID;
-- (BOOL)updateArchivedEventIDIfNeededWithEventID:(ZMEventID *)eventID;
-- (BOOL)updateClearedEventIDIfNeededWithEventID:(ZMEventID *)eventID andSync:(BOOL)shouldSync;
-
-- (BOOL)shouldAddEvent:(ZMUpdateEvent *)event;
-
-// this event is called when setting the clearedTimeStamp on the sync context or after merging the uiMOC into the syncMOC
-- (void)deleteOlderMessages;
-
-@end

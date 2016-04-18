@@ -318,7 +318,7 @@
     ZMConversation *conversation =  [self conversationForMockConversation:self.groupConversation];
     NSString *convIDString = conversation.remoteIdentifier.transportString;
     
-    NSDate *pastDate = [[NSDate date] dateByAddingTimeInterval:-100];
+    NSDate *pastDate = [NSDate dateWithTimeIntervalSince1970:12333333];
     XCTAssertEqual(conversation.messages.count, 1u);
     XCTAssertNil(conversation.lastReadServerTimeStamp);
     

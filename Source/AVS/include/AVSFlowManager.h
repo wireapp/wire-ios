@@ -87,7 +87,7 @@ typedef NS_ENUM(int, AVSFlowManagerVideoReceiveState) {
 
 typedef NS_ENUM(int, AVSFlowManagerVideoReason) {
 	FLOWMANAGER_VIDEO_NORMAL = 0,
-	FLOWMANAGER_VIDEO_LOW_BANDWIDTH,
+	FLOWMANAGER_VIDEO_BAD_CONNECTION
 };
 
 @interface AVSVideoStateChangeInfo : NSObject
@@ -141,7 +141,10 @@ struct flowmgr;
 // AVS_FLAG_AUDIO_TEST     = 1<<1. Audio Test mode for autmatic testing by QA.
 // AVS_FLAG_VIDEO_TEST     = 1<<2. Video Test mode for autmatic testing by QA.
 - (instancetype)init:(uint64_t)avs_flags;
-- (instancetype)initWithDelegate:(id<AVSFlowManagerDelegate>)delegate mediaManager:(id)mediaManager;
+- (instancetype)initWithDelegate:(id<AVSFlowManagerDelegate>)delegate
+	mediaManager:(id)mediaManager;
+- (instancetype)initWithDelegate:(id<AVSFlowManagerDelegate>)delegate
+	mediaManager:(id)mediaManager flags:(uint64_t)avs_flags;
 - (instancetype)initWithDelegate:(id<AVSFlowManagerDelegate>)delegate flowManager:(struct flowmgr *)flowManager mediaManager:(id)mediaManager;
 - (BOOL)isReady;
 

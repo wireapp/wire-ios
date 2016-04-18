@@ -420,8 +420,8 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 {
     if ([message isKindOfClass:[ZMKnockMessage class]]) {
         ZMKnockMessage *knockMessage = (id)message;
-        if (knockMessage.eventID == nil ||
-            [knockMessage.eventID compare:self.lastReadEventID] == NSOrderedAscending)
+        if (knockMessage.serverTimestamp == nil ||
+            [knockMessage.serverTimestamp compare:self.lastReadServerTimeStamp] == NSOrderedAscending)
         {
             return NO;
         }

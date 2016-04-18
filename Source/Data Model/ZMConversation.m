@@ -13,6 +13,8 @@
 @import ZMTransport;
 
 #import "ZMConversation+Internal.h"
+#import "ZMConversation+Timestamps.h"
+
 #import "ZMUser+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "ZMClientMessage.h"
@@ -60,6 +62,8 @@ NSString *const ZMConversationClearedEventIDKey = @"clearedEventID";
 NSString *const ZMConversationLastServerTimeStampKey = @"lastServerTimeStamp";
 NSString *const ZMConversationLastReadServerTimeStampKey = @"lastReadServerTimeStamp";
 NSString *const ZMConversationClearedTimeStampKey = @"clearedTimeStamp";
+NSString *const ZMConversationArchivedChangedTimeStampKey = @"archivedChangedTimestamp";
+NSString *const ZMConversationSilencedChangedTimeStampKey = @"silencedChangedTimestamp";
 
 NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
 
@@ -80,7 +84,6 @@ NSString *const ZMConversationFailedToDecryptMessageNotificationName = @"ZMConve
 
 static NSString *const CallStateNeedsToBeUpdatedFromBackendKey = @"callStateNeedsToBeUpdatedFromBackend";
 static NSString *const ConnectedUserKey = @"connectedUser";
-static NSString *const ConversationInfoArchivedValueKey = @"archived";
 static NSString *const ConversationTypeKey = @"conversationType";
 static NSString *const CreatorKey = @"creator";
 static NSString *const DownloadedMessageIDsDataKey = @"downloadedMessageIDs_data";
@@ -104,12 +107,7 @@ static NSString *const HiddenMessagesKey = @"hiddenMessages";
 static NSString *const PersonalInvitationsKey = @"personalInvitations";
 static NSString *const SecurityLevelKey = @"securityLevel";
 
-typedef NS_ENUM(int, ZMBackendConversationType) {
-    ZMConvTypeGroup = 0,
-    ZMConvTypeSelf = 1,
-    ZMConvOneToOne = 2,
-    ZMConvConnection = 3,
-};
+
 NSTimeInterval ZMConversationDefaultLastReadEventIDSaveDelay = 0.7;
 
 const NSUInteger ZMConversationMaxEncodedTextMessageLength = 1500;
@@ -119,7 +117,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 
 @interface ZMConversation ()
 
-@property (readonly, nonatomic) NSMutableOrderedSet *mutableLastServerSyncedActiveParticipants;
 @property (nonatomic) NSString *normalizedUserDefinedName;
 @property (nonatomic) ZMConversationType conversationType;
 
@@ -131,10 +128,13 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 @property (nonatomic) int64_t lastReadEventIDUpdateCounter;
 @property (nonatomic) ZMEventID *archivedEventID;
 @property (nonatomic) BOOL internalIsArchived;
+
 @property (nonatomic) ZMEventID *clearedEventID;
 @property (nonatomic) NSDate *lastReadServerTimeStamp;
 @property (nonatomic) NSDate *lastServerTimeStamp;
 @property (nonatomic) NSDate *clearedTimeStamp;
+@property (nonatomic) NSDate *archivedChangedTimestamp;
+@property (nonatomic) NSDate *silencedChangedTimestamp;
 
 @end
 
@@ -171,6 +171,8 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 @dynamic isTrusted;
 @dynamic hasUntrustedClients;
 @dynamic internalIsArchived;
+@dynamic archivedChangedTimestamp;
+@dynamic silencedChangedTimestamp;
 
 @synthesize tempMaximumLastReadEventID;
 @synthesize tempMaxLastReadServerTimeStamp;
@@ -186,15 +188,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 - (void)setIsArchived:(BOOL)isArchived
 {
     self.internalIsArchived = isArchived;
-    if(isArchived) {
-        ZMEventID *lastEvent = self.lastEventID;
-        if(self.archivedEventID == nil || ([self.archivedEventID compare:lastEvent] == NSOrderedDescending)) {
-            self.archivedEventID = lastEvent;
-        }
-    }
-    else {
-        self.archivedEventID = nil;
-    }
+    [self updateArchivedChangedTimeStampIfNeeded:self.lastServerTimeStamp andSync:YES];
 }
 
 - (NSUInteger)estimatedUnreadCount
@@ -205,6 +199,18 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 + (NSSet *)keyPathsForValuesAffectingEstimatedUnreadCount
 {
     return [NSSet setWithObject: ZMConversationInternalEstimatedUnreadCountKey];
+}
+
+
+- (void)setIsSilenced:(BOOL)isSilenced
+{
+    [self willChangeValueForKey:ZMConversationIsSilencedKey];
+    [self setPrimitiveValue:@(isSilenced) forKey:ZMConversationIsSilencedKey];
+    [self didChangeValueForKey:ZMConversationIsSilencedKey];
+    
+    if (self.managedObjectContext.zm_isUserInterfaceContext) {
+        [self updateSilencedChangedTimeStampIfNeeded:self.lastServerTimeStamp andSync:YES];
+    }
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsSilenced
@@ -408,7 +414,9 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
             ZMConversationLastUnreadKnockDateKey,
             ZMConversationLastUnreadMissedCallDateKey,
             ZMConversationLastReadLocalTimestampKey,
-            ZMConversationInternalEstimatedUnreadCountKey
+            ZMConversationInternalEstimatedUnreadCountKey,
+            ZMConversationIsArchivedKey,
+            ZMConversationIsSilencedKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -1312,169 +1320,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     [self updateUnreadMessagesWithMessage:message];
 }
 
-- (void)updateLastReadFromPostPayloadEvent:(ZMUpdateEvent *)event
-{
-    NSDate *serverTimeStamp = event.timeStamp;
-    ZMEventID *eventID = event.eventID;
-    
-    [self updateLastModifiedDateIfNeeded:serverTimeStamp];
-    [self updateLastServerTimeStampIfNeeded:serverTimeStamp];
-    [self updateLastEventIDIfNeededWithEventID:eventID];
-    
-    [self updateLastReadServerTimeStampIfNeededWithTimeStamp:serverTimeStamp andSync:YES];
-    [self updateLastReadEventIDIfNeededWithEventID:eventID];
-}
-
-- (void)updateClearedFromPostPayloadEvent:(ZMUpdateEvent *)event
-{
-    [self updateClearedEventIDIfNeededWithEventID:event.eventID andSync:YES];
-    [self updateClearedServerTimeStampIfNeeded:event.timeStamp andSync:YES];
-}
-
-- (void)updateWithTransportData:(NSDictionary *)transportData;
-{
-    NSUUID *remoteId = [transportData uuidForKey:@"id"];
-    RequireString(remoteId == nil || [remoteId isEqual:self.remoteIdentifier],
-                  "Remote IDs not matching for conversation: %s vs. %s",
-                  remoteId.transportString.UTF8String,
-                  self.remoteIdentifier.transportString.UTF8String);
-    
-    if(transportData[@"name"] != [NSNull null]) {
-        self.userDefinedName = [transportData stringForKey:@"name"];
-    }
-    
-    self.conversationType = [self conversationTypeFromTransportData:[transportData numberForKey:@"type"]];
-    
-    NSDate *lastTimeStamp = [transportData dateForKey:@"last_event_time"];
-    [self updateLastModifiedDateIfNeeded:lastTimeStamp];
-    [self updateLastServerTimeStampIfNeeded:lastTimeStamp];
-    [self updateLastEventIDIfNeededWithEventID:[transportData eventForKey:@"last_event"]];
-
-    NSDictionary *selfStatus = [[transportData dictionaryForKey:@"members"] dictionaryForKey:@"self"];
-    if(selfStatus != nil) {
-        // we pass nil as timeStamp because we don't know when the lastReadEventID / clearedEventID was set
-        [self updateSelfStatusFromDictionary:selfStatus timeStamp:nil];
-    }
-    else {
-        ZMLogError(@"Missing self status in conversation data");
-    }
-    
-    NSUUID *creatorId = [transportData uuidForKey:@"creator"];
-    if(creatorId != nil) {
-        self.creator = [ZMUser userWithRemoteID:creatorId createIfNeeded:YES inContext:self.managedObjectContext];
-    }
-    
-    NSDictionary *members = [transportData dictionaryForKey:@"members"];
-    if(members != nil) {
-        NSArray *users = [members arrayForKey:@"others"];
-        for(NSDictionary *userDict in [users asDictionaries]) {
-            
-            NSUUID *userId = [userDict uuidForKey:@"id"];
-            if(userId == nil) {
-                continue;
-            }
-            ZMUser *user = [ZMUser userWithRemoteID:userId createIfNeeded:YES inContext:self.managedObjectContext];
-            
-            if([[userDict numberForKey:@"status"] intValue] == 0) {
-                [self internalAddParticipant:user isAuthoritative:YES];
-            }
-            else {
-                [self.mutableOtherInactiveParticipants addObject:user];
-                [self.mutableOtherActiveParticipants removeObject:user];
-                [self.mutableLastServerSyncedActiveParticipants removeObject:user];
-            }
-        }
-        [self updatePotentialGapSystemMessagesIfNeededWithUsers:self.activeParticipants.set];
-    }
-    else {
-        ZMLogError(@"Invalid members in conversation JSON: %@", transportData);
-    }
-}
-
-- (void)updatePotentialGapSystemMessagesIfNeededWithUsers:(NSSet <ZMUser *>*)users
-{
-    ZMSystemMessage *latestSystemMessage = [ZMSystemMessage fetchLatestPotentialGapSystemMessageInConversation:self];
-    if (nil == latestSystemMessage) {
-        return;
-    }
-    
-    NSMutableSet <ZMUser *>* removedUsers = latestSystemMessage.users.mutableCopy;
-    [removedUsers minusSet:users];
-    
-    NSMutableSet <ZMUser *>* addedUsers = users.mutableCopy;
-    [addedUsers minusSet:latestSystemMessage.users];
-    
-    latestSystemMessage.addedUsers = addedUsers;
-    latestSystemMessage.removedUsers = removedUsers;
-    [latestSystemMessage updateNeedsUpdatingUsersIfNeeded];
-}
-
-/// Pass timeStamp when the timeStamp equals the time of the lastRead / cleared event, otherwise pass nil
-- (void)updateSelfStatusFromDictionary:(NSDictionary *)dictionary timeStamp:(NSDate *)timeStamp
-{
-    ZMEventID *lastRead = [dictionary optionalEventForKey:@"last_read"];
-    if ([self updateLastReadEventIDIfNeededWithEventID:lastRead]) {
-        if (timeStamp != nil) {
-            [self updateLastReadServerTimeStampIfNeededWithTimeStamp:timeStamp andSync:NO];
-        }
-        else if ([self.lastEventID isEqualToEventID:self.lastReadEventID]){
-            [self updateLastReadServerTimeStampIfNeededWithTimeStamp:self.lastServerTimeStamp andSync:NO];
-        }
-    }
-    
-    NSNumber *status = [dictionary optionalNumberForKey:@"status"];
-    if(status != nil) {
-        self.isSelfAnActiveMember = status.integerValue == 0;
-    }
-    
-    if(dictionary[@"muted"] != nil) {
-        NSNumber *muted = [dictionary optionalNumberForKey:@"muted"];
-        self.isSilenced = [muted isEqual:@1];
-    }
-    
-    if(dictionary[ConversationInfoArchivedValueKey] != nil) {
-        if([dictionary[ConversationInfoArchivedValueKey] isEqual:[NSNull null]] || [dictionary[ConversationInfoArchivedValueKey] isEqualToString:@"false"]) {
-            self.isArchived = NO;
-        }
-        else {
-            ZMEventID *archivedEventID = [dictionary eventForKey:ConversationInfoArchivedValueKey];
-            if ([self updateArchivedEventIDIfNeededWithEventID:archivedEventID]) {
-                self.internalIsArchived = YES;
-            }
-        }
-    }
-    
-    ZMEventID *clearedEventID = [dictionary optionalEventForKey:@"cleared"];
-    if ([self updateClearedEventIDIfNeededWithEventID:clearedEventID andSync:NO]) {
-        if (timeStamp != nil) {
-            [self updateClearedServerTimeStampIfNeeded:timeStamp andSync:NO];
-        }
-        else if ([self.lastEventID isEqualToEventID:self.clearedEventID]){
-            [self updateClearedServerTimeStampIfNeeded:self.lastServerTimeStamp andSync:NO];
-        }
-    }
-}
-
-- (ZMConversationType)conversationTypeFromTransportData:(NSNumber *)transportType
-{
-    return [[self class] conversationTypeFromTransportData:transportType];
-}
-
-+ (ZMConversationType)conversationTypeFromTransportData:(NSNumber *)transportType
-{
-    int const t = [transportType intValue];
-    switch (t) {
-        case ZMConvTypeGroup:
-            return ZMConversationTypeGroup;
-        case ZMConvOneToOne:
-            return ZMConversationTypeOneOnOne;
-        case ZMConvConnection:
-            return ZMConversationTypeConnection;
-        default:
-            NOT_USED(ZMConvTypeSelf);
-            return ZMConversationTypeSelf;
-    }
-}
 
 + (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc
 {
@@ -1516,6 +1361,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     ZMConversation *conversation = (ZMConversation *)[super insertNewObjectInManagedObjectContext:moc];
     conversation.lastModifiedDate = [NSDate date];
     conversation.conversationType = ZMConversationTypeGroup;
+    conversation.creator = selfUser;
     for (ZMUser *participant in participants) {
         Require([participant isKindOfClass:[ZMUser class]]);
         const BOOL isSelf = (participant == selfUser);
@@ -1607,13 +1453,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 }
 
 
-- (void)unarchiveConversationFromEvent:(ZMUpdateEvent *)event;
-{
-    if ([event canUnarchiveConversation:self]){
-        self.isArchived = NO;
-        [self setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationIsArchivedKey]];
-    }
-}
 
 
 - (void)startFetchingMessages
@@ -1705,6 +1544,32 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     }
     
     return index;
+}
+
+- (void)deleteOlderMessages
+{
+    if ( self.messages.count == 0 || self.clearedTimeStamp == nil) {
+        return;
+    }
+    
+    // If messages are not sorted beforehand, we might delete messages we were supposed to keep
+    [self sortMessages];
+    
+    NSMutableArray *messagesToDelete = [NSMutableArray array];
+    [self.messages enumerateObjectsUsingBlock:^(ZMSystemMessage *message, NSUInteger __unused idx, BOOL *stop) {
+        NOT_USED(stop);
+        // cleared event can be an invisible event that is not a message
+        // therefore we should stop when we reach a message that is older than the clearedTimestamp
+        if ([message.serverTimestamp compare:self.clearedTimeStamp] == NSOrderedDescending) {
+            *stop = YES;
+            return;
+        }
+        [messagesToDelete addObject:message];
+    }];
+    
+    for (ZMMessage *message in messagesToDelete) {
+        [self.managedObjectContext deleteObject:message];
+    }
 }
 
 @end
@@ -1986,26 +1851,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 @end
 
 
-
-@implementation ZMConversation (ZMVoiceChannel_Internal)
-
-+ (void)updateCallStateForOfflineModeInContext:(NSManagedObjectContext *)moc;
-{
-    NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];
-    RequireString(entity != nil, "Unable to locate Conversation entity");
-    for (ZMConversation *c in moc.registeredObjects) {
-        if (c.entity == entity) {
-            [c updateCallStateForOfflineMode];
-        }
-    }
-}
-
-- (void)updateCallStateForOfflineMode;
-{
-    // TODO: what should we do here?
-}
-
-@end
 
 
 @implementation ZMConversation (KeyValueValidation)
@@ -2462,162 +2307,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 
 @end
 
-
-
-@implementation ZMConversation (TimeStamps)
-
-+ (NSDate *)updateTimeStamp:(NSDate *)timeToUpdate ifNeededWithTimeStamp:(NSDate *)newTimeStamp
-{
-    if ((newTimeStamp != nil) &&
-        (timeToUpdate == nil || [timeToUpdate compare:newTimeStamp] == NSOrderedAscending))
-    {
-        return newTimeStamp;
-    }
-    return nil;
-}
-
-- (BOOL)updateLastServerTimeStampIfNeeded:(NSDate *)serverTimeStamp
-{
-    NSDate *newTime = [ZMConversation updateTimeStamp:self.lastServerTimeStamp ifNeededWithTimeStamp:serverTimeStamp];
-    if (newTime != nil) {
-        self.lastServerTimeStamp = newTime;
-    }
-    return (newTime != nil);
-}
-
-- (BOOL)updateLastReadServerTimeStampIfNeededWithTimeStamp:(NSDate *)timeStamp andSync:(BOOL)shouldSync
-{
-    NSDate *newTime = [ZMConversation updateTimeStamp:self.lastReadServerTimeStamp ifNeededWithTimeStamp:timeStamp];
-    if (newTime != nil) {
-        self.lastReadServerTimeStamp = newTime;
-        BOOL isSyncContext = self.managedObjectContext.zm_isSyncContext; // modified keys are set "automatically" on the uiMOC
-        if (shouldSync && self.lastReadServerTimeStamp != nil && isSyncContext) {
-            [self setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationLastReadServerTimeStampKey]];
-        }
-    }
-    return (newTime != nil);
-}
-
-- (BOOL)updateLastModifiedDateIfNeeded:(NSDate *)date
-{
-    NSDate *newTime =  [ZMConversation updateTimeStamp:self.lastModifiedDate ifNeededWithTimeStamp:date];
-    if (newTime != nil) {
-        self.lastModifiedDate = newTime;
-    }
-    return (newTime != nil);
-}
-
-- (BOOL)updateClearedServerTimeStampIfNeeded:(NSDate *)date andSync:(BOOL)shouldSync
-{
-    NSDate *newTime =  [ZMConversation updateTimeStamp:self.clearedTimeStamp ifNeededWithTimeStamp:date];
-    if (newTime != nil) {
-        self.clearedTimeStamp = newTime;
-        if (shouldSync && self.managedObjectContext.zm_isSyncContext) {
-            [self setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationClearedTimeStampKey]];
-        }
-    }
-    return (newTime != nil);
-}
-
-
-- (ZMEventID *)updateEventID:(ZMEventID *)eventIDToUpdate ifNeededWithEventID:(ZMEventID *)newEventID
-{
-    if (newEventID != nil &&
-        (eventIDToUpdate == nil || [eventIDToUpdate compare:newEventID] == NSOrderedAscending)) {
-        return newEventID;
-    }
-    return nil;
-}
-
-- (BOOL)updateLastReadEventIDIfNeededWithEventID:(ZMEventID *)eventID
-{
-    ZMEventID *newID = [self updateEventID:self.lastReadEventID ifNeededWithEventID:eventID];
-    if (newID != nil) {
-        self.lastReadEventID = newID;
-    }
-    return (newID != nil);
-}
-
-- (BOOL)updateLastEventIDIfNeededWithEventID:(ZMEventID *)eventID
-{
-    ZMEventID *newID =  [self updateEventID:self.lastEventID ifNeededWithEventID:eventID];
-    if (newID != nil) {
-        self.lastEventID = newID;
-    }
-    return (newID != nil);
-}
-
-- (BOOL)updateArchivedEventIDIfNeededWithEventID:(ZMEventID *)eventID
-{
-    ZMEventID *newID =  [self updateEventID:self.archivedEventID ifNeededWithEventID:eventID];
-    if (newID != nil) {
-        self.archivedEventID = newID;
-    }
-    return (newID != nil);
-}
-
-- (BOOL)updateClearedEventIDIfNeededWithEventID:(ZMEventID *)eventID andSync:(BOOL)shouldSync
-{
-    ZMEventID *newID =  [self updateEventID:self.clearedEventID ifNeededWithEventID:eventID];
-    if (newID != nil) {
-        self.clearedEventID = newID;
-        if (shouldSync && self.managedObjectContext.zm_isSyncContext) {
-            [self setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationClearedEventIDDataKey]];
-        }
-    }
-    return (newID != nil);
-}
-
-
-- (BOOL)shouldAddEvent:(ZMUpdateEvent *)event
-{
-    ZMEventID *eventID = event.eventID;
-    NSDate *timeStamp = event.timeStamp;
-    
-    if (self.clearedEventID != nil && eventID != nil &&
-        [self.clearedEventID compare:eventID] != NSOrderedAscending)
-    {
-        [self updateClearedServerTimeStampIfNeeded:timeStamp andSync:YES];
-        return NO;
-    }
-    if (self.clearedTimeStamp != nil && timeStamp != nil &&
-        [self.clearedTimeStamp compare:timeStamp] != NSOrderedAscending)
-    {
-        return NO;
-    }
-    if (self.conversationType == ZMConversationTypeSelf){
-        return NO;
-    }
-    return YES;
-}
-
-- (void)deleteOlderMessages
-{
-    if ( self.messages.count == 0 || self.clearedTimeStamp == nil) {
-        return;
-    }
-    
-    // If messages are not sorted beforehand, we might delete messages we were supposed to keep
-    [self sortMessages];
-    
-    NSMutableArray *messagesToDelete = [NSMutableArray array];
-    [self.messages enumerateObjectsUsingBlock:^(ZMSystemMessage *message, NSUInteger __unused idx, BOOL *stop) {
-        NOT_USED(stop);
-        // cleared event can be an invisible event that is not a message
-        // therefore we should stop when we reach a message that is older than the clearedTimestamp
-        if ([message.serverTimestamp compare:self.clearedTimeStamp] == NSOrderedDescending) {
-            *stop = YES;
-            return;
-        }
-        [messagesToDelete addObject:message];
-    }];
-    
-    for (ZMMessage *message in messagesToDelete) {
-        [self.managedObjectContext deleteObject:message];
-    }
-}
-
-@end
 
 
 @implementation ZMConversation (History)
