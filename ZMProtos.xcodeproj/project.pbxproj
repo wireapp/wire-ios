@@ -358,7 +358,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nCOMPILE=\"Scripts/compile-protos.sh\"\nif [ -e \"$COMPILE\" ]; then\n    $COMPILE\nfi\n\n\n";
+			shellScript = "set -e\nScripts/compile-protos.sh\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
