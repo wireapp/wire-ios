@@ -65,6 +65,16 @@
 @class UninterpretedOptionBuilder;
 @class UninterpretedOptionNamePart;
 @class UninterpretedOptionNamePartBuilder;
+@class ZMAsset;
+@class ZMAssetBuilder;
+@class ZMAssetImageMetaData;
+@class ZMAssetImageMetaDataBuilder;
+@class ZMAssetOriginal;
+@class ZMAssetOriginalBuilder;
+@class ZMAssetPreview;
+@class ZMAssetPreviewBuilder;
+@class ZMAssetUploaded;
+@class ZMAssetUploadedBuilder;
 @class ZMCalling;
 @class ZMCallingBuilder;
 @class ZMCleared;
@@ -100,6 +110,14 @@ typedef NS_ENUM(SInt32, ZMClientAction) {
 BOOL ZMClientActionIsValidValue(ZMClientAction value);
 NSString *NSStringFromZMClientAction(ZMClientAction value);
 
+typedef NS_ENUM(SInt32, ZMAssetNotUploaded) {
+  ZMAssetNotUploadedCANCELLED = 0,
+  ZMAssetNotUploadedFAILED = 1,
+};
+
+BOOL ZMAssetNotUploadedIsValidValue(ZMAssetNotUploaded value);
+NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
+
 
 @interface ZMMessagesRoot : NSObject {
 }
@@ -117,6 +135,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 #define GenericMessage_external @"external"
 #define GenericMessage_clientAction @"clientAction"
 #define GenericMessage_calling @"calling"
+#define GenericMessage_asset @"asset"
 @interface ZMGenericMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasMessageId_:1;
@@ -127,6 +146,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
   BOOL hasCleared_:1;
   BOOL hasExternal_:1;
   BOOL hasCalling_:1;
+  BOOL hasAsset_:1;
   BOOL hasLiking_:1;
   BOOL hasClientAction_:1;
   NSString* messageId;
@@ -137,6 +157,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
   ZMCleared* cleared;
   ZMExternal* external;
   ZMCalling* calling;
+  ZMAsset* asset;
   ZMLikeAction liking;
   ZMClientAction clientAction;
 }
@@ -150,6 +171,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 - (BOOL) hasExternal;
 - (BOOL) hasClientAction;
 - (BOOL) hasCalling;
+- (BOOL) hasAsset;
 @property (readonly, strong) NSString* messageId;
 @property (readonly, strong) ZMText* text;
 @property (readonly, strong) ZMImageAsset* image;
@@ -160,6 +182,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 @property (readonly, strong) ZMExternal* external;
 @property (readonly) ZMClientAction clientAction;
 @property (readonly, strong) ZMCalling* calling;
+@property (readonly, strong) ZMAsset* asset;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -259,6 +282,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 - (ZMGenericMessageBuilder*) setCallingBuilder:(ZMCallingBuilder*) builderForValue;
 - (ZMGenericMessageBuilder*) mergeCalling:(ZMCalling*) value;
 - (ZMGenericMessageBuilder*) clearCalling;
+
+- (BOOL) hasAsset;
+- (ZMAsset*) asset;
+- (ZMGenericMessageBuilder*) setAsset:(ZMAsset*) value;
+- (ZMGenericMessageBuilder*) setAssetBuilder:(ZMAssetBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeAsset:(ZMAsset*) value;
+- (ZMGenericMessageBuilder*) clearAsset;
 @end
 
 #define Text_content @"content"
@@ -699,6 +729,396 @@ NSString *NSStringFromZMClientAction(ZMClientAction value);
 - (NSData*) sha256;
 - (ZMImageAssetBuilder*) setSha256:(NSData*) value;
 - (ZMImageAssetBuilder*) clearSha256;
+@end
+
+#define Asset_original @"original"
+#define Asset_preview @"preview"
+#define Asset_not_uploaded @"notUploaded"
+#define Asset_uploaded @"uploaded"
+@interface ZMAsset : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasOriginal_:1;
+  BOOL hasPreview_:1;
+  BOOL hasUploaded_:1;
+  BOOL hasNotUploaded_:1;
+  ZMAssetOriginal* original;
+  ZMAssetPreview* preview;
+  ZMAssetUploaded* uploaded;
+  ZMAssetNotUploaded notUploaded;
+}
+- (BOOL) hasOriginal;
+- (BOOL) hasPreview;
+- (BOOL) hasNotUploaded;
+- (BOOL) hasUploaded;
+@property (readonly, strong) ZMAssetOriginal* original;
+@property (readonly, strong) ZMAssetPreview* preview;
+@property (readonly) ZMAssetNotUploaded notUploaded;
+@property (readonly, strong) ZMAssetUploaded* uploaded;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMAssetBuilder*) builder;
++ (ZMAssetBuilder*) builder;
++ (ZMAssetBuilder*) builderWithPrototype:(ZMAsset*) prototype;
+- (ZMAssetBuilder*) toBuilder;
+
++ (ZMAsset*) parseFromData:(NSData*) data;
++ (ZMAsset*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAsset*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAsset*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAsset*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAsset*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+#define Original_mime_type @"mimeType"
+#define Original_size @"size"
+#define Original_name @"name"
+#define Original_image @"image"
+@interface ZMAssetOriginal : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasSize_:1;
+  BOOL hasMimeType_:1;
+  BOOL hasName_:1;
+  BOOL hasImage_:1;
+  UInt64 size;
+  NSString* mimeType;
+  NSString* name;
+  ZMAssetImageMetaData* image;
+}
+- (BOOL) hasMimeType;
+- (BOOL) hasSize;
+- (BOOL) hasName;
+- (BOOL) hasImage;
+@property (readonly, strong) NSString* mimeType;
+@property (readonly) UInt64 size;
+@property (readonly, strong) NSString* name;
+@property (readonly, strong) ZMAssetImageMetaData* image;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMAssetOriginalBuilder*) builder;
++ (ZMAssetOriginalBuilder*) builder;
++ (ZMAssetOriginalBuilder*) builderWithPrototype:(ZMAssetOriginal*) prototype;
+- (ZMAssetOriginalBuilder*) toBuilder;
+
++ (ZMAssetOriginal*) parseFromData:(NSData*) data;
++ (ZMAssetOriginal*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetOriginal*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAssetOriginal*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetOriginal*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAssetOriginal*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMAssetOriginalBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMAssetOriginal* resultOriginal;
+}
+
+- (ZMAssetOriginal*) defaultInstance;
+
+- (ZMAssetOriginalBuilder*) clear;
+- (ZMAssetOriginalBuilder*) clone;
+
+- (ZMAssetOriginal*) build;
+- (ZMAssetOriginal*) buildPartial;
+
+- (ZMAssetOriginalBuilder*) mergeFrom:(ZMAssetOriginal*) other;
+- (ZMAssetOriginalBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetOriginalBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasMimeType;
+- (NSString*) mimeType;
+- (ZMAssetOriginalBuilder*) setMimeType:(NSString*) value;
+- (ZMAssetOriginalBuilder*) clearMimeType;
+
+- (BOOL) hasSize;
+- (UInt64) size;
+- (ZMAssetOriginalBuilder*) setSize:(UInt64) value;
+- (ZMAssetOriginalBuilder*) clearSize;
+
+- (BOOL) hasName;
+- (NSString*) name;
+- (ZMAssetOriginalBuilder*) setName:(NSString*) value;
+- (ZMAssetOriginalBuilder*) clearName;
+
+- (BOOL) hasImage;
+- (ZMAssetImageMetaData*) image;
+- (ZMAssetOriginalBuilder*) setImage:(ZMAssetImageMetaData*) value;
+- (ZMAssetOriginalBuilder*) setImageBuilder:(ZMAssetImageMetaDataBuilder*) builderForValue;
+- (ZMAssetOriginalBuilder*) mergeImage:(ZMAssetImageMetaData*) value;
+- (ZMAssetOriginalBuilder*) clearImage;
+@end
+
+#define Preview_mime_type @"mimeType"
+#define Preview_otr_key @"otrKey"
+#define Preview_sha256 @"sha256"
+#define Preview_size @"size"
+#define Preview_image @"image"
+@interface ZMAssetPreview : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasSize_:1;
+  BOOL hasMimeType_:1;
+  BOOL hasImage_:1;
+  BOOL hasOtrKey_:1;
+  BOOL hasSha256_:1;
+  UInt64 size;
+  NSString* mimeType;
+  ZMAssetImageMetaData* image;
+  NSData* otrKey;
+  NSData* sha256;
+}
+- (BOOL) hasMimeType;
+- (BOOL) hasOtrKey;
+- (BOOL) hasSha256;
+- (BOOL) hasSize;
+- (BOOL) hasImage;
+@property (readonly, strong) NSString* mimeType;
+@property (readonly, strong) NSData* otrKey;
+@property (readonly, strong) NSData* sha256;
+@property (readonly) UInt64 size;
+@property (readonly, strong) ZMAssetImageMetaData* image;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMAssetPreviewBuilder*) builder;
++ (ZMAssetPreviewBuilder*) builder;
++ (ZMAssetPreviewBuilder*) builderWithPrototype:(ZMAssetPreview*) prototype;
+- (ZMAssetPreviewBuilder*) toBuilder;
+
++ (ZMAssetPreview*) parseFromData:(NSData*) data;
++ (ZMAssetPreview*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetPreview*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAssetPreview*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAssetPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMAssetPreviewBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMAssetPreview* resultPreview;
+}
+
+- (ZMAssetPreview*) defaultInstance;
+
+- (ZMAssetPreviewBuilder*) clear;
+- (ZMAssetPreviewBuilder*) clone;
+
+- (ZMAssetPreview*) build;
+- (ZMAssetPreview*) buildPartial;
+
+- (ZMAssetPreviewBuilder*) mergeFrom:(ZMAssetPreview*) other;
+- (ZMAssetPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasMimeType;
+- (NSString*) mimeType;
+- (ZMAssetPreviewBuilder*) setMimeType:(NSString*) value;
+- (ZMAssetPreviewBuilder*) clearMimeType;
+
+- (BOOL) hasOtrKey;
+- (NSData*) otrKey;
+- (ZMAssetPreviewBuilder*) setOtrKey:(NSData*) value;
+- (ZMAssetPreviewBuilder*) clearOtrKey;
+
+- (BOOL) hasSha256;
+- (NSData*) sha256;
+- (ZMAssetPreviewBuilder*) setSha256:(NSData*) value;
+- (ZMAssetPreviewBuilder*) clearSha256;
+
+- (BOOL) hasSize;
+- (UInt64) size;
+- (ZMAssetPreviewBuilder*) setSize:(UInt64) value;
+- (ZMAssetPreviewBuilder*) clearSize;
+
+- (BOOL) hasImage;
+- (ZMAssetImageMetaData*) image;
+- (ZMAssetPreviewBuilder*) setImage:(ZMAssetImageMetaData*) value;
+- (ZMAssetPreviewBuilder*) setImageBuilder:(ZMAssetImageMetaDataBuilder*) builderForValue;
+- (ZMAssetPreviewBuilder*) mergeImage:(ZMAssetImageMetaData*) value;
+- (ZMAssetPreviewBuilder*) clearImage;
+@end
+
+#define ImageMetaData_width @"width"
+#define ImageMetaData_height @"height"
+#define ImageMetaData_tag @"tag"
+@interface ZMAssetImageMetaData : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasWidth_:1;
+  BOOL hasHeight_:1;
+  BOOL hasTag_:1;
+  SInt32 width;
+  SInt32 height;
+  NSString* tag;
+}
+- (BOOL) hasWidth;
+- (BOOL) hasHeight;
+- (BOOL) hasTag;
+@property (readonly) SInt32 width;
+@property (readonly) SInt32 height;
+@property (readonly, strong) NSString* tag;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMAssetImageMetaDataBuilder*) builder;
++ (ZMAssetImageMetaDataBuilder*) builder;
++ (ZMAssetImageMetaDataBuilder*) builderWithPrototype:(ZMAssetImageMetaData*) prototype;
+- (ZMAssetImageMetaDataBuilder*) toBuilder;
+
++ (ZMAssetImageMetaData*) parseFromData:(NSData*) data;
++ (ZMAssetImageMetaData*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetImageMetaData*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAssetImageMetaData*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetImageMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAssetImageMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMAssetImageMetaDataBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMAssetImageMetaData* resultImageMetaData;
+}
+
+- (ZMAssetImageMetaData*) defaultInstance;
+
+- (ZMAssetImageMetaDataBuilder*) clear;
+- (ZMAssetImageMetaDataBuilder*) clone;
+
+- (ZMAssetImageMetaData*) build;
+- (ZMAssetImageMetaData*) buildPartial;
+
+- (ZMAssetImageMetaDataBuilder*) mergeFrom:(ZMAssetImageMetaData*) other;
+- (ZMAssetImageMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetImageMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasWidth;
+- (SInt32) width;
+- (ZMAssetImageMetaDataBuilder*) setWidth:(SInt32) value;
+- (ZMAssetImageMetaDataBuilder*) clearWidth;
+
+- (BOOL) hasHeight;
+- (SInt32) height;
+- (ZMAssetImageMetaDataBuilder*) setHeight:(SInt32) value;
+- (ZMAssetImageMetaDataBuilder*) clearHeight;
+
+- (BOOL) hasTag;
+- (NSString*) tag;
+- (ZMAssetImageMetaDataBuilder*) setTag:(NSString*) value;
+- (ZMAssetImageMetaDataBuilder*) clearTag;
+@end
+
+#define Uploaded_otr_key @"otrKey"
+#define Uploaded_sha256 @"sha256"
+@interface ZMAssetUploaded : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasOtrKey_:1;
+  BOOL hasSha256_:1;
+  NSData* otrKey;
+  NSData* sha256;
+}
+- (BOOL) hasOtrKey;
+- (BOOL) hasSha256;
+@property (readonly, strong) NSData* otrKey;
+@property (readonly, strong) NSData* sha256;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMAssetUploadedBuilder*) builder;
++ (ZMAssetUploadedBuilder*) builder;
++ (ZMAssetUploadedBuilder*) builderWithPrototype:(ZMAssetUploaded*) prototype;
+- (ZMAssetUploadedBuilder*) toBuilder;
+
++ (ZMAssetUploaded*) parseFromData:(NSData*) data;
++ (ZMAssetUploaded*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetUploaded*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAssetUploaded*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetUploaded*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAssetUploaded*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMAssetUploadedBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMAssetUploaded* resultUploaded;
+}
+
+- (ZMAssetUploaded*) defaultInstance;
+
+- (ZMAssetUploadedBuilder*) clear;
+- (ZMAssetUploadedBuilder*) clone;
+
+- (ZMAssetUploaded*) build;
+- (ZMAssetUploaded*) buildPartial;
+
+- (ZMAssetUploadedBuilder*) mergeFrom:(ZMAssetUploaded*) other;
+- (ZMAssetUploadedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetUploadedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasOtrKey;
+- (NSData*) otrKey;
+- (ZMAssetUploadedBuilder*) setOtrKey:(NSData*) value;
+- (ZMAssetUploadedBuilder*) clearOtrKey;
+
+- (BOOL) hasSha256;
+- (NSData*) sha256;
+- (ZMAssetUploadedBuilder*) setSha256:(NSData*) value;
+- (ZMAssetUploadedBuilder*) clearSha256;
+@end
+
+@interface ZMAssetBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMAsset* resultAsset;
+}
+
+- (ZMAsset*) defaultInstance;
+
+- (ZMAssetBuilder*) clear;
+- (ZMAssetBuilder*) clone;
+
+- (ZMAsset*) build;
+- (ZMAsset*) buildPartial;
+
+- (ZMAssetBuilder*) mergeFrom:(ZMAsset*) other;
+- (ZMAssetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasOriginal;
+- (ZMAssetOriginal*) original;
+- (ZMAssetBuilder*) setOriginal:(ZMAssetOriginal*) value;
+- (ZMAssetBuilder*) setOriginalBuilder:(ZMAssetOriginalBuilder*) builderForValue;
+- (ZMAssetBuilder*) mergeOriginal:(ZMAssetOriginal*) value;
+- (ZMAssetBuilder*) clearOriginal;
+
+- (BOOL) hasPreview;
+- (ZMAssetPreview*) preview;
+- (ZMAssetBuilder*) setPreview:(ZMAssetPreview*) value;
+- (ZMAssetBuilder*) setPreviewBuilder:(ZMAssetPreviewBuilder*) builderForValue;
+- (ZMAssetBuilder*) mergePreview:(ZMAssetPreview*) value;
+- (ZMAssetBuilder*) clearPreview;
+
+- (BOOL) hasNotUploaded;
+- (ZMAssetNotUploaded) notUploaded;
+- (ZMAssetBuilder*) setNotUploaded:(ZMAssetNotUploaded) value;
+- (ZMAssetBuilder*) clearNotUploaded;
+
+- (BOOL) hasUploaded;
+- (ZMAssetUploaded*) uploaded;
+- (ZMAssetBuilder*) setUploaded:(ZMAssetUploaded*) value;
+- (ZMAssetBuilder*) setUploadedBuilder:(ZMAssetUploadedBuilder*) builderForValue;
+- (ZMAssetBuilder*) mergeUploaded:(ZMAssetUploaded*) value;
+- (ZMAssetBuilder*) clearUploaded;
 @end
 
 #define External_otr_key @"otrKey"
