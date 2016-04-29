@@ -19,15 +19,14 @@
 
 @import UIKit;
 @import ZMCMockTransport;
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
-#import "ZMConversation.h"
 #import "ZMUserSession.h"
 #import "ZMUserSession+Internal.h"
 
 // needed to override very long timers
 #import "ZMLocalNotificationDispatcher+Testing.h"
-#import "ZMMessage+Internal.h"
 // -----------------------------------
 
 @class BackgroundTests;

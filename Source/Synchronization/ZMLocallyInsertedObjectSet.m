@@ -18,9 +18,8 @@
 
 
 @import ZMUtilities;
-
+#import <ZMCDataModel/ZMManagedObject.h>
 #import "ZMLocallyInsertedObjectSet.h"
-#import "ZMManagedObject.h"
 
 
 @interface ZMLocallyInsertedObjectSet ()

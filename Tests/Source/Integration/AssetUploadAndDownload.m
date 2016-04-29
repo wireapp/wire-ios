@@ -16,13 +16,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-
-
 
 @interface AssetUploadAndDownload : IntegrationTestBase
 @end
@@ -76,7 +72,7 @@
     NSUInteger changedIndex = note.updatedIndexes.firstIndex;
     id<ZMConversationMessage> changedMessage = [window.messages objectAtIndex:changedIndex];
     XCTAssertNotNil(changedMessage.imageMessageData.mediumData);
-    XCTAssertEqual(changedMessage.imageMessageData.mediumData.length, (NSUInteger) 419976);
+    XCTAssertEqual(changedMessage.imageMessageData.mediumData.length, (NSUInteger) 317748);
     [observer tearDown];
 }
 
@@ -99,7 +95,7 @@
     
     //when cache is cleared
     ZMImageMessage *lastMessage = conversation.messages.lastObject;
-    [[AssetDirectory new] deleteAssetData:lastMessage.nonce format:ZMImageFormatMedium encrypted:NO];
+    [self.uiMOC.zm_imageAssetCache deleteAssetData:lastMessage.nonce format:ZMImageFormatMedium encrypted:NO];
     XCTAssertNil(lastMessage.mediumData);
     
     // when
@@ -115,7 +111,7 @@
     NSUInteger changedIndex = note.updatedIndexes.firstIndex;
     id<ZMConversationMessage> changedMessage = [window.messages objectAtIndex:changedIndex];
     XCTAssertNotNil(changedMessage.imageMessageData.mediumData);
-    XCTAssertEqual(changedMessage.imageMessageData.mediumData.length, (NSUInteger) 419976);
+    XCTAssertEqual(changedMessage.imageMessageData.mediumData.length, (NSUInteger) 317748);
     [observer tearDown];
 }
 

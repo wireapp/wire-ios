@@ -22,50 +22,60 @@ import ZMTransport
 import ZMUtilities
 
 
+public struct SignalingKeys {
+    let verificationKey : NSData
+    let decryptionKey : NSData
+    
+    init(verificationKey: NSData? = nil, decryptionKey: NSData? = nil) {
+        self.verificationKey = verificationKey ?? NSData.secureRandomDataOfLength(APSSignalingKeysStore.defaultKeyLengthBytes)
+        self.decryptionKey = decryptionKey ?? NSData.secureRandomDataOfLength(APSSignalingKeysStore.defaultKeyLengthBytes)
+    }
+}
+
+
 @objc
 public class APSSignalingKeysStore: NSObject {
-    public var verificationKey: NSData!
-    public var decryptionKey: NSData!
     public var apsDecoder: ZMAPSMessageDecoder!
+    internal var verificationKey : NSData!
+    internal var decryptionKey : NSData!
+
+    internal static let verificationKeyAccountName = "APSVerificationKey"
+    internal static let decryptionKeyAccountName = "APSDecryptionKey"
+    internal static let defaultKeyLengthBytes : UInt = 256 / 8
     
-    private static let verificationKeyAccountName = "APSVerificationKey"
-    private static let decryptionKeyAccountName = "APSDecryptionKey"
-    private static let defaultKeyLengthBytes : UInt = 256 / 8
-    
-    public init?(fromKeychain: Bool) {
-        let newVerificationKey: NSData!
-        let newDecryptionKey: NSData!
-        
-        if fromKeychain {
-            newVerificationKey = ZMKeychain.dataForAccount(self.dynamicType.verificationKeyAccountName)
-            newDecryptionKey = ZMKeychain.dataForAccount(self.dynamicType.decryptionKeyAccountName)
-        }
-        else {
-            newVerificationKey = NSData.secureRandomDataOfLength(self.dynamicType.defaultKeyLengthBytes)
-            newDecryptionKey = NSData.secureRandomDataOfLength(self.dynamicType.defaultKeyLengthBytes)
-        }
+    public init?(userClient: UserClient) {
         super.init()
-        
-        if let newVerificationKey = newVerificationKey, newDecryptionKey = newDecryptionKey {
-            self.verificationKey = newVerificationKey
-            self.decryptionKey = newDecryptionKey
-            self.apsDecoder = ZMAPSMessageDecoder(encryptionKey: self.decryptionKey, macKey: self.verificationKey)
+        if let verificationKey = userClient.apsVerificationKey, decryptionKey = userClient.apsDecryptionKey {
+            self.verificationKey = verificationKey
+            self.decryptionKey = decryptionKey
+            self.apsDecoder = ZMAPSMessageDecoder(encryptionKey: decryptionKey, macKey: verificationKey)
         }
         else {
-            self.decryptionKey = nil
-            self.verificationKey = nil
-            self.apsDecoder = nil
             return nil
         }
     }
     
-    public func saveToKeychain() {
-        ZMKeychain.setData(self.verificationKey, forAccount: self.dynamicType.verificationKeyAccountName)
-        ZMKeychain.setData(self.decryptionKey, forAccount: self.dynamicType.decryptionKeyAccountName)
+    /// use this method to create new keys, e.g. for client registration or update
+    static func createKeys() -> SignalingKeys {
+        return SignalingKeys()
     }
- 
+    
+    /// we previously stored keys in the key chain. use this method to retreive the previously stored values to move them into the selfClient
+    static func keysStoredInKeyChain() -> SignalingKeys? {
+        guard let verificationKey = ZMKeychain.dataForAccount(self.verificationKeyAccountName),
+              let decryptionKey = ZMKeychain.dataForAccount(self.decryptionKeyAccountName)
+        else { return nil }
+        
+        return SignalingKeys(verificationKey: verificationKey, decryptionKey: decryptionKey)
+    }
+    
+    static func clearSignalingKeysInKeyChain(){
+        ZMKeychain.deleteAllKeychainItemsWithAccountName(self.verificationKeyAccountName)
+        ZMKeychain.deleteAllKeychainItemsWithAccountName(self.decryptionKeyAccountName)
+    }
     
     public func decryptDataDictionary(payload: NSDictionary) -> NSDictionary? {
         return self.apsDecoder.decodeAPSPayload(payload as [NSObject : AnyObject])
     }
 }
+

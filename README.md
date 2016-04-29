@@ -10,11 +10,3 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 Wire is in the process of releasing source code, but is not yet actively developing in all open source repositories. For this reason, we are not able to accept all pull requests at the moment.
 
-## Prerequisite
-
-- [Carthage](https://github.com/Carthage/Carthage)
-- Xcode 7.2
-
-## How to build
-
-- Run `carthage bootstrap --platform ios` to install dependencies.

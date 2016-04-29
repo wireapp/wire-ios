@@ -21,21 +21,16 @@
 @import ZMTransport;
 @import Cryptobox;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMMessageTranscoder+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUpstreamInsertedObjectSync.h"
 #import "ZMMessageExpirationTimer.h"
 #import "ZMUpstreamTranscoder.h"
-#import "ZMAssetPreprocessingTracker.h"
+#import "ZMImagePreprocessingTracker.h"
 
 #import "ZMLocalNotificationDispatcher.h"
 
-#import <zmessaging/zmessaging-Swift.h>
 #import "CBCryptoBox+UpdateEvents.h"
 #import <zmessaging/zmessaging-Swift.h>
 #import "ZMOperationLoop.h"
@@ -193,41 +188,7 @@ typedef NS_ENUM(int8_t, ZMAssetTag) {
 
 - (ZMManagedObject *)dependentObjectNeedingUpdateBeforeProcessingObject:(ZMMessage *)message;
 {
-    // Don't post messages until the conversation has been created:
-    if (message.conversation.remoteIdentifier == nil) {
-        return message.conversation;
-    }
-
-    // Messages should time out within 1 minute. But image messages never time out. In case there is a bug
-    // and one image message gets stuck in a non-sent state (but not expired), that message will block any future
-    // message in that conversation forver. This happened with some buggy builds (ie.g. internal 2838).
-    // In order to recover from this situation for people that used a buggy client, we can set a cap
-    // to the amount of time that a "non-delivered" message will block future messages.
-    // This will also prevent looking too far back in time for ALL messages in a conversation. Only messages
-    // that are more recent than X minutes will be considered. The expected "pending messages" should expire
-    // within a minute anyway. The server timestamp of the pending messages (since they are not delivered)
-    // is set using the local timestamp so we can safely check with the current messge timestamp (not delivered,
-    // so also a local timestamp). Of course the user could change the local clock in between sending messages
-    // but this is quite an edge case.
-    const NSTimeInterval MaxDelayToConsiderForBlockingObject = 3 * 60; // 3 minutes
-    
-    __block ZMMessage *blockingMessage;
-    [message.conversation.messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ZMMessage *previousMessage, __unused NSUInteger idx, BOOL *stop) {
-        BOOL objectIsTooOldToBlock = [message.serverTimestamp timeIntervalSinceDate:previousMessage.serverTimestamp] > MaxDelayToConsiderForBlockingObject;
-        if(objectIsTooOldToBlock) {
-            *stop = YES;
-            return;
-        }
-        BOOL sameMessage = previousMessage == message || [previousMessage.nonce isEqual:message.nonce];
-        BOOL previousNotDelivered = previousMessage.deliveryState == ZMDeliveryStatePending;
-        BOOL previousIsEarlier = [previousMessage.serverTimestamp compare:message.serverTimestamp] == NSOrderedAscending;
-        
-        if ( !sameMessage && previousNotDelivered && previousIsEarlier) {
-            blockingMessage = previousMessage;
-            *stop = YES;
-        }
-    }];
-    return blockingMessage;
+    return message.dependendObjectNeedingUpdateBeforeProcessing;
 }
 
 - (void)updateMessage:(ZMMessage *)message fromResponse:(ZMTransportResponse *)response updatedKeys:(NSSet *)updatedKeys;

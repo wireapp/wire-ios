@@ -18,7 +18,7 @@
 
 
 import ZMTransport
-
+import ZMCDataModel
 
 class ZMLocalNotificationForMemberEvent : ZMLocalNotificationForEvent {
 

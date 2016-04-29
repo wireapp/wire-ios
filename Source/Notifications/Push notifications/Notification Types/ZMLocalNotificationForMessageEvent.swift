@@ -56,7 +56,9 @@ public class ZMLocalNotificationForPostInConversationEvent : ZMLocalNotification
 
 public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversationEvent {
     var messageText : String?
-
+    var isImageMessage : Bool = false
+    var isFileUploadedMessage : Bool = false
+    
     override var copiedEventTypes : [ZMUpdateEventType] {
         return [.ConversationMessageAdd, .ConversationAssetAdd, .ConversationOtrAssetAdd, .ConversationOtrMessageAdd]
     }
@@ -74,16 +76,28 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
             guard let encryptedEventData = encryptedEventData else { return false }
             
             var genericMessage : ZMGenericMessage?
-            let exception = zm_tryBlock{
+            let exception = zm_tryBlock {
                 genericMessage = ZMGenericMessage(base64String: encryptedEventData)
             }
-            
-            guard exception == nil,
-                let message = genericMessage where (message.hasText() && message.text.content.characters.count > 0) || (message.hasImage())
+  
+            guard exception == nil, let message = genericMessage
             else { return false }
             
-            if message.hasText() {
+            let isTextMessage = message.hasText() && message.text.content.characters.count > 0
+            let isImageMessage = message.hasImage()
+            let isFileUploadedMessage = message.hasAsset()
+            
+            guard isTextMessage || isImageMessage || isFileUploadedMessage
+            else { return false }
+            
+            if isTextMessage {
                 messageText = message.text.content
+            }
+            else if isFileUploadedMessage {
+                self.isFileUploadedMessage = isFileUploadedMessage
+            }
+            else if isImageMessage {
+                self.isImageMessage = isImageMessage
             }
             return true
         case .ConversationMessageAdd:
@@ -94,6 +108,7 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
         case .ConversationAssetAdd:
             guard let tag = eventData["info"]?["tag"] as? String where tag == "medium"
                 else { return false }
+            self.isImageMessage = true
             return true
         default:
             return false
@@ -105,8 +120,11 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
         if events.count <= MaximumNumberOfEventsBeforeBundling && messageText != nil {
             return alertBody
         }
-        if events.count == 1 && messageText == nil {
+        else if events.count == 1 && self.isImageMessage {
             return alertBodyForOneImageAddEvent
+        }
+        else if events.count == 1 && self.isFileUploadedMessage {
+            return alertBodyForOneFileAddEvent
         }
         return alertBodyForMultipleMessageAddEvents
     }
@@ -117,6 +135,10 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
     
     var alertBodyForOneImageAddEvent : String {
         return ZMPushStringImageAdd.localizedStringWithUser(sender, conversation: conversation)
+    }
+    
+    var alertBodyForOneFileAddEvent : String {
+        return ZMPushStringFileAdd.localizedStringWithUser(sender, conversation: conversation)
     }
     
     var alertBodyForMultipleMessageAddEvents : String {

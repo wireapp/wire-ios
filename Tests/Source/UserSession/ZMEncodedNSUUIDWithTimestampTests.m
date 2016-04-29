@@ -17,7 +17,8 @@
 // 
 
 
-#import "ZMEncodedNSUUIDWithTimestamp.h"
+@import ZMUtilities;
+
 #import "MessagingTest.h"
 #import "ZMConnection+InvitationToConnect.h"
 #import "NSURL+LaunchOptions.h"

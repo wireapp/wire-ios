@@ -20,15 +20,12 @@
 @import ZMCSystem;
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMLocalNotification.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage.h"
 
 #import "ZMLocalNotificationLocalization.h"
 #import "UILocalNotification+StringProcessing.h"
-#import "ZMMessage+Internal.h"
 #import "ZMUserSession+UserNotificationCategories.h"
 
 NSString * const ZMLocalNotificationConversationObjectURLKey = @"conversationObjectURLString";
@@ -57,6 +54,7 @@ static NSString *const ZMLocalNotificationNewMessageSoundName = @"new_message_ap
 // %1$@    %2$@            %3$@
 NSString *const ZMPushStringMessageAdd = @"add.message"; // "[senderName] in [conversationName] - [messageText]"
 NSString *const ZMPushStringImageAdd = @"add.image"; // "[senderName] shared a picture in [conversationName]"
+NSString *const ZMPushStringFileAdd = @"add.file"; // "[senderName] shared a file in [conversationName]"
 NSString *const ZMPushStringMessageAddMany = @"add.message.many"; // "x new messages in [conversationName] / from [senderName]"
 
 /// 2 users, 1 conversation

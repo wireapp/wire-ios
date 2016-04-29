@@ -23,22 +23,17 @@
 @import CoreGraphics;
 @import ImageIO;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
-#import "NSManagedObjectContext+zmessaging.h"
 
 #import "ZMAssetTranscoder.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
 #import "ZMContextChangeTracker.h"
 #import "ZMUpstreamAssetSync.h"
 #import "ZMContextChangeTracker.h"
-#import "ZMUser+Internal.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMDownstreamObjectSync.h"
-#import "ZMAssetPreprocessingTracker.h"
+#import "ZMImagePreprocessingTracker.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
 
 

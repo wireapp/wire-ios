@@ -19,12 +19,10 @@
 
 @import ZMProtos;
 @import CoreTelephony;
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
 #import "ZMUserSession+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
 #import "ZMTestNotifications.h"
 #import "ZMSearchDirectory.h"
 #import "ZMUserSession+Authentication.h"
@@ -678,7 +676,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     [conversation insertOTRMessageFromClient:senderClient toClient:recipient data:encryptedData];
 }
 
-- (void)inserOTRMessage:(ZMGenericMessage *)message
+- (CBCryptoBox *)inserOTRMessage:(ZMGenericMessage *)message
          inConversation:(MockConversation *)conversation
                fromUser:(MockUser *)sender
                toClient:(MockUserClient *)recipient
@@ -697,6 +695,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     NSData *encryptedData = [sessionFromSenderToSelf encrypt:message.data error:&error];
     
     [conversation insertOTRMessageFromClient:senderClient toClient:recipient data:encryptedData];
+    return senderBox;
 }
 
 

@@ -20,6 +20,7 @@
 @import UIKit;
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 
 #import "MessagingTest.h"
@@ -32,11 +33,8 @@
 #import "ZMEventProcessingState.h"
 #import "ZMSlowSyncPhaseOneState.h"
 #import "ZMSlowSyncPhaseTwoState.h"
-#import "ZMUpdateEvent.h"
 #import "ZMConversationTranscoder.h"
 #import "ZMSelfTranscoder.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMUser+Internal.h"
 #import "ZMMessageTranscoder.h"
 #import "ZMConversationEventsTranscoder.h"
 #import "ZMAssetTranscoder.h"
@@ -53,7 +51,6 @@
 #import "ZMCallStateTranscoder.h"
 #import "ZMOperationLoop.h"
 #import "ZMKnockTranscoder.h"
-#import "ZMConversation+Internal.h"
 #import "ZMTypingTranscoder.h"
 #import "ZMRemovedSuggestedPeopleTranscoder.h"
 #import "AVSMediaManager.h"
@@ -65,7 +62,6 @@
 #import "ZMBadge.h"
 #import "ZMBadge+Testing.h"
 #import "ZMMessageTranscoder+Internal.h"
-#import "ZMMessage+Internal.h"
 #import "ZMClientMessageTranscoder.h"
 #import "BadgeApplication.h"
 
@@ -140,7 +136,8 @@
     (void) [[[textMessageTranscoder expect] andReturn:textMessageTranscoder] initWithManagedObjectContext:self.syncMOC upstreamInsertedObjectSync:nil localNotificationDispatcher:OCMOCK_ANY messageExpirationTimer:nil];
 
     id clientMessageTranscoder = [OCMockObject mockForClass:ZMClientMessageTranscoder.class];
-    (void) [[[[clientMessageTranscoder expect] classMethod] andReturn:clientMessageTranscoder] clientMessageTranscoderWithManagedObjectContext:self.syncMOC localNotificationDispatcher:OCMOCK_ANY clientRegistrationStatus:OCMOCK_ANY];
+    [[[[clientMessageTranscoder expect] andReturn:clientMessageTranscoder] classMethod] alloc];
+    (void) [[[clientMessageTranscoder expect] andReturn:clientMessageTranscoder] initWithManagedObjectContext:self.syncMOC localNotificationDispatcher:OCMOCK_ANY clientRegistrationStatus:OCMOCK_ANY];
 
     id knockTranscoder = [OCMockObject mockForClass:ZMKnockTranscoder.class];
     [[[[knockTranscoder expect] andReturn:knockTranscoder] classMethod] alloc];
@@ -273,6 +270,7 @@
                                                   syncStateDelegate:self.syncStateDelegate
                                               backgroundableSession:self.backgroundableSession
                                        localNotificationsDispatcher:OCMOCK_ANY
+                                           taskCancellationProvider:OCMOCK_ANY
                                                               badge:self.badge];
     
     
@@ -830,8 +828,14 @@
 {
     
     // given
-    NSSet *cacheInsertSet = [NSSet setWithObjects:@"foo", nil];
-    NSSet *cacheUpdateSet = [NSSet setWithObjects:@"bar", nil];
+    id firstObject = [OCMockObject niceMockForClass:ZMManagedObject.class];
+    id secondObject = [OCMockObject niceMockForClass:ZMManagedObject.class];
+    
+    [[[firstObject stub] andReturn:nil] entity];
+    [[[secondObject stub] andReturn:nil] entity];
+    
+    NSSet *cacheInsertSet = [NSSet setWithObject:firstObject];
+    NSSet *cacheUpdateSet = [NSSet setWithObject:secondObject];
     
     NSMutableSet *totalSet = [NSMutableSet setWithSet:cacheInsertSet];
     [totalSet unionSet:cacheUpdateSet];

@@ -18,18 +18,17 @@
 
 
 #import "IntegrationTestBase.h"
-#import "ZMUser+Internal.h"
-#import "ZMUserSession.h"
 #import "NSError+ZMUserSession.h"
+#import "NSError+ZMUserSessionInternal.h"
 #import "ZMSearchDirectory.h"
 
+#import "ZMUserSession.h"
 #import "ZMUserSession+Authentication.h"
 #import "ZMUserSession+Registration.h"
-#import "ZMEditableUser.h"
-#import "ZMCredentials.h"
-#import "NSError+ZMUserSessionInternal.h"
-#import "ZMEditableUser.h"
+#import "ZMUserSession+EditingVerification.h"
 
+#import "ZMCredentials.h"
+  
 @interface UserProfileTests : IntegrationTestBase
 
 @end

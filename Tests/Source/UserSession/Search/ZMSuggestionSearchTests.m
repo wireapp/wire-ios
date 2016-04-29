@@ -16,13 +16,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
+
 
 #import "MessagingTest.h"
 #import "ZMUserSession.h"
 #import "ZMSuggestionSearch.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 #import "ZMSearchResult+Internal.h"
-#import "ZMSearchUser+Internal.h"
 
 
 

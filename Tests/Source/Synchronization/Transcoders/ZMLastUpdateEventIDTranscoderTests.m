@@ -26,7 +26,6 @@
 #import "ZMSyncStrategy.h"
 #import "ZMObjectStrategyDirectory.h"
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
-#import "ZMUpdateEvent.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 @interface ZMLastUpdateEventIDTranscoderTests : MessagingTest

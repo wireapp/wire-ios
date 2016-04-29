@@ -18,8 +18,6 @@
 
 
 #import "ObjectTranscoderTests.h"
-#import "NSManagedObjectContext+zmessaging.h"
-
 
 @implementation ObjectTranscoderTests
 

@@ -19,6 +19,7 @@
 
 import XCTest
 import zmessaging
+import ZMCDataModel
 
 class ClientMessageTests_OTR: BaseZMClientMessageTests {
     

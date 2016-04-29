@@ -18,11 +18,10 @@
 
 
 #import "ZMClientRegistrationStatus.h"
-#import <zmessaging/zmessaging-Swift.h>
 #import "ZMOperationLoop.h"
 #import "ZMAuthenticationStatus_Internal.h"
 #import "ZMUserSessionAuthenticationNotification.h"
-#import "ZMNotifications+Internal.h"
+#import "ZMNotifications+UserSession.h"
 #import "ZMClientRegistrationStatus+Internal.h"
 #import <zmessaging/zmessaging-Swift.h>
 #import "ZMCookie.h"
@@ -396,6 +395,10 @@ static char* const ZMLogTag ZM_UNUSED = "Authentication";
     }
     
     [self.managedObjectContext.zm_cryptKeyStore deleteAndCreateNewBox];
+}
+
+- (BOOL)currentClientReadyToUse {
+    return self.currentPhase == ZMClientRegistrationPhaseRegistered;
 }
 
 - (void)invalidateSelfClient

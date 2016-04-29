@@ -18,7 +18,7 @@
 
 
 import Foundation
-
+import ZMCDataModel
 
 
 public class ZMLocalNotificationForCallEvent : ZMLocalNotificationForEvent {

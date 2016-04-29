@@ -26,7 +26,6 @@
 #import "ZMObjectStrategyDirectory.h"
 #import "ZMMissingUpdateEventsTranscoder.h"
 #import "ZMSyncStateMachine.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMAssetTranscoder.h"
 
 

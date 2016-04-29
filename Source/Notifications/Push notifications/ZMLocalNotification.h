@@ -18,7 +18,7 @@
 
 
 @import UIKit;
-#import "ZMUpdateEvent.h"
+#import <ZMTransport/ZMUpdateEvent.h>
 
 @class ZMUpdateEvent;
 @class ZMConversation;
@@ -53,6 +53,7 @@ typedef NS_ENUM(int, ZMLocalNotificationForEventType) {
 
 extern NSString * _Null_unspecified const ZMPushStringMessageAdd;
 extern NSString * _Null_unspecified const ZMPushStringImageAdd;
+extern NSString * _Null_unspecified const ZMPushStringFileAdd;
 extern NSString * _Null_unspecified const ZMPushStringMessageAddMany;
 
 extern NSString * _Null_unspecified const ZMPushStringMemberJoin;

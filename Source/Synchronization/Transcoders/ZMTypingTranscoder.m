@@ -18,19 +18,16 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMTypingTranscoder.h"
 #import "ZMTyping.h"
-#import "ZMUpdateEvent.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMOperationLoop.h"
 #import "ZMTypingTranscoder+Internal.h"
 
 
 
-static NSString * const TypingNotificationName = @"ZMTypingNotification";
+NSString * const ZMTypingNotificationName = @"ZMTypingNotification";
 static NSString * const IsTypingKey = @"isTyping";
 static NSString * const ClearIsTypingKey = @"clearIsTyping";
 
@@ -76,7 +73,9 @@ static NSString * const StartedKey = @"started";
     if (self != nil) {
         self.typing = typing ?: [[ZMTyping alloc] initWithUserInterfaceManagedObjectContext:uiMoc syncManagedObjectContext:self.managedObjectContext];
         self.conversations = [NSMutableDictionary dictionary];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addConversationForNextRequest:) name:TypingNotificationName object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addConversationForNextRequest:) name:ZMTypingNotificationName object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(shouldClearTypingForConversation:) name:ZMConversationClearTypingNotificationName object:nil];
+
     }
     return self;
 }
@@ -89,24 +88,41 @@ static NSString * const StartedKey = @"started";
     [super tearDown];
 }
 
+- (void)shouldClearTypingForConversation:(NSNotification *)note
+{
+    ZMConversation *conversation = note.object;
+    if (conversation.remoteIdentifier == nil) {
+        return;
+    }
+    [self addConversationForNextRequest:conversation isTypingNumber:@0 clearIsTyping:YES];
+}
+
 - (void)addConversationForNextRequest:(NSNotification *)note
 {
     ZMConversation *conversation = note.object;
+    if (conversation.remoteIdentifier == nil) {
+        return;
+    }
     NSNumber *isTyping = note.userInfo[IsTypingKey];
     NSNumber *clearIsTypingNumber = note.userInfo[ClearIsTypingKey];
     VerifyReturn(isTyping != nil || clearIsTypingNumber != nil);
-    
+    BOOL const clearIsTyping = [clearIsTypingNumber boolValue];
+
+    [self addConversationForNextRequest:conversation isTypingNumber:isTyping clearIsTyping:clearIsTyping];
+}
+
+- (void)addConversationForNextRequest:(ZMConversation *)conversation isTypingNumber:(NSNumber *)isTypingNumber clearIsTyping:(BOOL)clearIsTyping
+{
     if (conversation.remoteIdentifier == nil){
         return;
     }
-    BOOL const clearIsTyping = [clearIsTypingNumber boolValue];
-    
+
     [self.managedObjectContext performGroupedBlock:^{
         if (clearIsTyping) {
             [self.conversations removeObjectForKey:conversation.objectID];
             self.lastSentTypingEvent = nil;
         } else {
-            self.conversations[conversation.objectID] = isTyping;
+            self.conversations[conversation.objectID] = isTypingNumber;
             [ZMOperationLoop notifyNewRequestsAvailable:self];
         }
     }];
@@ -233,13 +249,13 @@ static NSString * const StartedKey = @"started";
 + (void)notifyTranscoderThatUserIsTyping:(BOOL)isTyping inConversation:(ZMConversation *)conversation;
 {
     NSDictionary *userInfo = @{IsTypingKey: @(isTyping)};
-    [[NSNotificationCenter defaultCenter] postNotificationName:TypingNotificationName object:conversation userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTypingNotificationName object:conversation userInfo:userInfo];
 }
 
 + (void)clearTranscoderStateForTypingInConversation:(ZMConversation *)conversation;
 {
     NSDictionary *userInfo = @{ClearIsTypingKey: @YES};
-    [[NSNotificationCenter defaultCenter] postNotificationName:TypingNotificationName object:conversation userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTypingNotificationName object:conversation userInfo:userInfo];
 }
 
 @end

@@ -29,7 +29,6 @@
 #import "ZMUserImageTranscoder.h"
 #import "StateBaseTest.h"
 #import "ZMObjectStrategyDirectory.h"
-#import "ZMNotifications+Internal.h"
 
 @interface ZMEventProcessingStateTests : StateBaseTest
 

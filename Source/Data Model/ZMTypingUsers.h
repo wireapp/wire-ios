@@ -43,3 +43,11 @@
 @property (nonatomic, readonly) ZMTypingUsers *typingUsers;
 
 @end
+
+
+@interface ZMConversation (ZMTypingUsers)
+
+- (void)setIsTyping:(BOOL)isTyping;
+- (NSSet *)typingUsers;
+
+@end

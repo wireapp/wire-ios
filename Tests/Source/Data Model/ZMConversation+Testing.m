@@ -17,9 +17,9 @@
 // 
 
 
-#import "ZMConversation+Testing.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConversation+UnreadCount.h"
+@import ZMCDataModel;
+@import ZMCMockTransport;
+@import ZMTesting;
 
 @implementation ZMConversation (Testing)
 

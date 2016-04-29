@@ -22,9 +22,7 @@
 @import ZMTransport;
 
 #import "ZMSelfTranscoder+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMSyncStrategy.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "ZMSingleRequestSync.h"
 #import "ZMUpstreamTranscoder.h"

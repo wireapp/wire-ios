@@ -19,18 +19,13 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMIncompleteConversationsCache.h"
 #import "ZMConversationEventsTranscoder+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
 
 #import "ZMSyncStrategy.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMVoiceChannel+Testing.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 static NSString const *GetConversationURL = @"/conversations/%@/events?size=%lu&start=%@&end=%@";

@@ -17,8 +17,7 @@
 // 
 
 
-#import "NSManagedObjectContext+zmessaging.h"
-
+@import ZMCDataModel;
 
 
 @interface NSManagedObjectContext (TestHelpers)

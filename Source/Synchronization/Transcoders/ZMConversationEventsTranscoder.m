@@ -19,14 +19,11 @@
 
 @import ZMCSystem;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMConversationEventsTranscoder+Internal.h"
 #import "ZMIncompleteConversationsCache.h"
-#import "ZMConversation+Internal.h"
 #import "ZMSyncStrategy.h"
-#import "ZMUpdateEvent.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMUser+Internal.h"
 
 static NSTimeInterval const ZMLowPriorityEventsDownloadCooldown = 15; // secs
 const NSUInteger ZMMaximumMessagesPageSize = 50;

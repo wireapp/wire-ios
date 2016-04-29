@@ -19,12 +19,9 @@
 
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMHotFix.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
 #import "ZMOperationLoop.h"
 #import "ZMHotFixDirectory.h"
 #import "ZMUserSession.h"

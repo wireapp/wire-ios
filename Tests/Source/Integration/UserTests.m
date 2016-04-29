@@ -20,12 +20,11 @@
 @import Foundation;
 @import ZMTesting;
 @import zmessaging;
-
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
-#import "ZMUser+Testing.h"
 #import "ZMUserSession.h"
-#import "ZMEditableUser.h"
+#import "ZMUser+Testing.h"
 
 @interface UserTests : IntegrationTestBase
 

@@ -24,7 +24,6 @@
 #import "ZMAddressBookEncoder.h"
 #import "ZMAddressBook.h"
 #import "ZMOperationLoop.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 static NSString * const ZMEmptyAddressBookNeedsToBeUploadedKey = @"ZMEmptyAddressBookNeedsToBeUploaded";
 

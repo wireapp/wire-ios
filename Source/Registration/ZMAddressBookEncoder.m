@@ -17,14 +17,11 @@
 // 
 
 
-#import "ZMAddressBookEncoder.h"
+@import ZMUtilities;
+@import ZMCDataModel;
 
+#import "ZMAddressBookEncoder.h"
 #import "ZMAddressBook.h"
-#import "ZMAddressBookContact.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMUser+Internal.h"
-#import "ZMEmailAddressValidator.h"
-#import "ZMPhoneNumberValidator.h"
 #import <CommonCrypto/CommonDigest.h>
 
 static dispatch_queue_t ZMAddressBookIsolationQueue;

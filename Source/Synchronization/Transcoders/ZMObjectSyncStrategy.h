@@ -19,11 +19,11 @@
 
 
 @import Foundation;
+@import ZMCDataModel;
 @import ZMCSystem;
 
 #import "ZMRequestGenerator.h"
 #import "ZMContextChangeTracker.h"
-#import "ZMFetchRequestBatch.h"
 
 @class ZMTransportRequest;
 @class ZMSyncStrategy;

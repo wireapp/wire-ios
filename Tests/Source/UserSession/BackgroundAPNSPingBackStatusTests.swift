@@ -56,7 +56,7 @@ class OperationLoopNewRequestObserver {
     var callCount = 0
     
     func didReceiveUpdateEvents(events: [ZMUpdateEvent]?) {
-        callCount++
+        callCount += 1
         didReceiveUpdateEventsBlock?(events)
     }
 }

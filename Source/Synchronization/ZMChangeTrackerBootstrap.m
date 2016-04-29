@@ -18,12 +18,10 @@
 
 
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMChangeTrackerBootstrap+Testing.h"
 #import "ZMContextChangeTracker.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMManagedObject+Internal.h"
-#import "NSFetchRequest+ZMRelationshipKeyPaths.h"
 
 @interface ZMChangeTrackerBootstrap ()
 

@@ -19,18 +19,12 @@
 
 @import ZMTransport;
 @import ZMTesting;
+@import ZMCDataModel;
 
 #import "ZMVoiceChannelTests.h"
-#import "ZMVoiceChannel+Testing.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMFlowSync.h"
 #import "ZMUserSession.h"
-#import "ZMConversation.h"
-#import "ZMConnection+Internal.h"
 #import "ZMAVSBridge.h"
-#import "NSError+ZMConversationInternal.h"
 
 #if TARGET_OS_IPHONE
 @import CoreTelephony;
@@ -264,7 +258,7 @@
     [[[userSession stub] andReturn:self.uiMOC] managedObjectContext];
 
     // when
-    NSAttributedString *s = [ZMVoiceChannel voiceChannelDebugInformationInUserSession:userSession];
+    NSAttributedString *s = [ZMVoiceChannel voiceChannelDebugInformation];
 
     // then
     XCTAssertEqualObjects(s.string, @"Session ID: \nSession start date: \nSession start date (GMT): \n");
@@ -279,7 +273,7 @@
     [[[userSession stub] andReturn:self.uiMOC] managedObjectContext];
 
     // when
-    NSAttributedString *s = [ZMVoiceChannel voiceChannelDebugInformationInUserSession:userSession];
+    NSAttributedString *s = [ZMVoiceChannel voiceChannelDebugInformation];
 
     // then
     NSArray *lines = [s.string componentsSeparatedByString:@"\n"];

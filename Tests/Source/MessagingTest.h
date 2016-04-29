@@ -19,9 +19,9 @@
 
 @import ZMTesting;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "NSManagedObjectContext+TestHelpers.h"
-#import "ZMUser.h"
 
 
 @class ZMEventID;

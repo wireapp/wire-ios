@@ -17,10 +17,11 @@
 // 
 
 
+@import ZMCDataModel;
+
 #import "MessagingTest.h"
 #import "ZMLocallyInsertedObjectSet.h"
 #import "MockEntity.h"
-#import "ZMManagedObject+Internal.h"
 
 @interface ZMLocalInsertedObjectSetTests : MessagingTest
 

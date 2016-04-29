@@ -18,11 +18,9 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
-#import "ZMMessage+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
 
 
 

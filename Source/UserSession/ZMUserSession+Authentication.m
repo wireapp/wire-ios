@@ -18,6 +18,7 @@
 
 
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMUserSession+Authentication.h"
 #import "ZMUserSession+Internal.h"
@@ -26,8 +27,6 @@
 #import "NSError+ZMUserSessionInternal.h"
 #import "ZMCredentials.h"
 #import "ZMUserSessionAuthenticationNotification.h"
-#import "ZMUser+Internal.h"
-#import "ZMPhoneNumberValidator.h"
 #import "ZMPushToken.h"
 
 static char* const ZMLogTag ZM_UNUSED = "Authentication";

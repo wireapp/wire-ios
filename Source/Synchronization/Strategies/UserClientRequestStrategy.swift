@@ -21,6 +21,7 @@ import Foundation
 import ZMTransport
 import ZMUtilities
 import Cryptobox
+import ZMCDataModel
 
 private let zmLog = ZMSLog(tag: "Crypto")
 
@@ -65,7 +66,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         let deletePredicate = NSPredicate(format: "\(ZMUserClientMarkedToDeleteKey) == YES")
         let modifiedPredicate = self.modifiedPredicate()
 
-        self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self, entityName: UserClient.entityName(), updatePredicate: modifiedPredicate, filter: nil, keysToSync: [ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey], managedObjectContext: context)
+        self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self, entityName: UserClient.entityName(), updatePredicate: modifiedPredicate, filter: nil, keysToSync: [ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey], managedObjectContext: context)
         self.deleteSync = ZMUpstreamModifiedObjectSync(transcoder: self, entityName: UserClient.entityName(), updatePredicate: deletePredicate, filter: nil, keysToSync: [ZMUserClientMarkedToDeleteKey], managedObjectContext: context)
         self.insertSync = ZMUpstreamInsertedObjectSync(transcoder: self, entityName: UserClient.entityName(), filter: insertSyncFilter, managedObjectContext: context)
         
@@ -156,7 +157,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         return requestsFactory.fetchClientsRequest()
     }
     
-    public func requestForUpdatingObject(managedObject: ZMManagedObject!, forKeys keys: Set<NSObject>!) -> ZMUpstreamRequest! {
+    public func requestForUpdatingObject(managedObject: ZMManagedObject, forKeys keys: Set<NSObject>) -> ZMUpstreamRequest? {
         if let managedObject = managedObject as? UserClient {
             guard let clientUpdateStatus = self.clientUpdateStatus else { fatal("clientUpdateStatus is not set") }
             
@@ -181,7 +182,12 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
                     let map = MissingClientsMap(Array(missing), pageSize: requestsFactory.missingClientsUserPageSize)
                     request = requestsFactory.fetchMissingClientKeysRequest(map)
                 }
-                
+            case _ where keys.contains(ZMUserClientNeedsToUpdateSignalingKeysKey):
+                do {
+                    try request = requestsFactory.updateClientSignalingKeysRequest(managedObject)
+                } catch let e {
+                    fatal("Couldn't create request for new signaling keys: \(e)")
+                }
             default: fatal("Unknown keys to sync (\(keys))")
             }
             
@@ -192,7 +198,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         }
     }
     
-    public func requestForInsertingObject(managedObject: ZMManagedObject!, forKeys keys: Set<NSObject>!) -> ZMUpstreamRequest! {
+    public func requestForInsertingObject(managedObject: ZMManagedObject, forKeys keys: Set<NSObject>?) -> ZMUpstreamRequest? {
         if let managedObject = managedObject as? UserClient {
             guard let authenticationStatus = self.authenticationStatus else { fatal("authenticationStatus is not set") }
             let request = try? requestsFactory.registerClientRequest(managedObject, credentials: clientRegistrationStatus?.emailCredentials, authenticationStatus: authenticationStatus)
@@ -203,11 +209,11 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         }
     }
     
-    public func failedToUpdateInsertedObject(managedObject: ZMManagedObject!, request upstreamRequest: ZMUpstreamRequest!, response: ZMTransportResponse!, keysToParse: Set<NSObject>!) -> Bool {
-        if let keys = keysToParse where keys.contains(ZMUserClientNumberOfKeysRemainingKey) {
+    public func shouldRetryToSyncAfterFailedToUpdateObject(managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse: Set<NSObject>) -> Bool {
+        if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             return false
         }
-        else if let keys = keysToParse where keys.contains(ZMUserClientMarkedToDeleteKey) {
+        else if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
             let error = self.errorFromFailedDeleteResponse(response)
             if error.code == ClientUpdateError.ClientToDeleteNotFound.rawValue {
                 self.managedObjectContext.deleteObject(managedObject)
@@ -228,7 +234,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         }
     }
     
-    public func updateInsertedObject(managedObject: ZMManagedObject!, request upstreamRequest: ZMUpstreamRequest!, response: ZMTransportResponse!) {
+    public func updateInsertedObject(managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
         if let client = managedObject as? UserClient {
             
             guard
@@ -318,7 +324,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
     }
     
     /// Returns whether synchronization of this object needs additional requests
-    public func updateUpdatedObject(managedObject: ZMManagedObject!, requestUserInfo: [NSObject : AnyObject]!, response: ZMTransportResponse!, keysToParse: Set<NSObject>!) -> Bool {
+    public func updateUpdatedObject(managedObject: ZMManagedObject, requestUserInfo: [NSObject : AnyObject]?, response: ZMTransportResponse, keysToParse: Set<NSObject>) -> Bool {
         
         if keysToParse.contains(ZMUserClientMissingKey) {
             return processResponseForUpdatingMissingClients(managedObject, requestUserInfo: requestUserInfo, responsePayload: response.payload)
@@ -498,7 +504,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
     }
     
     // Should return the objects that need to be refetched from the BE in case of upload error
-    public func objectToRefetchForFailedUpdateOfObject(managedObject: ZMManagedObject!) -> ZMManagedObject! {
+    public func objectToRefetchForFailedUpdateOfObject(managedObject: ZMManagedObject) -> ZMManagedObject? {
         return nil
     }
     
@@ -561,7 +567,8 @@ public struct MissingClientsMap {
     
     public init(_ missingClients: [UserClient], pageSize: Int) {
         
-        let addClientIdToMap = { (var clientsMap: [String : [String]], missingClient: UserClient) -> [String:[String]] in
+        let addClientIdToMap = { (clientsMap: [String : [String]], missingClient: UserClient) -> [String:[String]] in
+            var clientsMap = clientsMap
             let missingUserId = missingClient.user!.remoteIdentifier!.transportString()
             clientsMap[missingUserId] = (clientsMap[missingUserId] ?? []) + [missingClient.remoteIdentifier]
             return clientsMap

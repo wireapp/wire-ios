@@ -17,9 +17,10 @@
 // 
 
 
+@import ZMUtilities;
+
 #import <Foundation/Foundation.h>
 #import "MessagingTest.h"
-#import "NSString+Normalization.h"
 
 @interface NSString_NormalizationTests : MessagingTest
 

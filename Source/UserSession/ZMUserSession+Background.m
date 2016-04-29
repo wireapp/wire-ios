@@ -18,6 +18,7 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUserSession+Internal.h"
 #import "ZMUserSession+Background+Testing.h"
@@ -26,13 +27,7 @@
 #import "ZMLocalNotificationDispatcher.h"
 
 #import "ZMLocalNotification.h"
-#import "ZMConversation+Internal.h"
-#import "ZMVoiceChannel.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMBackgroundFetchState.h"
-#import <zmessaging/zmessaging-Swift.h>
-#import "ZMUser+Internal.h"
-#import "ZMConnection+Internal.h"
 #import "ZMUserSession+UserNotificationCategories.h"
 #import "ZMStoredLocalNotification.h"
 #import <zmessaging/zmessaging-Swift.h>

@@ -18,15 +18,10 @@
 
 
 @import ZMTransport;
-
+@import ZMCDataModel;
 
 #import "ZMIncompleteConversationsCache.h"
-#import "ZMConversation+Internal.h"
-#import "NSNotification+ManagedObjectContextSave.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMOperationLoop.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser.h"
 
 static const NSUInteger ConversationPriorityCount = 5;
 

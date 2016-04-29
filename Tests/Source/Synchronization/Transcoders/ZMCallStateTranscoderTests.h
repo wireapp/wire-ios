@@ -18,26 +18,19 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMCallStateTranscoder.h"
-#import "ZMConversation+Internal.h"
 #import "ZMContextChangeTracker.h"
 #import "ZMDownstreamObjectSync.h"
-#import "ZMUser+Internal.h"
 
-#import "ZMManagedObject+Internal.h"
-#import "ZMUpdateEvent.h"
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "ZMFlowSync.h"
 #import "ZMObjectStrategyDirectory.h"
-#import "ZMConnection+Internal.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMNotifications.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
 #import "ZMUpstreamModifiedObjectSync.h"
-#import "ZMVoiceChannel+Testing.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMOperationLoop.h"
 #import "ZMGSMCallHandler.h"

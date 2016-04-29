@@ -18,15 +18,12 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMHotFix.h"
 #import "ZMHotFixDirectory.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMManagedObject+Internal.h"
-
+#import <zmessaging/zmessaging-Swift.h>
 
 @interface VersionNumberTests : MessagingTest
 @end
@@ -484,6 +481,86 @@
     XCTAssertFalse([[NSFileManager defaultManager] fileExistsAtPath:[conversationUrl relativePath]]);
 }
 
+- (void)testThatItCopiesTheAPSDecryptionKeysFromKeyChainToSelfClient_41_43
+{
+    // given
+    UserClient *userClient = [self createSelfClient];
+    NSData *encryptionKey = [NSData randomEncryptionKey];
+    NSData *verificationKey = [NSData randomEncryptionKey];
+    
+    [ZMKeychain setData:verificationKey forAccount:@"APSVerificationKey"];
+    [ZMKeychain setData:encryptionKey forAccount:@"APSDecryptionKey"];
+
+    // when
+    self.sut = [[ZMHotFix alloc] initWithSyncMOC:self.syncMOC];
+    [self.sut applyPatchesForCurrentVersion:@"41.42"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *newVersion = [self.syncMOC persistentStoreMetadataForKey:@"lastSavedVersion"];
+    XCTAssertEqualObjects(newVersion, @"41.42");
+    
+    // then
+    XCTAssertEqualObjects(userClient.apsVerificationKey, verificationKey);
+    XCTAssertEqualObjects(userClient.apsDecryptionKey, encryptionKey);
+    XCTAssertFalse(userClient.needsToUploadSignalingKeys);
+    XCTAssertFalse([userClient hasLocalModificationsForKey:@"needsToUploadSignalingKeys"]);
+    
+    // and when
+    // the keys change and afterwards we are updating again
+    userClient.apsDecryptionKey = [NSData randomEncryptionKey];
+    userClient.apsVerificationKey = [NSData randomEncryptionKey];
+    
+    [self.sut applyPatchesForCurrentVersion:@"41.43"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *newVersion2 = [self.syncMOC persistentStoreMetadataForKey:@"lastSavedVersion"];
+    XCTAssertEqualObjects(newVersion2, @"41.43");
+    
+    // then
+    // we didn't overwrite the keys witht the old ones stored in the keychain
+    XCTAssertNotEqualObjects(userClient.apsVerificationKey, verificationKey);
+    XCTAssertNotEqualObjects(userClient.apsDecryptionKey, encryptionKey);
+    
+    [ZMKeychain deleteAllKeychainItemsWithAccountName:@"APSVerificationKey"];
+    [ZMKeychain deleteAllKeychainItemsWithAccountName:@"APSDecryptionKey"];
+}
+
+- (void)testThatItSetsNeedsToUploadSignalingKeysIfKeysNotPresentInKeyChain_41_43
+{
+    // given
+    UserClient *userClient = [self createSelfClient];
+    XCTAssertFalse(userClient.needsToUploadSignalingKeys);
+    XCTAssertFalse([userClient hasLocalModificationsForKey:@"needsToUploadSignalingKeys"]);
+    
+    // when
+    self.sut = [[ZMHotFix alloc] initWithSyncMOC:self.syncMOC];
+    [self.sut applyPatchesForCurrentVersion:@"41.42"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *newVersion = [self.syncMOC persistentStoreMetadataForKey:@"lastSavedVersion"];
+    XCTAssertEqualObjects(newVersion, @"41.42");
+    
+    // then
+    XCTAssertTrue(userClient.needsToUploadSignalingKeys);
+    XCTAssertTrue([userClient hasLocalModificationsForKey:@"needsToUploadSignalingKeys"]);
+    
+    // and when
+    // we created and stored signaling keys and are updatign again
+    userClient.apsVerificationKey = [NSData randomEncryptionKey];
+    userClient.needsToUploadSignalingKeys = NO;
+    [userClient resetLocallyModifiedKeys:[NSSet setWithObject:@"needsToUploadSignalingKeys"]];
+    
+    [self.sut applyPatchesForCurrentVersion:@"41.43"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *newVersion2 = [self.syncMOC persistentStoreMetadataForKey:@"lastSavedVersion"];
+    XCTAssertEqualObjects(newVersion2, @"41.43");
+
+    // then
+    // we are not reuploading the keys
+    XCTAssertFalse(userClient.needsToUploadSignalingKeys);
+    XCTAssertFalse([userClient hasLocalModificationsForKey:@"needsToUploadSignalingKeys"]);
+}
 
 @end
 

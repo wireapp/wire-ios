@@ -16,15 +16,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "ObjectTranscoderTests.h"
 #import "ZMAddressBookSync+Testing.h"
 #import "ZMAddressBookEncoder.h"
-#import "ZMAddressBookContact.h"
 #import "ZMSingleRequestSync.h"
 #import "ZMAddressBook.h"
-#import "ZMUser+Internal.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 
 @interface ZMAddressBookSyncTests : ObjectTranscoderTests
 {

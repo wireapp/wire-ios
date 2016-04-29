@@ -18,14 +18,11 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
+@import ZMUtilities;
 
 #import "ZMSearch.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMUser+Internal.h"
 #import "ZMSearchResult+Internal.h"
-#import "NSString+Normalization.h"
-#import "ZMConversation+Internal.h"
-#import "ZMSearchUser+Internal.h"
 #import "ZMSearchRequestCodec.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMSearchRequest+Internal.h"

@@ -16,10 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUserProfileUpdateStatus.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMPhoneNumberValidator.h"
 #import "NSError+ZMUserSessionInternal.h"
 
 static NSString *const UserProfileNotificationName =  @"ZMUUserProfileNotificationName";

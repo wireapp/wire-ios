@@ -16,14 +16,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import <XCTest/XCTest.h>
 #import <ocmock/ocmock.h>
 #import "zmessaging.h"
+
 #import "ZMUserSession+Internal.h"
 #import "IntegrationTestBase.h"
 #import "ZMAddressBook.h"
-#import "ZMAddressBookContact.h"
 
 
 @interface MockSearchResultObserver : NSObject <ZMSearchResultObserver>
@@ -117,17 +118,6 @@
     [[[[_mockAddressBook stub] classMethod] andReturnValue:@(authorized)] userHasAuthorizedAccess];
     [[[_mockAddressBook stub] andReturn:contacts] contacts];
     [[[[_mockAddressBook stub] classMethod] andReturn:_mockAddressBook] addressBook] ;
-}
-
-- (void)testThatWeGetACorrectPersonalInvitationUrl;
-{
-        // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
-        
-        // then
-    XCTAssertNotNil([self.userSession checkForPersonalInvitationURL]);
-        
 }
     
 - (void)testThatFetchingUsersWithAddressBookWorksAtAll;
@@ -236,42 +226,6 @@
     [self.searchDirectory removeSearchResultObserver:observer];
 }
 
-- (void)testThatWeCanAcceptInvitationAndLoginAfterPreviousCookieWasStillPresent
-{
-    // given
-    [self.mockTransportSession logoutSelfUser];
-    [self setupAddressBook];
-    
-    ZMAddressBookContact *invitee = self.addressBookContacts[0];
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session insertInvitationForSelfUser:self.selfUser inviteeName:invitee.name mail:invitee.emailAddresses[0]];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    ZMCompleteRegistrationUser *registrationUser = [ZMCompleteRegistrationUser registrationUserWithEmail:invitee.emailAddresses[0] password:@"test123456" invitationCode:self.mockTransportSession.invitationCode];
-    registrationUser.name = invitee.name;
-    registrationUser.accentColorValue = ZMAccentColorSoftPink;
-    
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session whiteListEmail:registrationUser.emailAddress];
-    }];
-    
-    // when we still have a cookie in the cookie store
-    [[self.mockTransportSession cookieStorage] setAuthenticationCookieData:[@"12345" dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    [self recreateUserSessionAndWipeCache:YES];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // and we try to register from the invitation
-    [self.userSession registerSelfUser:registrationUser];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then it should have been deleted
-    XCTAssertEqualObjects([ZMUser selfUserInContext:self.uiMOC].emailAddress, invitee.emailAddresses[0]);
-}
-
-
 - (void)testThatFetchingContactDoesntDuplicateWireAndAddressBookContact;
 {
     //given
@@ -306,261 +260,6 @@
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     
     [self.searchDirectory removeSearchResultObserver:observer];
-}
-
-- (void)testThatInvitingTriggersARequest;
-{
-    //given
-    XCTAssert([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self setupAddressBook];
-    ZMAddressBookContact *invitee = [self.addressBookContacts firstObject];
-    ZMPersonName *selfUserPersonName = [ZMPersonName personWithName:self.selfUser.name];
-    
-    __block XCTestExpectation *expectation = [self expectationWithDescription:@"Invitation request"];
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request ) {
-        XCTAssertEqual(request.method, ZMMethodPOST);
-        XCTAssertEqualObjects(request.path, @"/invitations");
-        
-        XCTAssertEqualObjects(selfUserPersonName.givenName, [[request.payload asDictionary] stringForKey:@"inviter_name"]);
-        XCTAssertEqualObjects(invitee.name, [[request.payload asDictionary] stringForKey:@"invitee_name"]);
-        XCTAssertNotNil([[request.payload asDictionary] objectForKey:@"message"]);
-        [expectation fulfill];
-        return ZMCustomResponseGeneratorReturnResponseNotCompleted;
-    };
-    
-    //when
-    [invitee inviteWithEmail:invitee.emailAddresses[0] toGroupConversation:nil userSession:self.userSession];
-   
-    //then
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
-}
-
-- (void)testThatInvitingAUserWithEmailCreatesAnInvitationInBackend;
-{
-    //given
-    XCTAssert([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self setupAddressBook];
-    ZMAddressBookContact *invitee = [self.addressBookContacts firstObject];
-    
-    //when
-    [invitee inviteWithEmail:invitee.emailAddresses[0] toGroupConversation:nil userSession:self.userSession];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    //then
-    NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:@"inviter == %@ AND inviteeEmail == %@", self.selfUser, invitee.emailAddresses[0]];
-    NSFetchRequest *invitationFetchRequest = [MockPersonalInvitation sortedFetchRequestWithPredicate:fetchPredicate];
-    NSArray *invitations = [self.mockTransportSession.managedObjectContext executeFetchRequest:invitationFetchRequest error:nil];
-    XCTAssertEqual(invitations.count, 1lu);
-}
-
-- (void)testThatInvitingAUserWithPhoneCreatesAnInvitationInBackend;
-{
-    //given
-    XCTAssert([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self setupAddressBook];
-    ZMAddressBookContact *invitee = [self.addressBookContacts firstObject];
-    
-    //when
-    [invitee inviteWithPhoneNumber:invitee.phoneNumbers[0] toGroupConversation:nil userSession:self.userSession];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    //then
-    NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:@"inviter == %@ AND inviteePhone == %@", self.selfUser, invitee.phoneNumbers[0]];
-    NSFetchRequest *invitationFetchRequest = [MockPersonalInvitation sortedFetchRequestWithPredicate:fetchPredicate];
-    NSArray *invitations = [self.mockTransportSession.managedObjectContext executeFetchRequest:invitationFetchRequest error:nil];
-    XCTAssertEqual(invitations.count, 1lu);
-}
-
-
-- (void)testThatInvitingAWireUserReturnsACreatedConnectionToThatUser;
-{
-    //given
-    XCTAssert([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    ZMAddressBookContact *invitee = [self addressBookContactWithUser:self.user5];
-    self.addressBookContacts = [self addressBookWithContainingEmails:YES phoneNumbers:YES];
-    self.addressBookContacts = [self.addressBookContacts arrayByAddingObject:invitee];
-    
-    [self setupAddressBookStubsWithAuthorizationAccess:YES contacts:self.addressBookContacts];
-    
-    //when
-    [invitee inviteWithEmail:invitee.emailAddresses[0] toGroupConversation:nil userSession:self.userSession];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    //then
-    NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:@"inviter == %@ AND inviteeEmail == %@", self.selfUser, invitee.emailAddresses[0]];
-    NSFetchRequest *invitationFetchRequest = [MockPersonalInvitation sortedFetchRequestWithPredicate:fetchPredicate];
-    NSArray *invitations = [self.mockTransportSession.managedObjectContext executeFetchRequest:invitationFetchRequest error:nil];
-    XCTAssertEqual(invitations.count, 0lu);
-    
-    NSPredicate *connectionFetchPredicate = [NSPredicate predicateWithFormat:@"from == %@ AND to == %@", self.selfUser, self.user5];
-    NSFetchRequest *connectionFetchRequest = [MockConnection sortedFetchRequest];
-    connectionFetchRequest.predicate = connectionFetchPredicate;
-    NSArray *connections = [self.mockTransportSession.managedObjectContext executeFetchRequest:connectionFetchRequest error:nil];
-    XCTAssertEqual(connections.count, 1lu);
-}
-
-- (void)testThatInvitingAWireUserReturnsTheAlreadyCreatedConnectionToThatUser;
-{
-    //given
-    XCTAssert([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    __block MockConnection *connection;
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        connection = [session createConnectionRequestFromUser:self.selfUser toUser:self.user3 message:@"You won the Gemini Croquet contest. Let's go to Floston Paradise!"];
-    }];
-    
-    ZMAddressBookContact *invitee = [self addressBookContactWithUser:self.user3];
-    self.addressBookContacts = [self addressBookWithContainingEmails:YES phoneNumbers:YES];
-    self.addressBookContacts = [self.addressBookContacts arrayByAddingObject:invitee];
-    [self setupAddressBookStubsWithAuthorizationAccess:YES contacts:self.addressBookContacts];
-    
-    //when
-    [invitee inviteWithEmail:invitee.emailAddresses[0] toGroupConversation:nil userSession:self.userSession];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    //then
-    NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:@"inviter == %@ AND inviteeEmail == %@", self.selfUser, invitee.emailAddresses[0]];
-    NSFetchRequest *invitationFetchRequest = [MockPersonalInvitation sortedFetchRequestWithPredicate:fetchPredicate];
-    NSArray *invitations = [self.mockTransportSession.managedObjectContext executeFetchRequest:invitationFetchRequest error:nil];
-    XCTAssertEqual(invitations.count, 0lu);
-    
-    NSPredicate *connectionFetchPredicate = [NSPredicate predicateWithFormat:@"from == %@ AND to == %@", self.selfUser, self.user3];
-    NSFetchRequest *connectionFetchRequest = [MockConnection sortedFetchRequest];
-    connectionFetchRequest.predicate = connectionFetchPredicate;
-    NSArray *connections = [self.mockTransportSession.managedObjectContext executeFetchRequest:connectionFetchRequest error:nil];
-    XCTAssertEqual(connections.count, 1lu);
-    XCTAssertEqualObjects([connections firstObject], connection);
-}
-
-
-- (void)testThatRegisteringInviteeWithWrongInvitationCodeFails;
-{
-    // given
-    XCTAssert([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    [self setupAddressBook];
-    ZMAddressBookContact *invitee = [self.addressBookContacts firstObject];
-    [invitee inviteWithEmail:[invitee.emailAddresses firstObject] toGroupConversation:nil userSession:self.userSession];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self recreateUserSessionAndWipeCache:YES];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    ZMCompleteRegistrationUser *registrationUser = [ZMCompleteRegistrationUser registrationUserWithEmail:invitee.emailAddresses[0] password:@"test123456" invitationCode:self.mockTransportSession.invalidInvitationCode];
-    registrationUser.name = invitee.name;
-    registrationUser.accentColorValue = ZMAccentColorSoftPink;
-    
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session whiteListEmail:registrationUser.emailAddress];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    id mockRegistrationObserver = [OCMockObject mockForProtocol:@protocol(ZMRegistrationObserver)];
-    id regToken = [self.userSession addRegistrationObserver:mockRegistrationObserver];
-    
-    // expectation
-    [[mockRegistrationObserver expect] registrationDidFail:[OCMArg checkWithBlock:^BOOL(NSError *error) {
-        XCTAssertEqual(error.code, (long)ZMUserSessionInvalidInvitationCode);
-        return YES;
-    }]];
-    
-    // when
-    [self.userSession registerSelfUser:registrationUser];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    [mockRegistrationObserver verify];
-    
-    [self.userSession removeRegistrationObserverForToken:regToken];
-}
-
-
-- (void)testThatRegisteringInviteeReceiveConnectionAndConversationWithInviter;
-{
-    // given
-    [self.mockTransportSession logoutSelfUser];
-    
-    [self setupAddressBook];
-    ZMAddressBookContact *invitee = self.addressBookContacts[0];
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session insertInvitationForSelfUser:self.selfUser inviteeName:invitee.name mail:invitee.emailAddresses[0]];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    
-    
-    ZMCompleteRegistrationUser *registrationUser = [ZMCompleteRegistrationUser registrationUserWithEmail:invitee.emailAddresses[0] password:@"test123456" invitationCode:self.mockTransportSession.invitationCode];
-    registrationUser.name = invitee.name;
-    registrationUser.accentColorValue = ZMAccentColorSoftPink;
-    
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session whiteListEmail:registrationUser.emailAddress];
-    }];
-    
-    // when
-    [self.userSession registerSelfUser:registrationUser];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    NSFetchRequest *mockUserFetchRequest = [MockUser sortedFetchRequestWithPredicate:[NSPredicate predicateWithFormat:@"name == %@ AND email == %@", registrationUser.name, registrationUser.emailAddress]];
-    NSArray *userArray = [self.mockTransportSession.managedObjectContext executeFetchRequest:mockUserFetchRequest error:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertEqual(userArray.count, 1u);
-    
-    MockUser *user = userArray[0];
-    
-    MockConversation *conversation = [MockConversation conversationInMoc:self.mockTransportSession.managedObjectContext withCreator:self.selfUser otherUsers:@[user] type:ZMTConversationTypeOneOnOne];
-    
-    //then
-    XCTAssertEqualObjects(user.email, registrationUser.emailAddress);
-    XCTAssertEqualObjects(user.name, registrationUser.name);
-    XCTAssertNotNil(conversation);
-}
-
-- (void)testThatRegisteringInviteeDeletesTheInvitationInSelfUser;
-{
-    [self.mockTransportSession logoutSelfUser];
-    
-    [self setupAddressBook];
-    ZMAddressBookContact *invitee = self.addressBookContacts[0];
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session insertInvitationForSelfUser:self.selfUser inviteeName:invitee.name mail:invitee.emailAddresses[0]];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    
-    ZMCompleteRegistrationUser *registrationUser = [ZMCompleteRegistrationUser registrationUserWithEmail:invitee.emailAddresses[0] password:@"test123456" invitationCode:self.mockTransportSession.invitationCode];
-    registrationUser.name = invitee.name;
-    registrationUser.accentColorValue = ZMAccentColorSoftPink;
-    
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session whiteListEmail:registrationUser.emailAddress];
-    }];
-    
-    // when
-    [self.userSession registerSelfUser:registrationUser];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSFetchRequest *mockUserFetchRequest = [MockPersonalInvitation sortedFetchRequestWithPredicate:[NSPredicate predicateWithFormat:@"inviteeName == %@ AND inviteeEmail == %@", registrationUser.name, registrationUser.emailAddress]];
-    NSArray *userArray = [self.mockTransportSession.managedObjectContext executeFetchRequest:mockUserFetchRequest error:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    XCTAssertEqual(userArray.count, 0lu);
 }
 
 @end

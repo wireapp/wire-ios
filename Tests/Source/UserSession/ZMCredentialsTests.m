@@ -16,9 +16,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMUtilities;
 
 #import "MessagingTest.h"
-#import "ZMPhoneNumberValidator.h"
 #import "ZMCredentials.h"
 
 @interface ZMCredentialsTests : MessagingTest

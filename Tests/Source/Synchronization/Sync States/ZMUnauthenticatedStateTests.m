@@ -19,6 +19,7 @@
 
 @import UIKit;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMUnauthenticatedState+Tests.h"
@@ -31,9 +32,7 @@
 #import "ZMCredentials+Internal.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMUserSessionAuthenticationNotification.h"
-#import "ZMEditableUser.h"
 #import "ZMRegistrationTranscoder.h"
-#import "ZMUser+Internal.h"
 
 
 @interface ZMUnauthenticatedStateTests : StateBaseTest

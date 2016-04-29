@@ -18,10 +18,10 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMCommonContactsSearch.h"
-#import "ZMUser+Internal.h"
 
 static NSString const *SearchAPI = @"/search/common";
 

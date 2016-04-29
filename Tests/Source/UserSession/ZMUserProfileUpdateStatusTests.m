@@ -17,10 +17,11 @@
 // 
 
 
+@import ZMUtilities;
+
 #import "MessagingTest.h"
 #import "ZMUserProfileUpdateStatus.h"
 #import "NSError+ZMUserSessionInternal.h"
-#import "ZMPhoneNumberValidator.h"
 
 @interface ZMUserProfileUpdateStatusTests : MessagingTest
 

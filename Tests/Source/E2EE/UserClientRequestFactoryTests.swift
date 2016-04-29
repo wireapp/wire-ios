@@ -17,12 +17,12 @@
 // 
 
 
-import UIKit
-import XCTest
 import zmessaging
+import ZMUtilities
 import ZMTesting
 import Cryptobox
 import ZMCMockTransport
+import ZMCDataModel
 
 // used by tests to fake errors on genrating pre keys
 public class FakeKeysStore: UserClientKeysStore {
@@ -82,7 +82,7 @@ class UserClientRequestFactoryTests: MessagingTest {
     func expectedKeyPayloadForClientPreKeys(client : UserClient) -> [NSDictionary] {
         let generatedKeys = (client.keysStore as! FakeKeysStore).lastGeneratedKeys
         let expectedPrekeys = generatedKeys.keys.enumerate().map {
-            return ["key": $1.data!.base64String, "id": Int(generatedKeys.minIndex) + $0]
+            return ["key": $1.data!.base64String(), "id": Int(generatedKeys.minIndex) + $0]
         }
         return expectedPrekeys
     }
@@ -103,7 +103,7 @@ class UserClientRequestFactoryTests: MessagingTest {
                 AssertDictionaryHasOptionalValue(payload, key: "password", expected: credentials.password!, "Payload should contain password")
                 
                 let lastPreKey = (client.keysStore as! FakeKeysStore).lastGeneratedLastPrekey!
-                let expectedLastPreKeyPayload = ["key": lastPreKey.data!.base64String, "id": CBMaxPreKeyID+1]
+                let expectedLastPreKeyPayload = ["key": lastPreKey.data!.base64String(), "id": CBMaxPreKeyID+1]
                 
                 AssertDictionaryHasOptionalValue(payload, key: "lastkey", expected: expectedLastPreKeyPayload, "Payload should contain last prekey")
                 
@@ -147,7 +147,7 @@ class UserClientRequestFactoryTests: MessagingTest {
                 XCTAssertNil(payload["password"])
                 
                 let lastPreKey = try! client.keysStore.lastPreKey()
-                let expectedLastPreKeyPayload = ["key": lastPreKey.data!.base64String, "id": CBMaxPreKeyID+1]
+                let expectedLastPreKeyPayload = ["key": lastPreKey.data!.base64String(), "id": CBMaxPreKeyID+1]
                 
                 AssertDictionaryHasOptionalValue(payload, key: "lastkey", expected: expectedLastPreKeyPayload, "Payload should contain last prekey")
                 

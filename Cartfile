@@ -1,7 +1,0 @@
-github “wireapp/zmc-cryptobox" ~> 2.0
-github "wireapp/zmc-images" ~> 4.0
-github "wireapp/zmc-transport" ~> 6.0
-github "wireapp/zmc-system" ~> 14.0
-github "wireapp/zmc-protos" ~> 3.0
-github "iziz/libPhoneNumber-iOS" ~> 0.8
-github "pinterest/PINCache" ~> 2.2.1

@@ -19,10 +19,9 @@
 
 @import ZMCSystem;
 @import Foundation;
+@import ZMCDataModel;
 
 #import "ZMSearchRequest.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
 
 
 @implementation ZMSearchRequest

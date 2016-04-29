@@ -20,6 +20,7 @@
 @import UIKit;
 @import ZMCSystem;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMUnauthenticatedState+Tests.h"
 #import "ZMStateMachineDelegate.h"
@@ -31,9 +32,7 @@
 #import "ZMLoginCodeRequestTranscoder.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMCredentials.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "NSError+ZMUserSessionInternal.h"
-#import "ZMUser+Internal.h"
 #import "ZMTracing.h"
 #import "ZMAddressBookTranscoder.h"
 #import "ZMStateMachineDelegate.h"

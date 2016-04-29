@@ -18,17 +18,11 @@
 
 
 @import Foundation;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
-#import "ZMSearchUser+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMConnection+Internal.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMNotifications+Internal.h"
-#import "ZMAddressBookContact.h"
 #import <zmessaging/zmessaging-Swift.h>
-#import "ZMBareUser.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 
 @interface ZMSearchUserTests : MessagingTest <ZMUserObserver>
 @property (nonatomic) NSMutableArray *userNotifications;
@@ -38,6 +32,10 @@
 
 - (void)setUp {
     [super setUp];
+    
+    self.syncMOC.zm_userImageCache = [[UserImageLocalCache alloc] init];
+    self.uiMOC.zm_userImageCache = self.syncMOC.zm_userImageCache;
+
     self.userNotifications = [NSMutableArray array];
 }
 

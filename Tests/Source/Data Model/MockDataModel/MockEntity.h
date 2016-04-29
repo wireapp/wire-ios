@@ -17,7 +17,7 @@
 // 
 
 
-#import "ZMManagedObject.h"
+@import ZMCDataModel;
 
 @interface MockEntity : ZMManagedObject
 

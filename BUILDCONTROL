@@ -1,8 +1,0 @@
-# Build control file
-#
-
-[config]
-component: zmessaging
-major_version: 41
-
-

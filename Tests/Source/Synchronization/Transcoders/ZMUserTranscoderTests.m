@@ -19,14 +19,11 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "ObjectTranscoderTests.h"
 #import "ZMUserTranscoder+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMSyncStrategy.h"
-
-#import "ZMConnection+Internal.h"
-#import "ZMUpdateEvent.h"
 #import "ZMUserSession.h"
 #import "ZMContextChangeTracker.h"
 #import "ZMUpstreamModifiedObjectSync.h"
@@ -50,6 +47,10 @@ static NSString *const USER_PATH_WITH_QUERY = @"/users?ids=";
 - (void)setUp
 {
     [super setUp];
+    
+    self.syncMOC.zm_userImageCache = [[UserImageLocalCache alloc] init];
+    self.uiMOC.zm_userImageCache = self.syncMOC.zm_userImageCache;
+    
     self.sut = [[ZMUserTranscoder alloc] initWithManagedObjectContext:self.syncMOC];
     WaitForAllGroupsToBeEmpty(0.5);
 }

@@ -21,10 +21,7 @@
 
 #import "IntegrationTestBase.h"
 #import "ZMSearchRequestCodec.h"
-#import "ZMUser+Internal.h"
 #import "ZMSearchResult+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMSearchUser.h"
 
 @interface ZMSearchRequestCodecTests : IntegrationTestBase
 @property (nonatomic) NSArray *remoteIDStrings;

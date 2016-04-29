@@ -21,6 +21,7 @@
 @import CoreData;
 @import ZMCSystem;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMUserSession+Background.h"
 
@@ -29,16 +30,12 @@
 #import "ZMOperationLoop.h"
 #import "NSError+ZMUserSessionInternal.h"
 #import "ZMCredentials.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMSearchDirectory+Internal.h"
 #import <libkern/OSAtomic.h>
 #import "ZMAuthenticationStatus.h"
 #import "ZMAddressBookTranscoder.h"
 #import "ZMPushToken.h"
-#import "ZMNotifications+Internal.h"
 #import "ZMCommonContactsSearch.h"
-#import "ZMConversation+Internal.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMBlacklistVerificator.h"
 #import "ZMTracing.h"
 #import "ZMAddressBookSync.h"
@@ -50,14 +47,12 @@
 #import "NSURL+LaunchOptions.h"
 #import "ZMessagingLogs.h"
 #import "ZMAddressBook.h"
-#import "ZMAddressBookContact.h"
 #import "ZMAVSBridge.h"
 #import "ZMOnDemandFlowManager.h"
 #import "ZMCookie.h"
 #import "ZMFlowSync.h"
 #import <zmessaging/zmessaging-Swift.h>
 
-#import "ZMStringLengthValidator.h"
 #import "ZMEnvironmentsSetup.h"
 #import "ZMClientRegistrationStatus.h"
 #import "ZMLocalNotificationDispatcher.h"
@@ -66,7 +61,6 @@ static NSInteger const MaximumContactsToParse = 10000;
 
 NSString * const ZMPhoneVerificationCodeKey = @"code";
 NSString * const ZMLaunchedWithPhoneVerificationCodeNotificationName = @"ZMLaunchedWithPhoneVerificationCode";
-NSString * const ZMLaunchedWithPersonalInvitationCodeNotificationName = @"ZMLaunchedWithPersonalInvitationCode";
 NSString * const ZMUserSessionFailedToAccessAddressBookNotificationName = @"ZMUserSessionFailedToAccessAddressBook";
 NSString * const ZMUserSessionTrackingIdentifierDidChangeNotification = @"ZMUserSessionTrackingIdentifierDidChange";
 static NSString * const ZMRequestToOpenSyncConversationNotificationName = @"ZMRequestToOpenSyncConversation";
@@ -215,9 +209,18 @@ ZM_EMPTY_ASSERTING_INIT()
         self.syncManagedObjectContext.zm_userInterfaceContext = self.managedObjectContext;
         self.managedObjectContext.zm_syncContext = self.syncManagedObjectContext;
         
-        UserImageLocalCache *imageCache = [[UserImageLocalCache alloc] init];
-        self.syncManagedObjectContext.zm_userImageCache = imageCache;
-        self.managedObjectContext.zm_userImageCache = imageCache;
+        UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] init];
+        self.syncManagedObjectContext.zm_userImageCache = userImageCache;
+        self.managedObjectContext.zm_userImageCache = userImageCache;
+        
+        ImageAssetCache *imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:100];
+        self.syncManagedObjectContext.zm_imageAssetCache = imageAssetCache;
+        self.managedObjectContext.zm_imageAssetCache = imageAssetCache;
+        
+        FileAssetCache *fileAssetCache = [[FileAssetCache alloc] init];
+        self.syncManagedObjectContext.zm_fileAssetCache = fileAssetCache;
+        self.managedObjectContext.zm_fileAssetCache = fileAssetCache;
+        
         
         ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.managedObjectContext cookieStorage:session.cookieStorage];
         self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:syncManagedObjectContext cookie:cookie];
@@ -613,6 +616,17 @@ ZM_EMPTY_ASSERTING_INIT()
 
 
 
+@implementation ZMUserSession (Transport)
+
+- (void)addCompletionHandlerForBackgroundURLSessionWithIdentifier:(NSString *)identifier handler:(dispatch_block_t)handler
+{
+    [self.transportSession addCompletionHandlerForBackgroundSessionWithIdentifier:identifier handler:handler];
+}
+
+@end
+
+
+
 @implementation ZMUserSession (AddressBookUpload)
 
 + (void)addAddressBookUploadObserver:(id<AddressBookUploadObserver>)observer;
@@ -803,14 +817,9 @@ static NSString * const TrackingIdentifierKey = @"ZMTrackingIdentifier";
         }];
     }
     else if ([URL isURLForPhoneVerification]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:ZMLaunchedWithPhoneVerificationCodeNotificationName object:nil userInfo:@{ ZMPhoneVerificationCodeKey : [URL codeForPhoneVerification] }];
-    }
-    else if ([URL isURLForPersonalInvitation]) {
-        [IncomingPersonalInvitationStrategy storePendingInvitation:URL.codeForPersonalInvitation context:self.syncManagedObjectContext];
-        [ZMOperationLoop notifyNewRequestsAvailable:self];
-    }
-    else if ([URL isURLForPersonalInvitationError]) {
-        [ZMIncomingPersonalInvitationNotification notifyDidNotFindPersonalInvitation];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ZMLaunchedWithPhoneVerificationCodeNotificationName
+                                                            object:nil
+                                                          userInfo:@{ ZMPhoneVerificationCodeKey : [URL codeForPhoneVerification] }];
     }
 }
 
@@ -904,16 +913,6 @@ static NSString * const TrackingIdentifierKey = @"ZMTrackingIdentifier";
     }
     
     self.cachedAddressBookContacts = contacts;
-}
-
-@end
-
-@implementation ZMUserSession (PersonalInvitation)
-
-- (NSURL *)checkForPersonalInvitationURL
-{
-    ZMBackendEnvironment *backendURL = [[ZMBackendEnvironment alloc] init];
-    return [backendURL.frontendURL URLByAppendingPathComponent:@"/i/check"];
 }
 
 @end

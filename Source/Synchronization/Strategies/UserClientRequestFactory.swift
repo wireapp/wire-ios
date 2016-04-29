@@ -20,13 +20,6 @@
 import Foundation
 import Cryptobox
 
-extension NSData {
-    public var base64String: String {
-        return self.base64EncodedStringWithOptions(NSDataBase64EncodingOptions())
-    }
-}
-
-
 enum UserClientRequestError: ErrorType {
     case NoPreKeys
     case NoLastPreKey
@@ -48,34 +41,9 @@ public class UserClientRequestFactory {
 
     public func registerClientRequest(client: UserClient, credentials: ZMEmailCredentials?, authenticationStatus: ZMAuthenticationStatus) throws -> ZMUpstreamRequest {
         
-        //we don't want to generate new prekeys if we already have them
-        let (preKeys, preKeysRangeMin, preKeysRangeMax) : ([CBPreKey], UInt, UInt)
-        do {
-            (preKeys, preKeysRangeMin, preKeysRangeMax) = try client.keysStore.generateMoreKeys(keyCount)
-        }
-        catch {
-            throw UserClientRequestError.NoPreKeys
-        }
-        
-        let preKeysPayloadData = preKeys.enumerate().map { (index, preKey: CBPreKey) in
-            ["key": preKey.data!.base64String, "id": Int(preKeysRangeMin) + index]
-        }
-        
-        let lastKey : CBPreKey
-        do {
-            lastKey = try client.keysStore.lastPreKey()
-        } catch  {
-            throw UserClientRequestError.NoLastPreKey
-        }
-        
-        let lastPreKeyString = lastKey.data!.base64String
-        let lastPreKeyPayloadData = ["key": lastPreKeyString, "id": CBMaxPreKeyID + 1]
-        
-        let apsKeyStore = APSSignalingKeysStore(fromKeychain: false)!
-        apsKeyStore.saveToKeychain()
-        
-        let macKeyString = apsKeyStore.verificationKey.base64String
-        let apnsEncriptionKeyString = apsKeyStore.decryptionKey.base64String
+        let (preKeysPayloadData, preKeysRangeMax) = try payloadForPreKeys(client)
+        let (signalingKeysPayloadData, signalingKeys) = payloadForSignalingKeys()
+        let lastPreKeyPayloadData = try payloadForLastPreKey(client)
         
         var payload: [String: AnyObject] = [
             "type": client.type,
@@ -84,7 +52,7 @@ public class UserClientRequestFactory {
             "class": (client.deviceClass ?? ""),
             "lastkey": lastPreKeyPayloadData,
             "prekeys": preKeysPayloadData,
-            "sigkeys": ["enckey": apnsEncriptionKeyString, "mackey": macKeyString],
+            "sigkeys": signalingKeysPayloadData,
             "cookie" : ((authenticationStatus.cookieLabel.characters.count != 0) ? authenticationStatus.cookieLabel : "")
         ]
         
@@ -93,14 +61,15 @@ public class UserClientRequestFactory {
         }
         
         let request = ZMTransportRequest(path: "/clients", method: ZMTransportRequestMethod.MethodPOST, payload: payload)
-        request.addCompletionHandler(completionHandlerForMaxRangeID(client, maxRangeID: preKeysRangeMax))
+        request.addCompletionHandler(storeMaxRangeID(client, maxRangeID: preKeysRangeMax))
+        request.addCompletionHandler(storeAPSSignalingKeys(client, signalingKeys: signalingKeys))
         
         let upstreamRequest = ZMUpstreamRequest(transportRequest: request)
         return upstreamRequest
     }
     
     
-    func completionHandlerForMaxRangeID(client: UserClient, maxRangeID: UInt) -> ZMCompletionHandler {
+    func storeMaxRangeID(client: UserClient, maxRangeID: UInt) -> ZMCompletionHandler {
         let completionHandler = ZMCompletionHandler(onGroupQueue: client.managedObjectContext!, block: { response in
             if response.result == .Success {
                 client.preKeysRangeMax = Int64(maxRangeID)
@@ -109,33 +78,77 @@ public class UserClientRequestFactory {
         return completionHandler
     }
     
+    func storeAPSSignalingKeys(client: UserClient, signalingKeys: SignalingKeys) -> ZMCompletionHandler {
+        let completionHandler = ZMCompletionHandler(onGroupQueue: client.managedObjectContext!, block: { response in
+            if response.result == .Success {
+                client.apsDecryptionKey = signalingKeys.decryptionKey
+                client.apsVerificationKey = signalingKeys.verificationKey
+                client.needsToUploadSignalingKeys = false
+            }
+        })
+        return completionHandler
+    }
+    
+    internal func payloadForPreKeys(client: UserClient, startIndex: UInt = 0) throws -> (payload: [NSDictionary], maxRange: UInt) {
+        //we don't want to generate new prekeys if we already have them
+        do {
+            let (preKeys, preKeysRangeMin, preKeysRangeMax) = try client.keysStore.generateMoreKeys(keyCount, start: startIndex)
+            let preKeysPayloadData = preKeys.enumerate().map { (index, preKey: CBPreKey) in
+                ["key": preKey.data!.base64String(), "id": Int(preKeysRangeMin) + index]
+            }
+            return (preKeysPayloadData, preKeysRangeMax)
+        }
+        catch {
+            throw UserClientRequestError.NoPreKeys
+        }
+    }
+    
+    internal func payloadForLastPreKey(client: UserClient) throws -> [String: AnyObject] {
+        do {
+            let lastKey = try client.keysStore.lastPreKey()
+            let lastPreKeyString = lastKey.data!.base64String()
+            let lastPreKeyPayloadData : [String: AnyObject] = ["key": lastPreKeyString, "id": CBMaxPreKeyID + 1]
+            return lastPreKeyPayloadData
+        } catch  {
+            throw UserClientRequestError.NoLastPreKey
+        }
+    }
+    
+    internal func payloadForSignalingKeys() -> (payload: [String: String!], signalingKeys: SignalingKeys) {
+        let signalingKeys = APSSignalingKeysStore.createKeys()
+        let payload = ["enckey": signalingKeys.decryptionKey.base64String(), "mackey": signalingKeys.verificationKey.base64String()]
+        return (payload, signalingKeys)
+    }
+    
     public func updateClientPreKeysRequest(client: UserClient) throws -> ZMUpstreamRequest {
         if let remoteIdentifier = client.remoteIdentifier {
-            let (preKeys, preKeysRangeMin, preKeysRangeMax) : ([CBPreKey], UInt, UInt)
-            let startIndex = client.preKeysRangeMax
-            do {
-                (preKeys, preKeysRangeMin, preKeysRangeMax) = try client.keysStore.generateMoreKeys(keyCount, start: UInt(startIndex))
-            }
-            catch {
-                throw UserClientRequestError.NoPreKeys
-            }
-            
-            let preKeysPayloadData = preKeys.enumerate().map { (index, preKey: CBPreKey) in
-                ["key": preKey.data!.base64String, "id": Int(preKeysRangeMin) + index]
-            }
-            
-            let paylod: [String: AnyObject] = [
+            let startIndex = UInt(client.preKeysRangeMax)
+            let (preKeysPayloadData, preKeysRangeMax) = try payloadForPreKeys(client, startIndex: startIndex)
+            let payload: [String: AnyObject] = [
                 "prekeys": preKeysPayloadData
             ]
-            
-            let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.MethodPUT, payload: paylod)
-            request.addCompletionHandler(completionHandlerForMaxRangeID(client, maxRangeID: preKeysRangeMax))
+            let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.MethodPUT, payload: payload)
+            request.addCompletionHandler(storeMaxRangeID(client, maxRangeID: preKeysRangeMax))
 
             return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMUserClientNumberOfKeysRemainingKey), transportRequest: request, userInfo: nil)
         }
         throw UserClientRequestError.ClientNotRegistered
     }
     
+    public func updateClientSignalingKeysRequest(client: UserClient) throws -> ZMUpstreamRequest {
+        if let remoteIdentifier = client.remoteIdentifier {
+            let (signalingKeysPayloadData, signalingKeys) = payloadForSignalingKeys()
+            let payload: [String: AnyObject] = [
+                "sigkeys": signalingKeysPayloadData,
+                "prekeys": [] // NOTE backend always expects 'prekeys' to be present atm
+            ]
+            let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.MethodPUT, payload: payload)
+            request.addCompletionHandler(storeAPSSignalingKeys(client, signalingKeys: signalingKeys))
+            
+            return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMUserClientNeedsToUpdateSignalingKeysKey), transportRequest: request, userInfo: nil)
+        }
+        throw UserClientRequestError.ClientNotRegistered
+    }
     
     /// Password needs to be set
     public func deleteClientRequest(client: UserClient, credentials: ZMEmailCredentials) -> ZMUpstreamRequest! {

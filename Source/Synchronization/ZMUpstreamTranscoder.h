@@ -24,19 +24,19 @@
 
 - (BOOL)shouldProcessUpdatesBeforeInserts;
 
-- (ZMUpstreamRequest *)requestForUpdatingObject:(ZMManagedObject *)managedObject forKeys:(NSSet *)keys;
-- (ZMUpstreamRequest *)requestForInsertingObject:(ZMManagedObject *)managedObject forKeys:(NSSet *)keys;
+- (ZMUpstreamRequest  * _Nullable )requestForUpdatingObject:(ZMManagedObject  * _Nonnull )managedObject forKeys:(NSSet  * _Nonnull )keys;
+- (ZMUpstreamRequest  * _Nullable )requestForInsertingObject:(ZMManagedObject  * _Nonnull )managedObject forKeys:(NSSet  * _Nullable )keys;
 
-- (void)updateInsertedObject:(ZMManagedObject *)managedObject request:(ZMUpstreamRequest *)upstreamRequest response:(ZMTransportResponse *)response;
+- (void)updateInsertedObject:(ZMManagedObject * _Nonnull)managedObject request:(ZMUpstreamRequest * _Nonnull)upstreamRequest response:(ZMTransportResponse * _Nonnull)response;
 
 /// Returns whether synchronization of this object needs additional requests
-- (BOOL)updateUpdatedObject:(ZMManagedObject *)managedObject
-            requestUserInfo:(NSDictionary *)requestUserInfo
-                   response:(ZMTransportResponse *)response
-                keysToParse:(NSSet *)keysToParse;
+- (BOOL)updateUpdatedObject:(ZMManagedObject * _Nonnull)managedObject
+            requestUserInfo:(NSDictionary * _Nullable)requestUserInfo
+                   response:(ZMTransportResponse * _Nonnull)response
+                keysToParse:(NSSet * _Nonnull)keysToParse;
 
 // Should return the objects that need to be refetched from the BE in case of upload error
-- (ZMManagedObject *)objectToRefetchForFailedUpdateOfObject:(ZMManagedObject *)managedObject;
+- (ZMManagedObject * _Nullable)objectToRefetchForFailedUpdateOfObject:(ZMManagedObject * _Nonnull)managedObject;
 
 @optional
 
@@ -48,23 +48,25 @@
 /// at which time the upstream object sync will ask the transcoder again.
 ///
 /// Dependant -> depends on -> dependency
-- (ZMManagedObject *)dependentObjectNeedingUpdateBeforeProcessingObject:(ZMManagedObject *)dependant;
+- (ZMManagedObject * _Nullable)dependentObjectNeedingUpdateBeforeProcessingObject:(ZMManagedObject * _Nonnull)dependant;
 
 /// If implemented, the upstream object sync will call this when an upstream request timed out. Having a request
 /// that might time out but not implementing this will trigger an assertion.
-- (void)requestExpiredForObject:(ZMManagedObject *)managedObject forKeys:(NSSet *)keys;
+- (void)requestExpiredForObject:(ZMManagedObject * _Nonnull)managedObject forKeys:(NSSet * _Nonnull)keys;
 
 /// If implemented, the transcoder can refuse requests until a conditions is fullfilled
 /// Object will be not removed from objects to be synced
-- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject *)managedObject withSync:(id)sync;
+- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * _Nonnull)managedObject withSync:(id _Nonnull)sync;
 
-/// If this method is not implemented, inserted sync will delete object. If this method reutrns TRUE than object will be added back to sync queue
-- (BOOL)failedToUpdateInsertedObject:(ZMManagedObject *)managedObject
-                             request:(ZMUpstreamRequest *)upstreamRequest
-                            response:(ZMTransportResponse *)response
-                         keysToParse:(NSSet *)keys;
+/// If this method is not implemented, inserted sync will delete object.
+/// If this method reutrns TRUE the object will be added back to sync queue.
+/// If it returns FALSE, it will be deleted (if it's an insertion) or the keys will be reset (if it's an update)
+- (BOOL)shouldRetryToSyncAfterFailedToUpdateObject:(ZMManagedObject * _Nonnull)managedObject
+                             request:(ZMUpstreamRequest * _Nonnull)upstreamRequest
+                            response:(ZMTransportResponse * _Nonnull)response
+                         keysToParse:(NSSet * _Nonnull)keys;
 
 @end
 
 /// Asserts with a description of how it failed to generate a request from a transcoder
-void ZMTrapUnableToGenerateRequest(NSSet *keys, id transcoder);
+void ZMTrapUnableToGenerateRequest(NSSet * _Nonnull keys, id _Nonnull transcoder);

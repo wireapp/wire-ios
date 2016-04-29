@@ -9,13 +9,10 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMIncompleteConversationsCache.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
 #import "ZMTimingTests.h"
 #import "ZMOperationLoop.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"

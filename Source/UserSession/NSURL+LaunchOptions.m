@@ -39,15 +39,6 @@
     return [self.path substringFromIndex:1];
 }
 
-- (NSString *)codeForPersonalInvitation
-{
-    if (!self.isURLForPersonalInvitation) {
-        return nil;
-    }
-    
-    return self.zm_queryComponents[@"code"];
-}
-
 - (BOOL)isURLForInvitationToConnect;
 {
     NSString *code = self.zm_queryComponents[@"code"];
@@ -67,32 +58,6 @@
     [self.scheme isEqualToString:@"wire"]
     && [self.host isEqualToString:@"verify-phone"]
     && self.path.length > 1;
-}
-
-- (BOOL)isURLForPersonalInvitation
-{
-    NSString *code = self.zm_queryComponents[@"code"];
-    if(code == nil || code.length == 0) {
-        return NO;
-    }
-    
-    return
-    [self.scheme isEqualToString:@"wire"]
-    && [self.host isEqualToString:@"invitation"]
-    && [self.path isEqualToString:@""];
-}
-
-- (BOOL)isURLForPersonalInvitationError
-{
-    NSString *error = self.zm_queryComponents[@"error"];
-    if(error == nil || ! error.length == 0) {
-        return NO;
-    }
-    
-    return
-    [self.scheme isEqualToString:@"wire"]
-    && [self.host isEqualToString:@"invitation"]
-    && [self.path isEqualToString:@""];
 }
 
 @end

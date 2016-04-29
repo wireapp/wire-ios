@@ -4,17 +4,11 @@
 @import ZMTransport;
 @import ZMCMockTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMConversationEventsTranscoder+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMConnection.h"
-#import "ZMUser+Internal.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMConversation.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConversation+Testing.h"
 #import "IntegrationTestBase.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMLoginTranscoder+Internal.h"

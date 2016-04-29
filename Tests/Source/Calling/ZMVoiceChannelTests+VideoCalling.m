@@ -18,9 +18,9 @@
 
 
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "ZMVoiceChannelTests.h"
-#import "ZMVoiceChannel+Internal.h"
 #import "AVSFlowManager.h"
 #import "ZMUserSession+Internal.h"
 
@@ -29,6 +29,7 @@
 extern id ZMFlowSyncInternalFlowManagerOverride;
 
 @implementation ZMVoiceChannelTests (VideoCalling)
+
 
 - (void)testThatItCallsIsSendingVideoForParticipantAndReturnValue_hasFlowManager
 {

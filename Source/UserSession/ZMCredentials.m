@@ -17,8 +17,9 @@
 // 
 
 
+@import ZMUtilities;
+
 #import "ZMCredentials+Internal.h"
-#import "ZMPhoneNumberValidator.h"
 
 @interface ZMCredentials ()
 

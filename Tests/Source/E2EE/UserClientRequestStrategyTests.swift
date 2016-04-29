@@ -19,9 +19,10 @@
 
 import XCTest
 import zmessaging
+import ZMUtilities
 import ZMTesting
 import ZMCMockTransport
-
+import ZMCDataModel
 
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockPhase : ZMClientRegistrationPhase?
@@ -56,11 +57,11 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
 
     override func didFetchClients(clients: [UserClient]) {
         fetchedClients = clients
-        fetchCallCount++
+        fetchCallCount += 1
     }
     
     override func didDeleteClient() {
-        deleteCallCount++
+        deleteCallCount += 1
     }
     
     override var currentPhase: ClientUpdatePhase {
@@ -86,7 +87,7 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider
     }
     
     func credentialsMayBeCleared() {
-        clearCallCount++
+        clearCallCount += 1
     }
 }
 
@@ -119,7 +120,7 @@ class UserClientRequestStrategyTests: MessagingTest {
         authenticationStatus = ZMMockAuthenticationStatus(managedObjectContext: self.syncMOC, cookie: cookie);
         clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
         sut = UserClientRequestStrategy(authenticationStatus:authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, clientUpdateStatus:clientUpdateStatus, context: self.syncMOC)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveAuthenticationNotification:", name: "ZMUserSessionAuthenticationNotificationName", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UserClientRequestStrategyTests.didReceiveAuthenticationNotification(_:)), name: "ZMUserSessionAuthenticationNotificationName", object: nil)
     }
     
     
@@ -210,7 +211,7 @@ extension UserClientRequestStrategyTests {
         let request = self.sut.requestForInsertingObject(client, forKeys: Set())
         
         // when
-        self.sut.updateInsertedObject(client, request: request, response: response)
+        self.sut.updateInsertedObject(client, request: request!, response: response)
         
         // then
         XCTAssertNotNil(client.remoteIdentifier, "Should store remoteIdentifier provided by response")
@@ -244,6 +245,28 @@ extension UserClientRequestStrategyTests {
         
         XCTAssertNotEqual(maxID_after, maxID_before)
         XCTAssertEqual(maxID_after, expectedMaxID)
+    }
+    
+    func testThatItStoresTheSignalingKeysWhenUpdatingAnInsertedObject() {
+        
+        // given
+        clientRegistrationStatus.mockPhase = .Unregistered
+        
+        let client = createSelfClient(sut.managedObjectContext)
+        XCTAssertNil(client.apsDecryptionKey)
+        XCTAssertNil(client.apsVerificationKey)
+        
+        notifyChangeTrackers(client)
+        guard let request = self.sut.nextRequest() else { return XCTFail() }
+        let response = ZMTransportResponse(payload: ["id": "fakeRemoteID"], HTTPstatus: 200, transportSessionError: nil)
+        
+        // when
+        request.completeWithResponse(response)
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.2))
+        
+        // then
+        XCTAssertNotNil(client.apsDecryptionKey)
+        XCTAssertNotNil(client.apsVerificationKey)
     }
     
     func testThatItNotifiesObserversWhenUpdatingAnInsertedObject() {
@@ -724,8 +747,8 @@ extension UserClientRequestStrategyTests {
         
         let selfClient = createSelfClient()
         
-        let preKeys = try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, 2)).map { $0.data!.base64String }
-        let lastKey = try! selfClient.keysStore.box.lastPreKey().data!.base64String
+        let preKeys = try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, 2)).map { $0.data!.base64String() }.flatMap{$0}
+        let lastKey = try! selfClient.keysStore.box.lastPreKey().data!.base64String()
         
         let client1 = createRemoteClient(Array(preKeys[0..<1]), lastKey: lastKey)
         let client2 = createRemoteClient(Array(preKeys[1..<2]), lastKey: lastKey)
@@ -783,7 +806,7 @@ extension UserClientRequestStrategyTests {
     func testThatItRemovesOtherMissingClientsEvenIfOneOfThemHasANilValue() {
         //given
         let (selfClient, otherClient) = createClients()
-        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String
+        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String()
         let payload : [ String : [String : AnyObject]] = [
             otherClient.user!.remoteIdentifier!.transportString() :
             [
@@ -806,7 +829,7 @@ extension UserClientRequestStrategyTests {
         
         //given
         let (selfClient, otherClient1) = createClients()
-        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String
+        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String()
         let otherClient2 = self.createRemoteClient(generateValidPrekeysStrings(selfClient, howMany: 1), lastKey: lastKey)
         
         let payload : [ String : [String : AnyObject]] = [
@@ -842,7 +865,7 @@ extension UserClientRequestStrategyTests {
         
         //given
         let (selfClient, otherClient1) = createClients()
-        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String
+        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String()
         let otherClient2 = self.createRemoteClient(generateValidPrekeysStrings(selfClient, howMany: 1), lastKey: lastKey)
 
         let payload : [ String : [String : AnyObject]] = [
@@ -868,7 +891,7 @@ extension UserClientRequestStrategyTests {
         
         //given
         let (selfClient, otherClient1) = createClients()
-        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String
+        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String()
         let otherClient2 = self.createRemoteClient(generateValidPrekeysStrings(selfClient, howMany: 1), lastKey: lastKey)
         
         let payload : [ String : [String : AnyObject]] = [
@@ -972,13 +995,13 @@ extension UserClientRequestStrategyTests {
     }
     
     func generateValidPrekeysStrings(selfClient: UserClient, howMany: Int) -> [String] {
-        return try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, howMany)).map { $0.data!.base64String }
+        return try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, howMany)).map { $0.data!.base64String() }
     }
     
     func createClients() -> (UserClient, UserClient) {
         let selfClient = self.createSelfClient()
-        let preKeys = try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, 2)).map { $0.data!.base64String }
-        let lastKey = try! selfClient.keysStore.box.lastPreKey().data!.base64String
+        let preKeys = try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, 2)).map { $0.data!.base64String() }.flatMap{$0}
+        let lastKey = try! selfClient.keysStore.box.lastPreKey().data!.base64String()!
         let otherClient = self.createRemoteClient(preKeys, lastKey: lastKey)
         return (selfClient, otherClient)
     }
@@ -1028,7 +1051,7 @@ extension UserClientRequestStrategyTests {
     func missingClientsRequestAndResponse(selfClient: UserClient, missingClients: [UserClient], payload: [String: [String: AnyObject]]? = nil)
         -> (request: ZMUpstreamRequest, response: ZMTransportResponse)
     {
-        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String
+        let lastKey = try! selfClient.keysStore.lastPreKey().data!.base64String()
 
         // make sure that we are missing those clients
         for missingClient in missingClients {
@@ -1330,6 +1353,37 @@ extension UserClientRequestStrategyTests {
         XCTAssertNotNil(fingerprint)
         XCTAssertNotNil(newFingerprint)
         XCTAssertNotEqual(previousLastPrekey, newLastPrekey)
+    }
+    
+    func testThatItCreatesARequestForClientsThatNeedToUploadSignalingKeys() {
+        
+        // given
+        clientRegistrationStatus.mockPhase = .Registered
+
+        let existingClient = createSelfClient()
+        XCTAssertNil(existingClient.apsVerificationKey)
+        XCTAssertNil(existingClient.apsDecryptionKey)
+        
+        // when
+        existingClient.needsToUploadSignalingKeys = true
+        existingClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNeedsToUpdateSignalingKeysKey))
+        self.sut.contextChangeTrackers.forEach{$0.objectsDidChange(Set(arrayLiteral: existingClient))}
+        let request = self.sut.nextRequest()
+        
+        // then
+        XCTAssertNotNil(request)
+        
+        // and when
+        let response = ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil)
+        request?.completeWithResponse(response)
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.2))
+        
+        // then
+        XCTAssertNotNil(existingClient.apsVerificationKey)
+        XCTAssertNotNil(existingClient.apsDecryptionKey)
+        XCTAssertFalse(existingClient.needsToUploadSignalingKeys)
+        XCTAssertFalse(existingClient.hasLocalModificationsForKey(ZMUserClientNeedsToUpdateSignalingKeysKey))
+
     }
 }
 

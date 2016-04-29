@@ -18,11 +18,9 @@
 
 
 @import ZMCMockTransport;
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
-#import "ZMConversation.h"
-#import "ZMMessage.h"
-#import "ZMVoiceChannel+Testing.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
 

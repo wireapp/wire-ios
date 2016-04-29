@@ -19,10 +19,10 @@
 
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUserSession.h"
 #import <zmessaging/ZMAuthenticationStatus.h>
-#import "ZMBareUser.h"
 #import "ZMSyncStateDelegate.h"
 #import <zmessaging/zmessaging-Swift.h>
 
@@ -70,7 +70,7 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 
 
 
-@interface ZMUserSession (Internal)
+@interface ZMUserSession (Internal) 
 
 @property (nonatomic, readonly) BOOL isLoggedIn;
 @property (nonatomic, readonly) ZMOperationLoop *operationLoop;

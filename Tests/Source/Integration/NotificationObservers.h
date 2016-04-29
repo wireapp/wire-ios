@@ -17,7 +17,8 @@
 // 
 
 
-#import "ZMNotifications+Internal.h"
+@import ZMCDataModel;
+// TODO Sabine = build framework for this?
 #import <zmessaging/zmessaging-Swift.h>
 
 typedef void(^ObserverCallback)(NSObject *note);
@@ -70,3 +71,11 @@ typedef void(^ObserverCallback)(NSObject *note);
 
 @end
 
+@interface MockConversationWindowObserver : NSObject <ZMConversationMessageWindowObserver>
+
+@property (nonatomic, readonly) NSOrderedSet *computedMessages; //< this is the list of messages according to the inial list + applying all notifications so far
+@property (nonatomic, readonly) ZMConversationMessageWindow *window;
+
+- (instancetype)initWithConversation:(ZMConversation *)conversation size:(NSUInteger)size;
+
+@end

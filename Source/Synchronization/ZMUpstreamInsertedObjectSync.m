@@ -18,12 +18,10 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUpstreamInsertedObjectSync.h"
-#import "ZMManagedObject.h"
 #import "ZMLocallyInsertedObjectSet.h"
-#import "ZMManagedObject+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMDependentObjects.h"
 #import "ZMLocallyModifiedObjectSyncStatus.h"
 #import "ZMLocallyModifiedObjectSet.h"
@@ -232,8 +230,8 @@
             
             BOOL shouldResyncObject = NO;
 
-            if ([transcoder respondsToSelector:@selector(failedToUpdateInsertedObject:request:response:keysToParse:)]) {
-                shouldResyncObject = [transcoder failedToUpdateInsertedObject:nextObject request:request response:response keysToParse:nil];
+            if ([transcoder respondsToSelector:@selector(shouldRetryToSyncAfterFailedToUpdateObject:request:response:keysToParse:)]) {
+                shouldResyncObject = [transcoder shouldRetryToSyncAfterFailedToUpdateObject:nextObject request:request response:response keysToParse:[NSSet set]];
                 if (shouldResyncObject) {
                     //if there is no new dependencies for currently synced object then we just try again
                     didFinish = ! [self addInsertedObject:nextObject];

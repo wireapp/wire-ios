@@ -21,6 +21,7 @@
 @import Foundation;
 @import ZMCSystem;
 
+#import <ZMCDataModel/ZMManagedObjectContextProvider.h>
 #import <zmessaging/ZMNetworkState.h>
 
 @class ZMTransportSession;
@@ -53,7 +54,7 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 /// The main entry point for the zmessaging API.
 ///
 /// The client app should create this object upon launch and keep a reference to it
-@interface ZMUserSession : NSObject
+@interface ZMUserSession : NSObject <ZMManagedObjectContextProvider>
 
 /**
  Returns YES if data store needs to be migrated.
@@ -116,11 +117,16 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 
 
 
-@interface ZMUserSession (Debug)
+@interface ZMUserSession (Transport)
 
-- (NSProgress *)exportDatabaseToURL:(NSURL *)outputURL withCompletionHandler:(void(^)(NSURL *archive))handler;
+/// This method should be called from inside @c application(application:handleEventsForBackgroundURLSession identifier:completionHandler:)
+/// and passed the NSURLSession and completionHandler to store after recreating the background session with the given identifier.
+/// @param identifier The identifier that should be used to recreate the background @c NSURLSession
+/// @param handler The completion block from the OS that should be stored
+- (void)addCompletionHandlerForBackgroundURLSessionWithIdentifier:(NSString *)identifier handler:(dispatch_block_t)handler;
 
 @end
+
 
 
 @interface ZMUserSession (AddressBookUpload)
@@ -192,13 +198,6 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 
 @end
 
-
-@interface ZMUserSession (PersonalInvitation)
-
-/// This URL will check if the user has an incoming personal invitation when opened in Safari and then re-direct back to the app.
-- (NSURL *)checkForPersonalInvitationURL;
-
-@end
 
 @interface ZMUserSession (SelfUserClient)
 

@@ -24,9 +24,7 @@
 #import "ZMOperationLoop+Private.h"
 
 #import "ZMLocalNotificationDispatcher.h"
-#import "ZMUpdateEvent.h"
 #import "ZMSyncStrategy+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import <zmessaging/zmessaging-Swift.h>
 
 static char* const ZMLogTag ZM_UNUSED = "Network";
@@ -48,7 +46,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
 {
     ZMLogDebug(@"----> Received push notification payload: %@, source: %lu", payload, (unsigned long)source);
     ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"send notification for payload"];
-    [self.syncMOC performGroupedBlock:^(){
+    [self.syncMOC performGroupedBlock:^{
         
         EventsWithIdentifier *eventsWithID = [self eventsFromPushChannelData:payload];
         NSArray *events = eventsWithID.events;
@@ -56,8 +54,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
         EventsWithIdentifier *filteredEventsWithIdentifier = [eventsWithID filteredWithoutPreexistingNonces:preexistingMessageNonces];
         
         if (events.count > 0) {
-            
-            [self forwardEvents:filteredEventsWithIdentifier.events];
+            [self forwardEvents:events];
             
             if (source == ZMPushNotficationTypeVoIP && nil != eventsWithID.identifier) {
                 ZM_WEAK(self);
@@ -168,7 +165,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
 
 - (EventsWithIdentifier *)eventArrayFromEncryptedMessage:(NSDictionary *)encryptedPayload
 {
-    VerifyStringReturnNil(self.apsSignalKeyStore != nil, "Could not initiate APSSignalingKeystore from Keychain");
+    VerifyStringReturnNil(self.apsSignalKeyStore != nil, "Could not initiate APSSignalingKeystore");
     VerifyStringReturnNil(self.cryptoBox != nil, "Could not instantiate Cryptobox");
     
     //    @"aps" : @{ @"alert": @{@"loc-args": @[],

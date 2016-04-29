@@ -8,18 +8,19 @@
 
 @import ZMTransport;
 @import ZMCMockTransport;
+@import ZMCDataModel;
 
-#import "MessagingTest.h"
 #import "NSError+ZMUserSessionInternal.h"
-#import "ZMUserSession+Internal.h"
 #import "IntegrationTestBase.h"
-#import "ZMCredentials.h"
+
+#import "ZMUserSession+Internal.h"
 #import "ZMUserSession+Authentication.h"
+#import "ZMUserSession+EditingVerification.h"
 #import "ZMUserSession+Registration.h"
-#import "ZMCredentials.h"
-#import "ZMEditableUser.h"
-#import <zmessaging/ZMAuthenticationStatus.h>
 #import "ZMUserSession+OTR.h"
+
+#import "ZMCredentials.h"
+#import <zmessaging/ZMAuthenticationStatus.h>
 
 extern NSTimeInterval DebugLoginFailureTimerOverride;
 

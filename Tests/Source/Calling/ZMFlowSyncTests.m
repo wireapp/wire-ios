@@ -19,20 +19,13 @@
 
 @import ZMTransport;
 @import ZMUtilities;
+@import ZMCDataModel;
 @import zmessaging;
 
 #import "MessagingTest.h"
 #import "ZMFlowSync+Internal.h"
 #import "AVSFlowManager.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMVoiceChannelNotifications.h"
-#import "ZMVoiceChannel.h"
-#import "ZMConnection.h"
-#import "ZMConversation+Internal.h"
 #import "ZMOperationLoop.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMVoiceChannel+Testing.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMOnDemandFlowManager.h"
 

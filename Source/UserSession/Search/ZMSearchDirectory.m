@@ -19,19 +19,14 @@
 
 @import CoreData;
 @import ZMTransport;
+@import ZMCDataModel;
+@import ZMUtilities;
 
 #import "ZMSearchDirectory+Internal.h"
-#import "ZMSearchUser+Internal.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "NSString+Normalization.h"
-#import "ZMConnection+Internal.h"
 #import "ZMSearch.h"
 #import "ZMSearchRequestCodec.h"
 #import "ZMSuggestionSearch.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 #import "ZMSearchTopConversations.h"
 #import "ZMUserIDsForSearchDirectoryTable.h"
 #import "ZMOperationLoop.h"
@@ -48,7 +43,7 @@ static const int SuggestedUsersFetchLimit = 30;
 
 static ZMUserIDsForSearchDirectoryTable *userIDMissingProfileImageBySearch;
 
-static NSString * const InvalidateTopConversationCacheNotificationName = @"ZMInvalidateTopConversationCacheNotification";
+NSString * const InvalidateTopConversationCacheNotificationName = @"ZMInvalidateTopConversationCacheNotification";
 
 
 @interface ZMSearchResult (AllSearchUsers)

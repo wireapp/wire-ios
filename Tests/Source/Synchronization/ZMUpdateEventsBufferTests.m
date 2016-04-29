@@ -16,10 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMTransport;
 
 #import "MessagingTest.h"
 #import "ZMUpdateEventsBuffer.h"
-#import "ZMUpdateEvent.h"
 
 @interface ZMUpdateEventsBufferTests : MessagingTest
 

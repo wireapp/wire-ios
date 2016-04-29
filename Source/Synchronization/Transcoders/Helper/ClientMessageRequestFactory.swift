@@ -21,10 +21,12 @@ import Foundation
 import ZMTransport
 import zimages
 
-private let protobufContentType = "application/x-protobuf"
-private let octetStreamContentType = "application/octet-stream"
+private let zmLog = ZMSLog(tag: "Network")
 
 public class ClientMessageRequestFactory: NSObject {
+    
+    let protobufContentType = "application/x-protobuf"
+    let octetStreamContentType = "application/octet-stream"
     
     public func upstreamRequestForMessage(message: ZMClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
         if(message.isEncrypted) {
@@ -55,7 +57,7 @@ public class ClientMessageRequestFactory: NSObject {
 
     private func upstreamRequestForClientMessage(message: ZMClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
         let path = "/" + ["conversations", conversationId.transportString(), "client-messages"].joinWithSeparator("/")
-        let payload = ["content": message.genericMessage.data().base64String]
+        let payload = ["content": message.genericMessage.data().base64String()]
         let request = ZMTransportRequest(path: path, method: ZMTransportRequestMethod.MethodPOST, payload: payload)
         request.appendDebugInformation("\(message.genericMessage)")
         return request
@@ -63,9 +65,9 @@ public class ClientMessageRequestFactory: NSObject {
 
     private func upstreamRequestForEncryptedImageMessage(format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
 
-        let genericMessage = format == .Medium ? message.mediumGenericMessage : message.previewGenericMessage
-        let format = ImageFormatFromString(genericMessage.image.tag)
-        let isInline = message.isInlineForFormat(format)
+        let genericMessage = format == .Medium ? message.imageAssetStorage!.mediumGenericMessage : message.imageAssetStorage!.previewGenericMessage
+        let format = ImageFormatFromString(genericMessage!.image.tag)
+        let isInline = message.imageAssetStorage!.isInlineForFormat(format)
         let hasAssetId = message.assetId != nil
         
         if isInline || !hasAssetId {
@@ -82,11 +84,11 @@ public class ClientMessageRequestFactory: NSObject {
     
     // request for first upload and reupload inline images
     private func upstreamRequestForInsertedEncryptedImageMessage(format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
-        if let imageData = message.imageDataForFormat(format, encrypted: true) {
+        if let imageData = message.imageAssetStorage!.imageDataForFormat(format, encrypted: true) {
             let path = "/" +  ["conversations", conversationId.transportString(), "otr", "assets"].joinWithSeparator("/")
-            let metaData = message.encryptedMessagePayloadForImageFormat(format)
-            let request = ZMTransportRequest.multipartRequestWithPath(path, imageData: imageData, metaData: metaData.data(), metaDataContentType: protobufContentType, mediaContentType: octetStreamContentType)
-            request.appendDebugInformation("\(message.genericMessageForFormat(format))")
+            let metaData = message.imageAssetStorage!.encryptedMessagePayloadForImageFormat(format)
+            let request = ZMTransportRequest.multipartRequestWithPath(path, imageData: imageData, metaData: metaData!.data(), metaDataContentType: protobufContentType, mediaContentType: octetStreamContentType)
+            request.appendDebugInformation("\(message.imageAssetStorage!.genericMessageForFormat(format))")
             request.appendDebugInformation("\(metaData)")
             request.forceToBackgroundSession()
             return request
@@ -97,9 +99,9 @@ public class ClientMessageRequestFactory: NSObject {
     // request to reupload image (not inline)
     private func upstreamRequestForUpdatedEncryptedImageMessage(format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
         let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", message.assetId!.transportString()].joinWithSeparator("/")
-        let metaData = message.encryptedMessagePayloadForImageFormat(format)
-        let request = ZMTransportRequest(path: path, method: ZMTransportRequestMethod.MethodPOST, binaryData: metaData.data(), type: protobufContentType, contentDisposition: nil)
-        request.appendDebugInformation("\(message.genericMessageForFormat(format))")
+        let metaData = message.imageAssetStorage!.encryptedMessagePayloadForImageFormat(format)
+        let request = ZMTransportRequest(path: path, method: ZMTransportRequestMethod.MethodPOST, binaryData: metaData!.data(), type: protobufContentType, contentDisposition: nil)
+        request.appendDebugInformation("\(message.imageAssetStorage!.genericMessageForFormat(format))")
         request.appendDebugInformation("\(metaData)")
         request.forceToBackgroundSession()
         return request
@@ -107,15 +109,15 @@ public class ClientMessageRequestFactory: NSObject {
     
     
     private func upstreamRequestForImageMessage(format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
-        if let imageData =  message.imageDataForFormat(format, encrypted: false) {
+        if let imageData =  message.imageAssetStorage!.imageDataForFormat(format, encrypted: false) {
             let path = "/" + ["conversations", conversationId.transportString(), "assets"].joinWithSeparator("/")
             let disposition = ZMAssetMetaDataEncoder.contentDispositionForImageOwner(
-                message.genericMessageForFormat(format),
+                ZMGenericMessageImageOwner(genericMessage: message.imageAssetStorage!.genericMessageForFormat(format)!, assetCache: message.managedObjectContext!.zm_imageAssetCache),
                 format: format,
                 conversationID: conversationId,
                 correlationID: message.nonce)
             let request = ZMTransportRequest.multipartRequestWithPath(path, imageData: imageData, metaData: disposition)
-            request.appendDebugInformation("\(message.genericMessageForFormat(format))")
+            request.appendDebugInformation("\(message.imageAssetStorage!.genericMessageForFormat(format))")
             request.forceToBackgroundSession()
             return request
         }
@@ -128,5 +130,5 @@ public class ClientMessageRequestFactory: NSObject {
         request.forceToBackgroundSession()
         return request
     }
-
+    
 }

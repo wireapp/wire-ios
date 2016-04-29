@@ -18,10 +18,9 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMKnockTranscoder.h"
-#import "ZMMessage+Internal.h"
-#import "ZMConversation+Internal.h"
 
 
 @interface ZMKnockTranscoder ()
@@ -63,8 +62,7 @@
     for(ZMUpdateEvent *event in knockEvents) {
         ZMMessage *message = [ZMKnockMessage createOrUpdateMessageFromUpdateEvent:event
                                                            inManagedObjectContext:self.managedObjectContext
-                                                                   prefetchResult:prefetchResult
-                            ];
+                                                                   prefetchResult:prefetchResult];
         
         if(message != nil) {
             [conversationsToSort addObject:message.conversation];

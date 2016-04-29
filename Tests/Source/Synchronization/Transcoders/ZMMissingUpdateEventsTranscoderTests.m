@@ -19,14 +19,12 @@
 
 @import ZMTransport;
 @import zmessaging;
-//@import Foundation;
 
 #import <Foundation/Foundation.h>
 
 #import "MessagingTest.h"
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
 #import "ZMSingleRequestSync.h"
-#import "ZMUpdateEvent.h"
 #import "ZMSyncStrategy.h"
 #import "ZMSimpleListRequestPaginator.h"
 

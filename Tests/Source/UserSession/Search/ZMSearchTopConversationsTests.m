@@ -16,11 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMSearchTopConversations.h"
-#import "ZMConversation+Internal.h"
-#import "ZMManagedObject+Internal.h"
 
 
 

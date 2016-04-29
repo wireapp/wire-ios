@@ -16,10 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "MockEntity.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMDownstreamObjectSyncWithWhitelist.h"
 #import "ZMSyncOperationSet.h"
 #import "ZMTransportResponse.h"

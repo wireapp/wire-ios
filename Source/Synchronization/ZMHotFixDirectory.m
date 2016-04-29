@@ -17,13 +17,11 @@
 // 
 
 
+@import ZMCDataModel;
 #import "ZMHotFixDirectory.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
+#import "ZMUserSession.h"
 #import <ZMTransport/ZMTransport.h>
-#import "zmessaging.h"
+#import <zmessaging/zmessaging-Swift.h>
 
 @implementation ZMHotFixPatch
 
@@ -66,11 +64,17 @@
                      patchWithVersion:@"40.23"
                      patchCode:^(__unused NSManagedObjectContext *context){
                          [ZMHotFixDirectory removeSharingExtension];
+                     }],
+                    [ZMHotFixPatch
+                     patchWithVersion:@"41.43"
+                     patchCode:^(NSManagedObjectContext *context){
+                         [ZMHotFixDirectory moveOrUpdateSignalingKeysInContext:context];
                      }]
                     ];
     });
     return patches;
 }
+
 
 
 + (void)updateLastReadEventIDForConnectionRequestsOrClearedConversationsOnContext:(NSManagedObjectContext *)context

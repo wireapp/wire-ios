@@ -20,9 +20,9 @@
 #import "ZMMessageTranscoder.h"
 #import "ZMUpstreamInsertedObjectSync.h"
 #import "ZMUpstreamTranscoder.h"
-#import "ZMConversation.h"
 
 @class ZMMessageExpirationTimer;
+@class ZMConversation;
 
 @interface ZMMessageTranscoder (Internal) <ZMUpstreamTranscoder>
 

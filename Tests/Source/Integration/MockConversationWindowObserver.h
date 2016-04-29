@@ -17,8 +17,6 @@
 // 
 
 
-#import "ZMConversation.h"
-#import "ZMNotifications.h"
 #import "ZMConversationMessageWindow.h"
 
 @interface MockConversationWindowObserver : NSObject <ZMConversationMessageWindowObserver>

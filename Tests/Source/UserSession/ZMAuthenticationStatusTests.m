@@ -18,18 +18,16 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
+@import ZMTransport;
 
 #import "MessagingTest.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMUserSessionRegistrationNotification.h"
 #import "ZMAuthenticationStatus+Testing.h"
-#import "ZMEditableUser.h"
 #import "ZMCredentials.h"
 #import "NSError+ZMUserSessionInternal.h"
-#import "ZMPhoneNumberValidator.h"
-#import <zmessaging/ZMManagedObject+Internal.h>
 #import <zmessaging/zmessaging-Swift.h>
-#import <zmessaging/ZMUser+Internal.h>
 
 
 @interface ZMAuthenticationStatusTests : MessagingTest

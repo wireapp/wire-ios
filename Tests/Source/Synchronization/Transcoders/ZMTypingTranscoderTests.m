@@ -19,13 +19,11 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "ZMTypingTranscoder+Internal.h"
 #import "MessagingTest.h"
 #import "ZMTyping.h"
-#import "ZMUpdateEvent.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
 
 static NSString * const TypingNotificationName = @"ZMTypingNotification";
 static NSString * const IsTypingKey = @"isTyping";
@@ -404,8 +402,8 @@ typedef NS_ENUM(int, TestTyping_t) {
     [self.uiMOC saveOrRollback];
     
     // expect
-    [self expectationForNotification:@"ZMTypingNotification" object:nil handler:^BOOL(NSNotification *notification) {
-        return [notification.userInfo isEqual:@{@"clearIsTyping": @YES}];
+    [self expectationForNotification:ZMConversationClearTypingNotificationName object:nil handler:^BOOL(NSNotification *notification) {
+        return [notification.object isEqual:conversation];
     }];
     
     // when

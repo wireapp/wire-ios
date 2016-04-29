@@ -21,15 +21,11 @@
 @import ZMCMockTransport;
 @import Cryptobox;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "ZMMessageTranscoderTests.h"
 #import "ZMMessageTranscoder+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
 #import "ZMSyncStrategy.h"
-#import "ZMUpdateEvent.h"
 #import "ZMUpstreamInsertedObjectSync.h"
 #import "ZMMessageExpirationTimer.h"
 #import "ZMUpstreamTranscoder.h"

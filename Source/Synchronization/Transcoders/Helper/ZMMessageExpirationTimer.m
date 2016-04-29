@@ -19,11 +19,9 @@
 
 @import ZMCSystem;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMMessageExpirationTimer.h"
-#import "ZMMessage+Internal.h"
-#import "ZMConversation+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMOperationLoop.h"
 
 #import "ZMLocalNotificationDispatcher.h"

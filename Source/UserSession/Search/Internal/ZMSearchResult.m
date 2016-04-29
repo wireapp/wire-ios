@@ -16,9 +16,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "ZMSearchDirectory.h"
-#import "ZMSearchUser+Internal.h"
 
 
 @interface ZMSearchResult ()

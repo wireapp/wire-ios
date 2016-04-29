@@ -20,7 +20,7 @@
 @import ZMCSystem;
 
 #import "ZMLocallyModifiedObjectSyncStatus.h"
-#import "ZMManagedObject+Internal.h"
+#import <ZMCDataModel/ZMManagedObject+Internal.h>
 
 @interface ZMLocallyModifiedObjectSyncStatusToken : NSObject
 

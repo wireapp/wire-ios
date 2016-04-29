@@ -19,18 +19,15 @@
 
 @import ZMCSystem;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUserImageTranscoder.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMDownstreamObjectSync.h"
 #import "ZMDownstreamObjectSyncWithWhitelist.h"
-#import "ZMUser+Internal.h"
-#import "ZMAssetPreprocessingTracker.h"
+#import "ZMImagePreprocessingTracker.h"
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "ZMUpstreamAssetSync.h"
 #import "ZMAssetRequestFactory.h"
-#import "ZMConversation+Internal.h"
-#import "ZMBareUser.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUpstreamRequest.h"
 
@@ -49,7 +46,7 @@ static NSString * const RequestUserProfileSmallAssetNotificationName = @"ZMReque
 @property (nonatomic) ZMDownstreamObjectSyncWithWhitelist *smallProfileDownstreamSync;
 @property (nonatomic) ZMDownstreamObjectSyncWithWhitelist *mediumDownstreamSync;
 @property (nonatomic) ZMUpstreamModifiedObjectSync *upstreamSync;
-@property (nonatomic, readonly) ZMAssetPreprocessingTracker *assetPreprocessingTracker;
+@property (nonatomic, readonly) ZMImagePreprocessingTracker *assetPreprocessingTracker;
 @property (nonatomic, readonly) NSOperationQueue *imageProcessingQueue;
 @end
 
@@ -118,10 +115,10 @@ static NSString * const RequestUserProfileSmallAssetNotificationName = @"ZMReque
     }];
 }
 
-- (ZMAssetPreprocessingTracker *)createAssetPreprocessingTracker
+- (ZMImagePreprocessingTracker *)createAssetPreprocessingTracker
 {
     NSPredicate *attributePredicate = [self.class predicateForNeedingToBePreprocessed];
-    return [[ZMAssetPreprocessingTracker alloc] initWithManagedObjectContext:self.managedObjectContext
+    return [[ZMImagePreprocessingTracker alloc] initWithManagedObjectContext:self.managedObjectContext
                                                         imageProcessingQueue:self.imageProcessingQueue
                                                               fetchPredicate:attributePredicate
                                                     needsProcessingPredicate:attributePredicate

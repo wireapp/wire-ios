@@ -18,8 +18,7 @@
 
 
 @import Foundation;
-
-#import "ZMBareUser.h"
+@import ZMCDataModel;
 
 @class ZMTransportSession;
 

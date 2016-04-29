@@ -18,13 +18,11 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMCallStateLogger.h"
 #import "ZMFlowSync.h"
-#import "ZMVoiceChannel+Internal.h"
 #import "ZMOperationLoop.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMTracing.h"
 

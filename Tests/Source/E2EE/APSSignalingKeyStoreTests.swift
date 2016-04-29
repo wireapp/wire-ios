@@ -18,97 +18,72 @@
 
 
 import XCTest
-import zmessaging
+@testable import zmessaging
 import ZMTesting
 import ZMTransport
 
 class APSSignalingKeyStoreTests: MessagingTest {
-    func testThatItCreatesKeyStoreWithoutKeychain() {
+    
+    func testThatItCreatesKeyStoreFromUserClientWithKeys() {
         // given
-        let keySize : Int = 256 / 8
+        let keySize = Int(APSSignalingKeysStore.defaultKeyLengthBytes)
+        let client = self.createSelfClient()
+        let keys = APSSignalingKeysStore.createKeys()
+        client.apsVerificationKey = keys.verificationKey
+        client.apsDecryptionKey = keys.decryptionKey
+        
         // when
-        let keyStore = APSSignalingKeysStore(fromKeychain: false)
+        let keyStore = APSSignalingKeysStore(userClient: client)
 
         // then
-        AssertOptionalNotNil(keyStore) { keyStore in
-            AssertOptionalNotNil(keyStore.verificationKey) { _ in
-                AssertOptionalNotNil(keyStore.decryptionKey) { _ in
-                    XCTAssertEqual(keyStore.verificationKey.length, keySize)
-                    XCTAssertEqual(keyStore.decryptionKey.length, keySize)
-                }
-            }
-        }
+        XCTAssertNotNil(keyStore)
+        XCTAssertEqual(keyStore?.verificationKey.length, keySize)
+        XCTAssertEqual(keyStore?.decryptionKey.length, keySize)
+    }
+    
+    func testThatItReturnsNilKeyStoreFromUserClientWithoutKeys() {
+        // given
+        let client = self.createSelfClient()
+        
+        // when
+        let keyStore = APSSignalingKeysStore(userClient: client)
+        
+        // then
+        XCTAssertNil(keyStore)
     }
     
     func testThatItRandomizesTheKeys() {
         // when
-        let keyStore1 = APSSignalingKeysStore(fromKeychain: false)
-        let keyStore2 = APSSignalingKeysStore(fromKeychain: false)
+        let keys1 = APSSignalingKeysStore.createKeys()
+        let keys2 = APSSignalingKeysStore.createKeys()
         
         // then
-        AssertOptionalNotNil(keyStore1) { keyStore1 in
-            AssertOptionalNotNil(keyStore2) { keyStore2 in
-                XCTAssertNotEqual(keyStore1.verificationKey, keyStore2.verificationKey)
-                XCTAssertNotEqual(keyStore1.decryptionKey,   keyStore2.decryptionKey)
-                XCTAssertNotEqual(keyStore1.verificationKey, keyStore1.decryptionKey)
-                XCTAssertNotEqual(keyStore1.verificationKey, keyStore1.decryptionKey)
+        AssertOptionalNotNil(keys1) { keys1 in
+            AssertOptionalNotNil(keys2) { keys2 in
+                XCTAssertNotEqual(keys1.verificationKey, keys2.verificationKey)
+                XCTAssertNotEqual(keys1.decryptionKey,   keys2.decryptionKey)
+                XCTAssertNotEqual(keys1.verificationKey, keys1.decryptionKey)
+                XCTAssertNotEqual(keys2.verificationKey, keys2.decryptionKey)
             }
         }
     }
     
-    func testThatItFailsToCreateKeyStoreWithKeychainIfThereIsNoData() {
+    func testThatItReturnsKeysStoredInKeyChain() {
         // given
-        ZMKeychain.deleteAllKeychainItemsWithAccountName("APSVerificationKey")
-        ZMKeychain.deleteAllKeychainItemsWithAccountName("APSDecryptionKey")
-
-        // when
-        let keyStore = APSSignalingKeysStore(fromKeychain: true)
-
-        // then
-        AssertOptionalNil(keyStore)
-    }
-    
-    func testThatItCreatesKeyStoreWithKeychainIfThereIsData() {
-        // given
-        let keyStoreNew = APSSignalingKeysStore(fromKeychain: false)
-        keyStoreNew?.saveToKeychain()
-
-        // when
-        let keyStoreFromKeychain = APSSignalingKeysStore(fromKeychain: true)
-
-
-        // then
-        AssertOptionalNotNil(keyStoreNew) { keyStoreNew in
-            AssertOptionalNotNil(keyStoreFromKeychain) { keyStoreFromKeychain in
-                XCTAssertEqual(keyStoreNew.verificationKey, keyStoreFromKeychain.verificationKey)
-                XCTAssertEqual(keyStoreNew.decryptionKey, keyStoreFromKeychain.decryptionKey)
-            }
-        }
+        let data1 = NSData.randomEncryptionKey()
+        let data2 = NSData.randomEncryptionKey()
         
-    }
-
-    func testThatItOverwritesTheExistingKeychain() {
-        // given
-        let keyStoreNew = APSSignalingKeysStore(fromKeychain: false)
-        keyStoreNew?.saveToKeychain()
-
+        ZMKeychain.setData(data1, forAccount: APSSignalingKeysStore.verificationKeyAccountName)
+        ZMKeychain.setData(data2, forAccount: APSSignalingKeysStore.decryptionKeyAccountName)
+        
         // when
-        let keyStoreNew2 = APSSignalingKeysStore(fromKeychain: false)
-        keyStoreNew2?.saveToKeychain()
-
-        let keyStoreFromKeychain = APSSignalingKeysStore(fromKeychain: true)
-
+        let keys = APSSignalingKeysStore.keysStoredInKeyChain()
+        
         // then
-        AssertOptionalNotNil(keyStoreNew) { keyStoreNew in
-            AssertOptionalNotNil(keyStoreNew2) { keyStoreNew2 in
-                AssertOptionalNotNil(keyStoreFromKeychain) { keyStoreFromKeychain in
-                    XCTAssertEqual(keyStoreNew2.verificationKey, keyStoreFromKeychain.verificationKey)
-                    XCTAssertEqual(keyStoreNew2.decryptionKey, keyStoreFromKeychain.decryptionKey)
-                    
-                    XCTAssertNotEqual(keyStoreNew.verificationKey, keyStoreFromKeychain.verificationKey)
-                    XCTAssertNotEqual(keyStoreNew.decryptionKey, keyStoreFromKeychain.decryptionKey)
-                }
-            }
-        }
+        XCTAssertNotNil(keys)
+        
+        ZMKeychain.deleteAllKeychainItemsWithAccountName(APSSignalingKeysStore.verificationKeyAccountName)
+        ZMKeychain.deleteAllKeychainItemsWithAccountName(APSSignalingKeysStore.decryptionKeyAccountName)
     }
+
 }

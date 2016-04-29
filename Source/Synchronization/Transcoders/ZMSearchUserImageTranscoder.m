@@ -21,9 +21,7 @@
 
 #import "ZMSearchUserImageTranscoder.h"
 #import "ZMSearchDirectory+Internal.h"
-#import "ZMSearchUser+Internal.h"
 #import "ZMUserIDsForSearchDirectoryTable.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUserImageTranscoder.h"
 #import <zmessaging/zmessaging-Swift.h>
 

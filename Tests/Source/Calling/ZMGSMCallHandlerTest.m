@@ -19,13 +19,10 @@
 
 @import CoreTelephony;
 @import zmessaging;
+@import ZMCDataModel;
+
 #import "MessagingTest.h"
 #import "ZMGSMCallHandler.h"
-#import "ZMConversation+Internal.h"
-#import "ZMVoiceChannel+Testing.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMCallStateLogger.h"
 #import "ZMSyncStateMachine.h"
 

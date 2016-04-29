@@ -19,7 +19,6 @@
 
 #import "ZMUserSession.h"
 #import "ZMUserSession+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
 #import "ZMOperationLoop.h"
 
 @implementation ZMUserSession (Giphy)

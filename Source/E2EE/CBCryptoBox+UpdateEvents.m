@@ -21,8 +21,6 @@
 @import ZMUtilities;
 
 #import "CBCryptoBox+UpdateEvents.h"
-#import "ZMUser.h"
-#import "ZMUpdateEvent.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 
@@ -90,7 +88,7 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
     if(didFailBecauseDuplicated) {
         return;
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationFailedToDecryptMessageNotificationName object:self userInfo:@{@"cause" : CBErrorCodeToString(error.code)}];
+    NSMutableDictionary *userInfoDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cause" : CBErrorCodeToString(error.code)}];
     
     NSString *senderClientID = [[event.payload.asDictionary optionalDictionaryForKey:@"data"] optionalStringForKey:@"sender"];
     
@@ -99,6 +97,7 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
         ZMUser *sender = [ZMUser userWithRemoteID:event.senderUUID createIfNeeded:NO inContext:managedObjectContext];
         UserClient *client = [UserClient fetchUserClientWithRemoteId:senderClientID forUser:sender createIfNeeded:NO];
         if (client != nil) {
+            userInfoDictionary[@"deviceClass"] = client.deviceClass;
             ZMLogError(@"Unable to decrypt event %@, client: %@", event, client.description);
         } else {
             ZMLogError(@"Unable to decrypt event %@, unknown client for user: %@", event, sender.name);
@@ -107,6 +106,7 @@ NSString * CBErrorCodeToString(CBErrorCode errorCode);
             [conversation appendDecryptionFailedSystemMessageAtTime:event.timeStamp sender:sender client:client errorCode:error.code];
         }
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationFailedToDecryptMessageNotificationName object:self userInfo:userInfoDictionary];
 }
 
 - (ZMUpdateEvent *)decryptOTRClientMessageUpdateEvent:(ZMUpdateEvent *)event newSessionId:(NSString *__autoreleasing *)newSessionId error:(NSError **)error

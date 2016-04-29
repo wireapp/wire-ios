@@ -19,12 +19,9 @@
 
 @import CoreTelephony;
 @import ZMCSystem;
+@import ZMCDataModel;
 
 #import "ZMGSMCallHandler.h"
-#import "ZMConversation+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMVoiceChannel.h"
 #import "ZMCallStateLogger.h"
 #import "ZMSyncStateMachine.h"
 #import <zmessaging/zmessaging-Swift.h>

@@ -21,6 +21,7 @@ import Foundation
 import CoreData
 import ZMCSystem
 
+
 private let zmLog = ZMSLog(tag: "Calling")
 
 private let ZMVoiceChannelTimerTimeOutGroup : NSTimeInterval = 30;
@@ -28,8 +29,6 @@ private let ZMVoiceChannelTimerTimeOutOneOnOne : NSTimeInterval = 60;
 private var ZMVoiceChannelTimerTestTimeout : NSTimeInterval = 0;
 
 private let UserInfoCallTimerKey = "ZMCallTimer"
-
-
 
 extension NSManagedObjectContext {
     
@@ -71,6 +70,10 @@ extension NSManagedObjectContext {
     }
 }
 
+public protocol ZMCallTimerClient {
+
+    func callTimerDidFire(timer: ZMCallTimer)
+}
 
 public class ZMCallTimer : NSObject, ZMTimerClient {
 
@@ -125,9 +128,10 @@ public class ZMCallTimer : NSObject, ZMTimerClient {
             if let testDelegate = self.testDelegate {
                 testDelegate.callTimerDidFire(self)
             }
-            if let conversation = self.managedObjectContext?.objectWithID(conversationID) as? ZMConversation where !conversation.isZombieObject {
-                conversation.voiceChannel?.callTimerDidFire(self)
-            }
+            guard let conversation = self.managedObjectContext?.objectWithID(conversationID) as? ZMConversation where !conversation.isZombieObject
+            else { return }
+            conversation.voiceChannel?.callTimerDidFire(self)
+            
             break;
         }
     }

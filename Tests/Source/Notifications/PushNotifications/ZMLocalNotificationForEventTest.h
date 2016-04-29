@@ -19,13 +19,10 @@
 
 @import ZMTransport;
 @import ZMProtos;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMLocalNotification+Internal.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMConversation+Internal.h"
 #import "ZMLocalNotificationLocalization.h"
 #import "MessagingTest+EventFactory.h"
 #import "ZMUserSession+UserNotificationCategories.h"

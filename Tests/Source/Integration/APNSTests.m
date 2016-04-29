@@ -16,14 +16,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
-#import "ZMUser.h"
 #import "ZMUserSession.h"
 #import "ZMUserSession+Internal.h"
-
-#import "ZMConversation+Internal.h"
-
 #import "ZMUserSession+Background+Testing.h"
 
 @interface APNSTests : IntegrationTestBase

@@ -18,13 +18,11 @@
 
 
 #import "IntegrationTestBase.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSession.h"
 #import "NSError+ZMUserSession.h"
 #import "ZMSearchDirectory.h"
 #import "ZMUserSession+Authentication.h"
 #import "ZMUserSession+Registration.h"
-#import "ZMEditableUser.h"
 #import "ZMCredentials.h"
 
 extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;

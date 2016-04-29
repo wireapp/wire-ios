@@ -17,10 +17,8 @@
 // 
 
 
+@import ZMCDataModel;
 #import "ZMDependentObjects.h"
-
-#import "ZMManagedObject+Internal.h"
-
 
 
 @interface ZMDependentObjects ()

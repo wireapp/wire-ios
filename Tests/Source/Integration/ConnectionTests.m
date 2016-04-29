@@ -19,16 +19,12 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
 #import "ZMSearchDirectory.h"
-#import "ZMSearchUser.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSession.h"
-#import "ZMMessage+Internal.h"
 #import "ZMConnectionTranscoder+Internal.h"
-#import "ZMConversationList.h"
-#import "ZMConnection.h"
 
 @interface ConnectionTests : IntegrationTestBase
 

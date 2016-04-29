@@ -21,14 +21,13 @@
 @import ZMCSystem;
 @import ZMTransport;
 @import Cryptobox;
+@import ZMCDataModel;
+
 
 #import "ZMOperationLoop+Private.h"
 #import "ZMSyncStrategy.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMManagedObject.h"
 #import "ZMUserTranscoder.h"
 #import "ZMUserSession.h"
-#import "ZMUpdateEvent.h"
 #import "ZMTracing.h"
 #import <libkern/OSAtomic.h>
 #import "ZMBadge.h"
@@ -100,6 +99,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
                                                                       syncStateDelegate:syncStateDelegate
                                                                   backgroundableSession:transportSession
                                                            localNotificationsDispatcher:dispatcher
+                                                               taskCancellationProvider:transportSession
                                                                                   badge:badge];
     
     self = [self initWithTransportSession:transportSession
@@ -124,7 +124,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     
     self = [super init];
     if (self) {
-        self.apsSignalKeyStore = [[APSSignalingKeysStore alloc] initFromKeychain:YES];
         self.cryptoBox = [syncMOC zm_cryptKeyStore].box;
         self.transportSession = transportSession;
         self.syncStrategy = syncStrategy;
@@ -196,7 +195,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     if (_apsSignalKeyStore == nil) {
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         if (selfUser.selfClient != nil) {
-            _apsSignalKeyStore = [[APSSignalingKeysStore alloc] initFromKeychain:YES];
+            _apsSignalKeyStore = [[APSSignalingKeysStore alloc] initWithUserClient:selfUser.selfClient];
         }
     }
     return _apsSignalKeyStore;

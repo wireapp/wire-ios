@@ -16,17 +16,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "ZMVoiceChannel+VideoCalling.h"
 #import "AVSFlowManager.h"
 #import "ZMUserSession.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMVoiceChannel.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMConversation.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser.h"
-#import "ZMUser+Internal.h"
 #import "ZMAVSBridge.h"
 #import <zmessaging/zmessaging-Swift.h>
 
