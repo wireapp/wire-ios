@@ -2424,7 +2424,106 @@ static __weak FakeReachability *currentReachability;
     // then
     [(id)self.URLSessionSwitch verify];
 }
+
+- (void)testThatItStoresAndCallsTheCompletionHandlerWhen_URLSessionDidFinishEventsForBackgroundURLSession_IsCalled
+{
+    // given
+    __block NSUInteger callCount = 0;
+    __block NSThread *callThread;
+    
+    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMURLSessionDelegate)];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name];
+    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:mockDelegate delegateQueue:self.queue identifier:@"test-session"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completion handler on the main thread"];
+    
+    // when
+    [self.sut addCompletionHandlerForBackgroundSessionWithIdentifier:configuration.identifier handler:^{
+        callCount++;
+        callThread = NSThread.currentThread;
+        [expectation fulfill];
+    }];
+    
+    // then
+    [self spinMainQueueWithTimeout:0.1];
+    XCTAssertEqual(callCount, 0lu);
+    
+    // when
+    [self.sut URLSessionDidFinishEventsForBackgroundURLSession:session];
+    [self.sut URLSessionDidFinishEventsForBackgroundURLSession:session];
+    
+    // then
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    XCTAssertEqual(callCount, 1lu);
+    XCTAssertNotNil(callThread);
+    XCTAssertTrue(callThread.isMainThread);
+    [session tearDown];
+}
+
+- (void)testThatItGetsTheCurrentTasksForTheBackgroundSession
+{
+    // given
+    XCTestExpectation *expectation = [self expectationWithDescription:@"It should get the resumed background session tasks"];
+    ZMTransportRequest *foregroundRequest = [ZMTransportRequest requestGetFromPath:@"/some/path/foreground"];
+    ZMTransportRequest *backgroundRequest = [ZMTransportRequest requestGetFromPath:@"/some/path/background"];
+    
+    // expect
+    NSURLSessionTask *expectedTask = [NSURLSessionTask new];
+    id backgroundSessionMock = [OCMockObject mockForClass:ZMURLSession.class];
+    [[[backgroundSessionMock stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name]] configuration];
+    [[[(id)self.URLSessionSwitch stub] andReturn:backgroundSessionMock] backgroundSession];
+    [[(id)self.URLSession expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:foregroundRequest];
+    [[(id)backgroundSessionMock expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:backgroundRequest];
+    
+    [(ZMURLSession *)[backgroundSessionMock expect] getTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void (^block)(NSArray <NSURLSessionTask *>*) = obj;
+        block(@[expectedTask]);
+        return YES;
+    }]];
+    
+    [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
+        return [TestResponse testResponse];
+    }];
+    
+    [backgroundRequest forceToBackgroundSession];
+    
+    [self.sut sendSchedulerItem:foregroundRequest];
+    [self.sut sendSchedulerItem:backgroundRequest];
+    
+    // when
+    [self.sut getBackgroundTasksWithCompletionHandler:^(NSArray<NSURLSessionTask *> *backgroundTasks) {
+        XCTAssertEqualObjects(expectedTask, backgroundTasks.firstObject);
+        XCTAssertEqual(backgroundTasks.count, 1lu);
+        [expectation fulfill];
+    }];
+    
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItCancelsATaskOnTheCorrectURLSession_Identifier
+{
+    // given
+    ZMTaskIdentifier *identifier = [ZMTaskIdentifier identifierWithIdentifier:42 sessionIdentifier:@"background-session"];
+    
+    // expect
+    id backgroundSessionMock = [OCMockObject niceMockForClass:ZMURLSession.class];
+    id foregroundSessionMock = [OCMockObject niceMockForClass:ZMURLSession.class];
+
+    [[[(id)self.URLSessionSwitch stub] andReturn:@[foregroundSessionMock, backgroundSessionMock]] allSessions];
+    [[(id)backgroundSessionMock expect] cancelTaskWithIdentifier:42 completionHandler:OCMOCK_ANY];
+    [(ZMURLSession *)[[backgroundSessionMock stub] andReturn:@"background-session"] identifier];
+    [[(id)foregroundSessionMock reject] cancelTaskWithIdentifier:42 completionHandler:OCMOCK_ANY];
+    [(ZMURLSession *)[[foregroundSessionMock stub] andReturn:@"foreground-session"] identifier];
+    
+    // when
+    [self.sut cancelTaskWithIdentifier:identifier];
+    
+    // then
+    [backgroundSessionMock verify];
+    [foregroundSessionMock verify];
+}
+
 @end
+
 
 @implementation ZMTransportSessionTests (ExpirationDate)
 

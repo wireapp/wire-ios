@@ -28,17 +28,10 @@
 #import "ZMTransportCodec.h"
 #import "ZMBackgroundActivity.h"
 #import "NSData+Multipart.h"
+#import "ZMURLSession.h"
+#import "ZMTaskIdentifier.h"
 
 const NSTimeInterval ZMTransportRequestDefaultExpirationInterval = 60;
-
-
-@interface ZMCompletionHandler ()
-
-@property (nonatomic) id<ZMSGroupQueue> groupQueue;
-@property (nonatomic, copy) ZMCompletionHandlerBlock block;
-
-@end
-
 
 /// OS X 10.9 does not have uniform type identifiers with JSON support
 static BOOL hasUTJSONSupport(void)
@@ -47,6 +40,13 @@ static BOOL hasUTJSONSupport(void)
 }
 
 
+@interface ZMCompletionHandler ()
+
+
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, copy) ZMCompletionHandlerBlock block;
+
+@end
 
 @implementation ZMCompletionHandler
 
@@ -65,6 +65,57 @@ static BOOL hasUTJSONSupport(void)
 @end;
 
 
+@interface ZMTaskCreatedHandler ()
+
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, copy) ZMTaskCreatedBlock block;
+
+@end
+
+@implementation ZMTaskCreatedHandler
+
++ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMTaskCreatedBlock)block;
+{
+    RequireString(block != nil, "Invalid completion handler");
+    RequireString(groupQueue != nil, "Invalid group queue");
+    ZMTaskCreatedHandler *handler = [[self alloc] init];
+    if (handler != nil) {
+        handler.groupQueue = groupQueue;
+        handler.block = block;
+    }
+    return handler;
+}
+
+@end;
+
+
+
+
+@interface ZMTaskProgressHandler ()
+
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, copy) ZMProgressHandlerBlock block;
+
+@end
+
+@implementation ZMTaskProgressHandler
+
++ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMProgressHandlerBlock)block;
+{
+    RequireString(block != nil, "Invalid completion handler");
+    RequireString(groupQueue != nil, "Invalid group queue");
+    ZMTaskProgressHandler *handler = [[self alloc] init];
+    if (handler != nil) {
+        handler.groupQueue = groupQueue;
+        handler.block = block;
+    }
+    return handler;
+}
+
+@end;
+
+
+
 
 
 @interface ZMTransportRequest ()
@@ -75,7 +126,9 @@ static BOOL hasUTJSONSupport(void)
 @property (nonatomic, copy) NSData *binaryData;
 @property (nonatomic, copy) NSString *binaryDataType;
 @property (nonatomic, copy) NSDictionary *contentDisposition;
-@property (nonatomic) NSMutableArray *completionHandlers;
+@property (nonatomic) NSMutableArray <ZMTaskCreatedHandler*> *taskCreatedHandlers;
+@property (nonatomic) NSMutableArray <ZMCompletionHandler *> *completionHandlers;
+@property (nonatomic) NSMutableArray <ZMTaskProgressHandler *> *progressHandlers;
 @property (nonatomic) BOOL needsAuthentication;
 @property (nonatomic) BOOL responseWillContainAccessToken;
 @property (nonatomic) BOOL responseWillContainCookie;
@@ -83,8 +136,10 @@ static BOOL hasUTJSONSupport(void)
 @property (nonatomic) NSDate *timeoutDate;
 @property (nonatomic) NSMutableArray<NSString *>* debugInformation;
 @property (nonatomic) BOOL shouldCompress;
+@property (nonatomic) NSURL *fileUploadURL;
 @property (nonatomic) NSDate *startOfUploadTimestamp;
 @property (nonatomic) BOOL shouldUseOnlyBackgroundSession;
+@property (nonatomic) float progress;
 
 @end
 
@@ -146,6 +201,19 @@ static BOOL hasUTJSONSupport(void)
 + (instancetype)compressedGetFromPath:(NSString *)path
 {
     return [self requestWithPath:path method:ZMMethodGET payload:nil shouldCompress:YES];
+}
+
++ (instancetype)uploadRequestWithFileURL:(NSURL *)url path:(NSString *)path contentType:(NSString *)contentType;
+{
+    ZMTransportRequest *request = [[self.class alloc] initWithPath:path
+                                                            method:ZMMethodPOST
+                                                        binaryData:nil
+                                                              type:contentType
+                                                contentDisposition:nil];
+    request.fileUploadURL = url;
+    request.shouldFailInsteadOfRetry = YES;
+    [request forceToBackgroundSession];
+    return request;
 }
 
 + (instancetype)emptyPutRequestWithPath:(NSString *)path;
@@ -248,7 +316,10 @@ static BOOL hasUTJSONSupport(void)
 {
     static NSString * const ContentTypeHeader = @"Content-Type";
     
-    if ((self.binaryDataType != nil) && (self.binaryData != nil)) {
+    BOOL isFileUploadWithContentType = (self.binaryDataType != nil) && (self.fileUploadURL != nil);
+    BOOL hasBinaryData = (self.binaryDataType != nil) && (self.binaryData != nil);
+    
+    if (hasBinaryData || isFileUploadWithContentType) {
         NSString *mediaType;
         if (! hasUTJSONSupport()) {
             if ([self.binaryDataType isEqualToString:@"public.json"]) {
@@ -264,7 +335,9 @@ static BOOL hasUTJSONSupport(void)
         else {
             [URLRequest addValue:self.binaryDataType forHTTPHeaderField:ContentTypeHeader];
         }
-        URLRequest.HTTPBody = self.binaryData;
+        if (hasBinaryData) {
+            URLRequest.HTTPBody = self.binaryData;
+        }
     } else if (self.payload != nil) {
         URLRequest.HTTPBody = [ZMTransportCodec encodedTransportData:self.payload];
         [URLRequest addValue:[ZMTransportCodec encodedContentType] forHTTPHeaderField:ContentTypeHeader];
@@ -351,6 +424,42 @@ static BOOL hasUTJSONSupport(void)
     return types;
 }
 
+- (void)addTaskCreatedHandler:(ZMTaskCreatedHandler *)taskCreatedHandler;
+{
+    VerifyReturn(taskCreatedHandler != nil);
+    if (self.taskCreatedHandlers == nil) {
+        self.taskCreatedHandlers = [NSMutableArray arrayWithObject:taskCreatedHandler];
+    } else {
+        [self.taskCreatedHandlers addObject:taskCreatedHandler];
+    }
+}
+
+- (void)callTaskCreationHandlersWithTask:(NSURLSessionTask *)task session:(ZMURLSession *)session;
+{
+    ZMTaskIdentifier *identifier = [ZMTaskIdentifier identifierWithIdentifier:task.taskIdentifier sessionIdentifier:session.identifier];
+    NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, task];
+    ZMBackgroundActivity *creationActivity = [ZMBackgroundActivity beginBackgroundActivityWithName:NSStringFromSelector(_cmd)];
+    ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
+    
+    for (ZMTaskCreatedHandler *handler in self.taskCreatedHandlers) {
+        id<ZMSGroupQueue> queue = handler.groupQueue;
+        [handlerGroup enter];
+        if (nil != queue) {
+            [queue performGroupedBlock:^{
+                ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:6 label:label];
+                handler.block(task, identifier);
+                [tp warnIfLongerThanInterval];
+                [handlerGroup leave];
+            }];
+        }
+    }
+    
+    [handlerGroup notifyOnQueue:dispatch_get_main_queue() block:^{
+        [creationActivity endActivity];
+    }];
+}
+
+
 - (void)addCompletionHandler:(ZMCompletionHandler *)completionHandler;
 {
     VerifyReturn(completionHandler != nil);
@@ -361,8 +470,20 @@ static BOOL hasUTJSONSupport(void)
     }
 }
 
+- (void)addProgressHandler:(ZMTaskProgressHandler *)progressHandler;
+{
+    VerifyReturn(progressHandler != nil);
+    if (self.progressHandlers == nil) {
+        self.progressHandlers = [NSMutableArray arrayWithObject:progressHandler];
+    } else {
+        [self.progressHandlers addObject:progressHandler];
+    }
+}
+
 - (void)completeWithResponse:(ZMTransportResponse *)response
 {
+    response.startOfUploadTimestamp = self.startOfUploadTimestamp;
+
     ZMBackgroundActivity *completeActivity = [ZMBackgroundActivity beginBackgroundActivityWithName:NSStringFromSelector(_cmd)];
     ZMSDispatchGroup *group = response.dispatchGroup;
     ZMSDispatchGroup *group2 = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest"];
@@ -394,6 +515,28 @@ static BOOL hasUTJSONSupport(void)
     [group2 notifyOnQueue:dispatch_get_main_queue() block:^{
         [completeActivity endActivity];
     }];
+}
+
+- (void)updateProgress:(float)progress
+{
+    float limitedProgress = progress;
+    if (limitedProgress > 1.0f) {
+        limitedProgress = 1.0f;
+    }
+    if (limitedProgress < 0.0f) {
+        limitedProgress = 0.0f;
+    }
+    
+    self.progress = limitedProgress;
+    
+    for (ZMTaskProgressHandler *progresHandler in self.progressHandlers) {
+        id<ZMSGroupQueue> queue = progresHandler.groupQueue;
+        if (queue != nil) {
+            [queue performGroupedBlock:^{
+                progresHandler.block(limitedProgress);
+            }];
+        }
+    }
 }
 
 - (void)forceToBackgroundSession

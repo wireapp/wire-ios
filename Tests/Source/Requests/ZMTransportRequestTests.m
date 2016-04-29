@@ -90,6 +90,7 @@
     XCTAssertEqualObjects(request.path, originalPath);
     XCTAssertEqual(request.method, ZMMethodGET);
     XCTAssertNil(request.payload);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
     XCTAssertEqual(request.contentDisposition.count, 0U);
 }
 
@@ -112,6 +113,29 @@
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
     XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypePNG);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
+}
+
+- (void)testThatFileUploadRequestSetsProperties;
+{
+    // given
+    NSURL *fileURL = [NSURL URLWithString:@"/url/to/some/private/file"];
+    NSString *path = @"some/path";
+    
+    // when
+    NSString *contentType = @"multipart/mixed; boundary=frontier";
+    ZMTransportRequest *request = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:path contentType:contentType];
+    
+    // then
+    XCTAssertNotNil(request);
+    XCTAssertNil(request.payload);
+    XCTAssertEqualObjects(request.path, path);
+    XCTAssertEqual(request.method, ZMMethodPOST);
+    XCTAssertNil(request.contentDisposition);
+    XCTAssertNil(request.binaryData);
+    XCTAssertEqualObjects(fileURL, request.fileUploadURL);
+    XCTAssertTrue(request.shouldUseOnlyBackgroundSession);
+    XCTAssertTrue(request.shouldFailInsteadOfRetry);
 }
 
 - (void)testThatEmptyPUTRequestSetsProperties;
@@ -133,6 +157,7 @@
     XCTAssertEqualObjects(request.path, path);
     XCTAssertEqual(request.method, method);
     XCTAssertNil(request.contentDisposition);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
     XCTAssertEqualObjects(request.binaryData, [NSData data]);
     XCTAssertEqualObjects([httpRequest valueForHTTPHeaderField:@"Content-Type"], @"application/json");
 }
@@ -154,6 +179,7 @@
     XCTAssertEqual(request.method, ZMMethodPOST);
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
     XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypeJPEG);
 }
 
@@ -189,6 +215,7 @@
     XCTAssertEqualObjects(request.path, path);
     XCTAssertEqual(request.method, ZMMethodPOST);
     XCTAssertNil(request.contentDisposition);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
     NSArray *items = [request multipartBodyItems];
     XCTAssertEqual(items.count, 2u);
 
@@ -218,6 +245,87 @@
     XCTAssertNil(request);
 }
 
+- (void)testThatItCallsTaskCreatedHandler
+{
+    // given
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Task created handler called"];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    NSURLSessionTask *expectedTask = [NSURLSession.sharedSession dataTaskWithURL:[NSURL URLWithString:@"www.example.com"]];
+    NSString *sessionIdentifier = @"test-session";
+    id mockSession = [OCMockObject niceMockForClass:ZMURLSession.class];
+    [(ZMURLSession *)[[mockSession stub] andReturn:sessionIdentifier] identifier];
+    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:expectedTask.taskIdentifier
+                                                                    sessionIdentifier:sessionIdentifier];
+    
+    ZMTaskCreatedHandler *handler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(NSURLSessionTask *task, ZMTaskIdentifier *identifier) {
+        XCTAssertEqualObjects(task, expectedTask);
+        XCTAssertEqualObjects(identifier, expectedIdentifier);
+        [expectation fulfill];
+    }];
+    
+    [transportRequest addTaskCreatedHandler:handler];
+    
+    // when
+    [transportRequest callTaskCreationHandlersWithTask:expectedTask session:mockSession];
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItCallsMultipleTaskCreatedHandlers
+{
+    // given
+    XCTestExpectation *firstExpectation = [self expectationWithDescription:@"First task created handler called"];
+    XCTestExpectation *secondExpectation = [self expectationWithDescription:@"Second task created handler called"];;
+    
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    NSURLSessionTask *expectedTask = [NSURLSession.sharedSession dataTaskWithURL:[NSURL URLWithString:@"www.example.com"]];
+    
+    ZMTaskCreatedHandler *firstHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(NSURLSessionTask *task, ZMTaskIdentifier *identifier) {
+        NOT_USED(identifier);
+        XCTAssertEqualObjects(task, expectedTask);
+        [firstExpectation fulfill];
+    }];
+    
+    ZMTaskCreatedHandler *secondHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(NSURLSessionTask *task, ZMTaskIdentifier *identifier) {
+        NOT_USED(identifier);
+        XCTAssertEqualObjects(task, expectedTask);
+        [secondExpectation fulfill];
+    }];
+    
+    [transportRequest addTaskCreatedHandler:firstHandler];
+    [transportRequest addTaskCreatedHandler:secondHandler];
+    
+    // when
+    [transportRequest callTaskCreationHandlersWithTask:expectedTask session:nil];
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItDoesNotAttemptToCallATaskCreatedHandlerIfNoneIsSet
+{
+    // given
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    
+    // when
+    XCTAssertNoThrow([transportRequest callTaskCreationHandlersWithTask:nil session:nil]);
+}
+
+- (void)testThatItSetsStartOfUploadTimestamp
+{
+    // given
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    [transportRequest markStartOfUploadTimestamp];
+    
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPstatus:213 transportSessionError:nil];
+    
+    // when
+    [transportRequest completeWithResponse:response];
+    
+    // then
+    XCTAssertEqual(transportRequest.startOfUploadTimestamp, response.startOfUploadTimestamp);
+}
 
 - (void)testThatItCallsTheCompletionHandler
 {
@@ -334,6 +442,135 @@
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
     XCTAssertEqualObjects(responses, @"abc");
 }
+
+
+- (void)testThatItCallsTaskProgressHandler
+{
+    // given
+    const float expectedProgress = 0.5f;
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    
+    [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
+        XCTAssertEqual(expectedProgress, progress);
+        [expectation fulfill];
+    }]];
+    
+    // when
+    [transportRequest updateProgress:expectedProgress];
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItCallsTaskProgressHandlerContinuously
+{
+    // given
+    const static float expectedProgress[] = {0.0f, 0.1f, 0.5f, 0.9f, 1.0f};
+    const static size_t expectedProgressSize = sizeof(expectedProgress) / sizeof(expectedProgress[0]);
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    
+    NSUInteger __block currentCallIndex = 0;
+    
+    [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
+        XCTAssertEqual(expectedProgress[currentCallIndex], progress);
+        currentCallIndex++;
+        
+        if (currentCallIndex == expectedProgressSize) {
+            [expectation fulfill];
+        }
+    }]];
+    
+    // when
+    for (size_t i = 0 ; i < expectedProgressSize; i++) {
+        [transportRequest updateProgress:expectedProgress[i]];
+    }
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItCallsTaskProgressHandlerWithProgressLessOrEqualToComplete
+{
+    // given
+    const float randomProgress = 1000234.0f;
+    const float expectedProgress = 1.0f;
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    
+    [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
+        XCTAssertEqual(expectedProgress, progress);
+        [expectation fulfill];
+    }]];
+    
+    // when
+    [transportRequest updateProgress:randomProgress];
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItCallsTaskProgressHandlerWithProgressLessOrEqualToInitial
+{
+    // given
+    const float randomProgress = -123.0f;
+    const float expectedProgress = 0.0f;
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    
+    [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
+        XCTAssertEqual(expectedProgress, progress);
+        [expectation fulfill];
+    }]];
+    
+    // when
+    [transportRequest updateProgress:randomProgress];
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItCallsMultipleTaskProgressHandlers
+{
+    // given
+    const float expectedProgress = 0.5f;
+    
+    XCTestExpectation *expectation1 = [self expectationWithDescription:@"Task progress handler 1 called"];
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Task progress handler 2 called"];
+
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    
+    [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
+        XCTAssertEqual(expectedProgress, progress);
+        [expectation1 fulfill];
+    }]];
+    
+    [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
+        XCTAssertEqual(expectedProgress, progress);
+        [expectation2 fulfill];
+    }]];
+    
+    // when
+    [transportRequest updateProgress:expectedProgress];
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItDoesNotAttemptToCallATaskProgressHandlerIfNoneIsSet
+{
+    // given
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    
+    // when
+    XCTAssertNoThrow([transportRequest updateProgress:1.0f]);
+}
+
 
 - (void)testThatARequestShouldBeExecutedOnlyOnForegroundSessionByDefault
 {
@@ -498,6 +735,22 @@
     // then
     XCTAssertNil(request.HTTPBody);
     XCTAssertNil([request valueForHTTPHeaderField:@"Content-Type"]);
+}
+
+- (void)testThatItSetsTheContentTypeForFileUploadRequests;
+{
+    // given
+    NSString *contentType = @"multipart/mixed; boundary=frontier";
+    NSURL *fileURL = [NSURL URLWithString:@"file://url/to/file"];
+    ZMTransportRequest *sut = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:nil contentType:contentType];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    
+    // when
+    [sut setBodyDataAndMediaTypeOnHTTPRequest:request];
+    
+    // then
+    XCTAssertNil(request.HTTPBody);
+    XCTAssertEqualObjects([request valueForHTTPHeaderField:@"Content-Type"], contentType);
 }
 
 - (void)testThatItSetsTheContentDispositionForImageRequest;

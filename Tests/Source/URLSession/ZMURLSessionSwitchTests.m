@@ -96,8 +96,8 @@ static NSHashTable *sessionCancelTimers;
     sessionCancelTimers = [NSHashTable weakObjectsHashTable];
     
     NSOperationQueue *q = [NSOperationQueue zm_serialQueueWithName:self.name];
-    ZMURLSession *sessionA = [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q];
-    ZMURLSession *sessionB = [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q];
+    ZMURLSession *sessionA = [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-a"];
+    ZMURLSession *sessionB = [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-b"];
     self.foregroundSession = sessionA;
     self.backgroundSession = sessionB;
     
@@ -142,6 +142,16 @@ static NSHashTable *sessionCancelTimers;
     [self.sut switchToForegroundSession];
     
     XCTAssertEqual(timer.cancelCounter, 1);
+}
+
+- (void)testThatItReturnsAllSessions;
+{
+    // when
+    NSArray *allSessions = self.sut.allSessions;
+    NSArray *expectedSessions = @[self.sut.foregroundSession, self.sut.backgroundSession];
+    
+    // then
+    XCTAssertEqualObjects(allSessions, expectedSessions);
 }
 
 - (void)testThatItCreatesASessionCancelTimerWhenSwitchingToTheBackgroundSession;

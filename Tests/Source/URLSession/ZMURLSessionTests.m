@@ -40,6 +40,7 @@
 
 @property (nonatomic) NSUInteger receivedDataCount;
 @property (nonatomic) NSMutableArray *receivedResponses;
+@property (nonatomic) NSMutableArray *finishedBackgroundSessions;
 @property (nonatomic) NSMutableArray *completedTasks;
 @property (nonatomic) NSMutableArray *firedTimers;
 
@@ -62,10 +63,14 @@ static NSString * const DataKey = @"data";
     self.receivedResponses = [NSMutableArray array];
     self.completedTasks = [NSMutableArray array];
     self.firedTimers = [NSMutableArray array];
+    self.finishedBackgroundSessions = [NSMutableArray array];
     self.receivedDataCount = 0;
     
     self.queue = [NSOperationQueue zm_serialQueueWithName:self.name];
-    self.sut = (id) [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:self.queue];
+    self.sut = (id) [ZMURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
+                                                  delegate:self
+                                             delegateQueue:self.queue
+                                                identifier:@"test-session"];
 
     self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://a.exmaple.com/"]];
     self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://b.exmaple.com/"]];
@@ -78,6 +83,7 @@ static NSString * const DataKey = @"data";
     self.queue = nil;
     self.receivedResponses = nil;
     self.completedTasks = nil;
+    self.finishedBackgroundSessions = nil;
     self.receivedDataCount = 0;
     self.firedTimers = nil;
 
@@ -119,6 +125,11 @@ static NSString * const DataKey = @"data";
         arguments[DataKey] = responseData;
     }
     [self.completedTasks addObject:arguments];
+}
+
+- (void)URLSessionDidFinishEventsForBackgroundURLSession:(ZMURLSession *)URLSession
+{
+    [self.finishedBackgroundSessions addObject:URLSession];
 }
 
 - (void)testThatItPassesTheRequestToTheCompletionMethod;
@@ -202,6 +213,52 @@ static NSString * const DataKey = @"data";
     }
     WaitForAllGroupsToBeEmpty(0.5);
     // This will fail with "ZMTimer was not cleaned up correctly" unless cancel has been called.
+}
+
+- (void)testThatItGetsAllRegisteredRequestsForTheURLSession_Resume
+{
+    [self assertGetAllTasksWithConfiguration:^(NSURLSessionTask *task) {
+        [task resume];
+    } verifyBlock:^(__unused NSURLSessionTask *task, NSArray<NSURLSessionTask *> *tasks) {
+         XCTAssertEqualObjects(@[task], tasks);
+    }];
+}
+
+- (void)testThatItGetsAllRegisteredRequestsForTheURLSession_Suspend
+{
+    [self assertGetAllTasksWithConfiguration:^(NSURLSessionTask *task) {
+        [task suspend];
+    } verifyBlock:^(__unused NSURLSessionTask *task, NSArray<NSURLSessionTask *> *tasks) {
+        XCTAssertEqual(tasks.count, 0lu);
+    }];
+}
+
+- (void)testThatItGetsAllRegisteredRequestsForTheURLSession_Cancel
+{
+    [self assertGetAllTasksWithConfiguration:^(NSURLSessionTask *task) {
+        [task cancel];
+    } verifyBlock:^(__unused NSURLSessionTask *task, NSArray<NSURLSessionTask *> *tasks) {
+        XCTAssertEqual(tasks.count, 0lu);
+    }];
+}
+
+- (void)assertGetAllTasksWithConfiguration:(void (^)(NSURLSessionTask *))configurationBlock
+                               verifyBlock:(void (^)(NSURLSessionTask *, NSArray<NSURLSessionTask *> *))verifyBlock
+{
+    // given
+    XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completionHandler"];
+    
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/some/path/"];
+    NSURLSessionTask *task = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:request];
+    configurationBlock(task);
+    
+    // when
+    [self.sut getTasksWithCompletionHandler:^(NSArray<NSURLSessionTask *> *tasks) {
+        verifyBlock(task, tasks);
+        [expectation fulfill];
+    }];
+    
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
 @end
@@ -289,6 +346,111 @@ willPerformHTTPRedirection:response
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0]);
 }
 
+- (void)testThatItCallsTheDelegateWhenTheBackgroundURLSessionFinished
+{
+    // when
+    [self.sut URLSessionDidFinishEventsForBackgroundURLSession:self.sut.backingSession];
+    
+    // then
+    XCTAssertEqual(self.finishedBackgroundSessions.count, 1lu);
+    XCTAssertEqual(self.finishedBackgroundSessions.firstObject, self.sut);
+}
+
+- (void)testThatItCompletesTheRequestWith_TryAgainLater_IfTheProgressDecreaces_ShouldFailInsteadOfRetry_Upload
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:YES shouldFailInsteadOfRetry:YES upload:NO verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertEqualObjects(response.transportSessionError, NSError.tryAgainLaterError);
+    }];
+}
+
+- (void)testThatItDoesCompleteTheRequestWith_TryAgainLater_IfTheProgressIncreases_ShouldFailInsteadOfRetry_Upload
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:NO shouldFailInsteadOfRetry:YES upload:NO verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertNil(response);
+    }];
+}
+
+- (void)testThatItDoesNotCompleteTheRequestWith_TryAgainLater_IfTheProgressDecreacesAnd_ShouldFailInsteadOfRetry_isNotSet_Upload
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:YES shouldFailInsteadOfRetry:NO upload:NO verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertNil(response);
+    }];
+}
+
+- (void)testThatItDoesNotCompleteTheRequestWith_TryAgainLater_IfTheProgressIncreasesAnd_ShouldFailInsteadOfRetry_isNotSet_Upload
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:NO shouldFailInsteadOfRetry:NO upload:NO verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertNil(response);
+    }];
+}
+
+- (void)testThatItCompletesTheRequestWith_TryAgainLater_IfTheProgressDecreaces_ShouldFailInsteadOfRetry_Download
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:YES shouldFailInsteadOfRetry:YES upload:YES verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertEqualObjects(response.transportSessionError, NSError.tryAgainLaterError);
+    }];
+}
+
+- (void)testThatItDoesCompleteTheRequestWith_TryAgainLater_IfTheProgressIncreases_ShouldFailInsteadOfRetry_Download
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:NO shouldFailInsteadOfRetry:YES upload:YES verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertNil(response);
+    }];
+}
+
+- (void)testThatItDoesNotCompleteTheRequestWith_TryAgainLater_IfTheProgressDecreacesAnd_ShouldFailInsteadOfRetry_isNotSet_Download
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:YES shouldFailInsteadOfRetry:NO upload:YES verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertNil(response);
+    }];
+}
+
+- (void)testThatItDoesNotCompleteTheRequestWith_TryAgainLater_IfTheProgressIncreasesAnd_ShouldFailInsteadOfRetry_isNotSet_Download
+{
+    [self checkThatItCompletesTheRequestWhenTheProgressDecreases:NO shouldFailInsteadOfRetry:NO upload:YES verifyBlock:^(ZMTransportResponse *response) {
+        XCTAssertNil(response);
+    }];
+}
+
+- (void)checkThatItCompletesTheRequestWhenTheProgressDecreases:(BOOL)shouldDecrease
+                                      shouldFailInsteadOfRetry:(BOOL)shouldFailInsteadOfRetry
+                                                        upload:(BOOL)upload
+                                                   verifyBlock:(void (^)(ZMTransportResponse *response))verifyBlock
+{
+    // given
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"www.example.com"];
+    request.shouldFailInsteadOfRetry = shouldFailInsteadOfRetry;
+    
+    __block ZMTransportResponse *receivedResponse;
+    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response) {
+        receivedResponse = response;
+    }]];
+    
+    NSURLSessionTask *task = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:request];
+    [task resume];
+    int64_t totalBytes = shouldDecrease ? 2500 : 5000;
+    
+    // when
+    if (upload) {
+        NSURLSessionDownloadTask *downloadTask = (NSURLSessionDownloadTask *)task;
+        [self.sut URLSession:self.sut.backingSession downloadTask:downloadTask didWriteData:4000 totalBytesWritten:4000 totalBytesExpectedToWrite:6000];
+        [self.sut URLSession:self.sut.backingSession downloadTask:downloadTask didWriteData:totalBytes totalBytesWritten:totalBytes totalBytesExpectedToWrite:6000];
+    } else {
+        [self.sut URLSession:self.sut.backingSession task:task didSendBodyData:4000 totalBytesSent:4000 totalBytesExpectedToSend:6000];
+        [self.sut URLSession:self.sut.backingSession task:task didSendBodyData:totalBytes totalBytesSent:totalBytes totalBytesExpectedToSend:6000];
+    }
+    
+    // then
+    XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+    
+    if (shouldDecrease && shouldFailInsteadOfRetry) {
+        XCTAssertNotNil(receivedResponse);
+        verifyBlock(receivedResponse);
+    } else {
+        verifyBlock(nil);
+    }
+}
+
 @end
 
 
@@ -297,7 +459,7 @@ willPerformHTTPRedirection:response
 
 - (void)setupMockBackgroundSession
 {    
-    self.sut = (id) [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:self.queue];
+    self.sut = (id) [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:self.queue identifier:@"test-session"];
     self.sut.backingSession = [OCMockObject niceMockForClass:NSURLSession.class];
     
     [[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name]] configuration];
@@ -312,7 +474,7 @@ willPerformHTTPRedirection:response
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
-    self.sut = (id) [ZMURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:self.queue];
+    self.sut = (id) [ZMURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:@"test-session"];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
@@ -437,6 +599,35 @@ willPerformHTTPRedirection:response
     
     // then
     [(id)self.sut.temporaryFiles verify];
+}
+
+- (void)testThatItCreatesAnUploadTasksForRequestsWithFileURL
+{
+    // given
+    [self setupBackgroundSession];
+    NSString *path = @"http://baz.example.com/1/";
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:path]];
+    NSString *contentType = @"multipart/mixed; boundary=frontier";
+    ZMTransportRequest *transportRequest = [ZMTransportRequest uploadRequestWithFileURL:self.uniqueFileURL path:path contentType:contentType];
+    
+    // when
+    NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:nil transportRequest:transportRequest];
+    
+    // then
+    XCTAssertTrue([task isKindOfClass:NSURLSessionUploadTask.class]);
+    XCTAssertEqualObjects(task.originalRequest, request);
+    XCTAssertEqual(task.state, NSURLSessionTaskStateSuspended);
+}
+
+- (NSURL *)uniqueFileURL
+{
+    NSString *documents = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    NSString *fileName = [NSUUID.createUUID.transportString stringByAppendingPathExtension:@"txt"];
+    NSURL *fileURL = [NSURL fileURLWithPath:[documents stringByAppendingPathComponent:fileName]];
+    NSError *error = nil;
+    XCTAssertTrue([@"🔒" writeToURL:fileURL atomically:YES encoding:NSUTF8StringEncoding error:&error]);
+    XCTAssertNil(error);
+    return fileURL;
 }
 
 @end

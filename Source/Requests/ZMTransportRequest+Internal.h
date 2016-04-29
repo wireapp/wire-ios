@@ -22,7 +22,8 @@
 
 @interface ZMTransportRequest (Internal)
 
-@property (nonatomic) NSMutableArray *completionHandlers;
+@property (nonatomic) NSMutableArray<ZMCompletionHandler *> *completionHandlers;
+@property (nonatomic) NSMutableArray<ZMTaskProgressHandler *> *progressHandlers;
 
 + (NSString *)stringForMethod:(ZMTransportRequestMethod)method;
 + (ZMTransportRequestMethod)methodFromString:(NSString *)string;
@@ -33,5 +34,6 @@
 
 /// This is intended for logs such that it does not reveal any payload
 @property (nonatomic, readonly, copy) NSString *descriptionWithMethodAndPath;
+@property (nonatomic, readonly) float progress;
 
 @end

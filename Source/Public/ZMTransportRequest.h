@@ -24,9 +24,13 @@
 @class ZMTransportResponse;
 @protocol ZMTransportData;
 @protocol ZMSGroupQueue;
+@class ZMTaskIdentifier;
+@class ZMURLSession;
 
+typedef void(^ZMTaskCreatedBlock)(NSURLSessionTask *, ZMTaskIdentifier *);
 typedef void(^ZMCompletionHandlerBlock)(ZMTransportResponse *);
 typedef void(^ZMAccessTokenHandlerBlock)(NSString *token, NSString *type);
+typedef void(^ZMProgressHandlerBlock)(float);
 
 extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 
@@ -37,7 +41,19 @@ extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 
 @end;
 
+@interface ZMTaskCreatedHandler : NSObject
 
++ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMTaskCreatedBlock)block ZM_NON_NULL(1,2);
+@property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
+
+@end
+
+@interface ZMTaskProgressHandler : NSObject
+
++ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMProgressHandlerBlock)block ZM_NON_NULL(1,2);
+@property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
+
+@end
 
 typedef NS_ENUM(uint8_t, ZMTransportRequestMethod) {
     ZMMethodGET,
@@ -74,6 +90,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 
 + (instancetype)requestGetFromPath:(NSString *)path;
 + (instancetype)compressedGetFromPath:(NSString *)path;
++ (instancetype)uploadRequestWithFileURL:(NSURL *)url path:(NSString *)path contentType:(NSString *)contentType;
 
 + (instancetype)emptyPutRequestWithPath:(NSString *)path;
 + (instancetype)imageGetRequestFromPath:(NSString *)path;
@@ -91,20 +108,26 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @property (nonatomic, readonly, copy) NSString *path;
 @property (nonatomic, readonly) ZMTransportRequestMethod method;
 @property (nonatomic, readonly, copy) NSData *binaryData;
+@property (nonatomic, readonly) NSURL *fileUploadURL;
 @property (nonatomic, readonly, copy) NSString *binaryDataType; ///< Uniform type identifier (UTI) of the binary data
 @property (nonatomic, readonly) BOOL needsAuthentication;
 @property (nonatomic, readonly) BOOL responseWillContainAccessToken;
 @property (nonatomic, readonly) BOOL responseWillContainCookie;
 @property (nonatomic, readonly) NSDate *expirationDate;
 @property (nonatomic, readonly) BOOL shouldCompress;
+@property (nonatomic) BOOL shouldFailInsteadOfRetry;
 
 /// If true, the request should only be sent through background session
 @property (nonatomic, readonly) BOOL shouldUseOnlyBackgroundSession;
 
 @property (nonatomic, readonly, copy) NSDictionary *contentDisposition; ///< C.f. <https://tools.ietf.org/html/rfc2183>
 
+- (void)addTaskCreatedHandler:(ZMTaskCreatedHandler *)taskCreatedHandler;
 - (void)addCompletionHandler:(ZMCompletionHandler *)completionHandler;
+- (void)addProgressHandler:(ZMTaskProgressHandler *)progressHandler;
+- (void)callTaskCreationHandlersWithTask:(NSURLSessionTask *)task session:(ZMURLSession *)session;
 - (void)completeWithResponse:(ZMTransportResponse *)response;
+- (void)updateProgress:(float)progress;
 - (BOOL)isEqualToRequest:(ZMTransportRequest *)request;
 
 - (void)expireAfterInterval:(NSTimeInterval)interval;

@@ -24,7 +24,7 @@
 #import "ZMTransportRequestScheduler.h"
 #import "ZMTransportPushChannel.h"
 #import "ZMAccessTokenHandler.h"
-
+#import "ZMURLSession.h"
 
 @class ZMTaskIdentifierMap;
 @class ZMReachability;
@@ -53,6 +53,11 @@
 
 @interface ZMTransportSession (Testing)
 - (void)setAccessToken:(ZMAccessToken *)accessToken;
+@end
+
+
+@interface ZMTransportSession (URLSessionDelegate) <ZMURLSessionDelegate>
+- (void)URLSessionDidFinishEventsForBackgroundURLSession:(ZMURLSession *)URLSession;
 @end
 
 

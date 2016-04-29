@@ -22,6 +22,7 @@
 #import <ZMTransport/ZMTransportRequest.h>
 #import <ZMTransport/ZMReachability.h>
 #import <ZMTransport/ZMBackgroundable.h>
+#import <ZMTransport/ZMRequestCancellation.h>
 
 @class ZMAccessToken;
 @class ZMTransportRequest;
@@ -91,6 +92,20 @@ extern NSString * const ZMTransportSessionShouldKeepWebsocketOpenKey;
 
 + (void)notifyNewRequestsAvailable:(id<NSObject>)sender;
 
+/**
+ *   This method should be called from inside @c application(application:handleEventsForBackgroundURLSession identifier:completionHandler:)
+ *   and passed the identifier and completionHandler to store after recreating the background session with the given identifier.
+ *   We need to store the handler to call it as soon as the background download completed (in @c URLSessionDidFinishEventsForBackgroundURLSession(session:))
+ */
+- (void)addCompletionHandlerForBackgroundSessionWithIdentifier:(NSString *)identifier handler:(dispatch_block_t)handler;
+
+/**
+ *   Asynchronically gets all current @c NSURLSessionTasks for the background session and calls the completionHandler
+ *   with them as parameter, can be used to check if a request that is expected to be registered with the
+ *   background session indeed is, e.g. after the app has been terminated
+ */
+- (void)getBackgroundTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler;
+
 @end
 
 
@@ -102,6 +117,10 @@ extern NSString * const ZMTransportSessionShouldKeepWebsocketOpenKey;
 
 /// Close push channel and open it again.
 - (void)restartPushChannel;
+
+@end
+
+@interface ZMTransportSession (RequestCancellation) <ZMRequestCancellation>
 
 @end
 
