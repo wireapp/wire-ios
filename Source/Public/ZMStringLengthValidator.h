@@ -17,13 +17,13 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+#import "ZMPropertyValidator.h"
 
+@interface ZMStringLengthValidator : NSObject
 
-@interface NSUUID (Data)
-
-/// Returns the raw data for this NSUUID
-- (NSData *)data;
++ (BOOL)validateValue:(inout id *)ioValue
+  mimimumStringLength:(NSUInteger)mimimumStringLength
+   maximumSringLength:(NSUInteger)maximumLength
+                error:(out NSError **)outError;
 
 @end
-

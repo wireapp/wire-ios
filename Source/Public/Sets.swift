@@ -87,7 +87,7 @@ public final class OrderedSet<T  where T : NSObject, T : Hashable> : Equatable, 
     public func generate() -> AnyGenerator<T> {
         let enumeration = self.innerSet.objectEnumerator()
         
-        return anyGenerator {
+        return AnyGenerator {
             return enumeration.nextObject() as? T
         }
     }

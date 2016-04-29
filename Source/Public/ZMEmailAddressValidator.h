@@ -17,13 +17,8 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+#import "ZMPropertyValidator.h"
 
-
-@interface NSUUID (Data)
-
-/// Returns the raw data for this NSUUID
-- (NSData *)data;
+@interface ZMEmailAddressValidator : NSObject <ZMPropertyValidator>
 
 @end
-

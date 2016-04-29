@@ -163,6 +163,13 @@ extension NSData_ZMSCryptoTests {
             generatedDataSet.insert(data)
         }
     }
+    
+    func testThatItReturnsNilIfDecryptingKeyIsNotOfAES256Length() {
+        
+        let badKey = self.sampleKey.subdataWithRange(NSRange(location: 0, length: 16))
+        XCTAssertNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIVWithKey(badKey))
+        XCTAssertNotNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIVWithKey(self.sampleKey))
+    }
 }
 
 
