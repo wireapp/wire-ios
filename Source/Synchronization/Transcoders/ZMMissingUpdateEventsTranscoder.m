@@ -23,10 +23,7 @@
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
 #import "ZMSingleRequestSync.h"
 #import "ZMSyncStrategy.h"
-#import "ZMUpdateEvent.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import <zmessaging/zmessaging-Swift.h>
-#import "ZMUpdateEvent.h"
 #import "ZMSimpleListRequestPaginator.h"
 
 static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";

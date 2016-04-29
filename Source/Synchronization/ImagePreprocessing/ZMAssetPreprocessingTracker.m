@@ -18,11 +18,11 @@
 
 
 @import zimages;
+@import ZMCDataModel;
 
 #import "ZMAssetPreprocessingTracker+Testing.h"
-#import "ZMManagedObject+Internal.h"
 
-@interface ZMAssetPreprocessingTracker ()
+@interface ZMImagePreprocessingTracker ()
 
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) id<ZMAssetsPreprocessor> preprocessor;
@@ -35,7 +35,7 @@
 
 
 
-@implementation ZMAssetPreprocessingTracker
+@implementation ZMImagePreprocessingTracker
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                         imageProcessingQueue:(NSOperationQueue *)imageProcessingQueue

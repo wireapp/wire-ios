@@ -18,6 +18,7 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUserProfileUpdateTranscoder.h"
 #import "ZMSingleRequestSync.h"
@@ -25,7 +26,6 @@
 #import "ZMCredentials+Internal.h"
 #import "ZMUserSessionRegistrationNotification.h"
 #import "NSError+ZMUserSessionInternal.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSessionRegistrationNotification.h"
 #import "ZMUserProfileUpdateStatus.h"
 

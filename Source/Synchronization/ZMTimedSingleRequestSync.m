@@ -18,10 +18,10 @@
 
 
 @import ZMCSystem;
+@import ZMCDataModel;
 
 #import "ZMTimedSingleRequestSync.h"
 #import "ZMOperationLoop.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 @class ZMTimedRequestTriggerHolder;
 

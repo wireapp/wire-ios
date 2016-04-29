@@ -29,8 +29,7 @@
 #import "ZMTestNotifications.h"
 #import "ZMSyncStateDelegate.h"
 #import "ZMStateMachineDelegate.h"
-#import "ZMNotifications+Internal.h"
-#import "ZMuserProfileUpdateTranscoder.h"
+#import "ZMUserProfileUpdateTranscoder.h"
 #import "ZMHotFix.h"
 
 @interface ZMEventProcessingState ()

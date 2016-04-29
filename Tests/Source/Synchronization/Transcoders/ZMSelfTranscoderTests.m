@@ -20,12 +20,11 @@
 @import zimages;
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "ObjectTranscoderTests.h"
 #import "ZMSelfTranscoder+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMUpstreamModifiedObjectSync.h"
-#import "ZMConversation+Internal.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMSingleRequestSync.h"
 #import "ZMUserSession+Internal.h"
@@ -421,7 +420,8 @@
         ZMUpstreamRequest *request = [(id<ZMUpstreamTranscoder>) self.sut requestForInsertingObject:selfUser forKeys:[NSSet setWithObject:@"name"]];
         
         // when
-        BOOL needsToUpdateMoreObjects = [(id<ZMUpstreamTranscoder>) self.sut updateUpdatedObject:selfUser requestUserInfo:request.userInfo response:nil keysToParse:nil];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+        BOOL needsToUpdateMoreObjects = [(id<ZMUpstreamTranscoder>) self.sut updateUpdatedObject:selfUser requestUserInfo:request.userInfo response:response keysToParse:[NSSet set]];
         
         // then
         XCTAssertFalse(needsToUpdateMoreObjects);

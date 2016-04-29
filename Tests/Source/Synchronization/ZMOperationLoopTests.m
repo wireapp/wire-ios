@@ -19,18 +19,13 @@
 
 @import ZMTransport;
 @import Cryptobox;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMSyncStrategy.h"
 #import <zmessaging/ZMUserSession.h>
-#import "NSManagedObjectContext+zmessaging.h"
 #import "MockModelObjectContextFactory.h"
-#import "ZMClientMessage.h"
-#import "ZMManagedObject+Internal.h"
 #import "MockModelObjectContextFactory.h"
-#import "ZMUpdateEvent.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMAuthenticationStatus.h"
 #import "AVSMediaManager.h"
 #import "AVSFlowManager.h"
@@ -126,6 +121,7 @@
             syncStateDelegate:nil
             backgroundableSession:transportSession
             localNotificationsDispatcher:OCMOCK_ANY
+            taskCancellationProvider:OCMOCK_ANY
             badge:OCMOCK_ANY];
     
     // when
@@ -874,17 +870,22 @@
 
 @implementation ZMOperationLoopTests (Background)
 
-- (APSSignalingKeysStore *)prepareKeyChainForAPSSignalingStore
+- (APSSignalingKeysStore *)prepareSelfClientForAPSSignalingStore
 {
+    [[self.syncStrategy stub] processSaveWithInsertedObjects:OCMOCK_ANY updateObjects:OCMOCK_ANY];
+    [[self.syncStrategy stub] dataDidChange];
+    
     NSString *macKey = @"OnuLUsjZT5ix8mebzewnNH7kVuLNYvDTxVFe8xiZ1u0=";
     NSString *encryptionKey = @"eiISyl78bYnFZaXsjvZh4v7d/mnNLDQNB+vRcsapovA=";
     
     NSData *macKeyData = [[NSData alloc] initWithBase64EncodedString:macKey options:0];
     NSData *encryptionKeyData = [[NSData alloc] initWithBase64EncodedString:encryptionKey options:0];
     
-    [ZMKeychain setData:macKeyData forAccount: @"APSVerificationKey"];
-    [ZMKeychain setData:encryptionKeyData forAccount: @"APSDecryptionKey"];
-    return [[APSSignalingKeysStore alloc] initFromKeychain:YES];
+    UserClient *selfClient = [self createSelfClient];
+    selfClient.apsDecryptionKey = encryptionKeyData;
+    selfClient.apsVerificationKey = macKeyData;
+
+    return [[APSSignalingKeysStore alloc] initWithUserClient:selfClient];
 }
 
 -(void)clearKeyChainData
@@ -1000,7 +1001,7 @@
 - (void)testThatItForwardsEventsFromEncryptedPushesToTheTransportSessionAndPingBackStatus
 {
     // given
-    self.sut.apsSignalKeyStore = [self prepareKeyChainForAPSSignalingStore];
+    self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
     id mockCryptoBox = [OCMockObject niceMockForClass:[CBCryptoBox class]];
     self.sut.cryptoBox = mockCryptoBox;
     
@@ -1143,7 +1144,7 @@
     handler(ZMBackgroundFetchResultNewData);
 }
 
-- (void)testThatItFiltersOutPreexisingMessageEventsAndForwardsTheFilteredEventsToTheSyncStrategyAndPingBackStatus
+- (void)testThatItFiltersOutPreexisingMessageEventsAndForwardsTheEventsToTheSyncStrategyAndFilteredEventsToThePingBackStatus
 {
     // given
     NSUUID *notificationID = NSUUID.createUUID;
@@ -1175,7 +1176,7 @@
     XCTAssertEqual(filteredEvents.count, 1lu);
     
     // expect
-    [(ZMSyncStrategy *)[self.syncStrategy expect] consumeUpdateEvents:filteredEvents];
+    [(ZMSyncStrategy *)[self.syncStrategy expect] consumeUpdateEvents:events];
     [(ZMSyncStrategy *)[self.syncStrategy expect] updateBadgeCount];
     [[self.pingBackStatus expect] didReceiveVoIPNotification:[OCMArg checkWithBlock:^BOOL(EventsWithIdentifier *eventsWithID) {
         XCTAssertEqualObjects(eventsWithID.events, filteredEvents);

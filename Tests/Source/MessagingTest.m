@@ -27,16 +27,11 @@
 @import CoreData;
 @import ZMTransport;
 @import ZMCMockTransport;
+@import ZMCDataModel;
 
-#import "ZMClientMessage.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "NSManagedObjectContext+tests.h"
 #import "ZMTimingTests.h"
 #import "MockModelObjectContextFactory.h"
-#import "ZMAssetClientMessage.h"
 
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
 #import "ZMObjectStrategyDirectory.h"
 
 #import "ZMUserTranscoder.h"
@@ -62,15 +57,10 @@
 #import "ZMRemovedSuggestedPeopleTranscoder.h"
 #import "ZMKnockTranscoder.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMUserDisplayNameGenerator.h"
 #import "ZMUserProfileUpdateTranscoder.h"
-#import "ZMUser+Internal.h"
 #import "ZMMessageTranscoder+Internal.h"
 #import "ZMClientMessageTranscoder.h"
 #import <zmessaging/zmessaging-Swift.h>
-#import "ZMConversation+UnreadCount.h"
 
 static const int32_t Mersenne1 = 524287;
 static const int32_t Mersenne2 = 131071;
@@ -95,12 +85,6 @@ static const int32_t Mersenne3 = 8191;
 
 
 @implementation MessagingTest
-{
-    dispatch_semaphore_t _successSemaphore;
-    int32_t successCount;
-    int32_t completionCount;
-    int32_t verySmallJPEGData;
-}
 
 - (BOOL)shouldSlowTestTimers
 {
@@ -166,9 +150,6 @@ static const int32_t Mersenne3 = 8191;
     
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     
-    [self reseedImageCounter];
-    _successSemaphore = dispatch_semaphore_create(0);
-    
     self.testMOC = [MockModelObjectContextFactory testContext];
     [self.testMOC addGroup:self.dispatchGroup];
     self.alternativeTestMOC = [MockModelObjectContextFactory alternativeMocForPSC:self.testMOC.persistentStoreCoordinator];
@@ -176,7 +157,7 @@ static const int32_t Mersenne3 = 8191;
     self.searchMOC = [NSManagedObjectContext createSearchContext];
     [self.searchMOC addGroup:self.dispatchGroup];
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
-    WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }
 
 - (void)tearDown;
@@ -185,7 +166,7 @@ static const int32_t Mersenne3 = 8191;
     [self resetState];
     [MessagingTest deleteAllFilesInCache];
     [super tearDown];
-    WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }
 
 - (void)resetState
@@ -205,8 +186,6 @@ static const int32_t Mersenne3 = 8191;
     [self.mockTransportSession tearDown];
     self.mockTransportSession = nil;
     
-    successCount = 0;
-    completionCount = 0;
     self.ignoreTestDebugFlagForTestTimers = NO;
     [NSManagedObjectContext resetUserInterfaceContext];
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
@@ -296,6 +275,14 @@ static const int32_t Mersenne3 = 8191;
     
     [self.syncMOC setZm_userInterfaceContext:self.uiMOC];
     [self.uiMOC setZm_syncContext:self.syncMOC];
+    
+    ImageAssetCache *imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:100];
+    self.syncMOC.zm_imageAssetCache = imageAssetCache;
+    self.uiMOC.zm_imageAssetCache = imageAssetCache;
+    
+    FileAssetCache *fileAssetCache = [[FileAssetCache alloc] init];
+    self.syncMOC.zm_fileAssetCache = fileAssetCache;
+    self.uiMOC.zm_fileAssetCache = fileAssetCache;
 }
 
 - (id<ZMObjectStrategyDirectory>)createMockObjectStrategyDirectoryInMoc:(NSManagedObjectContext *)moc;
@@ -435,19 +422,6 @@ static int32_t eventIdCounter;
 {
     int32_t c = OSAtomicIncrement32(&eventIdCounter);
     return (((int)c * Mersenne3) + Mersenne2) % (max+1);
-}
-
-static int16_t imageCounter;
-
-- (void)reseedImageCounter;
-{
-    NSData *data = [self.name dataUsingEncoding:NSUTF8StringEncoding];
-    union {
-        int16_t counter;
-        uint8_t md[CC_SHA1_DIGEST_LENGTH];
-    } u;
-    CC_SHA1(data.bytes, (CC_LONG) data.length, u.md);
-    imageCounter = u.counter;
 }
 
 - (BOOL)waitWithTimeout:(NSTimeInterval)timeout forSaveOfContext:(NSManagedObjectContext *)moc untilBlock:(BOOL(^)(void))block;
@@ -711,7 +685,7 @@ static int16_t imageCounter;
         ZMGenericMessage *message = [ZMGenericMessage messageWithMediumImageProperties:properties processedImageProperties:properties encryptionKeys:keys nonce:nonce.transportString format:format];
         [imageMessage addGenericMessage:message];
         
-        AssetDirectory *directory = [[AssetDirectory alloc] init];
+        ImageAssetCache *directory = self.uiMOC.zm_imageAssetCache;
         if (stored) {
             [directory storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:imageData];
         }

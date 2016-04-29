@@ -19,7 +19,7 @@
 
 @import Foundation;
 
-#import <zmessaging/ZMNotifications.h>
+#import <ZMCDataModel/ZMNotifications.h>
 
 @protocol ZMAuthenticationObserverToken;
 

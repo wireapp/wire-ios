@@ -18,9 +18,9 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMTracingProbes.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 
 

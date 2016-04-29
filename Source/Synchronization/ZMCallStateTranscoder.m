@@ -9,29 +9,22 @@
 @import ZMCSystem;
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMCallStateTranscoder.h"
-
+#import "ZMVoiceChannel+CallFlow.h"
 #import "ZMDownstreamObjectSync.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMUpdateEvent.h"
 #import "ZMObjectStrategyDirectory.h"
 #import "ZMFlowSync.h"
-#import "ZMVoiceChannel+Internal.h"
 #import "ZMTracing.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMNotifications+Internal.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMUpstreamModifiedObjectSync.h"
-#import "NSError+ZMConversation.h"
-#import "NSError+ZMConversationInternal.h"
 #import "ZMOperationLoop.h"
 #import "ZMCallStateLogger.h"
 #import "ZMGSMCallHandler.h"
 #import "ZMLocalNotificationDispatcher.h"
-
+#import <zmessaging/zmessaging-Swift.h>
 
 static NSString * const StateKey = @"state";
 static NSString * const StateIdle = @"idle";
@@ -608,6 +601,7 @@ _Pragma("clang diagnostic pop")
 
     if (!currentIsVideoCall && isVideoActive) {
         conversation.isVideoCall = YES;
+        [conversation.voiceChannel updateForStateChange];
     }
     
     if (conversation.isVideoCall) {

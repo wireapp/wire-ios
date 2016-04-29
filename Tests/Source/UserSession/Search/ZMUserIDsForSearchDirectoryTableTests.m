@@ -17,10 +17,11 @@
 // 
 
 
+@import ZMCDataModel;
+
 #import "MessagingTest.h"
 #import "ZMSearchDirectory+Internal.h"
 #import "ZMUserIDsForSearchDirectoryTable.h"
-#import "ZMSearchUser+Internal.h"
 #import "ZMUserSession+Internal.h"
 
 @interface ZMUserIDsForSearchDirectoryTableTests: MessagingTest

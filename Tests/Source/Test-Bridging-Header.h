@@ -18,20 +18,7 @@
 
 
 #import <zmessaging/zmessaging.h>
-#import "ZMManagedObject+Internal.h"
 #import "MessagingTest.h"
 #import "ZMUserSessionTestsBase.h"
-#import "ZMMessage+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMOrderedSetState.h"
-#import "ZMChangedIndexes.h"
-#import "ZMNotifications+Internal.h"
-#import "ZMEditableUser.h"
-#import "ZMVoiceChannel+Testing.h"
-#import "ZMUserSession+Internal.h"
-#import "ZMMessageTests.h"
 #import "IntegrationTestBase.h"
-#import "TestUserObserver.h"
 #import "MessagingTest+EventFactory.h"

@@ -20,15 +20,10 @@
 @import ZMCSystem;
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUserTranscoder+Internal.h"
 #import "ZMSyncStrategy.h"
-#import "ZMUser+Internal.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMUpdateEvent.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMRemoteIdentifierObjectSync.h"
 #import "ZMDownstreamObjectSync.h"
 

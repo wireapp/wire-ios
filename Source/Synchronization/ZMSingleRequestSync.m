@@ -21,7 +21,6 @@
 @import ZMTransport;
 
 #import "ZMSingleRequestSync.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 @interface ZMSingleRequestSync ()
 

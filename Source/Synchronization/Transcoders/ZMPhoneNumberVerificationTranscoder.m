@@ -27,7 +27,6 @@
 #import "ZMCredentials+Internal.h"
 #import "ZMUserSessionRegistrationNotification.h"
 #import "NSError+ZMUserSessionInternal.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSessionRegistrationNotification.h"
 
 @interface ZMPhoneNumberVerificationTranscoder() <ZMSingleRequestTranscoder>

@@ -17,9 +17,9 @@
 // 
 
 
+@import ZMCDataModel;
 #import "ZMPushToken.h"
 
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import <stdio.h>
 #import <xlocale.h>
 

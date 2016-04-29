@@ -16,12 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "ZMAddressBookMatcher.h"
-#import "ZMAddressBookContact.h"
-#import "ZMUser.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMSearchUser+Internal.h"
 
 @interface ZMAddressBookMatcher ()
 

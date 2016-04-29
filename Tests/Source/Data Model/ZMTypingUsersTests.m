@@ -16,13 +16,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMTypingUsers.h"
-#import "ZMNotifications+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
-
+#import "ZMTypingTranscoder.h"
 
 
 @interface ZMTypingUsersTests : MessagingTest
@@ -37,7 +35,9 @@
 
 @end
 
+@interface ZMConversationTest_TypingUser : MessagingTest
 
+@end
 
 @implementation ZMTypingUsersTests
 
@@ -143,3 +143,33 @@
 }
 
 @end
+
+
+
+@implementation ZMConversationTest_TypingUser
+
+
+- (void)testThatItCreatesANotificationWhenCallingSetTyping
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+
+    // then
+    [self expectationForNotification:ZMTypingNotificationName object:nil handler:^BOOL(NSNotification * notification) {
+        XCTAssertEqual(notification.object, conversation);
+        XCTAssertEqual(notification.userInfo[@"isTyping"], @(YES));
+        return  YES;
+    }];
+    
+    // when
+    [conversation setIsTyping:YES];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // teardown
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+@end
+
+

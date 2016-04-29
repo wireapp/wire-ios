@@ -23,32 +23,8 @@
 
 @interface ZMClientMessageTranscoder : ZMMessageTranscoder
 
-+ (instancetype)clientMessageTranscoderWithManagedObjectContext:(NSManagedObjectContext *)moc
-                                    localNotificationDispatcher:(ZMLocalNotificationDispatcher *)dispatcher
-                                       clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus;
-
-@end
-
-
-@class ZMUpstreamModifiedObjectSync;
-@class ClientMessageRequestFactory;
-@class ZMDownstreamObjectSync;
-
-@interface ZMClientMessageTranscoder (Testing)
-
-+ (instancetype)clientMessageTranscoderWithManagedObjectContext:(NSManagedObjectContext *)moc
-                                     upstreamInsertedObjectSync:(ZMUpstreamInsertedObjectSync *)upstreamObjectSync
-                                    localNotificationDispatcher:(ZMLocalNotificationDispatcher *)dispatcher
-                                         messageExpirationTimer:(ZMMessageExpirationTimer *)expirationTimer
-                                       clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus;
-
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                  upstreamInsertedObjectSync:(ZMUpstreamInsertedObjectSync *)upstreamInsertedObjectSync
-                  upstreamModifiedObjectSync:(ZMUpstreamModifiedObjectSync *)upstreamModifiedObjectSync
-                        downstreamObjectSync:(ZMDownstreamObjectSync *)downstreamObjectSync
                  localNotificationDispatcher:(ZMLocalNotificationDispatcher *)dispatcher
-                      messageExpirationTimer:(ZMMessageExpirationTimer *)expirationTimer
-                              requestFactory:(ClientMessageRequestFactory *)factory
-                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus;;
+                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus;
 
 @end

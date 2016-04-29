@@ -16,13 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
-
-#import "ZMMessageTranscoderTests.h"
+@import ZMCDataModel;
 
 #import "ZMMessageTranscoderTests.h"
 #import "ZMMessageTranscoder+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMUpdateEvent.h"
 
 
 

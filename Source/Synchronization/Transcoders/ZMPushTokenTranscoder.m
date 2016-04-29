@@ -25,8 +25,6 @@
 #import "ZMPushToken.h"
 #import "ZMSingleRequestSync.h"
 #import "ZMContextChangeTracker.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
 #import "ZMClientRegistrationStatus.h"
 #import <zmessaging/zmessaging-Swift.h>
 

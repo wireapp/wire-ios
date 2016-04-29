@@ -699,6 +699,83 @@
     }];
 }
 
+- (NSDictionary *)payloadForEncryptedOTRMessageWithFileNonce:(NSUUID *)nonce sender:(ZMUser *)sender conversation:(ZMConversation *)conversation
+{
+    ZMAssetUploadedBuilder* uploadedBuilder = [[ZMAssetUploadedBuilder alloc] init];
+    [uploadedBuilder setSha256:[NSData secureRandomDataOfLength:32]];
+    [uploadedBuilder setOtrKey:[NSData secureRandomDataOfLength:32]];
+    
+    ZMAssetBuilder* assetBuilder = [[ZMAssetBuilder alloc] init];
+    [assetBuilder setUploaded:[uploadedBuilder build]];
+    
+    ZMGenericMessageBuilder* genericAssetMessageBuilder = [[ZMGenericMessageBuilder alloc] init];
+    [genericAssetMessageBuilder setAsset:[assetBuilder build]];
+    [genericAssetMessageBuilder setMessageId:nonce.transportString];
+    
+    ZMGenericMessage *message = [genericAssetMessageBuilder build];
+    NSString *base64EncodedString = message.data.base64String;
+    return @{@"info": base64EncodedString,
+             @"conversation" : conversation.remoteIdentifier.transportString,
+             @"type": EventConversationEncryptedMessage,
+             @"from": sender ? sender.remoteIdentifier.transportString : @""
+             };
+}
+
+- (UILocalNotification *)notificationForFileAddEventFromUser:(ZMUser *)sender inConversation:(ZMConversation *)conversation
+{
+    ZMLocalNotificationForEvent *note = [self noteWithPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] sender:sender conversation:conversation]
+                                                     fromUser:sender
+                                               inConversation:conversation
+                                                         type:EventConversationAddOTRAsset];
+    
+    XCTAssertNotNil(note);
+    
+    XCTAssertEqualObjects(conversation, note.conversation);
+    if (sender != nil) {
+        XCTAssertEqualObjects(sender, note.sender);
+    } else {
+        XCTAssertNil(note.sender);
+    }
+    
+    XCTAssertNotNil(note.notifications);
+    UILocalNotification *notification = note.notifications.lastObject;
+    
+    return notification;
+}
+
+- (void)testThatItCreatesFileAddNotificationsCorrectly
+{
+    
+//    "push.notification.add.file.group" = "%1$@ shared a file in %2$@";
+//    "push.notification.add.file.group.nousername" = "New file in %1$@";
+//    "push.notification.add.file.group.nousername.noconversationname" = "New file in a conversation";
+//    "push.notification.add.file.group.noconversationname" = "%1$@ shared a file in a conversation";
+//    
+//    "push.notification.add.file.oneonone" = "%1$@ shared a file";
+//    "push.notification.add.file.oneonone.nousername" = "New file in a conversation";
+//    
+    NSDictionary *cases = @{@"Super User shared a file": @[self.sender, self.oneOnOneConversation],
+                            @"New file in a conversation" : @[self.oneOnOneConversation],
+                            
+                            @"Super User shared a file in Super Conversation": @[self.sender, self.groupConversation],
+                            @"New file in Super Conversation":@[self.groupConversation],
+                            @"New file in a conversation":@[self.groupConversationWithoutName],
+                            @"Super User shared a file": @[self.sender, self.groupConversationWithoutName],
+                            };
+    
+    [cases enumerateKeysAndObjectsUsingBlock:^(NSString *expectedAlert, NSArray *arguments, BOOL *stop) {
+        NOT_USED(stop);
+        UILocalNotification *notification;
+        if (arguments.count == 2) {
+            notification = [self notificationForFileAddEventFromUser:arguments[0] inConversation:arguments[1]];
+        }
+        else {
+            notification = [self notificationForFileAddEventFromUser:nil inConversation:arguments[0]];
+        }
+        XCTAssertNotNil(notification);
+        XCTAssertEqualObjects(notification.alertBody, expectedAlert);
+    }];
+}
 
 - (void)testThatItDoesNotCreateAnImageAddNotificationForTheWrongPayload
 {

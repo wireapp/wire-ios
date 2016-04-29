@@ -20,16 +20,11 @@
 @import ZMProtos;
 @import ZMTransport;
 @import Cryptobox;
+@import ZMCDataModel;
 
 #import "ZMClientMessageTranscoder+UpdateEvents.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
-#import "ZMClientMessage.h"
-#import "ZMAssetClientMessage.h"
-#import "ZMConversation+Internal.h"
 #import "ZMClientMessageTranscoder+Internal.h"
 #import <zmessaging/zmessaging-Swift.h>
-
 
 
 @interface ZMUpdateEventWithNonce : NSObject
@@ -110,11 +105,10 @@
         switch (event.type) {
             case ZMUpdateEventConversationClientMessageAdd:
             case ZMUpdateEventConversationOtrMessageAdd:
-                nonce = [self nonceForUpdateEvent:event entityClass:ZMClientMessage.class];
-                break;
             case ZMUpdateEventConversationOtrAssetAdd:
-                nonce = [self nonceForUpdateEvent:event entityClass:ZMAssetClientMessage.class];
+                nonce = [self nonceForUpdateEvent:event];
                 break;
+                
             default:
                 break;
         }
@@ -128,9 +122,9 @@
     return noncesForUpdateEvents;
 }
 
-- (NSUUID *)nonceForUpdateEvent:(ZMUpdateEvent *)event entityClass:(Class)entityClass
+- (NSUUID *)nonceForUpdateEvent:(ZMUpdateEvent *)event
 {
-    ZMGenericMessage *message = [ZMClientMessage genericMessageFromUpdateEvent:event entityClass:entityClass];
+    ZMGenericMessage *message = [ZMGenericMessage genericMessageFromUpdateEvent:event];
     return [NSUUID uuidWithTransportString:message.messageId];
 }
 

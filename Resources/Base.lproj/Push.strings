@@ -33,6 +33,14 @@
 "push.notification.add.image.oneonone" = "%1$@ shared a picture";
 "push.notification.add.image.oneonone.nousername" = "New picture in a conversation";
 
+"push.notification.add.file.group" = "%1$@ shared a file in %2$@";
+"push.notification.add.file.group.nousername" = "New file in %1$@";
+"push.notification.add.file.group.nousername.noconversationname" = "New file in a conversation";
+"push.notification.add.file.group.noconversationname" = "%1$@ shared a file in a conversation";
+
+"push.notification.add.file.oneonone" = "%1$@ shared a file";
+"push.notification.add.file.oneonone.nousername" = "New file in a conversation";
+
 "push.notification.member.join" = "%1$@ added %3$@ to %2$@";
 "push.notification.member.join.noconversationname" = "%1$@ added %2$@ to a conversation";
 "push.notification.member.join.nousername.noconversationname" = "%1$@ was added to a conversation";

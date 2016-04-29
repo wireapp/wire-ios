@@ -17,10 +17,10 @@
 // 
 
 
-#import "ZMAssetPreprocessingTracker.h"
+#import "ZMImagePreprocessingTracker.h"
 @class ZMAssetsPreprocessor;
 
-@interface ZMAssetPreprocessingTracker ()
+@interface ZMImagePreprocessingTracker ()
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                         imageProcessingQueue:(NSOperationQueue *)imageProcessingQueue

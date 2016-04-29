@@ -19,6 +19,7 @@
 
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMLoginTranscoder+Internal.h"
 #import "ZMSingleRequestSync.h"
@@ -27,8 +28,6 @@
 #import "NSError+ZMUserSessionInternal.h"
 #import "ZMTimedSingleRequestSync.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMUser+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMOperationLoop.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMUserSessionRegistrationNotification.h"

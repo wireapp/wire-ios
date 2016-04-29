@@ -20,12 +20,10 @@
 @import Foundation;
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
-#import "ZMMessage+Internal.h"
 #import "ZMKnockTranscoder.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "ZMUpstreamInsertedObjectSync.h"
 #import <zmessaging/ZMUpstreamRequest.h>

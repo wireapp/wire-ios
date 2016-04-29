@@ -18,11 +18,10 @@
 
 
 @import zmessaging;
+@import ZMCDataModel;
+
 #import "MessagingTest.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConnection+Internal.h"
 
 @interface FakeChangeTracker : NSObject <ZMContextChangeTracker>
 @property (nonatomic) NSFetchRequest *fetchRequest;

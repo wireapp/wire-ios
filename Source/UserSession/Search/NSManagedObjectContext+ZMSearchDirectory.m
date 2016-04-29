@@ -19,8 +19,8 @@
 
 #import "NSManagedObjectContext+ZMSearchDirectory.h"
 @import ZMTransport;
+@import ZMCDataModel;
 #import "ZMSearchUser+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 
 NSString * const ZMSuggestedUsersForUserDidChange = @"ZMSuggestedUsersForUserDidChange";

@@ -19,11 +19,11 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMRemovedSuggestedPeopleTranscoder.h"
 #import "ZMSuggestionSearch.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 
 
 

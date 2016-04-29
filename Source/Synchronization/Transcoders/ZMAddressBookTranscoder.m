@@ -22,7 +22,6 @@
 
 #import "ZMAddressBookTranscoder.h"
 
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMAddressBookSync.h"
 #import "ZMEmptyAddressBookSync.h"
 #import "ZMAddressBook.h"

@@ -21,7 +21,7 @@
 @import ZMCSystem;
 
 #import "ZMCredentials.h"
-#import "ZMNotifications+Internal.h"
+#import "ZMNotifications+UserSession.h"
 #import <zmessaging/ZMClientRegistrationStatus+Internal.h>
 
 

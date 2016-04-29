@@ -19,12 +19,9 @@
 
 @import ZMUtilities;
 @import ZMCSystem;
+@import ZMCDataModel;
 
 #import "ZMTypingUsersTimeout.h"
-
-
-#import "ZMConversation.h"
-#import "ZMUser.h"
 
 
 @interface ZMUserAndConversationKey : NSObject <NSCopying>

@@ -19,15 +19,19 @@
 
 #import <CoreData/CoreData.h>
 #import <ZMTransport/ZMTransport.h>
+#import <ZMCDataModel/ZMCDataModel.h>
 
 #import "MessagingTest.h"
 #import "ZMUserSession+Internal.h"
-#if TARGET_OS_IPHONE
 # import "ZMUserSession+Background.h"
 # import "ZMUserSession+UserNotificationCategories.h"
-# import "ZMOperationLoop+Background.h"
-# import "ZMLocalNotification.h"
-#endif
+# import "ZMUserSession+Authentication.h"
+# import "ZMUserSession+Registration.h"
+# import "ZMUserSessionAuthenticationNotification.h"
+# import "ZMUserSessionRegistrationNotification.h"
+
+#import "ZMOperationLoop+Background.h"
+#import "ZMLocalNotification.h"
 #import "NSError+ZMUserSessionInternal.h"
 #import "ZMCredentials.h"
 #import "ZMSyncStrategy.h"
@@ -35,19 +39,11 @@
 #import "ZMFlowSync.h"
 #import "ZMAddressBookTranscoder.h"
 #import "ZMPushToken.h"
-#import "ZMNotifications.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
 #import "ZMCommonContactsSearch.h"
-#import "ZMConversation+Internal.h"
 #import "ZMAddressBookSync.h"
 #import "ZMEmptyAddressBookSync.h"
 #import "ZMConnection+InvitationToConnect.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMUserSession+Authentication.h"
-#import "ZMUserSession+Registration.h"
-#import "ZMUserSessionAuthenticationNotification.h"
-#import "ZMUserSessionRegistrationNotification.h"
+
 #import "ZMCredentials.h"
 #import "NSURL+LaunchOptions.h"
 

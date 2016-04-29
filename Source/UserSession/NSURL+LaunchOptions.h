@@ -23,11 +23,8 @@
 
 - (BOOL)isURLForInvitationToConnect;
 - (BOOL)isURLForPhoneVerification;
-- (BOOL)isURLForPersonalInvitation;
-- (BOOL)isURLForPersonalInvitationError;
 
 - (NSString *)invitationToConnectToken;
 - (NSString *)codeForPhoneVerification;
-- (NSString *)codeForPersonalInvitation;
 
 @end

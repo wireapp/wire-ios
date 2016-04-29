@@ -20,12 +20,10 @@
 @import ZMCSystem;
 @import libPhoneNumber;
 @import AddressBook;
+@import ZMCDataModel;
 
 #import "ZMAddressBook.h"
-#import "ZMAddressBookContact.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMNotifications+Internal.h"
-#import "ZMPersonalInvitation+Internal.h"
 
 
 
@@ -249,128 +247,3 @@ static NSString * const ZMSentAddressBookInvitationsKey = @"ZMSentAddressBookInv
 @end
 
 
-
-@implementation ZMAddressBookContact
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        self.emailAddresses = @[];
-        self.phoneNumbers = @[];
-    }
-    return self;
-}
-
-- (NSString *)name
-{
-    NSMutableArray *names = [NSMutableArray array];
-    
-    if (self.firstName.length > 0) {
-        [names addObject:self.firstName];
-    }
-    
-    if (self.middleName.length > 0) {
-        [names addObject:self.middleName];
-    }
-    
-    if (self.lastName.length > 0) {
-        [names addObject:self.lastName];
-    }
-    
-    if (names.count > 0) {
-        return [names componentsJoinedByString:@" "];
-    } else if (self.organization) {
-        return self.organization;
-    } else if (self.nickname) {
-        return self.nickname;
-    } else if (self.emailAddresses.count > 0) {
-        return self.emailAddresses.firstObject;
-    } else if (self.phoneNumbers.count > 0) {
-        return self.phoneNumbers.firstObject;
-    }
-    return @"";
-}
-
-- (NSString *)description;
-{
-    return [NSString stringWithFormat:@"<%@: %p> email: {%@}, phone: {%@}",
-            self.class, self,
-            [self.emailAddresses componentsJoinedByString:@"; "],
-            [self.phoneNumbers componentsJoinedByString:@"; "]];
-}
-
-- (NSArray *)contactDetails
-{
-    NSMutableArray *details = [NSMutableArray array];
-    [details addObjectsFromArray:self.emailAddresses];
-    [details addObjectsFromArray:self.phoneNumbers];
-    return details;
-}
-
-- (NSArray *)invitationsInUserSession:(ZMUserSession *)userSession
-{
-    return [ZMPersonalInvitation fetchInvitationsFromUser:[ZMUser selfUserInUserSession:userSession]
-                                                  contact:self
-                                     managedObjectContext:userSession.managedObjectContext];
-}
-
-- (BOOL)hasBeenInvitedInUserSession:(ZMUserSession *)userSession
-{
-    return [[self invitationsInUserSession:userSession] count] > 0;
-}
-
-- (BOOL)requestedConnectionInUserSession:(ZMUserSession *)userSession
-{
-    NSArray *invitations = [self invitationsInUserSession:userSession];
-    for (ZMPersonalInvitation *invitation in invitations) {
-        if (invitation.status == ZMInvitationStatusConnectionRequestSent) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (BOOL)inviteWithEmail:(NSString *)emailAddress
-    toGroupConversation:(ZMConversation *)conversation
-            userSession:(ZMUserSession *)userSession
-{
-    if ([self requestedConnectionInUserSession:userSession]) {
-        return NO;
-    }
-    ZMPersonalInvitation *invitation = [ZMPersonalInvitation invitationFromUser:[ZMUser selfUserInUserSession:userSession]
-                                                                      toContact:self
-                                                                          email:emailAddress
-                                                                   conversation:conversation
-                                                           managedObjectContext:userSession.managedObjectContext];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        ZMNotification *note = [ZMInvitationStatusChangedNotification invitationStatusChangedNotificationForContactEmailAddress:emailAddress
-                                                                                                                         status:ZMInvitationStatusPending];
-        [[NSNotificationCenter defaultCenter] postNotification:note];
-    });
-    return (invitation != nil);
-}
-
-- (BOOL)inviteWithPhoneNumber:(NSString *)phoneNumber
-          toGroupConversation:(ZMConversation *)conversation
-                  userSession:(ZMUserSession *)userSession
-{
-    if ([self requestedConnectionInUserSession:userSession]) {
-        return NO;
-    }
-    ZMPersonalInvitation *invitation = [ZMPersonalInvitation invitationFromUser:[ZMUser selfUserInUserSession:userSession]
-                                                                      toContact:self
-                                                                    phoneNumber:phoneNumber
-                                                                   conversation:conversation
-                                                           managedObjectContext:userSession.managedObjectContext];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        ZMNotification *note = [ZMInvitationStatusChangedNotification invitationStatusChangedNotificationForContactPhoneNumber:phoneNumber
-                                                                                                                        status:ZMInvitationStatusPending];
-        [[NSNotificationCenter defaultCenter] postNotification:note];
-    });
-    return (invitation != nil);
-}
-
-@end

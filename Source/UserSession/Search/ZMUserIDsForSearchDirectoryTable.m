@@ -18,9 +18,9 @@
 
 
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMUserIDsForSearchDirectoryTable.h"
-#import "ZMSearchUser+Internal.h"
 
 @interface ZMSearchUserAndAssetID ()
 

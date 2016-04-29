@@ -16,9 +16,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
-
+@import ZMCDataModel;
 #import "MockEntity.h"
-#import "ZMManagedObject+Internal.h"
 
 @implementation MockEntity
 

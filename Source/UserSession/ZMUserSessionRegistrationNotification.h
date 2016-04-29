@@ -20,7 +20,7 @@
 @import Foundation;
 @import ZMCSystem;
 
-#import "ZMNotifications+Internal.h"
+#import <ZMCDataModel/ZMNotifications+Internal.h>
 
 @protocol ZMRegistrationObserverToken;
 

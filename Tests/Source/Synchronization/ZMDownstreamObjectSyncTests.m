@@ -19,10 +19,10 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "MockEntity.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMDownstreamObjectSync.h"
 #import "ZMSyncOperationSet.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"

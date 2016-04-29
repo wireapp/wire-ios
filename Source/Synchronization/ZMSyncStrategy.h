@@ -57,6 +57,7 @@
                            syncStateDelegate:(id<ZMSyncStateDelegate>)syncStateDelegate
                        backgroundableSession:(id<ZMBackgroundable>)backgroundableSession
                 localNotificationsDispatcher:(ZMLocalNotificationDispatcher *)localNotificationsDispatcher
+                    taskCancellationProvider:(id <ZMRequestCancellation>)taskCancellationProvider
                                        badge:(ZMBadge *)badge;
 
 - (void)didInterruptUpdateEventsStream;

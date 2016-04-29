@@ -19,14 +19,11 @@
 
 @import ZMCSystem;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMTypingUsers.h"
-
-
-#import "ZMConversation.h"
-#import "ZMUser.h"
-#import "ZMNotifications.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
+#import "ZMNotifications+UserSession.h"
+#import "ZMTypingTranscoder.h"
 
 static NSString * const ZMTypingUsersKey = @"ZMTypingUsers";
 
@@ -97,6 +94,22 @@ static NSString * const ZMTypingUsersKey = @"ZMTypingUsers";
         self.userInfo[ZMTypingUsersKey] = typingUsers;
     }
     return typingUsers;
+}
+
+@end
+
+
+
+@implementation ZMConversation (ZMTypingUsers)
+
+- (void)setIsTyping:(BOOL)isTyping;
+{
+    [ZMTypingTranscoder notifyTranscoderThatUserIsTyping:isTyping inConversation:self];
+}
+
+- (NSSet *)typingUsers
+{
+    return [self.managedObjectContext.typingUsers typingUsersInConversation:self];
 }
 
 @end

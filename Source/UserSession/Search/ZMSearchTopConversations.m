@@ -18,10 +18,9 @@
 
 
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMSearchTopConversations.h"
-#import "ZMConversation+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 
 

@@ -22,22 +22,17 @@
 @import ZMTransport;
 @import ZMCMockTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMUserImageTranscoder.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
 #import "ZMContextChangeTracker.h"
 #import "ZMDownstreamObjectSync.h"
 #import "ZMDownstreamObjectSyncWithWhitelist.h"
-#import "ZMUser+Internal.h"
 #import "ZMAssetRequestFactory.h"
 #import "ZMUserImageTranscoder+Testing.h"
 #import "ZMUpstreamModifiedObjectSync.h"
-#import "ZMAssetPreprocessingTracker.h"
+#import "ZMImagePreprocessingTracker.h"
 #import "ZMUpstreamAssetSync.h"
 
 
@@ -57,6 +52,9 @@
 - (void)setUp
 {
     [super setUp];
+    
+    self.syncMOC.zm_userImageCache = [[UserImageLocalCache alloc] init];
+    self.uiMOC.zm_userImageCache = self.syncMOC.zm_userImageCache;
     
     self.queue = [[NSOperationQueue alloc] init];
     self.queue.name = self.name;

@@ -19,16 +19,12 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMSearchUserImageTranscoder.h"
-#import "ZMSearchUser.h"
 #import "ZMSearchDirectory+Internal.h"
 #import "ZMUserIDsForSearchDirectoryTable.h"
-#import "ZMSearchUser+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMSearchUser+Internal.h"
-#import "ZMNotifications+Internal.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 static NSString *const UserRequestURL = @"/users?ids=";

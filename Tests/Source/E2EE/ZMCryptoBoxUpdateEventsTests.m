@@ -107,7 +107,7 @@
     XCTAssertNotNil(decryptedEvent.payload.asDictionary[@"data"]);
     ZMAssetClientMessage *decryptedMessage = [ZMAssetClientMessage createOrUpdateMessageFromUpdateEvent:decryptedEvent inManagedObjectContext:self.syncMOC prefetchResult:nil];
     XCTAssertEqualObjects(decryptedMessage.nonce.transportString, message.messageId);
-    XCTAssertEqualObjects(decryptedMessage.mediumGenericMessage, message);
+    XCTAssertEqualObjects(decryptedMessage.imageAssetStorage.mediumGenericMessage, message);
     XCTAssertEqualObjects(decryptedEvent.uuid, notificationID);
 }
 

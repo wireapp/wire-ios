@@ -19,7 +19,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
+#import <ZMCDataModel/NSManagedObjectContext+ZMSearchDirectory.h>
 
 @interface ZMSuggestionResult : NSObject
 

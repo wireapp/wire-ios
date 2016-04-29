@@ -16,14 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMUtilities;
+@import ZMCDataModel;
 
-#import "ZMConnection+Internal.h"
 #import "ZMConnection+InvitationToConnect.h"
-#import "ZMUser+Internal.h"
-#import "ZMEncodedNSUUIDWithTimestamp.h"
-#import "ZMUser+Internal.h"
-#import "ZMManagedObject+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUserSession+Internal.h"
 #import "NSURL+LaunchOptions.h"
 

@@ -17,9 +17,9 @@
 // 
 
 
+#import <ZMCDataModel/ZMNotifications+Internal.h>
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMUserSession+Registration.h"
-#import "ZMNotifications+Internal.h"
 
 static NSString *const UserSessionAuthenticationNotificationName =  @"ZMUserSessionAuthenticationNotificationName";
 

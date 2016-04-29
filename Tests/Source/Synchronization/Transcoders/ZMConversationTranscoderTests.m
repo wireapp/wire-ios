@@ -21,22 +21,16 @@
 @import ZMTransport;
 @import OCMock;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "ObjectTranscoderTests.h"
 #import "ZMConversationTranscoder.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMUpdateEvent.h"
-#import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConversationTranscoder+Internal.h"
 #import "ZMSyncOperationSet.h"
-#import "ZMConnection+Internal.h"
-#import "ZMMessage+Internal.h"
 #import "ZMDownstreamObjectSync.h"
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "ZMUpstreamInsertedObjectSync.h"
 #import "ZMSyncStrategy.h"
-#import "ZMMessage+Internal.h"
 #import "BadgeApplication.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMSimpleListRequestPaginator.h"
@@ -104,7 +98,8 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
 
 - (void)setupSelfConversation
 {
-    [ZMUser selfUserInContext:self.uiMOC].remoteIdentifier = self.selfUserID;
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = self.selfUserID;
     ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     selfConversation.remoteIdentifier = self.selfUserID;
     selfConversation.conversationType = ZMConversationTypeSelf;
@@ -190,35 +185,41 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
             && sameInactiveUsers);
 }
 
+
+- (NSDictionary *)conversationMetaDataForConversation:(NSUUID *)conversationID selfID:(NSUUID *)selfID otherUserID:(NSUUID *)otherUserID isArchived:(BOOL)isArchived lastEventID:(ZMEventID *)eventID
+{
+    return @{
+             @"creator": selfID.transportString,
+             @"id": conversationID.transportString,
+             @"last_event": eventID.transportString,
+             @"last_event_time": @"2014-06-30T09:09:14.738Z",
+             @"members" : @{
+                     @"others" : @[
+                             @{
+                                 @"id": otherUserID.transportString,
+                                 @"status": @0
+                                 },
+                             ],
+                     @"self" : @{
+                             @"archived" : isArchived ? eventID.transportString : [NSNull null],
+                             @"id": selfID.transportString,
+                             @"last_read": eventID.transportString,
+                             @"muted" : [NSNull null],
+                             @"muted_time" : [NSNull null],
+                             @"status": @0,
+                             @"status_ref": @"0.0",
+                             @"status_time": @"2013-06-30T09:09:14.738Z"
+                             }
+                     },
+             @"name" : [NSNull null],
+             @"type": @3,
+             };
+}
+
 - (ZMUpdateEvent *)conversationCreateEventForConversationID:(NSUUID *)conversationID selfID:(NSUUID *)selfID otherUserID:(NSUUID *)otherUserID isArchived:(BOOL)isArchived lastEventID:(ZMEventID *)eventID
 {
     NSDictionary *payload = @{@"conversation": conversationID.transportString,
-                              @"data" : @{
-                                      @"creator": selfID.transportString,
-                                      @"id": conversationID.transportString,
-                                      @"last_event": eventID.transportString,
-                                      @"last_event_time": @"2014-06-30T09:09:14.738Z",
-                                      @"members" : @{
-                                              @"others" : @[
-                                                      @{
-                                                          @"id": otherUserID.transportString,
-                                                          @"status": @0
-                                                          },
-                                                      ],
-                                              @"self" : @{
-                                                      @"archived" : isArchived ? eventID.transportString : [NSNull null],
-                                                      @"id": selfID.transportString,
-                                                      @"last_read": eventID.transportString,
-                                                      @"muted" : [NSNull null],
-                                                      @"muted_time" : [NSNull null],
-                                                      @"status": @0,
-                                                      @"status_ref": @"0.0",
-                                                      @"status_time": @"2013-06-30T09:09:14.738Z"
-                                                      }
-                                              },
-                                      @"name" : [NSNull null],
-                                      @"type": @3,
-                                      },
+                              @"data" : [self conversationMetaDataForConversation:conversationID selfID:selfID otherUserID:otherUserID isArchived:isArchived lastEventID:eventID],
                               @"from": selfID.transportString,
                               @"time": @"2013-06-30T09:09:14.752Z",
                               @"type": @"conversation.create"
@@ -1561,12 +1562,13 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    ZMUpstreamModifiedObjectSync *mockUpstream = [OCMockObject niceMockForClass:ZMUpstreamModifiedObjectSync.class];
     
     [self.syncMOC performGroupedBlockAndWait:^{
         // when
         XCTAssertTrue([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUserDefinedNameKey]);
 
-        [self.sut shouldCreateRequestToSyncObject:conversation withSync:nil];
+        [self.sut shouldCreateRequestToSyncObject:conversation withSync:mockUpstream];
         
         XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUserDefinedNameKey]);
     }];
@@ -2489,6 +2491,7 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
     // when
     conversation.isSelfAnActiveMember = NO;
     [self.uiMOC saveOrRollback];
+    [self.syncMOC refreshAllObjects];
     XCTAssertTrue([conversation hasLocalModificationsForKeys:keys]);
 
     NSDictionary *responsePayload = [self responsePayloadForUserEventInConversationID:conversation.remoteIdentifier userIDs:@[self.selfUserID] eventType:@"conversation.member-leave"];
@@ -2853,11 +2856,30 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         [request1 completeWithResponse:response];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
+    
     [self.syncMOC performGroupedBlockAndWait:^{
         // then
-        XCTAssertNotNil(request1);
-        ZMTransportRequest *request2 = [self.sut.requestGenerators nextRequest];
-        XCTAssertNil(request2);
+        XCTAssertTrue(conversation.needsToBeUpdatedFromBackend);
+        
+        // and when
+        // it resyncs the conversation
+        ZM_ALLOW_MISSING_SELECTOR(ZMTransportRequest *request = [self.sut.requestGenerators firstNonNilReturnedFromSelector:@selector(nextRequest)];)
+        XCTAssertNotNil(request);
+        XCTAssertEqual(request.method, ZMMethodGET);
+        
+        NSDictionary *metaData = [self conversationMetaDataForConversation:conversation.remoteIdentifier selfID:[NSUUID createUUID] otherUserID:[NSUUID createUUID] isArchived:NO lastEventID:[self createEventID]];
+        [request completeWithResponse:[ZMTransportResponse responseWithPayload:metaData HTTPstatus:200 transportSessionError:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // then
+        XCTAssertFalse(conversation.needsToBeUpdatedFromBackend);
+        
+        // and when
+        // it does not create a new request for the selfUser leaving
+        ZM_ALLOW_MISSING_SELECTOR(ZMTransportRequest *request = [self.sut.requestGenerators firstNonNilReturnedFromSelector:@selector(nextRequest)];)
+        XCTAssertNil(request);
     }];
 }
 
@@ -4739,6 +4761,65 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         
         // then
         XCTAssertTrue(conversation.needsToBeUpdatedFromBackend);
+    }];
+}
+
+
+- (void)testThatItDoesNotTryToSyncAgainAfterAPermanentError
+{
+    id partialSUTMock = [OCMockObject partialMockForObject:self.sut];
+    __block ZMConversation *conversation;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        NSSet *changedKeys = [NSSet setWithObject:ZMConversationIsSelfAnActiveMemberKey];
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = [NSUUID createUUID];
+        
+        conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        conversation.isSelfAnActiveMember = NO;
+        [conversation setLocallyModifiedKeys:changedKeys];
+        
+        for (id<ZMContextChangeTracker> tracker in self.sut.contextChangeTrackers) {
+            [tracker objectsDidChange:[NSSet setWithObject:conversation]];
+        }
+        
+        [[[partialSUTMock expect] andForwardToRealObject] shouldRetryToSyncAfterFailedToUpdateObject:conversation request:OCMOCK_ANY response:OCMOCK_ANY keysToParse:changedKeys];
+        
+        // when
+        ZM_ALLOW_MISSING_SELECTOR(ZMTransportRequest *request = [self.sut.requestGenerators firstNonNilReturnedFromSelector:@selector(nextRequest)];)
+        XCTAssertNotNil(request);
+        [request completeWithResponse:[ZMTransportResponse responseWithPayload:@{} HTTPstatus:404 transportSessionError:nil]];
+        
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // then
+        [partialSUTMock verify];
+        XCTAssertTrue(conversation.needsToBeUpdatedFromBackend);
+        XCTAssertFalse([conversation hasLocalModificationsForKey:ZMConversationIsSelfAnActiveMemberKey]);
+        
+        // and when
+        // it resyncs the conversation
+        ZM_ALLOW_MISSING_SELECTOR(ZMTransportRequest *request = [self.sut.requestGenerators firstNonNilReturnedFromSelector:@selector(nextRequest)];)
+        XCTAssertNotNil(request);
+        XCTAssertEqual(request.method, ZMMethodGET);
+        
+        NSDictionary *metaData = [self conversationMetaDataForConversation:conversation.remoteIdentifier selfID:[NSUUID createUUID] otherUserID:[NSUUID createUUID] isArchived:NO lastEventID:[self createEventID]];
+        [request completeWithResponse:[ZMTransportResponse responseWithPayload:metaData HTTPstatus:200 transportSessionError:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // then
+        XCTAssertFalse(conversation.needsToBeUpdatedFromBackend);
+        
+        // and when
+        // it does not create a new request for the selfUser leaving
+        ZM_ALLOW_MISSING_SELECTOR(ZMTransportRequest *request = [self.sut.requestGenerators firstNonNilReturnedFromSelector:@selector(nextRequest)];)
+        XCTAssertNil(request);
     }];
 }
 

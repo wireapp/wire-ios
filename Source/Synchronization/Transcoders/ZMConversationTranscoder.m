@@ -20,25 +20,16 @@
 @import ZMCSystem;
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMConversationTranscoder.h"
 #import "ZMAuthenticationStatus.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConversation+Transport.h"
-#import "ZMConversation+Timestamps.h"
 
-#import "ZMUpdateEvent.h"
-#import "ZMConversation.h"
-#import "ZMConversation+OTR.h"
-#import "ZMUser+internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "ZMUpstreamInsertedObjectSync.h"
 #import "ZMDownstreamObjectSync.h"
-#import "ZMConnection+Internal.h"
 #import "ZMSyncStrategy.h"
 #import "ZMSingleRequestSync.h"
-#import "ZMMessage+Internal.h"
 #import "ZMRemoteIdentifierObjectSync.h"
 #import "ZMSimpleListRequestPaginator.h"
 #import "ZMUpstreamTranscoder.h"
@@ -566,8 +557,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
 - (ZMUpstreamRequest *)requestForLeavingConversation:(ZMConversation *)conversation
 {
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-
-    if (conversation.remoteIdentifier == nil) {
+    if (conversation.remoteIdentifier == nil || selfUser.remoteIdentifier == nil) {
         return nil;
     }
     
@@ -833,16 +823,15 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     return YES;
 }
 
-- (BOOL)failedToUpdateInsertedObject:(ZMConversation *)conversation request:(ZMUpstreamRequest *__unused)upstreamRequest response:(ZMTransportResponse *__unused)response keysToParse:(NSSet * __unused)keys
+- (BOOL)shouldRetryToSyncAfterFailedToUpdateObject:(ZMConversation *)conversation request:(ZMUpstreamRequest *__unused)upstreamRequest response:(ZMTransportResponse *__unused)response keysToParse:(NSSet * __unused)keys
 {
     if (conversation.remoteIdentifier) {
         conversation.needsToBeUpdatedFromBackend = YES;
         [conversation resetParticipantsBackToLastServerSync];
-        return YES;
+        [self.downstreamSync objectsDidChange:[NSSet setWithObject:conversation]];
     }
-    else {
-        return NO;
-    }
+    
+    return NO;
 }
 
 @end

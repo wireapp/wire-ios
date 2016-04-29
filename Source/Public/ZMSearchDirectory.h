@@ -19,7 +19,7 @@
 
 @import Foundation;
 
-#import <zmessaging/ZMAccentColor.h>
+#import <ZMUtilities/ZMAccentColor.h>
 
 @class ZMConversation;
 @class ZMUserSession;

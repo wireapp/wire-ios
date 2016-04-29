@@ -20,16 +20,12 @@
 @import ZMCSystem;
 @import ZMTransport;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMLocalNotificationDispatcher+Testing.h"
-#import "ZMUpdateEvent.h"
 #import "ZMLocalNotification.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMUpdateEvent.h"
-#import "ZMConversation+Internal.h"
 #import "ZMBadge.h"
 #import "ZMPushRegistrant.h"
-#import "ZMMessage+Internal.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 NSString * ZMLocalNotificationDispatcherUIApplicationClass = @"UIApplication";

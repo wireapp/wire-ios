@@ -19,9 +19,9 @@
 
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMSyncOperationSet.h"
-#import "ZMManagedObject.h"
 
 static id valueOrNSNull(id obj) {
     return obj ?: [NSNull null];

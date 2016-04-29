@@ -19,16 +19,14 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMPushTokenTranscoder.h"
 #import "ZMPushToken.h"
 #import "ZMContextChangeTracker.h"
 #import "ZMSingleRequestSync.h"
-#import "ZMUpdateEvent.h"
 #import <zmessaging/zmessaging-Swift.h>
-#import "ZMManagedObject.h"
-#import "ZMUser+Internal.h"
 
 static NSString * const FallbackAPNS = @"APNS";
 

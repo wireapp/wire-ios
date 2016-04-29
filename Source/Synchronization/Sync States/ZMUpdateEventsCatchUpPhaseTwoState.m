@@ -18,13 +18,12 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUpdateEventsCatchUpPhaseTwoState.h"
-#import "ZMMissingUpdateEventsTranscoder.h"
 #import "ZMSyncStateMachine.h"
 #import "ZMMissingUpdateEventsTranscoder.h"
 #import "ZMObjectStrategyDirectory.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUserProfileUpdateTranscoder.h"
 
 

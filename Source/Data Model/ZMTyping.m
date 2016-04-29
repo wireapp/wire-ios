@@ -19,16 +19,12 @@
 
 @import ZMCSystem;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMTyping.h"
-
-
 #import "ZMTypingUsersTimeout.h"
-#import "ZMConversation+Internal.h"
-#import "ZMNotifications+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMTypingUsers.h"
-
+#import "ZMNotifications+UserSessionInternal.h"
 
 
 #if DEBUG

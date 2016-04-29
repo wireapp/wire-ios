@@ -19,17 +19,11 @@
 
 @import Foundation;
 @import ZMCMockTransport;
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
 #import "ZMSearchDirectory.h"
-#import "ZMUser.h"
-#import "ZMBareUser.h"
-#import "ZMSearchUser.h"
-#import "ZMSearchUser+Internal.h"
-
 #import "ZMUserSession.h"
-
-#import "ZMNotifications.h"
 
 
 @interface SearchTests : IntegrationTestBase <ZMSearchResultObserver, ZMUserObserver>

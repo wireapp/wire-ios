@@ -19,16 +19,10 @@
 
 @import ZMTransport;
 @import ZMCMockTransport;
+@import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMConversation.h"
-
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMMessage.h"
-#import "ZMConversation.h"
-#import "ZMNotifications.h"
-#import "ZMConversationMessageWindow.h"
 
 @interface TestConversationObserver : NSObject <ZMConversationObserver>
 

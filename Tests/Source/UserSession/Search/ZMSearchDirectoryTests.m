@@ -20,20 +20,11 @@
 @import Foundation;
 @import CoreData;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMSearchDirectory+Internal.h"
-#import "ZMSearchUser+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSession+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMUserSession+Internal.h"
-#import "ZMSearchUser+Internal.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
-#import "ZMUserDisplayNameGenerator.h"
 #import "ZMUserIDsForSearchDirectoryTable.h"
 
 

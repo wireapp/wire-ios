@@ -18,14 +18,11 @@
 
 
 @import CoreTelephony;
+@import ZMCDataModel;
 
 #import "CallingTests.h"
-#import "ZMVoiceChannelNotifications.h"
+#import "ZMVoiceChannel+CallFlow.h"
 #import "AVSFlowManager.h"
-#import "ZMMessage.h"
-#import "NSManagedObjectContext+tests.h"
-#import "NSError+ZMConversation.h"
-#import "ZMUser+Internal.h"
 #import <zmessaging/zmessaging-Swift.h>
 #import "ZMGSMCallHandler.h"
 

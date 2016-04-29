@@ -19,12 +19,12 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMPhoneNumberVerificationTranscoder.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMSingleRequestSync.h"
-#import "ZMUser+Internal.h"
 #import "ZMCredentials+Internal.h"
 #import "ZMUserSessionRegistrationNotification.h"
 

@@ -19,20 +19,14 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMUpstreamModifiedObjectSync+Testing.h"
 #import "MockEntity.h"
 #import "MockEntity2.h"
-#import "ZMManagedObject+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMMessage+Internal.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMLocallyModifiedObjectSet.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
 #import <zmessaging/ZMUpstreamRequest.h>
 
@@ -496,7 +490,7 @@ static NSString *foo = @"foo";
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didFailToSynchronizeToken:token];
     [[[(id)self.mockTranscoder stub] andReturn:nil] objectToRefetchForFailedUpdateOfObject:entity];
-    [[(id)self.mockTranscoder expect] failedToUpdateInsertedObject:OCMOCK_ANY request:fakeRequest response:response keysToParse:OCMOCK_ANY];
+    [[(id)self.mockTranscoder expect] shouldRetryToSyncAfterFailedToUpdateObject:OCMOCK_ANY request:fakeRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -739,7 +733,7 @@ static NSString *foo = @"foo";
     [request completeWithResponse:response];
     
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
-    [[(id)self.mockTranscoder expect] failedToUpdateInsertedObject:OCMOCK_ANY request:fakeRequest response:response keysToParse:OCMOCK_ANY];
+    [[(id)self.mockTranscoder expect] shouldRetryToSyncAfterFailedToUpdateObject:OCMOCK_ANY request:fakeRequest response:response keysToParse:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didFailToSynchronizeToken:token];
     [[[(id)self.mockTranscoder expect] andReturn:entity2] objectToRefetchForFailedUpdateOfObject:entity];
 

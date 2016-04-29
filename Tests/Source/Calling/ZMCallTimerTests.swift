@@ -26,7 +26,7 @@ class ZMCallTimerTests : MessagingTest {
     
     @objc class TestClient: NSObject, ZMCallTimerClient {
         var didTimeOut : Bool = false
-        @objc func callTimerDidFire(timer: ZMCallTimer!) {
+        @objc func callTimerDidFire(timer: ZMCallTimer) {
             didTimeOut = true
         }
     }

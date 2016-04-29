@@ -20,11 +20,9 @@
 @import ZMUtilities;
 @import ZMTransport;
 @import ZMTesting;
+@import ZMCDataModel;
 
 #import "MessagingTest+EventFactory.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUpdateEvent.h"
 
 NSString * const EventConversationAdd = @"conversation.message-add";
 NSString * const EventConversationAddClientMessage = @"conversation.client-message-add";

@@ -19,11 +19,10 @@
 
 @import CoreData;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMDownstreamObjectSync.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMSyncOperationSet.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 @interface ZMDownstreamObjectSync ()
 

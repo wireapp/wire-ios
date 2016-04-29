@@ -19,10 +19,10 @@
 
 @import ZMCSystem;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUserTranscoder.h"
 #import "ZMSyncStateMachine+internal.h"
-#import "ZMSyncState.h"
 #import "ZMSyncState.h"
 #import "ZMTracing.h"
 #import "ZMUnauthenticatedState.h"
@@ -33,7 +33,6 @@
 #import "ZMUpdateEventsCatchUpPhaseTwoState.h"
 #import "ZMDownloadLastUpdateEventIDState.h"
 #import "ZMBackgroundState.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMPreBackgroundState.h"
 #import "ZMUnauthenticatedBackgroundState.h"
 #import "ZMBackgroundFetchState.h"

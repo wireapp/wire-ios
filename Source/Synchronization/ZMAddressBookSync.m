@@ -20,6 +20,7 @@
 @import ZMCSystem;
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMAddressBookSync+Testing.h"
 
@@ -27,8 +28,6 @@
 #import "ZMAddressBook.h"
 #import "ZMAddressBookEncoder.h"
 #import "ZMOperationLoop.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 static NSString * const ZMAddressBookTranscoderNeedsToBeUploadedKey = @"ZMAddressBookTranscoderNeedsToBeUploaded";
 static NSString * const ZMOnboardingEndpoint = @"/onboarding/v2";

@@ -18,18 +18,14 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ObjectTranscoderTests.h"
 #import "ZMConnectionTranscoder+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMUpdateEvent.h"
 #import "ZMContextChangeTracker.h"
-#import "ZMConversation+Internal.h"
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "ZMUpstreamInsertedObjectSync.h"
 #import "ZMSimpleListRequestPaginator.h"
-#import <zmessaging/ZMConversationList.h>
 #import "ZMDownstreamObjectSync.h"
 
 @interface ZMConnectionTranscoderTest : ObjectTranscoderTests
@@ -962,9 +958,10 @@
         
         NSMutableDictionary *payload = [self connectionPayloadForConversationID:[NSUUID createUUID] fromID:selfUser.remoteIdentifier toID:user.remoteIdentifier status:@"accepted"];
         ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+        ZMUpstreamRequest *request = [[ZMUpstreamRequest alloc] initWithTransportRequest:[ZMTransportRequest requestGetFromPath:@"foo"]];
         
         // when
-        [(id<ZMUpstreamTranscoder>) self.sut updateInsertedObject:connection request:nil response:response];
+        [(id<ZMUpstreamTranscoder>) self.sut updateInsertedObject:connection request:request response:response];
     
         // then
         XCTAssertEqualObjects(connection.message, payload[@"message"]);
@@ -1195,7 +1192,7 @@
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
     
     // when
-    [self.sut updateUpdatedObject:connection requestUserInfo:nil response:response keysToParse:nil];
+    [self.sut updateUpdatedObject:connection requestUserInfo:nil response:response keysToParse:[NSSet set]];
     
     // then
     XCTAssertFalse(connection.conversation.needsToBeUpdatedFromBackend);
@@ -1221,7 +1218,7 @@
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
     
     // when
-    [self.sut updateUpdatedObject:connection requestUserInfo:nil response:response keysToParse:nil];
+    [self.sut updateUpdatedObject:connection requestUserInfo:nil response:response keysToParse:[NSSet set]];
     
     // then
     XCTAssertTrue(connection.conversation.needsToBeUpdatedFromBackend);

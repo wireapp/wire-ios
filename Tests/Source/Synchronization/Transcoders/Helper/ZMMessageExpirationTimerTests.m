@@ -17,10 +17,10 @@
 // 
 
 
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMMessageExpirationTimer.h"
-#import "ZMMessage+Internal.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
 
 #if TARGET_OS_IPHONE

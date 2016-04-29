@@ -19,10 +19,10 @@
 
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMRegistrationTranscoder.h"
 #import "ZMSingleRequestSync.h"
-#import "ZMUser+Internal.h"
 #import "ZMAuthenticationStatus.h"
 #import "ZMCredentials.h"
 #import "ZMUserSessionRegistrationNotification.h"

@@ -18,15 +18,14 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMClientRegistrationStatus.h"
-#import "ZMUser+Internal.h"
 #import "ZMCredentials.h"
 #import <zmessaging/zmessaging-Swift.h>
 #import "ZMClientRegistrationStatus+Internal.h"
 #import "NSError+ZMUserSession.h"
-#import "ZMNotifications.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMCookie.h"
 

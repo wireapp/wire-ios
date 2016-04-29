@@ -18,6 +18,7 @@
 
 
 import Foundation
+import ZMCDataModel
 
 private let zmLog = ZMSLog(tag: "Pingback")
 
@@ -61,7 +62,7 @@ extension ZMLocalNotificationDispatcher: LocalNotificationDispatchType {}
     }
 }
 
-extension EventsWithIdentifier: CustomDebugStringConvertible {
+extension EventsWithIdentifier {
     override public var debugDescription: String {
         return "<EventsWithIdentifier>: identifier: \(identifier), events: \(events)"
     }

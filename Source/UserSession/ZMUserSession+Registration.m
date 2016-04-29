@@ -20,23 +20,18 @@
 @import Foundation;
 @import CoreData;
 @import ZMCSystem;
+@import ZMCDataModel;
 
 #import "ZMUserSession+Internal.h"
 #import "ZMUserSession+Registration.h"
 #import "ZMUserSession+Authentication.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMAddressBookSync.h"
 #import "ZMEmptyAddressBookSync.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "NSError+ZMUserSessionInternal.h"
 #import "ZMOperationLoop.h"
 #import "ZMUserSessionRegistrationNotification.h"
-#import "ZMEditableUser.h"
 #import "ZMCredentials.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSessionRegistrationNotification.h"
-#import "ZMStringLengthValidator.h"
-#import "ZMPhoneNumberValidator.h"
 
 @implementation ZMUser (ZMRegistrationUser)
 

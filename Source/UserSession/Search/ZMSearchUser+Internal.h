@@ -17,14 +17,14 @@
 // 
 
 
-#import "ZMSearchUser.h"
-#import "ZMAccentColor.h"
-
+#import <ZMCDataModel/ZMSearchUser.h>
+#import <ZMUtilities/ZMAccentColor.h>
 
 @class ZMUserSession;
 @class ZMUser;
 @class ZMAddressBookContact;
 @class ManagedObjectContextObserver;
+
 
 FOUNDATION_EXPORT NSString *const ZMSearchUserMutualFriendsKey;
 FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;

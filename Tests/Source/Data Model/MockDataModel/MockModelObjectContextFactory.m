@@ -17,6 +17,7 @@
 // 
 
 
+@import ZMCDataModel;
 
 #import <CoreData/CoreData.h>
 #import <ZMUtilities/ZMUtilities.h>
@@ -24,7 +25,6 @@
 #import "MockModelObjectContextFactory.h"
 #import "MockEntity.h"
 #import "MockEntity2.h"
-#import "NSManagedObjectContext+tests.h"
 
 
 

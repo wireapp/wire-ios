@@ -18,17 +18,14 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMUpstreamModifiedObjectSync+Testing.h"
-#import "ZMManagedObject.h"
 #import "ZMSyncOperationSet.h"
-#import "ZMManagedObject+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMDependentObjects.h"
 #import "ZMLocallyModifiedObjectSyncStatus.h"
 #import "ZMLocallyModifiedObjectSet.h"
 #import "ZMUpstreamTranscoder.h"
-#import "ZMConversation+Internal.h"
 #import "ZMUpstreamRequest.h"
 
 
@@ -293,8 +290,8 @@ ZM_EMPTY_ASSERTING_INIT();
         }
         else {
             BOOL shouldResyncObject = NO;
-            if ([transcoder respondsToSelector:@selector(failedToUpdateInsertedObject:request:response:keysToParse:)]) {
-                shouldResyncObject = [transcoder failedToUpdateInsertedObject:objectWithKeys.object request:request response:response keysToParse:keysToParse];
+            if ([transcoder respondsToSelector:@selector(shouldRetryToSyncAfterFailedToUpdateObject:request:response:keysToParse:)]) {
+                shouldResyncObject = [transcoder shouldRetryToSyncAfterFailedToUpdateObject:objectWithKeys.object request:request response:response keysToParse:keysToParse];
             }
 
             if (shouldResyncObject) {

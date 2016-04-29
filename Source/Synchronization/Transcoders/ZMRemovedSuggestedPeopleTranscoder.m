@@ -18,11 +18,10 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMRemovedSuggestedPeopleTranscoder.h"
 #import "ZMRemoteIdentifierObjectSync.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMOperationLoop.h"
 
 

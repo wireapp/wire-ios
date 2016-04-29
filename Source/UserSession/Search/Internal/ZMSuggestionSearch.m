@@ -19,17 +19,13 @@
 
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMSuggestionSearch.h"
-#import "ZMUser+Internal.h"
 #import "ZMUserSession+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMUserTranscoder+Internal.h"
-#import "ZMSearchUser+Internal.h"
 #import "ZMSearchResult+Internal.h"
 #import "ZMSearchDirectory+Internal.h"
-#import "ZMConnection.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 
 
 static NSArray *removedSearchUserRemoteIdentifiers;

@@ -19,13 +19,9 @@
 
 @import ZMCSystem;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #import "ZMFlowSync+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMUpdateEvent.h"
-#import "ZMConversation+Internal.h"
-#import "ZMVoiceChannelNotifications+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMTracing.h"
 #import "ZMOperationLoop.h"
 #import "ZMAVSBridge.h"

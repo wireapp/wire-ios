@@ -16,14 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMLocalNotification.h"
-#import "ZMUpdateEvent.h"
-#import "ZMUser+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMMessage+Internal.h"
 
 @interface ZMLocalNotificationForExpiredMessageTest : MessagingTest
 @property (nonatomic) ZMUser *userWithNoName;

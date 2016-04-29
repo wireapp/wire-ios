@@ -19,16 +19,15 @@
 
 @import ZMTransport;
 @import ZMUtilities;
+@import ZMCDataModel;
 
 #include "ZMAuthenticationStatus.h"
 #include "ZMTracing.h"
 #include "ZMCredentials+Internal.h"
-#include "ZMUser+Internal.h"
 #include "NSError+ZMUserSession.h"
 #include "NSError+ZMUserSessionInternal.h"
 #include "ZMUserSessionRegistrationNotification.h"
 #include "ZMUserSessionAuthenticationNotification.h"
-#include "ZMPhoneNumberValidator.h"
 
 #import "ZMAuthenticationStatus_Internal.h"
 

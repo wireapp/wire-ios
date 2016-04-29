@@ -19,17 +19,12 @@
 
 @import ZMTransport;
 @import zmessaging;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMUpstreamModifiedObjectSync.h"
 #import "MockEntity.h"
 #import "MockEntity2.h"
-#import "ZMManagedObject+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
-#import "ZMConnection+Internal.h"
-#import "ZMMessage+Internal.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUpstreamInsertedObjectSync.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
@@ -541,7 +536,7 @@ static NSString *foo = @"foo";
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
     [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@(YES)] failedToUpdateInsertedObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder expect] andReturnValue:@(YES)] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -569,7 +564,7 @@ static NSString *foo = @"foo";
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
     [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@NO] failedToUpdateInsertedObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder expect] andReturnValue:@NO] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -597,7 +592,7 @@ static NSString *foo = @"foo";
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
     [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@YES] failedToUpdateInsertedObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder expect] andReturnValue:@YES] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -627,7 +622,7 @@ static NSString *foo = @"foo";
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
     [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@NO] failedToUpdateInsertedObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [[[(id)self.mockTranscoder expect] andReturnValue:@NO] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];

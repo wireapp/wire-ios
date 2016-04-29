@@ -23,18 +23,13 @@
 @import ZMTransport;
 @import CoreGraphics;
 @import ImageIO;
+@import ZMCDataModel;
 
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMAssetTranscoder.h"
-#import "ZMConversation+Internal.h"
-#import "ZMManagedObject+Internal.h"
-#import "ZMMessage+Internal.h"
 #import "ZMOperationLoop.h"
-#import "ZMUpdateEvent.h"
 #import "ZMSyncOperationSet.h"
 #import "ZMDownstreamObjectSyncWithWhitelist.h"
 #import "ZMUpstreamAssetSync.h"
-#import "ZMManagedObject+Internal.h"
 #import "ZMAssetRequestFactory.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUpstreamRequest.h"

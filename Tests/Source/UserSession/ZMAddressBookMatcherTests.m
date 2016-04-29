@@ -19,11 +19,10 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMAddressBookMatcher.h"
-#import "ZMAddressBookContact.h"
-#import "ZMUser+Internal.h"
 
 @interface ZMAddressBookMatcherTests : MessagingTest
 

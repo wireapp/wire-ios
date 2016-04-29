@@ -19,6 +19,8 @@
 
 
 @import ZMCMockTransport;
+@import ZMCDataModel;
+
 #import "MessagingTest.h"
 #import "NotificationObservers.h"
 
@@ -103,12 +105,12 @@ extern NSString * const SelfUserPassword;
                                numberOfKeys:(NSUInteger)numberOfKeys
                establishSessionWithSelfUser:(BOOL)establishSessionWithSelfUser;
 
-- (void)inserOTRMessage:(ZMGenericMessage *)message
-         inConversation:(MockConversation *)conversation
-               fromUser:(MockUser *)sender
-               toClient:(MockUserClient *)recipient
-               usingKey:(CBPreKey *)preKey
-                session:(MockTransportSession<MockTransportSessionObjectCreation> *)session;
+- (CBCryptoBox *)inserOTRMessage:(ZMGenericMessage *)message
+                  inConversation:(MockConversation *)conversation
+                        fromUser:(MockUser *)sender
+                        toClient:(MockUserClient *)recipient
+                        usingKey:(CBPreKey *)preKey
+                         session:(MockTransportSession<MockTransportSessionObjectCreation> *)session;
 
 - (void)inserOTRMessage:(ZMGenericMessage *)message
          inConversation:(MockConversation *)conversation

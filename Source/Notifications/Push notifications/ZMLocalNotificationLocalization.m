@@ -16,11 +16,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // 
 
-
+@import ZMCDataModel;
 #import "ZMLocalNotificationLocalization.h"
-
-#import "ZMUser+Internal.h"
-#import "ZMConversation+Internal.h"
+#import "ZMUserSession.h"
 
 static NSString *localizedStringWithKeyAndArguments(NSString *key, NSArray *arguments);
 static NSString * ZMPushLocalizedString(NSString *key);
@@ -287,7 +285,7 @@ static NSString *const NoOtherUserNameKey = @"nootherusername";
 
 static NSString * ZMPushLocalizedString(NSString *key)
 {
-    return [[NSBundle bundleForClass:ZMConversation.class] localizedStringForKey:[@"push.notification." stringByAppendingString:key] value:@"" table:@"Push"];
+    return [[NSBundle bundleForClass:[ZMUserSession class]] localizedStringForKey:[@"push.notification." stringByAppendingString:key] value:@"" table:@"Push"];
 }
 
 static NSString *localizedStringWithKeyAndArguments(NSString *key, NSArray *arguments)

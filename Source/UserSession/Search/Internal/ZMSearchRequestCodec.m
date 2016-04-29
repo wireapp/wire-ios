@@ -19,15 +19,12 @@
 
 @import ZMCSystem;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMSearchRequestCodec.h"
-#import "ZMUser+Internal.h"
-#import "ZMSearchUser+Internal.h"
 #import "ZMSuggestionResult.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMSearchResult+Internal.h"
 #import "ZMUserSession+Internal.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 
 static NSString * const ZMSearchEndPoint = @"/search/contacts";
 static NSString * const ZMTopSearchEndPoint = @"/search/top";

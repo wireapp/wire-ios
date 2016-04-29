@@ -18,8 +18,10 @@
 
 
 import XCTest
-import zmessaging
+@testable import zmessaging
 import ZMProtos
+import ZMCDataModel
+import ZMUtilities
 
 class ClientMessageRequestFactoryTests: MessagingTest {
 
@@ -33,7 +35,7 @@ class ClientMessageRequestFactoryTests: MessagingTest {
         }
         else {
             expectedPath = "/conversations/\(conversationId.transportString())/client-messages"
-            expectedPayload = ["content": message.genericMessage.data().base64String] as [String: NSObject]
+            expectedPayload = ["content": message.genericMessage.data().base64String()] as [String: NSObject]
         }
 
         AssertOptionalNotNil(request, "ClientRequestFactory should create requet to post " + (encrypted ? "plain" : "ecnrypted") + " text message") { request in
@@ -77,7 +79,7 @@ class ClientMessageRequestFactoryTests: MessagingTest {
     
     func assertRequest(request: ZMTransportRequest?, forImageMessage message: ZMAssetClientMessage, conversationId: NSUUID, encrypted: Bool, expectedPath: String, expectedPayload: [String: NSObject]?, format: ZMImageFormat)
     {
-        let imageData = message.imageDataForFormat(format, encrypted: encrypted)!
+        let imageData = message.imageAssetStorage!.imageDataForFormat(format, encrypted: encrypted)!
         
         AssertOptionalNotNil(request, "ClientRequestFactory should create requet to post medium asset message") { request in
             XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
@@ -119,7 +121,7 @@ class ClientMessageRequestFactoryTests: MessagingTest {
             //then
             let expectedPath = "/conversations/\(conversationId.transportString())/assets"
             let expectedPayload = ZMAssetMetaDataEncoder.contentDispositionForImageOwner(
-                message.genericMessageForFormat(format),
+                ZMGenericMessageImageOwner(genericMessage: message.imageAssetStorage!.genericMessageForFormat(format)!, assetCache: ImageAssetCache(MBLimit: 100)),
                 format: format,
                 conversationID: conversationId,
                 correlationID: message.nonce) as! [String: NSObject]
@@ -168,7 +170,7 @@ class ClientMessageRequestFactoryTests: MessagingTest {
             let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message, forConversationWithId: conversationId)
             
             //then
-            let expectedPath = "/conversations/\(conversationId.transportString())/otr/assets/\(message.assetId.transportString())"
+            let expectedPath = "/conversations/\(conversationId.transportString())/otr/assets/\(message.assetId!.transportString())"
 
             AssertOptionalNotNil(request, "ClientRequestFactory should create requet to post medium asset message") { request in
                 XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
@@ -177,5 +179,269 @@ class ClientMessageRequestFactoryTests: MessagingTest {
                 XCTAssertTrue(request.shouldUseOnlyBackgroundSession)
             }
         }
+    }
+}
+
+// MARK: - File Upload
+
+extension ClientMessageRequestFactoryTests {
+    
+    func testThatItCreatesRequestToUploadAFileMessage_Placeholder() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, _) = createAssetFileMessage(false, encryptedDataOnDisk: false)
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.Placeholder, message: message, forConversationWithId: conversationID)
+        
+        // then
+        guard let request = uploadRequest else { return XCTFail() }
+        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/messages")
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+        XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
+        XCTAssertNotNil(request.binaryData)
+    }
+    
+    func testThatItCreatesRequestToUploadAFileMessage_Placeholder_UploadedDataPresent() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, _) = createAssetFileMessage(true, encryptedDataOnDisk: true)
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.Placeholder, message: message, forConversationWithId: conversationID)
+        
+        // then
+        guard let request = uploadRequest else { return XCTFail() }
+        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/messages")
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+        XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
+        XCTAssertNotNil(request.binaryData)
+    }
+    
+    func testThatItCreatesRequestToUploadAFileMessage_FileData() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, _) = createAssetFileMessage(true)
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationID)
+        
+        // then
+        guard let request = uploadRequest else { return XCTFail() }
+        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets")
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+    }
+    
+    func testThatItCreatesRequestToReuploadFileMessageMetaData_WhenAssetIdIsPresent() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, _) = createAssetFileMessage()
+        message.assetId = .createUUID()
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationID)
+        
+        // then
+        guard let request = uploadRequest else { return XCTFail() }
+        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets/\(message.assetId!.transportString())")
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+        XCTAssertNotNil(request.binaryData)
+        XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
+    }
+    
+    func testThatTheRequestToReuploadAFileMessageDoesNotContainTheBinaryFileData() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, nonce) = createAssetFileMessage()
+        message.assetId = .createUUID()
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationID)
+        
+        // then
+        guard let request = uploadRequest else { return XCTFail() }
+        XCTAssertNil(syncMOC.zm_fileAssetCache.accessRequestURL(nonce))
+        XCTAssertNotNil(request.binaryData)
+        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets/\(message.assetId!.transportString())")
+    }
+    
+    func testThatItDoesNotCreatesRequestToReuploadFileMessageMetaData_WhenAssetIdIsPresent_Placeholder() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, _) = createAssetFileMessage()
+        message.assetId = .createUUID()
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.Placeholder, message: message, forConversationWithId: conversationID)
+        
+        // then
+        guard let request = uploadRequest else { return XCTFail() }
+        XCTAssertFalse(request.path.containsString(message.assetId!.transportString()))
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/messages")
+    }
+    
+    func testThatItWritesTheMultiPartRequestDataToDisk() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, data, nonce) = createAssetFileMessage()
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message:message, forConversationWithId: conversationID)
+        XCTAssertNotNil(uploadRequest)
+        
+        // then
+        guard let url = syncMOC.zm_fileAssetCache.accessRequestURL(nonce) else { return XCTFail() }
+        guard let multipartData = NSData(contentsOfURL: url) else { return XCTFail() }
+        guard let multiPartItems = multipartData.multipartDataItemsSeparatedWithBoundary("frontier") else { return XCTFail() }
+        XCTAssertEqual(multiPartItems.count, 2)
+        let fileData = (multiPartItems.last as? ZMMultipartBodyItem)?.data
+        XCTAssertEqual(data, fileData)
+    }
+    
+    func testThatItSetsTheDataMD5() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, data, nonce) = createAssetFileMessage(true)
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationID)
+        XCTAssertNotNil(uploadRequest)
+        
+        // then
+        guard let url = syncMOC.zm_fileAssetCache.accessRequestURL(nonce) else { return XCTFail() }
+        guard let multipartData = NSData(contentsOfURL: url) else { return XCTFail() }
+        guard let multiPartItems = multipartData.multipartDataItemsSeparatedWithBoundary("frontier") else { return XCTFail() }
+        XCTAssertEqual(multiPartItems.count, 2)
+        guard let fileData = (multiPartItems.last as? ZMMultipartBodyItem) else { return XCTFail() }
+        XCTAssertEqual(fileData.headers["Content-MD5"] as? String, data.zmMD5Digest().base64String())
+    }
+    
+    func testThatItDoesNotCreateARequestIfTheMessageIsNotAFileAssetMessage_AssetClientMessage_Image() {
+        // given
+        createSelfClient()
+        let imageData = verySmallJPEGData()
+        let conversationID = NSUUID.createUUID()
+        let message = createImageMessageWithImageData(imageData, format: .Medium, processed: true, stored: false, encrypted: true, moc: syncMOC)
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationID)
+        
+        // then
+        XCTAssertNil(uploadRequest)
+    }
+    
+    func testThatItReturnsNilWhenThereIsNoEncryptedDataToUploadOnDisk() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, _) = createAssetFileMessage(encryptedDataOnDisk: false)
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationID)
+        
+        // then
+        XCTAssertNil(uploadRequest)
+    }
+    
+    func testThatItStoresTheUploadDataInTheCachesDirectoryAndMarksThemAsNotBeingBackedUp() {
+        // given
+        createSelfClient()
+        let conversationID = NSUUID.createUUID()
+        let (message, _, nonce) = createAssetFileMessage()
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationID)
+        
+        // then
+        XCTAssertNotNil(uploadRequest)
+        guard let url = syncMOC.zm_fileAssetCache.accessRequestURL(nonce) else { return XCTFail() }
+        XCTAssertNotNil(NSData(contentsOfURL: url))
+        
+        let fm = NSFileManager.defaultManager()
+        guard let path = url.path, attributes = try? fm.attributesOfItemAtPath(path) else { return XCTFail() }
+        XCTAssertTrue(path.containsString("/Library/Caches"))
+        
+        // It's very likely that this is the most un-future proof way of testing this...
+        let excludedFromBackup = attributes["NSFileExtendedAttributes"]?["com.apple.metadata:com_apple_backup_excludeItem"]
+        XCTAssertNotNil(excludedFromBackup)
+    }
+    
+    func testThatItCreatesTheMultipartDataWithTheCorrectContentTypes() {
+        // given
+        let metaData = "metadata".dataUsingEncoding(NSUTF8StringEncoding)!
+        let fileData = "filedata".dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        // when
+        let multipartData = ClientMessageRequestFactory().dataForMultipartFileUploadRequest(metaData, fileData: fileData)
+        
+        // then
+        guard let parts = multipartData.multipartDataItemsSeparatedWithBoundary("frontier") as? [ZMMultipartBodyItem] else { return XCTFail() }
+        XCTAssertEqual(parts.count, 2)
+        XCTAssertEqual(parts.first?.contentType, "application/x-protobuf")
+        XCTAssertEqual(parts.last?.contentType, "application/octet-stream")
+    }
+    
+    // MARK : - Helper
+    
+    var testURL: NSURL {
+        let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
+        let documentsURL = NSURL(fileURLWithPath: documents)
+        return documentsURL.URLByAppendingPathComponent("file.dat")
+    }
+    
+    func createAssetFileMessage(withUploaded: Bool = true, encryptedDataOnDisk: Bool = true) -> (ZMAssetClientMessage, NSData, NSUUID) {
+        let data = createTestFile(testURL)
+        let nonce = NSUUID.createUUID()
+        let message = ZMAssetClientMessage(
+            assetURL: testURL,
+            size: UInt64(data.length),
+            mimeType: "text/plain",
+            name: name!,
+            nonce: nonce,
+            managedObjectContext: syncMOC
+        )
+        
+        XCTAssertNotNil(data)
+        XCTAssertNotNil(message)
+        
+        if withUploaded {
+            let otrKey = NSData.randomEncryptionKey()
+            let sha256 = NSData.randomEncryptionKey()
+            let uploadedMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: nonce.transportString())
+            XCTAssertNotNil(uploadedMessage)
+            message.addGenericMessage(uploadedMessage)
+        }
+        
+        if encryptedDataOnDisk {
+            syncMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: name!, encrypted: true, data: data)
+        }
+        
+        return (message, data, nonce)
+    }
+    
+    func createTestFile(url: NSURL) -> NSData {
+        let data: NSData! = name!.dataUsingEncoding(NSUTF8StringEncoding)
+        try! data.writeToURL(url, options: [])
+        return data
     }
 }

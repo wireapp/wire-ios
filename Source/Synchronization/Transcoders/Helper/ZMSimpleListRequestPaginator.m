@@ -19,11 +19,10 @@
 
 @import ZMCSystem;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMSimpleListRequestPaginator+Internal.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMSingleRequestSync.h"
-#import "ZMUser+Internal.h"
 #import <zmessaging/zmessaging-Swift.h>
 
 @interface ZMSimpleListRequestPaginator () <ZMSingleRequestTranscoder>

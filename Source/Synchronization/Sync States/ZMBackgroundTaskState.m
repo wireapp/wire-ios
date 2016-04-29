@@ -24,7 +24,6 @@
 #import "ZMBackgroundTaskState.h"
 #import "ZMObjectStrategyDirectory.h"
 #import "ZMSyncStateMachine.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 
 #import "ZMClientMessageTranscoder.h"
 #import <zmessaging/zmessaging-Swift.h>

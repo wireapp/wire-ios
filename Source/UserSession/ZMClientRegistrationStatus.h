@@ -62,7 +62,19 @@ extern NSString *const ZMPersistedClientIdKey;
 @end
 
 
-@interface ZMClientRegistrationStatus : NSObject
+@protocol ZMClientClientRegistrationStatusProvider <NSObject>
+
+/// Whether the current client is ready to use
+@property (nonatomic, readonly) BOOL currentClientReadyToUse;
+
+/// Notify that the current client was deleted remotely
+- (void)didDetectCurrentClientDeletion;
+
+@end
+
+
+
+@interface ZMClientRegistrationStatus : NSObject <ZMClientClientRegistrationStatusProvider>
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                      loginCredentialProvider:(id<ZMCredentialProvider>) loginCredentialProvider

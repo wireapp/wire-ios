@@ -19,9 +19,9 @@
 
 @import zimages;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMAssetRequestFactory.h"
-#import "ZMConversation+Internal.h"
 
 @implementation ZMAssetRequestFactory
 

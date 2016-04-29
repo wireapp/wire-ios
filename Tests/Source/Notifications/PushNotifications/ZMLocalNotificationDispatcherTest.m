@@ -18,17 +18,13 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "MessagingTest.h"
 #import "ZMLocalNotificationDispatcher+Testing.h"
 #import "ZMLocalNotification.h"
-#import "ZMConversation+Internal.h"
-#import "ZMUser+Internal.h"
-#import "ZMUpdateEvent.h"
 #import "ZMBadge.h"
-#import "ZMMessage+Internal.h"
 #import "MessagingTest+EventFactory.h"
-#import "ZMVoiceChannel.h"
 
 @interface ZMLocalNotificationDispatcherTest : MessagingTest
 @property (nonatomic) ZMLocalNotificationDispatcher *sut;

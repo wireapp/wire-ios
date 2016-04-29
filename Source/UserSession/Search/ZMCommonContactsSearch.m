@@ -19,10 +19,9 @@
 
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMCommonContactsSearch.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-#import "ZMUser+Internal.h"
 
 static NSTimeInterval CacheValidityInterval = 60 * 10; // 10 minutes
 

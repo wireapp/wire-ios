@@ -21,6 +21,7 @@
 @import zimages;
 @import ZMUtilities;
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMBadge.h"
 #import "ZMSyncStrategy+Internal.h"
@@ -29,13 +30,11 @@
 #import "ZMConnectionTranscoder.h"
 #import "ZMUserTranscoder.h"
 #import "ZMSelfTranscoder.h"
-#import "ZMUpdateEvent.h"
 #import "ZMConversationTranscoder.h"
 #import "ZMMessageTranscoder.h"
 #import "ZMKnockTranscoder.h"
 #import "ZMAssetTranscoder.h"
 #import "ZMUserImageTranscoder.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
 #import "ZMContextChangeTracker.h"
 #import "ZMSyncStateMachine.h"
 #import "ZMAuthenticationStatus.h"
@@ -105,6 +104,7 @@
 @property (nonatomic) ZMChangeTrackerBootstrap *changeTrackerBootStrap;
 @property (nonatomic) ConversationStatusStrategy *conversationStatusSync;
 @property (nonatomic) UserClientRequestStrategy *userClientRequestStrategy;
+@property (nonatomic) FileUploadRequestStrategy *fileUploadRequestStrategy;
 
 
 @property (nonatomic) NSArray *allChangeTrackers;
@@ -138,6 +138,7 @@ ZM_EMPTY_ASSERTING_INIT()
                            syncStateDelegate:(id<ZMSyncStateDelegate>)syncStateDelegate
                        backgroundableSession:(id<ZMBackgroundable>)backgroundableSession
                 localNotificationsDispatcher:(ZMLocalNotificationDispatcher *)localNotificationsDispatcher
+                    taskCancellationProvider:(id <ZMRequestCancellation>)taskCancellationProvider
                                        badge:(ZMBadge *)badge;
 
 {
@@ -155,7 +156,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus
                                                mediaManager:mediaManager
                                         onDemandFlowManager:onDemandFlowManager
-         ];
+                                   taskCancellationProvider:taskCancellationProvider];
         
         self.stateMachine = [[ZMSyncStateMachine alloc] initWithAuthenticationStatus:authenticationStatus
                                                             clientRegistrationStatus:clientRegistrationStatus
@@ -171,11 +172,14 @@ ZM_EMPTY_ASSERTING_INIT()
         self.requestStrategies = @[self.userClientRequestStrategy,
                                    [[GiphyRequestStrategy alloc] initWithRequestsStatus:giphyRequestsStatus
                                                                    managedObjectContext:self.syncMOC],
-                                   [[IncomingPersonalInvitationStrategy alloc] initWithManagedObjectContext:self.syncMOC],
-                                   [[PersonalInvitationRequestStrategy alloc] initWithContext:self.syncMOC],
-                                   [[DeleteAccountRequestStrategy alloc] initWithAuthStatus:authenticationStatus managedObjectContext:self.syncMOC],
+                                   [[DeleteAccountRequestStrategy alloc] initWithAuthStatus:authenticationStatus
+                                                                       managedObjectContext:self.syncMOC],
+                                   [[AssetDownloadRequestStrategy alloc] initWithAuthStatus:authenticationStatus
+                                                                   taskCancellationProvider:taskCancellationProvider
+                                                                       managedObjectContext:self.syncMOC],
                                    self.pingBackRequestStrategy,
-                                   self.pushNoticeFetchStrategy
+                                   self.pushNoticeFetchStrategy,
+                                   self.fileUploadRequestStrategy
                                    ];
         
         self.changeTrackerBootStrap = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.syncMOC changeTrackers:self.allChangeTrackers];
@@ -197,6 +201,7 @@ ZM_EMPTY_ASSERTING_INIT()
                          backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                          mediaManager:(id<AVSMediaManager>)mediaManager
                                   onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager
+                             taskCancellationProvider:(id <ZMRequestCancellation>)taskCancellationProvider
 {
     NSManagedObjectContext *uiMOC = self.uiMOC;
     NSOperationQueue *imageProcessingQueue = [ZMImagePreprocessor createSuitableImagePreprocessingQueue];
@@ -207,7 +212,7 @@ ZM_EMPTY_ASSERTING_INIT()
     self.conversationTranscoder = [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus syncStrategy:self];
     self.systemMessageTranscoder = [ZMMessageTranscoder systemMessageTranscoderWithManagedObjectContext:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher];
     self.textMessageTranscoder = [ZMMessageTranscoder textMessageTranscoderWithManagedObjectContext:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher];
-    self.clientMessageTranscoder = [ZMClientMessageTranscoder clientMessageTranscoderWithManagedObjectContext:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher clientRegistrationStatus:clientRegistrationStatus];
+    self.clientMessageTranscoder = [[ZMClientMessageTranscoder alloc ] initWithManagedObjectContext:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher clientRegistrationStatus:clientRegistrationStatus];
     self.knockTranscoder = [[ZMKnockTranscoder alloc] initWithManagedObjectContext:self.syncMOC];
     self.registrationTranscoder = [[ZMRegistrationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus];
     self.missingUpdateEventsTranscoder = [[ZMMissingUpdateEventsTranscoder alloc] initWithSyncStrategy:self];
@@ -228,6 +233,7 @@ ZM_EMPTY_ASSERTING_INIT()
     self.conversationStatusSync = [[ConversationStatusStrategy alloc] initWithManagedObjectContext:self.syncMOC];
     self.pingBackRequestStrategy = [[PingBackRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus authenticationStatus:authenticationStatus];
     self.pushNoticeFetchStrategy = [[PushNoticeRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus authenticationStatus:authenticationStatus];
+    self.fileUploadRequestStrategy = [[FileUploadRequestStrategy alloc] initWithAuthenticationStatus:authenticationStatus clientRegistrationStatus:clientRegistrationStatus managedObjectContext:self.syncMOC taskCancellationProvider:taskCancellationProvider];
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
@@ -290,6 +296,7 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.conversationStatusSync tearDown];
     [self.pingBackRequestStrategy tearDown];
     [self.pushNoticeFetchStrategy tearDown];
+    [self.fileUploadRequestStrategy tearDown];
 }
 
 - (void)processAllEventsInBuffer
@@ -451,7 +458,7 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         
         _allChangeTrackers = [_allChangeTrackers arrayByAddingObjectsFromArray:[self.requestStrategies flattenWithBlock:^NSArray *(id <ZMObjectStrategy> objectSync) {
-            if ([objectSync conformsToProtocol:@protocol(ZMObjectStrategy)]) {
+            if ([objectSync conformsToProtocol:@protocol(ZMContextChangeTrackerSource)]) {
                 return objectSync.contextChangeTrackers;
             }
             return nil;

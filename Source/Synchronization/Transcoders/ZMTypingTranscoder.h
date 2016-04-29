@@ -23,6 +23,8 @@
 @class ZMConversation;
 
 
+extern NSString * const ZMTypingNotificationName;
+
 @interface ZMTypingTranscoder : ZMObjectSyncStrategy <ZMObjectStrategy>
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc

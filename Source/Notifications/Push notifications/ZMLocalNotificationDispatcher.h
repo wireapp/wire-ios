@@ -32,7 +32,7 @@ extern NSString * _Null_unspecified const ZMConversationCancelNotificationForInc
 
 @interface ZMLocalNotificationDispatcher : NSObject
 
-- (nullable instancetype)initWithManagedObjectContext:(nonnull NSManagedObjectContext *)moc sharedApplication:(nonnull ZMApplication *)sharedApplication;
+- (nullable instancetype)initWithManagedObjectContext:(nonnull NSManagedObjectContext *)moc sharedApplication:(nonnull UIApplication *)sharedApplication;
 
 - (void)tearDown;
 

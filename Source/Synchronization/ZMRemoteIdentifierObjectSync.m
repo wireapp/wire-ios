@@ -18,11 +18,9 @@
 
 
 @import ZMTransport;
+@import ZMCDataModel;
 
 #import "ZMRemoteIdentifierObjectSync.h"
-#import <zmessaging/NSManagedObjectContext+zmessaging.h>
-
-
 
 @interface ZMRemoteIdentifierObjectSync ()
 

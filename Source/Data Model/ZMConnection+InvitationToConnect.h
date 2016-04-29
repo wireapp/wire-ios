@@ -18,9 +18,7 @@
 
 
 @import Foundation;
-
-#import "ZMConnection+Internal.h"
-#import "ZMUser+Internal.h"
+@import ZMCDataModel;
 
 extern NSString * const ZMConnectionInvitationToConnectOutgoingBaseURL;
 
