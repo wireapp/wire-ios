@@ -50,9 +50,16 @@
     return [[ZMSDispatchGroup alloc] initWithGroup:dispatch_group_create() label:label];
 }
 
-- (long)waitWitTimeout:(dispatch_time_t)timeout
+- (long)waitWithTimeout:(dispatch_time_t)timeout
 {
     return dispatch_group_wait(self.group, timeout);
+}
+
+- (long)waitForInterval:(NSTimeInterval)timeout;
+{
+    dispatch_time_t start = DISPATCH_TIME_NOW;
+    int64_t delta = ((int64_t)(timeout) * 1000) * (int64_t)NSEC_PER_MSEC;
+    return dispatch_group_wait(self.group, dispatch_time(start, delta));
 }
 
 - (void)enter

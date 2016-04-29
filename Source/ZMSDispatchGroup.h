@@ -29,7 +29,8 @@
 - (void)enter;
 - (void)leave;
 - (void)notifyOnQueue:(dispatch_queue_t)queue block:(dispatch_block_t)block;
-- (long)waitWitTimeout:(dispatch_time_t)timeout;
+- (long)waitWithTimeout:(dispatch_time_t)timeout;
+- (long)waitForInterval:(NSTimeInterval)timeout;
 - (void)asyncOnQueue:(dispatch_queue_t)queue block:(dispatch_block_t)block;
 
 @end

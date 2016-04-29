@@ -51,16 +51,16 @@ public struct ZMSLog {
     
     private let logClient : ZMSASLClient;
     
-    public func error(@autoclosure message: () -> String, file: String = __FILE__, line: UInt = __LINE__) {
+    public func error(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
         logWithLevel(.Error, message, file: file, line:line)
     }
-    public func warn(@autoclosure message: () -> String, file: String = __FILE__, line: UInt = __LINE__) {
+    public func warn(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
         logWithLevel(.Warn, message, file: file, line:line)
     }
-    public func info(@autoclosure message: () -> String, file: String = __FILE__, line: UInt = __LINE__) {
+    public func info(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
         logWithLevel(.Info, message, file: file, line:line)
     }
-    public func debug(@autoclosure message: () -> String, file: String = __FILE__, line: UInt = __LINE__) {
+    public func debug(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
         logWithLevel(.Debug, message, file: file, line:line)
     }
 }
@@ -93,7 +93,7 @@ extension ZMSLog {
 /// Internal stuff
 extension ZMSLog {
     
-    private func logWithLevel(level: ZMLogLevel_t, @autoclosure _ message: () -> String, file: String = __FILE__, line: UInt = __LINE__) {
+    private func logWithLevel(level: ZMLogLevel_t, @autoclosure _ message: () -> String, file: String = #file, line: UInt = #line) {
         if (level.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).UTF8String).rawValue) {
             let m = message()
             logToAppleSystemLogFacility(level, m, file: file, line: line)

@@ -210,7 +210,7 @@
     [sut enter];
     
     // when
-    long result = [sut waitWitTimeout:dispatch_time(DISPATCH_TIME_NOW, 200LL * NSEC_PER_MSEC)];
+    long result = [sut waitWithTimeout:dispatch_time(DISPATCH_TIME_NOW, 200LL * NSEC_PER_MSEC)];
     
     // then
     XCTAssertNotEqual(result, 0);
@@ -229,7 +229,7 @@
     });
     
     // when
-    long result = [sut waitWitTimeout:DISPATCH_TIME_FOREVER];
+    long result = [sut waitWithTimeout:DISPATCH_TIME_FOREVER];
     
     // then
     XCTAssertEqual(result, 0);

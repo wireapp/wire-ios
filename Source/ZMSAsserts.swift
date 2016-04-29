@@ -20,13 +20,13 @@
 import Foundation
 
 /// Reports an error and terminates the application
-@noreturn public func fatal(message: String, file: String = __FILE__, line: Int = __LINE__) {
+@noreturn public func fatal(message: String, file: String = #file, line: Int = #line) {
     ZMAssertionDump_NSString("Swift assertion", file, Int32(line), message)
     fatalError(message)
 }
 
 /// If the condition is not true, reports an error and terminates the application
-public func require(condition: Bool, _ message: String = "", file: String = __FILE__, line: Int = __LINE__) {
+public func require(condition: Bool, _ message: String = "", file: String = #file, line: Int = #line) {
     if(!condition) {
         fatal(message, file: file, line: line)
     }

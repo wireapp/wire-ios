@@ -58,8 +58,6 @@
 		540CD8A31B737017006677DE /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		540CD8A41B737017006677DE /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		540CD8A51B737017006677DE /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
-		540CD8A61B737017006677DE /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
-		540CD8A71B737017006677DE /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
 		540CD8A81B737017006677DE /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		540CD8A91B737017006677DE /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		540CD8AA1B737017006677DE /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
@@ -127,8 +125,6 @@
 				540CD8A31B737017006677DE /* ios-test-host.xcconfig */,
 				540CD8A41B737017006677DE /* ios-test-target.xcconfig */,
 				540CD8A51B737017006677DE /* ios.xcconfig */,
-				540CD8A61B737017006677DE /* osx-test-target.xcconfig */,
-				540CD8A71B737017006677DE /* osx.xcconfig */,
 				540CD8A81B737017006677DE /* project-common.xcconfig */,
 				540CD8A91B737017006677DE /* project-debug.xcconfig */,
 				540CD8AA1B737017006677DE /* project.xcconfig */,
@@ -403,7 +399,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 540CD8A91B737017006677DE /* project-debug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 37;
 				ENABLE_TESTABILITY = YES;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -413,7 +409,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 540CD8AA1B737017006677DE /* project.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 37;
 			};
 			name = Release;
 		};
