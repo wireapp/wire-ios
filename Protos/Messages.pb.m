@@ -86,6 +86,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property (strong) ZMExternal* external;
 @property ZMClientAction clientAction;
 @property (strong) ZMCalling* calling;
+@property (strong) ZMAsset* asset;
 @end
 
 @implementation ZMGenericMessage
@@ -160,6 +161,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasCalling_ = !!_value_;
 }
 @synthesize calling;
+- (BOOL) hasAsset {
+  return !!hasAsset_;
+}
+- (void) setHasAsset:(BOOL) _value_ {
+  hasAsset_ = !!_value_;
+}
+@synthesize asset;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -172,6 +180,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.external = [ZMExternal defaultInstance];
     self.clientAction = ZMClientActionRESETSESSION;
     self.calling = [ZMCalling defaultInstance];
+    self.asset = [ZMAsset defaultInstance];
   }
   return self;
 }
@@ -226,6 +235,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasAsset) {
+    if (!self.asset.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -258,6 +272,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasCalling) {
     [output writeMessage:10 value:self.calling];
+  }
+  if (self.hasAsset) {
+    [output writeMessage:11 value:self.asset];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -297,6 +314,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasCalling) {
     size_ += computeMessageSize(10, self.calling);
+  }
+  if (self.hasAsset) {
+    size_ += computeMessageSize(11, self.asset);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -384,6 +404,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasAsset) {
+    [output appendFormat:@"%@%@ {\n", indent, @"asset"];
+    [self.asset writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -431,6 +457,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.calling storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"calling"];
   }
+  if (self.hasAsset) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.asset storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"asset"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -462,6 +493,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasClientAction || self.clientAction == otherMessage.clientAction) &&
       self.hasCalling == otherMessage.hasCalling &&
       (!self.hasCalling || [self.calling isEqual:otherMessage.calling]) &&
+      self.hasAsset == otherMessage.hasAsset &&
+      (!self.hasAsset || [self.asset isEqual:otherMessage.asset]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -495,6 +528,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasCalling) {
     hashCode = hashCode * 31 + [self.calling hash];
+  }
+  if (self.hasAsset) {
+    hashCode = hashCode * 31 + [self.asset hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -568,6 +604,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasCalling) {
     [self mergeCalling:other.calling];
+  }
+  if (other.hasAsset) {
+    [self mergeAsset:other.asset];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -673,6 +712,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setCalling:[subBuilder buildPartial]];
+        break;
+      }
+      case 90: {
+        ZMAssetBuilder* subBuilder = [ZMAsset builder];
+        if (self.hasAsset) {
+          [subBuilder mergeFrom:self.asset];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setAsset:[subBuilder buildPartial]];
         break;
       }
     }
@@ -934,6 +982,36 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearCalling {
   resultGenericMessage.hasCalling = NO;
   resultGenericMessage.calling = [ZMCalling defaultInstance];
+  return self;
+}
+- (BOOL) hasAsset {
+  return resultGenericMessage.hasAsset;
+}
+- (ZMAsset*) asset {
+  return resultGenericMessage.asset;
+}
+- (ZMGenericMessageBuilder*) setAsset:(ZMAsset*) value {
+  resultGenericMessage.hasAsset = YES;
+  resultGenericMessage.asset = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setAssetBuilder:(ZMAssetBuilder*) builderForValue {
+  return [self setAsset:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeAsset:(ZMAsset*) value {
+  if (resultGenericMessage.hasAsset &&
+      resultGenericMessage.asset != [ZMAsset defaultInstance]) {
+    resultGenericMessage.asset =
+      [[[ZMAsset builderWithPrototype:resultGenericMessage.asset] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.asset = value;
+  }
+  resultGenericMessage.hasAsset = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearAsset {
+  resultGenericMessage.hasAsset = NO;
+  resultGenericMessage.asset = [ZMAsset defaultInstance];
   return self;
 }
 @end
@@ -2929,6 +3007,1873 @@ static ZMImageAsset* defaultZMImageAssetInstance = nil;
 - (ZMImageAssetBuilder*) clearSha256 {
   resultImageAsset.hasSha256 = NO;
   resultImageAsset.sha256 = [NSData data];
+  return self;
+}
+@end
+
+@interface ZMAsset ()
+@property (strong) ZMAssetOriginal* original;
+@property (strong) ZMAssetPreview* preview;
+@property ZMAssetNotUploaded notUploaded;
+@property (strong) ZMAssetUploaded* uploaded;
+@end
+
+@implementation ZMAsset
+
+- (BOOL) hasOriginal {
+  return !!hasOriginal_;
+}
+- (void) setHasOriginal:(BOOL) _value_ {
+  hasOriginal_ = !!_value_;
+}
+@synthesize original;
+- (BOOL) hasPreview {
+  return !!hasPreview_;
+}
+- (void) setHasPreview:(BOOL) _value_ {
+  hasPreview_ = !!_value_;
+}
+@synthesize preview;
+- (BOOL) hasNotUploaded {
+  return !!hasNotUploaded_;
+}
+- (void) setHasNotUploaded:(BOOL) _value_ {
+  hasNotUploaded_ = !!_value_;
+}
+@synthesize notUploaded;
+- (BOOL) hasUploaded {
+  return !!hasUploaded_;
+}
+- (void) setHasUploaded:(BOOL) _value_ {
+  hasUploaded_ = !!_value_;
+}
+@synthesize uploaded;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.original = [ZMAssetOriginal defaultInstance];
+    self.preview = [ZMAssetPreview defaultInstance];
+    self.notUploaded = ZMAssetNotUploadedCANCELLED;
+    self.uploaded = [ZMAssetUploaded defaultInstance];
+  }
+  return self;
+}
+static ZMAsset* defaultZMAssetInstance = nil;
++ (void) initialize {
+  if (self == [ZMAsset class]) {
+    defaultZMAssetInstance = [[ZMAsset alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMAssetInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMAssetInstance;
+}
+- (BOOL) isInitialized {
+  if (self.hasOriginal) {
+    if (!self.original.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasPreview) {
+    if (!self.preview.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasUploaded) {
+    if (!self.uploaded.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasOriginal) {
+    [output writeMessage:1 value:self.original];
+  }
+  if (self.hasPreview) {
+    [output writeMessage:2 value:self.preview];
+  }
+  if (self.hasNotUploaded) {
+    [output writeEnum:3 value:self.notUploaded];
+  }
+  if (self.hasUploaded) {
+    [output writeMessage:4 value:self.uploaded];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasOriginal) {
+    size_ += computeMessageSize(1, self.original);
+  }
+  if (self.hasPreview) {
+    size_ += computeMessageSize(2, self.preview);
+  }
+  if (self.hasNotUploaded) {
+    size_ += computeEnumSize(3, self.notUploaded);
+  }
+  if (self.hasUploaded) {
+    size_ += computeMessageSize(4, self.uploaded);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMAsset*) parseFromData:(NSData*) data {
+  return (ZMAsset*)[[[ZMAsset builder] mergeFromData:data] build];
+}
++ (ZMAsset*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAsset*)[[[ZMAsset builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMAsset*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMAsset*)[[[ZMAsset builder] mergeFromInputStream:input] build];
+}
++ (ZMAsset*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAsset*)[[[ZMAsset builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAsset*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMAsset*)[[[ZMAsset builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMAsset*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAsset*)[[[ZMAsset builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetBuilder*) builder {
+  return [[ZMAssetBuilder alloc] init];
+}
++ (ZMAssetBuilder*) builderWithPrototype:(ZMAsset*) prototype {
+  return [[ZMAsset builder] mergeFrom:prototype];
+}
+- (ZMAssetBuilder*) builder {
+  return [ZMAsset builder];
+}
+- (ZMAssetBuilder*) toBuilder {
+  return [ZMAsset builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasOriginal) {
+    [output appendFormat:@"%@%@ {\n", indent, @"original"];
+    [self.original writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasPreview) {
+    [output appendFormat:@"%@%@ {\n", indent, @"preview"];
+    [self.preview writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasNotUploaded) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"notUploaded", NSStringFromZMAssetNotUploaded(self.notUploaded)];
+  }
+  if (self.hasUploaded) {
+    [output appendFormat:@"%@%@ {\n", indent, @"uploaded"];
+    [self.uploaded writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasOriginal) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.original storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"original"];
+  }
+  if (self.hasPreview) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.preview storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"preview"];
+  }
+  if (self.hasNotUploaded) {
+    [dictionary setObject: @(self.notUploaded) forKey: @"notUploaded"];
+  }
+  if (self.hasUploaded) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.uploaded storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"uploaded"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMAsset class]]) {
+    return NO;
+  }
+  ZMAsset *otherMessage = other;
+  return
+      self.hasOriginal == otherMessage.hasOriginal &&
+      (!self.hasOriginal || [self.original isEqual:otherMessage.original]) &&
+      self.hasPreview == otherMessage.hasPreview &&
+      (!self.hasPreview || [self.preview isEqual:otherMessage.preview]) &&
+      self.hasNotUploaded == otherMessage.hasNotUploaded &&
+      (!self.hasNotUploaded || self.notUploaded == otherMessage.notUploaded) &&
+      self.hasUploaded == otherMessage.hasUploaded &&
+      (!self.hasUploaded || [self.uploaded isEqual:otherMessage.uploaded]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasOriginal) {
+    hashCode = hashCode * 31 + [self.original hash];
+  }
+  if (self.hasPreview) {
+    hashCode = hashCode * 31 + [self.preview hash];
+  }
+  if (self.hasNotUploaded) {
+    hashCode = hashCode * 31 + self.notUploaded;
+  }
+  if (self.hasUploaded) {
+    hashCode = hashCode * 31 + [self.uploaded hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+BOOL ZMAssetNotUploadedIsValidValue(ZMAssetNotUploaded value) {
+  switch (value) {
+    case ZMAssetNotUploadedCANCELLED:
+    case ZMAssetNotUploadedFAILED:
+      return YES;
+    default:
+      return NO;
+  }
+}
+NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value) {
+  switch (value) {
+    case ZMAssetNotUploadedCANCELLED:
+      return @"ZMAssetNotUploadedCANCELLED";
+    case ZMAssetNotUploadedFAILED:
+      return @"ZMAssetNotUploadedFAILED";
+    default:
+      return nil;
+  }
+}
+
+@interface ZMAssetOriginal ()
+@property (strong) NSString* mimeType;
+@property UInt64 size;
+@property (strong) NSString* name;
+@property (strong) ZMAssetImageMetaData* image;
+@end
+
+@implementation ZMAssetOriginal
+
+- (BOOL) hasMimeType {
+  return !!hasMimeType_;
+}
+- (void) setHasMimeType:(BOOL) _value_ {
+  hasMimeType_ = !!_value_;
+}
+@synthesize mimeType;
+- (BOOL) hasSize {
+  return !!hasSize_;
+}
+- (void) setHasSize:(BOOL) _value_ {
+  hasSize_ = !!_value_;
+}
+@synthesize size;
+- (BOOL) hasName {
+  return !!hasName_;
+}
+- (void) setHasName:(BOOL) _value_ {
+  hasName_ = !!_value_;
+}
+@synthesize name;
+- (BOOL) hasImage {
+  return !!hasImage_;
+}
+- (void) setHasImage:(BOOL) _value_ {
+  hasImage_ = !!_value_;
+}
+@synthesize image;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.mimeType = @"";
+    self.size = 0L;
+    self.name = @"";
+    self.image = [ZMAssetImageMetaData defaultInstance];
+  }
+  return self;
+}
+static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
++ (void) initialize {
+  if (self == [ZMAssetOriginal class]) {
+    defaultZMAssetOriginalInstance = [[ZMAssetOriginal alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMAssetOriginalInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMAssetOriginalInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasMimeType) {
+    return NO;
+  }
+  if (!self.hasSize) {
+    return NO;
+  }
+  if (self.hasImage) {
+    if (!self.image.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasMimeType) {
+    [output writeString:1 value:self.mimeType];
+  }
+  if (self.hasSize) {
+    [output writeUInt64:2 value:self.size];
+  }
+  if (self.hasName) {
+    [output writeString:3 value:self.name];
+  }
+  if (self.hasImage) {
+    [output writeMessage:4 value:self.image];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasMimeType) {
+    size_ += computeStringSize(1, self.mimeType);
+  }
+  if (self.hasSize) {
+    size_ += computeUInt64Size(2, self.size);
+  }
+  if (self.hasName) {
+    size_ += computeStringSize(3, self.name);
+  }
+  if (self.hasImage) {
+    size_ += computeMessageSize(4, self.image);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMAssetOriginal*) parseFromData:(NSData*) data {
+  return (ZMAssetOriginal*)[[[ZMAssetOriginal builder] mergeFromData:data] build];
+}
++ (ZMAssetOriginal*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetOriginal*)[[[ZMAssetOriginal builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetOriginal*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMAssetOriginal*)[[[ZMAssetOriginal builder] mergeFromInputStream:input] build];
+}
++ (ZMAssetOriginal*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetOriginal*)[[[ZMAssetOriginal builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetOriginal*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMAssetOriginal*)[[[ZMAssetOriginal builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMAssetOriginal*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetOriginal*)[[[ZMAssetOriginal builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetOriginalBuilder*) builder {
+  return [[ZMAssetOriginalBuilder alloc] init];
+}
++ (ZMAssetOriginalBuilder*) builderWithPrototype:(ZMAssetOriginal*) prototype {
+  return [[ZMAssetOriginal builder] mergeFrom:prototype];
+}
+- (ZMAssetOriginalBuilder*) builder {
+  return [ZMAssetOriginal builder];
+}
+- (ZMAssetOriginalBuilder*) toBuilder {
+  return [ZMAssetOriginal builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasMimeType) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"mimeType", self.mimeType];
+  }
+  if (self.hasSize) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"size", [NSNumber numberWithLongLong:self.size]];
+  }
+  if (self.hasName) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"name", self.name];
+  }
+  if (self.hasImage) {
+    [output appendFormat:@"%@%@ {\n", indent, @"image"];
+    [self.image writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasMimeType) {
+    [dictionary setObject: self.mimeType forKey: @"mimeType"];
+  }
+  if (self.hasSize) {
+    [dictionary setObject: [NSNumber numberWithLongLong:self.size] forKey: @"size"];
+  }
+  if (self.hasName) {
+    [dictionary setObject: self.name forKey: @"name"];
+  }
+  if (self.hasImage) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.image storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"image"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMAssetOriginal class]]) {
+    return NO;
+  }
+  ZMAssetOriginal *otherMessage = other;
+  return
+      self.hasMimeType == otherMessage.hasMimeType &&
+      (!self.hasMimeType || [self.mimeType isEqual:otherMessage.mimeType]) &&
+      self.hasSize == otherMessage.hasSize &&
+      (!self.hasSize || self.size == otherMessage.size) &&
+      self.hasName == otherMessage.hasName &&
+      (!self.hasName || [self.name isEqual:otherMessage.name]) &&
+      self.hasImage == otherMessage.hasImage &&
+      (!self.hasImage || [self.image isEqual:otherMessage.image]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasMimeType) {
+    hashCode = hashCode * 31 + [self.mimeType hash];
+  }
+  if (self.hasSize) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithLongLong:self.size] hash];
+  }
+  if (self.hasName) {
+    hashCode = hashCode * 31 + [self.name hash];
+  }
+  if (self.hasImage) {
+    hashCode = hashCode * 31 + [self.image hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMAssetOriginalBuilder()
+@property (strong) ZMAssetOriginal* resultOriginal;
+@end
+
+@implementation ZMAssetOriginalBuilder
+@synthesize resultOriginal;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultOriginal = [[ZMAssetOriginal alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultOriginal;
+}
+- (ZMAssetOriginalBuilder*) clear {
+  self.resultOriginal = [[ZMAssetOriginal alloc] init];
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clone {
+  return [ZMAssetOriginal builderWithPrototype:resultOriginal];
+}
+- (ZMAssetOriginal*) defaultInstance {
+  return [ZMAssetOriginal defaultInstance];
+}
+- (ZMAssetOriginal*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMAssetOriginal*) buildPartial {
+  ZMAssetOriginal* returnMe = resultOriginal;
+  self.resultOriginal = nil;
+  return returnMe;
+}
+- (ZMAssetOriginalBuilder*) mergeFrom:(ZMAssetOriginal*) other {
+  if (other == [ZMAssetOriginal defaultInstance]) {
+    return self;
+  }
+  if (other.hasMimeType) {
+    [self setMimeType:other.mimeType];
+  }
+  if (other.hasSize) {
+    [self setSize:other.size];
+  }
+  if (other.hasName) {
+    [self setName:other.name];
+  }
+  if (other.hasImage) {
+    [self mergeImage:other.image];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMAssetOriginalBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMAssetOriginalBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setMimeType:[input readString]];
+        break;
+      }
+      case 16: {
+        [self setSize:[input readUInt64]];
+        break;
+      }
+      case 26: {
+        [self setName:[input readString]];
+        break;
+      }
+      case 34: {
+        ZMAssetImageMetaDataBuilder* subBuilder = [ZMAssetImageMetaData builder];
+        if (self.hasImage) {
+          [subBuilder mergeFrom:self.image];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setImage:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasMimeType {
+  return resultOriginal.hasMimeType;
+}
+- (NSString*) mimeType {
+  return resultOriginal.mimeType;
+}
+- (ZMAssetOriginalBuilder*) setMimeType:(NSString*) value {
+  resultOriginal.hasMimeType = YES;
+  resultOriginal.mimeType = value;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clearMimeType {
+  resultOriginal.hasMimeType = NO;
+  resultOriginal.mimeType = @"";
+  return self;
+}
+- (BOOL) hasSize {
+  return resultOriginal.hasSize;
+}
+- (UInt64) size {
+  return resultOriginal.size;
+}
+- (ZMAssetOriginalBuilder*) setSize:(UInt64) value {
+  resultOriginal.hasSize = YES;
+  resultOriginal.size = value;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clearSize {
+  resultOriginal.hasSize = NO;
+  resultOriginal.size = 0L;
+  return self;
+}
+- (BOOL) hasName {
+  return resultOriginal.hasName;
+}
+- (NSString*) name {
+  return resultOriginal.name;
+}
+- (ZMAssetOriginalBuilder*) setName:(NSString*) value {
+  resultOriginal.hasName = YES;
+  resultOriginal.name = value;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clearName {
+  resultOriginal.hasName = NO;
+  resultOriginal.name = @"";
+  return self;
+}
+- (BOOL) hasImage {
+  return resultOriginal.hasImage;
+}
+- (ZMAssetImageMetaData*) image {
+  return resultOriginal.image;
+}
+- (ZMAssetOriginalBuilder*) setImage:(ZMAssetImageMetaData*) value {
+  resultOriginal.hasImage = YES;
+  resultOriginal.image = value;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) setImageBuilder:(ZMAssetImageMetaDataBuilder*) builderForValue {
+  return [self setImage:[builderForValue build]];
+}
+- (ZMAssetOriginalBuilder*) mergeImage:(ZMAssetImageMetaData*) value {
+  if (resultOriginal.hasImage &&
+      resultOriginal.image != [ZMAssetImageMetaData defaultInstance]) {
+    resultOriginal.image =
+      [[[ZMAssetImageMetaData builderWithPrototype:resultOriginal.image] mergeFrom:value] buildPartial];
+  } else {
+    resultOriginal.image = value;
+  }
+  resultOriginal.hasImage = YES;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clearImage {
+  resultOriginal.hasImage = NO;
+  resultOriginal.image = [ZMAssetImageMetaData defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMAssetPreview ()
+@property (strong) NSString* mimeType;
+@property (strong) NSData* otrKey;
+@property (strong) NSData* sha256;
+@property UInt64 size;
+@property (strong) ZMAssetImageMetaData* image;
+@end
+
+@implementation ZMAssetPreview
+
+- (BOOL) hasMimeType {
+  return !!hasMimeType_;
+}
+- (void) setHasMimeType:(BOOL) _value_ {
+  hasMimeType_ = !!_value_;
+}
+@synthesize mimeType;
+- (BOOL) hasOtrKey {
+  return !!hasOtrKey_;
+}
+- (void) setHasOtrKey:(BOOL) _value_ {
+  hasOtrKey_ = !!_value_;
+}
+@synthesize otrKey;
+- (BOOL) hasSha256 {
+  return !!hasSha256_;
+}
+- (void) setHasSha256:(BOOL) _value_ {
+  hasSha256_ = !!_value_;
+}
+@synthesize sha256;
+- (BOOL) hasSize {
+  return !!hasSize_;
+}
+- (void) setHasSize:(BOOL) _value_ {
+  hasSize_ = !!_value_;
+}
+@synthesize size;
+- (BOOL) hasImage {
+  return !!hasImage_;
+}
+- (void) setHasImage:(BOOL) _value_ {
+  hasImage_ = !!_value_;
+}
+@synthesize image;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.mimeType = @"";
+    self.otrKey = [NSData data];
+    self.sha256 = [NSData data];
+    self.size = 0L;
+    self.image = [ZMAssetImageMetaData defaultInstance];
+  }
+  return self;
+}
+static ZMAssetPreview* defaultZMAssetPreviewInstance = nil;
++ (void) initialize {
+  if (self == [ZMAssetPreview class]) {
+    defaultZMAssetPreviewInstance = [[ZMAssetPreview alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMAssetPreviewInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMAssetPreviewInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasMimeType) {
+    return NO;
+  }
+  if (!self.hasOtrKey) {
+    return NO;
+  }
+  if (!self.hasSha256) {
+    return NO;
+  }
+  if (!self.hasSize) {
+    return NO;
+  }
+  if (self.hasImage) {
+    if (!self.image.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasMimeType) {
+    [output writeString:1 value:self.mimeType];
+  }
+  if (self.hasOtrKey) {
+    [output writeData:2 value:self.otrKey];
+  }
+  if (self.hasSha256) {
+    [output writeData:3 value:self.sha256];
+  }
+  if (self.hasSize) {
+    [output writeUInt64:4 value:self.size];
+  }
+  if (self.hasImage) {
+    [output writeMessage:5 value:self.image];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasMimeType) {
+    size_ += computeStringSize(1, self.mimeType);
+  }
+  if (self.hasOtrKey) {
+    size_ += computeDataSize(2, self.otrKey);
+  }
+  if (self.hasSha256) {
+    size_ += computeDataSize(3, self.sha256);
+  }
+  if (self.hasSize) {
+    size_ += computeUInt64Size(4, self.size);
+  }
+  if (self.hasImage) {
+    size_ += computeMessageSize(5, self.image);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMAssetPreview*) parseFromData:(NSData*) data {
+  return (ZMAssetPreview*)[[[ZMAssetPreview builder] mergeFromData:data] build];
+}
++ (ZMAssetPreview*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetPreview*)[[[ZMAssetPreview builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetPreview*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMAssetPreview*)[[[ZMAssetPreview builder] mergeFromInputStream:input] build];
+}
++ (ZMAssetPreview*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetPreview*)[[[ZMAssetPreview builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMAssetPreview*)[[[ZMAssetPreview builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMAssetPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetPreview*)[[[ZMAssetPreview builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetPreviewBuilder*) builder {
+  return [[ZMAssetPreviewBuilder alloc] init];
+}
++ (ZMAssetPreviewBuilder*) builderWithPrototype:(ZMAssetPreview*) prototype {
+  return [[ZMAssetPreview builder] mergeFrom:prototype];
+}
+- (ZMAssetPreviewBuilder*) builder {
+  return [ZMAssetPreview builder];
+}
+- (ZMAssetPreviewBuilder*) toBuilder {
+  return [ZMAssetPreview builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasMimeType) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"mimeType", self.mimeType];
+  }
+  if (self.hasOtrKey) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"otrKey", self.otrKey];
+  }
+  if (self.hasSha256) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"sha256", self.sha256];
+  }
+  if (self.hasSize) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"size", [NSNumber numberWithLongLong:self.size]];
+  }
+  if (self.hasImage) {
+    [output appendFormat:@"%@%@ {\n", indent, @"image"];
+    [self.image writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasMimeType) {
+    [dictionary setObject: self.mimeType forKey: @"mimeType"];
+  }
+  if (self.hasOtrKey) {
+    [dictionary setObject: self.otrKey forKey: @"otrKey"];
+  }
+  if (self.hasSha256) {
+    [dictionary setObject: self.sha256 forKey: @"sha256"];
+  }
+  if (self.hasSize) {
+    [dictionary setObject: [NSNumber numberWithLongLong:self.size] forKey: @"size"];
+  }
+  if (self.hasImage) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.image storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"image"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMAssetPreview class]]) {
+    return NO;
+  }
+  ZMAssetPreview *otherMessage = other;
+  return
+      self.hasMimeType == otherMessage.hasMimeType &&
+      (!self.hasMimeType || [self.mimeType isEqual:otherMessage.mimeType]) &&
+      self.hasOtrKey == otherMessage.hasOtrKey &&
+      (!self.hasOtrKey || [self.otrKey isEqual:otherMessage.otrKey]) &&
+      self.hasSha256 == otherMessage.hasSha256 &&
+      (!self.hasSha256 || [self.sha256 isEqual:otherMessage.sha256]) &&
+      self.hasSize == otherMessage.hasSize &&
+      (!self.hasSize || self.size == otherMessage.size) &&
+      self.hasImage == otherMessage.hasImage &&
+      (!self.hasImage || [self.image isEqual:otherMessage.image]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasMimeType) {
+    hashCode = hashCode * 31 + [self.mimeType hash];
+  }
+  if (self.hasOtrKey) {
+    hashCode = hashCode * 31 + [self.otrKey hash];
+  }
+  if (self.hasSha256) {
+    hashCode = hashCode * 31 + [self.sha256 hash];
+  }
+  if (self.hasSize) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithLongLong:self.size] hash];
+  }
+  if (self.hasImage) {
+    hashCode = hashCode * 31 + [self.image hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMAssetPreviewBuilder()
+@property (strong) ZMAssetPreview* resultPreview;
+@end
+
+@implementation ZMAssetPreviewBuilder
+@synthesize resultPreview;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultPreview = [[ZMAssetPreview alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultPreview;
+}
+- (ZMAssetPreviewBuilder*) clear {
+  self.resultPreview = [[ZMAssetPreview alloc] init];
+  return self;
+}
+- (ZMAssetPreviewBuilder*) clone {
+  return [ZMAssetPreview builderWithPrototype:resultPreview];
+}
+- (ZMAssetPreview*) defaultInstance {
+  return [ZMAssetPreview defaultInstance];
+}
+- (ZMAssetPreview*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMAssetPreview*) buildPartial {
+  ZMAssetPreview* returnMe = resultPreview;
+  self.resultPreview = nil;
+  return returnMe;
+}
+- (ZMAssetPreviewBuilder*) mergeFrom:(ZMAssetPreview*) other {
+  if (other == [ZMAssetPreview defaultInstance]) {
+    return self;
+  }
+  if (other.hasMimeType) {
+    [self setMimeType:other.mimeType];
+  }
+  if (other.hasOtrKey) {
+    [self setOtrKey:other.otrKey];
+  }
+  if (other.hasSha256) {
+    [self setSha256:other.sha256];
+  }
+  if (other.hasSize) {
+    [self setSize:other.size];
+  }
+  if (other.hasImage) {
+    [self mergeImage:other.image];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMAssetPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMAssetPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setMimeType:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setOtrKey:[input readData]];
+        break;
+      }
+      case 26: {
+        [self setSha256:[input readData]];
+        break;
+      }
+      case 32: {
+        [self setSize:[input readUInt64]];
+        break;
+      }
+      case 42: {
+        ZMAssetImageMetaDataBuilder* subBuilder = [ZMAssetImageMetaData builder];
+        if (self.hasImage) {
+          [subBuilder mergeFrom:self.image];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setImage:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasMimeType {
+  return resultPreview.hasMimeType;
+}
+- (NSString*) mimeType {
+  return resultPreview.mimeType;
+}
+- (ZMAssetPreviewBuilder*) setMimeType:(NSString*) value {
+  resultPreview.hasMimeType = YES;
+  resultPreview.mimeType = value;
+  return self;
+}
+- (ZMAssetPreviewBuilder*) clearMimeType {
+  resultPreview.hasMimeType = NO;
+  resultPreview.mimeType = @"";
+  return self;
+}
+- (BOOL) hasOtrKey {
+  return resultPreview.hasOtrKey;
+}
+- (NSData*) otrKey {
+  return resultPreview.otrKey;
+}
+- (ZMAssetPreviewBuilder*) setOtrKey:(NSData*) value {
+  resultPreview.hasOtrKey = YES;
+  resultPreview.otrKey = value;
+  return self;
+}
+- (ZMAssetPreviewBuilder*) clearOtrKey {
+  resultPreview.hasOtrKey = NO;
+  resultPreview.otrKey = [NSData data];
+  return self;
+}
+- (BOOL) hasSha256 {
+  return resultPreview.hasSha256;
+}
+- (NSData*) sha256 {
+  return resultPreview.sha256;
+}
+- (ZMAssetPreviewBuilder*) setSha256:(NSData*) value {
+  resultPreview.hasSha256 = YES;
+  resultPreview.sha256 = value;
+  return self;
+}
+- (ZMAssetPreviewBuilder*) clearSha256 {
+  resultPreview.hasSha256 = NO;
+  resultPreview.sha256 = [NSData data];
+  return self;
+}
+- (BOOL) hasSize {
+  return resultPreview.hasSize;
+}
+- (UInt64) size {
+  return resultPreview.size;
+}
+- (ZMAssetPreviewBuilder*) setSize:(UInt64) value {
+  resultPreview.hasSize = YES;
+  resultPreview.size = value;
+  return self;
+}
+- (ZMAssetPreviewBuilder*) clearSize {
+  resultPreview.hasSize = NO;
+  resultPreview.size = 0L;
+  return self;
+}
+- (BOOL) hasImage {
+  return resultPreview.hasImage;
+}
+- (ZMAssetImageMetaData*) image {
+  return resultPreview.image;
+}
+- (ZMAssetPreviewBuilder*) setImage:(ZMAssetImageMetaData*) value {
+  resultPreview.hasImage = YES;
+  resultPreview.image = value;
+  return self;
+}
+- (ZMAssetPreviewBuilder*) setImageBuilder:(ZMAssetImageMetaDataBuilder*) builderForValue {
+  return [self setImage:[builderForValue build]];
+}
+- (ZMAssetPreviewBuilder*) mergeImage:(ZMAssetImageMetaData*) value {
+  if (resultPreview.hasImage &&
+      resultPreview.image != [ZMAssetImageMetaData defaultInstance]) {
+    resultPreview.image =
+      [[[ZMAssetImageMetaData builderWithPrototype:resultPreview.image] mergeFrom:value] buildPartial];
+  } else {
+    resultPreview.image = value;
+  }
+  resultPreview.hasImage = YES;
+  return self;
+}
+- (ZMAssetPreviewBuilder*) clearImage {
+  resultPreview.hasImage = NO;
+  resultPreview.image = [ZMAssetImageMetaData defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMAssetImageMetaData ()
+@property SInt32 width;
+@property SInt32 height;
+@property (strong) NSString* tag;
+@end
+
+@implementation ZMAssetImageMetaData
+
+- (BOOL) hasWidth {
+  return !!hasWidth_;
+}
+- (void) setHasWidth:(BOOL) _value_ {
+  hasWidth_ = !!_value_;
+}
+@synthesize width;
+- (BOOL) hasHeight {
+  return !!hasHeight_;
+}
+- (void) setHasHeight:(BOOL) _value_ {
+  hasHeight_ = !!_value_;
+}
+@synthesize height;
+- (BOOL) hasTag {
+  return !!hasTag_;
+}
+- (void) setHasTag:(BOOL) _value_ {
+  hasTag_ = !!_value_;
+}
+@synthesize tag;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.width = 0;
+    self.height = 0;
+    self.tag = @"";
+  }
+  return self;
+}
+static ZMAssetImageMetaData* defaultZMAssetImageMetaDataInstance = nil;
++ (void) initialize {
+  if (self == [ZMAssetImageMetaData class]) {
+    defaultZMAssetImageMetaDataInstance = [[ZMAssetImageMetaData alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMAssetImageMetaDataInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMAssetImageMetaDataInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasWidth) {
+    return NO;
+  }
+  if (!self.hasHeight) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasWidth) {
+    [output writeInt32:1 value:self.width];
+  }
+  if (self.hasHeight) {
+    [output writeInt32:2 value:self.height];
+  }
+  if (self.hasTag) {
+    [output writeString:3 value:self.tag];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasWidth) {
+    size_ += computeInt32Size(1, self.width);
+  }
+  if (self.hasHeight) {
+    size_ += computeInt32Size(2, self.height);
+  }
+  if (self.hasTag) {
+    size_ += computeStringSize(3, self.tag);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMAssetImageMetaData*) parseFromData:(NSData*) data {
+  return (ZMAssetImageMetaData*)[[[ZMAssetImageMetaData builder] mergeFromData:data] build];
+}
++ (ZMAssetImageMetaData*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetImageMetaData*)[[[ZMAssetImageMetaData builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetImageMetaData*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMAssetImageMetaData*)[[[ZMAssetImageMetaData builder] mergeFromInputStream:input] build];
+}
++ (ZMAssetImageMetaData*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetImageMetaData*)[[[ZMAssetImageMetaData builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetImageMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMAssetImageMetaData*)[[[ZMAssetImageMetaData builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMAssetImageMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetImageMetaData*)[[[ZMAssetImageMetaData builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetImageMetaDataBuilder*) builder {
+  return [[ZMAssetImageMetaDataBuilder alloc] init];
+}
++ (ZMAssetImageMetaDataBuilder*) builderWithPrototype:(ZMAssetImageMetaData*) prototype {
+  return [[ZMAssetImageMetaData builder] mergeFrom:prototype];
+}
+- (ZMAssetImageMetaDataBuilder*) builder {
+  return [ZMAssetImageMetaData builder];
+}
+- (ZMAssetImageMetaDataBuilder*) toBuilder {
+  return [ZMAssetImageMetaData builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasWidth) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"width", [NSNumber numberWithInteger:self.width]];
+  }
+  if (self.hasHeight) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"height", [NSNumber numberWithInteger:self.height]];
+  }
+  if (self.hasTag) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"tag", self.tag];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasWidth) {
+    [dictionary setObject: [NSNumber numberWithInteger:self.width] forKey: @"width"];
+  }
+  if (self.hasHeight) {
+    [dictionary setObject: [NSNumber numberWithInteger:self.height] forKey: @"height"];
+  }
+  if (self.hasTag) {
+    [dictionary setObject: self.tag forKey: @"tag"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMAssetImageMetaData class]]) {
+    return NO;
+  }
+  ZMAssetImageMetaData *otherMessage = other;
+  return
+      self.hasWidth == otherMessage.hasWidth &&
+      (!self.hasWidth || self.width == otherMessage.width) &&
+      self.hasHeight == otherMessage.hasHeight &&
+      (!self.hasHeight || self.height == otherMessage.height) &&
+      self.hasTag == otherMessage.hasTag &&
+      (!self.hasTag || [self.tag isEqual:otherMessage.tag]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasWidth) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.width] hash];
+  }
+  if (self.hasHeight) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.height] hash];
+  }
+  if (self.hasTag) {
+    hashCode = hashCode * 31 + [self.tag hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMAssetImageMetaDataBuilder()
+@property (strong) ZMAssetImageMetaData* resultImageMetaData;
+@end
+
+@implementation ZMAssetImageMetaDataBuilder
+@synthesize resultImageMetaData;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultImageMetaData = [[ZMAssetImageMetaData alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultImageMetaData;
+}
+- (ZMAssetImageMetaDataBuilder*) clear {
+  self.resultImageMetaData = [[ZMAssetImageMetaData alloc] init];
+  return self;
+}
+- (ZMAssetImageMetaDataBuilder*) clone {
+  return [ZMAssetImageMetaData builderWithPrototype:resultImageMetaData];
+}
+- (ZMAssetImageMetaData*) defaultInstance {
+  return [ZMAssetImageMetaData defaultInstance];
+}
+- (ZMAssetImageMetaData*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMAssetImageMetaData*) buildPartial {
+  ZMAssetImageMetaData* returnMe = resultImageMetaData;
+  self.resultImageMetaData = nil;
+  return returnMe;
+}
+- (ZMAssetImageMetaDataBuilder*) mergeFrom:(ZMAssetImageMetaData*) other {
+  if (other == [ZMAssetImageMetaData defaultInstance]) {
+    return self;
+  }
+  if (other.hasWidth) {
+    [self setWidth:other.width];
+  }
+  if (other.hasHeight) {
+    [self setHeight:other.height];
+  }
+  if (other.hasTag) {
+    [self setTag:other.tag];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMAssetImageMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMAssetImageMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 8: {
+        [self setWidth:[input readInt32]];
+        break;
+      }
+      case 16: {
+        [self setHeight:[input readInt32]];
+        break;
+      }
+      case 26: {
+        [self setTag:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasWidth {
+  return resultImageMetaData.hasWidth;
+}
+- (SInt32) width {
+  return resultImageMetaData.width;
+}
+- (ZMAssetImageMetaDataBuilder*) setWidth:(SInt32) value {
+  resultImageMetaData.hasWidth = YES;
+  resultImageMetaData.width = value;
+  return self;
+}
+- (ZMAssetImageMetaDataBuilder*) clearWidth {
+  resultImageMetaData.hasWidth = NO;
+  resultImageMetaData.width = 0;
+  return self;
+}
+- (BOOL) hasHeight {
+  return resultImageMetaData.hasHeight;
+}
+- (SInt32) height {
+  return resultImageMetaData.height;
+}
+- (ZMAssetImageMetaDataBuilder*) setHeight:(SInt32) value {
+  resultImageMetaData.hasHeight = YES;
+  resultImageMetaData.height = value;
+  return self;
+}
+- (ZMAssetImageMetaDataBuilder*) clearHeight {
+  resultImageMetaData.hasHeight = NO;
+  resultImageMetaData.height = 0;
+  return self;
+}
+- (BOOL) hasTag {
+  return resultImageMetaData.hasTag;
+}
+- (NSString*) tag {
+  return resultImageMetaData.tag;
+}
+- (ZMAssetImageMetaDataBuilder*) setTag:(NSString*) value {
+  resultImageMetaData.hasTag = YES;
+  resultImageMetaData.tag = value;
+  return self;
+}
+- (ZMAssetImageMetaDataBuilder*) clearTag {
+  resultImageMetaData.hasTag = NO;
+  resultImageMetaData.tag = @"";
+  return self;
+}
+@end
+
+@interface ZMAssetUploaded ()
+@property (strong) NSData* otrKey;
+@property (strong) NSData* sha256;
+@end
+
+@implementation ZMAssetUploaded
+
+- (BOOL) hasOtrKey {
+  return !!hasOtrKey_;
+}
+- (void) setHasOtrKey:(BOOL) _value_ {
+  hasOtrKey_ = !!_value_;
+}
+@synthesize otrKey;
+- (BOOL) hasSha256 {
+  return !!hasSha256_;
+}
+- (void) setHasSha256:(BOOL) _value_ {
+  hasSha256_ = !!_value_;
+}
+@synthesize sha256;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.otrKey = [NSData data];
+    self.sha256 = [NSData data];
+  }
+  return self;
+}
+static ZMAssetUploaded* defaultZMAssetUploadedInstance = nil;
++ (void) initialize {
+  if (self == [ZMAssetUploaded class]) {
+    defaultZMAssetUploadedInstance = [[ZMAssetUploaded alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMAssetUploadedInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMAssetUploadedInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasOtrKey) {
+    return NO;
+  }
+  if (!self.hasSha256) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasOtrKey) {
+    [output writeData:1 value:self.otrKey];
+  }
+  if (self.hasSha256) {
+    [output writeData:2 value:self.sha256];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasOtrKey) {
+    size_ += computeDataSize(1, self.otrKey);
+  }
+  if (self.hasSha256) {
+    size_ += computeDataSize(2, self.sha256);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMAssetUploaded*) parseFromData:(NSData*) data {
+  return (ZMAssetUploaded*)[[[ZMAssetUploaded builder] mergeFromData:data] build];
+}
++ (ZMAssetUploaded*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetUploaded*)[[[ZMAssetUploaded builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetUploaded*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMAssetUploaded*)[[[ZMAssetUploaded builder] mergeFromInputStream:input] build];
+}
++ (ZMAssetUploaded*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetUploaded*)[[[ZMAssetUploaded builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetUploaded*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMAssetUploaded*)[[[ZMAssetUploaded builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMAssetUploaded*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetUploaded*)[[[ZMAssetUploaded builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetUploadedBuilder*) builder {
+  return [[ZMAssetUploadedBuilder alloc] init];
+}
++ (ZMAssetUploadedBuilder*) builderWithPrototype:(ZMAssetUploaded*) prototype {
+  return [[ZMAssetUploaded builder] mergeFrom:prototype];
+}
+- (ZMAssetUploadedBuilder*) builder {
+  return [ZMAssetUploaded builder];
+}
+- (ZMAssetUploadedBuilder*) toBuilder {
+  return [ZMAssetUploaded builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasOtrKey) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"otrKey", self.otrKey];
+  }
+  if (self.hasSha256) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"sha256", self.sha256];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasOtrKey) {
+    [dictionary setObject: self.otrKey forKey: @"otrKey"];
+  }
+  if (self.hasSha256) {
+    [dictionary setObject: self.sha256 forKey: @"sha256"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMAssetUploaded class]]) {
+    return NO;
+  }
+  ZMAssetUploaded *otherMessage = other;
+  return
+      self.hasOtrKey == otherMessage.hasOtrKey &&
+      (!self.hasOtrKey || [self.otrKey isEqual:otherMessage.otrKey]) &&
+      self.hasSha256 == otherMessage.hasSha256 &&
+      (!self.hasSha256 || [self.sha256 isEqual:otherMessage.sha256]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasOtrKey) {
+    hashCode = hashCode * 31 + [self.otrKey hash];
+  }
+  if (self.hasSha256) {
+    hashCode = hashCode * 31 + [self.sha256 hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMAssetUploadedBuilder()
+@property (strong) ZMAssetUploaded* resultUploaded;
+@end
+
+@implementation ZMAssetUploadedBuilder
+@synthesize resultUploaded;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultUploaded = [[ZMAssetUploaded alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultUploaded;
+}
+- (ZMAssetUploadedBuilder*) clear {
+  self.resultUploaded = [[ZMAssetUploaded alloc] init];
+  return self;
+}
+- (ZMAssetUploadedBuilder*) clone {
+  return [ZMAssetUploaded builderWithPrototype:resultUploaded];
+}
+- (ZMAssetUploaded*) defaultInstance {
+  return [ZMAssetUploaded defaultInstance];
+}
+- (ZMAssetUploaded*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMAssetUploaded*) buildPartial {
+  ZMAssetUploaded* returnMe = resultUploaded;
+  self.resultUploaded = nil;
+  return returnMe;
+}
+- (ZMAssetUploadedBuilder*) mergeFrom:(ZMAssetUploaded*) other {
+  if (other == [ZMAssetUploaded defaultInstance]) {
+    return self;
+  }
+  if (other.hasOtrKey) {
+    [self setOtrKey:other.otrKey];
+  }
+  if (other.hasSha256) {
+    [self setSha256:other.sha256];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMAssetUploadedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMAssetUploadedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setOtrKey:[input readData]];
+        break;
+      }
+      case 18: {
+        [self setSha256:[input readData]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasOtrKey {
+  return resultUploaded.hasOtrKey;
+}
+- (NSData*) otrKey {
+  return resultUploaded.otrKey;
+}
+- (ZMAssetUploadedBuilder*) setOtrKey:(NSData*) value {
+  resultUploaded.hasOtrKey = YES;
+  resultUploaded.otrKey = value;
+  return self;
+}
+- (ZMAssetUploadedBuilder*) clearOtrKey {
+  resultUploaded.hasOtrKey = NO;
+  resultUploaded.otrKey = [NSData data];
+  return self;
+}
+- (BOOL) hasSha256 {
+  return resultUploaded.hasSha256;
+}
+- (NSData*) sha256 {
+  return resultUploaded.sha256;
+}
+- (ZMAssetUploadedBuilder*) setSha256:(NSData*) value {
+  resultUploaded.hasSha256 = YES;
+  resultUploaded.sha256 = value;
+  return self;
+}
+- (ZMAssetUploadedBuilder*) clearSha256 {
+  resultUploaded.hasSha256 = NO;
+  resultUploaded.sha256 = [NSData data];
+  return self;
+}
+@end
+
+@interface ZMAssetBuilder()
+@property (strong) ZMAsset* resultAsset;
+@end
+
+@implementation ZMAssetBuilder
+@synthesize resultAsset;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultAsset = [[ZMAsset alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultAsset;
+}
+- (ZMAssetBuilder*) clear {
+  self.resultAsset = [[ZMAsset alloc] init];
+  return self;
+}
+- (ZMAssetBuilder*) clone {
+  return [ZMAsset builderWithPrototype:resultAsset];
+}
+- (ZMAsset*) defaultInstance {
+  return [ZMAsset defaultInstance];
+}
+- (ZMAsset*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMAsset*) buildPartial {
+  ZMAsset* returnMe = resultAsset;
+  self.resultAsset = nil;
+  return returnMe;
+}
+- (ZMAssetBuilder*) mergeFrom:(ZMAsset*) other {
+  if (other == [ZMAsset defaultInstance]) {
+    return self;
+  }
+  if (other.hasOriginal) {
+    [self mergeOriginal:other.original];
+  }
+  if (other.hasPreview) {
+    [self mergePreview:other.preview];
+  }
+  if (other.hasNotUploaded) {
+    [self setNotUploaded:other.notUploaded];
+  }
+  if (other.hasUploaded) {
+    [self mergeUploaded:other.uploaded];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMAssetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMAssetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        ZMAssetOriginalBuilder* subBuilder = [ZMAssetOriginal builder];
+        if (self.hasOriginal) {
+          [subBuilder mergeFrom:self.original];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setOriginal:[subBuilder buildPartial]];
+        break;
+      }
+      case 18: {
+        ZMAssetPreviewBuilder* subBuilder = [ZMAssetPreview builder];
+        if (self.hasPreview) {
+          [subBuilder mergeFrom:self.preview];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setPreview:[subBuilder buildPartial]];
+        break;
+      }
+      case 24: {
+        ZMAssetNotUploaded value = (ZMAssetNotUploaded)[input readEnum];
+        if (ZMAssetNotUploadedIsValidValue(value)) {
+          [self setNotUploaded:value];
+        } else {
+          [unknownFields mergeVarintField:3 value:value];
+        }
+        break;
+      }
+      case 34: {
+        ZMAssetUploadedBuilder* subBuilder = [ZMAssetUploaded builder];
+        if (self.hasUploaded) {
+          [subBuilder mergeFrom:self.uploaded];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setUploaded:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasOriginal {
+  return resultAsset.hasOriginal;
+}
+- (ZMAssetOriginal*) original {
+  return resultAsset.original;
+}
+- (ZMAssetBuilder*) setOriginal:(ZMAssetOriginal*) value {
+  resultAsset.hasOriginal = YES;
+  resultAsset.original = value;
+  return self;
+}
+- (ZMAssetBuilder*) setOriginalBuilder:(ZMAssetOriginalBuilder*) builderForValue {
+  return [self setOriginal:[builderForValue build]];
+}
+- (ZMAssetBuilder*) mergeOriginal:(ZMAssetOriginal*) value {
+  if (resultAsset.hasOriginal &&
+      resultAsset.original != [ZMAssetOriginal defaultInstance]) {
+    resultAsset.original =
+      [[[ZMAssetOriginal builderWithPrototype:resultAsset.original] mergeFrom:value] buildPartial];
+  } else {
+    resultAsset.original = value;
+  }
+  resultAsset.hasOriginal = YES;
+  return self;
+}
+- (ZMAssetBuilder*) clearOriginal {
+  resultAsset.hasOriginal = NO;
+  resultAsset.original = [ZMAssetOriginal defaultInstance];
+  return self;
+}
+- (BOOL) hasPreview {
+  return resultAsset.hasPreview;
+}
+- (ZMAssetPreview*) preview {
+  return resultAsset.preview;
+}
+- (ZMAssetBuilder*) setPreview:(ZMAssetPreview*) value {
+  resultAsset.hasPreview = YES;
+  resultAsset.preview = value;
+  return self;
+}
+- (ZMAssetBuilder*) setPreviewBuilder:(ZMAssetPreviewBuilder*) builderForValue {
+  return [self setPreview:[builderForValue build]];
+}
+- (ZMAssetBuilder*) mergePreview:(ZMAssetPreview*) value {
+  if (resultAsset.hasPreview &&
+      resultAsset.preview != [ZMAssetPreview defaultInstance]) {
+    resultAsset.preview =
+      [[[ZMAssetPreview builderWithPrototype:resultAsset.preview] mergeFrom:value] buildPartial];
+  } else {
+    resultAsset.preview = value;
+  }
+  resultAsset.hasPreview = YES;
+  return self;
+}
+- (ZMAssetBuilder*) clearPreview {
+  resultAsset.hasPreview = NO;
+  resultAsset.preview = [ZMAssetPreview defaultInstance];
+  return self;
+}
+- (BOOL) hasNotUploaded {
+  return resultAsset.hasNotUploaded;
+}
+- (ZMAssetNotUploaded) notUploaded {
+  return resultAsset.notUploaded;
+}
+- (ZMAssetBuilder*) setNotUploaded:(ZMAssetNotUploaded) value {
+  resultAsset.hasNotUploaded = YES;
+  resultAsset.notUploaded = value;
+  return self;
+}
+- (ZMAssetBuilder*) clearNotUploaded {
+  resultAsset.hasNotUploaded = NO;
+  resultAsset.notUploaded = ZMAssetNotUploadedCANCELLED;
+  return self;
+}
+- (BOOL) hasUploaded {
+  return resultAsset.hasUploaded;
+}
+- (ZMAssetUploaded*) uploaded {
+  return resultAsset.uploaded;
+}
+- (ZMAssetBuilder*) setUploaded:(ZMAssetUploaded*) value {
+  resultAsset.hasUploaded = YES;
+  resultAsset.uploaded = value;
+  return self;
+}
+- (ZMAssetBuilder*) setUploadedBuilder:(ZMAssetUploadedBuilder*) builderForValue {
+  return [self setUploaded:[builderForValue build]];
+}
+- (ZMAssetBuilder*) mergeUploaded:(ZMAssetUploaded*) value {
+  if (resultAsset.hasUploaded &&
+      resultAsset.uploaded != [ZMAssetUploaded defaultInstance]) {
+    resultAsset.uploaded =
+      [[[ZMAssetUploaded builderWithPrototype:resultAsset.uploaded] mergeFrom:value] buildPartial];
+  } else {
+    resultAsset.uploaded = value;
+  }
+  resultAsset.hasUploaded = YES;
+  return self;
+}
+- (ZMAssetBuilder*) clearUploaded {
+  resultAsset.hasUploaded = NO;
+  resultAsset.uploaded = [ZMAssetUploaded defaultInstance];
   return self;
 }
 @end

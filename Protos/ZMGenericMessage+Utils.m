@@ -91,7 +91,8 @@
     self.hasLiking ||
     self.hasLastRead ||
     self.hasCleared ||
-    self.hasClientAction;
+    self.hasClientAction ||
+    self.hasAsset;
 }
 
 + (instancetype)messageWithImageData:(NSData *)imageData format:(ZMImageFormat)format nonce:(NSString *)nonce
