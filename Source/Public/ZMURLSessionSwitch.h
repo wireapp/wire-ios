@@ -32,6 +32,7 @@
 /// The foreground session
 @property (nonatomic, readonly) ZMURLSession *foregroundSession;
 @property (nonatomic, readonly) ZMURLSession *backgroundSession;
+@property (nonatomic, readonly) NSArray <ZMURLSession *> *allSessions;
 
 - (instancetype)initWithForegroundSession:(ZMURLSession *)foregroundSession backgroundSession:(ZMURLSession *)backgroundSession;
 - (instancetype)initWithForegroundSession:(ZMURLSession *)foregroundSession backgroundSession:(ZMURLSession *)backgroundSession sessionCancelTimerClass:(Class)sessionCancelTimerClass NS_DESIGNATED_INITIALIZER;

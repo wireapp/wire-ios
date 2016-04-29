@@ -31,6 +31,7 @@
 @property (nonatomic) ZMURLSession *currentSession;
 @property (nonatomic) ZMURLSession *foregroundSession;
 @property (nonatomic) ZMURLSession *backgroundSession;
+
 @property (nonatomic) Class sessionCancelTimerClass;
 
 @property (nonatomic) ZMSessionCancelTimer *cancelForegroundTimer;
@@ -97,6 +98,11 @@ ZM_EMPTY_ASSERTING_INIT();
     [self.cancelForegroundTimer cancel]; // TODO DANIEL test this
     self.cancelForegroundTimer = [[self.sessionCancelTimerClass alloc] initWithURLSession:self.foregroundSession timeout:ZMSessionCancelTimerDefaultTimeout];
     [self.cancelForegroundTimer start];
+}
+
+- (NSArray <ZMURLSession *>*)allSessions
+{
+    return @[self.foregroundSession, self.backgroundSession];
 }
 
 @end

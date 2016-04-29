@@ -21,13 +21,14 @@
 
 #import "ZMURLSession+Internal.h"
 
-
+#import "NSError+ZMTransportSession.h"
 #import "ZMTaskIdentifierMap.h"
 #import "ZMServerTrust.h"
 #import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "TransportTracing.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMTLogging.h"
+#import "ZMTransportResponse.h"
 
 
 static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
@@ -60,6 +61,7 @@ static inline void ZMTraceTransportSessionTaskResponse(NSURLSessionTask *task) {
 }
 
 
+static NSUInteger const ZMTransportDecreasedProgressCancellationLeeway = 1024 * 2;
 
 
 @interface ZMURLSession ()
@@ -69,6 +71,7 @@ static inline void ZMTraceTransportSessionTaskResponse(NSURLSessionTask *task) {
 @property (nonatomic, readonly) ZMTaskIdentifierMap *taskIdentifierToData;
 
 @property (nonatomic, weak) id<ZMURLSessionDelegate> delegate;
+@property (nonatomic, readwrite) NSString *identifier;
 
 @property (nonatomic) NSURLSession *backingSession;
 @property (nonatomic) ZMTemporaryFileListForBackgroundRequests *temporaryFiles;
@@ -87,24 +90,25 @@ static inline void ZMTraceTransportSessionTaskResponse(NSURLSessionTask *task) {
 
 ZM_EMPTY_ASSERTING_INIT();
 
-- (instancetype)initWithDelegate:(id<ZMURLSessionDelegate>) delegate {
+- (instancetype)initWithDelegate:(id<ZMURLSessionDelegate>)delegate identifier:(NSString *)identifier {
     self = [super init];
     if (self) {
         self.delegate = delegate;
         _taskIdentifierToTimeoutTimer = [[ZMTaskIdentifierMap alloc] init];
         _taskIdentifierToRequest = [[ZMTaskIdentifierMap alloc] init];
         _taskIdentifierToData = [[ZMTaskIdentifierMap alloc] init];
+        self.identifier = identifier;
         self.temporaryFiles = [[ZMTemporaryFileListForBackgroundRequests alloc] init];
     }
     return self;
 }
 
-+ (instancetype)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue;
++ (instancetype)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue identifier:(NSString *)identifier;
 {
     Require(configuration != nil);
     Require(delegate != nil);
     Require(queue != nil);
-    ZMURLSession *session = [[ZMURLSession alloc] initWithDelegate:delegate];
+    ZMURLSession *session = [[ZMURLSession alloc] initWithDelegate:delegate identifier:identifier];
     if(session) {
         session->_backingSession = [NSURLSession sessionWithConfiguration:configuration delegate:session delegateQueue:queue];
     }
@@ -225,6 +229,18 @@ ZM_EMPTY_ASSERTING_INIT();
     }];
 }
 
+- (void)getTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler
+{
+    [self.backingSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        NSMutableArray <NSURLSessionTask *> *allTasks = [NSMutableArray new];
+        [allTasks addObjectsFromArray:dataTasks];
+        [allTasks addObjectsFromArray:uploadTasks];
+        [allTasks addObjectsFromArray:downloadTasks];
+        completionHandler(allTasks);
+    }];
+}
+
+
 - (void)countTasksWithCompletionHandler:(void(^)(NSUInteger count))handler;
 {
     [self.backingSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
@@ -307,6 +323,7 @@ ZM_EMPTY_ASSERTING_INIT();
 {
     NOT_USED(URLSession);
     Check(URLSession == self.backingSession);
+    
     [self.delegate URLSession:self dataTask:dataTask didReceiveResponse:response completionHandler:completionHandler];
 }
 
@@ -360,6 +377,90 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
     [self removeTask:task];
 }
 
+
+- (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session
+{
+    NOT_USED(session);
+    ZMLogDebug(@"-- <%@ %p> %@ -> %@ %@", self.class, self, NSStringFromSelector(_cmd), session, session.configuration.identifier);
+    
+    Check(session == self.backingSession);
+    NSObject<ZMURLSessionDelegate> *delegate = (id) self.delegate;
+    [delegate URLSessionDidFinishEventsForBackgroundURLSession:self];
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
+      didWriteData:(int64_t)bytesWritten
+ totalBytesWritten:(int64_t)totalBytesWritten
+totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+{
+    NOT_USED(session);
+    NOT_USED(bytesWritten);
+
+    ZMTransportRequest *request = [self requestForTask:downloadTask];
+    float progress = 0;
+    if (totalBytesWritten != 0 && totalBytesExpectedToWrite != 0) {
+        progress = (float)totalBytesWritten / (float)totalBytesExpectedToWrite;
+        
+        BOOL didFailRestartedRequest = [self completeRestartedRequestIfNeeded:request
+                                                                     progress:progress
+                                                                   totalBytes:totalBytesWritten
+                                                           totalBytesExpected:totalBytesExpectedToWrite];
+        
+        if (didFailRestartedRequest) {
+            return;
+        }
+    }
+    
+    [request updateProgress:progress];
+}
+
+- (void)URLSession:(NSURLSession *)session
+              task:(NSURLSessionTask *)task
+   didSendBodyData:(int64_t)bytesSent
+    totalBytesSent:(int64_t)totalBytesSent
+totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
+{
+    NOT_USED(session);
+    NOT_USED(bytesSent);
+    
+    ZMTransportRequest *request = [self requestForTask:task];
+    float progress = 0;
+    
+    if (totalBytesSent != 0 && totalBytesExpectedToSend != 0) {
+        progress = (float)totalBytesSent / (float)totalBytesExpectedToSend;
+        
+        BOOL didFailRestartedRequest = [self completeRestartedRequestIfNeeded:request
+                                                                     progress:progress
+                                                                   totalBytes:totalBytesSent
+                                                           totalBytesExpected:totalBytesExpectedToSend];
+        
+        if (didFailRestartedRequest) {
+            return;
+        }
+    }
+    
+    [request updateProgress:progress];
+}
+
+- (BOOL)completeRestartedRequestIfNeeded:(ZMTransportRequest *)request
+                                progress:(float)progress
+                              totalBytes:(int64_t)totalBytes
+                      totalBytesExpected:(int64_t)totalBytesExpected
+{
+    if (!request.shouldFailInsteadOfRetry || request.progress == 0) {
+        return NO;
+    }
+    
+    if (progress < request.progress) {
+        float failureThresholdProgress = (float)totalBytes + ZMTransportDecreasedProgressCancellationLeeway / (float)totalBytesExpected;
+        if (progress < failureThresholdProgress) {
+            [request completeWithResponse:[ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError]];
+            return YES;
+        }
+    }
+    return NO;
+}
+
 @end
 
 
@@ -374,8 +475,14 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
 - (NSURLSessionTask *)taskWithRequest:(NSURLRequest *)request bodyData:(NSData *)bodyData transportRequest:(ZMTransportRequest *)transportRequest;
 {
     NSURLSessionTask *task;
-    if (self.isBackgroundSession) {
-        if (bodyData != nil) {
+    
+    if (nil != transportRequest.fileUploadURL) {
+        RequireString(self.isBackgroundSession, "File uploads need to set 'forceToBackgroundSession' on the request");
+        task = [self.backingSession uploadTaskWithRequest:request fromFile:transportRequest.fileUploadURL];
+        ZMLogDebug(@"Created file upload task: %@, url: %@", task, transportRequest.fileUploadURL);
+    }
+    else if (self.isBackgroundSession) {
+         if (bodyData != nil) {
             NSURL *fileURL = [self.temporaryFiles temporaryFileWithBodyData:bodyData];
             VerifyReturnNil(fileURL != nil);
             task = [self.backingSession uploadTaskWithRequest:request fromFile:fileURL];
@@ -384,7 +491,8 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
             task = [self.backingSession downloadTaskWithRequest:request];
         }
         ZMLogDebug(@"Created background task: %@ %@ %@", task, task.originalRequest.HTTPMethod, task.originalRequest.URL);
-    } else {
+    }
+    else {
         if (bodyData != nil) {
             task = [self.backingSession uploadTaskWithRequest:request fromData:bodyData];
         } else {
@@ -396,6 +504,7 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
         [self setRequest:transportRequest forTask:task];
     }
     
+    [transportRequest callTaskCreationHandlersWithTask:task session:self];
     ZMTraceTransportSessionTaskCreated(task, transportRequest);
     return task;
 }

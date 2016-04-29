@@ -29,13 +29,19 @@
 
 @interface ZMURLSession : NSObject
 
-+ (instancetype)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue;
+@property (nonatomic, readonly) NSString *identifier;
+
++ (instancetype)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration
+                                delegate:(id<ZMURLSessionDelegate>)delegate
+                           delegateQueue:(NSOperationQueue *)queue
+                              identifier:(NSString *)identifier;
 
 - (void)setTimeoutTimer:(ZMTimer *)timer forTask:(NSURLSessionTask *)task;
 
 - (void)cancelAndRemoveAllTimers;
 - (void)cancelAllTasksWithCompletionHandler:(dispatch_block_t)handler;
 - (void)countTasksWithCompletionHandler:(void(^)(NSUInteger count))handler ZM_NON_NULL(1);
+- (void)getTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler;
 
 - (void)tearDown;
 
@@ -72,5 +78,7 @@ didReceiveResponse:(NSURLResponse *)response
    taskDidComplete:(NSURLSessionTask *)task
   transportRequest:(ZMTransportRequest *)transportRequest
       responseData:(NSData *)responseData;
+
+- (void)URLSessionDidFinishEventsForBackgroundURLSession:(ZMURLSession *)URLSession;
 
 @end

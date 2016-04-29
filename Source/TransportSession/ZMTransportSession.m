@@ -40,6 +40,7 @@
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 #import "NSData+Multipart.h"
+#import "ZMTaskIdentifier.h"
 
 
 static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
@@ -91,15 +92,11 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) NSMutableSet *expiredTasks;
 @property (nonatomic) ZMURLSessionSwitch *urlSessionSwitch;
 @property (nonatomic, weak) id<ZMNetworkStateDelegate> weakNetworkStateDelegate;
+@property (nonatomic) NSMutableDictionary <NSString *, dispatch_block_t> *completionHandlerBySessionID;
 
 
 - (void)signUpForNotifications;
 
-@end
-
-
-
-@interface ZMTransportSession (URLSessionDelegate) <ZMURLSessionDelegate>
 @end
 
 
@@ -166,8 +163,8 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:@"ZMTransportSession"];
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"ZMTransportSession init"];
     
-    ZMURLSession *foregroundSession = [ZMURLSession sessionWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue];
-    ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:[[self class] backgroundSessionConfiguration] delegate:self delegateQueue:queue];
+    ZMURLSession *foregroundSession = [ZMURLSession sessionWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:@"foreground-session"];
+    ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:[[self class] backgroundSessionConfiguration] delegate:self delegateQueue:queue identifier:@"background-session"];
     
     ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group];
     
@@ -225,6 +222,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         _workGroup = group;
         self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:baseURL.host];
         self.expiredTasks = [NSMutableSet set];
+        self.completionHandlerBySessionID = [NSMutableDictionary new];
         self.urlSessionSwitch = URLSessionSwitch;
         
         _requestScheduler = requestScheduler;
@@ -309,6 +307,16 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (NSString *)tasksDescription;
 {
     return self.urlSessionSwitch.description;
+}
+
+- (void)addCompletionHandlerForBackgroundSessionWithIdentifier:(NSString *)identifier handler:(dispatch_block_t)handler;
+{
+    self.completionHandlerBySessionID[identifier] = [handler copy];
+}
+
+- (void)getBackgroundTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler;
+{
+    [self.urlSessionSwitch.backgroundSession getTasksWithCompletionHandler:completionHandler];
 }
 
 - (void)enqueueSearchRequest:(ZMTransportRequest *)searchRequest;
@@ -713,6 +721,22 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self.expiredTasks removeObject:task];
 }
 
+- (void)URLSessionDidFinishEventsForBackgroundURLSession:(ZMURLSession *)URLSession
+{
+    NSString *identifier = URLSession.configuration.identifier;
+    dispatch_block_t storedHandler = [self.completionHandlerBySessionID[identifier] copy];
+    self.completionHandlerBySessionID[identifier] = nil;
+    
+    if (nil != storedHandler) {
+        ZMLogDebug(@"-- <%@ %p> %@ -> calling background event completion handler for session: %@", self.class, self, NSStringFromSelector(_cmd), identifier);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            storedHandler();
+        });
+    } else {
+        ZMLogDebug(@"-- <%@ %p> %@ -> No stored completion handler found for session: %@", self.class, self, NSStringFromSelector(_cmd), identifier);
+    }
+}
+
 @end
 
 
@@ -744,6 +768,19 @@ static NSInteger const DefaultMaximumRequests = 6;
 @end
 
 
+@implementation ZMTransportSession (RequestCancellation)
+
+- (void)cancelTaskWithIdentifier:(ZMTaskIdentifier *)identifier;
+{
+    for (ZMURLSession *session in self.urlSessionSwitch.allSessions) {
+        if ([identifier.sessionIdentifier isEqualToString:session.identifier]) {
+            [session cancelTaskWithIdentifier:identifier.identifier completionHandler:nil];
+            return;
+        }
+    }
+}
+
+@end
 
 
 @implementation ZMTransportSession (PushChannel)
@@ -765,6 +802,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 }
 
 @end
+
 
 @implementation ZMTransportSession (Testing)
 
