@@ -19,11 +19,11 @@
 
 #import <Foundation/Foundation.h>
 
+@interface NSString (Normalization)
 
-@interface NSUUID (Data)
+- (instancetype)normalizedString;
+- (instancetype)normalizedEmailaddress;
 
-/// Returns the raw data for this NSUUID
-- (NSData *)data;
+- (BOOL)zmHasOnlyWhitespaceCharacters;
 
 @end
-

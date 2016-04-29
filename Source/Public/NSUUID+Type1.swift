@@ -34,7 +34,7 @@ public extension NSUUID {
     private func readOctectsReverted(start: UInt, len: UInt) -> UInt64 {
         let data = self.data()
         var result : UInt64 = 0
-        for i in Range<UInt>(start: 0, end: len) {
+        for i in 0..<len {
             var readData : UInt32 = 0
             let finalOctetIndex = len-i-1
             data.getBytes(&readData, range: NSRange.init(location: Int(start+i), length: 1))

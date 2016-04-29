@@ -36,6 +36,12 @@
 @end
 
 
+@interface NSData (Base64Encoding)
+
+- (NSString *)base64String;
+
+@end
+
 
 @interface NSData (ZMSCrypto)
 

@@ -58,7 +58,7 @@ class OrderedSetTests : XCTestCase
         var count = 0
         for x in mySet {
             XCTAssertEqual(array[count].innerValue, x.innerValue)
-            ++count
+            count += 1
         }
         
         XCTAssertEqual(count, array.count)

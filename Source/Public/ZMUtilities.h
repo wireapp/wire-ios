@@ -47,3 +47,12 @@ FOUNDATION_EXPORT const unsigned char ZMUtilitiesVersionString[];
 #import <ZMUtilities/ZMAPNSEnvironment.h>
 #import <ZMUtilities/ZMDeploymentEnvironment.h>
 #import <ZMUtilities/ZMSwiftExceptionHandler.h>
+#import <ZMUtilities/NSString+Normalization.h>
+#import <ZMUtilities/ZMEncodedNSUUIDWithTimestamp.h>
+#import <ZMUtilities/ZMAccentColor.h>
+#import <ZMUtilities/ZMAccentColorValidator.h>
+#import <ZMUtilities/ZMEmailAddressValidator.h>
+#import <ZMUtilities/ZMPhoneNumberValidator.h>
+#import <ZMUtilities/ZMStringLengthValidator.h>
+#import <ZMUtilities/ZMPropertyValidator.h>
+

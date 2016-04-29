@@ -1,3 +1,3 @@
 github "erikdoe/ocmock" "v3.2.2"
-github "wireapp/zmc-system" "14.26"
-github "wireapp/zmc-testing" "6.20"
+github "wireapp/zmc-system" "14.37"
+github "wireapp/zmc-testing" "6.29"

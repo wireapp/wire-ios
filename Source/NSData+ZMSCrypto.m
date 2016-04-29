@@ -74,6 +74,17 @@ static char* const ZMLogTag ZM_UNUSED = "Encryption";
 
 
 
+@implementation NSData (Base64Encoding)
+
+- (NSString *)base64String;
+{
+    return [self base64EncodedStringWithOptions:0];
+}
+
+@end
+
+
+
 @implementation NSData (ZMSCrypto)
 
 + (NSData *)randomEncryptionKey {
@@ -273,7 +284,7 @@ static char* const ZMLogTag ZM_UNUSED = "Encryption";
 
 - (NSData *)zmDecryptPrefixedPlainTextIVWithKey:(NSData *)key
 {
-    Require(key.length == kCCKeySizeAES256);
+    VerifyReturnNil(key.length == kCCKeySizeAES256);
 
     size_t copiedBytes = 0;
     NSMutableData *decryptedData = [NSMutableData dataWithLength:self.length+kCCBlockSizeAES128];

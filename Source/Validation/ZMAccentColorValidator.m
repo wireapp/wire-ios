@@ -17,13 +17,26 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+@import ZMCSystem;
 
+#import "ZMAccentColorValidator.h"
+#import "ZMAccentColor.h"
 
-@interface NSUUID (Data)
+@implementation ZMAccentColorValidator
 
-/// Returns the raw data for this NSUUID
-- (NSData *)data;
+ZM_EMPTY_ASSERTING_INIT()
+
++ (BOOL)validateValue:(inout id *)ioValue error:(out NSError ** __unused)outError
+{
+    if ((*ioValue == nil) ||
+        ([*ioValue intValue] < (int) ZMAccentColorMin) ||
+        ((int) ZMAccentColorMax < [*ioValue intValue]))
+    {
+        ZMAccentColor color = (ZMAccentColor) (((int16_t) ZMAccentColorMin) +
+                                               ((int16_t) arc4random_uniform((u_int32_t) (ZMAccentColorMax - ZMAccentColorMin))));
+        *ioValue = @(color);
+    }
+    return YES;
+}
 
 @end
-

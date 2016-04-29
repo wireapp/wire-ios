@@ -19,11 +19,18 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const ZMObjectValidationErrorDomain;
 
-@interface NSUUID (Data)
+typedef NS_ENUM(NSUInteger, ZMManagedObjectValidationErrorCode) {
+    ZMObjectValidationErrorCodeStringTooLong = 1,
+    ZMObjectValidationErrorCodeStringTooShort,
+    ZMObjectValidationErrorCodeEmailAddressIsInvalid,
+    ZMObjectValidationErrorCodePhoneNumberContainsInvalidCharacters,
+};
 
-/// Returns the raw data for this NSUUID
-- (NSData *)data;
+
+@protocol ZMPropertyValidator <NSObject>
+
++ (BOOL)validateValue:(inout id *)ioValue error:(out NSError **)outError;
 
 @end
-
