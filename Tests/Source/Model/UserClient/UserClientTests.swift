@@ -388,6 +388,45 @@ extension UserClientTests {
         // then
         XCTAssertFalse(otherClient.verified)
     }
+}
+
+
+// MARK : SignalingStore
+
+extension UserClientTests {
+
+    func testThatItDeletesExistingSignalingKeys() {
+        
+        // given
+        let selfClient = createSelfClient()
+        selfClient.apsVerificationKey =  NSData()
+        selfClient.apsDecryptionKey = NSData()
+        
+        XCTAssertNotNil(selfClient.apsVerificationKey)
+        XCTAssertNotNil(selfClient.apsDecryptionKey)
+        
+        // when
+        UserClient.resetSignalingKeysInContext(self.syncMOC)
+        
+        // then
+        XCTAssertNil(selfClient.apsVerificationKey)
+        XCTAssertNil(selfClient.apsDecryptionKey)
+    }
     
+    func testThatItSetsKeysNeedingToBeSynced() {
+        
+        // given
+        let selfClient = createSelfClient()
+        
+        // when
+        UserClient.resetSignalingKeysInContext(self.syncMOC)
+        
+        // then
+        XCTAssertTrue(selfClient.needsToUploadSignalingKeys)
+        XCTAssertTrue(selfClient.keysThatHaveLocalModifications.contains(ZMUserClientNeedsToUpdateSignalingKeysKey))
+    }
     
 }
+
+
+

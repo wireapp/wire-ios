@@ -30,64 +30,6 @@
 @protocol ZMFileMessageData;
 @protocol UserClientType;
 
-typedef NS_ENUM(NSUInteger, ZMDeliveryState) {
-    ZMDeliveryStateInvalid = 0,
-    ZMDeliveryStatePending = 1,
-    ZMDeliveryStateDelivered = 2,
-    ZMDeliveryStateFailedToSend = 3
-};
-
-
-
-@protocol ZMConversationMessage <NSObject>
-
-/// Whether the message was received in its encrypted form.
-/// In the transition period, a message can be both encrypted and plaintext.
-@property (nonatomic, readonly) BOOL isEncrypted;
-
-/// Whether the message was received in its plain-text form.
-/// In the transition period, a message can be both encrypted and plaintext.
-@property (nonatomic, readonly) BOOL isPlainText;
-
-/// The user who sent the message
-@property (nonatomic, readonly) ZMUser *sender;
-
-/// The timestamp as received by the server
-@property (nonatomic, readonly) NSDate *serverTimestamp;
-
-/// The conversation this message belongs to
-@property (nonatomic, readonly) ZMConversation *conversation;
-
-/// The current delivery state of this message. It makes sense only for
-/// messages sent from this device. In any other case, it will be
-/// ZMDeliveryStateDelivered
-@property (nonatomic, readonly) ZMDeliveryState deliveryState;
-
-/// The text of the message. If the message has no text, it will be nil
-@property (nonatomic, readonly) NSString *messageText;
-
-/// The image data associated with the message. If the message has no image, it will be nil
-@property (nonatomic, readonly) id<ZMImageMessageData> imageMessageData;
-
-/// The system message data associated with the message. If the message is not a system message data associated, it will be nil
-@property (nonatomic, readonly) id<ZMSystemMessageData> systemMessageData;
-
-/// The knock message data associated with the message. If the message is not a knock, it will be nil
-@property (nonatomic, readonly) id<ZMKnockMessageData> knockMessageData;
-
-/// The file transfer data associated with the message. If the message is not the file transfer, it will be nil
-@property (nonatomic, readonly) id<ZMFileMessageData> fileMessageData;
-
-/// Request the download of the full message content (asset, ...), if not already present.
-/// The download will be executed asynchronously. The caller can be notified by observing the message window.
-/// This method can safely be called multiple times, even if the content is already available locally
-- (void)requestFullContent;
-
-/// In case this message failed to deliver, this will resend it
-- (void)resend;
-
-@end
-
 
 #pragma mark - ZMImageMessageData
 

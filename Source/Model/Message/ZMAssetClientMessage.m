@@ -149,7 +149,8 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
                                                ZMAssetClientMessageLoadedMediumDataKey,
                                                AssetClientMessageDataSetKey,
                                                ZMAssetClientMessageTransferStateKey,
-                                               ZMAssetClientMessageProgressKey
+                                               ZMAssetClientMessageProgressKey,
+                                               AssociatedTaskIdentifierDataKey
                                                ]];
 }
 
@@ -925,3 +926,23 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 @end
 
+
+#pragma mark - Deletion
+@implementation ZMAssetClientMessage (Deletion)
+
+- (void)removeMessage {
+    if(self.imageMessageData != nil) {
+        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatOriginal encrypted:NO];
+        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatPreview encrypted:NO];
+        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatMedium encrypted:NO];
+        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatPreview encrypted:YES];
+        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatMedium encrypted:YES];
+    }
+    if(self.fileMessageData != nil) {
+        [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self.nonce fileName:self.filename encrypted:NO];
+        [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self.nonce fileName:self.filename encrypted:YES];
+    }
+    [super removeMessage];
+}
+
+@end

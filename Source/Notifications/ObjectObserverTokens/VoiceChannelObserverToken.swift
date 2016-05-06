@@ -37,8 +37,6 @@ extension ZMVoiceChannel : ObjectInSnapshot {
 ///
 ///////////////////
 
-///TODO MEC-1236 : to skip intermediate updates we can define valid transitions and check update if it's valid. If it's not we ignore it.
-
 @objc public final class VoiceChannelStateChangeInfo : ObjectChangeInfo {
     
     public required init(object: NSObject) {

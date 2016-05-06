@@ -160,7 +160,7 @@ extension ZMConversationMessageWindow {
         self.updatedMessages = []
         self.shouldRecalculate = false
         
-        let updatedSet = OrderedSet<NSObject>(array: currentlyUpdatedMessaged.filter {msg in return msg.conversation === self.conversationWindow.conversation})
+        let updatedSet = OrderedSet<NSObject>(array: currentlyUpdatedMessaged.filter {(msg : ZMConversationMessage) in return msg.conversation === self.conversationWindow.conversation})
         
         conversationWindow.recalculateMessages()
         

@@ -15,6 +15,7 @@
 		BFA4D57C1CCF74600028C9E1 /* store23.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BFA4D57B1CCF74600028C9E1 /* store23.wiredatabase */; };
 		BFD2E7991CBE796600BF195A /* ZMGenericMessage+UpdateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD2E7971CBE796600BF195A /* ZMGenericMessage+UpdateEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFD2E79A1CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD2E7981CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m */; };
+		CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */; };
 		CEE525AA1CCA4C97001D06F9 /* NSString+RandomString.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE525A91CCA4C97001D06F9 /* NSString+RandomString.m */; };
 		F9331C521CB3BC6800139ECC /* CryptoBoxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9331C501CB3BC6800139ECC /* CryptoBoxTests.swift */; };
 		F9331C561CB3BCF300139ECC /* OtrBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9331C541CB3BCDA00139ECC /* OtrBaseTest.swift */; };
@@ -316,6 +317,7 @@
 		BFC387681CB7BC1E00F08415 /* zmessaging2.4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.4.xcdatamodel; sourceTree = "<group>"; };
 		BFD2E7971CBE796600BF195A /* ZMGenericMessage+UpdateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMGenericMessage+UpdateEvent.h"; sourceTree = "<group>"; };
 		BFD2E7981CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMGenericMessage+UpdateEvent.m"; sourceTree = "<group>"; };
+		CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
 		CEE525A81CCA4C97001D06F9 /* NSString+RandomString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+RandomString.h"; sourceTree = "<group>"; };
 		CEE525A91CCA4C97001D06F9 /* NSString+RandomString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+RandomString.m"; sourceTree = "<group>"; };
 		F9331C501CB3BC6800139ECC /* CryptoBoxTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBoxTests.swift; sourceTree = "<group>"; };
@@ -761,6 +763,7 @@
 		F9A705F01CAEE01D00C2F5FE /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */,
 				F9A705F11CAEE01D00C2F5FE /* AssetCache.swift */,
 				541E4F941CBD182100D82D69 /* FileAssetCache.swift */,
 				F9A705F21CAEE01D00C2F5FE /* AssetEncryption.swift */,
@@ -1636,6 +1639,7 @@
 				F9A706B11CAEE01D00C2F5FE /* MessageWindowChangeToken.swift in Sources */,
 				F9A706C91CAEE01D00C2F5FE /* ZMUpdateEvent+ZMCDataModel.m in Sources */,
 				F9A706761CAEE01D00C2F5FE /* ZMAssetClientMessage.m in Sources */,
+				CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */,
 				F9A706A51CAEE01D00C2F5FE /* GlobalConversationObserver.swift in Sources */,
 				F9A7065C1CAEE01D00C2F5FE /* ZMConnection.m in Sources */,
 				F9A706B61CAEE01D00C2F5FE /* UserClientObserverToken.swift in Sources */,
@@ -1847,7 +1851,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1895,7 +1899,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1925,7 +1929,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 10;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1950,7 +1954,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 10;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

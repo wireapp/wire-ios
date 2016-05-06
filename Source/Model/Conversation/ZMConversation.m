@@ -491,7 +491,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
                     return user.displayName;
                 }];
                 
-                // TODO: Make ZMLocalizedString work with  ZMLocalizable.strings file
                 NSString *joiner = @", ";
                 NSDictionary *dimmed = @{ZMIsDimmedKey: @YES};
                 NSString *activeNamesString = [activeNames componentsJoinedByString:joiner];
@@ -1298,10 +1297,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
         // Just to be on the safe side, force update:
         self.needsToBeUpdatedFromBackend = YES;
         // This is a duplicate. Delete the other one
-        
-        //TODO: We need to solve deletion proble somehow. We should delete only after UI processed all notifications cause by changes in this object,
-        //other way will have reference to object that is already deleted from persistent store
-        //and will crash trying to access it's properties
         [self.managedObjectContext deleteObject:existingConversation];
     }
     self.remoteIdentifier = remoteID;
@@ -1608,17 +1603,16 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 
 @implementation ZMConversation (SelfConversation)
 
-+ (ZMClientMessage *)appendSelfConversationWithGenericMessage:(ZMGenericMessage *)message forConversation:(ZMConversation *)conversation
++ (ZMClientMessage *)appendSelfConversationWithGenericMessageData:(NSData * )messageData managedObjectContext:(NSManagedObjectContext *)moc;
 {
-    VerifyReturnNil(message != nil);
+    VerifyReturnNil(messageData != nil);
 
-    ZMConversation *selfConversation = [ZMConversation selfConversationInContext:conversation.managedObjectContext];
+    ZMConversation *selfConversation = [ZMConversation selfConversationInContext:moc];
     VerifyReturnNil(selfConversation != nil);
     
-    ZMClientMessage *clientMessage = [selfConversation appendClientMessageWithData:message.data];
+    ZMClientMessage *clientMessage = [selfConversation appendClientMessageWithData:messageData];
     clientMessage.isEncrypted = YES;
     [clientMessage removeExpirationDate]; // Self messages don't expire since we always want to keep last read / cleared updates in-sync
-    [conversation.managedObjectContext enqueueDelayedSave];
     return clientMessage;
 }
 
@@ -1635,7 +1629,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     ZMGenericMessage *message = [ZMGenericMessage messageWithLastRead:lastRead ofConversationWithID:convID.transportString nonce:nonce.transportString];
     VerifyReturnNil(message != nil);
     
-    return [self appendSelfConversationWithGenericMessage:message forConversation:conversation];
+    return [self appendSelfConversationWithGenericMessageData:message.data managedObjectContext:conversation.managedObjectContext];
 }
 
 + (void)updateConversationWithZMLastReadFromSelfConversation:(ZMLastRead *)lastRead inContext:(NSManagedObjectContext *)context
@@ -1664,7 +1658,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     ZMGenericMessage *message = [ZMGenericMessage messageWithClearedTimestamp:cleared ofConversationWithID:convID.transportString nonce:nonce.transportString];
     VerifyReturnNil(message != nil);
     
-    return [self appendSelfConversationWithGenericMessage:message forConversation:conversation];
+    return [self appendSelfConversationWithGenericMessageData:message.data managedObjectContext:conversation.managedObjectContext];
 }
 
 + (void)updateConversationWithZMClearedFromSelfConversation:(ZMCleared *)cleared inContext:(NSManagedObjectContext *)context
@@ -2308,7 +2302,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     return messagesToKeep;
 }
 
-// TODO investigate -[NSManagedObjectContext stalenessInterval]
 - (BOOL)shouldNotBeRefreshed
 {
     static const int HOUR_IN_SEC = 60 * 60;

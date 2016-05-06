@@ -35,6 +35,8 @@
 #import "ZMUpdateEvent+ZMCDataModel.h"
 #import "ZMClientMessage.h"
 
+#import <ZMCDataModel/ZMCDataModel-Swift.h>
+
 
 static NSTimeInterval ZMDefaultMessageExpirationTime = 60;
 
@@ -104,13 +106,7 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 
 @implementation ZMMessage
 
-@dynamic sender;
-@dynamic isEncrypted;
-@dynamic isPlainText;
-@dynamic hiddenInConversation;
-@dynamic visibleInConversation;
 @dynamic missingRecipients;
-@dynamic serverTimestamp;
 @dynamic isExpired;
 @dynamic expirationDate;
 
@@ -134,35 +130,6 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
     }
     CFRelease(source);
     return isAnimated;
-}
-
-- (id<ZMSystemMessageData>)systemMessageData
-{
-    return nil;
-}
-
-- (NSString *)messageText
-{
-    return nil;
-}
-
-- (id<ZMImageMessageData>)imageMessageData
-{
-    return nil;
-}
-
-- (id<ZMKnockMessageData>)knockMessageData
-{
-    return nil;
-}
-
-- (id<ZMFileMessageData>)fileMessageData
-{
-    return nil;
-}
-
-- (void)requestFullContent
-{
 }
 
 - (BOOL)isUnreadMessage
@@ -244,19 +211,6 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
         self.serverTimestamp = [NSDate lastestOfDate:self.serverTimestamp and:timestamp];
     } else if (timestamp != nil) {
         self.serverTimestamp = timestamp;
-    }
-}
-
-- (ZMDeliveryState)deliveryState
-{
-    if (self.eventID != nil) {
-        return ZMDeliveryStateDelivered;
-    }
-    else if (self.isExpired) {
-        return ZMDeliveryStateFailedToSend;
-    }
-    else  {
-        return ZMDeliveryStatePending;
     }
 }
 
@@ -353,9 +307,25 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
     return [ZMConversation conversationWithRemoteID:conversationUUID createIfNeeded:YES inContext:moc];
 }
 
-- (ZMConversation *)conversation
+- (void)removeMessage
 {
-    return self.visibleInConversation ?: self.hiddenInConversation;
+    RequireString(self.managedObjectContext.zm_isSyncContext, "Tried to delete a messa from the UI context");
+    self.visibleInConversation = nil;
+    [self.managedObjectContext deleteObject:self];
+}
+
++ (void)removeMessageWithRemotelyDeletedMessage:(ZMMsgDeleted *)deletedMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
+    if(user != selfUser) {
+        return;
+    }
+    NSUUID *messageID = [NSUUID uuidWithTransportString:deletedMessage.messageId];
+    NSUUID *conversationID = [NSUUID uuidWithTransportString:deletedMessage.conversationId];
+
+    ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:NO inContext:moc];
+    ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
+    [message removeMessage];
 }
 
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys
@@ -918,6 +888,7 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 {
     return self.systemMessageType == ZMSystemMessageTypeMissedCall;
 }
+
 
 @end
 

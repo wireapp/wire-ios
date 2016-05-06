@@ -23,12 +23,15 @@
 #import "ZMMessage.h"
 #import "ZMManagedObjectContextProvider.h"
 
+
 @class ZMUser;
 @class ZMMessage;
 @class ZMTextMessage;
 @class ZMImageMessage;
 @class ZMKnockMessage;
 @class ZMConversationList;
+
+@protocol ZMConversationMessage;
 
 typedef NS_ENUM(int16_t, ZMConversationType) {
     ZMConversationTypeInvalid = 0,

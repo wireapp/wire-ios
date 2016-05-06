@@ -58,7 +58,7 @@ typedef NS_ENUM(NSUInteger, ZMAssetClientMessageDataType) {
 };
 
 
-@interface ZMAssetClientMessage : ZMOTRMessage <ZMConversationMessage>
+@interface ZMAssetClientMessage : ZMOTRMessage
 
 /// Whether it needs to upload the preview
 @property (nonatomic, readonly) BOOL needsToUploadPreview;

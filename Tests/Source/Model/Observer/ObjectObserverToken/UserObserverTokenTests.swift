@@ -418,7 +418,7 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         observer.tearDown()
         NSNotificationCenter.defaultCenter().removeObserver(notificationCenterToken)
     }
-    
+
     func testThatItUpdatesClientObserversWhenClientsAreFaultedAndNewClientIsAddedSameContext() {
         
         // given
@@ -461,7 +461,7 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         let otherClient = UserClient.insertNewObjectInManagedObjectContext(uiMOC)
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
-        let observer = UserChangeObserver(user: observedUser)
+        let observer : UserChangeObserver = UserChangeObserver(user: observedUser)
 
         // when
         observedUser.mutableSetValueForKey(UserClientsKey).addObject(otherClient)
@@ -470,19 +470,20 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         
         //then
         XCTAssertEqual(observer.notifications.count, 1)
-        XCTAssertEqual(observer.notifications.firstObject?.clientsChanged, true)
-        
+        let note = observer.notifications.firstObject
+        XCTAssertEqual(note?.clientsChanged, true)
+
         // when
         selfClient.trustClient(otherClient)
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
-        
+
         // then
         XCTAssertEqual(observedUser.clients.count, 1)
         XCTAssertEqual(observer.notifications.count, 2)
         XCTAssertEqual(observer.notifications.map { $0.trustLevelChanged }, [false, true])
         XCTAssertEqual(observer.notifications.map { $0.clientsChanged }, [true, false])
-        
+
         observer.tearDown()
     }
     

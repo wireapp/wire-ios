@@ -72,7 +72,6 @@ static NSString *const SystemMessagesKey = @"systemMessages";
 static NSString *const ShowingUserAddedKey = @"showingUserAdded";
 static NSString *const ShowingUserRemovedKey = @"showingUserRemoved";
 static NSString *const UserClientsKey = @"clients";
-static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
 
 
 @interface ZMBoxedSelfUser : NSObject
@@ -375,7 +374,6 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
                                            OriginalProfileImageDataKey,
                                            SystemMessagesKey,
                                            UserClientsKey,
-                                           PersonalInvitationsSentKey,
                                            ShowingUserAddedKey,
                                            ShowingUserRemovedKey
                                            ]];
@@ -1016,7 +1014,7 @@ static NSString *const PersonalInvitationsSentKey = @"personalInvitationsSent";
 
 - (CGSize)originalImageSize
 {
-    return [ZMImagePreprocessor sizeOfPrerotatedImageWithData:self.originalProfileImageData]; // TODO: verify the need for this
+    return [ZMImagePreprocessor sizeOfPrerotatedImageWithData:self.originalProfileImageData];
 }
 
 

@@ -98,7 +98,7 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         let conversation = window.conversation
         message1.serverTimestamp = NSDate()
         message1.eventID = self.createEventID()
-        message2.serverTimestamp = message1.serverTimestamp.dateByAddingTimeInterval(5);
+        message2.serverTimestamp = message1.serverTimestamp!.dateByAddingTimeInterval(5);
         message2.eventID = self.createEventID()
         conversation.lastServerTimeStamp = message2.serverTimestamp
         
