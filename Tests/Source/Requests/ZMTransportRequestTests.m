@@ -862,6 +862,54 @@
 @end
 
 
+@implementation ZMTransportRequestTests (TimeoutOverride)
+
+- (void)testThatItSetsTheTimeoutOverrideWhenTheApplicationisInTheBackgroundAndTheRequestDoesNotEnforceTheBackgroundSession;
+{
+    [self checkThatItDoesSetTheTimeoutInterval:YES applicationInBackground:YES usingBackgroundSession:NO];
+}
+
+- (void)testThatItDoesNotSetTheTimeoutOverrideWhenTheApplicationisInTheBackgroundAndTheRequestDoesEnforceTheBackgroundSession;
+{
+    [self checkThatItDoesSetTheTimeoutInterval:NO applicationInBackground:YES usingBackgroundSession:YES];
+}
+
+- (void)testThatItDoesNotSetTheTimeoutOverrideWhenTheApplicationisNotInTheBackgroundAndTheRequestDoesNotEnforceTheBackgroundSession;
+{
+    [self checkThatItDoesSetTheTimeoutInterval:NO applicationInBackground:NO usingBackgroundSession:NO];
+}
+
+- (void)testThatItDoesNotSetTheTimeoutOverrideWhenTheApplicationisNotInTheBackgroundAndTheRequestDoesEnforceTheBackgroundSession;
+{
+    [self checkThatItDoesSetTheTimeoutInterval:NO applicationInBackground:NO usingBackgroundSession:YES];
+}
+
+- (void)checkThatItDoesSetTheTimeoutInterval:(BOOL)shouldSetInterval
+                     applicationInBackground:(BOOL)backgrounded
+                      usingBackgroundSession:(BOOL)usingBackgroundSession
+{
+    // given
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST payload:nil];
+    if (usingBackgroundSession) {
+        [sut forceToBackgroundSession];
+    }
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    
+    // when
+    [sut setTimeoutIntervalOnRequestIfNeeded:request applicationIsBackgrounded:backgrounded usingBackgroundSession:usingBackgroundSession];
+    
+    // then
+    if (shouldSetInterval) {
+        XCTAssertEqual(request.timeoutInterval, 25);
+    } else {
+        XCTAssertEqual(request.timeoutInterval, 60);
+    }
+}
+
+@end
+
+
 @implementation ZMTransportRequestTests (Debugging)
 
 - (void)testThatItPrintsDebugInformation

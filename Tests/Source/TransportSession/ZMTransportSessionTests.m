@@ -417,6 +417,7 @@ static __weak FakeReachability *currentReachability;
     self.URLSession = [OCMockObject mockForClass:ZMURLSession.class];
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     (void)[(ZMURLSession *) [[(id) self.URLSession stub] andReturn:config] configuration];
+    [[[(id)self.URLSession stub] andReturnValue:@NO] isBackgroundSession];
     [self verifyMockLater:self.URLSession];
     
     self.URLSessionSwitch = [OCMockObject mockForClass:ZMURLSessionSwitch.class];
@@ -1855,7 +1856,7 @@ static __weak FakeReachability *currentReachability;
     }];
 
     
-    [[(id)self.URLSession expect]setTimeoutTimer:OCMOCK_ANY forTask:dataTask];
+    [[(id)self.URLSession expect] setTimeoutTimer:OCMOCK_ANY forTask:dataTask];
     XCTestExpectation *expectation = [self expectationWithDescription:@"did cancel task"];
     
     // expect
@@ -1869,6 +1870,68 @@ static __weak FakeReachability *currentReachability;
 
     [self.sut sendSchedulerItem:request];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItDoesNotSetTheTimoutIntervalOnARequestWhenInTheBackgroundAndUsingTheBackgroundSession
+{
+    // when
+    NSURLSessionTask *task = [self suspendedTaskForBackgroundSession:YES applicationInBackground:YES];
+    
+    // then
+    XCTAssertEqual(task.originalRequest.timeoutInterval, 60);
+}
+
+- (void)testThatItDoesNotSetTheTimoutIntervalOnARequestWhenInTheForegroundAndUsingTheBackgroundSession
+{
+    // when
+    NSURLSessionTask *task = [self suspendedTaskForBackgroundSession:YES applicationInBackground:NO];
+    
+    // then
+    XCTAssertEqual(task.originalRequest.timeoutInterval, 60);
+}
+
+- (void)testThatItDoesNotSetTheTimoutIntervalOnARequestWhenInTheForegroundAndNotUsingTheBackgroundSession
+{
+    // when
+    NSURLSessionTask *task = [self suspendedTaskForBackgroundSession:NO applicationInBackground:NO];
+    
+    // then
+    XCTAssertEqual(task.originalRequest.timeoutInterval, 60);
+}
+
+- (void)testThatItSetsTheTimoutIntervalOnARequestWhenInTheBackgroundAndNotUsingTheBackgroundSession
+{
+    // when
+    NSURLSessionTask *task = [self suspendedTaskForBackgroundSession:NO applicationInBackground:YES];
+    
+    // then
+    XCTAssertEqual(task.originalRequest.timeoutInterval, 25);
+}
+
+- (NSURLSessionTask *)suspendedTaskForBackgroundSession:(BOOL)backgroundSession applicationInBackground:(BOOL)applicationInBackground
+{
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/foo"];
+    
+    if (applicationInBackground) {
+        [[(id)self.URLSessionSwitch expect] switchToBackgroundSession];
+        [self.sut enterBackground];
+    }
+    
+    id delegate = [OCMockObject niceMockForProtocol:@protocol(ZMURLSessionDelegate)];
+    
+    NSURLSessionConfiguration *configuration;
+    if (backgroundSession) {
+        configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name];
+    } else {
+        configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
+    }
+    
+    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:@""];
+    if (backgroundSession) {
+        XCTAssertTrue(session.isBackgroundSession);
+    }
+    
+    return [self.sut suspendedTaskForRequest:request onSession:session];
 }
 
 - (void)testThatItSendsAnAppropriateResponseWhenATaskWasCancelled
@@ -2469,6 +2532,7 @@ static __weak FakeReachability *currentReachability;
     // expect
     NSURLSessionTask *expectedTask = [NSURLSessionTask new];
     id backgroundSessionMock = [OCMockObject mockForClass:ZMURLSession.class];
+    [[(id)backgroundSessionMock expect] isBackgroundSession];
     [[[backgroundSessionMock stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name]] configuration];
     [[[(id)self.URLSessionSwitch stub] andReturn:backgroundSessionMock] backgroundSession];
     [[(id)self.URLSession expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:foregroundRequest];
@@ -2553,6 +2617,5 @@ static __weak FakeReachability *currentReachability;
     XCTAssertEqual(receivedResponse.transportSessionError.code, (long)ZMTransportSessionErrorCodeRequestExpired);
     XCTAssertEqual(receivedResponse.result, ZMTransportResponseStatusExpired);
 }
-
 
 @end

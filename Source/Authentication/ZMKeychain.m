@@ -147,11 +147,10 @@ extern NSString *ZMKeychainErrorDescription(OSStatus s)
 
 #pragma mark - Fetch query
 
-+ (NSMutableDictionary *)fetchQueryForAccountName:(NSString *)accountName
++ (NSMutableDictionary *)fetchQuery
 {
     NSMutableDictionary *query = [[NSMutableDictionary alloc] init];
     query[(__bridge id) kSecClass] = (__bridge id) kSecClassGenericPassword;
-    query[(__bridge id) kSecAttrAccount] = accountName;
     query[(__bridge id) kSecAttrService] = self.keychainServiceName;
     
     // looks like we still need it no OSX, at least to pass tests
@@ -160,6 +159,14 @@ extern NSString *ZMKeychainErrorDescription(OSStatus s)
     query[(__bridge id) kSecAttrGeneric] = self.keychainGenericData;
 #endif
     
+    return query;
+}
+
++ (NSMutableDictionary *)fetchQueryForAccountName:(NSString *)accountName
+{
+    NSMutableDictionary *query = [self fetchQuery];
+    query[(__bridge id) kSecAttrAccount] = accountName;
+
     return query;
 }
 
@@ -258,10 +265,20 @@ fallbackToDefaultGroup:(BOOL)fallback
     [self deleteAllKeychainItemsInGroup:nil withAccountName:accountName];
 }
 
++ (void)deleteAllKeychainItems
+{
+    [self deleteAllKeychainItemsInGroup:[self defaultAccessGroup] withAccountName:nil];
+}
+
 + (void)deleteAllKeychainItemsInGroup:(NSString *)accessGroup withAccountName:(NSString *)accountName
 {
-    NSMutableDictionary *query = [self fetchQueryForAccountName:accountName];
-    [query removeObjectForKey:(__bridge id) kSecAttrAccount];
+    NSMutableDictionary *query;
+    if (accountName.length != 0) {
+        query = [self fetchQueryForAccountName:accountName];
+    } else {
+        query = [self fetchQuery];
+    }
+    
     query[(__bridge id) kSecMatchLimit] = (__bridge id) kSecMatchLimitAll;
     
 #if TARGET_OS_IPHONE

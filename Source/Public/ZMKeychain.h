@@ -27,7 +27,12 @@
 
 + (BOOL)setData:(NSData *)data forAccount:(NSString *)accountName;
 
+/// Deletes items of the specified account name
 + (void)deleteAllKeychainItemsWithAccountName:(NSString *)accountName;
 
+/// Deletes all items of all account names
++ (void)deleteAllKeychainItems;
+
 + (NSString *)defaultAccessGroup;
+
 @end
