@@ -811,7 +811,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     }
 }
 
-- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject *)managedObject withSync:(id __unused)sync;
+- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject *)managedObject forKeys:(NSSet<NSString *> * __unused)keys  withSync:(id __unused)sync;
 {
     ZMConversation *conversation = (ZMConversation *)managedObject;
     if ([conversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey] && !conversation.userDefinedName) {

@@ -468,9 +468,14 @@ ZM_EMPTY_ASSERTING_INIT()
         // and should return the existing device token to the app delegate via [didRegisterForRemoteNotifications:] immediately
         [self.application registerForRemoteNotifications];
         
+        
+        // Also reset the preKeys
+        [UserClient resetSignalingKeysInContext:self.managedObjectContext];
+
         if (![self.managedObjectContext forceSaveOrRollback]) {
             ZMLogError(@"Failed to save push token after refresh");
         }
+        
     }];
 }
 

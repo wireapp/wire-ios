@@ -358,6 +358,25 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     [self.userSession removeAuthenticationObserverForToken:token];
 }
 
+- (void)testThatWhenWeLoginItChecksForTheHistory
+{
+    // given
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    XCTAssertFalse(self.userSession.hadHistoryAtLastLogin);
+    
+    // when
+    [self recreateUserSessionAndWipeCache:NO];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    // then
+    XCTAssertTrue(self.userSession.hadHistoryAtLastLogin);
+}
+
 @end
 
 

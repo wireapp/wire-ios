@@ -18,6 +18,7 @@
 
 
 import Foundation
+import ZMCSystem
 import ZMTransport
 import ZMUtilities
 import Cryptobox
@@ -38,6 +39,7 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
     private(set) var deleteSync: ZMUpstreamModifiedObjectSync! = nil
     private(set) var insertSync: ZMUpstreamInsertedObjectSync! = nil
     private(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
+    private var didRetryRegisteringSignalingKeys : Bool = false
     
     public var requestsFactory: UserClientRequestFactory = UserClientRequestFactory()
     public var minNumberOfRemainingKeys: UInt = 20
@@ -94,13 +96,14 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         
         let baseModifiedPredicate = UserClient.predicateForObjectsThatNeedToBeUpdatedUpstream()
         let needToUploadKeysPredicate = NSPredicate(format: "\(ZMUserClientNumberOfKeysRemainingKey) < \(minNumberOfRemainingKeys)")
+        let needsToUploadSignalingKeysPredicate = NSPredicate(format: "\(ZMUserClientNeedsToUpdateSignalingKeysKey) == YES")
         let missingClientsPredicate = NSPredicate(format: "\(ZMUserClientMissingKey).@count > 0")
         let remoteIdentifierPresentPredicate = NSPredicate(format: "\(ZMUserClientRemoteIdentifierKey) != nil")
         
         let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates:[
             baseModifiedPredicate,
             notDeletedPredicate,
-            NSCompoundPredicate(orPredicateWithSubpredicates:[needToUploadKeysPredicate, missingClientsPredicate]),
+            NSCompoundPredicate(orPredicateWithSubpredicates:[needToUploadKeysPredicate, missingClientsPredicate, needsToUploadSignalingKeysPredicate]),
             remoteIdentifierPresentPredicate
             ])
         return modifiedPredicate
@@ -177,17 +180,18 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
                 else {
                     fatal("No email credentials in memory")
                 }
-            case _ where keys.contains(ZMUserClientMissingKey):
-                if let missing = managedObject.missingClients where missing.count > 0 {
-                    let map = MissingClientsMap(Array(missing), pageSize: requestsFactory.missingClientsUserPageSize)
-                    request = requestsFactory.fetchMissingClientKeysRequest(map)
-                }
             case _ where keys.contains(ZMUserClientNeedsToUpdateSignalingKeysKey):
                 do {
                     try request = requestsFactory.updateClientSignalingKeysRequest(managedObject)
                 } catch let e {
                     fatal("Couldn't create request for new signaling keys: \(e)")
                 }
+            case _ where keys.contains(ZMUserClientMissingKey):
+                if let missing = managedObject.missingClients where missing.count > 0 {
+                    let map = MissingClientsMap(Array(missing), pageSize: requestsFactory.missingClientsUserPageSize)
+                    request = requestsFactory.fetchMissingClientKeysRequest(map)
+                }
+
             default: fatal("Unknown keys to sync (\(keys))")
             }
             
@@ -211,6 +215,21 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
     
     public func shouldRetryToSyncAfterFailedToUpdateObject(managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse: Set<NSObject>) -> Bool {
         if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
+            return false
+        }
+        if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
+            if response.HTTPStatus == 400, let label = response.payloadLabel() where label == "bad-request" {
+                // Malformed prekeys uploaded - recreate and retry once per launch
+
+                if didRetryRegisteringSignalingKeys {
+                    (managedObject as? UserClient)?.needsToUploadSignalingKeys = false
+                    managedObjectContext.saveOrRollback()
+                    fatal("UserClientTranscoder sigKey request failed with bad-request - \(upstreamRequest.debugDescription)")
+                }
+                didRetryRegisteringSignalingKeys = true
+                return true
+            }
+            (managedObject as? UserClient)?.needsToUploadSignalingKeys = false
             return false
         }
         else if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
@@ -334,6 +353,9 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         }
         else if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             (managedObject as! UserClient).numberOfKeysRemaining += Int32(requestsFactory.keyCount)
+        }
+        else if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
+            didRetryRegisteringSignalingKeys = false
         }
         
         return false

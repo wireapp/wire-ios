@@ -25,23 +25,25 @@ extension ZMOTRMessage {
     /// Which object this message depends on when sending
     public override func dependendObjectNeedingUpdateBeforeProcessing() -> ZMManagedObject? {
         
+        guard let conversation = self.conversation else { return nil }
+        
         // If we receive a missing payload that includes users that are not part of the conversation,
         // we need to refetch the conversation before recreating the message payload.
         // Otherwise we end up in an endless loop receiving missing clients error
-        if self.conversation.needsToBeUpdatedFromBackend {
+        if conversation.needsToBeUpdatedFromBackend {
             return self.conversation
         }
         
-        if (self.conversation.conversationType == .OneOnOne || self.conversation.conversationType == .Connection)
-            && self.conversation.connection.needsToBeUpdatedFromBackend {
-                return self.conversation.connection
+        if (conversation.conversationType == .OneOnOne || conversation.conversationType == .Connection)
+            && conversation.connection.needsToBeUpdatedFromBackend {
+                return conversation.connection
         }
         
         // If we are missing clients, we need to refetch the clients before retrying
         if let selfClient = ZMUser.selfUserInContext(self.managedObjectContext!).selfClient(),
             let missingClients = selfClient.missingClients where missingClients.count > 0
         {
-            let activeParticipants = self.conversation.activeParticipants.array as! [ZMUser]
+            let activeParticipants = conversation.activeParticipants.array as! [ZMUser]
             let activeClients = activeParticipants.flatMap {
                 return Array($0.clients)
             }
@@ -69,7 +71,9 @@ extension ZMMessage {
     public func dependendObjectNeedingUpdateBeforeProcessing() -> ZMManagedObject? {
         
         // conversation not created yet on the BE?
-        if self.conversation.remoteIdentifier == nil {
+        guard let conversation = self.conversation else { return nil }
+        
+        if conversation.remoteIdentifier == nil {
             return self.conversation
         }
         
@@ -91,15 +95,19 @@ extension ZMMessage {
         // we don't want following messages to block this one, only previous ones.
         // so we iterate backwards and we ignore everything until we find this one
         var selfMessageFound = false
-        self.conversation.messages
+        conversation.messages
             .enumerateObjectsWithOptions(NSEnumerationOptions.Reverse) { (obj, _, stop) in
                 guard let previousMessage = obj as? ZMMessage else { return }
                 
-                // to old?
-                let tooOld = self.serverTimestamp.timeIntervalSinceDate(previousMessage.serverTimestamp) > MaxDelayToConsiderForBlockingObject
-                if tooOld {
-                    stop.memory = true
-                    return
+                if let currentTimestamp = self.serverTimestamp,
+                    let previousTimestamp = previousMessage.serverTimestamp {
+                    
+                    // to old?
+                    let tooOld = currentTimestamp.timeIntervalSinceDate(previousTimestamp) > MaxDelayToConsiderForBlockingObject
+                    if tooOld {
+                        stop.memory = true
+                        return
+                    }
                 }
                 
                 let sameMessage = previousMessage === self || previousMessage.nonce == self.nonce

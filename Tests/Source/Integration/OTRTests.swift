@@ -78,4 +78,64 @@ class OTRTests : IntegrationTestBase
         XCTAssertNotNil(message)
         XCTAssertTrue(self.hasMockTransportRequest(.MethodPOST, path: "/conversations/\(conversation.remoteIdentifier.transportString())/otr/assets", count: 2))
     }
+    
+    func testThatItSendsARequestToUpdateSignalingKeys(){
+        
+        // given
+        XCTAssert(self.logInAndWaitForSyncToBeComplete())
+        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        self.mockTransportSession.resetReceivedRequests()
+
+        var didReregister = false
+        self.mockTransportSession.responseGeneratorBlock = { response in
+            if response.path.containsString("/clients/") && response.payload.asDictionary()["sigkeys"] != nil {
+                didReregister = true
+                return ZMTransportResponse(payload: [], HTTPstatus: 200, transportSessionError: nil)
+            }
+            return nil
+        }
+        
+        // when
+        self.userSession.performChanges {
+            UserClient.resetSignalingKeysInContext(self.uiMOC)
+        }
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+
+        // then
+        XCTAssertTrue(didReregister)
+    }
+
+    func testThatItCreatesNewKeysIfReqeustToSyncSignalingKeysFailedWithBadRequest() {
+        
+        // given
+        XCTAssert(self.logInAndWaitForSyncToBeComplete())
+        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        self.mockTransportSession.resetReceivedRequests()
+
+        var tryCount = 0
+        var firstSigKeys = [String : String]()
+        self.mockTransportSession.responseGeneratorBlock = { response in
+            if response.path.containsString("/clients/") && response.payload.asDictionary()["sigkeys"] != nil {
+                if tryCount == 0 {
+                    tryCount += 1
+                    firstSigKeys = response.payload.asDictionary()["sigkeys"] as! [String : String]
+                    return ZMTransportResponse(payload: ["label" : "bad-request"], HTTPstatus: 400, transportSessionError: nil)
+                }
+                tryCount += 1
+                XCTAssertNotEqual(response.payload.asDictionary()["sigkeys"] as! [String : String], firstSigKeys)
+                return ZMTransportResponse(payload: [], HTTPstatus: 200, transportSessionError: nil)
+            }
+            return nil
+        }
+        
+        // when
+        self.userSession.performChanges {
+            UserClient.resetSignalingKeysInContext(self.uiMOC)
+        }
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertEqual(tryCount, 2)
+    }
 }
+

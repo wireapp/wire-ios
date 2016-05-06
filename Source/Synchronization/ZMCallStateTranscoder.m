@@ -661,7 +661,7 @@ _Pragma("clang diagnostic pop")
     return NO;
 }
 
-- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * __unused)managedObject withSync:(id __unused)sync
+- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * __unused)managedObject forKeys:(NSSet<NSString *> * __unused)keys withSync:(id __unused)sync
 {
     return self.pushChannelIsOpen;
 }

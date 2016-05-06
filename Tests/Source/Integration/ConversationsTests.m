@@ -1498,6 +1498,63 @@
     [ZMMessage resetDefaultExpirationTime];
 }
 
+#pragma mark - Deleted messages
+
+- (void)testThatItDeleteMessageWhenAskedTo;
+{
+    // given
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForEverythingToBeDone();
+    
+    ZMConversation *groupConversation = [self conversationForMockConversation:self.groupConversation];
+    XCTAssertNotNil(groupConversation);
+    
+    __block ZMMessage *message;
+    __block NSUUID *messageNonce;
+    [self.userSession performChanges:^{
+        message = [groupConversation appendMessageWithText:@"lalala"];
+        messageNonce = message.nonce;
+    }];
+    XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
+    WaitForEverythingToBeDone();
+    
+    //when
+    [self.userSession performChanges:^{
+        [ZMMessage deleteMessage:message];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    message = [ZMMessage fetchMessageWithNonce:messageNonce forConversation:groupConversation inManagedObjectContext:self.uiMOC];
+    XCTAssertNil(message);
+}
+
+
+- (void)testThatItSyncsWhenAMessageDeleteIsRemotelyAppended;
+{
+    // given
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForEverythingToBeDone();
+    
+    ZMConversation *groupConversation = [self conversationForMockConversation:self.groupConversation];
+    XCTAssertNotNil(groupConversation);
+    
+    __block ZMMessage *message;
+    __block NSUUID *messageNonce;
+    [self.userSession performChanges:^{
+        message = [groupConversation appendMessageWithText:@"lalala"];
+        messageNonce = message.nonce;
+    }];
+    XCTAssertTrue([groupConversation.managedObjectContext saveOrRollback]);
+    WaitForEverythingToBeDone();
+    
+    //when
+    [self remotelyAppendSelfConversationWithZMMsgDeletedForMessageID:messageNonce.transportString conversationID:groupConversation.remoteIdentifier.transportString];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    message = [ZMMessage fetchMessageWithNonce:messageNonce forConversation:groupConversation inManagedObjectContext:self.uiMOC];
+    XCTAssertNil(message);
+}
+
 #pragma mark - File Sharing -
 #pragma mark Sending
 
@@ -2328,12 +2385,17 @@
             [conversation addParticipant:user];
             XCTAssertTrue([conversation.activeParticipants containsObject:user]);
         }];
+        WaitForEverythingToBeDone();
         XCTAssertFalse(conversation.hasChanges, @"Rollback?");
         
-        XCTAssertEqual(observer.notifications.count, 1u);
+        // Participants changes and messages changes (System message fot the added user)
+        XCTAssertEqual(observer.notifications.count, 2u);
         ConversationChangeInfo *note1 = observer.notifications.firstObject;
+        ConversationChangeInfo *note2 = observer.notifications.lastObject;
         XCTAssertEqual(note1.conversation, conversation);
         XCTAssertTrue(note1.participantsChanged);
+        XCTAssertEqual(note2.conversation, conversation);
+        XCTAssertTrue(note2.messagesChanged);
         [observer.notifications removeAllObjects];
         
         [self.userSession performChanges:^{
@@ -2341,12 +2403,17 @@
             [conversation removeParticipant:user];
             XCTAssertFalse([conversation.activeParticipants containsObject:user]);
         }];
+        WaitForEverythingToBeDone();
         XCTAssertFalse(conversation.hasChanges, @"Rollback?");
         
-        XCTAssertEqual(observer.notifications.count, 1u);
-        ConversationChangeInfo *note2 = observer.notifications.firstObject;
-        XCTAssertEqual(note2.conversation, conversation);
-        XCTAssertTrue(note2.participantsChanged);
+        // Participants changes and messages changes (System message fot the added user)
+        XCTAssertEqual(observer.notifications.count, 2u);
+        ConversationChangeInfo *note3 = observer.notifications.firstObject;
+        ConversationChangeInfo *note4 = observer.notifications.lastObject;
+        XCTAssertEqual(note3.conversation, conversation);
+        XCTAssertTrue(note3.participantsChanged);
+        XCTAssertEqual(note4.conversation, conversation);
+        XCTAssertTrue(note4.messagesChanged);
         [observer.notifications removeAllObjects];
         
         // Wait for merge ui->sync to be done

@@ -65,7 +65,7 @@ class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
     private func createFileTransferMessage(conversation: ZMConversation) -> ZMAssetClientMessage {
         let message = conversation.appendMessageWithFileAtURL(testDataURL) as! ZMAssetClientMessage
         message.assetId = NSUUID.createUUID()
-        message.fileMessageData.transferState = .Downloading
+        message.fileMessageData!.transferState = .Downloading
         
         self.syncMOC.saveOrRollback()
         
@@ -102,7 +102,7 @@ extension AssetDownloadRequestStrategyTests {
         // given
         let message = conversation.appendMessageWithFileAtURL(testDataURL) as! ZMAssetClientMessage
         message.assetId = .None
-        message.fileMessageData.transferState = .Downloading
+        message.fileMessageData!.transferState = .Downloading
         
         self.syncMOC.saveOrRollback()
         
@@ -123,7 +123,7 @@ extension AssetDownloadRequestStrategyTests {
         // given
         let message = conversation.appendMessageWithFileAtURL(testDataURL) as! ZMAssetClientMessage
         message.assetId = NSUUID.createUUID()
-        message.fileMessageData.transferState = .Uploaded
+        message.fileMessageData!.transferState = .Uploaded
         
         self.syncMOC.saveOrRollback()
         
@@ -208,7 +208,7 @@ extension AssetDownloadRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
 
         // then
-        XCTAssertEqual(message.fileMessageData.transferState.rawValue, ZMFileTransferState.Downloaded.rawValue)
+        XCTAssertEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.Downloaded.rawValue)
     }
     
     func testThatItMarksDownloadAsFailedIfCannotDownload_PermanentError() {
@@ -222,7 +222,7 @@ extension AssetDownloadRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertEqual(message.fileMessageData.transferState.rawValue, ZMFileTransferState.FailedDownload.rawValue)
+        XCTAssertEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.FailedDownload.rawValue)
     }
     
     func testThatItMarksDownloadAsFailedIfCannotDownload_TemporaryError() {
@@ -236,7 +236,7 @@ extension AssetDownloadRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertEqual(message.fileMessageData.transferState.rawValue, ZMFileTransferState.FailedDownload.rawValue)
+        XCTAssertEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.FailedDownload.rawValue)
     }
     
     func testThatItMarksDownloadAsFailedIfCannotDownload_CannotDecrypt() {
@@ -250,7 +250,7 @@ extension AssetDownloadRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertEqual(message.fileMessageData.transferState.rawValue, ZMFileTransferState.FailedDownload.rawValue)
+        XCTAssertEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.FailedDownload.rawValue)
     }
     
     func testThatItUpdatesFileDownloadProgress() {
@@ -259,14 +259,14 @@ extension AssetDownloadRequestStrategyTests {
         let message = self.createFileTransferMessage(self.conversation)
         let request : ZMTransportRequest? = self.sut.nextRequest()
         
-        XCTAssertEqual(message.fileMessageData.progress, 0)
+        XCTAssertEqual(message.fileMessageData?.progress, 0)
 
         // when
         request?.updateProgress(expectedProgress)
         XCTAssertTrue(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertEqual(message.fileMessageData.progress, expectedProgress)
+        XCTAssertEqual(message.fileMessageData?.progress, expectedProgress)
     }
     
     func testThatItSendsTheNotificationIfSuccessfulDownloadAndDecryption() {
@@ -364,7 +364,7 @@ extension AssetDownloadRequestStrategyTests {
         XCTAssertNotNil(identifier)
         
         // when the transfer is cancelled
-        message.fileMessageData.cancelTransfer()
+        message.fileMessageData!.cancelTransfer()
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then the cancellation provider should be informed to cancel the request

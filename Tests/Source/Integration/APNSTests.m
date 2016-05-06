@@ -190,7 +190,8 @@
     // then
     BOOL didContainVOIPRequest = NO;
     BOOL didContainRemoteRequest = NO;
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
+    BOOL didContainSignalingKeyRequest = YES;
+    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
     for (ZMTransportRequest *aRequest in self.mockTransportSession.receivedRequests) {
         if (![aRequest.path isEqualToString: @"/push/tokens"]) {
             return;
@@ -202,9 +203,13 @@
         if ([transportType isEqualToString:@"APNS"]) {
             didContainRemoteRequest = YES;
         }
+        if ([aRequest.path containsString:@"/clients/"] && [aRequest.payload asDictionary][@"sigKeys"] != nil) {
+            didContainSignalingKeyRequest = YES;
+        }
     }
     XCTAssertTrue(didContainRemoteRequest);
     XCTAssertTrue(didContainVOIPRequest);
+    XCTAssertTrue(didContainSignalingKeyRequest);
 
     [mockPushRegistrant verify];
     [mockApplication verify];
@@ -239,7 +244,9 @@
     // then
     BOOL didContainVOIPRequest = NO;
     BOOL didContainRemoteRequest = NO;
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
+    BOOL didContainSignalingKeyRequest = YES;
+
+    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
     for (ZMTransportRequest *aRequest in self.mockTransportSession.receivedRequests) {
         if (![aRequest.path isEqualToString: @"/push/tokens"]) {
             return;
@@ -251,10 +258,14 @@
         if ([transportType isEqualToString:@"APNS"]) {
             didContainRemoteRequest = YES;
         }
+        if ([aRequest.path containsString:@"/clients/"] && [aRequest.payload asDictionary][@"sigKeys"] != nil) {
+            didContainSignalingKeyRequest = YES;
+        }
     }
     XCTAssertTrue(didContainRemoteRequest);
     XCTAssertTrue(didContainVOIPRequest);
-    
+    XCTAssertTrue(didContainSignalingKeyRequest);
+
     [mockPushRegistrant verify];
     [mockApplication verify];
 }

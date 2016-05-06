@@ -88,7 +88,7 @@ extension ZMOTRMessage {
             let clients = clientIDs.map { UserClient.fetchUserClient(withRemoteId: $0, forUser: user, createIfNeeded: true)! }
             
             // is this user not there?
-            self.conversation.checkIfMissingActiveParticipant(user)
+            self.conversation?.checkIfMissingActiveParticipant(user)
             
             return clients
         })

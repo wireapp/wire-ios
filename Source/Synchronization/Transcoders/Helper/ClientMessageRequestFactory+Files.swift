@@ -110,7 +110,8 @@ extension ClientMessageRequestFactory {
     // MARK: Downloading
     
     func downstreamRequestForEcryptedOriginalFileMessage(message: ZMAssetClientMessage) -> ZMTransportRequest? {
-        let path = "/conversations/\(message.conversation.remoteIdentifier.transportString())/otr/assets/\(message.assetId!.transportString())"
+        guard let conversation = message.conversation else { return nil }
+        let path = "/conversations/\(conversation.remoteIdentifier.transportString())/otr/assets/\(message.assetId!.transportString())"
         
         let request = ZMTransportRequest(getFromPath: path)
         request.appendDebugInformation("Downloading file (Asset)")

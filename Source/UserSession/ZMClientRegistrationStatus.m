@@ -312,8 +312,10 @@ static char* const ZMLogTag ZM_UNUSED = "Authentication";
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
 
     NSSet *allClientsExceptCurrent = [selfUser.clients filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"remoteIdentifier != %@", currentSelfClient.remoteIdentifier]];
-    [currentSelfClient missesClients:allClientsExceptCurrent];
-    [currentSelfClient setLocallyModifiedKeys:[NSSet setWithObject:@"missingClients"]];
+    if (allClientsExceptCurrent.count > 0) {
+        [currentSelfClient missesClients:allClientsExceptCurrent];
+        [currentSelfClient setLocallyModifiedKeys:[NSSet setWithObject:@"missingClients"]];
+    }
 }
 
 - (void)didFailToRegisterClient:(NSError *)error

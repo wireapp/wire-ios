@@ -195,8 +195,8 @@
     }
     
     id<ZMUpstreamTranscoder> transcoder = [self transcoder];
-    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:withSync:)]) {
-        if (![transcoder shouldCreateRequestToSyncObject:nextObject withSync:self]) {
+    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:)]) {
+        if (![transcoder shouldCreateRequestToSyncObject:nextObject forKeys:[NSSet set] withSync:self]) {
             return nil;
         }
     }

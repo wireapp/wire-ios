@@ -1568,7 +1568,7 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         // when
         XCTAssertTrue([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUserDefinedNameKey]);
 
-        [self.sut shouldCreateRequestToSyncObject:conversation withSync:mockUpstream];
+        [self.sut shouldCreateRequestToSyncObject:conversation forKeys:[NSSet set] withSync:mockUpstream];
         
         XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUserDefinedNameKey]);
     }];

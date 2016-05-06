@@ -1088,7 +1088,7 @@
     [self.sut requestForUpdatingObject:message forKeys:[NSSet setWithObject:key]];
     
     //then
-    XCTAssertTrue(message.isDeleted);
+    XCTAssertTrue(message.isZombieObject);
 }
 
 - (void)testThatItDeletesMessageIfFailedToCreatedUpdateRequestForMediumFormatAndNoOriginalDataStored
@@ -1099,6 +1099,26 @@
 - (void)testThatItDeletesMessageIfFailedToCreatedUpdateRequestForPreviewFormatAndNoOriginalDataStored
 {
     [self checkThatItDeletesMessageIfFailedToCreatedUpdateRequestAndNoOriginalDataStored:ZMImageFormatPreview];
+}
+
+- (void)testThatItChecksIfItNeedsProcessingBeforeCreatingRequest
+{
+    NSUUID *conversationId = [NSUUID createUUID];
+    ZMAssetClientMessage *message = [self bootstrapAndCreateOTRAssetMessageInConversationWithId:conversationId];
+    [self prepareMessage:message forUploadOnlyForFormat:ZMImageFormatMedium];
+    
+    NSManagedObject *syncMessage = [self.sut.managedObjectContext objectWithID:message.objectID];
+    for(id changeTracker in self.sut.contextChangeTrackers) {
+        [changeTracker objectsDidChange:[NSSet setWithObject:syncMessage]];
+    }
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    [message.managedObjectContext.zm_imageAssetCache deleteAssetData:message.nonce format:ZMImageFormatMedium encrypted:YES];
+    ZMTransportRequest *request = [self.sut.requestGenerators nextRequest];
+    
+    // then
+    XCTAssertNil(request);
 }
 
 - (void)testThatItResetsNeedsToUploadMediumKeyWhenParsingTheResponseForPreviewImage
