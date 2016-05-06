@@ -75,6 +75,8 @@
 @class ZMAssetPreviewBuilder;
 @class ZMAssetUploaded;
 @class ZMAssetUploadedBuilder;
+@class ZMAssetVideoMetaData;
+@class ZMAssetVideoMetaDataBuilder;
 @class ZMCalling;
 @class ZMCallingBuilder;
 @class ZMCleared;
@@ -91,6 +93,8 @@
 @class ZMLastReadBuilder;
 @class ZMMention;
 @class ZMMentionBuilder;
+@class ZMMsgDeleted;
+@class ZMMsgDeletedBuilder;
 @class ZMText;
 @class ZMTextBuilder;
 
@@ -136,6 +140,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define GenericMessage_clientAction @"clientAction"
 #define GenericMessage_calling @"calling"
 #define GenericMessage_asset @"asset"
+#define GenericMessage_deleted @"deleted"
 @interface ZMGenericMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasMessageId_:1;
@@ -147,6 +152,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasExternal_:1;
   BOOL hasCalling_:1;
   BOOL hasAsset_:1;
+  BOOL hasDeleted_:1;
   BOOL hasLiking_:1;
   BOOL hasClientAction_:1;
   NSString* messageId;
@@ -158,6 +164,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   ZMExternal* external;
   ZMCalling* calling;
   ZMAsset* asset;
+  ZMMsgDeleted* deleted;
   ZMLikeAction liking;
   ZMClientAction clientAction;
 }
@@ -172,6 +179,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hasClientAction;
 - (BOOL) hasCalling;
 - (BOOL) hasAsset;
+- (BOOL) hasDeleted;
 @property (readonly, strong) NSString* messageId;
 @property (readonly, strong) ZMText* text;
 @property (readonly, strong) ZMImageAsset* image;
@@ -183,6 +191,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @property (readonly) ZMClientAction clientAction;
 @property (readonly, strong) ZMCalling* calling;
 @property (readonly, strong) ZMAsset* asset;
+@property (readonly, strong) ZMMsgDeleted* deleted;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -289,6 +298,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMGenericMessageBuilder*) setAssetBuilder:(ZMAssetBuilder*) builderForValue;
 - (ZMGenericMessageBuilder*) mergeAsset:(ZMAsset*) value;
 - (ZMGenericMessageBuilder*) clearAsset;
+
+- (BOOL) hasDeleted;
+- (ZMMsgDeleted*) deleted;
+- (ZMGenericMessageBuilder*) setDeleted:(ZMMsgDeleted*) value;
+- (ZMGenericMessageBuilder*) setDeletedBuilder:(ZMMsgDeletedBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeDeleted:(ZMMsgDeleted*) value;
+- (ZMGenericMessageBuilder*) clearDeleted;
 @end
 
 #define Text_content @"content"
@@ -581,6 +597,66 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMClearedBuilder*) clearClearedTimestamp;
 @end
 
+#define MsgDeleted_conversation_id @"conversationId"
+#define MsgDeleted_message_id @"messageId"
+@interface ZMMsgDeleted : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasConversationId_:1;
+  BOOL hasMessageId_:1;
+  NSString* conversationId;
+  NSString* messageId;
+}
+- (BOOL) hasConversationId;
+- (BOOL) hasMessageId;
+@property (readonly, strong) NSString* conversationId;
+@property (readonly, strong) NSString* messageId;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMMsgDeletedBuilder*) builder;
++ (ZMMsgDeletedBuilder*) builder;
++ (ZMMsgDeletedBuilder*) builderWithPrototype:(ZMMsgDeleted*) prototype;
+- (ZMMsgDeletedBuilder*) toBuilder;
+
++ (ZMMsgDeleted*) parseFromData:(NSData*) data;
++ (ZMMsgDeleted*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input;
++ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMMsgDeletedBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMMsgDeleted* resultMsgDeleted;
+}
+
+- (ZMMsgDeleted*) defaultInstance;
+
+- (ZMMsgDeletedBuilder*) clear;
+- (ZMMsgDeletedBuilder*) clone;
+
+- (ZMMsgDeleted*) build;
+- (ZMMsgDeleted*) buildPartial;
+
+- (ZMMsgDeletedBuilder*) mergeFrom:(ZMMsgDeleted*) other;
+- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasConversationId;
+- (NSString*) conversationId;
+- (ZMMsgDeletedBuilder*) setConversationId:(NSString*) value;
+- (ZMMsgDeletedBuilder*) clearConversationId;
+
+- (BOOL) hasMessageId;
+- (NSString*) messageId;
+- (ZMMsgDeletedBuilder*) setMessageId:(NSString*) value;
+- (ZMMsgDeletedBuilder*) clearMessageId;
+@end
+
 #define ImageAsset_tag @"tag"
 #define ImageAsset_width @"width"
 #define ImageAsset_height @"height"
@@ -777,25 +853,30 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Original_size @"size"
 #define Original_name @"name"
 #define Original_image @"image"
+#define Original_video @"video"
 @interface ZMAssetOriginal : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasSize_:1;
   BOOL hasMimeType_:1;
   BOOL hasName_:1;
   BOOL hasImage_:1;
+  BOOL hasVideo_:1;
   UInt64 size;
   NSString* mimeType;
   NSString* name;
   ZMAssetImageMetaData* image;
+  ZMAssetVideoMetaData* video;
 }
 - (BOOL) hasMimeType;
 - (BOOL) hasSize;
 - (BOOL) hasName;
 - (BOOL) hasImage;
+- (BOOL) hasVideo;
 @property (readonly, strong) NSString* mimeType;
 @property (readonly) UInt64 size;
 @property (readonly, strong) NSString* name;
 @property (readonly, strong) ZMAssetImageMetaData* image;
+@property (readonly, strong) ZMAssetVideoMetaData* video;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -853,6 +934,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMAssetOriginalBuilder*) setImageBuilder:(ZMAssetImageMetaDataBuilder*) builderForValue;
 - (ZMAssetOriginalBuilder*) mergeImage:(ZMAssetImageMetaData*) value;
 - (ZMAssetOriginalBuilder*) clearImage;
+
+- (BOOL) hasVideo;
+- (ZMAssetVideoMetaData*) video;
+- (ZMAssetOriginalBuilder*) setVideo:(ZMAssetVideoMetaData*) value;
+- (ZMAssetOriginalBuilder*) setVideoBuilder:(ZMAssetVideoMetaDataBuilder*) builderForValue;
+- (ZMAssetOriginalBuilder*) mergeVideo:(ZMAssetVideoMetaData*) value;
+- (ZMAssetOriginalBuilder*) clearVideo;
 @end
 
 #define Preview_mime_type @"mimeType"
@@ -1015,6 +1103,76 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (NSString*) tag;
 - (ZMAssetImageMetaDataBuilder*) setTag:(NSString*) value;
 - (ZMAssetImageMetaDataBuilder*) clearTag;
+@end
+
+#define VideoMetaData_width @"width"
+#define VideoMetaData_height @"height"
+#define VideoMetaData_duration_in_millis @"durationInMillis"
+@interface ZMAssetVideoMetaData : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasDurationInMillis_:1;
+  BOOL hasWidth_:1;
+  BOOL hasHeight_:1;
+  UInt64 durationInMillis;
+  SInt32 width;
+  SInt32 height;
+}
+- (BOOL) hasWidth;
+- (BOOL) hasHeight;
+- (BOOL) hasDurationInMillis;
+@property (readonly) SInt32 width;
+@property (readonly) SInt32 height;
+@property (readonly) UInt64 durationInMillis;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMAssetVideoMetaDataBuilder*) builder;
++ (ZMAssetVideoMetaDataBuilder*) builder;
++ (ZMAssetVideoMetaDataBuilder*) builderWithPrototype:(ZMAssetVideoMetaData*) prototype;
+- (ZMAssetVideoMetaDataBuilder*) toBuilder;
+
++ (ZMAssetVideoMetaData*) parseFromData:(NSData*) data;
++ (ZMAssetVideoMetaData*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetVideoMetaData*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAssetVideoMetaData*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetVideoMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAssetVideoMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMAssetVideoMetaDataBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMAssetVideoMetaData* resultVideoMetaData;
+}
+
+- (ZMAssetVideoMetaData*) defaultInstance;
+
+- (ZMAssetVideoMetaDataBuilder*) clear;
+- (ZMAssetVideoMetaDataBuilder*) clone;
+
+- (ZMAssetVideoMetaData*) build;
+- (ZMAssetVideoMetaData*) buildPartial;
+
+- (ZMAssetVideoMetaDataBuilder*) mergeFrom:(ZMAssetVideoMetaData*) other;
+- (ZMAssetVideoMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetVideoMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasWidth;
+- (SInt32) width;
+- (ZMAssetVideoMetaDataBuilder*) setWidth:(SInt32) value;
+- (ZMAssetVideoMetaDataBuilder*) clearWidth;
+
+- (BOOL) hasHeight;
+- (SInt32) height;
+- (ZMAssetVideoMetaDataBuilder*) setHeight:(SInt32) value;
+- (ZMAssetVideoMetaDataBuilder*) clearHeight;
+
+- (BOOL) hasDurationInMillis;
+- (UInt64) durationInMillis;
+- (ZMAssetVideoMetaDataBuilder*) setDurationInMillis:(UInt64) value;
+- (ZMAssetVideoMetaDataBuilder*) clearDurationInMillis;
 @end
 
 #define Uploaded_otr_key @"otrKey"
