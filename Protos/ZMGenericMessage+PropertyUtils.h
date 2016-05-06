@@ -35,3 +35,10 @@
           conversationRemoteIDString:(NSString *)conversationIDString;
 
 @end
+
+@interface ZMMsgDeleted (Utils)
+
++ (instancetype)msgDeletedWithMessageID:(NSString *)messageID
+                         conversationID:(NSString *)conversationID;
+
+@end

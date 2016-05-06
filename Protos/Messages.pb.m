@@ -87,6 +87,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property ZMClientAction clientAction;
 @property (strong) ZMCalling* calling;
 @property (strong) ZMAsset* asset;
+@property (strong) ZMMsgDeleted* deleted;
 @end
 
 @implementation ZMGenericMessage
@@ -168,6 +169,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasAsset_ = !!_value_;
 }
 @synthesize asset;
+- (BOOL) hasDeleted {
+  return !!hasDeleted_;
+}
+- (void) setHasDeleted:(BOOL) _value_ {
+  hasDeleted_ = !!_value_;
+}
+@synthesize deleted;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -181,6 +189,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.clientAction = ZMClientActionRESETSESSION;
     self.calling = [ZMCalling defaultInstance];
     self.asset = [ZMAsset defaultInstance];
+    self.deleted = [ZMMsgDeleted defaultInstance];
   }
   return self;
 }
@@ -240,6 +249,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasDeleted) {
+    if (!self.deleted.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -275,6 +289,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasAsset) {
     [output writeMessage:11 value:self.asset];
+  }
+  if (self.hasDeleted) {
+    [output writeMessage:12 value:self.deleted];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -317,6 +334,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasAsset) {
     size_ += computeMessageSize(11, self.asset);
+  }
+  if (self.hasDeleted) {
+    size_ += computeMessageSize(12, self.deleted);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -410,6 +430,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasDeleted) {
+    [output appendFormat:@"%@%@ {\n", indent, @"deleted"];
+    [self.deleted writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -462,6 +488,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.asset storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"asset"];
   }
+  if (self.hasDeleted) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.deleted storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"deleted"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -495,6 +526,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasCalling || [self.calling isEqual:otherMessage.calling]) &&
       self.hasAsset == otherMessage.hasAsset &&
       (!self.hasAsset || [self.asset isEqual:otherMessage.asset]) &&
+      self.hasDeleted == otherMessage.hasDeleted &&
+      (!self.hasDeleted || [self.deleted isEqual:otherMessage.deleted]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -531,6 +564,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasAsset) {
     hashCode = hashCode * 31 + [self.asset hash];
+  }
+  if (self.hasDeleted) {
+    hashCode = hashCode * 31 + [self.deleted hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -607,6 +643,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasAsset) {
     [self mergeAsset:other.asset];
+  }
+  if (other.hasDeleted) {
+    [self mergeDeleted:other.deleted];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -721,6 +760,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setAsset:[subBuilder buildPartial]];
+        break;
+      }
+      case 98: {
+        ZMMsgDeletedBuilder* subBuilder = [ZMMsgDeleted builder];
+        if (self.hasDeleted) {
+          [subBuilder mergeFrom:self.deleted];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setDeleted:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1012,6 +1060,36 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearAsset {
   resultGenericMessage.hasAsset = NO;
   resultGenericMessage.asset = [ZMAsset defaultInstance];
+  return self;
+}
+- (BOOL) hasDeleted {
+  return resultGenericMessage.hasDeleted;
+}
+- (ZMMsgDeleted*) deleted {
+  return resultGenericMessage.deleted;
+}
+- (ZMGenericMessageBuilder*) setDeleted:(ZMMsgDeleted*) value {
+  resultGenericMessage.hasDeleted = YES;
+  resultGenericMessage.deleted = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setDeletedBuilder:(ZMMsgDeletedBuilder*) builderForValue {
+  return [self setDeleted:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeDeleted:(ZMMsgDeleted*) value {
+  if (resultGenericMessage.hasDeleted &&
+      resultGenericMessage.deleted != [ZMMsgDeleted defaultInstance]) {
+    resultGenericMessage.deleted =
+      [[[ZMMsgDeleted builderWithPrototype:resultGenericMessage.deleted] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.deleted = value;
+  }
+  resultGenericMessage.hasDeleted = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearDeleted {
+  resultGenericMessage.hasDeleted = NO;
+  resultGenericMessage.deleted = [ZMMsgDeleted defaultInstance];
   return self;
 }
 @end
@@ -2294,6 +2372,267 @@ static ZMCleared* defaultZMClearedInstance = nil;
 }
 @end
 
+@interface ZMMsgDeleted ()
+@property (strong) NSString* conversationId;
+@property (strong) NSString* messageId;
+@end
+
+@implementation ZMMsgDeleted
+
+- (BOOL) hasConversationId {
+  return !!hasConversationId_;
+}
+- (void) setHasConversationId:(BOOL) _value_ {
+  hasConversationId_ = !!_value_;
+}
+@synthesize conversationId;
+- (BOOL) hasMessageId {
+  return !!hasMessageId_;
+}
+- (void) setHasMessageId:(BOOL) _value_ {
+  hasMessageId_ = !!_value_;
+}
+@synthesize messageId;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.conversationId = @"";
+    self.messageId = @"";
+  }
+  return self;
+}
+static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
++ (void) initialize {
+  if (self == [ZMMsgDeleted class]) {
+    defaultZMMsgDeletedInstance = [[ZMMsgDeleted alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMMsgDeletedInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMMsgDeletedInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasConversationId) {
+    return NO;
+  }
+  if (!self.hasMessageId) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasConversationId) {
+    [output writeString:1 value:self.conversationId];
+  }
+  if (self.hasMessageId) {
+    [output writeString:2 value:self.messageId];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasConversationId) {
+    size_ += computeStringSize(1, self.conversationId);
+  }
+  if (self.hasMessageId) {
+    size_ += computeStringSize(2, self.messageId);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMMsgDeleted*) parseFromData:(NSData*) data {
+  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromData:data] build];
+}
++ (ZMMsgDeleted*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromInputStream:input] build];
+}
++ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMMsgDeletedBuilder*) builder {
+  return [[ZMMsgDeletedBuilder alloc] init];
+}
++ (ZMMsgDeletedBuilder*) builderWithPrototype:(ZMMsgDeleted*) prototype {
+  return [[ZMMsgDeleted builder] mergeFrom:prototype];
+}
+- (ZMMsgDeletedBuilder*) builder {
+  return [ZMMsgDeleted builder];
+}
+- (ZMMsgDeletedBuilder*) toBuilder {
+  return [ZMMsgDeleted builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasConversationId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"conversationId", self.conversationId];
+  }
+  if (self.hasMessageId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"messageId", self.messageId];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasConversationId) {
+    [dictionary setObject: self.conversationId forKey: @"conversationId"];
+  }
+  if (self.hasMessageId) {
+    [dictionary setObject: self.messageId forKey: @"messageId"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMMsgDeleted class]]) {
+    return NO;
+  }
+  ZMMsgDeleted *otherMessage = other;
+  return
+      self.hasConversationId == otherMessage.hasConversationId &&
+      (!self.hasConversationId || [self.conversationId isEqual:otherMessage.conversationId]) &&
+      self.hasMessageId == otherMessage.hasMessageId &&
+      (!self.hasMessageId || [self.messageId isEqual:otherMessage.messageId]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasConversationId) {
+    hashCode = hashCode * 31 + [self.conversationId hash];
+  }
+  if (self.hasMessageId) {
+    hashCode = hashCode * 31 + [self.messageId hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMMsgDeletedBuilder()
+@property (strong) ZMMsgDeleted* resultMsgDeleted;
+@end
+
+@implementation ZMMsgDeletedBuilder
+@synthesize resultMsgDeleted;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultMsgDeleted = [[ZMMsgDeleted alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultMsgDeleted;
+}
+- (ZMMsgDeletedBuilder*) clear {
+  self.resultMsgDeleted = [[ZMMsgDeleted alloc] init];
+  return self;
+}
+- (ZMMsgDeletedBuilder*) clone {
+  return [ZMMsgDeleted builderWithPrototype:resultMsgDeleted];
+}
+- (ZMMsgDeleted*) defaultInstance {
+  return [ZMMsgDeleted defaultInstance];
+}
+- (ZMMsgDeleted*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMMsgDeleted*) buildPartial {
+  ZMMsgDeleted* returnMe = resultMsgDeleted;
+  self.resultMsgDeleted = nil;
+  return returnMe;
+}
+- (ZMMsgDeletedBuilder*) mergeFrom:(ZMMsgDeleted*) other {
+  if (other == [ZMMsgDeleted defaultInstance]) {
+    return self;
+  }
+  if (other.hasConversationId) {
+    [self setConversationId:other.conversationId];
+  }
+  if (other.hasMessageId) {
+    [self setMessageId:other.messageId];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setConversationId:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setMessageId:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasConversationId {
+  return resultMsgDeleted.hasConversationId;
+}
+- (NSString*) conversationId {
+  return resultMsgDeleted.conversationId;
+}
+- (ZMMsgDeletedBuilder*) setConversationId:(NSString*) value {
+  resultMsgDeleted.hasConversationId = YES;
+  resultMsgDeleted.conversationId = value;
+  return self;
+}
+- (ZMMsgDeletedBuilder*) clearConversationId {
+  resultMsgDeleted.hasConversationId = NO;
+  resultMsgDeleted.conversationId = @"";
+  return self;
+}
+- (BOOL) hasMessageId {
+  return resultMsgDeleted.hasMessageId;
+}
+- (NSString*) messageId {
+  return resultMsgDeleted.messageId;
+}
+- (ZMMsgDeletedBuilder*) setMessageId:(NSString*) value {
+  resultMsgDeleted.hasMessageId = YES;
+  resultMsgDeleted.messageId = value;
+  return self;
+}
+- (ZMMsgDeletedBuilder*) clearMessageId {
+  resultMsgDeleted.hasMessageId = NO;
+  resultMsgDeleted.messageId = @"";
+  return self;
+}
+@end
+
 @interface ZMImageAsset ()
 @property (strong) NSString* tag;
 @property SInt32 width;
@@ -3263,6 +3602,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value) {
 @property UInt64 size;
 @property (strong) NSString* name;
 @property (strong) ZMAssetImageMetaData* image;
+@property (strong) ZMAssetVideoMetaData* video;
 @end
 
 @implementation ZMAssetOriginal
@@ -3295,12 +3635,20 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value) {
   hasImage_ = !!_value_;
 }
 @synthesize image;
+- (BOOL) hasVideo {
+  return !!hasVideo_;
+}
+- (void) setHasVideo:(BOOL) _value_ {
+  hasVideo_ = !!_value_;
+}
+@synthesize video;
 - (instancetype) init {
   if ((self = [super init])) {
     self.mimeType = @"";
     self.size = 0L;
     self.name = @"";
     self.image = [ZMAssetImageMetaData defaultInstance];
+    self.video = [ZMAssetVideoMetaData defaultInstance];
   }
   return self;
 }
@@ -3343,6 +3691,9 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   if (self.hasImage) {
     [output writeMessage:4 value:self.image];
   }
+  if (self.hasVideo) {
+    [output writeMessage:5 value:self.video];
+  }
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -3363,6 +3714,9 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   }
   if (self.hasImage) {
     size_ += computeMessageSize(4, self.image);
+  }
+  if (self.hasVideo) {
+    size_ += computeMessageSize(5, self.video);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -3414,6 +3768,12 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasVideo) {
+    [output appendFormat:@"%@%@ {\n", indent, @"video"];
+    [self.video writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -3430,6 +3790,11 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
    NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
    [self.image storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"image"];
+  }
+  if (self.hasVideo) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.video storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"video"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -3450,6 +3815,8 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
       (!self.hasName || [self.name isEqual:otherMessage.name]) &&
       self.hasImage == otherMessage.hasImage &&
       (!self.hasImage || [self.image isEqual:otherMessage.image]) &&
+      self.hasVideo == otherMessage.hasVideo &&
+      (!self.hasVideo || [self.video isEqual:otherMessage.video]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -3465,6 +3832,9 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   }
   if (self.hasImage) {
     hashCode = hashCode * 31 + [self.image hash];
+  }
+  if (self.hasVideo) {
+    hashCode = hashCode * 31 + [self.video hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -3521,6 +3891,9 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   if (other.hasImage) {
     [self mergeImage:other.image];
   }
+  if (other.hasVideo) {
+    [self mergeVideo:other.video];
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -3561,6 +3934,15 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setImage:[subBuilder buildPartial]];
+        break;
+      }
+      case 42: {
+        ZMAssetVideoMetaDataBuilder* subBuilder = [ZMAssetVideoMetaData builder];
+        if (self.hasVideo) {
+          [subBuilder mergeFrom:self.video];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setVideo:[subBuilder buildPartial]];
         break;
       }
     }
@@ -3642,6 +4024,36 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
 - (ZMAssetOriginalBuilder*) clearImage {
   resultOriginal.hasImage = NO;
   resultOriginal.image = [ZMAssetImageMetaData defaultInstance];
+  return self;
+}
+- (BOOL) hasVideo {
+  return resultOriginal.hasVideo;
+}
+- (ZMAssetVideoMetaData*) video {
+  return resultOriginal.video;
+}
+- (ZMAssetOriginalBuilder*) setVideo:(ZMAssetVideoMetaData*) value {
+  resultOriginal.hasVideo = YES;
+  resultOriginal.video = value;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) setVideoBuilder:(ZMAssetVideoMetaDataBuilder*) builderForValue {
+  return [self setVideo:[builderForValue build]];
+}
+- (ZMAssetOriginalBuilder*) mergeVideo:(ZMAssetVideoMetaData*) value {
+  if (resultOriginal.hasVideo &&
+      resultOriginal.video != [ZMAssetVideoMetaData defaultInstance]) {
+    resultOriginal.video =
+      [[[ZMAssetVideoMetaData builderWithPrototype:resultOriginal.video] mergeFrom:value] buildPartial];
+  } else {
+    resultOriginal.video = value;
+  }
+  resultOriginal.hasVideo = YES;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clearVideo {
+  resultOriginal.hasVideo = NO;
+  resultOriginal.video = [ZMAssetVideoMetaData defaultInstance];
   return self;
 }
 @end
@@ -4395,6 +4807,310 @@ static ZMAssetImageMetaData* defaultZMAssetImageMetaDataInstance = nil;
 - (ZMAssetImageMetaDataBuilder*) clearTag {
   resultImageMetaData.hasTag = NO;
   resultImageMetaData.tag = @"";
+  return self;
+}
+@end
+
+@interface ZMAssetVideoMetaData ()
+@property SInt32 width;
+@property SInt32 height;
+@property UInt64 durationInMillis;
+@end
+
+@implementation ZMAssetVideoMetaData
+
+- (BOOL) hasWidth {
+  return !!hasWidth_;
+}
+- (void) setHasWidth:(BOOL) _value_ {
+  hasWidth_ = !!_value_;
+}
+@synthesize width;
+- (BOOL) hasHeight {
+  return !!hasHeight_;
+}
+- (void) setHasHeight:(BOOL) _value_ {
+  hasHeight_ = !!_value_;
+}
+@synthesize height;
+- (BOOL) hasDurationInMillis {
+  return !!hasDurationInMillis_;
+}
+- (void) setHasDurationInMillis:(BOOL) _value_ {
+  hasDurationInMillis_ = !!_value_;
+}
+@synthesize durationInMillis;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.width = 0;
+    self.height = 0;
+    self.durationInMillis = 0L;
+  }
+  return self;
+}
+static ZMAssetVideoMetaData* defaultZMAssetVideoMetaDataInstance = nil;
++ (void) initialize {
+  if (self == [ZMAssetVideoMetaData class]) {
+    defaultZMAssetVideoMetaDataInstance = [[ZMAssetVideoMetaData alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMAssetVideoMetaDataInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMAssetVideoMetaDataInstance;
+}
+- (BOOL) isInitialized {
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasWidth) {
+    [output writeInt32:1 value:self.width];
+  }
+  if (self.hasHeight) {
+    [output writeInt32:2 value:self.height];
+  }
+  if (self.hasDurationInMillis) {
+    [output writeUInt64:3 value:self.durationInMillis];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasWidth) {
+    size_ += computeInt32Size(1, self.width);
+  }
+  if (self.hasHeight) {
+    size_ += computeInt32Size(2, self.height);
+  }
+  if (self.hasDurationInMillis) {
+    size_ += computeUInt64Size(3, self.durationInMillis);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMAssetVideoMetaData*) parseFromData:(NSData*) data {
+  return (ZMAssetVideoMetaData*)[[[ZMAssetVideoMetaData builder] mergeFromData:data] build];
+}
++ (ZMAssetVideoMetaData*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetVideoMetaData*)[[[ZMAssetVideoMetaData builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetVideoMetaData*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMAssetVideoMetaData*)[[[ZMAssetVideoMetaData builder] mergeFromInputStream:input] build];
+}
++ (ZMAssetVideoMetaData*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetVideoMetaData*)[[[ZMAssetVideoMetaData builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetVideoMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMAssetVideoMetaData*)[[[ZMAssetVideoMetaData builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMAssetVideoMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAssetVideoMetaData*)[[[ZMAssetVideoMetaData builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAssetVideoMetaDataBuilder*) builder {
+  return [[ZMAssetVideoMetaDataBuilder alloc] init];
+}
++ (ZMAssetVideoMetaDataBuilder*) builderWithPrototype:(ZMAssetVideoMetaData*) prototype {
+  return [[ZMAssetVideoMetaData builder] mergeFrom:prototype];
+}
+- (ZMAssetVideoMetaDataBuilder*) builder {
+  return [ZMAssetVideoMetaData builder];
+}
+- (ZMAssetVideoMetaDataBuilder*) toBuilder {
+  return [ZMAssetVideoMetaData builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasWidth) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"width", [NSNumber numberWithInteger:self.width]];
+  }
+  if (self.hasHeight) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"height", [NSNumber numberWithInteger:self.height]];
+  }
+  if (self.hasDurationInMillis) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"durationInMillis", [NSNumber numberWithLongLong:self.durationInMillis]];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasWidth) {
+    [dictionary setObject: [NSNumber numberWithInteger:self.width] forKey: @"width"];
+  }
+  if (self.hasHeight) {
+    [dictionary setObject: [NSNumber numberWithInteger:self.height] forKey: @"height"];
+  }
+  if (self.hasDurationInMillis) {
+    [dictionary setObject: [NSNumber numberWithLongLong:self.durationInMillis] forKey: @"durationInMillis"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMAssetVideoMetaData class]]) {
+    return NO;
+  }
+  ZMAssetVideoMetaData *otherMessage = other;
+  return
+      self.hasWidth == otherMessage.hasWidth &&
+      (!self.hasWidth || self.width == otherMessage.width) &&
+      self.hasHeight == otherMessage.hasHeight &&
+      (!self.hasHeight || self.height == otherMessage.height) &&
+      self.hasDurationInMillis == otherMessage.hasDurationInMillis &&
+      (!self.hasDurationInMillis || self.durationInMillis == otherMessage.durationInMillis) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasWidth) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.width] hash];
+  }
+  if (self.hasHeight) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.height] hash];
+  }
+  if (self.hasDurationInMillis) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithLongLong:self.durationInMillis] hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMAssetVideoMetaDataBuilder()
+@property (strong) ZMAssetVideoMetaData* resultVideoMetaData;
+@end
+
+@implementation ZMAssetVideoMetaDataBuilder
+@synthesize resultVideoMetaData;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultVideoMetaData = [[ZMAssetVideoMetaData alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultVideoMetaData;
+}
+- (ZMAssetVideoMetaDataBuilder*) clear {
+  self.resultVideoMetaData = [[ZMAssetVideoMetaData alloc] init];
+  return self;
+}
+- (ZMAssetVideoMetaDataBuilder*) clone {
+  return [ZMAssetVideoMetaData builderWithPrototype:resultVideoMetaData];
+}
+- (ZMAssetVideoMetaData*) defaultInstance {
+  return [ZMAssetVideoMetaData defaultInstance];
+}
+- (ZMAssetVideoMetaData*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMAssetVideoMetaData*) buildPartial {
+  ZMAssetVideoMetaData* returnMe = resultVideoMetaData;
+  self.resultVideoMetaData = nil;
+  return returnMe;
+}
+- (ZMAssetVideoMetaDataBuilder*) mergeFrom:(ZMAssetVideoMetaData*) other {
+  if (other == [ZMAssetVideoMetaData defaultInstance]) {
+    return self;
+  }
+  if (other.hasWidth) {
+    [self setWidth:other.width];
+  }
+  if (other.hasHeight) {
+    [self setHeight:other.height];
+  }
+  if (other.hasDurationInMillis) {
+    [self setDurationInMillis:other.durationInMillis];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMAssetVideoMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMAssetVideoMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 8: {
+        [self setWidth:[input readInt32]];
+        break;
+      }
+      case 16: {
+        [self setHeight:[input readInt32]];
+        break;
+      }
+      case 24: {
+        [self setDurationInMillis:[input readUInt64]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasWidth {
+  return resultVideoMetaData.hasWidth;
+}
+- (SInt32) width {
+  return resultVideoMetaData.width;
+}
+- (ZMAssetVideoMetaDataBuilder*) setWidth:(SInt32) value {
+  resultVideoMetaData.hasWidth = YES;
+  resultVideoMetaData.width = value;
+  return self;
+}
+- (ZMAssetVideoMetaDataBuilder*) clearWidth {
+  resultVideoMetaData.hasWidth = NO;
+  resultVideoMetaData.width = 0;
+  return self;
+}
+- (BOOL) hasHeight {
+  return resultVideoMetaData.hasHeight;
+}
+- (SInt32) height {
+  return resultVideoMetaData.height;
+}
+- (ZMAssetVideoMetaDataBuilder*) setHeight:(SInt32) value {
+  resultVideoMetaData.hasHeight = YES;
+  resultVideoMetaData.height = value;
+  return self;
+}
+- (ZMAssetVideoMetaDataBuilder*) clearHeight {
+  resultVideoMetaData.hasHeight = NO;
+  resultVideoMetaData.height = 0;
+  return self;
+}
+- (BOOL) hasDurationInMillis {
+  return resultVideoMetaData.hasDurationInMillis;
+}
+- (UInt64) durationInMillis {
+  return resultVideoMetaData.durationInMillis;
+}
+- (ZMAssetVideoMetaDataBuilder*) setDurationInMillis:(UInt64) value {
+  resultVideoMetaData.hasDurationInMillis = YES;
+  resultVideoMetaData.durationInMillis = value;
+  return self;
+}
+- (ZMAssetVideoMetaDataBuilder*) clearDurationInMillis {
+  resultVideoMetaData.hasDurationInMillis = NO;
+  resultVideoMetaData.durationInMillis = 0L;
   return self;
 }
 @end

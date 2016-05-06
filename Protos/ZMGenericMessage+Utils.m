@@ -92,7 +92,8 @@
     self.hasLastRead ||
     self.hasCleared ||
     self.hasClientAction ||
-    self.hasAsset;
+    self.hasAsset ||
+    self.hasDeleted;
 }
 
 + (instancetype)messageWithImageData:(NSData *)imageData format:(ZMImageFormat)format nonce:(NSString *)nonce
@@ -175,6 +176,16 @@
 {
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
     builder.cleared = [ZMCleared clearedWithTimestamp:timestamp conversationRemoteIDString:conversationIDString];
+    builder.messageId = nonce;
+    return [builder build];
+}
+
++ (ZMGenericMessage *)messageWithDeleteMessage:(NSString *)messageID
+                                inConversation:(NSString *)conversationID
+                                         nonce:(NSString *)nonce;
+{
+    ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
+    builder.deleted = [ZMMsgDeleted msgDeletedWithMessageID:messageID conversationID:conversationID];
     builder.messageId = nonce;
     return [builder build];
 }
