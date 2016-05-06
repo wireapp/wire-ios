@@ -514,5 +514,23 @@ extension UserClient {
     }
 }
 
+// MARK: APSSignaling
+extension UserClient {
+
+    public static func resetSignalingKeysInContext(context: NSManagedObjectContext) {
+        guard let selfClient = ZMUser.selfUserInContext(context).selfClient()
+        else { return }
+        
+        selfClient.apsDecryptionKey = nil
+        selfClient.apsVerificationKey = nil
+        selfClient.needsToUploadSignalingKeys = true
+        selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNeedsToUpdateSignalingKeysKey))
+        
+        context.enqueueDelayedSave()
+    }
+
+}
+
+
 
  

@@ -23,6 +23,8 @@
 #import "ZMConversation+Internal.h"
 #import "ZMNotifications.h"
 
+@import ZMCDataModel;
+
 @interface ChangeObserver ()
 @end
 

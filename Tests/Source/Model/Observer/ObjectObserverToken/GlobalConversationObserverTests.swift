@@ -495,7 +495,6 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         let conversationList = ZMConversation.conversationsExcludingArchivedAndCallingInContext(self.uiMOC)
         self.uiMOC.saveOrRollback()
         
-        // TODO: if I put a save here, I get no notifications at all?
         user.name = "Foo"
         self.uiMOC.saveOrRollback()
         

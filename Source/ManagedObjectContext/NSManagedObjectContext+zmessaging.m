@@ -1098,9 +1098,6 @@ static dispatch_queue_t singletonContextIsolation(void)
     if(self.zm_shouldRefreshObjectsWithSyncContextPolicy) {
         [ZMConversation refreshObjectsThatAreNotNeededInSyncContext:self];
     }
-    if(self.zm_shouldRefreshObjectsWithUIContextPolicy) {
-        // TODO
-    }
 }
 
 

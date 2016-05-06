@@ -70,8 +70,6 @@
 @end
 
 
-
-/// TODO. We will eventually move all of ZMUser (Connections) here.
 @protocol ZMBareUserConnection <NSObject>
 
 @property (nonatomic, readonly) BOOL isPendingApprovalByOtherUser;

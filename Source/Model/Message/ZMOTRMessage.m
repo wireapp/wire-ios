@@ -147,6 +147,11 @@ NSString * const DeliveredKey = @"delivered";
     if (message.hasCleared && conversation.conversationType == ZMConversationTypeSelf) {
         [ZMConversation updateConversationWithZMClearedFromSelfConversation:message.cleared inContext:moc];
     }
+    if (message.hasDeleted && conversation.conversationType == ZMConversationTypeSelf) {
+        ZMUser *user = [ZMUser fetchObjectWithRemoteIdentifier:updateEvent.senderUUID inManagedObjectContext:moc];
+        [ZMMessage removeMessageWithRemotelyDeletedMessage:message.deleted fromUser:user inManagedObjectContext:moc];
+        return nil;
+    }
     
     if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction) {
         [conversation addEventToDownloadedEvents:updateEvent.eventID timeStamp:updateEvent.timeStamp];

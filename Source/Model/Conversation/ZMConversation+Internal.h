@@ -99,8 +99,6 @@ extern NSString *const ZMConversationLastUnreadMissedCallDateKey;
 extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 
-
-
 @interface ZMConversation (Internal)
 
 + (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc;
@@ -213,6 +211,9 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 
 @interface ZMConversation (SelfConversation)
+
+/// Create and append to self conversation a ClientMessage that has generic message data built with the given data
++ (ZMClientMessage *)appendSelfConversationWithGenericMessageData:(NSData *)messageData managedObjectContext:(NSManagedObjectContext *)moc;
 
 + (ZMClientMessage *)appendSelfConversationWithLastReadOfConversation:(ZMConversation *)conversation;
 + (ZMClientMessage *)appendSelfConversationWithClearedOfConversation:(ZMConversation *)conversation;

@@ -110,7 +110,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
-            modifier: { $0.sender.name = "Horst"},
+            modifier: { $0.sender!.name = "Horst"},
             expectedChangedField: "senderChanged"
         )
     }
@@ -161,7 +161,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
-            modifier: { $0.sender.accentColorValue = ZMAccentColor.SoftPink },
+            modifier: { $0.sender!.accentColorValue = ZMAccentColor.SoftPink },
             expectedChangedField: "senderChanged"
         )
     }
@@ -176,7 +176,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
-            modifier: { $0.sender.imageMediumData = self.verySmallJPEGData()},
+            modifier: { $0.sender!.imageMediumData = self.verySmallJPEGData()},
             expectedChangedField: "senderChanged"
         )
     }
@@ -191,7 +191,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
-            modifier: { $0.sender.imageSmallProfileData = self.verySmallJPEGData()},
+            modifier: { $0.sender!.imageSmallProfileData = self.verySmallJPEGData()},
             expectedChangedField: "senderChanged"
         )
     }

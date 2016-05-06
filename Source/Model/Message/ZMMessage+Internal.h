@@ -25,6 +25,7 @@
 #import "ZMManagedObject+Internal.h"
 #import "ZMFetchRequestBatch.h"
 
+
 @class ZMEventID;
 @class ZMUser;
 @class ZMConversation;
@@ -60,14 +61,7 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 
 extern NSString * const ZMImageMessageWhitelistAssetDownloadNotificationName;
 
-@interface ZMMessage : ZMManagedObject <ZMConversationMessage>
-
-@property (nonatomic) ZMUser *sender;
-@property (nonatomic) BOOL isEncrypted;
-@property (nonatomic) BOOL isPlainText;
-@property (nonatomic) ZMConversation *hiddenInConversation;
-@property (nonatomic) ZMConversation *visibleInConversation;
-
+@interface ZMMessage : ZMManagedObject
 
 
 // Use these for sorting:
@@ -77,11 +71,13 @@ extern NSString * const ZMImageMessageWhitelistAssetDownloadNotificationName;
 - (void)resend;
 - (BOOL)shouldGenerateUnreadCount;
 
+- (void)removeMessage;
++ (void)removeMessageWithRemotelyDeletedMessage:(ZMMsgDeleted *)deletedMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
 @end
 
 
 
-@interface ZMTextMessage : ZMMessage <ZMConversationMessage>
+@interface ZMTextMessage : ZMMessage
 
 @property (nonatomic, readonly, copy) NSString *text;
 
@@ -89,7 +85,7 @@ extern NSString * const ZMImageMessageWhitelistAssetDownloadNotificationName;
 
 
 
-@interface ZMImageMessage : ZMMessage <ZMConversationMessage, ZMImageMessageData>
+@interface ZMImageMessage : ZMMessage <ZMImageMessageData>
 
 @property (nonatomic, readonly) BOOL mediumDataLoaded;
 @property (nonatomic, readonly) BOOL originalDataProcessed;
@@ -136,7 +132,6 @@ extern NSString * const ZMImageMessageWhitelistAssetDownloadNotificationName;
 
 @property (nonatomic) ZMEventID *eventID;
 @property (nonatomic) NSUUID *nonce;
-@property (nonatomic) NSDate *serverTimestamp;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
 

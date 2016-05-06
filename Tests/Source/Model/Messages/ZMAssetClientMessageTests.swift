@@ -169,7 +169,7 @@ class ZMAssetClientMessageTests : BaseZMClientMessageTests {
         // i.e. cache folder is cleared but message is already processed
         self.uiMOC.zm_imageAssetCache.deleteAssetData(message.nonce, format: ZMImageFormat.Medium, encrypted: false)
         
-        XCTAssertNil(message.imageMessageData.mediumData)
+        XCTAssertNil(message.imageMessageData?.mediumData)
         XCTAssertFalse(message.loadedMediumData)
     }
     
@@ -296,7 +296,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(asset.hasOriginal())
         XCTAssertTrue(asset.hasPreview())
         XCTAssertEqual(asset.original.name, name)
-        XCTAssertEqual(sut.fileMessageData.filename, name)
+        XCTAssertEqual(sut.fileMessageData?.filename, name)
         XCTAssertEqual(asset.original.mimeType, mimeType)
         XCTAssertEqual(asset.original.size, UInt64(data.length))
         XCTAssertEqual(asset.preview, preview)
@@ -320,10 +320,10 @@ extension ZMAssetClientMessageTests {
         sut.updateWithGenericMessage(originalMessage, updateEvent: ZMUpdateEvent())
         
         // then
-        XCTAssertEqual(sut.fileMessageData.size, 256)
-        XCTAssertEqual(sut.fileMessageData.mimeType, mimeType)
-        XCTAssertEqual(sut.fileMessageData.filename, name)
-        XCTAssertEqual(sut.fileMessageData.transferState, ZMFileTransferState.Uploading)
+        XCTAssertEqual(sut.fileMessageData?.size, 256)
+        XCTAssertEqual(sut.fileMessageData?.mimeType, mimeType)
+        XCTAssertEqual(sut.fileMessageData?.filename, name)
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.Uploading)
     }
     
     func testThatItUpdatesTheTransferStateWhenTheUploadedMessageIsMerged()
@@ -340,7 +340,7 @@ extension ZMAssetClientMessageTests {
         sut.updateWithGenericMessage(originalMessage, updateEvent: ZMUpdateEvent())
         
         // then
-        XCTAssertEqual(sut.fileMessageData.transferState, ZMFileTransferState.Uploaded)
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.Uploaded)
     }
     
     func testThatItUpdatesTheTransferStateWhenTheNotUploadedCanceledMessageIsMerged()
@@ -357,7 +357,7 @@ extension ZMAssetClientMessageTests {
         sut.updateWithGenericMessage(originalMessage, updateEvent: ZMUpdateEvent())
         
         // then
-        XCTAssertEqual(sut.fileMessageData.transferState, ZMFileTransferState.CancelledUpload)
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.CancelledUpload)
     }
     
     /// This is testing a race condition on the receiver side if the sender cancels but not fast enough, and he BE just got the entire payload
@@ -377,7 +377,7 @@ extension ZMAssetClientMessageTests {
         sut.updateWithGenericMessage(canceledMessage, updateEvent: ZMUpdateEvent())
         
         // then
-        XCTAssertEqual(sut.fileMessageData.transferState, ZMFileTransferState.CancelledUpload)
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.CancelledUpload)
     }
     
     func testThatItUpdatesTheTransferStateWhenTheNotUploadedFailedMessageIsMerged()
@@ -394,7 +394,7 @@ extension ZMAssetClientMessageTests {
         sut.updateWithGenericMessage(originalMessage, updateEvent: ZMUpdateEvent())
         
         // then
-        XCTAssertEqual(sut.fileMessageData.transferState, ZMFileTransferState.FailedUpload)
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.FailedUpload)
     }
     
     func testThatItUpdatesTheAssetIdWhenTheUploadedMessageIsMerged()
@@ -590,10 +590,10 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut.fileMessageData)
         
         // when
-        sut.fileMessageData.requestFullContent()
+        sut.fileMessageData?.requestFullContent()
         
         // then
-        XCTAssertEqual(sut.fileMessageData.transferState, ZMFileTransferState.Downloading)
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.Downloading)
     }
     
     func testThatItCancelsUpload() {
@@ -608,7 +608,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploading)
         
         // when
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         
         // then
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
@@ -626,13 +626,13 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploading)
         
         // when / then
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
         
         sut.resend()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploading)
         
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
         
         sut.resend()
@@ -653,7 +653,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // when
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         
         // then
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploaded)
@@ -673,7 +673,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // when
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         
         // then
         let messages = sut.dataSet.flatMap { $0.genericMessage }
@@ -699,7 +699,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // when
-        sut.fileMessageData.requestFullContent()
+        sut.fileMessageData?.requestFullContent()
         
         // then
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Downloaded)
@@ -717,7 +717,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // when we cancel the transfer
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
         
         // then the generic message data should include the not uploaded
@@ -744,7 +744,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // when we cancel the transfer
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
         
         // then the genereted encrypted message should include the Asset.Original and Asset.NotUploaded
@@ -771,7 +771,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Downloading)
         
         // when
-        sut.fileMessageData.cancelTransfer()
+        sut.fileMessageData?.cancelTransfer()
         
         // then
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploaded)
@@ -978,7 +978,7 @@ extension ZMAssetClientMessageTests {
         let payload : [NSObject : AnyObject] = ["deleted" : [String:String](), "missing" : [String:String](), "redundant":[String:String](), "time" : date.transportString()]
         
         message.updateWithPostPayload(payload, updatedKeys: Set(arrayLiteral: ZMAssetClientMessage_NeedsToUploadPreviewKey))
-        XCTAssertEqual(message.serverTimestamp, message.conversation.lastServerTimeStamp)
+        XCTAssertEqual(message.serverTimestamp, message.conversation?.lastServerTimeStamp)
     }
     
     func testThatItDoesNotSetConversationLastServerTimestampWhenPostingMedium() {
@@ -987,7 +987,7 @@ extension ZMAssetClientMessageTests {
         let payload : [NSObject : AnyObject] = ["deleted" : [String:String](), "missing" : [String:String](), "redundant":[String:String](), "time" : date.transportString()]
         
         message.updateWithPostPayload(payload, updatedKeys: Set(arrayLiteral: ZMAssetClientMessage_NeedsToUploadMediumKey))
-        XCTAssertNotEqual(message.serverTimestamp, message.conversation.lastServerTimeStamp)
+        XCTAssertNotEqual(message.serverTimestamp, message.conversation?.lastServerTimeStamp)
     }
     
 }
@@ -1374,8 +1374,8 @@ extension ZMAssetClientMessageTests {
         let message2 = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
         
         // when
-        let id1 = message1.imageMessageData.imageDataIdentifier
-        let id2 = message2.imageMessageData.imageDataIdentifier
+        let id1 = message1.imageMessageData?.imageDataIdentifier
+        let id2 = message2.imageMessageData?.imageDataIdentifier
         
         
         // then
@@ -1383,21 +1383,21 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(id2)
         XCTAssertNotEqual(id1, id2)
         
-        XCTAssertEqual(id1, message1.imageMessageData.imageDataIdentifier) // not random!
+        XCTAssertEqual(id1, message1.imageMessageData?.imageDataIdentifier) // not random!
     }
     
     func testThatImageDataIdentifierChangesWhenChangingProcessedImage() {
         
         // given
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
-        let oldId = message.imageMessageData.imageDataIdentifier
+        let oldId = message.imageMessageData?.imageDataIdentifier
         let properties = ZMIImageProperties(size: CGSizeMake(300,300), length: 234, mimeType: "image/jpg")
         
         // when
         message.imageAssetStorage!.setImageData(self.verySmallJPEGData(), forFormat: .Medium, properties: properties)
         
         // then
-        let id = message.imageMessageData.imageDataIdentifier
+        let id = message.imageMessageData?.imageDataIdentifier
         XCTAssertNotEqual(id, oldId)
     }
 }
@@ -1436,8 +1436,8 @@ extension ZMAssetClientMessageTests {
             // then
             XCTAssertNotNil(sut)
             XCTAssertEqual(sut!.conversation, conversation)
-            XCTAssertEqual(sut!.sender.remoteIdentifier!.transportString(), payload["from"] as? String)
-            XCTAssertEqual(sut!.serverTimestamp.transportString(), payload["time"] as? String)
+            XCTAssertEqual(sut!.sender?.remoteIdentifier!.transportString(), payload["from"] as? String)
+            XCTAssertEqual(sut!.serverTimestamp?.transportString(), payload["time"] as? String)
             
             XCTAssertTrue(sut!.isEncrypted)
             XCTAssertFalse(sut!.isPlainText)
@@ -1449,6 +1449,7 @@ extension ZMAssetClientMessageTests {
 }
 
 // MARK: - GIF Data
+
 extension ZMAssetClientMessageTests {
     
     func testThatIsNotAnAnimatedGifWhenItHasNoMediumData() {
@@ -1464,6 +1465,97 @@ extension ZMAssetClientMessageTests {
         message.imageAssetStorage!.setImageData(data, forFormat: .Preview, properties: testProperties)
         
         // then
-        XCTAssertFalse(message.imageMessageData.isAnimatedGIF);
+        XCTAssertFalse(message.imageMessageData!.isAnimatedGIF);
     }
+}
+
+// MARK: - Message Deletion
+
+extension ZMAssetClientMessageTests {
+    
+    func testThatAnAssetClientMessageWithFileDataCanBeDeleted_Delivered() {
+        checkThatFileMessageCanBeDeleted(true, .Delivered)
+    }
+    
+    func testThatAnAssetClientMessageWithFileDataCanBeDeleted_Expired() {
+        checkThatFileMessageCanBeDeleted(true, .FailedToSend)
+    }
+    
+    func testThatAnAssetClientMessageWithFileDataCan_Not_BeDeleted_Pending() {
+        checkThatFileMessageCanBeDeleted(false, .Pending)
+    }
+    
+    func testThatAnAssetClientMessageWithImageDataCanBeDeleted_Delivered() {
+        checkThatImageAssetMessageCanBeDeleted(true, .Delivered)
+    }
+    
+    func testThatAnAssetClientMessageWithImageDataCanBeDeleted_Expired() {
+        checkThatImageAssetMessageCanBeDeleted(true, .FailedToSend)
+    }
+    
+    func testThatAnAssetClientMessageWithImageDataCan_Not_BeDeleted_Pending() {
+        checkThatImageAssetMessageCanBeDeleted(false, .Pending)
+    }
+
+    // MARK: Helper
+    
+    func checkThatFileMessageCanBeDeleted(canBeDeleted: Bool, _ state: ZMDeliveryState) {
+        // given
+        _ = createTestFile(testURL)
+        defer { removeTestFile(testURL) }
+        
+        let sut = ZMAssetClientMessage(
+            assetURL: testURL,
+            size: 256,
+            mimeType: "text/plain",
+            name: name!,
+            nonce: .createUUID(),
+            managedObjectContext: syncMOC
+        )
+        
+        sut.isEncrypted = true
+        
+        XCTAssertNotNil(sut.fileMessageData)
+        XCTAssertTrue(sut.isEncrypted)
+        XCTAssertTrue(syncMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // when
+        if state == .Delivered {
+            sut.delivered = true
+        } else if state == .FailedToSend {
+            sut.expire()
+        }
+        
+        XCTAssertEqual(sut.deliveryState, state)
+        
+        // then
+        XCTAssertEqual(sut.canBeDeleted, canBeDeleted)
+    }
+    
+    func checkThatImageAssetMessageCanBeDeleted(canBeDeleted: Bool, _ state: ZMDeliveryState) {
+        // given
+        let sut = createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
+        
+        sut.isEncrypted = true
+        XCTAssertNil(sut.fileMessageData)
+        XCTAssertTrue(sut.isEncrypted)
+        XCTAssertNotNil(sut.imageAssetStorage)
+        XCTAssertNotNil(sut.imageMessageData)
+        XCTAssertTrue(syncMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // when
+        if state == .Delivered {
+            sut.delivered = true
+        } else if state == .FailedToSend {
+            sut.expire()
+        }
+        
+        XCTAssertEqual(sut.deliveryState, state)
+        
+        // then
+        XCTAssertEqual(sut.canBeDeleted, canBeDeleted)
+    }
+    
 }

@@ -28,6 +28,8 @@
 #import "ZMClientMessage.h"
 #import "NSManagedObjectContext+zmessaging.h"
 
+#import <ZMCDataModel/ZMCDataModel-Swift.h>
+
 NSString *const ZMConversationInternalEstimatedUnreadCountKey = @"internalEstimatedUnreadCount";
 NSString *const ZMConversationLastUnreadKnockDateKey = @"lastUnreadKnockDate";
 NSString *const ZMConversationLastUnreadMissedCallDateKey = @"lastUnreadMissedCallDate";

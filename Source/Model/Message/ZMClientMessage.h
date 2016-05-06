@@ -20,13 +20,13 @@
 #import "ZMMessage+Internal.h"
 #import "ZMOTRMessage.h"
 
-
 @class UserClient;
+@protocol ZMConversationMessage;
 
 extern NSString * const ZMFailedToCreateEncryptedMessagePayloadString;
 extern NSUInteger const ZMClientMessageByteSizeExternalThreshold;
 
-@interface ZMClientMessage : ZMOTRMessage <ZMConversationMessage>
+@interface ZMClientMessage : ZMOTRMessage
 
 @property (nonatomic, readonly) ZMGenericMessage *genericMessage;
 

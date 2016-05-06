@@ -3661,7 +3661,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
-- (void)testThatItUpdatesTheConversationWhenItReceivesAZMLastReadInTheSelfConversation
+- (void)testThatItUpdatesTheConversationWhenItReceivesALastReadMessage
 {
     // given
     __block ZMConversation *updatedConversation;
@@ -3696,6 +3696,251 @@
     
     // then
     XCTAssertEqualWithAccuracy([updatedConversation.lastReadServerTimeStamp timeIntervalSince1970], [newLastRead timeIntervalSince1970], 1.5);
+}
+
+- (void)testThatItRemovesTheMessageWhenItReceivesADeletionMessage;
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // given
+        NSUUID *messageID = [NSUUID createUUID];
+        NSUUID *selfUserID = [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier;
+        XCTAssertNotNil(selfUserID);
+        
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID];
+        
+        ZMGenericMessage *message = [ZMGenericMessage messageWithDeleteMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = message.data;
+        NSString *data = [contentData base64EncodedStringWithOptions:0];
+        
+        NSDictionary *payload = @{@"conversation" : selfUserID.transportString,
+                                  @"time" : [NSDate date].transportString,
+                                  @"data" : data,
+                                  @"from" : selfUserID.transportString,
+                                  @"id" : self.createEventID.transportString,
+                                  @"type": @"conversation.client-message-add"
+                                  };
+        ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
+        
+        // when
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [self.syncMOC saveOrRollback];
+        
+        // then
+        ZMMessage *fetchedMessage = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:self.syncMOC];
+        XCTAssertNil(fetchedMessage);
+    }];
+}
+
+- (void)testThatItRemovesImageAssetsWhenItReceivesADeletionMessage;
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // given
+        NSUUID *messageID = [NSUUID createUUID];
+        NSUUID *selfUserID = [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier;
+        NSData *imageData = [NSData secureRandomDataOfLength:100];
+        XCTAssertNotNil(selfUserID);
+        
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        [conversation appendOTRMessageWithImageData:[NSData secureRandomDataOfLength:500] nonce:messageID];
+        
+        // store asset data
+        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatOriginal encrypted:NO data:imageData];
+        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatPreview encrypted:NO data:imageData];
+        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatMedium encrypted:NO data:imageData];
+        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatPreview encrypted:YES data:imageData];
+        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatMedium encrypted:YES data:imageData];
+        
+        // delete
+        ZMGenericMessage *message = [ZMGenericMessage messageWithDeleteMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = message.data;
+        NSString *data = [contentData base64EncodedStringWithOptions:0];
+        
+        NSDictionary *payload = @{@"conversation" : selfUserID.transportString,
+                                  @"time" : [NSDate date].transportString,
+                                  @"data" : data,
+                                  @"from" : selfUserID.transportString,
+                                  @"id" : self.createEventID.transportString,
+                                  @"type": @"conversation.client-message-add"
+                                  };
+        ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
+        
+        // when
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [self.syncMOC saveOrRollback];
+        
+        // then
+        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatOriginal encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatPreview encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatMedium encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatPreview encrypted:YES]);
+        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatMedium encrypted:YES]);
+    }];
+}
+
+- (void)testThatItRemovesFileAssetsWhenItReceivesADeletionMessage;
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // given
+        NSUUID *messageID = [NSUUID createUUID];
+        NSUUID *selfUserID = [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier;
+        NSData *fileData = [NSData secureRandomDataOfLength:100];
+        NSString *fileName = @"foo.bar";
+        
+        NSString *documentsURL = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        NSURL *fileURL = [[NSURL fileURLWithPath:documentsURL] URLByAppendingPathComponent:fileName];
+        [fileData writeToURL:fileURL atomically:NO];
+        
+        XCTAssertNotNil(selfUserID);
+        
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        [conversation appendOTRMessageWithFileURL:fileURL fileSize:200 name:fileName mimeType:@"text/ascii" nonce:messageID];
+        
+        // store asset data
+        [self.syncMOC.zm_fileAssetCache storeAssetData:messageID fileName:fileName encrypted:NO data:fileData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:messageID fileName:fileName encrypted:YES data:fileData];
+        
+        // delete
+        ZMGenericMessage *message = [ZMGenericMessage messageWithDeleteMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = message.data;
+        NSString *data = [contentData base64EncodedStringWithOptions:0];
+        
+        NSDictionary *payload = @{@"conversation" : selfUserID.transportString,
+                                  @"time" : [NSDate date].transportString,
+                                  @"data" : data,
+                                  @"from" : selfUserID.transportString,
+                                  @"id" : self.createEventID.transportString,
+                                  @"type": @"conversation.client-message-add"
+                                  };
+        ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
+        
+        // when
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [self.syncMOC saveOrRollback];
+        
+        // then
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:messageID fileName:fileName encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:messageID fileName:fileName encrypted:YES]);
+    }];
+}
+
+- (void)testThatItDoesNotRemovesANonExistingMessageWhenItReceivesADeletionMessage;
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // given
+        NSUUID *selfUserID = [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier;
+        XCTAssertNotNil(selfUserID);
+        
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:[NSUUID createUUID]];
+        NSUInteger previusMessagesCount = conversation.messages.count;
+        
+        ZMGenericMessage *message = [ZMGenericMessage messageWithDeleteMessage:[NSUUID createUUID].transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = message.data;
+        NSString *data = [contentData base64EncodedStringWithOptions:0];
+        
+        NSDictionary *payload = @{@"conversation" : selfUserID.transportString,
+                                  @"time" : [NSDate date].transportString,
+                                  @"data" : data,
+                                  @"from" : selfUserID.transportString,
+                                  @"id" : self.createEventID.transportString,
+                                  @"type": @"conversation.client-message-add"
+                                  };
+        ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
+        
+        // when
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [self.syncMOC saveOrRollback];
+        
+        // then
+        XCTAssertEqual(previusMessagesCount, conversation.messages.count);
+    }];
+}
+
+- (void)testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotFromSelfUser;
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // given
+        NSUUID *messageID = [NSUUID createUUID];
+        NSUUID *selfUserID = [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier;
+        XCTAssertNotNil(selfUserID);
+        
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID];
+        NSUInteger previusMessagesCount = conversation.messages.count;
+        
+        ZMGenericMessage *message = [ZMGenericMessage messageWithDeleteMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = message.data;
+        NSString *data = [contentData base64EncodedStringWithOptions:0];
+        
+        NSDictionary *payload = @{@"conversation" : selfUserID.transportString,
+                                  @"time" : [NSDate date].transportString,
+                                  @"data" : data,
+                                  @"from" : [NSUUID createUUID].transportString,
+                                  @"id" : self.createEventID.transportString,
+                                  @"type": @"conversation.client-message-add"
+                                  };
+        ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
+        
+        // when
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [self.syncMOC saveOrRollback];
+        
+        // then
+        XCTAssertEqual(previusMessagesCount, conversation.messages.count);
+    }];
+}
+
+- (void)testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotInTheSelfConversation;
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // given
+        NSUUID *messageID = [NSUUID createUUID];
+        NSUUID *selfUserID = [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier;
+        XCTAssertNotNil(selfUserID);
+        
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID];
+        NSUInteger previusMessagesCount = conversation.messages.count;
+        
+        ZMGenericMessage *message = [ZMGenericMessage messageWithDeleteMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = message.data;
+        NSString *data = [contentData base64EncodedStringWithOptions:0];
+        
+        NSDictionary *payload = @{@"conversation" : [NSUUID createUUID].transportString,
+                                  @"time" : [NSDate date].transportString,
+                                  @"data" : data,
+                                  @"from" : selfUserID.transportString,
+                                  @"id" : self.createEventID.transportString,
+                                  @"type": @"conversation.client-message-add"
+                                  };
+        ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
+        
+        // when
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [self.syncMOC saveOrRollback];
+        
+        // then
+        XCTAssertEqual(previusMessagesCount, conversation.messages.count);
+    }];
 }
 
 @end
