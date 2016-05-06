@@ -315,10 +315,17 @@ static dispatch_queue_t isolationQueue()
     @try {
         unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     } @catch (id) {
+    
         ZMLogError(@"Unable to parse stored cookie data.");
         self.authenticationCookieData = nil;
         return;
     }
+    if (unarchiver == nil) {
+        ZMLogError(@"Unable to parse stored cookie data.");
+        self.authenticationCookieData = nil;
+        return;
+    }
+    
     unarchiver.requiresSecureCoding = YES;
     NSArray *properties = [unarchiver decodePropertyListForKey:@"properties"];
     VerifyReturn([properties isKindOfClass:[NSArray class]]);
