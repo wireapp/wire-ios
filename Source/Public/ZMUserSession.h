@@ -107,7 +107,7 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 @property (nonatomic, readonly) NSString *trackingIdentifier;
 
 
-/// Call this function to reregister the push tokens with the backend
+/// Creates new signaling keys  and reregisters the keys and the push tokens with the backend
 - (void)resetPushTokens;
 
 /// Initiates the deletion process for the current signed in user

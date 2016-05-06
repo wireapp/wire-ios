@@ -30,6 +30,7 @@
 #import "ZMPushToken.h"
 
 static char* const ZMLogTag ZM_UNUSED = "Authentication";
+static NSString *const HasHistoryKey = @"hasHistory";
 
 @implementation ZMUserSession (Authentication)
 
@@ -55,6 +56,7 @@ static char* const ZMLogTag ZM_UNUSED = "Authentication";
     ZMTraceAuthUserSessionLogin(loginCredentials.email, loginCredentials.password.length > 0 ? 1 : 0);
     
     [self reregisterPushTokensIfNecessary];
+    [self checkIfItHasHistory];
     
     [self.syncManagedObjectContext performGroupedBlock:^{
         if (self.isLoggedIn) {
@@ -83,6 +85,23 @@ static char* const ZMLogTag ZM_UNUSED = "Authentication";
     }];
     
     [ZMOperationLoop notifyNewRequestsAvailable:self];
+}
+
+- (void)checkIfItHasHistory
+{
+    NSFetchRequest *convRequest = [NSFetchRequest fetchRequestWithEntityName:[ZMConversation entityName]];
+    NSUInteger count = [self.managedObjectContext countForFetchRequest:convRequest error:nil];
+    [self setHadHistoryAtLastLogin:(count > 1)];
+}
+
+- (void)setHadHistoryAtLastLogin:(BOOL)hadHistoryAtLastLogin
+{
+    [self.managedObjectContext setPersistentStoreMetadata:@(hadHistoryAtLastLogin) forKey:HasHistoryKey];
+}
+
+- (BOOL)hadHistoryAtLastLogin
+{
+    return [[self.managedObjectContext persistentStoreMetadataForKey:HasHistoryKey] boolValue];
 }
 
 - (void)reregisterPushTokensIfNecessary

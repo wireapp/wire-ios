@@ -32,8 +32,7 @@ extension ZMHotFixDirectory {
             selfClient.apsDecryptionKey = keys.decryptionKey
             APSSignalingKeysStore.clearSignalingKeysInKeyChain()
         } else {
-            selfClient.needsToUploadSignalingKeys = true
-            selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNeedsToUpdateSignalingKeysKey))
+            UserClient.resetSignalingKeysInContext(context)
         }
         
         context.enqueueDelayedSave()

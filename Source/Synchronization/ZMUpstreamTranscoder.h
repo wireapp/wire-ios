@@ -56,7 +56,7 @@
 
 /// If implemented, the transcoder can refuse requests until a conditions is fullfilled
 /// Object will be not removed from objects to be synced
-- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * _Nonnull)managedObject withSync:(id _Nonnull)sync;
+- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * _Nonnull)managedObject forKeys:(NSSet<NSString *>  * _Nonnull )keys withSync:(id _Nonnull)sync;
 
 /// If this method is not implemented, inserted sync will delete object.
 /// If this method reutrns TRUE the object will be added back to sync queue.

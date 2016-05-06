@@ -112,31 +112,49 @@
     return request;
 }
 
-- (ZMUpstreamRequest *)requestForUpdatingObject:(ZMAssetClientMessage *)message forKeys:(NSSet *)keys
+- (BOOL)shouldCreateRequestToSyncObject:(ZMAssetClientMessage *)message forKeys:(NSSet *)keys withSync:(id)sync
+{
+    NOT_USED(sync);
+    ZMImageFormat format = [self imageFormatForKeys:keys];
+    if(format == ZMImageFormatInvalid) {
+        // we will ultimately crash here when trying to create the request
+        return YES;
+    }
+    if ([message.imageAssetStorage shouldReprocessForFormat:format]) {
+        // before we create an upstream request we should check if we can (and should) process image data again
+        // if we can we reschedule processing
+        // this might cause a loop if the message can not be processed whatsoever
+        [self scheduleImageProcessingForMessage:message format:format];
+        [self.managedObjectContext saveOrRollback];
+        return NO;
+    }
+    return YES;
+}
+
+- (ZMImageFormat)imageFormatForKeys:(NSSet *)keys
 {
     ZMImageFormat format = ZMImageFormatInvalid;
-    
     if ([keys containsObject:ZMAssetClientMessage_NeedsToUploadPreviewKey]) {
         format = ZMImageFormatPreview;
     }
     else if ([keys containsObject:ZMAssetClientMessage_NeedsToUploadMediumKey]) {
         format = ZMImageFormatMedium;
     }
+    return format;
+}
+
+- (ZMUpstreamRequest *)requestForUpdatingObject:(ZMAssetClientMessage *)message forKeys:(NSSet *)keys
+{
+    ZMImageFormat format = [self imageFormatForKeys:keys];
     if(format == ZMImageFormatInvalid) {
         ZMTrapUnableToGenerateRequest(keys, self);
         return nil;
     }
     ZMUpstreamRequest *request = [self requestForUpdatingAssetClientMessage:message format:format];
     if (request == nil) {
-        //when we failed to create upstream request we check if we can (and should) process image data again
-        //if we can't than something is wrong and we can't really recover from that and we just delete such message
-        //if we can we schedule processing
-        if ([message.imageAssetStorage shouldReprocessForFormat:format]) {
-            [self scheduleImageProcessingForMessage:message format:format];
-        }
-        else {
-            [message.managedObjectContext deleteObject:message];
-        }
+        // We will crash, but we should still delete the image
+        [message.managedObjectContext deleteObject:message];
+        [self.managedObjectContext saveOrRollback];
     }
     return request;
 }

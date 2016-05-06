@@ -1385,6 +1385,42 @@ extension UserClientRequestStrategyTests {
         XCTAssertFalse(existingClient.hasLocalModificationsForKey(ZMUserClientNeedsToUpdateSignalingKeysKey))
 
     }
+    
+    func testThatItRetriesOnceWhenUploadSignalingKeysFails() {
+        
+        // given
+        clientRegistrationStatus.mockPhase = .Registered
+        
+        let existingClient = createSelfClient()
+        XCTAssertNil(existingClient.apsVerificationKey)
+        XCTAssertNil(existingClient.apsDecryptionKey)
+        
+        existingClient.needsToUploadSignalingKeys = true
+        existingClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNeedsToUpdateSignalingKeysKey))
+        self.sut.contextChangeTrackers.forEach{$0.objectsDidChange(Set(arrayLiteral: existingClient))}
+        
+        // when
+        let request = self.sut.nextRequest()
+        XCTAssertNotNil(request)
+        let badResponse = ZMTransportResponse(payload: ["label": "bad-request"], HTTPstatus: 400, transportSessionError: nil)
+
+        request?.completeWithResponse(badResponse)
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.2))
+        
+        // and when
+        let secondRequest = self.sut.nextRequest()
+        XCTAssertNotNil(secondRequest)
+        let success = ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil)
+
+        request?.completeWithResponse(success)
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.2))
+        
+        // and when
+        let thirdRequest = self.sut.nextRequest()
+        XCTAssertNil(thirdRequest)
+        
+    }
+
 }
 
 

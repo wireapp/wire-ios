@@ -53,6 +53,8 @@
 /// This will delete any data stored by zmessaging, but retain the cookies (i.e. keychain)
 + (void)deleteCacheOnRelaunch;
 
+- (BOOL)hadHistoryAtLastLogin;
+
 @end
 
 

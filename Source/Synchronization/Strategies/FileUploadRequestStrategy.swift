@@ -209,7 +209,7 @@ private let reponseHeaderAssetIdKey = "Location"
     
     /// Returns a request to upload original
     private func requestToUploadOriginal(message: ZMAssetClientMessage) -> ZMTransportRequest? {
-        let conversationId = message.conversation.remoteIdentifier
+        guard let conversationId = message.conversation?.remoteIdentifier else { return nil }
         let request = requestFactory.upstreamRequestForEncryptedFileMessage(.Placeholder, message: message, forConversationWithId: conversationId)
         
         request?.addTaskCreatedHandler(ZMTaskCreatedHandler(onGroupQueue: managedObjectContext) { _, taskIdentifier in
@@ -228,7 +228,7 @@ private let reponseHeaderAssetIdKey = "Location"
     
     /// Returns a request to upload full file
     private func requestToUploadFull(message: ZMAssetClientMessage) -> ZMTransportRequest? {
-        let conversationId = message.conversation.remoteIdentifier
+        guard let conversationId = message.conversation?.remoteIdentifier else { return nil }
         let request = requestFactory.upstreamRequestForEncryptedFileMessage(.FileData, message: message, forConversationWithId: conversationId)
         
         request?.addTaskCreatedHandler(ZMTaskCreatedHandler(onGroupQueue: managedObjectContext) { _, taskIdentifier in
@@ -251,7 +251,7 @@ private let reponseHeaderAssetIdKey = "Location"
     
     /// Returns a request to upload full file
     private func requestToUploadNotUploaded(message: ZMAssetClientMessage) -> ZMTransportRequest? {
-        let conversationId = message.conversation.remoteIdentifier
+        guard let conversationId = message.conversation?.remoteIdentifier else { return nil }
         let request = requestFactory.upstreamRequestForEncryptedFileMessage(.Placeholder, message: message, forConversationWithId: conversationId)
         return request
     }

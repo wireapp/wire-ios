@@ -80,13 +80,14 @@ import ZMTransport
     
     private func handleResponse(response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
         if response.result == .Success {
+            guard let fileMessageData = assetClientMessage.fileMessageData else { return }
             // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
             let fileCache = self.managedObjectContext.zm_fileAssetCache
-            fileCache.storeAssetData(assetClientMessage.nonce, fileName: assetClientMessage.fileMessageData.filename, encrypted: true, data: response.rawData)
+            fileCache.storeAssetData(assetClientMessage.nonce, fileName: fileMessageData.filename, encrypted: true, data: response.rawData)
 
             let imageAsset = assetClientMessage.genericAssetMessage.asset
 
-            if fileCache.decryptFileIfItMatchesDigest(assetClientMessage.nonce, fileName: assetClientMessage.fileMessageData.filename, encryptionKey: imageAsset.uploaded.otrKey, sha256Digest: imageAsset.uploaded.sha256) {
+            if fileCache.decryptFileIfItMatchesDigest(assetClientMessage.nonce, fileName: fileMessageData.filename, encryptionKey: imageAsset.uploaded.otrKey, sha256Digest: imageAsset.uploaded.sha256) {
                 assetClientMessage.transferState = .Downloaded
             }
             else {
