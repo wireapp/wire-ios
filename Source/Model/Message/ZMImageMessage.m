@@ -30,9 +30,6 @@
 #import "ZMClientMessage.h"
 #import "ZMCDataModel/ZMCDataModel-Swift.h"
 
-NSString * const ZMImageMessageWhitelistAssetDownloadNotificationName = @"ZMWhitelistAssetDownloadNotificationName";
-
-
 #pragma mark - Image message
 
 @interface ZMImageMessage ()
@@ -333,20 +330,6 @@ NSString * const ZMImageMessageWhitelistAssetDownloadNotificationName = @"ZMWhit
     
     self.originalDataProcessed = YES;
     [self.managedObjectContext enqueueDelayedSave];
-}
-
-
-- (void)requestFullContent
-{
-    if (self.mediumRemoteIdentifier != nil) {
-        NSError *error;
-        if(self.objectID.isTemporaryID) {
-            if(![self.managedObjectContext obtainPermanentIDsForObjects:@[self] error:&error]) {
-                ZMLogError(@"Can't get permanent object ID for object: %@", error);
-            }
-        }
-        [[NSNotificationCenter defaultCenter] postNotificationName:ZMImageMessageWhitelistAssetDownloadNotificationName object:self.objectID];
-    }
 }
 
 @end

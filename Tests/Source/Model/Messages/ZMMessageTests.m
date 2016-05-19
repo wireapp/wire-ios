@@ -791,8 +791,9 @@ NSString * const IsExpiredKey = @"isExpired";
     
     ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     message.serverTimestamp = referenceDate;
+    message.uploadState = ZMAssetUploadStateUploadingPlaceholder;
     
-    NSSet *updatedKeys = [NSSet setWithObject:ZMAssetClientMessage_NeedsToUploadPreviewKey];
+    NSSet *updatedKeys = [NSSet setWithObject:ZMAssetClientMessageUploadedStateKey];
 
     
     // when
@@ -810,8 +811,9 @@ NSString * const IsExpiredKey = @"isExpired";
     
     ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     message.serverTimestamp = referenceDate;
+    message.uploadState = ZMAssetUploadStateUploadingFullAsset;
     
-    NSSet *updatedKeys = [NSSet setWithObject:ZMAssetClientMessage_NeedsToUploadMediumKey];
+    NSSet *updatedKeys = [NSSet setWithObject:ZMAssetClientMessageUploadedStateKey];
     
     // when
     [message updateWithPostPayload:@{@"time" : updatedDate.transportString } updatedKeys:updatedKeys];

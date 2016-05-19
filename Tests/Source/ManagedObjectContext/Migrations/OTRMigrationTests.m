@@ -338,7 +338,67 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     
     XCTAssertNotNil(userDictionaries);
     XCTAssertEqual(userDictionaries.count, 3lu);
-    XCTAssertEqualObjects(userDictionaries, self.userDictionaryFixture2_4);
+    XCTAssertEqualObjects(userDictionaries, [self userDictionaryFixture_2_45_modifiedDataFields:4]);
+}
+
+- (void)testThatItPerformsMigrationFrom_2_5_ToCurrentModelVersion {
+    // given
+    __block NSManagedObjectContext *syncContext;
+    __block NSUInteger conversationCount;
+    __block NSUInteger messageCount;
+    __block NSUInteger systemMessageCount;
+    __block NSUInteger connectionCount;
+    __block NSArray *userDictionaries;
+    __block NSUInteger userClientCount;
+    __block NSArray *assetClientMessages;
+    
+    // when
+    [self performMockingStoreURLWithVersion:@"2.5" block:^{
+        
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        
+        XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.5 to the current mom"];
+        
+        [syncContext performGroupedBlockAndWait:^{
+            NSError *error = nil;
+            conversationCount = [syncContext countForFetchRequest:ZMConversation.sortedFetchRequest error:&error];
+            messageCount = [syncContext countForFetchRequest:ZMClientMessage.sortedFetchRequest error:&error];
+            systemMessageCount = [syncContext countForFetchRequest:ZMSystemMessage.sortedFetchRequest error:&error];
+            connectionCount = [syncContext countForFetchRequest:ZMConnection.sortedFetchRequest error:&error];
+            userClientCount = [syncContext countForFetchRequest:UserClient.sortedFetchRequest error:&error];
+            assetClientMessages = [syncContext executeFetchRequestOrAssert:ZMAssetClientMessage.sortedFetchRequest];
+            
+            XCTAssertNil(error);
+            
+            NSFetchRequest *userFetchRequest = ZMUser.sortedFetchRequest;
+            userFetchRequest.resultType = NSDictionaryResultType;
+            userFetchRequest.propertiesToFetch = self.userPropertiesToFetch;
+            userDictionaries = [syncContext executeFetchRequestOrAssert:userFetchRequest];
+            [expectation fulfill];
+        }];
+        
+        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(15);
+    
+    // then
+    XCTAssertEqual(assetClientMessages.count, 5lu);
+    
+    for (ZMAssetClientMessage *message in assetClientMessages) {
+        XCTAssertEqual(message.uploadState, ZMAssetUploadStateDone);
+    }
+    
+    XCTAssertEqual(conversationCount, 2lu);
+    XCTAssertEqual(messageCount, 13lu);
+    XCTAssertEqual(systemMessageCount, 1lu);
+    XCTAssertEqual(connectionCount, 2lu);
+    XCTAssertEqual(userClientCount, 10lu);
+    
+    XCTAssertNotNil(userDictionaries);
+    XCTAssertEqual(userDictionaries.count, 3lu);
+    
+    XCTAssertEqualObjects(userDictionaries, [self userDictionaryFixture_2_45_modifiedDataFields:0]);
 }
 
 #pragma mark - Helper
@@ -406,7 +466,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 - (void)performMockingStoreURLWithVersion:(NSString *)version block:(dispatch_block_t)block;
 {
     // 1.25 and 1.26 share the same model version of 1.25
-    if (! [@[@"1.24", @"1.25", @"1.27", @"1.28", @"2.3", @"2.4"] containsObject:version]) {
+    if (! [@[@"1.24", @"1.25", @"1.27", @"1.28", @"2.3", @"2.4", @"2.5"] containsObject:version]) {
         XCTFail(@"Can only copy a database version with an existing SQL fixture in the test target");
     }
     
@@ -627,13 +687,13 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              ];
 }
 
-- (NSArray <NSDictionary *>*)userDictionaryFixture2_4
+- (NSArray <NSDictionary *>*)userDictionaryFixture_2_45_modifiedDataFields:(NSInteger)modifiedFields
 {
     return @[
              @{
                  @"accentColorValue": @4,
                  @"emailAddress": @"user1@example.com",
-                 @"modifiedDataFields": @4,
+                 @"modifiedDataFields": @(modifiedFields),
                  @"name": @"User 1",
                  @"normalizedEmailAddress": @"user1@example.com",
                  @"normalizedName": @"user 1"

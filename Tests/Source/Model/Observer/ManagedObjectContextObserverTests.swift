@@ -31,11 +31,12 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
 
     }
     
-    class TestObserver : NSObject, ZMConversationObserver, ZMUserObserver, ZMVoiceChannelStateObserver {
+    class TestObserver : NSObject, ZMConversationObserver, ZMUserObserver, ZMVoiceChannelStateObserver, ZMMessageObserver {
     
         var conversationNotes: [ConversationChangeInfo] = []
         var userNotes: [UserChangeInfo] = []
         var voiceChannelNotes: [VoiceChannelStateChangeInfo] = []
+        var messageChangeNotes: [MessageChangeInfo] = []
 
         func conversationDidChange(note: ConversationChangeInfo!) {
             conversationNotes.append(note)
@@ -46,6 +47,10 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         
         func voiceChannelStateDidChange(note: VoiceChannelStateChangeInfo) {
             voiceChannelNotes.append(note)
+        }
+        
+        func messageDidChange(note: MessageChangeInfo!) {
+            messageChangeNotes.append(note)
         }
     }
     
@@ -264,6 +269,77 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(observer.userNotes.count, 1)
         
         ZMUser.removeUserObserverForToken(userToken)
+    }
+    
+    func testThatItPropagatesChangesOfComputedProperties_Images() {
+        
+        // given
+        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
+        
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let imageMessage = conversation.appendOTRMessageWithImageData(self.verySmallJPEGData(), nonce: NSUUID.createUUID())
+        self.uiMOC.zm_imageAssetCache.deleteAssetData(imageMessage.nonce, format: .Original, encrypted: false)
+        XCTAssertFalse(imageMessage.hasDownloadedImage)
+        self.uiMOC.saveOrRollback()
+        
+        let observer = TestObserver()
+        let messageObserver = ZMMessageNotification.addMessageObserver(observer, forMessage: imageMessage)
+        
+        // when
+        self.uiMOC.zm_imageAssetCache.storeAssetData(imageMessage.nonce, format: .Medium, encrypted: false, data: self.verySmallJPEGData())
+        XCTAssertTrue(imageMessage.hasDownloadedImage)
+        self.uiMOC.globalManagedObjectContextObserver.notifyNonCoreDataChangeInManagedObject(imageMessage)
+        
+        // then
+        if let note = observer.messageChangeNotes.first {
+            XCTAssertTrue(note.imageChanged)
+        } else {
+            XCTFail("No note")
+        }
+        
+        // after
+        ZMMessageNotification.removeMessageObserverForToken(messageObserver)
+        
+    }
+    
+    func testThatItPropagatesChangesOfComputedProperties_Files() {
+        
+        // given
+        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
+        let filename = "foo.mp4"
+        
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let fileMessage = conversation.appendOTRMessageWithFileURL(self.fileURLForResource("medium", extension: "jpg"),
+                                                                   fileSize: 200,
+                                                                   thumbnail: self.verySmallJPEGData(),
+                                                                   name: filename,
+                                                                   mimeType: "video/mp4",
+                                                                   nonce: NSUUID.createUUID(),
+                                                                   durationInMilliseconds: 0,
+                                                                   videoDimensions: CGSize(width: 0, height: 0)
+                                                                   )
+        self.uiMOC.zm_fileAssetCache.deleteAssetData(fileMessage.nonce, fileName: filename, encrypted: false)
+        XCTAssertFalse(fileMessage.hasDownloadedFile)
+        self.uiMOC.saveOrRollback()
+        
+        let observer = TestObserver()
+        let messageObserver = ZMMessageNotification.addMessageObserver(observer, forMessage: fileMessage)
+        
+        // when
+        self.uiMOC.zm_fileAssetCache.storeAssetData(fileMessage.nonce, fileName: filename, encrypted: false, data: self.verySmallJPEGData())
+        XCTAssertTrue(fileMessage.hasDownloadedFile)
+        self.uiMOC.globalManagedObjectContextObserver.notifyNonCoreDataChangeInManagedObject(fileMessage)
+        
+        // then
+        if let note = observer.messageChangeNotes.first {
+            XCTAssertTrue(note.fileAvailabilityChanged)
+        } else {
+            XCTFail("No note")
+        }
+        
+        // after
+        ZMMessageNotification.removeMessageObserverForToken(messageObserver)
+        
     }
     
 }

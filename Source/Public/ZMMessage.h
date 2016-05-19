@@ -121,13 +121,31 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
 @property (nonatomic) float progress;
 /// The file location on the filesystem
 @property (nonatomic, readonly) NSURL *fileURL;
+/// The asset ID of the thumbnail, if any
+@property (nonatomic) NSString *thumbnailAssetID;
+/// Duration of the media in milliseconds
+@property (nonatomic, readonly) NSUInteger durationMilliseconds;
+/// Dimensions of the video
+@property (nonatomic, readonly) CGSize videoDimensions;
+/// Document preview frame
+@property (nonatomic, readonly) NSData *previewData;
+/// This can be used as a cache key for @c -previewData
+@property (nonatomic, readonly) NSString *imagePreviewDataIdentifier;
 
-/// Marks file to be downloaded. @c state is immediately changed to @c .Downloading. When the download is done the state
-/// is changing either to @c .Downloaded or @c .FailedDownload. Progress and state can be observed via message observer.
-- (void)requestFullContent;
+/// Marks file to be downloaded
+- (void)requestFileDownload;
 
 /// Cancels the pending download or upload of the file. Deisgned to be used in case the file transfer on sender side is
 /// in @c ZMFileMessageStateUploading state, or in @c ZMFileMessageStateDownloading state on receiver side.
 - (void)cancelTransfer;
+
+/// Video-message related properties
+/// if MIME type is indicating the video content
+- (BOOL)isVideo;
+
+/// Audio-message related properties
+/// if MIME type is indicating the audio content
+- (BOOL)isAudio;
+
 @end
 

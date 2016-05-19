@@ -33,7 +33,8 @@ extension ZMMessage : ObjectInSnapshot {
             keys.append(ZMAssetClientMessageTransferStateKey)
             keys.append("previewGenericMessage")
             keys.append("mediumGenericMessage")
-            keys.append(ZMAssetClientMessageLoadedMediumDataKey)
+            keys.append(ZMAssetClientMessageDownloadedImageKey)
+            keys.append(ZMAssetClientMessageDownloadedFileKey)
             keys.append(ZMAssetClientMessageProgressKey)
         }
         return keys
@@ -50,8 +51,19 @@ extension ZMMessage : ObjectInSnapshot {
         return changedKeysAndOldValues.keys.contains("deliveryState")
     }
 
+    /// Whether the image data on disk changed
     public var imageChanged : Bool {
-        return !Set(arrayLiteral: "mediumData", "mediumRemoteIdentifier", "previewGenericMessage", "mediumGenericMessage", ZMAssetClientMessageLoadedMediumDataKey).isDisjointWith(changedKeysAndOldValues.keys)
+        return !Set(arrayLiteral: "mediumData",
+            "mediumRemoteIdentifier",
+            "previewGenericMessage",
+            "mediumGenericMessage",
+            ZMAssetClientMessageDownloadedImageKey
+        ).isDisjointWith(changedKeysAndOldValues.keys)
+    }
+    
+    /// Whether the file on disk changed
+    public var fileAvailabilityChanged: Bool {
+        return changedKeysAndOldValues.keys.contains(ZMAssetClientMessageDownloadedFileKey)
     }
 
     public var usersChanged : Bool {

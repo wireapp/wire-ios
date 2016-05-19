@@ -67,10 +67,15 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// The file transfer data associated with the message. If the message is not the file transfer, it will be nil
     var fileMessageData: ZMFileMessageData? { get }
     
-    /// Request the download of the full message content (asset, ...), if not already present.
+    /// Request the download of the file if not already present.
     /// The download will be executed asynchronously. The caller can be notified by observing the message window.
     /// This method can safely be called multiple times, even if the content is already available locally
-    func requestFullContent()
+    func requestFileDownload()
+    
+    /// Request the download of the image if not already present.
+    /// The download will be executed asynchronously. The caller can be notified by observing the message window.
+    /// This method can safely be called multiple times, even if the content is already available locally
+    func requestImageDownload()
     
     /// In case this message failed to deliver, this will resend it
     func resend()
@@ -135,7 +140,9 @@ extension ZMMessage : ZMConversationMessage {
 
     }
     
-    public func requestFullContent() {}
+    public func requestFileDownload() {}
+    
+    public func requestImageDownload() {}
     
     public var canBeDeleted : Bool {
         return deliveryState == .Delivered || deliveryState == .FailedToSend

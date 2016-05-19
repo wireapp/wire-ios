@@ -297,7 +297,7 @@
     conversation.remoteIdentifier = NSUUID.createUUID;
 
     // when
-    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileAtURL:fileURL];
+    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileAtURL:fileURL thumbnail:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -312,14 +312,103 @@
     XCTAssertNil(fileMessage.assetId);
     XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage);
     XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage);
-    XCTAssertFalse(fileMessage.needsToUploadPreview); // Should only be true after preprocessing (encrypting) is done
-    XCTAssertFalse(fileMessage.needsToUploadMedium);  // Should only be true after preprocessing (encrypting) is done
+    XCTAssertEqual(fileMessage.uploadState, ZMAssetUploadStateUploadingPlaceholder);
     XCTAssertFalse(fileMessage.delivered);
-    XCTAssertFalse(fileMessage.loadedMediumData);
+    XCTAssertTrue(fileMessage.hasDownloadedFile);
     XCTAssertEqual(fileMessage.size, size);
     XCTAssertEqual(fileMessage.progress, 0.f);
     XCTAssertEqualObjects(fileMessage.filename, @"secret_file.txt");
     XCTAssertEqualObjects(fileMessage.mimeType, @"text/plain");
+    XCTAssertFalse(fileMessage.fileMessageData.isVideo);
+    XCTAssertFalse(fileMessage.fileMessageData.isAudio);
+}
+
+- (void)testThatWeCanInsertAVideoMessage
+{
+    // given
+    NSString *fileName = @"video.mp4";
+    NSString *documents = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    NSURL *fileURL = [[NSURL fileURLWithPath:documents] URLByAppendingPathComponent:fileName];
+    NSData *videoData = [NSData secureRandomDataOfLength:500];
+    NSData *thumbnailData = [NSData secureRandomDataOfLength:250];
+    NSError *error;
+    NSUInteger duration = 12333;
+    CGSize dimensions = CGSizeMake(1900, 800);
+    XCTAssertTrue([videoData writeToURL:fileURL options:0 error:&error]);
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.remoteIdentifier = NSUUID.createUUID;
+    
+    // when
+    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithMediaAtURL:fileURL thumbnail:thumbnailData durationInMilliseconds:duration dimensions:dimensions];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    XCTAssertEqualObjects(conversation.messages.firstObject, fileMessage);
+    
+    XCTAssertTrue(fileMessage.isEncrypted);
+    XCTAssertNotNil(fileMessage);
+    XCTAssertNotNil(fileMessage.nonce);
+    XCTAssertNotNil(fileMessage.fileMessageData);
+    XCTAssertNotNil(fileMessage.genericAssetMessage);
+    XCTAssertNil(fileMessage.assetId);
+    XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage);
+    XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage);
+    XCTAssertEqual(fileMessage.uploadState, ZMAssetUploadStateUploadingPlaceholder);
+    XCTAssertFalse(fileMessage.delivered);
+    XCTAssertTrue(fileMessage.hasDownloadedFile);
+    XCTAssertEqual(fileMessage.size, videoData.length);
+    XCTAssertEqual(fileMessage.progress, 0.f);
+    XCTAssertEqualObjects(fileMessage.filename, fileName);
+    XCTAssertEqualObjects(fileMessage.mimeType, @"video/mp4");
+    XCTAssertTrue(fileMessage.fileMessageData.isVideo);
+    XCTAssertFalse(fileMessage.fileMessageData.isAudio);
+    XCTAssertEqual(fileMessage.fileMessageData.durationMilliseconds, duration);
+    XCTAssertEqual(fileMessage.fileMessageData.videoDimensions.height, dimensions.height);
+    XCTAssertEqual(fileMessage.fileMessageData.videoDimensions.width, dimensions.width);
+}
+
+- (void)testThatWeCanInsertAnAudioMessage
+{
+    // given
+    NSString *fileName = @"audio.m4a";
+    NSString *documents = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    NSURL *fileURL = [[NSURL fileURLWithPath:documents] URLByAppendingPathComponent:fileName];
+    NSData *videoData = [NSData secureRandomDataOfLength:500];
+    NSData *thumbnailData = [NSData secureRandomDataOfLength:250];
+    NSError *error;
+    NSUInteger duration = 12333;
+    XCTAssertTrue([videoData writeToURL:fileURL options:0 error:&error]);
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.remoteIdentifier = NSUUID.createUUID;
+    
+    // when
+    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithMediaAtURL:fileURL thumbnail:thumbnailData durationInMilliseconds:duration dimensions:CGSizeZero];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    XCTAssertEqualObjects(conversation.messages.firstObject, fileMessage);
+    
+    XCTAssertTrue(fileMessage.isEncrypted);
+    XCTAssertNotNil(fileMessage);
+    XCTAssertNotNil(fileMessage.nonce);
+    XCTAssertNotNil(fileMessage.fileMessageData);
+    XCTAssertNotNil(fileMessage.genericAssetMessage);
+    XCTAssertNil(fileMessage.assetId);
+    XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage);
+    XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage);
+    XCTAssertEqual(fileMessage.uploadState, ZMAssetUploadStateUploadingPlaceholder);
+    XCTAssertFalse(fileMessage.delivered);
+    XCTAssertTrue(fileMessage.hasDownloadedFile);
+    XCTAssertEqual(fileMessage.size, videoData.length);
+    XCTAssertEqual(fileMessage.progress, 0.f);
+    XCTAssertEqualObjects(fileMessage.filename, fileName);
+    XCTAssertEqualObjects(fileMessage.mimeType, @"audio/x-m4a");
+    XCTAssertFalse(fileMessage.fileMessageData.isVideo);
+    XCTAssertTrue(fileMessage.fileMessageData.isAudio);
 }
 
 @end // messages

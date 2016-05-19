@@ -19,13 +19,12 @@
 
 #import "ZMClientMessage.h"
 
-extern NSString * _Nonnull const ZMAssetClientMessage_NeedsToUploadPreviewKey;
-extern NSString * _Nonnull const ZMAssetClientMessage_NeedsToUploadMediumKey;
-extern NSString * _Nonnull const ZMAssetClientMessage_NeedsToUploadNotUploadedKey;
 extern NSString * _Nonnull const ZMAssetClientMessageTransferStateKey;
 extern NSString * _Nonnull const ZMAssetClientMessageProgressKey;
-extern NSString * _Nonnull const ZMAssetClientMessageLoadedMediumDataKey;
+extern NSString * _Nonnull const ZMAssetClientMessageDownloadedImageKey;
+extern NSString * _Nonnull const ZMAssetClientMessageDownloadedFileKey;
 extern NSString * _Nonnull const ZMAssetClientMessageDidCancelFileDownloadNotificationName;
+extern NSString * _Nonnull const ZMAssetClientMessageUploadedStateKey;
 
 /**
  *  This protocol is used to encapsulate the information and data about an image asset
@@ -54,17 +53,24 @@ extern NSString * _Nonnull const ZMAssetClientMessageDidCancelFileDownloadNotifi
 
 typedef NS_ENUM(NSUInteger, ZMAssetClientMessageDataType) {
     ZMAssetClientMessageDataTypePlaceholder = 1,
-    ZMAssetClientMessageDataTypeFileData = 2
+    ZMAssetClientMessageDataTypeFullAsset = 2,
+    ZMAssetClientMessageDataTypeThumbnail = 3,
+};
+
+typedef NS_ENUM(int16_t, ZMAssetUploadState) {
+    ZMAssetUploadStateDone = 0,
+    ZMAssetUploadStateUploadingPlaceholder = 1,
+    ZMAssetUploadStateUploadingThumbnail = 2,
+    ZMAssetUploadStateUploadingFullAsset = 3,
+    ZMAssetUploadStateUploadingFailed = 4
 };
 
 
 @interface ZMAssetClientMessage : ZMOTRMessage
 
-/// Whether it needs to upload the preview
-@property (nonatomic, readonly) BOOL needsToUploadPreview;
-
-/// Whether it needs to upload the medium
-@property (nonatomic, readonly) BOOL needsToUploadMedium;
+/// The generic asset message containing that is constructed by merging
+/// all generic messages from the dataset that contain an asset
+@property (nonatomic, readonly) ZMGenericMessage * _Nullable genericAssetMessage;
 
 /// Remote asset ID
 @property (nonatomic) NSUUID * _Nullable assetId;
@@ -84,11 +90,17 @@ typedef NS_ENUM(NSUInteger, ZMAssetClientMessageDataType) {
 /// File transfer state
 @property (nonatomic) ZMFileTransferState transferState;
 
+/// Upload state
+@property (nonatomic) ZMAssetUploadState uploadState;
+
 /// File name as was sent or @c nil in case of an image asset
 @property (nonatomic, readonly) NSString * _Nullable filename;
 
-/// Whether the medium representation was downloaded. The preview is always downloaded as it is in-line
-@property (nonatomic, readonly) BOOL loadedMediumData;
+/// Whether the image was downloaded
+@property (nonatomic, readonly) BOOL hasDownloadedImage;
+
+/// Whether the file was downloaded
+@property (nonatomic, readonly) BOOL hasDownloadedFile;
 
 // The image metaData if if this @c ZMAssetClientMessage represents an image or @c nil otherwise
 @property (nonatomic, readonly) id <ZMImageAssetStorage> _Nullable imageAssetStorage;
@@ -98,22 +110,22 @@ typedef NS_ENUM(NSUInteger, ZMAssetClientMessageDataType) {
 /// data of a @c FileMessage is being down- or uploaded after a termination event
 @property (nonatomic) ZMTaskIdentifier * _Nullable associatedTaskIdentifier;
 
-
-- (void)setNeedsToUploadData:(ZMAssetClientMessageDataType)dataType needsToUpload:(BOOL)needsToUpload;
-
 /// Creates a new @c ZMAssetClientMessage with an attached @c imageAssetStorage
 + (instancetype _Nonnull)assetClientMessageWithOriginalImageData:(NSData * _Nonnull)imageData
-                                                  nonce:(NSUUID * _Nonnull)nonce
-                                   managedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
+                                                           nonce:(NSUUID * _Nonnull)nonce
+                                            managedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 /// Inserts a new @c ZMAssetClientMessage in the @c moc and updates it with
 /// the given parameters, used when sending a file
 + (instancetype _Nonnull)assetClientMessageWithAssetURL:(NSURL * _Nonnull)fileURL
-                                          size:(unsigned long long)size
-                                      mimeType:(NSString * _Nonnull)mimeType
-                                          name:(NSString * _Nonnull)name
-                                         nonce:(NSUUID * _Nonnull)nonce
-                          managedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
+                                                   size:(unsigned long long)size
+                                              thumbnail:(NSData * _Nullable)thumbnailData
+                                               mimeType:(NSString * _Nonnull)mimeType
+                                                   name:(NSString * _Nonnull)name
+                                                  nonce:(NSUUID * _Nonnull)nonce
+                                   managedObjectContext:(NSManagedObjectContext * _Nonnull)moc
+                                 durationInMilliseconds:(NSUInteger)durationInMilliseconds
+                                        videoDimensions:(CGSize)videoSize;
 
 /// Adds a (protobuf) data entry to the list of generic message data
 - (void)addGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage;
@@ -123,9 +135,8 @@ typedef NS_ENUM(NSUInteger, ZMAssetClientMessageDataType) {
 /// Also returns @c nil for messages representing an image
 - (NSData * _Nullable)encryptedMessagePayloadForDataType:(ZMAssetClientMessageDataType)dataType;
 
-/// Marks file to be downloaded. @c state is immediately changed to @c .Downloading. When the download is done the state
-/// is changing either to @c .Downloaded or @c .FailedDownload. Progress and state can be observed via message observer.
-- (void)requestFullContent;
+/// Marks file to be downloaded
+- (void)requestFileDownload;
 
 - (void)didFailToUploadFileData;
 

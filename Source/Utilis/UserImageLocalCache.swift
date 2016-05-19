@@ -81,6 +81,7 @@ extension NSManagedObjectContext
         
         largeUserImageCache.makeURLSecure()
         smallUserImageCache.makeURLSecure()
+        super.init()
     }
     
     /// Large image for user

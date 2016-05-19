@@ -870,7 +870,12 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     return [self appendMessageWithOriginalImageData:imageData originalSize:originalSize];
 }
 
-- (nullable id<ZMConversationMessage>)appendMessageWithFileAtURL:(nonnull NSURL *)fileURL;
+- (nullable id<ZMConversationMessage>)appendMessageWithFileAtURL:(nonnull NSURL *)fileURL thumbnail:(nullable NSData *)thumbnailData;
+{
+    return [self appendMessageWithMediaAtURL:fileURL thumbnail:thumbnailData durationInMilliseconds:0 dimensions:CGSizeMake(0, 0)];
+}
+
+- (nullable id<ZMConversationMessage>)appendMessageWithMediaAtURL:(nonnull NSURL *)fileURL thumbnail:(nullable NSData *)thumbnailData durationInMilliseconds:(NSUInteger)durationInMilliseconds dimensions:(CGSize)dimensions;
 {
     VerifyReturnNil(nil != fileURL);
     if (! fileURL.isFileURL) {
@@ -892,7 +897,15 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     CFRelease(UTI);
     
     NSString * const mimeType = (__bridge NSString *)MIMEType;
-    return [self appendOTRMessageWithFileURL:fileURL fileSize:fileSize name:[fileURL lastPathComponent] mimeType:mimeType nonce:NSUUID.UUID];
+    return [self appendOTRMessageWithFileURL:fileURL
+                                    fileSize:fileSize
+                                   thumbnail:thumbnailData
+                                        name:[fileURL lastPathComponent]
+                                    mimeType:mimeType
+                                       nonce:NSUUID.UUID
+                      durationInMilliseconds:durationInMilliseconds
+                             videoDimensions:dimensions
+            ];
 }
 
 - (id<ZMConversationMessage>)appendMessageWithOriginalImageData:(NSData *)originalImageData originalSize:(CGSize __unused)originalSize;
@@ -1493,16 +1506,23 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 
 - (ZMAssetClientMessage *)appendOTRMessageWithFileURL:(NSURL *)fileURL
                                              fileSize:(unsigned long long)fileSize
+                                            thumbnail:(NSData *)thumbnailData
                                                  name:(NSString *)name
                                              mimeType:(NSString *)mimeType
                                                 nonce:(NSUUID *)nonce
+                               durationInMilliseconds:(NSUInteger)durationInMilliseconds
+                                      videoDimensions:(CGSize)videoSize
 {
     ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithAssetURL:fileURL
                                                                                     size:fileSize
+                                                                               thumbnail:thumbnailData
                                                                                 mimeType:mimeType
                                                                                     name:name
                                                                                    nonce:nonce
-                                                                    managedObjectContext:self.managedObjectContext];
+                                                                    managedObjectContext:self.managedObjectContext
+                                                                  durationInMilliseconds:durationInMilliseconds
+                                                                         videoDimensions:videoSize
+                                     ];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     message.isEncrypted = YES;
     [self sortedAppendMessage:message];

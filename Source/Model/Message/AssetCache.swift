@@ -43,6 +43,9 @@ protocol Cache {
     
     /// Deletes the data for a key. This will cause I/O
     func deleteAssetData(key: String)
+    
+    /// Checks if the data exists in the cache. Faster than checking the data itself
+    func hasDataForKey(key: String) -> Bool
 }
 
 
@@ -84,6 +87,10 @@ struct PINAssetCache : Cache {
     
     func wipeCache() {
         assetsCache.removeAllObjects()
+    }
+    
+    func hasDataForKey(key: String) -> Bool {
+        return self.assetData(key) != nil
     }
 }
 

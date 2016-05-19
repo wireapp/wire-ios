@@ -470,8 +470,9 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         
         //then
         XCTAssertEqual(observer.notifications.count, 1)
-        let note = observer.notifications.firstObject
-        XCTAssertEqual(note?.clientsChanged, true)
+        let note : UserChangeInfo = observer.notifications.firstObject! as! UserChangeInfo
+        let clientsChanged : Bool = note.clientsChanged
+        XCTAssertEqual(clientsChanged, true)
 
         // when
         selfClient.trustClient(otherClient)
@@ -479,10 +480,12 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
 
         // then
+        let userChangeInfos = observer.notifications.asArray() as! [UserChangeInfo]
+        
         XCTAssertEqual(observedUser.clients.count, 1)
-        XCTAssertEqual(observer.notifications.count, 2)
-        XCTAssertEqual(observer.notifications.map { $0.trustLevelChanged }, [false, true])
-        XCTAssertEqual(observer.notifications.map { $0.clientsChanged }, [true, false])
+        XCTAssertEqual(userChangeInfos.count, 2)
+        XCTAssertEqual(userChangeInfos.map { $0.trustLevelChanged }, [false, true])
+        XCTAssertEqual(userChangeInfos.map { $0.clientsChanged }, [true, false])
 
         observer.tearDown()
     }

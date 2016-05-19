@@ -130,6 +130,10 @@ private struct FileCache : Cache {
         return nil
     }
     
+    func hasDataForKey(key: String) -> Bool {
+        return assetURL(key) != nil
+    }
+    
     /// Returns the expected URL of a cache entry
     private func URLForKey(key: String) -> NSURL {
         guard key != "." && key != ".." else { fatal("Can't use \(key) as cache key") }
@@ -176,6 +180,10 @@ public class FileAssetCache : NSObject {
     /// Returns the asset URL for a given message
     public func accessRequestURL(messageID: NSUUID) -> NSURL? {
         return cache.assetURL(self.dynamicType.cacheKeyForAsset(messageID, fileName: "", request: true))
+    }
+    
+    public func hasDataOnDisk(messageID: NSUUID, fileName: String, encrypted: Bool) -> Bool {
+        return cache.hasDataForKey(self.dynamicType.cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
     }
     
     /// Sets the asset data for a given message. This will cause I/O

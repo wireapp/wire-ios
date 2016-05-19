@@ -164,6 +164,11 @@ extension FileAssetCacheTests {
         XCTAssertEqual(sut.assetData(id2, fileName: name2, encrypted: false), data2_plain)
         XCTAssertEqual(sut.assetData(id1, fileName: name1, encrypted: true), data1_enc)
         XCTAssertEqual(sut.assetData(id2, fileName: name2, encrypted: true), data2_enc)
+        
+        XCTAssertTrue(sut.hasDataOnDisk(id1, fileName: name1, encrypted: false))
+        XCTAssertTrue(sut.hasDataOnDisk(id2, fileName: name2, encrypted: false))
+        XCTAssertTrue(sut.hasDataOnDisk(id1, fileName: name1, encrypted: true))
+        XCTAssertTrue(sut.hasDataOnDisk(id2, fileName: name2, encrypted: true))
     }
     
     func testThatRetrievingMissingAssetsFilenameReturnsNil() {
@@ -180,6 +185,48 @@ extension FileAssetCacheTests {
         XCTAssertNil(data)
     }
     
+    func testThatHasDataOnDisk() {
+        
+        // given
+        let sut = FileAssetCache()
+        let uuid = NSUUID.createUUID()
+        sut.storeAssetData(uuid, fileName: "Mario.txt", encrypted: false, data: testData())
+        
+        // when
+        let data = sut.hasDataOnDisk(uuid, fileName: "Mario.txt", encrypted: false)
+        
+        // then
+        XCTAssertTrue(data)
+    }
+    
+    func testThatHasNoDataOnDiskWithWrongEncryptionFlag() {
+        
+        // given
+        let sut = FileAssetCache()
+        let uuid = NSUUID.createUUID()
+        sut.storeAssetData(uuid, fileName: "Mario.txt", encrypted: false, data: testData())
+        
+        // when
+        let data = sut.hasDataOnDisk(uuid, fileName: "Mario.txt", encrypted: true)
+        
+        // then
+        XCTAssertFalse(data)
+    }
+    
+    func testThatHasNoDataOnDiskWithWrongFileName() {
+        
+        // given
+        let sut = FileAssetCache()
+        let uuid = NSUUID.createUUID()
+        sut.storeAssetData(uuid, fileName: "Mario.txt", encrypted: false, data: testData())
+        
+        // when
+        let data = sut.hasDataOnDisk(uuid, fileName: "York.pdf", encrypted: false)
+        
+        // then
+        XCTAssertFalse(data)
+    }
+    
     func testThatRetrievingMissingAssetsUUIDReturnsNil() {
         
         // given
@@ -192,6 +239,20 @@ extension FileAssetCacheTests {
         
         // then
         XCTAssertNil(data)
+    }
+    
+    func testThatHasNoDataOnDiskWithWrongUUID() {
+        
+        // given
+        let sut = FileAssetCache()
+        let name = "Report.txt"
+        sut.storeAssetData(NSUUID.createUUID(), fileName: name, encrypted: false, data: testData())
+        
+        // when
+        let data = sut.hasDataOnDisk(NSUUID.createUUID(), fileName: name, encrypted: false)
+        
+        // then
+        XCTAssertFalse(data)
     }
     
     func testThatAssetsAreLoadedAcrossInstances() {

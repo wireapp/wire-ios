@@ -428,11 +428,17 @@ public final class ManagedObjectContextObserver: NSObject {
         }
     }
     
+    @objc public func notifyNonCoreDataChangeInManagedObject(object: NSObject) {
+        let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: [object])
+        self.processChanges(changes)
+    }
+    
     
     func propagateChangesForObservers(changes: ManagedObjectChanges, observerType: ObjectObserverType) {
         if let observersOfType = self.observers[observerType] {
+            let filteredChanges = changes.changesWithoutZombies
             for observer in observersOfType.allObjects {
-                (observer as? ObjectsDidChangeDelegate)?.objectsDidChange(changes.changesWithoutZombies)
+                (observer as? ObjectsDidChangeDelegate)?.objectsDidChange(filteredChanges)
             }
         }
     }
