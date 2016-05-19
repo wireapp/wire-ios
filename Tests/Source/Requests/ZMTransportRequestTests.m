@@ -250,15 +250,9 @@
     // given
     XCTestExpectation *expectation = [self expectationWithDescription:@"Task created handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
-    NSURLSessionTask *expectedTask = [NSURLSession.sharedSession dataTaskWithURL:[NSURL URLWithString:@"www.example.com"]];
-    NSString *sessionIdentifier = @"test-session";
-    id mockSession = [OCMockObject niceMockForClass:ZMURLSession.class];
-    [(ZMURLSession *)[[mockSession stub] andReturn:sessionIdentifier] identifier];
-    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:expectedTask.taskIdentifier
-                                                                    sessionIdentifier:sessionIdentifier];
+    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
     
-    ZMTaskCreatedHandler *handler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(NSURLSessionTask *task, ZMTaskIdentifier *identifier) {
-        XCTAssertEqualObjects(task, expectedTask);
+    ZMTaskCreatedHandler *handler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTaskIdentifier *identifier) {
         XCTAssertEqualObjects(identifier, expectedIdentifier);
         [expectation fulfill];
     }];
@@ -266,7 +260,7 @@
     [transportRequest addTaskCreatedHandler:handler];
     
     // when
-    [transportRequest callTaskCreationHandlersWithTask:expectedTask session:mockSession];
+    [transportRequest callTaskCreationHandlersWithIdentifier:2 sessionIdentifier:@"test-session"];
     
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -279,17 +273,15 @@
     XCTestExpectation *secondExpectation = [self expectationWithDescription:@"Second task created handler called"];;
     
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
-    NSURLSessionTask *expectedTask = [NSURLSession.sharedSession dataTaskWithURL:[NSURL URLWithString:@"www.example.com"]];
+    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
     
-    ZMTaskCreatedHandler *firstHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(NSURLSessionTask *task, ZMTaskIdentifier *identifier) {
-        NOT_USED(identifier);
-        XCTAssertEqualObjects(task, expectedTask);
+    ZMTaskCreatedHandler *firstHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTaskIdentifier *identifier) {
+        XCTAssertEqualObjects(identifier, expectedIdentifier);
         [firstExpectation fulfill];
     }];
     
-    ZMTaskCreatedHandler *secondHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(NSURLSessionTask *task, ZMTaskIdentifier *identifier) {
-        NOT_USED(identifier);
-        XCTAssertEqualObjects(task, expectedTask);
+    ZMTaskCreatedHandler *secondHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTaskIdentifier *identifier) {
+        XCTAssertEqualObjects(identifier, expectedIdentifier);
         [secondExpectation fulfill];
     }];
     
@@ -297,7 +289,7 @@
     [transportRequest addTaskCreatedHandler:secondHandler];
     
     // when
-    [transportRequest callTaskCreationHandlersWithTask:expectedTask session:nil];
+    [transportRequest callTaskCreationHandlersWithIdentifier:2 sessionIdentifier:@"test-session"];
     
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -309,7 +301,7 @@
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
     
     // when
-    XCTAssertNoThrow([transportRequest callTaskCreationHandlersWithTask:nil session:nil]);
+    XCTAssertNoThrow([transportRequest callTaskCreationHandlersWithIdentifier:0 sessionIdentifier:@""]);
 }
 
 - (void)testThatItSetsStartOfUploadTimestamp

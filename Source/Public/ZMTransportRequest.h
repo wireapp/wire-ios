@@ -27,7 +27,7 @@
 @class ZMTaskIdentifier;
 @class ZMURLSession;
 
-typedef void(^ZMTaskCreatedBlock)(NSURLSessionTask *, ZMTaskIdentifier *);
+typedef void(^ZMTaskCreatedBlock)(ZMTaskIdentifier *);
 typedef void(^ZMCompletionHandlerBlock)(ZMTransportResponse *);
 typedef void(^ZMAccessTokenHandlerBlock)(NSString *token, NSString *type);
 typedef void(^ZMProgressHandlerBlock)(float);
@@ -125,7 +125,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 - (void)addTaskCreatedHandler:(ZMTaskCreatedHandler *)taskCreatedHandler;
 - (void)addCompletionHandler:(ZMCompletionHandler *)completionHandler;
 - (void)addProgressHandler:(ZMTaskProgressHandler *)progressHandler;
-- (void)callTaskCreationHandlersWithTask:(NSURLSessionTask *)task session:(ZMURLSession *)session;
+- (void)callTaskCreationHandlersWithIdentifier:(NSUInteger)identifier sessionIdentifier:(NSString *)sessionIdentifier;
 - (void)completeWithResponse:(ZMTransportResponse *)response;
 - (void)updateProgress:(float)progress;
 - (BOOL)isEqualToRequest:(ZMTransportRequest *)request;
