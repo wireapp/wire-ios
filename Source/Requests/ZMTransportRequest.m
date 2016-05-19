@@ -448,10 +448,10 @@ static BOOL hasUTJSONSupport(void)
     }
 }
 
-- (void)callTaskCreationHandlersWithTask:(NSURLSessionTask *)task session:(ZMURLSession *)session;
+- (void)callTaskCreationHandlersWithIdentifier:(NSUInteger)identifier sessionIdentifier:(NSString *)sessionIdentifier;
 {
-    ZMTaskIdentifier *identifier = [ZMTaskIdentifier identifierWithIdentifier:task.taskIdentifier sessionIdentifier:session.identifier];
-    NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, task];
+    ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
+    NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, taskIdentifier];
     ZMBackgroundActivity *creationActivity = [ZMBackgroundActivity beginBackgroundActivityWithName:NSStringFromSelector(_cmd)];
     ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
     
@@ -461,7 +461,7 @@ static BOOL hasUTJSONSupport(void)
         if (nil != queue) {
             [queue performGroupedBlock:^{
                 ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:6 label:label];
-                handler.block(task, identifier);
+                handler.block(taskIdentifier);
                 [tp warnIfLongerThanInterval];
                 [handlerGroup leave];
             }];

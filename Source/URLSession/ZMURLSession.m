@@ -504,7 +504,7 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
         [self setRequest:transportRequest forTask:task];
     }
     
-    [transportRequest callTaskCreationHandlersWithTask:task session:self];
+    [transportRequest callTaskCreationHandlersWithIdentifier:task.taskIdentifier sessionIdentifier:self.identifier];
     ZMTraceTransportSessionTaskCreated(task, transportRequest);
     return task;
 }
