@@ -66,6 +66,8 @@
 @class UninterpretedOptionNamePart;
 @class UninterpretedOptionNamePartBuilder;
 @class ZMAsset;
+@class ZMAssetAudioMetaData;
+@class ZMAssetAudioMetaDataBuilder;
 @class ZMAssetBuilder;
 @class ZMAssetImageMetaData;
 @class ZMAssetImageMetaDataBuilder;
@@ -73,8 +75,8 @@
 @class ZMAssetOriginalBuilder;
 @class ZMAssetPreview;
 @class ZMAssetPreviewBuilder;
-@class ZMAssetUploaded;
-@class ZMAssetUploadedBuilder;
+@class ZMAssetRemoteData;
+@class ZMAssetRemoteDataBuilder;
 @class ZMAssetVideoMetaData;
 @class ZMAssetVideoMetaDataBuilder;
 @class ZMCalling;
@@ -808,28 +810,28 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @end
 
 #define Asset_original @"original"
-#define Asset_preview @"preview"
 #define Asset_not_uploaded @"notUploaded"
 #define Asset_uploaded @"uploaded"
+#define Asset_preview @"preview"
 @interface ZMAsset : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasOriginal_:1;
-  BOOL hasPreview_:1;
   BOOL hasUploaded_:1;
+  BOOL hasPreview_:1;
   BOOL hasNotUploaded_:1;
   ZMAssetOriginal* original;
+  ZMAssetRemoteData* uploaded;
   ZMAssetPreview* preview;
-  ZMAssetUploaded* uploaded;
   ZMAssetNotUploaded notUploaded;
 }
 - (BOOL) hasOriginal;
-- (BOOL) hasPreview;
 - (BOOL) hasNotUploaded;
 - (BOOL) hasUploaded;
+- (BOOL) hasPreview;
 @property (readonly, strong) ZMAssetOriginal* original;
-@property (readonly, strong) ZMAssetPreview* preview;
 @property (readonly) ZMAssetNotUploaded notUploaded;
-@property (readonly, strong) ZMAssetUploaded* uploaded;
+@property (readonly, strong) ZMAssetRemoteData* uploaded;
+@property (readonly, strong) ZMAssetPreview* preview;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -854,6 +856,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Original_name @"name"
 #define Original_image @"image"
 #define Original_video @"video"
+#define Original_audio @"audio"
 @interface ZMAssetOriginal : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasSize_:1;
@@ -861,22 +864,26 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasName_:1;
   BOOL hasImage_:1;
   BOOL hasVideo_:1;
+  BOOL hasAudio_:1;
   UInt64 size;
   NSString* mimeType;
   NSString* name;
   ZMAssetImageMetaData* image;
   ZMAssetVideoMetaData* video;
+  ZMAssetAudioMetaData* audio;
 }
 - (BOOL) hasMimeType;
 - (BOOL) hasSize;
 - (BOOL) hasName;
 - (BOOL) hasImage;
 - (BOOL) hasVideo;
+- (BOOL) hasAudio;
 @property (readonly, strong) NSString* mimeType;
 @property (readonly) UInt64 size;
 @property (readonly, strong) NSString* name;
 @property (readonly, strong) ZMAssetImageMetaData* image;
 @property (readonly, strong) ZMAssetVideoMetaData* video;
+@property (readonly, strong) ZMAssetAudioMetaData* audio;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -941,35 +948,37 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMAssetOriginalBuilder*) setVideoBuilder:(ZMAssetVideoMetaDataBuilder*) builderForValue;
 - (ZMAssetOriginalBuilder*) mergeVideo:(ZMAssetVideoMetaData*) value;
 - (ZMAssetOriginalBuilder*) clearVideo;
+
+- (BOOL) hasAudio;
+- (ZMAssetAudioMetaData*) audio;
+- (ZMAssetOriginalBuilder*) setAudio:(ZMAssetAudioMetaData*) value;
+- (ZMAssetOriginalBuilder*) setAudioBuilder:(ZMAssetAudioMetaDataBuilder*) builderForValue;
+- (ZMAssetOriginalBuilder*) mergeAudio:(ZMAssetAudioMetaData*) value;
+- (ZMAssetOriginalBuilder*) clearAudio;
 @end
 
 #define Preview_mime_type @"mimeType"
-#define Preview_otr_key @"otrKey"
-#define Preview_sha256 @"sha256"
 #define Preview_size @"size"
+#define Preview_remote @"remote"
 #define Preview_image @"image"
 @interface ZMAssetPreview : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasSize_:1;
   BOOL hasMimeType_:1;
+  BOOL hasRemote_:1;
   BOOL hasImage_:1;
-  BOOL hasOtrKey_:1;
-  BOOL hasSha256_:1;
   UInt64 size;
   NSString* mimeType;
+  ZMAssetRemoteData* remote;
   ZMAssetImageMetaData* image;
-  NSData* otrKey;
-  NSData* sha256;
 }
 - (BOOL) hasMimeType;
-- (BOOL) hasOtrKey;
-- (BOOL) hasSha256;
 - (BOOL) hasSize;
+- (BOOL) hasRemote;
 - (BOOL) hasImage;
 @property (readonly, strong) NSString* mimeType;
-@property (readonly, strong) NSData* otrKey;
-@property (readonly, strong) NSData* sha256;
 @property (readonly) UInt64 size;
+@property (readonly, strong) ZMAssetRemoteData* remote;
 @property (readonly, strong) ZMAssetImageMetaData* image;
 
 + (instancetype) defaultInstance;
@@ -1012,20 +1021,17 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMAssetPreviewBuilder*) setMimeType:(NSString*) value;
 - (ZMAssetPreviewBuilder*) clearMimeType;
 
-- (BOOL) hasOtrKey;
-- (NSData*) otrKey;
-- (ZMAssetPreviewBuilder*) setOtrKey:(NSData*) value;
-- (ZMAssetPreviewBuilder*) clearOtrKey;
-
-- (BOOL) hasSha256;
-- (NSData*) sha256;
-- (ZMAssetPreviewBuilder*) setSha256:(NSData*) value;
-- (ZMAssetPreviewBuilder*) clearSha256;
-
 - (BOOL) hasSize;
 - (UInt64) size;
 - (ZMAssetPreviewBuilder*) setSize:(UInt64) value;
 - (ZMAssetPreviewBuilder*) clearSize;
+
+- (BOOL) hasRemote;
+- (ZMAssetRemoteData*) remote;
+- (ZMAssetPreviewBuilder*) setRemote:(ZMAssetRemoteData*) value;
+- (ZMAssetPreviewBuilder*) setRemoteBuilder:(ZMAssetRemoteDataBuilder*) builderForValue;
+- (ZMAssetPreviewBuilder*) mergeRemote:(ZMAssetRemoteData*) value;
+- (ZMAssetPreviewBuilder*) clearRemote;
 
 - (BOOL) hasImage;
 - (ZMAssetImageMetaData*) image;
@@ -1175,64 +1181,134 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMAssetVideoMetaDataBuilder*) clearDurationInMillis;
 @end
 
-#define Uploaded_otr_key @"otrKey"
-#define Uploaded_sha256 @"sha256"
-@interface ZMAssetUploaded : PBGeneratedMessage<GeneratedMessageProtocol> {
+#define AudioMetaData_duration_in_millis @"durationInMillis"
+@interface ZMAssetAudioMetaData : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
-  BOOL hasOtrKey_:1;
-  BOOL hasSha256_:1;
-  NSData* otrKey;
-  NSData* sha256;
+  BOOL hasDurationInMillis_:1;
+  UInt64 durationInMillis;
 }
-- (BOOL) hasOtrKey;
-- (BOOL) hasSha256;
-@property (readonly, strong) NSData* otrKey;
-@property (readonly, strong) NSData* sha256;
+- (BOOL) hasDurationInMillis;
+@property (readonly) UInt64 durationInMillis;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
 
 - (BOOL) isInitialized;
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
-- (ZMAssetUploadedBuilder*) builder;
-+ (ZMAssetUploadedBuilder*) builder;
-+ (ZMAssetUploadedBuilder*) builderWithPrototype:(ZMAssetUploaded*) prototype;
-- (ZMAssetUploadedBuilder*) toBuilder;
+- (ZMAssetAudioMetaDataBuilder*) builder;
++ (ZMAssetAudioMetaDataBuilder*) builder;
++ (ZMAssetAudioMetaDataBuilder*) builderWithPrototype:(ZMAssetAudioMetaData*) prototype;
+- (ZMAssetAudioMetaDataBuilder*) toBuilder;
 
-+ (ZMAssetUploaded*) parseFromData:(NSData*) data;
-+ (ZMAssetUploaded*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
-+ (ZMAssetUploaded*) parseFromInputStream:(NSInputStream*) input;
-+ (ZMAssetUploaded*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
-+ (ZMAssetUploaded*) parseFromCodedInputStream:(PBCodedInputStream*) input;
-+ (ZMAssetUploaded*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetAudioMetaData*) parseFromData:(NSData*) data;
++ (ZMAssetAudioMetaData*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetAudioMetaData*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAssetAudioMetaData*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetAudioMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAssetAudioMetaData*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
 @end
 
-@interface ZMAssetUploadedBuilder : PBGeneratedMessageBuilder {
+@interface ZMAssetAudioMetaDataBuilder : PBGeneratedMessageBuilder {
 @private
-  ZMAssetUploaded* resultUploaded;
+  ZMAssetAudioMetaData* resultAudioMetaData;
 }
 
-- (ZMAssetUploaded*) defaultInstance;
+- (ZMAssetAudioMetaData*) defaultInstance;
 
-- (ZMAssetUploadedBuilder*) clear;
-- (ZMAssetUploadedBuilder*) clone;
+- (ZMAssetAudioMetaDataBuilder*) clear;
+- (ZMAssetAudioMetaDataBuilder*) clone;
 
-- (ZMAssetUploaded*) build;
-- (ZMAssetUploaded*) buildPartial;
+- (ZMAssetAudioMetaData*) build;
+- (ZMAssetAudioMetaData*) buildPartial;
 
-- (ZMAssetUploadedBuilder*) mergeFrom:(ZMAssetUploaded*) other;
-- (ZMAssetUploadedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
-- (ZMAssetUploadedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+- (ZMAssetAudioMetaDataBuilder*) mergeFrom:(ZMAssetAudioMetaData*) other;
+- (ZMAssetAudioMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetAudioMetaDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasDurationInMillis;
+- (UInt64) durationInMillis;
+- (ZMAssetAudioMetaDataBuilder*) setDurationInMillis:(UInt64) value;
+- (ZMAssetAudioMetaDataBuilder*) clearDurationInMillis;
+@end
+
+#define RemoteData_otr_key @"otrKey"
+#define RemoteData_sha256 @"sha256"
+#define RemoteData_asset_id @"assetId"
+#define RemoteData_asset_token @"assetToken"
+@interface ZMAssetRemoteData : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasAssetId_:1;
+  BOOL hasOtrKey_:1;
+  BOOL hasSha256_:1;
+  BOOL hasAssetToken_:1;
+  NSString* assetId;
+  NSData* otrKey;
+  NSData* sha256;
+  NSData* assetToken;
+}
+- (BOOL) hasOtrKey;
+- (BOOL) hasSha256;
+- (BOOL) hasAssetId;
+- (BOOL) hasAssetToken;
+@property (readonly, strong) NSData* otrKey;
+@property (readonly, strong) NSData* sha256;
+@property (readonly, strong) NSString* assetId;
+@property (readonly, strong) NSData* assetToken;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMAssetRemoteDataBuilder*) builder;
++ (ZMAssetRemoteDataBuilder*) builder;
++ (ZMAssetRemoteDataBuilder*) builderWithPrototype:(ZMAssetRemoteData*) prototype;
+- (ZMAssetRemoteDataBuilder*) toBuilder;
+
++ (ZMAssetRemoteData*) parseFromData:(NSData*) data;
++ (ZMAssetRemoteData*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetRemoteData*) parseFromInputStream:(NSInputStream*) input;
++ (ZMAssetRemoteData*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMAssetRemoteData*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMAssetRemoteData*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMAssetRemoteDataBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMAssetRemoteData* resultRemoteData;
+}
+
+- (ZMAssetRemoteData*) defaultInstance;
+
+- (ZMAssetRemoteDataBuilder*) clear;
+- (ZMAssetRemoteDataBuilder*) clone;
+
+- (ZMAssetRemoteData*) build;
+- (ZMAssetRemoteData*) buildPartial;
+
+- (ZMAssetRemoteDataBuilder*) mergeFrom:(ZMAssetRemoteData*) other;
+- (ZMAssetRemoteDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMAssetRemoteDataBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
 
 - (BOOL) hasOtrKey;
 - (NSData*) otrKey;
-- (ZMAssetUploadedBuilder*) setOtrKey:(NSData*) value;
-- (ZMAssetUploadedBuilder*) clearOtrKey;
+- (ZMAssetRemoteDataBuilder*) setOtrKey:(NSData*) value;
+- (ZMAssetRemoteDataBuilder*) clearOtrKey;
 
 - (BOOL) hasSha256;
 - (NSData*) sha256;
-- (ZMAssetUploadedBuilder*) setSha256:(NSData*) value;
-- (ZMAssetUploadedBuilder*) clearSha256;
+- (ZMAssetRemoteDataBuilder*) setSha256:(NSData*) value;
+- (ZMAssetRemoteDataBuilder*) clearSha256;
+
+- (BOOL) hasAssetId;
+- (NSString*) assetId;
+- (ZMAssetRemoteDataBuilder*) setAssetId:(NSString*) value;
+- (ZMAssetRemoteDataBuilder*) clearAssetId;
+
+- (BOOL) hasAssetToken;
+- (NSData*) assetToken;
+- (ZMAssetRemoteDataBuilder*) setAssetToken:(NSData*) value;
+- (ZMAssetRemoteDataBuilder*) clearAssetToken;
 @end
 
 @interface ZMAssetBuilder : PBGeneratedMessageBuilder {
@@ -1259,24 +1335,24 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMAssetBuilder*) mergeOriginal:(ZMAssetOriginal*) value;
 - (ZMAssetBuilder*) clearOriginal;
 
-- (BOOL) hasPreview;
-- (ZMAssetPreview*) preview;
-- (ZMAssetBuilder*) setPreview:(ZMAssetPreview*) value;
-- (ZMAssetBuilder*) setPreviewBuilder:(ZMAssetPreviewBuilder*) builderForValue;
-- (ZMAssetBuilder*) mergePreview:(ZMAssetPreview*) value;
-- (ZMAssetBuilder*) clearPreview;
-
 - (BOOL) hasNotUploaded;
 - (ZMAssetNotUploaded) notUploaded;
 - (ZMAssetBuilder*) setNotUploaded:(ZMAssetNotUploaded) value;
 - (ZMAssetBuilder*) clearNotUploaded;
 
 - (BOOL) hasUploaded;
-- (ZMAssetUploaded*) uploaded;
-- (ZMAssetBuilder*) setUploaded:(ZMAssetUploaded*) value;
-- (ZMAssetBuilder*) setUploadedBuilder:(ZMAssetUploadedBuilder*) builderForValue;
-- (ZMAssetBuilder*) mergeUploaded:(ZMAssetUploaded*) value;
+- (ZMAssetRemoteData*) uploaded;
+- (ZMAssetBuilder*) setUploaded:(ZMAssetRemoteData*) value;
+- (ZMAssetBuilder*) setUploadedBuilder:(ZMAssetRemoteDataBuilder*) builderForValue;
+- (ZMAssetBuilder*) mergeUploaded:(ZMAssetRemoteData*) value;
 - (ZMAssetBuilder*) clearUploaded;
+
+- (BOOL) hasPreview;
+- (ZMAssetPreview*) preview;
+- (ZMAssetBuilder*) setPreview:(ZMAssetPreview*) value;
+- (ZMAssetBuilder*) setPreviewBuilder:(ZMAssetPreviewBuilder*) builderForValue;
+- (ZMAssetBuilder*) mergePreview:(ZMAssetPreview*) value;
+- (ZMAssetBuilder*) clearPreview;
 @end
 
 #define External_otr_key @"otrKey"
