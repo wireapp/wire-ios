@@ -59,8 +59,6 @@ extern NSString * const ZMMessageUsersKey;
 extern NSString * const ZMMessageClientsKey;
 extern NSString * const ZMMessageHiddenInConversationKey;
 
-extern NSString * const ZMImageMessageWhitelistAssetDownloadNotificationName;
-
 @interface ZMMessage : ZMManagedObject
 
 

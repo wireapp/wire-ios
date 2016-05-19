@@ -123,7 +123,10 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 - (nullable id<ZMConversationMessage>)appendMessageWithImageData:(nonnull NSData *)imageData;
 
 /// The given URL must be a file URL. It's safe to pass @c nil. Returns @c nil if no message was inserted.
-- (nullable id<ZMConversationMessage>)appendMessageWithFileAtURL:(nonnull NSURL *)fileURL;
+- (nullable id<ZMConversationMessage>)appendMessageWithFileAtURL:(nonnull NSURL *)fileURL thumbnail:(nullable NSData *)thumbnailData;
+
+/// Appends a video or audio. The given URL must be a file URL. It's safe to pass @c nil. Returns @c nil if no message was inserted.
+- (nullable id<ZMConversationMessage>)appendMessageWithMediaAtURL:(nonnull NSURL *)fileURL thumbnail:(nullable NSData *)thumbnailData durationInMilliseconds:(NSUInteger)durationInMilliseconds dimensions:(CGSize)dimensions;
 
 @end
 

@@ -44,8 +44,42 @@ public extension ZMGenericMessage {
         return builder.build()
     }
     
-    public static func genericMessage(withSize size: UInt64, mimeType: String, name: String, messageID: String) -> ZMGenericMessage {
+    public static func genericMessage(withAssetSize size: UInt64,
+                                                    mimeType: String,
+                                                    name: String,
+                                                    messageID: String) -> ZMGenericMessage {
+        
         let asset = ZMAsset.asset(withOriginal: .original(withSize: size, mimeType: mimeType, name: name))
+        return ZMGenericMessage.genericMessage(withAsset: asset, messageID: messageID)
+    }
+    
+    public static func genericMessage(withAssetSize size: UInt64,
+                                                    mimeType: String,
+                                                    name: String,
+                                                    messageID: String,
+                                                    videoDurationInMillis: UInt,
+                                                    videoDimensions: CGSize) -> ZMGenericMessage {
+        
+        let asset = ZMAsset.asset(withOriginal: .original(withSize: size,
+            mimeType: mimeType,
+            name: name,
+            videoDurationInMillis: videoDurationInMillis,
+            videoDimensions: videoDimensions)
+        )
+        return ZMGenericMessage.genericMessage(withAsset: asset, messageID: messageID)
+    }
+    
+    public static func genericMessage(withAssetSize size: UInt64,
+                                                    mimeType: String,
+                                                    name: String,
+                                                    messageID: String,
+                                                    audioDurationInMillis: UInt) -> ZMGenericMessage {
+        
+        let asset = ZMAsset.asset(withOriginal: .original(withSize: size,
+            mimeType: mimeType,
+            name: name,
+            audioDurationInMillis: audioDurationInMillis)
+        )
         return ZMGenericMessage.genericMessage(withAsset: asset, messageID: messageID)
     }
     
@@ -89,7 +123,7 @@ public extension ZMAsset {
     
     public static func asset(withUploadedOTRKey otrKey: NSData, sha256: NSData) -> ZMAsset {
         let builder = ZMAsset.builder()
-        builder.setUploaded(.uploaded(withOTRKey: otrKey, sha256: sha256))
+        builder.setUploaded(.remoteData(withOTRKey: otrKey, sha256: sha256))
         return builder.build()
     }
     
@@ -111,30 +145,67 @@ public extension ZMAssetOriginal {
         return builder.build()
     }
     
+    public static func original(withSize size: UInt64, mimeType: String, name: String, videoDurationInMillis: UInt, videoDimensions: CGSize) -> ZMAssetOriginal {
+        let builder = ZMAssetOriginal.builder()
+        builder.setSize(size)
+        builder.setMimeType(mimeType)
+        builder.setName(name)
+        
+        let videoBuilder = ZMAssetVideoMetaData.builder()
+        videoBuilder.setDurationInMillis(UInt64(videoDurationInMillis))
+        videoBuilder.setWidth(Int32(videoDimensions.width))
+        videoBuilder.setHeight(Int32(videoDimensions.height))
+        builder.setVideoBuilder(videoBuilder)
+        
+        return builder.build()
+    }
+    
+    public static func original(withSize size: UInt64, mimeType: String, name: String, audioDurationInMillis: UInt) -> ZMAssetOriginal {
+        let builder = ZMAssetOriginal.builder()
+        builder.setSize(size)
+        builder.setMimeType(mimeType)
+        builder.setName(name)
+        
+        let audioBuilder = ZMAssetAudioMetaData.builder()
+        audioBuilder.setDurationInMillis(UInt64(audioDurationInMillis))
+        builder.setAudioBuilder(audioBuilder)
+        
+        return builder.build()
+    }
 }
 
 public extension ZMAssetPreview {
     
-    public static func preview(withSize size: UInt64, mimeType: String, sha256: NSData, otrKey: NSData) -> ZMAssetPreview {
+    public static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData, imageMetaData: ZMAssetImageMetaData) -> ZMAssetPreview {
         let builder = ZMAssetPreview.builder()
         builder.setSize(size)
         builder.setMimeType(mimeType)
-        builder.setSha256(sha256)
-        builder.setOtrKey(otrKey)
+        builder.setRemote(remoteData)
+        builder.setImage(imageMetaData)
         return builder.build()
     }
-    
+
 }
 
-public extension ZMAssetUploaded {
-    
-    public static func uploaded(withOTRKey otrKey: NSData, sha256: NSData) -> ZMAssetUploaded {
-        let builder = ZMAssetUploaded.builder()
-        builder.setOtrKey(otrKey)
-        builder.setSha256(sha256)
+public extension ZMAssetImageMetaData {
+    public static func imageMetaData(withWidth width: Int32, height: Int32) -> ZMAssetImageMetaData {
+        let builder = ZMAssetImageMetaData.builder()
+        builder.setWidth(width)
+        builder.setHeight(height)
         return builder.build()
     }
+}
+
+public extension ZMAssetRemoteData {
     
+    public static func remoteData(withOTRKey otrKey: NSData, sha256: NSData, assetId: String? = "", assetToken: NSData? = NSData()) -> ZMAssetRemoteData {
+        let builder = ZMAssetRemoteData.builder()
+        builder.setOtrKey(otrKey)
+        builder.setSha256(sha256)
+        builder.setAssetId(assetId)
+        builder.setAssetToken(assetToken)
+        return builder.build()
+    }
 }
 
 public extension ZMClientEntry {
@@ -192,6 +263,5 @@ public extension ZMOtrAssetMeta {
 // MARK: - Equatable
 
 func ==(lhs: ZMAssetPreview, rhs: ZMAssetPreview) -> Bool {
-    return lhs.mimeType == rhs.mimeType && lhs.size == rhs.size &&
-        lhs.sha256.isEqualToData(rhs.sha256) && lhs.otrKey.isEqualToData(rhs.otrKey)
+    return lhs.data() == rhs.data()
 }

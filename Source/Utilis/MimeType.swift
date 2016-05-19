@@ -17,13 +17,18 @@
 // 
 
 
-#import <ZMCDataModel/ZMCDataModel.h>
+import Foundation
+import MobileCoreServices
 
-@interface ZMAssetClientMessage (Testing)
-
-@property (nonatomic) ZMGenericMessage *genericAssetMessage;
-
-- (BOOL)isImageMessage;
-- (ZMGenericMessage *)genericMessageForDataType:(ZMAssetClientMessageDataType)dataType;
-
-@end
+extension NSString {
+    
+    /// Returns whether the string represents a video mime type
+    public func isVideoMimeType() -> Bool {
+        return self.zm_conformsToUTI(kUTTypeMovie)
+    }
+    
+    /// Returns whether the string represents an audio mime type
+    public func isAudioMimeType() -> Bool {
+        return self.zm_conformsToUTI(kUTTypeAudio)
+    }
+}
