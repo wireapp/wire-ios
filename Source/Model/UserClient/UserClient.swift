@@ -262,9 +262,16 @@ public extension UserClient {
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
     public func markForDeletion() {
-        if self.user != ZMUser.selfUserInContext(managedObjectContext!) {
-            zmLog.error("The method 'markForDeletion()' can only be called for clients that belong to the selfUser")
+        guard let context = self.managedObjectContext else {
+            zmLog.error("Object already deleted?")
             return
+        }
+        let selfUser = ZMUser.selfUserInContext(context)
+        guard self.user == selfUser else {
+            fatal("The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser))")
+        }
+        guard selfUser.selfClient() != self else {
+            fatal("Attempt to delete the self client. This should never happen!")
         }
         self.markedToDelete = true
         self.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMarkedToDeleteKey))

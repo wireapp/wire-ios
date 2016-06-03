@@ -1,2 +1,6 @@
-github "iziz/libPhoneNumber-iOS" ~> 0.8
+github "wireapp/zmc-cryptobox"
+github "wireapp/zmc-images"
+github "wireapp/zmc-protos"
+github "iziz/libPhoneNumber-iOS" "0.8.12"
 github "pinterest/PINCache" ~> 2.2.1
+github "wireapp/zmc-transport"

@@ -19,6 +19,8 @@
 
 #import "ZMClientMessage.h"
 
+@class ZMFileMetadata;
+
 extern NSString * _Nonnull const ZMAssetClientMessageTransferStateKey;
 extern NSString * _Nonnull const ZMAssetClientMessageProgressKey;
 extern NSString * _Nonnull const ZMAssetClientMessageDownloadedImageKey;
@@ -115,17 +117,10 @@ typedef NS_ENUM(int16_t, ZMAssetUploadState) {
                                                            nonce:(NSUUID * _Nonnull)nonce
                                             managedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
-/// Inserts a new @c ZMAssetClientMessage in the @c moc and updates it with
-/// the given parameters, used when sending a file
-+ (instancetype _Nonnull)assetClientMessageWithAssetURL:(NSURL * _Nonnull)fileURL
-                                                   size:(unsigned long long)size
-                                              thumbnail:(NSData * _Nullable)thumbnailData
-                                               mimeType:(NSString * _Nonnull)mimeType
-                                                   name:(NSString * _Nonnull)name
-                                                  nonce:(NSUUID * _Nonnull)nonce
-                                   managedObjectContext:(NSManagedObjectContext * _Nonnull)moc
-                                 durationInMilliseconds:(NSUInteger)durationInMilliseconds
-                                        videoDimensions:(CGSize)videoSize;
+/// Inserts a new @c ZMAssetClientMessage in the @c moc and updates it with the given file metadata
++ (nonnull instancetype)assetClientMessageWithFileMetadata:(nonnull ZMFileMetadata *)metadata
+                                                     nonce:(nonnull NSUUID *)nonce
+                                      managedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 /// Adds a (protobuf) data entry to the list of generic message data
 - (void)addGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage;

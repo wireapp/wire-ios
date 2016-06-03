@@ -199,14 +199,8 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 - (ZMClientMessage *)appendOTRSessionResetMessage;
 - (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce;
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce;
-- (ZMAssetClientMessage *)appendOTRMessageWithFileURL:(NSURL *)fileURL
-                                             fileSize:(unsigned long long)fileSize
-                                            thumbnail:(NSData *)thumbnailData
-                                                 name:(NSString *)name
-                                             mimeType:(NSString *)mimeType
-                                                nonce:(NSUUID *)nonce
-                               durationInMilliseconds:(NSUInteger)durationInMilliseconds
-                                      videoDimensions:(CGSize)videoSize;
+- (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce;
+
 - (void)deleteOlderMessages;
 
 @end
