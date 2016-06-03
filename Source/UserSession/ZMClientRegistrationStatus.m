@@ -419,7 +419,7 @@ static char* const ZMLogTag ZM_UNUSED = "Authentication";
     [self.loginCredentialProvider credentialsMayBeCleared];
     [self.cookie deleteAllKeyChainItemsAndCookieLabels];
     
-    NSError *outError = [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidCredentials userInfo:nil];
+    NSError *outError = [NSError userSessionErrorWithErrorCode:ZMUserSessionClientDeletedRemotely userInfo:nil];
     [ZMUserSessionAuthenticationNotification notifyAuthenticationDidFail:outError];
 }
 

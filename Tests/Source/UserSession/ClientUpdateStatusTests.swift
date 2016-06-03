@@ -304,6 +304,33 @@ class ClientUpdateStatusTests: MessagingTest {
             XCTFail("no notification received")
         }
     }
+    
+    func testThatItResetsTheDeletionOfTheSelfClientAtInit() {
+        
+        // GIVEN
+        // remove previous
+        ZMClientUpdateNotification.removeObserver(clientObserverToken)
+        self.sut.tearDown()
+
+        // delete self client
+        let selfClient = insertSelfClient()
+        selfClient.markedToDelete = true
+        selfClient.setLocallyModifiedKeys(Set([ZMUserClientMarkedToDeleteKey]))
+        selfClient.managedObjectContext?.saveOrRollback()
+        
+        // WHEN
+        // re-create
+        self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+        clientObserverToken = ZMClientUpdateNotification.addObserverWithBlock{[weak self] in
+            self?.receivedNotifications.append($0)
+        }
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // THEN
+        XCTAssertFalse(selfClient.markedToDelete)
+        XCTAssertFalse(selfClient.hasLocalModificationsForKey(ZMUserClientMarkedToDeleteKey))
+        
+    }
 }
 
 

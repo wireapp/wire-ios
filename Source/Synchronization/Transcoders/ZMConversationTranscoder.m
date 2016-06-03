@@ -90,15 +90,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     if (self) {
         self.authenticationStatus = authenticationStatus;
         
-        NSArray<NSString *> *keysToSync = @[ZMConversationUserDefinedNameKey,
-                                            ZMConversationUnsyncedInactiveParticipantsKey,
-                                            ZMConversationUnsyncedActiveParticipantsKey,
-                                            ZMConversationArchivedChangedTimeStampKey,
-                                            ZMConversationSilencedChangedTimeStampKey,
-                                            ZMConversationIsSelfAnActiveMemberKey,
-                                            ZMConversationClearedEventIDDataKey];
-        
-        self.modifiedSync = [[ZMUpstreamModifiedObjectSync alloc] initWithTranscoder:self entityName:ZMConversation.entityName updatePredicate:nil filter:nil keysToSync:keysToSync managedObjectContext:moc];
+        self.modifiedSync = [[ZMUpstreamModifiedObjectSync alloc] initWithTranscoder:self entityName:ZMConversation.entityName updatePredicate:nil filter:nil keysToSync:self.keysToSync managedObjectContext:moc];
         self.insertedSync = [[ZMUpstreamInsertedObjectSync alloc] initWithTranscoder:self entityName:ZMConversation.entityName managedObjectContext:moc];
         NSPredicate *conversationPredicate =
         [NSPredicate predicateWithFormat:@"%K != %@ AND (connection == nil OR (connection.status != %d AND connection.status != %d) ) AND needsToBeUpdatedFromBackend == YES",
@@ -118,6 +110,30 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
         self.remoteIDSync = [[ZMRemoteIdentifierObjectSync alloc] initWithTranscoder:self managedObjectContext:self.managedObjectContext];
     }
     return self;
+}
+
+- (NSArray<NSString *> *)keysToSync
+{
+    NSArray *keysWithRef = @[
+             ZMConversationArchivedChangedTimeStampKey,
+             ZMConversationSilencedChangedTimeStampKey,
+             ZMConversationClearedEventIDDataKey];
+    NSArray *allKeys = [keysWithRef arrayByAddingObjectsFromArray:self.keysToSyncWithoutRef];
+    return allKeys;
+}
+
+- (NSArray<NSString *>*)keysToSyncWithoutRef
+{
+    // Some keys don't have or are a time reference
+    // These keys will always be over written when updating from the backend
+    // They might be overwritten in a way that they don't create requests anymore whereas they previously did
+    // To avoid crashes or unneccessary syncs, we should reset those when refetching the conversation from the backend
+    
+    return @[ZMConversationUserDefinedNameKey,
+             ZMConversationUnsyncedInactiveParticipantsKey,
+             ZMConversationUnsyncedActiveParticipantsKey,
+             ZMConversationIsSelfAnActiveMemberKey];
+    
 }
 
 - (NSUUID *)nextUUIDFromResponse:(ZMTransportResponse *)response forListPaginator:(ZMSimpleListRequestPaginator *)paginator
@@ -557,9 +573,8 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
 - (ZMUpstreamRequest *)requestForLeavingConversation:(ZMConversation *)conversation
 {
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    if (conversation.remoteIdentifier == nil || selfUser.remoteIdentifier == nil) {
-        return nil;
-    }
+    RequireString(conversation.remoteIdentifier != nil, "ZMConversationTranscoder refuses request to leave conversation - conversation remoteID is nil");
+    RequireString(selfUser.remoteIdentifier != nil, "ZMConversationTranscoder refuses request to leave conversation - selfUser remoteID is nil");
     
     NSString *path = [NSString pathWithComponents:@[ ConversationsPath, conversation.remoteIdentifier.transportString, @"members", selfUser.remoteIdentifier.transportString]];
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodDELETE payload:nil];
@@ -689,7 +704,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
 {
     ZMConversation *insertedConversation = (ZMConversation *)managedObject;
     NSUUID *remoteID = [response.payload.asDictionary uuidForKey:@"id"];
-    ZMEventID *lastEventID = [response.payload.asDictionary eventForKey:@"last_event"];
+    NSString *lastTimestampString = [response.payload.asDictionary stringForKey:@"last_event_time"];
     
     // check if there is another with the same conversation ID
     if(remoteID != nil)
@@ -699,7 +714,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
         if( existingConversation != nil )
         {
             [self.managedObjectContext deleteObject:existingConversation];
-            if( ! [existingConversation.lastEventID isEqualToEventID:lastEventID] )
+            if( ! [existingConversation.lastServerTimeStamp.transportString isEqualToString:lastTimestampString] )
             {
                 insertedConversation.needsToBeUpdatedFromBackend = YES;
             }
@@ -800,38 +815,63 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
 
 - (void)requestExpiredForObject:(ZMConversation *)conversation forKeys:(NSSet *)keys
 {
-    if ([keys containsObject:ZMConversationUserDefinedNameKey]) {
-        conversation.needsToBeUpdatedFromBackend = YES;
-        [conversation resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUserDefinedNameKey]];
-    }
-    if ([keys containsObject:ZMConversationUnsyncedActiveParticipantsKey] ||
-             [keys containsObject:ZMConversationUnsyncedInactiveParticipantsKey]) {
-        conversation.needsToBeUpdatedFromBackend = YES;
-        [conversation resetParticipantsBackToLastServerSync];
-    }
+    NOT_USED(keys);
+    conversation.needsToBeUpdatedFromBackend = YES;
+    [self resetModifiedKeysWithoutReferenceInConversation:conversation];
 }
 
-- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject *)managedObject forKeys:(NSSet<NSString *> * __unused)keys  withSync:(id __unused)sync;
+- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject *)managedObject forKeys:(NSSet<NSString *> * __unused)keys  withSync:(id)sync;
 {
+    if (sync == self.downstreamSync || sync == self.insertedSync) {
+        return YES;
+    }
+    // This is our chance to reset keys that should not be set - instead of crashing when we create a request.
     ZMConversation *conversation = (ZMConversation *)managedObject;
+    NSMutableSet *remainingKeys = [NSMutableSet setWithSet:keys];
+    
     if ([conversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey] && !conversation.userDefinedName) {
         [conversation resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUserDefinedNameKey]];
-        [self.modifiedSync objectsDidChange:[NSSet setWithObject:conversation]];
-        [self.managedObjectContext enqueueDelayedSave];
-        return NO;
+        [remainingKeys removeObject:ZMConversationUserDefinedNameKey];
     }
-    return YES;
+    if ([conversation hasLocalModificationsForKey:ZMConversationUnsyncedActiveParticipantsKey] && conversation.unsyncedActiveParticipants.count == 0) {
+        [conversation resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedActiveParticipantsKey]];
+        [remainingKeys removeObject:ZMConversationUnsyncedActiveParticipantsKey];
+    }
+    if ([conversation hasLocalModificationsForKey:ZMConversationUnsyncedInactiveParticipantsKey] && conversation.unsyncedInactiveParticipants.count == 0) {
+        [conversation resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedInactiveParticipantsKey]];
+        [remainingKeys removeObject:ZMConversationUnsyncedInactiveParticipantsKey];
+    }
+    if ([conversation hasLocalModificationsForKey:ZMConversationIsSelfAnActiveMemberKey] && conversation.isSelfAnActiveMember) {
+        [conversation resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationIsSelfAnActiveMemberKey]];
+        [remainingKeys removeObject:ZMConversationIsSelfAnActiveMemberKey];
+    }
+    if (remainingKeys.count < keys.count) {
+        [sync objectsDidChange:[NSSet setWithObject:conversation]];
+        [self.managedObjectContext enqueueDelayedSave];
+    }
+    return (remainingKeys.count > 0);
 }
 
 - (BOOL)shouldRetryToSyncAfterFailedToUpdateObject:(ZMConversation *)conversation request:(ZMUpstreamRequest *__unused)upstreamRequest response:(ZMTransportResponse *__unused)response keysToParse:(NSSet * __unused)keys
 {
     if (conversation.remoteIdentifier) {
         conversation.needsToBeUpdatedFromBackend = YES;
-        [conversation resetParticipantsBackToLastServerSync];
+        [self resetModifiedKeysWithoutReferenceInConversation:conversation];
         [self.downstreamSync objectsDidChange:[NSSet setWithObject:conversation]];
     }
     
     return NO;
+}
+
+/// Resets all keys that don't have a time reference and would possibly be changed with refetching of the conversation from the BE
+- (void)resetModifiedKeysWithoutReferenceInConversation:(ZMConversation*)conversation
+{
+    [conversation resetParticipantsBackToLastServerSync];
+    [conversation resetLocallyModifiedKeys:[NSSet setWithArray:self.keysToSyncWithoutRef]];
+    
+    // since we reset all keys, we should make sure to remove the object from the modifiedSync
+    // it might otherwise try to sync remaining keys
+    [self.modifiedSync objectsDidChange:[NSSet setWithObject:conversation]];
 }
 
 @end
@@ -840,7 +880,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
 
 @implementation ZMConversationTranscoder (DownstreamTranscoder)
 
-- (ZMTransportRequest *)requestForFetchingObject:(ZMConversation *)conversation downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (ZMTransportRequest *)requestForFetchingObject:(ZMConversation *)conversation downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     if (conversation.remoteIdentifier == nil) {
@@ -852,17 +892,18 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     return request;
 }
 
-- (void)updateObject:(ZMConversation *)conversation withResponse:(ZMTransportResponse *)response downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (void)updateObject:(ZMConversation *)conversation withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     conversation.needsToBeUpdatedFromBackend = NO;
+    [self resetModifiedKeysWithoutReferenceInConversation:conversation];
     
     NSDictionary *dictionaryPayload = [response.payload asDictionary];
     VerifyReturn(dictionaryPayload != nil);
     [conversation updateWithTransportData:dictionaryPayload];
 }
 
-- (void)deleteObject:(ZMConversation *)conversation downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (void)deleteObject:(ZMConversation *)conversation downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     NOT_USED(conversation);

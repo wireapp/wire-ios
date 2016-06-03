@@ -359,18 +359,13 @@
     
     // when
     XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
-    XCTestExpectation *pingbackExpectation = [self expectationWithDescription:@"pinging backend"];
 
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
-        NSString *path = [NSString stringWithFormat:@"/notifications/%@?client=%@", notificationID.transportString,selfUser.selfClient.remoteIdentifier];
+        NSString *path = [NSString stringWithFormat:@"/notifications/%@?client=%@&cancel_fallback=true", notificationID.transportString,selfUser.selfClient.remoteIdentifier];
         if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
             [fetchingExpectation fulfill];
             return [ZMTransportResponse responseWithPayload:eventPayload HTTPstatus:200 transportSessionError:nil];
         };
-        NSString *fallbackPath = [NSString stringWithFormat:@"/push/fallback/%@/cancel", notificationID.transportString];
-        if ([request.path isEqualToString:fallbackPath] && request.method == ZMMethodPOST) {
-            [pingbackExpectation fulfill];
-        }
         return nil;
     };
     

@@ -28,13 +28,12 @@
 #import "ZMAssetTranscoder.h"
 #import "ZMOperationLoop.h"
 #import "ZMSyncOperationSet.h"
+#import "ZMDownstreamObjectSync.h"
 #import "ZMDownstreamObjectSyncWithWhitelist.h"
 #import "ZMUpstreamAssetSync.h"
 #import "ZMAssetRequestFactory.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUpstreamRequest.h"
-
-static NSString * const WhitelistAssetDownloadNotificationName = @"ZMWhitelistAssetDownloadNotificationName";
 
 @interface ZMAssetTranscoder ()
 
@@ -53,17 +52,6 @@ static NSString * const WhitelistAssetDownloadNotificationName = @"ZMWhitelistAs
 
 ZM_EMPTY_ASSERTING_INIT()
 
-+ (void)whitelistAssetDownloadForImageMessage:(ZMImageMessage *)imageMessage;
-{
-    NSError *error;
-    if(imageMessage.objectID.isTemporaryID) {
-        if(![imageMessage.managedObjectContext obtainPermanentIDsForObjects:@[imageMessage] error:&error]) {
-            ZMLogError(@"Can't get permanent object ID for object: %@", error);
-        }
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:WhitelistAssetDownloadNotificationName object:imageMessage.objectID userInfo:nil];
-}
-
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc;
 {
     self = [super initWithManagedObjectContext:moc];
@@ -73,9 +61,8 @@ ZM_EMPTY_ASSERTING_INIT()
         self.downstreamMediumImageSync = [[ZMDownstreamObjectSyncWithWhitelist alloc] initWithTranscoder:self
                                                                                               entityName:ZMImageMessage.entityName
                                                                            predicateForObjectsToDownload:mediumDataNeedsToBeDownloaded
-                                                                predicateForObjectsRequiringWhitelisting:[NSPredicate predicateWithValue:YES]
                                                                                     managedObjectContext:self.managedObjectContext];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didWhitelistAssetDownload:) name:WhitelistAssetDownloadNotificationName object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didWhitelistAssetDownload:) name:ZMAssetClientMessage.ImageDownloadNotificationName object:nil];
     }
     return self;
 }
@@ -90,8 +77,11 @@ ZM_EMPTY_ASSERTING_INIT()
     ZM_WEAK(self);
     [self.managedObjectContext performGroupedBlock:^{
         ZM_STRONG(self);
+        if(self == nil) {
+            return;
+        }
         NSManagedObjectID *objectID = (NSManagedObjectID *)note.object;
-        ZMImageMessage *imageMessage = (ZMImageMessage *)[self.managedObjectContext objectWithID:objectID];
+        ZMImageMessage *imageMessage = (ZMImageMessage *)[self.managedObjectContext existingObjectWithID:objectID error:nil];
         if(imageMessage != nil) {
             [self.downstreamMediumImageSync whiteListObject:imageMessage];
         }

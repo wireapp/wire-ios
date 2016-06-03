@@ -65,7 +65,6 @@ typedef void(^ObserverCallback)(NSObject *note);
 @end
 
 
-
 @interface MessageWindowChangeObserver : ChangeObserver <ZMConversationMessageWindowObserver>
 - (instancetype)initWithMessageWindow:(ZMConversationMessageWindow *)window;
 

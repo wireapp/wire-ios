@@ -1,0 +1,1599 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
+
+
+@import ZMCDataModel;
+@import ZMTransport;
+@import ZMCMockTransport;
+@import ZMUtilities;
+@import ZMTesting;
+
+#import "MessagingTest.h"
+#import "ZMUserSession.h"
+#import "IntegrationTestBase.h"
+#import "ZMTestNotifications.h"
+#import "ZMUserSession+Internal.h"
+#import "ZMConversationTranscoder+Internal.h"
+#import <zmessaging/zmessaging-Swift.h>
+#import "ConversationTestsBase.h"
+
+@interface FileTransferTests : ConversationTestsBase
+
+@end
+
+@implementation FileTransferTests
+
+- (NSArray *)filterOutRequestsForLastRead:(NSArray *)requests
+{
+   
+    NSString *conversationPrefix = [NSString stringWithFormat:@"/conversations/%@/otr/messages",  [ZMConversation selfConversationInContext:self.uiMOC].remoteIdentifier.transportString];
+    return [requests filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id  obj, NSDictionary __unused *bindings) {
+        return ![((ZMTransportRequest *)obj).path hasPrefix:conversationPrefix];
+    }]];
+}
+
+- (void)testThatItSendsAFileMessage
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 2lu); // Asset.Original & Asset.Uploaded
+    XCTAssertEqualObjects(requests.firstObject.path, expectedMessageAddPath);
+    
+    ZMTransportRequest *uploadRequest = requests.lastObject;
+    XCTAssertEqualObjects(uploadRequest.path, expectedAssetAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+    XCTAssertEqualObjects(message.fileMessageData.filename.stringByDeletingPathExtension, self.name);
+    XCTAssertEqualObjects(message.fileMessageData.filename.pathExtension, @"dat");
+    XCTAssertEqual(message.fileMessageData.size, 256lu);
+}
+
+- (void)testThatItSendsNoneVideoFileMessage_withThumbnail
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 2lu); // Asset.Original & Asset.Uploaded
+    XCTAssertEqualObjects(requests.firstObject.path, expectedMessageAddPath);
+    
+    ZMTransportRequest *uploadRequest = requests.lastObject;
+    XCTAssertEqualObjects(uploadRequest.path, expectedAssetAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+    XCTAssertEqualObjects(message.fileMessageData.filename.stringByDeletingPathExtension, self.name);
+    XCTAssertEqualObjects(message.fileMessageData.filename.pathExtension, @"dat");
+    XCTAssertEqual(message.fileMessageData.size, 256lu);
+}
+
+- (void)testThatItResendsAFailedFileMessage
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:[NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString]]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:400 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    // and when
+    self.mockTransportSession.responseGeneratorBlock = nil;
+    [self.userSession performChanges:^{
+        [fileMessage resend];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+}
+
+- (void)testThatItSendsATextMessageAfterAFileMessage
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    
+    // when
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    __block ZMMessage *textMessage;
+    [self.userSession performChanges:^{
+        textMessage = [conversation appendMessageWithText:self.name];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    XCTAssertEqual(textMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(conversation.messages.count, 2lu);
+}
+
+- (void)testThatItDoesNotSendAFileWhenTheOriginalRequestFails
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedMessageAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:401 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 1lu); // Asset.Original
+    XCTAssertEqualObjects(requests.firstObject.path, expectedMessageAddPath);
+}
+
+- (void)testThatItDoesSendAFailedUploadMessageWhenTheFileDataUploadFails_400
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:401 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 3lu); // Asset.Original
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);
+    XCTAssertEqualObjects(requests[2].path, expectedMessageAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesSendAFailedUploadMessageWhenTheFileDataUploadFails_NetworkError
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeTryAgainLater userInfo:nil];
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:0 transportSessionError:error];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 3lu); // Asset.Original
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);
+    XCTAssertEqualObjects(requests[2].path, expectedMessageAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesSendACancelledUploadMessageWhenTheFileDataUploadIsCancelled
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    __block ZMMessage *fileMessage;
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            return ResponseGenerator.ResponseNotCompleted;
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.userSession performChanges:^{
+        [fileMessage.fileMessageData cancelTransfer];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateCancelledUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 3lu); // Asset.Original
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);
+    XCTAssertEqualObjects(requests[2].path, expectedMessageAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesSendACancelledUploadMessageWhenThePlaceholderUploadFails
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    
+    __block ZMMessage *fileMessage;
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedMessageAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:401 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 1lu); // Asset.Original
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesReuploadTheAssetMetadataAfterReceivingA_412_MissingClients
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    
+    XCTAssertNotNil(conversation);
+    NSURL *fileURL = [self createTestFile:self.name];
+    NSString *expectedMessageAddPath = [NSString
+                                        stringWithFormat:@"/conversations/%@/otr/messages",
+                                        conversation.remoteIdentifier.transportString];
+    
+    NSString *expectedAssetAddPath = [NSString
+                                      stringWithFormat:@"/conversations/%@/otr/assets",
+                                      conversation.remoteIdentifier.transportString];
+    
+    // when
+    // register other users client
+    __unused CBCryptoBox *user1Box = [self setupOTREnvironmentForUser:self.user1
+                                                         isSelfClient:NO
+                                                         numberOfKeys:1
+                                         establishSessionWithSelfUser:NO];
+    __block ZMMessage *fileMessage;
+    
+    [self.mockTransportSession resetReceivedRequests];
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    
+    XCTAssertEqual(requests.count, 4lu); // Asset.Original, Asset.Original reuploading & Asset.Uploaded
+    
+    if (requests.count < 4) {
+        return;
+    }
+    
+    ZMTransportRequest *firstOriginalUploadRequest = requests[0];
+    ZMTransportRequest *missingPrekeysRequest = requests[1];
+    ZMTransportRequest *secondOriginalUploadRequest = requests[2];
+    ZMTransportRequest *uploadedUploadRequest = requests[3];
+    
+    XCTAssertEqualObjects(firstOriginalUploadRequest.path, expectedMessageAddPath);
+    XCTAssertEqualObjects(secondOriginalUploadRequest.path, expectedMessageAddPath);
+    XCTAssertEqualObjects(missingPrekeysRequest.path, @"/users/prekeys");
+    XCTAssertEqualObjects(uploadedUploadRequest.path, expectedAssetAddPath);
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+#pragma mark Sending Video (Preview)
+
+- (void)testThatItSendsAFileMessage_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    // Used for uploading the thumbnail and the full asset
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 3lu); // Asset.Original, Asset.Preview & Asset.Uploaded
+    XCTAssertEqualObjects(requests.firstObject.path, expectedMessageAddPath);
+    
+    ZMTransportRequest *thumbnailRequest = requests[1];
+    XCTAssertEqualObjects(thumbnailRequest.path, expectedAssetAddPath);
+    
+    ZMTransportRequest *fullAssetRequest = requests[2];
+    XCTAssertEqualObjects(fullAssetRequest.path, expectedAssetAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+    XCTAssertEqualObjects(message.fileMessageData.filename.stringByDeletingPathExtension, @"video");
+    XCTAssertEqualObjects(message.fileMessageData.filename.pathExtension, @"mp4");
+    
+    NSError *error = nil;
+    NSUInteger size = [NSFileManager.defaultManager attributesOfItemAtPath:fileURL.path error:&error].fileSize;
+    
+    XCTAssertNil(error);
+    XCTAssertEqual(message.fileMessageData.size, size);
+}
+
+- (void)testThatItResendsAFailedFileMessage_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        // We fail the thumbnail upload
+        if ([request.path isEqualToString:[NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString]]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:400 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    // and when
+    self.mockTransportSession.responseGeneratorBlock = nil;
+    [self.userSession performChanges:^{
+        [fileMessage resend];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    XCTAssertEqualObjects(fileMessage.fileMessageData.filename.stringByDeletingPathExtension, @"video");
+    XCTAssertEqualObjects(fileMessage.fileMessageData.filename.pathExtension, @"mp4");
+    
+    NSError *error = nil;
+    NSUInteger size = [NSFileManager.defaultManager attributesOfItemAtPath:fileURL.path error:&error].fileSize;
+    
+    XCTAssertNil(error);
+    XCTAssertEqual(fileMessage.fileMessageData.size, size);
+}
+
+- (void)testThatItResendsAFailedFileMessage_WithVideo_AfterTheThumbnailHasBeenUploaded
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    __block NSUInteger assetUploadCounter = 0;
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:[NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString]]) {
+            assetUploadCounter++;
+            // We fail the second asset endpoint request, which is the full asset upload
+            if (assetUploadCounter == 2) {
+                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:400 transportSessionError:nil];
+            }
+        }
+        return nil;
+    };
+    
+    // when
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    // and when
+    self.mockTransportSession.responseGeneratorBlock = nil;
+    [self.userSession performChanges:^{
+        [fileMessage resend];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(assetUploadCounter, 2lu);
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    XCTAssertEqualObjects(fileMessage.fileMessageData.filename.stringByDeletingPathExtension, @"video");
+    XCTAssertEqualObjects(fileMessage.fileMessageData.filename.pathExtension, @"mp4");
+    
+    NSError *error = nil;
+    NSUInteger size = [NSFileManager.defaultManager attributesOfItemAtPath:fileURL.path error:&error].fileSize;
+    
+    XCTAssertNil(error);
+    XCTAssertEqual(fileMessage.fileMessageData.size, size);
+}
+
+- (void)testThatItDoesNotSendAFileWhenTheOriginalRequestFails_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedMessageAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:401 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 1lu); // Asset.Original
+    XCTAssertEqualObjects(requests.firstObject.path, expectedMessageAddPath);
+}
+
+- (void)testThatItDoesSendAFailedUploadMessageWhenTheThumbnailUploadFails_400_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *transportString = conversation.remoteIdentifier.transportString;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", transportString];
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:401 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 3lu);
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);  // Asset.Original
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);    // Asset.Preview
+    XCTAssertEqualObjects(requests[2].path, expectedMessageAddPath);  // Asset.NotUploaded
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesSendAFailedUploadMessageWhenTheFullAssetUploadFails_400_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    __block NSUInteger assetCallCount = 0;
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            if (++assetCallCount == 2) {
+                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:401 transportSessionError:nil];
+            }
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(assetCallCount, 2lu);
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 4lu);
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);  // Asset.Original
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);    // Asset.Preview
+    XCTAssertEqualObjects(requests[2].path, expectedAssetAddPath);    // Asset.FullAsset
+    XCTAssertEqualObjects(requests[3].path, expectedMessageAddPath);  // Asset.NotUploaded
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesSendAFailedUploadMessageWhenTheThumbnailUploadFails_NetworkError_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeTryAgainLater userInfo:nil];
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:0 transportSessionError:error];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 3lu);
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);  // Asset.Original
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);    // Asset.Preview
+    XCTAssertEqualObjects(requests[2].path, expectedMessageAddPath);  // Asset.NotUploaded
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesSendAFailedUploadMessageWhenTheFileDataUploadFails_NetworkError_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    __block NSUInteger assetCallCount = 0;
+    NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeTryAgainLater userInfo:nil];
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            if (++assetCallCount == 2) {
+                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:0 transportSessionError:error];
+            }
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(assetCallCount, 2lu);
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 4lu);
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);  // Asset.Original
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);    // Asset.Preview
+    XCTAssertEqualObjects(requests[2].path, expectedAssetAddPath);    // Asset.FullAsset
+    XCTAssertEqualObjects(requests[3].path, expectedMessageAddPath);  // Asset.NotUploaded
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesSendACancelledUploadMessageWhenTheThumbnailDataUploadIsCancelled_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    __block ZMMessage *fileMessage;
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            return ResponseGenerator.ResponseNotCompleted;
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.userSession performChanges:^{
+        [fileMessage.fileMessageData cancelTransfer];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateCancelledUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 3lu);
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);  // Asset.Original
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);    // Asset.Preview
+    XCTAssertEqualObjects(requests[2].path, expectedMessageAddPath);  // Asset.NotUploaded
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+    
+    XCTAssertEqualObjects(message.fileMessageData.filename.stringByDeletingPathExtension, @"video");
+    XCTAssertEqualObjects(message.fileMessageData.filename.pathExtension, @"mp4");
+    
+    NSError *error = nil;
+    NSUInteger size = [NSFileManager.defaultManager attributesOfItemAtPath:fileURL.path error:&error].fileSize;
+    
+    XCTAssertNil(error);
+    XCTAssertEqual(message.fileMessageData.size, size);
+}
+
+- (void)testThatItDoesSendACancelledUploadMessageWhenTheFileDataUploadIsCancelled_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    __block ZMMessage *fileMessage;
+    __block NSUInteger assetCallCount = 0;
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedAssetAddPath]) {
+            if (++assetCallCount == 2) {
+                return ResponseGenerator.ResponseNotCompleted;
+            }
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.userSession performChanges:^{
+        [fileMessage.fileMessageData cancelTransfer];
+    }];
+    WaitForAllGroupsToBeEmpty(5);
+    
+    //then
+    XCTAssertEqual(assetCallCount, 2lu);
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateCancelledUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 4lu);
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);  // Asset.Original
+    XCTAssertEqualObjects(requests[1].path, expectedAssetAddPath);    // Asset.Preview
+    XCTAssertEqualObjects(requests[2].path, expectedAssetAddPath);  // Asset.Uploaded
+    XCTAssertEqualObjects(requests[3].path, expectedMessageAddPath);  // Asset.NotUploaded
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+    
+    XCTAssertEqualObjects(message.fileMessageData.filename.stringByDeletingPathExtension, @"video");
+    XCTAssertEqualObjects(message.fileMessageData.filename.pathExtension, @"mp4");
+    
+    NSError *error = nil;
+    NSUInteger size = [NSFileManager.defaultManager attributesOfItemAtPath:fileURL.path error:&error].fileSize;
+    
+    XCTAssertNil(error);
+    XCTAssertEqual(message.fileMessageData.size, size);
+}
+
+- (void)testThatItDoesSendACancelledUploadMessageWhenThePlaceholderUploadFails_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    
+    __block ZMMessage *fileMessage;
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedMessageAddPath]) {
+            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:401 transportSessionError:nil];
+        }
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateFailedToSend);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateFailedUpload);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 1lu); // Asset.Original
+    XCTAssertEqualObjects(requests[0].path, expectedMessageAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItDoesReuploadTheAssetMetadataAfterReceivingA_412_MissingClients_WithVideo
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    
+    XCTAssertNotNil(conversation);
+    NSURL *fileURL = self.testVideoFileURL;
+    NSString *expectedMessageAddPath = [NSString
+                                        stringWithFormat:@"/conversations/%@/otr/messages",
+                                        conversation.remoteIdentifier.transportString];
+    
+    NSString *expectedAssetAddPath = [NSString
+                                      stringWithFormat:@"/conversations/%@/otr/assets",
+                                      conversation.remoteIdentifier.transportString];
+    
+    // when
+    // register other users client
+    __unused CBCryptoBox *user1Box = [self setupOTREnvironmentForUser:self.user1
+                                                         isSelfClient:NO
+                                                         numberOfKeys:1
+                                         establishSessionWithSelfUser:NO];
+    __block ZMMessage *fileMessage;
+    
+    [self.mockTransportSession resetReceivedRequests];
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:self.mediumJPEGData]];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    
+    XCTAssertEqual(requests.count, 5lu); // Asset.Original, Prekeys, Asset.Original reuploading, Asset.Preview & Asset.Uploaded
+    if (requests.count < 5) {
+        return;
+    }
+    
+    ZMTransportRequest *firstOriginalUploadRequest = requests[0];
+    ZMTransportRequest *missingPrekeysRequest = requests[1];
+    ZMTransportRequest *secondOriginalUploadRequest = requests[2];
+    ZMTransportRequest *thumbnailUploadRequest = requests[3];
+    ZMTransportRequest *fullAssetUploadRequest = requests[4];
+    
+    XCTAssertEqualObjects(firstOriginalUploadRequest.path, expectedMessageAddPath);
+    XCTAssertEqualObjects(secondOriginalUploadRequest.path, expectedMessageAddPath);
+    XCTAssertEqualObjects(missingPrekeysRequest.path, @"/users/prekeys");
+    XCTAssertEqualObjects(thumbnailUploadRequest.path, expectedAssetAddPath);
+    XCTAssertEqualObjects(fullAssetUploadRequest.path, expectedAssetAddPath);
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    
+    ZMMessage *message = conversation.messages.firstObject;
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+}
+
+- (void)testThatItSendsARegularFileMessageForAFileWithVideoButNilThumbnail
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertNotNil(conversation);
+    
+    NSURL *fileURL = self.testVideoFileURL; // Video URL
+    NSString *expectedMessageAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
+    NSString *expectedAssetAddPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets", conversation.remoteIdentifier.transportString];
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    
+    __block ZMMessage *fileMessage;
+    [self.userSession performChanges:^{
+        fileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:fileURL thumbnail:nil]];  // But no thumbnail
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    //then
+    XCTAssertEqual(fileMessage.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(fileMessage.fileMessageData.transferState, ZMFileTransferStateDownloaded);
+    
+    NSArray <ZMTransportRequest *> *requests = [self filterOutRequestsForLastRead:self.mockTransportSession.receivedRequests];
+    XCTAssertEqual(requests.count, 2lu); // Asset.Original & Asset.Uploaded
+    XCTAssertEqualObjects(requests.firstObject.path, expectedMessageAddPath);
+    
+    ZMTransportRequest *uploadRequest = requests.lastObject;
+    XCTAssertEqualObjects(uploadRequest.path, expectedAssetAddPath);
+    
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    ZMMessage *message = conversation.messages.firstObject;
+    
+    XCTAssertNotNil(message.fileMessageData);
+    XCTAssertNil(message.imageMessageData);
+    XCTAssertEqualObjects(message.fileMessageData.filename.stringByDeletingPathExtension, @"video");
+    XCTAssertEqualObjects(message.fileMessageData.filename.pathExtension, @"mp4");
+    
+    NSError *error = nil;
+    NSUInteger size = [NSFileManager.defaultManager attributesOfItemAtPath:fileURL.path error:&error].fileSize;
+    
+    XCTAssertNil(error);
+    XCTAssertEqual(message.fileMessageData.size, size);
+}
+
+#pragma mark Receiving
+
+- (void)testThatItReceivesAVideoFileMessageThumbnailSentRemotely
+{
+    // given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    NSUUID *thumbnailAssetID = NSUUID.createUUID;
+    NSString *thumbnailIDString = thumbnailAssetID.transportString;
+    NSData *otrKey = NSData.randomEncryptionKey;
+    NSData *encryptedAsset = [self.mediumJPEGData zmEncryptPrefixingPlainTextIVWithKey:otrKey];
+    NSData *sha256 = encryptedAsset.zmSHA256Digest;
+    
+    ZMAssetRemoteData *remote = [ZMAssetRemoteData remoteDataWithOTRKey:otrKey sha256:sha256 assetId:thumbnailIDString assetToken:nil];
+    ZMAssetImageMetaData *image = [ZMAssetImageMetaData imageMetaDataWithWidth:1024 height:2048];
+    ZMAssetPreview *preview = [ZMAssetPreview previewWithSize:256 mimeType:@"image/jpeg" remoteData:remote imageMetaData:image];
+    ZMAsset *asset = [ZMAsset assetWithOriginal:nil preview:preview];
+    ZMGenericMessage *updateMessage = [ZMGenericMessage genericMessageWithAsset:asset messageID:nonce.transportString];
+    
+    
+    // when
+    __block MessageChangeObserver *observer;
+    __block ZMConversation *conversation;
+    
+    id insertBlock = ^(NSData *data, MockConversation *mockConversation, MockUserClient *from, MockUserClient *to) {
+        [mockConversation insertOTRAssetFromClient:from toClient:to metaData:data imageData:nil assetId:thumbnailAssetID isInline:NO];
+        conversation = [self conversationForMockConversation:mockConversation];
+        observer = [[MessageChangeObserver alloc] initWithMessage:conversation.messages.lastObject];
+    };
+    
+    ZMAssetClientMessage *message = [self remotelyInsertAssetOriginalWithMimeType:@"video/mp4"
+                                                                updateWithMessage:updateMessage
+                                                                      insertBlock:insertBlock
+                                                                            nonce:nonce];
+    
+    // insert the thumbnail asset remotely
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        [session createAssetWithData:encryptedAsset
+                          identifier:thumbnailIDString
+                         contentType:@"image/jpeg"
+                     forConversation:conversation.remoteIdentifier.transportString];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertNotNil(message);
+    XCTAssertNotNil(observer);
+    XCTAssertNotNil(conversation);
+    
+    [self.userSession performChanges:^{
+        [message requestImageDownload];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    XCTAssertNotNil(message);
+    NSArray *notifications = observer.notifications;
+    XCTAssertEqual(notifications.count, 1lu);
+    MessageChangeInfo *info = notifications.firstObject;
+    XCTAssertTrue(info.imageChanged);
+    
+    // then
+    // We should have received an thumbnail asset ID to be able to download the thumbnail image
+    XCTAssertEqualObjects(message.fileMessageData.thumbnailAssetID, thumbnailIDString);
+    XCTAssertEqualObjects(message.nonce, nonce);
+    XCTAssertEqual(message.transferState, ZMFileTransferStateUploading);
+    
+    [observer tearDown];
+}
+
+- (void)testThatAFileUpload_AssetOriginal_MessageIsReceivedWhenSentRemotely
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self setupOTREnvironmentForUser:self.user1 isSelfClient:NO numberOfKeys:1 establishSessionWithSelfUser:YES];
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    ZMGenericMessage *original = [ZMGenericMessage genericMessageWithAssetSize:256
+                                                                 mimeType:@"text/plain"
+                                                                     name:self.name
+                                                                messageID:nonce.transportString                                  ];
+    
+    NSError *error;
+    CBCryptoBox *box = self.userSession.syncManagedObjectContext.zm_cryptKeyStore.box;
+    CBPreKey *prekey = [box lastPreKey:&error];
+    XCTAssertNil(error);
+    
+    // when
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        [self inserOTRMessage:original
+               inConversation:self.selfToUser1Conversation
+                     fromUser:self.user1
+                     toClient:self.selfUser.clients.anyObject
+                     usingKey:prekey
+                      session:session];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    
+    if (! [conversation.messages.firstObject isKindOfClass:ZMAssetClientMessage.class]) {
+        return XCTFail(@"Unexpected message type, expected ZMAssetClientMessage : %@", [conversation.messages.firstObject class]);
+    }
+    
+    ZMAssetClientMessage *message = (ZMAssetClientMessage *)conversation.messages.firstObject;
+    XCTAssertEqual(message.size, 256lu);
+    XCTAssertEqualObjects(message.mimeType, @"text/plain");
+    XCTAssertEqualObjects(message.filename, self.name);
+    XCTAssertEqualObjects(message.nonce, nonce);
+    XCTAssertNil(message.assetId);
+    XCTAssertEqual(message.transferState, ZMFileTransferStateUploading);
+}
+
+- (void)testThatAFileUpload_AssetUploaded_MessageIsReceivedAndUpdatesTheOriginalMessageWhenSentRemotely
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    NSUUID *assetID = NSUUID.createUUID;
+    NSData *otrKey = NSData.randomEncryptionKey;
+    NSData *sha256 = NSData.zmRandomSHA256Key;
+    ZMGenericMessage *uploaded = [ZMGenericMessage genericMessageWithUploadedOTRKey:otrKey sha256:sha256 messageID:nonce.transportString];
+    
+    // when
+    ZMAssetClientMessage *message = [self remotelyInsertAssetOriginalAndUpdate:uploaded insertBlock:
+                                     ^(NSData *data, MockConversation *conversation, MockUserClient *from, MockUserClient *to) {
+                                         [conversation insertOTRAssetFromClient:from toClient:to metaData:data imageData:nil assetId:assetID isInline:NO];
+                                     } nonce:nonce];
+    
+    // then
+    XCTAssertEqualObjects(message.assetId, assetID); // We should have received an asset ID to be able to download the file
+    XCTAssertEqualObjects(message.nonce, nonce);
+    XCTAssertEqual(message.transferState, ZMFileTransferStateUploaded);
+}
+
+- (void)testThatItUpdatesAFileMessageWhenTheUploadIsCancelledRemotely
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    ZMGenericMessage *cancelled = [ZMGenericMessage genericMessageWithNotUploaded:ZMAssetNotUploadedCANCELLED messageID:nonce.transportString];
+    
+    // when
+    ZMAssetClientMessage *message = [self remotelyInsertAssetOriginalAndUpdate:cancelled insertBlock:
+                                     ^(NSData *data, MockConversation *conversation, MockUserClient *from, MockUserClient *to) {
+                                         [conversation insertOTRMessageFromClient:from toClient:to data:data];
+                                     } nonce:nonce];
+    
+    // then
+    XCTAssertNil(message.assetId);
+    // As soon as we delete the message on cancelation we can remove this check
+    // and assert the absence of the message instead
+    XCTAssertEqual(message.transferState, ZMFileTransferStateCancelledUpload);
+}
+
+- (void)testThatItUpdatesAFileMessageWhenTheUploadFailesRemotlely
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    ZMGenericMessage *failed = [ZMGenericMessage genericMessageWithNotUploaded:ZMAssetNotUploadedFAILED messageID:nonce.transportString];
+    
+    // when
+    ZMAssetClientMessage *message = [self remotelyInsertAssetOriginalAndUpdate:failed insertBlock:
+                                     ^(NSData *data, MockConversation *conversation, MockUserClient *from, MockUserClient *to) {
+                                         [conversation insertOTRMessageFromClient:from toClient:to data:data];
+                                     } nonce:nonce];
+    
+    // then
+    XCTAssertNil(message.assetId);
+    // As soon as we delete the message on cancelation we can remove this check
+    // and assert the absence of the message instead
+    XCTAssertEqual(message.transferState, ZMFileTransferStateFailedUpload);
+}
+
+#pragma mark Downloading
+
+- (void)testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_Downloaded_AfterSuccesfullDecryption
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    NSUUID *assetID = NSUUID.createUUID;
+    NSData *otrKey = NSData.randomEncryptionKey;
+    
+    NSData *assetData = [NSData secureRandomDataOfLength:256];
+    NSData *encryptedAsset = [assetData zmEncryptPrefixingPlainTextIVWithKey:otrKey];
+    NSData *sha256 = encryptedAsset.zmSHA256Digest;
+    
+    ZMGenericMessage *uploaded = [ZMGenericMessage genericMessageWithUploadedOTRKey:otrKey sha256:sha256 messageID:nonce.transportString];
+    
+    // when
+    ZMAssetClientMessage *message = [self remotelyInsertAssetOriginalAndUpdate:uploaded insertBlock:
+                                     ^(NSData *data, MockConversation *conversation, MockUserClient *from, MockUserClient *to) {
+                                         [conversation insertOTRAssetFromClient:from toClient:to metaData:data imageData:assetData assetId:assetID isInline:NO];
+                                     } nonce:nonce];
+    WaitForAllGroupsToBeEmpty(0.5);
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    
+    // creating the asset remotely
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        [session createAssetWithData:encryptedAsset
+                          identifier:assetID.transportString
+                         contentType:@"text/plain"
+                     forConversation:conversation.remoteIdentifier.transportString];
+    }];
+    
+    // then
+    XCTAssertEqualObjects(message.assetId, assetID); // We should have received an asset ID to be able to download the file
+    XCTAssertEqualObjects(message.nonce, nonce);
+    XCTAssertEqual(message.transferState, ZMFileTransferStateUploaded);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    [self.userSession performChanges:^{
+        [message requestFileDownload];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    ZMTransportRequest *lastRequest = self.mockTransportSession.receivedRequests.lastObject;
+    NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets/%@", conversation.remoteIdentifier.transportString, message.assetId.transportString];
+    XCTAssertEqualObjects(lastRequest.path, expectedPath);
+    XCTAssertEqual(message.transferState, ZMFileTransferStateDownloaded);
+}
+
+- (void)testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption
+{
+    //given
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = NSUUID.createUUID;
+    NSUUID *assetID = NSUUID.createUUID;
+    NSData *otrKey = NSData.randomEncryptionKey;
+    
+    NSData *assetData = [NSData secureRandomDataOfLength:256];
+    NSData *encryptedAsset = [assetData zmEncryptPrefixingPlainTextIVWithKey:otrKey];
+    NSData *sha256 = encryptedAsset.zmSHA256Digest;
+    
+    ZMGenericMessage *uploaded = [ZMGenericMessage genericMessageWithUploadedOTRKey:otrKey sha256:sha256 messageID:nonce.transportString];
+    
+    // when
+    ZMAssetClientMessage *message = [self remotelyInsertAssetOriginalAndUpdate:uploaded insertBlock:
+                                     ^(NSData *data, MockConversation *conversation, MockUserClient *from, MockUserClient *to) {
+                                         [conversation insertOTRAssetFromClient:from toClient:to metaData:data imageData:assetData assetId:assetID isInline:NO];
+                                     } nonce:nonce];
+    WaitForAllGroupsToBeEmpty(0.5);
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    
+    // creating a wrong asset (different hash, will fail to decrypt) remotely
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        [session createAssetWithData:[NSData secureRandomDataOfLength:128]
+                          identifier:assetID.transportString
+                         contentType:@"text/plain"
+                     forConversation:conversation.remoteIdentifier.transportString];
+    }];
+    
+    // then
+    XCTAssertEqualObjects(message.assetId, assetID); // We should have received an asset ID to be able to download the file
+    XCTAssertEqualObjects(message.nonce, nonce);
+    XCTAssertEqual(message.transferState, ZMFileTransferStateUploaded);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    [self.userSession performChanges:^{
+        [message requestFileDownload];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    ZMTransportRequest *lastRequest = self.mockTransportSession.receivedRequests.lastObject;
+    NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/otr/assets/%@", conversation.remoteIdentifier.transportString, message.assetId.transportString];
+    XCTAssertEqualObjects(lastRequest.path, expectedPath);
+    XCTAssertEqual(message.transferState, ZMFileTransferStateFailedDownload);
+}
+
+#pragma mark Helper
+
+- (NSURL *)createTestFile:(NSString *)name
+{
+    NSError *error;
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSURL *directory = [fm URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
+    XCTAssertNil(error);
+    
+    NSString *fileName = [NSString stringWithFormat:@"%@.dat", name];
+    NSURL *fileURL = [directory URLByAppendingPathComponent:fileName].filePathURL;
+    NSData *testData = [NSData secureRandomDataOfLength:256];
+    XCTAssertTrue([testData writeToFile:fileURL.path atomically:YES]);
+    
+    return fileURL;
+}
+
+- (NSURL *)testVideoFileURL
+{
+    NSBundle *bundle = [NSBundle bundleForClass:self.class];
+    
+    NSURL *url = [bundle URLForResource:@"video" withExtension:@"mp4"];
+    if (nil == url) XCTFail("Unable to load video fixture from disk");
+    return url;
+}
+
+- (void)encryptAndRemotelyInsertOTRAssetToSelfClient:(ZMGenericMessage *)genericMessage
+                                            fromUser:(MockUser *)user
+                                      inConversation:(MockConversation *)conversation
+{
+    NSError *error;
+    CBCryptoBox *box = self.userSession.syncManagedObjectContext.zm_cryptKeyStore.box;
+    CBPreKey *prekey = [box lastPreKey:&error];
+    XCTAssertNil(error);
+    
+    // when
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        
+        [self inserOTRMessage:genericMessage
+               inConversation:conversation
+                     fromUser:user
+                     toClient:self.selfUser.clients.anyObject
+                     usingKey:prekey
+                      session:session];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
+- (ZMAssetClientMessage *)remotelyInsertAssetOriginalAndUpdate:(ZMGenericMessage *)updateMessage
+                                                   insertBlock:(void (^)(NSData *data, MockConversation *conversation, MockUserClient *from, MockUserClient *to))insertBlock
+                                                         nonce:(NSUUID *)nonce
+{
+    return [self remotelyInsertAssetOriginalWithMimeType:@"text/plain" updateWithMessage:updateMessage insertBlock:insertBlock nonce:nonce];
+}
+
+- (ZMAssetClientMessage *)remotelyInsertAssetOriginalWithMimeType:(NSString *)mimeType
+                                                updateWithMessage:(ZMGenericMessage *)updateMessage
+                                                      insertBlock:(void (^)(NSData *data, MockConversation *conversation, MockUserClient *from, MockUserClient *to))insertBlock
+                                                            nonce:(NSUUID *)nonce
+{
+    
+    // given
+    MockUserClient *selfClient = [self.selfUser.clients anyObject];
+    XCTAssertNotNil(selfClient);
+    
+    ZMGenericMessage *original = [ZMGenericMessage genericMessageWithAssetSize:256
+                                                                      mimeType:mimeType
+                                                                          name:self.name
+                                                                     messageID:nonce.transportString];
+    
+    // when
+    NSError *error;
+    CBCryptoBox *box = self.userSession.syncManagedObjectContext.zm_cryptKeyStore.box;
+    CBPreKey *key = [box generatePreKeys:NSMakeRange(0, 1) error:&error].firstObject;
+    XCTAssertNil(error);
+    
+    __block CBCryptoBox *senderBox;
+    
+    // when
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        senderBox = [self inserOTRMessage:original
+                           inConversation:self.selfToUser1Conversation
+                                 fromUser:self.user1
+                                 toClient:selfClient
+                                 usingKey:key
+                                  session:session];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    MockUserClient *user1Client = self.user1.clients.anyObject;
+    XCTAssertNotNil(user1Client);
+    XCTAssertNotNil(senderBox);
+    
+    [self.mockTransportSession performRemoteChanges:^(__unused MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        NSError *innerError;
+        CBSession *sessionFromSenderToSelf = [senderBox sessionById:selfClient.identifier error:&innerError];
+        NSData *data = [sessionFromSenderToSelf encrypt:updateMessage.data error:&innerError];
+        XCTAssertNil(innerError);
+        
+        insertBlock(data, self.selfToUser1Conversation, user1Client, selfClient);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    
+    if (! [conversation.messages.firstObject isKindOfClass:ZMAssetClientMessage.class]) {
+        XCTFail(@"Unexpected message type, expected ZMAssetClientMessage : %@", [conversation.messages.firstObject class]);
+        return nil;
+    }
+    
+    ZMAssetClientMessage *message = (ZMAssetClientMessage *)conversation.messages.firstObject;
+    XCTAssertEqual(message.size, 256lu);
+    XCTAssertEqualObjects(message.mimeType, mimeType);
+    XCTAssertEqualObjects(message.filename, self.name);
+    XCTAssertEqualObjects(message.nonce, nonce);
+    
+    return message;
+}
+
+@end

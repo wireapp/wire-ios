@@ -68,6 +68,16 @@ public class ClientUpdateStatus: NSObject {
             }
         }
         self.needsToVerifySelfClientOnAuthenticationDidSucceed = !ZMClientRegistrationStatus.needsToRegisterClientInContext(self.syncManagedObjectContext)
+        
+        // check if we are already trying to delete the client
+        if let selfUser = ZMUser.selfUserInContext(syncManagedObjectContext).selfClient() where selfUser.markedToDelete {
+            // This recovers from the bug where we think we should delete the self cient.
+            // See: https://wearezeta.atlassian.net/browse/ZIOS-6646
+            // This code can be removed and possibly moved to a hotfix once all paths that lead to the bug
+            // have been discovered
+            selfUser.markedToDelete = false
+            selfUser.resetLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMarkedToDeleteKey))
+        }
     }
     
     public func tearDown() {

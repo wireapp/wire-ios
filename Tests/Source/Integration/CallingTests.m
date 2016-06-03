@@ -201,7 +201,7 @@
         NSString *expectedString = [NSString stringWithFormat:@"/conversations/%@/call/state", self.conversationUnderTest.remoteIdentifier.transportString];
         if(request.method == ZMMethodPUT && [request.path isEqualToString:expectedString]) {
             delayedRequest = request;
-            return ZMCustomResponseGeneratorReturnResponseNotCompleted;
+            return ResponseGenerator.ResponseNotCompleted;
         }
         return nil;
     };

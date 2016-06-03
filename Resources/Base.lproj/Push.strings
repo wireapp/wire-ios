@@ -33,6 +33,22 @@
 "push.notification.add.image.oneonone" = "%1$@ shared a picture";
 "push.notification.add.image.oneonone.nousername" = "New picture in a conversation";
 
+"push.notification.add.video.group" = "%1$@ shared a video in %2$@";
+"push.notification.add.video.group.nousername" = "New video in %1$@";
+"push.notification.add.video.group.nousername.noconversationname" = "New video in a conversation";
+"push.notification.add.video.group.noconversationname" = "%1$@ shared a video in a conversation";
+
+"push.notification.add.video.oneonone" = "%1$@ shared a video";
+"push.notification.add.video.oneonone.nousername" = "New video in a conversation";
+
+"push.notification.add.audio.group" = "%1$@ shared an audio message in %2$@";
+"push.notification.add.audio.group.nousername" = "New audio message in %1$@";
+"push.notification.add.audio.group.nousername.noconversationname" = "New audio message in a conversation";
+"push.notification.add.audio.group.noconversationname" = "%1$@ shared an audio message in a conversation";
+
+"push.notification.add.audio.oneonone" = "%1$@ shared an audio message";
+"push.notification.add.audio.oneonone.nousername" = "New audio message in a conversation";
+
 "push.notification.add.file.group" = "%1$@ shared a file in %2$@";
 "push.notification.add.file.group.nousername" = "New file in %1$@";
 "push.notification.add.file.group.nousername.noconversationname" = "New file in a conversation";

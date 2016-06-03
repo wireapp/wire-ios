@@ -227,7 +227,7 @@ NSUInteger ZMConnectionTranscoderPageSize = 90;
 
 @implementation ZMConnectionTranscoder (DownstreamTranscoder)
 
-- (ZMTransportRequest *)requestForFetchingObject:(ZMConnection *)connection downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (ZMTransportRequest *)requestForFetchingObject:(ZMConnection *)connection downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     if (connection.to.remoteIdentifier == nil || connection.needsToBeUpdatedFromBackend == NO) {
@@ -239,7 +239,7 @@ NSUInteger ZMConnectionTranscoderPageSize = 90;
     return request;
     
 }
-- (void)updateObject:(ZMConnection *)connection withResponse:(ZMTransportResponse *)response downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (void)updateObject:(ZMConnection *)connection withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     connection.needsToBeUpdatedFromBackend = NO;
@@ -250,7 +250,7 @@ NSUInteger ZMConnectionTranscoderPageSize = 90;
     [connection updateConversationType];
 }
 
-- (void)deleteObject:(ZMConnection *)connection downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (void)deleteObject:(ZMConnection *)connection downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(connection);
     NOT_USED(downstreamSync);

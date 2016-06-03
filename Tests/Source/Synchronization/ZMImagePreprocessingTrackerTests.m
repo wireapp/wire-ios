@@ -21,7 +21,7 @@
 @import ZMCDataModel;
 
 #import "MessagingTest.h"
-#import "ZMAssetPreprocessingTracker+Testing.h"
+#import "ZMImagePreprocessingTracker+Testing.h"
 
 
 @interface ZMImagePreprocessingTrackerTests : MessagingTest

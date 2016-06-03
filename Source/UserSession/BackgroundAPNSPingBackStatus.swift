@@ -85,15 +85,20 @@ extension EventsWithIdentifier {
     public var status: PingBackStatus = .Done
 
     public var hasNotificationIDs: Bool {
-        return !notificationIDs.isEmpty
+        if let next = notificationIDs.first {
+            return !next.isNotice
+        }
+        return false
     }
     
     public var hasNoticeNotificationIDs: Bool {
-        return !noticeNotificationIDs.isEmpty
+        if let next = notificationIDs.first {
+            return next.isNotice
+        }
+        return false
     }
     
-    private var notificationIDs: [NSUUID] = []
-    private var noticeNotificationIDs: [NSUUID] = []
+    private var notificationIDs: [EventsWithIdentifier] = []
     private var notificationIDToEventsMap : [NSUUID : [ZMUpdateEvent]] = [:]
     
     private var syncManagedObjectContext: NSManagedObjectContext
@@ -116,20 +121,16 @@ extension EventsWithIdentifier {
     }
     
     public func nextNotificationID() -> NSUUID? {
-        return notificationIDs.isEmpty ? .None : notificationIDs.removeFirst()
+        return hasNotificationIDs ?  notificationIDs.removeFirst().identifier : .None
     }
     
     public func nextNoticeNotificationID() -> NSUUID? {
-        return noticeNotificationIDs.isEmpty ? .None : noticeNotificationIDs.removeFirst()
+        return hasNoticeNotificationIDs ? notificationIDs.removeFirst().identifier : .None
     }
     
     public func didReceiveVoIPNotification(eventsWithID: EventsWithIdentifier, handler: PingBackResultHandler) {
-        let identifier = eventsWithID.identifier
-        notificationIDs.append(identifier)
-        if eventsWithID.isNotice {
-            noticeNotificationIDs.append(identifier)
-        }
-        eventsWithHandlerByNotificationID[identifier] = (eventsWithID.events, handler)
+        notificationIDs.append(eventsWithID)
+        eventsWithHandlerByNotificationID[eventsWithID.identifier] = (eventsWithID.events, handler)
         
         if authenticationStatusProvider?.currentPhase == .Authenticated {
             backgroundActivity = backgroundActivity ?? ZMBackgroundActivity.beginBackgroundActivityWithName("Ping back to BE")
@@ -155,23 +156,17 @@ extension EventsWithIdentifier {
     
     public func didFetchNoticeNotification(notificationID: NSUUID, success: Bool, events: [ZMUpdateEvent]) {
         var finalEvents = events
-        if let idx = notificationIDs.indexOf(notificationID) where idx != NSNotFound {
-            if success {
-                // we fetched the event and want to ping back
-                status = .Pinging
-                let cryptoBox = syncManagedObjectContext.zm_cryptKeyStore.box
-                let decryptedEvents = events.flatMap{cryptoBox.decryptUpdateEventAndAddClient($0, managedObjectContext: syncManagedObjectContext)}
-                finalEvents = decryptedEvents
-                notificationIDToEventsMap[notificationID] = decryptedEvents
-            } else {
-                // we could't fetch the event and want the fallback
-                notificationIDs.removeAtIndex(idx)
-                let eventsWithHandler = eventsWithHandlerByNotificationID.removeValueForKey(notificationID)
-                defer { eventsWithHandler?.handler(.Failure, []) }
-                updateStatus()
-            }
+        if success {
+            // we fetched the event and pinged back
+            let cryptoBox = syncManagedObjectContext.zm_cryptKeyStore.box
+            let decryptedEvents = events.flatMap{cryptoBox.decryptUpdateEventAndAddClient($0, managedObjectContext: syncManagedObjectContext)}
+            finalEvents = decryptedEvents
+            notificationIDToEventsMap[notificationID] = decryptedEvents
+            didPerfomPingBackRequest(notificationID, success: true)
         } else {
-            zmLog.error("id for notice notification has already been removed from pingBack IDs - something went wrong")
+            // we could't fetch the event and want the fallback
+            let eventsWithHandler = eventsWithHandlerByNotificationID.removeValueForKey(notificationID)
+            defer { eventsWithHandler?.handler(.Failure, []) }
             updateStatus()
         }
         
@@ -180,17 +175,12 @@ extension EventsWithIdentifier {
     }
     
     func updateStatus() {
-        if !hasNotificationIDs {
+        if notificationIDs.isEmpty {
             backgroundActivity?.endActivity()
             backgroundActivity = nil
             status = .Done
-            if hasNoticeNotificationIDs {
-                zmLog.error("has no id to ping back, but id for notice left - something went wrong - removing noticeIds")
-                noticeNotificationIDs.removeAll()
-            }
         } else {
-            let nextIDIsNoticeID = hasNoticeNotificationIDs && noticeNotificationIDs.first == notificationIDs.first
-            status = nextIDIsNoticeID ? .FetchingNotice : .Pinging
+            status = hasNoticeNotificationIDs ? .FetchingNotice : .Pinging
         }
     }
     

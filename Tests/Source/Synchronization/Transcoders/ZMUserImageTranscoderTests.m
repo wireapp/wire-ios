@@ -81,25 +81,6 @@
     [super tearDown];
 }
 
-- (void)testThatItProcessesSmallProfileBeforeMediumBeforeUpstream;
-{
-    // when
-    NSArray *generators = self.sut.requestGenerators;
-    
-    // then
-    XCTAssertEqual(generators.count, 3u);
-    XCTAssertTrue([generators.firstObject isKindOfClass:ZMDownstreamObjectSync.class]);
-    XCTAssertTrue([generators[1] isKindOfClass:ZMDownstreamObjectSync.class]);
-    XCTAssertTrue([generators.lastObject isKindOfClass:ZMUpstreamModifiedObjectSync.class]);
-
-    ZMDownstreamObjectSync *smallProfile = generators.firstObject;
-    ZMDownstreamObjectSync *medium = generators[1];
-
-    XCTAssertEqualObjects(smallProfile.predicateForObjectsToDownload , [ZMUser predicateForSmallImageNeedingToBeUpdatedFromBackend]);
-    XCTAssertEqualObjects(medium.predicateForObjectsToDownload , [ZMUser predicateForMediumImageNeedingToBeUpdatedFromBackend]);
-    
-}
-
 @end
 
 

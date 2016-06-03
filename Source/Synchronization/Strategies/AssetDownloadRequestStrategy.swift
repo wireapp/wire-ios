@@ -80,14 +80,19 @@ import ZMTransport
     
     private func handleResponse(response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
         if response.result == .Success {
-            guard let fileMessageData = assetClientMessage.fileMessageData else { return }
+            guard let fileMessageData = assetClientMessage.fileMessageData, asset = assetClientMessage.genericAssetMessage?.asset else { return }
             // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
             let fileCache = self.managedObjectContext.zm_fileAssetCache
             fileCache.storeAssetData(assetClientMessage.nonce, fileName: fileMessageData.filename, encrypted: true, data: response.rawData)
 
-            let imageAsset = assetClientMessage.genericAssetMessage.asset
-
-            if fileCache.decryptFileIfItMatchesDigest(assetClientMessage.nonce, fileName: fileMessageData.filename, encryptionKey: imageAsset.uploaded.otrKey, sha256Digest: imageAsset.uploaded.sha256) {
+            let decryptionSuccess = fileCache.decryptFileIfItMatchesDigest(
+                assetClientMessage.nonce,
+                fileName: fileMessageData.filename,
+                encryptionKey: asset.uploaded.otrKey,
+                sha256Digest: asset.uploaded.sha256
+            )
+            
+            if decryptionSuccess {
                 assetClientMessage.transferState = .Downloaded
             }
             else {
@@ -95,7 +100,9 @@ import ZMTransport
             }
         }
         else {
-            assetClientMessage.transferState = .FailedDownload
+            if assetClientMessage.transferState == .Downloading {
+                assetClientMessage.transferState = .FailedDownload
+            }
         }
         
         let messageObjectId = assetClientMessage.objectID
@@ -122,10 +129,10 @@ import ZMTransport
 
     // MARK: - ZMDownstreamTranscoder
     
-    public func requestForFetchingObject(object: ZMManagedObject!, downstreamSync: ZMDownstreamObjectSync!) -> ZMTransportRequest! {
+    public func requestForFetchingObject(object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage {
             
-            let taskCreationHandler = ZMTaskCreatedHandler(onGroupQueue: managedObjectContext) { _, taskIdentifier in
+            let taskCreationHandler = ZMTaskCreatedHandler(onGroupQueue: managedObjectContext) { taskIdentifier in
                 assetClientMessage.associatedTaskIdentifier = taskIdentifier
             }
             
@@ -149,11 +156,11 @@ import ZMTransport
         fatalError("Cannot generate request for \(object)")
     }
     
-    public func deleteObject(object: ZMManagedObject!, downstreamSync: ZMDownstreamObjectSync!) {
+    public func deleteObject(object: ZMManagedObject!, downstreamSync: ZMObjectSync!) {
         // no-op
     }
     
-    public func updateObject(object: ZMManagedObject!, withResponse response: ZMTransportResponse!, downstreamSync: ZMDownstreamObjectSync!) {
+    public func updateObject(object: ZMManagedObject!, withResponse response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         // no-op
     }
 }

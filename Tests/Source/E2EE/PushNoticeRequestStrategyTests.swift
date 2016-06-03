@@ -64,7 +64,7 @@ class PushNoticeRequestStrategyTests: MessagingTest {
         
         // then
         XCTAssertEqual(request?.method, .MethodGET)
-        XCTAssertEqual(request?.path, "/notifications/\(notificationID.transportString())?client=\(selfClient.remoteIdentifier)")
+        XCTAssertEqual(request?.path, "/notifications/\(notificationID.transportString())?client=\(selfClient.remoteIdentifier)&cancel_fallback=true")
         XCTAssertNil(request?.payload)
     }
     

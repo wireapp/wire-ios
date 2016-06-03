@@ -17,16 +17,9 @@
 // 
 
 
-@import Foundation;
-@import CoreData;
-#import <zmessaging/ZMObjectSyncStrategy.h>
+#import <zmessaging/ZMContextChangeTracker.h>
+#import <zmessaging/ZMRequestGenerator.h>
 #import <zmessaging/ZMOutstandingItems.h>
 
-@class ZMImageMessage;
-
-@interface ZMAssetTranscoder : ZMObjectSyncStrategy <ZMObjectStrategy, ZMOutstandingItems>
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext * __unused)moc NS_DESIGNATED_INITIALIZER;
-
+@protocol ZMObjectSync <NSObject, ZMContextChangeTracker, ZMOutstandingItems, ZMRequestGenerator>
 @end

@@ -562,5 +562,78 @@
     XCTAssertFalse([userClient hasLocalModificationsForKey:@"needsToUploadSignalingKeys"]);
 }
 
+- (void)testThatItSetsNotUploadedAssetClientMessagesToFailedAndAlsoExpiresFailedImageMessages_42_11
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.conversationType = ZMConversationTypeOneOnOne;
+    
+    ZMAssetClientMessage *uploadedImageMessage = [conversation appendOTRMessageWithImageData:self.mediumJPEGData nonce:NSUUID.createUUID];
+    [uploadedImageMessage markAsDelivered];
+    uploadedImageMessage.uploadState = ZMAssetUploadStateDone;
+    uploadedImageMessage.assetId = NSUUID.createUUID;
+    XCTAssertTrue(uploadedImageMessage.delivered);
+    XCTAssertTrue(uploadedImageMessage.hasDownloadedImage);
+    XCTAssertEqual(uploadedImageMessage.uploadState, ZMAssetUploadStateDone);
+    
+    ZMAssetClientMessage *notUploadedImageMessage = [conversation appendOTRMessageWithImageData:self.mediumJPEGData nonce:NSUUID.createUUID];
+    notUploadedImageMessage.uploadState = ZMAssetUploadStateUploadingFullAsset;
+    XCTAssertFalse(notUploadedImageMessage.delivered);
+    XCTAssertTrue(notUploadedImageMessage.hasDownloadedImage);
+    XCTAssertEqual(notUploadedImageMessage.uploadState, ZMAssetUploadStateUploadingFullAsset);
+    
+    ZMAssetClientMessage *uploadedFileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:self.testVideoFileURL thumbnail:self.verySmallJPEGData]];
+    [uploadedFileMessage markAsDelivered];
+    uploadedFileMessage.uploadState = ZMAssetUploadStateDone;
+    uploadedFileMessage.assetId = NSUUID.createUUID;
+    XCTAssertTrue(uploadedFileMessage.delivered);
+    XCTAssertTrue(uploadedFileMessage.hasDownloadedImage);
+    XCTAssertEqual(uploadedFileMessage.uploadState, ZMAssetUploadStateDone);
+    
+    ZMAssetClientMessage *notUploadedFileMessage = [conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:self.testVideoFileURL thumbnail:self.verySmallJPEGData]];
+    [notUploadedFileMessage markAsDelivered];
+    notUploadedFileMessage.uploadState = ZMAssetUploadStateDone;
+    XCTAssertTrue(notUploadedFileMessage.delivered);
+    XCTAssertTrue(notUploadedFileMessage.hasDownloadedImage);
+    XCTAssertEqual(notUploadedFileMessage.uploadState, ZMAssetUploadStateDone);
+    
+    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    self.sut = [[ZMHotFix alloc] initWithSyncMOC:self.syncMOC];
+    [self.sut applyPatchesForCurrentVersion:@"42.11"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *newVersion = [self.syncMOC persistentStoreMetadataForKey:@"lastSavedVersion"];
+    XCTAssertEqualObjects(newVersion, @"42.11");
+    
+    // then
+    XCTAssertTrue(uploadedImageMessage.delivered);
+    XCTAssertTrue(uploadedImageMessage.hasDownloadedImage);
+    XCTAssertEqual(uploadedImageMessage.uploadState, ZMAssetUploadStateDone);
+    
+    XCTAssertFalse(notUploadedImageMessage.delivered);
+    XCTAssertTrue(notUploadedImageMessage.hasDownloadedImage);
+    XCTAssertEqual(notUploadedImageMessage.uploadState, ZMAssetUploadStateUploadingFailed);
+    
+    XCTAssertTrue(uploadedFileMessage.delivered);
+    XCTAssertTrue(uploadedFileMessage.hasDownloadedImage);
+    XCTAssertEqual(uploadedFileMessage.uploadState, ZMAssetUploadStateDone);
+    
+    XCTAssertTrue(notUploadedFileMessage.delivered);
+    XCTAssertTrue(notUploadedFileMessage.hasDownloadedImage);
+    XCTAssertEqual(notUploadedFileMessage.uploadState, ZMAssetUploadStateUploadingFailed);
+}
+
+- (NSURL *)testVideoFileURL
+{
+    NSBundle *bundle = [NSBundle bundleForClass:self.class];
+    
+    NSURL *url = [bundle URLForResource:@"video" withExtension:@"mp4"];
+    if (nil == url) XCTFail("Unable to load video fixture from disk");
+    return url;
+}
+
 @end
 

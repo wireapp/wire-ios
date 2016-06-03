@@ -211,16 +211,6 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
 
 @implementation ZMAssetTranscoderTests (General)
 
-- (void)testThatItProcessesUpstreamBeforeDownstream;
-{
-    // when
-    NSArray *generators = self.sut.requestGenerators;
-    
-    // then
-    XCTAssertEqual(generators.count, 1lu);
-    XCTAssertTrue([generators.firstObject isKindOfClass:ZMDownstreamObjectSync.class]);
-}
-
 - (void)testThatItIsCreatedWithIsSlowSyncDoneTrue
 {
     XCTAssertTrue(self.sut.isSlowSyncDone);
@@ -253,18 +243,6 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
     XCTAssertNil(request);
 }
 
-- (void)whitelistMessagesInConversation:(ZMConversation *)conversation
-{
-    [self.syncMOC performGroupedBlockAndWait:^{
-        for(ZMImageMessage *imageMessage in conversation.messages) {
-            if([imageMessage isKindOfClass:ZMImageMessage.class]) {
-                [ZMAssetTranscoder whitelistAssetDownloadForImageMessage:imageMessage];
-            }
-        }
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-}
-
 - (void)testThatItGeneratesAnAssetRequestWhenReceivingAMessageAndRequestingToDownloadIt
 {
     // given
@@ -279,9 +257,12 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
         [self pushContextChangesIntoChangeTrackers];
         imageMessage = conversation.messages.firstObject;
     }];
+    [self.syncMOC saveOrRollback];
     
     // when
-    [self whitelistMessagesInConversation:conversation];
+    [imageMessage requestImageDownload];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
     __block ZMTransportRequest *request;
     [self.syncMOC performGroupedBlockAndWait:^{
         request = [self.sut.requestGenerators nextRequest];
@@ -308,14 +289,17 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
     NSData *imageData = [@"image-data-0q39eijdkslfm" dataUsingEncoding:NSUTF8StringEncoding];
     ZMTransportResponse *response = [[ZMTransportResponse alloc] initWithImageData:imageData HTTPstatus:200 transportSessionError:nil headers:nil];
     
-    __block ZMImageMessage *imageMessage = nil;
     [self.syncMOC performGroupedBlockAndWait:^{
         [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
         [self pushContextChangesIntoChangeTrackers];
+        [self.syncMOC saveOrRollback];
     }];
-    [self whitelistMessagesInConversation:conversation];
-    
+
+    [conversation.messages.lastObject requestImageDownload];
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // when
+    __block ZMImageMessage *imageMessage = nil;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMTransportRequest *request = [self.sut.requestGenerators nextRequest];
         XCTAssertNotNil(request);
@@ -340,16 +324,18 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
     NSData *imageData = [@"image-data-0q39eijdkslfm" dataUsingEncoding:NSUTF8StringEncoding];
     ZMTransportResponse *response = [[ZMTransportResponse alloc] initWithImageData:imageData HTTPstatus:404 transportSessionError:nil headers:nil];
 
-    __block ZMImageMessage *imageMessage;
     [self.syncMOC performGroupedBlockAndWait:^{
         [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
         [self pushContextChangesIntoChangeTrackers];
         [self.syncMOC saveOrRollback];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    [self whitelistMessagesInConversation:conversation];
+
+    [conversation.messages.lastObject requestImageDownload];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // when
+    __block ZMImageMessage *imageMessage;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMTransportRequest *request = [self.sut.requestGenerators nextRequest];
         XCTAssertNotNil(request);
@@ -375,9 +361,11 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
     [self.syncMOC performGroupedBlockAndWait:^{
         [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
         [self pushContextChangesIntoChangeTrackers];
+        [self.syncMOC saveOrRollback];
         
     }];
-    [self whitelistMessagesInConversation:conversation];
+    [conversation.messages.lastObject requestImageDownload];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // when
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -534,12 +522,12 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
         
         [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
     }];
-    NSManagedObjectID *conversationManagedObjectID = conversation.objectID;
     
     // when
     [self resetSUT];
     
-    [self whitelistMessagesInConversation:(ZMConversation *)[self.syncMOC objectWithID:conversationManagedObjectID]];
+    [imageMessage requestImageDownload];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     ZMTransportRequest *request = [self.sut.requestGenerators nextRequest];
     
@@ -651,7 +639,9 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
         message.mediumRemoteIdentifier = [NSUUID createUUID];
         XCTAssert([message.managedObjectContext saveOrRollback]);
     }];
-    [self whitelistMessagesInConversation:conversation];
+    
+    [message requestImageDownload];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // when
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -690,12 +680,13 @@ static NSString const *EventTypeAssetAdd = @"conversation.asset-add";
         imageMessage.visibleInConversation = conversation;
         imageMessage.originalSize = CGSizeMake(1900, 1500);
         imageMessage.mediumRemoteIdentifier = [NSUUID createUUID];
+        [self.syncMOC saveOrRollback];
         
         for (id<ZMContextChangeTracker> t in self.sut.contextChangeTrackers) {
             [t objectsDidChange:[NSSet setWithObject:imageMessage]];
         }
     }];
-    [ZMAssetTranscoder whitelistAssetDownloadForImageMessage:imageMessage];
+    [imageMessage requestImageDownload];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
