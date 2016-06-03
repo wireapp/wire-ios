@@ -24,6 +24,7 @@
 #import "ZMMessageExpirationTimer.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMImagePreprocessingTracker.h"
+#import "ZMDownstreamObjectSyncWithWhitelist.h"
 
 #import "ZMClientRegistrationStatus.h"
 #import "ZMLocalNotificationDispatcher.h"
@@ -32,10 +33,21 @@
 #import <zmessaging/zmessaging-Swift.h>
 #import "ZMOperationLoop.h"
 
+
+
+@interface ZMAssetClientMessage (ImagePredicates)
+
++ (NSPredicate *)filterForUploadingImageMessages;
++ (NSPredicate *)filterForImagesToBeDownloaded;
+
+@end
+
+
+
 @interface ZMClientMessageTranscoder()
 
 @property (nonatomic) ZMUpstreamModifiedObjectSync *assetModifiedSync;
-@property (nonatomic) ZMDownstreamObjectSync *downstreamSync;
+@property (nonatomic) ZMDownstreamObjectSyncWithWhitelist *downstreamSync;
 @property (nonatomic) ClientMessageRequestFactory *requestsFactory;
 @property (nonatomic) ZMImagePreprocessingTracker *imagePreprocessor;
 @property (nonatomic, weak) ZMClientRegistrationStatus *clientRegistrationStatus;
@@ -51,31 +63,31 @@
 {
     ZMUpstreamInsertedObjectSync *clientTextMessageUpstreamSync = [[ZMUpstreamInsertedObjectSync alloc] initWithTranscoder:self entityName:[ZMClientMessage entityName] filter:nil managedObjectContext:moc];
     ZMMessageExpirationTimer *messageTimer = [[ZMMessageExpirationTimer alloc] initWithManagedObjectContext:moc entityName:[ZMClientMessage entityName] localNotificationDispatcher:dispatcher filter:nil];
-    ZMUpstreamModifiedObjectSync *assetModifiedSync = [[ZMUpstreamModifiedObjectSync alloc] initWithTranscoder:self
-                                                                                                    entityName:[ZMAssetClientMessage entityName]
-                                                                                               updatePredicate:nil
-                                                                                                        filter:[NSPredicate predicateWithFormat:@"filename == nil"]
-                                                                                                    keysToSync:nil
-                                                                                          managedObjectContext:moc];
-    
-    NSPredicate *mediumDataNeedsToBeDownloaded = [NSPredicate predicateWithFormat:@"assetId_data != NIL && loadedMediumData == NO"];
-    ZMDownstreamObjectSync *downstreamSync = [[ZMDownstreamObjectSync alloc] initWithTranscoder:self
-                                                                                     entityName:[ZMAssetClientMessage entityName]
-                                                                  predicateForObjectsToDownload:mediumDataNeedsToBeDownloaded
-                                                                                         filter:[NSPredicate predicateWithFormat:@"imageMessageData != nil"]
-                                                                           managedObjectContext:moc];
-    ClientMessageRequestFactory *factory = [ClientMessageRequestFactory new];
     
     self = [super initWithManagedObjectContext:moc
                     upstreamInsertedObjectSync:clientTextMessageUpstreamSync
                    localNotificationDispatcher:dispatcher
                         messageExpirationTimer:messageTimer];
     if (self) {
-        self.assetModifiedSync = assetModifiedSync;
-        self.downstreamSync = downstreamSync;
-        self.requestsFactory = factory;
-        self.clientRegistrationStatus = clientRegistrationStatus;
         
+        // Asset upload
+        NSPredicate *insertPredicate = [NSPredicate predicateWithFormat:@"%K != %@", ZMAssetClientMessageUploadedStateKey, @(ZMAssetUploadStateDone)];
+        self.assetModifiedSync = [[ZMUpstreamModifiedObjectSync alloc] initWithTranscoder:self
+                                                                                                        entityName:[ZMAssetClientMessage entityName]
+                                                                                                   updatePredicate:insertPredicate
+                                                                                                            filter:ZMAssetClientMessage.filterForUploadingImageMessages
+                                                                                                        keysToSync:nil
+                                                                                              managedObjectContext:moc];
+
+        // Asset download
+        self.downstreamSync = [[ZMDownstreamObjectSyncWithWhitelist alloc] initWithTranscoder:self
+                                                                                   entityName:[ZMAssetClientMessage entityName]
+                                                                 predicateForObjectsToDownload:ZMAssetClientMessage.filterForImagesToBeDownloaded
+                                                                         managedObjectContext:moc];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didWhitelistAssetDownload:) name:ZMAssetClientMessage.ImageDownloadNotificationName object:nil];
+        
+        // Image preprocessing
         NSPredicate *needToProcessPredicate = [NSPredicate predicateWithFormat:@"(mediumGenericMessage.image.width == 0 || previewGenericMessage.image.width == 0) && delivered == NO"];
         NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:@"delivered == NO"];
         NSOperationQueue *preprocessQueue = [[NSOperationQueue alloc] init];
@@ -84,8 +96,34 @@
                                                                                     fetchPredicate:fetchPredicate
                                                                           needsProcessingPredicate:needToProcessPredicate
                                                                                        entityClass:ZMAssetClientMessage.class];
+        
+        // Others
+        self.requestsFactory = [ClientMessageRequestFactory new];
+        self.clientRegistrationStatus = clientRegistrationStatus;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)didWhitelistAssetDownload:(NSNotification *)note
+{
+    ZM_WEAK(self);
+    [self.managedObjectContext performGroupedBlock:^{
+        ZM_STRONG(self);
+        if(self == nil) {
+            return;
+        }
+        NSManagedObjectID *objectID = (NSManagedObjectID *)note.object;
+        ZMAssetClientMessage *imageMessage = (ZMAssetClientMessage *)[self.managedObjectContext existingObjectWithID:objectID error:nil];
+        if(imageMessage != nil) {
+            [self.downstreamSync whiteListObject:imageMessage];
+        }
+        [ZMOperationLoop notifyNewRequestsAvailable:self];
+    }];
 }
 
 - (NSArray *)contextChangeTrackers
@@ -115,7 +153,7 @@
 - (BOOL)shouldCreateRequestToSyncObject:(ZMAssetClientMessage *)message forKeys:(NSSet *)keys withSync:(id)sync
 {
     NOT_USED(sync);
-    ZMImageFormat format = [self imageFormatForKeys:keys];
+    ZMImageFormat format = [self imageFormatForKeys:keys message:message];
     if(format == ZMImageFormatInvalid) {
         // we will ultimately crash here when trying to create the request
         return YES;
@@ -131,25 +169,38 @@
     return YES;
 }
 
-- (ZMImageFormat)imageFormatForKeys:(NSSet *)keys
+- (ZMImageFormat)imageFormatForKeys:(NSSet *)keys message:(ZMAssetClientMessage *)message
 {
     ZMImageFormat format = ZMImageFormatInvalid;
-    if ([keys containsObject:ZMAssetClientMessage_NeedsToUploadPreviewKey]) {
-        format = ZMImageFormatPreview;
+    
+    if ([keys containsObject:ZMAssetClientMessageUploadedStateKey]) {
+        switch (message.uploadState) {
+            case ZMAssetUploadStateUploadingPlaceholder:
+                format = ZMImageFormatPreview;
+                break;
+                
+            case ZMAssetUploadStateUploadingFullAsset:
+                format = ZMImageFormatMedium;
+                break;
+                
+            case ZMAssetUploadStateDone:
+            case ZMAssetUploadStateUploadingFailed:
+            case ZMAssetUploadStateUploadingThumbnail:
+                break;
+        }
     }
-    else if ([keys containsObject:ZMAssetClientMessage_NeedsToUploadMediumKey]) {
-        format = ZMImageFormatMedium;
-    }
+    
     return format;
 }
 
 - (ZMUpstreamRequest *)requestForUpdatingObject:(ZMAssetClientMessage *)message forKeys:(NSSet *)keys
 {
-    ZMImageFormat format = [self imageFormatForKeys:keys];
-    if(format == ZMImageFormatInvalid) {
+    ZMImageFormat format = [self imageFormatForKeys:keys message:message];
+    if (format == ZMImageFormatInvalid) {
         ZMTrapUnableToGenerateRequest(keys, self);
         return nil;
     }
+    
     ZMUpstreamRequest *request = [self requestForUpdatingAssetClientMessage:message format:format];
     if (request == nil) {
         // We will crash, but we should still delete the image
@@ -184,26 +235,11 @@
         if (response.result == ZMTransportResponseStatusSuccess) {
             ZM_STRONG(self);
             [message markAsDelivered];
-            [self.managedObjectContext enqueueDelayedSave];
             [ZMOperationLoop notifyNewRequestsAvailable:self]; //to send next image
-        } else if (response.HTTPStatus == 409) {
-            ZMLogWarn(@"Tried to upload %@ for %@, but it was already on the backend. Ignoring.", [message.imageAssetStorage genericMessageForFormat:format].image.tag, message.nonce.transportString);
-        } else if (response.HTTPStatus != 412) {
-            //missing clients
-            ZMLogWarn(@"Failed to upload %@ for %@. Ignoring.", [message.imageAssetStorage genericMessageForFormat:format].image.tag, message.nonce.transportString);
         }
-    } ]];
+    }]];
     
-    NSSet *actualKeys;
-    if (format == ZMImageFormatPreview) {
-        actualKeys = [NSSet setWithObject:ZMAssetClientMessage_NeedsToUploadPreviewKey];
-    }
-    else {
-        actualKeys = [NSSet setWithObject:ZMAssetClientMessage_NeedsToUploadMediumKey];
-    }
-    
-    return [[ZMUpstreamRequest alloc] initWithKeys:actualKeys transportRequest:request];
-
+    return [[ZMUpstreamRequest alloc] initWithKeys:[NSSet setWithObject:ZMAssetClientMessageUploadedStateKey] transportRequest:request];
 }
 
 - (void)updateInsertedObject:(ZMMessage *)message request:(ZMUpstreamRequest *)upstreamRequest response:(ZMTransportResponse *)response;
@@ -219,34 +255,41 @@
 {
     BOOL result = [super updateUpdatedObject:message requestUserInfo:requestUserInfo response:response keysToParse:keysToParse];
     
-    if([keysToParse contains:ZMAssetClientMessage_NeedsToUploadPreviewKey]) {
-        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:message.nonce format:ZMImageFormatPreview encrypted:YES];
+    if([keysToParse contains:ZMAssetClientMessageUploadedStateKey]) {
+    
+        switch (message.uploadState) {
+            case ZMAssetUploadStateUploadingPlaceholder:
+                message.uploadState = ZMAssetUploadStateUploadingFullAsset;
+                [self.managedObjectContext.zm_imageAssetCache deleteAssetData:message.nonce format:ZMImageFormatPreview encrypted:NO];
+                [self.managedObjectContext.zm_imageAssetCache deleteAssetData:message.nonce format:ZMImageFormatPreview encrypted:YES];
+                result = YES; // We want to resynchronize this key in order to upload the full asset
+                break;
+                
+            case ZMAssetUploadStateUploadingFullAsset: {
+                message.uploadState = ZMAssetUploadStateDone;
+                NSUUID *assetId = [NSUUID uuidWithTransportString:response.headers[@"Location"]];
+                message.assetId = assetId;
+                [self.managedObjectContext.zm_imageAssetCache deleteAssetData:message.nonce format:ZMImageFormatMedium encrypted:YES];
+                [message resetLocallyModifiedKeys:[NSSet setWithObject:ZMAssetClientMessageUploadedStateKey]];
+            }
+                break;
+                
+            case ZMAssetUploadStateDone:
+            case ZMAssetUploadStateUploadingFailed:
+            case ZMAssetUploadStateUploadingThumbnail:
+                break;
+        }
     }
-    if([keysToParse contains:ZMAssetClientMessage_NeedsToUploadMediumKey]) {
-        NSUUID *assetId = [NSUUID uuidWithTransportString:response.headers[@"Location"]];
-        message.assetId = assetId;
-        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:message.nonce format:ZMImageFormatMedium encrypted:YES];
-    }
-    [self resetFlagsForNeedsToUploadKeys:keysToParse onAssetMessage:message];
+    
     [message parseUploadResponse:response clientDeletionDelegate:self.clientRegistrationStatus];    
     return result;
-}
-
-- (void)resetFlagsForNeedsToUploadKeys:(NSSet *)keys onAssetMessage:(ZMAssetClientMessage *)message
-{
-    if ([keys containsObject:ZMAssetClientMessage_NeedsToUploadMediumKey] ) {
-        [message setNeedsToUploadData:ZMAssetClientMessageDataTypeFileData needsToUpload:NO];
-    }
-    if([keys containsObject:ZMAssetClientMessage_NeedsToUploadPreviewKey]) {
-        [message setNeedsToUploadData:ZMAssetClientMessageDataTypePlaceholder needsToUpload:NO];
-    }
 }
 
 - (BOOL)shouldRetryToSyncAfterFailedToUpdateObject:(ZMClientMessage *)message request:(ZMUpstreamRequest *__unused)upstreamRequest response:(ZMTransportResponse *)response keysToParse:(NSSet * __unused)keys
 {
     BOOL shouldRetry = [message parseUploadResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
     if(!shouldRetry && [message isKindOfClass:ZMAssetClientMessage.class]) {
-        [self resetFlagsForNeedsToUploadKeys:keys onAssetMessage:(ZMAssetClientMessage *)message];
+        ((ZMAssetClientMessage *)message).uploadState = ZMAssetUploadStateUploadingFailed;
     }
     return shouldRetry;
 }
@@ -288,16 +331,21 @@
 
 @implementation ZMClientMessageTranscoder (ZMDownstreamMediumImageTranscoder)
 
-- (ZMTransportRequest *)requestForFetchingObject:(ZMAssetClientMessage *)imageMessage downstreamSync:(ZMDownstreamObjectSync * __unused)downstreamSync;
+- (ZMTransportRequest *)requestForFetchingObject:(ZMAssetClientMessage *)message downstreamSync:(ZMDownstreamObjectSync * __unused)downstreamSync;
 {
     //if we have data stored already we don't need to make request
     //we just update message using this data
-    NSData *existingData = [self.managedObjectContext.zm_imageAssetCache assetData:imageMessage.nonce format:ZMImageFormatMedium encrypted:imageMessage.isEncrypted];
+    NSData *existingData = [self.managedObjectContext.zm_imageAssetCache assetData:message.nonce format:ZMImageFormatMedium encrypted:NO];
     if (existingData == nil) {
-        return [self.requestsFactory requestToGetAsset:imageMessage.assetId inConversation:imageMessage.conversation.remoteIdentifier isEncrypted:imageMessage.isEncrypted];
+        if (nil != message.imageMessageData) {
+            return [self.requestsFactory requestToGetAsset:message.assetId.transportString inConversation:message.conversation.remoteIdentifier isEncrypted:message.isEncrypted];
+        } else if (nil != message.fileMessageData) {
+            return [self.requestsFactory requestToGetAsset:message.fileMessageData.thumbnailAssetID inConversation:message.conversation.remoteIdentifier isEncrypted:message.isEncrypted];
+        }
+        return nil;
     }
     else {
-        [self updateObject:imageMessage withImageData:existingData];
+        [self updateObject:message withImageData:existingData];
         [self.managedObjectContext enqueueDelayedSave];
         return nil;
     }
@@ -316,6 +364,41 @@
 - (void)updateObject:(ZMAssetClientMessage *)imageMessage withImageData:(NSData *)mediumImageData;
 {
     [imageMessage.imageAssetStorage updateMessageWithImageData:mediumImageData forFormat:ZMImageFormatMedium];
+    // trigger change for image data (a computed property)
+    NSManagedObjectContext *uiMOC = self.managedObjectContext.zm_userInterfaceContext;
+    
+    [uiMOC performGroupedBlock:^{
+        ZMAssetClientMessage *message = [uiMOC existingObjectWithID:imageMessage.objectID error:nil];
+        if (nil != message) {
+            [uiMOC.globalManagedObjectContextObserver notifyNonCoreDataChangeInManagedObject:message];
+        }
+    }];
+}
+
+@end
+
+
+
+@implementation ZMAssetClientMessage (ImagePredicates)
+
++ (NSPredicate *)filterForUploadingImageMessages
+{
+    return [NSPredicate predicateWithBlock:^BOOL(ZMAssetClientMessage  * _Nonnull message, __unused NSDictionary * _Nullable bindings) {
+        return message.imageMessageData != nil &&
+        (message.uploadState == ZMAssetUploadStateUploadingPlaceholder ||
+         message.uploadState == ZMAssetUploadStateUploadingFullAsset) &&
+        message.imageAssetStorage.mediumGenericMessage.image.width != 0 &&
+        message.imageAssetStorage.previewGenericMessage.image.width != 0;
+    }];
+}
+
++ (NSPredicate *)filterForImagesToBeDownloaded
+{
+    return [NSPredicate predicateWithBlock:^BOOL(ZMAssetClientMessage * _Nonnull message, __unused NSDictionary * _Nullable bindings) {
+        BOOL imageWithoutMedium = message.imageMessageData != nil && !message.hasDownloadedImage && message.assetId != nil;
+        BOOL videoFileWithoutThumbnail = message.fileMessageData != nil && !message.hasDownloadedImage && message.fileMessageData.thumbnailAssetID != nil;
+        return imageWithoutMedium || videoFileWithoutThumbnail;
+    }];
 }
 
 @end

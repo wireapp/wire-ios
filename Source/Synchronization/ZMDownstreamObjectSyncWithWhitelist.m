@@ -18,14 +18,13 @@
 
 
 #import "ZMDownstreamObjectSyncWithWhitelist.h"
+#import "ZMDownstreamObjectSync.h"
 
-@interface ZMDownstreamObjectSyncWithWhitelist ()
+@interface ZMDownstreamObjectSyncWithWhitelist () <ZMDownstreamTranscoder>
 
-@property (nonatomic) NSPredicate *predicateForObjectsRequiringWhitelisting;
 @property (nonatomic) NSMutableSet *whitelist;
-@property (nonatomic, readonly) NSPredicate *predicateForObjectsRequiringWhitelistingAndMatchingEntityType;
-@property (nonatomic, readonly) NSPredicate *predicateForObjectsWithObservedEntityType;
-@property (nonatomic, readonly) NSPredicate *predicateForObjectsNotCurrentlyInWhitelist;
+@property (nonatomic) ZMDownstreamObjectSync *innerDownstreamSync;
+@property (nonatomic) id<ZMDownstreamTranscoder> transcoder;
 
 @end
 
@@ -34,22 +33,12 @@
 - (instancetype)initWithTranscoder:(id<ZMDownstreamTranscoder>)transcoder
                         entityName:(NSString *)entityName
      predicateForObjectsToDownload:(NSPredicate *)predicateForObjectsToDownload
-predicateForObjectsRequiringWhitelisting:(NSPredicate *)predicateForObjectsRequiringWhitelisting
               managedObjectContext:(NSManagedObjectContext *)moc
 {
-    return [self initWithTranscoder:transcoder entityName:entityName predicateForObjectsToDownload:predicateForObjectsToDownload predicateForObjectsRequiringWhitelisting:predicateForObjectsRequiringWhitelisting filter:nil managedObjectContext:moc];
-}
-
-- (instancetype)initWithTranscoder:(id<ZMDownstreamTranscoder>)transcoder
-                        entityName:(NSString *)entityName
-     predicateForObjectsToDownload:(NSPredicate *)predicateForObjectsToDownload
-predicateForObjectsRequiringWhitelisting:(NSPredicate *)predicateForObjectsRequiringWhitelisting
-                            filter:(NSPredicate *)filter
-              managedObjectContext:(NSManagedObjectContext *)moc
-{
-    self = [self initWithTranscoder:transcoder entityName:entityName predicateForObjectsToDownload:predicateForObjectsToDownload filter:filter managedObjectContext:moc];
+    self = [super init];
     if(self) {
-        self.predicateForObjectsRequiringWhitelisting = predicateForObjectsRequiringWhitelisting;
+        self.transcoder = transcoder;
+        self.innerDownstreamSync = [[ZMDownstreamObjectSync alloc] initWithTranscoder:self entityName:entityName predicateForObjectsToDownload:predicateForObjectsToDownload filter:nil managedObjectContext:moc];
         self.whitelist = [NSMutableSet set];
     }
     return self;
@@ -57,49 +46,51 @@ predicateForObjectsRequiringWhitelisting:(NSPredicate *)predicateForObjectsRequi
 
 - (void)whiteListObject:(ZMManagedObject *)object;
 {
-    if([self.predicateForObjectsRequiringWhitelisting evaluateWithObject:object]) {
-        [self.whitelist addObject:object];
-        [self addTrackedObjects:[NSSet setWithObject:object]];
-    }
-}
-
-- (NSPredicate *)predicateForObjectsNotCurrentlyInWhitelist
-{
-    return [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings __unused) {
-        return ![self.whitelist containsObject:evaluatedObject];
-    }];
-}
-
-- (NSPredicate *)predicateForObjectsWithObservedEntityType
-{
-    return [NSPredicate predicateWithFormat:@"entity == %@", self.entity];
-}
-
-- (NSPredicate *)predicateForObjectsRequiringWhitelistingAndMatchingEntityType
-{
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[self.predicateForObjectsWithObservedEntityType,
-                                                                self.predicateForObjectsRequiringWhitelisting]];
-}
-
-- (NSSet *)setWithoutObjectsThatNeedToBeWhitelisted:(NSSet *)objects
-{
-    NSPredicate *compoundPredicate = [NSCompoundPredicate notPredicateWithSubpredicate:
-                                      [NSCompoundPredicate andPredicateWithSubpredicates:@[self.predicateForObjectsRequiringWhitelistingAndMatchingEntityType,
-                                                                                           self.predicateForObjectsNotCurrentlyInWhitelist]]];
-    return [objects filteredSetUsingPredicate:compoundPredicate];
+    [self.whitelist addObject:object];
+    [self.innerDownstreamSync objectsDidChange:[NSSet setWithObject:object]];
 }
 
 - (void)objectsDidChange:(NSSet *)objects;
 {
-    [super objectsDidChange:[self setWithoutObjectsThatNeedToBeWhitelisted:objects]];
-    [self.whitelist minusSet:[objects filteredSetUsingPredicate:[NSCompoundPredicate notPredicateWithSubpredicate:
-                                                                 self.predicateForObjectsRequiringWhitelistingAndMatchingEntityType]]];
+    NSMutableSet *whitelistedObjectsThatChanges = [self.whitelist mutableCopy];
+    [whitelistedObjectsThatChanges intersectSet:objects];
+    [self.innerDownstreamSync objectsDidChange:whitelistedObjectsThatChanges];
 }
 
-/// Adds tracked objects -- which have been retrieved by using the fetch request returned by -fetchRequestForTrackedObjects
-- (void)addTrackedObjects:(NSSet *)objects;
+- (NSFetchRequest *)fetchRequestForTrackedObjects
 {
-    [super addTrackedObjects:[self setWithoutObjectsThatNeedToBeWhitelisted:objects]];
+    // I don't want to fetch. Only objects that are whitelisted should go through
+    return nil;
+}
+
+- (void)addTrackedObjects:(NSSet __unused *)objects;
+{
+    // no-op
+}
+
+- (BOOL)hasOutstandingItems
+{
+    return self.innerDownstreamSync.hasOutstandingItems;
+}
+
+- (ZMTransportRequest *)nextRequest
+{
+    return [self.innerDownstreamSync nextRequest];
+}
+
+- (ZMTransportRequest *)requestForFetchingObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync> __unused)downstreamSync
+{
+    return [self.transcoder requestForFetchingObject:object downstreamSync:self];
+}
+
+- (void)deleteObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync> __unused)downstreamSync
+{
+    return [self.transcoder deleteObject:object downstreamSync:self];
+}
+
+- (void)updateObject:(ZMManagedObject *)object withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync> __unused)downstreamSync
+{
+    return [self.transcoder updateObject:object withResponse:response downstreamSync:self];
 }
 
 @end

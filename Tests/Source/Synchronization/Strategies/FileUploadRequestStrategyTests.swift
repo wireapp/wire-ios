@@ -85,14 +85,12 @@ private let testData = NSData(contentsOfURL: testDataURL)!
     }
     
     /// Creates a message that should generate request
-    func createMessage(name: String, previewUploaded: Bool = false, inConversation: ZMConversation? = nil) -> ZMAssetClientMessage {
+    func createMessage(name: String, uploadState: ZMAssetUploadState = .UploadingPlaceholder, inConversation: ZMConversation? = nil, thumbnail: NSData? = nil, url: NSURL = testDataURL) -> ZMAssetClientMessage {
         let conversation = inConversation ?? ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
         conversation!.remoteIdentifier = NSUUID.createUUID()
-        let msg = conversation!.appendMessageWithFileAtURL(testDataURL) as! ZMAssetClientMessage
-        if previewUploaded {
-            msg.setNeedsToUploadData(.Placeholder, needsToUpload: false)
-            msg.setNeedsToUploadData(.FileData, needsToUpload: true)
-        }
+        // This is a video metadata since it's the only file type which supports thumbnails at the moment.
+        let msg = conversation!.appendMessageWithFileMetadata(ZMVideoMetadata(fileURL: url, thumbnail: thumbnail)) as! ZMAssetClientMessage
+        msg.uploadState = uploadState
         self.syncMOC.saveOrRollback()
         return msg
     }
@@ -108,10 +106,6 @@ private let testData = NSData(contentsOfURL: testDataURL)!
         
         return (otherClient, conversation)
     }
-    
-    func zmurlSessionWithIdentifier(id: String) -> ZMURLSession {
-        return ZMURLSession(configuration: .defaultSessionConfiguration(), delegate: FakeZMURLSessionDelegate(), delegateQueue: .mainQueue(), identifier: id)
-    }
 
     /// Forces the strategy to process the message
     func process(strategy: FileUploadRequestStrategy, message: ZMAssetClientMessage) {
@@ -125,7 +119,7 @@ private let testData = NSData(contentsOfURL: testDataURL)!
     }
     
     func completeRequest(request: ZMTransportRequest?, HTTPStatus: Int) {
-        request?.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: HTTPStatus, transportSessionError: nil))
+        request?.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: HTTPStatus, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
     }
 }
@@ -162,22 +156,82 @@ extension FileUploadRequestStrategyTests {
         XCTAssertFalse(genericMessage.asset.hasUploaded())
     }
     
-    func testThatItSets_NeedsToUploadMedium_OnMessageWhenAssetOriginalRequestCompletesSuccesfully() {
+    func testThatItSets_UploadingThumbnail_OnMessageWhenAssetOriginalRequestCompletesSuccesfully() {
         
         // given
-        let msg = createMessage("foo")
-        self.process(sut, message: msg)
-        XCTAssertFalse(msg.needsToUploadMedium)
-        XCTAssertTrue(msg.needsToUploadPreview)
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url)
+        process(sut, message: msg)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingPlaceholder)
         
         // when
         let placeholderRequest = sut.nextRequest() // Asset.Original request (message-add)
         completeRequest(placeholderRequest, HTTPStatus: 201)
         
         // then
-        XCTAssertTrue(msg.needsToUploadMedium)
-        XCTAssertFalse(msg.needsToUploadPreview)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingThumbnail)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
+    }
+    
+    func testThatItSets_UploadingFullAsset_OnVideoFileMessageWhenTheThumbnailRequestCompletesSuccesfully() {
+        
+        // given
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url)
+        self.process(sut, message: msg)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingPlaceholder)
+        
+        // when
+        guard let placeholderRequest = sut.nextRequest() else { return XCTFail("Unable to create placeholder request") } // Asset.Original request (message-add / .UploadingPlaceholder)
+        completeRequest(placeholderRequest, HTTPStatus: 201)
+        XCTAssertEqual(placeholderRequest.path, "/conversations/\(msg.conversation!.remoteIdentifier.transportString())/otr/messages")
+        XCTAssertEqual(placeholderRequest.method, ZMTransportRequestMethod.MethodPOST)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingThumbnail)
+        
+        guard let thumbnailRequest = sut.nextRequest() else { return XCTFail("Unable to create thumbnail request") } // Asset.Preview request (message-add / .UploadingThumbnail)
+        completeRequest(thumbnailRequest, HTTPStatus: 201)
+        XCTAssertEqual(thumbnailRequest.path, "/conversations/\(msg.conversation!.remoteIdentifier.transportString())/otr/assets")
+        XCTAssertEqual(thumbnailRequest.method, ZMTransportRequestMethod.MethodPOST)
+        
+        // then
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingFullAsset)
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
+
+        // when
+        guard let fullRequest = sut.nextRequest() else { return XCTFail("Unable to create full asset request") } // Asset.Uploaded request (message-add / .UploadingFullAsset)
+        completeRequest(fullRequest, HTTPStatus: 201)
+        
+        // then
+        XCTAssertEqual(fullRequest.path, "/conversations/\(msg.conversation!.remoteIdentifier.transportString())/otr/assets")
+        XCTAssertEqual(fullRequest.method, ZMTransportRequestMethod.MethodPOST)
+        XCTAssertNil(sut.nextRequest())
+    }
+    
+    func testThatItSets_UploadingFullAsset_OnFileMessageWhenThePlaceholderRequestCompletesSuccesfully() {
+        
+        // given
+        let msg = createMessage(name!)
+        self.process(sut, message: msg)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingPlaceholder)
+        
+        // when
+        guard let placeholderRequest = sut.nextRequest() else { return XCTFail("Unable to create placeholder request") } // Asset.Original request (message-add / .UploadingPlaceholder)
+        completeRequest(placeholderRequest, HTTPStatus: 201)
+        XCTAssertEqual(placeholderRequest.path, "/conversations/\(msg.conversation!.remoteIdentifier.transportString())/otr/messages")
+        XCTAssertEqual(placeholderRequest.method, ZMTransportRequestMethod.MethodPOST)
+        
+        // then
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingFullAsset)
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
+        
+        // when
+        guard let fullRequest = sut.nextRequest() else { return XCTFail("Unable to create full asset request") } // Asset.Uploaded request (message-add / .UploadingFullAsset)
+        completeRequest(fullRequest, HTTPStatus: 201)
+        
+        // then
+        XCTAssertEqual(fullRequest.path, "/conversations/\(msg.conversation!.remoteIdentifier.transportString())/otr/assets")
+        XCTAssertEqual(fullRequest.method, ZMTransportRequestMethod.MethodPOST)
+        XCTAssertNil(sut.nextRequest())
     }
     
     func testThatItDoesNotGeneratesARequestWhenNotAuthenticated() {
@@ -238,7 +292,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertEqual(msg1Original?.path, "/conversations/\(msg1Conversation.remoteIdentifier.transportString())/otr/messages")
         
         // when
-        msg1Original?.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil))
+        msg1Original?.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 200, transportSessionError: nil))
         XCTAssertTrue(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
         self.syncMOC.saveOrRollback()
         self.process(sut, message: msg1)
@@ -254,7 +308,7 @@ extension FileUploadRequestStrategyTests {
         // third request: msg2 original
         let msg2Original = sut.nextRequest()
         XCTAssertEqual(msg2Original?.path, "/conversations/\(msg1Conversation.remoteIdentifier.transportString())/otr/messages")
-        msg2Original?.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil))
+        msg2Original?.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 200, transportSessionError: nil))
         XCTAssertTrue(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
         self.syncMOC.saveOrRollback()
         self.process(sut, message: msg1)
@@ -264,13 +318,12 @@ extension FileUploadRequestStrategyTests {
 // MARK: - Parse response
 extension FileUploadRequestStrategyTests {
     
-    func testThatItMarksAnUploadedFile() {
+    func testThatItMarksAnUploadedFileAsFailedToUploadWhenTheRequestCompletesUnsuccesfully() {
         
         // given
         let msg = createMessage("foo")
         self.process(sut, message: msg)
-        XCTAssertFalse(msg.needsToUploadMedium)
-        XCTAssertTrue(msg.needsToUploadPreview)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingPlaceholder)
         
         // when
         let placeholderRequest = sut.nextRequest() // Asset.Original request (message-add)
@@ -278,8 +331,9 @@ extension FileUploadRequestStrategyTests {
         
         // then
         XCTAssertEqual(msg.transferState, ZMFileTransferState.FailedUpload)
-        XCTAssertFalse(msg.needsToUploadPreview)
-        XCTAssertNil(sut.nextRequest())
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingFailed)
+        let nextRequest = sut.nextRequest()
+        XCTAssertNil(nextRequest)
     }
     
     func testThatItDoesGenerateTheRequestToUploadTheMediumAfterThePreviewCompletedSuccessfully() {
@@ -288,8 +342,7 @@ extension FileUploadRequestStrategyTests {
         let (otherClient, conversation) = createOtherClientAndConversation()
         let msg = createMessage("foo", inConversation: conversation)
         self.process(sut, message: msg)
-        XCTAssertFalse(msg.needsToUploadMedium)
-        XCTAssertTrue(msg.needsToUploadPreview)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingPlaceholder)
         
         // when
         let placeholderRequest = sut.nextRequest() // Asset.Original request (message-add)
@@ -300,6 +353,7 @@ extension FileUploadRequestStrategyTests {
         guard let msgConversation = msg.conversation else { return XCTFail("Conversation was nil") }
         
         // then
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingFullAsset)
         XCTAssertNotNil(placeholderRequest)
         XCTAssertNotNil(uploadedRequest)
         XCTAssertNotNil(uploadedRequest?.fileUploadURL)
@@ -309,42 +363,26 @@ extension FileUploadRequestStrategyTests {
             let requestMultipart = NSData(contentsOfURL: request.fileUploadURL) else {
                 return XCTFail("No data at fileUploadURL")
         }
+        
         let genericPartData = requestMultipart.multipartDataItemsSeparatedWithBoundary("frontier").first as! ZMMultipartBodyItem
         guard let genericMessage = decryptedMessage(fromRequestData: genericPartData.data, forClient: otherClient) else { return XCTFail() }
         XCTAssertFalse(genericMessage.asset.hasNotUploaded())
         XCTAssertTrue(genericMessage.asset.hasOriginal())
-        XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
+        XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED) // FIXME: This does not make sense to me, why would we have a CANCELLED?
         XCTAssertTrue(genericMessage.asset.hasUploaded())
-    }
-    
-    func testThatItDoesNotSet_NeedsToUploadMedium_OnMessageWhenAssetOriginalRequestCompletesUnsuccessfully() {
-        
-        // given
-        let msg = createMessage("foo")
-        self.process(sut, message: msg)
-        XCTAssertFalse(msg.needsToUploadMedium)
-        XCTAssertTrue(msg.needsToUploadPreview)
-        
-        // when
-        let placeholderRequest = sut.nextRequest() // Asset.Original request (message-add)
-        completeRequest(placeholderRequest, HTTPStatus: 400)
-        
-        // then
-        XCTAssertEqual(msg.transferState, ZMFileTransferState.FailedUpload)
-        XCTAssertFalse(msg.needsToUploadPreview)
         XCTAssertNil(sut.nextRequest())
     }
     
     func testThatItUpdatesTheMessageWithTheAssetIDFromTheUploadedReponseHeader() {
         
         // given
-        let msg = createMessage(name!, previewUploaded: true)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset)
         self.process(sut, message: msg)
         guard let request = sut.nextRequest() else { return XCTFail() }
         
         // when
         let assetId = NSUUID.createUUID()
-        let response = ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil, headers: ["Location": assetId.transportString()])
+        let response = ZMTransportResponse(payload: [], HTTPstatus: 200, transportSessionError: nil, headers: ["Location": assetId.transportString()])
         request.completeWithResponse(response)
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
@@ -357,12 +395,12 @@ extension FileUploadRequestStrategyTests {
     func testThatItDeletesDataForAnUploadedFile() {
         
         // given
-        let msg = createMessage(name!, previewUploaded: true)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset)
         self.process(sut, message: msg)
         guard let request = sut.nextRequest() else { return XCTFail() }
         
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 200, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
@@ -377,7 +415,7 @@ extension FileUploadRequestStrategyTests {
         guard let request = sut.nextRequest() else { return XCTFail() }
         
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 400, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 400, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
@@ -393,7 +431,7 @@ extension FileUploadRequestStrategyTests {
         guard let request = sut.nextRequest() else { return XCTFail() }
         
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 400, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 400, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
@@ -409,7 +447,7 @@ extension FileUploadRequestStrategyTests {
         guard let request = sut.nextRequest() else { return XCTFail() }
         
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 500, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 500, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
@@ -425,7 +463,7 @@ extension FileUploadRequestStrategyTests {
         guard let request = sut.nextRequest() else { return XCTFail() }
         
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 400, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 400, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
@@ -435,12 +473,12 @@ extension FileUploadRequestStrategyTests {
     func testThatItDeletesUnencryptedDataForAFailedFile_UploadedFailed() {
         
         // given
-        let msg = createMessage(name!, previewUploaded: true)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset)
         self.process(sut, message: msg)
         guard let request = sut.nextRequest() else { return XCTFail() }
         
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 400, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 400, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
@@ -451,7 +489,7 @@ extension FileUploadRequestStrategyTests {
     func testThatItSendsNotificaitonForAnUploadedFile() {
         
         // given
-        let msg = createMessage(name!, previewUploaded: true)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset)
         self.process(sut, message: msg)
         guard let request = sut.nextRequest() else { return XCTFail() }
         
@@ -464,7 +502,7 @@ extension FileUploadRequestStrategyTests {
         }
         // when
         let assetId = NSUUID.createUUID()
-        let response = ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil, headers: ["Location": assetId.transportString()])
+        let response = ZMTransportResponse(payload: [], HTTPstatus: 200, transportSessionError: nil, headers: ["Location": assetId.transportString()])
         request.completeWithResponse(response)
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
@@ -486,17 +524,17 @@ extension FileUploadRequestStrategyTests {
             notificationExpectation.fulfill()
         }
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 400, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 400, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
         XCTAssertTrue(self.waitForCustomExpectationsWithTimeout(0.5))
     }
     
-    func testThatItDoesNotCancelCurrentlyRunningRequestWhenTheUploadFails() {
+    func testThatItDoesNotCancelCurrentlyRunningRequestWhenTheUploadFails_FullAsset() {
         
         // given
-        let msg = createMessage(name!, previewUploaded: true)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset)
         let identifier = ZMTaskIdentifier(identifier: 12345, sessionIdentifier: "background-session")
         msg.associatedTaskIdentifier = identifier
         process(sut, message: msg)
@@ -504,7 +542,31 @@ extension FileUploadRequestStrategyTests {
         XCTAssertEqual(cancellationProvider.cancelledIdentifiers.count, 0)
         
         // when
-        request.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 400, transportSessionError: nil))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 400, transportSessionError: nil))
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then there should not be a running upload request as the upload failed by itself,
+        // next request would be the Asset.NotUploaded request
+        XCTAssertEqual(cancellationProvider.cancelledIdentifiers.count, 0)
+    }
+    
+    func testThatItDoesNotCancelCurrentlyRunningRequestWhenTheUploadFails_Thumbnail() {
+        
+        // given
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url, uploadState: .UploadingThumbnail)
+        
+        let identifier = ZMTaskIdentifier(identifier: 12345, sessionIdentifier: "background-session")
+        msg.associatedTaskIdentifier = identifier
+        process(sut, message: msg)
+        
+        XCTAssertEqual(msg.genericAssetMessage?.asset.preview.hasImage(), true)
+        guard let request = sut.nextRequest() else { return XCTFail() }
+        XCTAssertEqual(cancellationProvider.cancelledIdentifiers.count, 0)
+        
+        // when
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 400, transportSessionError: nil))
+        msg.fileMessageData!.cancelTransfer()
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then there should not be a running upload request as the upload failed by itself,
@@ -515,18 +577,22 @@ extension FileUploadRequestStrategyTests {
     func testThatItCancelsCurrentlyRunningRequestWhenTheUploadIsCancelledAndItCreatesThe_NotUploaded_Request() {
         
         // given
-        let msg = createMessage(name!, previewUploaded: true)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset)
         let identifier = ZMTaskIdentifier(identifier: 12345, sessionIdentifier: "background-session")
         msg.associatedTaskIdentifier = identifier
         process(sut, message: msg)
-        guard let _ = sut.nextRequest() else { return XCTFail() }
+        guard let request = sut.nextRequest() else { return XCTFail() }
         XCTAssertEqual(cancellationProvider.cancelledIdentifiers.count, 0)
         
         // when
-        msg.fileMessageData!.cancelTransfer()
+        msg.fileMessageData?.cancelTransfer()
+        sut.objectsDidChange(Set(arrayLiteral: msg))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 0, transportSessionError: .tryAgainLaterError()))
+        
+        
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
-        
+        // then
         guard let _ = sut.nextRequest() else { return XCTFail("Request was nil") } // Asset.NotUploaded
         
         // then
@@ -536,67 +602,94 @@ extension FileUploadRequestStrategyTests {
     
     func testThatItUpdatesTheAssociatedTaskIdentifierWhenTheTaskHasBeenCreated_PlaceholderUpload() {
         // given
-        let msg = createMessage(name!, previewUploaded: false) // We did not yet generate the request to upload the Asset.Original
+        let msg = createMessage(name!) // We did not yet generate the request to upload the Asset.Original
         process(sut, message: msg)
         
         // when
         guard let originalRequest = sut.nextRequest() else { return XCTFail() } // Asset.Original
-        // We need a valid instance of a NSURLSessionTask here in order to have it return a taskIdentifier
-        let task = NSURLSession.sharedSession().dataTaskWithURL(NSURL(string: originalRequest.path)!)
-        originalRequest.callTaskCreationHandlersWithTask(task, session: zmurlSessionWithIdentifier(name!))
+        originalRequest.callTaskCreationHandlersWithIdentifier(42, sessionIdentifier: name)
         
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
         XCTAssertNotNil(msg.associatedTaskIdentifier);
         XCTAssertEqual(msg.associatedTaskIdentifier?.sessionIdentifier, name);
-        XCTAssertEqual(msg.associatedTaskIdentifier?.identifier, UInt(task.taskIdentifier));
+        XCTAssertEqual(msg.associatedTaskIdentifier?.identifier, 42);
+    }
+    
+    func testThatItUpdatesTheAssociatedTaskIdentifierWhenTheTaskHasBeenCreated_ThumbnailUpload() {
+        // given
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url, uploadState: .UploadingThumbnail)
+        process(sut, message: msg)
+        
+        // when
+        guard let originalRequest = sut.nextRequest() else { return XCTFail() } // Asset.Preview
+        originalRequest.callTaskCreationHandlersWithIdentifier(42, sessionIdentifier: name)
+        
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertNotNil(msg.associatedTaskIdentifier);
+        XCTAssertEqual(msg.associatedTaskIdentifier?.sessionIdentifier, name);
+        XCTAssertEqual(msg.associatedTaskIdentifier?.identifier, 42);
     }
     
     func testThatItUpdatesTheAssociatedTaskIdentifierWhenTheTaskHasBeenCreated_FileDataUpload() {
         // given
-        let msg = createMessage(name!, previewUploaded: true) // We did  generate the request to upload the Asset.Original
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset) // We did  generate the request to upload the Asset.Original
         process(sut, message: msg)
         
         // when
         guard let originalRequest = sut.nextRequest() else { return XCTFail() } // Asset.Uploaded
-        // We need a valid instance of a NSURLSessionTask here in order to have it return a taskIdentifier
-        let task = NSURLSession.sharedSession().dataTaskWithURL(NSURL(string: originalRequest.path)!)
-        originalRequest.callTaskCreationHandlersWithTask(task, session: zmurlSessionWithIdentifier(name!))
+        originalRequest.callTaskCreationHandlersWithIdentifier(42, sessionIdentifier: name)
         
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
         XCTAssertNotNil(msg.associatedTaskIdentifier);
         XCTAssertEqual(msg.associatedTaskIdentifier?.sessionIdentifier, name);
-        XCTAssertEqual(msg.associatedTaskIdentifier?.identifier, UInt(task.taskIdentifier));
+        XCTAssertEqual(msg.associatedTaskIdentifier?.identifier, 42);
     }
     
     func testThatItResetTheAssociatedTaskIdentifierAfterThe_Placeholder_UploadCompleted_Successfully() {
-        assertThatItRestsTheAssociatedTaskIdentifier(false, HTTPStatus: 200)
+        assertThatItResetsTheAssociatedTaskIdentifier(.UploadingPlaceholder, HTTPStatus: 200)
     }
     
     func testThatItResetTheAssociatedTaskIdentifierAfterThe_Placeholder_UploadCompleted_Failure() {
-        assertThatItRestsTheAssociatedTaskIdentifier(false, HTTPStatus: 401)
+        assertThatItResetsTheAssociatedTaskIdentifier(.UploadingPlaceholder, HTTPStatus: 401)
     }
     
-    func testThatItResetTheAssociatedTaskIdentifierAfterThe_FilaData_UploadCompleted_Succesfully() {
-        assertThatItRestsTheAssociatedTaskIdentifier(true, HTTPStatus: 200)
+    func testThatItResetTheAssociatedTaskIdentifierAfterThe_Thumbnail_UploadCompleted_Succesfully() {
+        assertThatItResetsTheAssociatedTaskIdentifier(.UploadingThumbnail, HTTPStatus: 200)
     }
     
-    func testThatItResetTheAssociatedTaskIdentifierAfterThe_FilaData_UploadCompleted_Failure() {
-        assertThatItRestsTheAssociatedTaskIdentifier(true, HTTPStatus: 401)
+    func testThatItResetTheAssociatedTaskIdentifierAfterThe_Thumbnail_UploadCompleted_Failure() {
+        assertThatItResetsTheAssociatedTaskIdentifier(.UploadingThumbnail, HTTPStatus: 401)
     }
     
-    func assertThatItRestsTheAssociatedTaskIdentifier(previewAlreadyUploaded: Bool, HTTPStatus: Int) {
+    func testThatItResetTheAssociatedTaskIdentifierAfterThe_FileData_UploadCompleted_Succesfully() {
+        assertThatItResetsTheAssociatedTaskIdentifier(.UploadingFullAsset, HTTPStatus: 200)
+    }
+    
+    func testThatItResetTheAssociatedTaskIdentifierAfterThe_FileData_UploadCompleted_Failure() {
+        assertThatItResetsTheAssociatedTaskIdentifier(.UploadingFullAsset, HTTPStatus: 401)
+    }
+    
+    func assertThatItResetsTheAssociatedTaskIdentifier(uploadState: ZMAssetUploadState, HTTPStatus: Int) {
         // given
-        let msg = createMessage(name!, previewUploaded: previewAlreadyUploaded)
+        let msg: ZMAssetClientMessage
+        if uploadState == .UploadingThumbnail {
+            guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+            msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url, uploadState: .UploadingThumbnail)
+        } else {
+            msg = createMessage(name!, uploadState: uploadState)
+        }
+        
         process(sut, message: msg)
         guard let originalRequest = sut.nextRequest() else { return XCTFail("Did not generate a request") }
-        
-		// We need a valid instance of a NSURLSessionTask here in order to have it return a taskIdentifier
-        let task = NSURLSession.sharedSession().dataTaskWithURL(NSURL(string: originalRequest.path)!)
-        originalRequest.callTaskCreationHandlersWithTask(task, session: zmurlSessionWithIdentifier(name!))
+
+        originalRequest.callTaskCreationHandlersWithIdentifier(42, sessionIdentifier: name)
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         XCTAssertNotNil(msg.associatedTaskIdentifier);
         
@@ -612,12 +705,82 @@ extension FileUploadRequestStrategyTests {
         
         // given
         let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, previewUploaded: false, inConversation: conversation)
+        let msg = createMessage(name!, inConversation: conversation)
         process(sut, message: msg)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
         
         // when
-        msg.fileMessageData!.cancelTransfer()
+        msg.fileMessageData?.cancelTransfer()
+        
+        // then
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.CancelledUpload)
+        XCTAssertTrue(syncMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
+        guard let msgConversation = msg.conversation else { return XCTFail("Conversation was nil") }
+        let expectedPath = "/conversations/\(msgConversation.remoteIdentifier.transportString())/otr/messages"
+
+        XCTAssertEqual(request.path, expectedPath)
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+
+        guard let genericMessage = decryptedMessage(fromRequestData: request.binaryData, forClient: otherClient) else { return XCTFail() }
+        XCTAssertTrue(genericMessage.asset.hasNotUploaded())
+        XCTAssertTrue(genericMessage.asset.hasOriginal())
+        XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
+        XCTAssertFalse(genericMessage.asset.hasUploaded())
+        
+        // Asset should still be there in case we want to retry
+        XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: msg.filename!, encrypted: true))
+        XCTAssertNil(sut.nextRequest())
+    }
+    
+    func testThatItGeneratesARequestWhenTheFileTransferIsSetTo_NotUploaded_Cancelled_ThumbnailUploading() {
+        
+        // given
+        let (otherClient, conversation) = createOtherClientAndConversation()
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url, uploadState: .UploadingThumbnail, inConversation: conversation)
+        process(sut, message: msg)
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
+        
+        // when
+        msg.fileMessageData?.cancelTransfer()
+        
+        // then
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.CancelledUpload)
+        XCTAssertTrue(syncMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
+        guard let msgConversation = msg.conversation else { return XCTFail("Conversation was nil") }
+        let expectedPath = "/conversations/\(msgConversation.remoteIdentifier.transportString())/otr/messages"
+
+        XCTAssertEqual(request.path, expectedPath)
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+        
+        guard let genericMessage = decryptedMessage(fromRequestData: request.binaryData, forClient: otherClient) else { return XCTFail() }
+        XCTAssertTrue(genericMessage.asset.hasNotUploaded())
+        XCTAssertTrue(genericMessage.asset.hasOriginal())
+        XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
+        XCTAssertFalse(genericMessage.asset.hasUploaded())
+        
+        // Asset should still be there in case we want to retry
+        XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: msg.filename!, encrypted: true))
+        XCTAssertNil(sut.nextRequest())
+    }
+    
+    func testThatItGeneratesARequestWhenTheFileTransferIsSetTo_NotUploaded_Cancelled_ThumbnailUploaded_Video() {
+        
+        // given
+        let (otherClient, conversation) = createOtherClientAndConversation()
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url, uploadState: .UploadingFullAsset, inConversation: conversation)
+        process(sut, message: msg)
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
+        
+        // when
+        msg.fileMessageData?.cancelTransfer()
         
         // then
         XCTAssertEqual(msg.transferState, ZMFileTransferState.CancelledUpload)
@@ -626,11 +789,11 @@ extension FileUploadRequestStrategyTests {
         
         guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
         guard let msgConversation = msg.conversation else { return XCTFail("message conversation was nil") }
-
         let expectedPath = "/conversations/\(msgConversation.remoteIdentifier.transportString())/otr/messages"
+
         XCTAssertEqual(request.path, expectedPath)
         XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
-
+        
         guard let genericMessage = decryptedMessage(fromRequestData: request.binaryData, forClient: otherClient) else { return XCTFail() }
         XCTAssertTrue(genericMessage.asset.hasNotUploaded())
         XCTAssertTrue(genericMessage.asset.hasOriginal())
@@ -646,12 +809,12 @@ extension FileUploadRequestStrategyTests {
         
         // given
         let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, previewUploaded: true, inConversation: conversation)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset, inConversation: conversation)
         process(sut, message: msg)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
         
         // when
-        msg.fileMessageData!.cancelTransfer()
+        msg.fileMessageData?.cancelTransfer()
         
         // then
         XCTAssertEqual(msg.transferState, ZMFileTransferState.CancelledUpload)
@@ -659,9 +822,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
-        guard let msgConversation = msg.conversation else { return XCTFail("message conversation was nil") }
-            
-        let expectedPath = "/conversations/\(msgConversation.remoteIdentifier.transportString())/otr/messages"
+        let expectedPath = "/conversations/\(msg.conversation!.remoteIdentifier.transportString())/otr/messages"
         XCTAssertEqual(request.path, expectedPath)
         XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
 
@@ -680,27 +841,27 @@ extension FileUploadRequestStrategyTests {
         
         // given
         let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, previewUploaded: true, inConversation: conversation)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset, inConversation: conversation)
         process(sut, message: msg)
-        guard let _ = sut.nextRequest() else { return XCTFail("Should return the request to upload Asset.Uploaded") }
+        guard let request = sut.nextRequest() else { return XCTFail("Should return the request to upload Asset.Uploaded") }
         XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
         
         // when
-        msg.fileMessageData!.cancelTransfer()
+        msg.fileMessageData?.cancelTransfer()
+        sut.objectsDidChange(Set(arrayLiteral: msg))
+        request.completeWithResponse(ZMTransportResponse(payload: [], HTTPstatus: 0, transportSessionError: .tryAgainLaterError()))
         
         // then
         XCTAssertEqual(msg.transferState, ZMFileTransferState.CancelledUpload)
         XCTAssertTrue(syncMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
-        guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
-        guard let msgConversation = msg.conversation else { return XCTFail("message conversation was nil") }
-
-        let expectedPath = "/conversations/\(msgConversation.remoteIdentifier.transportString())/otr/messages"
-        XCTAssertEqual(request.path, expectedPath)
-        XCTAssertEqual(request.method, ZMTransportRequestMethod.MethodPOST)
+        guard let secondRequest = sut.nextRequest() else { return XCTFail("Request was nil") }
+        let expectedPath = "/conversations/\(msg.conversation!.remoteIdentifier.transportString())/otr/messages"
+        XCTAssertEqual(secondRequest.path, expectedPath)
+        XCTAssertEqual(secondRequest.method, ZMTransportRequestMethod.MethodPOST)
         
-        guard let genericMessage = decryptedMessage(fromRequestData: request.binaryData, forClient: otherClient) else { return XCTFail() }
+        guard let genericMessage = decryptedMessage(fromRequestData: secondRequest.binaryData, forClient: otherClient) else { return XCTFail() }
         XCTAssertTrue(genericMessage.asset.hasNotUploaded())
         XCTAssertTrue(genericMessage.asset.hasOriginal())
         XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
@@ -715,7 +876,7 @@ extension FileUploadRequestStrategyTests {
         
         // given
         let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, previewUploaded: true, inConversation: conversation)
+        let msg = createMessage(name!, uploadState: .UploadingFullAsset, inConversation: conversation)
         
         process(sut, message: msg)
         guard let uploadedRequest = sut.nextRequest() else { return XCTFail("Should return the request to upload Asset.Uploaded") }
@@ -728,6 +889,7 @@ extension FileUploadRequestStrategyTests {
         guard let notUploadedRequest = sut.nextRequest() else { return XCTFail("Request was nil") }
         guard let msgConversation = msg.conversation else { return XCTFail("Conversation was nil") }
         let expectedPath = "/conversations/\(msgConversation.remoteIdentifier.transportString())/otr/messages"
+
         XCTAssertEqual(notUploadedRequest.path, expectedPath)
         XCTAssertEqual(notUploadedRequest.method, ZMTransportRequestMethod.MethodPOST)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.FailedUpload)
@@ -785,11 +947,13 @@ extension FileUploadRequestStrategyTests {
         
         // payload
         let payload = [
+            "time" : NSDate().transportString(),
             "deleted" : [
                 user.remoteIdentifier!.transportString() : [
                     client.remoteIdentifier
                 ]
-            ]
+            ],
+            "time" : "2015-03-11T09:34:00.436Z"
         ]
         
         // when
@@ -879,14 +1043,83 @@ extension FileUploadRequestStrategyTests {
         
         // given
         let msg = createMessage("foo")
+        XCTAssertFalse(msg.isReadyToUploadFile)
         
         // when
         sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set(arrayLiteral: msg)) }
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
     
         // then after processing it should set 'needsToUploadPreview' to true
-        XCTAssertFalse(msg.needsToUploadMedium);
-        XCTAssertTrue(msg.needsToUploadPreview);
+        XCTAssertTrue(msg.isReadyToUploadFile)
         XCTAssertNotNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: "foo", encrypted:true))
+    }
+    
+    func testThatItPreprocessesAFileMessageAndGeneratesTheThumbnail() {
+        
+        // given
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
+        let message = createMessage(name!, thumbnail: mediumJPEGData(), url: url)
+        
+        // when
+        sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set(arrayLiteral: message)) }
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+    
+        // then
+        XCTAssertEqual(message.genericAssetMessage?.asset.hasPreview(), true)
+        guard let preview = message.genericAssetMessage?.asset.preview else { return XCTFail("Unable to get the preview") }
+        
+        let encrypted = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Medium, encrypted: true)
+        let decrypted = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Medium, encrypted: false)
+        
+        XCTAssertNotNil(decrypted)
+        XCTAssertNotNil(encrypted)
+        
+        let (otrKey, sha256) = (preview.remote.otrKey, preview.remote.sha256)
+        XCTAssertEqual(encrypted?.zmSHA256Digest(), sha256)
+        XCTAssertEqual(decrypted, encrypted?.zmDecryptPrefixedPlainTextIVWithKey(otrKey))
+        
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Preview, encrypted: false))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Preview, encrypted: true))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Original, encrypted: false))
+        
+        XCTAssertTrue(preview.hasImage())
+        XCTAssertTrue(preview.image.width > 0)
+    }
+    
+    func testThatItDoesNotPreprocessAFileMessageAndGeneratesThePreviewIfTheMessageIsNotAVideo() {
+        // given
+        let message = createMessage(name!)
+        
+        // when
+        sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set(arrayLiteral: message)) }
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertEqual(message.genericAssetMessage?.asset.hasPreview(), false)
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Medium, encrypted: true))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Medium, encrypted: false))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Preview, encrypted: false))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Preview, encrypted: true))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Original, encrypted: false))
+    }
+    
+    func testThatItDoesNotGeneratePreviewsForImageMessages() {
+        // given
+        let (_, conversation) = createOtherClientAndConversation()
+        let messageNonce = NSUUID.createUUID()
+        let message = conversation.appendOTRMessageWithImageData(mediumJPEGData(), nonce: messageNonce)
+        
+        // when
+        sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set(arrayLiteral: message)) }
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertNil(message.genericAssetMessage)
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Medium, encrypted: true))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Medium, encrypted: false))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Preview, encrypted: false))
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Preview, encrypted: true))
+        
+        XCTAssertNotNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .Original, encrypted: false))
     }
 }

@@ -18,7 +18,7 @@
 
 
 import XCTest
-import zmessaging
+@testable import zmessaging
 import ZMUtilities
 import ZMTesting
 import ZMCMockTransport
@@ -1418,6 +1418,38 @@ extension UserClientRequestStrategyTests {
         // and when
         let thirdRequest = self.sut.nextRequest()
         XCTAssertNil(thirdRequest)
+        
+    }
+    
+    
+    func testThatItResetsKeyForMissingClientIfThereIsNoMissingClient(){
+        // given
+        let client = self.createSelfClient()
+        client.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+        XCTAssertTrue(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
+
+        // when
+        let shouldCreateRequest = sut.shouldCreateRequestToSyncObject(client, forKeys: Set(arrayLiteral: ZMUserClientMissingKey), withSync: sut.modifiedSync)
+        
+        // then
+        XCTAssertFalse(shouldCreateRequest)
+        XCTAssertFalse(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
+        
+    }
+    
+    func testThatItDoesNotResetKeyForMissingClientIfThereIsAMissingClient(){
+        // given
+        let client = self.createSelfClient()
+        client.missesClient(UserClient.insertNewObjectInManagedObjectContext(self.syncMOC))
+        client.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+        XCTAssertTrue(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
+        
+        // when
+        let shouldCreateRequest = sut.shouldCreateRequestToSyncObject(client, forKeys: Set(arrayLiteral: ZMUserClientMissingKey), withSync: sut.modifiedSync)
+        
+        // then
+        XCTAssertTrue(shouldCreateRequest)
+        XCTAssertTrue(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
         
     }
 

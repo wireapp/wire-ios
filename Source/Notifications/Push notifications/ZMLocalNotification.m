@@ -54,6 +54,8 @@ static NSString *const ZMLocalNotificationNewMessageSoundName = @"new_message_ap
 // %1$@    %2$@            %3$@
 NSString *const ZMPushStringMessageAdd = @"add.message"; // "[senderName] in [conversationName] - [messageText]"
 NSString *const ZMPushStringImageAdd = @"add.image"; // "[senderName] shared a picture in [conversationName]"
+NSString *const ZMPushStringVideoAdd = @"add.video"; // "[senderName] shared a video in [conversationName]"
+NSString *const ZMPushStringAudioAdd = @"add.audio"; // "[senderName] shared an audio message in [conversationName]"
 NSString *const ZMPushStringFileAdd = @"add.file"; // "[senderName] shared a file in [conversationName]"
 NSString *const ZMPushStringMessageAddMany = @"add.message.many"; // "x new messages in [conversationName] / from [senderName]"
 

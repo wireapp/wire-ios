@@ -82,7 +82,7 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         (void)request;
-        return ZMCustomResponseGeneratorReturnResponseNotCompleted;
+        return ResponseGenerator.ResponseNotCompleted;
     };
     
     ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];

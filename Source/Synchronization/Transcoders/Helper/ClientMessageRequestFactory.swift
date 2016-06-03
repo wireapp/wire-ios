@@ -29,20 +29,11 @@ public class ClientMessageRequestFactory: NSObject {
     let octetStreamContentType = "application/octet-stream"
     
     public func upstreamRequestForMessage(message: ZMClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
-        if(message.isEncrypted) {
-            return upstreamRequestForEncriptedClientMessage(message, forConversationWithId: conversationId);
-        }
-        else {
-            return upstreamRequestForClientMessage(message, forConversationWithId: conversationId);
-        }
+        return upstreamRequestForEncriptedClientMessage(message, forConversationWithId: conversationId);
     }
     
     public func upstreamRequestForAssetMessage(format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
-        if (message.isEncrypted) {
             return upstreamRequestForEncryptedImageMessage(format, message: message, forConversationWithId: conversationId);
-        } else {
-            return upstreamRequestForImageMessage(format, message: message, forConversationWithId: conversationId);
-        }
     }
     
     private func upstreamRequestForEncriptedClientMessage(message: ZMClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
@@ -52,14 +43,6 @@ public class ClientMessageRequestFactory: NSObject {
         var debugInfo = "\(message.genericMessage)"
         if message.genericMessage.hasExternal() { debugInfo = "External message: " + debugInfo }
         request.appendDebugInformation(debugInfo)
-        return request
-    }
-
-    private func upstreamRequestForClientMessage(message: ZMClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
-        let path = "/" + ["conversations", conversationId.transportString(), "client-messages"].joinWithSeparator("/")
-        let payload = ["content": message.genericMessage.data().base64String()]
-        let request = ZMTransportRequest(path: path, method: ZMTransportRequestMethod.MethodPOST, payload: payload)
-        request.appendDebugInformation("\(message.genericMessage)")
         return request
     }
 
@@ -107,25 +90,8 @@ public class ClientMessageRequestFactory: NSObject {
         return request
     }
     
-    
-    private func upstreamRequestForImageMessage(format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
-        if let imageData =  message.imageAssetStorage!.imageDataForFormat(format, encrypted: false) {
-            let path = "/" + ["conversations", conversationId.transportString(), "assets"].joinWithSeparator("/")
-            let disposition = ZMAssetMetaDataEncoder.contentDispositionForImageOwner(
-                ZMGenericMessageImageOwner(genericMessage: message.imageAssetStorage!.genericMessageForFormat(format)!, assetCache: message.managedObjectContext!.zm_imageAssetCache),
-                format: format,
-                conversationID: conversationId,
-                correlationID: message.nonce)
-            let request = ZMTransportRequest.multipartRequestWithPath(path, imageData: imageData, metaData: disposition)
-            request.appendDebugInformation("\(message.imageAssetStorage!.genericMessageForFormat(format))")
-            request.forceToBackgroundSession()
-            return request
-        }
-        return nil
-    }
-    
-    public func requestToGetAsset(assetId: NSUUID, inConversation conversationId: NSUUID, isEncrypted: Bool) -> ZMTransportRequest {
-        let path = "/" + ["conversations", conversationId.transportString()!, isEncrypted ? "otr" : "", "assets", assetId.transportString()!].joinWithSeparator("/")
+    public func requestToGetAsset(assetId: String, inConversation conversationId: NSUUID, isEncrypted: Bool) -> ZMTransportRequest {
+        let path = "/" + ["conversations", conversationId.transportString()!, isEncrypted ? "otr" : "", "assets", assetId].joinWithSeparator("/")
         let request = ZMTransportRequest.imageGetRequestFromPath(path)
         request.forceToBackgroundSession()
         return request

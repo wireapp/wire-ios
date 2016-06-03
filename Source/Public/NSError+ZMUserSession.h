@@ -22,23 +22,45 @@
 
 typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
     ZMUserSessionNoError = 0,
-    ZMUserSessionUnkownError,
-    ZMUserSessionNeedsCredentials,
-    ZMUserSessionInvalidCredentials,
-    ZMUserSessionAccountIsPendingActivation,
-    ZMUserSessionNetworkError,
-    ZMUserSessionEmailIsAlreadyRegistered,
-    ZMUserSessionPhoneNumberIsAlreadyRegistered,
-    ZMUserSessionInvalidPhoneNumber,
-    ZMUserSessionInvalidEmail,
-    ZMUserSessionInvalidPhoneNumberVerificationCode,
-    ZMUserSessionRegistrationDidFailWithUnknownError,
-    ZMUserSessionCodeRequestIsAlreadyPending,
-    ZMUserSessionNeedsPasswordToRegisterClient,
-    ZMUserSessionNeedsToRegisterEmailToRegisterClient,
-    ZMUserSessionCanNotRegisterMoreClients,
-    ZMUserSessionInvalidInvitationCode,
-    ZMUserSessionAccountDeleted,
+    /// ???
+    ZMUserSessionUnkownError = 1,
+    /// Credentials are needed to authenticate
+    ZMUserSessionNeedsCredentials = 2,
+    /// The credentials provided are not valid
+    ZMUserSessionInvalidCredentials = 3,
+    /// The account is still pending validation
+    ZMUserSessionAccountIsPendingActivation = 4,
+    /// Network error in communicating with the backend
+    ZMUserSessionNetworkError = 5,
+    /// The email used in the registration is already in use
+    ZMUserSessionEmailIsAlreadyRegistered = 6,
+    /// The phone number used in the registration is already in use
+    ZMUserSessionPhoneNumberIsAlreadyRegistered = 7,
+    /// The phone number used in the registration is not a valid phone number
+    ZMUserSessionInvalidPhoneNumber = 8,
+    /// The email used in the registration is not a valid email
+    ZMUserSessionInvalidEmail = 9,
+    /// The phone number verification code inserted is not valid
+    ZMUserSessionInvalidPhoneNumberVerificationCode = 10,
+    /// The registration failed, but we don't know why
+    ZMUserSessionRegistrationDidFailWithUnknownError = 11,
+    /// There is already a recent request to get the activation code for registration/login
+    ZMUserSessionCodeRequestIsAlreadyPending = 12,
+    /// The user account does not have a password, and a password
+    /// is needed to register a new client
+    ZMUserSessionNeedsPasswordToRegisterClient = 13,
+    /// The user account does not have an email, and an email
+    /// is needed to register a new client
+    ZMUserSessionNeedsToRegisterEmailToRegisterClient = 14,
+    /// Too many clients have been registered for this user,
+    /// one needs to be deleted before registering a new one
+    ZMUserSessionCanNotRegisterMoreClients = 15,
+    /// The invitation code provided during registration is invalid
+    ZMUserSessionInvalidInvitationCode = 16,
+    /// The user account was deleted
+    ZMUserSessionAccountDeleted = 17,
+    /// The current usert client was deleted remotely
+    ZMUserSessionClientDeletedRemotely = 18
 };
 
 FOUNDATION_EXPORT NSString * const ZMUserSessionErrorDomain;

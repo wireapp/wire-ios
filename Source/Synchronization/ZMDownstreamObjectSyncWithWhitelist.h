@@ -17,35 +17,24 @@
 // 
 
 
-#import "ZMDownstreamObjectSync.h"
+#import "ZMObjectSync.h"
+@protocol ZMDownstreamTranscoder;
+@class ZMManagedObject;
 
 /// ZMDownstreamObjectSync with support for whitelisting. Only whitelisted objects matching the predicate will be downloaded
 
-@interface ZMDownstreamObjectSyncWithWhitelist : ZMDownstreamObjectSync
+@interface ZMDownstreamObjectSyncWithWhitelist : NSObject <ZMObjectSync>
 
 /// @param predicateForObjectsToDownload the predicate that will be used to select which object to download
-/// @param predicateForObjectsRequiringWhitelisting if an object matches this predicate and the @c predicateForObjectsToDownload, it will be donwloaded only if whitelisted,
-///    if it doesn't match this predicate it will be downloaded even if not whitelisted
 - (instancetype)initWithTranscoder:(id<ZMDownstreamTranscoder>)transcoder
                         entityName:(NSString *)entityName
      predicateForObjectsToDownload:(NSPredicate *)predicateForObjectsToDownload
-predicateForObjectsRequiringWhitelisting:(NSPredicate *)predicateForObjectsRequiringWhitelisting
-              managedObjectContext:(NSManagedObjectContext *)moc;
-
-/// @param predicateForObjectsToDownload the predicate that will be used to select which object to download
-/// @param predicateForObjectsRequiringWhitelisting if an object matches this predicate and the @c predicateForObjectsToDownload, it will be donwloaded only if whitelisted,
-///    if it doesn't match this predicate it will be downloaded even if not whitelisted
-- (instancetype)initWithTranscoder:(id<ZMDownstreamTranscoder>)transcoder
-                        entityName:(NSString *)entityName
-     predicateForObjectsToDownload:(NSPredicate *)predicateForObjectsToDownload
-predicateForObjectsRequiringWhitelisting:(NSPredicate *)predicateForObjectsRequiringWhitelisting
-                            filter:(NSPredicate *)filter
               managedObjectContext:(NSManagedObjectContext *)moc;
 
 /// Adds an object to the whitelist. It will later be removed once downloaded and not matching the whitelist predicate
 - (void)whiteListObject:(ZMManagedObject *)object;
 
-/// See the @c init description
-@property (nonatomic, readonly) NSPredicate *predicateForObjectsRequiringWhitelisting;
+/// Returns a request to download the next object
+- (ZMTransportRequest *)nextRequest;
 
 @end

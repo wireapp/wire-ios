@@ -53,6 +53,8 @@ typedef NS_ENUM(int, ZMLocalNotificationForEventType) {
 
 extern NSString * _Null_unspecified const ZMPushStringMessageAdd;
 extern NSString * _Null_unspecified const ZMPushStringImageAdd;
+extern NSString * _Null_unspecified const ZMPushStringVideoAdd;
+extern NSString * _Null_unspecified const ZMPushStringAudioAdd;
 extern NSString * _Null_unspecified const ZMPushStringFileAdd;
 extern NSString * _Null_unspecified const ZMPushStringMessageAddMany;
 

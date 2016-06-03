@@ -62,7 +62,7 @@
 
     // when
     MessageWindowChangeObserver *observer = [[MessageWindowChangeObserver alloc] initWithMessageWindow:window];
-    [lastMessage requestFullContent];
+    [lastMessage requestImageDownload];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then we should receive another notification
@@ -101,7 +101,7 @@
     // when
     ZMConversationMessageWindow *window = [conversation conversationWindowWithSize:10];
     MessageWindowChangeObserver *observer = [[MessageWindowChangeObserver alloc] initWithMessageWindow:window];
-    [lastMessage requestFullContent];
+    [lastMessage requestImageDownload];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then we should receive another notification

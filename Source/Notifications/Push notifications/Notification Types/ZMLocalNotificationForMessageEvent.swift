@@ -18,6 +18,7 @@
 
 
 import ZMUtilities
+import MobileCoreServices;
 
 public func findIndex<S: SequenceType>(sequence: S, predicate: (S.Generator.Element) -> Bool) -> Int? {
     for (index, element) in sequence.enumerate() {
@@ -57,6 +58,8 @@ public class ZMLocalNotificationForPostInConversationEvent : ZMLocalNotification
 public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversationEvent {
     var messageText : String?
     var isImageMessage : Bool = false
+    var isVideoMessage : Bool = false
+    var isAudioMessage : Bool = false
     var isFileUploadedMessage : Bool = false
     
     override var copiedEventTypes : [ZMUpdateEventType] {
@@ -85,13 +88,21 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
             
             let isTextMessage = message.hasText() && message.text.content.characters.count > 0
             let isImageMessage = message.hasImage()
+            let isVideoMessage = message.asset.original.mimeType.zm_conformsToUTI(kUTTypeMovie)
+            let isAudioMessage = message.asset.original.mimeType.zm_conformsToUTI(kUTTypeAudio)
             let isFileUploadedMessage = message.hasAsset()
             
-            guard isTextMessage || isImageMessage || isFileUploadedMessage
+            guard isTextMessage || isImageMessage || isFileUploadedMessage || isVideoMessage || isAudioMessage
             else { return false }
             
             if isTextMessage {
                 messageText = message.text.content
+            }
+            else if isVideoMessage {
+                self.isVideoMessage = isVideoMessage
+            }
+            else if isAudioMessage {
+                self.isAudioMessage = isAudioMessage
             }
             else if isFileUploadedMessage {
                 self.isFileUploadedMessage = isFileUploadedMessage
@@ -117,16 +128,27 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
     
     // MARK : Notification content
     override func configureAlertBody() -> String {
-        if events.count <= MaximumNumberOfEventsBeforeBundling && messageText != nil {
-            return alertBody
+        
+        if (events.count <= MaximumNumberOfEventsBeforeBundling) {
+            if messageText != nil {
+                return alertBody
+            }
+            else if self.isImageMessage {
+                return alertBodyForOneImageAddEvent
+            }
+            else if self.isVideoMessage {
+                return alertBodyForOneVideoAddEvent
+            }
+            else if self.isAudioMessage {
+                return alertBodyForOneAudioAddEvent
+            }
+            else if self.isFileUploadedMessage {
+                return alertBodyForOneFileAddEvent
+            }
+            return alertBodyForMultipleMessageAddEvents
+        } else {
+            return alertBodyForMultipleMessageAddEvents
         }
-        else if events.count == 1 && self.isImageMessage {
-            return alertBodyForOneImageAddEvent
-        }
-        else if events.count == 1 && self.isFileUploadedMessage {
-            return alertBodyForOneFileAddEvent
-        }
-        return alertBodyForMultipleMessageAddEvents
     }
     
     var alertBody : String {
@@ -135,6 +157,14 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
     
     var alertBodyForOneImageAddEvent : String {
         return ZMPushStringImageAdd.localizedStringWithUser(sender, conversation: conversation)
+    }
+    
+    var alertBodyForOneVideoAddEvent : String {
+        return ZMPushStringVideoAdd.localizedStringWithUser(sender, conversation: conversation)
+    }
+    
+    var alertBodyForOneAudioAddEvent : String {
+        return ZMPushStringAudioAdd.localizedStringWithUser(sender, conversation: conversation)
     }
     
     var alertBodyForOneFileAddEvent : String {
@@ -196,4 +226,3 @@ public class ZMLocalNotificationForKnockMessage : ZMLocalNotificationForPostInCo
     }
    
 }
-

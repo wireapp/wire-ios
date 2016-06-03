@@ -40,7 +40,7 @@
 #import <zmessaging/ZMPushRegistrant.h>
 #import <zmessaging/ZMNotifications+UserSession.h>
 #import <zmessaging/ZMNotifications+UserSessionInternal.h>
-
+#import <zmessaging/ZMObjectSync.h>
 #import <zmessaging/ZMUserSession+Background.h>
 #import <zmessaging/ZMAuthenticationStatus.h>
 #import <zmessaging/ZMClientRegistrationStatus.h>
@@ -77,4 +77,5 @@
 #import <zmessaging/ZMLocalNotificationLocalization.h>
 #import <zmessaging/UILocalNotification+StringProcessing.h>
 #import <zmessaging/ZMHotFixDirectory.h>
+#import <zmessaging/ZMImagePreprocessingTracker.h>
 

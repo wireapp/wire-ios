@@ -160,6 +160,21 @@ public class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, 
         return requestsFactory.fetchClientsRequest()
     }
     
+    public func shouldCreateRequestToSyncObject(managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: AnyObject) -> Bool {
+        guard let sync = sync as? ZMUpstreamModifiedObjectSync where sync == self.modifiedSync
+        else { return true }
+        
+        var keysToSync = keys
+        if keys.contains(ZMUserClientMissingKey),
+            let client = managedObject as? UserClient where (client.missingClients == nil || client.missingClients?.count == 0)
+        {
+            keysToSync.remove(ZMUserClientMissingKey)
+            client.resetLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+            self.modifiedSync.objectsDidChange(Set(arrayLiteral: client))
+        }
+        return (keysToSync.count > 0)
+    }
+    
     public func requestForUpdatingObject(managedObject: ZMManagedObject, forKeys keys: Set<NSObject>) -> ZMUpstreamRequest? {
         if let managedObject = managedObject as? UserClient {
             guard let clientUpdateStatus = self.clientUpdateStatus else { fatal("clientUpdateStatus is not set") }

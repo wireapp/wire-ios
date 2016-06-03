@@ -43,24 +43,23 @@ extension ClientMessageRequestFactory {
         
         let hasAssetId = message.assetId != nil
         
-        if format == .Placeholder || !hasAssetId {
-            return upstreamRequestForInsertedEcryptedFileMessage(format, message: message, forConversationWithId: conversationId);
+        if format == .Placeholder {
+            return upstreamRequestForInsertedEcryptedPlaceholderFileMessage(message, forConversationWithId: conversationId)
         }
         
-        if hasAssetId {
-            return upstreamRequestForUpdatedEcryptedOriginalFileMessage(message, forConversationWithId: conversationId)
+        if format == .Thumbnail {
+            return upstreamRequestForInsertedEcryptedThumbnailFileMessage(message, forConversationWithId: conversationId)
+        }
+        
+        if format == .FullAsset {
+            if !hasAssetId {
+                return upstreamRequestForInsertedEcryptedFullAssetFileMessage(message, forConversationWithId: conversationId)
+            } else {
+                return upstreamRequestForUpdatedEcryptedFullAssetFileMessage(message, forConversationWithId: conversationId)
+            }
         }
         
         return nil
-    }
-    
-    /// Returns the request to upload the Asset.Original payload
-    func upstreamRequestForInsertedEcryptedFileMessage(dataType: ZMAssetClientMessageDataType, message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
-        if dataType == .Placeholder {
-            return upstreamRequestForInsertedEcryptedPlaceholderFileMessage(message, forConversationWithId: conversationId)
-        } else {
-            return upstreamRequestForInsertedEcryptedOriginalFileMessage(message, forConversationWithId: conversationId)
-        }
     }
     
     // MARK: Inserting
@@ -71,17 +70,17 @@ extension ClientMessageRequestFactory {
         guard let assetOriginalData = message.encryptedMessagePayloadForDataType(.Placeholder) where nil != message.filename else { return nil }
         let request = ZMTransportRequest(path: path, method: .MethodPOST, binaryData: assetOriginalData, type: protobufContentType, contentDisposition: nil)
         request.appendDebugInformation("Inserting file upload placeholder (Original)")
-        request.appendDebugInformation("\(assetOriginalData)")
+        request.appendDebugInformation("\(message.dataSet)")
         request.forceToBackgroundSession()
         return request
     }
     
     /// Returns the multipart request to upload the Asset.Uploaded payload which includes the file data
-    func upstreamRequestForInsertedEcryptedOriginalFileMessage(message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
+    func upstreamRequestForInsertedEcryptedFullAssetFileMessage(message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
         guard let moc = message.managedObjectContext else { return nil }
         guard message.imageMessageData == nil else { return nil }
         let path = "/conversations/\(conversationId.transportString())/otr/assets"
-        guard let assetUploadedData = message.encryptedMessagePayloadForDataType(.FileData), filename = message.filename else { return nil }
+        guard let assetUploadedData = message.encryptedMessagePayloadForDataType(.FullAsset), filename = message.filename else { return nil }
         guard let fileData = moc.zm_fileAssetCache.assetData(message.nonce, fileName: filename, encrypted: true) else { return nil }
         let multipartData = dataForMultipartFileUploadRequest(assetUploadedData, fileData: fileData)
         
@@ -95,11 +94,31 @@ extension ClientMessageRequestFactory {
         return request
     }
     
+    /// Returns the multipart request to upload the thumbnail payload which includes the file data
+    func upstreamRequestForInsertedEcryptedThumbnailFileMessage(message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
+        guard let moc = message.managedObjectContext else { return nil }
+        guard message.fileMessageData != nil else { return nil }
+        let path = "/conversations/\(conversationId.transportString())/otr/assets"
+        guard let thumbnailMetaData = message.encryptedMessagePayloadForDataType(.Thumbnail) else { return nil }
+        guard let thumbnailData = moc.zm_imageAssetCache.assetData(message.nonce, format: .Medium, encrypted: true) else { return nil }
+        
+        let request = ZMTransportRequest.multipartRequestWithPath(
+            path,
+            imageData: thumbnailData,
+            metaData: thumbnailMetaData,
+            metaDataContentType: protobufContentType,
+            mediaContentType: octetStreamContentType
+        )
+        
+        request.appendDebugInformation("Inserting file upload thumbnail (Asset.Preview) with binary file data")
+        return request
+    }
+    
     // MARK: Updating
     
-    func upstreamRequestForUpdatedEcryptedOriginalFileMessage(message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
+    func upstreamRequestForUpdatedEcryptedFullAssetFileMessage(message: ZMAssetClientMessage, forConversationWithId conversationId: NSUUID) -> ZMTransportRequest? {
         let path = "/conversations/\(conversationId.transportString())/otr/assets/\(message.assetId!.transportString())"
-        guard let assetUploadedData = message.encryptedMessagePayloadForDataType(.FileData) else { return nil }
+        guard let assetUploadedData = message.encryptedMessagePayloadForDataType(.FullAsset) else { return nil }
         let request = ZMTransportRequest(path: path, method: .MethodPOST, binaryData: assetUploadedData, type: protobufContentType, contentDisposition: nil)
         request.appendDebugInformation("Updating file upload metadata (Asset.Uploaded)")
         request.appendDebugInformation("\(assetUploadedData)")

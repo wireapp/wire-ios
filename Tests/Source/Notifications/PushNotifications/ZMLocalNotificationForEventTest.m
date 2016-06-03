@@ -699,14 +699,31 @@
     }];
 }
 
-- (NSDictionary *)payloadForEncryptedOTRMessageWithFileNonce:(NSUUID *)nonce sender:(ZMUser *)sender conversation:(ZMConversation *)conversation
+- (void)testThatItDoesNotCreateAnImageAddNotificationForTheWrongPayload
 {
-    ZMAssetUploadedBuilder* uploadedBuilder = [[ZMAssetUploadedBuilder alloc] init];
-    [uploadedBuilder setSha256:[NSData secureRandomDataOfLength:32]];
-    [uploadedBuilder setOtrKey:[NSData secureRandomDataOfLength:32]];
+    // given
+    NSDictionary *data = @{@"info": @{@"tag": @"small"}};
+    
+    // when
+    ZMLocalNotificationForEvent *note = [self noteWithPayload:data fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddAsset];
+    
+    // then
+    XCTAssertNil(note);
+}
+
+- (NSDictionary *)payloadForEncryptedOTRMessageWithFileNonce:(NSUUID *)nonce mimeType:(NSString *)mimeType sender:(ZMUser *)sender conversation:(ZMConversation *)conversation
+{
+    ZMAssetRemoteDataBuilder* dataBuilder = [[ZMAssetRemoteDataBuilder alloc] init];
+    [dataBuilder setSha256:[NSData secureRandomDataOfLength:32]];
+    [dataBuilder setOtrKey:[NSData secureRandomDataOfLength:32]];
+    
+    ZMAssetOriginalBuilder *originalBuilder = [[ZMAssetOriginalBuilder alloc] init];
+    [originalBuilder setMimeType:mimeType];
+    [originalBuilder setSize:0];
     
     ZMAssetBuilder* assetBuilder = [[ZMAssetBuilder alloc] init];
-    [assetBuilder setUploaded:[uploadedBuilder build]];
+    [assetBuilder setUploaded:[dataBuilder build]];
+    [assetBuilder setOriginal:[originalBuilder build]];
     
     ZMGenericMessageBuilder* genericAssetMessageBuilder = [[ZMGenericMessageBuilder alloc] init];
     [genericAssetMessageBuilder setAsset:[assetBuilder build]];
@@ -721,9 +738,9 @@
              };
 }
 
-- (UILocalNotification *)notificationForFileAddEventFromUser:(ZMUser *)sender inConversation:(ZMConversation *)conversation
+- (UILocalNotification *)notificationForFileAddEventWithMimeType:(NSString *)mimeType fromUser:(ZMUser *)sender inConversation:(ZMConversation *)conversation
 {
-    ZMLocalNotificationForEvent *note = [self noteWithPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] sender:sender conversation:conversation]
+    ZMLocalNotificationForEvent *note = [self noteWithPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:mimeType sender:sender conversation:conversation]
                                                      fromUser:sender
                                                inConversation:conversation
                                                          type:EventConversationAddOTRAsset];
@@ -767,26 +784,141 @@
         NOT_USED(stop);
         UILocalNotification *notification;
         if (arguments.count == 2) {
-            notification = [self notificationForFileAddEventFromUser:arguments[0] inConversation:arguments[1]];
+            notification = [self notificationForFileAddEventWithMimeType:@"application/pdf" fromUser:arguments[0] inConversation:arguments[1]];
         }
         else {
-            notification = [self notificationForFileAddEventFromUser:nil inConversation:arguments[0]];
+            notification = [self notificationForFileAddEventWithMimeType:@"application/pdf" fromUser:nil inConversation:arguments[0]];
         }
         XCTAssertNotNil(notification);
         XCTAssertEqualObjects(notification.alertBody, expectedAlert);
     }];
 }
 
-- (void)testThatItDoesNotCreateAnImageAddNotificationForTheWrongPayload
+- (void)testThatItDoesntBundleFileAddNotification_whenUnderBundleLimit
 {
     // given
-    NSDictionary *data = @{@"info": @{@"tag": @"small"}};
+    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
+    
     
     // when
-    ZMLocalNotificationForEvent *note = [self noteWithPayload:data fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddAsset];
+    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"application/pdf" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
+    
     
     // then
-    XCTAssertNil(note);
+    NSString *expectedAlertText = @"Super User shared a file";
+    
+    XCTAssertNotNil(note2);
+    XCTAssertNotNil(note2.notifications);
+    UILocalNotification *notification = note2.notifications.lastObject;
+    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
+}
+
+- (void)testThatItCreatesVideoAddNotificationsCorrectly
+{
+    
+    //    "push.notification.add.video.group" = "%1$@ shared a video in %2$@";
+    //    "push.notification.add.video.group.nousername" = "New video in %1$@";
+    //    "push.notification.add.video.group.nousername.noconversationname" = "New video in a conversation";
+    //    "push.notification.add.video.group.noconversationname" = "%1$@ shared a video in a conversation";
+    //
+    //    "push.notification.add.video.oneonone" = "%1$@ shared a video";
+    //    "push.notification.add.video.oneonone.nousername" = "New video in a conversation";
+    //
+    NSDictionary *cases = @{@"Super User shared a video": @[self.sender, self.oneOnOneConversation],
+                            @"New video in a conversation" : @[self.oneOnOneConversation],
+                            
+                            @"Super User shared a video in Super Conversation": @[self.sender, self.groupConversation],
+                            @"New video in Super Conversation":@[self.groupConversation],
+                            @"New video in a conversation":@[self.groupConversationWithoutName],
+                            @"Super User shared a video": @[self.sender, self.groupConversationWithoutName],
+                            };
+    
+    [cases enumerateKeysAndObjectsUsingBlock:^(NSString *expectedAlert, NSArray *arguments, BOOL *stop) {
+        NOT_USED(stop);
+        UILocalNotification *notification;
+        if (arguments.count == 2) {
+            notification = [self notificationForFileAddEventWithMimeType:@"video/mp4" fromUser:arguments[0] inConversation:arguments[1]];
+        }
+        else {
+            notification = [self notificationForFileAddEventWithMimeType:@"video/mp4" fromUser:nil inConversation:arguments[0]];
+        }
+        XCTAssertNotNil(notification);
+        XCTAssertEqualObjects(notification.alertBody, expectedAlert);
+    }];
+}
+
+- (void)testThatItDoesntBundleVideoAddNotification_whenUnderBundleLimit
+{
+    // given
+    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
+    
+    
+    // when
+    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"video/mp4" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
+    
+    
+    // then
+    NSString *expectedAlertText = @"Super User shared a video";
+    
+    XCTAssertNotNil(note2);
+    XCTAssertNotNil(note2.notifications);
+    UILocalNotification *notification = note2.notifications.lastObject;
+    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
+}
+
+
+- (void)testThatItCreatesAudioAddNotificationsCorrectly
+{
+    
+    //    "push.notification.add.audio.group" = "%1$@ shared an audio message in %2$@";
+    //    "push.notification.add.audio.group.nousername" = "New audio message in %1$@";
+    //    "push.notification.add.audio.group.nousername.noconversationname" = "New audio message in a conversation";
+    //    "push.notification.add.audio.group.noconversationname" = "%1$@ shared an audio message in a conversation";
+    //
+    //    "push.notification.add.audio.oneonone" = "%1$@ shared an audio message";
+    //    "push.notification.add.audio.oneonone.nousername" = "New audio message in a conversation";
+    //
+    NSDictionary *cases = @{@"Super User shared an audio message": @[self.sender, self.oneOnOneConversation],
+                            @"New audio message in a conversation" : @[self.oneOnOneConversation],
+                            
+                            @"Super User shared an audio message in Super Conversation": @[self.sender, self.groupConversation],
+                            @"New audio message in Super Conversation":@[self.groupConversation],
+                            @"New audio message in a conversation":@[self.groupConversationWithoutName],
+                            @"Super User shared an audio message": @[self.sender, self.groupConversationWithoutName],
+                            };
+    
+    [cases enumerateKeysAndObjectsUsingBlock:^(NSString *expectedAlert, NSArray *arguments, BOOL *stop) {
+        NOT_USED(stop);
+        UILocalNotification *notification;
+        if (arguments.count == 2) {
+            notification = [self notificationForFileAddEventWithMimeType:@"audio/x-m4a" fromUser:arguments[0] inConversation:arguments[1]];
+        }
+        else {
+            notification = [self notificationForFileAddEventWithMimeType:@"audio/x-m4a" fromUser:nil inConversation:arguments[0]];
+        }
+        XCTAssertNotNil(notification);
+        XCTAssertEqualObjects(notification.alertBody, expectedAlert);
+    }];
+}
+
+
+- (void)testThatItDoesntBundleAudioAddNotification_whenUnderBundleLimit
+{
+    // given
+    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
+    
+    
+    // when
+    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"audio/x-m4a" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
+    
+    
+    // then
+    NSString *expectedAlertText = @"Super User shared an audio message";
+    
+    XCTAssertNotNil(note2);
+    XCTAssertNotNil(note2.notifications);
+    UILocalNotification *notification = note2.notifications.lastObject;
+    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
 }
 
 @end

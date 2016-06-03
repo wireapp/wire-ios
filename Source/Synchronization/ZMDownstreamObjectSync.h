@@ -18,10 +18,7 @@
 
 
 @import Foundation;
-#import <zmessaging/ZMContextChangeTracker.h>
-#import <zmessaging/ZMOutstandingItems.h>
-
-
+#import <zmessaging/ZMObjectSync.h>
 
 @protocol ZMTransportData;
 @class ZMTransportRequest;
@@ -32,8 +29,7 @@
 @class ZMTransportResponse;
 
 
-
-@interface ZMDownstreamObjectSync : NSObject <ZMContextChangeTracker, ZMOutstandingItems>
+@interface ZMDownstreamObjectSync : NSObject <ZMObjectSync>
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -77,9 +73,8 @@
 
 @protocol ZMDownstreamTranscoder <NSObject>
 
-- (ZMTransportRequest *)requestForFetchingObject:(ZMManagedObject *)object downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
-- (void)deleteObject:(ZMManagedObject *)object downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
-- (void)updateObject:(ZMManagedObject *)object withResponse:(ZMTransportResponse *)response downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (ZMTransportRequest *)requestForFetchingObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync>)downstreamSync;
+- (void)deleteObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync>)downstreamSync;
+- (void)updateObject:(ZMManagedObject *)object withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync>)downstreamSync;
 
 @end
-

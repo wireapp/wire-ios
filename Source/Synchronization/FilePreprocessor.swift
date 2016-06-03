@@ -76,8 +76,6 @@ It creates an encrypted version from the plain text version
         objectsBeingProcessed.remove(message)
 
         message.addUploadedGenericMessage(keys)
-        message.setNeedsToUploadData(.Placeholder, needsToUpload: true)
-        
         message.managedObjectContext?.enqueueDelayedSave()
     }
 }

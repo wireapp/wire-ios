@@ -196,10 +196,9 @@
                    withReadMessageBlock:^(MockPushEvent *lastEvent, CBCryptoBox *__unused user1Box){
                        [self assertOtrAssetMessageIsDelivered:message lastEvent:lastEvent];
                    }];
-    XCTAssertFalse([message hasLocalModificationsForKey:ZMAssetClientMessage_NeedsToUploadPreviewKey]);
-    XCTAssertFalse([message hasLocalModificationsForKey:ZMAssetClientMessage_NeedsToUploadMediumKey]);
-    XCTAssertFalse(message.needsToUploadMedium);
-    XCTAssertFalse(message.needsToUploadPreview);
+
+    XCTAssertFalse([message hasLocalModificationsForKey:ZMAssetClientMessageUploadedStateKey]);
+    XCTAssertEqual(message.uploadState, ZMAssetUploadStateDone);
 
 }
 
@@ -211,7 +210,7 @@
     [self.mockTransportSession setResponseGeneratorBlock:^ ZMTransportResponse *(ZMTransportRequest *__unused request) {
         if ([request.path.pathComponents containsObject:@"prekeys"]) {
             askedForPreKeys = YES;
-            return ZMCustomResponseGeneratorReturnResponseNotCompleted;
+            return ResponseGenerator.ResponseNotCompleted;
         }
         return nil;
     }];
@@ -352,10 +351,9 @@
     }];
 
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssertFalse([message hasLocalModificationsForKey:ZMAssetClientMessage_NeedsToUploadPreviewKey]);
-    XCTAssertFalse([message hasLocalModificationsForKey:ZMAssetClientMessage_NeedsToUploadMediumKey]);
-    XCTAssertFalse(message.needsToUploadMedium);
-    XCTAssertFalse(message.needsToUploadPreview);
+    
+    XCTAssertFalse([message hasLocalModificationsForKey:ZMAssetClientMessageUploadedStateKey]);
+    XCTAssertEqual(message.uploadState, ZMAssetUploadStateUploadingFailed);
 }
 
 - (void)testThatItNotifiesIfThereAreNewRemoteClients
@@ -774,20 +772,31 @@
     ZMGenericMessage *message = [self otrAssetGenericMessage:format imageData:imageData encryptedData:&encryptedImageData];
     
     // when
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        //create local client
-        
-        [self createClientsAndEncryptMessageData:message appendMessageBlock:^(MockUserClient *fromClient, MockUserClient *toClient, NSData *messageData) {
-            //user sends message from one device to another
-            NSUUID *assetId = [NSUUID createUUID];
+    [self createClientsAndEncryptMessageData:message appendMessageBlock:^(MockUserClient *fromClient, MockUserClient *toClient, NSData *messageData) {
+        //user sends message from one device to another
+        NSUUID *assetId = [NSUUID createUUID];
+        [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
             [self.groupConversation insertOTRAssetFromClient:fromClient toClient:toClient metaData:messageData imageData:encryptedImageData assetId:assetId isInline:YES];
             [session createAssetWithData:encryptedImageData identifier:assetId.transportString contentType:@"" forConversation:self.groupConversation.identifier];
         }];
-        
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    [self spinMainQueueWithTimeout:0.5];
+    
+    ZMConversation *localGroupConversation = [self conversationForMockConversation:self.groupConversation];
+    ZMMessage *observedMessage = localGroupConversation.messages.lastObject;
+    MessageChangeObserver *messageObserver = [[MessageChangeObserver alloc] initWithMessage:observedMessage];
+    XCTAssertTrue([observedMessage isKindOfClass:ZMAssetClientMessage.class]);
+    
+    [localGroupConversation.messages.lastObject requestImageDownload];
+    
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
     // then
+    XCTAssertEqual(messageObserver.notifications.count, 1lu);
+    
     NSOrderedSet *currentMessageSet = observer.computedMessages;
     NSOrderedSet *windowMessageSet = observer.window.messages;
     
@@ -804,6 +813,8 @@
             XCTAssertEqual(currentMessageSet[i], initialMessageSet[i-1]);
         }
     }
+    
+    [messageObserver tearDown];
 }
 
 - (void)testThatMessageWindowChangesWhenOTRAssetPreviewIsLoaded
@@ -841,13 +852,13 @@
     [self.uiMOC.zm_imageAssetCache deleteAssetData:imageMessageData.nonce format:ZMImageFormatMedium encrypted:YES];
     [self.uiMOC.zm_imageAssetCache deleteAssetData:imageMessageData.nonce format:ZMImageFormatMedium encrypted:NO];
     
-    XCTAssertNil([[imageMessageData imageMessageData] mediumData]);
-    XCTAssertFalse(imageMessageData.loadedMediumData);
     
+    XCTAssertNil([[imageMessageData imageMessageData] mediumData]);
+    
+    [imageMessageData requestImageDownload];
     WaitForAllGroupsToBeEmpty(0.5);
 
     XCTAssertNotNil([[imageMessageData imageMessageData] mediumData]);
-    XCTAssertTrue(imageMessageData.loadedMediumData);
 }
 
 - (void)testThatAssetMediumIsRedownloadedIfNoDecryptedMessageDataIsStored
@@ -874,15 +885,12 @@
     // remove decrypted data, but keep encrypted, like we crashed during decryption
     [self.uiMOC.zm_imageAssetCache storeAssetData:imageMessageData.nonce format:ZMImageFormatMedium encrypted:YES data:encryptedImageData];
     [self.uiMOC.zm_imageAssetCache deleteAssetData:imageMessageData.nonce format:ZMImageFormatMedium encrypted:NO];
-
     
     XCTAssertNil([[imageMessageData imageMessageData] mediumData]);
-    XCTAssertFalse(imageMessageData.loadedMediumData);
-    
+    [imageMessageData requestImageDownload];
     WaitForAllGroupsToBeEmpty(0.5);
     
     XCTAssertNotNil([[imageMessageData imageMessageData] mediumData]);
-    XCTAssertTrue(imageMessageData.loadedMediumData);
 }
 
 - (void)testThatCreatingAnOTRMessageToSendMarkedTheSessionToAsNeedingSave;

@@ -712,7 +712,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
                 [self.userSession loginWithCredentials:credentials];
             }];
         };
-        [[[authenticationObserver expect] andDo:provideCredentials] authenticationDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidCredentials userInfo:nil]];
+        [[[authenticationObserver expect] andDo:provideCredentials] authenticationDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionClientDeletedRemotely userInfo:nil]];
 
         [[authenticationObserver expect] authenticationDidSucceed];
         [[authenticationObserver expect] authenticationDidSucceed];

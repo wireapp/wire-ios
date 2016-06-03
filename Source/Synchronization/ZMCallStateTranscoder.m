@@ -355,7 +355,7 @@ _Pragma("clang diagnostic pop")
     return path;
 }
 
-- (ZMTransportRequest *)requestForFetchingObject:(ZMConversation *)conversation downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (ZMTransportRequest *)requestForFetchingObject:(ZMConversation *)conversation downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     if (conversation.conversationType == ZMConversationTypeGroup && !conversation.isSelfAnActiveMember) {
         return nil;
@@ -377,7 +377,7 @@ _Pragma("clang diagnostic pop")
 }
 
 
-- (void)updateObject:(ZMConversation *)conversation withResponse:(ZMTransportResponse *)response downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (void)updateObject:(ZMConversation *)conversation withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     //[self logCurrentStateForConversation:conversation withMessage:@"Call state sync result"];
@@ -644,7 +644,7 @@ _Pragma("clang diagnostic pop")
     
 }
 
-- (void)deleteObject:(ZMConversation *)conversation downstreamSync:(ZMDownstreamObjectSync *)downstreamSync;
+- (void)deleteObject:(ZMConversation *)conversation downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     NOT_USED(conversation);

@@ -163,7 +163,7 @@
         }
         
         if (shouldBlockRequests && ! [request.path containsString:@"fallback"]) {
-            return ZMCustomResponseGeneratorReturnResponseNotCompleted;
+            return ResponseGenerator.ResponseNotCompleted;
         }
         
         return nil;

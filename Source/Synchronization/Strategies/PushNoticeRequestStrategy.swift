@@ -77,9 +77,13 @@ extension PushNoticeRequestStrategy: ZMSingleRequestTranscoder {
               let selfClientID = ZMUser.selfUserInContext(self.managedObjectContext).selfClient()?.remoteIdentifier
         else { return nil }
         
+        let basePath = "/notifications/\(nextNotificationID.transportString())"
+        let clientComponent = NSURLQueryItem(name: "client", value: selfClientID)
+        let fallbackComponent = NSURLQueryItem(name: "cancel_fallback", value: "true")
+        let path = NSURLComponents(string: basePath)
+        path!.queryItems = [clientComponent, fallbackComponent]
         
-        let path = "/notifications/\(nextNotificationID.transportString())?client=\(selfClientID)"
-        let request = ZMTransportRequest(path: path, method: .MethodGET, payload: nil)
+        let request = ZMTransportRequest(path: path!.string, method: .MethodGET, payload: nil)
         
         let completion = ZMCompletionHandler(onGroupQueue: managedObjectContext)  { [weak self] response in
             let success = response.result == .Success

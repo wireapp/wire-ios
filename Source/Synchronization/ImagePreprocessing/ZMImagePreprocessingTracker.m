@@ -20,7 +20,7 @@
 @import zimages;
 @import ZMCDataModel;
 
-#import "ZMAssetPreprocessingTracker+Testing.h"
+#import "ZMImagePreprocessingTracker+Testing.h"
 
 @interface ZMImagePreprocessingTracker ()
 
