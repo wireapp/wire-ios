@@ -64,8 +64,14 @@ typedef BOOL(^VerificationBlock)(void);
 /// perform operations while not considering ZMLogErrors as test failure
 - (void)performIgnoringZMLogError:(void(^)(void))block;
 
+/// Returns the data of a small JPEG image
 - (NSData *)verySmallJPEGData;
+/// Returns the data of a small JPEG image
 + (NSData *)verySmallJPEGData;
+/// Returns the data of a medium JPEG image
+- (NSData *)mediumJPEGData;
+/// Returns the data of a medium JPEG image
++ (NSData *)mediumJPEGData;
 
 @property (nonatomic, strong) id<ZMSGroupQueue> fakeUIContext;
 @property (nonatomic, strong) id<ZMSGroupQueue> fakeSyncContext;

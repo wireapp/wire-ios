@@ -115,7 +115,6 @@
     self.fakeSyncContext = [FakeGroupContext sycnContext];
     
     [NSUUID reseedUUID:self.name];
-    [self reseedImageCounter];
 }
 
 - (void)tearDown
@@ -232,14 +231,14 @@
 
 - (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout;
 {
-    NSArray *groups = self.allDispatchGroups;
+    NSArray *groups = [self.allDispatchGroups copy];
     
     NSDate * const start = [NSDate date];
     NSTimeInterval timeinterval2 = [self.class timeToUseForOriginalTime:timeout];
     NSDate *end = [start dateByAddingTimeInterval:timeinterval2];
     
     __block NSUInteger waitCount = groups.count;
-    for (ZMSDispatchGroup *g in self.allDispatchGroups) {
+    for (ZMSDispatchGroup *g in groups) {
         [g notifyOnQueue:dispatch_get_main_queue() block:^{
             --waitCount;
         }];
@@ -289,36 +288,12 @@
     return result;
 }
 
-
-static int16_t imageCounter;
-
-- (void)reseedImageCounter;
-{
-    NSData *data = [self.name dataUsingEncoding:NSUTF8StringEncoding];
-    union {
-        int16_t counter;
-        uint8_t md[CC_SHA1_DIGEST_LENGTH];
-    } u;
-    CC_SHA1(data.bytes, (CC_LONG) data.length, u.md);
-    imageCounter = u.counter;
-}
-
 + (NSData *)verySmallJPEGData;
 {
-    NSURL *imagesURL = [[NSBundle bundleForClass:[ZMTBaseTest class]] resourceURL];
-    imagesURL = [imagesURL URLByAppendingPathComponent:@"verySmallJPEGs"];
-    NSError *error;
-    NSArray *imageURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:imagesURL includingPropertiesForKeys:@[NSURLTypeIdentifierKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:&error];
-    imageURLs = [imageURLs filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSURL *fileURL, NSDictionary *bindings) {
-        NOT_USED(bindings);
-        NSString *type;
-        return ([fileURL getResourceValue:&type forKey:NSURLTypeIdentifierKey error:NULL] &&
-                UTTypeConformsTo((__bridge CFStringRef) type, kUTTypeJPEG));
-    }]];
-    NSAssert(imageURLs.count != (NSUInteger) 0, @"No JPEGs found inside \"%@\"", [imagesURL path]);
-    NSUInteger idx = ((NSUInteger) (imageCounter++)) % imageURLs.count;
-    NSURL *imageURL = imageURLs[idx];
-    return [NSData dataWithContentsOfURL:imageURL];
+    NSURL *imageURL = [[NSBundle bundleForClass:[ZMTBaseTest class]] URLForResource:@"tiny" withExtension:@"jpg"];
+    NSData *data = [NSData dataWithContentsOfURL:imageURL];
+    RequireString(data != nil, "tiny.jpg not found");
+    return data;
 }
 
 - (NSData *)verySmallJPEGData;
@@ -326,6 +301,19 @@ static int16_t imageCounter;
     return [[self class] verySmallJPEGData];
 }
 
++ (NSData *)mediumJPEGData
+{
+    NSURL *imageURL = [[NSBundle bundleForClass:[ZMTBaseTest class]] URLForResource:@"medium" withExtension:@"jpg"];
+    NSData *data = [NSData dataWithContentsOfURL:imageURL];
+    RequireString(data != nil, "medium.jpg not found");
+    return data;
+}
+
+- (NSData *)mediumJPEGData
+{
+    return [[self class] mediumJPEGData];
+
+}
 
 @end
 
