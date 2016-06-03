@@ -30,6 +30,8 @@
 		09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DA1B78BE2700BADDB6 /* Main.storyboard */; };
 		09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DD1B78BE2700BADDB6 /* Images.xcassets */; };
 		09F028E11B78BE2700BADDB6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DF1B78BE2700BADDB6 /* LaunchScreen.xib */; };
+		16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */; };
+		16EB9B381CE0D7D800883FCF /* NSString+MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */; };
 		3E88BD441B1F3EA300232589 /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* ZMUtilities.framework */; };
 		3E88BE1B1B1F478200232589 /* NSOrderedSet+Zeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BDF51B1F478200232589 /* NSOrderedSet+Zeta.m */; };
 		3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BDF71B1F478200232589 /* NSSet+Zeta.m */; };
@@ -183,6 +185,8 @@
 		09F028DD1B78BE2700BADDB6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		09F028E01B78BE2700BADDB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		09F028F61B78BEBB00BADDB6 /* ZMUtilities-tests-host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "ZMUtilities-tests-host.entitlements"; sourceTree = "<group>"; };
+		16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMEType.swift"; sourceTree = "<group>"; };
+		16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMETypeTests.swift"; sourceTree = "<group>"; };
 		3E88BD381B1F3EA300232589 /* ZMUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZMUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD431B1F3EA300232589 /* ZMUtilities-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ZMUtilities-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD7D1B1F3F8000232589 /* ZMUtilities-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMUtilities-Info.plist"; sourceTree = "<group>"; };
@@ -519,6 +523,7 @@
 				54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */,
 				54CA31201B74F36B00B820C0 /* UnownedObject.swift */,
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
+				16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -573,6 +578,7 @@
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
+				16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */,
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
 			);
 			name = Source;
@@ -806,6 +812,7 @@
 				F9C9A7AE1CAEACB10039E10C /* ZMPhoneNumberValidator.m in Sources */,
 				3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */,
 				091799641B7E04FE00E60DD9 /* ZMAPNSEnvironment.m in Sources */,
+				16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,6 +820,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16EB9B381CE0D7D800883FCF /* NSString+MIMETypeTests.swift in Sources */,
 				F9D381B41B70B95100E6E4EB /* NSOrderedSet+ZMUTests.m in Sources */,
 				F9C9A7C51CAEAFE10039E10C /* ZMAccentColorValidatorTests.m in Sources */,
 				F9C9A7C81CAEAFE10039E10C /* ZMStringLengthValidatorTests.m in Sources */,
@@ -938,7 +946,7 @@
 			baseConfigurationReference = 54C1B0F91B31A1E400CB8CF3 /* ZMUtilities-ios.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 29;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -950,7 +958,7 @@
 			baseConfigurationReference = 54C1B0F91B31A1E400CB8CF3 /* ZMUtilities-ios.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 29;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
