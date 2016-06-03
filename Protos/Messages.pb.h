@@ -1182,13 +1182,18 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @end
 
 #define AudioMetaData_duration_in_millis @"durationInMillis"
+#define AudioMetaData_normalized_loudness @"normalizedLoudness"
 @interface ZMAssetAudioMetaData : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasDurationInMillis_:1;
+  BOOL hasNormalizedLoudness_:1;
   UInt64 durationInMillis;
+  NSData* normalizedLoudness;
 }
 - (BOOL) hasDurationInMillis;
+- (BOOL) hasNormalizedLoudness;
 @property (readonly) UInt64 durationInMillis;
+@property (readonly, strong) NSData* normalizedLoudness;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -1229,6 +1234,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (UInt64) durationInMillis;
 - (ZMAssetAudioMetaDataBuilder*) setDurationInMillis:(UInt64) value;
 - (ZMAssetAudioMetaDataBuilder*) clearDurationInMillis;
+
+- (BOOL) hasNormalizedLoudness;
+- (NSData*) normalizedLoudness;
+- (ZMAssetAudioMetaDataBuilder*) setNormalizedLoudness:(NSData*) value;
+- (ZMAssetAudioMetaDataBuilder*) clearNormalizedLoudness;
 @end
 
 #define RemoteData_otr_key @"otrKey"

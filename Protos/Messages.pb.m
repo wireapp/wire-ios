@@ -5164,6 +5164,7 @@ static ZMAssetVideoMetaData* defaultZMAssetVideoMetaDataInstance = nil;
 
 @interface ZMAssetAudioMetaData ()
 @property UInt64 durationInMillis;
+@property (strong) NSData* normalizedLoudness;
 @end
 
 @implementation ZMAssetAudioMetaData
@@ -5175,9 +5176,17 @@ static ZMAssetVideoMetaData* defaultZMAssetVideoMetaDataInstance = nil;
   hasDurationInMillis_ = !!_value_;
 }
 @synthesize durationInMillis;
+- (BOOL) hasNormalizedLoudness {
+  return !!hasNormalizedLoudness_;
+}
+- (void) setHasNormalizedLoudness:(BOOL) _value_ {
+  hasNormalizedLoudness_ = !!_value_;
+}
+@synthesize normalizedLoudness;
 - (instancetype) init {
   if ((self = [super init])) {
     self.durationInMillis = 0L;
+    self.normalizedLoudness = [NSData data];
   }
   return self;
 }
@@ -5200,6 +5209,9 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
   if (self.hasDurationInMillis) {
     [output writeUInt64:1 value:self.durationInMillis];
   }
+  if (self.hasNormalizedLoudness) {
+    [output writeData:3 value:self.normalizedLoudness];
+  }
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -5211,6 +5223,9 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
   size_ = 0;
   if (self.hasDurationInMillis) {
     size_ += computeUInt64Size(1, self.durationInMillis);
+  }
+  if (self.hasNormalizedLoudness) {
+    size_ += computeDataSize(3, self.normalizedLoudness);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -5250,11 +5265,17 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
   if (self.hasDurationInMillis) {
     [output appendFormat:@"%@%@: %@\n", indent, @"durationInMillis", [NSNumber numberWithLongLong:self.durationInMillis]];
   }
+  if (self.hasNormalizedLoudness) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"normalizedLoudness", self.normalizedLoudness];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
   if (self.hasDurationInMillis) {
     [dictionary setObject: [NSNumber numberWithLongLong:self.durationInMillis] forKey: @"durationInMillis"];
+  }
+  if (self.hasNormalizedLoudness) {
+    [dictionary setObject: self.normalizedLoudness forKey: @"normalizedLoudness"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -5269,12 +5290,17 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
   return
       self.hasDurationInMillis == otherMessage.hasDurationInMillis &&
       (!self.hasDurationInMillis || self.durationInMillis == otherMessage.durationInMillis) &&
+      self.hasNormalizedLoudness == otherMessage.hasNormalizedLoudness &&
+      (!self.hasNormalizedLoudness || [self.normalizedLoudness isEqual:otherMessage.normalizedLoudness]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
   __block NSUInteger hashCode = 7;
   if (self.hasDurationInMillis) {
     hashCode = hashCode * 31 + [[NSNumber numberWithLongLong:self.durationInMillis] hash];
+  }
+  if (self.hasNormalizedLoudness) {
+    hashCode = hashCode * 31 + [self.normalizedLoudness hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -5322,6 +5348,9 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
   if (other.hasDurationInMillis) {
     [self setDurationInMillis:other.durationInMillis];
   }
+  if (other.hasNormalizedLoudness) {
+    [self setNormalizedLoudness:other.normalizedLoudness];
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -5347,6 +5376,10 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
         [self setDurationInMillis:[input readUInt64]];
         break;
       }
+      case 26: {
+        [self setNormalizedLoudness:[input readData]];
+        break;
+      }
     }
   }
 }
@@ -5364,6 +5397,22 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
 - (ZMAssetAudioMetaDataBuilder*) clearDurationInMillis {
   resultAudioMetaData.hasDurationInMillis = NO;
   resultAudioMetaData.durationInMillis = 0L;
+  return self;
+}
+- (BOOL) hasNormalizedLoudness {
+  return resultAudioMetaData.hasNormalizedLoudness;
+}
+- (NSData*) normalizedLoudness {
+  return resultAudioMetaData.normalizedLoudness;
+}
+- (ZMAssetAudioMetaDataBuilder*) setNormalizedLoudness:(NSData*) value {
+  resultAudioMetaData.hasNormalizedLoudness = YES;
+  resultAudioMetaData.normalizedLoudness = value;
+  return self;
+}
+- (ZMAssetAudioMetaDataBuilder*) clearNormalizedLoudness {
+  resultAudioMetaData.hasNormalizedLoudness = NO;
+  resultAudioMetaData.normalizedLoudness = [NSData data];
   return self;
 }
 @end
