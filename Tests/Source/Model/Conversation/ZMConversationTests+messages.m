@@ -297,7 +297,8 @@
     conversation.remoteIdentifier = NSUUID.createUUID;
 
     // when
-    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileAtURL:fileURL thumbnail:nil];
+    ZMFileMetadata *fileMetadata = [[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil];
+    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileMetadata:fileMetadata];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -340,7 +341,8 @@
     conversation.remoteIdentifier = NSUUID.createUUID;
     
     // when
-    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithMediaAtURL:fileURL thumbnail:thumbnailData durationInMilliseconds:duration dimensions:dimensions];
+    ZMVideoMetadata *videoMetadata = [[ZMVideoMetadata alloc] initWithFileURL:fileURL duration:duration dimensions:dimensions thumbnail:thumbnailData];
+    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileMetadata:videoMetadata];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -364,7 +366,7 @@
     XCTAssertEqualObjects(fileMessage.mimeType, @"video/mp4");
     XCTAssertTrue(fileMessage.fileMessageData.isVideo);
     XCTAssertFalse(fileMessage.fileMessageData.isAudio);
-    XCTAssertEqual(fileMessage.fileMessageData.durationMilliseconds, duration);
+    XCTAssertEqual(fileMessage.fileMessageData.durationMilliseconds, duration * 1000);
     XCTAssertEqual(fileMessage.fileMessageData.videoDimensions.height, dimensions.height);
     XCTAssertEqual(fileMessage.fileMessageData.videoDimensions.width, dimensions.width);
 }
@@ -385,7 +387,8 @@
     conversation.remoteIdentifier = NSUUID.createUUID;
     
     // when
-    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithMediaAtURL:fileURL thumbnail:thumbnailData durationInMilliseconds:duration dimensions:CGSizeZero];
+    ZMAudioMetadata *audioMetadata = [[ZMAudioMetadata alloc] initWithFileURL:fileURL duration:duration normalizedLoudness:@[] thumbnail:thumbnailData];
+    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileMetadata:audioMetadata];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

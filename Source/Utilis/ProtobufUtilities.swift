@@ -53,34 +53,8 @@ public extension ZMGenericMessage {
         return ZMGenericMessage.genericMessage(withAsset: asset, messageID: messageID)
     }
     
-    public static func genericMessage(withAssetSize size: UInt64,
-                                                    mimeType: String,
-                                                    name: String,
-                                                    messageID: String,
-                                                    videoDurationInMillis: UInt,
-                                                    videoDimensions: CGSize) -> ZMGenericMessage {
-        
-        let asset = ZMAsset.asset(withOriginal: .original(withSize: size,
-            mimeType: mimeType,
-            name: name,
-            videoDurationInMillis: videoDurationInMillis,
-            videoDimensions: videoDimensions)
-        )
-        return ZMGenericMessage.genericMessage(withAsset: asset, messageID: messageID)
-    }
-    
-    public static func genericMessage(withAssetSize size: UInt64,
-                                                    mimeType: String,
-                                                    name: String,
-                                                    messageID: String,
-                                                    audioDurationInMillis: UInt) -> ZMGenericMessage {
-        
-        let asset = ZMAsset.asset(withOriginal: .original(withSize: size,
-            mimeType: mimeType,
-            name: name,
-            audioDurationInMillis: audioDurationInMillis)
-        )
-        return ZMGenericMessage.genericMessage(withAsset: asset, messageID: messageID)
+    public static func genericMessage(withFileMetadata fileMetadata: ZMFileMetadata, messageID: String) -> ZMGenericMessage {
+        return ZMGenericMessage.genericMessage(withAsset: fileMetadata.asset, messageID: messageID)
     }
     
     public static func genericMessage(withUploadedOTRKey otrKey: NSData, sha256: NSData, messageID: String) -> ZMGenericMessage {
@@ -160,17 +134,35 @@ public extension ZMAssetOriginal {
         return builder.build()
     }
     
-    public static func original(withSize size: UInt64, mimeType: String, name: String, audioDurationInMillis: UInt) -> ZMAssetOriginal {
+    public static func original(withSize size: UInt64, mimeType: String, name: String, audioDurationInMillis: UInt, normalizedLoudness: [Float]) -> ZMAssetOriginal {
         let builder = ZMAssetOriginal.builder()
         builder.setSize(size)
         builder.setMimeType(mimeType)
         builder.setName(name)
         
+        let loudnessArray = normalizedLoudness.map { UInt8(roundf($0*255)) }
         let audioBuilder = ZMAssetAudioMetaData.builder()
         audioBuilder.setDurationInMillis(UInt64(audioDurationInMillis))
+        audioBuilder.setNormalizedLoudness(NSData(bytes: loudnessArray, length: loudnessArray.count))
         builder.setAudioBuilder(audioBuilder)
         
         return builder.build()
+    }
+    
+    /// Returns the normalized loudness as floats between 0 and 1
+    public var normalizedLoudnessLevels : [Float] {
+        
+        guard self.audio.hasNormalizedLoudness() else { return [] }
+        guard self.audio.normalizedLoudness.length > 0 else { return [] }
+        
+        let data = self.audio.normalizedLoudness
+        let offsets = 0..<data.length
+        return offsets.map { offset -> UInt8 in
+            var number : UInt8 = 0
+            data.getBytes(&number, range: NSRange(location: 0 + offset, length: sizeof(UInt8.self)))
+            return number
+            }
+            .map { Float(Float($0)/255.0) }
     }
 }
 

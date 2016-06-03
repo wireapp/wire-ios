@@ -186,26 +186,19 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         let data = createTestFile(testURL)
         defer { removeTestFile(testURL) }
-        let size = UInt64(data.length)
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: size,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+            managedObjectContext: uiMOC)
         
         // then
         XCTAssertNotNil(sut)
         XCTAssertFalse(sut.delivered)
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploading)
-        XCTAssertEqual(sut.filename, name)
+        XCTAssertEqual(sut.filename, testURL.lastPathComponent)
         XCTAssertNotNil(sut.fileMessageData)
     }
     
@@ -216,20 +209,13 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         let data = createTestFile(testURL)
         defer { removeTestFile(testURL) }
-        let size = UInt64(data.length)
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: size,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+            managedObjectContext: uiMOC)
         
         // then
         XCTAssertTrue(sut.hasDownloadedFile)
@@ -243,20 +229,14 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         let data = createTestFile(testURL)
         defer { removeTestFile(testURL) }
-        let size = UInt64(data.length)
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: size,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+            managedObjectContext: uiMOC)
+        
         self.uiMOC.zm_fileAssetCache.deleteAssetData(sut.nonce, fileName: sut.filename!, encrypted: false)
         
         // then
@@ -271,21 +251,14 @@ extension ZMAssetClientMessageTests {
         let mimeType = "video/mp4"
         let data = createTestFile(testURL)
         defer { removeTestFile(testURL) }
-        let size = UInt64(data.length)
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: size,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-
-        )
+            managedObjectContext: uiMOC)
+        
         self.uiMOC.zm_imageAssetCache.storeAssetData(sut.nonce, format: .Medium, encrypted: false, data: NSData.secureRandomDataOfLength(100))
         defer { self.uiMOC.zm_imageAssetCache.deleteAssetData(sut.nonce, format: .Medium, encrypted: false) }
         
@@ -300,21 +273,14 @@ extension ZMAssetClientMessageTests {
         let mimeType = "video/mp4"
         let data = createTestFile(testURL)
         defer { removeTestFile(testURL) }
-        let size = UInt64(data.length)
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: size,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-
-        )
+            managedObjectContext: uiMOC)
+        
         self.uiMOC.zm_imageAssetCache.storeAssetData(sut.nonce, format: .Original, encrypted: false, data: NSData.secureRandomDataOfLength(100))
         defer { self.uiMOC.zm_imageAssetCache.deleteAssetData(sut.nonce, format: .Medium, encrypted: false) }
         
@@ -345,23 +311,19 @@ extension ZMAssetClientMessageTests {
         // given
         let nonce = NSUUID.createUUID()
         let mimeType = "text/plain"
-        let data = createTestFile(testURL)
-        defer { removeTestFile(testURL) }
+        let filename = "document.txt"
+        let url = testURLWithFilename(filename)
+        let data = createTestFile(url)
+        defer { removeTestFile(url) }
         let size = UInt64(data.length)
+        let fileMetadata = ZMFileMetadata(fileURL: url)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: size,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-
-        )
+            managedObjectContext: uiMOC)
+        
         XCTAssertNotNil(sut)
         
         // then
@@ -374,7 +336,7 @@ extension ZMAssetClientMessageTests {
         
         let original = assetMessage?.asset.original
         XCTAssertNotNil(original)
-        XCTAssertEqual(original?.name, name)
+        XCTAssertEqual(original?.name, filename)
         XCTAssertEqual(original?.mimeType, mimeType)
         XCTAssertEqual(original?.size, size)
     }
@@ -382,23 +344,18 @@ extension ZMAssetClientMessageTests {
     func testThatItMergesMultipleGenericAssetMessagesForFileMessages()
     {
         let nonce = NSUUID.createUUID()
-        let data = createTestFile(testURL)
         let mimeType = "text/plain"
-        let size = UInt64(data.length)
+        let filename = "document.txt"
+        let url = testURLWithFilename(filename)
+        let data = createTestFile(url)
+        let fileMetadata = ZMFileMetadata(fileURL: url)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: size,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
+            managedObjectContext: uiMOC)
 
-        )
         XCTAssertNotNil(sut)
         
         let otrKey = NSData.randomEncryptionKey()
@@ -425,8 +382,8 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(asset)
         XCTAssertTrue(asset.hasOriginal())
         XCTAssertTrue(asset.hasPreview())
-        XCTAssertEqual(asset.original.name, name)
-        XCTAssertEqual(sut.fileMessageData?.filename, name)
+        XCTAssertEqual(asset.original.name, filename)
+        XCTAssertEqual(sut.fileMessageData?.filename, filename)
         XCTAssertEqual(asset.original.mimeType, mimeType)
         XCTAssertEqual(asset.original.size, UInt64(data.length))
         XCTAssertEqual(asset.preview, preview)
@@ -560,19 +517,13 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: 256,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+            managedObjectContext: uiMOC)
         
         // then
         XCTAssertNotNil(sut)
@@ -585,18 +536,12 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: 256,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: uiMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+            managedObjectContext: uiMOC)
         
         // when
         let otrKey = NSData.randomEncryptionKey()
@@ -618,6 +563,7 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
         let selfClient = UserClient.insertNewObjectInManagedObjectContext(syncMOC)
         selfClient.remoteIdentifier = name
@@ -626,16 +572,9 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(ZMUser.selfUserInContext(syncMOC).selfClient())
         
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: 256,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: syncMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+            managedObjectContext: syncMOC)
         
         // when
         sut.addGenericMessage(.genericMessage(
@@ -656,21 +595,17 @@ extension ZMAssetClientMessageTests {
         // given
         let nonce = NSUUID.createUUID()
         let mimeType = "text/plain"
-        _ = createTestFile(testURL)
-        defer { removeTestFile(testURL) }
+        let filename = "document.txt"
+        let url = testURLWithFilename(filename)
+        let data = createTestFile(url)
+        defer { removeTestFile(url) }
+        let fileMetadata = ZMFileMetadata(fileURL: url)
         
         // when
         let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: 256,
-            thumbnail: nil,
-            mimeType: mimeType,
-            name: name!,
+            fileMetadata: fileMetadata,
             nonce: nonce,
-            managedObjectContext: syncMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+            managedObjectContext: syncMOC)
         
         conversation.mutableMessages.addObject(sut)
         
@@ -686,27 +621,26 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(genericMessage.asset.hasOriginal())
         
         let original = genericMessage.asset.original
-        XCTAssertEqual(original.name, name)
+        XCTAssertEqual(original.name, filename)
         XCTAssertEqual(original.mimeType, mimeType)
-        XCTAssertEqual(original.size, 256)
+        XCTAssertEqual(original.size, UInt64(data.length))
     }
     
     func testThatItReturnsTheEncryptedMetaDataForTheFileDataMessage() {
         // given
         let nonce = NSUUID.createUUID()
         let mimeType = "text/plain"
-        _ = createTestFile(testURL)
-        defer { removeTestFile(testURL) }
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 32,
-                                       thumbnail: nil,
-                                       mimeType: mimeType,
-                                       name: name!,
-                                       nonce: nonce,
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let filename = "document.txt"
+        let url = testURLWithFilename(filename)
+        let data = createTestFile(url)
+        defer { removeTestFile(url) }
+        let fileMetadata = ZMFileMetadata(fileURL: url)
+        
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: nonce,
+            managedObjectContext: syncMOC)
+        
         conversation.mutableMessages.addObject(sut)
         
         // when
@@ -727,9 +661,9 @@ extension ZMAssetClientMessageTests {
         
         XCTAssertTrue(genericMessage.asset.hasOriginal())
         let original = genericMessage.asset.original
-        XCTAssertEqual(original.name, name)
+        XCTAssertEqual(original.name, filename)
         XCTAssertEqual(original.mimeType, mimeType)
-        XCTAssertEqual(original.size, 32)
+        XCTAssertEqual(original.size, UInt64(data.length))
         
         XCTAssertFalse(original.hasVideo())
     }
@@ -738,22 +672,19 @@ extension ZMAssetClientMessageTests {
         // given
         let nonce = NSUUID.createUUID()
         let mimeType = "video/mp4"
-        let size : UInt64 = 32
-        let duration : UInt = 15000
+        let duration : NSTimeInterval = 15000
         let dimensions = CGSizeMake(1024, 768)
         let name = "cats.mp4"
-        _ = createTestFile(testURL)
-        defer { removeTestFile(testURL) }
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: size,
-                                       thumbnail: nil,
-                                       mimeType: mimeType,
-                                       name: name,
-                                       nonce: nonce,
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: duration,
-                                       videoDimensions: dimensions
-        )
+        let url = testURLWithFilename(name)
+        let data = createTestFile(url)
+        let size = data.length
+        defer { removeTestFile(url) }
+        let videoMetadata = ZMVideoMetadata(fileURL: url, duration: duration, dimensions: dimensions)
+        let sut = ZMAssetClientMessage(
+            fileMetadata: videoMetadata,
+            nonce: nonce,
+            managedObjectContext: syncMOC)
+        
         conversation.mutableMessages.addObject(sut)
         
         // when
@@ -776,11 +707,11 @@ extension ZMAssetClientMessageTests {
         let original = genericMessage.asset.original
         XCTAssertEqual(original.name, name)
         XCTAssertEqual(original.mimeType, mimeType)
-        XCTAssertEqual(original.size, size)
+        XCTAssertEqual(original.size, UInt64(size))
         
         XCTAssertTrue(original.hasVideo())
         let video = original.video
-        XCTAssertEqual(video.durationInMillis, UInt64(duration))
+        XCTAssertEqual(video.durationInMillis, UInt64(duration * 1000))
         XCTAssertEqual(video.width, Int32(dimensions.width))
         XCTAssertEqual(video.height, Int32(dimensions.height))
     }
@@ -805,17 +736,13 @@ extension ZMAssetClientMessageTests {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 256,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: NSUUID.createUUID(),
+            managedObjectContext: syncMOC)
+        
         XCTAssertNotNil(sut.fileMessageData)
         XCTAssertTrue(syncMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
@@ -826,23 +753,20 @@ extension ZMAssetClientMessageTests {
         
         // then
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
+        XCTAssertEqual(sut.progress, 0.0)
     }
     
     func testThatItCanCancelsUploadMultipleTimes() {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 256,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: NSUUID.createUUID(),
+            managedObjectContext: syncMOC)
+        
         XCTAssertNotNil(sut.fileMessageData)
         XCTAssertTrue(syncMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
@@ -854,30 +778,28 @@ extension ZMAssetClientMessageTests {
         
         sut.resend()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploading)
-        
+        XCTAssertEqual(sut.progress, 0.0);
+
         sut.fileMessageData?.cancelTransfer()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
         
         sut.resend()
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploading)
-        
+        XCTAssertEqual(sut.progress, 0.0)
+
     }
     
     func testThatItCancelsDownload() {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 256,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-                                       )
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: NSUUID.createUUID(),
+            managedObjectContext: syncMOC)
+        
         sut.transferState = .Downloading
         sut.delivered = true
         XCTAssertNotNil(sut.fileMessageData)
@@ -889,23 +811,20 @@ extension ZMAssetClientMessageTests {
         
         // then
         XCTAssertEqual(sut.transferState, ZMFileTransferState.Uploaded)
+        XCTAssertEqual(sut.progress, 0.0)
     }
     
     func testThatItAppendsA_NotUploadedCancelled_MessageWhenUploadFromThisDeviceIsCancelled() {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 256,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-                                       )
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: NSUUID.createUUID(),
+            managedObjectContext: syncMOC)
+        
         sut.transferState = .Uploading
         sut.delivered = false
 
@@ -925,23 +844,20 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(notUploaded.first, ZMAssetNotUploaded.CANCELLED)
         
         XCTAssertEqual(sut.transferState, ZMFileTransferState.CancelledUpload)
+        XCTAssertEqual(sut.progress, 0.0)
     }
     
     func testThatItSetsTheTransferStateToDonwloadedWhen_RequestFileDownload_IsCalledButFileIsAlreadyOnDisk() {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: NSUUID.createUUID(),
+            managedObjectContext: syncMOC)
+        
         sut.transferState = .Uploaded
         sut.delivered = true
         XCTAssertNotNil(sut.fileMessageData)
@@ -959,17 +875,13 @@ extension ZMAssetClientMessageTests {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: NSUUID.createUUID(),
+            managedObjectContext: syncMOC)
+        
         sut.delivered = true
         XCTAssertNotNil(sut.fileMessageData)
         XCTAssertTrue(syncMOC.saveOrRollback())
@@ -993,17 +905,12 @@ extension ZMAssetClientMessageTests {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-                                       )
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: syncMOC)
+        
         conversation.mutableMessages.addObject(sut)
         sut.delivered = true
         
@@ -1051,17 +958,12 @@ extension ZMAssetClientMessageTests {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: syncMOC)
+        
         conversation.mutableMessages.addObject(sut)
         sut.delivered = true
         sut.progress = 56
@@ -1083,17 +985,11 @@ extension ZMAssetClientMessageTests {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-                                       )
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: syncMOC)
         
         // then
         XCTAssertNil(sut.fileMessageData?.thumbnailAssetID)
@@ -1110,17 +1006,12 @@ extension ZMAssetClientMessageTests {
         let uuid = NSUUID.createUUID().transportString()
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-                                       )
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: syncMOC)
+        
         let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
         sut.addGenericMessage(ZMGenericMessage.genericMessage(withAsset: asset, messageID: "\(sut.nonce)"))
         
@@ -1149,17 +1040,12 @@ extension ZMAssetClientMessageTests {
         let uuid = NSUUID.createUUID().transportString()
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: syncMOC)
+        
         let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
         let genericMessage = ZMGenericMessage.genericMessage(withAsset: asset, messageID: "\(sut.nonce)")
         let payload : [String : AnyObject] = [
@@ -1194,17 +1080,12 @@ extension ZMAssetClientMessageTests {
         let uuid = NSUUID.createUUID().transportString()
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(assetURL: testURL,
-                                       size: 2,
-                                       thumbnail: nil,
-                                       mimeType: "text/plain",
-                                       name: name!,
-                                       nonce: .createUUID(),
-                                       managedObjectContext: syncMOC,
-                                       durationInMilliseconds: 0,
-                                       videoDimensions: CGSize(width: 0, height: 0)
-                                       )
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: syncMOC)
+        
         let assetWithUploaded = ZMAsset.asset(withUploadedOTRKey: NSData.zmRandomSHA256Key(), sha256: NSData.zmRandomSHA256Key())
         let assetWithPreview = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
         let builder = ZMAssetBuilder()
@@ -1239,9 +1120,13 @@ extension ZMAssetClientMessageTests {
 extension ZMAssetClientMessageTests {
     
     var testURL: NSURL {
+        return testURLWithFilename("file.dat")
+    }
+    
+    func testURLWithFilename(filename: String) -> NSURL {
         let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
         let documentsURL = NSURL(fileURLWithPath: documents)
-        return documentsURL.URLByAppendingPathComponent("file.dat")
+        return documentsURL.URLByAppendingPathComponent(filename)
     }
     
     func createTestFile(url: NSURL) -> NSData {
@@ -2076,18 +1961,11 @@ extension ZMAssetClientMessageTests {
         // given
         _ = createTestFile(testURL)
         defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
         
-        let sut = ZMAssetClientMessage(
-            assetURL: testURL,
-            size: 256,
-            thumbnail: nil,
-            mimeType: "text/plain",
-            name: name!,
-            nonce: .createUUID(),
-            managedObjectContext: syncMOC,
-            durationInMilliseconds: 0,
-            videoDimensions: CGSize(width: 0, height: 0)
-        )
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: syncMOC)
         
         sut.isEncrypted = true
         

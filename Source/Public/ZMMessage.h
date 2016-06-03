@@ -131,6 +131,8 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
 @property (nonatomic, readonly) NSData *previewData;
 /// This can be used as a cache key for @c -previewData
 @property (nonatomic, readonly) NSString *imagePreviewDataIdentifier;
+/// Normalized loudness of audio data
+@property (nonatomic, readonly) NSArray<NSNumber *> *normalizedLoudness;
 
 /// Marks file to be downloaded
 - (void)requestFileDownload;

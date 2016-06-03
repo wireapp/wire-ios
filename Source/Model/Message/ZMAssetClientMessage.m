@@ -91,55 +91,29 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     return message;
 }
 
-+ (instancetype)assetClientMessageWithAssetURL:(NSURL *)fileURL
-                                          size:(unsigned long long)size
-                                     thumbnail:(NSData *)thumbnailData
-                                      mimeType:(NSString *)mimeType
-                                          name:(NSString *)name
-                                         nonce:(NSUUID *)nonce
-                          managedObjectContext:(NSManagedObjectContext *)moc
-                        durationInMilliseconds:(NSUInteger)durationInMilliseconds
-                               videoDimensions:(CGSize)videoDimensions;
++ (instancetype)assetClientMessageWithFileMetadata:(ZMFileMetadata *)metadata nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc
 {
     NSError *error;
-    NSData *data = [NSData dataWithContentsOfURL:fileURL options:NSDataReadingMappedIfSafe error:&error];
+    NSData *data = [NSData dataWithContentsOfURL:metadata.fileURL options:NSDataReadingMappedIfSafe error:&error];
     
     if (nil != error) {
-        ZMLogWarn(@"Failed to read data of file at url %@ : %@", fileURL, error);
+        ZMLogWarn(@"Failed to read data of file at url %@ : %@", metadata.fileURL, error);
         return nil;
     }
     
-    [moc.zm_fileAssetCache storeAssetData:nonce fileName:name encrypted:NO data:data];
+    [moc.zm_fileAssetCache storeAssetData:nonce fileName:metadata.fileURL.lastPathComponent encrypted:NO data:data];
+    
     
     ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:moc];
-    ZMGenericMessage *originalAssetMessage;
-    if(mimeType.isVideoMimeType && durationInMilliseconds > 0) {
-        originalAssetMessage = [ZMGenericMessage genericMessageWithAssetSize:size
-                                                                    mimeType:mimeType
-                                                                        name:name
-                                                                   messageID:nonce.transportString
-                                                       videoDurationInMillis:durationInMilliseconds
-                                                             videoDimensions:videoDimensions];
-    } else if (mimeType.isAudioMimeType && durationInMilliseconds > 0) {
-        originalAssetMessage = [ZMGenericMessage genericMessageWithAssetSize:size
-                                                                    mimeType:mimeType
-                                                                        name:name
-                                                                   messageID:nonce.transportString
-                                                       audioDurationInMillis:durationInMilliseconds];
-    } else {
-        originalAssetMessage = [ZMGenericMessage genericMessageWithAssetSize:size
-                                                                    mimeType:mimeType
-                                                                        name:name
-                                                                   messageID:nonce.transportString];
-    }
     message.transferState = ZMFileTransferStateUploading;
     message.uploadState = ZMAssetUploadStateUploadingPlaceholder;
-
-    if (nil != thumbnailData && [mimeType isVideoMimeType]) {
-        [message.managedObjectContext.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:thumbnailData];
-    }
-    [message addGenericMessage:originalAssetMessage];
+    [message addGenericMessage:[ZMGenericMessage genericMessageWithFileMetadata:metadata messageID:nonce.transportString]];
     message.delivered = NO;
+    
+    if (metadata.thumbnail != nil && [metadata isKindOfClass:ZMVideoMetadata.class]) {
+        [moc.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:metadata.thumbnail];
+    }
+    
     return message;
 }
 
@@ -1045,10 +1019,12 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     if (self.transferState == ZMFileTransferStateUploading) {
         [self didCancelUploadingTransfer];
         self.transferState = ZMFileTransferStateCancelledUpload;
+        self.progress = 0.0f;
         [self expire];
     }
     else if (self.transferState == ZMFileTransferStateDownloading) {
         self.transferState = ZMFileTransferStateUploaded;
+        self.progress = 0.0f;
         [self obtainPermanentObjectID];
         
         [self.managedObjectContext saveOrRollback];
@@ -1085,6 +1061,15 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     else {
         return 0;
     }
+}
+
+- (NSArray<NSNumber *> *)normalizedLoudness
+{
+    if (self.isAudio && self.genericAssetMessage.asset.original.audio.hasNormalizedLoudness) {
+        return self.genericAssetMessage.asset.original.normalizedLoudnessLevels;
+    }
+    
+    return @[];
 }
 
 @end

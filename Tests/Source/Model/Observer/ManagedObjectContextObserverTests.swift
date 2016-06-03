@@ -307,17 +307,18 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         // given
         self.uiMOC.globalManagedObjectContextObserver.isTesting = true
         let filename = "foo.mp4"
+        let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
+        let documentsURL = NSURL(fileURLWithPath: documents)
+        let fileURL =  documentsURL.URLByAppendingPathComponent(filename)
+        verySmallJPEGData().writeToURL(fileURL, atomically: true)
+        defer { try! NSFileManager.defaultManager().removeItemAtURL(fileURL) }
         
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let fileMessage = conversation.appendOTRMessageWithFileURL(self.fileURLForResource("medium", extension: "jpg"),
-                                                                   fileSize: 200,
-                                                                   thumbnail: self.verySmallJPEGData(),
-                                                                   name: filename,
-                                                                   mimeType: "video/mp4",
-                                                                   nonce: NSUUID.createUUID(),
-                                                                   durationInMilliseconds: 0,
-                                                                   videoDimensions: CGSize(width: 0, height: 0)
-                                                                   )
+        let fileMetadata = ZMVideoMetadata(fileURL: fileURL,
+                                           duration: 0,
+                                           dimensions: CGSize(width: 0, height: 0))
+        let fileMessage = conversation.appendOTRMessageWithFileMetadata(fileMetadata, nonce: NSUUID.createUUID())
+        
         self.uiMOC.zm_fileAssetCache.deleteAssetData(fileMessage.nonce, fileName: filename, encrypted: false)
         XCTAssertFalse(fileMessage.hasDownloadedFile)
         self.uiMOC.saveOrRollback()

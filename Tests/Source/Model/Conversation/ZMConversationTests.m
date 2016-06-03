@@ -3803,7 +3803,8 @@
         
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        [conversation appendOTRMessageWithFileURL:fileURL fileSize:200 thumbnail:nil name:fileName mimeType:@"text/ascii" nonce:messageID durationInMilliseconds:0 videoDimensions:CGSizeMake(0, 0)];
+        ZMFileMetadata *fileMetadata = [[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil];
+        [conversation appendOTRMessageWithFileMetadata:fileMetadata nonce:messageID];
         
         // store asset data
         [self.syncMOC.zm_fileAssetCache storeAssetData:messageID fileName:fileName encrypted:NO data:fileData];
