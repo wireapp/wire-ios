@@ -1,2 +1,3 @@
-github "wireapp/zmc-transport" ~> 5.7
-github "wireapp/zmc-protos" ~> 3.3
+github "wireapp/zmc-transport"
+github "wireapp/zmc-protos"
+github "wireapp/zmc-cryptobox"

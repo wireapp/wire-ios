@@ -17,8 +17,9 @@
 // 
 
 
-#import "MockUserClient.h"
+#import "MockUserClient+Internal.h"
 #import "MockPreKey.h"
+
 
 @implementation MockUserClient
 
@@ -36,6 +37,8 @@
 @dynamic locationLongitude;
 @dynamic model;
 @dynamic time;
+
+@synthesize box;
 
 + (NSFetchRequest *)fetchRequestWithPredicate:(NSPredicate *)predicate
 {
@@ -65,14 +68,10 @@
         return nil;
     }
     
-    NSSet *prekeys = [MockPreKey insertNewKeysWithPayload:prekyesPayload context:context];
-    MockPreKey *lastPreKey = [MockPreKey insertNewKeyWithPayload:lastKeyPayload context:context];
     
     MockUserClient *newClient = [NSEntityDescription insertNewObjectForEntityForName:@"UserClient" inManagedObjectContext:context];
     newClient.label = label;
     newClient.type = type;
-    newClient.prekeys = prekeys;
-    newClient.lastPrekey = lastPreKey;
     newClient.identifier = [NSString createAlphanumericalString];
     newClient.mackey = mackey;
     newClient.enckey = enckey;
@@ -82,6 +81,52 @@
     newClient.locationLongitude = 13.3833;
     newClient.address = @"62.96.148.44";
     newClient.time = [NSDate date];
+
+    NSSet *prekeys = [MockPreKey insertNewKeysWithPayload:prekyesPayload context:context];
+    for (MockPreKey *prekey in prekeys) {
+        prekey.client = newClient;
+    }
+    MockPreKey *lastPreKey = [MockPreKey insertNewKeyWithPayload:lastKeyPayload context:context];
+    lastPreKey.client = newClient;
+    
+    newClient.prekeys = prekeys;
+    newClient.lastPrekey = lastPreKey;
+
+    
+    return newClient;
+}
+
++ (instancetype)insertClientWithLabel:(NSString *)label type:(NSString *)type atLocation:(NSURL *)location inContext:(NSManagedObjectContext *)moc;
+{
+    MockUserClient *newClient = [NSEntityDescription insertNewObjectForEntityForName:@"UserClient" inManagedObjectContext:moc];
+
+    newClient.identifier = [NSString createAlphanumericalString];
+    newClient.label = label;
+    newClient.type = type;
+    
+    newClient.time = [NSDate date];
+
+    NSURL *clientOtrLocation = [location URLByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@", newClient.identifier, newClient.label]];
+    [[NSFileManager defaultManager] createDirectoryAtURL:clientOtrLocation withIntermediateDirectories:YES attributes:nil error:nil];
+    NSError *error;
+    CBCryptoBox *box = [CBCryptoBox cryptoBoxWithPathURL:clientOtrLocation error:&error];
+    if (error) NSLog(@"%@", error);
+    VerifyReturnNil(box != nil && error == nil);
+    newClient.box = box;
+    
+    
+    NSArray <CBPreKey *> *prekeys = [box generatePreKeys:NSMakeRange(0, 100) error:&error];
+    VerifyReturnNil([prekeys count] > 0 && error == nil);
+    
+    NSArray <MockPreKey *> *mockPrekeys = [MockPreKey insertMockPrekeysFromPrekeys:prekeys forClient:newClient inManagedObjectContext:moc];
+    newClient.prekeys = [NSSet setWithArray:mockPrekeys];
+    
+    CBPreKey *lastprekey = [box lastPreKey:&error];
+    MockPreKey *mockLastPrekey = [MockPreKey insertNewKeyWithPrekey:lastprekey forClient:newClient inManagedObjectContext:moc];
+    newClient.lastPrekey = mockLastPrekey;
+    
+    VerifyReturnNil(prekeys);
+    
     
     return newClient;
 }
@@ -106,6 +151,43 @@
                            };
     return data;
 }
+
++ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient identifier:(NSString *)identifier data:(NSData *)data;
+{
+    NSError *error;
+    CBCryptoBox *box = fromClient.box;
+    CBSession *session = [box sessionById:identifier error:&error];
+    if (!session) {
+        session = [box sessionWithId:identifier fromStringPreKey:toClient.lastPrekey.value error:&error];
+    }
+    
+    NSData *encryptedData = [session encrypt:data error:&error];
+    return encryptedData;
+}
+
+
++ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
+{
+    return [self encryptedDataFromClient:fromClient toClient:toClient identifier:toClient.identifier data:data];
+}
+
++ (CBSessionMessage *)sessionMessageForEncryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
+{
+    NSError *error;
+    CBCryptoBox *box = toClient.box;
+    CBSessionMessage *sessionMessage = [box sessionMessageWithId:fromClient.identifier fromMessage:data error:&error];
+    return sessionMessage;
+}
+
+- (BOOL)establishConnectionWithClient:(MockUserClient *)client2;
+{
+    NSError *error = nil;
+    if ([self.box sessionById:client2.identifier error:&error]) return YES;
+    CBSession *session = [self.box sessionWithId:client2.identifier fromStringPreKey:client2.lastPrekey.value error:&error];
+    
+    return session != nil;
+}
+
 
 @end
 

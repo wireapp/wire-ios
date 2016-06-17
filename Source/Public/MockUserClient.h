@@ -22,6 +22,7 @@
 
 @class MockUser;
 @class MockPreKey;
+@class CBSessionMessage;
 
 @interface MockUserClient : NSManagedObject
 
@@ -62,8 +63,13 @@
 + (NSFetchRequest *)fetchRequestWithPredicate:(NSPredicate *)predicate;
 
 + (instancetype)insertClientWithPayload:(NSDictionary *)paylod contenxt:(NSManagedObjectContext *)context;
-
++ (instancetype)insertClientWithLabel:(NSString *)label type:(NSString *)type atLocation:(NSURL *)location inContext:(NSManagedObjectContext *)moc;
 - (id<ZMTransportData>)transportData;
+
++ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient identifier:(NSString *)identifier data:(NSData *)data;
++ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
++ (CBSessionMessage *)sessionMessageForEncryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
+- (BOOL)establishConnectionWithClient:(MockUserClient *)client2;
 
 @end
 

@@ -443,13 +443,14 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -512,13 +513,15 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -608,13 +611,15 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -680,13 +685,15 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -776,13 +783,15 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -854,13 +863,15 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -964,13 +975,15 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1028,6 +1041,169 @@
     }
 }
 
+- (void)testThatItCreatesPushEventsWhenReceivingEncryptedOTRMessageWithCorrectData;
+{
+    // given
+    __block MockUser *selfUser;
+    __block MockUserClient *selfClient;
+    
+    __block MockUser *otherUser;
+    __block MockUserClient *otherUserClient;
+    
+    __block MockConversation *conversation;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        otherUser = [session insertUserWithName:@"bar"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
+        
+        selfClient = [selfUser.clients anyObject];
+        otherUserClient = [otherUser.clients anyObject];
+        
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"Je suis kaput" nonce:nonce.transportString];
+    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+    
+    // when
+    [self.sut performRemoteChanges:^(__unused MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        NSData *encryptedData = [MockUserClient encryptedDataFromClient:otherUserClient toClient:selfClient data:message.data];
+        [conversation insertOTRMessageFromClient:otherUserClient toClient:selfClient data:encryptedData];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
+    NSDictionary *lastEventPayload = [lastEvent.payload asDictionary];
+    XCTAssertEqualObjects(lastEventPayload[@"type"], @"conversation.otr-message-add");
+    XCTAssertEqualObjects(lastEventPayload[@"data"][@"recipient"], selfClient.identifier);
+    XCTAssertEqualObjects(lastEventPayload[@"data"][@"sender"], otherUserClient.identifier);
+    XCTAssertNotEqualObjects(lastEventPayload[@"data"][@"text"], base64Content);
+}
+
+- (void)testThatItCreatesPushEventsWhenReceivingEncryptedOTRAssetWithCorrectData;
+{
+    // given
+    __block MockUser *selfUser;
+    __block MockUserClient *selfClient;
+    
+    __block MockUser *otherUser;
+    __block MockUserClient *otherUserClient;
+    
+    __block MockConversation *conversation;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        otherUser = [session insertUserWithName:@"bar"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
+        
+        selfClient = [selfUser.clients anyObject];
+        otherUserClient = [otherUser.clients anyObject];
+        
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    NSUUID *assetID = [NSUUID createUUID];
+    NSData *imageData = [self verySmallJPEGData];
+    
+    ZMGenericMessage *message = [ZMGenericMessage  messageWithImageData:imageData format:ZMImageFormatMedium nonce:nonce.transportString];
+    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+    // when
+    [self.sut performRemoteChanges:^(__unused MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        NSData *encryptedData = [MockUserClient encryptedDataFromClient:otherUserClient toClient:selfClient data:message.data];
+        [conversation  insertOTRAssetFromClient:otherUserClient toClient:selfClient metaData:encryptedData imageData:imageData assetId:assetID isInline:YES];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
+    NSDictionary *lastEventPayload = [lastEvent.payload asDictionary];
+    XCTAssertEqualObjects(lastEventPayload[@"type"], @"conversation.otr-asset-add");
+    XCTAssertEqualObjects(lastEventPayload[@"data"][@"recipient"], selfClient.identifier);
+    XCTAssertEqualObjects(lastEventPayload[@"data"][@"sender"], otherUserClient.identifier);
+    XCTAssertEqualObjects(lastEventPayload[@"data"][@"data"], [imageData base64String]);
+    XCTAssertNotEqualObjects(lastEventPayload[@"data"][@"key"], base64Content);
+}
+
+- (void)testThatItReturnsAValidResponseWenUploadingAFile
+{
+    // given
+    __block MockConversation *conversation;
+    __block MockUser *selfUser;
+    __block MockUserClient *selfClient;
+    __block MockUser *otherUser;
+    __block MockUserClient *otherUserClient;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        otherUser = [session insertUserWithName:@"bar"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
+        selfClient = [selfUser.clients anyObject];
+        otherUserClient = [otherUser.clients anyObject];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    NSData *fileData = [NSData secureRandomDataOfLength:256];
+    ZMOtrAssetMeta *metaData = [self OTRAssetMetaWithSender:selfClient recipients:@[otherUser] text:[NSData secureRandomDataOfLength:16]];
+    NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
+    NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
+    ZMTransportResponse *response = [self responseForFileData:fileData path:requestPath metadata:metaData.data contentType:@"multipart/mixed"];
+    
+    // then
+    XCTAssertNotNil(response);
+    XCTAssertNil(response.transportSessionError);
+    
+    if (response != nil) {
+        XCTAssertEqual(response.HTTPStatus, 201);
+        AssertEqualDictionaries(@{}, response.payload.asDictionary[@"missing"]);
+        AssertEqualDictionaries(@{}, response.payload.asDictionary[@"redundant"]);
+    }
+    
+    XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount + 1u);
+}
+
+- (ZMOtrAssetMeta *)OTRAssetMetaWithSender:(MockUserClient *)sender recipients:(NSArray <MockUser *>*)recipients text:(NSData *)text
+{
+    ZMOtrAssetMetaBuilder *builder = ZMOtrAssetMeta.builder;
+    ZMClientIdBuilder *senderIDBuilder = ZMClientId.builder;
+    
+    NSArray <ZMUserEntry *>* userEntries = [recipients mapWithBlock:^ZMUserEntry *(MockUser *user) {
+        ZMUserEntryBuilder *entryBuilder = ZMUserEntry.builder;
+        ZMUserIdBuilder *userIDBuilder = ZMUserId.builder;
+        [userIDBuilder setUuid:[NSUUID uuidWithTransportString:user.identifier].data];
+        entryBuilder.user = userIDBuilder.build;
+        [entryBuilder setClientsArray:[user.clients.allObjects mapWithBlock:^ZMClientEntry *(MockUserClient *client) {
+            ZMClientEntryBuilder *clientBuilder = ZMClientEntry.builder;
+            ZMClientIdBuilder *clientIDBuilder = ZMClientId.builder;
+            unsigned long long hexID;
+            [[NSScanner scannerWithString:client.identifier] scanHexLongLong:&hexID];
+            [clientIDBuilder setClient:hexID];
+            [clientBuilder setClient:clientIDBuilder.build];
+            [clientBuilder setText:text];
+            return clientBuilder.build;
+        }]];
+        
+        return entryBuilder.build;
+    }];
+    
+    [builder setRecipientsArray:userEntries];
+    builder.isInline = NO;
+    builder.nativePush = YES;
+
+    unsigned long long hexID;
+    [[NSScanner scannerWithString:sender.identifier] scanHexLongLong:&hexID];
+    [senderIDBuilder setClient:hexID];
+    builder.sender = senderIDBuilder.build;
+    return builder.build;
+}
+
 - (void)testThatItCreatesPushEventsWhenReceivingOTRAssetWithoutMissedClients_Protobuf
 {
     // given
@@ -1043,13 +1219,14 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+        otherUserClient = [otherUser.clients anyObject];
         secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1147,6 +1324,7 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        [session registerClientForUser:selfUser label:@"Self Client" type:@"permanent"];
         conversation = [session insertSelfConversationWithSelfUser:selfUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1257,7 +1435,7 @@
                                                           @"id": assetId.transportString} mutableCopy];
     
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(MockTransportSession<MockTransportSessionObjectCreation> *session, MockConversation *conversation) {
-        MockUserClient *client1 = [session registerClientForUser:session.selfUser label:@"client1" type:@"permanent"];
+        MockUserClient *client1 = [session.selfUser.clients anyObject];
         MockUserClient *client2 = [session registerClientForUser:session.selfUser label:@"client2" type:@"permanent"];
         expectedPayloadData[@"sender"] = client1.identifier;
         expectedPayloadData[@"recipient"] = client2.identifier;

@@ -71,10 +71,14 @@ static NSInteger const MaxUserClientsAllowed = 2;
         return toManyClientsRespone;
     }
     
+    BOOL selfClientExists = nil != [existingClients firstObjectMatchingWithBlock:^BOOL(MockUserClient *userClient){
+        return userClient.user == self.selfUser;
+    }];
+    
     NSDictionary *paylod = sessionRequest.payload.asDictionary;
     
     NSString *password = [paylod optionalStringForKey:@"password"];
-    if (existingClients.count > 0  &&
+    if (selfClientExists &&
         !(password != nil && [password isEqualToString:self.selfUser.password])) {
         return passwordRequiredRespone;
     }
