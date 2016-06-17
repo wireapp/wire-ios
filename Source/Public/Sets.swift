@@ -42,6 +42,8 @@ public struct SetGenerator<Element : Hashable> : GeneratorType {
 
 // MARK: Set
 extension Set {
+    
+    /// Returns a set with elements filtered out
     func filter(includeElement: (Element) -> Bool)-> Set<Element> {
         return Set(Array(self).filter(includeElement))
     }
@@ -50,6 +52,8 @@ extension Set {
         return Array(self).reduce(initial, combine: combine)
     }
     
+    /// Returns a set with mapped elements. The resulting set might be smaller than self because
+    /// of collisions in the mapping.
     func map<U>(transform: (Element) -> U) -> Set<U> {
         return Set<U>(Array(self).map(transform))
     }
