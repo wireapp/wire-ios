@@ -381,20 +381,19 @@ public extension UserClient {
         let selfClient = ZMUser.selfUserInContext(managedObjectContext).selfClient()
         assert(self == selfClient)
         
-        let session = try? keysStore.box.sessionWithId(client.remoteIdentifier, fromStringPreKey: preKey)
-        client.fingerprint = client.fetchFingerprint()
-        return session != nil
+        if let session = try? keysStore.box.sessionWithId(client.remoteIdentifier, fromStringPreKey: preKey) {
+            client.fingerprint = session.remoteFingerprint()
+            return true
+        } else {
+            zmLog.error("Cannot create session for prekey \(preKey)")
+        }
+        
+        return false
     }
     
     private func fetchFingerprint() -> NSData? {
-        do {
-            let session = try keysStore.box.sessionById(self.remoteIdentifier)
-            return session.remoteFingerprint()
-        }
-        catch let error as NSError {
-            zmLog.error("Cannot fetch fingerprint for \(self): \(error)")
-            return .None
-        }
+        
+        return (try? keysStore.box.sessionById(self.remoteIdentifier))?.remoteFingerprint()
     }
     
     /// Use this method only for the selfClient

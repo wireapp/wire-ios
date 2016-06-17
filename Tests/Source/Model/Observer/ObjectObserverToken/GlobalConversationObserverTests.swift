@@ -528,6 +528,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         let conversationList = ZMConversation.conversationsExcludingArchivedAndCallingInContext(self.uiMOC)
         
         self.uiMOC.saveOrRollback()
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         let testObserver = TestObserver()
         let token = conversationList.addConversationListObserver(testObserver)
@@ -535,7 +536,8 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         // when
         self.simulateUnreadMissedKnockInConversation(conversation)
         self.uiMOC.saveOrRollback()
-        
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
         if let first = testObserver.changes.first {

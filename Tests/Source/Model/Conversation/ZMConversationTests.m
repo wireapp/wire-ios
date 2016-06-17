@@ -105,7 +105,15 @@
 {
     __block NSManagedObjectID *objectID;
     [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:participants];
+        
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        
+        NSArray *syncParticipants = [[participants mapWithBlock:^id(ZMUser *user){
+            return [self.syncMOC objectWithID:user.objectID];
+        }] filterWithBlock:^BOOL(ZMUser *user){
+            return user != selfUser;
+        }];
+        ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:syncParticipants];
         conversation.conversationType = ZMConversationTypeGroup;
         conversation.remoteIdentifier = NSUUID.createUUID;
         for (ZMUser *user in callParticipants) {
@@ -180,6 +188,7 @@
     
     // then
     XCTAssertEqualObjects(conversation.creator, selfUser);
+    XCTAssertEqual(conversation.messages.count, 1u); // new conversation system message
 }
 
 - (void)testThatItHasLocallyModifiedDataFields
@@ -1081,6 +1090,20 @@
     // then
     XCTAssertEqualObjects(conversation.lastModifiedDate, postingDate);
     XCTAssertEqualObjects(firstMessage.serverTimestamp, serverDate);
+}
+
+- (void)testThatAppendingNewConversationSystemMessageTwiceDoesNotCreateTwoSystemMessage;
+{
+    //given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    [conversation appendNewConversationSystemMessageIfNeeded];
+    XCTAssertEqual(conversation.messages.count, 1u);
+    
+    //when
+    [conversation appendNewConversationSystemMessageIfNeeded];
+    
+    //then
+    XCTAssertEqual(conversation.messages.count, 1u);
 }
 
 @end // general
@@ -2424,6 +2447,8 @@
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     
     [self.uiMOC saveOrRollback];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
     NSArray *users = @[user0, user1, selfUser];
     ZMConversation *conversation = [self insertConversationWithParticipants:users callParticipants:users callStateNeedsToBeUpdatedFromBackend:NO];
     ZMEventID *clearedEventID = self.createEventID;

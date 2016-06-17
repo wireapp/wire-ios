@@ -184,4 +184,26 @@
 
 }
 
+- (void)testThatItNormalizesTheEmailAddressWhenSwitchingFromIncompleteToComplete
+{
+    // given
+    NSString *password = @"aabbcc";
+    NSString *emailAddress = @" john.doe@gmail.com ";
+    NSString *normalizedEmailAddress = [emailAddress copy];
+    [ZMEmailAddressValidator validateValue:&normalizedEmailAddress error:nil];
+    ZMIncompleteRegistrationUser *user = [[ZMIncompleteRegistrationUser alloc] init];
+    user.emailAddress = emailAddress;
+    user.password = password;
+    
+    // when
+    ZMCompleteRegistrationUser *sut = [user completeRegistrationUser];
+    
+    // then
+    XCTAssertEqualObjects(sut.emailAddress, normalizedEmailAddress);
+    XCTAssertEqualObjects(sut.password, password);
+    XCTAssertNotEqualObjects(normalizedEmailAddress, emailAddress, @"Should not have modified original");
+    XCTAssertEqualObjects(user.emailAddress, emailAddress, @"Should not have modified incomplete user");
+    
+}
+
 @end

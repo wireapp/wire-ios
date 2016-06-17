@@ -40,19 +40,25 @@
 /// Should be called when a client is ignored
 - (void)decreaseSecurityLevelIfNeededAfterUserClientsWereIgnored:(NSSet<UserClient *> *)ignoredClients;
 
-
 /// Creates system message that says that you started using this device, if you was not registered on this device
 - (void)appendStartedUsingThisDeviceMessage;
 - (void)appendStartedUsingThisDeviceMessageIfNeeded;
+
+/// Creates a system message when a device ahs previously been used before, but was logged out due to invalid cookie and/ or invalidated client
+- (void)appendContinuedUsingThisDeviceMessage;
 
 - (void)appendNewPotentialGapSystemMessageWithUsers:(NSSet <ZMUser *> *)users timestamp:(NSDate *)timestamp;
 
 /// Creates the message that warns user about the fact that decryption of incoming message is failed
 - (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client errorCode:(NSInteger)errorCode;
 
-/// Resend last non sent messages
-- (void)resendLastUnsentMessages;
-
-
 @end
 
+
+
+@interface ZMConversation (HotFixes)
+
+/// Replaces the first NewClient systemMessage for the selfClient with a UsingNewDevice system message
+- (void)replaceNewClientMessageIfNeededWithNewDeviceMesssage;
+
+@end

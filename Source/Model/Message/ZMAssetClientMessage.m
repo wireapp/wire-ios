@@ -59,6 +59,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 @property (nonatomic) NSData *associatedTaskIdentifier_data;
 @property (nonatomic) CGSize preprocessedSize;
 @property (nonatomic) NSOrderedSet *dataSet;
+@property (nonatomic) ZMGenericMessage *cachedGenericAssetMessage;
 
 @end
 
@@ -75,6 +76,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 @dynamic transferState;
 @dynamic progress;
 @dynamic associatedTaskIdentifier_data;
+@synthesize cachedGenericAssetMessage;
 
 + (instancetype)assetClientMessageWithOriginalImageData:(NSData *)imageData nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc;
 {
@@ -110,7 +112,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     [message addGenericMessage:[ZMGenericMessage genericMessageWithFileMetadata:metadata messageID:nonce.transportString]];
     message.delivered = NO;
     
-    if (metadata.thumbnail != nil && [metadata isKindOfClass:ZMVideoMetadata.class]) {
+    if (metadata.thumbnail != nil) {
         [moc.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:metadata.thumbnail];
     }
     
@@ -121,6 +123,24 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 {
     [super awakeFromInsert];
     self.nonce = nil;
+}
+
+- (void)awakeFromFetch
+{
+    [super awakeFromFetch];
+    self.cachedGenericAssetMessage = nil;
+}
+
+- (void)awakeFromSnapshotEvents:(NSSnapshotEventType)flags
+{
+    [super awakeFromSnapshotEvents:flags];
+    self.cachedGenericAssetMessage = nil;
+}
+
+- (void)didTurnIntoFault
+{
+    [super didTurnIntoFault];
+    self.cachedGenericAssetMessage = nil;
 }
 
 + (NSString *)entityName;
@@ -152,9 +172,13 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (ZMGenericMessage *)genericAssetMessage
 {
-    return [self genericMessageMergedFromDataSetWithFilter:^BOOL(ZMGenericMessage *message) {
-        return message.hasAsset;
-    }];
+    if (self.cachedGenericAssetMessage == nil) {
+        self.cachedGenericAssetMessage = [self genericMessageMergedFromDataSetWithFilter:^BOOL(ZMGenericMessage *message) {
+            return message.hasAsset;
+        }];
+    }
+    
+    return self.cachedGenericAssetMessage;
 }
 
 - (void)addGenericMessage:(ZMGenericMessage *)genericMessage
@@ -162,7 +186,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     if (genericMessage == nil) {
         return;
     }
-
+    
     ZMGenericMessageData *messageData = [self mergeWithExistingData:genericMessage.data];
     
     if (self.nonce == nil) {
@@ -176,6 +200,8 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (ZMGenericMessageData *)mergeWithExistingData:(NSData *)data
 {
+    self.cachedGenericAssetMessage = nil;
+    
     ZMGenericMessage *genericMessage = (ZMGenericMessage *)[[[ZMGenericMessage builder] mergeFromData:data] build];
     ZMImageFormat imageFormat = genericMessage.image.imageFormat;
     ZMGenericMessageData *existingMessageData = [self genericMessageDataFromDataSetForFormat:imageFormat];
@@ -534,6 +560,8 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (void)replaceGenericMessageForThumbnailWithGenericMessage:(ZMGenericMessage *)genericMessage
 {
+    self.cachedGenericAssetMessage = nil;
+    
     for(ZMGenericMessageData* data in self.dataSet) {
         ZMGenericMessage *dataMessage = [data genericMessage];
         if(dataMessage.hasAsset && dataMessage.asset.hasPreview && !dataMessage.asset.hasUploaded) {

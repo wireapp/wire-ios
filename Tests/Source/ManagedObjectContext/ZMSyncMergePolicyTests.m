@@ -210,6 +210,7 @@
         [(ZMMessage *)[self.syncConversation appendMessageWithText:@"D"] setServerTimestamp:[self nextDate]];
         [self.syncConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
     }];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // when
     ZMTextMessage *m = self.uiConversation.messages[0];
@@ -242,14 +243,20 @@
     [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
 }
 
-- (void)testThatItMergesConflictingMessagesFromSyncUiToSyncMOC
+- (void)testThatItMergesConflictingMessagesFromUiMOCToSyncMOC
 {
+    WaitForAllGroupsToBeEmpty(0.5);
+    
     // given
     [(ZMMessage *)[self.uiConversation appendMessageWithText:@"D"] setServerTimestamp:[self nextDate]];
     [self.uiConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
 
+    (void)self.syncConversation.mutableMessages;
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // when
     [self.syncMOC performGroupedBlockAndWait:^{
+        
         ZMClientMessage *m = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
         [m addData:[ZMGenericMessage messageWithText:@"X" nonce:[NSUUID createUUID].transportString].data];
         m.serverTimestamp = [self nextDate];
@@ -263,7 +270,7 @@
     [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"X"] failureRecorder:NewFailureRecorder()];
     
     // and when
-    [self.syncMOC performGroupedBlockAndWait:^{
+    [self.syncMOC performGroupedBlock:^{
         XCTAssert([self.syncMOC saveOrRollback]);
     }];
     WaitForAllGroupsToBeEmpty(0.5);

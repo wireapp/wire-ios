@@ -347,7 +347,7 @@ struct stringAndStatus {
 
 + (void)updateConnection:(ZMConnection *)connection fromPreviousStatus:(ZMConnectionStatus)oldStatus
 {
-    if ((oldStatus == ZMConnectionStatusSent) && (connection.status == ZMConnectionStatusAccepted)) {
+    if (oldStatus == ZMConnectionStatusSent && (connection.status == ZMConnectionStatusAccepted)) {
         connection.conversation.conversationType = ZMConversationTypeOneOnOne;
         connection.needsToBeUpdatedFromBackend = YES; // Do we really need that?
     }

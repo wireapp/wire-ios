@@ -159,14 +159,17 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
     return request;
 }
 
-- (void)fetchUnreadMessages
+- (BOOL)didUpdateConversationWhileFetchingUnreadMessages
 {
+    if (nil == self.managedObjectContext) {
+        return NO;
+    }
     if (!self.managedObjectContext.zm_isSyncContext) {
         ZMLogWarn(@"timestamps should only be managed from the Sync Context");
-        return;
+        return NO;
     }
     if (self.conversationType == ZMConversationTypeSelf) {
-        return;
+        return NO;
     }
     
     NSArray *messages;
@@ -205,9 +208,11 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
     self.unreadTimeStamps = [NSMutableOrderedSet orderedSetWithArray:timeStamps];
 
     // The first time we check we overwrite whatever is stored - therefore we set authoratitive to YES
-    [self updateLastUnreadKnock:lastKnockDate authoritative:YES];
-    [self updateLastUnreadMissedCall:lastMissedCallDate authoritative:YES];
-    [self updateUnreadCount];
+    BOOL didUpdateKnock = [self updateLastUnreadKnock:lastKnockDate authoritative:YES];
+    BOOL didUpdateCall = [self updateLastUnreadMissedCall:lastMissedCallDate authoritative:YES];
+    BOOL didUpdateUnread = [self updateUnreadCount];
+    
+    return (didUpdateCall || didUpdateKnock || didUpdateUnread);
 }
 
 
@@ -316,15 +321,18 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 
 - (void)updateUnread
 {
+    if (nil == self.managedObjectContext) {
+        return;
+    }
     if (!self.managedObjectContext.zm_isSyncContext) {
         ZMLogWarn(@"unreadTimeStamps should only be changed from the Sync Context");
         return;
     }
-    if (self.lastReadServerTimeStamp == nil) {
+    if (self.lastReadServerTimeStamp == nil && self.internalEstimatedUnreadCount == 0) {
         return;
     }
     if (self.unreadTimeStamps == nil) {
-        [self fetchUnreadMessages];
+        [self didUpdateConversationWhileFetchingUnreadMessages];
     }
     else {
         [self didUpdateTimestamps];
