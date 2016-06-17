@@ -61,9 +61,7 @@ private let reponseHeaderAssetIdKey = "Location"
                 let fileMessageData = message.fileMessageData
             else { return false }
             
-            return fileMessageData.isVideo() &&
-                !message.genericAssetMessage!.asset.hasPreview() &&
-                fileMessageData.previewData != nil
+            return !message.genericAssetMessage!.asset.hasPreview() && fileMessageData.previewData != nil
         }
         let thumbnailFetchPredicate = NSPredicate(format: "delivered == NO")
         
@@ -166,7 +164,7 @@ private let reponseHeaderAssetIdKey = "Location"
         
         switch message.uploadState {
         case .UploadingPlaceholder:
-            if message.fileMessageData?.isVideo() == true && message.fileMessageData?.previewData != nil {
+            if message.fileMessageData?.previewData != nil {
                 message.uploadState =  .UploadingThumbnail
             } else {
                 message.uploadState =  .UploadingFullAsset

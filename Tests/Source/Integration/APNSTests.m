@@ -312,9 +312,68 @@
     
     NSString *expectedPath = [NSString stringWithFormat:@"/push/fallback/%@/cancel", identifier.transportString];
     XCTAssertTrue([lastRequest.path containsString:expectedPath]);
-    
 }
 
+- (void)testThatItPingsBackToTheBackendWhenReceivingAVoIPNotificationToCancelTheAPNSNotificationAndRetiresAfter_401
+{
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.2);
+    
+    [self.mockTransportSession closePushChannelAndRemoveConsumer]; // do not use websocket
+    
+    NSUUID *identifier = NSUUID.createUUID;
+    NSString *expectedPath = [NSString stringWithFormat:@"/push/fallback/%@/cancel", identifier.transportString];
+    __block NSDictionary *conversationTransportData;
+    
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        MockConversation *conversation = [session insertGroupConversationWithSelfUser:self.selfUser otherUsers:@[self.user1]];
+        conversationTransportData = (NSDictionary *)conversation.transportData;
+    }];
+    WaitForAllGroupsToBeEmpty(0.2);
+    
+    NSDictionary *payload = @{
+                              @"conversation" : NSUUID.createUUID,
+                              @"data" : conversationTransportData,
+                              @"from" : self.user1.identifier,
+                              @"time" : @"2015-03-11T09:34:00.436Z",
+                              @"type" : @"conversation.create"
+                              };
+    
+    // expect
+    [[[(id)self.userSession.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
+    
+    __block NSUInteger callCount = 0;
+    
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        if ([request.path isEqualToString:expectedPath] && request.method == ZMMethodPOST) {
+            if (++callCount == 1) {
+                return [ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError];
+            } else {
+                [fetchingExpectation fulfill];
+                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+            }
+        };
+        return nil;
+    };
+    
+    // when
+    [self.mockTransportSession resetReceivedRequests];
+    NSDictionary *apnsPayload = [self APNSPayloadForNotificationPayload:payload identifier:identifier];
+    [self.userSession receivedPushNotificationWithPayload:apnsPayload completionHandler:nil source:ZMPushNotficationTypeVoIP];
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    WaitForEverythingToBeDone();
+    
+    // then
+    NSArray <ZMTransportRequest *> *requests = self.mockTransportSession.receivedRequests;
+    ZMTransportRequest *lastRequest = requests.lastObject;
+    XCTAssertNotNil(lastRequest);
+    XCTAssertEqual(lastRequest.method, ZMMethodPOST);
+    XCTAssertEqual(requests.count, 2lu);
+    XCTAssertEqual(callCount, 2lu);
+    XCTAssertTrue([lastRequest.path containsString:expectedPath]);
+    
+}
 
 - (void)testThatItFetchesTheNotificationAndPingsBackToTheBackendWhenReceivingAVoIPNotificationOfTypeNotice
 {
@@ -337,22 +396,11 @@
     NSUUID *notificationID = NSUUID.createUUID;
     NSUUID *conversationID = [NSUUID uuidWithTransportString:convIdentifier];
     
-    NSDictionary *eventPayload = @{@"id" :notificationID.transportString,
-                                   @"payload" : @[@{
-                                           @"conversation" : convIdentifier,
-                                           @"data" : conversationTransportData,
-                                           @"from" : self.user1.identifier,
-                                           @"time" : @"2015-03-11T09:34:00.436Z",
-                                           @"type" : @"conversation.create"
-                                           }]
-                                   };
-    
-    NSDictionary *noticePayload = @{@"aps" : @{},
-                                    @"data" : @{
-                                            @"data" : @{ @"id" : notificationID.transportString },
-                                            @"type" : @"notice"
-                                            }
-                                    };
+    NSDictionary *eventPayload = [self conversationCreatePayloadWithNotificationID:notificationID
+                                                                    conversationID:convIdentifier
+                                                                     transportData:conversationTransportData
+                                                                          senderID:self.user1.identifier];
+    NSDictionary *noticePayload = [self noticePayloadWithIdentifier:notificationID];
     
     // expect
     [[[(id)self.userSession.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
@@ -379,5 +427,97 @@
     ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversationID inManagedObjectContext:self.uiMOC];
     XCTAssertNotNil(conversation);
 }
+
+- (void)testThatItFetchesTheNotificationAndPingsBackToTheBackendWhenReceivingAVoIPNotificationOfTypeNotice_TriesAgainWhenReceiving_401
+{
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.2);
+    
+    [self.mockTransportSession closePushChannelAndRemoveConsumer]; // do not use websocket
+    ZMUser *selfUser = [self userForMockUser:self.selfUser];
+    XCTAssertEqual(selfUser.clients.count, 1u);
+    
+    __block NSDictionary *conversationTransportData;
+    
+    __block NSString *convIdentifier;
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        MockConversation *conversation = [session insertGroupConversationWithSelfUser:self.selfUser otherUsers:@[self.user1]];
+        conversationTransportData = (NSDictionary *)conversation.transportData;
+        convIdentifier = conversation.identifier;
+    }];
+    WaitForAllGroupsToBeEmpty(0.2);
+    NSUUID *notificationID = NSUUID.createUUID;
+    NSUUID *conversationID = [NSUUID uuidWithTransportString:convIdentifier];
+    
+    NSDictionary *eventPayload = [self conversationCreatePayloadWithNotificationID:notificationID
+                                                                    conversationID:convIdentifier
+                                                                     transportData:conversationTransportData
+                                                                          senderID:self.user1.identifier];
+    NSDictionary *noticePayload = [self noticePayloadWithIdentifier:notificationID];
+    
+    // expect
+    [[[(id)self.userSession.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    
+    // when
+    XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
+    
+    __block NSUInteger requestCount = 0;
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        NSString *path = [NSString stringWithFormat:@"/notifications/%@?client=%@&cancel_fallback=true", notificationID.transportString, selfUser.selfClient.remoteIdentifier];
+        if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
+            if (++requestCount == 2) {
+                [fetchingExpectation fulfill];
+                return [ZMTransportResponse responseWithPayload:eventPayload HTTPstatus:200 transportSessionError:nil];
+            } else {
+                return [ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError];
+            }
+        };
+        return nil;
+    };
+    
+    [self.mockTransportSession resetReceivedRequests];
+    NSDictionary *apnsPayload = noticePayload;
+    [self.userSession receivedPushNotificationWithPayload:apnsPayload completionHandler:nil source:ZMPushNotficationTypeVoIP];
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    WaitForEverythingToBeDone();
+    
+    // then
+    XCTAssertEqual(requestCount, 2lu);
+    ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversationID inManagedObjectContext:self.uiMOC];
+    XCTAssertNotNil(conversation);
+}
+
+#pragma mark - Helper
+
+- (NSDictionary *)conversationCreatePayloadWithNotificationID:(NSUUID *)notificationID
+                                               conversationID:(NSString *)conversationID
+                                                transportData:(NSDictionary *)transportData
+                                                     senderID:(NSString *)senderID
+{
+    return @{
+             @"id" :notificationID.transportString,
+             @"payload" : @[
+                     @{
+                         @"conversation" : conversationID,
+                         @"data" : transportData,
+                         @"from" : senderID,
+                         @"time" : @"2015-03-11T09:34:00.436Z",
+                         @"type" : @"conversation.create"
+                         }
+                     ]
+             };
+}
+
+- (NSDictionary *)noticePayloadWithIdentifier:(NSUUID *)uuid
+{
+    return @{
+             @"aps" : @{},
+             @"data" : @{
+                     @"data" : @{ @"id" : uuid.transportString },
+                     @"type" : @"notice"
+                     }
+             };
+}
+
 
 @end

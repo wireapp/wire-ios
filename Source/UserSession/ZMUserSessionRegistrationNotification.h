@@ -22,7 +22,8 @@
 
 #import <ZMCDataModel/ZMNotifications+Internal.h>
 
-@protocol ZMRegistrationObserverToken;
+@protocol ZMRegistrationObserverToken
+@end
 
 typedef NS_ENUM(NSUInteger, ZMUserSessionRegistrationNotificationType) {
     ZMRegistrationNotificationEmailVerificationDidSucceed,

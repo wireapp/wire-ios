@@ -37,6 +37,7 @@
 
 @class BackgroundAPNSPingBackStatus;
 @class ZMApplication;
+@class ZMAccountStatus;
 
 extern NSString * const ZMPushChannelStateChangeNotificationName;
 extern NSString * const ZMPushChannelIsOpenKey;
@@ -53,6 +54,7 @@ extern NSString * const ZMPushChannelResponseStatusKey;
                 clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                       clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
                       giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
+                           accountStatus:(ZMAccountStatus *)accountStatus
             backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
              localNotificationdispatcher:(ZMLocalNotificationDispatcher *)dispatcher
                             mediaManager:(id<AVSMediaManager>)mediaManager

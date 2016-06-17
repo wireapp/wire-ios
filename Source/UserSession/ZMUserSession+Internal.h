@@ -47,7 +47,7 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 @property (nonatomic, readonly) ZMUserProfileUpdateStatus *userProfileUpdateStatus;
 @property (nonatomic, readonly) ZMClientRegistrationStatus *clientRegistrationStatus;
 @property (nonatomic, readonly) ClientUpdateStatus *clientUpdateStatus;
-
+@property (nonatomic, readonly) ZMAccountStatus *accountStatus;
 @end
 
 @interface ZMUserSession (GiphyRequestStatus)

@@ -71,8 +71,8 @@ class ConversationStatusStrategyTests: MessagingTest {
             conversation.remoteIdentifier = NSUUID.createUUID()
             conversation.setLocallyModifiedKeys(Set(arrayLiteral: "lastReadServerTimeStamp"))
             conversation.appendMessageWithText("hey")
-            
-            conversation.fetchUnreadMessages()
+
+            conversation.didUpdateConversationWhileFetchingUnreadMessages()
             conversation.lastUnreadMissedCallDate = conversation.lastReadServerTimeStamp.dateByAddingTimeInterval(-10)
             conversation.lastUnreadKnockDate = conversation.lastReadServerTimeStamp.dateByAddingTimeInterval(-15)
             

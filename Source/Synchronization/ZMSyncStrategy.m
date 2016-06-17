@@ -130,6 +130,7 @@ ZM_EMPTY_ASSERTING_INIT()
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                           clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
                           giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
+                               accountStatus:(ZMAccountStatus *)accountStatus
                 backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                 mediaManager:(id<AVSMediaManager>)mediaManager
                          onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager
@@ -154,6 +155,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                localNotificationsDispatcher:localNotificationsDispatcher
                                        authenticationStatus:authenticationStatus
                                backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus
+                                              accountStatus:accountStatus
                                                mediaManager:mediaManager
                                         onDemandFlowManager:onDemandFlowManager
                                    taskCancellationProvider:taskCancellationProvider];
@@ -199,6 +201,7 @@ ZM_EMPTY_ASSERTING_INIT()
                          localNotificationsDispatcher:(ZMLocalNotificationDispatcher *)localNotificationsDispatcher
                                  authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
                          backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
+                                        accountStatus:(ZMAccountStatus *)accountStatus
                                          mediaManager:(id<AVSMediaManager>)mediaManager
                                   onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager
                              taskCancellationProvider:(id <ZMRequestCancellation>)taskCancellationProvider
@@ -209,7 +212,7 @@ ZM_EMPTY_ASSERTING_INIT()
     self.connectionTranscoder = [[ZMConnectionTranscoder alloc] initWithManagedObjectContext:self.syncMOC];
     self.userTranscoder = [[ZMUserTranscoder alloc] initWithManagedObjectContext:self.syncMOC];
     self.selfTranscoder = [[ZMSelfTranscoder alloc] initWithClientRegistrationStatus:clientRegistrationStatus managedObjectContext:self.syncMOC];
-    self.conversationTranscoder = [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus syncStrategy:self];
+    self.conversationTranscoder = [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus accountStatus:accountStatus syncStrategy:self];
     self.systemMessageTranscoder = [ZMMessageTranscoder systemMessageTranscoderWithManagedObjectContext:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher];
     self.textMessageTranscoder = [ZMMessageTranscoder textMessageTranscoderWithManagedObjectContext:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher];
     self.clientMessageTranscoder = [[ZMClientMessageTranscoder alloc ] initWithManagedObjectContext:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher clientRegistrationStatus:clientRegistrationStatus];

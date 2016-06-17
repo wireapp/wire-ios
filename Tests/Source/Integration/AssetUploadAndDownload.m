@@ -46,7 +46,7 @@
     // need to fault conversation and messages in order to receive notifications
     ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
     (void) conversation.userDefinedName;
-    XCTAssertEqual(conversation.messages.count, 0u);
+    XCTAssertEqual(conversation.messages.count, 2u); // "NewConversation" + "You started using this device" message
 
     // when we insert the medium image
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
@@ -85,7 +85,7 @@
     // need to fault conversation and messages in order to receive notifications
     ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
     (void) conversation.userDefinedName;
-    XCTAssertEqual(conversation.messages.count, 0u);
+    XCTAssertEqual(conversation.messages.count, 2u); // "NewConversation" + "You started using this device" message
     
     // when we insert the medium image
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {

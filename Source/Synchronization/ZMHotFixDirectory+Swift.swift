@@ -58,4 +58,26 @@ extension ZMHotFixDirectory {
         
         context.enqueueDelayedSave()
     }
+    
+    public static func insertNewConversationSystemMessage(context: NSManagedObjectContext)
+    {
+        let fetchRequest = ZMConversation.sortedFetchRequest()
+        guard let conversations = context.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else { return }
+        
+        // Conversation Type Group are ongoing, active conversation
+        conversations.filter { $0.conversationType == .Group }.forEach {
+            $0.appendNewConversationSystemMessageIfNeeded()
+        }
+    }
+    
+    public static func updateSystemMessages(context: NSManagedObjectContext) {
+        let fetchRequest = ZMConversation.sortedFetchRequest()
+        guard let conversations = context.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else { return }
+        let filteredConversations =  conversations.filter{ $0.conversationType == .OneOnOne || $0.conversationType == .Group }
+        
+        // update "you are using this device" message
+        filteredConversations.forEach{
+            $0.replaceNewClientMessageIfNeededWithNewDeviceMesssage()
+        }
+    }
 }

@@ -75,7 +75,7 @@
     // then
     XCTAssertEqual(observer.notifications.count, 1u);
     
-    ConversationChangeInfo *note = observer.notifications.firstObject;
+    ConversationChangeInfo *note = observer.notifications.lastObject;
     XCTAssertNotNil(note);
     XCTAssertTrue(note.messagesChanged);
     XCTAssertFalse(note.participantsChanged);

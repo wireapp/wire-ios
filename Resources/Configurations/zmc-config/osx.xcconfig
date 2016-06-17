@@ -17,21 +17,28 @@
 // 
 
 
-@import Foundation;
-@import CoreData;
-@protocol ZMObjectStrategyDirectory;
-#import "ZMObjectSyncStrategy.h"
-@class ZMBadge;
-@class ZMAuthenticationStatus;
-@class ZMAccountStatus;
 
-@interface ZMConversationTranscoder : ZMObjectSyncStrategy <ZMObjectStrategy>
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                        authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
-                               accountStatus:(ZMAccountStatus *)accountStatus
-                                syncStrategy:(ZMSyncStrategy *)syncStrategy;
+//
+// This is the main file used by Framework targets on OS X.
+// It gets included by {target}-osx.xcconfig
+//
 
-@property (nonatomic) NSUInteger conversationPageSize;
 
-@end
+
+
+// Architectures
+//
+SDKROOT = macosx
+
+// Deployment
+//
+MACOSX_DEPLOYMENT_TARGET = 10.9
+DYLIB_INSTALL_NAME_BASE = @rpath
+FRAMEWORK_VERSION = A
+
+
+
+//Linking
+//
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/Mac $(PLATFORM_DIR)/Developer/Library/Frameworks

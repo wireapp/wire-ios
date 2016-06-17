@@ -23,12 +23,17 @@
 #import <ZMTransport/ZMTransport.h>
 #import <zmessaging/zmessaging-Swift.h>
 
+static char* const ZMLogTag ZM_UNUSED = "HotFix";
+
 @implementation ZMHotFixPatch
 
 + (instancetype)patchWithVersion:(NSString *)version patchCode:(ZMHotFixPatchCode)code
 {
     ZMHotFixPatch *patch = [[ZMHotFixPatch alloc] init];
-    patch->_code = [code copy];
+    patch->_code = ^(NSManagedObjectContext *context) {
+        ZMLogDebug(@"Executing HotFix for version %@", version);
+        code(context);
+    };
     patch->_version = [version copy];
     return patch;
 }
@@ -74,8 +79,19 @@
                      patchWithVersion:@"42.11"
                      patchCode:^(NSManagedObjectContext *context){
                          [ZMHotFixDirectory updateUploadedStateForNotUploadedFileMessages:context];
+                     }],
+                    [ZMHotFixPatch
+                     patchWithVersion:@"45.0.1"
+                     patchCode:^(NSManagedObjectContext *context) {
+                         [ZMHotFixDirectory insertNewConversationSystemMessage:context];
+                     }],
+                    [ZMHotFixPatch
+                     patchWithVersion:@"45.1"
+                     patchCode:^(NSManagedObjectContext *context) {
+                         [ZMHotFixDirectory updateSystemMessages:context];
                      }]
-                    ];
+                    ]
+                    ;
     });
     return patches;
 }

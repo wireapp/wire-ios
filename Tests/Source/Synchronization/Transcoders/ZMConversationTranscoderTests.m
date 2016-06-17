@@ -75,11 +75,11 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         return YES;
     }]];
     
-    id authStatusMock = [OCMockObject mockForClass:[ZMAuthenticationStatus class]];
+    id authStatusMock = [OCMockObject niceMockForClass:[ZMAuthenticationStatus class]];
     [[[authStatusMock stub] andReturnValue:@YES] registeredOnThisDevice];
     
     self.downloadedEvents = downloadedEvents;
-    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authStatusMock syncStrategy:self.syncStrategy];
+    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authStatusMock accountStatus:nil syncStrategy:self.syncStrategy];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -2027,7 +2027,7 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
     id authStatusMock = [OCMockObject mockForClass:[ZMAuthenticationStatus class]];
     [[[authStatusMock stub] andReturnValue:@YES] registeredOnThisDevice];
     
-    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authStatusMock syncStrategy:self.syncStrategy];
+    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authStatusMock accountStatus:nil syncStrategy:self.syncStrategy];
     WaitForAllGroupsToBeEmpty(0.5);
     
     [ZMChangeTrackerBootstrap bootStrapChangeTrackers:self.sut.contextChangeTrackers onContext:self.syncMOC];
@@ -2184,47 +2184,6 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
     }];
 }
 
-- (void)testThatItAppendsYouStartedUsingANewDeviceIfNewDevice {
-    
-    // given
-    id authStatusMock = [OCMockObject mockForClass:[ZMAuthenticationStatus class]];
-    [[[authStatusMock stub] andReturnValue:@NO] registeredOnThisDevice];
-    
-    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC
-                                                              authenticationStatus:authStatusMock
-                                                                      syncStrategy:self.syncStrategy];
-    
-    UserClient *selfClient = [self createSelfClient];
-    
-    __block NSDictionary *rawConversation;
-    [self.syncMOC performGroupedBlockAndWait:^{
-        [self.sut setNeedsSlowSync];
-        
-        NSArray *conversationIDs = [self createConversationIDArrayOfSize:1];
-        rawConversation = [self createRawConversationsForIds:conversationIDs][0];
-        [self setUpSyncWithConversationIDs:conversationIDs];
-    }];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self.syncMOC performGroupedBlockAndWait:^{
-        
-        // when
-        ZMTransportResponse *response = [self createConversationResponseForRawConversations:@[rawConversation]];
-        [self generateRequestAndCompleteWithResponse:response];
-    }];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    ZMConversation *conv = [ZMConversation conversationWithRemoteID:[NSUUID uuidWithTransportString:rawConversation[@"id"]] createIfNeeded:NO inContext:self.syncMOC];
-    
-    NSArray *messages = [conv.messages filteredOrderedSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMMessage * _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable ZM_UNUSED bindings) {
-        return [evaluatedObject isKindOfClass:[ZMSystemMessage class]] && [(ZMSystemMessage *)evaluatedObject systemMessageType] == ZMSystemMessageTypeNewClient && [[(ZMSystemMessage *)evaluatedObject clients] containsObject:(id<UserClientType>)selfClient];
-    }]].array;
-    
-    XCTAssertEqual(messages.count, 1u);
-}
-
 - (void)testThatItDoesNotAppendsYouStartedUsingANewDeviceIfRegisteredDevice {
     
     // given
@@ -2260,7 +2219,88 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
     XCTAssertEqual(messages.count, 0u);
 }
 
+- (void)testThatItDoesAppendsNewConversationIfRegisteredDevice;
+{
+    // given
+    id authStatusMock = [OCMockObject niceMockForClass:[ZMAuthenticationStatus class]];
+    [[[authStatusMock stub] andReturnValue:@YES] registeredOnThisDevice];
+    [(ZMAuthenticationStatus *)[[authStatusMock stub] andReturnValue:OCMOCK_VALUE((ZMAuthenticationPhase){ZMAuthenticationPhaseAuthenticated})] currentPhase];
+    
+    id accountStatus = [OCMockObject niceMockForClass:[ZMAccountStatus class]];
+    [[[accountStatus stub]
+      andReturnValue: OCMOCK_VALUE((AccountState){AccountStateOldDeviceActiveAccount})] currentAccountState];
 
+    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authStatusMock accountStatus:accountStatus syncStrategy:self.syncStrategy];
+    
+    __block NSDictionary *rawConversation;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.sut setNeedsSlowSync];
+        
+        NSArray *conversationIDs = [self createConversationIDArrayOfSize:1];
+        rawConversation = [self createRawConversationsForIds:conversationIDs][0];
+        [self setUpSyncWithConversationIDs:conversationIDs];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // when
+        ZMTransportResponse *response = [self createConversationResponseForRawConversations:@[rawConversation]];
+        [self generateRequestAndCompleteWithResponse:response];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    ZMConversation *conv = [ZMConversation conversationWithRemoteID:[NSUUID uuidWithTransportString:rawConversation[@"id"]] createIfNeeded:NO inContext:self.syncMOC];
+    
+    NSArray *messages = [conv.messages filteredOrderedSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMMessage * _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable ZM_UNUSED bindings) {
+        return [evaluatedObject isKindOfClass:[ZMSystemMessage class]] && [(ZMSystemMessage *)evaluatedObject systemMessageType] == ZMSystemMessageTypeNewConversation;
+    }]].array;
+    
+    XCTAssertEqual(messages.count, 1u);
+}
+
+- (void)testThatItDoesNotAppendNewConversationIfNewDevice {
+    
+    // given
+    id authStatusMock = [OCMockObject niceMockForClass:[ZMAuthenticationStatus class]];
+    [[[authStatusMock stub] andReturnValue:@NO] registeredOnThisDevice];
+    id accountStatusMock = [OCMockObject niceMockForClass:[ZMAccountStatus class]];
+    
+    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC
+                                                              authenticationStatus:authStatusMock
+                                                                     accountStatus:accountStatusMock
+                                                                      syncStrategy:self.syncStrategy];
+    
+    __block NSDictionary *rawConversation;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.sut setNeedsSlowSync];
+        
+        NSArray *conversationIDs = [self createConversationIDArrayOfSize:1];
+        rawConversation = [self createRawConversationsForIds:conversationIDs][0];
+        [self setUpSyncWithConversationIDs:conversationIDs];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // when
+        ZMTransportResponse *response = [self createConversationResponseForRawConversations:@[rawConversation]];
+        [self generateRequestAndCompleteWithResponse:response];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    ZMConversation *conv = [ZMConversation conversationWithRemoteID:[NSUUID uuidWithTransportString:rawConversation[@"id"]] createIfNeeded:NO inContext:self.syncMOC];
+    
+    NSArray *messages = [conv.messages filteredOrderedSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMMessage * _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable ZM_UNUSED bindings) {
+        return [evaluatedObject isKindOfClass:[ZMSystemMessage class]] && [(ZMSystemMessage *)evaluatedObject systemMessageType] == ZMSystemMessageTypeNewConversation;
+    }]].array;
+    
+    XCTAssertEqual(messages.count, 0u);
+}
 
 @end
 
@@ -3805,6 +3845,17 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
 - (void)testThatItMergesConversationsWhenItProcessesAConversationCreateEventForAOneOnOneConversationAndTheConnectionAlreadyHasAConversation
 {
     // given
+    id authStatusMock = [OCMockObject niceMockForClass:[ZMAuthenticationStatus class]];
+    [[[authStatusMock stub] andReturnValue:@YES] registeredOnThisDevice];
+    [(ZMAuthenticationStatus *)[[authStatusMock stub] andReturnValue:OCMOCK_VALUE((ZMAuthenticationPhase){ZMAuthenticationPhaseAuthenticated})] currentPhase];
+    
+    id accountStatus = [OCMockObject niceMockForClass:[ZMAccountStatus class]];
+    [[[accountStatus stub]
+      andReturnValue: OCMOCK_VALUE((AccountState){AccountStateOldDeviceActiveAccount})] currentAccountState];
+    
+    self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authStatusMock accountStatus:accountStatus syncStrategy:self.syncStrategy];
+
+    
     NSUUID *otherUserID = [NSUUID createUUID];
     NSUUID *conversationID = [NSUUID createUUID];
     

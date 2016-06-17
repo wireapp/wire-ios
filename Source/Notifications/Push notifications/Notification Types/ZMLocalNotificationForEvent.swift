@@ -20,10 +20,40 @@
 import Foundation
 
 
-let ZMLocalNotificationRingingSoundName = "ringing_from_them_long"
-let ZMLocalNotificationPingSoundName = "ping_from_them"
-let ZMLocalNotificationNewMessageSoundName = "new_message_apns"
+let ZMLocalNotificationRingingDefaultSoundName = "ringing_from_them_long.caf"
+let ZMLocalNotificationPingDefaultSoundName = "ping_from_them.caf"
+let ZMLocalNotificationNewMessageDefaultSoundName = "new_message_apns.caf"
 
+
+func ZMLocalNotificationRingingSoundName() -> String {
+    if let soundName = NSUserDefaults.standardUserDefaults().objectForKey("ZMCallSoundName") as? String,
+        let sound = ZMSound(rawValue: soundName) {
+        return sound.filename()
+    }
+    else {
+        return ZMLocalNotificationRingingDefaultSoundName
+    }
+}
+
+func ZMLocalNotificationPingSoundName() -> String {
+    if let soundName = NSUserDefaults.standardUserDefaults().objectForKey("ZMPingSoundName") as? String,
+        let sound = ZMSound(rawValue: soundName) {
+        return sound.filename()
+    }
+    else {
+        return ZMLocalNotificationPingDefaultSoundName
+    }
+}
+
+func ZMLocalNotificationNewMessageSoundName() -> String {
+    if let soundName = NSUserDefaults.standardUserDefaults().objectForKey("ZMMessageSoundName") as? String,
+        let sound = ZMSound(rawValue: soundName) {
+        return sound.filename()
+    }
+    else {
+        return ZMLocalNotificationNewMessageDefaultSoundName
+    }
+}
 
 let ZMConversationCategory = "conversationCategory"
 let ZMCallCategory = "callCategory"
@@ -214,7 +244,7 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
 
     /// if empty, it does not copy events
     var copiedEventTypes : [ZMUpdateEventType] { return [] }
-    var soundName : String { return ZMLocalNotificationNewMessageSoundName + ".caf" }
+    var soundName : String { return ZMLocalNotificationNewMessageSoundName() }
     var category : String { return ZMConversationCategory }
     
     /// you can copy additional properties from the previous notification to the new one

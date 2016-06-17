@@ -134,7 +134,7 @@ public class ZMLocalNotificationForCallEvent : ZMLocalNotificationForEvent {
     
     override var soundName : String {
         if currentCallType == .IncomingCall || currentCallType == .IncomingVideoCall {
-            return ZMLocalNotificationRingingSoundName + ".caf"
+            return ZMLocalNotificationRingingSoundName()
         }
         return super.soundName
     }

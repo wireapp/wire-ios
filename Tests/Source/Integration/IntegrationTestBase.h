@@ -100,6 +100,8 @@ extern NSString * const SelfUserPassword;
 - (MockUser *)createSentConnectionToUserWithName:(NSString *)name uuid:(NSUUID *)uuid;
 - (MockUser *)createUserWithName:(NSString *)name uuid:(NSUUID *)uuid;
 
+- (void)prefetchRemoteClientByInsertingMessageInConversation:(MockConversation *)conversation;
+
 - (CBCryptoBox *)setupOTREnvironmentForUser:(MockUser *)mockUser
                                isSelfClient:(BOOL)isSelfClient
                                numberOfKeys:(NSUInteger)numberOfKeys

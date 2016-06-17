@@ -109,16 +109,19 @@
     }
 }
 
+- (BOOL)needsToSyncObject:(NSObject *)object
+{
+    return [self.predicateForObjectsToDownload evaluateWithObject:object] &&
+           (self.filter == nil || [self.filter evaluateWithObject:object]);
+}
+
 - (void)objectsDidChange:(NSSet *)objects
 {
     for (ZMManagedObject* mo in objects) {
         if (mo.entity != self.entity) {
             continue;
         }
-        if ([self.predicateForObjectsToDownload evaluateWithObject:mo] &&
-            (self.filter == nil || [self.filter evaluateWithObject:mo])
-            )
-        {
+        if ([self needsToSyncObject:mo]) {
             [self.objectsToDownload addObjectToBeSynchronized:mo];
         }
     }
