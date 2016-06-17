@@ -538,7 +538,7 @@
 				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Cryptobox/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = org.pkaboo.cryptobox;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
 				PRODUCT_NAME = Cryptobox;
 				VERSION_INFO_PREFIX = "";
 			};
@@ -553,7 +553,7 @@
 				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Cryptobox/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = org.pkaboo.cryptobox;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
 				PRODUCT_NAME = Cryptobox;
 				VERSION_INFO_PREFIX = "";
 			};
