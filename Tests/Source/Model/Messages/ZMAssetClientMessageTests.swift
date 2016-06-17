@@ -1114,7 +1114,100 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.genericAssetMessage?.asset.preview.image.width, imageMetaData.width)
         XCTAssertEqual(sut.genericAssetMessage?.asset.original.name, sut.filename)
     }
+    
+    func testThatItClearsGenericAssetMessageCacheWhenFaulting() {
+        // given
+        let previewSize : UInt64 = 46
+        let previewMimeType = "image/jpg"
+        let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: NSData.zmRandomSHA256Key(), sha256: NSData.zmRandomSHA256Key())
+        let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
+        
+        let uuid = NSUUID.createUUID().transportString()
+        _ = createTestFile(testURL)
+        defer { removeTestFile(testURL) }
+        let fileMetadata = ZMFileMetadata(fileURL: testURL)
+        
+        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                       nonce: NSUUID.createUUID(),
+                                       managedObjectContext: uiMOC)
+        
+        XCTAssertFalse(sut.genericAssetMessage!.asset.hasPreview())
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // when
+        uiMOC.refreshObject(sut, mergeChanges: false) // Turn object into fault
+        
+        let sutInSyncContext = syncMOC.objectWithID(sut.objectID) as! ZMAssetClientMessage
+        let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
+        let genericMessage = ZMGenericMessage.genericMessage(withAsset: asset, messageID: "\(sut.nonce)")
+        let payload : [String : AnyObject] = [
+            "type" : "conversation.otr-asset-add",
+            "data" : [
+                "id" : uuid
+            ]
+        ]
+        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: NSUUID.createUUID())
+        XCTAssertNil(sutInSyncContext.fileMessageData?.thumbnailAssetID)
+        
+        sutInSyncContext.updateWithGenericMessage(genericMessage, updateEvent: updateEvent) // Append preview
+        XCTAssertTrue(syncMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        // properties changed in sync context are visible
+        XCTAssertEqual(sut.genericAssetMessage?.asset.preview.remote.otrKey, remoteData.otrKey)
+        XCTAssertEqual(sut.genericAssetMessage?.asset.preview.remote.sha256, remoteData.sha256)
+        XCTAssertEqual(sut.genericAssetMessage?.asset.preview.image.width, imageMetaData.width)
+    }
 }
+
+// MARK: UploadState
+extension ZMAssetClientMessageTests {
+
+    func testThatItStoresThumbnailDataIfAvailable() {
+        
+        // given
+        let thumbnail = verySmallJPEGData()
+        let nonce = NSUUID()
+        createTestFile(testURL)
+        defer { removeTestFile(testURL) }
+        
+        let fileMetadata = ZMFileMetadata(fileURL: testURL, thumbnail: thumbnail)
+        
+        // when
+        let message = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                           nonce: nonce,
+                                           managedObjectContext: syncMOC)
+        
+        // then
+        let storedThumbail = message.managedObjectContext?.zm_imageAssetCache.assetData(message.nonce, format: .Original, encrypted: false)
+        XCTAssertNotNil(storedThumbail)
+        XCTAssertEqual(storedThumbail, thumbnail)
+    }
+    func testThatItDoesNotStoresThumbnailDataIfEmpty() {
+        
+        // given
+        let textFile = testURLWithFilename("robert.txt")
+        
+        let thumbnail = NSData()
+        let nonce = NSUUID()
+        createTestFile(textFile)
+        defer { removeTestFile(textFile) }
+        
+        let fileMetadata = ZMFileMetadata(fileURL: textFile, thumbnail: thumbnail)
+        
+        // when
+        let message = ZMAssetClientMessage(fileMetadata: fileMetadata,
+                                           nonce: nonce,
+                                           managedObjectContext: syncMOC)
+        
+        // then
+        let storedThumbail = message.managedObjectContext?.zm_imageAssetCache.assetData(message.nonce, format: .Original, encrypted: false)
+        XCTAssertNil(storedThumbail)
+    }
+}
+
 
 // MARK: Helpers
 extension ZMAssetClientMessageTests {

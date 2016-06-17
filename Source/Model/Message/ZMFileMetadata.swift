@@ -31,7 +31,7 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
     
     required public init(fileURL: NSURL, thumbnail: NSData? = nil) {
         self.fileURL = fileURL
-        self.thumbnail = thumbnail
+        self.thumbnail = thumbnail?.length > 0 ? thumbnail : nil
         
         super.init()
     }

@@ -266,7 +266,11 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     [super awakeFromFetch];
     self.lastReadEventIDSaveDelay = ZMConversationDefaultLastReadEventIDSaveDelay;
     if (self.managedObjectContext.zm_isSyncContext) {
-        [self fetchUnreadMessages];
+        // From the documentation: The managed object context’s change processing is explicitly disabled around this method so that you can use public setters to establish transient values and other caches without dirtying the object or its context.
+        // Therefore we need to do a dispatch async  here in a performGroupedBlock to update the unread properties outside of awakeFromFetch
+        [self.managedObjectContext performGroupedBlock:^{
+            [self didUpdateConversationWhileFetchingUnreadMessages];
+        }];
     }
 }
 
@@ -275,7 +279,10 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     [super awakeFromInsert];
     self.lastReadEventIDSaveDelay = ZMConversationDefaultLastReadEventIDSaveDelay;
     if (self.managedObjectContext.zm_isSyncContext) {
-        [self fetchUnreadMessages];
+        // From the documentation: You are typically discouraged from performing fetches within an implementation of awakeFromInsert. Although it is allowed, execution of the fetch request can trigger the sending of internal Core Data notifications which may have unwanted side-effects. Since we fetch the unread messages here, we should do a dispatch async
+        [self.managedObjectContext performGroupedBlock:^{
+            [self didUpdateConversationWhileFetchingUnreadMessages];
+        }];
     }
 }
 
@@ -706,7 +713,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
         NOT_USED(oldestMessage);
         newestMessage = tempMsg;
     }
-    
     [self updateLastReadServerTimeStampWithMessage:newestMessage];
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
@@ -723,6 +729,8 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
         self.hasUnreadUnsentMessage = NO;
     }
 }
+
+
 
 - (void)updateLastReadServerTimeStampWithMessage:(ZMMessage *)message
 {
@@ -1034,6 +1042,17 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     return [self mutableOrderedSetValueForKey:LastServerSyncedActiveParticipantsKey];
 }
 
+
+- (void)resendLastUnsentMessages
+{
+    [self.messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ZMMessage *message, __unused NSUInteger idx, BOOL *stop) {
+        if (message.isExpired) {
+            [message resend];
+            *stop = YES;
+        }
+    }];
+}
+
 @end
 
 
@@ -1240,7 +1259,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     }
     // sortMessages is called when processing downloaded events (e.g. after slow sync) which can be unordered
     // after sorting messages we also need to recalculate the unread properties
-    [self fetchUnreadMessages];
+    [self didUpdateConversationWhileFetchingUnreadMessages];
 }
 
 - (void)resortMessagesWithUpdatedMessage:(ZMMessage *)message
@@ -1364,6 +1383,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     
     // We need to check if we should add a 'secure' system message in case all participants are trusted
     [conversation increaseSecurityLevelIfNeededAfterUserClientsWereTrusted:allClients];
+    [conversation appendNewConversationSystemMessageIfNeeded];
     return conversation;
 }
 
@@ -1509,6 +1529,33 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
     message.isEncrypted = YES;
     return message;
+}
+
+- (void)appendNewConversationSystemMessageIfNeeded;
+{
+    ZMMessage *firstMessage = self.messages.firstObject;
+    if ([firstMessage isKindOfClass:[ZMSystemMessage class]]) {
+        ZMSystemMessage *systemMessage = (ZMSystemMessage *)firstMessage;
+        if (systemMessage.systemMessageType == ZMSystemMessageTypeNewConversation) {
+            return;
+        }
+    }
+    
+    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
+    systemMessage.systemMessageType = ZMSystemMessageTypeNewConversation;
+    systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    systemMessage.isEncrypted = NO;
+    systemMessage.isPlainText = YES;
+    systemMessage.nonce = [NSUUID new];
+    systemMessage.sender = self.creator;
+    systemMessage.users = self.activeParticipants.set;
+    // the new conversation message should be displayed first,
+    // additionally the use of reference date is to ensure proper transition for older clients so the message is the very
+    // first message in conversation
+    systemMessage.serverTimestamp = [NSDate dateWithTimeIntervalSinceReferenceDate:0];
+    
+    [self sortedAppendMessage:systemMessage];
+    systemMessage.visibleInConversation = self;
 }
 
 - (NSUInteger)sortedAppendMessage:(ZMMessage *)message;
@@ -1746,7 +1793,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     if (timeStamp != nil) {
         if (self.lastReadEventID != nil && [eventID isEqualToEventID:self.lastReadEventID]) {
             if ([self updateLastReadServerTimeStampIfNeededWithTimeStamp:timeStamp andSync:NO]) {
-                [self fetchUnreadMessages];
+                [self didUpdateConversationWhileFetchingUnreadMessages];
             }
         }
         if (self.clearedEventID != nil) {
@@ -1867,319 +1914,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 @end
 
 
-@implementation ZMConversation (OTR)
 
-@dynamic securityLevel;
-
-// trusted conversation have all active users clients trusted
-// true corresponds to ZMCovnersationSecurityLevelSecure
-// false corresponds to ZMConversationSecurityLevelPartialSecure
-- (BOOL)trusted
-{
-    __block BOOL hasOnlyTrustedUsers = YES;
-    [self.activeParticipants.array enumerateObjectsUsingBlock:^(ZMUser *user, NSUInteger idx, BOOL * _Nonnull stop) {
-        NOT_USED(idx);
-        if (![user trusted]) {
-            hasOnlyTrustedUsers = NO;
-            *stop = YES;
-        }
-    }];
-    
-    return hasOnlyTrustedUsers && !self.containsUnconnectedParticipant;
-}
-
-- (BOOL)containsUnconnectedParticipant
-{
-    for (ZMUser *user in self.otherActiveParticipants) {
-        if (!user.isConnected) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (BOOL)allParticipantsHaveClients
-{
-    for(ZMUser *user in self.activeParticipants) {
-        if(user.clients.count == 0) {
-            return NO;
-        }
-    }
-    return YES;
-}
-
-- (BOOL)hasUntrustedClients
-{
-    __block BOOL hasUntrustedClients = NO;
-    [self.activeParticipants.array enumerateObjectsUsingBlock:^(ZMUser *user, NSUInteger idx, BOOL * _Nonnull stop) {
-        NOT_USED(idx);
-        if ([user untrusted]) {
-            hasUntrustedClients = YES;
-            *stop = YES;
-        }
-    }];
-
-    return hasUntrustedClients;
-}
-
-- (void)resendLastUnsentMessages
-{
-    [self.messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ZMMessage *message, __unused NSUInteger idx, BOOL *stop) {
-        if (message.isExpired) {
-            [message resend];
-            *stop = YES;
-        }
-    }];
-}
-
-- (void)increaseSecurityLevelIfNeededAfterUserClientsWereTrusted:(NSSet<UserClient *> *)trustedClients;
-{
-    //if conversation became trusted
-    //that will trigger ui notification
-    //and add system message that conversation is now trusted
-    
-    if ([self trusted] && [self allParticipantsHaveClients]) {
-        ZMConversationSecurityLevel previousSecurityLevel = self.securityLevel;
-        self.securityLevel = ZMConversationSecurityLevelSecure;
-        if (previousSecurityLevel != ZMConversationSecurityLevelSecure) {
-            [self appendNewIsSecureSystemMessageWithClientsVerified:trustedClients];
-            [self.managedObjectContext.zm_userInterfaceContext performGroupedBlock:^{
-                [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationIsVerifiedNotificationName object:self];
-            }];
-        }
-    }
-}
-
-- (void)increaseSecurityLevelIfNeededAfterRemovingClientForUser:(ZMUser *)user;
-{
-    if ([self trusted] && [self allParticipantsHaveClients]) {
-        ZMConversationSecurityLevel previousSecurityLevel = self.securityLevel;
-        self.securityLevel = ZMConversationSecurityLevelSecure;
-        if (previousSecurityLevel != ZMConversationSecurityLevelSecure) {
-            [self appendNewIsSecureSystemMessageWithClientsVerified:[NSSet set] forUsers:[NSSet setWithObject:user]];
-            [self.managedObjectContext.zm_userInterfaceContext performGroupedBlock:^{
-                [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationIsVerifiedNotificationName object:self];
-            }];
-        }
-    }
-}
-
-- (void)decreaseSecurityLevelIfNeededAfterUserClientsWereDiscovered:(NSSet<UserClient *> *)ignoredClients causedBy:(ZMOTRMessage *)message;
-{
-    if (![self trusted] && self.securityLevel == ZMConversationSecurityLevelSecure) {
-        ZMConversationSecurityLevel previousSecurityLevel = self.securityLevel;
-        self.securityLevel = ZMConversationSecurityLevelSecureWithIgnored;
-        // we need to append system message only the first time some client is being ignored
-        if (previousSecurityLevel == ZMConversationSecurityLevelSecure) {
-            if (nil != message) {
-                [self appendNewAddedClientsSystemMessageWithClients:ignoredClients beforeMessage:message];
-                if(message.deliveryState != ZMDeliveryStateDelivered) { // we were trying to send this message
-                    [self expireAllPendingMessagesStartingFrom:message]; // then we should display a security warning and block the message
-                }
-            }
-            else {
-                [self appendNewAddedClientsSystemMessageWithClients:ignoredClients];
-            }
-        }
-    }
-}
-
-- (void)decreaseSecurityLevelIfNeededAfterUserClientsWereIgnored:(NSSet<UserClient *> *)ignoredClients
-{
-    if (![self trusted] && self.securityLevel == ZMConversationSecurityLevelSecure) {
-        ZMConversationSecurityLevel previousSecurityLevel = self.securityLevel;
-        self.securityLevel = ZMConversationSecurityLevelSecureWithIgnored;
-        // we need to append system message only the first time some client is being ignored
-        if (previousSecurityLevel == ZMConversationSecurityLevelSecure) {
-            [self appendIgnoredClientsSystemMessageWithClients:ignoredClients];
-        }
-    }
-}
-
-- (void)expireAllPendingMessagesStartingFrom:(ZMMessage * __unused)message {
-    [self.messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ZMMessage *msg, __unused NSUInteger idx, BOOL *stop) {
-        if (msg.deliveryState != ZMDeliveryStateDelivered) {
-            [msg expire];
-        }
-        if(msg == message) {
-            *stop = YES;
-        }
-    }];
-}
-
-- (void)appendStartedUsingThisDeviceMessageIfNeeded
-{
-    ZMMessage *systemMessage = [ZMSystemMessage fetchStartedUsingOnThisDeviceMessageForConversation:self];
-    if (systemMessage == nil) {
-        [self appendStartedUsingThisDeviceMessage];
-    }
-}
-
-- (void)appendStartedUsingThisDeviceMessage
-{
-    UserClient *selfClient = [ZMUser selfUserInContext:self.managedObjectContext].selfClient;
-    if (selfClient != nil) {
-        [self appendNewAddedClientsSystemMessageWithClients:[NSSet setWithObject:selfClient]];
-    }
-}
-
-- (void)appendNewIsSecureSystemMessageWithClientsVerified:(NSSet <UserClient*> *)clients
-{
-    NSSet <ZMUser *>* users = [clients mapWithBlock:^ZMUser *(UserClient* obj) {
-        return obj.user;
-    }];
-    [self appendNewIsSecureSystemMessageWithClientsVerified:clients forUsers:users];
-}
-
-- (void)appendNewIsSecureSystemMessageWithClientsVerified:(NSSet <UserClient*> *)clients forUsers:(NSSet<ZMUser*> *)users
-{
-    if (users.count == 0) {return;}
-    if (self.securityLevel == ZMConversationSecurityLevelSecureWithIgnored) { return; }
-    
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    
-    ZMMessage *lastMessage = self.messages.lastObject;
-    systemMessage.systemMessageType = ZMSystemMessageTypeConversationIsSecure;
-    systemMessage.serverTimestamp = [self timestampAfterMessage:lastMessage];
-    systemMessage.users = users;
-    systemMessage.clients = (NSSet<id<UserClientType>> *)clients;
-    systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    systemMessage.isEncrypted = NO;
-    systemMessage.isPlainText = YES;
-    systemMessage.nonce = [NSUUID new];
-
-    [self sortedAppendMessage:systemMessage];
-    systemMessage.visibleInConversation = self;
-}
-
-- (void)appendNewAddedClientsSystemMessageWithClients:(NSSet <UserClient*> *)clients
-{
-    [self appendNewAddedClientsSystemMessageWithClients:clients beforeMessage:nil];
-}
-
-- (void)appendNewAddedClientsSystemMessageWithClients:(NSSet <UserClient*> *)clients beforeMessage:(ZMOTRMessage *)beforeMessage
-{
-    if (clients.count == 0) { return; }
-
-    
-    NSSet <ZMUser *>* users = [clients mapWithBlock:^ZMUser *(UserClient* obj) {
-        return obj.user;
-    }];
-    
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    systemMessage.users = users;
-    systemMessage.clients = (NSSet<id<UserClientType>> *)clients;
-    systemMessage.systemMessageType = ZMSystemMessageTypeNewClient;
-    
-    if (beforeMessage == nil || beforeMessage.conversation != self) {
-        systemMessage.serverTimestamp = [self timestampAfterMessage:self.messages.lastObject];
-    }
-    else {
-        //substract 1/10 of a second just to make this message to appear _before_ client message that caused it
-        //client message should be already appended at this point
-        systemMessage.serverTimestamp = [self timestampBeforeMessage:beforeMessage];
-    }
-    systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    systemMessage.isEncrypted = NO;
-    systemMessage.isPlainText = YES;
-    systemMessage.nonce = [NSUUID new];
-
-    [self sortedAppendMessage:systemMessage];
-    systemMessage.visibleInConversation = self;
-}
-
-- (void)appendIgnoredClientsSystemMessageWithClients:(NSSet <UserClient *> *)clients;
-{
-    if (clients.count == 0) { return; }
-    
-    
-    NSSet <ZMUser *>* users = [clients mapWithBlock:^ZMUser *(UserClient* obj) {
-        return obj.user;
-    }];
-    
-    ZMMessage *lastMessage = self.messages.lastObject;
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    systemMessage.users = users;
-    systemMessage.clients = (NSSet<id<UserClientType>> *)clients;
-    systemMessage.systemMessageType = ZMSystemMessageTypeIgnoredClient;
-    systemMessage.serverTimestamp = [self timestampAfterMessage:lastMessage];
-    
-    systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    systemMessage.isEncrypted = NO;
-    systemMessage.isPlainText = YES;
-    systemMessage.nonce = [NSUUID new];
-    
-    [self sortedAppendMessage:systemMessage];
-}
-
-- (void)appendNewPotentialGapSystemMessageWithUsers:(NSSet <ZMUser *> *)users timestamp:(NSDate *)timestamp
-{
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    systemMessage.systemMessageType = ZMSystemMessageTypePotentialGap;
-    systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    systemMessage.isEncrypted = NO;
-    systemMessage.users = users;
-    systemMessage.needsUpdatingUsers = YES;
-    systemMessage.isPlainText = YES;
-    systemMessage.nonce = [NSUUID new];
-    systemMessage.serverTimestamp = timestamp;
-    
-    NSUInteger index = [self sortedAppendMessage:systemMessage];
-    systemMessage.visibleInConversation = self;
-    
-    if (index > 1) {
-        ZMMessage *previousMessage = self.messages[index - 1];
-        [self updatePotentialGapSystemMessage:systemMessage ifNeededWithMessage:previousMessage];
-    }
-}
-
-- (void)updatePotentialGapSystemMessage:(ZMSystemMessage *)systemMessage ifNeededWithMessage:(ZMMessage *)message
-{
-    // In case the message before the new system message was also a system message of
-    // the type ZMSystemMessageTypePotentialGap, we delete the old one and update the
-    // users property of the new one to use old users and calculate the added / removed users
-    // from the time the previous one was added
-    
-    if (systemMessage.systemMessageType != ZMSystemMessageTypePotentialGap) {
-        return;
-    }
-    
-    if ([message isKindOfClass:ZMSystemMessage.class] &&
-        message.systemMessageData.systemMessageType == ZMSystemMessageTypePotentialGap) {
-        id <ZMSystemMessageData> previousSystemMessage = message.systemMessageData;
-        systemMessage.users = previousSystemMessage.users.copy;
-        [self.managedObjectContext deleteObject:previousSystemMessage];
-    }
-}
-
-- (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client errorCode:(NSInteger)errorCode
-{
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    systemMessage.systemMessageType = (errorCode == CBErrorCodeRemoteIdentityChanged) ? ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged : ZMSystemMessageTypeDecryptionFailed;
-    systemMessage.sender = sender;
-    systemMessage.clients = client != nil ? [NSSet setWithObject:client] : [NSSet set];
-    systemMessage.isEncrypted = NO;
-    systemMessage.isPlainText = YES;
-    systemMessage.nonce = [NSUUID new];
-    ZMMessage *lastMessage = self.messages.lastObject;
-    systemMessage.serverTimestamp = timestamp ?: [self timestampAfterMessage:lastMessage];
-    
-    [self sortedAppendMessage:systemMessage];
-}
-
-- (NSDate *)timestampBeforeMessage:(ZMMessage *)message
-{
-    NSDate *timestamp = message.serverTimestamp ?: self.lastModifiedDate;
-    return [timestamp dateByAddingTimeInterval:-0.01];
-}
-
-- (NSDate *)timestampAfterMessage:(ZMMessage *)message
-{
-    NSDate *timestamp = message.serverTimestamp ?: self.lastModifiedDate;
-    return [timestamp dateByAddingTimeInterval:0.01];
-}
-
-@end
 
 
 @implementation NSUUID (ZMSelfConversation)

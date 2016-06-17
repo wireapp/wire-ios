@@ -125,6 +125,9 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 /// Appends a file. see ZMFileMetaData, ZMAudioMetaData, ZMVideoMetaData.
 - (nullable id<ZMConversationMessage>)appendMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata;
 
+/// Resend last non sent messages
+- (void)resendLastUnsentMessages;
+
 @end
 
 @interface ZMConversation (History)

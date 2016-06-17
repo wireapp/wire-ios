@@ -42,48 +42,60 @@
 - (void)testThatItSortsTimeStampsWhenFetchingMessages
 {
     // given
+    __block ZMConversation *conv;
+    __block ZMMessage *excludedMessage;
+    __block NSOrderedSet *expectedTimeStamps;
+    
     [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conv.lastReadServerTimeStamp = [NSDate date];
         ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         
-        ZMMessage *excludedMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:-5];
+        excludedMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:-5];
         ZMMessage *lastMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:15];
         ZMMessage *firstMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:5];
         ZMMessage *middleMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:10];
         [self.syncMOC saveOrRollback];
         
-        NSOrderedSet *expectedTimeStamps = [NSOrderedSet orderedSetWithArray:@[firstMessage.serverTimestamp, middleMessage.serverTimestamp, lastMessage.serverTimestamp]];
+        expectedTimeStamps = [NSOrderedSet orderedSetWithArray:@[firstMessage.serverTimestamp, middleMessage.serverTimestamp, lastMessage.serverTimestamp]];
         
         // when
         [conv awakeFromFetch];
-        
-        // then
-        XCTAssertEqual(conv.estimatedUnreadCount, 3u);
-        XCTAssertFalse([conv.unreadTimeStamps containsObject:excludedMessage.serverTimestamp]);
-        XCTAssertEqualObjects(conv.unreadTimeStamps, expectedTimeStamps);
     }];
     
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(conv.estimatedUnreadCount, 3u);
+    XCTAssertFalse([conv.unreadTimeStamps containsObject:excludedMessage.serverTimestamp]);
+    XCTAssertEqualObjects(conv.unreadTimeStamps, expectedTimeStamps);
 }
-
 
 - (void)testThatItAddsNewTimeStampsToTheEndIfTheyAreNewerThanTheLastUnread
 {
     // given
+    __block ZMConversation *conv;
+    __block NSDate *newDate;
+    __block NSOrderedSet *expectedTimeStamps;
+    
     [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conv.lastReadServerTimeStamp = [NSDate date];
         ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         
         ZMMessage *firstMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:5];
         [self.syncMOC saveOrRollback];
         
-        NSDate *newDate = [conv.lastReadServerTimeStamp dateByAddingTimeInterval:10];
-        NSOrderedSet *expectedTimeStamps = [NSOrderedSet orderedSetWithArray:@[firstMessage.serverTimestamp, newDate]];
+        newDate = [conv.lastReadServerTimeStamp dateByAddingTimeInterval:10];
+        expectedTimeStamps = [NSOrderedSet orderedSetWithArray:@[firstMessage.serverTimestamp, newDate]];
         
         [conv awakeFromFetch];
-        XCTAssertEqual(conv.estimatedUnreadCount, 1u);
-        
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertEqual(conv.estimatedUnreadCount, 1u);
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
         // when
         [conv insertTimeStamp:newDate];
         
@@ -157,21 +169,27 @@
 - (void)testThatItUpdatesTheUnreadCount
 {
     // given
+    __block ZMConversation *conv;
+    __block ZMMessage *middleMessage;
+    __block ZMMessage *lastMessage;
+
     [self.syncMOC performGroupedBlockAndWait:^{
-        
-        ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conv.lastReadServerTimeStamp = [NSDate date];
         ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         
         [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:5];
-        ZMMessage *middleMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:10];
-        ZMMessage *lastMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:15];
+        middleMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:10];
+        lastMessage = [self insertMessageIntoConversation:conv sender:sender timeSinceLastRead:15];
         
         [self.syncMOC saveOrRollback];
         
         [conv awakeFromFetch];
-        XCTAssertEqual(conv.estimatedUnreadCount, 3u);
-        
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertEqual(conv.estimatedUnreadCount, 3u);
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
         // expect
         NSOrderedSet *expectedTimeStamps = [NSOrderedSet orderedSetWithArray:@[lastMessage.serverTimestamp]];
         
@@ -211,7 +229,7 @@
         
         conversation.lastServerTimeStamp =  [message1.serverTimestamp dateByAddingTimeInterval:30];
         
-        [conversation fetchUnreadMessages];
+        [conversation didUpdateConversationWhileFetchingUnreadMessages];
         XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorMissedCall);
 
         // when
@@ -240,7 +258,7 @@
         missedCallMessage.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         conversation.lastServerTimeStamp = missedCallMessage.serverTimestamp;
         
-        [conversation fetchUnreadMessages];
+        [conversation didUpdateConversationWhileFetchingUnreadMessages];
         XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorMissedCall);
         XCTAssertEqual(conversation.unreadTimeStamps.count, 3UL);
         
@@ -271,7 +289,7 @@
         // when
         conversation.lastReadServerTimeStamp = message2.serverTimestamp;
         conversation.lastServerTimeStamp = systemMessage.serverTimestamp;
-        [conversation fetchUnreadMessages];
+        [conversation didUpdateConversationWhileFetchingUnreadMessages];
         
         // then
         XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorNone);
@@ -301,7 +319,7 @@
         
         conversation.lastServerTimeStamp = [message1.serverTimestamp dateByAddingTimeInterval:30];
         
-        [conversation fetchUnreadMessages];
+        [conversation didUpdateConversationWhileFetchingUnreadMessages];
         XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorKnock);
         
         // when
@@ -329,7 +347,7 @@
         knockMessage.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         conversation.lastServerTimeStamp = knockMessage.serverTimestamp;
         
-        [conversation fetchUnreadMessages];
+        [conversation didUpdateConversationWhileFetchingUnreadMessages];
         XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorKnock);
         
         // when

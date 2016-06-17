@@ -201,6 +201,8 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce;
 - (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce;
 
+- (void)appendNewConversationSystemMessageIfNeeded;
+
 - (void)deleteOlderMessages;
 
 @end

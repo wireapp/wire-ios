@@ -495,7 +495,7 @@ class ConversationObserverTokenTests : ZMBaseManagedObjectTest {
             message.serverTimestamp = conversation.lastReadServerTimeStamp.dateByAddingTimeInterval(10)
             self.syncMOC.saveOrRollback()
             
-            conversation.fetchUnreadMessages()
+            conversation.didUpdateConversationWhileFetchingUnreadMessages()
             self.syncMOC.saveOrRollback()
             XCTAssertEqual(conversation.estimatedUnreadCount, 1)
             

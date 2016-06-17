@@ -52,6 +52,7 @@
 + (instancetype)registrationUserWithEmail:(NSString *)email password:(NSString *)password
 {
     ZMCompleteRegistrationUser *user = [[ZMCompleteRegistrationUser alloc] init];
+    [ZMEmailAddressValidator validateValue:&email error:nil];
     user.emailAddress = email;
     user.password = password;
     return user;
@@ -69,6 +70,7 @@
 + (instancetype)registrationUserWithEmail:(NSString *)email password:(NSString *)password invitationCode:(NSString *)invitationCode
 {
     ZMCompleteRegistrationUser *user = [[ZMCompleteRegistrationUser alloc] init];
+    [ZMEmailAddressValidator validateValue:&email error:nil];
     user.emailAddress = email;
     user.password = password;
     user.invitationCode = invitationCode;

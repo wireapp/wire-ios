@@ -23,6 +23,7 @@
 		BFD2E79A1CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD2E7981CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m */; };
 		CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */; };
 		CEE525AA1CCA4C97001D06F9 /* NSString+RandomString.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE525A91CCA4C97001D06F9 /* NSString+RandomString.m */; };
+		F91DF5AF1D0969BE009D81F1 /* ZMConversation+OTR.m in Sources */ = {isa = PBXBuildFile; fileRef = F91DF5AD1D0969BE009D81F1 /* ZMConversation+OTR.m */; };
 		F9331C521CB3BC6800139ECC /* CryptoBoxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9331C501CB3BC6800139ECC /* CryptoBoxTests.swift */; };
 		F9331C561CB3BCF300139ECC /* OtrBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9331C541CB3BCDA00139ECC /* OtrBaseTest.swift */; };
 		F9331C581CB3BE5300139ECC /* ZMConversationTests+OTR.m in Sources */ = {isa = PBXBuildFile; fileRef = F9331C571CB3BE5300139ECC /* ZMConversationTests+OTR.m */; };
@@ -248,7 +249,6 @@
 		F9C9A6741CAD78160039E10C /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6711CAD78160039E10C /* PINCache.framework */; };
 		F9C9A6751CAD78160039E10C /* zimages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6721CAD78160039E10C /* zimages.framework */; };
 		F9C9A6761CAD78160039E10C /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6731CAD78160039E10C /* ZMUtilities.framework */; };
-		F9C9A6901CAD7A790039E10C /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = F9C9A67B1CAD7A790039E10C /* .gitignore */; };
 		F9C9A6A81CAD7C7F0039E10C /* NSError+ZMConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A11CAD7C7F0039E10C /* NSError+ZMConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A6A91CAD7C7F0039E10C /* ZMBareUser.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A21CAD7C7F0039E10C /* ZMBareUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A6AA1CAD7C7F0039E10C /* ZMConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A31CAD7C7F0039E10C /* ZMConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -336,6 +336,7 @@
 		CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
 		CEE525A81CCA4C97001D06F9 /* NSString+RandomString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+RandomString.h"; sourceTree = "<group>"; };
 		CEE525A91CCA4C97001D06F9 /* NSString+RandomString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+RandomString.m"; sourceTree = "<group>"; };
+		F91DF5AD1D0969BE009D81F1 /* ZMConversation+OTR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMConversation+OTR.m"; sourceTree = "<group>"; };
 		F9331C501CB3BC6800139ECC /* CryptoBoxTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBoxTests.swift; sourceTree = "<group>"; };
 		F9331C541CB3BCDA00139ECC /* OtrBaseTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtrBaseTest.swift; sourceTree = "<group>"; };
 		F9331C571CB3BE5300139ECC /* ZMConversationTests+OTR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMConversationTests+OTR.m"; sourceTree = "<group>"; };
@@ -767,18 +768,19 @@
 			children = (
 				F9B71F0E1CB264EF001DB03F /* NSError+ZMConversation.m */,
 				F9B71F0F1CB264EF001DB03F /* NSError+ZMConversationInternal.h */,
-				F9B71F101CB264EF001DB03F /* ZMConversation.m */,
 				F9B71F111CB264EF001DB03F /* ZMConversation+Internal.h */,
+				F9B71F171CB264EF001DB03F /* ZMConversation+Trace.h */,
+				F9B71F101CB264EF001DB03F /* ZMConversation.m */,
 				F9B71F121CB264EF001DB03F /* ZMConversation+OTR.h */,
+				F91DF5AD1D0969BE009D81F1 /* ZMConversation+OTR.m */,
 				F9B71F151CB264EF001DB03F /* ZMConversation+Timestamps.h */,
 				F9B71F161CB264EF001DB03F /* ZMConversation+Timestamps.m */,
-				F9B71F171CB264EF001DB03F /* ZMConversation+Trace.h */,
 				F9B71F181CB264EF001DB03F /* ZMConversation+Transport.h */,
 				F9B71F191CB264EF001DB03F /* ZMConversation+Transport.m */,
 				F9B71F1A1CB264EF001DB03F /* ZMConversation+UnreadCount.h */,
 				F9B71F1B1CB264EF001DB03F /* ZMConversation+UnreadCount.m */,
-				F9B71F1C1CB264EF001DB03F /* ZMConversationMessageWindow.m */,
 				F9B71F1D1CB264EF001DB03F /* ZMConversationMessageWindow+Internal.h */,
+				F9B71F1C1CB264EF001DB03F /* ZMConversationMessageWindow.m */,
 				F9B71F1E1CB264EF001DB03F /* ZMConversationSecurityLevel.h */,
 				F9B71F1F1CB264EF001DB03F /* ZMConversationSecurityLevel.m */,
 			);
@@ -1594,7 +1596,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9C9A82C1CAEDA330039E10C /* Info.plist in Resources */,
-				F9C9A6901CAD7A790039E10C /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1689,6 +1690,7 @@
 				F9B71F391CB2718A001DB03F /* ZMRegistrationUser.m in Sources */,
 				F9B71F201CB264EF001DB03F /* NSError+ZMConversation.m in Sources */,
 				F9B71F311CB264EF001DB03F /* ZMConversationSecurityLevel.m in Sources */,
+				F91DF5AF1D0969BE009D81F1 /* ZMConversation+OTR.m in Sources */,
 				546D3DE61CE5D0B100A6047F /* MimeType.swift in Sources */,
 				F9A706831CAEE01D00C2F5FE /* ZMOTRMessage.m in Sources */,
 				F9A706531CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m in Sources */,
@@ -1970,6 +1972,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 4;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -1995,6 +1998,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 4;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",

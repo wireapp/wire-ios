@@ -33,8 +33,9 @@
 @property (nonatomic, readonly) ZMConversationListIndicator unreadListIndicator;
 + (NSSet *)keyPathsForValuesAffectingUnreadListIndicator;
 
-/// call [fetchUnreadMessages] in awakeFromFetch to fetch the timeStamps of messages that are currently unread
-- (void)fetchUnreadMessages;
+/// call [didUpdateConversationWhileFetchingUnreadMessages] in awakeFromFetch to fetch the timeStamps of messages that are currently unread
+/// returns YES if there are changes that require a save, NO otherwise
+- (BOOL)didUpdateConversationWhileFetchingUnreadMessages;
 
 /// call [insertTimeStamp:] when inserting a message
 /// make sure to check if the sender is not the selfUser before doing so

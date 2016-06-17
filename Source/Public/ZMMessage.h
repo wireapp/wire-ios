@@ -66,7 +66,10 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeConversationIsSecure,
     ZMSystemMessageTypePotentialGap,
     ZMSystemMessageTypeDecryptionFailed,
-    ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged
+    ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged,
+    ZMSystemMessageTypeNewConversation,
+    ZMSystemMessageTypeReactivatedDevice,
+    ZMSystemMessageTypeUsingNewDevice
 };
 
 

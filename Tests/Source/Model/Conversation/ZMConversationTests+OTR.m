@@ -262,7 +262,7 @@
         
         // then
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
-        XCTAssertEqual(conversation.messages.count, 1lu);
+        XCTAssertEqual(conversation.messages.count, 2lu);
         ZMMessage *message = conversation.messages.lastObject;
         XCTAssertNotNil(message);
         XCTAssertTrue([message isKindOfClass:[ZMSystemMessage class]]);
@@ -286,7 +286,9 @@
         
         // then
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelNotSecure);
-        XCTAssertEqual(conversation.messages.count, 0lu);
+        XCTAssertEqual(conversation.messages.count, 1lu);
+        ZMSystemMessage *message = conversation.messages.lastObject;
+        XCTAssertNotEqual(message.systemMessageType, ZMSystemMessageTypeConversationIsSecure);
     }];
     
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -416,6 +418,60 @@
     // then
     ZMSystemMessage *lastMessage = conversation.messages.lastObject;
     XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageTypeDecryptionFailed);
+}
+
+- (void)testThatContinuedUsingDeviceSystemMessageAppendedAfterLastMessage
+{
+    // given
+    [self createSelfClient];
+    [self.uiMOC refreshAllObjects];
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    conversation.lastModifiedDate = [NSDate new];
+    ZMMessage *previousMessage = [conversation appendMessageWithText:@"test"];
+    
+    // when
+    [conversation appendContinuedUsingThisDeviceMessage];
+    
+    // then
+    ZMSystemMessage *message = conversation.messages.lastObject;
+    XCTAssertNotNil(message.serverTimestamp);
+    XCTAssertLessThan([previousMessage.serverTimestamp timeIntervalSince1970], [message.serverTimestamp timeIntervalSince1970]);
+    XCTAssertEqualWithAccuracy([[NSDate date] timeIntervalSince1970], [message.serverTimestamp timeIntervalSince1970], 1.0);
+
+}
+
+@end
+
+
+@implementation ZMConversationTests (HotFix)
+
+- (void)testThatItUpdatesFirstNewClientSystemMessage
+{
+    // given
+    [self createSelfClient];
+    [self.uiMOC refreshAllObjects];
+    
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    UserClient *selfClient = selfUser.selfClient;
+    XCTAssertNotNil(selfClient);
+    
+    ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conv.conversationType = ZMConversationTypeOneOnOne;
+    
+    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    systemMessage.visibleInConversation = conv;
+    systemMessage.systemMessageType = ZMSystemMessageTypeNewClient;
+    systemMessage.sender = selfUser;
+    systemMessage.clients = [NSSet setWithObject:selfClient];
+    systemMessage.serverTimestamp = [NSDate date];
+    
+    // when
+    [conv replaceNewClientMessageIfNeededWithNewDeviceMesssage];
+    
+    // then
+    XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageTypeUsingNewDevice);
 }
 
 @end
