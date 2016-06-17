@@ -152,12 +152,82 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
         XCTAssertEqual(sut.status, PingBackStatus.Pinging)
         
         // when
-        let notificationIDToPing = sut.nextNotificationID()
+        let notificationIDToPing = sut.nextNotificationEventsWithID()?.identifier
         
         // then
         XCTAssertEqual(notificationID, notificationIDToPing)
-        XCTAssertNil(sut.nextNotificationID())
+        XCTAssertNil(sut.nextNotificationEventsWithID())
         XCTAssertFalse(sut.hasNotificationIDs)
+    }
+    
+    func testThatItReAddsTheNotificationIDWhenReceiving_TryAgainLater() {
+        // given
+        XCTAssertFalse(sut.hasNotificationIDs)
+        let notificationID = NSUUID.createUUID()
+        let eventsWithID = createEventsWithID(notificationID)
+        
+        // when
+        var callcount = 0
+        let handler: (ZMPushPayloadResult, [ZMUpdateEvent]) -> Void = { _ in callcount += 1 }
+        sut.didReceiveVoIPNotification(eventsWithID, handler: handler)
+        
+        // then
+        XCTAssertTrue(sut.hasNotificationIDs)
+        XCTAssertEqual(sut.status, PingBackStatus.Pinging)
+        
+        // when
+        guard let notificationEventsWithIDToPing = sut.nextNotificationEventsWithID() else { return XCTFail("No events with identifier") }
+        
+        // then
+        XCTAssertEqual(notificationID, notificationEventsWithIDToPing.identifier)
+        XCTAssertNil(sut.nextNotificationEventsWithID())
+        XCTAssertFalse(sut.hasNotificationIDs)
+        
+        // when
+        sut.didPerfomPingBackRequest(notificationEventsWithIDToPing, responseStatus: .TryAgainLater)
+        
+        // then
+        XCTAssertTrue(sut.hasNotificationIDs)
+        XCTAssertEqual(sut.status, PingBackStatus.Pinging)
+        
+        let nextEventsWithID = sut.nextNotificationEventsWithID()
+        
+        // then
+        XCTAssertEqual(notificationID, nextEventsWithID?.identifier)
+        
+        // when
+        sut.didPerfomPingBackRequest(notificationEventsWithIDToPing, responseStatus: .Success)
+        XCTAssertEqual(callcount, 1)
+        XCTAssertNil(sut.nextNotificationEventsWithID())
+    }
+    
+    func testThatItRemovesTheIDWhenThePingBackFailed() {
+        // given
+        XCTAssertFalse(sut.hasNotificationIDs)
+        let notificationID = NSUUID.createUUID()
+        let eventsWithID = createEventsWithID(notificationID)
+        
+        // when
+        sut.didReceiveVoIPNotification(eventsWithID)
+        
+        // then
+        XCTAssertTrue(sut.hasNotificationIDs)
+        XCTAssertEqual(sut.status, PingBackStatus.Pinging)
+        
+        // when
+        guard let notificationEventsWithIDToPing = sut.nextNotificationEventsWithID() else { return XCTFail("No events with identifier") }
+        
+        // then
+        XCTAssertEqual(notificationID, notificationEventsWithIDToPing.identifier)
+        XCTAssertNil(sut.nextNotificationEventsWithID())
+        XCTAssertFalse(sut.hasNotificationIDs)
+        
+        // when
+        sut.didPerfomPingBackRequest(notificationEventsWithIDToPing, responseStatus: .PermanentError)
+        
+        // then
+        XCTAssertFalse(sut.hasNotificationIDs)
+        XCTAssertEqual(sut.status, PingBackStatus.Done)
     }
     
     func testThatItPostsNewRequestsAvailableNotificationWhenAddingANotificationID() {
@@ -179,48 +249,89 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
         }
         
         // when
-        _ = sut.nextNotificationID()
-        sut.didPerfomPingBackRequest(eventsWithID.identifier, success: true)
+        _ = sut.nextNotificationEventsWithID()
+        sut.didPerfomPingBackRequest(eventsWithID, responseStatus: .Success)
         
         // then
         XCTAssertEqual(notificationDispatcher.callCount, 1)
     }
     
-    func testThatItDoesNotNotifyTheLocalNotificationDispatcherIfThePingBackFailed() {
+    func testThatItDoesNotNotifyTheLocalNotificationDispatcherIfThePingBackFailed_TemporaryError() {
         
         // given
         let eventsWithID = createEventsWithID()
         sut.didReceiveVoIPNotification(eventsWithID)
         
         // when
-        _ = sut.nextNotificationID()
-        sut.didPerfomPingBackRequest(eventsWithID.identifier, success: false)
+        _ = sut.nextNotificationEventsWithID()
+        sut.didPerfomPingBackRequest(eventsWithID, responseStatus: .TemporaryError)
         
         // then
         XCTAssertEqual(notificationDispatcher.callCount, 0)
     }
     
+    func testThatItDoesNotNotifyTheLocalNotificationDispatcherIfThePingBackFailed_TryAgainLater() {
+        
+        // given
+        let eventsWithID = createEventsWithID()
+        sut.didReceiveVoIPNotification(eventsWithID)
+        
+        // when
+        _ = sut.nextNotificationEventsWithID()
+        sut.didPerfomPingBackRequest(eventsWithID, responseStatus: .TryAgainLater)
+        
+        // then
+        XCTAssertEqual(notificationDispatcher.callCount, 0)
+    }
+    
+    func testThatItDoesNotCallTheHandlerAfterPingBackRequestCompletedUnsuccessfully_TryAgain_Until_Sucess() {
+        // given
+        let eventsWithID = createEventsWithID()
+        let expectation = expectationWithDescription("It doesn't call the completion handler")
+        
+        // expect
+        var callcount = 0
+        sut.didReceiveVoIPNotification(eventsWithID) {
+            callcount += 1
+            XCTAssertEqual($0.0, ZMPushPayloadResult.Success)
+            expectation.fulfill()
+        }
+        
+        // when
+        sut.didPerfomPingBackRequest(eventsWithID, responseStatus: .TryAgainLater)
+        
+        // then
+        XCTAssertEqual(callcount, 0)
+        
+        // when
+        sut.didPerfomPingBackRequest(eventsWithID, responseStatus: .Success)
+        XCTAssertTrue(waitForCustomExpectationsWithTimeout(0.5))
+        
+        // then
+        XCTAssertEqual(callcount, 1)
+    }
+    
     func testThatItCallsTheHandlerAfterPingBackRequestCompletedSuccessfully() {
-        checkThatItCallsTheHandlerAfterPingBackRequestCompleted(true)
+        checkThatItCallsTheHandlerAfterPingBackRequestCompleted(.Success)
     }
     
-    func testThatItCallsTheHandlerAfterPingBackRequestCompletedUnsuccessfully() {
-        checkThatItCallsTheHandlerAfterPingBackRequestCompleted(false)
+    func testThatItCallsTheHandlerAfterPingBackRequestCompletedUnsuccessfully_Permanent() {
+        checkThatItCallsTheHandlerAfterPingBackRequestCompleted(.PermanentError)
     }
     
-    func checkThatItCallsTheHandlerAfterPingBackRequestCompleted(successfully: Bool) {
+    func checkThatItCallsTheHandlerAfterPingBackRequestCompleted(status: ZMTransportResponseStatus) {
         // given
         let eventsWithID = createEventsWithID()
         let expectation = expectationWithDescription("It calls the completion handler")
         
         // expect
-        sut.didReceiveVoIPNotification(eventsWithID)  { result in
+        sut.didReceiveVoIPNotification(eventsWithID) { result in
             XCTAssertEqual(result.0, ZMPushPayloadResult.Success)
             expectation.fulfill()
         }
         
         // when
-        sut.didPerfomPingBackRequest(eventsWithID.identifier, success: successfully)
+        sut.didPerfomPingBackRequest(eventsWithID, responseStatus: status)
         
         // then
         XCTAssertTrue(waitForCustomExpectationsWithTimeout(0.5))
@@ -235,10 +346,10 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
         XCTAssertEqual(sut.status, PingBackStatus.Pinging)
         
         // when
-        _ = sut.nextNotificationID()
+        _ = sut.nextNotificationEventsWithID()
         XCTAssertFalse(sut.hasNotificationIDs)
 
-        sut.didPerfomPingBackRequest(eventsWithID.identifier, success: true)
+        sut.didPerfomPingBackRequest(eventsWithID, responseStatus: .Success)
         
         // then
         XCTAssertFalse(sut.hasNotificationIDs)
@@ -248,21 +359,20 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
     func testThatItRemovesEventsFromIdentifierEventsMappingAfterSuccesfullyPerformingPingBack() {
         // given
         let eventsWithIDs = createEventsWithID()
-        let expectedIdentifier = eventsWithIDs.identifier
 
         // when
         sut.didReceiveVoIPNotification(eventsWithIDs)
-        guard let currentEvents = sut.eventsWithHandlerByNotificationID[expectedIdentifier]?.events else { return XCTFail() }
+        guard let currentEvents = sut.eventsWithHandlerByNotificationID[eventsWithIDs.identifier]?.events else { return XCTFail() }
         
         // then
         XCTAssertTrue(sut.hasNotificationIDs)
         XCTAssertEqual(currentEvents, eventsWithIDs.events!)
         
         // when
-        sut.didPerfomPingBackRequest(expectedIdentifier, success: true)
+        sut.didPerfomPingBackRequest(eventsWithIDs, responseStatus: .Success)
         
         // then
-        XCTAssertNil(sut.eventsWithHandlerByNotificationID[expectedIdentifier])
+        XCTAssertNil(sut.eventsWithHandlerByNotificationID[eventsWithIDs.identifier])
     }
     
     func testThatItRemovesEventsWithHandlerFromIdentifierEventsMappingAfterFailingToPerformPingBack() {
@@ -279,7 +389,7 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
         XCTAssertEqual(currentEventsWithHandler.events!, eventsWithIDs.events!)
         
         // when
-        sut.didPerfomPingBackRequest(expectedIdentifier, success: false)
+        sut.didPerfomPingBackRequest(eventsWithIDs, responseStatus: .TemporaryError)
         
         // then
         XCTAssertNil(sut.eventsWithHandlerByNotificationID[expectedIdentifier])
@@ -302,8 +412,8 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
         XCTAssertEqual(currentEvents, firstEventsWithIDs.events!)
         
         // when
-        sut.didPerfomPingBackRequest(secondEventsWithIDs.identifier, success: true)
-        sut.didPerfomPingBackRequest(thirdEventsWithIDs.identifier, success: false)
+        sut.didPerfomPingBackRequest(secondEventsWithIDs, responseStatus: .Success)
+        sut.didPerfomPingBackRequest(thirdEventsWithIDs, responseStatus: .TemporaryError)
         
         // then
         guard let finalEvents = sut.eventsWithHandlerByNotificationID[expectedIdentifier]?.events else { return XCTFail() }
@@ -347,9 +457,9 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
         XCTAssertNotNil(sut.backgroundActivity)
         
         // when
-        let nextID = sut.nextNotificationID()!
-        XCTAssertEqual(nextID, eventsWithID.identifier)
-        sut.didPerfomPingBackRequest(nextID, success: successfully)
+        let nextEventsWithID = sut.nextNotificationEventsWithID()!
+        XCTAssertEqual(nextEventsWithID.identifier, eventsWithID.identifier)
+        sut.didPerfomPingBackRequest(nextEventsWithID, responseStatus: successfully ? .Success : .TemporaryError)
         
         // then
         XCTAssertNil(sut.backgroundActivity)
@@ -366,13 +476,13 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
         XCTAssertNotNil(sut.backgroundActivity)
         
         // when
-        let nextNoticeID = sut.nextNoticeNotificationID()!
+        let nextNoticeEventsWithID = sut.nextNoticeNotificationEventsWithID()!
         
-        sut.didFetchNoticeNotification(nextNoticeID, success: fetchSuccess, events:[])
+        sut.didFetchNoticeNotification(nextNoticeEventsWithID, responseStatus: fetchSuccess ? .Success : .TemporaryError, events:[])
         XCTAssertEqual(sut.status, PingBackStatus.Done)
         
         // and when
-        let nextID = sut.nextNotificationID()
+        let nextID = sut.nextNotificationEventsWithID()
         XCTAssertNil(nextID)
         
         // then
@@ -389,15 +499,15 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
     
 
     func simulateFetchNoticeAndPingback() {
-        let nextNoticeID = sut.nextNoticeNotificationID()!
-        sut.didFetchNoticeNotification(nextNoticeID, success: true, events:[])
+        let nextNoticeEventsWithID = sut.nextNoticeNotificationEventsWithID()!
+        sut.didFetchNoticeNotification(nextNoticeEventsWithID, responseStatus: .Success, events:[])
         
     }
     
     func simulatePingBack() -> NSUUID {
-        let nextID = sut.nextNotificationID()!
-        sut.didPerfomPingBackRequest(nextID, success: true)
-        return nextID
+        let nextEventsWithID = sut.nextNotificationEventsWithID()!
+        sut.didPerfomPingBackRequest(nextEventsWithID, responseStatus: .Success)
+        return nextEventsWithID.identifier
     }
     
     func checkThatItUpdatesStatusToFetchingWhenFirstAndNextNotificationAreNotice(nextIsNotice: Bool) {

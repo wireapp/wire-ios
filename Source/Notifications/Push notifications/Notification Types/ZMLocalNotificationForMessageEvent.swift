@@ -222,7 +222,7 @@ public class ZMLocalNotificationForKnockMessage : ZMLocalNotificationForPostInCo
     }
 
     override var soundName : String {
-        return ZMLocalNotificationPingSoundName + ".caf"
+        return ZMLocalNotificationPingSoundName()
     }
    
 }

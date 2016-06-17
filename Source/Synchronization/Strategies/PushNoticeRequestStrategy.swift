@@ -73,10 +73,11 @@ extension PushNoticeRequestStrategy: ZMSingleRequestTranscoder {
     
     public func requestForSingleRequestSync(sync: ZMSingleRequestSync!) -> ZMTransportRequest! {
         guard sync == pingBackSync,
-              let nextNotificationID = pingBackStatus?.nextNoticeNotificationID(),
+              let nextEventsWithID = pingBackStatus?.nextNoticeNotificationEventsWithID(),
               let selfClientID = ZMUser.selfUserInContext(self.managedObjectContext).selfClient()?.remoteIdentifier
         else { return nil }
         
+        let nextNotificationID = nextEventsWithID.identifier
         let basePath = "/notifications/\(nextNotificationID.transportString())"
         let clientComponent = NSURLQueryItem(name: "client", value: selfClientID)
         let fallbackComponent = NSURLQueryItem(name: "cancel_fallback", value: "true")
@@ -84,14 +85,15 @@ extension PushNoticeRequestStrategy: ZMSingleRequestTranscoder {
         path!.queryItems = [clientComponent, fallbackComponent]
         
         let request = ZMTransportRequest(path: path!.string, method: .MethodGET, payload: nil)
-        
+        request.forceToVoipSession()
+
         let completion = ZMCompletionHandler(onGroupQueue: managedObjectContext)  { [weak self] response in
             let success = response.result == .Success
             var events : [ZMUpdateEvent] = []
             if success {
                 events = ZMUpdateEvent.eventsArrayFromTransportData(response.payload, source: ZMUpdateEventSource.PushNotification) ?? []
             }
-            self?.pingBackStatus?.didFetchNoticeNotification(nextNotificationID, success: success, events: events)
+            self?.pingBackStatus?.didFetchNoticeNotification(nextEventsWithID, responseStatus: response.result, events: events)
         }
         
         request.addCompletionHandler(completion)

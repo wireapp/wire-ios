@@ -17,21 +17,11 @@
 // 
 
 
-@import Foundation;
-@import CoreData;
-@protocol ZMObjectStrategyDirectory;
-#import "ZMObjectSyncStrategy.h"
-@class ZMBadge;
-@class ZMAuthenticationStatus;
-@class ZMAccountStatus;
 
-@interface ZMConversationTranscoder : ZMObjectSyncStrategy <ZMObjectStrategy>
+#include "osx.xcconfig"
+#include "tests.xcconfig"
+#include "swift.xcconfig"
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                        authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
-                               accountStatus:(ZMAccountStatus *)accountStatus
-                                syncStrategy:(ZMSyncStrategy *)syncStrategy;
-
-@property (nonatomic) NSUInteger conversationPageSize;
-
-@end
+//Linking
+//
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited) $(PROJECT_DIR)/Carthage/Build/Mac

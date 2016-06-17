@@ -41,37 +41,44 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 class MockBackgroundAPNSPingBackStatus: BackgroundAPNSPingBackStatus {
     
     var mockNextNotificationID: NSUUID?
+    var mockNextNotificationEvents: [ZMUpdateEvent] = []
+    
     var mockStatus : PingBackStatus = .Done {
         didSet {
             status = mockStatus
         }
     }
-    var didPerformPingBackVerification: ((NSUUID, Bool) -> Void)?
+    var didPerformPingBackVerification: ((EventsWithIdentifier, ZMTransportResponseStatus) -> Void)?
     
     override var hasNotificationIDs: Bool {
         return nil != mockNextNotificationID
     }
     
-    override func nextNotificationID() -> NSUUID? {
-        return mockNextNotificationID
+
+    override func nextNotificationEventsWithID() -> EventsWithIdentifier? {
+        return mockNextNotificationID.map {
+            EventsWithIdentifier(events: mockNextNotificationEvents, identifier: $0, isNotice: false)
+        }
     }
 
-    override func didPerfomPingBackRequest(notificationID: NSUUID, success: Bool) {
-        didPerformPingBackVerification?(notificationID, success)
+    override func didPerfomPingBackRequest(eventsWithID: EventsWithIdentifier, responseStatus: ZMTransportResponseStatus) {
+        didPerformPingBackVerification?(eventsWithID, responseStatus)
     }
     
-    var didFetchNoticeNotification: ((NSUUID, Bool, [ZMUpdateEvent]) -> Void)?
+    var didFetchNoticeNotification: ((EventsWithIdentifier, ZMTransportResponseStatus, [ZMUpdateEvent]) -> Void)?
     
     override var hasNoticeNotificationIDs : Bool {
         return nil != mockNextNotificationID
     }
     
-    override func nextNoticeNotificationID() -> NSUUID? {
-        return mockNextNotificationID
+    override func nextNoticeNotificationEventsWithID() -> EventsWithIdentifier? {
+        return mockNextNotificationID.map {
+            EventsWithIdentifier(events: mockNextNotificationEvents, identifier: $0, isNotice: true)
+        }
     }
     
-    override func didFetchNoticeNotification(notificationID: NSUUID, success: Bool, events: [ZMUpdateEvent]) {
-        didFetchNoticeNotification?(notificationID, success, events)
+    override func didFetchNoticeNotification(eventsWithID: EventsWithIdentifier, responseStatus: ZMTransportResponseStatus, events: [ZMUpdateEvent]) {
+        didFetchNoticeNotification?(eventsWithID, responseStatus, events)
     }
 }
 
@@ -115,6 +122,7 @@ class PingBackRequestStrategyTests: MessagingTest {
         
         // then
         XCTAssertEqual(request?.method, .MethodPOST)
+        XCTAssertTrue(request!.shouldUseVoipSession)
         XCTAssertEqual(request?.path, "/push/fallback/\(notificationID.transportString())/cancel")
         XCTAssertNil(request?.payload)
     }
@@ -162,15 +170,15 @@ class PingBackRequestStrategyTests: MessagingTest {
         // given
         let nextUUID = NSUUID.createUUID()
         var didPerformPingBackCalled = false
-        var receivedUUID: NSUUID?
-        var receivedSuccess = false
+        var receivedEventsWithID: EventsWithIdentifier?
+        var receivedStatus: ZMTransportResponseStatus?
         
         pingBackStatus.mockNextNotificationID = nextUUID
         pingBackStatus.mockStatus = .Pinging
-        pingBackStatus.didPerformPingBackVerification = { uuid, success in
+        pingBackStatus.didPerformPingBackVerification = { eventsWithID, status in
             didPerformPingBackCalled = true
-            receivedSuccess = success
-            receivedUUID = uuid
+            receivedStatus = status
+            receivedEventsWithID = eventsWithID
         }
         
         XCTAssertTrue(pingBackStatus.hasNotificationIDs)
@@ -183,36 +191,74 @@ class PingBackRequestStrategyTests: MessagingTest {
         
         // then
         XCTAssertTrue(didPerformPingBackCalled)
-        XCTAssertTrue(receivedSuccess)
-        XCTAssertEqual(receivedUUID, nextUUID)
+        XCTAssertEqual(receivedStatus, .Success)
+        XCTAssertEqual(receivedEventsWithID?.identifier, nextUUID)
     }
     
-    func testThatItCallsDidPerformPingBackRequestOnThePingBackStatusAfterFailingPerformingThePingBack() {
+    func testThatItCallsDidPerformPingBackRequestOnThePingBackStatusAfterFailingPerformingThePingBack_401_ReenqueuesTheEventsAndID() {
         // given
         let nextUUID = NSUUID.createUUID()
-        var didPerformPingBackCalled = false
-        var receivedUUID: NSUUID?
-        var receivedSuccess = false
+        var didPerformPingBackCallCount = 0
+        var receivedEventsWithID: EventsWithIdentifier?
+        var receivedStatus: ZMTransportResponseStatus?
         
         pingBackStatus.mockNextNotificationID = nextUUID
         pingBackStatus.mockStatus = .Pinging
-        pingBackStatus.didPerformPingBackVerification = { uuid, success in
-            didPerformPingBackCalled = true
-            receivedSuccess = success
-            receivedUUID = uuid
+        pingBackStatus.didPerformPingBackVerification = { eventsWithID, status in
+            didPerformPingBackCallCount += 1
+            receivedStatus = status
+            receivedEventsWithID = eventsWithID
         }
         
         XCTAssertTrue(pingBackStatus.hasNotificationIDs)
         
         // when
-        let response = ZMTransportResponse(payload: nil, HTTPstatus: 401, transportSessionError: nil)
+        let request = sut.nextRequest()
+        request?.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 401, transportSessionError: .tryAgainLaterError()))
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertEqual(didPerformPingBackCallCount, 1)
+        XCTAssertEqual(receivedStatus, .TryAgainLater)
+        XCTAssertEqual(receivedEventsWithID?.identifier, nextUUID)
+        
+        XCTAssertTrue(pingBackStatus.hasNotificationIDs)
+        let nextRequest = sut.nextRequest()
+        XCTAssertNotNil(nextRequest)
+        nextRequest?.completeWithResponse(ZMTransportResponse(payload: nil, HTTPstatus: 200, transportSessionError: nil))
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        XCTAssertEqual(didPerformPingBackCallCount, 2)
+        XCTAssertEqual(receivedStatus, .Success)
+        XCTAssertEqual(receivedEventsWithID?.identifier, nextUUID)
+    }
+    
+    func testThatItCallsDidPerformPingBackRequestOnThePingBackStatusAfterFailingPerformingThePingBack_400() {
+        // given
+        let nextUUID = NSUUID.createUUID()
+        var didPerformPingBackCalled = false
+        var receivedEventsWithID: EventsWithIdentifier?
+        var receivedStatus: ZMTransportResponseStatus?
+        
+        pingBackStatus.mockNextNotificationID = nextUUID
+        pingBackStatus.mockStatus = .Pinging
+        pingBackStatus.didPerformPingBackVerification = { eventsWithID, status in
+            didPerformPingBackCalled = true
+            receivedStatus = status
+            receivedEventsWithID = eventsWithID
+        }
+        
+        XCTAssertTrue(pingBackStatus.hasNotificationIDs)
+        
+        // when
+        let response = ZMTransportResponse(payload: nil, HTTPstatus: 400, transportSessionError: nil)
         let request = sut.nextRequest()
         request?.completeWithResponse(response)
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
         XCTAssertTrue(didPerformPingBackCalled)
-        XCTAssertFalse(receivedSuccess)
-        XCTAssertEqual(receivedUUID, nextUUID)
+        XCTAssertEqual(receivedStatus, .PermanentError)
+        XCTAssertEqual(receivedEventsWithID?.identifier, nextUUID)
     }
 }

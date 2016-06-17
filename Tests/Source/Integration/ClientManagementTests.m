@@ -138,6 +138,8 @@
 {
     // given
     XCTAssert([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:SelfUserEmail password:SelfUserPassword];
     [self insertTwoSelfClientsOnMockTransporSession];
 
@@ -151,7 +153,6 @@
     XCTAssertTrue(self.observer.finishedFetching);
     XCTAssertNil(self.observer.fetchError);
 
-    
     // when
     [self.userSession performChanges:^{
         [self.userSession deleteClients:@[fetchClients.firstObject] withCredentials:credentials];
@@ -184,9 +185,10 @@
     WaitForEverythingToBeDone();
     
     // then
-    XCTAssertEqual(observer.notifications.count, 1u);
-    UserChangeInfo *lastChangeInfo = observer.notifications.lastObject;
-    XCTAssertTrue(lastChangeInfo.clientsChanged);
+    
+    XCTAssertEqual(observer.notifications.count, 2u);
+    UserChangeInfo *firstChangeInfo = observer.notifications.firstObject;
+    XCTAssertTrue(firstChangeInfo.clientsChanged);
     XCTAssertEqual(selfUser.clients.count, 2u);
     NSSet *newClients = [selfUser.clients objectsPassingTest:^BOOL(UserClient *client, BOOL * __unused stop) {
         return [client.remoteIdentifier isEqualToString:mockClient.identifier];

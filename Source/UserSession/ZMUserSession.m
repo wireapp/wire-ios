@@ -90,6 +90,7 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ZMClientRegistrationStatus *clientRegistrationStatus;
 @property (nonatomic) ClientUpdateStatus *clientUpdateStatus;
 @property (nonatomic) BackgroundAPNSPingBackStatus *pingBackStatus;
+@property (nonatomic) ZMAccountStatus *accountStatus;
 
 @property (nonatomic) GiphyRequestsStatus *giphyRequestStatus;
 @property (nonatomic) BOOL isVersionBlacklisted;
@@ -232,6 +233,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                                 updateCredentialProvider:self.userProfileUpdateStatus
                                                                                                   cookie:cookie
                                                                               registrationStatusDelegate:self];
+        self.accountStatus = [[ZMAccountStatus alloc] initWithManagedObjectContext: syncManagedObjectContext cookieStorage: session.cookieStorage];
         
         self.giphyRequestStatus = [GiphyRequestsStatus new];
         
@@ -256,6 +258,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                        clientRegistrationStatus:self.clientRegistrationStatus
                                                                              clientUpdateStatus:self.clientUpdateStatus
                                                                              giphyRequestStatus:self.giphyRequestStatus
+                                                                                  accountStatus:self.accountStatus
                                                                    backgroundAPNSPingBackStatus:self.pingBackStatus
                                                                     localNotificationdispatcher:self.localNotificationDispatcher
                                                                                    mediaManager:mediaManager

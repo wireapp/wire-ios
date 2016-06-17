@@ -429,14 +429,10 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
 
     // when
     [self.userSession requestPhoneVerificationCodeForLogin:phone];
-    if(![self waitForCustomExpectationsWithTimeout:0.5]) {
-        XCTFail(@"Login code request not confirmed");
-        return;
-    }
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-    if(loginCodeRequestExpectation)
     
     // and when
     [self.userSession loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code]];

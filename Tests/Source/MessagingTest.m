@@ -157,6 +157,7 @@ static const int32_t Mersenne3 = 8191;
     self.searchMOC = [NSManagedObjectContext createSearchContext];
     [self.searchMOC addGroup:self.dispatchGroup];
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
+    self.mockTransportSession.cryptoboxLocation = [UserClientKeysStore otrDirectory];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }
 

@@ -41,6 +41,7 @@
 @class ZMClientRegistrationStatus;
 @class ClientUpdateStatus;
 @class BackgroundAPNSPingBackStatus;
+@class ZMAccountStatus;
 
 @interface ZMSyncStrategy : NSObject <ZMObjectStrategyDirectory, ZMUpdateEventConsumer>
 
@@ -49,6 +50,7 @@
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                           clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
                           giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
+                               accountStatus:(ZMAccountStatus *)accountStatus
                 backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                 mediaManager:(id<AVSMediaManager>)mediaManager
                          onDemandFlowManager:(ZMOnDemandFlowManager *)onDemandFlowManager

@@ -70,7 +70,10 @@ extension ClientMessageRequestFactory {
         guard let assetOriginalData = message.encryptedMessagePayloadForDataType(.Placeholder) where nil != message.filename else { return nil }
         let request = ZMTransportRequest(path: path, method: .MethodPOST, binaryData: assetOriginalData, type: protobufContentType, contentDisposition: nil)
         request.appendDebugInformation("Inserting file upload placeholder (Original)")
-        request.appendDebugInformation("\(message.dataSet)")
+        let genericMessages = message.dataSet.map { $0.genericMessage }
+        for g in genericMessages {
+            request.appendDebugInformation("GENERIC MESSAGE:\n\(g)\n")
+        }
         request.forceToBackgroundSession()
         return request
     }

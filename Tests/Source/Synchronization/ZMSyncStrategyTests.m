@@ -125,7 +125,7 @@
 
     self.conversationTranscoder = [OCMockObject mockForClass:ZMConversationTranscoder.class];
     [[[[self.conversationTranscoder expect] andReturn:self.conversationTranscoder] classMethod] alloc];
-    (void) [[[self.conversationTranscoder expect] andReturn:self.conversationTranscoder] initWithManagedObjectContext:self.syncMOC authenticationStatus:OCMOCK_ANY syncStrategy:OCMOCK_ANY];
+    (void) [[[self.conversationTranscoder expect] andReturn:self.conversationTranscoder] initWithManagedObjectContext:self.syncMOC authenticationStatus:OCMOCK_ANY accountStatus:OCMOCK_ANY syncStrategy:OCMOCK_ANY];
 
     id systemMessageTranscoder = [OCMockObject mockForClass:ZMSystemMessageTranscoder.class];
     [[[[systemMessageTranscoder expect] andReturn:systemMessageTranscoder] classMethod] alloc];
@@ -262,6 +262,7 @@
                                            clientRegistrationStatus:self.clientRegistrationStatus
                                                  clientUpdateStatus:self.clientUpdateStatus
                                                  giphyRequestStatus:nil
+                                                      accountStatus:nil
                                        backgroundAPNSPingBackStatus:nil
                                                        mediaManager:mediaManager
                                                 onDemandFlowManager:nil

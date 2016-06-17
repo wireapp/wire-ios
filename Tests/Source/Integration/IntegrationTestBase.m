@@ -22,6 +22,7 @@
 @import ZMCDataModel;
 
 #import "IntegrationTestBase.h"
+#import "ZMHotfix.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMTestNotifications.h"
 #import "ZMSearchDirectory.h"
@@ -83,6 +84,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     [super setUp];
     self.mockObjectIDToRemoteID = [NSMutableDictionary dictionary];
     self.mockFlowManager = self.mockTransportSession.mockFlowManager;
+    self.mockTransportSession.cryptoboxLocation = [UserClientKeysStore otrDirectory];
 
     ZMFlowSyncInternalFlowManagerOverride = self.mockFlowManager;
     
@@ -343,8 +345,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
 
 - (void)disableHotfixes
 {
-    NSString *currentVersionString = [[NSBundle bundleForClass:ZMUserSession.class].infoDictionary objectForKey:@"CFBundleShortVersionString"];
-    [self.syncMOC setPersistentStoreMetadata:currentVersionString forKey:@"lastSavedVersion"];
+    [self.syncMOC setPersistentStoreMetadata:@(YES) forKey:ZMSkipHotfix];
 }
 
 - (BOOL)loginAndWaitForSyncToBeCompleteWithEmail:(NSString *)email
@@ -360,7 +361,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
               shouldIgnoreAuthenticationFailures: (BOOL)shouldIgnoreAuthenticationFailures;
 {
     BOOL synchronized = [self logInWithEmail:email password:password shouldIgnoreAuthenticationFailures:shouldIgnoreAuthenticationFailures];
-    XCTAssertTrue(synchronized);
+    
     
     synchronized = synchronized && [self waitForCustomExpectationsWithTimeout:timeout];
     
@@ -593,6 +594,15 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     return user;
 }
 
+- (void)prefetchRemoteClientByInsertingMessageInConversation:(MockConversation *)conversation;
+{
+    ZMConversation *realConversation = [self conversationForMockConversation:conversation];
+    [self.userSession performChanges:^{
+        [realConversation appendMessageWithText:@"hum, t'es sûr?"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
 - (MockUserClient *)remotelyRegisterClientForUser:(MockUser *)mockUser preKeys:(NSArray *)preKeys lastPreKey:(CBPreKey *)lastPreKey
 {
     __block MockUserClient *remoteUserClient;
@@ -624,7 +634,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     if (isSelfClient && mockUser.clients.count != 0) {
         NSString *selfClientID = [self.syncMOC persistentStoreMetadataForKey:ZMPersistedClientIdKey];
         remoteUserClient = [mockUser.clients.allObjects firstObjectMatchingWithBlock:^BOOL(MockUserClient *obj) {
-            return [obj.identifier isEqualToString:selfClientID];
+            return ![obj.identifier isEqualToString:selfClientID];
         }];
     }
     if (remoteUserClient == nil) {
@@ -677,11 +687,11 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
 }
 
 - (CBCryptoBox *)inserOTRMessage:(ZMGenericMessage *)message
-         inConversation:(MockConversation *)conversation
-               fromUser:(MockUser *)sender
-               toClient:(MockUserClient *)recipient
-               usingKey:(CBPreKey *)preKey
-                session:(MockTransportSession<MockTransportSessionObjectCreation> *)session
+                  inConversation:(MockConversation *)conversation
+                        fromUser:(MockUser *)sender
+                        toClient:(MockUserClient *)recipient
+                        usingKey:(CBPreKey *)preKey
+                         session:(MockTransportSession<MockTransportSessionObjectCreation> *)session
 {
     MockUserClient *senderClient = [session registerClientForUser:sender label:sender.name type:@"permanent"];
     NSError *error;

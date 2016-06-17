@@ -34,6 +34,7 @@
 #import "ZMSimpleListRequestPaginator.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUpstreamRequest.h"
+#import <zmessaging/zmessaging-Swift.h>
 
 static NSString *const ConversationsPath = @"/conversations";
 static NSString *const ConversationIDsPath = @"/conversations/ids";
@@ -58,6 +59,8 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
 @property (nonatomic) ZMRemoteIdentifierObjectSync *remoteIDSync;
 @property (nonatomic) ZMSimpleListRequestPaginator *listPaginator;
 @property (nonatomic, weak) ZMAuthenticationStatus *authenticationStatus;
+@property (nonatomic, weak) ZMAccountStatus *accountStatus;
+
 @end
 
 
@@ -84,12 +87,15 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     return self;
 }
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus syncStrategy:(ZMSyncStrategy *)syncStrategy;
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
+                        authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
+                               accountStatus:(ZMAccountStatus *)accountStatus
+                                syncStrategy:(ZMSyncStrategy *)syncStrategy;
 {
     self = [super initWithManagedObjectContext:moc];
     if (self) {
         self.authenticationStatus = authenticationStatus;
-        
+        self.accountStatus = accountStatus;
         self.modifiedSync = [[ZMUpstreamModifiedObjectSync alloc] initWithTranscoder:self entityName:ZMConversation.entityName updatePredicate:nil filter:nil keysToSync:self.keysToSync managedObjectContext:moc];
         self.insertedSync = [[ZMUpstreamInsertedObjectSync alloc] initWithTranscoder:self entityName:ZMConversation.entityName managedObjectContext:moc];
         NSPredicate *conversationPredicate =
@@ -201,8 +207,10 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     BOOL conversationCreated = NO;
     ZMConversation *conversation = [ZMConversation conversationWithRemoteID:convRemoteID createIfNeeded:YES inContext:self.managedObjectContext created:&conversationCreated];
     [conversation updateWithTransportData:transportData];
-    if (conversation.conversationType != ZMConversationTypeSelf && conversationCreated && ! self.authenticationStatus.registeredOnThisDevice) {
-        [conversation appendStartedUsingThisDeviceMessageIfNeeded];
+    
+    if (conversation.conversationType != ZMConversationTypeSelf && self.authenticationStatus.currentPhase == ZMAuthenticationPhaseAuthenticated && conversationCreated) {
+        // we just got a new conversation, we display new conversation header
+        [conversation appendNewConversationSystemMessageIfNeeded];
         [self.managedObjectContext enqueueDelayedSave];
     }
     return conversation;
@@ -259,11 +267,6 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     
     conversation.remoteIdentifier = convRemoteID;
     [conversation updateWithTransportData:transportData];
-    if (conversationCreated && ! self.authenticationStatus.registeredOnThisDevice) {
-        [conversation appendStartedUsingThisDeviceMessageIfNeeded];
-        [self.managedObjectContext enqueueDelayedSave];
-
-    }
     return conversation;
 }
 

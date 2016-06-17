@@ -22,6 +22,8 @@
 #import "AVSMediaManager.h"
 #import "AVSFlowManager.h"
 
+NSString *ZMOnDemandFlowManagerDidBecomeAvailableNotification = @"ZMOnDemandFlowManagerDidBecomeAvailableNotification";
+
 @import ZMCSystem;
 
 @interface ZMOnDemandFlowManager ()
@@ -35,7 +37,6 @@
 {
     self = [super init];
     if (self) {
-        
         (void)[[self class] flowManagerClass];
         self.mediaManager = mediaManager;
     }
@@ -51,7 +52,7 @@
 
 - (void)initializeFlowManagerWithDelegate:(id<AVSFlowManagerDelegate>)delegate
 {
-    if (self.flowManager == nil) {
+    if (self.flowManager == nil && ![[NSUserDefaults standardUserDefaults] boolForKey:@"ZMDisableAVS"]) {
         if ([ZMAVSBridge overrideFlowManager] != nil) {
             // We need this to interpose for our integration tests:
             self.flowManager = [ZMAVSBridge overrideFlowManager];
@@ -61,6 +62,8 @@
             Class flowManagerClass = [[self class] flowManagerClass];
             self.flowManager = [[flowManagerClass alloc] initWithDelegate:delegate mediaManager:self.mediaManager];
         }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:ZMOnDemandFlowManagerDidBecomeAvailableNotification object:self.flowManager];
     }
 }
 

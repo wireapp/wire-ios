@@ -76,6 +76,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
                 clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                       clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
                       giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
+                           accountStatus:(ZMAccountStatus *)accountStatus
             backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
              localNotificationdispatcher:(ZMLocalNotificationDispatcher *)dispatcher
                             mediaManager:(id<AVSMediaManager>)mediaManager
@@ -91,6 +92,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
                                                                clientRegistrationStatus:clientRegistrationStatus
                                                                      clientUpdateStatus:clientUpdateStatus
                                                                      giphyRequestStatus:giphyRequestsStatus
+                                                                          accountStatus:accountStatus
                                                            backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus
                                                                            mediaManager:mediaManager
                                                                     onDemandFlowManager:onDemandFlowManager

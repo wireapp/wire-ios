@@ -92,6 +92,9 @@
     [[[[transportSession expect] classMethod] andReturn:transportSession] alloc];
     (void) [[[transportSession expect] andReturn:transportSession] initWithBaseURL:OCMOCK_ANY websocketURL:OCMOCK_ANY keyValueStore:OCMOCK_ANY];
     
+    id cookieStorage = [OCMockObject niceMockForClass:[ZMPersistentCookieStorage class]];
+    (void) [[[transportSession stub] andReturn:cookieStorage] cookieStorage];
+
     // expect
     id operationLoop = [OCMockObject mockForClass:ZMOperationLoop.class];
     [[[[operationLoop expect] classMethod] andReturn:operationLoop] alloc];
@@ -102,6 +105,7 @@
             clientRegistrationStatus:OCMOCK_ANY
             clientUpdateStatus:OCMOCK_ANY
             giphyRequestStatus:OCMOCK_ANY
+            accountStatus:OCMOCK_ANY
             backgroundAPNSPingBackStatus:OCMOCK_ANY
             localNotificationdispatcher:OCMOCK_ANY
             mediaManager:mediaManager
@@ -132,6 +136,7 @@
     id transportSession = [OCMockObject niceMockForClass:ZMTransportSession.class];
     [[[[transportSession stub] classMethod] andReturn:transportSession] alloc];
     (void) [[[transportSession expect] andReturn:transportSession] initWithBaseURL:OCMOCK_ANY websocketURL:OCMOCK_ANY keyValueStore:OCMOCK_ANY];
+    [[[transportSession stub] andReturn:[OCMockObject niceMockForClass:[ZMPersistentCookieStorage class]]] cookieStorage];
     
     // expect
     id userAgent = [OCMockObject mockForClass:ZMUserAgent.class];
@@ -267,10 +272,12 @@
     // given
     UserClient *userClient = [self createSelfClient];
     id transportSession = [OCMockObject niceMockForClass:ZMTransportSession.class];
+    id cookieStorage = [OCMockObject niceMockForClass:ZMPersistentCookieStorage.class];
     
     // expect
     [[transportSession expect] setClientID:userClient.remoteIdentifier];
     [[transportSession expect] restartPushChannel];
+    [[[transportSession stub] andReturn:cookieStorage] cookieStorage];
     
     // when
     ZMUserSession *userSession = [[ZMUserSession alloc] initWithTransportSession:transportSession

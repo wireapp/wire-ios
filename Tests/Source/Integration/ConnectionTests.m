@@ -440,11 +440,11 @@
         }
         XCTAssertTrue(conv1StateChanged);
         XCTAssertEqual(conv1.conversationType, ZMConversationTypeOneOnOne);
-        XCTAssertEqual(conv1.messages.count, 1u); // connection request conversations should not produce a system message
+        XCTAssertEqual(conv1.messages.count, 2u); // accepting connection request produces a new conversation system message
 
         XCTAssertTrue(conv2StateChanged);
         XCTAssertEqual(conv2.conversationType, ZMConversationTypeOneOnOne);
-        XCTAssertEqual(conv2.messages.count, 1u); // connection request conversations should not produce a system message
+        XCTAssertEqual(conv2.messages.count, 2u); // accepting connection request produces a new conversation system message
     }
     
     [ZMConversation removeConversationObserverForToken:token1];
@@ -564,7 +564,7 @@
     [listObserver tearDown];
 }
 
-- (void)testThatWeDontSeeASystemMessageWhenAcceptingAConnectionRequest;
+- (void)testThatWeSeeANewConversationSystemMessageWhenAcceptingAConnectionRequest;
 {
     self.registeredOnThisDevice = YES;
     
@@ -578,7 +578,10 @@
     WaitForEverythingToBeDone();
     
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
-    XCTAssertEqual(conversation.messages.count, 0u);
+    XCTAssertEqual(conversation.messages.count, 1u);
+    id<ZMConversationMessage> message = conversation.messages.lastObject;
+    XCTAssertEqualObjects([message class], [ZMSystemMessage class]);
+    XCTAssertEqual(((ZMSystemMessage *)message).systemMessageType, ZMSystemMessageTypeNewClient);
 
 }
 

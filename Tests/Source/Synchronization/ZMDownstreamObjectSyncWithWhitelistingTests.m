@@ -17,23 +17,21 @@
 // 
 
 @import ZMCDataModel;
+@import ZMTransport;
 
 #import "MessagingTest.h"
 #import "MockEntity.h"
-#import "ZMDownstreamObjectSyncWithWhitelist.h"
+#import "ZMDownstreamObjectSyncWithWhitelist+Internal.h"
 #import "ZMSyncOperationSet.h"
-#import "ZMTransportResponse.h"
-#import "ZMTransportData.h"
-#import "ZMTransportRequest.h"
-#import "ZMTransportSession.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
 
-static const int FieldValueThatWillTriggerWhitelistingRequirement = 42;
 
 @interface ZMDownstreamObjectSyncWithWhitelistingTests : MessagingTest
 
 @property (nonatomic) id<ZMDownstreamTranscoder> transcoder;
 @property (nonatomic) ZMDownstreamObjectSyncWithWhitelist *sut;
+@property (nonatomic) ZMDownstreamObjectSyncWithWhitelist *sutWithRealTranscoder;
+
 @property (nonatomic) NSPredicate *predicateForObjectsToDownload;
 @property (nonatomic) NSPredicate *predicateForObjectsRequiringWhitelisting;
 @end
@@ -47,17 +45,18 @@ static const int FieldValueThatWillTriggerWhitelistingRequirement = 42;
     [self verifyMockLater:self.transcoder];
     
     self.predicateForObjectsToDownload = [NSPredicate predicateWithFormat:@"needsToBeUpdatedFromBackend == YES"];
-    self.predicateForObjectsRequiringWhitelisting = [NSPredicate predicateWithFormat:@"field == %d", FieldValueThatWillTriggerWhitelistingRequirement];
     self.sut = [[ZMDownstreamObjectSyncWithWhitelist alloc] initWithTranscoder:self.transcoder
                                                                     entityName:@"MockEntity"
                                                  predicateForObjectsToDownload:self.predicateForObjectsToDownload
-                                      predicateForObjectsRequiringWhitelisting:self.predicateForObjectsRequiringWhitelisting
                                                           managedObjectContext:self.testMOC];
+    
+    self.sutWithRealTranscoder = [[ZMDownstreamObjectSyncWithWhitelist alloc] initWithTranscoder:nil entityName:@"MockEntity" predicateForObjectsToDownload:self.predicateForObjectsToDownload managedObjectContext:self.testMOC];
 }
 
 - (void)tearDown {
     self.transcoder = nil;
-    self.sut = nil; 
+    self.sut = nil;
+    self.sutWithRealTranscoder = nil;
     self.predicateForObjectsToDownload = nil;
     self.predicateForObjectsRequiringWhitelisting = nil;
     [super tearDown];
@@ -74,7 +73,6 @@ static const int FieldValueThatWillTriggerWhitelistingRequirement = 42;
     [self makeSureFetchObjectsToDownloadHasBeenCalled];
     MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
     entity.needsToBeUpdatedFromBackend = YES;
-    entity.field = FieldValueThatWillTriggerWhitelistingRequirement;
 
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
@@ -95,7 +93,6 @@ static const int FieldValueThatWillTriggerWhitelistingRequirement = 42;
     [self makeSureFetchObjectsToDownloadHasBeenCalled];
     MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
     entity.needsToBeUpdatedFromBackend = YES;
-    entity.field = FieldValueThatWillTriggerWhitelistingRequirement;
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     ZMTransportRequest *dummyRequest = [ZMTransportRequest requestGetFromPath:@"dummy"];
@@ -112,58 +109,37 @@ static const int FieldValueThatWillTriggerWhitelistingRequirement = 42;
     [(id) self.transcoder verify];
 }
 
-- (void)testThatOnNextRequestsItDoesNotCreateARequestWhenTheObjectIsWhiteListedButNotAdded;
+- (void)testThatItAddsObjectsMatchingThePredicate
 {
     // given
-    [self makeSureFetchObjectsToDownloadHasBeenCalled];
     MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
     entity.needsToBeUpdatedFromBackend = YES;
-    
-    // expect
-    [[(id)self.transcoder reject] requestForFetchingObject:OCMOCK_ANY downstreamSync:OCMOCK_ANY];
-    
+
     // when
-    [self.sut whiteListObject:entity];
-    ZMTransportRequest *request = [self.sut nextRequest];
+    [self.sutWithRealTranscoder whiteListObject:entity];
     
     // then
-    XCTAssertNil(request);
-    [(id)self.transcoder verify];
+    XCTAssertTrue([self.sutWithRealTranscoder.whitelist containsObject:entity]);
+    XCTAssertTrue(self.sutWithRealTranscoder.hasOutstandingItems);
 }
 
-- (void)testThatItRemovesAnObjectFromTheWhiteListOnceItIsDownloaded
+- (void)testThatItDoesNotRemoveAnObjectStillMatchingThePredicate
 {
     // given
-    [self makeSureFetchObjectsToDownloadHasBeenCalled];
     MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
     entity.needsToBeUpdatedFromBackend = YES;
-    entity.field = FieldValueThatWillTriggerWhitelistingRequirement;
-    [self.sut objectsDidChange:[NSSet setWithObject:entity]];
+    [self.sutWithRealTranscoder whiteListObject:entity];
     
-    ZMTransportRequest *dummyRequest = [ZMTransportRequest requestGetFromPath:@"dummy"];
-    
-    // expect
-    [[[(id)self.transcoder expect] andReturn:dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
+    XCTAssertTrue([self.sutWithRealTranscoder.whitelist containsObject:entity]);
+    XCTAssertTrue(self.sutWithRealTranscoder.innerDownstreamSync.hasOutstandingItems);
     
     // when
-    [self.sut whiteListObject:entity];
-    ZMTransportRequest *request = [self.sut nextRequest];
-    [request completeWithResponse:[ZMTransportResponse responseWithPayload:@{} HTTPstatus:200 transportSessionError:nil]];
-    WaitForAllGroupsToBeEmpty(0.5);
+    entity.needsToBeUpdatedFromBackend = YES;
+    [self.sutWithRealTranscoder objectsDidChange:[NSSet setWithObject:entity]];
     
     // then
-    XCTAssertEqualObjects(dummyRequest, request);
-    [(id) self.transcoder verify];
-    
-    // and expect
-    [[(id)self.transcoder reject] requestForFetchingObject:entity downstreamSync:self.sut];
-    
-    // when
-    [self.sut objectsDidChange:[NSSet setWithObject:entity]];
-    [self.sut nextRequest];
-    
-    // then
-    [(id) self.transcoder verify];
+    XCTAssertTrue([self.sutWithRealTranscoder.whitelist containsObject:entity]);
+    XCTAssertTrue(self.sutWithRealTranscoder.hasOutstandingItems);
 }
 
 @end

@@ -21,6 +21,7 @@
 
 @class ZMHotFixDirectory;
 
+extern NSString * const ZMSkipHotfix;
 
 @interface ZMVersion : NSObject
 

@@ -113,6 +113,7 @@
             clientRegistrationStatus:nil
             clientUpdateStatus:nil
             giphyRequestStatus:nil
+            accountStatus:nil
             backgroundAPNSPingBackStatus:nil
             mediaManager:mediaManager
             onDemandFlowManager:nil
@@ -131,6 +132,7 @@
                                                    clientRegistrationStatus:nil
                                                          clientUpdateStatus:nil
                                                          giphyRequestStatus:nil
+                                                              accountStatus:nil
                                                backgroundAPNSPingBackStatus:nil
                                                 localNotificationdispatcher:nil
                                                                mediaManager:mediaManager

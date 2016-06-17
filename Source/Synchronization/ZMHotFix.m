@@ -26,8 +26,9 @@
 #import "ZMHotFixDirectory.h"
 #import "ZMUserSession.h"
 
+static char* const ZMLogTag ZM_UNUSED = "HotFix";
 static NSString * const LastSavedVersionKey = @"lastSavedVersion";
-
+NSString * const ZMSkipHotfix = @"ZMSkipHotfix";
 
 @interface ZMHotFix ()
 @property (nonatomic) ZMHotFixDirectory *hotFixDirectory;
@@ -55,6 +56,11 @@ static NSString * const LastSavedVersionKey = @"lastSavedVersion";
 
 - (void)applyPatches
 {
+    if ([[self.syncMOC persistentStoreMetadataForKey:ZMSkipHotfix] boolValue]) {
+        ZMLogDebug(@"Skipping applying HotFix");
+        return;
+    }
+    
     NSString * currentVersionString = [[[NSBundle bundleForClass:ZMUserSession.class] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     [self applyPatchesForCurrentVersion:currentVersionString];
 }
@@ -62,14 +68,17 @@ static NSString * const LastSavedVersionKey = @"lastSavedVersion";
 - (void)applyPatchesForCurrentVersion:(NSString *)currentVersionString;
 {
     if (currentVersionString.length == 0) {
+        ZMLogDebug(@"Invalid version string, skipping HotFix");
         return;
     }
     ZMVersion *lastSavedVersion = [self lastSavedVersion];
     ZMVersion *currentVersion = [[ZMVersion alloc] initWithVersionString:currentVersionString];
     if ([currentVersion compareWithVersion:lastSavedVersion] == NSOrderedSame) {
+        ZMLogDebug(@"Current version equal to last saved version (%@). Not applying any HotFix.", lastSavedVersion.versionString);
         return;
     }
     
+    ZMLogDebug(@"Applying HotFix with last saved version %@, current version %@.", lastSavedVersion.versionString, currentVersion.versionString);
     [self.syncMOC performGroupedBlock:^{
         [self applyFixesSinceVersion:lastSavedVersion];
         [self saveNewVersion:currentVersionString];
@@ -88,6 +97,7 @@ static NSString * const LastSavedVersionKey = @"lastSavedVersion";
 - (void)saveNewVersion:(NSString *)version
 {
     [self.syncMOC setPersistentStoreMetadata:version forKey:LastSavedVersionKey];
+    ZMLogDebug(@"Saved new HotFix version %@", version);
 }
 
 - (void)applyFixesSinceVersion:(ZMVersion *)lastSavedVersion

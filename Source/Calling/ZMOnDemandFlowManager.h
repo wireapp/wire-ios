@@ -23,6 +23,8 @@
 @protocol AVSFlowManagerDelegate;
 
 
+FOUNDATION_EXPORT NSString *ZMOnDemandFlowManagerDidBecomeAvailableNotification;
+
 /// This wrapper class is an entry point to access the AVSFlowManager shared instance
 @interface ZMOnDemandFlowManager : NSObject
 - (instancetype)initWithMediaManager:(id)mediaManager;

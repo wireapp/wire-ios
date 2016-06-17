@@ -1,0 +1,100 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// 
+
+
+"push.notification.add.message.group" = "%1$@ em %2$@: %3$@";
+"push.notification.add.message.group.nousername" = "Nova mensagem em %1$@: %2$@";
+"push.notification.add.message.group.nousername.noconversationname" = "Nova mensagem: %1$@";
+"push.notification.add.message.group.noconversationname" = "%1$@ em uma conversa: %2$@";
+
+"push.notification.add.message.oneonone" = "%1$@: %2$@";
+"push.notification.add.message.oneonone.nousername" = "Nova mensagem: %1$@";
+
+"push.notification.add.image.group" = "%1$@ compartilhou uma imagem em %2$@";
+"push.notification.add.image.group.nousername" = "Nova imagem em %1$@";
+"push.notification.add.image.group.nousername.noconversationname" = "Nova imagem em uma conversa";
+"push.notification.add.image.group.noconversationname" = "%1$@ compartilhou uma imagem em uma conversa";
+
+"push.notification.add.image.oneonone" = "%1$@ compartilhou uma imagem";
+"push.notification.add.image.oneonone.nousername" = "Nova imagem em uma conversa";
+
+"push.notification.member.join" = "%1$@ adicionou %3$@ ao %2$@";
+"push.notification.member.join.noconversationname" = "%1$@ adicionou %2$@ a uma conversa";
+"push.notification.member.join.nousername.noconversationname" = "%1$@ foi adicionado a uma conversa";
+"push.notification.member.join.nousername" = "%2$@ foi adicionado ao %1$@";
+
+"push.notification.member.join.many.nootherusername" = "%1$@ adicionou pessoas a %2$@";
+"push.notification.member.join.many.nootherusername.noconversationname" = "%1$@ adicionou as pessoas a uma conversa";
+"push.notification.member.join.many.nootherusername.nousername" = "Pessoas foram adicionadas ao %1$@";
+"push.notification.member.join.many.nootherusername.nousername.noconversationname" = "Pessoas foram adicionadas a uma conversa";
+
+"push.notification.member.join.self" = "%1$@ adicionou você ao %2$@";
+"push.notification.member.join.self.noconversationname" = "%1$@ adicionou você a uma conversa";
+"push.notification.member.join.self.nousername.noconversationname" = "Você foram adicionado a uma conversa";
+"push.notification.member.join.self.nousername" = "Você foram adicionado ao %1$@";
+
+"push.notification.member.join.nootherusername" = "%1$@ adicionou pessoas a %2$@";
+"push.notification.member.join.nootherusername.noconversationname" = "%1$@ adicionou as pessoas a uma conversa";
+"push.notification.member.join.nootherusername.nousername.noconversationname" = "Pessoas foram adicionadas a uma conversa";
+"push.notification.member.join.nootherusername.nousername" = "Pessoas foram adicionada ao %1$@";
+
+"push.notification.member.leave" = "%1$@ removeu %3$@ de %2$@";
+"push.notification.member.leave.noconversationname" = "%1$@ removeu %2$@ de uma conversa";
+"push.notification.member.leave.nousername.noconversationname" = "%1$@ foi removido de uma coversa";
+"push.notification.member.leave.nousername" = "%2$@ foi removido de %1$@";
+
+"push.notification.member.leave.many.nootherusername" = "%1$@ removeu pessoas de %2$@";
+"push.notification.member.leave.many.nootherusername.noconversationname" = "%1$@ removeu pessoas de uma conversa";
+"push.notification.member.leave.many.nootherusername.nousername" = "Pessoas foram removidas de %1$@";
+"push.notification.member.leave.many.nootherusername.nousername.noconversationname" = "Pessoas foram removidas de uma conversa";
+
+"push.notification.member.leave.self" = "%1$@ removeu você de %2$@";
+"push.notification.member.leave.self.noconversationname" = "%1$@ removeu você de uma conversa";
+"push.notification.member.leave.self.nousername.noconversationname" = "Você foi removido de uma conversa";
+"push.notification.member.leave.self.nousername" = "Você foi removido de %1$@";
+
+"push.notification.member.leave.nootherusername" = "%1$@ removeu pessoas de %2$@";
+"push.notification.member.leave.nootherusername.noconversationname" = "%1$@ removeu pessoas de uma conversa";
+"push.notification.member.leave.nootherusername.nousername.noconversationname" = "Pessoas foram removidas de uma conversa";
+"push.notification.member.leave.nootherusername.nousername" = "Pessoas foram removidas de %1$@";
+
+"push.notification.member.leave.sender.nootherusername" = "%1$@ deixou %2$@";
+"push.notification.member.leave.sender.nootherusername.noconversationname" = "%1$@ deixou uma conversa";
+"push.notification.member.leave.sender.nootherusername.nousername.noconversationname" = "Pessoas deixaram uma conversa";
+"push.notification.member.leave.sender.nootherusername.nousername" = "Pessoas deixaram %1$@";
+
+"push.notification.call.started" = "%1$@ está chamando";
+"push.notification.call.started.nousername" = "Alguém está chamando";
+
+"push.notification.conversation.create" = "%1$@ criou uma conversa em grupo com você";
+"push.notification.conversation.create.nousername" = "Alguém criou uma conversa em grupo com você";
+
+"push.notification.conversation.rename" = "%1$@ renomeou uma conversa para %2$@";
+"push.notification.conversation.rename.nousername" = "Uma conversa foi renomeada para %1$@";
+
+"push.notification.connection.request" = "%@ quer se conectar";
+"push.notification.connection.request.nousername" = "%@"; // uses message text
+
+"push.notification.connection.accepted" = "Você e %@ agora são conectados";
+"push.notification.connection.accepted.nousername" = "Você tem uma nova conexão";
+
+"push.notification.failed.message.oneonone" = "Não é possível enviar uma mensagem para %1$@";
+"push.notification.failed.message.oneonone.nousername" = "Não é possível enviar uma mensagem";
+
+"push.notification.failed.message.group" = "Não é possível enviar uma mensagem em %1$@";
+"push.notification.failed.message.group.noconversationname" = "Não é possível enviar uma mensagem";

@@ -34,6 +34,10 @@ id ZMFlowSyncInternalFlowManagerOverride;
         flowManagerClass = [ZMFlowSyncInternalFlowManagerOverride class];
     } 
     
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"ZMDisableAVS"]) {
+        return nil;
+    }
+    
     return flowManagerClass;
 }
 

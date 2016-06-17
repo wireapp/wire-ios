@@ -35,16 +35,6 @@ NSString * const ZMLocalNotificationUserInfoNonceKey = @"nonce";
 static NSString * const FailedMessageInGroupConversationText = @"failed.message.group";
 static NSString * const FailedMessageInOneOnOneConversationText = @"failed.message.oneonone";
 
-static NSString *const ZMLocalNotificationRingingSoundName = @"ringing_from_them_long";
-static NSString *const ZMLocalNotificationPingSoundName = @"ping_from_them";
-static NSString *const ZMLocalNotificationNewMessageSoundName = @"new_message_apns";
-
-
-
-//static NSString * ZMPushLocalizedString(NSString *key)
-//{
-//    return [[NSBundle mainBundle] localizedStringForKey:[@"push.notification." stringByAppendingString:key] value:@"" table:@"Push"];
-//}
 
 // These are the "base" keys for messages. We append to these for the specific case.
 //

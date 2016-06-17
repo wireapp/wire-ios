@@ -34,6 +34,7 @@
 #import <zmessaging/ZMVoiceChannel+CallFlow.h>
 #import <zmessaging/ZMUserSession+EditingVerification.h>
 #import <zmessaging/ZMTypingUsers.h>
+#import <zmessaging/ZMOnDemandFlowManager.h>
 
 
 // PRIVATE
@@ -78,4 +79,5 @@
 #import <zmessaging/UILocalNotification+StringProcessing.h>
 #import <zmessaging/ZMHotFixDirectory.h>
 #import <zmessaging/ZMImagePreprocessingTracker.h>
+#import <zmessaging/ZMUserSessionRegistrationNotification.h>
 

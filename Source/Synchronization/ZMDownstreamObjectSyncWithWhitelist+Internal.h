@@ -17,21 +17,11 @@
 // 
 
 
-@import Foundation;
-@import CoreData;
-@protocol ZMObjectStrategyDirectory;
-#import "ZMObjectSyncStrategy.h"
-@class ZMBadge;
-@class ZMAuthenticationStatus;
-@class ZMAccountStatus;
+#import "ZMDownstreamObjectSyncWithWhitelist.h"
 
-@interface ZMConversationTranscoder : ZMObjectSyncStrategy <ZMObjectStrategy>
+@interface ZMDownstreamObjectSyncWithWhitelist (Internal)
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                        authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
-                               accountStatus:(ZMAccountStatus *)accountStatus
-                                syncStrategy:(ZMSyncStrategy *)syncStrategy;
-
-@property (nonatomic) NSUInteger conversationPageSize;
+@property (nonatomic, copy) NSMutableSet *whitelist;
+@property (nonatomic, readonly) ZMDownstreamObjectSync *innerDownstreamSync;
 
 @end

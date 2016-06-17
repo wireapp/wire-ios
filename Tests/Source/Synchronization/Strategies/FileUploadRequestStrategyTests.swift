@@ -156,7 +156,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertFalse(genericMessage.asset.hasUploaded())
     }
     
-    func testThatItSets_UploadingThumbnail_OnMessageWhenAssetOriginalRequestCompletesSuccesfully() {
+    func testThatItSets_UploadingThumbnail_OnMessageWhenAssetOriginalRequestCompletesSuccesfully_Video() {
         
         // given
         guard let url = NSBundle(forClass: self.dynamicType).URLForResource("video", withExtension:"mp4") else { return XCTFail() }
@@ -172,6 +172,42 @@ extension FileUploadRequestStrategyTests {
         XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingThumbnail)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
     }
+    
+    
+    func testThatItSets_UploadingThumbnail_OnMessageWhenAssetOriginalRequestCompletesSuccesfully_Text() {
+        
+        // given
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("Lorem Ipsum", withExtension:"txt") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: mediumJPEGData(), url: url)
+        process(sut, message: msg)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingPlaceholder)
+        
+        // when
+        let placeholderRequest = sut.nextRequest() // Asset.Original request (message-add)
+        completeRequest(placeholderRequest, HTTPStatus: 201)
+        
+        // then
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingThumbnail)
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
+    }
+    
+    func testThatItSets_UploadingFullAsset_OnMessageWithoutThumbnail_Text() {
+        
+        // given
+        guard let url = NSBundle(forClass: self.dynamicType).URLForResource("Lorem Ipsum", withExtension:"txt") else { return XCTFail() }
+        let msg = createMessage(name!, thumbnail: nil, url: url)
+        process(sut, message: msg)
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingPlaceholder)
+        
+        // when
+        let placeholderRequest = sut.nextRequest() // Asset.Original request (message-add)
+        completeRequest(placeholderRequest, HTTPStatus: 201)
+        
+        // then
+        XCTAssertEqual(msg.uploadState, ZMAssetUploadState.UploadingFullAsset)
+        XCTAssertEqual(msg.transferState, ZMFileTransferState.Uploading)
+    }
+
     
     func testThatItSets_UploadingFullAsset_OnVideoFileMessageWhenTheThumbnailRequestCompletesSuccesfully() {
         
@@ -366,9 +402,8 @@ extension FileUploadRequestStrategyTests {
         
         let genericPartData = requestMultipart.multipartDataItemsSeparatedWithBoundary("frontier").first as! ZMMultipartBodyItem
         guard let genericMessage = decryptedMessage(fromRequestData: genericPartData.data, forClient: otherClient) else { return XCTFail() }
-        XCTAssertFalse(genericMessage.asset.hasNotUploaded())
         XCTAssertTrue(genericMessage.asset.hasOriginal())
-        XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED) // FIXME: This does not make sense to me, why would we have a CANCELLED?
+        XCTAssertFalse(genericMessage.asset.hasNotUploaded())
         XCTAssertTrue(genericMessage.asset.hasUploaded())
         XCTAssertNil(sut.nextRequest())
     }
@@ -905,6 +940,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: msg.filename!, encrypted: false))
         XCTAssertNil(sut.nextRequest())
     }
+    
     
     // MARK: - Decryption Helper
     

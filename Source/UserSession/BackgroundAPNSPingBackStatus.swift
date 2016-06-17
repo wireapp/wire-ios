@@ -120,12 +120,12 @@ extension EventsWithIdentifier {
         backgroundActivity?.endActivity()
     }
     
-    public func nextNotificationID() -> NSUUID? {
-        return hasNotificationIDs ?  notificationIDs.removeFirst().identifier : .None
+    public func nextNotificationEventsWithID() -> EventsWithIdentifier? {
+        return hasNotificationIDs ?  notificationIDs.removeFirst() : .None
     }
     
-    public func nextNoticeNotificationID() -> NSUUID? {
-        return hasNoticeNotificationIDs ? notificationIDs.removeFirst().identifier : .None
+    public func nextNoticeNotificationEventsWithID() -> EventsWithIdentifier? {
+        return hasNoticeNotificationIDs ? notificationIDs.removeFirst() : .None
     }
     
     public func didReceiveVoIPNotification(eventsWithID: EventsWithIdentifier, handler: PingBackResultHandler) {
@@ -135,6 +135,7 @@ extension EventsWithIdentifier {
         if authenticationStatusProvider?.currentPhase == .Authenticated {
             backgroundActivity = backgroundActivity ?? ZMBackgroundActivity.beginBackgroundActivityWithName("Ping back to BE")
         }
+        
         if status == .Done {
             updateStatus()
         }
@@ -142,36 +143,48 @@ extension EventsWithIdentifier {
         ZMOperationLoop.notifyNewRequestsAvailable(self)
     }
     
-    public func didPerfomPingBackRequest(notificationID: NSUUID, success: Bool) {
+    public func didPerfomPingBackRequest(eventsWithID: EventsWithIdentifier, responseStatus: ZMTransportResponseStatus) {
+        let notificationID = eventsWithID.identifier
         let eventsWithHandler = eventsWithHandlerByNotificationID.removeValueForKey(notificationID)
-        defer { eventsWithHandler?.handler(.Success, notificationIDToEventsMap[notificationID] ?? []) }
 
         updateStatus()
-    
-        zmLog.debug("Pingback \(success ? "succeeded" : "failed") for notification ID: \(notificationID)")
-        guard let unwrappedEvents = eventsWithHandler?.events where success else { return }
-        notificationDispatcher?.didReceiveUpdateEvents(unwrappedEvents)
+        zmLog.debug("Pingback with status \(status) for notification ID: \(notificationID)")
+        
+        if let unwrappedEvents = eventsWithHandler?.events where responseStatus == .Success {
+            notificationDispatcher?.didReceiveUpdateEvents(unwrappedEvents)
+        } else if responseStatus == .TryAgainLater {
+            guard let handler = eventsWithHandler?.handler else { return }
+            didReceiveVoIPNotification(eventsWithID, handler: handler)
+        }
+        
+        if responseStatus != .TryAgainLater {
+            eventsWithHandler?.handler(.Success, notificationIDToEventsMap[notificationID] ?? [])
+        }
     }
     
-    
-    public func didFetchNoticeNotification(notificationID: NSUUID, success: Bool, events: [ZMUpdateEvent]) {
+    public func didFetchNoticeNotification(eventsWithID: EventsWithIdentifier, responseStatus: ZMTransportResponseStatus, events: [ZMUpdateEvent]) {
         var finalEvents = events
-        if success {
-            // we fetched the event and pinged back
+        let notificationID = eventsWithID.identifier
+        
+        switch responseStatus {
+        case .Success: // we fetched the event and pinged back
             let cryptoBox = syncManagedObjectContext.zm_cryptKeyStore.box
-            let decryptedEvents = events.flatMap{cryptoBox.decryptUpdateEventAndAddClient($0, managedObjectContext: syncManagedObjectContext)}
+            let decryptedEvents = events.flatMap {
+                cryptoBox.decryptUpdateEventAndAddClient($0, managedObjectContext: syncManagedObjectContext)
+            }
             finalEvents = decryptedEvents
             notificationIDToEventsMap[notificationID] = decryptedEvents
-            didPerfomPingBackRequest(notificationID, success: true)
-        } else {
-            // we could't fetch the event and want the fallback
+            fallthrough
+        case .TryAgainLater:
+            didPerfomPingBackRequest(eventsWithID, responseStatus: responseStatus)
+        default: // we could't fetch the event and want the fallback
             let eventsWithHandler = eventsWithHandlerByNotificationID.removeValueForKey(notificationID)
             defer { eventsWithHandler?.handler(.Failure, []) }
             updateStatus()
         }
         
-        zmLog.debug("Fetching notification \(success ? "succeeded" : "failed") for notification ID: \(notificationID)")
         notificationDispatcher?.didReceiveUpdateEvents(finalEvents)
+        zmLog.debug("Fetching notification with status \(responseStatus) for notification ID: \(notificationID)")
     }
     
     func updateStatus() {
@@ -185,5 +198,3 @@ extension EventsWithIdentifier {
     }
     
 }
-
-

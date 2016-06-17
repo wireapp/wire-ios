@@ -355,9 +355,9 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqual(conversation.messages.count, 2lu);
-    XCTAssertEqualObjects(messages.firstObject.messageText, text);
-    XCTAssertEqualObjects(messages.lastObject.class, ZMSystemMessage.class);
+    XCTAssertEqual(conversation.messages.count, 3lu);
+    XCTAssertEqualObjects((messages[1]).messageText, text);
+    XCTAssertEqualObjects(messages.firstObject.class, ZMSystemMessage.class);
 }
 
 - (void)testThatItRemovesConnectionRequestSystemMessagesWhenUpdatingTo1_26
@@ -393,7 +393,7 @@
     
     // then
     XCTAssertEqual(conversation.messages.count, 1lu);
-    XCTAssertEqualObjects(messages.firstObject.messageText, text);
+    XCTAssertEqualObjects(messages.lastObject.messageText, text);
 }
 
 - (void)testThatItSetsTheLastReadOfALeftConversation
@@ -624,6 +624,50 @@
     XCTAssertTrue(notUploadedFileMessage.delivered);
     XCTAssertTrue(notUploadedFileMessage.hasDownloadedImage);
     XCTAssertEqual(notUploadedFileMessage.uploadState, ZMAssetUploadStateUploadingFailed);
+}
+
+- (void)testThatItAddANewConversationSystemMessageForAllOneOnOneAndGroupConversation_HasHistory_44_4;
+{
+    // given
+    [self.syncMOC setPersistentStoreMetadata:@YES forKey:@"HasHistory"];
+    
+    ZMConversation *oneOnOneConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    oneOnOneConversation.conversationType = ZMConversationTypeOneOnOne;
+    
+    ZMConversation *groupConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    groupConversation.conversationType = ZMConversationTypeGroup;
+    
+    ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    selfConversation.conversationType = ZMConversationTypeSelf;
+    
+    ZMConversation *connectionConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    connectionConversation.conversationType = ZMConversationTypeConnection;
+    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    XCTAssertEqual(oneOnOneConversation.messages.count, 0u);
+    XCTAssertEqual(groupConversation.messages.count, 0u);
+    XCTAssertEqual(selfConversation.messages.count, 0u);
+    XCTAssertEqual(connectionConversation.messages.count, 0u);
+    
+    // when
+    self.sut = [[ZMHotFix alloc] initWithSyncMOC:self.syncMOC];
+    [self.sut applyPatchesForCurrentVersion:@"44.4"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *newVersion = [self.syncMOC persistentStoreMetadataForKey:@"lastSavedVersion"];
+    XCTAssertEqualObjects(newVersion, @"44.4");
+    
+    // then
+    XCTAssertEqual(oneOnOneConversation.messages.count, 0u);
+    
+    XCTAssertEqual(groupConversation.messages.count, 1u);
+    ZMSystemMessage *message = groupConversation.messages.lastObject;
+    XCTAssertEqual(message.systemMessageType, ZMSystemMessageTypeNewConversation);
+    
+    XCTAssertEqual(selfConversation.messages.count, 0u);
+
+    XCTAssertEqual(connectionConversation.messages.count, 0u);
 }
 
 - (NSURL *)testVideoFileURL
