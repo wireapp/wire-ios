@@ -462,14 +462,14 @@ willPerformHTTPRedirection:response
     self.sut = (id) [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:self.queue identifier:@"test-session"];
     self.sut.backingSession = [OCMockObject niceMockForClass:NSURLSession.class];
     
-    [[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name]] configuration];
+    [[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:ZMURLSessionBackgroundIdentifier]] configuration];
     
     [(id) self.sut.backingSession verify];
 }
 
 - (void)setupBackgroundSession;
 {
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:ZMURLSessionBackgroundIdentifier];
     [self.sut tearDown];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
