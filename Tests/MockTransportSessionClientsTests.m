@@ -30,7 +30,7 @@
 
 @implementation MockTransportSessionClientsTests
 
-- (NSMutableDictionary *)payloadtoRegisterClient:(NSUInteger)keysCount
+- (NSMutableDictionary *)payloadtoRegisterClient:(NSUInteger)keysCount password:(NSString *)password
 {
     NSMutableDictionary *payload = [NSMutableDictionary new];
     NSString *type = @"permanent";
@@ -55,8 +55,16 @@
     payload[@"model"] = @"iPad Air Pro Max C 4 Plus";
     payload[@"address"] = @"127.0.0.10";
     payload[@"class"] = @"tablet";
+    if (password) {
+        payload[@"password"] = password;
+    }
     
     return payload;
+}
+
+- (NSMutableDictionary *)payloadtoRegisterClient:(NSUInteger)keysCount
+{
+    return [self payloadtoRegisterClient:keysCount password:nil];
 }
 
 @end
@@ -71,11 +79,12 @@
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
+        selfUser.password = @"Cestmonmotdepassesupermagique";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSUInteger keysCount = 100;
-    NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount];
+    NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount password:selfUser.password];
     
     // when
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
@@ -97,7 +106,9 @@
         NSFetchRequest *clientsRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
         NSArray *clients = [self.sut.managedObjectContext executeFetchRequestOrAssert:clientsRequest];
         XCTAssertEqual(clients.count, 1u);
-        MockUserClient *client = clients.firstObject;
+        MockUserClient *client = [clients firstObjectMatchingWithBlock:^BOOL(MockUserClient *obj) {
+            return [obj.identifier isEqualToString:clientId];
+        }];
         
         XCTAssertEqualObjects(responsePayload, [client transportData]);
         XCTAssertEqualObjects(client.type, responsePayload[@"type"]);
@@ -114,12 +125,15 @@
         keysRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"identifier" ascending:YES]];
         NSMutableArray *preKeys = [[self.sut.managedObjectContext executeFetchRequestOrAssert:keysRequest] mutableCopy];
 
-        XCTAssertEqual(preKeys.count, keysCount + 1);
+        XCTAssertEqual(preKeys.count, clients.count * (keysCount + 1));
         
         MockPreKey *lastPreKey = preKeys.lastObject;
         [preKeys removeLastObject];
         
-        AssertArraysContainsSameObjects(client.prekeys.allObjects, preKeys);
+        NSMutableSet *intersectPrekeys = [client.prekeys mutableCopy];
+        [intersectPrekeys intersectSet:[NSSet setWithArray:preKeys]];
+        
+        XCTAssertEqualObjects(intersectPrekeys, client.prekeys);
         XCTAssertEqualObjects(client.lastPrekey, lastPreKey);
         
         AssertArraysContainsSameObjects(selfUser.clients.allObjects, clients);
@@ -351,22 +365,27 @@
     
     NSUInteger keysCount = 100;
     NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount];
-    [(NSMutableDictionary *)payload[@"sigkeys"] removeObjectForKey:@"mackey"];
+    [(NSMutableDictionary *)payload[@"sigkeys"] removeObjectForKey:@"enckey"];
     
     [self expectFailureResponseWithStatusCode:400 label:nil forPayload:payload];
 }
 
 - (void)expectFailureResponseWithStatusCode:(NSInteger)statusCode label:(NSString *)label forPayload:(NSDictionary *)payload
 {
+    
     // given
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
+        selfUser.password = @"monmotdepasseesttropsecurisetasvue";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    NSMutableDictionary *final = [payload mutableCopy];
+    final[@"password"] = selfUser.password;
+    
     // when
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:[final copy] path:@"/clients" method:ZMMethodPOST];
     
     // then
     XCTAssertNotNil(response);
@@ -528,7 +547,7 @@
     
     // then
     XCTAssertEqual(selfUser.clients.count, 1u);
-    XCTAssertEqual(selfUser.clients.anyObject, client);
+    XCTAssertTrue([selfUser.clients containsObject:client]);
     
 }
 
@@ -539,7 +558,7 @@
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
-        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
+        client = [selfUser.clients anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -560,7 +579,8 @@
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
-        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        client = [selfUser.clients anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousEventsCount = self.sut.generatedPushEvents.count;
@@ -658,6 +678,25 @@
     
     // then
     XCTAssertEqual(self.sut.generatedPushEvents.count, 0u);
+}
+
+- (void)testThatEncryptEncryptDataBetweenTwoClients;
+{
+    __block MockUserClient *selfClient;
+    __block MockUserClient *destClient;
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        
+        MockUser *selfUser = [session insertSelfUserWithName:@"Brigite Sorço"];
+        selfClient = [selfUser.clients anyObject];
+        
+        destClient = [session registerClientForUser:selfUser label:@"l'autre" type:@"permanent"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSData *clearData = [@"Please, encrypt me!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *encryptedData = [MockUserClient encryptedDataFromClient:selfClient toClient:destClient data:clearData];
+    
+    XCTAssertNotEqualObjects(clearData, encryptedData);
 }
 
 @end

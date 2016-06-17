@@ -34,10 +34,7 @@
 
 typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportRequest *request);
 
-extern id const ZMCustomResponseGeneratorReturnResponseNotCompleted;
-
-
-@interface MockTransportSession : NSObject
+@interface MockTransportSession : NSObject <ZMRequestCancellation>
 
 - (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)group NS_DESIGNATED_INITIALIZER;
 
@@ -60,6 +57,8 @@ extern id const ZMCustomResponseGeneratorReturnResponseNotCompleted;
 @property (nonatomic) BOOL disableEnqueueRequests;
 
 @property (nonatomic) BOOL doNotRespondToRequests; //to simulate offline
+
+@property (nonatomic) NSURL *cryptoboxLocation;
 
 @property (nonatomic) NSUInteger maxMembersForGroupCall;
 @property (nonatomic) NSUInteger maxCallParticipants;
@@ -101,10 +100,11 @@ extern id const ZMCustomResponseGeneratorReturnResponseNotCompleted;
 
 
 
-@protocol MockTransportSessionObjectCreation <NSObject>
+@protocol MockTransportSessionObjectCreation <NSObject, ZMRequestCancellation>
 
 - (MockUser *)insertSelfUserWithName:(NSString *)name;
 - (MockUser *)insertUserWithName:(NSString *)name;
+- (MockUser *)insertUserWithName:(NSString *)name includeClient:(BOOL)shouldIncludeClient;
 - (void)addProfilePictureToUser:(MockUser *)user;
 - (MockConnection *)insertConnectionWithSelfUser:(MockUser *)selfUser toUser:(MockUser *)toUser;
 

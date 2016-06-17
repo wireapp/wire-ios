@@ -54,7 +54,7 @@
 }
 
 - (ZMTransportResponse *)sampleImageResponse {
-    NSData *data = [ZMTBaseTest dataForResource:@"verySmallJPEGs/medium" extension:@"jpg"];
+    NSData *data =  [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:self.class] URLForResource:@"medium"withExtension:@"jpg"]];
     return [[ZMTransportResponse alloc ] initWithImageData:data HTTPstatus:200 transportSessionError:nil headers:nil];
 }
 
@@ -138,7 +138,14 @@
     NSString *conversationId = sessionRequest.pathComponents.firstObject;
     
     NSArray *bodyItems = [sessionRequest.embeddedRequest multipartBodyItems];
-    if ((bodyItems.count != 2 && containsAsset) || (bodyItems.count != 1 && !containsAsset)) {
+    
+    // We need to check if we are dealing with a fileUpload, in that case the request data is located at the fileUploadURL
+    if (nil == bodyItems && nil != sessionRequest.embeddedRequest.fileUploadURL) {
+        NSData *requestData = [NSData dataWithContentsOfFile:sessionRequest.embeddedRequest.fileUploadURL.path];
+        bodyItems = [requestData multipartDataItemsSeparatedWithBoundary:@"frontier"];
+    }
+    
+    if (((bodyItems.count != 2 && containsAsset) || (bodyItems.count != 1 && !containsAsset))) {
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }
     

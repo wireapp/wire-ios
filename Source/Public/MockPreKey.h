@@ -18,6 +18,7 @@
 
 
 @import CoreData;
+@import Cryptobox;
 
 @class MockUserClient;
 
@@ -32,5 +33,8 @@
 + (instancetype)insertNewKeyWithPayload:(NSDictionary *)payload context:(NSManagedObjectContext *)context;;
 
 + (NSSet *)insertNewKeysWithPayload:(NSArray *)payload context:(NSManagedObjectContext *)context;;
+
++ (NSArray <MockPreKey *> *)insertMockPrekeysFromPrekeys:(NSArray <CBPreKey *> *)prekeys forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (MockPreKey *)insertNewKeyWithPrekey:(CBPreKey *)prekey forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
 
 @end

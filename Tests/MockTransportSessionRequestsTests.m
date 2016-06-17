@@ -18,6 +18,7 @@
 
 
 #import "MockTransportSessionTests.h"
+#import "ZMCMockTransport/ZMCMockTransport-Swift.h"
 
 @interface MockTransportSessionRequestsTests : MockTransportSessionTests
 
@@ -101,7 +102,7 @@
     // given
     self.sut.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NOT_USED(request);
-        return ZMCustomResponseGeneratorReturnResponseNotCompleted;
+        return ResponseGenerator.ResponseNotCompleted;
     };
     
     __block BOOL completed = NO;
@@ -132,7 +133,7 @@
     // given
     NSString *convID = [NSUUID createUUID].transportString;
     NSString *assetID = [NSUUID createUUID].transportString;
-    NSData *expectedImageData =  [ZMTBaseTest dataForResource:@"verySmallJPEGs/tiny" extension:@"jpg"];
+    NSData *expectedImageData =  [ZMTBaseTest verySmallJPEGData];
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         

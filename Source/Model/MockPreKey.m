@@ -53,4 +53,25 @@
     }];
 }
 
++ (NSArray <MockPreKey *> *)insertMockPrekeysFromPrekeys:(NSArray <CBPreKey *> *)prekeys forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    NSArray<MockPreKey *> *newMockPrekeys = [prekeys mapWithBlock:^MockPreKey *(CBPreKey *prekey) {
+        return [self insertNewKeyWithPrekey:prekey forClient:client inManagedObjectContext:moc];
+    }];
+    
+    return newMockPrekeys;
+}
+
++ (MockPreKey *)insertNewKeyWithPrekey:(CBPreKey *)prekey forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    MockPreKey *newPrekey = [NSEntityDescription insertNewObjectForEntityForName:@"PreKey" inManagedObjectContext:moc];
+    
+    newPrekey.identifier = 0;
+    newPrekey.value = [[prekey data] base64String];
+    newPrekey.client = client;
+    
+    
+    return newPrekey;
+}
+
 @end
