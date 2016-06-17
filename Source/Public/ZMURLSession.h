@@ -25,7 +25,7 @@
 @class ZMURLSession;
 @protocol ZMURLSessionDelegate;
 
-
+extern NSString * const ZMURLSessionBackgroundIdentifier;
 
 @interface ZMURLSession : NSObject
 

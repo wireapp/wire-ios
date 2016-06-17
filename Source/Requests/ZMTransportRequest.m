@@ -41,6 +41,12 @@ static BOOL hasUTJSONSupport(void)
 }
 
 
+typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
+    ZMTransportRequestSessionTypeUseDefaultSession,
+    ZMTransportRequestSessionTypeUseBackgroundSessionOnly,
+    ZMTransportRequestSessionTypeUseVoipSessionOnly,
+};
+
 @interface ZMCompletionHandler ()
 
 
@@ -139,7 +145,7 @@ static BOOL hasUTJSONSupport(void)
 @property (nonatomic) BOOL shouldCompress;
 @property (nonatomic) NSURL *fileUploadURL;
 @property (nonatomic) NSDate *startOfUploadTimestamp;
-@property (nonatomic) BOOL shouldUseOnlyBackgroundSession;
+@property (nonatomic) ZMTransportRequestSessionType transportSessionType;
 @property (nonatomic) float progress;
 
 @end
@@ -553,9 +559,26 @@ static BOOL hasUTJSONSupport(void)
     }
 }
 
+
+- (BOOL)shouldUseOnlyBackgroundSession
+{
+    return self.transportSessionType == ZMTransportRequestSessionTypeUseBackgroundSessionOnly;
+}
+
+- (BOOL)shouldUseVoipSession
+{
+    return self.transportSessionType == ZMTransportRequestSessionTypeUseVoipSessionOnly;
+}
+
+
 - (void)forceToBackgroundSession
 {
-    self.shouldUseOnlyBackgroundSession = YES;
+    self.transportSessionType = ZMTransportRequestSessionTypeUseBackgroundSessionOnly;
+}
+
+- (void)forceToVoipSession;
+{
+    self.transportSessionType = ZMTransportRequestSessionTypeUseVoipSessionOnly;
 }
 
 - (NSString *)completionHandlerDescription;

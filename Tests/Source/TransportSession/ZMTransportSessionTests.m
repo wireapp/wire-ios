@@ -761,7 +761,9 @@ static __weak FakeReachability *currentReachability;
     NSURL *url = [NSURL URLWithString:@"http://test1.example.com"];
     ZMURLSession *foregroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *backgroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
-    ZMURLSessionSwitch *urlSwitch = [[ZMURLSessionSwitch alloc] initWithForegroundSession:foregroundSession backgroundSession:backgroundSession];
+    ZMURLSession *voipSession = [OCMockObject niceMockForClass:ZMURLSession.class];
+
+    ZMURLSessionSwitch *urlSwitch = [[ZMURLSessionSwitch alloc] initWithForegroundSession:foregroundSession backgroundSession:backgroundSession voipSession:voipSession];
     ZMTransportSession *sut = [[ZMTransportSession alloc]
                 initWithURLSessionSwitch:urlSwitch
                 requestScheduler:(id) self.scheduler
@@ -797,7 +799,9 @@ static __weak FakeReachability *currentReachability;
     NSURL *url = [NSURL URLWithString:@"http://test1.example.com"];
     ZMURLSession *foregroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *backgroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
-    ZMURLSessionSwitch *urlSwitch = [[ZMURLSessionSwitch alloc] initWithForegroundSession:foregroundSession backgroundSession:backgroundSession];
+    ZMURLSession *voipSession = [OCMockObject niceMockForClass:ZMURLSession.class];
+
+    ZMURLSessionSwitch *urlSwitch = [[ZMURLSessionSwitch alloc] initWithForegroundSession:foregroundSession backgroundSession:backgroundSession voipSession:voipSession];
     ZMTransportSession *sut = [[ZMTransportSession alloc]
                                initWithURLSessionSwitch:urlSwitch
                                requestScheduler:(id) self.scheduler
@@ -1921,17 +1925,19 @@ static __weak FakeReachability *currentReachability;
     
     NSURLSessionConfiguration *configuration;
     if (backgroundSession) {
-        configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name];
+        configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:ZMURLSessionBackgroundIdentifier];
     } else {
         configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
     }
     
-    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:@""];
+    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:nil];
     if (backgroundSession) {
         XCTAssertTrue(session.isBackgroundSession);
     }
     
-    return [self.sut suspendedTaskForRequest:request onSession:session];
+    NSURLSessionTask *task = [self.sut suspendedTaskForRequest:request onSession:session];
+    [session tearDown];
+    return task;
 }
 
 - (void)testThatItSendsAnAppropriateResponseWhenATaskWasCancelled

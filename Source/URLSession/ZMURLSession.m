@@ -31,6 +31,7 @@
 #import "ZMTransportResponse.h"
 
 
+
 static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 
 
@@ -62,7 +63,7 @@ static inline void ZMTraceTransportSessionTaskResponse(NSURLSessionTask *task) {
 
 
 static NSUInteger const ZMTransportDecreasedProgressCancellationLeeway = 1024 * 2;
-
+NSString * const ZMURLSessionBackgroundIdentifier = @"com.wire.zmessaging";
 
 @interface ZMURLSession ()
 
@@ -469,7 +470,7 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 
 - (BOOL)isBackgroundSession;
 {
-    return self.backingSession.configuration.identifier != nil;
+    return [self.backingSession.configuration.identifier isEqual:ZMURLSessionBackgroundIdentifier];
 }
 
 - (NSURLSessionTask *)taskWithRequest:(NSURLRequest *)request bodyData:(NSData *)bodyData transportRequest:(ZMTransportRequest *)transportRequest;
