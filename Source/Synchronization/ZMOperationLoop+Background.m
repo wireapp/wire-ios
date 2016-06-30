@@ -49,7 +49,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
     [self.syncMOC performGroupedBlock:^{
         
         EventsWithIdentifier *eventsWithID = [self eventsFromPushChannelData:payload];
-        NSArray *events = eventsWithID.events;
+        NSArray <ZMUpdateEvent *>*events = eventsWithID.events;
         NSArray <NSUUID *>* preexistingMessageNonces = [self fetchPreexistingMessageNoncesForEvents:events];
         EventsWithIdentifier *filteredEventsWithIdentifier = [eventsWithID filteredWithoutPreexistingNonces:preexistingMessageNonces];
         
@@ -57,6 +57,8 @@ static NSString * const PushNotificationTypeNotice = @"notice";
             [self forwardEvents:events];
             
             if (source == ZMPushNotficationTypeVoIP && nil != eventsWithID.identifier) {
+                [APNSPerformanceTracker trackVOIPNotificationInOperationLoop:eventsWithID analytics:self.syncMOC.analytics];
+                
                 ZM_WEAK(self);
                 [self.backgroundAPNSPingBackStatus didReceiveVoIPNotification:filteredEventsWithIdentifier handler:^(ZMPushPayloadResult result, NSArray<ZMUpdateEvent *> *receivedEvents) {
                     NOT_USED(receivedEvents);
@@ -73,6 +75,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
             [activity endActivity];
         } else if (filteredEventsWithIdentifier.isNotice && source == ZMPushNotficationTypeVoIP && nil != eventsWithID.identifier) {
             ZM_WEAK(self);
+            [APNSPerformanceTracker trackVOIPNotificationInOperationLoop:eventsWithID analytics:self.syncMOC.analytics];
             [self.backgroundAPNSPingBackStatus didReceiveVoIPNotification:filteredEventsWithIdentifier handler:^(ZMPushPayloadResult result, NSArray<ZMUpdateEvent *> *receivedEvents) {
                 ZM_STRONG(self);
                 [self forwardEvents:receivedEvents];
@@ -85,6 +88,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
             }];
         }
         else if (completionHandler != nil) {
+            [APNSPerformanceTracker trackVOIPNotificationInOperationLoopNotCreatingNotification:self.syncMOC.analytics];
             ZMLogPushKit(@"ZMOperationLoop - calling completionHandler without creating notifications");
             [self.syncMOC.dispatchGroup notifyOnQueue:dispatch_get_main_queue() block:^{
                 completionHandler(ZMPushPayloadResultSuccess);
@@ -180,6 +184,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
     
     if (nil == decodedData) {
         ZMLogError(@"Failed to decrypt data dictionary from push payload: %@", encryptedPayload);
+        [APNSPerformanceTracker trackAPNSPayloadDecryptionFailure:self.syncMOC.analytics];
     }
     
     NSDictionary *dataPayload = [decodedData optionalDictionaryForKey:PushChannelDataKey];

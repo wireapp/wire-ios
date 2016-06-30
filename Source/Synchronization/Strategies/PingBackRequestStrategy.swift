@@ -84,6 +84,13 @@ extension PingBackRequestStrategy: ZMSingleRequestTranscoder {
         }
         
         request.addCompletionHandler(completion)
+        
+        APNSPerformanceTracker.sharedTracker.trackNotification(
+            nextEventsWithID.identifier,
+            state: .PingBackStrategy(notice: false),
+            analytics: managedObjectContext.analytics
+        )
+        
         return request
     }
     

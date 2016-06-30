@@ -42,7 +42,6 @@
 #import "ZMCommonContactsSearch.h"
 #import "ZMAddressBookSync.h"
 #import "ZMEmptyAddressBookSync.h"
-#import "ZMConnection+InvitationToConnect.h"
 
 #import "ZMCredentials.h"
 #import "NSURL+LaunchOptions.h"

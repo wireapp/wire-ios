@@ -117,7 +117,7 @@
     [[operationLoop expect] tearDown];
 
     // when
-    ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:mediaManager appVersion:@"000000"];
+    ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:mediaManager analytics:nil appVersion:@"000000"];
     XCTAssertNotNil(session);
 
     // then
@@ -143,7 +143,7 @@
     [[[userAgent expect] classMethod] setWireAppVersion:version];
     
     // when
-    ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:mediaManager appVersion:version];
+    ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:mediaManager analytics:nil appVersion:version];
     XCTAssertNotNil(session);
     
     // then
@@ -1619,71 +1619,6 @@
 
 
 @implementation ZMUserSessionTests (LaunchOptions)
-
-- (void)testThatItDoesNotCallAnyInvitationMethodIfItIsLoggedInButItIsNotAnInvitationToConnectURL
-{
-    // given
-    [self simulateLoggedInUser];
-    id mockConnection = [OCMockObject mockForClass:ZMConnection.class];
-    id mockURL = [OCMockObject niceMockForClass:NSURL.class];
-    
-    // expect
-    [[[mockURL expect] andReturnValue:@NO] isURLForInvitationToConnect];
-    [[mockConnection reject] sendInvitationToConnectFromURL:OCMOCK_ANY managedObjectContext:OCMOCK_ANY];
-    [[mockConnection reject] storeInvitationToConnectFromURL:OCMOCK_ANY managedObjectContext:OCMOCK_ANY];
-    // when
-    [self.sut didLaunchWithURL:mockURL];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // after
-    [mockConnection verify];
-    [mockURL verify];
-    [mockConnection stopMocking];
-}
-
-- (void)testThatItCalls_SendInvitationToConnectFromURL_IfItIsLoggedInAndItIsAnInvitationToConnectURL
-{
-    
-    // given
-    [self simulateLoggedInUser];
-    id mockConnection = [OCMockObject mockForClass:ZMConnection.class];
-    id mockURL = [OCMockObject mockForClass:NSURL.class];
-    
-    // expect
-    [[[mockURL expect] andReturnValue:@YES] isURLForInvitationToConnect];
-    [[mockConnection expect] sendInvitationToConnectFromURL:mockURL managedObjectContext:self.syncMOC];
-    [[mockConnection reject] storeInvitationToConnectFromURL:OCMOCK_ANY managedObjectContext:OCMOCK_ANY];
-    
-    // when
-    [self.sut didLaunchWithURL:mockURL];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // after
-    [mockConnection verify];
-    [mockURL verify];
-    [mockConnection stopMocking];
-}
-
-- (void)testThatItCalls_StoreInvitationToConnectFromURL_IfItIsNotLoggedInAndItIsAnInvitationToConnectURL
-{
-    // given
-    id mockConnection = [OCMockObject mockForClass:ZMConnection.class];
-    id mockURL = [OCMockObject mockForClass:NSURL.class];
-    
-    // expect
-    [[[mockURL expect] andReturnValue:@YES] isURLForInvitationToConnect];
-    [[mockConnection expect] storeInvitationToConnectFromURL:mockURL managedObjectContext:self.syncMOC];
-    [[mockConnection reject] sendInvitationToConnectFromURL:OCMOCK_ANY managedObjectContext:OCMOCK_ANY];
-    
-    // when
-    [self.sut didLaunchWithURL:mockURL];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // after
-    [mockConnection verify];
-    [mockURL verify];
-    [mockConnection stopMocking];
-}
 
 - (void)testThatItSendsNotificationIfLaunchedWithPhoneVerficationURL
 {

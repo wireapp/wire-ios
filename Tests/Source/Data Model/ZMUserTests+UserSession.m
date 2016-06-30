@@ -22,7 +22,6 @@
 
 #import "MessagingTest.h"
 #import "ZMBareUser+UserSession.h"
-#import "ZMConnection+InvitationToConnect.h"
 #import "ZMUserImageTranscoder.h"
 #import "ZMUserSession+Internal.h"
 
@@ -85,30 +84,6 @@ static NSString * const InvitationToConnectBaseURL = @"https://www.wire.com/c/";
     [delegate verify];
     [token verify];
 
-}
-
-- (void)testThatItReturnsAnInvitationToConnectURLForAUser
-{
-    // given
-    static const NSTimeInterval ONE_HOUR = 60 * 60;
-    static const NSTimeInterval TWO_WEEKS = ONE_HOUR * 24 * 7 * 2;
-
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user.remoteIdentifier = [NSUUID createUUID];
-
-    // when
-    NSURL *url = [user URLForInvitationToConnect];
-
-    // then
-    NSString *urlString = [url absoluteString];
-    XCTAssertNotNil(url);
-    XCTAssertTrue([urlString hasPrefix:InvitationToConnectBaseURL]);
-
-    NSString *token = [url lastPathComponent];
-    ZMEncodedNSUUIDWithTimestamp *decodedUUID = [[ZMEncodedNSUUIDWithTimestamp alloc] initWithSafeBase64EncodedToken:token withEncryptionKey:[ZMConnection invitationToConnectEncryptionKey]];
-
-    XCTAssertEqualObjects(decodedUUID.uuid, user.remoteIdentifier);
-    XCTAssertEqualWithAccuracy(decodedUUID.timestampDate.timeIntervalSince1970, [NSDate dateWithTimeIntervalSinceNow:TWO_WEEKS].timeIntervalSince1970, ONE_HOUR);
 }
 
 @end

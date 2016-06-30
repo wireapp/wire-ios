@@ -150,7 +150,7 @@
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification)];
     
     // when
-    [self.sut didReceiveUpdateEvents:@[event]];
+    [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -176,7 +176,7 @@
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(notification2)];
     
     // when
-    [self.sut didReceiveUpdateEvents:@[event1,event2]];
+    [self.sut didReceiveUpdateEvents:@[event1,event2] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -199,7 +199,7 @@
     [[self.mockUISharedApplication reject] scheduleLocalNotification:OCMOCK_ANY];
     
     // when
-    [self.sut didReceiveUpdateEvents:@[event]];
+    [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -219,7 +219,7 @@
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification2)];
     
     // when
-    [self.sut didReceiveUpdateEvents:@[event1,event2]];
+    [self.sut didReceiveUpdateEvents:@[event1,event2] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.mockUISharedApplication verify];
     
@@ -261,7 +261,7 @@
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification4)];
     
     // when
-    [self.sut didReceiveUpdateEvents:@[event1, event2, event3, event4]];
+    [self.sut didReceiveUpdateEvents:@[event1, event2, event3, event4] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     // when
     
@@ -298,11 +298,11 @@
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
     [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_SAVE(canceledNotification1)];
     
-    [self.sut didReceiveUpdateEvents:@[callEvent]];
+    [self.sut didReceiveUpdateEvents:@[callEvent] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
-    [self.sut didReceiveUpdateEvents:@[selfUserJoinsCallEvent]];
+    [self.sut didReceiveUpdateEvents:@[selfUserJoinsCallEvent] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
 
     [self.mockUISharedApplication verify];
@@ -326,13 +326,13 @@
     
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
     
-    [self.sut didReceiveUpdateEvents:@[callEvent]];
+    [self.sut didReceiveUpdateEvents:@[callEvent] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     
     [[self.conversation2 mutableOrderedSetValueForKey:@"callParticipants"] addObject:self.user1];
 
     // when
-    [self.sut didReceiveUpdateEvents:@[selfUserDoesNotJoinCallEvent]];
+    [self.sut didReceiveUpdateEvents:@[selfUserDoesNotJoinCallEvent] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
 
     [self.mockUISharedApplication verify];
@@ -356,7 +356,7 @@
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
     [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
 
-    [self.sut didReceiveUpdateEvents:@[callEvent]];
+    [self.sut didReceiveUpdateEvents:@[callEvent] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     [self expectationForNotification:ZMConversationCancelNotificationForIncomingCallNotificationName object:nil handler:^BOOL(NSNotification * _Nonnull notification) {
         return (notification.object == self.conversation2 );
@@ -488,7 +488,7 @@
     [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification)];
     
     // when
-    [self.sut didReceiveUpdateEvents:@[event]];
+    [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -517,11 +517,11 @@
     }]];
 
     // when receiving the first time, it schedules
-    [self.sut didReceiveUpdateEvents:@[event]];
+    [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when receiving a second time it doesn't
-    [self.sut didReceiveUpdateEvents:@[event]];
+    [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then

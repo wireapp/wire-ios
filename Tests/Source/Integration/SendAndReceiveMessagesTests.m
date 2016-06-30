@@ -791,7 +791,7 @@
     XCTAssertFalse(note.participantsChanged);
     XCTAssertFalse(note.nameChanged);
     XCTAssertTrue(note.lastModifiedDateChanged);
-    XCTAssertTrue(note.unreadCountChanged);
+    XCTAssertFalse(note.unreadCountChanged);
     XCTAssertFalse(note.connectionStateChanged);
     
     void (^checkImageMessage)(ZMConversation*, ZMTFailureRecorder *) = ^(ZMConversation* conv, ZMTFailureRecorder *recorder){
@@ -991,7 +991,8 @@
     [self.userSession performChanges:^{
         [self.groupConversation removeUsersByUser:self.user2 removedUser:self.user3];
     }];
-    
+    WaitForAllGroupsToBeEmpty(0.5);
+
     NSUUID *firstMessageNonce = NSUUID.createUUID;
     [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation> session __unused) {
         [self.groupConversation insertTextMessageFromUser:self.user1 text:@"Message Text" nonce:firstMessageNonce];

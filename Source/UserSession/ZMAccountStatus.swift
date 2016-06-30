@@ -88,7 +88,7 @@ public class ZMAccountStatus : NSObject, ZMInitialSyncCompletionObserver, ZMAuth
             else { return }
         
         conversations.forEach{
-            guard $0.conversationType != .Self else { return }
+            guard $0.conversationType == .OneOnOne || $0.conversationType == .Group else { return }
             switch state {
             case .OldDeviceDeactivatedAccount:
                 $0.appendContinuedUsingThisDeviceMessage()

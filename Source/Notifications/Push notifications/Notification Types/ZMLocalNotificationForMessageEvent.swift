@@ -55,20 +55,48 @@ public class ZMLocalNotificationForPostInConversationEvent : ZMLocalNotification
 }
 
 
+enum ZMLocalNotificationContentType  {
+    case Undefined, Text(String), Image, Video, Audio, Location, FileUpload
+    
+    static func typeForMessage(message: ZMGenericMessage) -> ZMLocalNotificationContentType {
+        if message.hasText() && message.text.content.characters.count > 0 {
+            return .Text(message.text.content)
+        }
+        if message.hasImage() {
+            return .Image
+        }
+        let mimeType = message.asset.original.mimeType
+        if mimeType.zm_conformsToUTI(kUTTypeMovie) {
+            return .Video
+        }
+        if mimeType.zm_conformsToUTI(kUTTypeAudio) {
+            return .Audio
+        }
+        if message.hasAsset() {
+            return .FileUpload
+        }
+        if message.hasLocation() {
+            return .Location
+        }
+        return .Undefined
+    }
+}
+extension ZMLocalNotificationContentType : Equatable {
+}
+
+func ==(lhs: ZMLocalNotificationContentType, rhs: ZMLocalNotificationContentType) -> Bool {
+    switch (lhs, rhs) {
+    case (let .Text(content1), let .Text(content2)):
+        return content1 == content2
+    case (.Image, .Image), (.Audio, .Audio), (.Video, .Video), (.Location, .Location), (.FileUpload, .FileUpload), (.Undefined, .Undefined):
+        return true
+    default:
+        return false
+    }
+}
+
 public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversationEvent {
-    var messageText : String?
-    var isImageMessage : Bool = false
-    var isVideoMessage : Bool = false
-    var isAudioMessage : Bool = false
-    var isFileUploadedMessage : Bool = false
-    
-    override var copiedEventTypes : [ZMUpdateEventType] {
-        return [.ConversationMessageAdd, .ConversationAssetAdd, .ConversationOtrAssetAdd, .ConversationOtrMessageAdd]
-    }
-    
-    override var shouldCopyNotifications : Bool {
-        return events.count < MaximumNumberOfEventsBeforeBundling+1
-    }
+    var contentType : ZMLocalNotificationContentType = .Undefined
     
     override func canCreateNotification() -> Bool {
         guard super.canCreateNotification()
@@ -82,44 +110,21 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
             let exception = zm_tryBlock {
                 genericMessage = ZMGenericMessage(base64String: encryptedEventData)
             }
-  
-            guard exception == nil, let message = genericMessage
-            else { return false }
+            guard exception == nil, let message = genericMessage else { return false }
             
-            let isTextMessage = message.hasText() && message.text.content.characters.count > 0
-            let isImageMessage = message.hasImage()
-            let isVideoMessage = message.asset.original.mimeType.zm_conformsToUTI(kUTTypeMovie)
-            let isAudioMessage = message.asset.original.mimeType.zm_conformsToUTI(kUTTypeAudio)
-            let isFileUploadedMessage = message.hasAsset()
-            
-            guard isTextMessage || isImageMessage || isFileUploadedMessage || isVideoMessage || isAudioMessage
-            else { return false }
-            
-            if isTextMessage {
-                messageText = message.text.content
-            }
-            else if isVideoMessage {
-                self.isVideoMessage = isVideoMessage
-            }
-            else if isAudioMessage {
-                self.isAudioMessage = isAudioMessage
-            }
-            else if isFileUploadedMessage {
-                self.isFileUploadedMessage = isFileUploadedMessage
-            }
-            else if isImageMessage {
-                self.isImageMessage = isImageMessage
-            }
+            let aType = ZMLocalNotificationContentType.typeForMessage(message)
+            guard aType != .Undefined else { return false }
+            self.contentType = aType
             return true
         case .ConversationMessageAdd:
             guard let text = eventData["content"] as? String where text.characters.count > 0
                 else { return false }
-            messageText = text
+            contentType = .Text(text)
             return true
         case .ConversationAssetAdd:
             guard let tag = eventData["info"]?["tag"] as? String where tag == "medium"
                 else { return false }
-            self.isImageMessage = true
+            contentType = .Image
             return true
         default:
             return false
@@ -128,47 +133,22 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
     
     // MARK : Notification content
     override func configureAlertBody() -> String {
-        
-        if (events.count <= MaximumNumberOfEventsBeforeBundling) {
-            if messageText != nil {
-                return alertBody
-            }
-            else if self.isImageMessage {
-                return alertBodyForOneImageAddEvent
-            }
-            else if self.isVideoMessage {
-                return alertBodyForOneVideoAddEvent
-            }
-            else if self.isAudioMessage {
-                return alertBodyForOneAudioAddEvent
-            }
-            else if self.isFileUploadedMessage {
-                return alertBodyForOneFileAddEvent
-            }
-            return alertBodyForMultipleMessageAddEvents
-        } else {
+        switch contentType {
+        case .Text(let content):
+            return ZMPushStringMessageAdd.localizedStringWithUser(sender, conversation: conversation, text:content)
+        case .Image:
+            return ZMPushStringImageAdd.localizedStringWithUser(sender, conversation: conversation)
+        case .Video:
+            return ZMPushStringVideoAdd.localizedStringWithUser(sender, conversation: conversation)
+        case .Audio:
+            return ZMPushStringAudioAdd.localizedStringWithUser(sender, conversation: conversation)
+        case .FileUpload:
+            return ZMPushStringFileAdd.localizedStringWithUser(sender, conversation: conversation)
+        case .Location:
+            return ZMPushStringLocationAdd.localizedStringWithUser(sender, conversation: conversation)
+        default:
             return alertBodyForMultipleMessageAddEvents
         }
-    }
-    
-    var alertBody : String {
-        return ZMPushStringMessageAdd.localizedStringWithUser(sender, conversation: conversation, text:messageText!)
-    }
-    
-    var alertBodyForOneImageAddEvent : String {
-        return ZMPushStringImageAdd.localizedStringWithUser(sender, conversation: conversation)
-    }
-    
-    var alertBodyForOneVideoAddEvent : String {
-        return ZMPushStringVideoAdd.localizedStringWithUser(sender, conversation: conversation)
-    }
-    
-    var alertBodyForOneAudioAddEvent : String {
-        return ZMPushStringAudioAdd.localizedStringWithUser(sender, conversation: conversation)
-    }
-    
-    var alertBodyForOneFileAddEvent : String {
-        return ZMPushStringFileAdd.localizedStringWithUser(sender, conversation: conversation)
     }
     
     var alertBodyForMultipleMessageAddEvents : String {
@@ -217,12 +197,15 @@ public class ZMLocalNotificationForKnockMessage : ZMLocalNotificationForPostInCo
     // MARK : Notification content
     override func configureAlertBody() -> String {
         let knockCount = NSNumber(integer: events.count)
-        let aSender = allEventsAreFromSameSender ? self.sender : nil;
-        return ZMPushStringKnock.localizedStringWithUser(aSender, conversation:self.conversation, count:knockCount)
+        return ZMPushStringKnock.localizedStringWithUser(self.sender, conversation:self.conversation, count:knockCount)
     }
 
     override var soundName : String {
         return ZMLocalNotificationPingSoundName()
     }
-   
+    
+    override var shouldCopyEventsOfSameSender : Bool {
+        return true
+    }
+
 }

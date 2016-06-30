@@ -614,21 +614,6 @@
     XCTAssertFalse(self.conversation.isIgnoringCall);
 }
 
-- (void)testThatItReturns_OutGoingCall_ForAOneOnOneConversation_WithOut_ActiveFlowWhen_OutgoingCall
-{
-    [self.syncMOC performGroupedBlockAndWait:^{
-        // when
-        [self.syncOneOnOneConversation.voiceChannel join];
-        [self.syncOneOnOneConversation.voiceChannel addCallParticipant:self.syncUser1];
-        [self.syncOneOnOneConversation.voiceChannel addCallParticipant:self.syncSelfUser];
-        
-        // then
-        XCTAssertTrue(self.syncOneOnOneConversation.isOutgoingCall);
-        XCTAssertEqual(self.syncOneOnOneConversation.voiceChannel.state, ZMVoiceChannelStateOutgoingCall);
-        XCTAssertNotEqual(self.syncOneOnOneConversation.voiceChannel.state, ZMVoiceChannelStateSelfIsJoiningActiveChannel);
-    }];
-}
-
 - (void)testThatItReturns_Connected_ForAOneOnOneConversation_With_ActiveFlow_IncomingCall
 {
     [self.syncMOC performGroupedBlockAndWait:^{

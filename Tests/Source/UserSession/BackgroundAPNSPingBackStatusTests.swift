@@ -55,7 +55,7 @@ class OperationLoopNewRequestObserver {
     var didReceiveUpdateEventsBlock: ([ZMUpdateEvent]? -> Void)?
     var callCount = 0
     
-    func didReceiveUpdateEvents(events: [ZMUpdateEvent]?) {
+    func didReceiveUpdateEvents(events: [ZMUpdateEvent]?, notificationID: NSUUID) {
         callCount += 1
         didReceiveUpdateEventsBlock?(events)
     }

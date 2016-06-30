@@ -20,7 +20,6 @@
 @import ZMUtilities;
 
 #import "MessagingTest.h"
-#import "ZMConnection+InvitationToConnect.h"
 #import "NSURL+LaunchOptions.h"
 #import <CommonCrypto/CommonCrypto.h>
 
@@ -136,96 +135,4 @@ static unsigned long HOUR_IN_SEC = 60 * 60;
 
 @end
 
-
-
-@implementation ZMEncodedNSUUIDWithTimestampTests (NSURL)
-
-- (void)testThatItCreatesAndDecodesAURLFromAnEncodedUUIDWithTimestamp
-{
-    // given
-    NSString *prefix = @"https://www.example.com/doo/bar/";
-    NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:SampleTimestamp];
-    NSUUID *uuid = [NSUUID createUUID];
-    NSData *encryptionKey = [ZMConnection invitationToConnectEncryptionKey];
-    
-    ZMEncodedNSUUIDWithTimestamp *original = [[ZMEncodedNSUUIDWithTimestamp alloc] initWithUUID:uuid timestampDate:timestamp encryptionKey:encryptionKey];
-    
-    // when
-    NSURL *url = [original URLWithEncodedUUIDWithTimestampPrefixedWithString:prefix];
-    
-    // then
-    XCTAssertTrue([url.absoluteString hasPrefix:prefix]);
-    NSString *token = [url.absoluteString substringFromIndex:prefix.length];
-
-    // when
-    ZMEncodedNSUUIDWithTimestamp *decoded = [[ZMEncodedNSUUIDWithTimestamp alloc] initWithSafeBase64EncodedToken:token withEncryptionKey:encryptionKey];
-    
-    // then
-    XCTAssertEqualObjects(decoded.uuid, uuid);
-    XCTAssertEqualObjects(decoded.timestampDate, [self.class dateByStrippingMinutesFromDate:timestamp]);
-    
-}
-
-- (void)testThatItDecodesAURLWithEscapedCharacter_Plus
-{
-    // given
-    NSUUID *expectedUUID = [[NSUUID alloc] initWithUUIDString:@"0F86B28A-85B1-46F4-A387-29D5AB420002"];
-    NSURL *url = [NSURL URLWithString:@"wire://connect?code=pq9xgV1-6Gg5xsM_ftz9KTFQkjRZsLbltoN8ATScuDs"];
-    NSData *key = [ZMConnection invitationToConnectEncryptionKey];
-    NSDate *expiration = [NSDate dateWithTimeIntervalSince1970:SampleTimestamp];
-    
-    // when
-    ZMEncodedNSUUIDWithTimestamp *decoded = [[ZMEncodedNSUUIDWithTimestamp alloc] initWithSafeBase64EncodedToken:[url invitationToConnectToken] withEncryptionKey:key];
-    
-    // then
-    XCTAssertEqualObjects(expectedUUID, decoded.uuid);
-    XCTAssertEqualObjects([self.class dateByStrippingMinutesFromDate:expiration], decoded.timestampDate);
-}
-
-- (void)testThatItDecodesAURLWithEscapedCharacter_Slash
-{
-    // given
-    NSUUID *expectedUUID = [[NSUUID alloc] initWithUUIDString:@"0F86B28A-85B1-46F4-A387-29D5AB420001"];
-    NSURL *url = [NSURL URLWithString:@"wire://connect?code=YjXsjDOfIEMtKPVnlNwHnzmn8J2R7Aika0LVMl1nCnM"];
-    NSData *key = [ZMConnection invitationToConnectEncryptionKey];
-    NSDate *expiration = [NSDate dateWithTimeIntervalSince1970:SampleTimestamp];
-    
-    // when
-    ZMEncodedNSUUIDWithTimestamp *decoded = [[ZMEncodedNSUUIDWithTimestamp alloc] initWithSafeBase64EncodedToken:[url invitationToConnectToken] withEncryptionKey:key];
-    
-    // then
-    XCTAssertEqualObjects(expectedUUID, decoded.uuid);
-    XCTAssertEqualObjects([self.class dateByStrippingMinutesFromDate:expiration], decoded.timestampDate);
-}
-
-- (void)testThatItDecodesAURLFromTheAndroidClient
-{
-    // given
-    NSUUID *expectedUUID = [[NSUUID alloc] initWithUUIDString:@"0F86B28A-85B1-46F4-A387-29D5AB420001"];
-    NSURL *url = [NSURL URLWithString:@"wire://connect?code=B32C2G-yV4WczFZbSKoLUAkvOvHd_ypNUSiW2WcqVLY"];
-    NSData *key = [ZMConnection invitationToConnectEncryptionKey];
-    NSDate *expiration = [NSDate dateWithTimeIntervalSince1970:1419349808];
-    
-    // when
-    ZMEncodedNSUUIDWithTimestamp *decoded = [[ZMEncodedNSUUIDWithTimestamp alloc] initWithSafeBase64EncodedToken:[url invitationToConnectToken] withEncryptionKey:key];
-
-    // then
-    XCTAssertEqualObjects(expectedUUID, decoded.uuid);
-    XCTAssertEqualObjects([self.class dateByStrippingMinutesFromDate:expiration], decoded.timestampDate);
-}
-
-- (void)testThatItDoesNotParseURLsWithInvalidData
-{
-    // given
-    NSURL *url = [NSURL URLWithString:@"wire://connect?bogus-key=B32C2G-yV4WczFZbSKoLUAkvOvHd_ypNUSiW2WcqVLY"];
-    NSData *key = [ZMConnection invitationToConnectEncryptionKey];
-    
-    // when
-    ZMEncodedNSUUIDWithTimestamp *decoded = [[ZMEncodedNSUUIDWithTimestamp alloc] initWithSafeBase64EncodedToken:[url invitationToConnectToken] withEncryptionKey:key];
-    
-    // then
-    XCTAssertNil(decoded);
-}
-
-@end
 

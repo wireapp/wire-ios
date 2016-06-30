@@ -381,7 +381,7 @@
 
 }
 
-- (void)testThatItCreatesACopyStoringTheNotificationsInternalWhenTheUnreadCountIsSmallerThanFive_OneOnOne
+- (void)testThatItDoesNotCreateACopyStoringTheNotificationsInternalWhenTheUnreadCountIsSmallerThanFive_OneOnOne
 {
     // given
     NSDictionary *data1 = @{@"content": @"Hello Hello!"};
@@ -396,32 +396,11 @@
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAdd];
     
     // then
-    XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 2u);
-    XCTAssertTrue(self.oneOnOneConversation.estimatedUnreadCount < 5);
+    XCTAssertNil(note2);
 }
 
-- (void)testThatItCreatesACopyStoringTheNotificationsInternalWhenTheUnreadCountIsSmallerThanFive_Group
-{
-    // given
-    NSDictionary *data1 = @{@"content": @"Hello Hello!"};
-    NSDictionary *data2 = @{@"content": @"Ahhhhh!"};
-    
-    NSUInteger unreadCount = 3;
-    
-    // when
-    ZMLocalNotificationForEvent *note1 = [self noteWithPayload:data1 fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
-    [self insertMessagesIntoConversation:self.groupConversation messageCount:unreadCount];
-    
-    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
-    
-    // then
-    XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 2u);
-    XCTAssertTrue(self.groupConversation.estimatedUnreadCount < 5);
-}
 
-- (void)testThatItBundlesTheNotificationsInternalWhenTheUnreadCountIsBiggerThanFive_Group
+- (void)testThatItDoesNotBundleTheNotificationsInternalWhenTheUnreadCountIsBiggerThanFive_Group
 {
     // given
     NSDictionary *data2 = @{@"content": @"Ahhhhh!"};
@@ -431,14 +410,13 @@
     XCTAssertNotNil(note1);
     
     // expect
-    [[mockApplication expect] cancelLocalNotification:note1.notifications.firstObject];
+    [[mockApplication reject] cancelLocalNotification:note1.notifications.firstObject];
     
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
     
     // then
-    XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 1u);
+    XCTAssertNil(note2);
     [mockApplication verify];
 }
 
@@ -453,172 +431,6 @@
     }
 }
 
-
-- (ZMLocalNotificationForEvent *)zmCopyForMessageAddNotificationFromUser:(ZMUser *)sender inConversation:(ZMConversation *)conversation unreadCount:(NSUInteger)unreadCount
-{
-    NSDictionary *data2 = @{@"content": @"Ahhhhh!"};
-
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // when
-    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:conversation fromUser:sender unreadCrount:unreadCount application:nil];
-    
-    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:sender inConversation:conversation type:EventConversationAdd];
-    
-    return note2;
-}
-
-- (void)testThatItCreatesACopyWhenThereIsAlreadyAMessageAddEventInAOneOnOneConversation
-{
-    //"push.notification.add.message.many.oneonone" = "%2$@ new messages from %1$@";
-    // given
-    NSUInteger unreadCount = 5;
-    ZMLocalNotificationForEvent *note2 = [self zmCopyForMessageAddNotificationFromUser:self.sender inConversation:self.oneOnOneConversation unreadCount:unreadCount];
-
-    // then
-    NSString *expectedAlertText = @"6 messages from Super User";
-    
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
-}
-
-
-- (void)testThatItDoesNotUseTheCurrentLocale
-{
-    //"push.notification.add.message.many.oneonone" = "%2$@ new messages from %1$@";
-    // given
-    id locale = [OCMockObject niceMockForClass:[NSLocale class]];
-    NSLocale *spanish = [NSLocale localeWithLocaleIdentifier:@"es"];
-    [[[locale stub] andReturn:spanish] currentLocale];
-    
-    NSUInteger unreadCount = 5;
-    ZMLocalNotificationForEvent *note2 = [self zmCopyForMessageAddNotificationFromUser:self.sender inConversation:self.oneOnOneConversation unreadCount:unreadCount];
-    
-    // then
-    NSString *expectedAlertText = @"6 messages from Super User";
-    
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
-    
-    [locale stopMocking];
-}
-
-
-- (void)testThatItCreatesACopyWhenThereIsAlreadyAMessageAddEventInAOneOnOneConversation_UnknownSender
-{
-    //"push.notification.add.message.many.oneonone.nousername" = "%1$@ new messages from someone";
-    // given
-    NSUInteger unreadCount = 5;
-    ZMLocalNotificationForEvent *note2 = [self zmCopyForMessageAddNotificationFromUser:nil inConversation:self.oneOnOneConversation unreadCount:unreadCount];
-    
-    // then
-    NSString *expectedAlertText = @"6 messages in a conversation";
-    
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
-}
-
-
-- (void)testThatItCreatesACopyWhenThereIsAlreadyAMessageAddEventInAGroupConversation
-{
-    //"push.notification.add.message.many.group" = "%2$@ new messages in %1$@";
-    // given
-    NSUInteger unreadCount = 5;
-    ZMLocalNotificationForEvent *note2 = [self zmCopyForMessageAddNotificationFromUser:self.sender inConversation:self.groupConversation unreadCount:unreadCount];
-    
-    // then
-    NSString *expectedAlertText = @"6 messages in Super Conversation";
-    
-    XCTAssertNotNil(note2);
-    
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
-}
-
-- (void)testThatItCreatesACopyWhenThereIsAlreadyAMessageAddEventInAGroupConversation_NoConversationName
-{
-    //"push.notification.add.message.many.group.noconversationname" = "%2$@ new messages in a conversation";
-    // given
-    NSUInteger unreadCount = 5;
-    ZMLocalNotificationForEvent *note2 = [self zmCopyForMessageAddNotificationFromUser:self.sender inConversation:self.groupConversationWithoutName unreadCount:unreadCount];
-    
-    // then
-    NSString *expectedAlertText = @"6 messages in a conversation";
-    
-    XCTAssertNotNil(note2);
-    
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
-}
-
-
-- (void)testThatItUsesTheCorrectSenderInGroupConversations
-{
-    // given
-    
-    NSDictionary *data = @{@"content": @"Hello Hello!"};
-    
-    // when
-    ZMLocalNotificationForEvent *note1 = [self noteWithPayload:data fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
-
-    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data fromUser:self.otherUser inConversation:self.groupConversation type:EventConversationAdd];
-    
-    ZMLocalNotificationForEvent *note3 = [self copyNote:note2 withPayload:data fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
-    
-    // then
-    XCTAssertNotNil(note1);
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note3);
-
-    XCTAssertEqualObjects(self.sender, note1.sender);
-    XCTAssertEqualObjects(self.otherUser, note2.sender);
-    XCTAssertEqualObjects(self.sender, note3.sender);
-}
-
-- (void)testThatItCreatesACopyWhenTheSendersAreNotTheSameAndStoresTheCorrectSender
-{
-    // given
-    NSDictionary *data1 = @{@"content": @"Hello Hello!"};
-    NSDictionary *data2 = @{@"content": @"Ahhhhh!"};
-    
-    // when
-    ZMLocalNotificationForEvent *note1 = [self noteWithPayload:data1 fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
-    XCTAssertNotNil(note1);
-    XCTAssertNotNil(note1.sender);
-    XCTAssertEqualObjects(self.sender, note1.sender);
-    
-    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:self.otherUser inConversation:self.groupConversation type:EventConversationAdd];
-    
-    // then
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note2.sender);
-    XCTAssertEqualObjects(self.sender, note1.sender);
-    XCTAssertEqualObjects(self.otherUser, note2.sender);
-}
-
-- (void)testThatItDoesNotCreateACopyWhenTheConversationsAreNotTheSame
-{
-    // given
-    NSDictionary *data1 = @{@"content": @"Hello Hello!"};
-    NSDictionary *data2 = @{@"content": @"Ahhhhh!"};
-    
-    ZMConversation *conversation2 = [self insertConversationWithRemoteID:[NSUUID createUUID] name:@"Super Conversation" type:ZMConversationTypeOneOnOne isSilenced:NO];
-    
-    // when
-    ZMLocalNotificationForEvent *note1 = [self noteWithPayload:data1 fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAdd];
-    ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:self.sender inConversation:conversation2 type:EventConversationAdd];
-    
-    // then
-    XCTAssertNil(note2);
-}
 
 - (void)testThatItDuplicatesPercentageSignsInTextAndConversationName
 {
@@ -794,23 +606,16 @@
     }];
 }
 
-- (void)testThatItDoesntBundleFileAddNotification_whenUnderBundleLimit
+- (void)testThatItDoesntBundleFileAddNotification
 {
     // given
     ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
     
-    
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"application/pdf" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
     
-    
     // then
-    NSString *expectedAlertText = @"Super User shared a file";
-    
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
+    XCTAssertNil(note2);
 }
 
 - (void)testThatItCreatesVideoAddNotificationsCorrectly
@@ -847,23 +652,16 @@
     }];
 }
 
-- (void)testThatItDoesntBundleVideoAddNotification_whenUnderBundleLimit
+- (void)testThatItDoesntBundleVideoAddNotification
 {
     // given
     ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
     
-    
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"video/mp4" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
     
-    
     // then
-    NSString *expectedAlertText = @"Super User shared a video";
-    
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
+    XCTAssertNil(note2);
 }
 
 
@@ -902,23 +700,16 @@
 }
 
 
-- (void)testThatItDoesntBundleAudioAddNotification_whenUnderBundleLimit
+- (void)testThatItDoesntBundleAudioAddNotification
 {
     // given
     ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
     
-    
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"audio/x-m4a" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
     
-    
     // then
-    NSString *expectedAlertText = @"Super User shared an audio message";
-    
-    XCTAssertNotNil(note2);
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
+    XCTAssertNil(note2);
 }
 
 @end
@@ -1036,7 +827,7 @@
     }];
 }
 
-- (void)testThatItCopysAKnockNotificationWhenTheSenderDiffersInGroupConversations
+- (void)testThatItDoesNotCopyAKnockNotificationWhenTheSenderDiffersInGroupConversations
 {
     //given
     ZMUser *user2 = [self insertUserWithRemoteID:[NSUUID createUUID] name:@"Super User2"];
@@ -1054,13 +845,7 @@
     ZMLocalNotificationForEvent *note2 = [self copyNote:note withPayload:nil fromUser:user2 inConversation:self.groupConversation type:EventConversationKnock];
     
     // then
-    
-    NSString *expectedAlertText = @"2 pings in Super Conversation";
-    XCTAssertNotNil(note2);
-    
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
-    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
+    XCTAssertNil(note2);
 }
 
 - (void)testThatItDoesNotReturnsACopyIfThereWasNoPriorKnockEvent

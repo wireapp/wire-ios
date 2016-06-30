@@ -17,22 +17,22 @@
 // 
 
 
-@import Foundation;
-@import ZMCDataModel;
+import Foundation
 
-extern NSString * const ZMConnectionInvitationToConnectOutgoingBaseURL;
+private let analyticsUserInfoKey = "AnalyticsUserInfoKey"
 
-@interface ZMConnection (InvitationToConnect)
-
-+ (NSData *)invitationToConnectEncryptionKey;
-
-+ (void)sendInvitationToConnectFromURL:(NSURL *)url managedObjectContext:(NSManagedObjectContext *)moc;
-+ (void)storeInvitationToConnectFromURL:(NSURL *)url managedObjectContext:(NSManagedObjectContext *)moc;
-+ (void)processStoredInvitationsToConnectFromURLInManagedObjectContext:(NSManagedObjectContext *)moc;
-
-@end
-
-
-
-@interface ZMUser (InvitationToConnect) <ZMUserURLForInvitationToConnect>
-@end
+public extension NSManagedObjectContext {
+    
+    /// Set when initializing the user session from the UI, used for easier tracking on SE
+    public var analytics: AnalyticsType? {
+        get {
+            guard zm_isSyncContext else { preconditionFailure("Analytics can only be accessed on sync context") }
+            return userInfo[analyticsUserInfoKey] as? AnalyticsType
+        }
+        
+        set {
+            guard zm_isSyncContext else { preconditionFailure("Analytics can only be accessed on sync context") }
+            userInfo[analyticsUserInfoKey] = newValue
+        }
+    }
+}

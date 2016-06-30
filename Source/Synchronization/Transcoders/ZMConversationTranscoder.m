@@ -361,7 +361,7 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
 {
 
     if (timeStamp != nil && oldLastTimeStamp != nil && [oldLastTimeStamp isEqualToDate:conversation.lastReadServerTimeStamp]) {
-        [conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:timeStamp andSync:YES];
+        [conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:timeStamp andSync:NO];
     }
     
     if (eventID != nil && oldLastEventID != nil && [oldLastEventID isEqualToEventID:conversation.lastReadEventID]) {

@@ -24,7 +24,6 @@
 #import "ZMUpdateEventsCatchUpPhaseOneState.h"
 #import "ZMMissingUpdateEventsTranscoder.h"
 #import "ZMStateMachineDelegate.h"
-#import "ZMConnection+InvitationToConnect.h"
 
 @interface ZMUpdateEventsCatchUpPhaseOneStateTests : StateBaseTest
 
@@ -217,45 +216,6 @@
         [self.sut didEnterState];
     }];
 
-}
-
-- (void)testThatItProcessesStoredInvitationsToConnectFromURLWhenItEntersTheState
-{
-    // given
-    [[(id)self.sut.stateMachineDelegate stub] didStartSync];
-    [[[(id)self.objectDirectory.missingUpdateEventsTranscoder stub] andReturnValue:@YES] hasLastUpdateEventID];
-    [[(id)self.objectDirectory.missingUpdateEventsTranscoder stub] startDownloadingMissingNotifications];
-    
-    // expect
-    id mockConnection = [OCMockObject mockForClass:ZMConnection.class];
-    [[[mockConnection expect] classMethod] processStoredInvitationsToConnectFromURLInManagedObjectContext:self.uiMOC];
-    
-    // when
-    [self.sut didEnterState];
-    
-    // then
-    [mockConnection stopMocking];
-    [mockConnection verify];
-}
-
-- (void)testThatItProcessesStoredInvitationsToConnectFromURLWhenItEntersTheStateEvenIfNeedsASlowSync
-{
-    // given
-    [[(id)self.sut.stateMachineDelegate stub] didStartSync];
-    [[[(id)self.objectDirectory.missingUpdateEventsTranscoder stub] andReturnValue:@NO] hasLastUpdateEventID];
-    [[(id)self.objectDirectory.missingUpdateEventsTranscoder stub] startDownloadingMissingNotifications];
-    [[(id)self.stateMachine stub] startSlowSync];
-    
-    // expect
-    id mockConnection = [OCMockObject mockForClass:ZMConnection.class];
-    [[[mockConnection expect] classMethod] processStoredInvitationsToConnectFromURLInManagedObjectContext:self.uiMOC];
-    
-    // when
-    [self.sut didEnterState];
-    
-    // then
-    [mockConnection stopMocking];
-    [mockConnection verify];
 }
 
 - (void)testThatItSwitchesToUnauthorizedStateOnDidFailAuthentication

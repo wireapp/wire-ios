@@ -2471,7 +2471,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
+    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
     [self.mockTransportSession resetReceivedRequests];
 
     // and when sending a message in the not safe conversation
@@ -2481,7 +2481,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
+    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
 }
 
 @end

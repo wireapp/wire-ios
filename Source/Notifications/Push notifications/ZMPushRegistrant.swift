@@ -60,6 +60,8 @@ public final class PushKitRegistrant : NSObject, PushNotificationSource {
         }
     }
     
+    public var analytics: AnalyticsType?
+    
     public convenience required init(didUpdateCredentials: (NSData) -> Void, didReceivePayload: (NSDictionary, ZMPushNotficationType, (ZMPushPayloadResult) -> Void) -> Void, didInvalidateToken: () -> Void) {
         self.init(fakeRegistry: nil, didUpdateCredentials: didUpdateCredentials, didReceivePayload: didReceivePayload, didInvalidateToken: didInvalidateToken)
     }
@@ -93,6 +95,8 @@ extension PushKitRegistrant : PKPushRegistryDelegate {
     public func pushRegistry(registry: PKPushRegistry!, didReceiveIncomingPushWithPayload payload: PKPushPayload!, forType type: String!) {
         ZMLogPushKit_swift("Registry \(self.registry.description) did receive '\(payload.type)' payload: \(payload.dictionaryPayload)")
         let a = ZMBackgroundActivity.beginBackgroundActivityWithName("Process PushKit payload")
+        APNSPerformanceTracker.trackReceivedNotification(analytics)
+
         didReceivePayload(payload.dictionaryPayload, .VoIP) {
             result in
             ZMLogPushKit_swift("Registry \(self.registry.description) did finish background task")

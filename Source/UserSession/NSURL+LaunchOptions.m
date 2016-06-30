@@ -23,33 +23,12 @@
 
 @implementation NSURL (LaunchOptions)
 
-- (NSString *)invitationToConnectToken
-{
-    if(!self.isURLForInvitationToConnect) {
-        return nil;
-    }
-    return self.zm_queryComponents[@"code"];
-}
-
 - (NSString *)codeForPhoneVerification
 {
     if (!self.isURLForPhoneVerification) {
         return nil;
     }
     return [self.path substringFromIndex:1];
-}
-
-- (BOOL)isURLForInvitationToConnect;
-{
-    NSString *code = self.zm_queryComponents[@"code"];
-    if(code == nil || code.length == 0) {
-        return NO;
-    }
-    
-    return
-    ([self.scheme isEqualToString:@"wire"] || [self.scheme isEqualToString:@"wire-invite"])
-    && [self.host isEqualToString:@"connect"]
-    && [self.path isEqualToString:@""];
 }
 
 - (BOOL)isURLForPhoneVerification
