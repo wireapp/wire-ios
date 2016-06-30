@@ -311,6 +311,10 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
     self.visibleInConversation = conversation;
     self.sender = [ZMUser userWithRemoteID:senderUUID createIfNeeded:YES inContext:self.managedObjectContext];
     
+    if (self.sender.isSelfUser) {
+        // if the message was sent by the selfUser we don't want to send a lastRead event, since we consider this message to be already read
+        [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:self.serverTimestamp andSync:NO];
+    }
     [conversation updateWithMessage:self timeStamp:serverTimestamp eventID:eventID];
 }
 

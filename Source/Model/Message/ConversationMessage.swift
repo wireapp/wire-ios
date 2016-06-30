@@ -67,6 +67,9 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// The file transfer data associated with the message. If the message is not the file transfer, it will be nil
     var fileMessageData: ZMFileMessageData? { get }
     
+    /// The location message data associated with the message. If the message is not a location message, it will be nil
+    var locationMessageData: ZMLocationMessageData? { get }
+    
     /// Request the download of the file if not already present.
     /// The download will be executed asynchronously. The caller can be notified by observing the message window.
     /// This method can safely be called multiple times, even if the content is already available locally
@@ -124,6 +127,10 @@ extension ZMMessage : ZMConversationMessage {
     }
     
     public var fileMessageData : ZMFileMessageData? {
+        return nil
+    }
+    
+    public var locationMessageData: ZMLocationMessageData? {
         return nil
     }
     

@@ -341,13 +341,16 @@
                                                        outInsertedAtIndex:&index];
     systemMessage.needsUpdatingUsers = YES;
     
+    
     if (index > 1) {
-        ZMMessage *previousMessage = self.messages[index - 1];
-        [self updatePotentialGapSystemMessage:systemMessage ifNeededWithMessage:previousMessage];
+        ZMSystemMessage *previousMessage = self.messages[index - 1];
+        if ([previousMessage isKindOfClass:[ZMSystemMessage class]]) {
+            [self updatePotentialGapSystemMessage:systemMessage ifNeededWithMessage:previousMessage];
+        }
     }
 }
 
-- (void)updatePotentialGapSystemMessage:(ZMSystemMessage *)systemMessage ifNeededWithMessage:(ZMMessage *)message
+- (void)updatePotentialGapSystemMessage:(ZMSystemMessage *)systemMessage ifNeededWithMessage:(ZMSystemMessage *)message
 {
     // In case the message before the new system message was also a system message of
     // the type ZMSystemMessageTypePotentialGap, we delete the old one and update the
@@ -358,8 +361,7 @@
         return;
     }
     
-    if ([message isKindOfClass:ZMSystemMessage.class] &&
-        message.systemMessageData.systemMessageType == ZMSystemMessageTypePotentialGap) {
+    if (message.systemMessageType == ZMSystemMessageTypePotentialGap) {
         id <ZMSystemMessageData> previousSystemMessage = message.systemMessageData;
         systemMessage.users = previousSystemMessage.users.copy;
         [self.managedObjectContext deleteObject:previousSystemMessage];

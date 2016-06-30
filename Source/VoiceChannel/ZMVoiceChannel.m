@@ -246,11 +246,7 @@ static dispatch_queue_t lastSessionIdentifierIsolation(void)
     else if (selfActiveInCall && otherJoined) {
         if (flowActive) {
             return ZMVoiceChannelStateSelfConnectedToActiveChannel;
-        }
-        else if (conversation.isOutgoingCall && conversation.conversationType == ZMConversationTypeOneOnOne){
-            return [self currentOutgoingCallState];
-        }
-        else {
+        } else {
             return ZMVoiceChannelStateSelfIsJoiningActiveChannel;
         }
     } else {

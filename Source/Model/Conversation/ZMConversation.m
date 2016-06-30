@@ -109,7 +109,7 @@ static NSString *const HiddenMessagesKey = @"hiddenMessages";
 static NSString *const SecurityLevelKey = @"securityLevel";
 
 
-NSTimeInterval ZMConversationDefaultLastReadEventIDSaveDelay = 0.7;
+NSTimeInterval ZMConversationDefaultLastReadEventIDSaveDelay = 3.0;
 
 const NSUInteger ZMConversationMaxEncodedTextMessageLength = 1500;
 const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTextMessageLength - 50; // Empirically we verified that the encoding adds 44 bytes
@@ -735,6 +735,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 - (void)updateLastReadServerTimeStampWithMessage:(ZMMessage *)message
 {
     NSDate *timeStamp = message.serverTimestamp;
+    BOOL senderIsSelfUser = message.sender.isSelfUser;
 
     if( ! self.managedObjectContext.zm_isUserInterfaceContext ) {
         return;
@@ -776,20 +777,30 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
                 return;
             }
             timeStamp = lastDeliveredMessage.serverTimestamp;
+            senderIsSelfUser = lastDeliveredMessage.sender.isSelfUser;
         }
     }
-    
-    [self updateLastReadServerTimeStamp:timeStamp];
+    [self updateLastReadServerTimeStamp:timeStamp senderIsSelfUser:senderIsSelfUser];
 }
 
-- (void)updateLastReadServerTimeStamp:(NSDate *)serverTimeStamp
+- (void)updateLastReadServerTimeStamp:(NSDate *)serverTimeStamp senderIsSelfUser:(BOOL)senderIsSelfUser
 {
     if ((self.lastReadServerTimeStamp != nil) &&([serverTimeStamp compare:self.lastReadServerTimeStamp] == NSOrderedAscending)) {
         return;
     }
     
     if (self.tempMaxLastReadServerTimeStamp == nil ||  [self.tempMaxLastReadServerTimeStamp compare:serverTimeStamp] == NSOrderedAscending) {
-        self.tempMaxLastReadServerTimeStamp = serverTimeStamp;
+        if (!senderIsSelfUser) {
+            self.tempMaxLastReadServerTimeStamp = serverTimeStamp;
+        }
+        else {
+            // This code only gets executed when we insert a message on this device and immediately set the window before the message was updated from the BE
+            // Since the message was created by the selfUser, we don't want to sync the lastRead
+            // To stop syncing of previously stored values, we need to reset the tempMaxLastRead to 0
+            self.tempMaxLastReadServerTimeStamp = nil;
+            self.lastReadEventIDUpdateCounter = 0;
+            return;
+        }
     }
     
     if (self.managedObjectContext.zm_isUserInterfaceContext) {
@@ -1307,20 +1318,6 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     [self updateLastEventIDIfNeededWithEventID:eventID];
     [self addEventToDownloadedEvents:eventID timeStamp:timeStamp];
     [self updateLastModifiedDateIfNeeded:timeStamp];
-    
-    if ([message isKindOfClass:[ZMSystemMessage class]]) {
-        ZMSystemMessageType type = [(ZMSystemMessage *)message systemMessageType];
-        
-        if (message.sender == [ZMUser selfUserInContext:self.managedObjectContext] &&
-            (type == ZMSystemMessageTypeConnectionRequest || type == ZMSystemMessageTypeMissedCall))
-        {
-            [self updateLastReadEventIDIfNeededWithEventID:eventID];
-            if (self.lastReadServerTimeStamp != nil) {
-                [self updateLastReadServerTimeStampIfNeededWithTimeStamp:timeStamp andSync:YES];
-            }
-        }
-    }
-    
     [self updateUnreadMessagesWithMessage:message];
 }
 
