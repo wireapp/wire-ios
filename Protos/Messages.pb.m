@@ -88,6 +88,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property (strong) ZMCalling* calling;
 @property (strong) ZMAsset* asset;
 @property (strong) ZMMsgDeleted* deleted;
+@property (strong) ZMLocation* location;
 @end
 
 @implementation ZMGenericMessage
@@ -176,6 +177,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasDeleted_ = !!_value_;
 }
 @synthesize deleted;
+- (BOOL) hasLocation {
+  return !!hasLocation_;
+}
+- (void) setHasLocation:(BOOL) _value_ {
+  hasLocation_ = !!_value_;
+}
+@synthesize location;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -190,6 +198,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.calling = [ZMCalling defaultInstance];
     self.asset = [ZMAsset defaultInstance];
     self.deleted = [ZMMsgDeleted defaultInstance];
+    self.location = [ZMLocation defaultInstance];
   }
   return self;
 }
@@ -254,6 +263,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasLocation) {
+    if (!self.location.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -292,6 +306,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasDeleted) {
     [output writeMessage:12 value:self.deleted];
+  }
+  if (self.hasLocation) {
+    [output writeMessage:13 value:self.location];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -337,6 +354,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasDeleted) {
     size_ += computeMessageSize(12, self.deleted);
+  }
+  if (self.hasLocation) {
+    size_ += computeMessageSize(13, self.location);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -436,6 +456,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasLocation) {
+    [output appendFormat:@"%@%@ {\n", indent, @"location"];
+    [self.location writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -493,6 +519,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.deleted storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"deleted"];
   }
+  if (self.hasLocation) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.location storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"location"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -528,6 +559,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasAsset || [self.asset isEqual:otherMessage.asset]) &&
       self.hasDeleted == otherMessage.hasDeleted &&
       (!self.hasDeleted || [self.deleted isEqual:otherMessage.deleted]) &&
+      self.hasLocation == otherMessage.hasLocation &&
+      (!self.hasLocation || [self.location isEqual:otherMessage.location]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -567,6 +600,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasDeleted) {
     hashCode = hashCode * 31 + [self.deleted hash];
+  }
+  if (self.hasLocation) {
+    hashCode = hashCode * 31 + [self.location hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -646,6 +682,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasDeleted) {
     [self mergeDeleted:other.deleted];
+  }
+  if (other.hasLocation) {
+    [self mergeLocation:other.location];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -769,6 +808,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setDeleted:[subBuilder buildPartial]];
+        break;
+      }
+      case 106: {
+        ZMLocationBuilder* subBuilder = [ZMLocation builder];
+        if (self.hasLocation) {
+          [subBuilder mergeFrom:self.location];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setLocation:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1090,6 +1138,36 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearDeleted {
   resultGenericMessage.hasDeleted = NO;
   resultGenericMessage.deleted = [ZMMsgDeleted defaultInstance];
+  return self;
+}
+- (BOOL) hasLocation {
+  return resultGenericMessage.hasLocation;
+}
+- (ZMLocation*) location {
+  return resultGenericMessage.location;
+}
+- (ZMGenericMessageBuilder*) setLocation:(ZMLocation*) value {
+  resultGenericMessage.hasLocation = YES;
+  resultGenericMessage.location = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setLocationBuilder:(ZMLocationBuilder*) builderForValue {
+  return [self setLocation:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeLocation:(ZMLocation*) value {
+  if (resultGenericMessage.hasLocation &&
+      resultGenericMessage.location != [ZMLocation defaultInstance]) {
+    resultGenericMessage.location =
+      [[[ZMLocation builderWithPrototype:resultGenericMessage.location] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.location = value;
+  }
+  resultGenericMessage.hasLocation = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearLocation {
+  resultGenericMessage.hasLocation = NO;
+  resultGenericMessage.location = [ZMLocation defaultInstance];
   return self;
 }
 @end
@@ -2629,6 +2707,365 @@ static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
 - (ZMMsgDeletedBuilder*) clearMessageId {
   resultMsgDeleted.hasMessageId = NO;
   resultMsgDeleted.messageId = @"";
+  return self;
+}
+@end
+
+@interface ZMLocation ()
+@property Float32 longitude;
+@property Float32 latitude;
+@property (strong) NSString* name;
+@property SInt32 zoom;
+@end
+
+@implementation ZMLocation
+
+- (BOOL) hasLongitude {
+  return !!hasLongitude_;
+}
+- (void) setHasLongitude:(BOOL) _value_ {
+  hasLongitude_ = !!_value_;
+}
+@synthesize longitude;
+- (BOOL) hasLatitude {
+  return !!hasLatitude_;
+}
+- (void) setHasLatitude:(BOOL) _value_ {
+  hasLatitude_ = !!_value_;
+}
+@synthesize latitude;
+- (BOOL) hasName {
+  return !!hasName_;
+}
+- (void) setHasName:(BOOL) _value_ {
+  hasName_ = !!_value_;
+}
+@synthesize name;
+- (BOOL) hasZoom {
+  return !!hasZoom_;
+}
+- (void) setHasZoom:(BOOL) _value_ {
+  hasZoom_ = !!_value_;
+}
+@synthesize zoom;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.longitude = 0;
+    self.latitude = 0;
+    self.name = @"";
+    self.zoom = 0;
+  }
+  return self;
+}
+static ZMLocation* defaultZMLocationInstance = nil;
++ (void) initialize {
+  if (self == [ZMLocation class]) {
+    defaultZMLocationInstance = [[ZMLocation alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMLocationInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMLocationInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasLongitude) {
+    return NO;
+  }
+  if (!self.hasLatitude) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasLongitude) {
+    [output writeFloat:1 value:self.longitude];
+  }
+  if (self.hasLatitude) {
+    [output writeFloat:2 value:self.latitude];
+  }
+  if (self.hasName) {
+    [output writeString:3 value:self.name];
+  }
+  if (self.hasZoom) {
+    [output writeInt32:4 value:self.zoom];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasLongitude) {
+    size_ += computeFloatSize(1, self.longitude);
+  }
+  if (self.hasLatitude) {
+    size_ += computeFloatSize(2, self.latitude);
+  }
+  if (self.hasName) {
+    size_ += computeStringSize(3, self.name);
+  }
+  if (self.hasZoom) {
+    size_ += computeInt32Size(4, self.zoom);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMLocation*) parseFromData:(NSData*) data {
+  return (ZMLocation*)[[[ZMLocation builder] mergeFromData:data] build];
+}
++ (ZMLocation*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMLocation*)[[[ZMLocation builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMLocation*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMLocation*)[[[ZMLocation builder] mergeFromInputStream:input] build];
+}
++ (ZMLocation*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMLocation*)[[[ZMLocation builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMLocation*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMLocation*)[[[ZMLocation builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMLocation*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMLocation*)[[[ZMLocation builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMLocationBuilder*) builder {
+  return [[ZMLocationBuilder alloc] init];
+}
++ (ZMLocationBuilder*) builderWithPrototype:(ZMLocation*) prototype {
+  return [[ZMLocation builder] mergeFrom:prototype];
+}
+- (ZMLocationBuilder*) builder {
+  return [ZMLocation builder];
+}
+- (ZMLocationBuilder*) toBuilder {
+  return [ZMLocation builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasLongitude) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"longitude", [NSNumber numberWithFloat:self.longitude]];
+  }
+  if (self.hasLatitude) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"latitude", [NSNumber numberWithFloat:self.latitude]];
+  }
+  if (self.hasName) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"name", self.name];
+  }
+  if (self.hasZoom) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"zoom", [NSNumber numberWithInteger:self.zoom]];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasLongitude) {
+    [dictionary setObject: [NSNumber numberWithFloat:self.longitude] forKey: @"longitude"];
+  }
+  if (self.hasLatitude) {
+    [dictionary setObject: [NSNumber numberWithFloat:self.latitude] forKey: @"latitude"];
+  }
+  if (self.hasName) {
+    [dictionary setObject: self.name forKey: @"name"];
+  }
+  if (self.hasZoom) {
+    [dictionary setObject: [NSNumber numberWithInteger:self.zoom] forKey: @"zoom"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMLocation class]]) {
+    return NO;
+  }
+  ZMLocation *otherMessage = other;
+  return
+      self.hasLongitude == otherMessage.hasLongitude &&
+      (!self.hasLongitude || self.longitude == otherMessage.longitude) &&
+      self.hasLatitude == otherMessage.hasLatitude &&
+      (!self.hasLatitude || self.latitude == otherMessage.latitude) &&
+      self.hasName == otherMessage.hasName &&
+      (!self.hasName || [self.name isEqual:otherMessage.name]) &&
+      self.hasZoom == otherMessage.hasZoom &&
+      (!self.hasZoom || self.zoom == otherMessage.zoom) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasLongitude) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithFloat:self.longitude] hash];
+  }
+  if (self.hasLatitude) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithFloat:self.latitude] hash];
+  }
+  if (self.hasName) {
+    hashCode = hashCode * 31 + [self.name hash];
+  }
+  if (self.hasZoom) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.zoom] hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMLocationBuilder()
+@property (strong) ZMLocation* resultLocation;
+@end
+
+@implementation ZMLocationBuilder
+@synthesize resultLocation;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultLocation = [[ZMLocation alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultLocation;
+}
+- (ZMLocationBuilder*) clear {
+  self.resultLocation = [[ZMLocation alloc] init];
+  return self;
+}
+- (ZMLocationBuilder*) clone {
+  return [ZMLocation builderWithPrototype:resultLocation];
+}
+- (ZMLocation*) defaultInstance {
+  return [ZMLocation defaultInstance];
+}
+- (ZMLocation*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMLocation*) buildPartial {
+  ZMLocation* returnMe = resultLocation;
+  self.resultLocation = nil;
+  return returnMe;
+}
+- (ZMLocationBuilder*) mergeFrom:(ZMLocation*) other {
+  if (other == [ZMLocation defaultInstance]) {
+    return self;
+  }
+  if (other.hasLongitude) {
+    [self setLongitude:other.longitude];
+  }
+  if (other.hasLatitude) {
+    [self setLatitude:other.latitude];
+  }
+  if (other.hasName) {
+    [self setName:other.name];
+  }
+  if (other.hasZoom) {
+    [self setZoom:other.zoom];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMLocationBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMLocationBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 13: {
+        [self setLongitude:[input readFloat]];
+        break;
+      }
+      case 21: {
+        [self setLatitude:[input readFloat]];
+        break;
+      }
+      case 26: {
+        [self setName:[input readString]];
+        break;
+      }
+      case 32: {
+        [self setZoom:[input readInt32]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasLongitude {
+  return resultLocation.hasLongitude;
+}
+- (Float32) longitude {
+  return resultLocation.longitude;
+}
+- (ZMLocationBuilder*) setLongitude:(Float32) value {
+  resultLocation.hasLongitude = YES;
+  resultLocation.longitude = value;
+  return self;
+}
+- (ZMLocationBuilder*) clearLongitude {
+  resultLocation.hasLongitude = NO;
+  resultLocation.longitude = 0;
+  return self;
+}
+- (BOOL) hasLatitude {
+  return resultLocation.hasLatitude;
+}
+- (Float32) latitude {
+  return resultLocation.latitude;
+}
+- (ZMLocationBuilder*) setLatitude:(Float32) value {
+  resultLocation.hasLatitude = YES;
+  resultLocation.latitude = value;
+  return self;
+}
+- (ZMLocationBuilder*) clearLatitude {
+  resultLocation.hasLatitude = NO;
+  resultLocation.latitude = 0;
+  return self;
+}
+- (BOOL) hasName {
+  return resultLocation.hasName;
+}
+- (NSString*) name {
+  return resultLocation.name;
+}
+- (ZMLocationBuilder*) setName:(NSString*) value {
+  resultLocation.hasName = YES;
+  resultLocation.name = value;
+  return self;
+}
+- (ZMLocationBuilder*) clearName {
+  resultLocation.hasName = NO;
+  resultLocation.name = @"";
+  return self;
+}
+- (BOOL) hasZoom {
+  return resultLocation.hasZoom;
+}
+- (SInt32) zoom {
+  return resultLocation.zoom;
+}
+- (ZMLocationBuilder*) setZoom:(SInt32) value {
+  resultLocation.hasZoom = YES;
+  resultLocation.zoom = value;
+  return self;
+}
+- (ZMLocationBuilder*) clearZoom {
+  resultLocation.hasZoom = NO;
+  resultLocation.zoom = 0;
   return self;
 }
 @end
