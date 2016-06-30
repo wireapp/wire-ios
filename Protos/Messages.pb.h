@@ -93,6 +93,8 @@
 @class ZMKnockBuilder;
 @class ZMLastRead;
 @class ZMLastReadBuilder;
+@class ZMLocation;
+@class ZMLocationBuilder;
 @class ZMMention;
 @class ZMMentionBuilder;
 @class ZMMsgDeleted;
@@ -143,6 +145,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define GenericMessage_calling @"calling"
 #define GenericMessage_asset @"asset"
 #define GenericMessage_deleted @"deleted"
+#define GenericMessage_location @"location"
 @interface ZMGenericMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasMessageId_:1;
@@ -155,6 +158,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasCalling_:1;
   BOOL hasAsset_:1;
   BOOL hasDeleted_:1;
+  BOOL hasLocation_:1;
   BOOL hasLiking_:1;
   BOOL hasClientAction_:1;
   NSString* messageId;
@@ -167,6 +171,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   ZMCalling* calling;
   ZMAsset* asset;
   ZMMsgDeleted* deleted;
+  ZMLocation* location;
   ZMLikeAction liking;
   ZMClientAction clientAction;
 }
@@ -182,6 +187,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hasCalling;
 - (BOOL) hasAsset;
 - (BOOL) hasDeleted;
+- (BOOL) hasLocation;
 @property (readonly, strong) NSString* messageId;
 @property (readonly, strong) ZMText* text;
 @property (readonly, strong) ZMImageAsset* image;
@@ -194,6 +200,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @property (readonly, strong) ZMCalling* calling;
 @property (readonly, strong) ZMAsset* asset;
 @property (readonly, strong) ZMMsgDeleted* deleted;
+@property (readonly, strong) ZMLocation* location;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -307,6 +314,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMGenericMessageBuilder*) setDeletedBuilder:(ZMMsgDeletedBuilder*) builderForValue;
 - (ZMGenericMessageBuilder*) mergeDeleted:(ZMMsgDeleted*) value;
 - (ZMGenericMessageBuilder*) clearDeleted;
+
+- (BOOL) hasLocation;
+- (ZMLocation*) location;
+- (ZMGenericMessageBuilder*) setLocation:(ZMLocation*) value;
+- (ZMGenericMessageBuilder*) setLocationBuilder:(ZMLocationBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeLocation:(ZMLocation*) value;
+- (ZMGenericMessageBuilder*) clearLocation;
 @end
 
 #define Text_content @"content"
@@ -657,6 +671,86 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (NSString*) messageId;
 - (ZMMsgDeletedBuilder*) setMessageId:(NSString*) value;
 - (ZMMsgDeletedBuilder*) clearMessageId;
+@end
+
+#define Location_longitude @"longitude"
+#define Location_latitude @"latitude"
+#define Location_name @"name"
+#define Location_zoom @"zoom"
+@interface ZMLocation : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasLongitude_:1;
+  BOOL hasLatitude_:1;
+  BOOL hasZoom_:1;
+  BOOL hasName_:1;
+  Float32 longitude;
+  Float32 latitude;
+  SInt32 zoom;
+  NSString* name;
+}
+- (BOOL) hasLongitude;
+- (BOOL) hasLatitude;
+- (BOOL) hasName;
+- (BOOL) hasZoom;
+@property (readonly) Float32 longitude;
+@property (readonly) Float32 latitude;
+@property (readonly, strong) NSString* name;
+@property (readonly) SInt32 zoom;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMLocationBuilder*) builder;
++ (ZMLocationBuilder*) builder;
++ (ZMLocationBuilder*) builderWithPrototype:(ZMLocation*) prototype;
+- (ZMLocationBuilder*) toBuilder;
+
++ (ZMLocation*) parseFromData:(NSData*) data;
++ (ZMLocation*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMLocation*) parseFromInputStream:(NSInputStream*) input;
++ (ZMLocation*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMLocation*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMLocation*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMLocationBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMLocation* resultLocation;
+}
+
+- (ZMLocation*) defaultInstance;
+
+- (ZMLocationBuilder*) clear;
+- (ZMLocationBuilder*) clone;
+
+- (ZMLocation*) build;
+- (ZMLocation*) buildPartial;
+
+- (ZMLocationBuilder*) mergeFrom:(ZMLocation*) other;
+- (ZMLocationBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMLocationBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasLongitude;
+- (Float32) longitude;
+- (ZMLocationBuilder*) setLongitude:(Float32) value;
+- (ZMLocationBuilder*) clearLongitude;
+
+- (BOOL) hasLatitude;
+- (Float32) latitude;
+- (ZMLocationBuilder*) setLatitude:(Float32) value;
+- (ZMLocationBuilder*) clearLatitude;
+
+- (BOOL) hasName;
+- (NSString*) name;
+- (ZMLocationBuilder*) setName:(NSString*) value;
+- (ZMLocationBuilder*) clearName;
+
+- (BOOL) hasZoom;
+- (SInt32) zoom;
+- (ZMLocationBuilder*) setZoom:(SInt32) value;
+- (ZMLocationBuilder*) clearZoom;
 @end
 
 #define ImageAsset_tag @"tag"

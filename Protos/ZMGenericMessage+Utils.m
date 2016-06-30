@@ -93,6 +93,7 @@
     self.hasCleared ||
     self.hasClientAction ||
     self.hasAsset ||
+    self.hasLocation ||
     self.hasDeleted;
 }
 
