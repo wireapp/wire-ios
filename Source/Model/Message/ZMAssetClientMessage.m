@@ -424,7 +424,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
         if (serverTimestamp != nil) {
             self.serverTimestamp = serverTimestamp;
         }
-        [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:serverTimestamp andSync:YES];
+        [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:serverTimestamp andSync:NO];
         [self.conversation resortMessagesWithUpdatedMessage:self];
         [self.conversation updateWithMessage:self timeStamp:serverTimestamp eventID:self.eventID];
     }

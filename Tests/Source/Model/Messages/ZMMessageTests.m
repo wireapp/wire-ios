@@ -1332,12 +1332,13 @@ NSString * const IsExpiredKey = @"isExpired";
 - (void)testThatItSetsLastReadEventIDForVoiceChannelDeactiveEventFromSelfUser
 {
     // given
-    ZMEventID *oldEventID = self.createEventID;
+    NSDate *oldDate = [NSDate date];
 
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
     conversation.conversationType = ZMConversationTypeOneOnOne;
-    conversation.lastReadEventID = oldEventID;
+    conversation.lastServerTimeStamp = oldDate;
+    conversation.lastReadServerTimeStamp = oldDate;
     XCTAssertNotNil(conversation);
     
     [self.uiMOC saveOrRollback];
@@ -1356,8 +1357,8 @@ NSString * const IsExpiredKey = @"isExpired";
     // then
     XCTAssertEqual(messages.count, 1u);
 
-    XCTAssertNotEqualObjects(conversation.lastReadEventID, oldEventID);
-    XCTAssertEqualObjects(conversation.lastReadEventID, [(ZMMessage *)messages.lastObject eventID]);
+    XCTAssertNotEqualWithAccuracy([conversation.lastReadServerTimeStamp timeIntervalSince1970], [oldDate timeIntervalSince1970], 0.5);
+    XCTAssertEqualWithAccuracy([conversation.lastReadServerTimeStamp timeIntervalSince1970], [[(ZMMessage *)messages.lastObject serverTimestamp] timeIntervalSince1970], 0.5);
 }
 
 - (void)testThatItSetsLastReadServerTimeStampForVoiceChannelDeactiveEventFromSelfUser
@@ -2235,19 +2236,18 @@ NSString * const IsExpiredKey = @"isExpired";
     XCTAssertEqualObjects(message.nonce, nonce);
 }
 
-- (void)testThatIt_DoesNotSet_LastReadEventIDOfItsConversationToLastEventID_ForOtherUserAsSender
+- (void)testThatItSetsLastReadServerTimestampOfItsConversationToServerTimestamp_ForSelfUserAsSender
 {
     // given
-    ZMEventID *convEventID = [self createEventID];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    conversation.lastReadEventID = convEventID;
+    conversation.lastReadServerTimeStamp = [NSDate date];
     
     NSUUID *nonce = [NSUUID createUUID];
     NSDictionary *data = @{
                            @"nonce" : nonce.transportString,
                            };
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationKnock data:data time:[NSDate dateWithTimeIntervalSinceReferenceDate:450000000]];
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationKnock data:data time:[conversation.lastReadServerTimeStamp dateByAddingTimeInterval:20] fromUser:[ZMUser selfUserInContext:self.uiMOC]];
     ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
     
     // when
@@ -2259,9 +2259,37 @@ NSString * const IsExpiredKey = @"isExpired";
     // then
     XCTAssertNotNil(message);
     XCTAssertEqualObjects(message.conversation, conversation);
-    XCTAssertEqualObjects(conversation.lastReadEventID, convEventID);
-    XCTAssertNotEqualObjects(conversation.lastReadEventID, [ZMEventID eventIDWithString:payload[@"id"]]);
+    XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, message.serverTimestamp);
 }
+
+- (void)testThatIt_DoesNot_SetLastReadServerTimestampOfItsConversationToServerTimestamp_ForOtherUserAsSender
+{
+    // given
+    NSDate *oldDate = [NSDate date];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadServerTimeStamp = oldDate;
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    NSDictionary *data = @{
+                           @"nonce" : nonce.transportString,
+                           };
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationKnock data:data time:[conversation.lastReadServerTimeStamp dateByAddingTimeInterval:20]];
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    
+    // when
+    __block ZMKnockMessage *message;
+    [self performPretendingUiMocIsSyncMoc:^{
+        message = [ZMKnockMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+    }];
+    
+    // then
+    XCTAssertNotNil(message);
+    XCTAssertEqualObjects(message.conversation, conversation);
+    XCTAssertNotEqualObjects(conversation.lastReadServerTimeStamp, message.serverTimestamp);
+    XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, oldDate);
+}
+
 
 - (void)testThatAKnockMessageHasKnockMessageData
 {

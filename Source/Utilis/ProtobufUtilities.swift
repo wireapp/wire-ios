@@ -35,6 +35,15 @@ public extension ZMGenericMessage {
         return ZMGenericMessage.genericMessage(withExternal: external, messageID: messageID)
     }
     
+    // MARK: ZMLocationMessageData
+    
+    public static func genericMessage(withLocation location: ZMLocation, messageID: String) -> ZMGenericMessage {
+        let builder = ZMGenericMessage.builder()
+        builder.setLocation(location)
+        builder.setMessageId(messageID)
+        return builder.build()
+    }
+    
     // MARK: ZMAssetClientMessage
     
     public static func genericMessage(withAsset asset: ZMAsset, messageID: String) -> ZMGenericMessage {
@@ -65,6 +74,22 @@ public extension ZMGenericMessage {
         return ZMGenericMessage.genericMessage(withAsset: .asset(withNotUploaded: notUploaded), messageID: messageID)
     }
     
+}
+
+public extension ZMLocation {
+
+    public static func location(withLatitude latitude: Float, longitude: Float, name: String? = nil, zoomLevel: Int32? = nil) -> ZMLocation {
+        let builder = ZMLocation.builder()
+        builder.setLatitude(latitude)
+        builder.setLongitude(longitude)
+        if let name = name {
+            builder.setName(name)
+        }
+        if let zoomLevel = zoomLevel {
+            builder.setZoom(zoomLevel)
+        }
+        return builder.build()
+    }
 }
 
 public extension ZMExternal {

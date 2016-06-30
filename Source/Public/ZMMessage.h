@@ -111,6 +111,8 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
     ZMFileTransferStateFailedDownload,
 };
 
+#pragma mark - ZMFileMessageData
+
 @protocol ZMFileMessageData <NSObject>
 /// MIME type of the file being transfered (implied from file extension)
 @property (nonatomic) NSString *mimeType;
@@ -151,6 +153,18 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
 /// Audio-message related properties
 /// if MIME type is indicating the audio content
 - (BOOL)isAudio;
+
+@end
+
+#pragma mark - ZMLocationMessageData
+
+@protocol ZMLocationMessageData <NSObject>
+
+@property (nonatomic, readonly) float longitude;
+@property (nonatomic, readonly) float latitude;
+
+@property (nonatomic, readonly) NSString *name; // nil if not specified
+@property (nonatomic, readonly) int32_t zoomLevel; // 0 if not specified
 
 @end
 
