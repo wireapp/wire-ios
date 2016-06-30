@@ -335,9 +335,6 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    //  when the selfUser is the caller, we go from calling to connected state (in OneOnOne conversations)
-    XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 0u);
-    
     XCTAssertEqual(self.voiceChannelParticipantStateDidChangeNotes.count, 1u);
     VoiceChannelParticipantsChangeInfo *partInfo2 = self.voiceChannelParticipantStateDidChangeNotes.lastObject;
     XCTAssertEqualObjects(partInfo2.insertedIndexes, [NSIndexSet indexSetWithIndex:0]);
@@ -354,9 +351,9 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 1u);
+    XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
     VoiceChannelStateChangeInfo *info2 = self.voiceChannelStateDidChangeNotes.lastObject;
-    XCTAssertEqual(info2.previousState, ZMVoiceChannelStateOutgoingCall);
+    XCTAssertEqual(info2.previousState, ZMVoiceChannelStateSelfIsJoiningActiveChannel);
     XCTAssertEqual(info2.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
     [self.voiceChannelStateDidChangeNotes removeAllObjects];
     
@@ -648,33 +645,6 @@
     [self.windowObserver registerOnConversation:self.conversationUnderTest];
 }
 
-- (void)testThatWeAreInThe_OutgoingCallState_AfterJoiningAnd_Not_ActivatingTheFlow_OutgoingCall_OneOnOne
-{
-    
-    // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    
-    ZMConversation *conversation = self.conversationUnderTest;
-    id stateToken = [conversation.voiceChannel addVoiceChannelStateObserver:self];
-
-    // when
-    [self selfJoinCall];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertTrue([self lastRequestContainsSelfStateJoined]);
-    
-    [self otherJoinCall];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateOutgoingCall);
-    VoiceChannelStateChangeInfo *lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
-    XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateOutgoingCall);
-    XCTAssertEqual(lastChange.previousState, ZMVoiceChannelStateNoActiveUsers);
-
-    [conversation.voiceChannel removeVoiceChannelStateObserverForToken:stateToken];
-}
-
 - (void)testThatWeAreIn_JoiningState_AfterJoiningAnd_Not_ActivatingTheFlow_OutgoingCall_Group
 {
     
@@ -773,7 +743,7 @@
     
     [self otherJoinCall];
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateOutgoingCall);
+    XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfIsJoiningActiveChannel);
 
     [self simulateMediaFlowEstablishedOnConversation:conversation];
     [self simulateParticipantsChanged:@[self.user2] onConversation:conversation];
@@ -782,7 +752,7 @@
     //then
     ZMVoiceChannelState state = conversation.voiceChannel.state;
     XCTAssertEqual(state, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-    XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
+    XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
 
     VoiceChannelStateChangeInfo *lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
     XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
@@ -876,7 +846,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
 
         VoiceChannelStateChangeInfo *lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
         XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
@@ -913,7 +883,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
 
         VoiceChannelStateChangeInfo *lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
         XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
@@ -1006,7 +976,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
 
         VoiceChannelStateChangeInfo *lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
         XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
@@ -1019,7 +989,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateNoActiveUsers);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 4u);
 
         lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
         XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateNoActiveUsers);
@@ -1051,7 +1021,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
 
         lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
         XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
@@ -1184,7 +1154,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
 
         VoiceChannelStateChangeInfo *lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
         XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
@@ -1291,7 +1261,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 2u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
 
         VoiceChannelStateChangeInfo *lastChange = self.voiceChannelStateDidChangeNotes.lastObject;
         XCTAssertEqual(lastChange.currentState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
@@ -1317,8 +1287,8 @@
         WaitForAllGroupsToBeEmpty(0.5);
         
         // then
-        // we skip the connecting state, because the selfUser is the caller
-        XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateOutgoingCall);
+        // we are in the connecting state
+        XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfIsJoiningActiveChannel);
 
         // users acquire flow
         [self simulateMediaFlowEstablishedOnConversation:self.conversationUnderTest];
@@ -1337,7 +1307,7 @@
         
         // then
         XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateNoActiveUsers);
-        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 3u);
+        XCTAssertEqual(self.voiceChannelStateDidChangeNotes.count, 4u);
     }
     
     [self.voiceChannelStateDidChangeNotes removeAllObjects];
@@ -2921,7 +2891,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateOutgoingCall);
+    XCTAssertEqual(conversation.voiceChannel.state, ZMVoiceChannelStateSelfIsJoiningActiveChannel);
     
     NSArray *messages = [self.mockTransportSession.mockFlowManager AVSlogMessagesForConversationID:conversation.remoteIdentifier.transportString];
     XCTAssertEqual(messages.count, 8u);
@@ -2942,7 +2912,7 @@
     
     NSString *expectedLastMessage = [NSString stringWithFormat:@"Finished updating call state from push event \n"
                                      @"-->  conversation remoteID: %@ \n"
-                                     @"-->  current voiceChannel state: OutgoingCall \n"
+                                     @"-->  current voiceChannel state: SelfIsJoiningActiveChannel \n"
                                      @"-->  current callDeviceIsActive: 1 \n"
                                      @"-->  current hasLocalModificationsForCallDeviceIsActive: 0 \n"
                                      @"-->  current is flow active: 0 \n"

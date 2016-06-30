@@ -4426,8 +4426,6 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         [messageMock stopMocking];
         XCTAssertEqualObjects(conversation.lastReadEventID, newEventID);
         XCTAssertEqualWithAccuracy(conversation.lastReadServerTimeStamp.timeIntervalSinceReferenceDate, newDate.timeIntervalSinceReferenceDate, 0.1);
-
-        XCTAssertTrue([conversation.keysThatHaveLocalModifications containsObject:ZMConversationLastReadServerTimeStampKey]);
     }];
 }
 
@@ -4594,8 +4592,6 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         [messageMock stopMocking];
         XCTAssertEqualObjects(conversation.lastReadEventID, newEventID);
         XCTAssertEqualWithAccuracy(conversation.lastReadServerTimeStamp.timeIntervalSinceReferenceDate, newDate.timeIntervalSinceReferenceDate, 0.1);
-
-        XCTAssertTrue([conversation.keysThatHaveLocalModifications containsObject:ZMConversationLastReadServerTimeStampKey]);
     }];
 }
 
@@ -4665,7 +4661,6 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
         // then
         XCTAssertEqualObjects(conversation.lastReadEventID, newEventID);
         XCTAssertEqualWithAccuracy(conversation.lastReadServerTimeStamp.timeIntervalSinceReferenceDate, newDate.timeIntervalSinceReferenceDate, 0.1);
-        XCTAssertTrue([conversation.keysThatHaveLocalModifications containsObject:ZMConversationLastReadServerTimeStampKey]);
     }];
 }
 

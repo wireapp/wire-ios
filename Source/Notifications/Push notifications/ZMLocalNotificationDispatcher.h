@@ -41,7 +41,7 @@ extern NSString * _Null_unspecified const ZMConversationCancelNotificationForInc
 - (void)didFailToSentMessage:(nonnull ZMMessage *)message;
 - (void)didFailToSendMessageInConversation:(nonnull ZMConversation *)conversation;
 
-- (void)didReceiveUpdateEvents:(nullable NSArray <ZMUpdateEvent *>*)events;
+- (void)didReceiveUpdateEvents:(nullable NSArray <ZMUpdateEvent *>*)events notificationID:(nonnull NSUUID *)notificationID;
 - (nullable ZMLocalNotificationForEvent *)notificationForEvent:(nullable ZMUpdateEvent *)event;
 
 

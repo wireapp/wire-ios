@@ -49,8 +49,9 @@ static const char *ZMLogTag = "Push";
 - (void)receivedPushNotificationWithPayload:(NSDictionary *)payload completionHandler:(ZMPushNotificationCompletionHandler)handler source:(ZMPushNotficationType)source
 {
     BOOL isNotInBackground = self.application.applicationState != UIApplicationStateBackground;
+    BOOL notAuthenticated = self.authenticationStatus.currentPhase != ZMAuthenticationPhaseAuthenticated;
     
-    if (self.authenticationStatus.currentPhase != ZMAuthenticationPhaseAuthenticated || isNotInBackground) {
+    if (notAuthenticated || isNotInBackground) {
         if (handler != nil) {
             if (isNotInBackground) {
                 ZMLogPushKit(@"Not displaying notification because app is not authenticated");
@@ -59,6 +60,11 @@ static const char *ZMLogTag = "Push";
         }
         return;
     }
+    
+    if (source == ZMPushNotficationTypeVoIP) {
+        [APNSPerformanceTracker trackAPNSInUserSession:self.syncManagedObjectContext.analytics authenticated:!notAuthenticated];
+    }
+
     [self.operationLoop saveEventsAndSendNotificationForPayload:payload fetchCompletionHandler:handler source:source];
 }
 
@@ -112,6 +118,7 @@ static const char *ZMLogTag = "Push";
         }];
     };
     self.pushRegistrant = [[ZMPushRegistrant alloc] initWithDidUpdateCredentials:updatePushKitCredentials didReceivePayload:didReceivePayload didInvalidateToken:didInvalidateToken];
+    self.pushRegistrant.analytics = self.syncManagedObjectContext.analytics;
 }
 
 @end
@@ -180,7 +187,8 @@ static const char *ZMLogTag = "Push";
 {
     if (application.applicationState == UIApplicationStateInactive) {
         self.pendingLocalNotification = [[ZMStoredLocalNotification alloc] initWithNotification:notification
-                                                                           managedObjectContext:self.managedObjectContext                                                                                actionIdentifier:nil
+                                                                           managedObjectContext:self.managedObjectContext
+                                                                               actionIdentifier:nil
                                                                                       textInput:nil];
     }
 }

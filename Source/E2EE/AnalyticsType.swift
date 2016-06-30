@@ -17,12 +17,28 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@interface NSURL (LaunchOptions)
+@objc public protocol AnalyticsType: NSObjectProtocol {
+    
+    func tagEvent(event: String)
+    func tagEvent(event: String, attributes: [String: NSObject])
+    func upload()
+    
+}
 
-- (BOOL)isURLForPhoneVerification;
-
-- (NSString *)codeForPhoneVerification;
-
-@end
+// Used for debugging only
+@objc public final class DebugAnalytics: NSObject, AnalyticsType {
+    
+    public func tagEvent(event: String) {
+        print(NSDate(), "[ANALYTICS]", #function, event)
+    }
+    
+    public func tagEvent(event: String, attributes: [String : NSObject]) {
+        print(NSDate(), "[ANALYTICS]", #function, event, attributes)
+    }
+    
+    public func upload() {
+        print(NSDate(), "[ANALYTICS]", #function)
+    }
+}

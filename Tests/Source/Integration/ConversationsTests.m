@@ -508,7 +508,7 @@
     // then
     XCTAssertNotNil(conversation.lastReadServerTimeStamp);
     XCTAssertTrue(didSendFirstArchivedMessage);
-    XCTAssertTrue(didSendLastReadMessage);
+    XCTAssertFalse(didSendLastReadMessage); // we update the last read locally but don't sync it
     XCTAssertTrue(didSendMemberLeaveRequest);
     XCTAssertTrue(didSendSecondArchivedMessage);
     XCTAssertTrue(firstIsArchived);
@@ -1725,6 +1725,35 @@
     [syncConv.voiceChannel tearDown];
 }
 
+- (void)testThatItDoesNotSendALastReadEventWhenInsertingAMessage
+{
+    // given
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.mockTransportSession resetReceivedRequests];
+    ZMConversation *conv =  [self conversationForMockConversation:self.selfToUser1Conversation];
+    ZMConversation *selfConv = [ZMConversation selfConversationInContext:self.uiMOC];
+    __block ZMMessage *textMsg;
+    __block ZMMessage *imageMsg;
+
+    // when
+    [self.userSession performChanges:^{
+        textMsg = [conv appendMessageWithText:@"bla bla"];
+        imageMsg = [conv appendMessageWithImageData:self.verySmallJPEGData];
+        [conv setVisibleWindowFromMessage:nil toMessage:imageMsg];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    ZMTransportRequest *lastReadRequest = [self.mockTransportSession.receivedRequests firstObjectMatchingWithBlock:^BOOL(ZMTransportRequest *request){
+        return [request.path isEqualToString:[NSString stringWithFormat:@"/conversations/%@/otr/messages", selfConv.remoteIdentifier.transportString]];
+    }];
+    XCTAssertNil(lastReadRequest);
+    
+    XCTAssertEqual(conv.estimatedUnreadCount, 0u);
+}
+
 @end
 
 #pragma mark - Conversation list pagination
@@ -1786,12 +1815,13 @@
     WaitForEverythingToBeDone();
     
     ZMConversation *conversation = [self conversationForMockConversation:mockConversation];
+    MockUser *otherUser = (id)[mockConversation.activeUsers firstObjectNotInSet:[NSSet setWithObject:self.selfUser]];
     
     // given
     [self.mockTransportSession performRemoteChanges:^(ZM_UNUSED id session) {
         // If the client is not registered yet we need to account for the added System Message
         for (NSUInteger i = 0; i < messagesCount - conversation.messages.count; i++) {
-            [mockConversation insertTextMessageFromUser:self.selfUser text:[NSString stringWithFormat:@"foo %lu", (unsigned long)i] nonce:NSUUID.createUUID];
+            [mockConversation insertTextMessageFromUser:otherUser text:[NSString stringWithFormat:@"foo %lu", (unsigned long)i] nonce:NSUUID.createUUID];
         }
     }];
     WaitForEverythingToBeDone();
@@ -1877,7 +1907,7 @@
         XCTAssertEqual(window.messages.count, 2u);
         XCTAssertEqualObjects([window.messages.firstObject class], [ZMSystemMessage class]);
         ZMSystemMessage *message = window.messages.firstObject;
-        XCTAssertEqual(message.systemMessageType, ZMSystemMessageTypeNewClient);
+        XCTAssertEqual(message.systemMessageType, ZMSystemMessageTypeUsingNewDevice);
         
         XCTAssertEqual(conversation.messages.count, 2u);
         XCTAssertEqualObjects([window.messages.firstObject objectID], [message objectID]);
@@ -2004,7 +2034,7 @@
         XCTAssertEqual(window.messages.count, 2u);
         XCTAssertEqualObjects([window.messages.firstObject class], [ZMSystemMessage class]);
         ZMSystemMessage *message = window.messages.firstObject;
-        XCTAssertEqual(message.systemMessageType, ZMSystemMessageTypeNewClient);
+        XCTAssertEqual(message.systemMessageType, ZMSystemMessageTypeUsingNewDevice);
         
         XCTAssertEqual(conversation.messages.count, 2u);
         XCTAssertEqualObjects([conversation.messages.lastObject objectID], [message objectID]);

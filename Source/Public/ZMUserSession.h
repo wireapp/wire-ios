@@ -30,6 +30,7 @@
 @class ZMConversation;
 @class UserClient;
 
+@protocol AnalyticsType;
 @protocol AVSMediaManager;
 @protocol AddressBookUploadObserver;
 @protocol ZMNetworkAvailabilityObserver;
@@ -72,10 +73,13 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 
 /**
  Intended initializer to be used by the UI
- @param mediaManager: the media manager delegate
- @param appVersion: the application version (build number)
+ @param mediaManager: The media manager delegate
+ @param analytics: An object conforming to the @c AnalyticsType protocol that can be used to track events on the sync engine
+ @param appVersion: The application version (build number)
 */
-- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager appVersion:(NSString *)appVersion;
+- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
+                           analytics:(id<AnalyticsType>)analytics
+                          appVersion:(NSString *)appVersion;
 
 @property (nonatomic, weak) id<ZMRequestsToOpenViewsDelegate> requestToOpenViewDelegate;
 @property (nonatomic, weak) id<ZMThirdPartyServicesDelegate> thirdPartyServicesDelegate;

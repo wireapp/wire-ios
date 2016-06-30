@@ -166,7 +166,12 @@ class ZMAccountStatusTests : MessagingTest {
         ZMUserSessionAuthenticationNotification.notifyAuthenticationDidSucceed()
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let oneOnOne = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        oneOnOne.conversationType = .OneOnOne
+        let group = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        group.conversationType = .Group
+        let connection = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        connection.conversationType = .Connection
         let selfConv = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
         selfConv.conversationType = .Self
         
@@ -177,9 +182,12 @@ class ZMAccountStatusTests : MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
 
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        if let message = conversation.messages.lastObject as? ZMSystemMessage {
-            XCTAssertEqual(message.systemMessageType, ZMSystemMessageType.NewClient)
+        XCTAssertEqual(oneOnOne.messages.count, 1)
+        XCTAssertEqual(group.messages.count, 1)
+        XCTAssertEqual(connection.messages.count, 0)
+        if let oneOnOneMsg = oneOnOne.messages.lastObject as? ZMSystemMessage, groupMsg = oneOnOne.messages.lastObject as? ZMSystemMessage {
+            XCTAssertEqual(oneOnOneMsg.systemMessageType, ZMSystemMessageType.UsingNewDevice)
+            XCTAssertEqual(groupMsg.systemMessageType, ZMSystemMessageType.UsingNewDevice)
         } else {
             XCTFail()
         }
@@ -194,7 +202,12 @@ class ZMAccountStatusTests : MessagingTest {
         let cookieStorage = MockCookieStorage()
         cookieStorage.shouldReturnCookie = false
         
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let oneOnOne = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        oneOnOne.conversationType = .OneOnOne
+        let group = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        group.conversationType = .Group
+        let connection = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        connection.conversationType = .Connection
         let selfConv = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
         selfConv.conversationType = .Self
         
@@ -206,9 +219,12 @@ class ZMAccountStatusTests : MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        if let message = conversation.messages.lastObject as? ZMSystemMessage {
-            XCTAssertEqual(message.systemMessageType, ZMSystemMessageType.ReactivatedDevice)
+        XCTAssertEqual(oneOnOne.messages.count, 1)
+        XCTAssertEqual(group.messages.count, 1)
+        XCTAssertEqual(connection.messages.count, 0)
+        if let oneOnOneMsg = oneOnOne.messages.lastObject as? ZMSystemMessage, groupMsg = oneOnOne.messages.lastObject as? ZMSystemMessage {
+            XCTAssertEqual(oneOnOneMsg.systemMessageType, ZMSystemMessageType.ReactivatedDevice)
+            XCTAssertEqual(groupMsg.systemMessageType, ZMSystemMessageType.ReactivatedDevice)
         } else {
             XCTFail()
         }

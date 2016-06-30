@@ -581,7 +581,7 @@
     XCTAssertEqual(conversation.messages.count, 1u);
     id<ZMConversationMessage> message = conversation.messages.lastObject;
     XCTAssertEqualObjects([message class], [ZMSystemMessage class]);
-    XCTAssertEqual(((ZMSystemMessage *)message).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertEqual(((ZMSystemMessage *)message).systemMessageType, ZMSystemMessageTypeUsingNewDevice);
 
 }
 
@@ -953,68 +953,6 @@
     
     // then
     ZMConnectionTranscoderPageSize = self.previousZMConnectionTranscoderPageSize;
-}
-
-@end
-
-
-@implementation ConnectionTests (InvitationsToConnect)
-
-- (void)testThatItCreatesAConnectionRequestFromAnURLWhenLoggedIn
-{
-    // given
-    NSUUID *expectedUUID = [[NSUUID alloc] initWithUUIDString:@"0F86B28A-85B1-46F4-A387-29D5AB420001"];
-    NSString *userName = @"The connected";
-    NSURL *url = [NSURL URLWithString:@"wire://connect?code=B32C2G-yV4WczFZbSKoLUAkvOvHd_ypNUSiW2WcqVLY"];
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *user = [session insertUserWithName:userName];
-        user.identifier = expectedUUID.transportString;
-    }];
-    
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    
-    // when
-    [self.userSession didLaunchWithURL:url];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    NSArray *conversations = [ZMConversationList conversationsInUserSession:self.userSession];
-    NSUInteger index = [conversations indexOfObjectPassingTest:^BOOL(ZMConversation *conversation, NSUInteger idx ZM_UNUSED, BOOL *stop ZM_UNUSED) {
-        const BOOL isConnection = conversation.conversationType == ZMConversationTypeConnection;
-        const BOOL isUser = [conversation.connectedUser.name isEqualToString:userName];
-        
-        return isConnection && isUser;
-    }];
-    XCTAssert(index != NSNotFound);
-}
-
-- (void)testThatItCreatesAConnectionRequestFromAnURLBeforeBeingLoggedIn
-{
-    // given
-    NSUUID *expectedUUID = [[NSUUID alloc] initWithUUIDString:@"0F86B28A-85B1-46F4-A387-29D5AB420001"];
-    NSString *userName = @"The connected";
-    NSURL *url = [NSURL URLWithString:@"wire://connect?code=B32C2G-yV4WczFZbSKoLUAkvOvHd_ypNUSiW2WcqVLY"];
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *user = [session insertUserWithName:userName];
-        user.identifier = expectedUUID.transportString;
-    }];
-    
-    // when
-    [self.userSession didLaunchWithURL:url];
-    WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    
-    // then
-    NSArray *conversations = [ZMConversationList conversationsInUserSession:self.userSession];
-    NSUInteger index = [conversations indexOfObjectPassingTest:^BOOL(ZMConversation *conversation, NSUInteger idx, BOOL *stop) {
-        (void)idx;
-        (void)stop;
-        const BOOL isConnection = conversation.conversationType == ZMConversationTypeConnection;
-        const BOOL isUser = [conversation.connectedUser.name isEqualToString:userName];
-        
-        return isConnection && isUser;
-    }];
-    XCTAssert(index != NSNotFound);
 }
 
 @end

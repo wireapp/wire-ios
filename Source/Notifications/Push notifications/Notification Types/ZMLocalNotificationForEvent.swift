@@ -219,7 +219,7 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
     }
     
     public func containsIdenticalEvent(event: ZMUpdateEvent) -> Bool {
-        guard event.hasEncryptedAndUnencryptedVersion() && copiedEventTypes.contains(event.type),
+        guard event.hasEncryptedAndUnencryptedVersion() && (copiedEventTypes.contains(event.type) || lastEvent.type == event.type),
             let conversation = conversation where conversation.remoteIdentifier == event.conversationUUID()
             else { return false }
         
@@ -233,7 +233,7 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
     
     // MARK: Override these if needed
     
-    /// if this returns true, it copies previous UILocalNotifications over, otherwiese those get cancelled
+    /// if this returns true, it copies previous UILocalNotifications over, otherwise those get cancelled
     var shouldCopyNotifications : Bool { return false }
     /// set to true if notification depends / refers to a specific conversation
     var requiresConversation : Bool { return false }
@@ -241,7 +241,9 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
     var ignoresSilencedState : Bool { return false }
     /// if true, it will create a ZMLocalNotification but no UILocalNotification for this event, this will be true in most cases
     var shouldCreateNoficiationForLastEvent : Bool { return true }
-
+    /// if true, it only copies events of the same sender
+    var shouldCopyEventsOfSameSender : Bool { return false }
+    
     /// if empty, it does not copy events
     var copiedEventTypes : [ZMUpdateEventType] { return [] }
     var soundName : String { return ZMLocalNotificationNewMessageSoundName() }
@@ -265,6 +267,9 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
             let conversation = conversation where
             conversation.remoteIdentifier == event.conversationUUID() && (!conversation.isSilenced || ignoresSilencedState)
         else {
+            return false
+        }
+        if shouldCopyEventsOfSameSender && self.allSenderUUIDS.first != event.senderUUID() {
             return false
         }
         return true

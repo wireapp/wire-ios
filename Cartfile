@@ -3,4 +3,4 @@ github "wireapp/zmc-images"
 github "wireapp/zmc-transport"
 github "wireapp/zmc-system"
 github "wireapp/zmc-protos"
-github "wireapp/zmc-data-model" ~> 6.1
+github "wireapp/zmc-data-model" ~> 6.8

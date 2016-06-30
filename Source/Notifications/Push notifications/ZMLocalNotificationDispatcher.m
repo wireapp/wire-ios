@@ -131,7 +131,7 @@ ZM_EMPTY_ASSERTING_INIT();
     self.eventsNotifications = notifications;
 }
 
-- (void)didReceiveUpdateEvents:(NSArray <ZMUpdateEvent *>*)events
+- (void)didReceiveUpdateEvents:(NSArray <ZMUpdateEvent *>*)events notificationID:(NSUUID *)notificationID
 {
     ZMLogPushKit(@"Processing push events (a) %p (count = %u)", events, (unsigned) events.count);    
     for (ZMUpdateEvent *event in events) {
@@ -142,6 +142,7 @@ ZM_EMPTY_ASSERTING_INIT();
             UILocalNotification *localNote = note.notifications.lastObject;
             ZMLogPushKit(@"Scheduling local notification <%@: %p> '%@'", localNote.class, localNote, localNote.alertBody);
             [sharedApplication scheduleLocalNotification:localNote];
+            [APNSPerformanceTracker trackVOIPNotificationInNotificationDispatcher:notificationID analytics:self.syncMOC.analytics];
         }
     }
 }

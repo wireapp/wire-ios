@@ -34,7 +34,7 @@ extension ZMAuthenticationStatus: AuthenticationStatusProvider {}
 // MARK: - LocalNotificationDispatchType
 
 @objc public protocol LocalNotificationDispatchType {
-    func didReceiveUpdateEvents(events: [ZMUpdateEvent]?)
+    func didReceiveUpdateEvents(events: [ZMUpdateEvent]?, notificationID: NSUUID)
 }
 
 extension ZMLocalNotificationDispatcher: LocalNotificationDispatchType {}
@@ -129,6 +129,12 @@ extension EventsWithIdentifier {
     }
     
     public func didReceiveVoIPNotification(eventsWithID: EventsWithIdentifier, handler: PingBackResultHandler) {
+        APNSPerformanceTracker.sharedTracker.trackNotification(
+            eventsWithID.identifier,
+            state: .PingBackStatus,
+            analytics: syncManagedObjectContext.analytics
+        )
+        
         notificationIDs.append(eventsWithID)
         eventsWithHandlerByNotificationID[eventsWithID.identifier] = (eventsWithID.events, handler)
         
@@ -151,7 +157,7 @@ extension EventsWithIdentifier {
         zmLog.debug("Pingback with status \(status) for notification ID: \(notificationID)")
         
         if let unwrappedEvents = eventsWithHandler?.events where responseStatus == .Success {
-            notificationDispatcher?.didReceiveUpdateEvents(unwrappedEvents)
+            notificationDispatcher?.didReceiveUpdateEvents(unwrappedEvents, notificationID: notificationID)
         } else if responseStatus == .TryAgainLater {
             guard let handler = eventsWithHandler?.handler else { return }
             didReceiveVoIPNotification(eventsWithID, handler: handler)
@@ -183,8 +189,8 @@ extension EventsWithIdentifier {
             updateStatus()
         }
         
-        notificationDispatcher?.didReceiveUpdateEvents(finalEvents)
         zmLog.debug("Fetching notification with status \(responseStatus) for notification ID: \(notificationID)")
+        notificationDispatcher?.didReceiveUpdateEvents(finalEvents, notificationID: notificationID)
     }
     
     func updateStatus() {

@@ -42,12 +42,12 @@
 "push.notification.add.video.oneonone.nousername" = "Jemand hat ein Video in einer Unterhaltung geteilt";
 
 "push.notification.add.audio.group" = "%1$@ hat ein Audionachricht in %2$@ geteilt";
-"push.notification.add.audio.group.nousername" = "Jemand hat ein Audionachricht in %1$@ geteilt";
-"push.notification.add.audio.group.nousername.noconversationname" = "Jemand hat ein Audionachricht in einer Unterhaltung geteil";
-"push.notification.add.audio.group.noconversationname" = "%1$@ hat ein Audionachricht in einer Unterhaltung geteilt";
+"push.notification.add.audio.group.nousername" = "Neue Audio-Nachricht in %1$@";
+"push.notification.add.audio.group.nousername.noconversationname" = "Neue Audio-Nachricht in einer Unterhaltung";
+"push.notification.add.audio.group.noconversationname" = "%1$@ hat eine Audio-Nachricht in einer Unterhaltung geteilt";
 
-"push.notification.add.audio.oneonone" = "%1$@ hat ein Audionachricht geteilt";
-"push.notification.add.audio.oneonone.nousername" = "Jemand hat ein Audionachricht in einer Unterhaltung geteilt";
+"push.notification.add.audio.oneonone" = "%1$@ hat eine Audio-Nachricht geteilt";
+"push.notification.add.audio.oneonone.nousername" = "Neue Audio-Nachricht in einer Unterhaltung";
 
 "push.notification.add.file.group" = "%1$@ hat ein File in %2$@ geteilt";
 "push.notification.add.file.group.nousername" = "Jemand hat ein File in %1$@ geteilt";
@@ -57,7 +57,15 @@
 "push.notification.add.file.oneonone" = "%1$@ hat ein File geteilt";
 "push.notification.add.file.oneonone.nousername" = "Jemand hat ein File in einer Unterhaltung geteilt";
 
-"push.notification.member.join" = "%1$@ hat %3$@ zu %2$@ hinzugefügt";
+"push.notification.add.location.group" = "%1$@ hat einen Standort in %2$@ geteilt";
+"push.notification.add.location.group.nousername" = "Jemand hat einen Standort in %1$@ geteilt";
+"push.notification.add.location.group.nousername.noconversationname" = "Jemand hat einen Standort in einer Unterhaltung geteilt";
+"push.notification.add.location.group.noconversationname" = "%1$@ hat einen Standort in einer Unterhaltung geteilt";
+
+"push.notification.add.location.oneonone" = "%1$@ hat einen Standort geteilt";
+"push.notification.add.location.oneonone.nousername" = "Jemand hat einen Standort in einer Unterhaltung geteilt";
+
+"push.notification.member.join" = "%1$@ hat %3$@ in %2$@ hinzugefügt";
 "push.notification.member.join.noconversationname" = "%1$@ hat %2$@ zu einer Unterhaltung hinzugefügt";
 "push.notification.member.join.nousername.noconversationname" = "%1$@ wurde zu einer Unterhaltung hinzugefügt";
 "push.notification.member.join.nousername" = "%2$@ wurde zu %1$@ hinzugefügt";
@@ -74,8 +82,8 @@
 
 "push.notification.member.join.nootherusername" = "%1$@ hat jemanden zu %2$@ hinzugefügt";
 "push.notification.member.join.nootherusername.noconversationname" = "%1$@ hat jemanden zu einer Unterhaltung hinzugefügt";
-"push.notification.member.join.nootherusername.nousername.noconversationname" = "Jemand wurde zu einer Unterhaltung hinzugefügt";
-"push.notification.member.join.nootherusername.nousername" = "Jemand wurde zu %1$@ hinzugefügt";
+"push.notification.member.join.nootherusername.nousername.noconversationname" = "Teilnehmer wurden zu einer Unterhaltung hinzugefügt";
+"push.notification.member.join.nootherusername.nousername" = "Teilnehmer wurden zu %1$@ hinzugefügt";
 
 "push.notification.member.leave" = "%1$@ hat %3$@ aus %2$@ entfernt";
 "push.notification.member.leave.noconversationname" = "%1$@ hat %2$@ aus einer Unterhaltung entfernt";
@@ -94,13 +102,14 @@
 
 "push.notification.member.leave.nootherusername" = "%1$@ hat Teilnehmer aus %2$@ entfernt";
 "push.notification.member.leave.nootherusername.noconversationname" = "%1$@ hat Teilnehmer aus einer Unterhaltung entfernt";
-"push.notification.member.leave.nootherusername.nousername.noconversationname" = "Mehrere Teilnehmer wurden aus einer Unterhaltung entfernt";
-"push.notification.member.leave.nootherusername.nousername" = "Mehrere Teilnehmer wurden aus %1$@ entfernt";
+"push.notification.member.leave.nootherusername.nousername.noconversationname" = "Teilnehmer wurden aus einer Unterhaltung entfernt";
+"push.notification.member.leave.nootherusername.nousername" = "Teilnehmer wurden aus %1$@ entfernt";
 
 "push.notification.member.leave.sender.nootherusername" = "%1$@ hat %2$@ verlassen";
 "push.notification.member.leave.sender.nootherusername.noconversationname" = "%1$@ hat eine Unterhaltung verlassen";
 "push.notification.member.leave.sender.nootherusername.nousername.noconversationname" = "Jemand hat eine Unterhaltung verlassen";
-"push.notification.member.leave.sender.nootherusername.nousername" = "Jemand hat %1$@ verlassen";
+"push.notification.member.leave.sender.nootherusername.nousername" = "Teilnehmer haben %1$@ verlassen";
+
 
 "push.notification.call.started.video.oneonone" = "%1$@ ruft mit Video an";
 "push.notification.call.started.video.oneonone.nousername" = "Jemand ruft mit Video an";
@@ -118,15 +127,6 @@
 "push.notification.call.started.group.noconversationname" = "%1$@ ruft in einer Unterhaltung an";
 "push.notification.call.started.group.nousername.noconversationname" = "Jemand ruft in einer Unterhaltung an";
 
-//"push.notification.call.missed.oneonone" = "%1$@ hat versucht in %2$@ anzurufen";
-//"push.notification.call.missed.oneonone.nousername" = "Jemand hat versucht dich anzurufen";
-//
-//"push.notification.call.missed.group" = "%1$@ hat versucht in %2$@ anzurufen";
-//"push.notification.call.missed.group.nousername" = "Jemand hat versucht in %1$@ anzurufen";
-//"push.notification.call.missed.group.noconversationname" = "Jemand hat versucht in einer %1$@ anzurufen";
-//"push.notification.call.missed.group.nousername.noconversationname" = "Jemand hat versucht in einer Unterhaltung anzurufen";
-
-
 "push.notification.conversation.create" = "%1$@ hat eine Gruppenunterhaltung mit dir begonnen";
 "push.notification.conversation.create.nousername" = "Jemand hat eine Gruppenunterhaltung mit dir erstellt";
 
@@ -134,7 +134,7 @@
 "push.notification.conversation.rename.nousername" = "Eine Unterhaltung wurde in %1$@ umbenannt";
 
 "push.notification.connection.request" = "%@ möchte sich mit dir verbinden";
-"push.notification.connection.request.nousername" = "Jemand möchte sich mit dir verbinden";
+"push.notification.connection.request.nousername" = "Jemand möchte dich als Kontakt hinzufügen";
 
 "push.notification.connection.accepted" = "Du bist jetzt mit %@ verbunden";
 "push.notification.connection.accepted.nousername" = "Du hast einen neuen Kontakt";
@@ -154,4 +154,3 @@
 "push.notification.action.call.accept" = "Annehmen";
 "push.notification.action.call.ignore" = "Ablehnen";
 "push.notification.action.connection.accept" = "Annehmen";
-

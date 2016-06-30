@@ -24,7 +24,6 @@
 #import "ZMMissingUpdateEventsTranscoder.h"
 #import "ZMObjectStrategyDirectory.h"
 #import "ZMStateMachineDelegate.h"
-#import "ZMConnection+InvitationToConnect.h"
 #import "ZMUserProfileUpdateTranscoder.h"
 
 
@@ -49,8 +48,6 @@
     
     id<ZMStateMachineDelegate> strongMachine = self.stateMachineDelegate;
     [strongMachine didStartSync];
-    
-    [ZMConnection processStoredInvitationsToConnectFromURLInManagedObjectContext:directory.moc];
     
     // NOTE:
     // this relies on the state machine to switch (re-enter) this state when the push channel goes down

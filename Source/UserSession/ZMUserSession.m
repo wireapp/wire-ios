@@ -40,7 +40,6 @@
 #import "ZMTracing.h"
 #import "ZMAddressBookSync.h"
 #import "ZMEmptyAddressBookSync.h"
-#import "ZMConnection+InvitationToConnect.h"
 #import "ZMSyncStateMachine.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMUserProfileUpdateStatus.h"
@@ -156,7 +155,7 @@ ZM_EMPTY_ASSERTING_INIT()
     return [NSManagedObjectContext storeIsReady];
 }
 
-- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager appVersion:(NSString *)appVersion;
+- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager analytics:(id<AnalyticsType>)analytics appVersion:(NSString *)appVersion;
 {
     zmSetupEnvironments();
     ZMBackendEnvironment *environment = [[ZMBackendEnvironment alloc] init];
@@ -166,9 +165,9 @@ ZM_EMPTY_ASSERTING_INIT()
     ZMAPNSEnvironment *apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
 
     NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContext];
-
+    syncMOC.analytics = analytics;
+    
     ZMTransportSession *session = [[ZMTransportSession alloc] initWithBaseURL:backendURL websocketURL:websocketURL keyValueStore:syncMOC];
-
     UIApplication *application = [UIApplication sharedApplication];
     
     self = [self initWithTransportSession:session
@@ -221,8 +220,7 @@ ZM_EMPTY_ASSERTING_INIT()
         FileAssetCache *fileAssetCache = [[FileAssetCache alloc] init];
         self.syncManagedObjectContext.zm_fileAssetCache = fileAssetCache;
         self.managedObjectContext.zm_fileAssetCache = fileAssetCache;
-        
-        
+
         ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.managedObjectContext cookieStorage:session.cookieStorage];
         self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:syncManagedObjectContext cookie:cookie];
         self.userProfileUpdateStatus = [[ZMUserProfileUpdateStatus alloc] initWithManagedObjectContext:syncManagedObjectContext];
@@ -810,21 +808,7 @@ static NSString * const TrackingIdentifierKey = @"ZMTrackingIdentifier";
 
 - (void)didLaunchWithURL:(NSURL *)URL;
 {
-    if([URL isURLForInvitationToConnect]) {
-        ZM_WEAK(self);
-        [self.syncManagedObjectContext performGroupedBlock:^{
-            ZM_STRONG(self);
-            if(self.isLoggedIn) {
-                [ZMConnection sendInvitationToConnectFromURL:URL managedObjectContext:self.syncManagedObjectContext];
-            }
-            else {
-                [ZMConnection storeInvitationToConnectFromURL:URL managedObjectContext:self.syncManagedObjectContext];
-            }
-            
-            [self.syncManagedObjectContext saveOrRollback];
-        }];
-    }
-    else if ([URL isURLForPhoneVerification]) {
+    if ([URL isURLForPhoneVerification]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:ZMLaunchedWithPhoneVerificationCodeNotificationName
                                                             object:nil
                                                           userInfo:@{ ZMPhoneVerificationCodeKey : [URL codeForPhoneVerification] }];

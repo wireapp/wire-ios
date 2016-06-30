@@ -97,6 +97,13 @@ extension PushNoticeRequestStrategy: ZMSingleRequestTranscoder {
         }
         
         request.addCompletionHandler(completion)
+        
+        APNSPerformanceTracker.sharedTracker.trackNotification(
+            nextNotificationID,
+            state: .PingBackStrategy(notice: true),
+            analytics: managedObjectContext.analytics
+        )
+        
         return request
     }
     
