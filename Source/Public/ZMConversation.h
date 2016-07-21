@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -31,6 +31,7 @@
 @class ZMKnockMessage;
 @class ZMConversationList;
 @class ZMFileMetadata;
+@class ZMLocationData;
 
 @protocol ZMConversationMessage;
 
@@ -109,6 +110,9 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 /// This method loads messages in a window when there are visible messages
 - (void)setVisibleWindowFromMessage:(nullable ZMMessage *)oldestMessage toMessage:(nullable ZMMessage *)newestMessage;
 
+/// completes a pending lastRead save, e.g. when leaving the conversation view
+- (void)savePendingLastRead;
+
 - (nonnull id<ZMConversationMessage>)appendKnock;
 
 + (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session withParticipants:(nonnull NSArray<ZMUser *> *)participants;
@@ -124,6 +128,8 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 - (nullable id<ZMConversationMessage>)appendMessageWithImageData:(nonnull NSData *)imageData;
 /// Appends a file. see ZMFileMetaData, ZMAudioMetaData, ZMVideoMetaData.
 - (nullable id<ZMConversationMessage>)appendMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata;
+/// Appends a location, see @c LocationData.
+- (nullable id<ZMConversationMessage>)appendMessageWithLocationData:(nonnull ZMLocationData *)locationData;
 
 /// Resend last non sent messages
 - (void)resendLastUnsentMessages;

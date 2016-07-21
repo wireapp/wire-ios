@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -1950,6 +1950,24 @@
     [conversation setVisibleWindowFromMessage:conversation.messages[2] toMessage:conversation.messages[4]];
     
     WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, ((ZMMessage *) conversation.messages[4]).serverTimestamp);
+}
+
+- (void)testThatItSavesTheLastReadServerTimeStampBeforeDelayedDispatchEnds;
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.lastReadEventIDSaveDelay = 2.0;
+    ZMMessage *message = [self insertDownloadedMessageForEventID:[self createEventID] intoConversation:conversation];
+    for (int i = 0; i < 10; ++i) {
+        message = [self insertDownloadedMessageAfterMessage:message intoConversation:conversation];
+    }
+    
+    // when
+    [conversation setVisibleWindowFromMessage:conversation.messages[2] toMessage:conversation.messages[4]];
+    [conversation savePendingLastRead];
     
     // then
     XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, ((ZMMessage *) conversation.messages[4]).serverTimestamp);

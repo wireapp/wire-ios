@@ -13,12 +13,11 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
 #import "ZMManagedObject.h"
-#import "ZMUserURLForInvitationToConnect.h"
 #import "ZMBareUser.h"
 #import "ZMManagedObjectContextProvider.h"
 
@@ -46,7 +45,7 @@
 
 @interface ZMUser (Utilities)
 
-+ (ZMUser<ZMEditableUser, ZMUserURLForInvitationToConnect> *)selfUserInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (ZMUser<ZMEditableUser> *)selfUserInUserSession:(id<ZMManagedObjectContextProvider>)session;
 
 @end
 
@@ -57,7 +56,6 @@
 @property (nonatomic, readonly) BOOL isBlocked;
 @property (nonatomic, readonly) BOOL isIgnored;
 @property (nonatomic, readonly) BOOL isPendingApprovalBySelfUser;
-//@property (nonatomic, readonly) BOOL isPendingApprovalByOtherUser; // Now part of ZMBareUserConnection
 
 - (void)accept;
 - (void)block;
