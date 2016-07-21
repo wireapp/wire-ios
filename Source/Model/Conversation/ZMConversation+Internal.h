@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -39,6 +39,7 @@
 @class ZMLastRead;
 @class ZMCleared;
 @class ZMUpdateEvent;
+@class ZMLocationData;
 
 extern NSString *const ZMConversationConnectionKey;
 extern NSString *const ZMConversationHasUnreadMissedCallKey;
@@ -84,6 +85,7 @@ extern NSString *const ZMConversationDidChangeVisibleWindowNotification;
 extern NSString *const ZMConversationVoiceChannelJoinFailedNotification;
 extern NSString *const ZMConversationRequestToLoadConversationEventsNotification;
 extern NSString *const ZMConversationClearTypingNotificationName;
+extern NSString *const ZMConversationLastReadDidChangeNotificationName;
 
 extern NSString *const ZMConversationRemoteIdentifierDataKey;
 
@@ -198,6 +200,7 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 - (ZMClientMessage *)appendOTRKnockMessageWithNonce:(NSUUID *)nonce;
 - (ZMClientMessage *)appendOTRSessionResetMessage;
 - (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce;
+- (ZMClientMessage *)appendOTRMessageWithLocationData:(ZMLocationData *)locationData nonce:(NSUUID *)nonce;
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce;
 - (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce;
 

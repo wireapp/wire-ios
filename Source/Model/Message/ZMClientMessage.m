@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -223,11 +223,17 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     NSData *messageData = message.data;
     if (messageData.length > ZMClientMessageByteSizeExternalThreshold && nil == externalData) {
+        
+        // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
+        // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
+        [self rollbackUsersClientsSessionFromConversation:conversation selfClient:selfClient];
         return [self encryptedMessageDataWithExternalDataBlobFromMessage:genericMessage
                                                           inConversation:conversation
                                                     managedObjectContext:moc];
     }
     
+    // here we know that the encrypted message(s) are going to be used to send a request, we persist the sessions
+    [selfClient.keysStore.box saveSessionsRequiringSave];
     return messageData;
 }
 
@@ -247,15 +253,23 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
                 BOOL corruptedClient = client.failedToEstablishSession;
                 client.failedToEstablishSession = NO;
                 
-                if (nil == session && corruptedClient) {
-                    NSData *data = [ZMFailedToCreateEncryptedMessagePayloadString dataUsingEncoding:NSUTF8StringEncoding];
-                    return [ZMClientEntry entryWithClient:client data:data];
+                if (nil == session) {
+                    if(corruptedClient) {
+                        NSData *data = [ZMFailedToCreateEncryptedMessagePayloadString dataUsingEncoding:NSUTF8StringEncoding];
+                        return [ZMClientEntry entryWithClient:client data:data];
+                    } else {
+                        return nil;
+                    }
                 }
                 
                 NSData *encryptedData = [session encrypt:dataToEncrypt error:&error];
                 if (encryptedData != nil) {
                     [box setSessionToRequireSave:session];
                     return [ZMClientEntry entryWithClient:client data:encryptedData];
+                } else {
+                    // We failed to encrypt the data using that session, which is not normal.
+                    // We rollback the session to the last serialised state
+                    [box rollbackSession:session];
                 }
             }
 
@@ -270,6 +284,27 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     }];
 
     return recipients;
+}
+
++ (void)rollbackUsersClientsSessionFromConversation:(ZMConversation *)conversation selfClient:(UserClient *)selfClient;
+{
+    CBCryptoBox *box = selfClient.keysStore.box;
+    for (ZMUser *user in conversation.activeParticipants) {
+        for (UserClient *client in user.clients) {
+            if (![client.remoteIdentifier isEqual:selfClient.remoteIdentifier]) {
+
+                NSError *error;
+                CBSession *session = [box sessionById:client.remoteIdentifier error:&error];
+                
+                BOOL corruptedClient = client.failedToEstablishSession;
+                client.failedToEstablishSession = NO;
+                
+                if (nil != session && !corruptedClient) {
+                    [box rollbackSession:session];
+                }
+            }
+        }
+    }
 }
 
 @end

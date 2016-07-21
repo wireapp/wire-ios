@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -322,6 +322,45 @@
     XCTAssertEqualObjects(fileMessage.mimeType, @"text/plain");
     XCTAssertFalse(fileMessage.fileMessageData.isVideo);
     XCTAssertFalse(fileMessage.fileMessageData.isAudio);
+}
+
+- (void)testThatWeCanInsertALocationMessage
+{
+    // given
+    float latitude = 48.53775f, longitude = 9.041169f;
+    int32_t zoomLevel = 16;
+    NSString *name = @"天津市 နေပြည်တော် Test";
+    ZMLocationData *locationData = [ZMLocationData locationDataWithLatitude:latitude longitude:longitude name:name zoomLevel:zoomLevel];
+    
+    // when
+    __block ZMConversation *conversation;
+    __block id <ZMConversationMessage> message;
+    
+    [self.syncMOC performGroupedBlock:^{
+        conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = NSUUID.createUUID;
+        message = [conversation appendMessageWithLocationData:locationData];
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertNotNil(message);
+    XCTAssertNotNil(conversation);
+    
+    // then
+    [self.syncMOC performGroupedBlock:^{
+        XCTAssertEqual(conversation.messages.count, 1lu);
+        XCTAssertEqualObjects(conversation.messages.firstObject, message);
+        XCTAssertTrue(message.isEncrypted);
+        
+        id <ZMLocationMessageData> locationMessageData = message.locationMessageData;
+        XCTAssertNotNil(locationMessageData);
+        XCTAssertEqual(locationMessageData.longitude, longitude);
+        XCTAssertEqual(locationMessageData.latitude, latitude);
+        XCTAssertEqual(locationMessageData.zoomLevel, zoomLevel);
+        XCTAssertEqualObjects(locationMessageData.name, name);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (void)testThatWeCanInsertAVideoMessage

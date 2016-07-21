@@ -83,6 +83,7 @@ NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data"
 NSString *const ZMConversationClearTypingNotificationName = @"ZMConversationClearTypingNotification";
 NSString *const ZMConversationIsVerifiedNotificationName = @"ZMConversationIsVerifiedNotificationName";
 NSString *const ZMConversationFailedToDecryptMessageNotificationName = @"ZMConversationFailedToDecryptMessageNotificationName";
+NSString *const ZMConversationLastReadDidChangeNotificationName = @"ZMConversationLastReadDidChangeNotification";
 
 static NSString *const CallStateNeedsToBeUpdatedFromBackendKey = @"callStateNeedsToBeUpdatedFromBackend";
 static NSString *const ConnectedUserKey = @"connectedUser";
@@ -730,7 +731,13 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     }
 }
 
-
+- (void)savePendingLastRead
+{
+    [self updateLastReadServerTimeStampIfNeededWithTimeStamp:self.tempMaxLastReadServerTimeStamp andSync:NO];
+    self.tempMaxLastReadServerTimeStamp = nil;
+    self.lastReadEventIDUpdateCounter = 0;
+    [self.managedObjectContext enqueueDelayedSave];
+}
 
 - (void)updateLastReadServerTimeStampWithMessage:(ZMMessage *)message
 {
@@ -808,15 +815,17 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
         int64_t currentCount = self.lastReadEventIDUpdateCounter;
         
         [self.managedObjectContext.dispatchGroup enter];
+        ZM_WEAK(self);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.lastReadEventIDSaveDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            ZM_STRONG(self);
+            if (self == nil) {
+                return;
+            }
             if (currentCount != self.lastReadEventIDUpdateCounter) {
                 [self.managedObjectContext.dispatchGroup leave];
                 return;
             }
-            [self updateLastReadServerTimeStampIfNeededWithTimeStamp:self.tempMaxLastReadServerTimeStamp andSync:NO];
-            self.tempMaxLastReadServerTimeStamp = nil;
-            self.lastReadEventIDUpdateCounter = 0;
-            [self.managedObjectContext enqueueDelayedSave];
+            [self savePendingLastRead];
             [self.managedObjectContext.dispatchGroup leave];
         });
     }
@@ -892,6 +901,11 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 - (nullable id<ZMConversationMessage>)appendMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata
 {
     return [self appendOTRMessageWithFileMetadata:fileMetadata nonce:NSUUID.UUID];
+}
+
+- (nullable id<ZMConversationMessage>)appendMessageWithLocationData:(nonnull ZMLocationData *)locationData
+{
+    return [self appendOTRMessageWithLocationData:locationData nonce:NSUUID.UUID];
 }
 
 - (id<ZMConversationMessage>)appendMessageWithOriginalImageData:(NSData *)originalImageData originalSize:(CGSize __unused)originalSize;
@@ -1494,6 +1508,14 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     message.isEncrypted = YES;
     [self sortedAppendMessage:message];
+    return message;
+}
+
+- (ZMClientMessage *)appendOTRMessageWithLocationData:(ZMLocationData *)locationData nonce:(NSUUID *)nonce
+{
+    ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithLocation:locationData.zmLocation messageID:nonce.transportString];
+    ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
+    message.isEncrypted = YES;
     return message;
 }
 
