@@ -93,4 +93,10 @@ class NSUUIDType1Tests: XCTestCase {
 
         }
     }
+    
+    func testThatGeneratedUUIDsAreOfType1(){
+        let uuid = NSUUID.timeBasedUUID()
+        
+        XCTAssertTrue(uuid.isType1UUID)
+    }
 }
