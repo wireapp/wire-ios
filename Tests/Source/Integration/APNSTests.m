@@ -110,47 +110,78 @@
     
 }
 
-- (void)testThatItDeletesAPushTokenWhenRequested
-{
-    // given
-    XCTAssert([self logInAndWaitForSyncToBeComplete]);
-    
-    NSData *deviceToken = [NSData dataWithBytes:@"lalala" length:6];
-    [self.mockTransportSession resetReceivedRequests];
 
+- (BOOL)registerForNotifications:(NSData*)token
+{
+    [self.mockTransportSession resetReceivedRequests];
     [self.userSession performChanges:^{
-        [self.userSession application:self.userSession.application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+        [self.userSession setPushToken:token];
+        [self.userSession setPushKitToken:token];
+        [self.uiMOC forceSaveOrRollback];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-
-    ZMTransportRequest *registrationRequest = self.mockTransportSession.receivedRequests.lastObject;
-    NSString *encodedToken = registrationRequest.payload[@"token"];
-    XCTAssertNotNil(encodedToken);
     
-    self.mockTransportSession.responseGeneratorBlock = nil;
-    [self.mockTransportSession resetReceivedRequests];
-    
-    
-    // expect
-    XCTestExpectation *deletionExpectation = [self expectationWithDescription:@"token deletion"];
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
-        NSString *path = [NSString pathWithComponents:@[@"/push/tokens", encodedToken]];
-        if ([request.path isEqualToString:path] && request.method == ZMMethodDELETE) {
-            [deletionExpectation fulfill];
-            return nil;
-        };
-        return nil;
-    };
-    
-    // when
-    [self.userSession performChanges:^{
-        [self.userSession removeRemoteNotificationTokenIfNeeded];
-    }];
-
-    // then
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    return [self lastRequestsContainedTokenRequests];
 }
 
+
+- (BOOL)lastRequestsContainedTokenRequests
+{
+    BOOL didContainVOIPRequest = NO;
+    BOOL didContainRemoteRequest = NO;
+    for (ZMTransportRequest *aRequest in self.mockTransportSession.receivedRequests) {
+        if (![aRequest.path isEqualToString: @"/push/tokens"]) {
+            continue;
+        }
+        NSString *transportType = aRequest.payload[@"transport"];
+        if ([transportType isEqualToString:@"APNS_VOIP"]) {
+            didContainVOIPRequest = YES;
+        }
+        if ([transportType isEqualToString:@"APNS"]) {
+            didContainRemoteRequest = YES;
+        }
+    }
+    return (didContainRemoteRequest && didContainVOIPRequest);
+}
+
+- (void)testThatItUpdatesNewTokensIfNeeded
+{
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    [self.mockTransportSession resetReceivedRequests];
+
+    // given
+    NSData *token = [NSData dataWithBytes:@"abc" length:3];
+    NSData *newToken = [NSData dataWithBytes:@"def" length:6];
+    
+    XCTAssertTrue([self registerForNotifications:token]);
+    [self.mockTransportSession resetReceivedRequests];
+    
+    // when
+    [self recreateUserSessionAndWipeCache:NO];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // expect
+    id mockPushRegistrant = [OCMockObject partialMockForObject:self.userSession.pushRegistrant];
+    [(ZMPushRegistrant *)[[mockPushRegistrant expect] andReturn:newToken] pushToken];
+    id mockApplication = [OCMockObject partialMockForObject:self.userSession.application];
+    [[[mockApplication expect] andDo:^(NSInvocation *inv) {
+        NOT_USED(inv);
+        [self.userSession performChanges:^{
+            [self.userSession application:self.userSession.application didRegisterForRemoteNotificationsWithDeviceToken:newToken];
+        }];
+    }] registerForRemoteNotifications];
+    
+    // when
+    [self.userSession start];
+
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        [session simulatePushChannelOpened];
+    }];
+    WaitForEverythingToBeDone();
+
+    // then
+    XCTAssertTrue([self lastRequestsContainedTokenRequests], @"Did receive: %@", self.mockTransportSession.receivedRequests);
+}
 
 - (void)testThatItReregistersPushTokensOnDemand
 {
@@ -159,22 +190,17 @@
     NSData *token = [NSData dataWithBytes:@"abc" length:3];
     NSData *newToken = [NSData dataWithBytes:@"def" length:6];
 
-    [self.mockTransportSession resetReceivedRequests];
     // when
-    [self.userSession performChanges:^{
-        [self.userSession application:self.userSession.application didRegisterForRemoteNotificationsWithDeviceToken:token];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertTrue([self registerForNotifications:token]);
     
     // then
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.lastObject;
     XCTAssertEqualObjects(request.path, @"/push/tokens");
-    
     [self.mockTransportSession resetReceivedRequests];
     
     // expect
     id mockPushRegistrant = [OCMockObject partialMockForObject:self.userSession.pushRegistrant];
-    [(ZMPushRegistrant *)[[mockPushRegistrant expect] andReturn:[NSData dataWithBytes:@"sdsdd" length:5]] pushToken];
+    [(ZMPushRegistrant *)[[mockPushRegistrant expect] andReturn:newToken] pushToken];
     id mockApplication = [OCMockObject partialMockForObject:self.userSession.application];
     [[[mockApplication expect] andDo:^(NSInvocation *inv) {
         NOT_USED(inv);
@@ -188,29 +214,15 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    BOOL didContainVOIPRequest = NO;
-    BOOL didContainRemoteRequest = NO;
-    BOOL didContainSignalingKeyRequest = YES;
+    BOOL didContainSignalingKeyRequest = NO;
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
     for (ZMTransportRequest *aRequest in self.mockTransportSession.receivedRequests) {
-        if (![aRequest.path isEqualToString: @"/push/tokens"]) {
-            return;
-        }
-        NSString *transportType = aRequest.payload[@"transport"];
-        if ([transportType isEqualToString:@"APNS_VOIP"]) {
-            didContainVOIPRequest = YES;
-        }
-        if ([transportType isEqualToString:@"APNS"]) {
-            didContainRemoteRequest = YES;
-        }
-        if ([aRequest.path containsString:@"/clients/"] && [aRequest.payload asDictionary][@"sigKeys"] != nil) {
+        if ([aRequest.path containsString:@"/clients/"] && [aRequest.payload asDictionary][@"sigkeys"] != nil) {
             didContainSignalingKeyRequest = YES;
         }
     }
-    XCTAssertTrue(didContainRemoteRequest);
-    XCTAssertTrue(didContainVOIPRequest);
     XCTAssertTrue(didContainSignalingKeyRequest);
-
+    XCTAssertTrue([self lastRequestsContainedTokenRequests]);
     [mockPushRegistrant verify];
     [mockApplication verify];
 }
@@ -218,12 +230,13 @@
 - (void)testThatItReregistersPushTokensOnDemandEvenIfItDidNotChange
 {
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // given
     NSData *token = [NSData dataWithBytes:@"abc" length:3];
-    [self.userSession performChanges:^{
-        [self.userSession application:self.userSession.application didRegisterForRemoteNotificationsWithDeviceToken:token];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self registerForNotifications:token];
+    XCTAssertTrue([self lastRequestsContainedTokenRequests]);
     [self.mockTransportSession resetReceivedRequests];
     
     // expect
@@ -238,33 +251,21 @@
     }] registerForRemoteNotifications];
     
     // when
-    [self.userSession resetPushTokens];
+    [self.userSession performChanges:^{
+        [self.userSession resetPushTokens];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    BOOL didContainVOIPRequest = NO;
-    BOOL didContainRemoteRequest = NO;
-    BOOL didContainSignalingKeyRequest = YES;
-
+    BOOL didContainSignalingKeyRequest = NO;
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
     for (ZMTransportRequest *aRequest in self.mockTransportSession.receivedRequests) {
-        if (![aRequest.path isEqualToString: @"/push/tokens"]) {
-            return;
-        }
-        NSString *transportType = aRequest.payload[@"transport"];
-        if ([transportType isEqualToString:@"APNS_VOIP"]) {
-            didContainVOIPRequest = YES;
-        }
-        if ([transportType isEqualToString:@"APNS"]) {
-            didContainRemoteRequest = YES;
-        }
-        if ([aRequest.path containsString:@"/clients/"] && [aRequest.payload asDictionary][@"sigKeys"] != nil) {
+        if ([aRequest.path containsString:@"/clients/"] && [aRequest.payload asDictionary][@"sigkeys"] != nil) {
             didContainSignalingKeyRequest = YES;
         }
     }
-    XCTAssertTrue(didContainRemoteRequest);
-    XCTAssertTrue(didContainVOIPRequest);
     XCTAssertTrue(didContainSignalingKeyRequest);
+    XCTAssertTrue([self lastRequestsContainedTokenRequests]);
 
     [mockPushRegistrant verify];
     [mockApplication verify];

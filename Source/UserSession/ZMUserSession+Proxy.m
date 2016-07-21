@@ -17,24 +17,18 @@
 // 
 
 
-#include "warnings.xcconfig"
-#include "project-common.xcconfig"
+#import "ZMUserSession.h"
+#import "ZMUserSession+Internal.h"
+#import "ZMOperationLoop.h"
 
-// Build Options
-//
-DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
-VALIDATE_PRODUCT = YES
+@implementation ZMUserSession (Proxy)
 
-// Packaging
-//
-INFOPLIST_PREPROCESS = YES
+- (void)proxiedRequestWithPath:(NSString * __nonnull)path method:(ZMTransportRequestMethod)method type:(ProxiedRequestType)type callback:(void (^__nullable)(NSData * __nullable, NSHTTPURLResponse * __nonnull, NSError * __nullable))callback;
+{
+    [self.syncManagedObjectContext performGroupedBlock:^{
+        [self.proxiedRequestStatus addRequest:type path:path method:method callback:callback];
+        [ZMOperationLoop notifyNewRequestsAvailable:self];
+    }];
+}
 
-// Deployment
-//
-COPY_PHASE_STRIP = YES
-
-
-// LLVM - Preprocessing
-//
-GCC_PREPROCESSOR_DEFINITIONS = DEBUG=0 ZM_MAJOR_VERSION=$(MAJOR_VERSION) $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_shared)
-
+@end

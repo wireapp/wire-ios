@@ -25,6 +25,7 @@
 #import "ZMOperationLoop+Background.h"
 #import "ZMOperationLoop+Private.h"
 #import "ZMLocalNotificationDispatcher.h"
+#import "ZMPushToken.h"
 
 #import "ZMLocalNotification.h"
 #import "ZMBackgroundFetchState.h"
@@ -89,14 +90,18 @@ static const char *ZMLogTag = "Push";
 {
     ZM_WEAK(self);
     void (^didInvalidateToken)(void) = ^{
-        ZM_STRONG(self);
-        [self setPushToken:nil];
     };
 
     void (^updateCredentials)(NSData *) = ^(NSData *deviceToken){
-        NOT_USED(deviceToken);
         ZM_STRONG(self);
-         [self setPushToken:deviceToken];
+        [self.managedObjectContext performGroupedBlock:^{
+            NSData *oldToken = self.managedObjectContext.pushToken.deviceToken;
+            if (oldToken == nil || ![oldToken isEqualToData:deviceToken]) {
+                self.managedObjectContext.pushToken = nil;
+                [self setPushToken:deviceToken];
+                [self.managedObjectContext forceSaveOrRollback];
+            }
+        }];
     };
     self.applicationRemoteNotification = [[ZMApplicationRemoteNotification alloc] initWithDidUpdateCredentials:updateCredentials didReceivePayload:didReceivePayload didInvalidateToken:didInvalidateToken];
 }
@@ -104,18 +109,22 @@ static const char *ZMLogTag = "Push";
 
 - (void)enableVoIPPushNotificationsWithDidReceivePayload:(void (^)(NSDictionary *, ZMPushNotficationType, void (^)(ZMPushPayloadResult)))didReceivePayload
 {
+    
     ZM_WEAK(self);
     void (^didInvalidateToken)(void) = ^{
         ZM_STRONG(self);
-        [self.syncManagedObjectContext performGroupedBlock:^{
+        [self.managedObjectContext performGroupedBlock:^{
             [self deletePushKitToken];
+            [self.managedObjectContext forceSaveOrRollback];
         }];
     };
 
     void (^updatePushKitCredentials)(NSData *) = ^(NSData *deviceToken){
         ZM_STRONG(self);
-        [self.syncManagedObjectContext performGroupedBlock:^{
+        [self.managedObjectContext performGroupedBlock:^{
+            self.managedObjectContext.pushKitToken = nil;
             [self setPushKitToken:deviceToken];
+            [self.managedObjectContext forceSaveOrRollback];
         }];
     };
     self.pushRegistrant = [[ZMPushRegistrant alloc] initWithDidUpdateCredentials:updatePushKitCredentials didReceivePayload:didReceivePayload didInvalidateToken:didInvalidateToken];
@@ -145,10 +154,6 @@ static const char *ZMLogTag = "Push";
     [self.applicationRemoteNotification application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
-- (void)removeRemoteNotificationTokenIfNeeded;
-{
-    [self deletePushToken];
-}
 
 - (void)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions;
 {

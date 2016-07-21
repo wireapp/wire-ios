@@ -98,6 +98,7 @@
 @property (nonatomic) ZMUserProfileUpdateTranscoder *userProfileUpdateTranscoder;
 @property (nonatomic) PingBackRequestStrategy *pingBackRequestStrategy;
 @property (nonatomic) PushNoticeRequestStrategy *pushNoticeFetchStrategy;
+@property (nonatomic) LinkPreviewAssetUploadRequestStrategy *linkPreviewAssetUploadRequestStrategy;
 
 @property (nonatomic) ZMSyncStateMachine *stateMachine;
 @property (nonatomic) ZMUpdateEventsBuffer *eventsBuffer;
@@ -105,6 +106,7 @@
 @property (nonatomic) ConversationStatusStrategy *conversationStatusSync;
 @property (nonatomic) UserClientRequestStrategy *userClientRequestStrategy;
 @property (nonatomic) FileUploadRequestStrategy *fileUploadRequestStrategy;
+@property (nonatomic) LinkPreviewAssetDownloadRequestStrategy *linkPreviewAssetDownloadRequestStrategy;
 
 
 @property (nonatomic) NSArray *allChangeTrackers;
@@ -129,7 +131,7 @@ ZM_EMPTY_ASSERTING_INIT()
                      userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                           clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
-                          giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
+                          proxiedRequestStatus:(ProxiedRequestsStatus *)proxiedRequestStatus
                                accountStatus:(ZMAccountStatus *)accountStatus
                 backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                 mediaManager:(id<AVSMediaManager>)mediaManager
@@ -172,8 +174,8 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                                                  context:self.syncMOC];
         
         self.requestStrategies = @[self.userClientRequestStrategy,
-                                   [[GiphyRequestStrategy alloc] initWithRequestsStatus:giphyRequestsStatus
-                                                                   managedObjectContext:self.syncMOC],
+                                   [[ProxiedRequestStrategy alloc] initWithRequestsStatus:proxiedRequestStatus
+                                                                     managedObjectContext:self.syncMOC],
                                    [[DeleteAccountRequestStrategy alloc] initWithAuthStatus:authenticationStatus
                                                                        managedObjectContext:self.syncMOC],
                                    [[AssetDownloadRequestStrategy alloc] initWithAuthStatus:authenticationStatus
@@ -181,7 +183,9 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                        managedObjectContext:self.syncMOC],
                                    self.pingBackRequestStrategy,
                                    self.pushNoticeFetchStrategy,
-                                   self.fileUploadRequestStrategy
+                                   self.fileUploadRequestStrategy,
+                                   self.linkPreviewAssetDownloadRequestStrategy,
+                                   self.linkPreviewAssetUploadRequestStrategy
                                    ];
         
         self.changeTrackerBootStrap = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.syncMOC changeTrackers:self.allChangeTrackers];
@@ -237,6 +241,8 @@ ZM_EMPTY_ASSERTING_INIT()
     self.pingBackRequestStrategy = [[PingBackRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus authenticationStatus:authenticationStatus];
     self.pushNoticeFetchStrategy = [[PushNoticeRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus authenticationStatus:authenticationStatus];
     self.fileUploadRequestStrategy = [[FileUploadRequestStrategy alloc] initWithAuthenticationStatus:authenticationStatus clientRegistrationStatus:clientRegistrationStatus managedObjectContext:self.syncMOC taskCancellationProvider:taskCancellationProvider];
+    self.linkPreviewAssetDownloadRequestStrategy = [[LinkPreviewAssetDownloadRequestStrategy alloc] initWithAuthStatus:authenticationStatus managedObjectContext:self.syncMOC];
+    self.linkPreviewAssetUploadRequestStrategy = [[LinkPreviewAssetUploadRequestStrategy alloc] initWithAuthenticationStatus:authenticationStatus managedObjectContext:self.syncMOC];
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note

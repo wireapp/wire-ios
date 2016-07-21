@@ -17,18 +17,17 @@
 // 
 
 
-#import "ZMUserSession.h"
-#import "ZMUserSession+Internal.h"
-#import "ZMOperationLoop.h"
+import Foundation
 
-@implementation ZMUserSession (Giphy)
+/// Keeps track of which requests to send to the backend
+public class ProxiedRequestsStatus: NSObject {
+    
+    public typealias Request = (type:ProxiedRequestType, path: String, method: ZMTransportRequestMethod, callback: ((NSData!, NSHTTPURLResponse!, NSError!) -> Void)?)
 
-- (void)giphyRequestWithURL:(NSURL * __nonnull)url callback:(void (^__nullable)(NSData * __nullable, NSHTTPURLResponse * __nonnull, NSError * __nullable))callback;
-{
-    [self.syncManagedObjectContext performGroupedBlock:^{
-        [self.giphyRequestStatus addRequest:url callback:callback];
-        [ZMOperationLoop notifyNewRequestsAvailable:self];
-    }];
+    /// List of requests to be sent to backend
+    public var pendingRequests : [Request] = []
+    
+    public func addRequest(type:ProxiedRequestType, path: String, method: ZMTransportRequestMethod = .MethodGET, callback: ((NSData!, NSHTTPURLResponse!, NSError!) -> Void)?) {
+        pendingRequests.append(Request(type, path, method, callback))
+    }
 }
-
-@end

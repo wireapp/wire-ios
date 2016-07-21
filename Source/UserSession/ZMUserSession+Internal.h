@@ -51,7 +51,7 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 @end
 
 @interface ZMUserSession (GiphyRequestStatus)
-@property (nonatomic, readonly) GiphyRequestsStatus *giphyRequestStatus;
+@property (nonatomic, readonly) ProxiedRequestsStatus *proxiedRequestStatus;
 @end
 
 
@@ -65,6 +65,7 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 
 - (void)notifyThirdPartyServices;
 - (void)start;
+- (void)refreshTokensIfNeeded;
 
 @end
 
@@ -153,23 +154,16 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 
 @interface ZMUserSession (PushToken)
 
+
 - (void)setPushToken:(NSData *)deviceToken;
 - (void)setPushKitToken:(NSData *)deviceToken;
 
 /// deletes the pushKit token from the backend
 - (void)deletePushKitToken;
 
-/// deletes the push token from the backend
-- (void)deletePushToken;
 
 @end
 
-
-@interface ZMUserSession (PushReceivers)
-
-- (void)enablePushNotifications;
-
-@end
 
 
 

@@ -356,7 +356,7 @@
     
     // then
     XCTAssertEqual(conversation.messages.count, 3lu);
-    XCTAssertEqualObjects((messages[1]).messageText, text);
+    XCTAssertEqualObjects((messages[1]).textMessageData.messageText, text);
     XCTAssertEqualObjects(messages.firstObject.class, ZMSystemMessage.class);
 }
 
@@ -384,7 +384,7 @@
     XCTAssertEqual(messages.count, 2lu);
     XCTAssertEqual(messages.firstObject.systemMessageData.systemMessageType, ZMSystemMessageTypeConnectionRequest);
     XCTAssertEqualObjects(messages.firstObject, addedMessage);
-    XCTAssertEqualObjects(messages.lastObject.messageText, text);
+    XCTAssertEqualObjects(messages.lastObject.textMessageData.messageText, text);
     
     // when
     self.sut = [[ZMHotFix alloc] initWithSyncMOC:self.syncMOC];
@@ -393,7 +393,7 @@
     
     // then
     XCTAssertEqual(conversation.messages.count, 1lu);
-    XCTAssertEqualObjects(messages.lastObject.messageText, text);
+    XCTAssertEqualObjects(messages.lastObject.textMessageData.messageText, text);
 }
 
 - (void)testThatItSetsTheLastReadOfALeftConversation

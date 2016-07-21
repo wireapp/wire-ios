@@ -541,7 +541,7 @@
     NSString *base64EncodedString = message.data.base64String;
     return @{@"info": base64EncodedString,
              @"conversation" : conversation.remoteIdentifier.transportString,
-             @"type": EventConversationEncryptedMessage,
+             @"type": EventConversationAddOTRMessage,
              @"from": sender ? sender.remoteIdentifier.transportString : @""
              };
 }
@@ -1341,9 +1341,9 @@
 {
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:text nonce:nonce.transportString];
     NSString *base64EncodedString = message.data.base64String;
-    return @{@"data": base64EncodedString,
+    return @{@"data": @{ @"text": base64EncodedString},
              @"conversation" : self.oneOnOneConversation.remoteIdentifier.transportString,
-             @"type": EventConversationEncryptedMessage,
+             @"type": EventConversationAddOTRMessage,
              @"from": self.sender.remoteIdentifier.transportString,
              @"time": [NSDate date].transportString
              };

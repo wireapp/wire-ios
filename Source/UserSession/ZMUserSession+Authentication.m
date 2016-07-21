@@ -55,8 +55,6 @@ static NSString *const HasHistoryKey = @"hasHistory";
 {
     ZMTraceAuthUserSessionLogin(loginCredentials.email, loginCredentials.password.length > 0 ? 1 : 0);
     
-    [self reregisterPushTokensIfNecessary];
-    
     [self.syncManagedObjectContext performGroupedBlock:^{
         if (self.isLoggedIn) {
             ZMLogDebug(@"User session has a cookie in loginWithEmail, no need to log in");
@@ -90,25 +88,6 @@ static NSString *const HasHistoryKey = @"hasHistory";
 {
     return self.accountStatus.hadHistoryBeforeLogin;
 }
-
-- (void)reregisterPushTokensIfNecessary
-{
-    [self.managedObjectContext performGroupedBlock:^{
-        BOOL needsToReregister = NO;
-        if (self.managedObjectContext.pushKitToken != nil && self.managedObjectContext.pushKitToken.isRegistered) {
-            self.managedObjectContext.pushKitToken = [self.managedObjectContext.pushKitToken unregisteredCopy];
-            needsToReregister = YES;
-        }
-        if (self.managedObjectContext.pushToken != nil && self.managedObjectContext.pushToken.isRegistered) {
-            self.managedObjectContext.pushToken = [self.managedObjectContext.pushToken unregisteredCopy];
-            needsToReregister = YES;
-        }
-        if (needsToReregister) {
-            [self.managedObjectContext enqueueDelayedSave];
-        }
-    }];
-}
-
 
 - (BOOL)requestPhoneVerificationCodeForLogin:(NSString *)phoneNumber
 {

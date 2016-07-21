@@ -90,8 +90,12 @@ public final class PushKitRegistrant : NSObject, PushNotificationSource {
 extension PushKitRegistrant : PKPushRegistryDelegate {
     public func pushRegistry(registry: PKPushRegistry!, didUpdatePushCredentials credentials: PKPushCredentials!, forType type: String!) {
         ZMLogPushKit_swift("Registry \(self.registry.description) updated credentials for type '\(type)'.")
+        if type != PKPushTypeVoIP {
+            return
+        }
         didUpdateCredentials(credentials.token)
     }
+    
     public func pushRegistry(registry: PKPushRegistry!, didReceiveIncomingPushWithPayload payload: PKPushPayload!, forType type: String!) {
         ZMLogPushKit_swift("Registry \(self.registry.description) did receive '\(payload.type)' payload: \(payload.dictionaryPayload)")
         let a = ZMBackgroundActivity.beginBackgroundActivityWithName("Process PushKit payload")

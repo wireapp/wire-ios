@@ -193,7 +193,7 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
     }
     
     public func containsIdenticalEvent(event: ZMUpdateEvent) -> Bool {
-        guard event.hasEncryptedAndUnencryptedVersion() && (copiedEventTypes.contains(event.type) || lastEvent?.type == event.type),
+        guard copiedEventTypes.contains(event.type) || lastEvent?.type == event.type || event.messageNonce() != nil,
             let conversation = conversation where conversation.remoteIdentifier == event.conversationUUID()
             else { return false }
         

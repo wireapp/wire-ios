@@ -80,6 +80,7 @@
 #import <zmessaging/ZMHotFixDirectory.h>
 #import <zmessaging/ZMImagePreprocessingTracker.h>
 #import <zmessaging/ZMUserSessionRegistrationNotification.h>
+#import <zmessaging/ZMDownstreamObjectSyncWithWhitelist.h>
 #import <zmessaging/UILocalNotification+UserInfo.h>
 #import <zmessaging/ZMUserSession+UserNotificationCategories.h>
 

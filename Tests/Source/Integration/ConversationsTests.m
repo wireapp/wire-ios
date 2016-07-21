@@ -877,10 +877,10 @@
     NSArray *windowMessageSet = observer.window.messages.array ;
     
     NSArray *currentTexts = [currentMessageSet mapWithBlock:^id(id<ZMConversationMessage> obj) {
-        return [obj messageText];
+        return [[obj textMessageData] messageText];
     }];
     NSArray *windowTexts = [windowMessageSet mapWithBlock:^id(id<ZMConversationMessage> obj) {
-        return [obj messageText];
+        return [[obj textMessageData] messageText];
     }];    
     
     XCTAssertEqualObjects(currentTexts, windowTexts);
@@ -891,9 +891,8 @@
     NSArray *currentFirstPart = [currentMessageSet subarrayWithRange:NSMakeRange(2, observer.window.size - 2)];
     
     XCTAssertEqualObjects(originalFirstPart, currentFirstPart);
-    XCTAssertEqualObjects([(id<ZMConversationMessage>)currentMessageSet[0] messageText], expectedTextLocal);
-    XCTAssertEqualObjects([(id<ZMConversationMessage> )currentMessageSet[1] messageText], expectedTextRemote);
-
+    XCTAssertEqualObjects([[(id<ZMConversationMessage>)currentMessageSet[0] textMessageData] messageText], expectedTextLocal);
+    XCTAssertEqualObjects([[(id<ZMConversationMessage>)currentMessageSet[1] textMessageData] messageText], expectedTextRemote);
 }
 
 @end

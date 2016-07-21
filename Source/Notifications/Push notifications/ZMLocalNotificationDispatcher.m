@@ -225,7 +225,13 @@ ZM_EMPTY_ASSERTING_INIT();
 }
 
 - (ZMLocalNotificationForEvent *)localNotificationForEvent:(ZMUpdateEvent *)event
-{    
+{
+    for (ZMLocalNotificationForEvent *note in self.eventsNotifications.notifications) {
+        if ([note containsIdenticalEvent:event]) {
+            return nil;
+        }
+    }
+    
     ZMLocalNotificationForEvent *newNote = [self.eventsNotifications copyExistingNotification:event];
     if (newNote != nil) {
         return newNote;

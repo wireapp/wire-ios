@@ -32,7 +32,7 @@
 @protocol ZMTransportData;
 @protocol AVSMediaManager;
 @class ZMOnDemandFlowManager;
-@class GiphyRequestsStatus;
+@class ProxiedRequestsStatus;
 @class ClientUpdateStatus;
 
 @class BackgroundAPNSPingBackStatus;
@@ -53,7 +53,7 @@ extern NSString * const ZMPushChannelResponseStatusKey;
                  userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileUpdateStatus
                 clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                       clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
-                      giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
+                    proxiedRequestStatus:(ProxiedRequestsStatus *)proxiedRequestStatus
                            accountStatus:(ZMAccountStatus *)accountStatus
             backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
              localNotificationdispatcher:(ZMLocalNotificationDispatcher *)dispatcher

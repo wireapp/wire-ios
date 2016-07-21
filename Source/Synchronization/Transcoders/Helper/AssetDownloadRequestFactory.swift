@@ -18,18 +18,15 @@
 
 
 import Foundation
+import ZMTransport
 
-/// Keeps track of which requests to send to the backend
-public class GiphyRequestsStatus: NSObject {
-    
-//    public typealias RequestCallback = (NSData!, NSURLResponse!, NSError!) -> Void
-    public typealias Request = (url: NSURL, callback: ((NSData!, NSHTTPURLResponse!, NSError!) -> Void)?)
+public final class AssetDownloadRequestFactory: NSObject {
 
-    /// List of requests to be sent to backend
-    public var pendingRequests : [Request] = []
-    
-    public func addRequest(url: NSURL, callback: ((NSData!, NSHTTPURLResponse!, NSError!) -> Void)?) {
-        pendingRequests.append(Request(url, callback))
+    public func requestToGetAsset(withKey key: String, token: String?) -> ZMTransportRequest? {
+        let path = "/assets/v3/\(key)"
+        let request = ZMTransportRequest.assetGetRequestFromPath(path, assetToken: token)
+        request?.forceToBackgroundSession()
+        return request
     }
-    
+
 }

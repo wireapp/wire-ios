@@ -104,7 +104,7 @@
             userProfileUpdateStatus:OCMOCK_ANY
             clientRegistrationStatus:OCMOCK_ANY
             clientUpdateStatus:OCMOCK_ANY
-            giphyRequestStatus:OCMOCK_ANY
+            proxiedRequestStatus:OCMOCK_ANY
             accountStatus:OCMOCK_ANY
             backgroundAPNSPingBackStatus:OCMOCK_ANY
             localNotificationdispatcher:OCMOCK_ANY
@@ -1127,27 +1127,6 @@
     [self.application verify];
     XCTAssertFalse(self.uiMOC.pushKitToken.isRegistered);
 }
-
-- (void)testThatItMarkesPushTokensForDeletion
-{
-    // given
-    NSData *deviceToken = [NSData dataWithBytes:@"bla" length:3];
-    ZMPushToken *pushToken = [[ZMPushToken alloc] initWithDeviceToken:deviceToken
-                                                           identifier:@"com.wire.ent"
-                                                        transportType:@"APNS"
-                                                             fallback:@"APNS"
-                                                         isRegistered:YES];
-    self.uiMOC.pushToken = pushToken;
-    XCTAssertFalse(self.uiMOC.pushToken.isMarkedForDeletion);
-
-    // when
-    [self.sut removeRemoteNotificationTokenIfNeeded];
-    
-    // then
-    XCTAssertTrue(self.uiMOC.pushToken.isMarkedForDeletion);
-}
-
-
 
 - (void)testThatItStoresThePushKitToken
 {

@@ -20,14 +20,25 @@
 import Foundation
 import ZMTransport
 
+
+extension ProxiedRequestType {
+    var basePath: String {
+        switch self {
+        case .Giphy:
+            return "/giphy"
+        case .Soundcloud:
+            return "/soundcloud"
+        }
+    }
+}
+
 /// Perform requests to the Giphy search API
-@objc public class GiphyRequestStrategy : NSObject, RequestStrategy {
+@objc public class ProxiedRequestStrategy : NSObject, RequestStrategy {
     
-    /// URL on the backend to handle giphy requests
-    private static let UrlPrefix = "giphy"
+    static private let BasePath = "/proxy"
     
     /// The requests to fulfill
-    private weak var requestsStatus : GiphyRequestsStatus?
+    private weak var requestsStatus : ProxiedRequestsStatus?
     
     /// The managed object context to operate on
     private let managedObjectContext : NSManagedObjectContext
@@ -35,7 +46,7 @@ import ZMTransport
     /// Requests fail after this interval if the network is unreachable
     private static let RequestExpirationTime : NSTimeInterval = 20
     
-    public init(requestsStatus: GiphyRequestsStatus, managedObjectContext: NSManagedObjectContext) {
+    public init(requestsStatus: ProxiedRequestsStatus, managedObjectContext: NSManagedObjectContext) {
         self.requestsStatus = requestsStatus
         self.managedObjectContext = managedObjectContext
     }
@@ -45,9 +56,13 @@ import ZMTransport
         guard let status = self.requestsStatus else { return nil }
         
         if(status.pendingRequests.count > 0) {
-            let (url, callback) = status.pendingRequests.removeAtIndex(0)
-            let request = ZMTransportRequest(getFromPath: NSString.pathWithComponents([GiphyRequestStrategy.UrlPrefix, url.relativeString!]))
-            request.expireAfterInterval(GiphyRequestStrategy.RequestExpirationTime)
+            let (type, path, method, callback) = status.pendingRequests.removeAtIndex(0)
+            let fullPath = ProxiedRequestStrategy.BasePath + type.basePath + path
+            let request = ZMTransportRequest(path: fullPath, method: method, payload: nil)
+            if type == .Soundcloud {
+                request.doesNotFollowRedirects = true
+            }
+            request.expireAfterInterval(ProxiedRequestStrategy.RequestExpirationTime)
             request.addCompletionHandler(ZMCompletionHandler(onGroupQueue: self.managedObjectContext, block: {
                 response in
                 dispatch_async(dispatch_get_main_queue(), {

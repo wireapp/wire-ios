@@ -23,6 +23,7 @@
 
 #import <ZMCDataModel/ZMManagedObjectContextProvider.h>
 #import <zmessaging/ZMNetworkState.h>
+#import <ZMTransport/ZMTransportRequest.h>
 
 @class ZMTransportSession;
 @class ZMSearchDirectory;
@@ -197,9 +198,14 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 @end
 
 
-@interface ZMUserSession (Giphy)
+typedef NS_ENUM (NSInteger, ProxiedRequestType){
+    ProxiedRequestTypeGiphy,
+    ProxiedRequestTypeSoundcloud
+};
 
-- (void)giphyRequestWithURL:(NSURL *)url callback:(void (^)(NSData *, NSHTTPURLResponse *, NSError *))callback;
+@interface ZMUserSession (Proxy)
+
+- (void)proxiedRequestWithPath:(NSString *)path method:(ZMTransportRequestMethod)method type:(ProxiedRequestType)type callback:(void (^)(NSData *, NSHTTPURLResponse *, NSError *))callback;
 
 @end
 

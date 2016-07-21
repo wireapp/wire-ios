@@ -259,31 +259,4 @@
     [self.operationLoop stopMocking];
 }
 
-- (void)testThatItResetsPushTokensIfNecessary
-{
-    // given
-    ZMPushToken *pushToken = [[ZMPushToken alloc] initWithDeviceToken:[NSData data] identifier:@"token" transportType:@"someType" fallback:nil isRegistered:YES];
-    ZMPushToken *pushKitToken = [[ZMPushToken alloc] initWithDeviceToken:[NSData data] identifier:@"token" transportType:@"someType" fallback:@"APNS" isRegistered:YES];
-    
-    self.uiMOC.pushToken = pushToken;
-    self.uiMOC.pushKitToken = pushKitToken;
-
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"dsg$#%24"];
-    
-    XCTAssertTrue(self.uiMOC.pushToken.isRegistered);
-    XCTAssertTrue(self.uiMOC.pushKitToken.isRegistered);
-
-    [[self.operationLoop stub] notifyNewRequestsAvailable:OCMOCK_ANY];
-    
-    // when
-    [self.sut loginWithCredentials:credentials];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertFalse(self.uiMOC.pushToken.isRegistered);
-    XCTAssertFalse(self.uiMOC.pushKitToken.isRegistered);
-    XCTAssertEqualObjects(self.uiMOC.pushToken, pushToken);
-    XCTAssertEqualObjects(self.uiMOC.pushKitToken, pushKitToken);
-}
-
 @end

@@ -35,7 +35,6 @@ extern NSString * const EventConversationRename;
 extern NSString * const EventConversationCreate;
 extern NSString * const EventUserConnection;
 extern NSString * const EventConversationConnectionRequest;
-extern NSString * const EventConversationEncryptedMessage;
 extern NSString * const EventNewConnection;
 
 @interface MessagingTest (EventFactory)

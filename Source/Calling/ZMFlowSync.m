@@ -185,6 +185,7 @@ static char* const ZMLogTag ZM_UNUSED = "Calling";
     
     id firstRequest = [self.requestStack lastObject];
     [firstRequest setDebugInformationTranscoder:self];
+    [firstRequest forceToVoipSession];
     [self.requestStack removeLastObject];
     return firstRequest;
 }

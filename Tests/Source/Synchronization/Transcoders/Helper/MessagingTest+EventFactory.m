@@ -40,7 +40,6 @@ NSString * const EventConversationRename = @"conversation.rename";
 NSString * const EventConversationCreate = @"conversation.create";
 NSString * const EventUserConnection = @"user.connection";
 NSString * const EventConversationConnectionRequest = @"conversation.connect-request";
-NSString * const EventConversationEncryptedMessage = @"conversation.otr-message-add";
 NSString * const EventNewConnection = @"user.contact-join";
 
 @implementation MessagingTest (EventFactory)
