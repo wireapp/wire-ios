@@ -573,11 +573,11 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *message1 = [conversation appendMessageWithText:@"hallo"];
+    ZMMessage *message1 = [conversation appendMessageWithText:@"hallo"];
     message1.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-50];
-    ZMTextMessage *message2 = [conversation appendMessageWithText:@"hallo"];
+    ZMMessage *message2 = [conversation appendMessageWithText:@"hallo"];
     message2.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-40];
-    ZMTextMessage *message3 = [conversation appendMessageWithText:@"hallo"];
+    ZMMessage *message3 = [conversation appendMessageWithText:@"hallo"];
     message3.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-30];
 
     NSOrderedSet *messages = [NSOrderedSet orderedSetWithArray:@[message1, message2, message3]];
@@ -600,11 +600,11 @@
     NSDate *date3 = [NSDate dateWithTimeIntervalSinceReferenceDate:4000];
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *message1 = [conversation appendMessageWithText:@"hallo 1"];
+    ZMMessage *message1 = [conversation appendMessageWithText:@"hallo 1"];
     message1.serverTimestamp = date1;
-    ZMTextMessage *message2 = [conversation appendMessageWithText:@"hallo 2"];
+    ZMMessage *message2 = [conversation appendMessageWithText:@"hallo 2"];
     message2.serverTimestamp = date3;
-    ZMTextMessage *message3 = [conversation appendMessageWithText:@"hallo 3"];
+    ZMMessage *message3 = [conversation appendMessageWithText:@"hallo 3"];
     
     NSOrderedSet *messages = [NSOrderedSet orderedSetWithArray:@[message1, message2, message3]];
     XCTAssertEqualObjects(messages, conversation.messages);
@@ -774,7 +774,7 @@
     // then
     id<ZMConversationMessage> message = [conversation appendMessageWithText:longText];
 
-    XCTAssertEqualObjects(message.messageText, longText);
+    XCTAssertEqualObjects(message.textMessageData.messageText, longText);
     XCTAssertEqual(conversation.messages.count, 1lu);
 }
 
@@ -830,7 +830,7 @@
     ZMConversation *sut = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.uiMOC withParticipants:@[user1, user2]];
     
     // when
-    ZMTextMessage *message = [sut appendMessageWithText:@"Quux"];
+    ZMMessage *message = [sut appendMessageWithText:@"Quux"];
 
     // then
     XCTAssertNotNil(message.expirationDate);

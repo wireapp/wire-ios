@@ -293,7 +293,7 @@
     [conversation.managedObjectContext performBlockAndWait:^{
         NSOrderedSet *t;
         t = [conversation.messages mapWithBlock:^id(id<ZMConversationMessage> msg) {
-            return msg.messageText;
+            return msg.textMessageData.messageText;
         }];
         FHAssertEqualArrays(fr, t.array, texts);
     }];

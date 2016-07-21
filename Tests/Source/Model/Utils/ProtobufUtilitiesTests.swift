@@ -43,6 +43,87 @@ class ProtobufUtilitiesTests: XCTestCase {
         
         // then
         XCTAssertEqual(sut.normalizedLoudnessLevels, [])
+    }
+    
+    func testThatItCreatesALinkPreviewWithTheDeprecatedArticleInside() {
+        // given
+        let (title, summary, url, permanentURL) = ("title", "summary", "www.example.com/original", "www.example.com/permanent")
+        let image = ZMAsset.asset(withUploadedOTRKey: .secureRandomDataOfLength(16), sha256: .secureRandomDataOfLength(16))
+
+        let preview = ZMLinkPreview.linkPreview(
+            withOriginalURL: url,
+            permanentURL: permanentURL,
+            offset: 42,
+            title: title,
+            summary: summary,
+            imageAsset: image
+        )
         
+        // then
+        XCTAssertEqual(preview.urlOffset, 42)
+        XCTAssertEqual(preview.url, url)
+        
+        XCTAssertEqual(preview.title, title)
+        XCTAssertEqual(preview.article.title, title)
+        XCTAssertEqual(preview.summary, summary)
+        XCTAssertEqual(preview.article.summary, summary)
+        
+        XCTAssertEqual(preview.image, image)
+        XCTAssertEqual(preview.article.image, image)
+    }
+    
+    func testThatItUpdatesTheLinkPreviewWithOTRKeyAndSha() {
+        // given
+        let preview = createLinkPreview()
+        XCTAssertFalse(preview.article.image.hasUploaded())
+        
+        // when
+        let (otrKey, sha256) = (NSData.randomEncryptionKey(), NSData.zmRandomSHA256Key())
+        let metadata: ZMAssetImageMetaData = .imageMetaData(withWidth: 42, height: 12)
+        let original: ZMAssetOriginal = .original(withSize: 256, mimeType: "image/jpeg", name: nil, imageMetaData: metadata)
+        let updated = preview.update(withOtrKey: otrKey, sha256: sha256, original: original)
+        
+        // then
+        [updated.article.image, updated.image].forEach { asset in
+            XCTAssertTrue(asset.hasUploaded())
+            XCTAssertEqual(asset.uploaded.otrKey, otrKey)
+            XCTAssertEqual(asset.uploaded.sha256, sha256)
+            XCTAssertEqual(asset.original.size, 256)
+            XCTAssertEqual(asset.original.mimeType, "image/jpeg")
+            XCTAssertEqual(asset.original.image.height, 12)
+            XCTAssertEqual(asset.original.image.width, 42)
+            XCTAssertFalse(asset.original.hasName())
+        }
+    }
+    
+    func testThatItUpdatesTheLinkPreviewWithAssetIDAndToken() {
+        // given
+        let preview = createLinkPreview().update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
+        XCTAssertTrue(preview.article.image.hasUploaded())
+        XCTAssertFalse(preview.article.image.uploaded.hasAssetId())
+        
+        // when
+        let (assetKey, token) = ("Key", "Token")
+        let updated = preview.update(withAssetKey: assetKey, assetToken: token)
+        
+        // then
+        [updated.article.image, updated.image].forEach { asset in
+            XCTAssertTrue(asset.uploaded.hasAssetId())
+            XCTAssertEqual(asset.uploaded.assetId, assetKey)
+            XCTAssertEqual(asset.uploaded.assetToken, token)
+        }
+    }
+    
+    // MARK:- Helper
+    
+    func createLinkPreview() -> ZMLinkPreview {
+        return .linkPreview(
+            withOriginalURL: "www.example.com/original",
+            permanentURL: "www.example.com/permanent",
+            offset: 42,
+            title: "Title",
+            summary: name!,
+            imageAsset: nil
+        )
     }
 }

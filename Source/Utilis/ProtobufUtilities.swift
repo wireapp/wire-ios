@@ -136,11 +136,20 @@ public extension ZMAsset {
 
 public extension ZMAssetOriginal {
     
-    public static func original(withSize size: UInt64, mimeType: String, name: String) -> ZMAssetOriginal {
+    public static func original(withSize size: UInt64, mimeType: String, name: String?) -> ZMAssetOriginal {
+        return original(withSize: size, mimeType: mimeType, name: name, imageMetaData: nil)
+    }
+    
+    public static func original(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: ZMAssetImageMetaData?) -> ZMAssetOriginal {
         let builder = ZMAssetOriginal.builder()
         builder.setSize(size)
         builder.setMimeType(mimeType)
-        builder.setName(name)
+        if let name = name {
+            builder.setName(name)
+        }
+        if let imageMeta = imageMetaData {
+            builder.setImage(imageMeta)
+        }
         return builder.build()
     }
     
@@ -215,12 +224,16 @@ public extension ZMAssetImageMetaData {
 
 public extension ZMAssetRemoteData {
     
-    public static func remoteData(withOTRKey otrKey: NSData, sha256: NSData, assetId: String? = "", assetToken: NSData? = NSData()) -> ZMAssetRemoteData {
+    public static func remoteData(withOTRKey otrKey: NSData, sha256: NSData, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
         let builder = ZMAssetRemoteData.builder()
         builder.setOtrKey(otrKey)
         builder.setSha256(sha256)
-        builder.setAssetId(assetId)
-        builder.setAssetToken(assetToken)
+        if let identifier = assetId {
+            builder.setAssetId(identifier)
+        }
+        if let token = assetToken {
+            builder.setAssetToken(token)
+        }
         return builder.build()
     }
 }
@@ -276,6 +289,151 @@ public extension ZMOtrAssetMeta {
 }
 
 
+public extension ZMArticle {
+
+    public static func article(withPermanentURL permanentURL: String, title: String?, summary: String?, imageAsset: ZMAsset?) -> ZMArticle {
+        let articleBuilder = ZMArticle.builder()
+        articleBuilder.setPermanentUrl(permanentURL)
+        if let title = title {
+            articleBuilder.setTitle(title)
+        }
+        if let summary = summary {
+            articleBuilder.setSummary(summary)
+        }
+        if let image = imageAsset {
+            articleBuilder.setImage(image)
+        }
+        return articleBuilder.build()
+    }
+    
+}
+
+public extension ZMLinkPreview {
+    
+    public static func linkPreview(withOriginalURL originalURL: String, permanentURL: String, offset: Int32, title: String?, summary: String?, imageAsset: ZMAsset?) -> ZMLinkPreview {
+        return linkPreview(withOriginalURL: originalURL, permanentURL: permanentURL, offset: offset, title: title, summary: summary, imageAsset: imageAsset, tweet: nil)
+    }
+    
+    public static func linkPreview(withOriginalURL originalURL: String, permanentURL: String, offset: Int32, title: String?, summary: String?, imageAsset: ZMAsset?, tweet: ZMTweet?) -> ZMLinkPreview {
+        let article = ZMArticle.article(withPermanentURL: permanentURL, title: title, summary: summary, imageAsset: imageAsset)
+        return linkPreview(withOriginalURL: originalURL, permanentURL: permanentURL, offset: offset, title: title, summary: summary, imageAsset: imageAsset, article: article, tweet: tweet)
+    }
+    
+    private static func linkPreview(withOriginalURL originalURL: String, permanentURL: String, offset: Int32, title: String?, summary: String?, imageAsset: ZMAsset?, article: ZMArticle?, tweet: ZMTweet?) -> ZMLinkPreview {
+        let linkPreviewBuilder = ZMLinkPreview.builder()
+        linkPreviewBuilder.setUrl(originalURL)
+        linkPreviewBuilder.setPermanentUrl(permanentURL)
+        linkPreviewBuilder.setUrlOffset(offset)
+        
+        if let title = title {
+            linkPreviewBuilder.setTitle(title)
+        }
+        if let summary = summary {
+            linkPreviewBuilder.setSummary(summary)
+        }
+        if let imageAsset = imageAsset {
+            linkPreviewBuilder.setImage(imageAsset)
+        }
+        if let tweet = tweet {
+            linkPreviewBuilder.setTweet(tweet)
+        }
+        if let article = article {
+            linkPreviewBuilder.setArticle(article)
+        }
+        
+        return linkPreviewBuilder.build()
+    }
+
+    func update(withOtrKey otrKey: NSData, sha256: NSData) -> ZMLinkPreview {
+        return update(withOtrKey: otrKey, sha256: sha256, original: nil)
+    }
+    
+    func update(withOtrKey otrKey: NSData, sha256: NSData, original: ZMAssetOriginal?) -> ZMLinkPreview {
+        let linkPreviewbuilder = toBuilder()
+        
+        if hasArticle() {
+            let articleBuilder = article.toBuilder()
+            let assetBuilder = article.image.toBuilder()
+            assetBuilder.setUploadedBuilder(remoteBuilder(withOTRKey: otrKey, sha256: sha256))
+            if let original = original {
+                assetBuilder.setOriginal(original)
+            }
+            articleBuilder.setImageBuilder(assetBuilder)
+            linkPreviewbuilder.setArticleBuilder(articleBuilder)
+        }
+        
+        let newAssetBuilder = image.toBuilder()
+        newAssetBuilder.setUploadedBuilder(remoteBuilder(withOTRKey: otrKey, sha256: sha256))
+        if let original = original {
+            newAssetBuilder.setOriginal(original)
+        }
+        linkPreviewbuilder.setImageBuilder(newAssetBuilder)
+        
+        return linkPreviewbuilder.build()
+    }
+    
+    func update(withAssetKey assetKey: String, assetToken: String?) -> ZMLinkPreview {
+        
+        let linkPreviewbuilder = toBuilder()
+        
+        if hasArticle() {
+            let articleRemoteBuilder = article.image.uploaded.builder(withAssetID: assetKey, token: assetToken)
+            let articleBuilder = article.toBuilder()
+            let assetBuilder = article.image.toBuilder()
+            assetBuilder.setUploadedBuilder(articleRemoteBuilder)
+            articleBuilder.setImageBuilder(assetBuilder)
+            linkPreviewbuilder.setArticleBuilder(articleBuilder)
+        }
+        
+        let newAssetRemoteBuilder = image.uploaded.builder(withAssetID: assetKey, token: assetToken)
+        let newImageBuilder = image.toBuilder()
+        newImageBuilder.setUploadedBuilder(newAssetRemoteBuilder)
+        linkPreviewbuilder.setImageBuilder(newImageBuilder)
+        
+        return linkPreviewbuilder.build()
+    }
+    
+    private func remoteBuilder(withOTRKey otrKey: NSData, sha256: NSData) -> ZMAssetRemoteDataBuilder {
+        let remoteDataBuilder = ZMAssetRemoteData.builder()
+        remoteDataBuilder.setOtrKey(otrKey)
+        remoteDataBuilder.setSha256(sha256)
+        return remoteDataBuilder
+    }
+    
+    private func uploadedBuilder(withAssetKey key: String, token: String?) -> ZMAssetRemoteDataBuilder {
+        let remoteDataBuilder = ZMAssetRemoteData.builder()
+        remoteDataBuilder.setAssetId(key)
+        if let token = token {
+            remoteDataBuilder.setAssetToken(token)
+        }
+        return remoteDataBuilder
+    }
+    
+}
+
+extension ZMAssetRemoteData {
+    func builder(withAssetID assetID: String, token: String?) -> ZMAssetRemoteDataBuilder {
+        let builder = toBuilder()
+        builder.setAssetId(assetID)
+        if let token = token {
+            builder.setAssetToken(token)
+        }
+        return builder
+    }
+}
+
+public extension ZMTweet {
+    public static func tweet(withAuthor author: String?, username: String?) -> ZMTweet {
+        let builder = ZMTweet.builder()
+        if let author = author {
+            builder.setAuthor(author)
+        }
+        if let username = username {
+            builder.setUsername(username)
+        }
+        return builder.build()
+    }
+}
 
 // MARK: - Equatable
 

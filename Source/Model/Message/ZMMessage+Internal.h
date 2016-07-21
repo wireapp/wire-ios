@@ -75,7 +75,7 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 
 
 
-@interface ZMTextMessage : ZMMessage
+@interface ZMTextMessage : ZMMessage <ZMTextMessageData>
 
 @property (nonatomic, readonly, copy) NSString *text;
 
@@ -128,6 +128,7 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 
 @interface ZMMessage ()
 
+@property (nonatomic) NSString *senderClientID;
 @property (nonatomic) ZMEventID *eventID;
 @property (nonatomic) NSUUID *nonce;
 

@@ -489,7 +489,7 @@
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeOneOnOne;
     c1.lastModifiedDate = [NSDate date];
-    ZMTextMessage *message = [c1 appendMessageWithText:@"message"];
+    ZMMessage *message = [c1 appendMessageWithText:@"message"];
     message.eventID = self.createEventID;
     message.serverTimestamp = [NSDate date];
     
@@ -526,7 +526,7 @@
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeOneOnOne;
     c1.lastModifiedDate = [NSDate date];
-    ZMTextMessage *message = [c1 appendMessageWithText:@"message"];
+    ZMMessage *message = [c1 appendMessageWithText:@"message"];
     message.eventID = self.createEventID;
     message.serverTimestamp = [NSDate date];
     

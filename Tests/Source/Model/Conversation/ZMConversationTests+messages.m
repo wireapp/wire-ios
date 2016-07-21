@@ -36,7 +36,7 @@
         id<ZMConversationMessage> message = [conversation appendMessageWithText:messageText];
         
         // then
-        XCTAssertEqualObjects(message.messageText, messageText);
+        XCTAssertEqualObjects(message.textMessageData.messageText, messageText);
         XCTAssertEqual(message.conversation, conversation);
         XCTAssertTrue([conversation.messages containsObject:message]);
         XCTAssertEqualObjects(selfUser, message.sender);
@@ -84,7 +84,7 @@
     
     // then
     [messageText appendString:@"1234"];
-    XCTAssertEqualObjects(message.messageText, originalText);
+    XCTAssertEqualObjects(message.textMessageData.messageText, originalText);
 }
 
 - (void)testThatInsertATextMessageWithNilTextDoesNotCreateANewMessage
@@ -95,7 +95,7 @@
     NSSet *start = [self.uiMOC.insertedObjects copy];
     
     // when
-    __block ZMTextMessage *message;
+    __block ZMMessage *message;
     [self performIgnoringZMLogError:^{
         message = [conversation appendMessageWithText:nil];
     }];

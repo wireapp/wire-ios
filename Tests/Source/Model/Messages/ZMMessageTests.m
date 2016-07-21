@@ -34,6 +34,7 @@
 #import <OCMock/OCMock.h>
 #import "ZMConversation+Transport.h"
 #import "ZMUpdateEvent+ZMCDataModel.h"
+#import "NSString+RandomString.h"
 
 NSString * const IsExpiredKey = @"isExpired";
 
@@ -521,7 +522,7 @@ NSString * const IsExpiredKey = @"isExpired";
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    NSArray *keysThatShouldBeTracked = @[@"dataSet"];
+    NSArray *keysThatShouldBeTracked = @[@"dataSet", @"linkPreviewState"];
     AssertArraysContainsSameObjects(message.keysTrackedForLocalModifications, keysThatShouldBeTracked);
 }
 
@@ -650,7 +651,7 @@ NSString * const IsExpiredKey = @"isExpired";
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     message.text = @"Foo";
     // then
-    XCTAssertEqualObjects(message.messageText, @"Foo");
+    XCTAssertEqualObjects(message.text, @"Foo");
     XCTAssertNil(message.systemMessageData);
     XCTAssertNil(message.imageMessageData);
     XCTAssertNil(message.knockMessageData);
@@ -777,7 +778,7 @@ NSString * const IsExpiredKey = @"isExpired";
     ZMImageMessage *message = [ZMImageMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    XCTAssertNil(message.messageText);
+    XCTAssertNil(message.textMessageData.messageText);
     XCTAssertNil(message.systemMessageData);
     XCTAssertNotNil(message.imageMessageData);
     XCTAssertNil(message.knockMessageData);
@@ -1458,7 +1459,7 @@ NSString * const IsExpiredKey = @"isExpired";
     ZMSystemMessage *message = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    XCTAssertNil(message.messageText);
+    XCTAssertNil(message.textMessageData.messageText);
     XCTAssertNotNil(message.systemMessageData);
     XCTAssertNil(message.imageMessageData);
     XCTAssertNil(message.knockMessageData);
@@ -2127,7 +2128,7 @@ NSString * const IsExpiredKey = @"isExpired";
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *pendingMessage1 = [conversation appendMessageWithText:@"P1"];
+    ZMMessage *pendingMessage1 = [conversation appendMessageWithText:@"P1"];
     pendingMessage1.visibleInConversation = conversation;
     
     ZMTextMessage *lastServerMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -2145,10 +2146,10 @@ NSString * const IsExpiredKey = @"isExpired";
     middleServerMessage.visibleInConversation = conversation;
     middleServerMessage.serverTimestamp = [NSDate dateWithTimeIntervalSince1970:5*1000];
     
-    ZMTextMessage *pendingMessage2 = [conversation appendMessageWithText:@"P2"];
+    ZMMessage *pendingMessage2 = [conversation appendMessageWithText:@"P2"];
     pendingMessage2.visibleInConversation = conversation;
 
-    ZMTextMessage *pendingMessage3 = [conversation appendMessageWithText:@"P3"];
+    ZMMessage *pendingMessage3 = [conversation appendMessageWithText:@"P3"];
     pendingMessage2.visibleInConversation = conversation;
     
     NSArray *expectedOrder = @[firstServerMessage, middleServerMessage, lastServerMessage, pendingMessage1, pendingMessage2, pendingMessage3];
@@ -2212,10 +2213,11 @@ NSString * const IsExpiredKey = @"isExpired";
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
     
+    NSString *senderClientID = [NSString createAlphanumericalString];
     NSUUID *nonce = [NSUUID createUUID];
     ZMGenericMessage *knockMessage = [ZMGenericMessage knockWithNonce:nonce.transportString];
 
-    NSString *data = knockMessage.data.base64String;
+    NSDictionary *data = @{ @"sender" : senderClientID, @"text" : knockMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate dateWithTimeIntervalSinceReferenceDate:450000000]];
     ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
     
@@ -2231,6 +2233,7 @@ NSString * const IsExpiredKey = @"isExpired";
     XCTAssertEqualObjects(message.conversation, conversation);
     XCTAssertEqualObjects(message.sender.remoteIdentifier.transportString, payload[@"from"]);
     XCTAssertEqualObjects(message.serverTimestamp.transportString, payload[@"time"]);
+    XCTAssertEqualObjects(message.senderClientID, senderClientID);
     XCTAssertTrue(message.isEncrypted);
     XCTAssertFalse(message.isPlainText);
     XCTAssertEqualObjects(message.nonce, nonce);
@@ -2297,7 +2300,7 @@ NSString * const IsExpiredKey = @"isExpired";
     ZMKnockMessage *message = [ZMKnockMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    XCTAssertNil(message.messageText);
+    XCTAssertNil(message.textMessageData.messageText);
     XCTAssertNil(message.systemMessageData);
     XCTAssertNil(message.imageMessageData);
     XCTAssertNotNil(message.knockMessageData);
@@ -2311,7 +2314,7 @@ NSString * const IsExpiredKey = @"isExpired";
     [message addData:knock.data];
     
     // then
-    XCTAssertNil(message.messageText);
+    XCTAssertNil(message.textMessageData.messageText);
     XCTAssertNil(message.systemMessageData);
     XCTAssertNil(message.imageMessageData);
     XCTAssertNotNil(message.knockMessageData);

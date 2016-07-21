@@ -17,42 +17,54 @@
 // 
 
 
+@import zimages;
 #import "ZMMessage+Internal.h"
 #import "ZMOTRMessage.h"
 
 @class UserClient;
 @protocol ZMConversationMessage;
 
-extern NSString * const ZMFailedToCreateEncryptedMessagePayloadString;
+extern NSString * _Nonnull const ZMFailedToCreateEncryptedMessagePayloadString;
 extern NSUInteger const ZMClientMessageByteSizeExternalThreshold;
+extern NSString * _Nonnull const ZMClientMessageLinkPreviewStateKey;
+extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotificationName;
 
 @interface ZMClientMessage : ZMOTRMessage
 
-@property (nonatomic, readonly) ZMGenericMessage *genericMessage;
+/// Link Preview state
+@property (nonatomic) ZMLinkPreviewState linkPreviewState;
 
-- (void)addData:(NSData *)data;
+@property (nonatomic, readonly) ZMGenericMessage * _Nullable genericMessage;
+
+- (void)addData:(NSData * _Nonnull)data;
+
+- (BOOL)hasDownloadedImage;
 
 @end
 
 @interface ZMClientMessage (OTR)
 
-- (NSData *)encryptedMessagePayloadData;
+- (NSData * _Nullable)encryptedMessagePayloadData;
 
-+ (NSArray *)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt
-                              selfClient:(UserClient *)selfClient
-                            conversation:(ZMConversation *)converation;
++ (NSArray * _Nullable)recipientsWithDataToEncrypt:(NSData * _Nonnull)dataToEncrypt
+                              selfClient:(UserClient * _Nonnull)selfClient
+                            conversation:(ZMConversation * _Nonnull)converation;
 
-+ (NSData *)encryptedMessagePayloadDataWithGenericMessage:(ZMGenericMessage *)genericMessage
-                                             conversation:(ZMConversation *)conversation
-                                     managedObjectContext:(NSManagedObjectContext *)moc
-                                             externalData:(NSData *)externalData;
++ (NSData * _Nullable)encryptedMessagePayloadDataWithGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage
+                                             conversation:(ZMConversation * _Nonnull)conversation
+                                     managedObjectContext:(NSManagedObjectContext * _Nonnull)moc
+                                             externalData:(NSData * _Nullable)externalData;
 
 @end
 
 @interface ZMClientMessage (External)
 
-+ (NSData *)encryptedMessageDataWithExternalDataBlobFromMessage:(ZMGenericMessage *)message
-                                                 inConversation:(ZMConversation *)conversation
-                                           managedObjectContext:(NSManagedObjectContext *)context;
++ (NSData * _Nullable)encryptedMessageDataWithExternalDataBlobFromMessage:(ZMGenericMessage * _Nonnull)message
+                                                 inConversation:(ZMConversation * _Nonnull)conversation
+                                           managedObjectContext:(NSManagedObjectContext * _Nonnull)context;
+
+@end
+
+@interface ZMClientMessage (ZMImageOwner) <ZMImageOwner>
 
 @end

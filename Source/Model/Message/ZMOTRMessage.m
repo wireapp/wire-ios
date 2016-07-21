@@ -177,11 +177,14 @@ NSString * const DeliveredKey = @"delivered";
     
     if (clientMessage == nil) {
         clientMessage = [messageClass insertNewObjectInManagedObjectContext:moc];
+    } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
+        return nil;
     }
     
     clientMessage.isEncrypted = encrypted;
     clientMessage.isPlainText = !encrypted;
     clientMessage.nonce = nonce;
+    clientMessage.senderClientID = updateEvent.senderClientID;
     [clientMessage updateWithGenericMessage:message updateEvent:updateEvent];
     [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation messageWasAlreadyReceived:clientMessage.delivered];
     

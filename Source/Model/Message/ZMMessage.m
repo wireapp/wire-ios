@@ -71,6 +71,7 @@ NSString * const ZMMessageAddedUsersKey = @"addedUsers";
 NSString * const ZMMessageRemovedUsersKey = @"removedUsers";
 NSString * const ZMMessageNeedsUpdatingUsersKey = @"needsUpdatingUsers";
 NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
+NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 
 @interface ZMMessage ()
 
@@ -109,6 +110,7 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 @dynamic missingRecipients;
 @dynamic isExpired;
 @dynamic expirationDate;
+@dynamic senderClientID;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
@@ -578,7 +580,8 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
                              ZMMessageMediumDataLoadedKey,
                              ZMMessageAddedUsersKey,
                              ZMMessageRemovedUsersKey,
-                             ZMMessageNeedsUpdatingUsersKey
+                             ZMMessageNeedsUpdatingUsersKey,
+                             ZMMessageSenderClientIDKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -651,6 +654,31 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 - (NSString *)messageText
 {
     return self.text;
+}
+
+- (LinkPreview *)linkPreview
+{
+    return nil;
+}
+
+- (id<ZMTextMessageData>)textMessageData
+{
+    return self;
+}
+
+- (NSData *)imageData
+{
+    return nil;
+}
+
+- (BOOL)hasImageData
+{
+    return NO;
+}
+
+- (NSString *)imageDataIdentifier
+{
+    return nil;
 }
 
 @end

@@ -33,6 +33,8 @@
 - (nullable NSUUID *)senderUUID;
 - (nullable NSUUID *)conversationUUID;
 - (nullable NSUUID *)messageNonce;
+- (nullable NSString *)senderClientID;
+- (nullable NSString *)recipientClientID;
 
 - (nonnull NSMutableSet *)usersFromUserIDsInManagedObjectContext:(nonnull NSManagedObjectContext *)context createIfNeeded:(BOOL)createIfNeeded;
 

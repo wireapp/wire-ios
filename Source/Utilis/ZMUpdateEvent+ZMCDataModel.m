@@ -149,6 +149,22 @@
     return [self.payload optionalUuidForKey:@"conversation"];
 }
 
+- (NSString *)senderClientID
+{
+    if (self.type == ZMUpdateEventConversationOtrMessageAdd || self.type == ZMUpdateEventConversationOtrAssetAdd) {
+        return [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"sender"];
+    }
+    return nil;
+}
+
+- (NSString *)recipientClientID
+{
+    if (self.type == ZMUpdateEventConversationOtrMessageAdd || self.type == ZMUpdateEventConversationOtrAssetAdd) {
+        return [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"recipient"];
+    }
+    return nil;
+}
+
 - (NSUUID *)messageNonce;
 {
     switch (self.type) {
