@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -23,6 +23,8 @@ import Foundation
 class ZMLocalNotificationForRenameEvent : ZMLocalNotificationForEvent {
     
     var newName : String!
+    
+    internal override var eventType: ZMLocalNotificationForEventType {return .ConversationRename}
     
     override var requiresConversation : Bool {
         return true
@@ -45,6 +47,7 @@ class ZMLocalNotificationForRenameEvent : ZMLocalNotificationForEvent {
 
 
 class ZMLocalNotificationForConversationCreateEvent : ZMLocalNotificationForEvent {
+    internal override var eventType: ZMLocalNotificationForEventType {return .ConversationCreate }
     
     override func configureAlertBody() -> String {
         return ZMPushStringConversationCreate.localizedStringWithUser(sender, count:nil, text:nil)

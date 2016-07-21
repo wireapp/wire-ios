@@ -13,16 +13,16 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
 @import PushKit;
 
-
-
 #include "ZMUserSessionTestsBase.h"
 #import "ZMPushToken.h"
+#import "UILocalNotification+UserInfo.h"
+#import "ZMUserSession+UserNotificationCategories.h"
 
 @interface ZMUserSessionTests : ZMUserSessionTestsBase
 
@@ -982,18 +982,17 @@
 
 - (UILocalNotification *)notificationWithConversationForCategory:(NSString *)category
 {
-    __block NSManagedObjectID *conversationID;
+    __block ZMConversation *conversation;
     [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.conversationType = ZMConversationTypeOneOnOne;
+        conversation.remoteIdentifier = [NSUUID UUID];
         [self.syncMOC saveOrRollback];
-        
-        conversationID = conversation.objectID;
     }];
     
     UILocalNotification *note = [[UILocalNotification alloc] init];
     note.category = category;
-    note.userInfo = @{@"conversationObjectURLString": conversationID.URIRepresentation.absoluteString};
+    note.userInfo = @{@"conversationIDString": conversation.remoteIdentifier.transportString};
     
     return note;
 }
@@ -1002,6 +1001,7 @@
 {
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeConnection;
+    conversation.remoteIdentifier = [NSUUID createUUID];
     ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     connection.conversation = conversation;
     connection.to = sender;
@@ -1009,23 +1009,12 @@
     
     [self.uiMOC saveOrRollback];
     
-    NSManagedObjectID *conversationID = conversation.objectID;
-    
     UILocalNotification *note = [[UILocalNotification alloc] init];
     note.category = ZMConnectCategory;
-    note.userInfo = @{@"conversationObjectURLString": conversationID.URIRepresentation.absoluteString,
-                      @"senderUUID" : sender.remoteIdentifier.transportString};
+    note.userInfo = @{@"conversationIDString": conversation.remoteIdentifier.transportString,
+                      @"senderIDString" : sender.remoteIdentifier.transportString};
     
     return note;
-}
-
-
-- (NSDictionary *)remoteNotificationForConversationWithRemoteIdentifier:(NSUUID *)remoteIdentifier
-{
-    NSDictionary *remoteNotification = @{@"aps" : @{@"conversation_id" : remoteIdentifier.transportString,
-                                                    @"msg_type" : @"conversation.voice-channel-activate"}
-                                         };
-    return remoteNotification;
 }
 
 - (void)testThatItStoresThePushToken
@@ -1202,70 +1191,6 @@
     [self.operationLoop verify];
 }
 
-
-
-- (void)checkThatItCallsTheDelegateForRemoteNotification:(NSDictionary *)userInfo withBlock:(void (^)(id mockDelegate))block
-{
-    [[self.operationLoop stub] saveEventsAndSendNotificationForPayload:userInfo fetchCompletionHandler:OCMOCK_ANY source:ZMPushNotficationTypeAlert];
-    id mockDelegate = [OCMockObject mockForProtocol:@protocol(ZMRequestsToOpenViewsDelegate)];
-
-    // expect
-    block(mockDelegate);
-
-    // when
-    self.sut.requestToOpenViewDelegate = mockDelegate;
-    [self.sut application:self.application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-        NOT_USED(result);
-    }];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ZMApplicationDidEnterEventProcessingStateNotification" object:nil];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    [self.operationLoop verify];
-    [mockDelegate verify];
-    [self.application verify];
-}
-
-- (void)testThatItDoesNotOpenConversationWhenApplicationIsActive
-{
-    // given
-    NSUUID *remoteID = NSUUID.createUUID;
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = remoteID;
-    [self.uiMOC saveOrRollback];
-    
-    [self simulateLoggedInUser];
-    [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
-    
-    // when
-    NSDictionary *remoteNotification = [self remoteNotificationForConversationWithRemoteIdentifier:conversation.remoteIdentifier];
-    [self checkThatItCallsTheDelegateForRemoteNotification:remoteNotification withBlock:^(id mockDelegate) {
-        [[mockDelegate reject] showConversation:conversation];
-        [[mockDelegate reject] showConversationList];
-    }];
-}
-
-- (void)testThatIt_Opens_ConversationWhenApplicationIsInactive
-{
-    // given
-    NSUUID *remoteID = NSUUID.createUUID;
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = remoteID;
-    [self.uiMOC saveOrRollback];
-    
-    [self simulateLoggedInUser];
-    [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
-    
-    // when
-    NSDictionary *remoteNotification = [self remoteNotificationForConversationWithRemoteIdentifier:conversation.remoteIdentifier];
-    [self checkThatItCallsTheDelegateForRemoteNotification:remoteNotification withBlock:^(id mockDelegate) {
-        [[mockDelegate expect] showConversation:conversation];
-    }];
-}
-
 - (void)checkThatItCallsTheDelegateForNotification:(UILocalNotification *)notification responseInfo:(NSDictionary *)responseInfo actionIdentifier:(NSString *)actionIdentifier withBlock:(void (^)(id mockDelegate))block
 {
     id mockDelegate = [OCMockObject mockForProtocol:@protocol(ZMRequestsToOpenViewsDelegate)];
@@ -1369,6 +1294,27 @@
     }];
 }
 
+
+- (void)testThatItMutesAndDoesNotCall_DelegateShowConversation_ForZMConversationCategory_ZMConversationMuteAction
+{
+    //given
+    [self simulateLoggedInUser];
+
+    [[[self.transportSession stub] andReturn:nil] attemptToEnqueueSyncRequestWithGenerator:OCMOCK_ANY];
+    UILocalNotification *note = [self notificationWithConversationForCategory:ZMConversationCategory];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
+    
+    // expect
+    [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
+    
+    [self checkThatItCallsTheDelegateForNotification:note responseInfo:nil actionIdentifier:ZMConversationMuteAction withBlock:^(id mockDelegate) {
+        [[mockDelegate reject] showConversation:OCMOCK_ANY];
+    }];
+    
+    //then
+    XCTAssertTrue(conversation.isSilenced);
+}
+
 - (void)testThat_OnLaunch_ItCalls_DelegateShowConversation_ForZMConversationCategory
 {
     // given
@@ -1398,7 +1344,7 @@
     sender.remoteIdentifier = NSUUID.createUUID;
     
     UILocalNotification *note = [self notificationWithConnectionRequestFromSender:sender];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note inManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
 
     // expect
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
@@ -1424,7 +1370,7 @@
     XCTAssertFalse(sender.isConnected);
 
     UILocalNotification *note = [self notificationWithConnectionRequestFromSender:sender];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note inManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
     
     // expect
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
@@ -1445,10 +1391,10 @@
     
     [[[self.transportSession stub] andReturn:nil] attemptToEnqueueSyncRequestWithGenerator:OCMOCK_ANY];
 
-    UILocalNotification *note = [self notificationWithConversationForCategory:ZMCallCategory];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note inManagedObjectContext:self.uiMOC];
+    UILocalNotification *note = [self notificationWithConversationForCategory:ZMIncomingCallCategory];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
+
     [[conversation mutableOrderedSetValueForKey:@"callParticipants"] addObject:[ZMUser insertNewObjectInManagedObjectContext:self.uiMOC]];
-    conversation.remoteIdentifier = NSUUID.createUUID;
     [self.uiMOC saveOrRollback];
     
     // expect
@@ -1462,17 +1408,15 @@
     XCTAssertTrue(conversation.callDeviceIsActive);
 }
 
-- (void)testThatIt_DoesNotCall_DelegateShowConversationAndAcceptsCall_ZMConnectCategory_NoCallParticipants
+- (void)testThatIt_DoesNotAcceptsCall_ButCallsDelegateShowConversation_ZMIncomingCallCategory_NoCallParticipants
 {
     // given
     [self simulateLoggedInUser];
     
     [[[self.transportSession stub] andReturn:nil] attemptToEnqueueSyncRequestWithGenerator:OCMOCK_ANY];
     
-    UILocalNotification *note = [self notificationWithConversationForCategory:ZMCallCategory];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note inManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = NSUUID.createUUID;
-    [self.uiMOC saveOrRollback];
+    UILocalNotification *note = [self notificationWithConversationForCategory:ZMIncomingCallCategory];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
     
     // expect
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
@@ -1485,25 +1429,49 @@
     XCTAssertFalse(conversation.callDeviceIsActive);
 }
 
+- (void)testThatIt_DoesNotCall_DelegateShowConversationAndIgnoresCall_ZMIncomingCallCategory_IgnoreAction
+{
+    // given
+    [self simulateLoggedInUser];
+    
+    [[[self.transportSession stub] andReturn:nil] attemptToEnqueueSyncRequestWithGenerator:OCMOCK_ANY];
 
-- (void)testThatItDoesNotCall_DelegateShowConversationAndIgnoresCall_ZMConnectCategory_IgnoreAction
+    UILocalNotification *note = [self notificationWithConversationForCategory:ZMIncomingCallCategory];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
+    
+    // expect
+    [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
+    
+    [self checkThatItCallsTheDelegateForNotification:note responseInfo:nil actionIdentifier:ZMCallIgnoreAction withBlock:^(id mockDelegate) {
+        [[mockDelegate reject] showConversation:conversation];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertFalse(conversation.callDeviceIsActive);
+    XCTAssertTrue(conversation.isIgnoringCall);
+}
+
+
+- (void)testThatItCalls_DelegateShowConversationAndCallsBack_ZMMissedCallCategory_CallBackAction
 {
     // given
     [self simulateLoggedInUser];
     
     [[[self.transportSession stub] andReturn:nil] attemptToEnqueueSyncRequestWithGenerator:OCMOCK_ANY];
     
-    UILocalNotification *note = [self notificationWithConversationForCategory:ZMCallCategory];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note inManagedObjectContext:self.uiMOC];
+    UILocalNotification *note = [self notificationWithConversationForCategory:ZMMissedCallCategory];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
     
     // expect
-    [self checkThatItCallsTheDelegateForNotification:note responseInfo:nil actionIdentifier:ZMCallIgnoreAction withBlock:^(id mockDelegate) {
-        [[mockDelegate reject] showConversation:conversation];
+    [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
+
+    [self checkThatItCallsTheDelegateForNotification:note responseInfo:nil actionIdentifier:ZMCallAcceptAction withBlock:^(id mockDelegate) {
+        [[mockDelegate expect] showConversation:conversation];
     }];
     
     // then
-    XCTAssertFalse(conversation.callDeviceIsActive);
-    XCTAssertTrue(conversation.isIgnoringCall);
+    XCTAssertTrue(conversation.callDeviceIsActive);
 
 }
 
@@ -1515,7 +1483,7 @@
     [[[self.transportSession stub] andReturn:nil] attemptToEnqueueSyncRequestWithGenerator:OCMOCK_ANY];
     
     UILocalNotification *note = [self notificationWithConversationForCategory:ZMConversationCategory];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note inManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [note conversationInManagedObjectContext:self.uiMOC];
     NSDictionary *responseInfo = @{UIUserNotificationActionResponseTypedTextKey: @"Hello hello"};
     XCTAssertEqual(conversation.messages.count, 0u);
 

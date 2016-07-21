@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -51,6 +51,8 @@ typedef NS_ENUM(int, ZMLocalNotificationForEventType) {
 };
 
 
+extern NSString * _Null_unspecified const ZMPushStringDefault;
+
 extern NSString * _Null_unspecified const ZMPushStringMessageAdd;
 extern NSString * _Null_unspecified const ZMPushStringImageAdd;
 extern NSString * _Null_unspecified const ZMPushStringVideoAdd;
@@ -83,10 +85,10 @@ extern NSString *_Null_unspecified const ZMPushStringNewConnection;
 @interface ZMLocalNotification : NSObject
 
 @property (nonatomic, readonly) ZMLocalNotificationType type;
-
-+ (nullable ZMConversation *)conversationForLocalNotification:(nonnull UILocalNotification *)notification inManagedObjectContext:(nonnull NSManagedObjectContext *)MOC;
-+ (nullable ZMMessage *)messageForLocalNotification:(nonnull UILocalNotification *)notification conversation:(nonnull ZMConversation *)conversation inManagedObjectContext:(nonnull NSManagedObjectContext *)MOC;
-+ (nullable NSUUID *)senderRemoteIdentifierForLocalNotification:(nonnull UILocalNotification *)notification;
+@property (nonatomic, readonly, nullable) NSUUID *conversationID;
+@property (nonatomic, readonly, nonnull) NSArray<UILocalNotification*> *uiNotifications;
+@property (nonatomic, nullable) ZMConversation *conversation;
+@property (nonatomic, readonly) ZMLocalNotificationForEventType eventType;
 
 @end
 
@@ -96,8 +98,6 @@ extern NSString *_Null_unspecified const ZMPushStringNewConnection;
 @interface ZMLocalNotificationForExpiredMessage : ZMLocalNotification
 
 @property (nonatomic, readonly, nonnull) ZMMessage *message;
-@property (nonatomic, readonly, nonnull) ZMConversation *conversation;
-
 @property (nonatomic, readonly, nonnull) UILocalNotification *uiNotification;
 
 - (nonnull instancetype)initWithExpiredMessage:(nonnull ZMMessage *)message;

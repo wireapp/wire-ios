@@ -13,9 +13,11 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+
+"push.notification.default" = "Nova mensagem";
 
 "push.notification.add.message.group" = "%1$@ em %2$@: %3$@";
 "push.notification.add.message.group.nousername" = "Nova mensagem em %1$@: %2$@";
@@ -32,6 +34,38 @@
 
 "push.notification.add.image.oneonone" = "%1$@ compartilhou uma imagem";
 "push.notification.add.image.oneonone.nousername" = "Nova imagem em uma conversa";
+
+"push.notification.add.video.group" = "%1$@ compartilhou um vídeo em %2$@";
+"push.notification.add.video.group.nousername" = "Novo vídeo em %1$@";
+"push.notification.add.video.group.nousername.noconversationname" = "Novo vídeo em uma conversa";
+"push.notification.add.video.group.noconversationname" = "%1$@ compartilhou um vídeo em uma conversa";
+
+"push.notification.add.video.oneonone" = "%1$@ compartilhou um vídeo";
+"push.notification.add.video.oneonone.nousername" = "Novo vídeo em uma conversa";
+
+"push.notification.add.audio.group" = "%1$@ compartilhou uma mensagem de áudio em %2$@";
+"push.notification.add.audio.group.nousername" = "Nova mensagem de áudio em %1$@";
+"push.notification.add.audio.group.nousername.noconversationname" = "Nova mensagem de áudio em uma conversa";
+"push.notification.add.audio.group.noconversationname" = "%1$@ compartilhou uma mensagem de áudio em uma conversa";
+
+"push.notification.add.audio.oneonone" = "%1$@ compartilhou uma mensagem de áudio";
+"push.notification.add.audio.oneonone.nousername" = "Nova mensagem de áudio em uma conversa";
+
+"push.notification.add.file.group" = "%1$@ compartilhou um arquivo em %2$@";
+"push.notification.add.file.group.nousername" = "Novo arquivo em %1$@";
+"push.notification.add.file.group.nousername.noconversationname" = "Novo arquivo em uma conversa";
+"push.notification.add.file.group.noconversationname" = "%1$@ compartilhou um arquivo em uma conversa";
+
+"push.notification.add.file.oneonone" = "%1$@ compartilhou de um arquivo";
+"push.notification.add.file.oneonone.nousername" = "Novo arquivo em uma conversa";
+
+"push.notification.add.location.group" = "%1$@ compartilhou uma localização em %2$@";
+"push.notification.add.location.group.nousername" = "Nova localização em %1$@";
+"push.notification.add.location.group.nousername.noconversationname" = "Nova localização em uma conversa";
+"push.notification.add.location.group.noconversationname" = "%1$@ compartilhou uma localização em uma conversa";
+
+"push.notification.add.location.oneonone" = "%1$@ compartilhou uma localização";
+"push.notification.add.location.oneonone.nousername" = "Nova localização em uma conversa";
 
 "push.notification.member.join" = "%1$@ adicionou %3$@ ao %2$@";
 "push.notification.member.join.noconversationname" = "%1$@ adicionou %2$@ a uma conversa";
@@ -78,8 +112,22 @@
 "push.notification.member.leave.sender.nootherusername.nousername.noconversationname" = "Pessoas deixaram uma conversa";
 "push.notification.member.leave.sender.nootherusername.nousername" = "Pessoas deixaram %1$@";
 
-"push.notification.call.started" = "%1$@ está chamando";
-"push.notification.call.started.nousername" = "Alguém está chamando";
+
+"push.notification.call.started.video.oneonone" = "%1$@ está chamando em vídeo";
+"push.notification.call.started.video.oneonone.nousername" = "Alguém está chamando em vídeo";
+
+"push.notification.call.started.video.group" = "%1$@ está chamando em vídeo em %2$@";
+"push.notification.call.started.video.group.nousername" = "Alguém está chamando em vídeo em %1$@";
+"push.notification.call.started.video.group.noconversationname" = "%1$@ está chamando em vídeo em uma conversa";
+"push.notification.call.started.video.group.nousername.noconversationname" = "Alguém está chamando em vídeo em uma conversa";
+
+"push.notification.call.started.oneonone" = "%1$@ está chamando";
+"push.notification.call.started.oneonone.nousername" = "Alguém está chamando";
+
+"push.notification.call.started.group" = "%1$@ está chamando em %2$@";
+"push.notification.call.started.group.nousername" = "Alguém está chamando em %1$@";
+"push.notification.call.started.group.noconversationname" = "%1$@ está chamando para uma conversa";
+"push.notification.call.started.group.nousername.noconversationname" = "Alguém está chamando em uma conversa";
 
 "push.notification.conversation.create" = "%1$@ criou uma conversa em grupo com você";
 "push.notification.conversation.create.nousername" = "Alguém criou uma conversa em grupo com você";
@@ -88,7 +136,7 @@
 "push.notification.conversation.rename.nousername" = "Uma conversa foi renomeada para %1$@";
 
 "push.notification.connection.request" = "%@ quer se conectar";
-"push.notification.connection.request.nousername" = "%@"; // uses message text
+"push.notification.connection.request.nousername" = "Alguém quer se conectar";
 
 "push.notification.connection.accepted" = "Você e %@ agora são conectados";
 "push.notification.connection.accepted.nousername" = "Você tem uma nova conexão";
@@ -98,3 +146,16 @@
 
 "push.notification.failed.message.group" = "Não é possível enviar uma mensagem em %1$@";
 "push.notification.failed.message.group.noconversationname" = "Não é possível enviar uma mensagem";
+
+"push.notification.new_user" = "%@ entrou no Wire";
+
+"push.notification.action.message.open" = "Abrir";
+"push.notification.action.message.reply" = "Responder";
+"push.notification.action.message.reply.button.title" = "Enviar";
+"push.notification.action.conversation.mute" = "Sem som";
+
+"push.notification.action.call.accept" = "Aceitar";
+"push.notification.action.call.ignore" = "Rejeitar";
+"push.notification.action.call.message" = "Mensagem";
+"push.notification.action.call.callback" = "Call Back";
+"push.notification.action.connection.accept" = "Aceitar";

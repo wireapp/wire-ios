@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -58,7 +58,7 @@
     self.transportSession = [OCMockObject niceMockForClass:[ZMTransportSession class]];
     [[self.transportSession stub] openPushChannelWithConsumer:OCMOCK_ANY groupQueue:OCMOCK_ANY];
     [[self.transportSession stub] closePushChannelAndRemoveConsumer];
-    self.syncStrategy = [OCMockObject mockForClass:[ZMSyncStrategy class]];
+    self.syncStrategy = [OCMockObject niceMockForClass:[ZMSyncStrategy class]];
     
     [self verifyMockLater:self.syncStrategy];
     [self verifyMockLater:self.transportSession];

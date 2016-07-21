@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -67,8 +67,8 @@
     
     // then
     XCTAssertNotNil(note);
-    XCTAssertEqualObjects([note.notifications.lastObject soundName], @"ringing_from_them_long.caf");
-    XCTAssertEqualObjects([note.notifications.lastObject category], ZMCallCategory);
+    XCTAssertEqualObjects([note.uiNotifications.lastObject soundName], @"ringing_from_them_long.caf");
+    XCTAssertEqualObjects([note.uiNotifications.lastObject category], ZMIncomingCallCategory);
 }
 
 - (void)testThatItCreatesANotificationWhenTheConversationIsSilenced_CallEndedEvent
@@ -83,8 +83,8 @@
     
     // then
     XCTAssertNotNil(note2);
-    XCTAssertEqualObjects([note2.notifications.lastObject soundName], @"new_message_apns.caf");
-    XCTAssertEqualObjects([note2.notifications.lastObject category], ZMConversationCategory);
+    XCTAssertEqualObjects([note2.uiNotifications.lastObject soundName], @"new_message_apns.caf");
+    XCTAssertEqualObjects([note2.uiNotifications.lastObject category], ZMMissedCallCategory);
 }
 
 - (void)testThatItDoesNotAddCallStartedEventWithSameSessionNumber
@@ -112,9 +112,9 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 1u);
+    XCTAssertEqual(note2.uiNotifications.count, 1u);
 }
 
 - (void)testThatItCanAddACallEndedNotification
@@ -127,9 +127,9 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 1u);
+    XCTAssertEqual(note2.uiNotifications.count, 1u);
 }
 
 - (void)testThatItCancelsTheNotificationsWhenTheSelfUserJoins
@@ -144,7 +144,7 @@
     XCTAssertNotNil(note1);
 
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 0u);
+    XCTAssertEqual(note2.uiNotifications.count, 0u);
 }
 
 
@@ -162,7 +162,7 @@
     // then
     XCTAssertNotNil(note1);
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 0u);
+    XCTAssertEqual(note2.uiNotifications.count, 0u);
 
     XCTAssertNil(note3);
 }
@@ -180,14 +180,14 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 0u);
+    XCTAssertEqual(note2.uiNotifications.count, 0u);
 
     XCTAssertNotNil(note3);
-    XCTAssertEqual(note3.notifications.count, 1u);
-    UILocalNotification *lastNote = note3.notifications.firstObject;
+    XCTAssertEqual(note3.uiNotifications.count, 1u);
+    UILocalNotification *lastNote = note3.uiNotifications.firstObject;
     XCTAssertEqualObjects(lastNote.alertBody, @"Someone called in Super Conversation");
     
 }
@@ -206,7 +206,7 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     XCTAssertNil(note2);
     XCTAssertNil(note3);
 }
@@ -225,10 +225,10 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 0u);
+    XCTAssertEqual(note2.uiNotifications.count, 0u);
 
     XCTAssertNil(note3);
 }
@@ -245,7 +245,7 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     XCTAssertNil(note2);
 }
 
@@ -265,10 +265,10 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 0u);
+    XCTAssertEqual(note2.uiNotifications.count, 0u);
 
     XCTAssertNil(note3);
 }
@@ -297,10 +297,10 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
     
     XCTAssertNotNil(note2);
-    XCTAssertEqual(note2.notifications.count, 0u);
+    XCTAssertEqual(note2.uiNotifications.count, 0u);
 
     XCTAssertNil(note3);
     XCTAssertNil(note4);
@@ -318,8 +318,8 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
-    UILocalNotification *firstNote = note1.notifications.firstObject;
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
+    UILocalNotification *firstNote = note1.uiNotifications.firstObject;
     XCTAssertEqualObjects(firstNote.alertBody, @"Super User is calling in Super Conversation");
     
     
@@ -337,8 +337,8 @@
     
     // then
     XCTAssertNotNil(note3);
-    XCTAssertEqual(note3.notifications.count, 1u);
-    UILocalNotification *lastNote = note3.notifications.firstObject;
+    XCTAssertEqual(note3.uiNotifications.count, 1u);
+    UILocalNotification *lastNote = note3.uiNotifications.firstObject;
     XCTAssertEqualObjects(lastNote.alertBody, @"Super User called in Super Conversation");
 }
 
@@ -351,8 +351,8 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 1u);
-    UILocalNotification *firstNote = note1.notifications.firstObject;
+    XCTAssertEqual(note1.uiNotifications.count, 1u);
+    UILocalNotification *firstNote = note1.uiNotifications.firstObject;
     XCTAssertEqualObjects(firstNote.alertBody, @"Super User is calling in Super Conversation");
     
     
@@ -370,8 +370,8 @@
     
     // then
     XCTAssertNotNil(note3);
-    XCTAssertEqual(note3.notifications.count, 1u);
-    UILocalNotification *lastNote = note3.notifications.firstObject;
+    XCTAssertEqual(note3.uiNotifications.count, 1u);
+    UILocalNotification *lastNote = note3.uiNotifications.firstObject;
     XCTAssertEqualObjects(lastNote.alertBody, @"Someone called in Super Conversation");
 }
 
@@ -383,7 +383,7 @@
     
     // then
     XCTAssertNotNil(note1);
-    XCTAssertEqual(note1.notifications.count, 0u);
+    XCTAssertEqual(note1.uiNotifications.count, 0u);
     
     // when selfuser leaves
     ZMUpdateEvent *event2 = [self callStateEventInConversation:self.groupConversation joinedUsers:@[] videoSendingUsers:@[] sequence:@2 session:@"session1"];
@@ -402,9 +402,9 @@
     ZMLocalNotificationForEvent *note3 = [self callNotificationForConversation:self.groupConversationWithoutName otherUser:self.sender othersAreJoined:YES selfIsJoined:NO sequence:nil session:nil];
     
     // then
-    XCTAssertEqualObjects([note1.notifications.lastObject alertBody], @"Super User is calling");
-    XCTAssertEqualObjects([note2.notifications.lastObject alertBody], @"Super User is calling in Super Conversation");
-    XCTAssertEqualObjects([note3.notifications.lastObject alertBody], @"Super User is calling in a conversation");
+    XCTAssertEqualObjects([note1.uiNotifications.lastObject alertBody], @"Super User is calling");
+    XCTAssertEqualObjects([note2.uiNotifications.lastObject alertBody], @"Super User is calling in Super Conversation");
+    XCTAssertEqualObjects([note3.uiNotifications.lastObject alertBody], @"Super User is calling in a conversation");
 }
 
 - (void)testThatItCreatesSetsTheCorrectBody_CallStartedNotification_SenderUnKnown
@@ -416,9 +416,9 @@
     ZMLocalNotificationForEvent *note6 = [self callNotificationForConversation:self.groupConversationWithoutName otherUser:nil othersAreJoined:YES selfIsJoined:NO sequence:nil session:nil];
     
     // then
-    XCTAssertEqualObjects([note4.notifications.lastObject alertBody], @"Someone is calling");
-    XCTAssertEqualObjects([note5.notifications.lastObject alertBody], @"Someone is calling in Super Conversation");
-    XCTAssertEqualObjects([note6.notifications.lastObject alertBody], @"Someone is calling in a conversation");
+    XCTAssertEqualObjects([note4.uiNotifications.lastObject alertBody], @"Someone is calling");
+    XCTAssertEqualObjects([note5.uiNotifications.lastObject alertBody], @"Someone is calling in Super Conversation");
+    XCTAssertEqualObjects([note6.uiNotifications.lastObject alertBody], @"Someone is calling in a conversation");
 }
 
 - (void)testThatItCreatesSetsTheCorrectBody_CallStartedNotification_SenderKnown_Video
@@ -433,9 +433,9 @@
     ZMLocalNotificationForEvent *note9 = [self callNotificationForConversation:self.groupConversationWithoutName otherUser:self.sender othersAreJoined:YES selfIsJoined:NO sequence:nil session:nil];
     
     // then
-    XCTAssertEqualObjects([note7.notifications.lastObject alertBody], @"Super User is video calling");
-    XCTAssertEqualObjects([note8.notifications.lastObject alertBody], @"Super User is video calling in Super Conversation");
-    XCTAssertEqualObjects([note9.notifications.lastObject alertBody], @"Super User is video calling in a conversation");
+    XCTAssertEqualObjects([note7.uiNotifications.lastObject alertBody], @"Super User is video calling");
+    XCTAssertEqualObjects([note8.uiNotifications.lastObject alertBody], @"Super User is video calling in Super Conversation");
+    XCTAssertEqualObjects([note9.uiNotifications.lastObject alertBody], @"Super User is video calling in a conversation");
 }
 
 - (void)testThatItCreatesSetsTheCorrectBody_CallEndedNotification_SenderKnown
@@ -455,9 +455,9 @@
     ZMLocalNotificationForEvent *note3 = [note03 copyByAddingEvent:event3];
     
     // then
-    XCTAssertEqualObjects([note1.notifications.lastObject alertBody], @"Super User called");
-    XCTAssertEqualObjects([note2.notifications.lastObject alertBody], @"Super User called in Super Conversation");
-    XCTAssertEqualObjects([note3.notifications.lastObject alertBody], @"Super User called in a conversation");
+    XCTAssertEqualObjects([note1.uiNotifications.lastObject alertBody], @"Super User called");
+    XCTAssertEqualObjects([note2.uiNotifications.lastObject alertBody], @"Super User called in Super Conversation");
+    XCTAssertEqualObjects([note3.uiNotifications.lastObject alertBody], @"Super User called in a conversation");
 }
 
 - (void)testThatItCreatesSetsTheCorrectBody_CallEndedNotification_SenderUnKnown
@@ -477,9 +477,9 @@
     ZMLocalNotificationForEvent *note3 = [note03 copyByAddingEvent:event3];
     
     // then
-    XCTAssertEqualObjects([note1.notifications.lastObject alertBody], @"Someone called");
-    XCTAssertEqualObjects([note2.notifications.lastObject alertBody], @"Someone called in Super Conversation");
-    XCTAssertEqualObjects([note3.notifications.lastObject alertBody], @"Someone called in a conversation");
+    XCTAssertEqualObjects([note1.uiNotifications.lastObject alertBody], @"Someone called");
+    XCTAssertEqualObjects([note2.uiNotifications.lastObject alertBody], @"Someone called in Super Conversation");
+    XCTAssertEqualObjects([note3.uiNotifications.lastObject alertBody], @"Someone called in a conversation");
 }
 
 @end

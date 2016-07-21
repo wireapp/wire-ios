@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -25,6 +25,7 @@
 #import "ZMLocalNotification.h"
 #import "ZMBadge.h"
 #import "MessagingTest+EventFactory.h"
+#import "UILocalNotification+UserInfo.h"
 
 @interface ZMLocalNotificationDispatcherTest : MessagingTest
 @property (nonatomic) ZMLocalNotificationDispatcher *sut;
@@ -36,6 +37,8 @@
 
 @property (nonatomic) ZMUser *selfUser;
 @property (nonatomic) id mockUISharedApplication;
+@property (nonatomic) id mockEventNotificationSet;
+@property (nonatomic) id mockFailedNotificationSet;
 
 @end
 
@@ -49,8 +52,15 @@
     
     self.mockUISharedApplication = [OCMockObject mockForClass:UIApplication.class];
     [self verifyMockLater:self.mockUISharedApplication];
+    self.mockEventNotificationSet = [OCMockObject niceMockForClass:[ZMLocalNotificationSet class]];
+    self.mockFailedNotificationSet = [OCMockObject niceMockForClass:[ZMLocalNotificationSet class]];
+    [self verifyMockLater:self.mockEventNotificationSet];
+    [self verifyMockLater:self.mockFailedNotificationSet];
     
-    self.sut = [[ZMLocalNotificationDispatcher alloc] initWithManagedObjectContext:self.syncMOC sharedApplication:self.mockUISharedApplication];
+    self.sut = [[ZMLocalNotificationDispatcher alloc] initWithManagedObjectContext:self.syncMOC
+                                                                 sharedApplication:self.mockUISharedApplication
+                                                              eventNotificationSet:self.mockEventNotificationSet
+                                                             failedNotificationSet:self.mockFailedNotificationSet];
     
     self.conversation1 = [self insertConversationWithRemoteID:[NSUUID createUUID] name:@"Conversation 1"];
     self.conversation2 = [self insertConversationWithRemoteID:[NSUUID createUUID] name:@"Conversation 2"];
@@ -70,6 +80,8 @@
     [self.syncMOC zm_tearDownCallTimer];
     [self.mockUISharedApplication stopMocking];
     self.mockUISharedApplication = nil;
+    self.mockFailedNotificationSet = nil;
+    self.mockEventNotificationSet = nil;
     WaitForAllGroupsToBeEmpty(0.5);
     
     [self.sut tearDown];
@@ -128,12 +140,6 @@
               } mutableCopy];
 }
 
-- (ZMConversation *)conversationFromNotification:(UILocalNotification *)note
-{
-    NSString *objectIDString = note.userInfo[ZMLocalNotificationConversationObjectURLKey];
-    NSManagedObjectID *objectID = [self.syncMOC.persistentStoreCoordinator managedObjectIDForURIRepresentation:[[NSURL alloc] initWithString:objectIDString]];
-    return (id) [self.syncMOC objectWithID:objectID];
-}
 
 @end
 
@@ -182,8 +188,8 @@
     // then
     XCTAssertNotNil(notification1);
     XCTAssertNotNil(notification2);
-    XCTAssertEqualObjects([self conversationFromNotification:notification1], self.conversation1);
-    XCTAssertEqualObjects([self conversationFromNotification:notification2], self.conversation2);
+    XCTAssertEqualObjects([notification1 conversationInManagedObjectContext:self.syncMOC], self.conversation1);
+    XCTAssertEqualObjects([notification2 conversationInManagedObjectContext:self.syncMOC], self.conversation2);
     
     // after (teardown)
     [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
@@ -201,118 +207,6 @@
     // when
     [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
-}
-
-- (void)testThatItResetsTheNotificationArrayWhenNotificationsAreCancelled
-{
-    // given
-    NSDictionary *data = @{@"content" : @"hallo"};
-
-    
-    ZMUpdateEvent *event1 = [self eventWithPayload:data inConversation:self.conversation1 type:EventConversationAdd];
-    ZMUpdateEvent *event2 = [self eventWithPayload:data inConversation:self.conversation2 type:EventConversationAdd];
-    
-    // expect
-    __block UILocalNotification *scheduledNotification1;
-    __block UILocalNotification *scheduledNotification2;
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification2)];
-    
-    // when
-    [self.sut didReceiveUpdateEvents:@[event1,event2] notificationID:NSUUID.createUUID];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self.mockUISharedApplication verify];
-    
-    // expect
-    [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_CHECK_IF_EQUAL(scheduledNotification1)];
-    [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_CHECK_IF_EQUAL(scheduledNotification2)];
-    
-    // when
-    [self.sut cancelAllNotifications];
-    
-    // after (teardown)
-    [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
-
-
-}
-
-- (void)testThatItCancelsNotificationsOnlyForASpecificConversation
-{
-    // given
-    NSDictionary *data = @{@"content" : @"hallo"};
-
-    ZMUpdateEvent *event1 = [self eventWithPayload:data inConversation:self.conversation1 type:EventConversationAdd];
-    ZMUpdateEvent *event2 = [self callStateEventInConversation:self.conversation1 joinedUsers:@[self.user1] videoSendingUsers:@[] sequence:nil];
-
-    ZMUpdateEvent *event3 = [self eventWithPayload:data inConversation:self.conversation2 type:EventConversationAdd];
-    ZMUpdateEvent *event4 = [self callStateEventInConversation:self.conversation2 joinedUsers:@[self.user2] videoSendingUsers:@[] sequence:nil];
-    // expect
-    __block UILocalNotification *scheduledNotification1;
-    __block UILocalNotification *scheduledNotification2;
-    __block UILocalNotification *scheduledNotification3;
-    __block UILocalNotification *scheduledNotification4;
-    
-    __block UILocalNotification *canceledNotification1;
-    __block UILocalNotification *canceledNotification2;
-    
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification2)];
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification3)];
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification4)];
-    
-    // when
-    [self.sut didReceiveUpdateEvents:@[event1, event2, event3, event4] notificationID:NSUUID.createUUID];
-    WaitForAllGroupsToBeEmpty(0.5);
-    // when
-    
-    [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_SAVE(canceledNotification1)];
-    [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_SAVE(canceledNotification2)];
-    
-    [self.sut cancelNotificationForConversation:self.conversation1];
-    
-    // then
-    XCTAssertEqualObjects([self conversationFromNotification:scheduledNotification1], self.conversation1);
-    XCTAssertEqualObjects([self conversationFromNotification:scheduledNotification2], self.conversation1);
-    XCTAssertEqualObjects([self conversationFromNotification:scheduledNotification3], self.conversation2);
-    XCTAssertEqualObjects([self conversationFromNotification:scheduledNotification4], self.conversation2);
-
-    XCTAssertEqualObjects([self conversationFromNotification:canceledNotification1], self.conversation1);
-    XCTAssertEqualObjects([self conversationFromNotification:canceledNotification2], self.conversation1);
-    
-    // after
-    [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
-    [self.mockUISharedApplication verify];
-}
-
-
-- (void)testThatItCancelsNotificationsForCallStateSelfUserJoinedEvents
-{
-    // given
-    ZMUpdateEvent *callEvent = [self callStateEventInConversation:self.conversation1 othersAreJoined:YES selfIsJoined:NO otherIsSendingVideo:NO selfIsSendingVideo:NO sequence:nil];
-    ZMUpdateEvent *selfUserJoinsCallEvent = [self callStateEventInConversation:self.conversation1 othersAreJoined:YES selfIsJoined:YES otherIsSendingVideo:NO selfIsSendingVideo:NO sequence:nil];
-    
-    // expect
-    __block UILocalNotification *scheduledNotification1;
-    __block UILocalNotification *canceledNotification1;
-    
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
-    [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_SAVE(canceledNotification1)];
-    
-    [self.sut didReceiveUpdateEvents:@[callEvent] notificationID:NSUUID.createUUID];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // when
-    [self.sut didReceiveUpdateEvents:@[selfUserJoinsCallEvent] notificationID:NSUUID.createUUID];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    [self.mockUISharedApplication verify];
-    
-    // then
-    XCTAssertEqualObjects([self conversationFromNotification:scheduledNotification1], self.conversation1);
-    XCTAssertEqualObjects([self conversationFromNotification:canceledNotification1], self.conversation1);
-    
-    // after
-    [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
 }
 
 - (void)testThatItDoesNotCancelNotificationsForCallStateSelfUserIdleEvents
@@ -339,7 +233,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    XCTAssertEqualObjects([self conversationFromNotification:scheduledNotification1], self.conversation2);
+    XCTAssertEqualObjects([scheduledNotification1 conversationInManagedObjectContext:self.syncMOC], self.conversation2);
     
     // after
     [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
@@ -350,14 +244,13 @@
     // given
     ZMUpdateEvent *callEvent = [self callStateEventInConversation:self.conversation2 joinedUsers:@[self.user1] videoSendingUsers:@[] sequence:nil];
     self.conversation2.isIgnoringCall = YES;
+    [[self.mockUISharedApplication expect] scheduleLocalNotification:OCMOCK_ANY];
     
-    // expect
-    __block UILocalNotification *scheduledNotification1;
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
-    [[self.mockUISharedApplication expect] cancelLocalNotification:ZM_ARG_SAVE(scheduledNotification1)];
-
     [self.sut didReceiveUpdateEvents:@[callEvent] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
+    
+    // expect
+    [[self.mockEventNotificationSet expect] cancelNotificationForIncomingCall:self.conversation2];
     [self expectationForNotification:ZMConversationCancelNotificationForIncomingCallNotificationName object:nil handler:^BOOL(NSNotification * _Nonnull notification) {
         return (notification.object == self.conversation2 );
     }];
@@ -365,39 +258,10 @@
     // when
     [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationCancelNotificationForIncomingCallNotificationName object:self.conversation2];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-    
-    [self.mockUISharedApplication verify];
     WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqualObjects([self conversationFromNotification:scheduledNotification1], self.conversation2);
-}
 
-- (ZMLocalNotificationForExpiredMessage *)createAndFireLocalNotificationForFailedMessageInConversation:(ZMConversation *)conversation
-{
-    ZMMessage *message = [ZMMessage insertNewObjectInManagedObjectContext:self.syncMOC];
-    [conversation.mutableMessages addObject:message];
-    
-    ZMLocalNotificationForExpiredMessage *customNote = [[ZMLocalNotificationForExpiredMessage alloc] initWithExpiredMessage:message];
-    
-    // make sure it generates the one we want
-    id mockLocalNote = [OCMockObject mockForClass:ZMLocalNotificationForExpiredMessage.class];
-    [[[[mockLocalNote expect] classMethod] andReturn:mockLocalNote] alloc];
-    (void) [[[mockLocalNote expect] andReturn:customNote] initWithExpiredMessage:message];
-    
-    [[self.mockUISharedApplication expect] scheduleLocalNotification:customNote.uiNotification];
-    
-    // generate
-    [self.sut didFailToSentMessage:message];
-    
-    // double check
-    [mockLocalNote verify];
-    [self.mockUISharedApplication verify];
-    
-    // stop mocking
-    [mockLocalNote stopMocking];
-    
-    return customNote;
+    // then
+    [self.mockEventNotificationSet verify];
 }
 
 - (void)testThatWhenFailingAMessageItSchedulesANotification
@@ -408,19 +272,21 @@
         [self.conversation1.mutableMessages addObject:message];
         UILocalNotification *note = (id) @"foo";
         
-        id mockLocalNote = [OCMockObject mockForClass:ZMLocalNotificationForExpiredMessage.class];
+        id mockLocalNote = [OCMockObject niceMockForClass:ZMLocalNotificationForExpiredMessage.class];
         
         //expect
         [[[[mockLocalNote expect] classMethod] andReturn:mockLocalNote] alloc];
         (void) [[[mockLocalNote expect] andReturn:mockLocalNote] initWithExpiredMessage:message];
         [[[mockLocalNote stub] andReturn:note] uiNotification];
         [[self.mockUISharedApplication expect] scheduleLocalNotification:note];
+        [(ZMLocalNotificationSet *)[self.mockFailedNotificationSet expect] addObject:mockLocalNote];
         
         // when
         [self.sut didFailToSentMessage:message];
         
         // after
         [mockLocalNote verify];
+        [self.mockFailedNotificationSet verify];
         [mockLocalNote stopMocking];
         
     }];
@@ -431,39 +297,34 @@
 
 - (void)testThatItCancelsAllNotificationsForFailingMessagesWhenCancelingAllNotifications
 {
-    // given
-    ZMLocalNotificationForExpiredMessage *note1 = [self createAndFireLocalNotificationForFailedMessageInConversation:self.conversation1];
-    ZMLocalNotificationForExpiredMessage *note2 = [self createAndFireLocalNotificationForFailedMessageInConversation:self.conversation2];
-
     // expect
-    [[self.mockUISharedApplication expect] cancelLocalNotification:note1.uiNotification];
-    [[self.mockUISharedApplication expect] cancelLocalNotification:note2.uiNotification];
+    [[self.mockFailedNotificationSet expect] cancelAllNotifications];
+    [[self.mockEventNotificationSet expect] cancelAllNotifications];
     
     // when
     [self.sut cancelAllNotifications];
     
     // then
-    [self.mockUISharedApplication verify];
+    [self.mockFailedNotificationSet verify];
+    [self.mockEventNotificationSet verify];
 }
 
 
 - (void)testThatItCancelsNotificationsForFailingMessagesWhenCancelingNotificationsForASpecificConversation
 {
-    // given
-    ZMLocalNotificationForExpiredMessage *note1 = [self createAndFireLocalNotificationForFailedMessageInConversation:self.conversation1];
-    ZMLocalNotificationForExpiredMessage *note2 = [self createAndFireLocalNotificationForFailedMessageInConversation:self.conversation2];
-    
     // expect
-    [[self.mockUISharedApplication expect] cancelLocalNotification:note1.uiNotification];
-    
+    [[self.mockFailedNotificationSet expect] cancelNotifications:self.conversation1];
+    [[self.mockFailedNotificationSet reject] cancelNotifications:self.conversation2];
+
+    [[self.mockEventNotificationSet expect] cancelNotifications:self.conversation1];
+    [[self.mockEventNotificationSet reject] cancelNotifications:self.conversation2];
+
     // when
     [self.sut cancelNotificationForConversation:self.conversation1];
     
     // then
-    [self.mockUISharedApplication verify];
-    
-    // after
-    [[self.mockUISharedApplication stub] cancelLocalNotification:note2.uiNotification];
+    [self.mockFailedNotificationSet verify];
+    [self.mockEventNotificationSet verify];
 }
 
 - (NSDictionary *)payloadForEncryptedOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce
@@ -473,7 +334,8 @@
     return @{@"data": base64EncodedString,
              @"conversation" : self.conversation1.remoteIdentifier.transportString,
              @"type": EventConversationAddOTRMessage,
-             @"from": self.user1.remoteIdentifier.transportString
+             @"from": self.user1.remoteIdentifier.transportString,
+             @"time": [NSDate date].transportString
              };
 }
 
@@ -499,33 +361,42 @@
 }
 
 
-- (void)testThatItDoesNotAddMessageAddEventsWithANonceThatAlreadyExists
+- (void)testThatItCancelsReadNotificationsIfTheLastReadChanges
 {
+    // given
+    [[self.mockFailedNotificationSet expect] cancelNotifications:self.conversation1];
+    [[self.mockEventNotificationSet expect] cancelNotifications:self.conversation1];
+
+    // when
+    [self.conversation1 updateLastReadServerTimeStampIfNeededWithTimeStamp:[NSDate date] andSync:NO];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    [self.mockEventNotificationSet verify];
+    [self.mockFailedNotificationSet verify];
+}
+
+- (void)testThatItSchedulesADefaultNotificationIfContentShouldNotBeVisible;
+{
+    [self.syncMOC setPersistentStoreMetadata:@(YES) forKey:@"ZMShouldHideNotificationContentKey"];
+    [self.syncMOC saveOrRollback];
     // given
     NSDictionary *data = @{@"content" : @"hallo", @"nonce": [NSUUID UUID].transportString };
     ZMUpdateEvent *event = [self eventWithPayload:data inConversation:self.conversation1 type:EventConversationAdd];
     
-    __block BOOL didScheduleOnce = NO;
     // expect
-    [[self.mockUISharedApplication stub] scheduleLocalNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        NOT_USED(obj);
-        if (didScheduleOnce) {
-            return NO;
-        }
-        didScheduleOnce = YES;
-        return YES;
+    [[self.mockUISharedApplication stub] scheduleLocalNotification:[OCMArg checkWithBlock:^BOOL(UILocalNotification *localNotification) {
+        
+        return [localNotification.alertBody isEqualToString:[ZMPushStringDefault localizedString]];
     }]];
-
-    // when receiving the first time, it schedules
+    
+    //when
     [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when receiving a second time it doesn't
-    [self.sut didReceiveUpdateEvents:@[event] notificationID:NSUUID.createUUID];
-    WaitForAllGroupsToBeEmpty(0.5);
-
     // then
     [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
+
 }
 
 @end

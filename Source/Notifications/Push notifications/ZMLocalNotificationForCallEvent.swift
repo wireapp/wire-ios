@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -23,6 +23,7 @@ import ZMCDataModel
 
 public class ZMLocalNotificationForCallEvent : ZMLocalNotificationForEvent {
     
+    public override var eventType: ZMLocalNotificationForEventType {return .Call }
     override var ignoresSilencedState : Bool { return true }
     override var requiresConversation : Bool { return true }
     override var copiedEventTypes : [ZMUpdateEventType] { return [.CallState] }
@@ -37,7 +38,7 @@ public class ZMLocalNotificationForCallEvent : ZMLocalNotificationForEvent {
     
     override func canCreateNotification() -> Bool {
         if (!super.canCreateNotification()) { return false }
-
+        let lastEvent = self.lastEvent!
         let callType = lastEvent.callEventTypeOnManagedObjectContext(managedObjectContext)
         guard accedptedCallTypes.contains(callType) else { return false }
         
@@ -140,7 +141,14 @@ public class ZMLocalNotificationForCallEvent : ZMLocalNotificationForEvent {
     }
     
     override var category : String {
-        return (currentCallType == .IncomingCall || currentCallType == .IncomingVideoCall) ? ZMCallCategory : ZMConversationCategory
+        switch currentCallType! {
+        case .IncomingCall, .IncomingVideoCall:
+            return ZMIncomingCallCategory
+        case .CallEnded:
+            return ZMMissedCallCategory
+        default:
+            return ZMConversationCategory
+        }
     }
     
     func cancelCallNotifications() {

@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -239,6 +239,11 @@ static const int32_t Mersenne3 = 8191;
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore
 {
+    [self resetUIandSyncContextsAndResetPersistentStore:resetPersistentStore notificationContentHidden:NO];
+}
+
+- (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore notificationContentHidden:(BOOL)notificationContentVisible;
+{
     [self.uiMOC zm_tearDownCallTimer];
     [self.syncMOC zm_tearDownCallTimer];
     
@@ -276,6 +281,9 @@ static const int32_t Mersenne3 = 8191;
     
     [self.syncMOC setZm_userInterfaceContext:self.uiMOC];
     [self.uiMOC setZm_syncContext:self.syncMOC];
+    
+    [self.syncMOC setPersistentStoreMetadata:@(notificationContentVisible) forKey:@"ZMShouldNotificationContentKey"];
+    [self.uiMOC   setPersistentStoreMetadata:@(notificationContentVisible) forKey:@"ZMShouldNotificationContentKey"];
     
     ImageAssetCache *imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:100];
     self.syncMOC.zm_imageAssetCache = imageAssetCache;

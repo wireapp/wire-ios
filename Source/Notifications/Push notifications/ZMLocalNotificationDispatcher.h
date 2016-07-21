@@ -13,13 +13,14 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
 
 @import UIKit;
 #import "ZMPushRegistrant.h"
+#import "ZMContextChangeTracker.h"
 
 @class ZMUpdateEvent;
 @class ZMConversation;
@@ -27,8 +28,10 @@
 @class ZMLocalNotificationForEvent;
 @class ZMLocalNotificationForExpiredMessage;
 @class ZMMessage;
+@class ZMLocalNotificationSet;
 
 extern NSString * _Null_unspecified const ZMConversationCancelNotificationForIncomingCallNotificationName;
+extern NSString * _Null_unspecified const ZMShouldHideNotificationContentKey;
 
 @interface ZMLocalNotificationDispatcher : NSObject
 
@@ -36,7 +39,7 @@ extern NSString * _Null_unspecified const ZMConversationCancelNotificationForInc
 
 - (void)tearDown;
 
-@property (nonatomic, readonly, nonnull, copy) NSArray *eventsNotifications;
+@property (nonatomic, readonly, nonnull) ZMLocalNotificationSet *eventsNotifications;
 
 - (void)didFailToSentMessage:(nonnull ZMMessage *)message;
 - (void)didFailToSendMessageInConversation:(nonnull ZMConversation *)conversation;
@@ -52,3 +55,4 @@ extern NSString * _Null_unspecified const ZMConversationCancelNotificationForInc
 - (void)cancelNotificationForConversation:(nonnull ZMConversation *)conversation;
 
 @end
+

@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -24,8 +24,11 @@
 extern NSString *const ZMConversationCategory;
 extern NSString *const ZMConversationOpenAction;
 extern NSString *const ZMConversationDirectReplyAction;
+extern NSString *const ZMConversationMuteAction;
 
-extern NSString *const ZMCallCategory;
+extern NSString *const ZMIncomingCallCategory;
+extern NSString *const ZMMissedCallCategory;
+
 extern NSString *const ZMCallIgnoreAction;
 extern NSString *const ZMCallAcceptAction;
 
@@ -37,7 +40,9 @@ extern NSString *const ZMConnectAcceptAction;
 @interface ZMUserSession (UserNotificationCategories)
 
 - (UIUserNotificationCategory *)replyCategory;
-- (UIUserNotificationCategory *)callCategory;
+- (UIUserNotificationCategory *)incomingCallCategory;
+- (UIUserNotificationCategory *)missedCallCategory;
+
 - (UIUserNotificationCategory *)connectCategory;
 
 @end

@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -64,7 +64,8 @@
 @property (nonatomic, readonly) MockTransportSession *mockTransportSession;
 
 /// reset ui and sync contexts
-- (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistantStore;
+- (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore;
+- (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore notificationContentHidden:(BOOL)notificationContentHidden;
 
 /// perform operations pretending that the uiMOC is a syncMOC
 - (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;

@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -106,7 +106,7 @@
     XCTAssertNotNil(note);
     
     // when
-    ZMStoredLocalNotification *storedNote = [[ZMStoredLocalNotification alloc] initWithNotification:note.notifications.firstObject managedObjectContext:self.uiMOC actionIdentifier:nil textInput:textInput];
+    ZMStoredLocalNotification *storedNote = [[ZMStoredLocalNotification alloc] initWithNotification:note.uiNotifications.firstObject managedObjectContext:self.uiMOC actionIdentifier:nil textInput:textInput];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -115,39 +115,5 @@
     XCTAssertEqualObjects(storedNote.category, ZMConversationCategory);
     XCTAssertEqualObjects(storedNote.textInput, textInput);
 }
-
-- (void)testThatItCreatesAStoredLocalNotificationFromBackendAlertPush_LimitedData
-{
-    // given
-    NSDictionary *pushPayload = [self oldStyleAlertPushPayload];
-    
-    // when
-    ZMStoredLocalNotification *storedNote = [[ZMStoredLocalNotification alloc] initWithPushPayload:pushPayload managedObjectContext:self.uiMOC];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(storedNote.conversation, self.conversation);
-    XCTAssertNil(storedNote.message);
-    XCTAssertNil(storedNote.senderUUID);
-    XCTAssertEqualObjects(storedNote.category, ZMConversationCategory);
-}
-
-- (void)testThatItCreatesAStoredLocalNotificationFromABackendAlertPush_FullData
-{
-    // given
-    NSDictionary *eventPayload = [self dataPayLoadForMessageAddEvent];
-    NSDictionary *pushPayload = [self newStyleAlertPushPayloadForEventPayload:eventPayload];
-    
-    // when
-    ZMStoredLocalNotification *storedNote = [[ZMStoredLocalNotification alloc] initWithPushPayload:pushPayload managedObjectContext:self.uiMOC];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(storedNote.conversation, self.conversation);
-    XCTAssertEqualObjects(storedNote.senderUUID, self.sender.remoteIdentifier);
-    XCTAssertEqualObjects(storedNote.category, ZMConversationCategory);
-}
-
-
 
 @end
