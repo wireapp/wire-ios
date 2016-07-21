@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="2.6" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15F34" minimumToolsVersion="Xcode 4.3">
+<model userDefinedModelVersionIdentifier="2.7" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15F34" minimumToolsVersion="Xcode 4.3">
     <entity name="AssetClientMessage" representedClassName="ZMAssetClientMessage" parentEntity="Message" syncable="YES">
         <attribute name="assetId" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="assetId_data" optional="YES" attributeType="Binary" syncable="YES"/>
@@ -15,6 +15,7 @@
     </entity>
     <entity name="ClientMessage" representedClassName="ZMClientMessage" parentEntity="Message" syncable="YES">
         <attribute name="delivered" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="linkPreviewState" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="dataSet" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="GenericMessageData" inverseName="message" inverseEntity="GenericMessageData" syncable="YES"/>
     </entity>
     <entity name="Connection" representedClassName="ZMConnection" syncable="YES">
@@ -104,6 +105,7 @@
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="nonce" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="nonce_data" optional="YES" attributeType="Binary" indexed="YES" versionHashModifier="add_index1" syncable="YES"/>
+        <attribute name="senderClientID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="serverTimestamp" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="hiddenInConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="hiddenMessages" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="missingRecipients" optional="YES" transient="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="messagesMissingRecipient" inverseEntity="UserClient" syncable="YES"/>
@@ -191,7 +193,7 @@
     </entity>
     <elements>
         <element name="AssetClientMessage" positionX="9" positionY="153" width="128" height="210"/>
-        <element name="ClientMessage" positionX="9" positionY="153" width="128" height="75"/>
+        <element name="ClientMessage" positionX="9" positionY="153" width="128" height="90"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="165"/>
         <element name="Conversation" positionX="0" positionY="0" width="128" height="675"/>
         <element name="GenericMessageData" positionX="18" positionY="162" width="128" height="90"/>

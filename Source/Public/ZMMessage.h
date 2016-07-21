@@ -23,6 +23,7 @@
 @class ZMUser;
 @class ZMConversation;
 @class UserClient;
+@class LinkPreview;
 
 @protocol ZMImageMessageData;
 @protocol ZMSystemMessageData;
@@ -74,6 +75,20 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 
 
 
+@protocol ZMTextMessageData <NSObject>
+
+@property (nonatomic, readonly) NSString *messageText;
+@property (nonatomic, readonly) LinkPreview *linkPreview;
+/// Returns image data associated with the link preview
+@property (nonatomic, readonly) NSData *imageData;
+/// Returns true if the link preview will have an image
+@property (nonatomic, readonly) BOOL hasImageData;
+/// Unique identifier for imageData. Returns nil there's not imageData associated with the message.
+@property (nonatomic, readonly) NSString *imageDataIdentifier;
+
+@end
+
+
 @protocol ZMSystemMessageData <NSObject>
 
 @property (nonatomic, readonly) ZMSystemMessageType systemMessageType;
@@ -93,6 +108,19 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @protocol ZMKnockMessageData <NSObject>
 
 @end
+
+typedef NS_ENUM(int16_t, ZMLinkPreviewState) {
+    /// Link preview has been sent or message did not contain any preview
+    ZMLinkPreviewStateDone = 0,
+    /// Message text needs to be parsed to see if it contain any links
+    ZMLinkPreviewStateWaitingToBeProcessed,
+    /// Link preview have been downloaded
+    ZMLinkPreviewStateDownloaded,
+    /// Link preview assets have been processed & encrypted
+    ZMLinkPreviewStateProcessed,
+    /// Link preview assets have been uploaded
+    ZMLinkPreviewStateUploaded
+};
 
 typedef NS_ENUM(int16_t, ZMFileTransferState) {
     /// Initial file state when sender is initiating the transfer to BE.

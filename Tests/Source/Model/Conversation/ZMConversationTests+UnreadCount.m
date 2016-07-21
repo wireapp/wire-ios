@@ -217,9 +217,9 @@
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        ZMTextMessage *message1 = [conversation appendMessageWithText:@"haha"];
+        ZMMessage *message1 = [conversation appendMessageWithText:@"haha"];
         message1.serverTimestamp = [NSDate date];
-        ZMTextMessage *message2 = [conversation appendMessageWithText:@"huhu"];
+        ZMMessage *message2 = [conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
         ZMSystemMessage *missedCallMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -247,9 +247,9 @@
     [self.syncMOC performGroupedBlockAndWait:^{
 
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        ZMTextMessage *message1 = [conversation appendMessageWithText:@"haha"];
+        ZMMessage *message1 = [conversation appendMessageWithText:@"haha"];
         message1.serverTimestamp = [NSDate date];
-        ZMTextMessage *message2 = [conversation appendMessageWithText:@"huhu"];
+        ZMMessage *message2 = [conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
         ZMSystemMessage *missedCallMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -276,9 +276,9 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        ZMTextMessage *message1 = [conversation appendMessageWithText:@"haha"];
+        ZMMessage *message1 = [conversation appendMessageWithText:@"haha"];
         message1.serverTimestamp = [NSDate date];
-        ZMTextMessage *message2 = [conversation appendMessageWithText:@"huhu"];
+        ZMMessage *message2 = [conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
         ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -308,9 +308,9 @@
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        ZMTextMessage *message1 = [conversation appendMessageWithText:@"haha"];
+        ZMMessage *message1 = [conversation appendMessageWithText:@"haha"];
         message1.serverTimestamp = [NSDate date];
-        ZMTextMessage *message2 = [conversation appendMessageWithText:@"huhu"];
+        ZMMessage *message2 = [conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
         ZMKnockMessage *knockMessage = [ZMKnockMessage insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -337,9 +337,9 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        ZMTextMessage *message1 = [conversation appendMessageWithText:@"haha"];
+        ZMMessage *message1 = [conversation appendMessageWithText:@"haha"];
         message1.serverTimestamp = [NSDate date];
-        ZMTextMessage *message2 = [conversation appendMessageWithText:@"huhu"];
+        ZMMessage *message2 = [conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
         ZMKnockMessage *knockMessage = [ZMKnockMessage insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -368,9 +368,9 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *message1 = [conversation appendMessageWithText:@"haha"];
+    ZMMessage *message1 = [conversation appendMessageWithText:@"haha"];
     message1.eventID = self.createEventID;
-    ZMTextMessage *message2 = [conversation appendMessageWithText:@"haha"];
+    ZMMessage *message2 = [conversation appendMessageWithText:@"haha"];
     [message2 expire];
     
     XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorExpiredMessage);
@@ -390,11 +390,11 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *message1 = [conversation appendMessageWithText:@"haha"];
+    ZMMessage *message1 = [conversation appendMessageWithText:@"haha"];
     message1.eventID = self.createEventID;
-    ZMTextMessage *message2 = [conversation appendMessageWithText:@"haha"];
+    ZMMessage *message2 = [conversation appendMessageWithText:@"haha"];
     [message2 expire];
-    ZMTextMessage *message3 = [conversation appendMessageWithText:@"haha"];
+    ZMMessage *message3 = [conversation appendMessageWithText:@"haha"];
     message3.eventID = [ZMEventID eventIDWithMajor:message1.eventID.major + 2 minor:self.createEventID.minor];
     
     XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorExpiredMessage);

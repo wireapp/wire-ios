@@ -298,8 +298,8 @@ class UserClientTests: ZMBaseManagedObjectTest {
             XCTAssertEqual(connection.conversation.messages.count, 1)
             
             if let message = connection.conversation.messages.lastObject as? ZMClientMessage {
-                XCTAssertTrue(message.genericMessage.hasClientAction())
-                XCTAssertEqual(message.genericMessage.clientAction, ZMClientAction.RESETSESSION)
+                XCTAssertTrue(message.genericMessage!.hasClientAction())
+                XCTAssertEqual(message.genericMessage!.clientAction, ZMClientAction.RESETSESSION)
             } else {
                 XCTFail("Did not insert session reset message")
             }

@@ -1531,6 +1531,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 {
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:text nonce:nonce.transportString];
     ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
+    message.linkPreviewState = ZMLinkPreviewStateWaitingToBeProcessed;
     message.isEncrypted = YES;
     return message;
 }

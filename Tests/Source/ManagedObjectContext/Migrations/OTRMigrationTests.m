@@ -401,6 +401,61 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     XCTAssertEqualObjects(userDictionaries, [self userDictionaryFixture_2_45_modifiedDataFields:0]);
 }
 
+- (void)testThatItPerformsMigrationFrom_2_6_ToCurrentModelVersion {
+    // given
+    __block NSManagedObjectContext *syncContext;
+    __block NSUInteger conversationCount;
+    __block NSUInteger messageCount;
+    __block NSUInteger systemMessageCount;
+    __block NSUInteger connectionCount;
+    __block NSArray *userDictionaries;
+    __block NSUInteger userClientCount;
+    __block NSArray *assetClientMessages;
+    
+    // when
+    [self performMockingStoreURLWithVersion:@"2.6" block:^{
+        
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        
+        XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.6 to the current mom"];
+        
+        [syncContext performGroupedBlockAndWait:^{
+            NSError *error = nil;
+            conversationCount = [syncContext countForFetchRequest:ZMConversation.sortedFetchRequest error:&error];
+            messageCount = [syncContext countForFetchRequest:ZMClientMessage.sortedFetchRequest error:&error];
+            systemMessageCount = [syncContext countForFetchRequest:ZMSystemMessage.sortedFetchRequest error:&error];
+            connectionCount = [syncContext countForFetchRequest:ZMConnection.sortedFetchRequest error:&error];
+            userClientCount = [syncContext countForFetchRequest:UserClient.sortedFetchRequest error:&error];
+            assetClientMessages = [syncContext executeFetchRequestOrAssert:ZMAssetClientMessage.sortedFetchRequest];
+            
+            XCTAssertNil(error);
+            
+            NSFetchRequest *userFetchRequest = ZMUser.sortedFetchRequest;
+            userFetchRequest.resultType = NSDictionaryResultType;
+            userFetchRequest.propertiesToFetch = self.userPropertiesToFetch;
+            userDictionaries = [syncContext executeFetchRequestOrAssert:userFetchRequest];
+            [expectation fulfill];
+        }];
+        
+        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(15);
+    
+    // then
+    XCTAssertEqual(assetClientMessages.count, 0lu);
+    XCTAssertEqual(conversationCount, 20lu);
+    XCTAssertEqual(messageCount, 3lu);
+    XCTAssertEqual(systemMessageCount, 21lu);
+    XCTAssertEqual(connectionCount, 16lu);
+    XCTAssertEqual(userClientCount, 12lu);
+    
+    XCTAssertNotNil(userDictionaries);
+    XCTAssertEqual(userDictionaries.count, 22lu);
+    
+    XCTAssertEqualObjects([userDictionaries subarrayWithRange:NSMakeRange(0, 3)], [self userDictionaryFixture2_6]);
+}
+
 #pragma mark - Helper
 
 - (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStore
@@ -466,7 +521,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 - (void)performMockingStoreURLWithVersion:(NSString *)version block:(dispatch_block_t)block;
 {
     // 1.25 and 1.26 share the same model version of 1.25
-    if (! [@[@"1.24", @"1.25", @"1.27", @"1.28", @"2.3", @"2.4", @"2.5"] containsObject:version]) {
+    if (! [@[@"1.24", @"1.25", @"1.27", @"1.28", @"2.3", @"2.4", @"2.5", @"2.6"] containsObject:version]) {
         XCTFail(@"Can only copy a database version with an existing SQL fixture in the test target");
     }
     
@@ -711,6 +766,34 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
                  @"name": @"User 3",
                  @"normalizedEmailAddress": @"user3@example.com",
                  @"normalizedName": @"user 3",
+                 },
+             ];
+}
+
+- (NSArray <NSDictionary *>*)userDictionaryFixture2_6
+{
+    return @[
+             @{
+                 @"accentColorValue": @3,
+                 @"modifiedDataFields": @0,
+                 @"name": @"Andreas",
+                 @"normalizedName": @"Andreas"
+                 },
+             @{
+                 @"accentColorValue": @3,
+                 @"emailAddress": @"574@example.com",
+                 @"modifiedDataFields": @0,
+                 @"name": @"Chad",
+                 @"normalizedEmailAddress": @"574@example.com",
+                 @"normalizedName": @"Chad"
+                 },
+             @{
+                 @"accentColorValue": @5,
+                 @"emailAddress": @"183@example.com",
+                 @"modifiedDataFields": @0,
+                 @"name": @"Daniel",
+                 @"normalizedEmailAddress": @"183@example.com",
+                 @"normalizedName": @"Daniel",
                  },
              ];
 }

@@ -19,24 +19,40 @@
 
 import Foundation
 
+private enum MessageKey: String {
+    case DeliveryState = "deliveryState"
+    case MediumData = "mediumData"
+    case MediumRemoteIdentifier = "mediumRemoteIdentifier"
+    case PreviewGenericMessage = "previewGenericMessage"
+    case MediumGenericMessage = "mediumGenericMessage"
+    case LinkPreviewState = "linkPreviewState"
+    case GenericMessage = "genericMessage"
+}
 
 extension ZMMessage : ObjectInSnapshot {
     
     public var observableKeys : [String] {
-        var keys = ["deliveryState"]
+        var keys = [MessageKey.DeliveryState.rawValue]
         
         if self is ZMImageMessage {
-            keys.append("mediumData")
-            keys.append("mediumRemoteIdentifier")
+            keys.append(MessageKey.MediumData.rawValue)
+            keys.append(MessageKey.MediumRemoteIdentifier.rawValue)
         }
         if self is ZMAssetClientMessage {
             keys.append(ZMAssetClientMessageTransferStateKey)
-            keys.append("previewGenericMessage")
-            keys.append("mediumGenericMessage")
+            keys.append(MessageKey.PreviewGenericMessage.rawValue)
+            keys.append(MessageKey.MediumGenericMessage.rawValue)
             keys.append(ZMAssetClientMessageDownloadedImageKey)
             keys.append(ZMAssetClientMessageDownloadedFileKey)
             keys.append(ZMAssetClientMessageProgressKey)
         }
+
+        if self is ZMClientMessage {
+            keys.append(ZMAssetClientMessageDownloadedImageKey)
+            keys.append(MessageKey.LinkPreviewState.rawValue)
+            keys.append(MessageKey.GenericMessage.rawValue)
+        }
+
         return keys
     }
 }
@@ -48,15 +64,15 @@ extension ZMMessage : ObjectInSnapshot {
         super.init(object: object)
     }
     public var deliveryStateChanged : Bool {
-        return changedKeysAndOldValues.keys.contains("deliveryState")
+        return changedKeysAndOldValues.keys.contains(MessageKey.DeliveryState.rawValue)
     }
 
     /// Whether the image data on disk changed
     public var imageChanged : Bool {
-        return !Set(arrayLiteral: "mediumData",
-            "mediumRemoteIdentifier",
-            "previewGenericMessage",
-            "mediumGenericMessage",
+        return !Set(arrayLiteral: MessageKey.MediumData.rawValue,
+            MessageKey.MediumRemoteIdentifier.rawValue,
+            MessageKey.PreviewGenericMessage.rawValue,
+            MessageKey.MediumGenericMessage.rawValue,
             ZMAssetClientMessageDownloadedImageKey
         ).isDisjointWith(changedKeysAndOldValues.keys)
     }
@@ -68,6 +84,24 @@ extension ZMMessage : ObjectInSnapshot {
 
     public var usersChanged : Bool {
         return userChangeInfo != nil
+    }
+    
+    private var linkPreviewDataChanged: Bool {
+        guard let genericMessage = (message as? ZMClientMessage)?.genericMessage else { return false }
+        guard let oldGenericMessage = changedKeysAndOldValues[MessageKey.GenericMessage.rawValue] as? ZMGenericMessage else { return false }
+        let oldLinks = oldGenericMessage.text.linkPreview as? [ZMLinkPreview]
+        let newLinks = genericMessage.text.linkPreview as? [ZMLinkPreview]
+        
+        switch (oldLinks, newLinks) {
+        case (.None, .Some): return true
+        case (.None, .None): return false
+        case let (left?, right?): return left != right
+        default: return false
+        }
+    }
+    
+    public var linkPreviewChanged: Bool {
+        return changedKeysAndOldValues.keys.contains(MessageKey.LinkPreviewState.rawValue) || linkPreviewDataChanged
     }
 
     public var senderChanged : Bool {

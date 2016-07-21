@@ -49,6 +49,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         // when
         modifier(message)
         self.uiMOC.saveOrRollback()
+        self.spinMainQueueWithTimeout(0.5)
         
         // then
         if expectedChangedField != nil {
@@ -207,6 +208,39 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
                     imageMessage.mediumData = self.verySmallJPEGData()}
             },
             expectedChangedField: "imageChanged"
+        )
+    }
+    
+    func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges() {
+        // when
+        checkThatItNotifiesTheObserverOfAChange(
+            ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC),
+            modifier: { ($0 as? ZMClientMessage)?.linkPreviewState = .Downloaded },
+            expectedChangedField: "linkPreviewChanged"
+        )
+    }
+    
+    func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges_NewGenericMessageData() {
+        // given
+        
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
+        let nonce = NSUUID.createUUID()
+        clientMessage.addData(ZMGenericMessage(text: name!, nonce: nonce.transportString()).data())
+        let preview = ZMLinkPreview.linkPreview(
+            withOriginalURL: "www.example.com",
+            permanentURL: "www.example.com/permanent",
+            offset: 42,
+            title: "title",
+            summary: "summary",
+            imageAsset: nil
+        )
+        let updateGenericMessage = ZMGenericMessage(text: name!, linkPreview: preview, nonce: nonce.transportString())
+        
+        // when
+        checkThatItNotifiesTheObserverOfAChange(
+            clientMessage,
+            modifier: { ($0 as? ZMClientMessage)?.addData(updateGenericMessage.data()) },
+            expectedChangedField: "linkPreviewChanged"
         )
     }
     

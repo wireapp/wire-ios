@@ -52,8 +52,8 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// ZMDeliveryStateDelivered
     var deliveryState: ZMDeliveryState { get }
     
-    /// The text of the message. If the message has no text, it will be nil
-    var messageText: String? { get }
+    /// The textMessageData of the message which also contains potential link previews. If the message has no text, it will be nil
+    var textMessageData : ZMTextMessageData? { get }
     
     /// The image data associated with the message. If the message has no image, it will be nil
     var imageMessageData: ZMImageMessageData? { get }
@@ -109,8 +109,8 @@ extension ZMMessage : ZMConversationMessage {
     @NSManaged public var isPlainText : Bool
     @NSManaged public var sender : ZMUser?
     @NSManaged public var serverTimestamp : NSDate?
-    
-    public var messageText : String? {
+
+    public var textMessageData : ZMTextMessageData? {
         return nil
     }
     

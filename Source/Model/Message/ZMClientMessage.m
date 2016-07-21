@@ -41,6 +41,8 @@
 static NSString * const ClientMessageDataSetKey = @"dataSet";
 static NSString * const ClientMessageGenericMessageKey = @"genericMessage";
 
+NSString * const ZMClientMessageLinkPreviewImageDownloadNotificationName = @"ZMClientMessageLinkPreviewImageDownloadNotificationName";
+NSString * const ZMClientMessageLinkPreviewStateKey = @"linkPreviewState";
 NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
 // From https://github.com/wearezeta/generic-message-proto:
 // "If payload is smaller then 256KB then OM can be sent directly"
@@ -61,7 +63,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 @end
 
+@interface ZMClientMessage (ZMTextMessageData) <ZMTextMessageData>
+
+@end
+
 @implementation ZMClientMessage
+
+@dynamic linkPreviewState;
 
 @synthesize genericMessage = _genericMessage;
 
@@ -82,10 +90,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         return;
     }
     
-    ZMGenericMessageData *messageData = [NSEntityDescription insertNewObjectForEntityForName:[ZMGenericMessageData entityName] inManagedObjectContext:self.managedObjectContext];
-    messageData.data = data;
-    messageData.message = self;
-    [self setGenericMessage:messageData.genericMessage];
+    ZMGenericMessageData *messageData = [self mergeWithExistingData:data];
+    [self setGenericMessage:self.genericMessageFromDataSet];
     
     if (self.nonce == nil) {
         self.nonce = [NSUUID uuidWithTransportString:messageData.genericMessage.messageId];
@@ -105,6 +111,35 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     return _genericMessage;
 }
 
+- (ZMGenericMessageData *)mergeWithExistingData:(NSData *)data
+{
+    _genericMessage = nil;
+    ZMGenericMessageData *existingMessageData = [self.dataSet firstObject];
+    
+    if (existingMessageData != nil) {
+        existingMessageData.data = data;
+        
+        NSManagedObjectContext *uiMOC = self.managedObjectContext.zm_userInterfaceContext;
+        NSManagedObjectID *objectID = self.objectID;
+        
+        [uiMOC performGroupedBlock:^{
+            ZMClientMessage *uiMOCMessage = [uiMOC existingObjectWithID:objectID error:nil];
+            if (nil == uiMOCMessage) {
+                return;
+            }
+            [uiMOC.globalManagedObjectContextObserver notifyNonCoreDataChangeInManagedObject:uiMOCMessage];
+        }];
+        
+        return existingMessageData;
+    }
+    else {
+        ZMGenericMessageData *messageData = [NSEntityDescription insertNewObjectForEntityForName:[ZMGenericMessageData entityName] inManagedObjectContext:self.managedObjectContext];
+        messageData.data = data;
+        messageData.message = self;
+        return messageData;
+    }
+}
+
 - (void)setGenericMessage:(ZMGenericMessage *)genericMessage
 {
     if ([genericMessage knownMessage] && !genericMessage.hasImage) {
@@ -112,17 +147,42 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     }
 }
 
+- (void)awakeFromFetch
+{
+    [super awakeFromFetch];
+    _genericMessage = nil;
+}
+
+- (void)awakeFromSnapshotEvents:(NSSnapshotEventType)flags
+{
+    [super awakeFromSnapshotEvents:flags];
+    _genericMessage = nil;
+}
+
+- (void)didTurnIntoFault
+{
+    [super didTurnIntoFault];
+    _genericMessage = nil;
+}
+
 - (ZMGenericMessage *)genericMessageFromDataSet
 {
-    // Later we need to loop through data set and merge it in one generic message somehow
-    // for now we just pick the first data that can read
-    
-    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(ZMGenericMessageData *evaluatedObject, NSDictionary *__unused bindings) {
-        ZMGenericMessage *genericMessage = evaluatedObject.genericMessage;
-        return [genericMessage knownMessage] && !genericMessage.hasImage;
+    NSArray <ZMGenericMessage *> *filteredMessages = [[self.dataSet.array mapWithBlock:^ZMGenericMessage *(ZMGenericMessageData *data) {
+        return data.genericMessage;
+    }] filterWithBlock:^BOOL(ZMGenericMessage *message) {
+        return [message knownMessage] && !message.hasImage;
     }];
-    ZMGenericMessageData *messageData = [self.dataSet filteredOrderedSetUsingPredicate:predicate].firstObject;
-    return [messageData genericMessage];
+
+    if (0 == filteredMessages.count) {
+        return nil;
+    }
+    
+    ZMGenericMessageBuilder *builder = ZMGenericMessage.builder;
+    for (ZMGenericMessage *message in filteredMessages) {
+        [builder mergeFrom:message];
+    }
+    
+    return builder.build;
 }
 
 + (NSSet *)keyPathsForValuesAffectingGenericMessage
@@ -135,11 +195,12 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     [self addData:message.data];
 }
 
-- (NSString *)messageText
+- (id<ZMTextMessageData>)textMessageData
 {
-    if(self.genericMessage.hasText) {
-        return self.genericMessage.text.content;
+    if (self.genericMessage.hasText) {
+        return self;
     }
+    
     return nil;
 }
 
@@ -186,9 +247,28 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 {
     NSPredicate *publicNotSynced = [NSPredicate predicateWithFormat:@"%K == NULL && %K == FALSE", ZMMessageEventIDDataKey, ZMMessageIsEncryptedKey];
     NSPredicate *encryptedNotSynced = [NSPredicate predicateWithFormat:@"%K == TRUE && %K == FALSE", ZMMessageIsEncryptedKey, DeliveredKey];
-    NSPredicate *notSynced = [NSCompoundPredicate orPredicateWithSubpredicates:@[publicNotSynced, encryptedNotSynced]];
+    NSPredicate *linkPreviewProcessed = [NSPredicate predicateWithFormat:@"%K == %d", ZMClientMessageLinkPreviewStateKey, ZMLinkPreviewStateUploaded];
+    NSPredicate *notSynced = [NSCompoundPredicate orPredicateWithSubpredicates:@[publicNotSynced, encryptedNotSynced, linkPreviewProcessed]];
     NSPredicate *notExpired = [NSPredicate predicateWithFormat:@"%K == 0", ZMMessageIsExpiredKey];
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[notSynced, notExpired]];
+}
+
+- (void)markAsDelivered
+{
+    [super markAsDelivered];
+    
+    if (self.linkPreviewState == ZMLinkPreviewStateUploaded) {
+        self.linkPreviewState = ZMLinkPreviewStateDone;
+    }
+}
+
+- (BOOL)hasDownloadedImage
+{
+    if (nil != self.textMessageData && nil != self.textMessageData.linkPreview) {
+        return [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:ZMImageFormatMedium encrypted:NO] != nil // processed or downloaded
+        || [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:ZMImageFormatOriginal encrypted:NO] != nil; // original
+    }
+    return false;
 }
 
 @end
@@ -370,3 +450,175 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 @end
 
+
+@implementation ZMClientMessage (ZMTextMessageData)
+
+- (NSString *)messageText
+{
+    return self.genericMessage.text.content;
+}
+
+- (LinkPreview *)linkPreview
+{
+    if (self.genericMessage.text.linkPreview.count > 0) {
+        ZMLinkPreview *linkPreview = self.firstZMLinkPreview;
+        
+        if (linkPreview.hasTweet) {
+            return [[TwitterStatus alloc] initWithProtocolBuffer:linkPreview];
+        }
+        else if (linkPreview.hasArticle) {
+            return [[Article alloc] initWithProtocolBuffer:linkPreview];
+        }
+        
+    }
+    
+    return nil;
+}
+
+- (ZMLinkPreview *)firstZMLinkPreview
+{
+    return self.genericMessage.text.linkPreview.firstObject;
+}
+
+- (void)requestImageDownload
+{
+    if (nil == self.linkPreview || self.objectID.isTemporaryID) {
+        return;
+    }
+    
+    ZMLinkPreview *linkPreview = self.firstZMLinkPreview;
+    if (!linkPreview.article.image.uploaded.hasAssetId && !linkPreview.image.uploaded.hasAssetId) {
+        return;
+    }
+    
+    if (nil != self.imageData) {
+        return;
+    }
+
+    [NSNotificationCenter.defaultCenter postNotificationName:ZMClientMessageLinkPreviewImageDownloadNotificationName
+                                                      object:self.objectID
+                                                    userInfo:nil];
+}
+
+- (void)setLinkPreviewState:(ZMLinkPreviewState)linkPreviewState
+{
+    [self willChangeValueForKey:ZMClientMessageLinkPreviewStateKey];
+    [self setPrimitiveValue:@(linkPreviewState) forKey:ZMClientMessageLinkPreviewStateKey];
+    [self didChangeValueForKey:ZMClientMessageLinkPreviewStateKey];
+    
+    if (ZMLinkPreviewStateDone != linkPreviewState) {
+        [self setLocallyModifiedKeys:[NSSet setWithObject:ZMClientMessageLinkPreviewStateKey]];
+    }
+}
+
+- (NSData *)imageData
+{
+    return [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:ZMImageFormatOriginal encrypted:NO] ?:
+    [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:ZMImageFormatMedium encrypted:NO];
+}
+
+- (BOOL)hasImageData
+{
+    // If we already have processed the image, we can check the protobuf if it has an image,
+    // there is a case however when sending a message that we don't have processed it yet but have the original image in the cache.
+    ZMLinkPreview *linkPreview = [self firstZMLinkPreview];
+    return linkPreview.article.hasImage || linkPreview.hasImage || self.imageData != nil;
+}
+
+- (NSString *)imageDataIdentifier
+{
+    ZMLinkPreview *linkPreview = [self firstZMLinkPreview];
+
+    if (linkPreview.article.hasImage) {
+        return linkPreview.article.image.uploaded.assetId;
+    }
+    else if (linkPreview.hasImage) {
+        return linkPreview.image.uploaded.assetId;
+    }
+    
+    return nil;
+}
+
+@end
+
+@implementation ZMClientMessage (ZMImageOwner)
+
+- (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(__unused ZMIImageProperties *)properties;
+{
+    if (format != ZMImageFormatMedium) {
+        return;
+    }
+    
+    ZMLinkPreview *linkPreview = [self.genericMessage.text.linkPreview firstObject];
+    
+    if (nil == linkPreview) {
+        return;
+    }
+    
+    [self.managedObjectContext.zm_imageAssetCache storeAssetData:self.nonce format:format encrypted:NO data:imageData];
+    ZMImageAssetEncryptionKeys *keys = [self.managedObjectContext.zm_imageAssetCache encryptFileAndComputeSHA256Digest:self.nonce format:format];
+    
+    ZMAssetImageMetaData *imageMetaData = [ZMAssetImageMetaData imageMetaDataWithWidth:(int32_t)properties.size.width height:(int32_t)properties.size.height];
+    ZMAssetOriginal *original = [ZMAssetOriginal originalWithSize:imageData.length mimeType:properties.mimeType name:nil imageMetaData:imageMetaData];
+    
+    [self addData:[ZMGenericMessage messageWithText:self.textMessageData.messageText
+                                        linkPreview:[linkPreview updateWithOtrKey:keys.otrKey sha256:keys.sha256 original:original]
+                                              nonce:self.nonce.transportString].data];
+    
+    [self.managedObjectContext enqueueDelayedSave];
+}
+
+- (NSData *)imageDataForFormat:(ZMImageFormat)format;
+{
+    return [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:format encrypted:NO];
+}
+
+/// The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
+- (NSOrderedSet *)requiredImageFormats;
+{
+    if (self.genericMessage.text.linkPreview.count > 0) {
+        return [NSOrderedSet orderedSetWithObject:@(ZMImageFormatMedium)];
+    }
+    return [NSOrderedSet orderedSet];
+}
+
+- (NSData *)originalImageData;
+{
+    return [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:ZMImageFormatOriginal encrypted:NO];
+}
+
+- (CGSize)originalImageSize;
+{
+    NSData *originalImageData = self.originalImageData;
+    
+    if (originalImageData) {
+        return [ZMImagePreprocessor sizeOfPrerotatedImageWithData:originalImageData];
+    } else {
+        return CGSizeZero;
+    }
+}
+
+- (BOOL)isInlineForFormat:(__unused ZMImageFormat)format;
+{
+    return NO;
+}
+
+- (BOOL)isPublicForFormat:(__unused ZMImageFormat)format;
+{
+    return NO;
+}
+
+- (BOOL)isUsingNativePushForFormat:(__unused ZMImageFormat)format;
+{
+    return NO;
+}
+
+/// Notifies that the processing was competed
+- (void)processingDidFinish;
+{
+    self.linkPreviewState = ZMLinkPreviewStateProcessed;
+    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatOriginal encrypted:NO];
+    [self.managedObjectContext enqueueDelayedSave];
+}
+
+@end
