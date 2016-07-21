@@ -84,4 +84,13 @@ public extension NSUUID {
         return self.type1Timestamp!.compare(uuid.type1Timestamp!)
     }
 
+    public class func timeBasedUUID() -> NSUUID {
+        let uuidSize = sizeof(uuid_t)
+        let uuidPointer = UnsafeMutablePointer<UInt8>.alloc(uuidSize)
+        uuid_generate_time(uuidPointer)
+        let uuid = NSUUID(UUIDBytes: uuidPointer)
+        uuidPointer.dealloc(uuidSize)
+        return uuid
+    }
 }
+
