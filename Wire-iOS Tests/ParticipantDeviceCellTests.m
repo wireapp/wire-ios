@@ -1,0 +1,86 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+
+#import <zmessaging/zmessaging.h>
+#import "ZMSnapshotTestCase.h"
+#import <PureLayout/PureLayout.h>
+#import "ParticipantDeviceCell.h"
+
+
+@interface ParticipantDeviceCellTests : ZMSnapshotTestCase
+@property (nonatomic) ParticipantDeviceCell *sut;
+@property (nonatomic) ZMUser *user;
+@end
+
+
+@implementation ParticipantDeviceCellTests
+
+- (void)setUp
+{
+    [super setUp];
+    self.sut = [[ParticipantDeviceCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"reuseIdentifier"];
+    [self.sut autoSetDimension:ALDimensionHeight toSize:64]; // This is a fixed height cell
+    self.user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+}
+
+- (void)testThatItRendersTheCellUnverifiedFullWidthIdentifierLongerThan_16_Characters
+{
+    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"102030405060708090" forUser:self.user createIfNeeded:YES];
+    client.deviceClass = @"tablet";
+    [self.sut configureForClient:client];
+    ZMVerifyViewInAllIPhoneWidths(self.sut);
+}
+
+- (void)testThatItRendersTheCellUnverifiedTruncatedIdentifier
+{
+    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"807060504030201" forUser:self.user createIfNeeded:YES];
+    client.deviceClass = @"desktop";
+    [self.sut configureForClient:client];
+    ZMVerifyViewInAllIPhoneWidths(self.sut);
+}
+
+- (void)testThatItRendersTheCellUnverifiedTruncatedIdentifierMultipleCharactersMissing
+{
+    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"7060504030201" forUser:self.user createIfNeeded:YES];
+    client.deviceClass = @"desktop";
+    [self.sut configureForClient:client];
+    ZMVerifyViewInAllIPhoneWidths(self.sut);
+}
+
+- (void)testThatItRendersTheCellVerifiedWithLabel
+{
+    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"e7b2u9d4s85h1gv0" forUser:self.user createIfNeeded:YES];
+    client.deviceClass = @"phone";
+    [self trustClient:client];
+    [self.sut configureForClient:client];
+    ZMVerifyViewInAllIPhoneWidths(self.sut);
+}
+
+#pragma mark - Helper
+
+- (void)trustClient:(UserClient *)client
+{
+    UserClient *selfClient = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    selfClient.remoteIdentifier = @"selfClientID";
+    [self.uiMOC setPersistentStoreMetadata:@"selfClientID" forKey:ZMPersistedClientIdKey];
+    selfClient.user = [ZMUser selfUserInContext:self.uiMOC];
+    [selfClient trustClient:client];
+}
+
+@end

@@ -1,0 +1,248 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+
+#import "RegistrationTextField.h"
+
+#import <WireExtensionComponents/WireExtensionComponents.h>
+
+
+#import "WAZUIMagicIOS.h"
+#import "UIImage+ZetaIconsNeue.h"
+#import "GuidanceDotView.h"
+#import "CountryCodeView.h"
+
+#import "NSAttributedString+Wire.h"
+
+static const CGFloat ConfirmButtonWidth = 40;
+static const CGFloat CountryCodeViewWidth = 60;
+static const CGFloat GuidanceDotViewWidth = 40;
+
+
+
+@interface RegistrationTextField ()
+
+@property (nonatomic, readwrite) IconButton *confirmButton;
+@property (nonatomic) CountryCodeView *countryCodeView;
+@property (nonatomic) GuidanceDotView *guidanceDotView;
+@property (nonatomic) UIEdgeInsets textInsets;
+@property (nonatomic) UIEdgeInsets placeholderInsets;
+
+@end
+
+@implementation RegistrationTextField
+
+@dynamic delegate;
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    
+    if (self) {
+        self.guidanceDotView = [[GuidanceDotView alloc] init];
+        self.countryCodeView = [[CountryCodeView alloc] init];
+        
+        [self setupConfirmButton];
+        
+        self.font = [UIFont fontWithMagicIdentifier:@"style.text.normal.font_spec"];
+        self.textColor = [UIColor colorWithMagicIdentifier:@"style.color.static_foreground.normal"];
+        self.textInsets = UIEdgeInsetsMake(0, 8, 0, 8);
+        self.placeholderInsets = UIEdgeInsetsMake(8, 8, 0, 8);
+        self.keyboardAppearance = UIKeyboardAppearanceDark;
+        self.autocorrectionType = UITextAutocorrectionTypeNo;
+        self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        self.layer.cornerRadius = 4;
+        self.layer.masksToBounds = YES;
+        self.backgroundColor = [UIColor colorWithMagicIdentifier:@"framework.input_field_background_color"];
+    }
+    
+    return self;
+}
+
+- (void)setupConfirmButton
+{
+    self.confirmButton = [[IconButton alloc] init];
+    [self.confirmButton setBackgroundImageColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.confirmButton setIcon:ZetaIconTypeChevronRight withSize:ZetaIconSizeSmall forState:UIControlStateNormal];
+    [self.confirmButton setIconColor:[UIColor colorWithMagicIdentifier:@"style.color.foreground.normal"] forState:UIControlStateNormal];
+    self.confirmButton.accessibilityIdentifier= @"RegistrationConfirmButton";
+}
+
+- (void)setPlaceholder:(NSString *)placeholder
+{
+    self.attributedPlaceholder = [self attributedPlaceholderString:placeholder.uppercaseString];
+}
+
+- (NSAttributedString *)attributedPlaceholderString:(NSString *)placeholder
+{
+    return [placeholder attributedStringWithAttributes:@{ NSForegroundColorAttributeName : [UIColor colorWithMagicIdentifier:@"style.color.static_foreground.faded"],
+                                                          NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"] }];
+}
+
+- (UIButton *)countryCodeButton
+{
+    return self.countryCodeView.button;
+}
+
+- (void)setCountryCode:(NSUInteger)countryCode
+{
+    _countryCode = countryCode;
+    
+    [self.countryCodeView.button setTitle:[NSString stringWithFormat:@"+%lu", (unsigned long)countryCode] forState:UIControlStateNormal];
+}
+
+- (void)setEnabled:(BOOL)enabled
+{
+    [super setEnabled:enabled];
+    
+    if (enabled) {
+        self.textColor = [UIColor colorWithMagicIdentifier:@"style.color.static_foreground.normal"];
+    } else {
+        self.textColor = [UIColor colorWithMagicIdentifier:@"style.color.static_foreground.faded"];
+    }
+}
+
+- (void)setRightAccessoryView:(RegistrationTextFieldRightAccessoryView)rightAccessoryView
+{
+    _rightAccessoryView = rightAccessoryView;
+    
+    switch (rightAccessoryView) {
+        case RegistrationTextFieldRightAccessoryViewNone:
+            self.rightView = nil;
+            self.rightViewMode = UITextFieldViewModeNever;
+            break;
+            
+        case RegistrationTextFieldRightAccessoryViewGuidanceDot:
+            self.rightView = self.guidanceDotView;
+            self.rightViewMode = UITextFieldViewModeAlways;
+            break;
+            
+        case RegistrationTextFieldRightAccessoryViewConfirmButton:
+            self.rightView = self.confirmButton;
+            self.rightViewMode = UITextFieldViewModeAlways;
+            break;
+        case RegistrationTextFieldRightAccessoryViewCustom:
+            self.rightView = self.customRightView;
+            self.rightViewMode = UITextFieldViewModeAlways;
+            break;
+    }
+}
+
+- (void)setLeftAccessoryView:(RegistrationTextFieldLeftAccessoryView)leftAccessoryView
+{
+    _leftAccessoryView = leftAccessoryView;
+    
+    switch (leftAccessoryView) {
+        case RegistrationTextFieldLeftAccessoryViewNone:
+            self.leftView = nil;
+            self.leftViewMode = UITextFieldViewModeNever;
+            break;
+            
+        case RegistrationTextFieldLeftAccessoryViewCountryCode:
+            self.leftView = self.countryCodeView;
+            self.leftViewMode = UITextFieldViewModeAlways;
+            break;
+    }
+}
+
+- (void)drawPlaceholderInRect:(CGRect)rect
+{
+    [super drawPlaceholderInRect:UIEdgeInsetsInsetRect(rect, self.placeholderInsets)];
+}
+
+- (CGRect)textRectForBounds:(CGRect)bounds
+{
+    CGRect textRect = [super textRectForBounds:bounds];
+
+    // In case the text content should be center-aligned, we need to inset the text with the right accessory view size on the left
+    if (self.rightAccessoryView != RegistrationTextFieldRightAccessoryViewNone && self.textAlignment == NSTextAlignmentCenter) {
+        textRect = UIEdgeInsetsInsetRect(textRect, UIEdgeInsetsMake(0, [self rightViewRectForBounds:bounds].size.width, 0, 0));
+    }
+
+    return UIEdgeInsetsInsetRect(textRect, self.textInsets);
+}
+
+- (CGRect)leftViewRectForBounds:(CGRect)bounds
+{
+    CGRect leftViewRect;
+    
+    switch (self.leftAccessoryView) {
+        case RegistrationTextFieldLeftAccessoryViewNone:
+            leftViewRect = CGRectZero;
+            break;
+            
+        case RegistrationTextFieldLeftAccessoryViewCountryCode:
+            leftViewRect = CGRectMake(bounds.origin.x, bounds.origin.y, CountryCodeViewWidth, bounds.size.height);
+            break;
+    }
+    
+    return leftViewRect;
+}
+
+- (CGRect)rightViewRectForBounds:(CGRect)bounds
+{
+    CGRect rightViewRect;
+    
+    switch (self.rightAccessoryView) {
+        case RegistrationTextFieldRightAccessoryViewNone:
+            rightViewRect = CGRectZero;
+            break;
+            
+        case RegistrationTextFieldRightAccessoryViewGuidanceDot:
+            rightViewRect = CGRectMake(CGRectGetMaxX(bounds) - GuidanceDotViewWidth, bounds.origin.y, GuidanceDotViewWidth, bounds.size.height);
+            break;
+            
+        case RegistrationTextFieldRightAccessoryViewConfirmButton:
+            rightViewRect = CGRectMake(CGRectGetMaxX(bounds) - ConfirmButtonWidth, bounds.origin.y, ConfirmButtonWidth, bounds.size.height);
+            break;
+        
+        case RegistrationTextFieldRightAccessoryViewCustom:
+            rightViewRect = CGRectMake(CGRectGetMaxX(bounds) - self.customRightView.intrinsicContentSize.width, bounds.origin.y, self.customRightView.intrinsicContentSize.width, bounds.size.height);
+            break;
+    }
+    
+    return rightViewRect;
+}
+
+- (void)paste:(id)sender
+{
+    BOOL shouldPaste = YES;
+    if ([self.delegate respondsToSelector:@selector(textField:shouldPasteCharactersInRange:replacementString:)]) {
+        UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:UIPasteboardNameGeneral create:NO];
+        NSString *pastedString = [pasteboard string];
+        shouldPaste = [self.delegate textField:self
+                  shouldPasteCharactersInRange:self.selectedRange
+                             replacementString:pastedString];
+    }
+    
+    if (shouldPaste) {
+        [super paste:sender];
+    }
+}
+
+- (NSRange)selectedRange
+{
+    NSInteger location = [self offsetFromPosition:self.beginningOfDocument
+                                       toPosition:self.selectedTextRange.start];
+    NSInteger length = [self offsetFromPosition:self.selectedTextRange.start
+                                     toPosition:self.selectedTextRange.end];
+    
+    return NSMakeRange(location, length);
+}
+
+@end

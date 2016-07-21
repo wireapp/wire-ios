@@ -1,0 +1,44 @@
+#!/usr/bin/python
+
+#
+# Wire
+# Copyright (C) 2016 Wire Swiss GmbH
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see http://www.gnu.org/licenses/.
+#
+
+import os
+import subprocess
+import sys
+
+files = ["first_message", "new_message", "ping_from_them", "hotping_from_them", "ringing_from_them_long", "new_message_apns"]
+
+audio_name = "audio-notifications"
+built_products_dir = "."
+resources_path = "."
+
+input_folder = os.path.join(built_products_dir, audio_name)
+app_resources = os.path.join(built_products_dir, resources_path)
+
+for name in files:
+    input_path = os.path.join(input_folder, name) + ".m4a"
+    output_path = os.path.join(app_resources, name) + ".caf"
+    sys.stdout.write("Creating {0}".format(output_path))
+    subprocess.check_call([
+        "xcrun", "afconvert",
+        input_path,
+        output_path,
+        "-d", "ima4",
+        "-f", "caff",
+        "-v"])

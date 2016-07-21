@@ -1,0 +1,74 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+
+#import <UIKit/UIKit.h>
+
+
+@class ZMConversation;
+@class ConversationListContentController;
+@class AggregateArray;
+@class ConversationListInteractiveItem;
+
+
+
+@protocol ConversationListContentDelegate <NSObject>
+
+- (void)conversationList:(ConversationListContentController *)controller
+   didSelectConversation:(ZMConversation *)conversation
+             focusOnView:(BOOL)focus;
+
+- (void)conversationList:(ConversationListContentController *)controller
+didSelectInteractiveItem:(ConversationListInteractiveItem *)interactiveItem
+             focusOnView:(BOOL)focus;
+
+/// This is called after a delete when there is an item to select
+- (void)conversationList:(ConversationListContentController *)controller willSelectIndexPathAfterSelectionDeleted:(NSIndexPath *)conv;
+
+- (void)conversationListDidScroll:(ConversationListContentController *)controller;
+
+- (void)conversationListContentController:(ConversationListContentController *)controller wantsActionMenuForConversation:(ZMConversation *)conversation;
+
+@end
+
+
+
+@interface ConversationListContentController : UICollectionViewController
+
+@property (nonatomic, weak) id <ConversationListContentDelegate> contentDelegate;
+
+@property (nonatomic, assign) BOOL showingArchived;
+@property (nonatomic, assign) BOOL showingPullToOpenArchive;
+@property (nonatomic, assign) BOOL willShowArchive;
+@property (nonatomic, assign) BOOL enableSubtitles;
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
+- (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout NS_UNAVAILABLE;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+
+- (BOOL)selectConversation:(ZMConversation *)conversation focusOnView:(BOOL)focus animated:(BOOL)animated;
+- (BOOL)selectConversation:(ZMConversation *)conversation focusOnView:(BOOL)focus animated:(BOOL)animated completion:(dispatch_block_t)completion;
+- (BOOL)selectInboxAndFocusOnView:(BOOL)focus;
+
+- (void)deselectAll;
+- (void)reload;
+
+- (void)scrollToCurrentSelectionAnimated:(BOOL)animated;
+
+@end
