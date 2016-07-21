@@ -475,6 +475,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         response = self.responseGeneratorBlock(originalRequest);
         if (response == ResponseGenerator.ResponseNotCompleted) {
             // do not complete this request
+            LogNetwork(@"<--- Not completing request to %@ due to custom responseHandler", originalRequest.path);
             [self.nonCompletedRequests addObject:originalRequest];
             if(completionHandler) {
                 completionHandler(nil);
@@ -482,6 +483,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             return;
         }
         if (response != nil) {
+            LogNetwork(@"<--- Custom response to %@: %@", originalRequest.path, response);
             if(completionHandler) {
                 completionHandler(response);
             }
@@ -1176,7 +1178,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                       @"client" : userClient.transportData,
                                       @"type" : @"user.client-add"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID createUUID] fromUser:userClient.user isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:userClient.user isTransient:NO]];
         }
     }
     
@@ -1191,7 +1193,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                       @"client" : @{ @"id" : userClient.identifier },
                                       @"type" : @"user.client-remove"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID createUUID] fromUser:userClient.user isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:userClient.user isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1217,7 +1219,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                       @"conversation" : conversation.identifier,
                                       };
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID createUUID] fromUser:conversation.creator isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:conversation.creator isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1290,7 +1292,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                               @"conversation" : conversation.identifier,
                               };
     
-    return [MockPushEvent eventWithPayload:payload uuid:[NSUUID createUUID] fromUser:conversation.creator isTransient:YES];
+    return [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:conversation.creator isTransient:YES];
 }
 
 
@@ -1318,7 +1320,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         }
         
         id e = [MockPushEvent eventWithPayload:event.transportData
-                                              uuid:[NSUUID createUUID]
+                                              uuid:[NSUUID timeBasedUUID]
                                           fromUser:event.from isTransient:NO];
         [pushEvents addObject:e];
     }
@@ -1354,7 +1356,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             }
             userPayload[@"id"] = user.identifier;
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" :userPayload} uuid:[NSUUID createUUID] fromUser:user isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" :userPayload} uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1376,7 +1378,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                 continue;
             }
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID createUUID] fromUser:connection.from isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] fromUser:connection.from isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1417,7 +1419,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                   @"from": user.identifier,
                                   @"data": @{@"status": started ? @"started" : @"stopped"},
                                   @"type": @"conversation.typing"};
-        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID createUUID] fromUser:user isTransient:YES];
+        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:YES];
         [self firePushEvents:@[event]];
     }];
 }
