@@ -30,6 +30,7 @@
 #endif
 
 #import "ZMTransportRequest+Internal.h"
+#import "ZMTransportRequest+AssetGet.h"
 #import "XCTestCase+Images.h"
 
 
@@ -665,6 +666,46 @@
     NSDictionary *body = (id) [NSJSONSerialization JSONObjectWithData:request.HTTPBody options:0 error:NULL];
     AssertEqualDictionaries(body, payload);
     XCTAssertEqualObjects([request valueForHTTPHeaderField:@"Content-Type"], @"application/json");
+}
+
+- (void)testThatItSetsAdditionalHeaderFieldsOnURLRequest;
+{
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodGET payload:nil];
+    [sut addValue:@"as73e8f98a7==" forAdditionalHeaderField:@"Access-Token"];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+
+    // when
+    [sut setAdditionalHeaderFieldsOnHTTPRequest:request];
+
+    // then
+    XCTAssertEqualObjects([request valueForHTTPHeaderField:@"Access-Token"], @"as73e8f98a7==");
+}
+
+- (void)testThatAssetGetRequestSetsAccessTokenIfPresent;
+{
+    // given
+    NSString *token = @"NzFoNzJoZDYyMTI=";
+    ZMTransportRequest *sut = [ZMTransportRequest assetGetRequestFromPath:@"/assets/v3" assetToken:token];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    
+    // when
+    [sut setAdditionalHeaderFieldsOnHTTPRequest:request];
+    
+    // then
+    XCTAssertEqualObjects([request valueForHTTPHeaderField:@"Asset-Token"], token);
+}
+
+- (void)testThatAssetGetRequestDoesNotSetAccessTokenIfNotPresent;
+{
+    // given
+    ZMTransportRequest *sut = [ZMTransportRequest assetGetRequestFromPath:@"/assets/v3" assetToken:nil];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    
+    // when
+    [sut setAdditionalHeaderFieldsOnHTTPRequest:request];
+    
+    // then
+    XCTAssertNil([request valueForHTTPHeaderField:@"Asset-Token"] );
 }
 
 - (void)testThatItSetsCompressedBodyDataAndMediaTypeForLargeTransportData;

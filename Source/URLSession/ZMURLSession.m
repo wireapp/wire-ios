@@ -334,6 +334,13 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
         newRequest:(NSURLRequest *)request
  completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
 {
+    ZMTransportRequest *orginalRequest = [self requestForTask:task];
+    if (orginalRequest.doesNotFollowRedirects) {
+        if(completionHandler) {
+            completionHandler(nil);
+        }
+        return;
+    }
     NSURLRequest *finalRequest = request;
     NSString *AuthenticationHeaderName = @"Authorization";
     

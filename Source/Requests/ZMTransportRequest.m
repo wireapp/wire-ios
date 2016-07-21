@@ -30,6 +30,7 @@
 #import "NSData+Multipart.h"
 #import "ZMURLSession.h"
 #import "ZMTaskIdentifier.h"
+#import "ZMTransportRequest+AssetGet.h"
 
 const NSTimeInterval ZMTransportRequestDefaultExpirationInterval = 60;
 const NSTimeInterval ZMTransportRequestReducedExpirationInterval = 25;
@@ -147,6 +148,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 @property (nonatomic) NSDate *startOfUploadTimestamp;
 @property (nonatomic) ZMTransportRequestSessionType transportSessionType;
 @property (nonatomic) float progress;
+@property (nonatomic) NSMutableDictionary <NSString *, NSString *> *additionalHeaderFields;
 
 @end
 
@@ -198,7 +200,6 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     Require(result.hasRequiredPayload);
     return result;
 }
-
 
 + (instancetype)requestGetFromPath:(NSString *)path
 {
@@ -366,6 +367,22 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
             }
         }
     }
+}
+
+- (void)addValue:(NSString *)value forAdditionalHeaderField:(NSString *)headerField
+{
+    if (nil == self.additionalHeaderFields) {
+        self.additionalHeaderFields = @{headerField: value}.mutableCopy;
+    } else {
+        self.additionalHeaderFields[headerField] = value;
+    }
+}
+
+- (void)setAdditionalHeaderFieldsOnHTTPRequest:(NSMutableURLRequest *)URLRequest
+{
+    [self.additionalHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *headerField, NSString *value, __unused BOOL *stop) {
+        [URLRequest setValue:value forHTTPHeaderField:headerField];
+    }];
 }
 
 - (void)setTimeoutIntervalOnRequestIfNeeded:(NSMutableURLRequest *)request
@@ -688,6 +705,22 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 
 @end
 
+
+@implementation ZMTransportRequest (AssetGet)
+
++ (instancetype)assetGetRequestFromPath:(NSString *)path assetToken:(NSString *)token;
+{
+    ZMTransportRequest *r = [self requestGetFromPath:path];
+    
+    if (nil != token) {
+        [r addValue:token forAdditionalHeaderField:@"Asset-Token"];
+    }
+    
+    Require(r.hasRequiredPayload);
+    return r;
+}
+
+@end
 
 
 @implementation ZMTransportRequest (ImageUpload)
