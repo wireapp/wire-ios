@@ -27,7 +27,7 @@ import ZMTransport
 
 @objc public class ZMLocalNotificationSet : NSObject  {
     
-    internal var notifications : Set<ZMLocalNotification> = Set() {
+    public private(set) var notifications : Set<ZMLocalNotification> = Set() {
         didSet {
             updateArchive()
         }

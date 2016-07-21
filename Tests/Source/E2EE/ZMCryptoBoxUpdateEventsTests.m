@@ -58,9 +58,11 @@
     
     // then
     XCTAssertNotNil(decryptedEvent.payload.asDictionary[@"data"]);
+    XCTAssertEqualObjects(decryptedEvent.payload.asDictionary[@"data"][@"sender"], selfClient.remoteIdentifier);
+    XCTAssertEqualObjects(decryptedEvent.payload.asDictionary[@"data"][@"recipient"], selfClient.remoteIdentifier);
     ZMClientMessage *decryptedMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:decryptedEvent inManagedObjectContext:self.syncMOC prefetchResult:nil];
     XCTAssertEqualObjects(decryptedMessage.nonce.transportString, message.messageId);
-    XCTAssertEqualObjects(decryptedMessage.messageText, message.text.content);
+    XCTAssertEqualObjects(decryptedMessage.textMessageData.messageText, message.text.content);
     XCTAssertEqualObjects(decryptedEvent.uuid, notificationID);
 }
 
@@ -204,7 +206,7 @@
     // then
     XCTAssertFalse(decryptedMessage.genericMessage.hasExternal);
     XCTAssertEqualObjects(decryptedMessage.nonce.transportString, textMessage.messageId);
-    XCTAssertEqualObjects(decryptedMessage.messageText, textMessage.text.content);
+    XCTAssertEqualObjects(decryptedMessage.textMessageData.messageText, textMessage.text.content);
     XCTAssertEqualObjects(decryptedEvent.uuid, notificationID);
 }
 

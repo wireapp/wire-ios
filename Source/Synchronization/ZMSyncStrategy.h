@@ -37,7 +37,7 @@
 @class ZMBadge;
 @class ZMLocalNotificationDispatcher;
 @class ZMUserProfileUpdateStatus;
-@class GiphyRequestsStatus;
+@class ProxiedRequestsStatus;
 @class ZMClientRegistrationStatus;
 @class ClientUpdateStatus;
 @class BackgroundAPNSPingBackStatus;
@@ -49,7 +49,7 @@
                      userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                           clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
-                          giphyRequestStatus:(GiphyRequestsStatus *)giphyRequestsStatus
+                          proxiedRequestStatus:(ProxiedRequestsStatus *)proxiedRequestStatus
                                accountStatus:(ZMAccountStatus *)accountStatus
                 backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
                                 mediaManager:(id<AVSMediaManager>)mediaManager

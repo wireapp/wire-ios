@@ -55,8 +55,8 @@
     id<ZMConversationMessage> message1 = groupConversation.messages[groupConversation.messages.count -2];
     id<ZMConversationMessage> message2 = groupConversation.messages.lastObject;
     
-    XCTAssertEqualObjects(message1.messageText, testMessage1);
-    XCTAssertEqualObjects(message2.messageText, testMessage2);
+    XCTAssertEqualObjects(message1.textMessageData.messageText, testMessage1);
+    XCTAssertEqualObjects(message2.textMessageData.messageText, testMessage2);
     XCTAssertEqualObjects(message1.sender, sender);
     XCTAssertEqualObjects(message2.sender, sender);
 }

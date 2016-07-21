@@ -47,7 +47,7 @@ public class ZMLocalNotificationForPostInConversationEvent : ZMLocalNotification
         else { return nil }
         
         if let data = payload["data"] {
-            if let data = data as? String {
+            if let data = data["text"] as? String {
                 return data
             }
             if let data = data["info"] as? String {

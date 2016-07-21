@@ -698,7 +698,7 @@
     
     // then
     id<ZMConversationMessage> lastMessage = conversation.messages.lastObject;
-    XCTAssertEqualObjects(lastMessage.messageText, otherUserMessageText);
+    XCTAssertEqualObjects(lastMessage.textMessageData.messageText, otherUserMessageText);
     
     // and when resending
     [self.userSession performChanges:^{
@@ -2568,7 +2568,7 @@
     NSUInteger previousNumberOfMessages = conversation.messages.count;
     id<ZMConversationMessage> lastMessage = conversation.messages.lastObject;
     XCTAssertNil(lastMessage.systemMessageData);
-    XCTAssertEqualObjects(lastMessage.messageText, firstMessageText);
+    XCTAssertEqualObjects(lastMessage.textMessageData.messageText, firstMessageText);
     
     // log out
     [self recreateUserSessionAndWipeCache:NO];
@@ -2589,7 +2589,7 @@
 
     lastMessage = conversation.messages.lastObject;
     XCTAssertNil(lastMessage.systemMessageData);
-    XCTAssertEqualObjects(lastMessage.messageText, firstMessageText);
+    XCTAssertEqualObjects(lastMessage.textMessageData.messageText, firstMessageText);
     XCTAssertEqual(newNumberOfMessages, previousNumberOfMessages);
 }
 

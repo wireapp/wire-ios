@@ -140,10 +140,12 @@ static NSString * const PushTokenPath = @"/push/tokens";
         if (token.isMarkedForDeletion) {
             if (self.pushTokenDeletionSync.status != ZMSingleRequestInProgress) {
                 [self.pushTokenDeletionSync readyForNextRequest];
+                [ZMOperationLoop notifyNewRequestsAvailable:self];
             }
         }
         else if(!token.isRegistered && (self.applicationTokenSync.status != ZMSingleRequestInProgress)) {
             [self.applicationTokenSync readyForNextRequest];
+            [ZMOperationLoop notifyNewRequestsAvailable:self];
         }
     }
     
@@ -152,10 +154,12 @@ static NSString * const PushTokenPath = @"/push/tokens";
         if (token.isMarkedForDeletion){
             if(self.pushKitTokenDeletionSync.status != ZMSingleRequestInProgress) {
                 [self.pushKitTokenDeletionSync readyForNextRequest];
+                [ZMOperationLoop notifyNewRequestsAvailable:self];
             }
         }
         else if( (! token.isRegistered) && (self.pushKitTokenSync.status != ZMSingleRequestInProgress)) {
             [self.pushKitTokenSync readyForNextRequest];
+            [ZMOperationLoop notifyNewRequestsAvailable:self];
         }
     }
 }
@@ -280,6 +284,7 @@ static NSString * const PushTokenPath = @"/push/tokens";
     if ((deviceToken != nil) && (identifier != nil) && (transportType != nil)) {
         ZMPushToken *t = [[ZMPushToken alloc] initWithDeviceToken:deviceToken identifier:identifier transportType:transportType fallback:fallback isRegistered:YES];
         [self setToken:t forSingleRequestSync:sync];
+        [self.managedObjectContext forceSaveOrRollback];
     }
 }
 

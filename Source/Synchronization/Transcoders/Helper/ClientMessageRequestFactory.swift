@@ -41,7 +41,7 @@ public class ClientMessageRequestFactory: NSObject {
         let metaData = message.encryptedMessagePayloadData()
         let request = ZMTransportRequest(path: path, method: .MethodPOST, binaryData: metaData, type: protobufContentType, contentDisposition: nil)
         var debugInfo = "\(message.genericMessage)"
-        if message.genericMessage.hasExternal() { debugInfo = "External message: " + debugInfo }
+        if let genericMessage = message.genericMessage where genericMessage.hasExternal() { debugInfo = "External message: " + debugInfo }
         request.appendDebugInformation(debugInfo)
         return request
     }

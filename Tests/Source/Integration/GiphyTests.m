@@ -18,6 +18,7 @@
 
 
 #import "IntegrationTestBase.h"
+#import "ZMUserSession.h"
 
 @interface GiphyTests : IntegrationTestBase
 
@@ -33,14 +34,14 @@
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"callback called"];
     NSArray *expectedPayload = @[@"bar"];
-    NSString *path = @"foo/bar/baz";
+    NSString *path = @"/foo/bar/baz";
 
     WaitForAllGroupsToBeEmpty(0.5);
     [self.mockTransportSession resetReceivedRequests];
     
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request){
-        if([request.path hasPrefix:@"giphy"]) {
-            XCTAssertEqualObjects(request.path, @"giphy/foo/bar/baz");
+        if([request.path hasPrefix:@"/proxy/giphy"]) {
+            XCTAssertEqualObjects(request.path, @"/proxy/giphy/foo/bar/baz");
             XCTAssertEqual(request.method, ZMMethodGET);
             XCTAssertTrue(request.needsAuthentication);
             
@@ -55,14 +56,14 @@
         XCTAssertNil(error);
         [expectation fulfill];
     };
-    [self.userSession giphyRequestWithURL:[NSURL URLWithString:path] callback:callback];
+    [self.userSession proxiedRequestWithPath:path method:ZMMethodGET type:ProxiedRequestTypeGiphy callback:callback];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.2];
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.firstObject;
-    XCTAssertEqualObjects(request.path, [@"giphy/" stringByAppendingString:path]);
+    XCTAssertEqualObjects(request.path, [@"/proxy/giphy" stringByAppendingString:path]);
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 

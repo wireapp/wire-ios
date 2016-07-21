@@ -211,12 +211,12 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
     
-    ZMTextMessage *message = [conversation appendMessageWithText:@"message a1"];
+    ZMMessage *message = [conversation appendMessageWithText:@"message a1"];
     message.nonce = [NSUUID createUUID];
     message.serverTimestamp = zeroTime;
     message.eventID = [self createEventID]; // already delivered message
     
-    ZMTextMessage *nextMessage = [conversation appendMessageWithText:@"message a2"];
+    ZMMessage *nextMessage = [conversation appendMessageWithText:@"message a2"];
     nextMessage.serverTimestamp = [NSDate dateWithTimeInterval:100 sinceDate:zeroTime];
     nextMessage.nonce = [NSUUID createUUID]; // undelivered
     

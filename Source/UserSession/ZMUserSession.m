@@ -91,7 +91,8 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) BackgroundAPNSPingBackStatus *pingBackStatus;
 @property (nonatomic) ZMAccountStatus *accountStatus;
 
-@property (nonatomic) GiphyRequestsStatus *giphyRequestStatus;
+@property (nonatomic) ProxiedRequestsStatus *proxiedRequestStatus;
+
 @property (nonatomic) BOOL isVersionBlacklisted;
 @property (nonatomic) NSArray *cachedAddressBookContacts;
 @property (nonatomic) dispatch_once_t loadAddressBookContactsOnce;
@@ -233,8 +234,8 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                               registrationStatusDelegate:self];
         self.accountStatus = [[ZMAccountStatus alloc] initWithManagedObjectContext: syncManagedObjectContext cookieStorage: session.cookieStorage];
         
-        self.giphyRequestStatus = [GiphyRequestsStatus new];
-        
+        self.proxiedRequestStatus = [[ProxiedRequestsStatus alloc] init];
+
         self.localNotificationDispatcher =
         [[ZMLocalNotificationDispatcher alloc] initWithManagedObjectContext:syncManagedObjectContext sharedApplication:application];
         
@@ -255,7 +256,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                         userProfileUpdateStatus:self.userProfileUpdateStatus
                                                                        clientRegistrationStatus:self.clientRegistrationStatus
                                                                              clientUpdateStatus:self.clientUpdateStatus
-                                                                             giphyRequestStatus:self.giphyRequestStatus
+                                                                           proxiedRequestStatus:self.proxiedRequestStatus
                                                                                   accountStatus:self.accountStatus
                                                                    backgroundAPNSPingBackStatus:self.pingBackStatus
                                                                     localNotificationdispatcher:self.localNotificationDispatcher
@@ -309,7 +310,7 @@ ZM_EMPTY_ASSERTING_INIT()
     self.clientRegistrationStatus = nil;
     self.authenticationStatus = nil;
     self.userProfileUpdateStatus = nil;
-    self.giphyRequestStatus = nil;
+    self.proxiedRequestStatus = nil;
     
     NSManagedObjectContext *uiMoc = self.managedObjectContext;
     
@@ -434,6 +435,7 @@ ZM_EMPTY_ASSERTING_INIT()
 - (void)start;
 {
     [self didStartApplication];
+    [self refreshTokensIfNeeded];
     [ZMOperationLoop notifyNewRequestsAvailable:self];
 }
 
@@ -454,10 +456,27 @@ ZM_EMPTY_ASSERTING_INIT()
     }];
 }
 
+- (void)refreshTokensIfNeeded
+{
+    [self.managedObjectContext performGroupedBlock:^{
+        // Refresh the Voip token if needed
+        NSData *actualToken = self.pushRegistrant.pushToken;
+        if (actualToken != nil && ![actualToken isEqualToData:self.managedObjectContext.pushKitToken.deviceToken]){
+            self.managedObjectContext.pushKitToken = nil;
+            [self setPushKitToken:actualToken];
+        }
+        
+        // Request the current token, the rest is taken care of
+        [self.application registerForRemoteNotifications];
+    }];
+}
+
 - (void)resetPushTokens
 {
     // instead of relying on the tokens we have cached locally we should always ask the OS about the latest tokens
-    [self.managedObjectContext performGroupedBlockAndWait:^{
+    [self.managedObjectContext performGroupedBlock:^{
+        
+        // (1) Refresh VoIP token
         NSData *pushKitToken = self.pushRegistrant.pushToken;
         if (pushKitToken != nil) {
             self.managedObjectContext.pushKitToken = nil;
@@ -466,21 +485,17 @@ ZM_EMPTY_ASSERTING_INIT()
             ZMLogError(@"The OS did not provide a valid VoIP token, pushRegistry might be nil");
         }
         
-        ZMPushToken *pushToken = self.managedObjectContext.pushToken;
-        if(pushToken != nil) {
-            self.managedObjectContext.pushToken = nil;
-            [self setPushToken:pushToken.deviceToken];
-        }
-        else {
-            ZMLogError(@"No stored push token, pushRegistry might be nil");
-        }
+        // (2) Refresh "normal" remote notification token
+        // we need to set the current push token to nil,
+        // otherwise if the push token didn't change it would not resend the request to the backend
+        self.managedObjectContext.pushToken = nil;
         
         // according to Apple's documentation, calling [registerForRemoteNotifications] should not cause additional overhead
-        // and should return the existing device token to the app delegate via [didRegisterForRemoteNotifications:] immediately
+        // and should return the *existing* device token to the app delegate via [didRegisterForRemoteNotifications:] immediately
+        // this call is forwarded to the ZMUserSession+Background where the new token is set
         [self.application registerForRemoteNotifications];
         
-        
-        // Also reset the preKeys
+        // (3) reset the preKeys for encrypting and decrypting
         [UserClient resetSignalingKeysInContext:self.managedObjectContext];
 
         if (![self.managedObjectContext forceSaveOrRollback]) {
@@ -614,16 +629,6 @@ ZM_EMPTY_ASSERTING_INIT()
         self.managedObjectContext.pushKitToken = [self.managedObjectContext.pushKitToken forDeletionMarkedCopy];
         if (![self.managedObjectContext forceSaveOrRollback]) {
             ZMLogError(@"Failed to save pushKit token marked for deletion");
-        }
-    }
-}
-
-- (void)deletePushToken
-{
-    if (self.managedObjectContext.pushToken != nil) {
-        self.managedObjectContext.pushToken = [self.managedObjectContext.pushToken forDeletionMarkedCopy];
-        if (![self.managedObjectContext forceSaveOrRollback]) {
-            ZMLogError(@"Failed to save push token marked for deletion");
         }
     }
 }

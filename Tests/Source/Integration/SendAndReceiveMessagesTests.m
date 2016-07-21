@@ -105,8 +105,8 @@
 
     // then
     XCTAssertEqual(otrResponseCount, 2lu);
-    XCTAssertEqualObjects(firstMessage.messageText, firstMessageText);
-    XCTAssertEqualObjects(secondMessage.messageText, secondMessageText);
+    XCTAssertEqualObjects(firstMessage.textMessageData.messageText, firstMessageText);
+    XCTAssertEqualObjects(secondMessage.textMessageData.messageText, secondMessageText);
 }
 
 - (void)testThatWeReceiveAMessageSentRemotely
@@ -125,7 +125,7 @@
     
     // then
     id<ZMConversationMessage> lastMessage = conversation.messages.lastObject;
-    XCTAssertEqualObjects(lastMessage.messageText, messageText);
+    XCTAssertEqualObjects(lastMessage.textMessageData.messageText, messageText);
 }
 
 - (ZMConversation *)setUpStateAndConversation {

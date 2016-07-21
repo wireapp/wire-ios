@@ -330,8 +330,22 @@
 - (NSDictionary *)payloadForEncryptedOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce
 {
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:text nonce:nonce.transportString];
-    NSString *base64EncodedString = message.data.base64String;
-    return @{@"data": base64EncodedString,
+    return [self payloadForOTRMessageWithGenericMessage:message];
+}
+
+- (NSDictionary *)payloadForOTRAssetWithGenericMessage:(ZMGenericMessage *)genericMessage
+{
+    return @{@"data": @{ @"info": genericMessage.data.base64String },
+             @"conversation" : self.conversation1.remoteIdentifier.transportString,
+             @"type": EventConversationAddOTRAsset,
+             @"from": self.user1.remoteIdentifier.transportString,
+             @"time": [NSDate date].transportString
+             };
+}
+
+- (NSDictionary *)payloadForOTRMessageWithGenericMessage:(ZMGenericMessage *)genericMessage
+{
+    return @{@"data": @{ @"text": genericMessage.data.base64String },
              @"conversation" : self.conversation1.remoteIdentifier.transportString,
              @"type": EventConversationAddOTRMessage,
              @"from": self.user1.remoteIdentifier.transportString,
@@ -397,6 +411,88 @@
     // then
     [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
 
+}
+
+- (void)testThatItDoesNotCreateNotificationForTwoMessageEventsWithTheSameNonce
+{
+    ZMLocalNotificationSet *localNotificationSet = [[ZMLocalNotificationSet alloc] initWithApplication:self.mockUISharedApplication
+                                                                                          archivingKey:@"ZMLocalNotificationDispatcherEventNotificationsKey"
+                                                                                         keyValueStore:[OCMockObject niceMockForProtocol:@protocol(ZMSynchonizableKeyValueStore)]];
+    
+    // Replace the default sut since we need a real ZMLocalNotificationSet
+    [self.sut tearDown];
+    self.sut = [[ZMLocalNotificationDispatcher alloc] initWithManagedObjectContext:self.syncMOC
+                                                                 sharedApplication:self.mockUISharedApplication
+                                                              eventNotificationSet:localNotificationSet
+                                                             failedNotificationSet:self.mockFailedNotificationSet];
+    
+    // given
+    NSDictionary *payload = [self payloadForEncryptedOTRMessageWithText:@"Hallo" nonce:[NSUUID UUID]];
+    ZMUpdateEvent *event1 = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    ZMUpdateEvent *event2 = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    
+    // expect
+    __block UILocalNotification *scheduledNotification;
+    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification)];
+    
+    // when
+    [self.sut didReceiveUpdateEvents:@[event1] notificationID:NSUUID.createUUID];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertNotNil(scheduledNotification);
+    
+    // after
+    [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
+    
+    // expect
+    [[self.mockUISharedApplication reject] scheduleLocalNotification:OCMOCK_ANY];
+    
+    // when
+    [self.sut didReceiveUpdateEvents:@[event2] notificationID:NSUUID.createUUID];
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
+- (void)testThatItDoesNotCreateNotificationForFileUploadEventsWithTheSameNonce
+{
+    ZMLocalNotificationSet *localNotificationSet = [[ZMLocalNotificationSet alloc] initWithApplication:self.mockUISharedApplication
+                                                                                          archivingKey:@"ZMLocalNotificationDispatcherEventNotificationsKey"
+                                                                                         keyValueStore:[OCMockObject niceMockForProtocol:@protocol(ZMSynchonizableKeyValueStore)]];
+    
+    NSUUID *nonce = [NSUUID UUID];
+    ZMAudioMetadata *audioMetadata = [[ZMAudioMetadata alloc] initWithFileURL:[NSURL fileURLWithPath:@"audiofile.m4a"] duration:100 normalizedLoudness:@[] thumbnail:nil];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithFileMetadata:audioMetadata messageID:nonce.transportString];
+    
+    // Replace the default sut since we need a real ZMLocalNotificationSet
+    [self.sut tearDown];
+    self.sut = [[ZMLocalNotificationDispatcher alloc] initWithManagedObjectContext:self.syncMOC
+                                                                 sharedApplication:self.mockUISharedApplication
+                                                              eventNotificationSet:localNotificationSet
+                                                             failedNotificationSet:self.mockFailedNotificationSet];
+    // given
+    ZMUpdateEvent *event1 = [ZMUpdateEvent eventFromEventStreamPayload:[self payloadForOTRMessageWithGenericMessage:genericMessage] uuid:nil];
+    ZMUpdateEvent *event2 = [ZMUpdateEvent eventFromEventStreamPayload:[self payloadForOTRAssetWithGenericMessage:genericMessage] uuid:nil];
+    
+    // expect
+    __block UILocalNotification *scheduledNotification;
+    [[self.mockUISharedApplication expect] scheduleLocalNotification:ZM_ARG_SAVE(scheduledNotification)];
+    
+    // when
+    [self.sut didReceiveUpdateEvents:@[event1] notificationID:NSUUID.createUUID];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertNotNil(scheduledNotification);
+    
+    // after
+    [[self.mockUISharedApplication stub] cancelLocalNotification:OCMOCK_ANY];
+    
+    // expect
+    [[self.mockUISharedApplication reject] scheduleLocalNotification:OCMOCK_ANY];
+    
+    // when
+    [self.sut didReceiveUpdateEvents:@[event2] notificationID:NSUUID.createUUID];
+    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 @end

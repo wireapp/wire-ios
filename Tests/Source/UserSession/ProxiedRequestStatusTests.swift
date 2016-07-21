@@ -19,13 +19,13 @@
 
 import XCTest
 
-class GiphyRequestsStatusTests: MessagingTest {
+class ProxiedRequestsStatusTests: MessagingTest {
     
-    private var sut: GiphyRequestsStatus!
+    private var sut: ProxiedRequestsStatus!
     
     override func setUp() {
         super.setUp()
-        self.sut = GiphyRequestsStatus()
+        self.sut = ProxiedRequestsStatus()
     }
     
     override func tearDown() {
@@ -37,18 +37,20 @@ class GiphyRequestsStatusTests: MessagingTest {
         let exp = self.expectationWithDescription("expected callback")
 
         //given
-        let url = NSURL(string: "foo/bar", relativeToURL: nil)!
+        let path = "foo/bar"
+        let url = NSURL(string: path, relativeToURL: nil)!
+        
         let callback: (NSData!, NSHTTPURLResponse!, NSError!) -> Void = { (_, _, _) -> Void in
             exp.fulfill()
         }
         
         //when
-        self.sut.addRequest(url, callback: callback)
+        self.sut.addRequest(.Giphy, path:url.relativeString!, method:.MethodGET, callback: callback)
         
         //then
         let request = self.sut.pendingRequests.last
         XCTAssert(request != nil)
-        XCTAssertEqual(request!.url, url, "")
+        XCTAssertEqual(request!.path, path)
         XCTAssert(request!.callback != nil)
         if let receivedCallback = request!.callback {
             receivedCallback(nil, NSHTTPURLResponse(), nil)

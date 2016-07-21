@@ -26,9 +26,6 @@
 /// Store deviceToken
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
 
-/// Remove deviceToken
-- (void)removeRemoteNotificationTokenIfNeeded;
-
 /// Process the payload of the remote notification. This may cause a @c UILocalNotification to be displayed.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 

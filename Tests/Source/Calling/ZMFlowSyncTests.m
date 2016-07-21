@@ -186,6 +186,7 @@ static NSString * const FlowEventName2 = @"conversation.member-join";
         XCTAssertEqualObjects(path, request.path);
         XCTAssertEqualObjects(content, request.binaryData);
         XCTAssertEqualObjects(mediaType, request.binaryDataType);
+        XCTAssertTrue(request.shouldUseVoipSession);
     }];
 }
 

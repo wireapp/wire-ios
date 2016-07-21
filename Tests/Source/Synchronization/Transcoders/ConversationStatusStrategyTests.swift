@@ -59,7 +59,7 @@ class ConversationStatusStrategyTests: MessagingTest {
                 XCTFail("should insert message into self conversation")
                 return
             }
-            XCTAssertTrue(message.genericMessage.hasLastRead())
+            XCTAssertTrue(message.genericMessage!.hasLastRead())
         }
     }
     
@@ -108,7 +108,7 @@ class ConversationStatusStrategyTests: MessagingTest {
                 XCTFail("should insert message into self conversation")
                 return
             }
-            XCTAssertTrue(message.genericMessage.hasCleared())
+            XCTAssertTrue(message.genericMessage!.hasCleared())
         }
     }
     
@@ -160,7 +160,7 @@ class ConversationStatusStrategyTests: MessagingTest {
                 XCTFail("should insert message into self conversation")
                 return
             }
-            XCTAssertTrue(message.genericMessage.hasLastRead())
+            XCTAssertTrue(message.genericMessage!.hasLastRead())
         }
 
     }

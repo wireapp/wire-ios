@@ -261,7 +261,7 @@
                                             userProfileUpdateStatus:self.userProfileUpdateStatus
                                            clientRegistrationStatus:self.clientRegistrationStatus
                                                  clientUpdateStatus:self.clientUpdateStatus
-                                                 giphyRequestStatus:nil
+                                               proxiedRequestStatus:nil
                                                       accountStatus:nil
                                        backgroundAPNSPingBackStatus:nil
                                                        mediaManager:mediaManager

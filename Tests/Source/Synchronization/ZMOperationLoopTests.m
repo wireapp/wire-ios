@@ -112,7 +112,7 @@
             userProfileUpdateStatus:userProfileStatus
             clientRegistrationStatus:nil
             clientUpdateStatus:nil
-            giphyRequestStatus:nil
+            proxiedRequestStatus:nil
             accountStatus:nil
             backgroundAPNSPingBackStatus:nil
             mediaManager:mediaManager
@@ -131,7 +131,7 @@
                                                     userProfileUpdateStatus:userProfileStatus
                                                    clientRegistrationStatus:nil
                                                          clientUpdateStatus:nil
-                                                         giphyRequestStatus:nil
+                                                       proxiedRequestStatus:nil
                                                               accountStatus:nil
                                                backgroundAPNSPingBackStatus:nil
                                                 localNotificationdispatcher:nil
