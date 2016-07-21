@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -23,6 +23,8 @@ extern NSString * ZMLocalNotificationDispatcherUIApplicationClass;
 
 @interface ZMLocalNotificationDispatcher (Testing)
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc sharedApplication:(UIApplication *)sharedApplication;
-
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
+                           sharedApplication:(ZMApplication *)sharedApplication
+                        eventNotificationSet:(ZMLocalNotificationSet *)eventNotificationSet
+                       failedNotificationSet:(ZMLocalNotificationSet *)failedNotificationSet;
 @end

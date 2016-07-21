@@ -66,7 +66,7 @@
                 <string>%1$@ mensagens</string>
             </dict>
         </dict>
-        <key>push.notification.call.missed</key>
+        <key>push.notification.call.missed.oneonone</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
             <string>%1$@ chamou%2$#@new_calls@</string>
@@ -77,15 +77,15 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>@</string>
                 <key>one</key>
-                <string> </string>
+                <string></string>
                 <key>other</key>
                 <string> %2$@ vezes</string>
             </dict>
         </dict>
-        <key>push.notification.call.missed.nousername</key>
+        <key>push.notification.call.missed.oneonone.nousername</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
-            <string>%1$#@new_calls@</string>
+            <string>Alguém chamou%1$#@new_calls@</string>
             <key>new_calls</key>
             <dict>
                 <key>NSStringFormatSpecTypeKey</key>
@@ -93,7 +93,103 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>@</string>
                 <key>one</key>
-                <string>Chamada não atendida</string>
+                <string></string>
+                <key>other</key>
+                <string> %1$@ vezes</string>
+            </dict>
+        </dict>
+        <key>push.notification.call.missed.group</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>%1$@ chamou%3$#@new_calls@ em %2$@</string>
+            <key>new_calls</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>@</string>
+                <key>one</key>
+                <string></string>
+                <key>other</key>
+                <string> %3$@ vezes</string>
+            </dict>
+        </dict>
+        <key>push.notification.call.missed.group.nousername</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>Alguém chamou%2$#@new_calls@ em %1$@</string>
+            <key>new_calls</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>@</string>
+                <key>one</key>
+                <string></string>
+                <key>other</key>
+                <string> %2$@ vezes</string>
+            </dict>
+        </dict>
+        <key>push.notification.call.missed.group.nousername.noconversationname</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>Alguém chamou%1$#@new_calls@ em uma conversa</string>
+            <key>new_calls</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>@</string>
+                <key>one</key>
+                <string></string>
+                <key>other</key>
+                <string> %1$@ vezes</string>
+            </dict>
+        </dict>
+        <key>push.notification.call.missed.group.noconversationname</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>%1$@ chamou%2$#@new_calls@ em uma conversa</string>
+            <key>new_calls</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>@</string>
+                <key>one</key>
+                <string></string>
+                <key>other</key>
+                <string> %2$@ vezes</string>
+            </dict>
+        </dict>
+        <key>push.notification.call.missed.many</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>Você tem %2$#@new_calls@ em %1@</string>
+            <key>new_calls</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>@</string>
+                <key>one</key>
+                <string>uma chamada não atendida</string>
+                <key>other</key>
+                <string>%2@ chamadas não atendidas</string>
+            </dict>
+        </dict>
+        <key>push.notification.call.missed.many.noconversationname</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>Você tem %1$#@new_calls@ em uma conversa</string>
+            <key>new_calls</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>@</string>
+                <key>one</key>
+                <string>uma chamada não atendida</string>
                 <key>other</key>
                 <string>%1$@ chamadas não atendidas</string>
             </dict>

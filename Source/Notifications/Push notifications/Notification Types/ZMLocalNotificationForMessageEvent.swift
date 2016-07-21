@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -34,12 +34,16 @@ let MaximumNumberOfEventsBeforeBundling = 5
 
 public class ZMLocalNotificationForPostInConversationEvent : ZMLocalNotificationForEvent {
     
+    public override var eventType: ZMLocalNotificationForEventType {return .PostInConversation
+    }
+
     override var requiresConversation : Bool {
         return true
     }
     
     var encryptedEventData : String? {
-        guard let payload = lastEvent.payload as? [String : AnyObject]
+        guard let lastEvent = lastEvent,
+              let payload = lastEvent.payload as? [String : AnyObject]
         else { return nil }
         
         if let data = payload["data"] {
@@ -102,7 +106,7 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
         guard super.canCreateNotification()
             else { return false }
         
-        switch lastEvent.type {
+        switch lastEvent!.type {
         case .ConversationOtrAssetAdd, .ConversationOtrMessageAdd:
             guard let encryptedEventData = encryptedEventData else { return false }
             
@@ -165,6 +169,9 @@ public class ZMLocalNotificationForMessage: ZMLocalNotificationForPostInConversa
 
 public class ZMLocalNotificationForKnockMessage : ZMLocalNotificationForPostInConversationEvent {
     
+    public override var eventType: ZMLocalNotificationForEventType {return .Knock
+    }
+    
     override var copiedEventTypes : [ZMUpdateEventType] {
         return [.ConversationKnock, .ConversationOtrMessageAdd]
     }
@@ -173,7 +180,7 @@ public class ZMLocalNotificationForKnockMessage : ZMLocalNotificationForPostInCo
         guard super.canCreateNotification()
             else { return false }
         
-        switch lastEvent.type {
+        switch lastEvent!.type {
         case .ConversationOtrMessageAdd:
             guard let encryptedEventData = encryptedEventData else { return false }
             

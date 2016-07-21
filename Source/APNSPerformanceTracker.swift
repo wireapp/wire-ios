@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -161,12 +161,24 @@ public extension APNSPerformanceTracker {
         analytics?.tagEvent(notificationDecryptionFailedEventName)
     }
     
-    @objc static func trackAPNSInUserSession(analytics: AnalyticsType?, authenticated: Bool) {
-        analytics?.tagEvent(notificationUserSessionEventName, attributes: ["authenticated": authenticated])
+    @objc static func trackAPNSInUserSession(analytics: AnalyticsType?, authenticated: Bool, applicationState: UIApplicationState) {
+        analytics?.tagEvent(notificationUserSessionEventName, attributes: ["authenticated": authenticated, "background": applicationState.description])
     }
     
     @objc static func trackReceivedNotification(analytics: AnalyticsType?) {
         analytics?.tagEvent(notificationReceivedEventName)
     }
 
+}
+
+extension UIApplicationState: CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .Active: return "active"
+        case .Inactive: return "inactive"
+        case .Background: return "background"
+        }
+    }
+    
 }

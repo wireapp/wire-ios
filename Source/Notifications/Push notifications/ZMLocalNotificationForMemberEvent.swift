@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -43,7 +43,7 @@ class ZMLocalNotificationForMemberEvent : ZMLocalNotificationForEvent {
         if userIDStrings.count == 1 {
             let firstUserID = NSUUID(UUIDString: userIDStrings.first!)
             let user = ZMUser(remoteID: firstUserID!, createIfNeeded: false, inContext: managedObjectContext)
-            let senderID = lastEvent.senderUUID()
+            let senderID = lastEvent!.senderUUID()
             
             if  senderID != nil && senderID == firstUserID {
                 return ZMPushStringMemberLeaveSender.localizedStringWithUser(sender, conversation: conversation, otherUser: nil)
@@ -65,6 +65,7 @@ class ZMLocalNotificationForMemberEvent : ZMLocalNotificationForEvent {
 
 class ZMLocalNotificationForMemberLeaveEvent : ZMLocalNotificationForMemberEvent {
     
+    internal override var eventType: ZMLocalNotificationForEventType {return .MemberJoin }
     override var copiedEventTypes : [ZMUpdateEventType] {
         return [.ConversationMemberLeave]
     }
@@ -79,6 +80,8 @@ class ZMLocalNotificationForMemberLeaveEvent : ZMLocalNotificationForMemberEvent
 
 
 class ZMLocalNotificationForMemberJoinEvent : ZMLocalNotificationForMemberEvent {
+    
+    internal override var eventType: ZMLocalNotificationForEventType {return .MemberLeave }
     
     override var copiedEventTypes : [ZMUpdateEventType] {
         return [.ConversationMemberJoin]

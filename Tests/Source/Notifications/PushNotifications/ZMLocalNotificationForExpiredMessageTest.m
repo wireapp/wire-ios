@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 @import ZMCDataModel;
@@ -44,11 +44,14 @@
         self.groupConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         self.groupConversation.userDefinedName = @"This is a group conversation";
         self.groupConversation.conversationType = ZMConversationTypeGroup;
-        
+        self.groupConversation.remoteIdentifier = [NSUUID createUUID];
+
         self.groupConversationWithoutName = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         self.groupConversationWithoutName.conversationType = ZMConversationTypeGroup;
+        self.groupConversationWithoutName.remoteIdentifier = [NSUUID createUUID];
 
         self.oneOnOneConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        self.oneOnOneConversation.remoteIdentifier = [NSUUID createUUID];
         self.oneOnOneConversation.conversationType = ZMConversationTypeOneOnOne;
         
         [self.syncMOC saveOrRollback];
@@ -93,8 +96,8 @@
         ZMLocalNotificationForExpiredMessage *note = [[ZMLocalNotificationForExpiredMessage alloc] initWithExpiredMessage:message];
         
         // then
-        ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note.uiNotification inManagedObjectContext:message.managedObjectContext];
-        XCTAssertEqual(conversation, self.oneOnOneConversation);
+        ZMConversation *conversation = [note.uiNotification conversationInManagedObjectContext:message.managedObjectContext];
+        XCTAssertEqualObjects(conversation, self.oneOnOneConversation);
 
     }];
 }
@@ -110,8 +113,8 @@
         ZMLocalNotificationForExpiredMessage *note = [[ZMLocalNotificationForExpiredMessage alloc] initWithConversation:message.conversation];
         
         // then
-        ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note.uiNotification inManagedObjectContext:message.managedObjectContext];
-        XCTAssertEqual(conversation, self.oneOnOneConversation);
+        ZMConversation *conversation = [note.uiNotification conversationInManagedObjectContext:message.managedObjectContext];
+        XCTAssertEqualObjects(conversation, self.oneOnOneConversation);
     }];
 }
 
@@ -151,7 +154,7 @@
         // then
         XCTAssertNotNil(note);
         XCTAssertEqual(note.message, message);
-        UILocalNotification *uiNote = note.uiNotification;
+        UILocalNotification *uiNote = note.uiNotification ;
         
         NSString *expectedText = @"Unable to send a message";
         XCTAssertEqualObjects(uiNote.alertBody, expectedText);
@@ -177,7 +180,7 @@
         // then
         XCTAssertNotNil(note);
         XCTAssertEqual(note.message, message);
-        UILocalNotification *uiNote = note.uiNotification;
+        UILocalNotification *uiNote = note.uiNotification ;
         
         NSString *expectedText = [NSString stringWithFormat:@"Unable to send a message to %@", self.userWithName.name];
         XCTAssertEqualObjects(uiNote.alertBody, expectedText);
@@ -203,7 +206,7 @@
         // then
         XCTAssertNotNil(note);
         XCTAssertEqual(note.message, message);
-        UILocalNotification *uiNote = note.uiNotification;
+        UILocalNotification *uiNote = note.uiNotification ;
         
         NSString *expectedText = @"Unable to send a message";
         XCTAssertEqualObjects(uiNote.alertBody, expectedText);

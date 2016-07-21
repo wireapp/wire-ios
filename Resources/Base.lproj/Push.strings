@@ -13,9 +13,11 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+
+"push.notification.default" = "New message";
 
 "push.notification.add.message.group" = "%1$@ in %2$@: %3$@";
 "push.notification.add.message.group.nousername" = "New message in %1$@: %2$@";
@@ -150,10 +152,14 @@
 "push.notification.action.message.open" = "Open";
 "push.notification.action.message.reply" = "Reply";
 "push.notification.action.message.reply.button.title" = "Send";
+"push.notification.action.conversation.mute" = "Mute";
 
 "push.notification.action.call.accept" = "Accept";
 "push.notification.action.call.ignore" = "Decline";
+"push.notification.action.call.message" = "Message";
+"push.notification.action.call.callback" = "Call Back";
 "push.notification.action.connection.accept" = "Accept";
+
 
 //////////////
 // The following keys are handled in the Push.stringsdict file. Please make the according changes there.

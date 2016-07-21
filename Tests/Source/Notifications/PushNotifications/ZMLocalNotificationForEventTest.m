@@ -13,12 +13,15 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
-#import "ZMLocalNotificationForEventTest.h"
+@import ZMTesting;
 
+#import "ZMLocalNotificationForEventTest.h"
+#import "UILocalNotification+UserInfo.h"
+#import <zmessaging/zmessaging-Swift.h>
 
 @implementation ZMLocalNotificationForEventTest
 
@@ -134,8 +137,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         NSUUID *senderID = fromUser.remoteIdentifier;
         if (senderID == nil) {
-            NSDictionary *userInfo = [(UILocalNotification *)note.notifications.lastObject userInfo];
-            senderID = [NSUUID uuidWithTransportString:userInfo[ZMLocalNotificationUserInfoSenderKey]];
+            senderID = [note.uiNotifications.lastObject zm_senderUUID];
         }
         NSDictionary *payload = [self payloadForMessageInConversation:conversation type:type data:data fromUserID:senderID];
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
@@ -213,7 +215,7 @@
     ZMLocalNotificationForEvent *note = [self zmNotificationForMessageAddEventFromUser:sender inConversation:self.oneOnOneConversation];
     
     // then
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:note.notifications.firstObject inManagedObjectContext:self.oneOnOneConversation.managedObjectContext];
+    ZMConversation *conversation = [note.uiNotifications.firstObject conversationInManagedObjectContext:self.oneOnOneConversation.managedObjectContext];
     XCTAssertEqual(conversation, self.oneOnOneConversation);
 }
 
@@ -228,7 +230,7 @@
     // then
     XCTAssertNotNil(note);
     
-    XCTAssertNotNil(note.notifications);
+    XCTAssertNotNil(note.uiNotifications);
     
     XCTAssertNotNil(note.conversation);
     XCTAssertEqualObjects(conversation, note.conversation);
@@ -270,14 +272,10 @@
     // then
     XCTAssertNotNil(note);
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     
-    NSString *expectedObjectURLString = [self objectURLStringForObject:self.oneOnOneConversation];
-    XCTAssertNotNil(expectedObjectURLString);
-    
-    NSString *objectURLString = notification.userInfo[@"conversationObjectURLString"];
-    XCTAssertEqualObjects(objectURLString, expectedObjectURLString);
+    XCTAssertEqualObjects(notification.zm_conversationRemoteID, self.oneOnOneConversation.remoteIdentifier);
     
 }
 
@@ -285,10 +283,10 @@
 - (void)testThatItStoresTheNonceStringInTheUserInfo
 {
     // given
-    NSString *nonceString = NSUUID.createUUID.transportString;
+    NSUUID *nonce = NSUUID.createUUID;
     NSString *text = @"Hello Hello!";
     NSDictionary *data = @{@"content": text,
-                           ZMLocalNotificationUserInfoNonceKey: nonceString};
+                           ZMLocalNotificationUserInfoNonceKey: nonce.transportString};
     
     // when
     ZMLocalNotificationForEvent *note = [self noteWithPayload:data fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAdd];
@@ -296,11 +294,10 @@
     // then
     XCTAssertNotNil(note);
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     
-    NSString *returnedNonceString = notification.userInfo[ZMLocalNotificationUserInfoNonceKey];
-    XCTAssertEqualObjects(nonceString, returnedNonceString);
+    XCTAssertEqualObjects(notification.zm_messageNonce, nonce);
 }
 
 - (void)testThatItStoresTheSenderUUUIDStringInTheUserInfo
@@ -317,11 +314,10 @@
     // then
     XCTAssertNotNil(note);
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     
-    NSString *returnedNonceString = notification.userInfo[ZMLocalNotificationUserInfoSenderKey];
-    XCTAssertEqualObjects(returnedNonceString, self.sender.remoteIdentifier.transportString);
+    XCTAssertEqualObjects(notification.zm_senderUUID, self.sender.remoteIdentifier);
 }
 
 @end
@@ -342,8 +338,8 @@
         XCTAssertNil(note.sender);
     }
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     return notification;
 }
 
@@ -410,7 +406,7 @@
     XCTAssertNotNil(note1);
     
     // expect
-    [[mockApplication reject] cancelLocalNotification:note1.notifications.firstObject];
+    [[mockApplication reject] cancelLocalNotification:note1.uiNotifications.firstObject];
     
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
@@ -445,8 +441,8 @@
     XCTAssertNotNil(note);
     
     XCTAssertEqualObjects(conversation, note.conversation);
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, @"Super User in 100%% Wire: Today we grew by 100%%");
 }
 
@@ -471,8 +467,8 @@
         XCTAssertNil(note.sender);
     }
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     
     return notification;
 }
@@ -566,8 +562,8 @@
         XCTAssertNil(note.sender);
     }
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     
     return notification;
 }
@@ -732,8 +728,8 @@
         XCTAssertNil(note.sender);
     }
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     
     return notification;
 }
@@ -755,8 +751,8 @@
         XCTAssertNil(note.sender);
     }
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     
     return notification;
 }
@@ -838,8 +834,8 @@
     NSString *expectedAlertText1 = @"Super User pinged in Super Conversation";
     
     XCTAssertNotNil(note);
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification1 = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification1 = note.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification1.alertBody, expectedAlertText1);
     
     ZMLocalNotificationForEvent *note2 = [self copyNote:note withPayload:nil fromUser:user2 inConversation:self.groupConversation type:EventConversationKnock];
@@ -904,8 +900,8 @@
     XCTAssertNotNil(note1.conversation);
     XCTAssertEqualObjects(conversation, note1.conversation);
     
-    XCTAssertNotNil(note1.notifications);
-    UILocalNotification *notification = note1.notifications.lastObject;
+    XCTAssertNotNil(note1.uiNotifications);
+    UILocalNotification *notification = note1.uiNotifications.lastObject;
     return notification;
 }
 
@@ -1070,8 +1066,8 @@
     
     XCTAssertNotNil(note2);
     
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
+    XCTAssertNotNil(note2.uiNotifications);
+    UILocalNotification *notification = note2.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, expectedAlertBody);
     
     XCTAssertNotNil(note2.conversation);
@@ -1101,8 +1097,8 @@
     XCTAssertNotNil(note1);
     XCTAssertNotNil(note2);
     
-    XCTAssertNotNil(note2.notifications);
-    UILocalNotification *notification = note2.notifications.lastObject;
+    XCTAssertNotNil(note2.uiNotifications);
+    UILocalNotification *notification = note2.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, expectedAlertBody);
 }
 
@@ -1123,8 +1119,8 @@
     
     XCTAssertNotNil(note1);
     
-    XCTAssertNotNil(note1.notifications);
-    UILocalNotification *notification = note1.notifications.lastObject;
+    XCTAssertNotNil(note1.uiNotifications);
+    UILocalNotification *notification = note1.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
 }
 
@@ -1141,8 +1137,8 @@
     
     XCTAssertNotNil(note1);
     
-    XCTAssertNotNil(note1.notifications);
-    UILocalNotification *notification = note1.notifications.lastObject;
+    XCTAssertNotNil(note1.uiNotifications);
+    UILocalNotification *notification = note1.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
 }
 
@@ -1168,8 +1164,8 @@
     
     XCTAssertNotNil(note1);
     
-    XCTAssertNotNil(note1.notifications);
-    UILocalNotification *notification = note1.notifications.lastObject;
+    XCTAssertNotNil(note1.uiNotifications);
+    UILocalNotification *notification = note1.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
 }
 
@@ -1188,8 +1184,8 @@
     
     XCTAssertNotNil(note1);
     
-    XCTAssertNotNil(note1.notifications);
-    UILocalNotification *notification = note1.notifications.lastObject;
+    XCTAssertNotNil(note1.uiNotifications);
+    UILocalNotification *notification = note1.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
 }
 
@@ -1225,8 +1221,8 @@
     
     XCTAssertNotNil(note1);
     
-    XCTAssertNotNil(note1.notifications);
-    UILocalNotification *notification = note1.notifications.lastObject;
+    XCTAssertNotNil(note1.uiNotifications);
+    UILocalNotification *notification = note1.uiNotifications.lastObject;
     XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
     
     XCTAssertNotNil(note1.conversation);
@@ -1268,8 +1264,8 @@
     XCTAssertNotNil(note.conversation);
     XCTAssertEqualObjects(self.oneOnOneConversation, note.conversation);
     
-    XCTAssertNotNil(note.notifications);
-    UILocalNotification *notification = note.notifications.lastObject;
+    XCTAssertNotNil(note.uiNotifications);
+    UILocalNotification *notification = note.uiNotifications.lastObject;
     return notification;
 }
 
@@ -1282,6 +1278,7 @@
                               @"user" : @{@"id": senderUUID.transportString,
                                           @"name": @"Bernd"},
                               @"type" : EventNewConnection,
+                              @"time" : [NSDate date].transportString
                               };
     ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
 
@@ -1295,9 +1292,9 @@
     
     // then
     XCTAssertNotNil(note);
-    UILocalNotification *notif = note.notifications.lastObject;
+    UILocalNotification *notif = note.uiNotifications.lastObject;
     XCTAssertEqualObjects(notif.alertBody, @"Bernd just joined Wire");
-    XCTAssertEqualObjects(notif.userInfo[ZMLocalNotificationUserInfoSenderKey], senderUUID.transportString);
+    XCTAssertEqualObjects(notif.zm_senderUUID, senderUUID);
 }
 
 - (void)testThatItCreatesConnectionRequestNotificationsCorrectly
@@ -1347,7 +1344,8 @@
     return @{@"data": base64EncodedString,
              @"conversation" : self.oneOnOneConversation.remoteIdentifier.transportString,
              @"type": EventConversationEncryptedMessage,
-             @"from": self.sender.remoteIdentifier.transportString
+             @"from": self.sender.remoteIdentifier.transportString,
+             @"time": [NSDate date].transportString
              };
 }
 
@@ -1364,11 +1362,10 @@
     ZMLocalNotificationForEvent *note = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:nil];
     
     // then
-    UILocalNotification *notif = note.notifications.firstObject;
+    UILocalNotification *notif = note.uiNotifications.firstObject;
     XCTAssertEqualObjects(notif.alertBody, expectedText);
-    XCTAssertEqualObjects(notif.userInfo[ZMLocalNotificationUserInfoNonceKey], nonce.transportString);
-    XCTAssertEqualObjects(notif.userInfo[ZMLocalNotificationUserInfoSenderKey], self.sender.remoteIdentifier.transportString);
-    XCTAssertNil(notif.userInfo[@"eventID"]);
+    XCTAssertEqualObjects(notif.zm_messageNonce, nonce);
+    XCTAssertEqualObjects(notif.zm_senderUUID, self.sender.remoteIdentifier);
 }
 
 @end
@@ -1619,8 +1616,8 @@
 //    
 //    XCTAssertNotNil(note1);
 //    
-//    XCTAssertNotNil(note1.notifications);
-//    UILocalNotification *notification = note1.notifications.lastObject;
+//    XCTAssertNotNil(note1.uiNotifications);
+//    UILocalNotification *notification = note1.uiNotifications.lastObject;
 //    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
 //    
 //    XCTAssertNotNil(note1.conversation);
@@ -1665,8 +1662,8 @@
 //    // then
 //    XCTAssertNotNil(note1);
 //    
-//    XCTAssertNotNil(note1.notifications);
-//    UILocalNotification *notification = note1.notifications.lastObject;
+//    XCTAssertNotNil(note1.uiNotifications);
+//    UILocalNotification *notification = note1.uiNotifications.lastObject;
 //    XCTAssertEqualObjects(notification.alertBody, expected);
 //    return [notification.alertBody isEqualToString:expected];
 //}
@@ -1700,8 +1697,8 @@
 //    
 //    // then
 //    XCTAssertNotNil(note1);
-//    XCTAssertNotNil(note1.notifications);
-//    UILocalNotification *notification = note1.notifications.lastObject;
+//    XCTAssertNotNil(note1.uiNotifications);
+//    UILocalNotification *notification = note1.uiNotifications.lastObject;
 //    XCTAssertEqualObjects(notification.alertBody, expectedAlertText);
 //
 //    return [notification.alertBody isEqualToString:expectedAlertText];
@@ -1746,12 +1743,12 @@
 //    NSString *expectedAlertText5 = @"Jemand ruft in Super Conversation an";
 //    NSString *expectedAlertText6 = @"Jemand ruft in einer Unterhaltung an";
 //
-//    XCTAssertEqualObjects([note1.notifications.lastObject alertBody], expectedAlertText1);
-//    XCTAssertEqualObjects([note2.notifications.lastObject alertBody], expectedAlertText2);
-//    XCTAssertEqualObjects([note3.notifications.lastObject alertBody], expectedAlertText3);
-//    XCTAssertEqualObjects([note4.notifications.lastObject alertBody], expectedAlertText4);
-//    XCTAssertEqualObjects([note5.notifications.lastObject alertBody], expectedAlertText5);
-//    XCTAssertEqualObjects([note6.notifications.lastObject alertBody], expectedAlertText6);
+//    XCTAssertEqualObjects([note1.uiNotifications.lastObject alertBody], expectedAlertText1);
+//    XCTAssertEqualObjects([note2.uiNotifications.lastObject alertBody], expectedAlertText2);
+//    XCTAssertEqualObjects([note3.uiNotifications.lastObject alertBody], expectedAlertText3);
+//    XCTAssertEqualObjects([note4.uiNotifications.lastObject alertBody], expectedAlertText4);
+//    XCTAssertEqualObjects([note5.uiNotifications.lastObject alertBody], expectedAlertText5);
+//    XCTAssertEqualObjects([note6.uiNotifications.lastObject alertBody], expectedAlertText6);
 //}
 //
 //
@@ -1776,12 +1773,12 @@
 //    NSString *expectedAlertText5 = @"Jemand hat versucht in Super Conversation anzurufen";
 //    NSString *expectedAlertText6 = @"Jemand hat versucht in einer Unterhaltung anzurufen";
 //    
-//    XCTAssertEqualObjects([note1.notifications.lastObject alertBody], expectedAlertText1);
-//    XCTAssertEqualObjects([note2.notifications.lastObject alertBody], expectedAlertText2);
-//    XCTAssertEqualObjects([note3.notifications.lastObject alertBody], expectedAlertText3);
-//    XCTAssertEqualObjects([note4.notifications.lastObject alertBody], expectedAlertText4);
-//    XCTAssertEqualObjects([note5.notifications.lastObject alertBody], expectedAlertText5);
-//    XCTAssertEqualObjects([note6.notifications.lastObject alertBody], expectedAlertText6);
+//    XCTAssertEqualObjects([note1.uiNotifications.lastObject alertBody], expectedAlertText1);
+//    XCTAssertEqualObjects([note2.uiNotifications.lastObject alertBody], expectedAlertText2);
+//    XCTAssertEqualObjects([note3.uiNotifications.lastObject alertBody], expectedAlertText3);
+//    XCTAssertEqualObjects([note4.uiNotifications.lastObject alertBody], expectedAlertText4);
+//    XCTAssertEqualObjects([note5.uiNotifications.lastObject alertBody], expectedAlertText5);
+//    XCTAssertEqualObjects([note6.uiNotifications.lastObject alertBody], expectedAlertText6);
 //}
 //
 //
@@ -1811,12 +1808,12 @@
 //    NSString *expectedAlertText5 = @"Jemand hat 2 mal versucht in Super Conversation anzurufen";
 //    NSString *expectedAlertText6 = @"Jemand hat 2 mal versucht in einer Unterhaltung anzurufen";
 //    
-//    XCTAssertEqualObjects([note1.notifications.lastObject alertBody], expectedAlertText1);
-//    XCTAssertEqualObjects([note2.notifications.lastObject alertBody], expectedAlertText2);
-//    XCTAssertEqualObjects([note3.notifications.lastObject alertBody], expectedAlertText3);
-//    XCTAssertEqualObjects([note4.notifications.lastObject alertBody], expectedAlertText4);
-//    XCTAssertEqualObjects([note5.notifications.lastObject alertBody], expectedAlertText5);
-//    XCTAssertEqualObjects([note6.notifications.lastObject alertBody], expectedAlertText6);
+//    XCTAssertEqualObjects([note1.uiNotifications.lastObject alertBody], expectedAlertText1);
+//    XCTAssertEqualObjects([note2.uiNotifications.lastObject alertBody], expectedAlertText2);
+//    XCTAssertEqualObjects([note3.uiNotifications.lastObject alertBody], expectedAlertText3);
+//    XCTAssertEqualObjects([note4.uiNotifications.lastObject alertBody], expectedAlertText4);
+//    XCTAssertEqualObjects([note5.uiNotifications.lastObject alertBody], expectedAlertText5);
+//    XCTAssertEqualObjects([note6.uiNotifications.lastObject alertBody], expectedAlertText6);
 //}
 //
 //

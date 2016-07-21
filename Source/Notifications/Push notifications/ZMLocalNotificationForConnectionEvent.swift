@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -33,11 +33,13 @@ class ZMLocalNotificationForConnectionEvent : ZMLocalNotificationForEvent {
 
 class ZMLocalNotificationForUserConnectionEvent : ZMLocalNotificationForEvent {
     
+    internal override var eventType: ZMLocalNotificationForEventType {return connectionType }
+    
     var connectionType : ZMLocalNotificationForEventType!
     
     override func canCreateNotification() -> Bool {
         if !super.canCreateNotification() { return false }
-        
+        let lastEvent = self.lastEvent! // last event is sure to exist here, checked in canCreateNotificaion
         if let status = lastEvent.payload["connection"]?["status"] as? String {
             if status == "accepted" {
                 connectionType = .ConnectionAccepted
@@ -51,7 +53,7 @@ class ZMLocalNotificationForUserConnectionEvent : ZMLocalNotificationForEvent {
     }
     
     override func configureAlertBody() -> String {
-        let name = sender?.name ?? lastEvent.payload["user"]?["name"] as? String
+        let name = sender?.name ?? lastEvent!.payload["user"]?["name"] as? String
         if connectionType == .ConnectionRequest {
             return ZMPushStringConnectionRequest.localizedStringWithUserName(name)
         }
@@ -64,8 +66,11 @@ class ZMLocalNotificationForUserConnectionEvent : ZMLocalNotificationForEvent {
 }
 
 class ZMLocalNotificationForNewUserEvent : ZMLocalNotificationForEvent {
+    
+    internal override var eventType: ZMLocalNotificationForEventType {return .NewConnection}
+    
     override func configureAlertBody() -> String {
-        let name = lastEvent.payload["user"]?["name"] as? String
+        let name = lastEvent!.payload["user"]?["name"] as? String
         return ZMPushStringNewConnection.localizedStringWithUserName(name)
     }
 }

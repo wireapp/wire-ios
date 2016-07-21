@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -31,12 +31,32 @@
 NSString * ZMLocalNotificationDispatcherUIApplicationClass = @"UIApplication";
 NSString * const ZMConversationCancelNotificationForIncomingCallNotificationName = @"ZMConversationCancelNotificationForIncomingCallNotification";
 
+NSString * _Null_unspecified const ZMShouldHideNotificationContentKey = @"ZMShouldHideNotificationContentKey";
+
+
+@interface UILocalNotification (Default)
+
++ (instancetype)defaultNotification;
+
+@end
+
+@implementation UILocalNotification (Default)
+
++ (instancetype)defaultNotification;
+{
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.alertBody = [ZMPushStringDefault localizedString];
+    return notification;
+}
+
+@end
+
 
 @interface ZMLocalNotificationDispatcher ()
 
 @property (nonatomic) NSManagedObjectContext *syncMOC;
-@property (nonatomic) NSArray *eventsNotifications;
-@property (nonatomic) NSMutableSet *failedMessageNotifications;
+@property (nonatomic) ZMLocalNotificationSet *failedMessageNotifications;
+@property (nonatomic) ZMLocalNotificationSet *eventsNotifications;
 @property (nonatomic) BOOL isTornDown;
 @property (nonatomic) ZMApplication *sharedApplication;
 
@@ -44,21 +64,32 @@ NSString * const ZMConversationCancelNotificationForIncomingCallNotificationName
 @end
 
 
+@interface NSManagedObjectContext (KeyValueStore) <ZMSynchonizableKeyValueStore>
+@end
 
 @implementation ZMLocalNotificationDispatcher
 
 ZM_EMPTY_ASSERTING_INIT();
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc sharedApplication:(ZMApplication *)sharedApplication
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
+                           sharedApplication:(ZMApplication *)sharedApplication
+{
+    return [self initWithManagedObjectContext:moc sharedApplication:sharedApplication eventNotificationSet:nil failedNotificationSet:nil];
+}
+
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
+                           sharedApplication:(ZMApplication *)sharedApplication
+                        eventNotificationSet:(ZMLocalNotificationSet *)eventNotificationSet
+                       failedNotificationSet:(ZMLocalNotificationSet *)failedNotificationSet
 {
     self = [super init];
     if (self) {
         self.syncMOC = moc;
-        self.eventsNotifications = [NSArray array];
-        self.failedMessageNotifications = [NSMutableSet set];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cancelNotificationsForNote:) name:ZMConversationDidChangeVisibleWindowNotification object:nil];
+        self.eventsNotifications = eventNotificationSet ?:  [[ZMLocalNotificationSet alloc] initWithApplication:sharedApplication archivingKey:@"ZMLocalNotificationDispatcherEventNotificationsKey" keyValueStore:moc];
+        self.failedMessageNotifications = failedNotificationSet ?: [[ZMLocalNotificationSet alloc] initWithApplication:sharedApplication archivingKey:@"ZMLocalNotificationDispatcherFailedNotificationsKey" keyValueStore:moc];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cancelNotificationForIncomingCallInConversation:) name:ZMConversationCancelNotificationForIncomingCallNotificationName object:nil];
-
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cancelNotificationForLastReadChangedNotification:) name:ZMConversationLastReadDidChangeNotificationName object:nil];
+        
         self.sharedApplication = sharedApplication;
     }
     return self;
@@ -76,59 +107,47 @@ ZM_EMPTY_ASSERTING_INIT();
     Require(self.isTornDown);
 }
 
+- (void)cancelNotificationForLastReadChangedNotification:(NSNotification *)note
+{
+    ZMConversation *conversation = note.object;
+    if (conversation == nil || ![conversation isKindOfClass:[ZMConversation class]]) {
+        return;
+    }
+    
+    BOOL isUIObject = conversation.managedObjectContext.zm_isUserInterfaceContext;
+    
+    [self.syncMOC performGroupedBlock:^{
+        if (isUIObject) {
+            // clear all notifications for this conversation
+            NSError *error;
+            ZMConversation *syncConversation = (id)[self.syncMOC existingObjectWithID:conversation.objectID error:&error];
+            if (error == nil && syncConversation != nil) {
+                [self cancelNotificationForConversation:syncConversation];
+            }
+        } else {
+            [self cancelNotificationForConversation:conversation];
+        }
+    }];
+}
 
 - (void)cancelNotificationForIncomingCallInConversation:(NSNotification *)notification
 {
     ZMConversation *conversation = (id)notification.object;
     if ([conversation isIgnoringCall]) {
-        [self cancelNotificationForConversation:conversation];
+        [self.eventsNotifications cancelNotificationForIncomingCall:conversation];
     }
-}
-- (void)cancelNotificationsForNote:(NSNotification *)note
-{
-    if ([self.sharedApplication applicationState] == UIApplicationStateBackground) {
-        return;
-    }
-    ZMConversation *uiConversation = note.object;
-    [self.syncMOC performGroupedBlock:^{
-        ZMConversation *syncConversation = (id)[self.syncMOC objectWithID:uiConversation.objectID];
-        [self cancelNotificationForConversation:syncConversation];
-    }];
 }
 
 - (void)cancelAllNotifications
 {
-    for (ZMLocalNotificationForEvent *note in self.eventsNotifications) {
-        for (UILocalNotification *notification in note.notifications) {
-            [self.sharedApplication cancelLocalNotification:notification];
-        }
-    }
-    for(ZMLocalNotificationForExpiredMessage *note in self.failedMessageNotifications) {
-        [self.sharedApplication cancelLocalNotification:note.uiNotification];
-    }
-    [self.failedMessageNotifications removeAllObjects];
-    
-    self.eventsNotifications = [NSArray array];
+    [self.eventsNotifications cancelAllNotifications];
+    [self.failedMessageNotifications cancelAllNotifications];
 }
 
 - (void)cancelNotificationForConversation:(ZMConversation *)conversation
 {
-    NSMutableArray *notifications = [NSMutableArray array];
-    
-    for (ZMLocalNotificationForEvent *note in self.eventsNotifications) {
-        if (note.conversation == conversation) {
-            for (UILocalNotification *notification in note.notifications) {
-                [self.sharedApplication cancelLocalNotification:notification];
-            }
-        }
-        else {
-            [notifications addObject:note];
-        }
-    }
-    
-    [self cancelAllMessageFailedNotificationsForConversations:conversation];
-    
-    self.eventsNotifications = notifications;
+    [self.eventsNotifications cancelNotifications:conversation];
+    [self.failedMessageNotifications cancelNotifications:conversation];
 }
 
 - (void)didReceiveUpdateEvents:(NSArray <ZMUpdateEvent *>*)events notificationID:(NSUUID *)notificationID
@@ -137,9 +156,9 @@ ZM_EMPTY_ASSERTING_INIT();
     for (ZMUpdateEvent *event in events) {
         
         ZMLocalNotificationForEvent *note = [self notificationForEvent:event];
-        if (note != nil && note.notifications.count > 0) {
+        if (note != nil && note.uiNotifications.count > 0) {
             UIApplication *sharedApplication = self.sharedApplication;
-            UILocalNotification *localNote = note.notifications.lastObject;
+            UILocalNotification *localNote = [[self.syncMOC persistentStoreMetadataForKey:ZMShouldHideNotificationContentKey] boolValue] ? [UILocalNotification defaultNotification] : note.uiNotifications.lastObject;
             ZMLogPushKit(@"Scheduling local notification <%@: %p> '%@'", localNote.class, localNote, localNote.alertBody);
             [sharedApplication scheduleLocalNotification:localNote];
             [APNSPerformanceTracker trackVOIPNotificationInNotificationDispatcher:notificationID analytics:self.syncMOC.analytics];
@@ -164,19 +183,6 @@ ZM_EMPTY_ASSERTING_INIT();
     [self.failedMessageNotifications addObject:note];
 }
 
-
-- (void)cancelAllMessageFailedNotificationsForConversations:(ZMConversation *)conversation;
-{
-    NSMutableSet *toRemove = [NSMutableSet set];
-    for(ZMLocalNotificationForExpiredMessage *note in self.failedMessageNotifications) {
-        if(note.conversation == conversation) {
-            [toRemove addObject:note];
-            [self.sharedApplication cancelLocalNotification:note.uiNotification];
-        }
-    }
-    
-    [self.failedMessageNotifications minusSet:toRemove];
-}
 
 - (ZMLocalNotificationForEvent *)notificationForEvent:(ZMUpdateEvent *)event
 {
@@ -218,44 +224,22 @@ ZM_EMPTY_ASSERTING_INIT();
     }
 }
 
-
 - (ZMLocalNotificationForEvent *)localNotificationForEvent:(ZMUpdateEvent *)event
-{
-    __block ZMLocalNotificationForEvent *newNote;
-    __block NSUInteger convIndex;
-    __block BOOL foundIdenticalNotification = NO;
-    
-    [self.eventsNotifications enumerateObjectsUsingBlock:^(ZMLocalNotificationForEvent *note, NSUInteger idx, BOOL *stop) {
-        if ([note containsIdenticalEvent:event]) {
-            foundIdenticalNotification = YES;
-            *stop = YES;
-            return;
-        }
-        newNote = [note copyByAddingEvent:event];
-        if (newNote != nil) {
-            convIndex = idx;
-            *stop = YES;
-        }
-    }];
-    
-    if (foundIdenticalNotification) {
-        return nil;
+{    
+    ZMLocalNotificationForEvent *newNote = [self.eventsNotifications copyExistingNotification:event];
+    if (newNote != nil) {
+        return newNote;
     }
  
-    NSMutableArray *notifications = [NSMutableArray arrayWithArray:self.eventsNotifications];
-    if (newNote == nil) {
-        newNote = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:self.sharedApplication];
-        if(newNote == nil) {
-            return nil;
-        }
-        [notifications addObject:newNote];
+    newNote = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:self.sharedApplication];
+    if (newNote != nil) {
+        [self.eventsNotifications addObject:newNote];
     }
-    else {
-        notifications[convIndex] = newNote;
-    }
-    self.eventsNotifications = [NSArray arrayWithArray:notifications];
-
     return newNote;
 }
 
+
 @end
+
+
+

@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -27,6 +27,9 @@
 #import "ZMLocalNotificationLocalization.h"
 #import "UILocalNotification+StringProcessing.h"
 #import "ZMUserSession+UserNotificationCategories.h"
+#import "zmessaging/zmessaging-Swift.h"
+#import "UILocalNotification+UserInfo.h"
+
 
 NSString * const ZMLocalNotificationConversationObjectURLKey = @"conversationObjectURLString";
 NSString * const ZMLocalNotificationUserInfoSenderKey = @"senderUUID";
@@ -34,6 +37,8 @@ NSString * const ZMLocalNotificationUserInfoNonceKey = @"nonce";
 
 static NSString * const FailedMessageInGroupConversationText = @"failed.message.group";
 static NSString * const FailedMessageInOneOnOneConversationText = @"failed.message.oneonone";
+
+NSString * const ZMPushStringDefault = @"default";
 
 
 // These are the "base" keys for messages. We append to these for the specific case.
@@ -102,40 +107,19 @@ NSString *const ZMPushStringNewConnection = @"new_user";
     return self;
 }
 
-+ (ZMConversation *)conversationForLocalNotification:(UILocalNotification *)notification inManagedObjectContext:(NSManagedObjectContext *)MOC;
+- (NSUUID *)conversationID
 {
-    NSString *urlString = [notification.userInfo valueForKey:ZMLocalNotificationConversationObjectURLKey];
-    NSURL *URL = [NSURL URLWithString:urlString];
-    if (URL == nil) {
-        return nil;
-    }
-    
-    NSManagedObjectID *conversationID = [MOC.persistentStoreCoordinator managedObjectIDForURIRepresentation:URL];
-    if (conversationID == nil) {
-        return nil;
-    }
-    
-    return (id)[MOC objectWithID:conversationID];
+    return  self.conversation.remoteIdentifier;
 }
 
-
-+ (ZMMessage *)messageForLocalNotification:(UILocalNotification *)notification conversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)context
+- (NSArray<UILocalNotification *> *)uiNotifications
 {
-    if (conversation == nil) {
-        return nil;
-    }
-    NSUUID *nonce = [NSUUID uuidWithTransportString:notification.userInfo[ZMLocalNotificationUserInfoNonceKey]];
-    if (nonce == nil) {
-        return nil;
-    }
-    ZMMessage *message = [ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:context];
-    return message;
+    return  @[];
 }
 
-+ (NSUUID *)senderRemoteIdentifierForLocalNotification:(UILocalNotification *)notification
+- (ZMLocalNotificationForEventType)eventType
 {
-    NSString *senderUUIDString = notification.userInfo[ZMLocalNotificationUserInfoSenderKey];
-    return [NSUUID uuidWithTransportString:senderUUIDString];
+    return ZMLocalNotificationForEventTypeInvalid;
 }
 
 @end
@@ -144,46 +128,50 @@ NSString *const ZMPushStringNewConnection = @"new_user";
 
 #pragma mark - ZMLocalNotificationForExpiredMessage
 
+
 @implementation ZMLocalNotificationForExpiredMessage
+
+
 
 - (instancetype)initWithExpiredMessage:(ZMMessage *)message
 {
     self = [super initWithType:ZMLocalNotificationTypeExpiredMessage];
     if(self) {
         _message = message;
-        _conversation = message.conversation;
-        _uiNotification = [[UILocalNotification alloc] init];
-        [self createBodyForConversation:message.conversation];
+        self.conversation = message.conversation;
+        UILocalNotification *note = [[UILocalNotification alloc] init];
+        [self createBodyForConversation:message.conversation notification:note];
+        _uiNotification = note;
     }
     return self;
+}
+
+- (NSArray<UILocalNotification *> *)uiNotifications
+{
+    return @[self.uiNotification];
 }
 
 - (instancetype)initWithConversation:(ZMConversation *)conversation
 {
-    self = [super init];
+    self = [super initWithType:ZMLocalNotificationTypeExpiredMessage];
     if(self) {
-        _conversation = conversation;
-        _uiNotification = [[UILocalNotification alloc] init];
-        [self createBodyForConversation:conversation];
+        self.conversation = conversation;
+        UILocalNotification *note = [[UILocalNotification alloc] init];
+        [self createBodyForConversation:conversation notification:note];
+        _uiNotification = note;
     }
     return self;
 }
 
-- (void)createBodyForConversation:(ZMConversation *)conversation
+- (void)createBodyForConversation:(ZMConversation *)conversation notification:(UILocalNotification *)notification
 {
     if(self.message.conversation.conversationType == ZMConversationTypeGroup) {
-        self.uiNotification.alertBody = [FailedMessageInGroupConversationText localizedStringWithConversation:conversation count:nil];
+        notification.alertBody = [FailedMessageInGroupConversationText localizedStringWithConversation:conversation count:nil];
     }
     else {
-        self.uiNotification.alertBody = [FailedMessageInOneOnOneConversationText localizedStringWithUser:conversation.connectedUser count:nil];
+        notification.alertBody = [FailedMessageInOneOnOneConversationText localizedStringWithUser:conversation.connectedUser count:nil];
     }
-    NSString *conversationID = [conversation objectIDURLString];
-    if(conversationID != nil) {
-        self.uiNotification.userInfo = @{ ZMLocalNotificationConversationObjectURLKey : conversationID };
-    }
-    else {
-        ZMLogError(@"Conversation not set on message?");
-    }
+    [notification setupUserInfo:conversation forEvent:nil];
 }
 
 @end

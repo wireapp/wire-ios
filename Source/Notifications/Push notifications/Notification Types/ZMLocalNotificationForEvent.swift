@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -25,40 +25,22 @@ let ZMLocalNotificationPingDefaultSoundName = "ping_from_them.caf"
 let ZMLocalNotificationNewMessageDefaultSoundName = "new_message_apns.caf"
 
 
+func ZMCustomSoundName(key: String) -> String? {
+    guard let soundName = NSUserDefaults.standardUserDefaults().objectForKey(key) as? String else { return nil }
+    return ZMSound(rawValue: soundName)?.filename()
+}
+
 func ZMLocalNotificationRingingSoundName() -> String {
-    if let soundName = NSUserDefaults.standardUserDefaults().objectForKey("ZMCallSoundName") as? String,
-        let sound = ZMSound(rawValue: soundName) {
-        return sound.filename()
-    }
-    else {
-        return ZMLocalNotificationRingingDefaultSoundName
-    }
+    return ZMCustomSoundName("ZMCallSoundName") ??  ZMLocalNotificationRingingDefaultSoundName
 }
 
 func ZMLocalNotificationPingSoundName() -> String {
-    if let soundName = NSUserDefaults.standardUserDefaults().objectForKey("ZMPingSoundName") as? String,
-        let sound = ZMSound(rawValue: soundName) {
-        return sound.filename()
-    }
-    else {
-        return ZMLocalNotificationPingDefaultSoundName
-    }
+    return ZMCustomSoundName("ZMPingSoundName") ?? ZMLocalNotificationPingDefaultSoundName
 }
 
 func ZMLocalNotificationNewMessageSoundName() -> String {
-    if let soundName = NSUserDefaults.standardUserDefaults().objectForKey("ZMMessageSoundName") as? String,
-        let sound = ZMSound(rawValue: soundName) {
-        return sound.filename()
-    }
-    else {
-        return ZMLocalNotificationNewMessageDefaultSoundName
-    }
+    return ZMCustomSoundName("ZMMessageSoundName") ?? ZMLocalNotificationNewMessageDefaultSoundName
 }
-
-let ZMConversationCategory = "conversationCategory"
-let ZMCallCategory = "callCategory"
-let ZMConnectCategory = "connectCategory"
-
 
 public extension ZMLocalNotificationForEvent {
     
@@ -106,22 +88,30 @@ extension UIApplication : NotificationScheduler {
 
 public class ZMLocalNotificationForEvent : ZMLocalNotification {
     
-    var lastEvent : ZMUpdateEvent {
-        return events.last!
+    public let sender : ZMUser?
+
+    public let notificationType : ZMLocalNotificationType = ZMLocalNotificationType.Event
+    internal var notifications : [UILocalNotification] = []
+    
+    public override var uiNotifications: [UILocalNotification] {
+        return notifications
+    }
+    
+    let application : NotificationScheduler
+    let managedObjectContext : NSManagedObjectContext
+    
+    var events : [ZMUpdateEvent] = []
+
+    var lastEvent : ZMUpdateEvent? {
+        return events.last
     }
     
     var eventData : [String : AnyObject] {
-        return (lastEvent.payload as? [String : AnyObject])!["data"] as! [String : AnyObject]
+        if let lastEvent = lastEvent {
+            return (lastEvent.payload as? [String : AnyObject])!["data"] as! [String : AnyObject]
+        }
+        return [:]
     }
-
-    public let notificationType : ZMLocalNotificationType = ZMLocalNotificationType.Event
-    public let sender : ZMUser?
-    let application : NotificationScheduler
-    let managedObjectContext : NSManagedObjectContext
-    public let conversation : ZMConversation?
-
-    var events : [ZMUpdateEvent] = []
-    public var notifications : [UILocalNotification] = []
     
     public convenience init?(event: ZMUpdateEvent, managedObjectContext: NSManagedObjectContext, application: NotificationScheduler?) {
        let conversation = ZMLocalNotificationForEvent.fetchConversation(event, managedObjectContext: managedObjectContext)
@@ -130,15 +120,16 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
     
     required public init?(events: [ZMUpdateEvent], conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext, application: NotificationScheduler?, copyFromNote: ZMLocalNotificationForEvent? = nil) {
         self.application = application ?? UIApplication.sharedApplication()
-        self.conversation = conversation
         self.events = events
-        if let senderUUID = events.last!.senderUUID() {
+        if let senderUUID = events.last?.senderUUID() {
             self.sender = ZMUser(remoteID: senderUUID, createIfNeeded: false, inContext: managedObjectContext)
         } else {
             self.sender = nil
         }
         self.managedObjectContext = managedObjectContext
         super.init()
+        
+        self.conversation = conversation
         
         if let note = copyFromNote {
             prepareForCopy(note)
@@ -176,25 +167,8 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
         notification.alertBody = configureAlertBody().stringByEscapingPercentageSymbols()
         notification.soundName = soundName
         notification.category = category
-        notification.userInfo = userInfo
+        notification.setupUserInfo(conversation, forEvent: lastEvent)
         return notification
-    }
-    
-    var userInfo : [String: String] {
-        var info : [String: String] = [:]
-        if let convIDString = conversation?.objectIDURLString() {
-            info[ZMLocalNotificationConversationObjectURLKey] = convIDString
-        }
-        if let senderUUIDString = lastEvent.senderUUID()?.transportString() {
-            info[ZMLocalNotificationUserInfoSenderKey] = senderUUIDString
-        }
-        if let messageNonce = lastEvent.messageNonce()?.transportString() {
-            info[ZMLocalNotificationUserInfoNonceKey] = messageNonce
-        }
-        if let eventID = lastEvent.eventID()?.transportString() {
-            info["eventID"] = eventID
-        }
-        return info
     }
     
     var allSenderUUIDS : Set<NSUUID> {
@@ -219,7 +193,7 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
     }
     
     public func containsIdenticalEvent(event: ZMUpdateEvent) -> Bool {
-        guard event.hasEncryptedAndUnencryptedVersion() && (copiedEventTypes.contains(event.type) || lastEvent.type == event.type),
+        guard event.hasEncryptedAndUnencryptedVersion() && (copiedEventTypes.contains(event.type) || lastEvent?.type == event.type),
             let conversation = conversation where conversation.remoteIdentifier == event.conversationUUID()
             else { return false }
         
@@ -253,9 +227,10 @@ public class ZMLocalNotificationForEvent : ZMLocalNotification {
     func prepareForCopy(note: ZMLocalNotificationForEvent) { }
     
     func canCreateNotification() -> Bool {
-        if ((conversation == nil) && requiresConversation) || (senderIsSelfUser(lastEvent) && lastEvent.type != .CallState ){
-            return false
-        }
+        guard (conversation != nil || !requiresConversation),
+              let lastEvent = lastEvent where (!senderIsSelfUser(lastEvent) || lastEvent.type == .CallState)
+        else { return false }
+
         if let conversation = conversation where conversation.isSilenced && !ignoresSilencedState {
             return false
         }

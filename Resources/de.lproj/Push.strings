@@ -13,9 +13,11 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+
+"push.notification.default" = "Neue Nachricht";
 
 "push.notification.add.message.group" = "%1$@ in %2$@: %3$@";
 "push.notification.add.message.group.nousername" = "Neue Nachricht in %1$@: %2$@";
@@ -150,7 +152,10 @@
 "push.notification.action.message.open" = "Öffnen";
 "push.notification.action.message.reply" = "Antworten";
 "push.notification.action.message.reply.button.title" = "Senden";
+"push.notification.action.conversation.mute" = "Stumm";
 
 "push.notification.action.call.accept" = "Annehmen";
 "push.notification.action.call.ignore" = "Ablehnen";
+"push.notification.action.call.message" = "Nachricht";
+"push.notification.action.call.callback" = "Rückruf";
 "push.notification.action.connection.accept" = "Annehmen";

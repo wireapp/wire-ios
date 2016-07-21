@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -127,6 +127,7 @@ static NSString * const PushNotificationTypeNotice = @"notice";
     [self.syncStrategy consumeUpdateEvents:nonFlowEvents];
     [self.syncMOC saveOrRollback];
     [self.syncStrategy updateBadgeCount];
+    [ZMOperationLoop notifyNewRequestsAvailable:self];
 }
 
 - (EventsWithIdentifier *)eventsFromPushChannelData:(NSDictionary *)userInfo

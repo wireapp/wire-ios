@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -38,6 +38,7 @@ static const char *ZMLogTag = "Push";
 
 - (void)ignoreCallForNotification:(UILocalNotification *)notification withCompletionHandler:(void (^)())completionHandler;
 - (void)replyToNotification:(UILocalNotification *)notification withReply:(NSString*)reply completionHandler:(void (^)())completionHandler;
+- (void)muteConversationForNotification:(UILocalNotification *)notification withCompletionHandler:(void (^)())completionHandler;
 
 @end
 
@@ -50,6 +51,10 @@ static const char *ZMLogTag = "Push";
 {
     BOOL isNotInBackground = self.application.applicationState != UIApplicationStateBackground;
     BOOL notAuthenticated = self.authenticationStatus.currentPhase != ZMAuthenticationPhaseAuthenticated;
+
+    if (source == ZMPushNotficationTypeVoIP) {
+        [APNSPerformanceTracker trackAPNSInUserSession:self.syncManagedObjectContext.analytics authenticated:!notAuthenticated applicationState:self.application.applicationState];
+    }
     
     if (notAuthenticated || isNotInBackground) {
         if (handler != nil) {
@@ -59,10 +64,6 @@ static const char *ZMLogTag = "Push";
             handler(ZMPushPayloadResultSuccess);
         }
         return;
-    }
-    
-    if (source == ZMPushNotficationTypeVoIP) {
-        [APNSPerformanceTracker trackAPNSInUserSession:self.syncManagedObjectContext.analytics authenticated:!notAuthenticated];
     }
 
     [self.operationLoop saveEventsAndSendNotificationForPayload:payload fetchCompletionHandler:handler source:source];
@@ -131,7 +132,7 @@ static const char *ZMLogTag = "Push";
 - (void)setupPushNotificationsForApplication:(UIApplication *)application
 {
     [application registerForRemoteNotifications];
-    NSSet *categories = [NSSet setWithArray:@[self.replyCategory, self.callCategory, self.connectCategory]];
+    NSSet *categories = [NSSet setWithArray:@[self.replyCategory, self.missedCallCategory, self.incomingCallCategory, self.connectCategory]];
     [application registerUserNotificationSettings:[UIUserNotificationSettings  settingsForTypes:(UIUserNotificationTypeSound |
                                                                                                  UIUserNotificationTypeAlert |
                                                                                                  UIUserNotificationTypeBadge)
@@ -166,20 +167,9 @@ static const char *ZMLogTag = "Push";
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 {
-    if (self.application.applicationState == UIApplicationStateInactive)
-    {
-        self.pendingLocalNotification = [[ZMStoredLocalNotification alloc] initWithPushPayload:userInfo
-                                                                          managedObjectContext:self.managedObjectContext];
-        if (completionHandler != nil) {
-            completionHandler(UIBackgroundFetchResultNewData);
-        }
-    }
-    else
-    {
-        [self.applicationRemoteNotification application:application
-                           didReceiveRemoteNotification:userInfo
-                                 fetchCompletionHandler:completionHandler];
-    }
+    NOT_USED(application);
+    NOT_USED(userInfo);
+    NOT_USED(completionHandler);
 }
 
 
@@ -197,6 +187,11 @@ static const char *ZMLogTag = "Push";
 {
     if ([identifier isEqualToString:ZMCallIgnoreAction]){
         [self ignoreCallForNotification:notification withCompletionHandler:completionHandler];
+        return;
+    }
+    if ([identifier isEqualToString:ZMConversationMuteAction]) {
+        [self muteConversationForNotification:notification withCompletionHandler:completionHandler];
+        return;
     }
     
     if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
@@ -290,7 +285,7 @@ static const char *ZMLogTag = "Push";
         if ([note.category isEqualToString:ZMConnectCategory]) {
             [self handleConnectionRequestCategoryNotification:note];
         }
-        else if ([note.category isEqualToString:ZMCallCategory]){
+        else if ([note.category isEqualToString:ZMIncomingCallCategory] || [note.category isEqualToString:ZMMissedCallCategory]){
             [self handleCallCategoryNotification:note];
         }
         else {
@@ -322,7 +317,11 @@ static const char *ZMLogTag = "Push";
 - (void)handleCallCategoryNotification:(ZMStoredLocalNotification *)note
 {
     if (note.actionIdentifier == nil || [note.actionIdentifier isEqualToString:ZMCallAcceptAction]) {
-        if ([note.conversation firstOtherConversationWithActiveCall] == nil && note.conversation.callParticipants.count > 0) {
+        BOOL callIsStillOngoing = (note.conversation.callParticipants.count > 0);
+        BOOL userWantsToCallBack = ([note.category isEqualToString:ZMMissedCallCategory]);
+        if ([note.conversation firstOtherConversationWithActiveCall] == nil &&
+            (callIsStillOngoing || userWantsToCallBack))
+        {
             [note.conversation.voiceChannel join];
             [note.conversation.managedObjectContext saveOrRollback];
         }
@@ -343,7 +342,6 @@ static const char *ZMLogTag = "Push";
     else {
         [strongDelegate showMessage:message inConversation:conversation];
     }
-    
 }
 
 // Background Actions
@@ -351,16 +349,31 @@ static const char *ZMLogTag = "Push";
 - (void)ignoreCallForNotification:(UILocalNotification *)notification withCompletionHandler:(void (^)())completionHandler;
 {
     ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"IgnoreCall Action Handler"];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:notification inManagedObjectContext:self.managedObjectContext];
+    ZMConversation *conversation = [notification conversationInManagedObjectContext:self.managedObjectContext];
     [self.managedObjectContext performBlock:^{
         conversation.isIgnoringCall = YES;
         [self.managedObjectContext saveOrRollback];
         
+        [activity endActivity];
+        if (completionHandler != nil) {
+            completionHandler();
+        }
     }];
-    [activity endActivity];
-    if (completionHandler != nil) {
-        completionHandler();
-    }
+}
+
+- (void)muteConversationForNotification:(UILocalNotification *)notification withCompletionHandler:(void (^)())completionHandler;
+{
+    ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"Mute Conversation Action Handler"];
+    ZMConversation *conversation = [notification conversationInManagedObjectContext:self.managedObjectContext];
+    [self.managedObjectContext performBlock:^{
+        conversation.isSilenced = YES;
+        [self.managedObjectContext saveOrRollback];
+        
+        [activity endActivity];
+        if (completionHandler != nil) {
+            completionHandler();
+        }
+    }];
 }
 
 
@@ -373,7 +386,7 @@ static const char *ZMLogTag = "Push";
         return;
     }
     ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"DirectReply Action Handler"];
-    ZMConversation *conversation = [ZMLocalNotification conversationForLocalNotification:notification inManagedObjectContext:self.managedObjectContext];
+    ZMConversation *conversation = [notification conversationInManagedObjectContext:self.managedObjectContext];
     if (conversation != nil) {
         ZM_WEAK(self);
         [self.operationLoop startBackgroundTaskWithCompletionHandler:^(ZMBackgroundTaskResult result) {
