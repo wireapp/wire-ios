@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -87,6 +87,11 @@ FOUNDATION_EXPORT const NSUInteger CBMaxPreKeyID;
 - (nullable NSArray *)generatePreKeys:(NSRange)range error:(NSError *__nullable * __nullable)error;
 
 - (void)closeSession:(nonnull CBSession *)session;
+
+/**
+ *  Remove session from cache, forcing it to be reloaded from disk. Allow us to roll back in case of encryption error.
+ */
+- (void)rollbackSession:(CBSession *_Nonnull)session;
 
 /// Close all open sessions
 /// @throws CBCodeIllegalStateException in case @c CBCryptoBox is closed already

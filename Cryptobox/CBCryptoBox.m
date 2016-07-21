@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -232,6 +232,9 @@ const NSUInteger CBMaxPreKeyID = 0xFFFE;
     dispatch_sync(self.cryptoBoxQueue, ^{
         for (CBSession *session in self.sessionsRequiringSave) {
             [session save:NULL];
+            
+            // we just persisted the session, we remove it from memory to reload a clean version from disk
+            [self.sessions removeObjectForKey:session.sessionId];
         }
         [self.sessionsRequiringSave removeAllObjects];
     });
@@ -340,6 +343,13 @@ const NSUInteger CBMaxPreKeyID = 0xFFFE;
         closed = [self isClosedInternally];
     });
     return closed;
+}
+
+- (void)rollbackSession:(CBSession *)session;
+{
+    dispatch_sync(self.cryptoBoxQueue, ^{
+        [self removeSession:session];
+    });
 }
 
 #pragma mark - Internal, not dispatch_sync protected methods

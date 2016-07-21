@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
 
@@ -231,5 +231,71 @@
     XCTAssertNotNil(anotherNewData);
     XCTAssertEqualObjects(plainData2, anotherNewData);
 }
+
+- (void)testThatASessionIsProperlyRollbacked;
+{
+    self.aliceBox = [self createBoxAndCheckAsserts:@"alice"];
+    self.bobBox = [self createBoxAndCheckAsserts:@"bob"];
+    
+    CBPreKey *bobPreKey = [self generatePreKeyAndCheckAssertsWithLocation:1 box:self.bobBox];
+    
+    //Alice side
+    NSError *error = nil;
+    CBSession *aliceToBobSession = [self.aliceBox sessionWithId:@"sessionWithBob" fromPreKey:bobPreKey error:&error];
+    XCTAssertNil(error, @"Error is not nil");
+    XCTAssertNotNil(aliceToBobSession, @"Session creation from prekey failed");
+    
+    [aliceToBobSession save:&error];
+    XCTAssertNil(error, @"Error is not nil");
+    
+    // Encrypt a message from alice to bob
+    NSString *const plain = @"Hello Bob!";
+    NSData *plainData = [plain dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *cipherData = [aliceToBobSession encrypt:plainData error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(cipherData);
+    XCTAssertNotEqual(plainData, cipherData);
+    
+    //Bob's side
+    CBSessionMessage *bobToAliceSessionMessage = [self.bobBox sessionMessageWithId:@"sessionToAlice" fromMessage:cipherData error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(bobToAliceSessionMessage);
+    XCTAssertNotNil(bobToAliceSessionMessage.session);
+    XCTAssertNotNil(bobToAliceSessionMessage.data);
+    
+    CBSession *bobToAliceSession = bobToAliceSessionMessage.session;
+    [bobToAliceSession save:&error];
+    
+    //alice again
+    NSString *const plain2 = @"Answer me, Bob!";
+    NSData *plainData2 = [plain2 dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *cipherData2 = [aliceToBobSession encrypt:plainData2 error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(cipherData2);
+    XCTAssertNotEqual(plainData2, cipherData2);
+    
+    //Bob's return
+    NSData *newMessage = [bobToAliceSession decrypt:cipherData2 error:&error];
+    
+    XCTAssertNil(error);
+    XCTAssertNotNil(newMessage);
+    XCTAssertEqualObjects(plainData2, newMessage);
+
+    [self.bobBox rollbackSession:bobToAliceSession];
+    
+    [self.bobBox close];
+    self.bobBox = [self createBoxAndCheckAsserts:@"bob"];
+    
+    CBSession *session = [self.bobBox sessionById:@"sessionToAlice" error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(session);
+    
+    NSData *anotherNewData = [session decrypt:cipherData2 error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(anotherNewData);
+    XCTAssertEqualObjects(plainData2, anotherNewData);
+
+}
+
 
 @end
