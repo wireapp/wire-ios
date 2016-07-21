@@ -28,6 +28,7 @@
 + (NSString *)stringForMethod:(ZMTransportRequestMethod)method;
 + (ZMTransportRequestMethod)methodFromString:(NSString *)string;
 
+- (void)setAdditionalHeaderFieldsOnHTTPRequest:(NSMutableURLRequest *)URLRequest;
 - (void)setAcceptedResponseMediaTypeOnHTTPRequest:(NSMutableURLRequest *)URLRequest;
 - (void)setBodyDataAndMediaTypeOnHTTPRequest:(NSMutableURLRequest *)URLRequest;
 - (void)setContentDispositionOnHTTPRequest:(NSMutableURLRequest *)URLRequest;

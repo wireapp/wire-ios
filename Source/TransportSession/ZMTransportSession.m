@@ -424,6 +424,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     [URLRequest setHTTPMethod:request.methodAsString];
     [request setAcceptedResponseMediaTypeOnHTTPRequest:URLRequest];
     [request setBodyDataAndMediaTypeOnHTTPRequest:URLRequest];
+    [request setAdditionalHeaderFieldsOnHTTPRequest:URLRequest];
     [request setContentDispositionOnHTTPRequest:URLRequest];
     [request setTimeoutIntervalOnRequestIfNeeded:URLRequest
                        applicationIsBackgrounded:self.applicationIsBackgrounded

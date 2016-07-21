@@ -17,15 +17,8 @@
 // 
 
 
-#import "ZMURLSession.h"
-@class ZMTemporaryFileListForBackgroundRequests;
+@interface ZMTransportRequest (AssetGet)
 
-
-@interface ZMURLSession (Tests)
-
-@property (nonatomic) NSURLSession *backingSession;
-@property (nonatomic) ZMTemporaryFileListForBackgroundRequests *temporaryFiles;
-
-- (void)setRequest:(ZMTransportRequest *)request forTask:(NSURLSessionTask *)task;
++ (__nullable instancetype)assetGetRequestFromPath:(NSString * __nonnull)path assetToken:(NSString *__nullable)token;
 
 @end

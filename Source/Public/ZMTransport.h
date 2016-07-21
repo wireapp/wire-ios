@@ -34,6 +34,7 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <ZMTransport/ZMTransportCodec.h>
 #import <ZMTransport/ZMTransportData.h>
 #import <ZMTransport/ZMTransportRequest.h>
+#import <ZMTransport/ZMTransportRequest+AssetGet.h>
 #import <ZMTransport/ZMTransportRequestScheduler.h>
 #import <ZMTransport/ZMTransportResponse.h>
 #import <ZMTransport/ZMTransportSession.h>

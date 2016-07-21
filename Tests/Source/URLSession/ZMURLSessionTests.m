@@ -346,6 +346,39 @@ willPerformHTTPRedirection:response
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0]);
 }
 
+- (void)testThatItDoesNotFollowRedirectsIfSpecified
+{
+    // given
+    NSString *initialURL = @"http://example.com/initial";
+    NSString *finalURL = @"http://example.com/final";
+
+    NSMutableURLRequest *originalRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:initialURL]];
+    NSURLSessionDataTask *originalTask = [self.sut.backingSession dataTaskWithRequest:originalRequest];
+    
+    NSURLRequest *newRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURL]];
+    
+    XCTestExpectation *completionHandlerCalled = [self expectationWithDescription:@"Completion handler invoked"];
+    
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:302 HTTPVersion:@"1.1" headerFields:@{}];
+    
+    // when
+    ZMTransportRequest *fakeRequest = [ZMTransportRequest requestGetFromPath:@"foo"];
+    fakeRequest.doesNotFollowRedirects = YES;
+    [self.sut setRequest:fakeRequest forTask:originalTask];
+    
+    [self.sut URLSession:self.sut.backingSession
+                    task:originalTask
+willPerformHTTPRedirection:response
+              newRequest:newRequest
+       completionHandler:^(NSURLRequest * _Nullable req) {
+           XCTAssertNil(req);
+           [completionHandlerCalled fulfill];
+       }];
+    
+    // then
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0]);
+}
+
 - (void)testThatItCallsTheDelegateWhenTheBackgroundURLSessionFinished
 {
     // when

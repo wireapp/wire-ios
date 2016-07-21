@@ -116,6 +116,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @property (nonatomic, readonly) NSDate *expirationDate;
 @property (nonatomic, readonly) BOOL shouldCompress;
 @property (nonatomic) BOOL shouldFailInsteadOfRetry;
+@property (nonatomic) BOOL doesNotFollowRedirects;
 
 /// If true, the request should only be sent through background session
 @property (nonatomic, readonly) BOOL shouldUseOnlyBackgroundSession;
@@ -130,7 +131,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 - (void)completeWithResponse:(ZMTransportResponse *)response;
 - (void)updateProgress:(float)progress;
 - (BOOL)isEqualToRequest:(ZMTransportRequest *)request;
-
+- (void)addValue:(NSString *)value forAdditionalHeaderField:(NSString *)headerField;
 - (void)expireAfterInterval:(NSTimeInterval)interval;
 - (void)expireAtDate:(NSDate *)date;
 
@@ -145,7 +146,6 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @property (nonatomic, readonly) ZMTransportAccept acceptedResponseMediaTypes; ///< C.f. RFC 7231 section 5.3.2 <http://tools.ietf.org/html/rfc7231#section-5.3.2>
 
 @end
-
 
 
 @interface ZMTransportRequest (ImageUpload)
@@ -180,4 +180,3 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 - (void)markStartOfUploadTimestamp;
 
 @end
-
