@@ -1,0 +1,42 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+
+#import "UIViewController+WR_Invite.h"
+#import "UIActivityViewController+Invite.h"
+#import "ActionSheetController+Invite.h"
+
+@implementation UIViewController (WR_Invite)
+
+- (void)wr_presentInviteActivityViewControllerWithSourceView:(UIView *)sourceView logicalContext:(GenericInviteContext)logicalContext
+{
+    UIActivityViewController *activity = [UIActivityViewController shareInviteActivityViewControllerWithCompletion:^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        if (completed && ! [activityType isEqualToString:UIActivityTypeCopyToPasteboard]) {
+            [self presentViewController:[ActionSheetController sharedInvitesActionSheet] animated:YES completion:nil];
+        }
+    } logicalContext:logicalContext];
+    
+    activity.modalPresentationStyle = UIModalPresentationPopover;
+    UIPopoverPresentationController *popoverPresentation = activity.popoverPresentationController;
+    popoverPresentation.sourceView = sourceView;
+    popoverPresentation.sourceRect = sourceView.bounds;
+    
+    [self presentViewController:activity animated:YES completion:nil];
+}
+
+@end

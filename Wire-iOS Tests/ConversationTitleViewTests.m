@@ -1,0 +1,59 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+
+#import "ZMSnapshotTestCase.h"
+#import "Wire_iOS_Tests-Swift.h"
+#import "Wire-Swift.h"
+#import "MockConversation.h"
+
+@interface ConversationTitleViewTests : ZMSnapshotTestCase
+@property (nonatomic) ConversationTitleView *sut;
+@end
+
+@implementation ConversationTitleViewTests
+
+- (void)setUp {
+    [super setUp];
+    MockConversation *conversation = [MockConversation new];
+    conversation.displayName = @"Alan Turing";
+    self.sut = [[ConversationTitleView alloc] initWithConversation:(ZMConversation *)conversation];
+    self.sut.backgroundColor = UIColor.whiteColor;
+}
+
+- (void)testThatItRendersTheConversationDisplayNameCorrectly {
+    ZMVerifyView(self.sut);
+}
+
+- (void)testThatItExecutesTheTapHandlerOnTitleTap {
+    // given
+    __block NSUInteger callCount;
+    self.sut.tapHandler = ^(UIButton *button) {
+        callCount++;
+    };
+    
+    XCTAssertEqual(callCount, 0lu);
+    
+    // when
+    [self.sut.titleButton sendActionsForControlEvents:UIControlEventTouchUpInside];
+    
+    // then
+    XCTAssertEqual(callCount, 1lu);
+}
+
+@end

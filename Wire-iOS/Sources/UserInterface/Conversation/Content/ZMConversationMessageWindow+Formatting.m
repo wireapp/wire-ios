@@ -1,0 +1,163 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+
+#import "ZMConversationMessageWindow+Formatting.h"
+#import "Message.h"
+#import "Message+Formatting.h"
+#import "ConversationCell.h"
+
+@implementation ZMConversationMessageWindow (Formatting)
+
+- (ConversationCellLayoutProperties *)layoutPropertiesForMessage:(id<ZMConversationMessage>)message lastUnreadMessage:(ZMMessage *)lastUnreadMessage
+{
+    ConversationCellLayoutProperties *layoutProperties = [[ConversationCellLayoutProperties alloc] init];
+    
+    if (! [Message isSystemMessage:message]) {
+        layoutProperties.showSender = ! [self isPreviousSenderSameForMessage:message];
+    }
+    
+    layoutProperties.showUnreadMarker = lastUnreadMessage != nil && [message isEqual:lastUnreadMessage];
+    layoutProperties.showBurstTimestamp = [self shouldShowBurstSeparatorForMessage:message] || layoutProperties.showUnreadMarker;
+    layoutProperties.topPadding = [self topPaddingForMessage:message showingSender:layoutProperties.showSender showingTimestamp:layoutProperties.showBurstTimestamp];
+    
+    if ([Message isTextMessage:message]) {
+        layoutProperties.linkAttachments = [Message linkAttachments:message.textMessageData];
+    }
+    
+    return layoutProperties;
+}
+
+- (BOOL)isPreviousSenderSameForMessage:(id<ZMConversationMessage>)message
+{
+    if (! [Message isNormalMessage:message]) {
+        return NO;
+    }
+    
+    if ([Message isKnockMessage:message]) {
+        return NO;
+    }
+    
+    NSUInteger messageIndex = [self.messages indexOfObject:message];
+    
+    if (messageIndex == NSNotFound) {
+        return NO;
+    }
+    
+    id<ZMConversationMessage> previousMessage = [self messagePreviousToMessage:message];
+    
+    if (previousMessage && previousMessage.sender == message.sender && [Message isNormalMessage:previousMessage]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (BOOL)shouldShowBurstSeparatorForMessage:(id<ZMConversationMessage>)message
+{
+    if ([Message isSystemMessage:message]) {
+        id<ZMSystemMessageData> systemMessage = message.systemMessageData;
+        
+        return  systemMessage.systemMessageType != ZMSystemMessageTypeNewClient &&
+                systemMessage.systemMessageType != ZMSystemMessageTypeConversationIsSecure &&
+                systemMessage.systemMessageType != ZMSystemMessageTypeReactivatedDevice &&
+                systemMessage.systemMessageType != ZMSystemMessageTypeNewConversation &&
+                systemMessage.systemMessageType != ZMSystemMessageTypeUsingNewDevice;
+    }
+    
+    if ([Message isKnockMessage:message]) {
+        return NO;
+    }
+    
+    if (! [Message isNormalMessage:message] && ! [Message isSystemMessage:message]) {
+        return NO;
+    }
+    
+    id<ZMConversationMessage>previousMessage = [self messagePreviousToMessage:message];
+    
+    if (! previousMessage) {
+        return YES;
+    }
+    
+    BOOL showTimestamp = NO;
+    
+    NSTimeInterval seconds = [message.serverTimestamp timeIntervalSinceDate:previousMessage.serverTimestamp];
+    
+    NSTimeInterval referenceSeconds = 300;
+    
+    if (seconds > referenceSeconds) {
+        showTimestamp = YES;
+    }
+    
+    return showTimestamp;
+}
+
+- (CGFloat)topPaddingForMessage:(id<ZMConversationMessage>)message showingSender:(BOOL)showingSender showingTimestamp:(BOOL)showingTimestamp
+{
+    id<ZMConversationMessage>previousMessage = [self messagePreviousToMessage:message];
+    
+    if (! previousMessage) {
+        return [self topMarginForMessage:message showingSender:showingSender showingTimestamp:showingTimestamp];
+    }
+    
+    return MAX([self topMarginForMessage:message showingSender:showingSender showingTimestamp:showingTimestamp], [self bottomMarginForMessage:previousMessage]);
+}
+
+- (CGFloat)topMarginForMessage:(id<ZMConversationMessage>)message showingSender:(BOOL)showingSender showingTimestamp:(BOOL)showingTimestamp
+{
+    if ([Message isSystemMessage:message] || showingTimestamp) {
+        return 16;
+    }
+    else if ([Message isNormalMessage:message]) {
+        return 12;
+    }
+    
+    return 0;
+}
+
+- (CGFloat)bottomMarginForMessage:(id<ZMConversationMessage>)message
+{
+    if ([Message isSystemMessage:message]) {
+        return 16;
+    }
+    else if ([Message isNormalMessage:message]) {
+        return 12;
+    }
+    
+    return 0;
+}
+
+- (id<ZMConversationMessage>)messagePreviousToMessage:(id<ZMConversationMessage>)message
+{
+    NSUInteger index = [self.messages indexOfObject:message];
+    NSUInteger previousIndex = NSNotFound;
+    if (index < self.messages.count - 1 && index != NSNotFound) {
+        previousIndex = index + 1;
+    }
+    
+    id<ZMConversationMessage>previousMessage = nil;
+    
+    // Find a previous message, and use it for time calculation
+    if (previousIndex != NSNotFound) {
+        previousMessage = [self.messages objectAtIndex:previousIndex];
+    }
+    
+    return previousMessage;
+}
+
+@end
