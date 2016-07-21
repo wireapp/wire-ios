@@ -1175,6 +1175,7 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 @interface ZMText ()
 @property (strong) NSString* content;
 @property (strong) NSMutableArray * mentionArray;
+@property (strong) NSMutableArray * linkPreviewArray;
 @end
 
 @implementation ZMText
@@ -1188,6 +1189,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 @synthesize content;
 @synthesize mentionArray;
 @dynamic mention;
+@synthesize linkPreviewArray;
+@dynamic linkPreview;
 - (instancetype) init {
   if ((self = [super init])) {
     self.content = @"";
@@ -1212,6 +1215,12 @@ static ZMText* defaultZMTextInstance = nil;
 - (ZMMention*)mentionAtIndex:(NSUInteger)index {
   return [mentionArray objectAtIndex:index];
 }
+- (NSArray *)linkPreview {
+  return linkPreviewArray;
+}
+- (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index {
+  return [linkPreviewArray objectAtIndex:index];
+}
 - (BOOL) isInitialized {
   if (!self.hasContent) {
     return NO;
@@ -1224,6 +1233,14 @@ static ZMText* defaultZMTextInstance = nil;
     }
   }];
   if (!isInitmention) return isInitmention;
+  __block BOOL isInitlinkPreview = YES;
+   [self.linkPreview enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
+    if (!element.isInitialized) {
+      isInitlinkPreview = NO;
+      *stop = YES;
+    }
+  }];
+  if (!isInitlinkPreview) return isInitlinkPreview;
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -1232,6 +1249,9 @@ static ZMText* defaultZMTextInstance = nil;
   }
   [self.mentionArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
     [output writeMessage:2 value:element];
+  }];
+  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
+    [output writeMessage:3 value:element];
   }];
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -1247,6 +1267,9 @@ static ZMText* defaultZMTextInstance = nil;
   }
   [self.mentionArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
     size_ += computeMessageSize(2, element);
+  }];
+  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
+    size_ += computeMessageSize(3, element);
   }];
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -1292,6 +1315,12 @@ static ZMText* defaultZMTextInstance = nil;
                      withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }];
+  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
+    [output appendFormat:@"%@%@ {\n", indent, @"linkPreview"];
+    [element writeDescriptionTo:output
+                     withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }];
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -1302,6 +1331,11 @@ static ZMText* defaultZMTextInstance = nil;
     NSMutableDictionary *elementDictionary = [NSMutableDictionary dictionary];
     [element storeInDictionary:elementDictionary];
     [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"mention"];
+  }
+  for (ZMLinkPreview* element in self.linkPreviewArray) {
+    NSMutableDictionary *elementDictionary = [NSMutableDictionary dictionary];
+    [element storeInDictionary:elementDictionary];
+    [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"linkPreview"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -1317,6 +1351,7 @@ static ZMText* defaultZMTextInstance = nil;
       self.hasContent == otherMessage.hasContent &&
       (!self.hasContent || [self.content isEqual:otherMessage.content]) &&
       [self.mentionArray isEqualToArray:otherMessage.mentionArray] &&
+      [self.linkPreviewArray isEqualToArray:otherMessage.linkPreviewArray] &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -1325,6 +1360,9 @@ static ZMText* defaultZMTextInstance = nil;
     hashCode = hashCode * 31 + [self.content hash];
   }
   [self.mentionArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
+    hashCode = hashCode * 31 + [element hash];
+  }];
+  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
     hashCode = hashCode * 31 + [element hash];
   }];
   hashCode = hashCode * 31 + [self.unknownFields hash];
@@ -1380,6 +1418,13 @@ static ZMText* defaultZMTextInstance = nil;
       [resultText.mentionArray addObjectsFromArray:other.mentionArray];
     }
   }
+  if (other.linkPreviewArray.count > 0) {
+    if (resultText.linkPreviewArray == nil) {
+      resultText.linkPreviewArray = [[NSMutableArray alloc] initWithArray:other.linkPreviewArray];
+    } else {
+      [resultText.linkPreviewArray addObjectsFromArray:other.linkPreviewArray];
+    }
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -1409,6 +1454,12 @@ static ZMText* defaultZMTextInstance = nil;
         ZMMentionBuilder* subBuilder = [ZMMention builder];
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self addMention:[subBuilder buildPartial]];
+        break;
+      }
+      case 26: {
+        ZMLinkPreviewBuilder* subBuilder = [ZMLinkPreview builder];
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self addLinkPreview:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1449,6 +1500,27 @@ static ZMText* defaultZMTextInstance = nil;
 }
 - (ZMTextBuilder *)clearMention {
   resultText.mentionArray = nil;
+  return self;
+}
+- (NSMutableArray *)linkPreview {
+  return resultText.linkPreviewArray;
+}
+- (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index {
+  return [resultText linkPreviewAtIndex:index];
+}
+- (ZMTextBuilder *)addLinkPreview:(ZMLinkPreview*)value {
+  if (resultText.linkPreviewArray == nil) {
+    resultText.linkPreviewArray = [[NSMutableArray alloc]init];
+  }
+  [resultText.linkPreviewArray addObject:value];
+  return self;
+}
+- (ZMTextBuilder *)setLinkPreviewArray:(NSArray *)array {
+  resultText.linkPreviewArray = [[NSMutableArray alloc]initWithArray:array];
+  return self;
+}
+- (ZMTextBuilder *)clearLinkPreview {
+  resultText.linkPreviewArray = nil;
   return self;
 }
 @end
@@ -1663,6 +1735,1283 @@ static ZMKnock* defaultZMKnockInstance = nil;
 - (ZMKnockBuilder*) clearHotKnock {
   resultKnock.hasHotKnock = NO;
   resultKnock.hotKnock = NO;
+  return self;
+}
+@end
+
+@interface ZMLinkPreview ()
+@property (strong) NSString* url;
+@property SInt32 urlOffset;
+@property (strong) ZMArticle* article;
+@property (strong) NSString* permanentUrl;
+@property (strong) NSString* title;
+@property (strong) NSString* summary;
+@property (strong) ZMAsset* image;
+@property (strong) ZMTweet* tweet;
+@end
+
+@implementation ZMLinkPreview
+
+- (BOOL) hasUrl {
+  return !!hasUrl_;
+}
+- (void) setHasUrl:(BOOL) _value_ {
+  hasUrl_ = !!_value_;
+}
+@synthesize url;
+- (BOOL) hasUrlOffset {
+  return !!hasUrlOffset_;
+}
+- (void) setHasUrlOffset:(BOOL) _value_ {
+  hasUrlOffset_ = !!_value_;
+}
+@synthesize urlOffset;
+- (BOOL) hasArticle {
+  return !!hasArticle_;
+}
+- (void) setHasArticle:(BOOL) _value_ {
+  hasArticle_ = !!_value_;
+}
+@synthesize article;
+- (BOOL) hasPermanentUrl {
+  return !!hasPermanentUrl_;
+}
+- (void) setHasPermanentUrl:(BOOL) _value_ {
+  hasPermanentUrl_ = !!_value_;
+}
+@synthesize permanentUrl;
+- (BOOL) hasTitle {
+  return !!hasTitle_;
+}
+- (void) setHasTitle:(BOOL) _value_ {
+  hasTitle_ = !!_value_;
+}
+@synthesize title;
+- (BOOL) hasSummary {
+  return !!hasSummary_;
+}
+- (void) setHasSummary:(BOOL) _value_ {
+  hasSummary_ = !!_value_;
+}
+@synthesize summary;
+- (BOOL) hasImage {
+  return !!hasImage_;
+}
+- (void) setHasImage:(BOOL) _value_ {
+  hasImage_ = !!_value_;
+}
+@synthesize image;
+- (BOOL) hasTweet {
+  return !!hasTweet_;
+}
+- (void) setHasTweet:(BOOL) _value_ {
+  hasTweet_ = !!_value_;
+}
+@synthesize tweet;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.url = @"";
+    self.urlOffset = 0;
+    self.article = [ZMArticle defaultInstance];
+    self.permanentUrl = @"";
+    self.title = @"";
+    self.summary = @"";
+    self.image = [ZMAsset defaultInstance];
+    self.tweet = [ZMTweet defaultInstance];
+  }
+  return self;
+}
+static ZMLinkPreview* defaultZMLinkPreviewInstance = nil;
++ (void) initialize {
+  if (self == [ZMLinkPreview class]) {
+    defaultZMLinkPreviewInstance = [[ZMLinkPreview alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMLinkPreviewInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMLinkPreviewInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasUrl) {
+    return NO;
+  }
+  if (!self.hasUrlOffset) {
+    return NO;
+  }
+  if (self.hasArticle) {
+    if (!self.article.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasImage) {
+    if (!self.image.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasUrl) {
+    [output writeString:1 value:self.url];
+  }
+  if (self.hasUrlOffset) {
+    [output writeInt32:2 value:self.urlOffset];
+  }
+  if (self.hasArticle) {
+    [output writeMessage:3 value:self.article];
+  }
+  if (self.hasPermanentUrl) {
+    [output writeString:5 value:self.permanentUrl];
+  }
+  if (self.hasTitle) {
+    [output writeString:6 value:self.title];
+  }
+  if (self.hasSummary) {
+    [output writeString:7 value:self.summary];
+  }
+  if (self.hasImage) {
+    [output writeMessage:8 value:self.image];
+  }
+  if (self.hasTweet) {
+    [output writeMessage:9 value:self.tweet];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasUrl) {
+    size_ += computeStringSize(1, self.url);
+  }
+  if (self.hasUrlOffset) {
+    size_ += computeInt32Size(2, self.urlOffset);
+  }
+  if (self.hasArticle) {
+    size_ += computeMessageSize(3, self.article);
+  }
+  if (self.hasPermanentUrl) {
+    size_ += computeStringSize(5, self.permanentUrl);
+  }
+  if (self.hasTitle) {
+    size_ += computeStringSize(6, self.title);
+  }
+  if (self.hasSummary) {
+    size_ += computeStringSize(7, self.summary);
+  }
+  if (self.hasImage) {
+    size_ += computeMessageSize(8, self.image);
+  }
+  if (self.hasTweet) {
+    size_ += computeMessageSize(9, self.tweet);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMLinkPreview*) parseFromData:(NSData*) data {
+  return (ZMLinkPreview*)[[[ZMLinkPreview builder] mergeFromData:data] build];
+}
++ (ZMLinkPreview*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMLinkPreview*)[[[ZMLinkPreview builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMLinkPreview*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMLinkPreview*)[[[ZMLinkPreview builder] mergeFromInputStream:input] build];
+}
++ (ZMLinkPreview*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMLinkPreview*)[[[ZMLinkPreview builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMLinkPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMLinkPreview*)[[[ZMLinkPreview builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMLinkPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMLinkPreview*)[[[ZMLinkPreview builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMLinkPreviewBuilder*) builder {
+  return [[ZMLinkPreviewBuilder alloc] init];
+}
++ (ZMLinkPreviewBuilder*) builderWithPrototype:(ZMLinkPreview*) prototype {
+  return [[ZMLinkPreview builder] mergeFrom:prototype];
+}
+- (ZMLinkPreviewBuilder*) builder {
+  return [ZMLinkPreview builder];
+}
+- (ZMLinkPreviewBuilder*) toBuilder {
+  return [ZMLinkPreview builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasUrl) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"url", self.url];
+  }
+  if (self.hasUrlOffset) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"urlOffset", [NSNumber numberWithInteger:self.urlOffset]];
+  }
+  if (self.hasArticle) {
+    [output appendFormat:@"%@%@ {\n", indent, @"article"];
+    [self.article writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasPermanentUrl) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"permanentUrl", self.permanentUrl];
+  }
+  if (self.hasTitle) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"title", self.title];
+  }
+  if (self.hasSummary) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"summary", self.summary];
+  }
+  if (self.hasImage) {
+    [output appendFormat:@"%@%@ {\n", indent, @"image"];
+    [self.image writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasTweet) {
+    [output appendFormat:@"%@%@ {\n", indent, @"tweet"];
+    [self.tweet writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasUrl) {
+    [dictionary setObject: self.url forKey: @"url"];
+  }
+  if (self.hasUrlOffset) {
+    [dictionary setObject: [NSNumber numberWithInteger:self.urlOffset] forKey: @"urlOffset"];
+  }
+  if (self.hasArticle) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.article storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"article"];
+  }
+  if (self.hasPermanentUrl) {
+    [dictionary setObject: self.permanentUrl forKey: @"permanentUrl"];
+  }
+  if (self.hasTitle) {
+    [dictionary setObject: self.title forKey: @"title"];
+  }
+  if (self.hasSummary) {
+    [dictionary setObject: self.summary forKey: @"summary"];
+  }
+  if (self.hasImage) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.image storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"image"];
+  }
+  if (self.hasTweet) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.tweet storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"tweet"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMLinkPreview class]]) {
+    return NO;
+  }
+  ZMLinkPreview *otherMessage = other;
+  return
+      self.hasUrl == otherMessage.hasUrl &&
+      (!self.hasUrl || [self.url isEqual:otherMessage.url]) &&
+      self.hasUrlOffset == otherMessage.hasUrlOffset &&
+      (!self.hasUrlOffset || self.urlOffset == otherMessage.urlOffset) &&
+      self.hasArticle == otherMessage.hasArticle &&
+      (!self.hasArticle || [self.article isEqual:otherMessage.article]) &&
+      self.hasPermanentUrl == otherMessage.hasPermanentUrl &&
+      (!self.hasPermanentUrl || [self.permanentUrl isEqual:otherMessage.permanentUrl]) &&
+      self.hasTitle == otherMessage.hasTitle &&
+      (!self.hasTitle || [self.title isEqual:otherMessage.title]) &&
+      self.hasSummary == otherMessage.hasSummary &&
+      (!self.hasSummary || [self.summary isEqual:otherMessage.summary]) &&
+      self.hasImage == otherMessage.hasImage &&
+      (!self.hasImage || [self.image isEqual:otherMessage.image]) &&
+      self.hasTweet == otherMessage.hasTweet &&
+      (!self.hasTweet || [self.tweet isEqual:otherMessage.tweet]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasUrl) {
+    hashCode = hashCode * 31 + [self.url hash];
+  }
+  if (self.hasUrlOffset) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.urlOffset] hash];
+  }
+  if (self.hasArticle) {
+    hashCode = hashCode * 31 + [self.article hash];
+  }
+  if (self.hasPermanentUrl) {
+    hashCode = hashCode * 31 + [self.permanentUrl hash];
+  }
+  if (self.hasTitle) {
+    hashCode = hashCode * 31 + [self.title hash];
+  }
+  if (self.hasSummary) {
+    hashCode = hashCode * 31 + [self.summary hash];
+  }
+  if (self.hasImage) {
+    hashCode = hashCode * 31 + [self.image hash];
+  }
+  if (self.hasTweet) {
+    hashCode = hashCode * 31 + [self.tweet hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMLinkPreviewBuilder()
+@property (strong) ZMLinkPreview* resultLinkPreview;
+@end
+
+@implementation ZMLinkPreviewBuilder
+@synthesize resultLinkPreview;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultLinkPreview = [[ZMLinkPreview alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultLinkPreview;
+}
+- (ZMLinkPreviewBuilder*) clear {
+  self.resultLinkPreview = [[ZMLinkPreview alloc] init];
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clone {
+  return [ZMLinkPreview builderWithPrototype:resultLinkPreview];
+}
+- (ZMLinkPreview*) defaultInstance {
+  return [ZMLinkPreview defaultInstance];
+}
+- (ZMLinkPreview*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMLinkPreview*) buildPartial {
+  ZMLinkPreview* returnMe = resultLinkPreview;
+  self.resultLinkPreview = nil;
+  return returnMe;
+}
+- (ZMLinkPreviewBuilder*) mergeFrom:(ZMLinkPreview*) other {
+  if (other == [ZMLinkPreview defaultInstance]) {
+    return self;
+  }
+  if (other.hasUrl) {
+    [self setUrl:other.url];
+  }
+  if (other.hasUrlOffset) {
+    [self setUrlOffset:other.urlOffset];
+  }
+  if (other.hasArticle) {
+    [self mergeArticle:other.article];
+  }
+  if (other.hasPermanentUrl) {
+    [self setPermanentUrl:other.permanentUrl];
+  }
+  if (other.hasTitle) {
+    [self setTitle:other.title];
+  }
+  if (other.hasSummary) {
+    [self setSummary:other.summary];
+  }
+  if (other.hasImage) {
+    [self mergeImage:other.image];
+  }
+  if (other.hasTweet) {
+    [self mergeTweet:other.tweet];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMLinkPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMLinkPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setUrl:[input readString]];
+        break;
+      }
+      case 16: {
+        [self setUrlOffset:[input readInt32]];
+        break;
+      }
+      case 26: {
+        ZMArticleBuilder* subBuilder = [ZMArticle builder];
+        if (self.hasArticle) {
+          [subBuilder mergeFrom:self.article];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setArticle:[subBuilder buildPartial]];
+        break;
+      }
+      case 42: {
+        [self setPermanentUrl:[input readString]];
+        break;
+      }
+      case 50: {
+        [self setTitle:[input readString]];
+        break;
+      }
+      case 58: {
+        [self setSummary:[input readString]];
+        break;
+      }
+      case 66: {
+        ZMAssetBuilder* subBuilder = [ZMAsset builder];
+        if (self.hasImage) {
+          [subBuilder mergeFrom:self.image];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setImage:[subBuilder buildPartial]];
+        break;
+      }
+      case 74: {
+        ZMTweetBuilder* subBuilder = [ZMTweet builder];
+        if (self.hasTweet) {
+          [subBuilder mergeFrom:self.tweet];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setTweet:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasUrl {
+  return resultLinkPreview.hasUrl;
+}
+- (NSString*) url {
+  return resultLinkPreview.url;
+}
+- (ZMLinkPreviewBuilder*) setUrl:(NSString*) value {
+  resultLinkPreview.hasUrl = YES;
+  resultLinkPreview.url = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearUrl {
+  resultLinkPreview.hasUrl = NO;
+  resultLinkPreview.url = @"";
+  return self;
+}
+- (BOOL) hasUrlOffset {
+  return resultLinkPreview.hasUrlOffset;
+}
+- (SInt32) urlOffset {
+  return resultLinkPreview.urlOffset;
+}
+- (ZMLinkPreviewBuilder*) setUrlOffset:(SInt32) value {
+  resultLinkPreview.hasUrlOffset = YES;
+  resultLinkPreview.urlOffset = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearUrlOffset {
+  resultLinkPreview.hasUrlOffset = NO;
+  resultLinkPreview.urlOffset = 0;
+  return self;
+}
+- (BOOL) hasArticle {
+  return resultLinkPreview.hasArticle;
+}
+- (ZMArticle*) article {
+  return resultLinkPreview.article;
+}
+- (ZMLinkPreviewBuilder*) setArticle:(ZMArticle*) value {
+  resultLinkPreview.hasArticle = YES;
+  resultLinkPreview.article = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) setArticleBuilder:(ZMArticleBuilder*) builderForValue {
+  return [self setArticle:[builderForValue build]];
+}
+- (ZMLinkPreviewBuilder*) mergeArticle:(ZMArticle*) value {
+  if (resultLinkPreview.hasArticle &&
+      resultLinkPreview.article != [ZMArticle defaultInstance]) {
+    resultLinkPreview.article =
+      [[[ZMArticle builderWithPrototype:resultLinkPreview.article] mergeFrom:value] buildPartial];
+  } else {
+    resultLinkPreview.article = value;
+  }
+  resultLinkPreview.hasArticle = YES;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearArticle {
+  resultLinkPreview.hasArticle = NO;
+  resultLinkPreview.article = [ZMArticle defaultInstance];
+  return self;
+}
+- (BOOL) hasPermanentUrl {
+  return resultLinkPreview.hasPermanentUrl;
+}
+- (NSString*) permanentUrl {
+  return resultLinkPreview.permanentUrl;
+}
+- (ZMLinkPreviewBuilder*) setPermanentUrl:(NSString*) value {
+  resultLinkPreview.hasPermanentUrl = YES;
+  resultLinkPreview.permanentUrl = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearPermanentUrl {
+  resultLinkPreview.hasPermanentUrl = NO;
+  resultLinkPreview.permanentUrl = @"";
+  return self;
+}
+- (BOOL) hasTitle {
+  return resultLinkPreview.hasTitle;
+}
+- (NSString*) title {
+  return resultLinkPreview.title;
+}
+- (ZMLinkPreviewBuilder*) setTitle:(NSString*) value {
+  resultLinkPreview.hasTitle = YES;
+  resultLinkPreview.title = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearTitle {
+  resultLinkPreview.hasTitle = NO;
+  resultLinkPreview.title = @"";
+  return self;
+}
+- (BOOL) hasSummary {
+  return resultLinkPreview.hasSummary;
+}
+- (NSString*) summary {
+  return resultLinkPreview.summary;
+}
+- (ZMLinkPreviewBuilder*) setSummary:(NSString*) value {
+  resultLinkPreview.hasSummary = YES;
+  resultLinkPreview.summary = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearSummary {
+  resultLinkPreview.hasSummary = NO;
+  resultLinkPreview.summary = @"";
+  return self;
+}
+- (BOOL) hasImage {
+  return resultLinkPreview.hasImage;
+}
+- (ZMAsset*) image {
+  return resultLinkPreview.image;
+}
+- (ZMLinkPreviewBuilder*) setImage:(ZMAsset*) value {
+  resultLinkPreview.hasImage = YES;
+  resultLinkPreview.image = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) setImageBuilder:(ZMAssetBuilder*) builderForValue {
+  return [self setImage:[builderForValue build]];
+}
+- (ZMLinkPreviewBuilder*) mergeImage:(ZMAsset*) value {
+  if (resultLinkPreview.hasImage &&
+      resultLinkPreview.image != [ZMAsset defaultInstance]) {
+    resultLinkPreview.image =
+      [[[ZMAsset builderWithPrototype:resultLinkPreview.image] mergeFrom:value] buildPartial];
+  } else {
+    resultLinkPreview.image = value;
+  }
+  resultLinkPreview.hasImage = YES;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearImage {
+  resultLinkPreview.hasImage = NO;
+  resultLinkPreview.image = [ZMAsset defaultInstance];
+  return self;
+}
+- (BOOL) hasTweet {
+  return resultLinkPreview.hasTweet;
+}
+- (ZMTweet*) tweet {
+  return resultLinkPreview.tweet;
+}
+- (ZMLinkPreviewBuilder*) setTweet:(ZMTweet*) value {
+  resultLinkPreview.hasTweet = YES;
+  resultLinkPreview.tweet = value;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) setTweetBuilder:(ZMTweetBuilder*) builderForValue {
+  return [self setTweet:[builderForValue build]];
+}
+- (ZMLinkPreviewBuilder*) mergeTweet:(ZMTweet*) value {
+  if (resultLinkPreview.hasTweet &&
+      resultLinkPreview.tweet != [ZMTweet defaultInstance]) {
+    resultLinkPreview.tweet =
+      [[[ZMTweet builderWithPrototype:resultLinkPreview.tweet] mergeFrom:value] buildPartial];
+  } else {
+    resultLinkPreview.tweet = value;
+  }
+  resultLinkPreview.hasTweet = YES;
+  return self;
+}
+- (ZMLinkPreviewBuilder*) clearTweet {
+  resultLinkPreview.hasTweet = NO;
+  resultLinkPreview.tweet = [ZMTweet defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMTweet ()
+@property (strong) NSString* author;
+@property (strong) NSString* username;
+@end
+
+@implementation ZMTweet
+
+- (BOOL) hasAuthor {
+  return !!hasAuthor_;
+}
+- (void) setHasAuthor:(BOOL) _value_ {
+  hasAuthor_ = !!_value_;
+}
+@synthesize author;
+- (BOOL) hasUsername {
+  return !!hasUsername_;
+}
+- (void) setHasUsername:(BOOL) _value_ {
+  hasUsername_ = !!_value_;
+}
+@synthesize username;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.author = @"";
+    self.username = @"";
+  }
+  return self;
+}
+static ZMTweet* defaultZMTweetInstance = nil;
++ (void) initialize {
+  if (self == [ZMTweet class]) {
+    defaultZMTweetInstance = [[ZMTweet alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMTweetInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMTweetInstance;
+}
+- (BOOL) isInitialized {
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasAuthor) {
+    [output writeString:1 value:self.author];
+  }
+  if (self.hasUsername) {
+    [output writeString:2 value:self.username];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasAuthor) {
+    size_ += computeStringSize(1, self.author);
+  }
+  if (self.hasUsername) {
+    size_ += computeStringSize(2, self.username);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMTweet*) parseFromData:(NSData*) data {
+  return (ZMTweet*)[[[ZMTweet builder] mergeFromData:data] build];
+}
++ (ZMTweet*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMTweet*)[[[ZMTweet builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMTweet*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMTweet*)[[[ZMTweet builder] mergeFromInputStream:input] build];
+}
++ (ZMTweet*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMTweet*)[[[ZMTweet builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMTweet*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMTweet*)[[[ZMTweet builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMTweet*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMTweet*)[[[ZMTweet builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMTweetBuilder*) builder {
+  return [[ZMTweetBuilder alloc] init];
+}
++ (ZMTweetBuilder*) builderWithPrototype:(ZMTweet*) prototype {
+  return [[ZMTweet builder] mergeFrom:prototype];
+}
+- (ZMTweetBuilder*) builder {
+  return [ZMTweet builder];
+}
+- (ZMTweetBuilder*) toBuilder {
+  return [ZMTweet builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasAuthor) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"author", self.author];
+  }
+  if (self.hasUsername) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"username", self.username];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasAuthor) {
+    [dictionary setObject: self.author forKey: @"author"];
+  }
+  if (self.hasUsername) {
+    [dictionary setObject: self.username forKey: @"username"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMTweet class]]) {
+    return NO;
+  }
+  ZMTweet *otherMessage = other;
+  return
+      self.hasAuthor == otherMessage.hasAuthor &&
+      (!self.hasAuthor || [self.author isEqual:otherMessage.author]) &&
+      self.hasUsername == otherMessage.hasUsername &&
+      (!self.hasUsername || [self.username isEqual:otherMessage.username]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasAuthor) {
+    hashCode = hashCode * 31 + [self.author hash];
+  }
+  if (self.hasUsername) {
+    hashCode = hashCode * 31 + [self.username hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMTweetBuilder()
+@property (strong) ZMTweet* resultTweet;
+@end
+
+@implementation ZMTweetBuilder
+@synthesize resultTweet;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultTweet = [[ZMTweet alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultTweet;
+}
+- (ZMTweetBuilder*) clear {
+  self.resultTweet = [[ZMTweet alloc] init];
+  return self;
+}
+- (ZMTweetBuilder*) clone {
+  return [ZMTweet builderWithPrototype:resultTweet];
+}
+- (ZMTweet*) defaultInstance {
+  return [ZMTweet defaultInstance];
+}
+- (ZMTweet*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMTweet*) buildPartial {
+  ZMTweet* returnMe = resultTweet;
+  self.resultTweet = nil;
+  return returnMe;
+}
+- (ZMTweetBuilder*) mergeFrom:(ZMTweet*) other {
+  if (other == [ZMTweet defaultInstance]) {
+    return self;
+  }
+  if (other.hasAuthor) {
+    [self setAuthor:other.author];
+  }
+  if (other.hasUsername) {
+    [self setUsername:other.username];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMTweetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMTweetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setAuthor:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setUsername:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasAuthor {
+  return resultTweet.hasAuthor;
+}
+- (NSString*) author {
+  return resultTweet.author;
+}
+- (ZMTweetBuilder*) setAuthor:(NSString*) value {
+  resultTweet.hasAuthor = YES;
+  resultTweet.author = value;
+  return self;
+}
+- (ZMTweetBuilder*) clearAuthor {
+  resultTweet.hasAuthor = NO;
+  resultTweet.author = @"";
+  return self;
+}
+- (BOOL) hasUsername {
+  return resultTweet.hasUsername;
+}
+- (NSString*) username {
+  return resultTweet.username;
+}
+- (ZMTweetBuilder*) setUsername:(NSString*) value {
+  resultTweet.hasUsername = YES;
+  resultTweet.username = value;
+  return self;
+}
+- (ZMTweetBuilder*) clearUsername {
+  resultTweet.hasUsername = NO;
+  resultTweet.username = @"";
+  return self;
+}
+@end
+
+@interface ZMArticle ()
+@property (strong) NSString* permanentUrl;
+@property (strong) NSString* title;
+@property (strong) NSString* summary;
+@property (strong) ZMAsset* image;
+@end
+
+@implementation ZMArticle
+
+- (BOOL) hasPermanentUrl {
+  return !!hasPermanentUrl_;
+}
+- (void) setHasPermanentUrl:(BOOL) _value_ {
+  hasPermanentUrl_ = !!_value_;
+}
+@synthesize permanentUrl;
+- (BOOL) hasTitle {
+  return !!hasTitle_;
+}
+- (void) setHasTitle:(BOOL) _value_ {
+  hasTitle_ = !!_value_;
+}
+@synthesize title;
+- (BOOL) hasSummary {
+  return !!hasSummary_;
+}
+- (void) setHasSummary:(BOOL) _value_ {
+  hasSummary_ = !!_value_;
+}
+@synthesize summary;
+- (BOOL) hasImage {
+  return !!hasImage_;
+}
+- (void) setHasImage:(BOOL) _value_ {
+  hasImage_ = !!_value_;
+}
+@synthesize image;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.permanentUrl = @"";
+    self.title = @"";
+    self.summary = @"";
+    self.image = [ZMAsset defaultInstance];
+  }
+  return self;
+}
+static ZMArticle* defaultZMArticleInstance = nil;
++ (void) initialize {
+  if (self == [ZMArticle class]) {
+    defaultZMArticleInstance = [[ZMArticle alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMArticleInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMArticleInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasPermanentUrl) {
+    return NO;
+  }
+  if (self.hasImage) {
+    if (!self.image.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasPermanentUrl) {
+    [output writeString:1 value:self.permanentUrl];
+  }
+  if (self.hasTitle) {
+    [output writeString:2 value:self.title];
+  }
+  if (self.hasSummary) {
+    [output writeString:3 value:self.summary];
+  }
+  if (self.hasImage) {
+    [output writeMessage:4 value:self.image];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasPermanentUrl) {
+    size_ += computeStringSize(1, self.permanentUrl);
+  }
+  if (self.hasTitle) {
+    size_ += computeStringSize(2, self.title);
+  }
+  if (self.hasSummary) {
+    size_ += computeStringSize(3, self.summary);
+  }
+  if (self.hasImage) {
+    size_ += computeMessageSize(4, self.image);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMArticle*) parseFromData:(NSData*) data {
+  return (ZMArticle*)[[[ZMArticle builder] mergeFromData:data] build];
+}
++ (ZMArticle*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMArticle*)[[[ZMArticle builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMArticle*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMArticle*)[[[ZMArticle builder] mergeFromInputStream:input] build];
+}
++ (ZMArticle*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMArticle*)[[[ZMArticle builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMArticle*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMArticle*)[[[ZMArticle builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMArticle*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMArticle*)[[[ZMArticle builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMArticleBuilder*) builder {
+  return [[ZMArticleBuilder alloc] init];
+}
++ (ZMArticleBuilder*) builderWithPrototype:(ZMArticle*) prototype {
+  return [[ZMArticle builder] mergeFrom:prototype];
+}
+- (ZMArticleBuilder*) builder {
+  return [ZMArticle builder];
+}
+- (ZMArticleBuilder*) toBuilder {
+  return [ZMArticle builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasPermanentUrl) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"permanentUrl", self.permanentUrl];
+  }
+  if (self.hasTitle) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"title", self.title];
+  }
+  if (self.hasSummary) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"summary", self.summary];
+  }
+  if (self.hasImage) {
+    [output appendFormat:@"%@%@ {\n", indent, @"image"];
+    [self.image writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasPermanentUrl) {
+    [dictionary setObject: self.permanentUrl forKey: @"permanentUrl"];
+  }
+  if (self.hasTitle) {
+    [dictionary setObject: self.title forKey: @"title"];
+  }
+  if (self.hasSummary) {
+    [dictionary setObject: self.summary forKey: @"summary"];
+  }
+  if (self.hasImage) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.image storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"image"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMArticle class]]) {
+    return NO;
+  }
+  ZMArticle *otherMessage = other;
+  return
+      self.hasPermanentUrl == otherMessage.hasPermanentUrl &&
+      (!self.hasPermanentUrl || [self.permanentUrl isEqual:otherMessage.permanentUrl]) &&
+      self.hasTitle == otherMessage.hasTitle &&
+      (!self.hasTitle || [self.title isEqual:otherMessage.title]) &&
+      self.hasSummary == otherMessage.hasSummary &&
+      (!self.hasSummary || [self.summary isEqual:otherMessage.summary]) &&
+      self.hasImage == otherMessage.hasImage &&
+      (!self.hasImage || [self.image isEqual:otherMessage.image]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasPermanentUrl) {
+    hashCode = hashCode * 31 + [self.permanentUrl hash];
+  }
+  if (self.hasTitle) {
+    hashCode = hashCode * 31 + [self.title hash];
+  }
+  if (self.hasSummary) {
+    hashCode = hashCode * 31 + [self.summary hash];
+  }
+  if (self.hasImage) {
+    hashCode = hashCode * 31 + [self.image hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMArticleBuilder()
+@property (strong) ZMArticle* resultArticle;
+@end
+
+@implementation ZMArticleBuilder
+@synthesize resultArticle;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultArticle = [[ZMArticle alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultArticle;
+}
+- (ZMArticleBuilder*) clear {
+  self.resultArticle = [[ZMArticle alloc] init];
+  return self;
+}
+- (ZMArticleBuilder*) clone {
+  return [ZMArticle builderWithPrototype:resultArticle];
+}
+- (ZMArticle*) defaultInstance {
+  return [ZMArticle defaultInstance];
+}
+- (ZMArticle*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMArticle*) buildPartial {
+  ZMArticle* returnMe = resultArticle;
+  self.resultArticle = nil;
+  return returnMe;
+}
+- (ZMArticleBuilder*) mergeFrom:(ZMArticle*) other {
+  if (other == [ZMArticle defaultInstance]) {
+    return self;
+  }
+  if (other.hasPermanentUrl) {
+    [self setPermanentUrl:other.permanentUrl];
+  }
+  if (other.hasTitle) {
+    [self setTitle:other.title];
+  }
+  if (other.hasSummary) {
+    [self setSummary:other.summary];
+  }
+  if (other.hasImage) {
+    [self mergeImage:other.image];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMArticleBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMArticleBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setPermanentUrl:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setTitle:[input readString]];
+        break;
+      }
+      case 26: {
+        [self setSummary:[input readString]];
+        break;
+      }
+      case 34: {
+        ZMAssetBuilder* subBuilder = [ZMAsset builder];
+        if (self.hasImage) {
+          [subBuilder mergeFrom:self.image];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setImage:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasPermanentUrl {
+  return resultArticle.hasPermanentUrl;
+}
+- (NSString*) permanentUrl {
+  return resultArticle.permanentUrl;
+}
+- (ZMArticleBuilder*) setPermanentUrl:(NSString*) value {
+  resultArticle.hasPermanentUrl = YES;
+  resultArticle.permanentUrl = value;
+  return self;
+}
+- (ZMArticleBuilder*) clearPermanentUrl {
+  resultArticle.hasPermanentUrl = NO;
+  resultArticle.permanentUrl = @"";
+  return self;
+}
+- (BOOL) hasTitle {
+  return resultArticle.hasTitle;
+}
+- (NSString*) title {
+  return resultArticle.title;
+}
+- (ZMArticleBuilder*) setTitle:(NSString*) value {
+  resultArticle.hasTitle = YES;
+  resultArticle.title = value;
+  return self;
+}
+- (ZMArticleBuilder*) clearTitle {
+  resultArticle.hasTitle = NO;
+  resultArticle.title = @"";
+  return self;
+}
+- (BOOL) hasSummary {
+  return resultArticle.hasSummary;
+}
+- (NSString*) summary {
+  return resultArticle.summary;
+}
+- (ZMArticleBuilder*) setSummary:(NSString*) value {
+  resultArticle.hasSummary = YES;
+  resultArticle.summary = value;
+  return self;
+}
+- (ZMArticleBuilder*) clearSummary {
+  resultArticle.hasSummary = NO;
+  resultArticle.summary = @"";
+  return self;
+}
+- (BOOL) hasImage {
+  return resultArticle.hasImage;
+}
+- (ZMAsset*) image {
+  return resultArticle.image;
+}
+- (ZMArticleBuilder*) setImage:(ZMAsset*) value {
+  resultArticle.hasImage = YES;
+  resultArticle.image = value;
+  return self;
+}
+- (ZMArticleBuilder*) setImageBuilder:(ZMAssetBuilder*) builderForValue {
+  return [self setImage:[builderForValue build]];
+}
+- (ZMArticleBuilder*) mergeImage:(ZMAsset*) value {
+  if (resultArticle.hasImage &&
+      resultArticle.image != [ZMAsset defaultInstance]) {
+    resultArticle.image =
+      [[[ZMAsset builderWithPrototype:resultArticle.image] mergeFrom:value] buildPartial];
+  } else {
+    resultArticle.image = value;
+  }
+  resultArticle.hasImage = YES;
+  return self;
+}
+- (ZMArticleBuilder*) clearImage {
+  resultArticle.hasImage = NO;
+  resultArticle.image = [ZMAsset defaultInstance];
   return self;
 }
 @end
@@ -5858,7 +7207,7 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
 @property (strong) NSData* otrKey;
 @property (strong) NSData* sha256;
 @property (strong) NSString* assetId;
-@property (strong) NSData* assetToken;
+@property (strong) NSString* assetToken;
 @end
 
 @implementation ZMAssetRemoteData
@@ -5896,7 +7245,7 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
     self.otrKey = [NSData data];
     self.sha256 = [NSData data];
     self.assetId = @"";
-    self.assetToken = [NSData data];
+    self.assetToken = @"";
   }
   return self;
 }
@@ -5932,7 +7281,7 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
     [output writeString:3 value:self.assetId];
   }
   if (self.hasAssetToken) {
-    [output writeData:4 value:self.assetToken];
+    [output writeString:5 value:self.assetToken];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -5953,7 +7302,7 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
     size_ += computeStringSize(3, self.assetId);
   }
   if (self.hasAssetToken) {
-    size_ += computeDataSize(4, self.assetToken);
+    size_ += computeStringSize(5, self.assetToken);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -6140,8 +7489,8 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
         [self setAssetId:[input readString]];
         break;
       }
-      case 34: {
-        [self setAssetToken:[input readData]];
+      case 42: {
+        [self setAssetToken:[input readString]];
         break;
       }
     }
@@ -6198,17 +7547,17 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
 - (BOOL) hasAssetToken {
   return resultRemoteData.hasAssetToken;
 }
-- (NSData*) assetToken {
+- (NSString*) assetToken {
   return resultRemoteData.assetToken;
 }
-- (ZMAssetRemoteDataBuilder*) setAssetToken:(NSData*) value {
+- (ZMAssetRemoteDataBuilder*) setAssetToken:(NSString*) value {
   resultRemoteData.hasAssetToken = YES;
   resultRemoteData.assetToken = value;
   return self;
 }
 - (ZMAssetRemoteDataBuilder*) clearAssetToken {
   resultRemoteData.hasAssetToken = NO;
-  resultRemoteData.assetToken = [NSData data];
+  resultRemoteData.assetToken = @"";
   return self;
 }
 @end
