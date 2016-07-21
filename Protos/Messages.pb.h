@@ -65,6 +65,8 @@
 @class UninterpretedOptionBuilder;
 @class UninterpretedOptionNamePart;
 @class UninterpretedOptionNamePartBuilder;
+@class ZMArticle;
+@class ZMArticleBuilder;
 @class ZMAsset;
 @class ZMAssetAudioMetaData;
 @class ZMAssetAudioMetaDataBuilder;
@@ -93,6 +95,8 @@
 @class ZMKnockBuilder;
 @class ZMLastRead;
 @class ZMLastReadBuilder;
+@class ZMLinkPreview;
+@class ZMLinkPreviewBuilder;
 @class ZMLocation;
 @class ZMLocationBuilder;
 @class ZMMention;
@@ -101,6 +105,8 @@
 @class ZMMsgDeletedBuilder;
 @class ZMText;
 @class ZMTextBuilder;
+@class ZMTweet;
+@class ZMTweetBuilder;
 
 
 typedef NS_ENUM(SInt32, ZMLikeAction) {
@@ -325,16 +331,20 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 
 #define Text_content @"content"
 #define Text_mention @"mention"
+#define Text_link_preview @"linkPreview"
 @interface ZMText : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasContent_:1;
   NSString* content;
   NSMutableArray * mentionArray;
+  NSMutableArray * linkPreviewArray;
 }
 - (BOOL) hasContent;
 @property (readonly, strong) NSString* content;
 @property (readonly, strong) NSArray * mention;
+@property (readonly, strong) NSArray * linkPreview;
 - (ZMMention*)mentionAtIndex:(NSUInteger)index;
+- (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -381,6 +391,12 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMTextBuilder *)addMention:(ZMMention*)value;
 - (ZMTextBuilder *)setMentionArray:(NSArray *)array;
 - (ZMTextBuilder *)clearMention;
+
+- (NSMutableArray *)linkPreview;
+- (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index;
+- (ZMTextBuilder *)addLinkPreview:(ZMLinkPreview*)value;
+- (ZMTextBuilder *)setLinkPreviewArray:(NSArray *)array;
+- (ZMTextBuilder *)clearLinkPreview;
 @end
 
 #define Knock_hot_knock @"hotKnock"
@@ -431,6 +447,274 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hotKnock;
 - (ZMKnockBuilder*) setHotKnock:(BOOL) value;
 - (ZMKnockBuilder*) clearHotKnock;
+@end
+
+#define LinkPreview_url @"url"
+#define LinkPreview_url_offset @"urlOffset"
+#define LinkPreview_article @"article"
+#define LinkPreview_permanent_url @"permanentUrl"
+#define LinkPreview_title @"title"
+#define LinkPreview_summary @"summary"
+#define LinkPreview_image @"image"
+#define LinkPreview_tweet @"tweet"
+@interface ZMLinkPreview : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasUrlOffset_:1;
+  BOOL hasUrl_:1;
+  BOOL hasPermanentUrl_:1;
+  BOOL hasTitle_:1;
+  BOOL hasSummary_:1;
+  BOOL hasArticle_:1;
+  BOOL hasImage_:1;
+  BOOL hasTweet_:1;
+  SInt32 urlOffset;
+  NSString* url;
+  NSString* permanentUrl;
+  NSString* title;
+  NSString* summary;
+  ZMArticle* article;
+  ZMAsset* image;
+  ZMTweet* tweet;
+}
+- (BOOL) hasUrl;
+- (BOOL) hasUrlOffset;
+- (BOOL) hasArticle;
+- (BOOL) hasPermanentUrl;
+- (BOOL) hasTitle;
+- (BOOL) hasSummary;
+- (BOOL) hasImage;
+- (BOOL) hasTweet;
+@property (readonly, strong) NSString* url;
+@property (readonly) SInt32 urlOffset;
+@property (readonly, strong) ZMArticle* article;
+@property (readonly, strong) NSString* permanentUrl;
+@property (readonly, strong) NSString* title;
+@property (readonly, strong) NSString* summary;
+@property (readonly, strong) ZMAsset* image;
+@property (readonly, strong) ZMTweet* tweet;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMLinkPreviewBuilder*) builder;
++ (ZMLinkPreviewBuilder*) builder;
++ (ZMLinkPreviewBuilder*) builderWithPrototype:(ZMLinkPreview*) prototype;
+- (ZMLinkPreviewBuilder*) toBuilder;
+
++ (ZMLinkPreview*) parseFromData:(NSData*) data;
++ (ZMLinkPreview*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMLinkPreview*) parseFromInputStream:(NSInputStream*) input;
++ (ZMLinkPreview*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMLinkPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMLinkPreview*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMLinkPreviewBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMLinkPreview* resultLinkPreview;
+}
+
+- (ZMLinkPreview*) defaultInstance;
+
+- (ZMLinkPreviewBuilder*) clear;
+- (ZMLinkPreviewBuilder*) clone;
+
+- (ZMLinkPreview*) build;
+- (ZMLinkPreview*) buildPartial;
+
+- (ZMLinkPreviewBuilder*) mergeFrom:(ZMLinkPreview*) other;
+- (ZMLinkPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMLinkPreviewBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasUrl;
+- (NSString*) url;
+- (ZMLinkPreviewBuilder*) setUrl:(NSString*) value;
+- (ZMLinkPreviewBuilder*) clearUrl;
+
+- (BOOL) hasUrlOffset;
+- (SInt32) urlOffset;
+- (ZMLinkPreviewBuilder*) setUrlOffset:(SInt32) value;
+- (ZMLinkPreviewBuilder*) clearUrlOffset;
+
+- (BOOL) hasArticle;
+- (ZMArticle*) article;
+- (ZMLinkPreviewBuilder*) setArticle:(ZMArticle*) value;
+- (ZMLinkPreviewBuilder*) setArticleBuilder:(ZMArticleBuilder*) builderForValue;
+- (ZMLinkPreviewBuilder*) mergeArticle:(ZMArticle*) value;
+- (ZMLinkPreviewBuilder*) clearArticle;
+
+- (BOOL) hasPermanentUrl;
+- (NSString*) permanentUrl;
+- (ZMLinkPreviewBuilder*) setPermanentUrl:(NSString*) value;
+- (ZMLinkPreviewBuilder*) clearPermanentUrl;
+
+- (BOOL) hasTitle;
+- (NSString*) title;
+- (ZMLinkPreviewBuilder*) setTitle:(NSString*) value;
+- (ZMLinkPreviewBuilder*) clearTitle;
+
+- (BOOL) hasSummary;
+- (NSString*) summary;
+- (ZMLinkPreviewBuilder*) setSummary:(NSString*) value;
+- (ZMLinkPreviewBuilder*) clearSummary;
+
+- (BOOL) hasImage;
+- (ZMAsset*) image;
+- (ZMLinkPreviewBuilder*) setImage:(ZMAsset*) value;
+- (ZMLinkPreviewBuilder*) setImageBuilder:(ZMAssetBuilder*) builderForValue;
+- (ZMLinkPreviewBuilder*) mergeImage:(ZMAsset*) value;
+- (ZMLinkPreviewBuilder*) clearImage;
+
+- (BOOL) hasTweet;
+- (ZMTweet*) tweet;
+- (ZMLinkPreviewBuilder*) setTweet:(ZMTweet*) value;
+- (ZMLinkPreviewBuilder*) setTweetBuilder:(ZMTweetBuilder*) builderForValue;
+- (ZMLinkPreviewBuilder*) mergeTweet:(ZMTweet*) value;
+- (ZMLinkPreviewBuilder*) clearTweet;
+@end
+
+#define Tweet_author @"author"
+#define Tweet_username @"username"
+@interface ZMTweet : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasAuthor_:1;
+  BOOL hasUsername_:1;
+  NSString* author;
+  NSString* username;
+}
+- (BOOL) hasAuthor;
+- (BOOL) hasUsername;
+@property (readonly, strong) NSString* author;
+@property (readonly, strong) NSString* username;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMTweetBuilder*) builder;
++ (ZMTweetBuilder*) builder;
++ (ZMTweetBuilder*) builderWithPrototype:(ZMTweet*) prototype;
+- (ZMTweetBuilder*) toBuilder;
+
++ (ZMTweet*) parseFromData:(NSData*) data;
++ (ZMTweet*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMTweet*) parseFromInputStream:(NSInputStream*) input;
++ (ZMTweet*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMTweet*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMTweet*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMTweetBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMTweet* resultTweet;
+}
+
+- (ZMTweet*) defaultInstance;
+
+- (ZMTweetBuilder*) clear;
+- (ZMTweetBuilder*) clone;
+
+- (ZMTweet*) build;
+- (ZMTweet*) buildPartial;
+
+- (ZMTweetBuilder*) mergeFrom:(ZMTweet*) other;
+- (ZMTweetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMTweetBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasAuthor;
+- (NSString*) author;
+- (ZMTweetBuilder*) setAuthor:(NSString*) value;
+- (ZMTweetBuilder*) clearAuthor;
+
+- (BOOL) hasUsername;
+- (NSString*) username;
+- (ZMTweetBuilder*) setUsername:(NSString*) value;
+- (ZMTweetBuilder*) clearUsername;
+@end
+
+#define Article_permanent_url @"permanentUrl"
+#define Article_title @"title"
+#define Article_summary @"summary"
+#define Article_image @"image"
+@interface ZMArticle : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasPermanentUrl_:1;
+  BOOL hasTitle_:1;
+  BOOL hasSummary_:1;
+  BOOL hasImage_:1;
+  NSString* permanentUrl;
+  NSString* title;
+  NSString* summary;
+  ZMAsset* image;
+}
+- (BOOL) hasPermanentUrl;
+- (BOOL) hasTitle;
+- (BOOL) hasSummary;
+- (BOOL) hasImage;
+@property (readonly, strong) NSString* permanentUrl;
+@property (readonly, strong) NSString* title;
+@property (readonly, strong) NSString* summary;
+@property (readonly, strong) ZMAsset* image;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMArticleBuilder*) builder;
++ (ZMArticleBuilder*) builder;
++ (ZMArticleBuilder*) builderWithPrototype:(ZMArticle*) prototype;
+- (ZMArticleBuilder*) toBuilder;
+
++ (ZMArticle*) parseFromData:(NSData*) data;
++ (ZMArticle*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMArticle*) parseFromInputStream:(NSInputStream*) input;
++ (ZMArticle*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMArticle*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMArticle*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMArticleBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMArticle* resultArticle;
+}
+
+- (ZMArticle*) defaultInstance;
+
+- (ZMArticleBuilder*) clear;
+- (ZMArticleBuilder*) clone;
+
+- (ZMArticle*) build;
+- (ZMArticle*) buildPartial;
+
+- (ZMArticleBuilder*) mergeFrom:(ZMArticle*) other;
+- (ZMArticleBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMArticleBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasPermanentUrl;
+- (NSString*) permanentUrl;
+- (ZMArticleBuilder*) setPermanentUrl:(NSString*) value;
+- (ZMArticleBuilder*) clearPermanentUrl;
+
+- (BOOL) hasTitle;
+- (NSString*) title;
+- (ZMArticleBuilder*) setTitle:(NSString*) value;
+- (ZMArticleBuilder*) clearTitle;
+
+- (BOOL) hasSummary;
+- (NSString*) summary;
+- (ZMArticleBuilder*) setSummary:(NSString*) value;
+- (ZMArticleBuilder*) clearSummary;
+
+- (BOOL) hasImage;
+- (ZMAsset*) image;
+- (ZMArticleBuilder*) setImage:(ZMAsset*) value;
+- (ZMArticleBuilder*) setImageBuilder:(ZMAssetBuilder*) builderForValue;
+- (ZMArticleBuilder*) mergeImage:(ZMAsset*) value;
+- (ZMArticleBuilder*) clearImage;
 @end
 
 #define Mention_user_id @"userId"
@@ -1342,13 +1626,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @interface ZMAssetRemoteData : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasAssetId_:1;
+  BOOL hasAssetToken_:1;
   BOOL hasOtrKey_:1;
   BOOL hasSha256_:1;
-  BOOL hasAssetToken_:1;
   NSString* assetId;
+  NSString* assetToken;
   NSData* otrKey;
   NSData* sha256;
-  NSData* assetToken;
 }
 - (BOOL) hasOtrKey;
 - (BOOL) hasSha256;
@@ -1357,7 +1641,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @property (readonly, strong) NSData* otrKey;
 @property (readonly, strong) NSData* sha256;
 @property (readonly, strong) NSString* assetId;
-@property (readonly, strong) NSData* assetToken;
+@property (readonly, strong) NSString* assetToken;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -1410,8 +1694,8 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMAssetRemoteDataBuilder*) clearAssetId;
 
 - (BOOL) hasAssetToken;
-- (NSData*) assetToken;
-- (ZMAssetRemoteDataBuilder*) setAssetToken:(NSData*) value;
+- (NSString*) assetToken;
+- (ZMAssetRemoteDataBuilder*) setAssetToken:(NSString*) value;
 - (ZMAssetRemoteDataBuilder*) clearAssetToken;
 @end
 

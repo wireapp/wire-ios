@@ -127,6 +127,18 @@
     return [builder build];
 }
 
++ (instancetype)messageWithText:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview nonce:(NSString *)nonce;
+{
+    ZMTextBuilder *textBuilder = [ZMText builder];
+    textBuilder.content = message;
+    [textBuilder addLinkPreview:linkPreview];
+    ZMText *text = [textBuilder build];
+    ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
+    builder.messageId = nonce;
+    builder.text = text;
+    return [builder build];
+}
+
 + (ZMGenericMessage *)knockWithNonce:(NSString *)nonce
 {
     ZMKnockBuilder *knockBuilder = [ZMKnock builder];
