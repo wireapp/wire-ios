@@ -45,9 +45,9 @@
         NSString *token = [payload stringForKey:@"token"];
         NSString *app = [payload stringForKey:@"app"];
         NSString *transport = [payload stringForKey:@"transport"];
-        if ((token != nil) && (0 < app.length) && [transport isEqualToString:@"APNS"]) {
-            [self addPushToken:@{@"token": token, @"app": app}];
-            return [ZMTransportResponse responseWithPayload:@{@"token": token, @"app": app, @"transport": @"APNS"} HTTPstatus:201 transportSessionError:nil];
+        if ((token != nil) && (0 < app.length) && ([transport isEqualToString:@"APNS"] || [transport isEqualToString:@"APNS_VOIP"])) {
+            [self addPushToken:@{@"token": token, @"app": app,  @"transport" : transport}];
+            return [ZMTransportResponse responseWithPayload:@{@"token": token, @"app": app, @"transport": transport} HTTPstatus:201 transportSessionError:nil];
         }
     }
     return [ZMTransportResponse responseWithPayload:@{@"code": @400} HTTPstatus:400 transportSessionError:nil];
