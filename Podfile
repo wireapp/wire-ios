@@ -1,4 +1,3 @@
-source 'https://github.com/wearezeta/zclient-iosx-private-specs.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 def ios_pods
