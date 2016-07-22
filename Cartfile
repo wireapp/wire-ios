@@ -1,4 +1,2 @@
-github "alexeyxo/protobuf-objc" "1.9.9.2"
-github "wireapp/generic-message-proto" "v1.11.0"
-github "wireapp/backend-api-protobuf" "2.1"
+github "wireapp/protobuf-objc" "1.9.9.2"
 github "wireapp/zmc-images"

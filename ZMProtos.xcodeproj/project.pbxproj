@@ -259,7 +259,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 090838141B872DC000629095 /* Build configuration list for PBXNativeTarget "ZMProtos-ios" */;
 			buildPhases = (
-				0908381A1B872E7700629095 /* Generate proto */,
 				090837F91B872DBF00629095 /* Sources */,
 				090837FA1B872DBF00629095 /* Frameworks */,
 				090837FB1B872DBF00629095 /* Headers */,
@@ -346,23 +345,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		0908381A1B872E7700629095 /* Generate proto */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate proto";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nCOMPILE=\"Scripts/compile-protos.sh\"\nif [ -e \"$COMPILE\" ]; then\n    $COMPILE\nfi\n\n\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		090837F91B872DBF00629095 /* Sources */ = {
