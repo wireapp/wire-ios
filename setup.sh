@@ -30,8 +30,7 @@ function die { ( >&2 echo "$*"); exit 1; }
 
 # CHECK PREREQUISITES
 hash carthage 2>/dev/null || die "Can't find Carthage, please install from https://github.com/Carthage/Carthage"
-hash pod 2>/dev/null || die "Can't find Cocoapod, please install from https://cocoapods.org/"
-hash xcodebuild 2>/dev/null || die "Can't find XCode, please install from the App Store"
+hash xcodebuild 2>/dev/null || die "Can't find Xcode, please install from the App Store"
 hash gem 2>/dev/null || die "Can't find Ruby (gem), please install from https://www.ruby-lang.org/en/"
 
 version=`carthage version`

@@ -60,7 +60,7 @@ The setup script will automatically check for you that you satisfy these require
 
 ### How to build locally
 1. Check out the wire-ios repository.
-2. From the checkout folder, run `./setup.sh`. This will pull in all the necessary dependencies with Carthage and CocoaPods and verify that you have the right version of the tools installed.
+2. From the checkout folder, run `./setup.sh`. This will pull in all the necessary dependencies with Carthage and CocoaPods and verify that you have the right version of the tools installed. If you did not have CocoaPods version >= 1.0.0 installed before this script will fail and you will need to run `bundle exec pod repo update` manually before running it again.
 3. Open the workspace `Wire-iOS.xcworkspace` in Xcode
 4. Click the "Run" button in Xcode
 
