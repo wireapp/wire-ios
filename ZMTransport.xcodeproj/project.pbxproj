@@ -288,6 +288,10 @@
 		54B3BD341B7A2D37004B8183 /* ZMEventID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMEventID.m; sourceTree = "<group>"; };
 		54B3BD361B7A2D69004B8183 /* ZMEventID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMEventID.h; sourceTree = "<group>"; };
 		54B3BD381B7A2DCE004B8183 /* ZMEventIDTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMEventIDTests.m; sourceTree = "<group>"; };
+		54BD49FA1D41FE0B006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		54BD49FB1D41FE0B006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		54BD49FC1D41FE0B006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+		54BD49FD1D41FE0B006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54CA14FE1B32F2C1008D3787 /* ZMAccessToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAccessToken.h; sourceTree = "<group>"; };
 		54CA14FF1B32F2C1008D3787 /* ZMAccessToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMAccessToken.m; sourceTree = "<group>"; };
 		54CA15001B32F2C1008D3787 /* ZMAccessTokenHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAccessTokenHandler.h; sourceTree = "<group>"; };
@@ -449,6 +453,10 @@
 		3E88BC9D1B1F35DF00232589 = {
 			isa = PBXGroup;
 			children = (
+				54BD49FA1D41FE0B006E29D1 /* Cartfile */,
+				54BD49FB1D41FE0B006E29D1 /* Cartfile.private */,
+				54BD49FC1D41FE0B006E29D1 /* Cartfile.resolved */,
+				54BD49FD1D41FE0B006E29D1 /* README.md */,
 				5499FF661B31C66C00835C8B /* Source */,
 				546E89BD1B33015000DD1042 /* Tests */,
 				3E88BD0B1B1F370700232589 /* Resources */,
