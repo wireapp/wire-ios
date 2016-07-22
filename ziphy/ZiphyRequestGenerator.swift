@@ -43,15 +43,15 @@ struct ZiphyRequestGenerator {
         
         if let requestURL = components.URL {
             
-            return Either.Right(Box(value: NSURLRequest(URL: requestURL)))
+            return Either.Right(NSURLRequest(URL: requestURL))
         }
         else {
             
             let invalidURL = requestScheme + "://" + ((self.host as NSString).stringByAppendingPathComponent(path) as NSString).stringByAppendingPathComponent(query ?? "")
             
-            return Either.Left(Box(value: NSError(domain: ZiphyErrorDomain,
+            return Either.Left(NSError(domain: ZiphyErrorDomain,
                 code: ZiphyError.MalformedURL.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:invalidURL + " is not a valid URL"])))
+                userInfo:[NSLocalizedDescriptionKey:invalidURL + " is not a valid URL"]))
         }
     }
     
@@ -59,18 +59,15 @@ struct ZiphyRequestGenerator {
         
         let query = "limit=\(resultsLimit)&offset=\(offset)"
         
-        switch self.requestWithParameters(self.searchEndpoint, query: query) {
+        return self.requestWithParameters(self.searchEndpoint, query: query).rightMap { (urlRequest: NSURLRequest) in
             
-        case .Left(let box):
-            return Either.Left(box)
-        case .Right(let box):
-            let url:NSURL! = box.value.URL
             let escapedSearchTerm = self.escape(term)
             let finalSearchTerm = escapedSearchTerm ?? ""
             LogDebug("Escaped search term from \(term) to \(finalSearchTerm)")
-            let finalURLString = url.absoluteString+"&q=\(finalSearchTerm)"
+            let finalURLString = urlRequest.URL!.absoluteString+"&q=\(finalSearchTerm)"
             LogDebug("Create request with URL: \(finalURLString)")
-            return Either.Right(Box(value: NSURLRequest(URL: NSURL(string: finalURLString)!)))
+            
+            return NSURLRequest(URL: NSURL(string: finalURLString)!)
         }
     }
     

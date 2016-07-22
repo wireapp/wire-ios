@@ -60,109 +60,112 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
         resultsLimit:Int = 25,
         offset:Int = 0,
         onCompletion:ZiphsCallBack) {
+        
+        let eitherRequest = self.requestGenerator.searchRequestWithParameters(term, resultsLimit:resultsLimit, offset:offset)
+        
+        eitherRequest.leftMap { error in
             
-            switch self.requestGenerator.searchRequestWithParameters(term, resultsLimit:resultsLimit, offset:offset) {
+            performOnQueue(callBackQueue) {
+                onCompletion(success: false, ziphs:[Ziph](), error: error)
+            }
+        }
+        
+        eitherRequest.rightMap { urlRequest in
+            
+            self.performDataTask(urlRequest, requester:self.requester).then { (data, _, nError) in
                 
-            case .Left(let box):
-                performOnQueue(callBackQueue) {
-                    onCompletion(success: false, ziphs:[Ziph](), error: box.value)
-                }
-            case .Right(let box):
+                let eitherPaginationData = self.checkDataForPagination(data, resultsLimit:resultsLimit, offset:offset)
                 
-                self.performDataTask(box.value, requester:self.requester).then { (data, _, nError) in
+                return eitherPaginationData.left
+                
+                }.then { (data, _, nError) in
                     
-                    switch self.checkDataForPagination(data, resultsLimit:resultsLimit, offset:offset) {
-                        
-                    case .Left(let box):
-                        return box.value
-                    case .Right(_):
-                        return nil
-                    }
+                    let eitherImageArray = self.checkDataForImageArray(data)
                     
-                    }.then { (data, _, nError) in
-                        
-                        switch self.checkDataForImageArray(data) {
-                            
-                        case .Left(let box):
-                            return box.value
-                        case .Right(let box):
-                            performOnQueue(callBackQueue) {
-                                onCompletion(success: true, ziphs:box.value, error:nil)
-                            }
-                            return nil
-                        }
-                        
-                    }.fail{ (error) -> () in
+                    return eitherImageArray.rightMap { ziphs in
                         
                         performOnQueue(callBackQueue) {
-                            onCompletion(success:false, ziphs:[Ziph](), error:error)
+                            onCompletion(success: true, ziphs: ziphs, error: nil)
                         }
-                }
+                        
+                    }.left
+                    
+                }.fail { error in
+                    
+                    performOnQueue(callBackQueue) {
+                        onCompletion(success: false, ziphs: [Ziph](), error: error)
+                    }
             }
+        }
     }
     
     public func randomGif(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
         onCompletion:ZiphByIdCallBack) {
+        
+        let eitherRequest = self.requestGenerator.randomRequests()
+        
+        eitherRequest.leftMap { error in
             
-            switch self.requestGenerator.randomRequests() {
-            case .Left(let box):
-                performOnQueue(callBackQueue) {
-                    onCompletion(success: false, ziphId:"", error: box.value)
-                }
-            case .Right(let box):
-                self.performDataTask(box.value, requester:self.requester).then({ (data, response, error) -> NSError? in
-                    
-                    switch self.checkDataForGifId(data) {
-                    case .Left(let box):
-                        return box.value
-                    case .Right(let box):
-                        performOnQueue(callBackQueue) {
-                            onCompletion(success: true, ziphId:box.value, error:nil)
-                        }
-                        return nil
-                    }
-                    
-                }).fail({ (error) -> () in
-                    performOnQueue(callBackQueue) {
-                        onCompletion(success:false, ziphId:"", error:error)
-                    }
-                })
+            performOnQueue(callBackQueue) {
+                onCompletion(success: false, ziphId: "", error: error)
             }
+        }
+        
+        eitherRequest.rightMap { request in
+            
+            self.performDataTask(request, requester:self.requester).then { (data, response, error) -> NSError? in
+                
+                let eitherGifID = self.checkDataForGifId(data)
+                
+                return eitherGifID.rightMap { ziphId in
+                    
+                    performOnQueue(callBackQueue) {
+                        onCompletion(success: true, ziphId: ziphId, error: nil)
+                    }
+                }.left
+                
+            }.fail { error in
+                performOnQueue(callBackQueue) {
+                    onCompletion(success:false, ziphId:"", error:error)
+                }
+            }
+        }
     }
     
     public func gifsById(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
         ids:[String],
         onCompletion:ZiphsCallBack) {
+        
+        let eitherRequest = self.requestGenerator.gifsByIdRequest(ids)
+        
+        eitherRequest.leftMap { error in
             
-            switch self.requestGenerator.gifsByIdRequest(ids) {
+            performOnQueue(callBackQueue) {
+                onCompletion(success: false, ziphs: [Ziph](), error: error)
+            }
+        }
+        
+        eitherRequest.rightMap { request in
+            
+            self.performDataTask(request, requester:self.requester).then { (data, _, nError) in
                 
-            case .Left(let box):
-                performOnQueue(callBackQueue) {
-                    onCompletion(success: false, ziphs:[Ziph](), error: box.value)
-                }
-            case .Right(let box):
+                let eitherImageArray = self.checkDataForImageArray(data)
                 
-                self.performDataTask(box.value, requester:self.requester).then { (data, _, nError) in
+                return eitherImageArray.rightMap { ziphs in
                     
-                    switch self.checkDataForImageArray(data) {
-                        
-                    case .Left(let box):
-                        return box.value
-                    case .Right(let box):
-                        performOnQueue(callBackQueue) {
-                            onCompletion(success: true, ziphs:box.value, error:nil)
-                        }
-                        return nil
+                    performOnQueue(callBackQueue) {
+                        onCompletion(success: true, ziphs: ziphs, error:nil)
                     }
+                }.left
+                
+            }.fail { error in
                     
-                    }.fail{ (error) -> () in
-                        
-                        performOnQueue(callBackQueue) {
-                            onCompletion(success:false, ziphs:[Ziph](), error:error)
-                        }
+                performOnQueue(callBackQueue) {
+                    onCompletion(success:false, ziphs:[Ziph](), error:error)
                 }
             }
-            
+        }
+        
     }
     
     public func fetchImage(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
@@ -230,9 +233,9 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
         
         if data == nil {
             
-            return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+            return Either.Left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.BadResponse.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:"No data in network response"])))
+                userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
         
         do {
@@ -248,36 +251,36 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                         
                         if offset >= total_count {
                             
-                            return  Either.Left(Box(value: NSError(domain: ZiphyErrorDomain,
+                            return  Either.Left(NSError(domain: ZiphyErrorDomain,
                                 code:ZiphyError.NoMorePages.rawValue,
-                                userInfo:[NSLocalizedDescriptionKey:"No more pages in JSON"])))
+                                userInfo:[NSLocalizedDescriptionKey:"No more pages in JSON"]))
                         }
                 }
             }
             else{
                 
-                return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+                return Either.Left(NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.BadResponse.rawValue,
-                    userInfo:[NSLocalizedDescriptionKey:"Pagination error in JSON"])))
+                    userInfo:[NSLocalizedDescriptionKey:"Pagination error in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
-            return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+            return Either.Left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.BadResponse.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error])))
+                userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
         
         
-        return Either.Right(Box(value:[]))
+        return Either.Right([])
     }
     
     private func checkDataForImageArray(data:NSData!) -> Either<NSError,[Ziph]> {
         
         if data == nil {
             
-            return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+            return Either.Left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.BadResponse.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:"No data in network response"])))
+                userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
         
         do {
@@ -293,21 +296,21 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                 let arrayOfPossibleZiphs = gifsArray.filter { return fromSearchResultToZiph($0) != nil }
                 let ziphs = arrayOfPossibleZiphs.map { return Ziph(dictionary:$0)! }
                 
-                return Either.Right(Box(value: ziphs))
+                return Either.Right(ziphs)
             }
             else {
                 
                 LogError("Response Error: \(maybeResponse)")
                 
-                return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+                return Either.Left(NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.BadResponse.rawValue,
-                    userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"])))
+                    userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
-            return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+            return Either.Left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.BadResponse.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error])))
+                userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
     }
     
@@ -315,30 +318,30 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
         
         if data == nil {
             
-            return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+            return Either.Left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.BadResponse.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:"No data in network response"])))
+                userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
         do {
             let maybeResponse = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0)) as? [String:AnyObject]
             if let randomGifDesc = maybeResponse?["data"] as? [String:AnyObject] {
                 
                 let gifId:String? = randomGifDesc["id"] as? String
-                return Either.Right(Box(value: gifId ?? ""))
+                return Either.Right(gifId ?? "")
             }
             else {
                 
                 LogError("Response Error: \(maybeResponse)")
                 
-                return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+                return Either.Left(NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.BadResponse.rawValue,
-                    userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"])))
+                    userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
-            return Either.Left(Box(value:NSError(domain: ZiphyErrorDomain,
+            return Either.Left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.BadResponse.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error])))
+                userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
         
     }

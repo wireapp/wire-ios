@@ -54,8 +54,8 @@ class GiphyRequester : ZiphyURLRequester {
 }
 
 class ZiphyTestCase: XCTestCase {
-    
-    let defaultRequester:GiphyRequester = GiphyRequester(apiKey:"")
+    //Public API key dc6zaTOxFJmzC
+    let defaultRequester:GiphyRequester = GiphyRequester(apiKey: "dc6zaTOxFJmzC")
     
     override func setUp() {
         super.setUp()
