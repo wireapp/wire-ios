@@ -126,6 +126,10 @@
 		16525A031D378ED500A9567E /* polygon_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polygon_head.txt; sourceTree = "<group>"; };
 		1662888A1D26B07C006172EB /* LinkPreviewDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPreviewDetector.swift; sourceTree = "<group>"; };
 		1662888C1D26E3C1006172EB /* OpenGraphDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenGraphDataTests.swift; sourceTree = "<group>"; };
+		54BD49F61D41FDE5006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		54BD49F71D41FDE5006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+		54BD49F91D41FDE5006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AF2A6AFF1D266EA000A59905 /* twitter_full.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = twitter_full.txt; sourceTree = "<group>"; };
 		AF2A6B011D2670E300A59905 /* PreviewDownloaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewDownloaderTests.swift; sourceTree = "<group>"; };
 		AF2A6B031D268A4400A59905 /* IntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
@@ -341,6 +345,10 @@
 		BFF057801D25434D004A2C29 = {
 			isa = PBXGroup;
 			children = (
+				54BD49F61D41FDE5006E29D1 /* Cartfile */,
+				54BD49F71D41FDE5006E29D1 /* Cartfile.private */,
+				54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */,
+				54BD49F91D41FDE5006E29D1 /* README.md */,
 				BF7699871D34F881009C378B /* Ono.framework */,
 				BFF0578C1D25434D004A2C29 /* ZMCLinkPreview */,
 				BFF057981D25434E004A2C29 /* ZMCLinkPreviewTests */,
