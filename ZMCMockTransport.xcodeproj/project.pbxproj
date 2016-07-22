@@ -195,6 +195,8 @@
 		54AE5A9E1B78FA62002757E9 /* MockTransportSessionTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTransportSessionTests.h; sourceTree = "<group>"; };
 		54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionTests.m; sourceTree = "<group>"; };
 		54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionUsersTests.m; sourceTree = "<group>"; };
+		54BD49FE1D41FE7E006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+		54BD49FF1D41FE7E006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54C902331B7532DD007162A8 /* ZMCMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZMCMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54C902371B7532DD007162A8 /* ZMCMockTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMCMockTransport-Info.plist"; sourceTree = "<group>"; };
 		54C9023E1B7532DD007162A8 /* ZMMockTransportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZMMockTransportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -334,6 +336,8 @@
 			children = (
 				0928E1FA1B975CCE0057232E /* Cartfile */,
 				0928E1FB1B975CFE0057232E /* Cartfile.private */,
+				54BD49FE1D41FE7E006E29D1 /* Cartfile.resolved */,
+				54BD49FF1D41FE7E006E29D1 /* README.md */,
 				54C902351B7532DD007162A8 /* Source */,
 				54C902421B7532DD007162A8 /* Tests */,
 				54C9024F1B7532F6007162A8 /* Resources */,
