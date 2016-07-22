@@ -227,6 +227,10 @@
 		546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FunctionalTests.swift; path = Source/FunctionalTests.swift; sourceTree = "<group>"; };
 		546E8A5E1B7503E8009EBA02 /* SetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SetsTests.swift; path = Source/SetsTests.swift; sourceTree = "<group>"; };
 		546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedObjectTests.swift; path = Source/UnownedObjectTests.swift; sourceTree = "<group>"; };
+		54BD49EB1D41FA16006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		54BD49EC1D41FA16006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		54BD49ED1D41FA16006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+		54BD49EE1D41FA1D006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54C1B0EC1B317E8400CB8CF3 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		54C1B0F91B31A1E400CB8CF3 /* ZMUtilities-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ZMUtilities-ios.xcconfig"; sourceTree = "<group>"; };
 		54C1B0FA1B31A1E400CB8CF3 /* ZMUtilities-osx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ZMUtilities-osx.xcconfig"; sourceTree = "<group>"; };
@@ -369,6 +373,10 @@
 		3E88BD291B1F3E8400232589 = {
 			isa = PBXGroup;
 			children = (
+				54BD49EB1D41FA16006E29D1 /* Cartfile */,
+				54BD49EC1D41FA16006E29D1 /* Cartfile.private */,
+				54BD49ED1D41FA16006E29D1 /* Cartfile.resolved */,
+				54BD49EE1D41FA1D006E29D1 /* README.md */,
 				3E88BD3A1B1F3EA300232589 /* Source */,
 				3E88BD471B1F3EA300232589 /* Tests */,
 				3E88BD7C1B1F3F6700232589 /* Resources */,
