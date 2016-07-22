@@ -53,6 +53,9 @@
 		0928E3811BA17E300057232E /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		0928E3821BA17E300057232E /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		0928E3831BA17E300057232E /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		543089B41D420113004D8AC4 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		543089B51D420113004D8AC4 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+		543089B61D420113004D8AC4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		BA025F921B79DAAE00139D15 /* CBTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBTypes.h; sourceTree = "<group>"; };
 		BA025F971B79F62A00139D15 /* CBCryptoBoxInitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBCryptoBoxInitTest.m; sourceTree = "<group>"; };
 		BA74487A1B7A69D7002D9941 /* CBMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBMacros.h; sourceTree = "<group>"; };
@@ -203,6 +206,9 @@
 		BA7EF9551B7109B600204A8E = {
 			isa = PBXGroup;
 			children = (
+				543089B41D420113004D8AC4 /* Cartfile */,
+				543089B51D420113004D8AC4 /* Cartfile.resolved */,
+				543089B61D420113004D8AC4 /* README.md */,
 				BA7EF9601B7109B600204A8E /* Cryptobox */,
 				0928E35A1BA090620057232E /* Resources */,
 				BA7EF9781B710B4D00204A8E /* Libraries */,
