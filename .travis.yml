@@ -1,4 +1,4 @@
 language: objective-c
 osx_image: xcode7.3
 
-script: ./setup.sh
+script: ./setup.sh && ./test.sh
