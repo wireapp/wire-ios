@@ -17,14 +17,6 @@
 // 
 
 
-//  ZClient-OSX
-//
-//  Created by Tyson Chihaya on 7/7/14.
-//  Copyright (c) 2014 Zeta Project Germany GmbH. All rights reserved.
-//
-
-
-
 #import "ZMUser+Additions.h"
 #import "zmessaging+iOS.h"
 #import "UIColor+WAZExtensions.h"
