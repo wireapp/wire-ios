@@ -23,5 +23,5 @@
 # This scripts runs the tests of Wire-iOS target.
 #
 
-xctool -workspace Wire-iOS.xcworkspace -scheme Wire-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' test
+xcodebuild test -workspace Wire-iOS.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | xcpretty
 
