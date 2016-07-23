@@ -4604,7 +4604,6 @@
 			buildConfigurationList = 8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */;
 			buildPhases = (
 				193B0B9A94C0482E9B6C33B0 /* [CP] Check Pods Manifest.lock */,
-				87DA46FD1D40FE7900B10BEF /* Download AVS */,
 				8F42C534199244A700288E4D /* Sources */,
 				8795A5D21D34D1A50024101B /* EmbedBuildInfo */,
 				8F42C535199244A700288E4D /* Frameworks */,
@@ -4901,20 +4900,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/Scripts/embedBuildInfo --output ${SRCROOT}/Wire-iOS/ComponentsVersions.plist";
-		};
-		87DA46FD1D40FE7900B10BEF /* Download AVS */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Download AVS";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/Scripts/download-avs.sh";
 		};
 		B51FF934CF48FDB769715E40 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

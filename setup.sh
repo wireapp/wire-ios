@@ -53,4 +53,9 @@ echo ""
 echo "ℹ️  Pod install. This might take a while..."
 bundle install && bundle exec pod install
 echo ""
+
+echo "ℹ️  Downloading AVS library..."
+./Scripts/download-avs.sh
+echo ""
+
 echo "✅  Wire project was set up, you can now open Wire-iOS.xcworkspace"
