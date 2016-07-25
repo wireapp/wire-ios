@@ -942,7 +942,6 @@
 					};
 					3E88BCA61B1F35DF00232589 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = W5KEQBF9B5;
 					};
 					3E88BCB11B1F35DF00232589 = {
 						CreatedOnToolsVersion = 6.3.2;
@@ -1239,6 +1238,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMTransport-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1249,6 +1249,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMTransport-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
