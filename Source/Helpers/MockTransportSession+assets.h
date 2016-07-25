@@ -23,5 +23,6 @@
 @interface MockTransportSession (Assets)
 
 - (ZMTransportResponse *)processAssetRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processAssetV3Request:(TestTransportSessionRequest *)sessionRequest;
 
 @end
