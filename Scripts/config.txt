@@ -1,0 +1,4 @@
+framework=ZMTransport
+organization=wireapp
+repository=wire-ios-transport
+release-name-format={BIRD}
