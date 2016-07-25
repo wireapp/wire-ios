@@ -4672,7 +4672,6 @@
 					};
 					8F42C537199244A700288E4D = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = W5KEQBF9B5;
 						SystemCapabilities = {
 							com.apple.iCloud = {
 								enabled = 1;
