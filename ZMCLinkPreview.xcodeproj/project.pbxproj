@@ -489,7 +489,6 @@
 					};
 					BFF057891D25434D004A2C29 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = W5KEQBF9B5;
 					};
 					BFF057931D25434E004A2C29 = {
 						CreatedOnToolsVersion = 7.3.1;
