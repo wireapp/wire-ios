@@ -17,26 +17,22 @@
 // 
 
 
-#import <XCTest/XCTest.h>
+import Foundation
 
-#import "CBCryptoBox.h"
-@class CBPreKey;
+/** 
+ This class is used to add type safety to C opaque pointers.
+ Just subclass this class and add the subclass to all signatures
 
-
-
-FOUNDATION_EXPORT NSURL *__nullable CBCreateTemporaryDirectoryAndReturnURL(NSString * __nonnull directorySeed, NSString * __nonnull name);
-
-
-
-@interface CBTestCase : XCTestCase
-
-@property (nonatomic, nonnull, readonly) NSString * directorySeed;
-
-//use the directory seed to create the box.
-- (nullable CBCryptoBox *)createBoxAndCheckAsserts:(NSString * __nonnull)userName;
-
-- (nullable NSArray *)generatePreKeysAndCheckAssertsWithRange:(NSRange)range box:(nonnull CBCryptoBox *)box;
-
-- (nullable CBPreKey *)generatePreKeyAndCheckAssertsWithLocation:(NSUInteger)location box:(nonnull  CBCryptoBox *)box;
-
-@end
+ E.g.
+ ```
+ class CStruct : PointerWrapper {}
+ 
+ func foo(struct: CStruct) -> Int {
+    return some_c_function(struct.ptr)
+ }
+ 
+ ```
+ */
+class PointerWrapper {
+    var ptr : COpaquePointer = nil
+}

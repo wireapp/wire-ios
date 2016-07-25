@@ -17,25 +17,22 @@
 // 
 
 
-#import "CBSessionMessage.h"
+#import "ViewController.h"
 
-@interface CBSessionMessage ()
-
-@property (nonatomic, readwrite, nonnull) CBSession *session;
-@property (nonatomic, readwrite, nullable) NSData *data;
+@interface ViewController ()
 
 @end
 
-@implementation CBSessionMessage
+@implementation ViewController
 
-- (nonnull instancetype)initWithSession:(nonnull CBSession *)session data:(nullable NSData *)data;
-{
-    self = [super init];
-    if (self) {
-        self.session = session;
-        self.data = data;
-    }
-    return self;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
 @end

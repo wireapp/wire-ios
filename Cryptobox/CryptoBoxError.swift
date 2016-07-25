@@ -17,11 +17,8 @@
 // 
 
 
-#import "cbox.h"
+import Foundation
 
-
-typedef struct CBox *CBoxRef;
-typedef struct CBoxVec *CBoxVecRef;
-typedef struct CBoxSession *CBoxSessionRef;
-
+extension CBoxResult : ErrorType {
+}
 
