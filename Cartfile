@@ -1,4 +1,4 @@
-github "wireapp/wire-ios-cryptobox"
+github "wireapp/wire-ios-cryptobox" ~> 2.8.1
 github "wireapp/wire-ios-images"
 github "wireapp/wire-ios-protos" ~> 6.0
 github "wireapp/libPhoneNumber-iOS" "0.8.12"
