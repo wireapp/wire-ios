@@ -17,10 +17,3 @@
 // 
 
 
-#import "CBPreKey.h"
-
-@interface CBPreKey (Internal)
-
-+ (nullable instancetype)preKeyWithId:(uint16_t)identifier boxRef:(nonnull CBoxRef)boxRef error:(NSError *__nullable * __nullable)error;
-
-@end

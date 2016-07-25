@@ -17,17 +17,10 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@class CBSession;
+@interface ViewController : UIViewController
 
-
-
-@interface CBSessionMessage : NSObject
-
-@property (nonatomic, readonly, nonnull) CBSession *session;
-@property (nonatomic, readonly, nullable) NSData *data;
-
-- (nonnull instancetype)initWithSession:(nonnull CBSession *)session data:(nullable NSData *)data;
 
 @end
+

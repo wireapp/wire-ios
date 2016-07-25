@@ -17,18 +17,17 @@
 // 
 
 
-#import "CBVector.h"
+import Foundation
 
-
-
-@interface CBVector (Internal)
-
-- (nonnull instancetype)initWithCBoxVecRef:(nonnull CBoxVecRef)vector;
-
-+ (nonnull instancetype)vectorWithCBoxVecRef:(nonnull CBoxVecRef)vector;
-
-- (nonnull uint8_t *)dataArray;
-
-- (unsigned long)length;
-
-@end
+extension NSData {
+    
+    /// Moves from a CBoxVector to this data
+    /// During this call, the CBoxVector is freed
+    static func moveFromCBoxVector(vector: COpaquePointer) -> NSData {
+        let data = cbox_vec_data(vector)
+        let length = cbox_vec_len(vector)
+        let finalData = NSData(bytes: data, length: length) // this ctor copies
+        cbox_vec_free(vector)
+        return finalData
+    }
+}

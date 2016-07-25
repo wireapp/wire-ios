@@ -17,33 +17,12 @@
 // 
 
 
-#import <Foundation/Foundation.h>
-#import <XCTest/XCTest.h>
+#import <UIKit/UIKit.h>
 
-#import "CBTestCase.h"
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
+@property (strong, nonatomic) UIWindow *window;
 
-@import Cryptobox;
-
-
-/// Very simple box init test
-@interface CBCryptoBoxInitTest : CBTestCase
 
 @end
 
-@implementation CBCryptoBoxInitTest
-
-- (void)testThatCryptoBoxInitWithPathWorks
-{
-    NSURL *directory = CBCreateTemporaryDirectoryAndReturnURL(self.directorySeed, self.name);
-    NSError *error = nil;
-    CBCryptoBox *box = [CBCryptoBox cryptoBoxWithPathURL:directory error:&error];
-    XCTAssertNil(error);
-    XCTAssertNotNil(box);
-    
-    NSData *localFingerprint = [box localFingerprint:&error];
-    XCTAssertNil(error);
-    XCTAssertNotNil(localFingerprint);
-}
-
-@end

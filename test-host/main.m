@@ -17,14 +17,11 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "AppDelegate.h"
 
-/// Wrapps CBoxVec
-@interface CBVector : NSObject
-
-@property (nonatomic, readonly, nullable) NSData *data;
-
-@end
-
-
-
+int main(int argc, char * argv[]) {
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
+}
