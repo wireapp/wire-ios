@@ -1,0 +1,3 @@
+framework=ZMTesting
+repository=wire-ios-testing
+release-name-format=That time when the compiler said {CPP_ERROR}
