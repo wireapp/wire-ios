@@ -1,3 +1,4 @@
 framework=ZMTesting
 repository=wire-ios-testing
+organization=wireapp
 release-name-format=That time when the compiler said {CPP_ERROR}
