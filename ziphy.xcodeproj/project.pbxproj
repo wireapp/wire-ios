@@ -36,6 +36,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		54FB26591D4669A6005574BF /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ziphy-ios.xcconfig"; sourceTree = "<group>"; };
+		54FB265B1D4669A6005574BF /* ziphy-osx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ziphy-osx.xcconfig"; sourceTree = "<group>"; };
+		54FB265C1D4669A6005574BF /* ziphy.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ziphy.xcconfig; sourceTree = "<group>"; };
+		54FB267F1D4669D0005574BF /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		54FB26801D4669D0005574BF /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		54FB26811D4669D0005574BF /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		54FB26821D4669D0005574BF /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		54FB26831D4669D0005574BF /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
+		54FB26841D4669D0005574BF /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
+		54FB26851D4669D0005574BF /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		54FB26861D4669D0005574BF /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		54FB26871D4669D0005574BF /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		54FB26881D4669D0005574BF /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		54FB26891D4669D0005574BF /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
+		54FB268A1D4669D0005574BF /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		54FB268B1D4669D0005574BF /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		54FB268C1D4669D0005574BF /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		DB289BA21B6B78C000718F19 /* ZiphyPaginationControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphyPaginationControllerTests.swift; sourceTree = "<group>"; };
 		DB289BA41B6B78F900718F19 /* ZiphyTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphyTestCase.swift; sourceTree = "<group>"; };
 		DB29C9A11B6BD4170072D14E /* ZiphySearchResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphySearchResultsController.swift; sourceTree = "<group>"; };
@@ -76,6 +94,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		54FB26571D4669A6005574BF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				54FB26581D4669A6005574BF /* Configurations */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		54FB26581D4669A6005574BF /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				54FB267E1D4669D0005574BF /* zmc-config */,
+				54FB26591D4669A6005574BF /* version.xcconfig */,
+				54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */,
+				54FB265B1D4669A6005574BF /* ziphy-osx.xcconfig */,
+				54FB265C1D4669A6005574BF /* ziphy.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		54FB267E1D4669D0005574BF /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				54FB267F1D4669D0005574BF /* .gitignore */,
+				54FB26801D4669D0005574BF /* ios-test-host.xcconfig */,
+				54FB26811D4669D0005574BF /* ios-test-target.xcconfig */,
+				54FB26821D4669D0005574BF /* ios.xcconfig */,
+				54FB26831D4669D0005574BF /* osx-test-target.xcconfig */,
+				54FB26841D4669D0005574BF /* osx.xcconfig */,
+				54FB26851D4669D0005574BF /* project-common.xcconfig */,
+				54FB26861D4669D0005574BF /* project-debug.xcconfig */,
+				54FB26871D4669D0005574BF /* project.xcconfig */,
+				54FB26881D4669D0005574BF /* simulator.xcconfig */,
+				54FB26891D4669D0005574BF /* swift.xcconfig */,
+				54FB268A1D4669D0005574BF /* tests.xcconfig */,
+				54FB268B1D4669D0005574BF /* warnings-debug.xcconfig */,
+				54FB268C1D4669D0005574BF /* warnings.xcconfig */,
+			);
+			path = "zmc-config";
+			sourceTree = "<group>";
+		};
 		DB3A68541B1895FB00900CF0 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -90,6 +149,7 @@
 		DBF3804F1B15C0B800369FB7 = {
 			isa = PBXGroup;
 			children = (
+				54FB26571D4669A6005574BF /* Resources */,
 				DBF3805B1B15C0B800369FB7 /* ziphy */,
 				DBF380681B15C0B800369FB7 /* ziphyTests */,
 				DBF3805A1B15C0B800369FB7 /* Products */,
@@ -303,6 +363,7 @@
 /* Begin XCBuildConfiguration section */
 		DBF3806D1B15C0B800369FB7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54FB26861D4669D0005574BF /* project-debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -352,6 +413,7 @@
 		};
 		DBF3806E1B15C0B800369FB7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54FB26861D4669D0005574BF /* project-debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -393,6 +455,7 @@
 		};
 		DBF380701B15C0B800369FB7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -411,6 +474,7 @@
 		};
 		DBF380711B15C0B800369FB7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -428,6 +492,7 @@
 		};
 		DBF380731B15C0B800369FB7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54FB26811D4669D0005574BF /* ios-test-target.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -446,6 +511,7 @@
 		};
 		DBF380741B15C0B800369FB7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54FB26811D4669D0005574BF /* ios-test-target.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
