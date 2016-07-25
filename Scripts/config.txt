@@ -1,0 +1,4 @@
+framework=zimages
+organization=wireapp
+repository=wire-ios-images
+release-name-format={FRIENDS_EPISODE}
