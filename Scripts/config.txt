@@ -1,0 +1,3 @@
+framework=ZMUtilities
+repository=wire-ios-utilities
+release-name-format=It smells like a {ADJECTIVE} {NOUN}
