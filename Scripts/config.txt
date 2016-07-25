@@ -1,0 +1,4 @@
+framework=ZMCDataModel
+repository=zmc-data-model
+organization=wireapp
+release-name-format=What would {WOMAN_IN_CS} do?
