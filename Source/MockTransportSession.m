@@ -306,6 +306,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     }
 }
 
+
 - (void)completeRequestAndRemoveFromLists:(ZMTransportRequest *)request response:(ZMTransportResponse *)response {
     [self.nonCompletedRequests removeObject:request];
     __block NSNumber *foundKey = nil;
@@ -390,6 +391,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
              @[@[@"/", @"login", @"send"], @"processLoginCodeRequest:"],
              @[@[@"/", @"login"], @"processLoginRequest:"],
              @[@[@"/", @"self"], @"processSelfUserRequest:"],
+             @[@[@"/", @"assets", @"v3"], @"processAssetV3Request:"],
              @[@[@"/", @"assets"], @"processAssetRequest:"],
              @[@[@"/", @"search", @"contacts"], @"processSearchRequest:"],
              @[@[@"/", @"search", @"common"], @"processCommonConnectionsSearchRequest:"],
@@ -399,7 +401,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
              @[@[@"/", @"activate", @"send"], @"processVerificationCodeRequest:"],
              @[@[@"/", @"activate"], @"processPhoneActivationRequest:"],
              @[@[@"/", @"onboarding", @"v2"], @"processOnboardingRequest:"],
-             @[@[@"/", @"invitations"], @"processInvitationsRequest:"], 
+             @[@[@"/", @"invitations"], @"processInvitationsRequest:"],
              ];
 }
 
@@ -950,6 +952,20 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     
     MockPersonalInvitation *invitation = [MockPersonalInvitation invitationInMOC:self.managedObjectContext fromUser:selfUser toInviteeWithName:name email:mail phoneNumber:phone];
     return invitation;
+}
+
+- (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
+{
+    Require(assetID != nil);
+    Require(assetData != nil);
+    Require(contentType != nil);
+    
+    MockAsset *asset = [MockAsset insertIntoManagedObjectContext:self.managedObjectContext];
+    asset.identifier = assetID.transportString;
+    asset.token = assetToken.transportString ?: @"";
+    asset.data = assetData;
+    asset.contentType = contentType;
+    return asset;
 }
 
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler

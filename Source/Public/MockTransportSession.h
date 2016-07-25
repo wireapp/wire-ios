@@ -118,6 +118,8 @@ typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportReques
 - (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name phone:(NSString *)phone;
 - (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(NSString *)mail phone:(NSString *)phone;
 
+- (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
+
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler;
 - (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
 

@@ -26,6 +26,7 @@
 @dynamic data;
 @dynamic contentType;
 @dynamic conversation;
+@dynamic token;
 
 + (MockAsset *)assetInContext:(NSManagedObjectContext *)managedObjectContext forID:(NSString *)identifier
 {

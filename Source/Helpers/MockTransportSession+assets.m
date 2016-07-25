@@ -22,6 +22,7 @@
 @import ZMProtos;
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
+#import "MockAsset.h"
 
 
 @implementation MockTransportSession (Assets)
@@ -283,6 +284,71 @@
     }
     
     return [[ZMTransportResponse alloc] initWithPayload:responsePayload HTTPstatus:statusCode transportSessionError:nil headers:headers];
+}
+
+
+#pragma mark - Asset v3
+
+- (ZMTransportResponse *)processAssetV3Request:(TestTransportSessionRequest *)sessionRequest
+{
+    if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 0) { //Post new asset
+        return [self processAssetV3Post:sessionRequest];
+        
+        
+    } else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 1) {
+        // doesn't handle Asset-token, need access to request header
+        return [self processAssetV3GetWithKey: (NSString *)sessionRequest.pathComponents[0]];
+    } else if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 2) {
+        //TODO: Implement this when actually needed
+    } else if (sessionRequest.method == ZMMethodDELETE && sessionRequest.pathComponents.count == 2) {
+        //TODO: Implement this when actually needed
+    }
+    
+    return nil;
+}
+
+- (ZMTransportResponse *)processAssetV3Post:(TestTransportSessionRequest *)sessionRequest;
+{
+    
+    NSArray *multipart = [sessionRequest.embeddedRequest multipartBodyItems];
+    if (multipart.count == 2) {
+        
+        ZMMultipartBodyItem *jsonObject = [multipart firstObject];
+        ZMMultipartBodyItem *imageData  = [multipart lastObject];
+        
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonObject.data options:NSJSONReadingAllowFragments error:nil];
+        BOOL isPublic = [json[@"public"] boolValue];
+        
+        NSData *data        = imageData.data;
+        NSString *mimeType  = imageData.contentType;
+        
+        MockAsset *asset = [MockAsset insertIntoManagedObjectContext:self.managedObjectContext];
+        asset.data = data;
+        asset.contentType = mimeType;
+        asset.identifier = [NSUUID createUUID].transportString;
+        if (!isPublic) {
+            asset.token = [NSUUID createUUID].transportString;
+        }
+        
+        NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"key" : asset.identifier, @"expires" : [[NSDate date] dateByAddingTimeInterval:1000000].transportString}];
+        if (asset.token) {
+            payload[@"token"] = asset.token;
+        }
+        
+        return [[ZMTransportResponse alloc] initWithPayload:[payload copy] HTTPstatus:201 transportSessionError:nil headers:@{@"Location" : [NSString stringWithFormat:@"/asset/v3/%@", asset.identifier]}];
+    }
+    
+    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:400 transportSessionError:nil];
+}
+
+- (ZMTransportResponse *)processAssetV3GetWithKey:(NSString *)key;
+{
+    MockAsset *asset = [MockAsset assetInContext:self.managedObjectContext forID:key];
+    if (asset != nil) {
+        
+        return [[ZMTransportResponse alloc] initWithImageData:asset.data HTTPstatus:200 transportSessionError:nil headers:nil];
+    }
+    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
 }
 
 
