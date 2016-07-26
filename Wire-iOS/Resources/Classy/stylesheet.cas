@@ -845,7 +845,7 @@ ConversationInputBarViewController {
 
 /* Image confirmer */
 
-ConfirmImageViewController {
+ConfirmAssetViewController {
     view: @{
         backgroundColor: $color-background;
     }
@@ -855,7 +855,7 @@ ConfirmImageViewController {
     }
     
     titleLabel: @{
-        font: $font-small-light;
+        font: $font-medium-medium;
         textColor: $color-text-foreground;
     }
     

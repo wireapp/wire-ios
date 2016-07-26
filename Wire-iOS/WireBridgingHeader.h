@@ -62,10 +62,16 @@
 #import "NotificationWindowRootViewController.h"
 #import "VoiceChannelController.h"
 #import "SplitViewController.h"
+#import "ConfirmAssetViewController.h"
+#import "SketchViewController.h"
 
 // Helper objects
 #import "PushTransition.h"
 #import "PopTransition.h"
+#import "ZoomTransition.h"
+#import "CrossfadeTransition.h"
+#import "VerticalTransition.h"
+#import "MediaAsset.h"
 
 // Utils
 #import "UIFont+MagicAccess.h"
@@ -93,6 +99,7 @@
 #import "Message+Formatting.h"
 #import "ImageCache.h"
 #import "AVAsset+VideoConvert.h"
+#import "DeviceOrientationObserver.h"
 
 // Camera
 #import "CameraController.h"
