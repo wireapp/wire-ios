@@ -29,7 +29,7 @@
 #import "Wire-Swift.h"
 
 const static unsigned long long ConversationUploadMaxFileSize = 25 * 1024 * 1024 - 32; // 25 megabytes - 32 bytes for IV and padding
-const static NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; // 4 minutes
+const NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; // 4 minutes
 
 @implementation ConversationInputBarViewController (Files)
 
@@ -106,14 +106,14 @@ const static NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; /
                                 image:[UIImage imageForIcon:ZetaIconTypeMovie iconSize:ZetaIconSizeMedium color:[UIColor darkGrayColor]]
                                 order:UIDocumentMenuOrderFirst
                               handler:^{
-                                  [self presentImagePickerSourceType:UIImagePickerControllerSourceTypePhotoLibrary mediaTypes:@[(id)kUTTypeMovie]];
+                                  [self presentImagePickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary mediaTypes:@[(id)kUTTypeMovie] allowsEditing:true];
                               }];
     
     [docController addOptionWithTitle:NSLocalizedString(@"content.file.take_video", @"")
                                 image:[UIImage imageForIcon:ZetaIconTypeCameraShutter iconSize:ZetaIconSizeMedium color:[UIColor darkGrayColor]]
                                 order:UIDocumentMenuOrderFirst
                               handler:^{
-                                  [self presentImagePickerSourceType:UIImagePickerControllerSourceTypeCamera mediaTypes:@[(id)kUTTypeMovie]];
+                                  [self presentImagePickerWithSourceType:UIImagePickerControllerSourceTypeCamera mediaTypes:@[(id)kUTTypeMovie] allowsEditing:false];
                               }];
     
     UIPopoverPresentationController* popover = docController.popoverPresentationController;
@@ -125,7 +125,7 @@ const static NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; /
     }];
 }
 
-- (void)presentImagePickerSourceType:(UIImagePickerControllerSourceType)sourceType mediaTypes:(NSArray *)mediaTypes
+- (void)presentImagePickerWithSourceType:(UIImagePickerControllerSourceType)sourceType mediaTypes:(NSArray *)mediaTypes allowsEditing:(BOOL)allowsEditing
 {
     if (! [UIImagePickerController isSourceTypeAvailable:sourceType]) {
 #if (TARGET_OS_SIMULATOR)
@@ -138,13 +138,14 @@ const static NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; /
     }
     
     [self executeWithVideoPermissions:^{
-        UIImagePickerController* videoPicker = [[UIImagePickerController alloc] init];
-        videoPicker.sourceType = sourceType;
-        videoPicker.delegate = self;
-        videoPicker.allowsEditing = (sourceType != UIImagePickerControllerSourceTypeCamera);
-        videoPicker.mediaTypes = mediaTypes;
-        videoPicker.videoMaximumDuration = ConversationUploadMaxVideoDuration;
-        [self.parentViewController presentViewController:videoPicker animated:YES completion:nil];
+        UIImagePickerController* pickerController = [[UIImagePickerController alloc] init];
+        pickerController.sourceType = sourceType;
+        pickerController.delegate = self;
+        pickerController.allowsEditing = allowsEditing;
+        pickerController.mediaTypes = mediaTypes;
+        pickerController.videoMaximumDuration = ConversationUploadMaxVideoDuration;
+        pickerController.transitioningDelegate = [FastTransitioningDelegate sharedDelegate];
+        [self.parentViewController presentViewController:pickerController animated:YES completion:nil];
     }];
 }
 
@@ -329,11 +330,9 @@ const static NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; /
         }
         
         if (image != nil) {
-            picker.showLoadingView = YES;
-
-            [self.sendController sendMessageWithImageData:UIImageJPEGRepresentation(image, 0.9) completion:^{
-                picker.showLoadingView = NO;
-                [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
+            [self.parentViewController dismissViewControllerAnimated:YES completion:^(){
+                CameraKeyboardSource source = (picker.sourceType == UIImagePickerControllerSourceTypeCamera) ? CameraKeyboardSourceCamera : CameraKeyboardSourceLibrary;
+                [self showConfirmationForImage:UIImageJPEGRepresentation(image, 0.9) source:source];
             }];
         }
     }
@@ -345,7 +344,14 @@ const static NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; /
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     // Workaround http://stackoverflow.com/questions/26651355/
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
-    [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
+    [self.parentViewController dismissViewControllerAnimated:YES completion:^() {
+        
+        if (self.shouldRefocusKeyboardAfterImagePickerDismiss) {
+            self.shouldRefocusKeyboardAfterImagePickerDismiss = NO;
+            self.mode = ConversationInputBarViewControllerModeCamera;
+            [self.inputBar.textView becomeFirstResponder];
+        }
+    }];
 }
 
 #pragma mark - UIDocumentMenuDelegate

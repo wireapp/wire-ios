@@ -45,6 +45,8 @@ public class CameraCell: UICollectionViewCell {
         super.init(frame: frame)
         
         self.cameraController.previewLayer.frame = self.contentView.bounds
+        self.cameraController.currentCamera = Settings.sharedSettings().preferredCamera
+            
         self.contentView.clipsToBounds = true
         self.contentView.backgroundColor = UIColor.blackColor()
         
@@ -56,6 +58,9 @@ public class CameraCell: UICollectionViewCell {
             self.updateVideoOrientation()
         }
         
+        UIDevice.currentDevice().beginGeneratingDeviceOrientationNotifications()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(deviceOrientationDidChange(_:)), name: UIDeviceOrientationDidChangeNotification, object: .None)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(cameraControllerWillChangeCurrentCamera(_:)), name: CameraControllerWillChangeCurrentCamera, object: .None)
         
         self.expandButton.setIcon(.FullScreen, withSize: .Tiny, forState: .Normal)
@@ -81,26 +86,26 @@ public class CameraCell: UICollectionViewCell {
         
         [self.takePictureButton, self.expandButton, self.changeCameraButton].forEach { button in
             button.layer.shadowColor = UIColor.blackColor().CGColor
-            button.layer.shadowOffset = CGSizeMake(0.5, 0.5)
-            button.layer.shadowRadius = 1
-            button.layer.shadowOpacity = 0.75
+            button.layer.shadowOffset = CGSizeMake(0, 0)
+            button.layer.shadowRadius = 0.5
+            button.layer.shadowOpacity = 0.5
         }
         
         constrain(self.contentView, self.expandButton, self.takePictureButton, self.changeCameraButton) { contentView, expandButton, takePictureButton, changeCameraButton in
             expandButton.width == 40
             expandButton.height == expandButton.width
             expandButton.right == contentView.right - 12
-            expandButton.top == contentView.top + 12
+            expandButton.top == contentView.top + 10
             
             takePictureButton.width == 60
             takePictureButton.height == takePictureButton.width
-            takePictureButton.bottom == contentView.bottom
+            takePictureButton.bottom == contentView.bottom - 6
             takePictureButton.centerX == contentView.centerX
             
             changeCameraButton.width == 40
             changeCameraButton.height == changeCameraButton.width
             changeCameraButton.left == contentView.left + 12
-            changeCameraButton.top == contentView.top + 12
+            changeCameraButton.top == contentView.top + 10
         }
     }
     
@@ -134,11 +139,6 @@ public class CameraCell: UICollectionViewCell {
     
     private func updateVideoOrientation() {
         let statusBarOrientation = AVCaptureVideoOrientation(rawValue: UIApplication.sharedApplication().statusBarOrientation.rawValue)!
-        
-        if let connection = self.cameraController.previewLayer.connection where connection.supportsVideoOrientation {
-            connection.videoOrientation = statusBarOrientation
-        }
-
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             self.cameraController.snapshotVideoOrientation = statusBarOrientation
         }
@@ -147,7 +147,11 @@ public class CameraCell: UICollectionViewCell {
         }
     }
     
-    func cameraControllerWillChangeCurrentCamera(notification: NSNotification) {
+    func deviceOrientationDidChange(notification: NSNotification!) {
+        self.updateVideoOrientation()
+    }
+    
+    func cameraControllerWillChangeCurrentCamera(notification: NSNotification!) {
         let snapshotImage = self.cameraController.videoSnapshot.imageScaledWithFactor(0.5)
     
         let blurredSnapshotImage = snapshotImage.blurredImageWithContext(self.dynamicType.ciContext, blurRadius: 12)
@@ -213,5 +217,6 @@ public class CameraCell: UICollectionViewCell {
     
     func changeCameraPressed(sender: AnyObject) {
         self.cameraController.currentCamera = self.cameraController.currentCamera == .Front ? .Back : .Front
+        Settings.sharedSettings().preferredCamera = self.cameraController.currentCamera
     }
 }

@@ -17,10 +17,12 @@
 // 
 
 
-#import "ConfirmImageViewController.h"
+#import "ConfirmAssetViewController.h"
 
 #import <PureLayout/PureLayout.h>
 #import <Classy/Classy.h>
+@import AVKit;
+@import AVFoundation;
 #import "WAZUIMagicIOS.h"
 
 #import "UIColor+WAZExtensions.h"
@@ -34,13 +36,13 @@
 #import "UIImage+ImageUtilities.h"
 #import "MediaAsset.h"
 
-static const CGFloat TopBarHeight = 56;
+static const CGFloat TopBarHeight = 64;
 static const CGFloat BottomBarMinHeight = 88;
 static const CGFloat MarginInset = 24;
 
 
 
-@interface ConfirmImageViewController ()
+@interface ConfirmAssetViewController ()
 
 @property (nonatomic) UIView *topPanel;
 @property (nonatomic) UIView *bottomPanel;
@@ -52,6 +54,7 @@ static const CGFloat MarginInset = 24;
 @property (nonatomic) Button *acceptImageButton;
 @property (nonatomic) Button *rejectImageButton;
 @property (nonatomic) FLAnimatedImageView *imagePreviewView;
+@property (nonatomic) AVPlayerViewController *playerViewController;
 
 @property (nonatomic) BOOL initialConstraintsCreated;
 
@@ -63,18 +66,25 @@ static const CGFloat MarginInset = 24;
 
 
 
-@implementation ConfirmImageViewController
+@implementation ConfirmAssetViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self createPreviewPanel];
+    if (self.image != nil) {
+        [self createPreviewPanel];
+    }
+    else if (self.videoURL != nil) {
+        [self createVideoPanel];
+    }
     [self createTopPanel];
     [self createBottomPanel];
     [self createEditButton];
     
     [self updateViewConstraints];
+    
+    [[CASStyler defaultStyler] styleItem:self];
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -92,7 +102,20 @@ static const CGFloat MarginInset = 24;
 
 - (BOOL)prefersStatusBarHidden
 {
-    return YES;
+    return NO;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    switch ([ColorScheme defaultColorScheme].variant) {
+        case ColorSchemeVariantLight:
+            return UIStatusBarStyleDefault;
+            break;
+            
+        case ColorSchemeVariantDark:
+            return UIStatusBarStyleLightContent;
+            break;
+    }
 }
 
 #pragma mark - View Creation
@@ -105,6 +128,18 @@ static const CGFloat MarginInset = 24;
     [self.view addSubview:self.imagePreviewView];
     
     [self.imagePreviewView setMediaAsset:self.image];
+}
+
+- (void)createVideoPanel
+{
+    self.playerViewController = [[AVPlayerViewController alloc] init];
+    
+    self.playerViewController.player = [AVPlayer playerWithURL:self.videoURL];
+    [self.playerViewController.player play];
+    self.playerViewController.showsPlaybackControls = YES;
+    self.playerViewController.view.backgroundColor = [UIColor whiteColor];
+    
+    [self.view addSubview:self.playerViewController.view];
 }
 
 - (void)createTopPanel
@@ -166,7 +201,8 @@ static const CGFloat MarginInset = 24;
         [self.topPanel autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeBottom];
         self.topBarHeightConstraint = [self.topPanel autoSetDimension:ALDimensionHeight toSize:TopBarHeight];
         
-        [self.titleLabel autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.topPanel];
+        [self.titleLabel autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:20];
+        [self.titleLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom];
         [self.titleLabel autoAlignAxisToSuperviewAxis:ALAxisVertical];
         
         // Bottom panel
@@ -206,6 +242,13 @@ static const CGFloat MarginInset = 24;
         [self.editButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:20];
         [self.editButton autoSetDimensionsToSize:CGSizeMake(32, 32)];
         [self.editButton autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.bottomPanel withOffset:-20];
+        
+        [self.playerViewController.view autoPinEdgeToSuperviewEdge:ALEdgeLeft];
+        [self.playerViewController.view autoPinEdgeToSuperviewEdge:ALEdgeRight];
+        
+        [self.playerViewController.view autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.topPanel];
+        [self.playerViewController.view autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.bottomPanel];
+        
         
         self.initialConstraintsCreated = YES;
     }
