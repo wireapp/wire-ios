@@ -32,21 +32,6 @@ static NSString const * TypeJPEG = @"image/jpeg";
 @implementation ZMImageDownsampleOperationTests
 
 
-
-//- (void)testAssertImageDataIsEqualPerformance;
-//{
-//    NSData *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation4" extension:@"jpg"];
-//    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation4_unrotated_preview" extension:@"jpg"];
-//
-//    [self measureBlock:^{
-//        @autoreleasepool {
-//            ImageComparator *comp = [[ImageComparator alloc] initWithImageDataA:outputData imageDataB:expectedData];
-//            [comp calculateDifference];
-//        }
-//    }];
-//}
-
-
 - (ZMImageDownsampleOperation *)mediumImageDataForInputFileName:(NSString *)name extension:(NSString *)ext
 {
     NSData *inputData = [self dataForResource:name extension:ext];
@@ -80,7 +65,6 @@ static NSString const * TypeJPEG = @"image/jpeg";
     return [self downsampleResultForInputData:inputData downsampleType:ZMImageDownsampleTypeSmallProfile];
 }
 
-
 - (ZMImageDownsampleOperation *)downsampleResultForInputData:(NSData *)inputData downsampleType:(ZMImageDownsampleType)downSampleType
 {
     ZMImageLoadOperation *loadOperation = [[ZMImageLoadOperation alloc] initWithImageData:inputData];
@@ -96,8 +80,34 @@ static NSString const * TypeJPEG = @"image/jpeg";
     return sut;
 }
 
-
-
+- (void)assertThatItReorientatesAnImageWithOrientation:(NSUInteger)orientation format:(ZMImageFormat)format
+{
+    XCTAssertTrue(orientation >= 0 && orientation <= 8, @"Invalid orientation, values from 0 to 8 are valid.");
+    XCTAssertFalse(ZMImageFormatOriginal == format, @"Only Medium and Preview are supported");
+    
+    // given
+    NSString *filename = @"unsplash_medium";
+    if (1 < orientation) {
+        filename = [filename stringByAppendingString:[NSString stringWithFormat:@"_exif_%lu", orientation]];
+    }
+    
+    ZMImageDownsampleOperation *outputData;
+    
+    if (ZMImageFormatMedium == format) {
+        outputData = [self mediumImageDataForInputFileName:filename extension:@"jpg"];
+    } else {
+        outputData = [self previewImageDataForInputFileName:filename extension:@"jpg"];
+    }
+    
+    // then
+    XCTAssertNotNil(outputData);
+    NSString *expectedDataFilename = ZMImageFormatMedium == format ? @"unsplash_medium" : @"unsplash_preview";
+    NSData *expectedData = [self dataForResource:expectedDataFilename extension:@"jpg"];
+    
+    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
+    XCTAssertEqual(outputData.format, format);
+    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+}
 
 @end
 
@@ -105,12 +115,10 @@ static NSString const * TypeJPEG = @"image/jpeg";
 
 @implementation ZMImageDownsampleOperationTests (MediumImage)
 
-
 - (void)testThatItGeneratesAMediumRepresentation
 {
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"DownsampleImageRotated3" extension:@"jpg"];
-
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"unsplash_medium_exif_3" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
@@ -136,17 +144,16 @@ static NSString const * TypeJPEG = @"image/jpeg";
     XCTAssertNil(outputData.downsampleImageData);
 }
 
-
 - (void)testThatItScalesTheImage
 {
     // Compression test case (1): Pixel dimensions too big
     
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"1900x1500" extension:@"jpg"];
-    
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"unsplash_original" extension:@"jpg"];
+
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"1900x1500_medium" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_original_medium" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssertEqualObjects(outputData.properties.mimeType, TypeJPEG);
@@ -158,11 +165,11 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // Compression test case (1): Pixel dimensions too big with rotated image
     
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"rotated with orientation 6" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"unsplash_original_exif_6" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"scaled and unrotated" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_original_exif_6_medium" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
@@ -174,7 +181,7 @@ static NSString const * TypeJPEG = @"image/jpeg";
 {
     [self measureMetrics:[[self class] defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
         @autoreleasepool {
-            NSData *inputData = [self dataForResource:@"rotated with orientation 6" extension:@"jpg"];
+            NSData *inputData = [self dataForResource:@"unsplash_original_exif_6" extension:@"jpg"];
             [self startMeasuring];
             ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputData:inputData];
             [self stopMeasuring];
@@ -183,16 +190,15 @@ static NSString const * TypeJPEG = @"image/jpeg";
     }];
 }
 
-
 - (void)testThatItUnrotatesAnImage {
     // Compression test case (2): Pixel dimensions and byte OK, rotated
 
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"ExifOrientation6" extension:@"jpg"];
-    
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"unsplash_medium_exif_6_small" extension:@"jpg"];
+
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"UnrotatedImage" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_medium_small" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
@@ -204,7 +210,7 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // Compression test case (3): Pixel dimensions and byte OK, not rotated
     
     // given
-    NSData *inputData = [self dataForResource:@"cat_999x633" extension:@"jpg"];
+    NSData *inputData = [self dataForResource:@"unsplash_medium_small" extension:@"jpg"];
     ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputData:inputData];
     
     // then
@@ -212,7 +218,6 @@ static NSString const * TypeJPEG = @"image/jpeg";
     AssertImageDataIsEqual(outputData.downsampleImageData, inputData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
-
 }
 
 
@@ -224,11 +229,11 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // -> recompressed in original format and still too big, recompressed as JPEG
     
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"Church_1MB" extension:@"png"];
-
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"unsplash_owl_1_MB" extension:@"png"];
+    
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"Church_1MB_medium" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_owl_medium" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
@@ -241,15 +246,14 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // -> recompressed in original format, rotated
 
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"Ceiling_rotated" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"ceiling_rotated" extension:@"jpg"];
 
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"Ceiling_recompressed_unrotated" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"ceiling_recompressed_unrotated" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
-
 }
 
 
@@ -266,9 +270,9 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // ->recompressed in original and it did not change that much, not rotated
     
     // given
-    NSData *inputData = [self dataForResource:@"Church_900KB" extension:@"jpg"];
+    NSData *inputData = [self dataForResource:@"unsplash_720_KB" extension:@"jpg"];
     ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputData:inputData];
-
+    
     // then
     XCTAssertNotNil(outputData);
     AssertImageDataIsEqual(inputData, outputData.downsampleImageData);
@@ -283,144 +287,70 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // ->recompressed in original format and it did not change that much, rotated
     
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"Church_900KB_rotated" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"unsplash_720_KB_rotated" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"Church_900KB_unrotated" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_720_KB_unrotated" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
 }
 
-
-
-// C.f. <https://irfanview-forum.de/showthread.php?t=9715> for test images
-- (void)testThatItDoesNotChangeAnImageWithOrientation1
+- (void)testThatItDoesNotChangeAnImageWithOrientation_1
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation1" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation1" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:1 format:ZMImageFormatMedium];
 }
 
-- (void)testThatItReorientatesAnImageWithOrientation2
+- (void)testThatItReorientatesAnImageWithOrientation_2
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation2" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation2_unrotated" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:2 format:ZMImageFormatMedium];
 }
 
-
-- (void)testThatItReorientatesAnImageWithOrientation3
+- (void)testThatItReorientatesAnImageWithOrientation_3
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation3" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation3_unrotated" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:3 format:ZMImageFormatMedium];
 }
 
-
-- (void)testThatItReorientatesAnImageWithOrientation4
+- (void)testThatItReorientatesAnImageWithOrientation_4
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation4" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation4_unrotated" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:4 format:ZMImageFormatMedium];
 }
 
-
-- (void)testThatItReorientatesAnImageWithOrientation5
+- (void)testThatItReorientatesAnImageWithOrientation_5
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation5" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation5_unrotated" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:5 format:ZMImageFormatMedium];
 }
 
-
-- (void)testThatItReorientatesAnImageWithOrientation6
+- (void)testThatItReorientatesAnImageWithOrientation_6
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation6" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation6_unrotated" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:6 format:ZMImageFormatMedium];
 }
 
-
-- (void)testThatItReorientatesAnImageWithOrientation7
+- (void)testThatItReorientatesAnImageWithOrientation_7
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation7" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation7_unrotated" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:7 format:ZMImageFormatMedium];
 }
 
-
-- (void)testThatItReorientatesAnImageWithOrientation8
+- (void)testThatItReorientatesAnImageWithOrientation_8
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"exif_orientation/ExifOrientation8" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation8_unrotated" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:8 format:ZMImageFormatMedium];
 }
 
 - (void)testThatItReturnsTheOriginalImageDataForAGIFThatsFailyLarge;
 {
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"colorful-mess" extension:@"gif"];
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"unsplash_big_gif" extension:@"gif"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"colorful-mess" extension:@"gif"];
+    NSData *expectedData = [self dataForResource:@"unsplash_big_gif" extension:@"gif"];
     AssertEqualData(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
 }
 
 @end
-
 
 
 
@@ -445,8 +375,7 @@ static NSString const * TypeJPEG = @"image/jpeg";
 - (void)testThatItGeneratesAPreviewRepresentation
 {
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"1900x1500" extension:@"jpg"];
-    
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"unsplash_original" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
@@ -476,17 +405,16 @@ static NSString const * TypeJPEG = @"image/jpeg";
     XCTAssertEqual(outputData.format, ZMImageFormatPreview);
 }
 
-
 - (void)testThatItScalesThePreviewImage
 {
     // Compression test case (1): Pixel dimensions too big
     
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"1900x1500" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"unsplash_original" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"1900x1500_preview" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_preview" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatPreview);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
@@ -497,27 +425,26 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // Compression test case (1): Pixel dimensions too big with rotated image
     
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"rotated with orientation 6" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"unsplash_original_exif_6" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"scaled and unrotated preview" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_preview" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatPreview);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
 }
-
 
 - (void)testThatItUnrotatesAPreviewImage
 {
     // Compression test case (2): Pixel dimensions and byte OK, rotated
     
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"ExifOrientation6" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"unsplash_medium_exif_6_small" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"UnrotatedImage_preview" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_preview" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatPreview);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
@@ -528,7 +455,7 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // Compression test case (3): Pixel dimensions and byte OK, not rotated
     
     // given
-    NSData *inputData = [self dataForResource:@"abstract_27x16" extension:@"jpg"];
+    NSData *inputData = [self dataForResource:@"unsplash_preview" extension:@"jpg"];
     ZMImageDownsampleOperation *outputData = [self previewImageDataForInputData:inputData];
     
     // then
@@ -538,22 +465,6 @@ static NSString const * TypeJPEG = @"image/jpeg";
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
 }
 
-// XXX WONTFIX IMAGES
-// This test behaves differently on iOS and OS X. Need to figure out why.
-//
-//- (void)testThatItReencodesAnImageToJpegEvenIfItIsOtherwiseFine
-//{
-//    // given
-//    NSData *outputData = [self previewImageDataForInputFileName:@"abstract_27x16" extension:@"png"];
-//    
-//    // then
-//    XCTAssertNotNil(outputData);
-//    NSData *expectedData = [self dataForResource:@"abstract_27x16png" extension:@"jpg"];
-//    AssertImageDataIsEqual(outputData, expectedData);
-//}
-
-
-
 - (void)testThatItRecompressesAPreviewImageThatHasSmallPixelDimensionsButFileSizeThatIsTooBigToJPEG
 {
     // In this case, initial recompression doesn't help much, so that it finally compresses the image as jpeg
@@ -562,16 +473,15 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // -> recompressed in original format and still too big, recompressed as JPEG
     
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"Church_1MB" extension:@"png"];
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"unsplash_owl_1_MB" extension:@"png"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"Church_1MB_preview" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_owl_small" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatPreview);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
 }
-
 
 - (void)testThatItUnrotatesAPreviewImageThatIsRotatedAndHasSmallPixelDimensionsButTooBigFileSize
 {
@@ -579,16 +489,15 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // -> recompressed in original format, rotated
     
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"Ceiling_rotated" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"ceiling_rotated" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"Ceiling_recompressed_unrotated_preview" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"ceiling_recompressed_unrotated_preview" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatPreview);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
 }
-
 
 // XXX WONTFIX IMAGES add test cases for case (6): Pixel dimension OK, byte size too big,
 //          -> recompressed in original format and still too big,
@@ -618,126 +527,54 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // ->recompressed in original format and it did not change that much, rotated
     
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"Church_900KB_rotated" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"unsplash_720_KB_rotated" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"Church_900KB_unrotated_preview" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_720_KB_preview" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatPreview);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
 }
 
-
-
-// C.f. <https://irfanview-forum.de/showthread.php?t=9715> for test images
-- (void)testThatItDoesNotChangeAPreviewImageWithOrientation1
+- (void)testThatItDoesNotChangeAPreviewImageWithOrientation_1
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation1" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation1_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:1 format:ZMImageFormatPreview];
 }
 
-- (void)testThatItReorientatesAPreviewImageWithOrientation2
+- (void)testThatItReorientatesAPreviewImageWithOrientation_2
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation2" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation2_unrotated_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:2 format:ZMImageFormatPreview];
 }
 
-
-- (void)testThatItReorientatesAPreviewImageWithOrientation3
+- (void)testThatItReorientatesAPreviewImageWithOrientation_3
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation3" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation3_unrotated_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:3 format:ZMImageFormatPreview];
 }
 
-
-- (void)testThatItReorientatesAPreviewImageWithOrientation4
+- (void)testThatItReorientatesAPreviewImageWithOrientation_4
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation4" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation4_unrotated_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:4 format:ZMImageFormatPreview];
 }
 
-- (void)testThatItReorientatesAPreviewImageWithOrientation5
+- (void)testThatItReorientatesAPreviewImageWithOrientation_5
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation5" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation5_unrotated_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:5 format:ZMImageFormatPreview];
 }
 
-
-- (void)testThatItReorientatesAPreviewImageWithOrientation6
+- (void)testThatItReorientatesAPreviewImageWithOrientation_6
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation6" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation6_unrotated_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:6 format:ZMImageFormatPreview];
 }
 
-
-- (void)testThatItReorientatesAPreviewImageWithOrientation7
+- (void)testThatItReorientatesAPreviewImageWithOrientation_7
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation7" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation7_unrotated_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:7 format:ZMImageFormatPreview];
 }
 
-
-- (void)testThatItReorientatesAPreviewImageWithOrientation8
+- (void)testThatItReorientatesAPreviewImageWithOrientation_8
 {
-    // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"exif_orientation/ExifOrientation8" extension:@"jpg"];
-    
-    // then
-    XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"exif_orientation/ExifOrientation8_unrotated_preview" extension:@"jpg"];
-    AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
-    XCTAssertEqual(outputData.format, ZMImageFormatPreview);
-    XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+    [self assertThatItReorientatesAnImageWithOrientation:8 format:ZMImageFormatPreview];
 }
 
 @end
@@ -765,11 +602,11 @@ static NSString const * TypeJPEG = @"image/jpeg";
 - (void)testThatItGeneratesASmallProfileRepresentationALandscapeImage
 {
     // given
-    ZMImageDownsampleOperation *outputData = [self smallProfileImageDataForInputFileName:@"1900x1500_medium" extension:@"jpg"];
-    
+    ZMImageDownsampleOperation *outputData = [self smallProfileImageDataForInputFileName:@"unsplash_original" extension:@"jpg"];
+
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"1900x1500_smallProfile" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_small_profile" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatProfile);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
@@ -778,11 +615,11 @@ static NSString const * TypeJPEG = @"image/jpeg";
 - (void)testThatItGeneratesASmallProfileRepresentationFromAPortraitImage
 {
     // given
-    ZMImageDownsampleOperation *outputData = [self smallProfileImageDataForInputFileName:@"Mersey00036992" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self smallProfileImageDataForInputFileName:@"unsplash_portrait" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"Mersey00036992_smallProfile" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_portrait_small_profile" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatProfile);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
@@ -791,11 +628,11 @@ static NSString const * TypeJPEG = @"image/jpeg";
 - (void)testThatItGeneratesASmallProfileRepresentationFromATinyImage
 {
     // given
-    ZMImageDownsampleOperation *outputData = [self smallProfileImageDataForInputFileName:@"tiny" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self smallProfileImageDataForInputFileName:@"unsplash_preview" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
-    NSData *expectedData = [self dataForResource:@"tiny_smallProfile" extension:@"jpg"];
+    NSData *expectedData = [self dataForResource:@"unsplash_preview_small_profile" extension:@"jpg"];
     AssertImageDataIsEqual(outputData.downsampleImageData, expectedData);
     XCTAssertEqual(outputData.format, ZMImageFormatProfile);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));

@@ -47,8 +47,8 @@
 
 - (void)testThatItCanCalculateTheSizeOfAnImage
 {
-    NSURL *imageURL = [self fileURLForResource:@"medium" extension:@"jpg"];
-    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL], CGSizeMake(1612, 1072));
+    NSURL *imageURL = [self fileURLForResource:@"unsplash_medium" extension:@"jpg"];
+    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL], CGSizeMake(531, 346));
 }
 
 - (void)testThatItReturnsZeroSizeIfFileIsNotAnImage
@@ -60,23 +60,24 @@
 - (void)testThatItReturnsTheRotatedSizeForImagesWithATIFFOrientation
 {
     NSURL *imageURL;
-    imageURL = [self fileURLForResource:@"exif_orientation/ExifOrientation3" extension:@"jpg"];
+    imageURL = [self fileURLForResource:@"unsplash_medium_exif_3" extension:@"jpg"];
     XCTAssertNotNil(imageURL);
     CGSize orientation3Size = [ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL];
-    AssertEqualSizes(orientation3Size, CGSizeMake(1240, 1754));
-    imageURL = [self fileURLForResource:@"exif_orientation/ExifOrientation6" extension:@"jpg"];
+    AssertEqualSizes(orientation3Size, CGSizeMake(531, 346));
+    imageURL = [self fileURLForResource:@"unsplash_medium_exif_6" extension:@"jpg"];
     XCTAssertNotNil(imageURL);
     CGSize orientation6Size = [ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL];
-    AssertEqualSizes(orientation6Size, CGSizeMake(1240, 1754));
-    imageURL = [self fileURLForResource:@"exif_orientation/ExifOrientation8" extension:@"jpg"];
+    AssertEqualSizes(orientation6Size, CGSizeMake(531, 346));
+    imageURL = [self fileURLForResource:@"unsplash_medium_exif_8" extension:@"jpg"];
     XCTAssertNotNil(imageURL);
     CGSize orientation8Size = [ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL];
-    AssertEqualSizes(orientation8Size, CGSizeMake(1240, 1754));
+    AssertEqualSizes(orientation8Size, CGSizeMake(531, 346));
 }
 
 - (void)testThatItReturnsTheRotatedSizeForImagesWithTIFFOrientation5;
 {
-    NSDictionary *properties = @{@"ColorModel": @"RGB",
+    NSDictionary *properties = @{
+                                 @"ColorModel": @"RGB",
                                  @"DPIHeight": @72,
                                  @"DPIWidth": @72,
                                  @"Depth": @8,
@@ -107,7 +108,8 @@
 
 - (void)testThatItReturnsTheRotatedSizeForImagesWithTIFFOrientation7;
 {
-    NSDictionary *properties = @{@"ColorModel": @"RGB",
+    NSDictionary *properties = @{
+                                 @"ColorModel": @"RGB",
                                  @"DPIHeight": @72,
                                  @"DPIWidth": @72,
                                  @"Depth": @8,
@@ -138,52 +140,20 @@
 
 - (void)testThatItReturnsZeroSizeIfFileDoesNotExist
 {
-    NSURL *imageURL = [NSURL fileURLWithPath:@"/goo/asdf"];
+    NSURL *imageURL = [NSURL fileURLWithPath:@"/foo/bar"];
     AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL], CGSizeZero);
 }
 
 - (void)testThatItCanCalculateTheSizeOfAnImageFromData
 {
-    NSData *imageData = [self dataForResource:@"medium" extension:@"jpg"];
-    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData], CGSizeMake(1612, 1072));
+    NSData *imageData = [self dataForResource:@"unsplash_medium" extension:@"jpg"];
+    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData], CGSizeMake(531, 346));
 }
-
 
 - (void)testThatItReturnsZeroSizeIfDataIsNotAnImage
 {
     NSData *imageData = [self dataForResource:@"Lorem Ipsum" extension:@"txt"];
     AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData], CGSizeZero);
-}
-
-@end
-
-
-
-@implementation ZMImagePreprocessorTests (MediumAndPreviewGeneration)
-
-- (void)testThatBothRepresentationsAreGenerated
-{
-    return; // 1 TODO REFACTOR -> implement and make ZMAssetTranscoder use it
-    
-    // given
-    NSData *imageData = [self dataForResource:@"rotated with orientation 3" extension:@"jpg"];
-    XCTAssertNotNil(imageData);
-    ZMImagePreprocessor *sut = [[ZMImagePreprocessor alloc] initWithImageData:imageData processingQueue:self.processingQueue];
-    
-    __block NSData *mediumData;
-    __block BOOL done = NO;
-    id handler = [OCMockObject mockForProtocol:@protocol(ZMImagePreprocessorHandler)];
-    [[handler expect] imagePreprocessor:sut didProducePreviewData:[OCMArg checkWithBlock:^BOOL(NSData *data) {mediumData = data; return YES;}]];
-    [[handler expect] imagePreprocessor:sut didProduceMediumData:[OCMArg checkWithBlock:^BOOL(NSData *data) {mediumData = data; return YES;}]];
-    [[[handler expect] andDo:^(__unused NSInvocation *i){ done = YES; }] imagePreprocessorDidComplete:sut];
-    
-    // when
-    [sut generateRepresentationsWithResultHandler:handler callbackQueue:[NSOperationQueue mainQueue]];
-    
-    // then
-    XCTAssert([self waitOnMainLoopUntilBlock:^BOOL{
-        return done;
-    } timeout:1]);
 }
 
 @end
