@@ -157,6 +157,18 @@ class PreviewDownloaderTests: XCTestCase {
         XCTAssertNotNil(sut.containerByTaskID[taskID])
     }
     
+    func testThatItDoesntCallTheCompletionWhenRequestIsCancelled() {
+        // given
+        let error = NSError(domain: NSURLErrorDomain, code: NSURLError.Cancelled.rawValue, userInfo: nil)
+        
+        // expect
+        let completion: PreviewDownloader.DownloadCompletion = { _ in XCTFail("It should not call the completion handler") }
+        
+        // when
+        sut.requestOpenGraphData(fromURL: url, completion: completion)
+        sut.URLSession(mockSession, task: mockDataTask, didCompleteWithError: error)
+    }
+    
     func testThatItOverridesTheContentTypeOfTheURLSessionUsedForParsing() {
         // given
         sut = PreviewDownloader(resultsQueue: .mainQueue())
