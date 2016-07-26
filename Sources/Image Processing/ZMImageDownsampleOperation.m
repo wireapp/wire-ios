@@ -453,10 +453,7 @@ static void bitmapContextReleaseData(void *releaseInfo, void *data);
     return result;
 }
 
-
-
-
-- (CGImageRef) rotateImageWithEXIF:(CGImageRef)source orientation:(int) orientation CF_RETURNS_RETAINED
+- (CGImageRef)rotateImageWithEXIF:(CGImageRef)source orientation:(int) orientation CF_RETURNS_RETAINED
 {
     switch (orientation)
     {

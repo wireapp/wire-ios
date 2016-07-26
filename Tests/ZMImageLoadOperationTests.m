@@ -38,7 +38,7 @@
 - (void)testThatItLoadsJPEGData;
 {
     // given
-    NSData *imageData = [self dataForResource:@"medium" extension:@"jpg"];
+    NSData *imageData = [self dataForResource:@"unsplash_medium_exif_2" extension:@"jpg"];
     ZMImageLoadOperation *sut = [[ZMImageLoadOperation alloc] initWithImageData:imageData];
     
     // when
@@ -52,18 +52,18 @@
     XCTAssertNotEqual(sut.CGImage, NULL);
     XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyTIFFDictionary][(__bridge id) kCGImagePropertyTIFFOrientation], @2);
     XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyOrientation], @2);
-    XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyPixelHeight], @1072);
-    XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyPixelWidth], @1612);
+    XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyPixelHeight], @346);
+    XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyPixelWidth], @531);
     AssertEqualData(sut.originalImageData, imageData);
     XCTAssertEqualObjects(sut.computedImageProperties.mimeType, (__bridge id)kUTTypeJPEG);
     XCTAssertEqual(sut.tiffOrientation, 2);
-    AssertEqualSizes(sut.computedImageProperties.size, CGSizeMake(1612, 1072));
+    AssertEqualSizes(sut.computedImageProperties.size, CGSizeMake(531, 346));
 }
 
 - (void)testThatItDoesNotLoadWhenCancelled
 {
     // given
-    NSData *imageData = [self dataForResource:@"medium" extension:@"jpg"];
+    NSData *imageData = [self dataForResource:@"unsplash_medium" extension:@"jpg"];
     XCTAssertNotNil(imageData);
     ZMImageLoadOperation *sut = [[ZMImageLoadOperation alloc] initWithImageData:imageData];
     [sut cancel];
