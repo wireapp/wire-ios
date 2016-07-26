@@ -66,76 +66,34 @@ class MetaStreamContainerTests: XCTestCase {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head >", shouldUpdate: false)
     }
     
-    func testThatItExtractsTheHead_Twitter() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.twitterData())
+    func testThatItExtractsTheHead_whenAllInOneLine() {
+        let head = "<head>header</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head)
     }
     
-    func testThatItExtractsTheHead_TwitterWithImages() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.twitterDataWithImages())
+    func testThatItExtractsTheHead_whenOneASeparateLine() {
+        let head = "<head>\nheader\n</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head)
     }
     
-    func testThatItExtractsTheHead_Verge() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.vergeData())
-    }
-    
-    func testThatItExtractsTheHead_Foursqaure() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.foursqaureData())
-    }
-    
-    func testThatItExtractsTheHead_YouTube() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.youtubeData())
-    }
-    
-    func testThatItExtractsTheHead_Guardian() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.guardianData())
-    }
-    
-    func testThatItExtractsTheHead_Instagram() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.instagramData())
-    }
-    
-    func testThatItExtractsTheHead_NYTimes() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.nytimesData())
-    }
-    
-    func testThatItExtractsTheHead_Vimeo() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.vimeoData())
-    }
-    
-    func testThatItExtractsTheHead_WashingtonPost() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.washingtonPostData())
-    }
-    
-    func testThatItExtractsTheHead_Medium() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.mediumData())
-    }
-    
-    func testThatItExtractsTheHead_Wire() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.wireData())
-    }
-
-    func testThatItExtractsTheHead_Polygon() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.polygonData())
-    }
-
-    func testThatItExtractsTheHead_iTunes() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.iTunesData())
-    }
-    
-    func testThatItExtractsTheHead_yahooSports() {
-        assertThatItExtractsTheCorrectHead(OpenGraphMockDataProvider.yahooSports())
+    func testThatItExtractsTheHead_whenItHasAttributes() {
+        let head = "<head data-network=\"123\">\nheader\n</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head)
     }
     
     // MARK: - Helper
     
-    func assertThatItExtractsTheCorrectHead(mockData: OpenGraphMockData, line: UInt = #line) {
+    func assertThatItExtractsTheCorrectHead(html: String, expectedHead: String, line: UInt = #line) {
         // when
-        sut.addData(mockData.full.utf8Data)
+        sut.addData(html.utf8Data)
         
         // then
         XCTAssertTrue(sut.reachedEndOfHead)
         guard let head = sut.head else { return XCTFail("Head was nil", line: line) }
-        XCTAssertEqual(head, mockData.head, line: line)
+        XCTAssertEqual(head, expectedHead, line: line)
     }
     
     func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(head: String, shouldUpdate: Bool = true, line: UInt = #line) {

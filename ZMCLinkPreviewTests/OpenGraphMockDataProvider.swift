@@ -21,7 +21,6 @@ import Foundation
 @testable import ZMCLinkPreview
 
 struct OpenGraphMockData {
-    let full: String
     let head: String
     let expected: OpenGraphData?
     let urlString: String
@@ -42,7 +41,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("twitter_full"),
             head: fixtureWithName("twitter_head"),
             expected: expected,
             urlString: expected.url
@@ -62,7 +60,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
         
         return OpenGraphMockData(
-            full: fixtureWithName("twitter_images_full"),
             head: fixtureWithName("twitter_images_head"),
             expected: expected,
             urlString: expected.url
@@ -83,7 +80,6 @@ class OpenGraphMockDataProvider: NSObject {
         expected.foursquareMetaData = FoursquareMetaData(latitude: 52.53084856462712, longitude: 13.4021941476607)
 
         return OpenGraphMockData(
-            full: fixtureWithName("foursquare_full"),
             head: fixtureWithName("foursquare_head"),
             expected: expected,
             urlString: expected.url
@@ -101,7 +97,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("verge_full"),
             head: fixtureWithName("verge_head"),
             expected: expected,
             urlString: expected.url
@@ -119,7 +114,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("youtube_full"),
             head: fixtureWithName("youtube_head"),
             expected: expected,
             urlString: expected.url
@@ -137,7 +131,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("guardian_full"),
             head: fixtureWithName("guardian_head"),
             expected: expected,
             urlString: expected.url
@@ -155,7 +148,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("instagram_full"),
             head: fixtureWithName("instagram_head"),
             expected: expected,
             urlString: expected.url
@@ -173,7 +165,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("vimeo_full"),
             head: fixtureWithName("vimeo_head"),
             expected: expected,
             urlString: expected.url
@@ -190,7 +181,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("nytimes_full"),
             head: fixtureWithName("nytimes_head"),
             expected: expected,
             urlString: expected.url
@@ -208,7 +198,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
         
         return OpenGraphMockData(
-            full: fixtureWithName("washington_post_full"),
             head: fixtureWithName("washington_post_head"),
             expected: expected,
             urlString: expected.url
@@ -226,7 +215,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
         
         return OpenGraphMockData(
-            full: fixtureWithName("medium_full"),
             head: fixtureWithName("medium_head"),
             expected: expected,
             urlString: expected.url
@@ -243,7 +231,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
         
         return OpenGraphMockData(
-            full: fixtureWithName("wire_full"),
             head: fixtureWithName("wire_head"),
             expected: expected,
             urlString: expected.url
@@ -261,7 +248,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
         
         return OpenGraphMockData(
-            full: fixtureWithName("polygon_full"),
             head: fixtureWithName("polygon_head"),
             expected: expected,
             urlString: expected.url
@@ -279,7 +265,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("itunes_full"),
             head: fixtureWithName("itunes_head"),
             expected: expected,
             urlString: expected.url
@@ -297,7 +282,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
 
         return OpenGraphMockData(
-            full: fixtureWithName("itunes_without_title_full"),
             head: fixtureWithName("itunes_without_title_head"),
             expected: expected,
             urlString: expected.url
@@ -315,7 +299,6 @@ class OpenGraphMockDataProvider: NSObject {
         )
         
         return OpenGraphMockData(
-            full: fixtureWithName("yahoo_sports_full"),
             head: fixtureWithName("yahoo_sports_head"),
             expected: expected,
             urlString: expected.url

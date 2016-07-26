@@ -66,6 +66,7 @@ public class PreviewDownloader: NSObject, NSURLSessionDataDelegate, PreviewDownl
     }
     
     func URLSession(session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
+        guard let errorCode = error?.code where errorCode != NSURLError.Cancelled.rawValue else { return }
         guard let url = task.originalRequest?.URL, completion = completionByURL[url] where error != nil else { return }
         completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
     }
