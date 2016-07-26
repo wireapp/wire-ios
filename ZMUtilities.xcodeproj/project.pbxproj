@@ -16,9 +16,6 @@
 		091799741B7E2E4D00E60DD9 /* ZMAPNSEnvironmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0917996E1B7E2E4600E60DD9 /* ZMAPNSEnvironmentTests.m */; };
 		091799751B7E2E4D00E60DD9 /* ZMDeploymentEnvironmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */; };
 		091799761B7E2E4D00E60DD9 /* ZMMobileProvisionParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */; };
-		0917997D1B7E2F0300E60DD9 /* AppStore-Sandbox.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 0917997A1B7E2F0300E60DD9 /* AppStore-Sandbox.mobileprovision */; };
-		0917997E1B7E2F0300E60DD9 /* Enterprise-Production.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 0917997B1B7E2F0300E60DD9 /* Enterprise-Production.mobileprovision */; };
-		0917997F1B7E2F0300E60DD9 /* Enterprise-Sandbox.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 0917997C1B7E2F0300E60DD9 /* Enterprise-Sandbox.mobileprovision */; };
 		097E36C11B7B620F0039CC4C /* NSLocale+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 097E36C01B7B620F0039CC4C /* NSLocale+Internal.h */; };
 		097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E36C21B7B62150039CC4C /* NSLocale+Internal.m */; };
 		097E36C51B7B631C0039CC4C /* NSLocale+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -85,6 +82,9 @@
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
 		871E12351C4FEED200862958 /* UnownedNSObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */; };
+		BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */; };
+		BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */; };
+		BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */; };
 		F991CE1D1CB64205004D8465 /* ZMPropertyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A7891CAE9F900039E10C /* NSString+Normalization.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A78B1CAE9F9A0039E10C /* NSString+Normalization.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */; };
@@ -166,9 +166,6 @@
 		0917996E1B7E2E4600E60DD9 /* ZMAPNSEnvironmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMAPNSEnvironmentTests.m; path = Source/ZMAPNSEnvironmentTests.m; sourceTree = "<group>"; };
 		0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMDeploymentEnvironmentTests.m; path = Source/ZMDeploymentEnvironmentTests.m; sourceTree = "<group>"; };
 		091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMMobileProvisionParserTests.m; path = Source/ZMMobileProvisionParserTests.m; sourceTree = "<group>"; };
-		0917997A1B7E2F0300E60DD9 /* AppStore-Sandbox.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AppStore-Sandbox.mobileprovision"; sourceTree = "<group>"; };
-		0917997B1B7E2F0300E60DD9 /* Enterprise-Production.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Enterprise-Production.mobileprovision"; sourceTree = "<group>"; };
-		0917997C1B7E2F0300E60DD9 /* Enterprise-Sandbox.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Enterprise-Sandbox.mobileprovision"; sourceTree = "<group>"; };
 		097E36C01B7B620F0039CC4C /* NSLocale+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLocale+Internal.h"; sourceTree = "<group>"; };
 		097E36C21B7B62150039CC4C /* NSLocale+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+Internal.m"; sourceTree = "<group>"; };
 		097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLocale+Internal.h"; sourceTree = "<group>"; };
@@ -263,6 +260,9 @@
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
 		871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedNSObjectTests.swift; path = Source/UnownedNSObjectTests.swift; sourceTree = "<group>"; };
+		BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-production.xml"; sourceTree = "<group>"; };
+		BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "appstore-sandbox.xml"; path = "../appstore-sandbox.xml"; sourceTree = "<group>"; };
+		BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-sandbox.xml"; sourceTree = "<group>"; };
 		F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPropertyValidator.h; sourceTree = "<group>"; };
 		F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Normalization.h"; sourceTree = "<group>"; };
 		F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Normalization.m"; sourceTree = "<group>"; };
@@ -336,11 +336,11 @@
 			isa = PBXGroup;
 			children = (
 				544B2FFC1C1FF2DD00384477 /* data_to_hash.enc */,
-				0917997A1B7E2F0300E60DD9 /* AppStore-Sandbox.mobileprovision */,
-				0917997B1B7E2F0300E60DD9 /* Enterprise-Production.mobileprovision */,
-				0917997C1B7E2F0300E60DD9 /* Enterprise-Sandbox.mobileprovision */,
 				54D06C581BC81976005F0FBB /* android_image.encrypted */,
 				54D06C5A1BC81983005F0FBB /* android_image.decrypted */,
+				BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */,
+				BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */,
+				BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -762,12 +762,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0917997F1B7E2F0300E60DD9 /* Enterprise-Sandbox.mobileprovision in Resources */,
-				0917997D1B7E2F0300E60DD9 /* AppStore-Sandbox.mobileprovision in Resources */,
+				BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */,
+				BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */,
 				54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */,
 				544B2FFE1C1FF79500384477 /* data_to_hash.enc in Resources */,
+				BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */,
 				54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */,
-				0917997E1B7E2F0300E60DD9 /* Enterprise-Production.mobileprovision in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
