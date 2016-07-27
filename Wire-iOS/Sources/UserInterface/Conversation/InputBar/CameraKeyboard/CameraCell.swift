@@ -138,14 +138,31 @@ public class CameraCell: UICollectionViewCell {
     }
     
     private func updateVideoOrientation() {
-        let statusBarOrientation = AVCaptureVideoOrientation(rawValue: UIApplication.sharedApplication().statusBarOrientation.rawValue)!
+        let newOrientation: AVCaptureVideoOrientation
+        
+        switch UIDevice.currentDevice().orientation {
+        case .Portrait:
+            newOrientation = .Portrait;
+            break;
+        case .PortraitUpsideDown:
+            newOrientation = .PortraitUpsideDown;
+            break;
+        case .LandscapeLeft:
+            newOrientation = .LandscapeRight;
+            break;
+        case .LandscapeRight:
+            newOrientation = .LandscapeLeft;
+            break;
+        default:
+            newOrientation = .Portrait;
+        }
         
         if let connection = self.cameraController.previewLayer.connection where connection.supportsVideoOrientation {
-            connection.videoOrientation = statusBarOrientation
+            connection.videoOrientation = newOrientation
         }
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            self.cameraController.snapshotVideoOrientation = statusBarOrientation
+            self.cameraController.snapshotVideoOrientation = newOrientation
         }
         else {
             self.cameraController.snapshotVideoOrientation = .Portrait
