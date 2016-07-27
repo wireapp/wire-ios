@@ -37,6 +37,9 @@ const NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; // 4 min
 {
     [Analytics.shared tagMediaAction:ConversationMediaActionFileTransfer inConversation:self.conversation];
     
+    self.mode = ConversationInputBarViewControllerModeTextInput;
+    [self.inputBar.textView resignFirstResponder];
+    
     UIDocumentMenuViewController *docController = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:@[(NSString *)kUTTypeItem]
                                                                                                        inMode:UIDocumentPickerModeImport];
     docController.modalPresentationStyle = UIModalPresentationPopover;
@@ -330,9 +333,11 @@ const NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; // 4 min
         }
         
         if (image != nil) {
-            [self.parentViewController dismissViewControllerAnimated:YES completion:^(){
-                CameraKeyboardSource source = (picker.sourceType == UIImagePickerControllerSourceTypeCamera) ? CameraKeyboardSourceCamera : CameraKeyboardSourceLibrary;
-                [self showConfirmationForImage:UIImageJPEGRepresentation(image, 0.9) source:source];
+            picker.showLoadingView = YES;
+            
+            [self.sendController sendMessageWithImageData:UIImageJPEGRepresentation(image, 0.9) completion:^{
+                picker.showLoadingView = NO;
+                [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
             }];
         }
     }
