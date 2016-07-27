@@ -148,6 +148,16 @@ const NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; // 4 min
         pickerController.mediaTypes = mediaTypes;
         pickerController.videoMaximumDuration = ConversationUploadMaxVideoDuration;
         pickerController.transitioningDelegate = [FastTransitioningDelegate sharedDelegate];
+        if (sourceType == UIImagePickerControllerSourceTypeCamera) {
+            switch ([Settings sharedSettings].preferredCamera) {
+                case CameraControllerCameraBack:
+                    pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+                    break;
+                case CameraControllerCameraFront:
+                    pickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+                    break;
+            }
+        }
         [self.parentViewController presentViewController:pickerController animated:YES completion:nil];
     }];
 }
@@ -333,12 +343,20 @@ const NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; // 4 min
         }
         
         if (image != nil) {
-            picker.showLoadingView = YES;
+            if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+                picker.showLoadingView = YES;
+                
+                [self.sendController sendMessageWithImageData:UIImageJPEGRepresentation(image, 0.9) completion:^{
+                    picker.showLoadingView = NO;
+                    [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
+                }];
+            }
+            else {
+                [self.parentViewController dismissViewControllerAnimated:YES completion:^(){
+                    [self showConfirmationForImage:UIImageJPEGRepresentation(image, 0.9) source:picker.sourceType];
+                }];
+            }
             
-            [self.sendController sendMessageWithImageData:UIImageJPEGRepresentation(image, 0.9) completion:^{
-                picker.showLoadingView = NO;
-                [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
-            }];
         }
     }
     else {
