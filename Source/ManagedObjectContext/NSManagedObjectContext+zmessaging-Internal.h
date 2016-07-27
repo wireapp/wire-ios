@@ -25,5 +25,6 @@
 + (BOOL)databaseExistsInCachesDirectory;
 + (BOOL)databaseExistsAndNotReadableDueToEncryption;
 + (NSURL *)storeURLInDirectory:(NSSearchPathDirectory)directory;
++ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorBackingUpCorrupedDatabases:(BOOL)backupCorruptedDatabase;
 
 @end

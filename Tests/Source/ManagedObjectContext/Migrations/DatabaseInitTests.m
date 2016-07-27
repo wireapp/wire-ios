@@ -36,6 +36,9 @@
 {
     [self cleanUp];
     [NSManagedObjectContext setUseInMemoryStore:NO];
+    [self performIgnoringZMLogError:^{
+        [NSManagedObjectContext initPersistentStoreCoordinatorBackingUpCorrupedDatabases:NO];
+    }];
     [super setUp];
 }
 
@@ -54,6 +57,9 @@
     
     // given
     id classMock = [OCMockObject mockForClass:[NSManagedObjectContext class]];
+    [[classMock expect] initPersistentStoreCoordinatorBackingUpCorrupedDatabases:NO];
+    [self verifyMockLater:classMock];
+
     XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStore]);
     
     // when
@@ -70,6 +76,9 @@
     // given
     id classMock = [OCMockObject mockForClass:[NSManagedObjectContext class]];
     [[[classMock stub] andReturnValue:@(YES)] databaseExistsAndNotReadableDueToEncryption];
+    [[classMock expect] initPersistentStoreCoordinatorBackingUpCorrupedDatabases:NO];
+    [self verifyMockLater:classMock];
+
     __block BOOL completionCalled = NO;
     
     // when
@@ -92,6 +101,9 @@
     // given
     id classMock = [OCMockObject mockForClass:[NSManagedObjectContext class]];
     [[[classMock stub] andReturnValue:@(YES)] databaseExistsAndNotReadableDueToEncryption];
+    [[classMock expect] initPersistentStoreCoordinatorBackingUpCorrupedDatabases:NO];
+    [self verifyMockLater:classMock];
+
     __block BOOL completionCalledTimes = 0;
     
     // when
