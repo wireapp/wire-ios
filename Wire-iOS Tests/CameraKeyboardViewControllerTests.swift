@@ -21,6 +21,7 @@ import XCTest
 import Photos
 import Cartography
 import AVFoundation
+import JPSimulatorHackFramework
 @testable import Wire
 
 
@@ -57,10 +58,12 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
     var sut: CameraKeyboardViewController!
     var splitView: SplitLayoutObservableMock!
     var delegateMock: CameraKeyboardViewControllerDelegateMock!
-    let assetLibrary = AssetLibrary(synchronous: true)
+    var assetLibrary: AssetLibrary!
     
     override func setUp() {
         super.setUp()
+        JPSimulatorHacks.grantAccessToPhotos()
+        self.assetLibrary = AssetLibrary(synchronous: true)
         self.splitView = SplitLayoutObservableMock()
         self.delegateMock = CameraKeyboardViewControllerDelegateMock()
     }
@@ -100,7 +103,7 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         XCTAssertEqual(self.sut.collectionView.numberOfSections(), 2)
         XCTAssertEqual(self.sut.collectionView.numberOfItemsInSection(0), 1)
     }
-    
+
     func testThatSecondSectionContainsCameraRollElements() {
         // given
         self.sut = CameraKeyboardViewController(splitLayoutObservable: self.splitView, assetLibrary: assetLibrary)
@@ -114,7 +117,7 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         XCTAssertTrue(itemCell is AssetCell)
         XCTAssertEqual(self.sut.collectionView.numberOfSections(), 2)
     }
-    
+
     func testInitialStateLayoutSizeCompact() {
         // given
         self.splitView?.layoutSize = .Compact
