@@ -1,3 +1,10 @@
 language: objective-c
-osx_image: xcode6.4
-script: xctool -project Cryptobox/Cryptobox.xcodeproj -scheme Cryptobox-ios -sdk iphonesimulator test
+osx_image: xcode7.3
+
+install:
+  - carthage bootstrap --platform iOS
+
+script:
+  - open -b com.apple.iphonesimulator
+  - set -o pipefail
+  - xcodebuild build test -scheme Cryptobox-ios -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | xcpretty -s

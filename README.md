@@ -1,4 +1,5 @@
 # Wire™
+[![Build Status](https://travis-ci.org/wireapp/wire-ios-cryptobox.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios-cryptobox)
 
 ![Wire logo](https://github.com/wireapp/wire/blob/master/assets/logo.png?raw=true)
 
