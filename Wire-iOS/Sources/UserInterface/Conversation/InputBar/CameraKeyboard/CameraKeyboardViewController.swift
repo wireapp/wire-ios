@@ -44,6 +44,8 @@ public class CameraKeyboardViewController: UIViewController {
     
     private let sideMargin: CGFloat = 14
     
+    private var viewWasHidden: Bool = false
+    
     private var goBackButtonRevealed: Bool = false {
         didSet {
             if goBackButtonRevealed {
@@ -140,11 +142,14 @@ public class CameraKeyboardViewController: UIViewController {
         self.collectionViewLayout.invalidateLayout()
         self.collectionView.reloadData()
         DeviceOrientationObserver.sharedInstance().startMonitoringDeviceOrientation()
-        self.assetLibrary.refetchAssets()
+        if self.viewWasHidden {
+            self.assetLibrary.refetchAssets()
+        }
     }
     
     public override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        self.viewWasHidden = true
         DeviceOrientationObserver.sharedInstance().stopMonitoringDeviceOrientation()
     }
     
@@ -223,11 +228,13 @@ public class CameraKeyboardViewController: UIViewController {
         let options = PHVideoRequestOptions()
         options.deliveryMode = .HighQualityFormat
         options.networkAccessAllowed = true
-        
+        options.version = .Original
+
         self.showLoadingView = true
         manager.requestAVAssetForVideo(asset, options: options, resultHandler: { videoAsset, audioMix, info in
             dispatch_async(dispatch_get_main_queue(), {
                 self.showLoadingView = false
+
                 guard let videoAsset = videoAsset as? AVURLAsset else {
                     return
                 }
