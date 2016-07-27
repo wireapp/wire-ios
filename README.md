@@ -1,4 +1,5 @@
 # Wire™
+[![Build Status](https://travis-ci.org/wireapp/wire-ios-protos.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios-protos)
 
 ![Wire logo](https://github.com/wireapp/wire/blob/master/assets/logo.png?raw=true)
 
@@ -8,14 +9,14 @@ You can find the published source code at [github.com/wireapp/wire](https://gith
 
 For licensing information, see the attached LICENSE file and the list of third-party licenses at [wire.com/legal/licenses/](https://wire.com/legal/licenses/).
 
-#ZMCProtos
+# wire-ios-protos
 
 This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
 
-ZMCProtos contains precompiled protocol buffer definitions for objective-c / swift and some convenience methods around them.
+The wire-ios-protos framework contains precompiled protocol buffer definitions for objective-c / swift and some convenience methods around them.
 
 
-###How to build
+### How to build
 
 This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
 
