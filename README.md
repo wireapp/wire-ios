@@ -1,4 +1,5 @@
 # Wire™
+[![Build Status](https://travis-ci.org/wireapp/wire-ios-utilities.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios-utilities)
 
 ![Wire logo](https://github.com/wireapp/wire/blob/master/assets/logo.png?raw=true)
 
