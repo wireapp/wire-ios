@@ -5,8 +5,10 @@ cache:
   - bundler
   - cocoapods
 
-script:
+install:
   - open -b com.apple.iphonesimulator
-  - set pipefail
   - ./setup.sh
+
+script:
+  - set -o pipefail
   - xcodebuild build test -workspace Wire-iOS.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | xcpretty
