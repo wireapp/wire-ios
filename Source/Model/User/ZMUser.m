@@ -73,6 +73,7 @@ static NSString *const ShowingUserAddedKey = @"showingUserAdded";
 static NSString *const ShowingUserRemovedKey = @"showingUserRemoved";
 static NSString *const UserClientsKey = @"clients";
 
+static NSString *const OttoPermanentRemoteIdentifier = @"e1832f71-8cdf-45c3-911d-018926f24c9c";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -237,6 +238,10 @@ static NSString *const UserClientsKey = @"clients";
     return self.connection.conversation;
 }
 
+- (BOOL)isOtto
+{
+    return [self.remoteIdentifier.transportString isEqual:OttoPermanentRemoteIdentifier];
+}
 
 - (BOOL)canBeConnected;
 {
