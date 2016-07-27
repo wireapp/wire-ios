@@ -1919,6 +1919,7 @@ static __weak FakeReachability *currentReachability;
     if (applicationInBackground) {
         [[(id)self.URLSessionSwitch expect] switchToBackgroundSession];
         [self.sut enterBackground];
+        WaitForAllGroupsToBeEmpty(0.5);
     }
     
     id delegate = [OCMockObject niceMockForProtocol:@protocol(ZMURLSessionDelegate)];
