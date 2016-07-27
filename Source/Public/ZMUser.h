@@ -38,6 +38,8 @@
 /// New self clients which the self user hasn't been informed about (only valid for the self user)
 @property (nonatomic, readonly) NSSet<UserClient *> *clientsRequiringUserAttention;
 
+@property (nonatomic, readonly) BOOL isOtto;
+
 @end
 
 

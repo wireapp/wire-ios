@@ -1512,6 +1512,31 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertEqual(connection.status, ZMConnectionStatusIgnored);
 }
 
+- (void)testThatItDetectsOtto
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    // when
+    user.remoteIdentifier = [NSUUID uuidWithTransportString:@"e1832f71-8cdf-45c3-911d-018926f24c9c"];
+    
+    // then
+    XCTAssertTrue(user.isOtto);
+}
+
+
+- (void)testThatItDoesNotDetectUserAsOtto
+{
+    // given
+    NSUUID *uuid = [NSUUID createUUID];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    // when
+    user.remoteIdentifier = uuid;
+    
+    // then
+    XCTAssertFalse(user.isOtto);
+}
 
 @end
 
