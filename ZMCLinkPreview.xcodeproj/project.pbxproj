@@ -26,23 +26,6 @@
 		AF2A6B431D26B26F00A59905 /* MetaStreamContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF2A6B421D26B26F00A59905 /* MetaStreamContainerTests.swift */; };
 		AFA947F81D3AF374007F53A1 /* itunes_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = AFA947F71D3AF374007F53A1 /* itunes_head.txt */; };
 		AFA947FC1D3AFC82007F53A1 /* itunes_without_title_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = AFA947FB1D3AFC82007F53A1 /* itunes_without_title_head.txt */; };
-		BF3DD2811D25445600D51DED /* version.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD26F1D25445600D51DED /* version.xcconfig */; };
-		BF3DD2821D25445600D51DED /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2711D25445600D51DED /* .gitignore */; };
-		BF3DD2831D25445600D51DED /* ios-test-host.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2721D25445600D51DED /* ios-test-host.xcconfig */; };
-		BF3DD2841D25445600D51DED /* ios-test-target.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2731D25445600D51DED /* ios-test-target.xcconfig */; };
-		BF3DD2851D25445600D51DED /* ios.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2741D25445600D51DED /* ios.xcconfig */; };
-		BF3DD2861D25445600D51DED /* osx-test-target.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2751D25445600D51DED /* osx-test-target.xcconfig */; };
-		BF3DD2871D25445600D51DED /* osx.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2761D25445600D51DED /* osx.xcconfig */; };
-		BF3DD2881D25445600D51DED /* project-common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2771D25445600D51DED /* project-common.xcconfig */; };
-		BF3DD2891D25445600D51DED /* project-debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2781D25445600D51DED /* project-debug.xcconfig */; };
-		BF3DD28A1D25445600D51DED /* project.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2791D25445600D51DED /* project.xcconfig */; };
-		BF3DD28B1D25445600D51DED /* simulator.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD27A1D25445600D51DED /* simulator.xcconfig */; };
-		BF3DD28C1D25445600D51DED /* swift.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD27B1D25445600D51DED /* swift.xcconfig */; };
-		BF3DD28D1D25445600D51DED /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD27C1D25445600D51DED /* tests.xcconfig */; };
-		BF3DD28E1D25445600D51DED /* warnings-debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD27D1D25445600D51DED /* warnings-debug.xcconfig */; };
-		BF3DD28F1D25445600D51DED /* warnings.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD27E1D25445600D51DED /* warnings.xcconfig */; };
-		BF3DD2901D25445600D51DED /* ZMCLinkPreview-ios.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD27F1D25445600D51DED /* ZMCLinkPreview-ios.xcconfig */; };
-		BF3DD2911D25445600D51DED /* ZMCLinkPreview.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BF3DD2801D25445600D51DED /* ZMCLinkPreview.xcconfig */; };
 		BF3DD2951D25474800D51DED /* OpenGraphDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3DD2941D25474800D51DED /* OpenGraphDataTypes.swift */; };
 		BF3DD2971D2548CB00D51DED /* OpenGraphScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3DD2961D2548CB00D51DED /* OpenGraphScanner.swift */; };
 		BF3DD29B1D254F7900D51DED /* PreviewDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3DD29A1D254F7900D51DED /* PreviewDownloader.swift */; };
@@ -483,23 +466,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF3DD2851D25445600D51DED /* ios.xcconfig in Resources */,
-				BF3DD28F1D25445600D51DED /* warnings.xcconfig in Resources */,
-				BF3DD2821D25445600D51DED /* .gitignore in Resources */,
-				BF3DD28C1D25445600D51DED /* swift.xcconfig in Resources */,
-				BF3DD2811D25445600D51DED /* version.xcconfig in Resources */,
-				BF3DD2881D25445600D51DED /* project-common.xcconfig in Resources */,
-				BF3DD28D1D25445600D51DED /* tests.xcconfig in Resources */,
-				BF3DD28A1D25445600D51DED /* project.xcconfig in Resources */,
-				BF3DD2831D25445600D51DED /* ios-test-host.xcconfig in Resources */,
-				BF3DD2891D25445600D51DED /* project-debug.xcconfig in Resources */,
-				BF3DD28B1D25445600D51DED /* simulator.xcconfig in Resources */,
-				BF3DD2861D25445600D51DED /* osx-test-target.xcconfig in Resources */,
-				BF3DD2901D25445600D51DED /* ZMCLinkPreview-ios.xcconfig in Resources */,
-				BF3DD2871D25445600D51DED /* osx.xcconfig in Resources */,
-				BF3DD2911D25445600D51DED /* ZMCLinkPreview.xcconfig in Resources */,
-				BF3DD2841D25445600D51DED /* ios-test-target.xcconfig in Resources */,
-				BF3DD28E1D25445600D51DED /* warnings-debug.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,9 +713,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"@executable_path/../../Frameworks",
 				);
 				INFOPLIST_FILE = ZMCLinkPreview/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -772,9 +740,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"@executable_path/../../Frameworks",
 				);
 				INFOPLIST_FILE = ZMCLinkPreview/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
