@@ -62,7 +62,6 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
     
     override func setUp() {
         super.setUp()
-        self.recordMode = true
         JPSimulatorHacks.grantAccessToPhotos()
         self.assetLibrary = AssetLibrary(synchronous: true)
         self.splitView = SplitLayoutObservableMock()
