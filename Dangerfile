@@ -1,6 +1,5 @@
 
-copyright_header =
-"//
+copyright_header = "//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 //
@@ -20,7 +19,7 @@ copyright_header =
 
 touched = git.added_files | git.modified_files
 paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
-missing = paths.map { |p| File.read(p).include? copyright_header }
+missing = paths.map { |p| File.read(p).start_with? copyright_header }
 
-warn "Missing copyright headers" if missing.count > 0
+warn "Missing copyright headers" if missing.include? true
 warn "Please add labels to this PR" if github.pr_labels.count == 0
