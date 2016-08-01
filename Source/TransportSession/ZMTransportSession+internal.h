@@ -42,7 +42,8 @@
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
                         pushChannelClass:(Class)pushChannelClass
-                           keyValueStore:(id<ZMKeyValueStore>)keyValueStore NS_DESIGNATED_INITIALIZER;
+                           keyValueStore:(id<ZMKeyValueStore>)keyValueStore
+                          mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue NS_DESIGNATED_INITIALIZER;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 
