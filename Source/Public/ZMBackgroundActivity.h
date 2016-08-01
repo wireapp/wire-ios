@@ -19,16 +19,20 @@
 
 #import <Foundation/Foundation.h>
 
-
+@protocol ZMSGroupQueue;
 
 // thin wrapper around [UIApplication beginBackgroundTaskWithName:expirationHandler:]
 @interface ZMBackgroundActivity : NSObject
 
-+ (instancetype)beginBackgroundActivityWithName:(NSString *)taskName;
++ (instancetype)beginBackgroundActivityWithName:(NSString *)taskName groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
 + (instancetype)beginBackgroundActivityWithName:(NSString *)taskName
+                                     groupQueue:(id<ZMSGroupQueue>)groupQueue
                               expirationHandler:(void (^)(void))handler;
 
+/**
+ *  This switches to the groupQueue to end the activity.
+ */
 - (void)endActivity;
 
 @end

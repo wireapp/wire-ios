@@ -288,6 +288,25 @@ static FakePushChannel *currentFakePushChannel;
 }
 @end
 
+#pragma mark - ZMSGroupQueue
+
+@interface FakeGroupQueue : NSObject <ZMSGroupQueue>
+
+@end
+
+@implementation FakeGroupQueue
+
+- (void)performGroupedBlock:(dispatch_block_t)block
+{
+    block();
+}
+
+- (ZMSDispatchGroup *)dispatchGroup
+{
+    return nil;
+}
+
+@end
 //////////////////////////////////////////////////
 //
 #pragma mark - Reachability
@@ -435,7 +454,8 @@ static __weak FakeReachability *currentReachability;
                 baseURL:self.baseURL
                 websocketURL:self.webSocketURL
                 pushChannelClass:FakePushChannel.class
-                keyValueStore:[[FakeKeyValueStore alloc] init]];
+                keyValueStore:[[FakeKeyValueStore alloc] init]
+                mainGroupQueue:[[FakeGroupQueue alloc] init]];
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
         id strongSelf = weakSelf;
@@ -557,7 +577,8 @@ static __weak FakeReachability *currentReachability;
                 baseURL:url
                 websocketURL:url2
                 pushChannelClass:nil
-                keyValueStore:[[FakeKeyValueStore alloc] init]];
+                keyValueStore:[[FakeKeyValueStore alloc] init]
+                mainGroupQueue:[[FakeGroupQueue alloc] init]];
     
     self.sut.accessToken = self.validAccessToken;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
@@ -765,15 +786,16 @@ static __weak FakeReachability *currentReachability;
 
     ZMURLSessionSwitch *urlSwitch = [[ZMURLSessionSwitch alloc] initWithForegroundSession:foregroundSession backgroundSession:backgroundSession voipSession:voipSession];
     ZMTransportSession *sut = [[ZMTransportSession alloc]
-                initWithURLSessionSwitch:urlSwitch
-                requestScheduler:(id) self.scheduler
-                reachabilityClass:[FakeReachability class]
-                queue:self.queue
-                group:self.dispatchGroup
-                baseURL:url
-                websocketURL:url
-                pushChannelClass:nil
-                keyValueStore:[[FakeKeyValueStore alloc] init]];
+                               initWithURLSessionSwitch:urlSwitch
+                               requestScheduler:(id) self.scheduler
+                               reachabilityClass:[FakeReachability class]
+                               queue:self.queue
+                               group:self.dispatchGroup
+                               baseURL:url
+                               websocketURL:url
+                               pushChannelClass:nil
+                               keyValueStore:[[FakeKeyValueStore alloc] init]
+                               mainGroupQueue:[[FakeGroupQueue alloc] init]];
     
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};
@@ -811,7 +833,8 @@ static __weak FakeReachability *currentReachability;
                                baseURL:url
                                websocketURL:url
                                pushChannelClass:nil
-                               keyValueStore:[[FakeKeyValueStore alloc] init]];
+                               keyValueStore:[[FakeKeyValueStore alloc] init]
+                               mainGroupQueue:nil];
     
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};

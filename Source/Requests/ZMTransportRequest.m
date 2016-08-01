@@ -22,6 +22,8 @@
 @import ImageIO;
 @import MobileCoreServices;
 
+#import <ZMTransport/ZMTransport-Swift.h>
+
 #import "ZMTransportRequest+Internal.h"
 #import "ZMTransportData.h"
 #import "ZMTransportResponse.h"
@@ -475,7 +477,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 {
     ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
     NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, taskIdentifier];
-    ZMBackgroundActivity *creationActivity = [ZMBackgroundActivity beginBackgroundActivityWithName:NSStringFromSelector(_cmd)];
+    ZMBackgroundActivity *creationActivity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:NSStringFromSelector(_cmd)];
     ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
     
     for (ZMTaskCreatedHandler *handler in self.taskCreatedHandlers) {
@@ -521,7 +523,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 {
     response.startOfUploadTimestamp = self.startOfUploadTimestamp;
 
-    ZMBackgroundActivity *completeActivity = [ZMBackgroundActivity beginBackgroundActivityWithName:NSStringFromSelector(_cmd)];
+    ZMBackgroundActivity *completeActivity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:NSStringFromSelector(_cmd)];
     ZMSDispatchGroup *group = response.dispatchGroup;
     ZMSDispatchGroup *group2 = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest"];
     [group2 enter];

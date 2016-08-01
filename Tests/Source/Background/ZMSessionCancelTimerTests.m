@@ -21,6 +21,7 @@
 @import ZMTesting;
 @import OCMock;
 
+#import <ZMTransport/ZMTransport-Swift.h>
 #import "ZMSessionCancelTimer.h"
 #import "ZMURLSession.h"
 #import "ZMBackgroundActivity.h"
@@ -116,20 +117,21 @@
 - (void)testThatItBeginsABackgroundActivityWhenStarting
 {
     // given
-    ZMBackgroundActivity *backgroundActivity = [OCMockObject mockForClass:ZMBackgroundActivity.class];
+    BackgroundActivityFactory *backgroundActivityFactory = [OCMockObject mockForClass:BackgroundActivityFactory.class];
     
     ZMURLSession *session = [OCMockObject mockForClass:ZMURLSession.class];
     ZMSessionCancelTimer *sut = [[ZMSessionCancelTimer alloc] initWithURLSession:session timeout:1.0];
     
     // expect
-    [[[(OCMockObject *)backgroundActivity expect] classMethod] beginBackgroundActivityWithName:OCMOCK_ANY];
+    [[(OCMockObject *)backgroundActivityFactory expect] backgroundActivityWithName:OCMOCK_ANY];
+    [[[[(OCMockObject *)backgroundActivityFactory expect] classMethod] andReturn:backgroundActivityFactory] sharedInstance];
     
     // when
     [sut start];
     
     // then
-    [(OCMockObject *)backgroundActivity verify];
-    [(OCMockObject *)backgroundActivity stopMocking];
+    [(OCMockObject *)backgroundActivityFactory verify];
+    [(OCMockObject *)backgroundActivityFactory stopMocking];
 }
 
 - (void)testThatitEndsTheBackgroundActivityWhenItIsCancelled;
@@ -142,8 +144,8 @@
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"cancel was called"];
     
+    
     id activity = [OCMockObject mockForClass:ZMBackgroundActivity.class];
-    [[[activity stub] andReturn:activity] beginBackgroundActivityWithName:[OCMArg any]];
     
     // expectations
     [[session stub] cancelAllTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(dispatch_block_t block) {
@@ -155,7 +157,10 @@
         [expectation fulfill];
     }] endActivity];
     
-    
+    id factory = [OCMockObject mockForClass:BackgroundActivityFactory.class];
+    [[[[factory stub] andReturn:factory] classMethod] sharedInstance];
+    [[[factory stub] andReturn:activity] backgroundActivityWithName:OCMOCK_ANY];
+
     // when
     [sut start];
     [sut cancel];
@@ -163,6 +168,7 @@
     
     // then
     [activity stopMocking];
+    [factory stopMocking];
 }
 
 - (void)testThatItEndsABackgroundActivityWhenTheTimerFires
@@ -176,7 +182,6 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"cancel was called"];
     
     id activity = [OCMockObject mockForClass:ZMBackgroundActivity.class];
-    [[[activity stub] andReturn:activity] beginBackgroundActivityWithName:[OCMArg any]];
     
     // expectations
     [[session stub] cancelAllTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(dispatch_block_t block) {
@@ -188,6 +193,10 @@
         [expectation fulfill];
     }] endActivity];
 
+    id factory = [OCMockObject mockForClass:BackgroundActivityFactory.class];
+    [[[[factory stub] andReturn:factory] classMethod] sharedInstance];
+    [[[factory stub] andReturn:activity] backgroundActivityWithName:OCMOCK_ANY];
+
     
     // when
     [sut start];
@@ -195,6 +204,7 @@
     
     // then
     [activity stopMocking];
+    [factory stopMocking];
 }
 
 @end

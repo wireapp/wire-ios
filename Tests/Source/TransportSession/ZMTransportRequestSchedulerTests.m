@@ -1051,10 +1051,16 @@
         // when
         self.sut.schedulerState = ZMTransportRequestSchedulerStateRateLimitedHoldingOff;
         
-        NSDate *high = [NSDate dateWithTimeIntervalSinceNow:1.15 * 2. * interval];
+        double const upperRandomAdjustment = 2.0;   // this is the max of the range of possible value
+        double const upperBackoffAdjustment = 1.15; // this is set to a value above the possible range in the test case
+        
+        // we create a date that is above to the limit mode time to ensure it switches time
+        NSDate *high = [NSDate dateWithTimeIntervalSinceNow:upperBackoffAdjustment * upperRandomAdjustment * interval];
         
         // then
-        [self spinMainQueueWithTimeout: 0.8 * 0.5 * interval];
+        
+        // backoffAdjustement * randrom adjustment * interval
+        [self spinMainQueueWithTimeout: 0.5 * 0.5 * interval];
         XCTAssertNotEqual(self.sut.schedulerState, ZMTransportRequestSchedulerStateRateLimitedRetrying, @"Iteration: %d", i);
         XCTAssertTrue([self waitUntilDate:high verificationBlock:^BOOL{
             return (self.sut.schedulerState == ZMTransportRequestSchedulerStateRateLimitedRetrying);

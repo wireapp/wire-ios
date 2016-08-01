@@ -26,6 +26,7 @@
 @interface ZMBackgroundActivity ()
 
 @property (nonatomic) UIBackgroundTaskIdentifier identifier;
+@property (nonatomic) id<ZMSGroupQueue> mainGroupQueue;
 @property (nonatomic, copy) NSString *name;
 @property (atomic) BOOL ended;
 
@@ -35,10 +36,12 @@
 
 @implementation ZMBackgroundActivity
 
-+ (instancetype)beginBackgroundActivityWithName:(NSString *)taskName;
++ (instancetype)beginBackgroundActivityWithName:(NSString *)taskName groupQueue:(id<ZMSGroupQueue>)groupQueue;
 {
     ZMBackgroundActivity *activity = [[self alloc] init];
-    activity.name = taskName;
+    activity.name           = taskName;
+    activity.mainGroupQueue = groupQueue;
+    
     activity.identifier = [[UIApplication sharedApplication] beginBackgroundTaskWithName:activity.name expirationHandler:^(){
         [activity endActivity];
     }];
@@ -46,10 +49,13 @@
 }
 
 + (instancetype)beginBackgroundActivityWithName:(NSString *)taskName
+                                     groupQueue:(id<ZMSGroupQueue>)groupQueue
                               expirationHandler:(void (^)(void))handler;
 {
     ZMBackgroundActivity *activity = [[self alloc] init];
-    activity.name = taskName;
+    activity.name           = taskName;
+    activity.mainGroupQueue = groupQueue;
+    
     activity.identifier = [[UIApplication sharedApplication] beginBackgroundTaskWithName:activity.name expirationHandler:^(){
         if (handler != nil) {
             handler();
@@ -63,7 +69,11 @@
 {
     if (! self.ended) {
         self.ended = YES;
-        [[UIApplication sharedApplication] endBackgroundTask:self.identifier];
+        UIBackgroundTaskIdentifier localIdentifier = self.identifier;
+        [self.mainGroupQueue performGroupedBlock:^{
+            [[UIApplication sharedApplication] endBackgroundTask:localIdentifier];
+        }];
+        
     }
 }
 

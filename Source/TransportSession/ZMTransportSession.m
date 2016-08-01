@@ -21,6 +21,8 @@
 @import ZMUtilities;
 @import UIKit;
 
+#import <ZMTransport/ZMTransport-Swift.h>
+
 #import "ZMTransportSession+Internal.h"
 #import "ZMTransportCodec.h"
 #import "ZMAccessToken.h"
@@ -114,7 +116,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithBaseURL:nil websocketURL:nil keyValueStore:nil];
+    return [self initWithBaseURL:nil websocketURL:nil keyValueStore:nil mainGroupQueue:nil];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -168,7 +170,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore;
+- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue;
 {
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:@"ZMTransportSession"];
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"ZMTransportSession init"];
@@ -192,7 +194,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                                     group:group
                                   baseURL:baseURL
                              websocketURL:websocketURL
-                            keyValueStore:keyValueStore];
+                            keyValueStore:keyValueStore
+                           mainGroupQueue:mainGroupQueue];
 }
 
 - (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
@@ -203,6 +206,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
                            keyValueStore:(id<ZMKeyValueStore>)keyValueStore
+                          mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue;
 {
     return [self initWithURLSessionSwitch:URLSessionSwitch
                          requestScheduler:requestScheduler
@@ -212,7 +216,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                                   baseURL:baseURL
                              websocketURL:websocketURL
                          pushChannelClass:nil
-                            keyValueStore:keyValueStore];
+                            keyValueStore:keyValueStore
+                           mainGroupQueue:mainGroupQueue];
 }
 
 
@@ -224,12 +229,15 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
                         pushChannelClass:(Class)pushChannelClass
-                           keyValueStore:(id<ZMKeyValueStore>)keyValueStore;
+                           keyValueStore:(id<ZMKeyValueStore>)keyValueStore
+                          mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue;
 {
     self = [super init];
     if (self) {
         self.baseURL = baseURL;
         self.websocketURL = websocketURL;
+        [[BackgroundActivityFactory sharedInstance] setMainGroupQueue:mainGroupQueue];
+        
         self.workQueue = queue;
         _workGroup = group;
         self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:baseURL.host];
@@ -558,7 +566,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)enterBackground;
 {
-    ZMBackgroundActivity *enterActivity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"ZMTransportSession.enterBackground"];
+    ZMBackgroundActivity *enterActivity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:@"ZMTransportSession.enterBackground"];
     ZMLogInfo(@"<%@: %p> %@", self.class, self, NSStringFromSelector(_cmd));
     NSOperationQueue *queue = self.workQueue;
     ZMSDispatchGroup *group = self.workGroup;
@@ -598,7 +606,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)prepareForSuspendedState;
 {
-    ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"enqueue access token"];
+    ZMBackgroundActivity *activity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:@"enqueue access token"];
     [self.urlSessionSwitch.currentSession countTasksWithCompletionHandler:^(NSUInteger count) {
         if (0 < count) {
             [self sendAccessTokenRequest];
