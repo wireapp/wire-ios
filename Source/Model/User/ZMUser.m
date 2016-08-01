@@ -22,6 +22,7 @@
 @import Cryptobox;
 @import ZMProtos;
 @import ZMTransport;
+@import Foundation;
 
 #import "ZMUser+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
@@ -73,7 +74,8 @@ static NSString *const ShowingUserAddedKey = @"showingUserAdded";
 static NSString *const ShowingUserRemovedKey = @"showingUserRemoved";
 static NSString *const UserClientsKey = @"clients";
 
-static NSString *const OttoPermanentRemoteIdentifier = @"e1832f71-8cdf-45c3-911d-018926f24c9c";
+static NSString *const UserBotEmailRegex = @"^(welcome|anna)\\+(.*)@wire\\.com$";
+
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -238,9 +240,22 @@ static NSString *const OttoPermanentRemoteIdentifier = @"e1832f71-8cdf-45c3-911d
     return self.connection.conversation;
 }
 
-- (BOOL)isOtto
+- (BOOL)isBot
 {
-    return [self.remoteIdentifier.transportString isEqual:OttoPermanentRemoteIdentifier];
+    static NSRegularExpression *botRegEx = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSError *regexParseError = nil;
+        botRegEx = [[NSRegularExpression alloc] initWithPattern:UserBotEmailRegex options:NSRegularExpressionCaseInsensitive error:&regexParseError];
+        assert(regexParseError == nil);
+    });
+    
+    if (self.emailAddress.length == 0) {
+        return NO;
+    }
+    NSRange matchRange = [botRegEx rangeOfFirstMatchInString:self.emailAddress options:NSMatchingAnchored range:NSMakeRange(0, self.emailAddress.length)];
+    
+    return ((matchRange.location == 0) && (matchRange.length == self.emailAddress.length));
 }
 
 - (BOOL)canBeConnected;
