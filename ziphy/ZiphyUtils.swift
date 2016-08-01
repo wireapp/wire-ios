@@ -26,31 +26,88 @@ func performOnQueue(callBackQueue:dispatch_queue_t, a:()->() ){
     dispatch_async(callBackQueue, a)
 }
 
-enum Either<T,U> {
+enum Either<L, R> {
     
-    case Left(Box<T>)
-    case Right(Box<U>)
-}
-
-final class Box<T> {
-    let value: T
+    case Left(L)
+    case Right(R)
     
-    init(value: T) {
-        self.value = value
+    var isLeft: Bool {
+        
+        switch self {
+        case Left:
+            return true
+        case .Right:
+            return false
+        }
     }
+    
+    var isRight: Bool {
+        
+        switch self {
+        case Right:
+            return true
+        case .Left:
+            return false
+        }
+    }
+    
+    var right: R? {
+    
+        switch self {
+        case let Right(r):
+            return r
+        case .Left:
+            return nil
+        }
+        
+    }
+    
+    var left: L? {
+        
+        switch self {
+        case let Left(l):
+            return l
+        case .Right:
+            return nil
+        }
+    }
+    
+    func bimap<B, D>(f : L -> B, _ g : (R -> D)) -> Either<B, D> {
+        
+        switch self {
+        case let .Left(bx):
+            return Either<B, D>.Left(f(bx))
+        case let .Right(bx):
+            return Either<B, D>.Right(g(bx))
+        }
+    }
+    
+    
+    func leftMap<B>(f : L -> B) -> Either<B, R> {
+        return self.bimap(f, identity)
+    }
+    
+    func rightMap<D>(g : R -> D) -> Either<L, D> {
+        return self.bimap(identity, g)
+    }
+    
+    func identity<A>(a: A) -> A {
+        return a
+    }
+
 }
 
 typealias NSURLRequestCallBack = (data:NSData?, response:NSURLResponse?, error:NSError?)->NSError?
 
 class NSURLRequestPromise {
     
-    var pending:[NSURLRequestCallBack] = []
-    var onFailure:(error:NSError)->() = { error in return }
-    var failure:NSError? = nil
+    var pending: [NSURLRequestCallBack] = []
+    var onFailure: (error: NSError) -> () = { error in return }
+    var failure: NSError? = nil
     
     func resolve() -> NSURLRequestCallBack {
         
-        func performAResolution(data:NSData?, response:NSURLResponse?, error:NSError?)->NSError? {
+        func performAResolution(data:NSData?, response:NSURLResponse?, error:NSError?) -> NSError? {
             
             if error != nil {
                 
@@ -75,7 +132,7 @@ class NSURLRequestPromise {
         return performAResolution
     }
     
-    func fail(onFailure:(error:NSError) ->()) -> NSURLRequestPromise {
+    func fail(onFailure: (error: NSError) ->() ) -> NSURLRequestPromise {
         
         self.onFailure = onFailure
         return self
@@ -86,7 +143,7 @@ class NSURLRequestPromise {
         self.failure = error
     }
     
-    func then(what:NSURLRequestCallBack)->NSURLRequestPromise {
+    func then(what: NSURLRequestCallBack) -> NSURLRequestPromise {
         
         self.pending.append(what)
         return self
