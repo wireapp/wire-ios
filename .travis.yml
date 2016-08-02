@@ -15,6 +15,7 @@ branches:
 
 install:
   - open -b com.apple.iphonesimulator
+  - carthage bootstrap --platform iOS
 
 script:
   - set -o pipefail
