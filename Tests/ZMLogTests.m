@@ -191,20 +191,9 @@ static NSString *const TagForTests = @"Testing";
 
 - (void)testThatSnapshotsIsFunctioning
 {
-    for (int i = 0; i < 2000; ++i) {
-        int rand = (int)(arc4random() * 1000) % 3;
-        switch (rand) {
-            case 0:
-                ZMLogDebug(@"value of i: %d", i);
-                break;
-            case 1:
-                ZMLogWarn(@"value of i: %d", i);
-                break;
-            case 2:
-                ZMLogError(@"value of i: %d", i);
-                break;
-        }
-    }
+    ZMLogDebug(@"value of i: %d", 1);
+    ZMLogWarn(@"value of i: %d", 2);
+    ZMLogError(@"value of i: %d", 3);
     
     NSString *filepath = [self filepathForSavingLogs];
     
