@@ -11,8 +11,11 @@ branches:
     - master
 
 cache:
-  - bundler
-  - cocoapods
+  bundler: true
+  cocoapods: true
+  directories:
+    - Carthage
+    - Libraries
 
 install:
   - open -b com.apple.iphonesimulator
