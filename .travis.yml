@@ -13,7 +13,9 @@ branches:
      - develop
      - master
 
+install:
+  - open -b com.apple.iphonesimulator
+
 script:
   - set -o pipefail
   - xcodebuild clean build test -scheme zmessaging-ios -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | xcpretty -s
-
