@@ -242,7 +242,7 @@ class ziphyTests: ZiphyTestCase {
         let expectation = expectationWithDescription("did not download an image")
         let imageFetcher = ZiphyImageFetcher(term: "Silent Bob",
             sizeLimit: 1024*1024*3,
-            resultslimit:50,
+            resultslimit: 50,
             imageType:ZiphyImageType.Downsized,
             requester:self.defaultRequester)
         
@@ -281,7 +281,7 @@ class ziphyTests: ZiphyTestCase {
             }
         }
         
-        waitForExpectationsWithTimeout(30) { (error) in
+        waitForExpectationsWithTimeout(40) { (error) in
             
         }
     }
