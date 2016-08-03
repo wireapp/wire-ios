@@ -24,6 +24,7 @@ extension UserClient {
     
     var hexRemoteIdentifier: UInt64 {
         let pointer = UnsafeMutablePointer<UInt64>.alloc(1)
+        defer { pointer.dealloc(1) }
         NSScanner(string: self.remoteIdentifier).scanHexLongLong(pointer)
         return UInt64(pointer.memory)
     }
