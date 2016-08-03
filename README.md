@@ -1,7 +1,8 @@
 # Wire™
-[![Build Status](https://travis-ci.org/wireapp/wire-ios-protos.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios-protos)
 
-![Wire logo](https://github.com/wireapp/wire/blob/master/assets/logo.png?raw=true)
+[![Wire logo](https://github.com/wireapp/wire/blob/master/assets/header-small.png?raw=true)](https://wire.com/jobs/)
+
+[![Build Status](https://travis-ci.org/wireapp/wire-ios-protos.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios-protos)
 
 This repository is part of the source code of Wire. You can find more information at [wire.com](https://wire.com) or by contacting opensource@wire.com.
 
