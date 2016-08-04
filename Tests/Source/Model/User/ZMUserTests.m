@@ -1560,6 +1560,18 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertFalse(user.isBot);
 }
 
+- (void)testThatItDoesNotDetectPrefixedName
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    // when
+    user.emailAddress = @"annalisa@wire.com";
+    
+    // then
+    XCTAssertFalse(user.isBot);
+}
+
 - (void)testThatItDoesNotDetectWireUserAsBot
 {
     // given
