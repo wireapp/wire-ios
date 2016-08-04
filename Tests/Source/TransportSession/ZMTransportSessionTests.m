@@ -1961,6 +1961,9 @@ static __weak FakeReachability *currentReachability;
     
     NSURLSessionTask *task = [self.sut suspendedTaskForRequest:request onSession:session];
     [session tearDown];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.2];
+    
     return task;
 }
 
