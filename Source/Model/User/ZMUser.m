@@ -74,7 +74,7 @@ static NSString *const ShowingUserAddedKey = @"showingUserAdded";
 static NSString *const ShowingUserRemovedKey = @"showingUserRemoved";
 static NSString *const UserClientsKey = @"clients";
 
-static NSString *const UserBotEmailRegex = @"^(welcome|anna)(.*)@wire\\.com$";
+static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.com$";
 
 
 @interface ZMBoxedSelfUser : NSObject
