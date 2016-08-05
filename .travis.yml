@@ -1,14 +1,30 @@
 env:
   global:
-    secure: DUTI6xnk6emxAGtabSBfFH5QO6jxkRgjCWZp6fnXGrT125ZJ1Gdmf7+O9Gm/qfv9g2zUwjAnptgXUPvPT3xkdB256Ev7eLok9yTwErRd4vubbmxxu7+EqavYg1kQtdb6UStZ5c1Yz/S2mlqOxG5KMQxom80WU9Cfdq096q8hfeJ25hsNdoKBs1EN4Dyb8VxDdTRBHbADE8prqEDtNEprLEYBKzNkH9EbvR/1sPpZ6tsWFKG5mLNifaV/BDfogoFhsgex5EAibpUhXgC4L9zsJMk0Xh8iUOXNkxp7dsOxMeazEtfnUxB26nXUaH2aSopnahmznEtmsKWxLrUheKVKX8rms5fAWTvC8O7p5KYmijzckWGsLK02xRa2lFd71Muw73ZTHL3fLwRJKF7JuU1Aw9bWcVBVjh6rRVaXJloyvJ5rlqvlCWLbUmAJp3QeBJC8MYDenT2G0RIfGEAitNI91IleJrRkX9jmgdzTwa0q+37imIk/H0F4joG4RxXYIx/OU7a95cYvR2pZ9I7jmaRYMlK9jR9huykoP4J2HdsKvkIZhvaIc/wh37B2Pe+tm42vZtcpu3Axym078T5oBs2NDrBYKX0QEpG+eFNA7nshpcPkKvSh2BJN/GFEPgbuSbuzFPYUTmhGOEsM7g1vIsds+rb3zs5/wf48tTiBhPBYh00=
+  - secure: q2t/85VYQ20AOkGPMDHYpGpjh/RFjOA3jcydoaoNGr7benepVClxCKEhTQ0YFIAODg/3fYY4aAM6fIi1bh4hcCANyq7SqvUBck09mjN420AEm54M2y5+LiXSqfi1OXQkBffpShtt6ieXYhGXjXUwBZ+ZLDQTfQpishBwZemCDRpIZivXmkXPU3ScnZKNcbqVmHIQuB1CIVp9nNoH20xAgOE8Mo9pvO/Dp2EjPJNA4zjEQLkDzqAhekqGJ6PPDg+44wDX5WeX+EHUaBWBtXAGw3kWT5JQkKJjb39p8EMxboHm5PDy7FZAwbnuFW+8epGn5nFxGyG+nkDjqH+ueQ3oScpCpPnEXRhUWsMuH1qRorx1HAKGg34teE7czStR4AURU2126qwtjB5zneUZFo7XAkJNRH0xg1GtJHhlLJ0Lt+wwDaq+tXmvnYkuRCb8n9WKYg2y6vquN8e/O50lhar2HjIV0sBciA4Vd9KRTUEnTYGhazoXds+lfGZ7JKNLa+gZZgY+gARPAiY9iXLr7GMAgHWIiWDARmBf4BOSyWcXdIyxyYMYHiXbHIJQ+yBttebXP2/5EupuBhmk2/WcFXbIcwJ6zWH/6rDhPdaHxRCgCMvjqZuSf3wHg6JMNbmVQbKHNRztYLR2r9GSBykF/D6lHbU7aPgR7MB7S+nK4ldHLWs=
+  - secure: zxFaKVTBxz8gQx2PkLAbohxz3J9B4+ADBZtAPTmf3zO8RfqWWlsc2YhxFA2tQF1REkygHXP60wSrbSDBHj8Tknf9+vprGqJI+Y5s52rtelcr0fhsUsGXcVP71qFUYfJp03kUsXnb3qRdUSLlnHwo/kDxof/jKZkoooYcqrZIyaJ74eH7ofSxCF21ALkwXqzQLxaogh4OYNz+ovBjvsc+ZxjBkkW+fJTJLZ+FKGZt1OGOb2+engAA1HhcqY+o5f+lBgOLjPwedNc2NTtX2DvasBF/4GE7Ux0VTGNZ7uHbDJrdWTFYHdZesB1LWX6qMBaY7EfaW9RcYJBXAie/RzFS6rBAeRxvf117x3M/+ODz3yzYEYZdDx83x1FpTdHdrhsn4bmv96qfWGFh6xaf2/ZXg4ob0QqOT0q16NlQ5H0BDTtflAGNbuL3VVxIX17xKUQHQBW/HMi80EbA2RpJS3bs/peucIxvrHWbnOq85wEpRb6Yao51jVTncpyBujtCR3QAx7mz0QcAQ4e0cDP9q/VIIhMH6PJmyDp+apVPgSl8+j4PVdBLmLCEBEppTQwv8gRdTARECrJ3irNKnpAZSmfUDZD3rrI94rwTw7uNYTFxyLi0txeD5rYHDYIzc4HmBEynEH/+rGQZcUIcM35yPbxEZ1uU53z40aDTWnWk0L1W6IQ=
 
 language: objective-c
 osx_image: xcode7.3
 
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+
+cache:
+  - bundler
+  - cocoapods
+
 install:
+  - bundle install
   - carthage bootstrap --platform iOS
+  - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
 
 script:
   - open -b com.apple.iphonesimulator
   - set -o pipefail
-  - xcodebuild build test -scheme ZMCLinkPreview -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | xcpretty -s
+  - xcodebuild build test -scheme ZMCLinkPreview -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | tee >build.log >(xcpretty -s)
+  - bundle exec danger
+
+after_failure:
+  - tail -n 500 build.log
