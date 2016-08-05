@@ -515,6 +515,8 @@ willPerformHTTPRedirection:response
     self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://b.exmaple.com/"]];
     self.taskA = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:nil];
     self.taskB = [self.sut taskWithRequest:self.URLRequestB bodyData:nil transportRequest:nil];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.1];
 }
 
 - (void)testThatItDetectsAForegroundSession;
@@ -637,12 +639,22 @@ willPerformHTTPRedirection:response
 - (void)testThatItCreatesAnUploadTasksForRequestsWithFileURL
 {
     // given
-    [self setupBackgroundSession];
+    [self.sut tearDown];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.1];
+
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [ZMURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:@"test-session"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.1];
+
     NSString *path = @"http://baz.example.com/1/";
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:path]];
     NSString *contentType = @"multipart/mixed; boundary=frontier";
     ZMTransportRequest *transportRequest = [ZMTransportRequest uploadRequestWithFileURL:self.uniqueFileURL path:path contentType:contentType];
-    
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.1];
+
     // when
     NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:nil transportRequest:transportRequest];
     
@@ -650,6 +662,7 @@ willPerformHTTPRedirection:response
     XCTAssertTrue([task isKindOfClass:NSURLSessionUploadTask.class]);
     XCTAssertEqualObjects(task.originalRequest, request);
     XCTAssertEqual(task.state, NSURLSessionTaskStateSuspended);
+    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (NSURL *)uniqueFileURL
