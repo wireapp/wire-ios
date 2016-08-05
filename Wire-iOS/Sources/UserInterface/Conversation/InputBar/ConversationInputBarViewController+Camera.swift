@@ -71,6 +71,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             }
         }
         else {
+
             let confirmVideoViewController = ConfirmAssetViewController()
             confirmVideoViewController.transitioningDelegate = FastTransitioningDelegate.sharedDelegate
             confirmVideoViewController.videoURL = videoURL
@@ -78,8 +79,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             confirmVideoViewController.editButtonVisible = false
             confirmVideoViewController.onConfirm = { [unowned self] in
                 self.dismissViewControllerAnimated(true, completion: .None)
-                
-                Analytics.shared()?.tagSentVideoMessage(duration)
+                Analytics.shared()?.tagSentVideoMessage(inConversation: self.conversation, context: .CameraKeyboard, duration: duration)
                 self.uploadFileAtURL(videoURL)
             }
             
@@ -90,14 +90,15 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 }
             }
             
+            
             self.presentViewController(confirmVideoViewController, animated: true) {
                 UIApplication.sharedApplication().wr_updateStatusBarForCurrentControllerAnimated(true)
             }
         }
     }
     
-    public func cameraKeyboardViewController(controller: CameraKeyboardViewController, didSelectImageData imageData: NSData, source: UIImagePickerControllerSourceType) {
-        showConfirmationForImage(imageData, source: source)
+    public func cameraKeyboardViewController(controller: CameraKeyboardViewController, didSelectImageData imageData: NSData, metadata: ImageMetadata) {
+        self.showConfirmationForImage(imageData, metadata: metadata)
     }
     
     @objc private func image(image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
@@ -109,6 +110,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     public func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(controller: CameraKeyboardViewController) {
         self.hideCameraKeyboardViewController {
             self.shouldRefocusKeyboardAfterImagePickerDismiss = true
+            self.videoSendContext = ConversationMediaVideoContext.FullCameraKeyboard.rawValue
             self.presentImagePickerWithSourceType(.Camera, mediaTypes: [kUTTypeMovie as String, kUTTypeImage as String], allowsEditing: false)
         }
     }
@@ -120,7 +122,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
     
-    @objc public func showConfirmationForImage(imageData: NSData, source: UIImagePickerControllerSourceType) {
+    @objc public func showConfirmationForImage(imageData: NSData, metadata: ImageMetadata) {
         let image = UIImage(data: imageData)
         
         let confirmImageViewController = ConfirmAssetViewController()
@@ -131,8 +133,10 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         confirmImageViewController.onConfirm = { [unowned self] in
             self.dismissViewControllerAnimated(true, completion: .None)
             
+            Analytics.shared()?.tagMediaSentPicture(inConversation: self.conversation, metadata: metadata)
+                
             self.sendController.sendMessageWithImageData(imageData, completion: .None)
-            if source == .Camera {
+            if metadata.source == .Camera {
                 let selector = #selector(ConversationInputBarViewController.image(_:didFinishSavingWithError:contextInfo:))
                 UIImageWriteToSavedPhotosAlbum(UIImage(data: imageData)!, self, selector, nil)
             }
@@ -221,7 +225,7 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
                 return
             }
             
-            Analytics.shared()?.tagSentVideoMessage(duration)
+            Analytics.shared()?.tagSentVideoMessage(inConversation: self.conversation, context: .CameraKeyboard, duration: duration)
             self.uploadFileAtURL(NSURL(fileURLWithPath: path))
         }
     }
