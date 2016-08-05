@@ -36,7 +36,7 @@ class OpenGraphDataTests: XCTestCase {
         // then
         XCTAssertEqual(sut.title, title)
         XCTAssertEqual(sut.type, type)
-        XCTAssertEqual(sut.description, name)
+        XCTAssertEqual(sut.content, name)
         XCTAssertEqual(sut.url, url)
         XCTAssertEqual(sut.imageUrls.first, images.first)
         XCTAssertNil(sut.siteNameString)

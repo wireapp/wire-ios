@@ -27,7 +27,7 @@ public struct OpenGraphData {
 
     let siteName: OpenGraphSiteName
     let siteNameString: String?
-    let description: String?
+    let content: String?
     let userGeneratedImage: Bool
     
     var foursquareMetaData: FoursquareMetaData?
@@ -39,8 +39,16 @@ public struct OpenGraphData {
         self.imageUrls = imageUrls
         self.siteNameString = siteName
         self.siteName = siteName.map { OpenGraphSiteName(string: $0) ?? .Other } ?? .Other
-        self.description = description
+        self.content = description
         self.userGeneratedImage = userGeneratedImage
+    }
+}
+
+extension OpenGraphData: CustomStringConvertible {
+    public var description: String {
+        var description = "<\(self.dynamicType)> \(siteNameString): \(url):\n\t\(title)"
+        if let content = content { description += "\n\(content)" }
+        return description
     }
 }
 
@@ -87,7 +95,7 @@ extension OpenGraphData: Equatable {}
 public func ==(lhs: OpenGraphData, rhs: OpenGraphData) -> Bool {
     return lhs.title == rhs.title && lhs.type == rhs.type &&
         lhs.url == rhs.url && lhs.imageUrls == rhs.imageUrls &&
-        lhs.siteName == rhs.siteName && lhs.description == rhs.description &&
+        lhs.siteName == rhs.siteName && lhs.content == rhs.content &&
         lhs.siteNameString == rhs.siteNameString && lhs.userGeneratedImage == rhs.userGeneratedImage &&
         lhs.foursquareMetaData == rhs.foursquareMetaData
 }
@@ -102,7 +110,7 @@ extension Article {
     public convenience init(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
         title = openGraphData.title
-        summary = openGraphData.description
+        summary = openGraphData.content
         guard let imageURL = openGraphData.imageUrls.flatMap ({ NSURL(string: $0) }).first else { return }
         imageURLs.append(imageURL)
     }
@@ -114,7 +122,7 @@ extension FoursquareLocation {
         
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
         title = openGraphData.title
-        subtitle = openGraphData.description
+        subtitle = openGraphData.content
         longitude = openGraphData.foursquareMetaData?.longitude
         latitude = openGraphData.foursquareMetaData?.latitude
         guard let imageURL = openGraphData.imageUrls.flatMap ({ NSURL(string: $0) }).first else { return }
@@ -127,7 +135,7 @@ extension InstagramPicture {
         guard openGraphData.type == OpenGraphTypeType.Instagram.rawValue && openGraphData.siteName == .Instagram else { return nil }
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
         title = openGraphData.title
-        subtitle = openGraphData.description
+        subtitle = openGraphData.content
         guard let imageURL = openGraphData.imageUrls.flatMap ({ NSURL(string: $0) }).first else { return }
         imageURLs.append(imageURL)
     }
@@ -137,11 +145,23 @@ extension TwitterStatus {
 
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type == OpenGraphTypeType.Article.rawValue && openGraphData.siteName == .Twitter else { return nil }
-        
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
-        message = openGraphData.description
-        author = openGraphData.title.stringByReplacingOccurrencesOfString(" on Twitter", withString: "", options: [.AnchoredSearch, .BackwardsSearch], range: nil)
+        
+        message = tweetContentFromOpenGraphData(openGraphData)
+        author = tweetAuthorFromOpenGraphData(openGraphData)
         imageURLs = openGraphData.userGeneratedImage ? openGraphData.imageUrls.flatMap { NSURL(string: $0) } : []
+    }
+    
+    private func tweetContentFromOpenGraphData(data: OpenGraphData) -> String? {
+        var tweet = data.content
+        tweet = tweet?.stringByReplacingOccurrencesOfString("“", withString: "", options: .AnchoredSearch, range: nil)
+        tweet = tweet?.stringByReplacingOccurrencesOfString("”", withString: "", options: [.AnchoredSearch, .BackwardsSearch], range: nil)
+        return tweet
+    }
+    
+    private func tweetAuthorFromOpenGraphData(data: OpenGraphData) -> String {
+        let authorSuffix = " on Twitter"
+        return data.title.stringByReplacingOccurrencesOfString(authorSuffix, withString: "", options: [.AnchoredSearch, .BackwardsSearch], range: nil)
     }
 }
 
