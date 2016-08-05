@@ -136,18 +136,17 @@ class IntegrationTests: XCTestCase {
         }
 
         waitForExpectationsWithTimeout(10, handler: nil)
-        
         guard let data = result else {
-            return XCTFail("Could not extract open graph data from \(mockData.urlString)")
+            return XCTFail("Could not extract open graph data from \(mockData.urlString)", line: line)
         }
         
         // then
-        XCTAssertEqual(data.description != nil, expectation.hasDescription)
-        XCTAssertEqual(data.foursquareMetaData != nil, expectation.hasFoursquareMetaData)
-        XCTAssertEqual(data.type, expectation.type)
-        XCTAssertEqual(data.siteNameString, expectation.siteNameString)
-        XCTAssertEqual(data.userGeneratedImage, expectation.userGeneratedImage)
-        XCTAssertTrue(data.imageUrls.count == expectation.numberOfImages)
+        XCTAssertEqual(data.content != nil, expectation.hasDescription, line: line)
+        XCTAssertEqual(data.foursquareMetaData != nil, expectation.hasFoursquareMetaData, line: line)
+        XCTAssertEqual(data.type, expectation.type, line: line)
+        XCTAssertEqual(data.siteNameString, expectation.siteNameString, line: line)
+        XCTAssertEqual(data.userGeneratedImage, expectation.userGeneratedImage, line: line)
+        XCTAssertTrue(data.imageUrls.count == expectation.numberOfImages, line: line)
     }
     
 }

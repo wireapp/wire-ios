@@ -47,7 +47,7 @@ final class MetaStreamContainer {
     }
 
     private func updateReachedEndOfHead(withData data: NSData) {
-        guard let string = String(data: data, encoding: NSUTF8StringEncoding)?.lowercaseString else { return assertionFailure() }
+        guard let string = String(data: data, encoding: NSUTF8StringEncoding)?.lowercaseString else { return }
         if string.containsString(OpenGraphXMLNode.HeadEnd.rawValue) {
             reachedEndOfHead = true
         }
