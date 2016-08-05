@@ -104,10 +104,11 @@
     id ac = [NSOrderedSet orderedSetWithArray:@[conversation1, conversation2]];
     XCTAssertEqualObjects([user3 valueForKey:@"activeConversations"], ac);
     XCTAssertEqualObjects([user3 valueForKey:@"inactiveConversations"], [NSOrderedSet new]);
-    
+
     NSError *error = nil;
     XCTAssertTrue([self.uiMOC save:&error], @"Save failed: %@", error);
-    
+    [NSThread sleepForTimeInterval:0.5];
+
     // Save and check that relationships can be traversed in the other context:
     
     ZMConversation *c2Conversation1 = (id) [self.syncMOC existingObjectWithID:conversation1.objectID error:&error];
