@@ -1,10 +1,30 @@
+env:
+  global:
+  - secure: oiXb4y00+nCPHf5FNwzSKss4jgz7URVjydwFtMWkBV4iOWsQTzA8H4CEF+ZhI+4qvpgLM+92ie5MPUlzOWnrLF/8sKzdyy9gnxcZXjS3vUXMDHu+c+/1RKgapB2Tjef8JvvJlKpmyJzWBRuZgk0AxHYmGjTEZOHCkBDTysCoMpBX8IZpD9drjBSoVXgNiRA8sAKl/X6DxmPO2+85PNw0cIwDyPfyi6/0dEQF9bptosGcwcTg0ZFq/+fLaIZpQNPLup8GuNo2yz0NVGs5EpdUBzMNumyFHXAaBCUX/o8KxC3viGRzTSx7k4pD0LnBNuPl6ztzaycZan/a2GxrDYEpoJMtlPq62pqH/+JSyMyBsq0YOgwqbh2HGNxtxvA1doOmKVwGuchOvDgO8uRuyTjNYlq5RSHdKzUeD2HrdWlqg3Z6NDp1+NaqIN/oIFRpspxGawgl07jCaxqRg74Z6in0wRP/tDdWHypUEw3qI5Wr3H8RDynuX473dmWAd+WWgxz2WSUmvcbz2oNBE8ct5+vMpV4cfYHQKtvVFa1oyTf/wxC32KZwm20v9DgiFfxrcGE7l5oUae6t75e+IinjeiK6D1JUrHZjoDVU5ka1S97jCVI+UZZTEyD5Znxj6waFnzKh2a6aEf0Tc477zjlhHr/Gd8Ujh9jPi6mhwYdIBD69+ic=
+  - secure: rKvmB+U7oedThqgMO9ciCs0cHEOo3ydYsCdXmS9CVO43FmlQlFQILlHkmQ6sp9UOEuVTMEIEocdkDYhk+vJfaFxN9nRrftypzmCyrHkpM94+CDzqK/DLdWKEMiNOmbLOlcJdDw7I+o2ciF5SsARLA8cex81jysA4GdGINfQJzf2AKOWpKzABHAas7I4G5Xq5uB1SvQdLWv3Dalp5fphd9MNuY/nSpBRXp5ohhEA0Y/7STThrZ1RMS9Uk+P6KmAHSpTfLEYTYeoJWEBFX2N/us0tlVHTD7D+end3Axn6f/kxFe2F2YdUucuZa6fqYSRRO0Gj0Zf4Y+I30b2HYHPpZaijyn1X2bJno/TKr0FPjCaiZN8/6ZedH2/21uxfrHz6SY/ifEDogS0W7+yNAVA8Tl7wAchdml1F4xRL5dDMkB00qUKwHdYBAlLXOq5FXCHWIVFw786S5VsdLpfw5B7jIPzK8zO2tiCGJr5ee3Y3cOvtnpbVhIDEidjWiT8R08UosrZEmw/+wRWYtpooNYPXC6p78oqdRG9q5kqkK3MpZXc6l2EFMfaimKgsTtchP2crcnbtfaeGt/Pc6TBeW+vtFy8G2tZvAoC0fqN2PJdLQuQyfz2SlCHO+Rxr3VlWbWR2athUFFgOjolnLRTgVlWur5Jny3u24U4XMnvZEWmvf8uw=
+
 language: objective-c
 osx_image: xcode7.3
 
+cache:
+  - bundler
+  - cocoapods
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+
 install:
+  - bundle install
   - carthage bootstrap --platform iOS
+  - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
 
 script:
   - open -b com.apple.iphonesimulator
   - set -o pipefail
-  - xcodebuild build test -scheme ZMCMockTransport -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | xcpretty -s
+  - xcodebuild build test -scheme ZMCMockTransport -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | tee >build.log >(xcpretty -s)
+  - bundle exec danger
+
+after_failure:
+  - tail -n 500 build.log
