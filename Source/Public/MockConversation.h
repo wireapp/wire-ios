@@ -78,8 +78,12 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 
 + (instancetype)conversationInMoc:(NSManagedObjectContext *)moc withCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
 
-- (MockEvent *)insertTextMessageFromUser:(MockUser *)fromUser text:(NSString *)text nonce:(NSUUID *)nonce;
 - (MockEvent *)insertClientMessageFromUser:(MockUser *)fromUser data:(NSData *)data;
+
+/// Encrypts and inserts a OTR message using the gerneric message data sent from the given client to the given client
+- (MockEvent *)encryptAndInsertDataFromClient:(MockUserClient *)fromClient
+                                     toClient:(MockUserClient *)toClient
+                                         data:(NSData *)data;
 
 - (MockEvent *)insertOTRMessageFromClient:(MockUserClient *)fromClient
                                  toClient:(MockUserClient *)toClient

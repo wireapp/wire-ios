@@ -270,11 +270,6 @@ static NSString * const IdleString = @"idle";
     return request;
 }
 
-- (MockEvent *)insertTextMessageFromUser:(MockUser *)fromUser text:(NSString *)text nonce:(NSUUID *)nonce;
-{
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationMessageAdd data:@{@"nonce": nonce.transportString, @"content": text}];
-}
-
 - (MockEvent *)insertClientMessageFromUser:(MockUser *)fromUser data:(NSData *)data
 {
     return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationClientMessageAdd data:[data base64EncodedStringWithOptions:0]];
@@ -291,6 +286,14 @@ static NSString * const IdleString = @"idle";
                                 @"text": [data base64EncodedStringWithOptions:0]
                                 };
     return [self eventIfNeededByUser:fromClient.user type:ZMTUpdateEventConversationOTRMessageAdd data:eventData];
+}
+
+- (MockEvent *)encryptAndInsertDataFromClient:(MockUserClient *)fromClient
+                                     toClient:(MockUserClient *)toClient
+                                         data:(NSData *)data;
+{
+    NSData *encrypted = [MockUserClient encryptedDataFromClient:fromClient toClient:toClient data:data];
+    return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
 - (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient metaData:(NSData *)metaData imageData:(NSData *)imageData assetId:(NSUUID *)assetId isInline:(BOOL)isInline
