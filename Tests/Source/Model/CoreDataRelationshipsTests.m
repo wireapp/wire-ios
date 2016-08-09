@@ -105,37 +105,39 @@
     XCTAssertEqualObjects([user3 valueForKey:@"activeConversations"], ac);
     XCTAssertEqualObjects([user3 valueForKey:@"inactiveConversations"], [NSOrderedSet new]);
 
-    NSError *error = nil;
+    __block NSError *error = nil;
     XCTAssertTrue([self.uiMOC save:&error], @"Save failed: %@", error);
     [NSThread sleepForTimeInterval:0.5];
 
     // Save and check that relationships can be traversed in the other context:
     
-    ZMConversation *c2Conversation1 = (id) [self.syncMOC existingObjectWithID:conversation1.objectID error:&error];
-    XCTAssertEqualObjects(c2Conversation1.objectID, conversation1.objectID, @"Failed to read in 2nd context: %@", error);
-    
-    ZMConversation *c2Conversation2 = (id) [self.syncMOC existingObjectWithID:conversation2.objectID error:&error];
-    XCTAssertEqualObjects(c2Conversation2.objectID, conversation2.objectID, @"Failed to read in 2nd context: %@", error);
-    
-    NSOrderedSet *c2Messages1 = c2Conversation1.messages;
-    XCTAssertEqual(c2Messages1.count, (NSUInteger) 2);
-    NSOrderedSet *c2Messages2 = c2Conversation2.messages;
-    XCTAssertEqual(c2Messages2.count, (NSUInteger) 1);
-    ZMTextMessage *c2Message1 = c2Messages1[0];
-    ZMTextMessage *c2Message2 = c2Messages1[1];
-    ZMTextMessage *c2Message3 = c2Messages2[0];
-    XCTAssertEqualObjects(c2Message1.objectID, message1.objectID);
-    XCTAssertEqualObjects(c2Message2.objectID, message2.objectID);
-    XCTAssertEqualObjects(c2Message3.objectID, message3.objectID);
-    
-    XCTAssertEqual(c2Message1.conversation, c2Conversation1);
-    XCTAssertEqual(c2Message2.conversation, c2Conversation1);
-    XCTAssertEqual(c2Message3.conversation, c2Conversation2);
-    
-    ZMUser *c2User1 = c2Conversation1.creator;
-    XCTAssertEqualObjects(c2User1.objectID, user1.objectID);
-    ZMUser *c2User2 = c2Conversation2.creator;
-    XCTAssertEqualObjects(c2User2.objectID, user2.objectID);
+    [self.syncMOC performBlockAndWait:^{
+        ZMConversation *c2Conversation1 = (id) [self.syncMOC existingObjectWithID:conversation1.objectID error:&error];
+        XCTAssertEqualObjects(c2Conversation1.objectID, conversation1.objectID, @"Failed to read in 2nd context: %@", error);
+        
+        ZMConversation *c2Conversation2 = (id) [self.syncMOC existingObjectWithID:conversation2.objectID error:&error];
+        XCTAssertEqualObjects(c2Conversation2.objectID, conversation2.objectID, @"Failed to read in 2nd context: %@", error);
+        
+        NSOrderedSet *c2Messages1 = c2Conversation1.messages;
+        XCTAssertEqual(c2Messages1.count, (NSUInteger) 2);
+        NSOrderedSet *c2Messages2 = c2Conversation2.messages;
+        XCTAssertEqual(c2Messages2.count, (NSUInteger) 1);
+        ZMTextMessage *c2Message1 = c2Messages1[0];
+        ZMTextMessage *c2Message2 = c2Messages1[1];
+        ZMTextMessage *c2Message3 = c2Messages2[0];
+        XCTAssertEqualObjects(c2Message1.objectID, message1.objectID);
+        XCTAssertEqualObjects(c2Message2.objectID, message2.objectID);
+        XCTAssertEqualObjects(c2Message3.objectID, message3.objectID);
+        
+        XCTAssertEqual(c2Message1.conversation, c2Conversation1);
+        XCTAssertEqual(c2Message2.conversation, c2Conversation1);
+        XCTAssertEqual(c2Message3.conversation, c2Conversation2);
+        
+        ZMUser *c2User1 = c2Conversation1.creator;
+        XCTAssertEqualObjects(c2User1.objectID, user1.objectID);
+        ZMUser *c2User2 = c2Conversation2.creator;
+        XCTAssertEqualObjects(c2User2.objectID, user2.objectID);
+    }];
 }
 
 @end
