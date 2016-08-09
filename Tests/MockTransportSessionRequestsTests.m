@@ -114,7 +114,8 @@
     ZMTransportRequestGenerator generator = [self createGeneratorForPayload:nil path:@"/foo" method:ZMMethodGET handler:handler];
     
     ZMTransportEnqueueResult* result = [self.sut.mockedTransportSession attemptToEnqueueSyncRequestWithGenerator:generator];
-    [self spinMainQueueWithTimeout:0.1];
+    WaitForAllGroupsToBeEmpty(0.2);
+    [self spinMainQueueWithTimeout:0.2];
     
     // then
     XCTAssertTrue(result.didHaveLessRequestThanMax);
@@ -122,7 +123,8 @@
     XCTAssertFalse(completed);
     
     [self.sut expireAllBlockedRequests];
-    [self spinMainQueueWithTimeout:0.1];
+    WaitForAllGroupsToBeEmpty(0.2);
+    [self spinMainQueueWithTimeout:0.2];
     
     XCTAssertTrue(completed);
 }

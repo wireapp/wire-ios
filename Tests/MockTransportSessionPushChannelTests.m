@@ -262,7 +262,6 @@
 
 - (void)testThatWeReceivePushEventsWhenCreatingAConversationAndInsertingMessages
 {
-    
     // given
     [self createAndOpenPushChannel];
     __block id<ZMTransportData> conversationPayload;
@@ -274,9 +273,13 @@
         MockUser *selfUser = session.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
         MockUser *user2 = [session insertUserWithName:@"Name2 866"];
+        
+        
         MockConversation *conversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1,user2]];
-        MockEvent *event1 = [conversation insertTextMessageFromUser:selfUser text:@"Text1" nonce:[NSUUID createUUID]];
-        MockEvent *event2 = [conversation insertTextMessageFromUser:selfUser text:@"Text2" nonce:[NSUUID createUUID]];
+        NSData *data1 = [@"Text 1" dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *data2 = [@"Text 2" dataUsingEncoding:NSUTF8StringEncoding];
+        MockEvent *event1 = [conversation insertOTRMessageFromClient:user1.clients.anyObject toClient:user2.clients.anyObject data:data1];
+        MockEvent *event2 = [conversation insertOTRMessageFromClient:user1.clients.anyObject toClient:user2.clients.anyObject data:data2];
         
         event1Payload = event1.data;
         event2Payload = event2.data;
@@ -293,11 +296,11 @@
         return event.type == ZMTUpdateEventConversationMemberJoin;
     }];
     TestPushChannelEvent *textEvent1 = [self popEventMatchingWithBlock:^BOOL(TestPushChannelEvent *event) {
-        return ((event.type == ZMTUpdateEventConversationMessageAdd) &&
+        return ((event.type == ZMTUpdateEventConversationOTRMessageAdd) &&
                 [event.payload[@"data"] isEqual:event1Payload]);
     }];
     TestPushChannelEvent *textEvent2 = [self popEventMatchingWithBlock:^BOOL(TestPushChannelEvent *event) {
-        return ((event.type == ZMTUpdateEventConversationMessageAdd) &&
+        return ((event.type == ZMTUpdateEventConversationOTRMessageAdd) &&
                 [event.payload[@"data"] isEqual:event2Payload]);
     }];
     XCTAssertNotNil(createConversationEvent);
@@ -564,9 +567,9 @@
     for(int i = 0; i < NUM_MESSAGES; ++i) {
         // NUM_MESSAGES message events
         [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-            [expectedTypes addObject:@"conversation.message-add"];
-            
-            [conversation insertTextMessageFromUser:user1 text:[NSString stringWithFormat:@"Message %d",i] nonce:[NSUUID createUUID]];
+            [expectedTypes addObject:@"conversation.otr-message-add"];
+            NSData *data = [[NSString stringWithFormat:@"Message %d", i] dataUsingEncoding:NSUTF8StringEncoding];
+            [conversation insertOTRMessageFromClient:user1.clients.anyObject toClient:user2.clients.anyObject data:data];
             NOT_USED(session);
         }];
     }

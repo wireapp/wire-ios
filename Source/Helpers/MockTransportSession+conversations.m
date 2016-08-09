@@ -67,11 +67,6 @@ static NSString * const IdleString = @"idle";
     {
         return [self processConversationsPostConversationsRequest:sessionRequest];
     }
-    // POST /conversations/<id>/messages
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"messages"])
-    {
-        return [self processAddMessageToConversationWithRequest:sessionRequest];
-    }
     // POST /conversations/<id>/client-messages
     else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"client-messages"])
     {
@@ -167,21 +162,6 @@ static NSString * const IdleString = @"idle";
 
     return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
 
-}
-
-// POST /conversations/<id>/messages
-- (ZMTransportResponse *)processAddMessageToConversationWithRequest:(TestTransportSessionRequest *)sessionRequest;
-{
-    NSAssert(self.selfUser != nil, @"No self user in mock transport session");
-    
-    NSUUID *nonce = [sessionRequest.payload.asDictionary uuidForKey:@"nonce"];
-    NSAssert(nonce != nil, @"");
-    NSString *content = [sessionRequest.payload.asDictionary stringForKey:@"content"];
-    
-    MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
-    MockEvent *event = [conversation insertTextMessageFromUser:self.selfUser text:content nonce:nonce];
-    
-    return [ZMTransportResponse responseWithPayload:[event transportData] HTTPstatus:201 transportSessionError:nil];
 }
 
 // POST /conversations/<id>/client-messages
