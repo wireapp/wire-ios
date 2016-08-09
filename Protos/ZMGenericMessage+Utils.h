@@ -70,8 +70,11 @@
                      ofConversationWithID:(NSString *)conversationIDString
                                     nonce:(NSString *)nonce;
 
++ (ZMGenericMessage *)messageWithHideMessage:(NSString *)messageID
+                              inConversation:(NSString *)conversationID
+                                       nonce:(NSString *)nonce;
+
 + (ZMGenericMessage *)messageWithDeleteMessage:(NSString *)messageID
-                                inConversation:(NSString *)conversationID
                                          nonce:(NSString *)nonce;
 
 - (BOOL)knownMessage;
