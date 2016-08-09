@@ -87,8 +87,10 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property ZMClientAction clientAction;
 @property (strong) ZMCalling* calling;
 @property (strong) ZMAsset* asset;
-@property (strong) ZMMsgDeleted* deleted;
+@property (strong) ZMMessageHide* hidden;
 @property (strong) ZMLocation* location;
+@property (strong) ZMMessageDelete* deleted;
+@property (strong) ZMMessageEdit* edited;
 @end
 
 @implementation ZMGenericMessage
@@ -170,13 +172,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasAsset_ = !!_value_;
 }
 @synthesize asset;
-- (BOOL) hasDeleted {
-  return !!hasDeleted_;
+- (BOOL) hasHidden {
+  return !!hasHidden_;
 }
-- (void) setHasDeleted:(BOOL) _value_ {
-  hasDeleted_ = !!_value_;
+- (void) setHasHidden:(BOOL) _value_ {
+  hasHidden_ = !!_value_;
 }
-@synthesize deleted;
+@synthesize hidden;
 - (BOOL) hasLocation {
   return !!hasLocation_;
 }
@@ -184,6 +186,20 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasLocation_ = !!_value_;
 }
 @synthesize location;
+- (BOOL) hasDeleted {
+  return !!hasDeleted_;
+}
+- (void) setHasDeleted:(BOOL) _value_ {
+  hasDeleted_ = !!_value_;
+}
+@synthesize deleted;
+- (BOOL) hasEdited {
+  return !!hasEdited_;
+}
+- (void) setHasEdited:(BOOL) _value_ {
+  hasEdited_ = !!_value_;
+}
+@synthesize edited;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -197,8 +213,10 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.clientAction = ZMClientActionRESETSESSION;
     self.calling = [ZMCalling defaultInstance];
     self.asset = [ZMAsset defaultInstance];
-    self.deleted = [ZMMsgDeleted defaultInstance];
+    self.hidden = [ZMMessageHide defaultInstance];
     self.location = [ZMLocation defaultInstance];
+    self.deleted = [ZMMessageDelete defaultInstance];
+    self.edited = [ZMMessageEdit defaultInstance];
   }
   return self;
 }
@@ -258,13 +276,23 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
-  if (self.hasDeleted) {
-    if (!self.deleted.isInitialized) {
+  if (self.hasHidden) {
+    if (!self.hidden.isInitialized) {
       return NO;
     }
   }
   if (self.hasLocation) {
     if (!self.location.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasDeleted) {
+    if (!self.deleted.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasEdited) {
+    if (!self.edited.isInitialized) {
       return NO;
     }
   }
@@ -304,11 +332,17 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (self.hasAsset) {
     [output writeMessage:11 value:self.asset];
   }
-  if (self.hasDeleted) {
-    [output writeMessage:12 value:self.deleted];
+  if (self.hasHidden) {
+    [output writeMessage:12 value:self.hidden];
   }
   if (self.hasLocation) {
     [output writeMessage:13 value:self.location];
+  }
+  if (self.hasDeleted) {
+    [output writeMessage:14 value:self.deleted];
+  }
+  if (self.hasEdited) {
+    [output writeMessage:15 value:self.edited];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -352,11 +386,17 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (self.hasAsset) {
     size_ += computeMessageSize(11, self.asset);
   }
-  if (self.hasDeleted) {
-    size_ += computeMessageSize(12, self.deleted);
+  if (self.hasHidden) {
+    size_ += computeMessageSize(12, self.hidden);
   }
   if (self.hasLocation) {
     size_ += computeMessageSize(13, self.location);
+  }
+  if (self.hasDeleted) {
+    size_ += computeMessageSize(14, self.deleted);
+  }
+  if (self.hasEdited) {
+    size_ += computeMessageSize(15, self.edited);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -450,15 +490,27 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
-  if (self.hasDeleted) {
-    [output appendFormat:@"%@%@ {\n", indent, @"deleted"];
-    [self.deleted writeDescriptionTo:output
+  if (self.hasHidden) {
+    [output appendFormat:@"%@%@ {\n", indent, @"hidden"];
+    [self.hidden writeDescriptionTo:output
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
   if (self.hasLocation) {
     [output appendFormat:@"%@%@ {\n", indent, @"location"];
     [self.location writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasDeleted) {
+    [output appendFormat:@"%@%@ {\n", indent, @"deleted"];
+    [self.deleted writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasEdited) {
+    [output appendFormat:@"%@%@ {\n", indent, @"edited"];
+    [self.edited writeDescriptionTo:output
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
@@ -514,15 +566,25 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.asset storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"asset"];
   }
-  if (self.hasDeleted) {
+  if (self.hasHidden) {
    NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
-   [self.deleted storeInDictionary:messageDictionary];
-   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"deleted"];
+   [self.hidden storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"hidden"];
   }
   if (self.hasLocation) {
    NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
    [self.location storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"location"];
+  }
+  if (self.hasDeleted) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.deleted storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"deleted"];
+  }
+  if (self.hasEdited) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.edited storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"edited"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -557,10 +619,14 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasCalling || [self.calling isEqual:otherMessage.calling]) &&
       self.hasAsset == otherMessage.hasAsset &&
       (!self.hasAsset || [self.asset isEqual:otherMessage.asset]) &&
-      self.hasDeleted == otherMessage.hasDeleted &&
-      (!self.hasDeleted || [self.deleted isEqual:otherMessage.deleted]) &&
+      self.hasHidden == otherMessage.hasHidden &&
+      (!self.hasHidden || [self.hidden isEqual:otherMessage.hidden]) &&
       self.hasLocation == otherMessage.hasLocation &&
       (!self.hasLocation || [self.location isEqual:otherMessage.location]) &&
+      self.hasDeleted == otherMessage.hasDeleted &&
+      (!self.hasDeleted || [self.deleted isEqual:otherMessage.deleted]) &&
+      self.hasEdited == otherMessage.hasEdited &&
+      (!self.hasEdited || [self.edited isEqual:otherMessage.edited]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -598,11 +664,17 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (self.hasAsset) {
     hashCode = hashCode * 31 + [self.asset hash];
   }
-  if (self.hasDeleted) {
-    hashCode = hashCode * 31 + [self.deleted hash];
+  if (self.hasHidden) {
+    hashCode = hashCode * 31 + [self.hidden hash];
   }
   if (self.hasLocation) {
     hashCode = hashCode * 31 + [self.location hash];
+  }
+  if (self.hasDeleted) {
+    hashCode = hashCode * 31 + [self.deleted hash];
+  }
+  if (self.hasEdited) {
+    hashCode = hashCode * 31 + [self.edited hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -680,11 +752,17 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (other.hasAsset) {
     [self mergeAsset:other.asset];
   }
-  if (other.hasDeleted) {
-    [self mergeDeleted:other.deleted];
+  if (other.hasHidden) {
+    [self mergeHidden:other.hidden];
   }
   if (other.hasLocation) {
     [self mergeLocation:other.location];
+  }
+  if (other.hasDeleted) {
+    [self mergeDeleted:other.deleted];
+  }
+  if (other.hasEdited) {
+    [self mergeEdited:other.edited];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -802,12 +880,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         break;
       }
       case 98: {
-        ZMMsgDeletedBuilder* subBuilder = [ZMMsgDeleted builder];
-        if (self.hasDeleted) {
-          [subBuilder mergeFrom:self.deleted];
+        ZMMessageHideBuilder* subBuilder = [ZMMessageHide builder];
+        if (self.hasHidden) {
+          [subBuilder mergeFrom:self.hidden];
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
-        [self setDeleted:[subBuilder buildPartial]];
+        [self setHidden:[subBuilder buildPartial]];
         break;
       }
       case 106: {
@@ -817,6 +895,24 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setLocation:[subBuilder buildPartial]];
+        break;
+      }
+      case 114: {
+        ZMMessageDeleteBuilder* subBuilder = [ZMMessageDelete builder];
+        if (self.hasDeleted) {
+          [subBuilder mergeFrom:self.deleted];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setDeleted:[subBuilder buildPartial]];
+        break;
+      }
+      case 122: {
+        ZMMessageEditBuilder* subBuilder = [ZMMessageEdit builder];
+        if (self.hasEdited) {
+          [subBuilder mergeFrom:self.edited];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setEdited:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1110,34 +1206,34 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   resultGenericMessage.asset = [ZMAsset defaultInstance];
   return self;
 }
-- (BOOL) hasDeleted {
-  return resultGenericMessage.hasDeleted;
+- (BOOL) hasHidden {
+  return resultGenericMessage.hasHidden;
 }
-- (ZMMsgDeleted*) deleted {
-  return resultGenericMessage.deleted;
+- (ZMMessageHide*) hidden {
+  return resultGenericMessage.hidden;
 }
-- (ZMGenericMessageBuilder*) setDeleted:(ZMMsgDeleted*) value {
-  resultGenericMessage.hasDeleted = YES;
-  resultGenericMessage.deleted = value;
+- (ZMGenericMessageBuilder*) setHidden:(ZMMessageHide*) value {
+  resultGenericMessage.hasHidden = YES;
+  resultGenericMessage.hidden = value;
   return self;
 }
-- (ZMGenericMessageBuilder*) setDeletedBuilder:(ZMMsgDeletedBuilder*) builderForValue {
-  return [self setDeleted:[builderForValue build]];
+- (ZMGenericMessageBuilder*) setHiddenBuilder:(ZMMessageHideBuilder*) builderForValue {
+  return [self setHidden:[builderForValue build]];
 }
-- (ZMGenericMessageBuilder*) mergeDeleted:(ZMMsgDeleted*) value {
-  if (resultGenericMessage.hasDeleted &&
-      resultGenericMessage.deleted != [ZMMsgDeleted defaultInstance]) {
-    resultGenericMessage.deleted =
-      [[[ZMMsgDeleted builderWithPrototype:resultGenericMessage.deleted] mergeFrom:value] buildPartial];
+- (ZMGenericMessageBuilder*) mergeHidden:(ZMMessageHide*) value {
+  if (resultGenericMessage.hasHidden &&
+      resultGenericMessage.hidden != [ZMMessageHide defaultInstance]) {
+    resultGenericMessage.hidden =
+      [[[ZMMessageHide builderWithPrototype:resultGenericMessage.hidden] mergeFrom:value] buildPartial];
   } else {
-    resultGenericMessage.deleted = value;
+    resultGenericMessage.hidden = value;
   }
-  resultGenericMessage.hasDeleted = YES;
+  resultGenericMessage.hasHidden = YES;
   return self;
 }
-- (ZMGenericMessageBuilder*) clearDeleted {
-  resultGenericMessage.hasDeleted = NO;
-  resultGenericMessage.deleted = [ZMMsgDeleted defaultInstance];
+- (ZMGenericMessageBuilder*) clearHidden {
+  resultGenericMessage.hasHidden = NO;
+  resultGenericMessage.hidden = [ZMMessageHide defaultInstance];
   return self;
 }
 - (BOOL) hasLocation {
@@ -1168,6 +1264,66 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearLocation {
   resultGenericMessage.hasLocation = NO;
   resultGenericMessage.location = [ZMLocation defaultInstance];
+  return self;
+}
+- (BOOL) hasDeleted {
+  return resultGenericMessage.hasDeleted;
+}
+- (ZMMessageDelete*) deleted {
+  return resultGenericMessage.deleted;
+}
+- (ZMGenericMessageBuilder*) setDeleted:(ZMMessageDelete*) value {
+  resultGenericMessage.hasDeleted = YES;
+  resultGenericMessage.deleted = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setDeletedBuilder:(ZMMessageDeleteBuilder*) builderForValue {
+  return [self setDeleted:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeDeleted:(ZMMessageDelete*) value {
+  if (resultGenericMessage.hasDeleted &&
+      resultGenericMessage.deleted != [ZMMessageDelete defaultInstance]) {
+    resultGenericMessage.deleted =
+      [[[ZMMessageDelete builderWithPrototype:resultGenericMessage.deleted] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.deleted = value;
+  }
+  resultGenericMessage.hasDeleted = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearDeleted {
+  resultGenericMessage.hasDeleted = NO;
+  resultGenericMessage.deleted = [ZMMessageDelete defaultInstance];
+  return self;
+}
+- (BOOL) hasEdited {
+  return resultGenericMessage.hasEdited;
+}
+- (ZMMessageEdit*) edited {
+  return resultGenericMessage.edited;
+}
+- (ZMGenericMessageBuilder*) setEdited:(ZMMessageEdit*) value {
+  resultGenericMessage.hasEdited = YES;
+  resultGenericMessage.edited = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setEditedBuilder:(ZMMessageEditBuilder*) builderForValue {
+  return [self setEdited:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeEdited:(ZMMessageEdit*) value {
+  if (resultGenericMessage.hasEdited &&
+      resultGenericMessage.edited != [ZMMessageEdit defaultInstance]) {
+    resultGenericMessage.edited =
+      [[[ZMMessageEdit builderWithPrototype:resultGenericMessage.edited] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.edited = value;
+  }
+  resultGenericMessage.hasEdited = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearEdited {
+  resultGenericMessage.hasEdited = NO;
+  resultGenericMessage.edited = [ZMMessageEdit defaultInstance];
   return self;
 }
 @end
@@ -3799,12 +3955,12 @@ static ZMCleared* defaultZMClearedInstance = nil;
 }
 @end
 
-@interface ZMMsgDeleted ()
+@interface ZMMessageHide ()
 @property (strong) NSString* conversationId;
 @property (strong) NSString* messageId;
 @end
 
-@implementation ZMMsgDeleted
+@implementation ZMMessageHide
 
 - (BOOL) hasConversationId {
   return !!hasConversationId_;
@@ -3827,17 +3983,17 @@ static ZMCleared* defaultZMClearedInstance = nil;
   }
   return self;
 }
-static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
+static ZMMessageHide* defaultZMMessageHideInstance = nil;
 + (void) initialize {
-  if (self == [ZMMsgDeleted class]) {
-    defaultZMMsgDeletedInstance = [[ZMMsgDeleted alloc] init];
+  if (self == [ZMMessageHide class]) {
+    defaultZMMessageHideInstance = [[ZMMessageHide alloc] init];
   }
 }
 + (instancetype) defaultInstance {
-  return defaultZMMsgDeletedInstance;
+  return defaultZMMessageHideInstance;
 }
 - (instancetype) defaultInstance {
-  return defaultZMMsgDeletedInstance;
+  return defaultZMMessageHideInstance;
 }
 - (BOOL) isInitialized {
   if (!self.hasConversationId) {
@@ -3874,35 +4030,35 @@ static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
   memoizedSerializedSize = size_;
   return size_;
 }
-+ (ZMMsgDeleted*) parseFromData:(NSData*) data {
-  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromData:data] build];
++ (ZMMessageHide*) parseFromData:(NSData*) data {
+  return (ZMMessageHide*)[[[ZMMessageHide builder] mergeFromData:data] build];
 }
-+ (ZMMsgDeleted*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
-  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
++ (ZMMessageHide*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageHide*)[[[ZMMessageHide builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
 }
-+ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input {
-  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromInputStream:input] build];
++ (ZMMessageHide*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMMessageHide*)[[[ZMMessageHide builder] mergeFromInputStream:input] build];
 }
-+ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
-  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
++ (ZMMessageHide*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageHide*)[[[ZMMessageHide builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
 }
-+ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input {
-  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromCodedInputStream:input] build];
++ (ZMMessageHide*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMMessageHide*)[[[ZMMessageHide builder] mergeFromCodedInputStream:input] build];
 }
-+ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
-  return (ZMMsgDeleted*)[[[ZMMsgDeleted builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
++ (ZMMessageHide*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageHide*)[[[ZMMessageHide builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
 }
-+ (ZMMsgDeletedBuilder*) builder {
-  return [[ZMMsgDeletedBuilder alloc] init];
++ (ZMMessageHideBuilder*) builder {
+  return [[ZMMessageHideBuilder alloc] init];
 }
-+ (ZMMsgDeletedBuilder*) builderWithPrototype:(ZMMsgDeleted*) prototype {
-  return [[ZMMsgDeleted builder] mergeFrom:prototype];
++ (ZMMessageHideBuilder*) builderWithPrototype:(ZMMessageHide*) prototype {
+  return [[ZMMessageHide builder] mergeFrom:prototype];
 }
-- (ZMMsgDeletedBuilder*) builder {
-  return [ZMMsgDeleted builder];
+- (ZMMessageHideBuilder*) builder {
+  return [ZMMessageHide builder];
 }
-- (ZMMsgDeletedBuilder*) toBuilder {
-  return [ZMMsgDeleted builderWithPrototype:self];
+- (ZMMessageHideBuilder*) toBuilder {
+  return [ZMMessageHide builderWithPrototype:self];
 }
 - (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
   if (self.hasConversationId) {
@@ -3926,10 +4082,10 @@ static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
   if (other == self) {
     return YES;
   }
-  if (![other isKindOfClass:[ZMMsgDeleted class]]) {
+  if (![other isKindOfClass:[ZMMessageHide class]]) {
     return NO;
   }
-  ZMMsgDeleted *otherMessage = other;
+  ZMMessageHide *otherMessage = other;
   return
       self.hasConversationId == otherMessage.hasConversationId &&
       (!self.hasConversationId || [self.conversationId isEqual:otherMessage.conversationId]) &&
@@ -3950,42 +4106,42 @@ static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
 }
 @end
 
-@interface ZMMsgDeletedBuilder()
-@property (strong) ZMMsgDeleted* resultMsgDeleted;
+@interface ZMMessageHideBuilder()
+@property (strong) ZMMessageHide* resultMessageHide;
 @end
 
-@implementation ZMMsgDeletedBuilder
-@synthesize resultMsgDeleted;
+@implementation ZMMessageHideBuilder
+@synthesize resultMessageHide;
 - (instancetype) init {
   if ((self = [super init])) {
-    self.resultMsgDeleted = [[ZMMsgDeleted alloc] init];
+    self.resultMessageHide = [[ZMMessageHide alloc] init];
   }
   return self;
 }
 - (PBGeneratedMessage*) internalGetResult {
-  return resultMsgDeleted;
+  return resultMessageHide;
 }
-- (ZMMsgDeletedBuilder*) clear {
-  self.resultMsgDeleted = [[ZMMsgDeleted alloc] init];
+- (ZMMessageHideBuilder*) clear {
+  self.resultMessageHide = [[ZMMessageHide alloc] init];
   return self;
 }
-- (ZMMsgDeletedBuilder*) clone {
-  return [ZMMsgDeleted builderWithPrototype:resultMsgDeleted];
+- (ZMMessageHideBuilder*) clone {
+  return [ZMMessageHide builderWithPrototype:resultMessageHide];
 }
-- (ZMMsgDeleted*) defaultInstance {
-  return [ZMMsgDeleted defaultInstance];
+- (ZMMessageHide*) defaultInstance {
+  return [ZMMessageHide defaultInstance];
 }
-- (ZMMsgDeleted*) build {
+- (ZMMessageHide*) build {
   [self checkInitialized];
   return [self buildPartial];
 }
-- (ZMMsgDeleted*) buildPartial {
-  ZMMsgDeleted* returnMe = resultMsgDeleted;
-  self.resultMsgDeleted = nil;
+- (ZMMessageHide*) buildPartial {
+  ZMMessageHide* returnMe = resultMessageHide;
+  self.resultMessageHide = nil;
   return returnMe;
 }
-- (ZMMsgDeletedBuilder*) mergeFrom:(ZMMsgDeleted*) other {
-  if (other == [ZMMsgDeleted defaultInstance]) {
+- (ZMMessageHideBuilder*) mergeFrom:(ZMMessageHide*) other {
+  if (other == [ZMMessageHide defaultInstance]) {
     return self;
   }
   if (other.hasConversationId) {
@@ -3997,10 +4153,10 @@ static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
-- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+- (ZMMessageHideBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
   return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
 }
-- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+- (ZMMessageHideBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
   PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
   while (YES) {
     SInt32 tag = [input readTag];
@@ -4027,35 +4183,531 @@ static ZMMsgDeleted* defaultZMMsgDeletedInstance = nil;
   }
 }
 - (BOOL) hasConversationId {
-  return resultMsgDeleted.hasConversationId;
+  return resultMessageHide.hasConversationId;
 }
 - (NSString*) conversationId {
-  return resultMsgDeleted.conversationId;
+  return resultMessageHide.conversationId;
 }
-- (ZMMsgDeletedBuilder*) setConversationId:(NSString*) value {
-  resultMsgDeleted.hasConversationId = YES;
-  resultMsgDeleted.conversationId = value;
+- (ZMMessageHideBuilder*) setConversationId:(NSString*) value {
+  resultMessageHide.hasConversationId = YES;
+  resultMessageHide.conversationId = value;
   return self;
 }
-- (ZMMsgDeletedBuilder*) clearConversationId {
-  resultMsgDeleted.hasConversationId = NO;
-  resultMsgDeleted.conversationId = @"";
+- (ZMMessageHideBuilder*) clearConversationId {
+  resultMessageHide.hasConversationId = NO;
+  resultMessageHide.conversationId = @"";
   return self;
 }
 - (BOOL) hasMessageId {
-  return resultMsgDeleted.hasMessageId;
+  return resultMessageHide.hasMessageId;
 }
 - (NSString*) messageId {
-  return resultMsgDeleted.messageId;
+  return resultMessageHide.messageId;
 }
-- (ZMMsgDeletedBuilder*) setMessageId:(NSString*) value {
-  resultMsgDeleted.hasMessageId = YES;
-  resultMsgDeleted.messageId = value;
+- (ZMMessageHideBuilder*) setMessageId:(NSString*) value {
+  resultMessageHide.hasMessageId = YES;
+  resultMessageHide.messageId = value;
   return self;
 }
-- (ZMMsgDeletedBuilder*) clearMessageId {
-  resultMsgDeleted.hasMessageId = NO;
-  resultMsgDeleted.messageId = @"";
+- (ZMMessageHideBuilder*) clearMessageId {
+  resultMessageHide.hasMessageId = NO;
+  resultMessageHide.messageId = @"";
+  return self;
+}
+@end
+
+@interface ZMMessageDelete ()
+@property (strong) NSString* messageId;
+@end
+
+@implementation ZMMessageDelete
+
+- (BOOL) hasMessageId {
+  return !!hasMessageId_;
+}
+- (void) setHasMessageId:(BOOL) _value_ {
+  hasMessageId_ = !!_value_;
+}
+@synthesize messageId;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.messageId = @"";
+  }
+  return self;
+}
+static ZMMessageDelete* defaultZMMessageDeleteInstance = nil;
++ (void) initialize {
+  if (self == [ZMMessageDelete class]) {
+    defaultZMMessageDeleteInstance = [[ZMMessageDelete alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMMessageDeleteInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMMessageDeleteInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasMessageId) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasMessageId) {
+    [output writeString:1 value:self.messageId];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasMessageId) {
+    size_ += computeStringSize(1, self.messageId);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMMessageDelete*) parseFromData:(NSData*) data {
+  return (ZMMessageDelete*)[[[ZMMessageDelete builder] mergeFromData:data] build];
+}
++ (ZMMessageDelete*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageDelete*)[[[ZMMessageDelete builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMMessageDelete*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMMessageDelete*)[[[ZMMessageDelete builder] mergeFromInputStream:input] build];
+}
++ (ZMMessageDelete*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageDelete*)[[[ZMMessageDelete builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMMessageDelete*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMMessageDelete*)[[[ZMMessageDelete builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMMessageDelete*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageDelete*)[[[ZMMessageDelete builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMMessageDeleteBuilder*) builder {
+  return [[ZMMessageDeleteBuilder alloc] init];
+}
++ (ZMMessageDeleteBuilder*) builderWithPrototype:(ZMMessageDelete*) prototype {
+  return [[ZMMessageDelete builder] mergeFrom:prototype];
+}
+- (ZMMessageDeleteBuilder*) builder {
+  return [ZMMessageDelete builder];
+}
+- (ZMMessageDeleteBuilder*) toBuilder {
+  return [ZMMessageDelete builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasMessageId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"messageId", self.messageId];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasMessageId) {
+    [dictionary setObject: self.messageId forKey: @"messageId"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMMessageDelete class]]) {
+    return NO;
+  }
+  ZMMessageDelete *otherMessage = other;
+  return
+      self.hasMessageId == otherMessage.hasMessageId &&
+      (!self.hasMessageId || [self.messageId isEqual:otherMessage.messageId]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasMessageId) {
+    hashCode = hashCode * 31 + [self.messageId hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMMessageDeleteBuilder()
+@property (strong) ZMMessageDelete* resultMessageDelete;
+@end
+
+@implementation ZMMessageDeleteBuilder
+@synthesize resultMessageDelete;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultMessageDelete = [[ZMMessageDelete alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultMessageDelete;
+}
+- (ZMMessageDeleteBuilder*) clear {
+  self.resultMessageDelete = [[ZMMessageDelete alloc] init];
+  return self;
+}
+- (ZMMessageDeleteBuilder*) clone {
+  return [ZMMessageDelete builderWithPrototype:resultMessageDelete];
+}
+- (ZMMessageDelete*) defaultInstance {
+  return [ZMMessageDelete defaultInstance];
+}
+- (ZMMessageDelete*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMMessageDelete*) buildPartial {
+  ZMMessageDelete* returnMe = resultMessageDelete;
+  self.resultMessageDelete = nil;
+  return returnMe;
+}
+- (ZMMessageDeleteBuilder*) mergeFrom:(ZMMessageDelete*) other {
+  if (other == [ZMMessageDelete defaultInstance]) {
+    return self;
+  }
+  if (other.hasMessageId) {
+    [self setMessageId:other.messageId];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMMessageDeleteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMMessageDeleteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setMessageId:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasMessageId {
+  return resultMessageDelete.hasMessageId;
+}
+- (NSString*) messageId {
+  return resultMessageDelete.messageId;
+}
+- (ZMMessageDeleteBuilder*) setMessageId:(NSString*) value {
+  resultMessageDelete.hasMessageId = YES;
+  resultMessageDelete.messageId = value;
+  return self;
+}
+- (ZMMessageDeleteBuilder*) clearMessageId {
+  resultMessageDelete.hasMessageId = NO;
+  resultMessageDelete.messageId = @"";
+  return self;
+}
+@end
+
+@interface ZMMessageEdit ()
+@property (strong) NSString* replacingMessageId;
+@property (strong) ZMText* text;
+@end
+
+@implementation ZMMessageEdit
+
+- (BOOL) hasReplacingMessageId {
+  return !!hasReplacingMessageId_;
+}
+- (void) setHasReplacingMessageId:(BOOL) _value_ {
+  hasReplacingMessageId_ = !!_value_;
+}
+@synthesize replacingMessageId;
+- (BOOL) hasText {
+  return !!hasText_;
+}
+- (void) setHasText:(BOOL) _value_ {
+  hasText_ = !!_value_;
+}
+@synthesize text;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.replacingMessageId = @"";
+    self.text = [ZMText defaultInstance];
+  }
+  return self;
+}
+static ZMMessageEdit* defaultZMMessageEditInstance = nil;
++ (void) initialize {
+  if (self == [ZMMessageEdit class]) {
+    defaultZMMessageEditInstance = [[ZMMessageEdit alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMMessageEditInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMMessageEditInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasReplacingMessageId) {
+    return NO;
+  }
+  if (self.hasText) {
+    if (!self.text.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasReplacingMessageId) {
+    [output writeString:1 value:self.replacingMessageId];
+  }
+  if (self.hasText) {
+    [output writeMessage:2 value:self.text];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasReplacingMessageId) {
+    size_ += computeStringSize(1, self.replacingMessageId);
+  }
+  if (self.hasText) {
+    size_ += computeMessageSize(2, self.text);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMMessageEdit*) parseFromData:(NSData*) data {
+  return (ZMMessageEdit*)[[[ZMMessageEdit builder] mergeFromData:data] build];
+}
++ (ZMMessageEdit*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageEdit*)[[[ZMMessageEdit builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMMessageEdit*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMMessageEdit*)[[[ZMMessageEdit builder] mergeFromInputStream:input] build];
+}
++ (ZMMessageEdit*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageEdit*)[[[ZMMessageEdit builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMMessageEdit*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMMessageEdit*)[[[ZMMessageEdit builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMMessageEdit*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMMessageEdit*)[[[ZMMessageEdit builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMMessageEditBuilder*) builder {
+  return [[ZMMessageEditBuilder alloc] init];
+}
++ (ZMMessageEditBuilder*) builderWithPrototype:(ZMMessageEdit*) prototype {
+  return [[ZMMessageEdit builder] mergeFrom:prototype];
+}
+- (ZMMessageEditBuilder*) builder {
+  return [ZMMessageEdit builder];
+}
+- (ZMMessageEditBuilder*) toBuilder {
+  return [ZMMessageEdit builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasReplacingMessageId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"replacingMessageId", self.replacingMessageId];
+  }
+  if (self.hasText) {
+    [output appendFormat:@"%@%@ {\n", indent, @"text"];
+    [self.text writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasReplacingMessageId) {
+    [dictionary setObject: self.replacingMessageId forKey: @"replacingMessageId"];
+  }
+  if (self.hasText) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.text storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"text"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMMessageEdit class]]) {
+    return NO;
+  }
+  ZMMessageEdit *otherMessage = other;
+  return
+      self.hasReplacingMessageId == otherMessage.hasReplacingMessageId &&
+      (!self.hasReplacingMessageId || [self.replacingMessageId isEqual:otherMessage.replacingMessageId]) &&
+      self.hasText == otherMessage.hasText &&
+      (!self.hasText || [self.text isEqual:otherMessage.text]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasReplacingMessageId) {
+    hashCode = hashCode * 31 + [self.replacingMessageId hash];
+  }
+  if (self.hasText) {
+    hashCode = hashCode * 31 + [self.text hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMMessageEditBuilder()
+@property (strong) ZMMessageEdit* resultMessageEdit;
+@end
+
+@implementation ZMMessageEditBuilder
+@synthesize resultMessageEdit;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultMessageEdit = [[ZMMessageEdit alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultMessageEdit;
+}
+- (ZMMessageEditBuilder*) clear {
+  self.resultMessageEdit = [[ZMMessageEdit alloc] init];
+  return self;
+}
+- (ZMMessageEditBuilder*) clone {
+  return [ZMMessageEdit builderWithPrototype:resultMessageEdit];
+}
+- (ZMMessageEdit*) defaultInstance {
+  return [ZMMessageEdit defaultInstance];
+}
+- (ZMMessageEdit*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMMessageEdit*) buildPartial {
+  ZMMessageEdit* returnMe = resultMessageEdit;
+  self.resultMessageEdit = nil;
+  return returnMe;
+}
+- (ZMMessageEditBuilder*) mergeFrom:(ZMMessageEdit*) other {
+  if (other == [ZMMessageEdit defaultInstance]) {
+    return self;
+  }
+  if (other.hasReplacingMessageId) {
+    [self setReplacingMessageId:other.replacingMessageId];
+  }
+  if (other.hasText) {
+    [self mergeText:other.text];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMMessageEditBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMMessageEditBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setReplacingMessageId:[input readString]];
+        break;
+      }
+      case 18: {
+        ZMTextBuilder* subBuilder = [ZMText builder];
+        if (self.hasText) {
+          [subBuilder mergeFrom:self.text];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setText:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasReplacingMessageId {
+  return resultMessageEdit.hasReplacingMessageId;
+}
+- (NSString*) replacingMessageId {
+  return resultMessageEdit.replacingMessageId;
+}
+- (ZMMessageEditBuilder*) setReplacingMessageId:(NSString*) value {
+  resultMessageEdit.hasReplacingMessageId = YES;
+  resultMessageEdit.replacingMessageId = value;
+  return self;
+}
+- (ZMMessageEditBuilder*) clearReplacingMessageId {
+  resultMessageEdit.hasReplacingMessageId = NO;
+  resultMessageEdit.replacingMessageId = @"";
+  return self;
+}
+- (BOOL) hasText {
+  return resultMessageEdit.hasText;
+}
+- (ZMText*) text {
+  return resultMessageEdit.text;
+}
+- (ZMMessageEditBuilder*) setText:(ZMText*) value {
+  resultMessageEdit.hasText = YES;
+  resultMessageEdit.text = value;
+  return self;
+}
+- (ZMMessageEditBuilder*) setTextBuilder:(ZMTextBuilder*) builderForValue {
+  return [self setText:[builderForValue build]];
+}
+- (ZMMessageEditBuilder*) mergeText:(ZMText*) value {
+  if (resultMessageEdit.hasText &&
+      resultMessageEdit.text != [ZMText defaultInstance]) {
+    resultMessageEdit.text =
+      [[[ZMText builderWithPrototype:resultMessageEdit.text] mergeFrom:value] buildPartial];
+  } else {
+    resultMessageEdit.text = value;
+  }
+  resultMessageEdit.hasText = YES;
+  return self;
+}
+- (ZMMessageEditBuilder*) clearText {
+  resultMessageEdit.hasText = NO;
+  resultMessageEdit.text = [ZMText defaultInstance];
   return self;
 }
 @end
