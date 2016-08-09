@@ -2077,7 +2077,7 @@
     // given
     NSUUID *convID = [NSUUID createUUID];
     NSUUID *userID = [NSUUID createUUID];
-    [self.syncMOC performBlockAndWait:^{
+    [self.syncMOC performGroupedBlockAndWait:^{
     
         
         
@@ -2437,7 +2437,7 @@
     // given
     NSUUID *selfUserID = [NSUUID createUUID];
     
-    [self.syncMOC performBlockAndWait:^{
+    [self.syncMOC performGroupedBlockAndWait:^{
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         selfUser.remoteIdentifier = selfUserID;
     }];
@@ -2862,7 +2862,7 @@
 
 - (void)testThatItCanInsertAKnock;
 {
-    [self.syncMOC performBlockAndWait:^{
+    [self.syncMOC performGroupedBlockAndWait:^{
         
         // given
         ZMConversation *conversation = [self createConversationWithMessages];
@@ -2917,13 +2917,16 @@
 {
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-    [self insertConversationWithUnread:YES];
     
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    //then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self insertConversationWithUnread:YES];
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        //then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
+    }];
 }
 
 
@@ -2931,13 +2934,16 @@
 {
     // give
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-    [self insertConversationWithUnread:NO];
     
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    //then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self insertConversationWithUnread:NO];
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        //then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    }];
 }
 
 - (void)testThatItCountsConversationsWithPendingConnectionAsUnread
@@ -2945,53 +2951,58 @@
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.conversationType = ZMConversationTypeConnection;
-    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-    connection.conversation = conversation;
-    connection.status = ZMConnectionStatusPending;
-
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeConnection;
+        ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
+        connection.conversation = conversation;
+        connection.status = ZMConnectionStatusPending;
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
+    }];
 }
 
 - (void)testThatItDoesNotCountConversationsWithSentConnectionAsUnread
 {
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.conversationType = ZMConversationTypeConnection;
-    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-    connection.conversation = conversation;
-    connection.status = ZMConnectionStatusSent;
-
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeConnection;
+        ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
+        connection.conversation = conversation;
+        connection.status = ZMConnectionStatusSent;
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    }];
 }
 
 - (void)testThatItDoesNotCountBlockedConversationsAsUnread
 {
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.conversationType = ZMConversationTypeConnection;
-    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-    connection.conversation = conversation;
-    connection.status = ZMConnectionStatusBlocked;
- 
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
     
-    // then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeConnection;
+        ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
+        connection.conversation = conversation;
+        connection.status = ZMConnectionStatusBlocked;
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    }];
 }
 
 - (void)testThatItDoesNotCountIgnoredConversationsAsUnread
@@ -2999,17 +3010,19 @@
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.conversationType = ZMConversationTypeConnection;
-    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
-    connection.conversation = conversation;
-    connection.status = ZMConnectionStatusIgnored;
-
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeConnection;
+        ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
+        connection.conversation = conversation;
+        connection.status = ZMConnectionStatusIgnored;
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    }];
 }
 
 - (void)testThatItDoesNotCountSilencedConversationsEvenWithUnreadContentAsUnread;
@@ -3017,14 +3030,16 @@
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-    ZMConversation *conversation = [self insertConversationWithUnread:YES];
-    conversation.isSilenced = YES;
-
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [self insertConversationWithUnread:YES];
+        conversation.isSilenced = YES;
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    }];
 }
 
 - (void)testThatItCountsArchivedConversationsWithUnreadMessagesAsUnread;
@@ -3032,14 +3047,16 @@
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-    ZMConversation *conversation = [self insertConversationWithUnread:YES];
-    conversation.isArchived = YES;
-
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [self insertConversationWithUnread:YES];
+        conversation.isArchived = YES;
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
+    }];
 }
 
 - (void)testThatItDoesNotCountConversationsThatAreClearedAsUnread;
@@ -3047,16 +3064,17 @@
     // given
     XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
 
-    ZMConversation *conversation = [self insertConversationWithUnread:YES];
-    conversation.isArchived = YES;
-    [conversation clearMessageHistory];
-    
-    // when
-    XCTAssert([self.syncMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [self insertConversationWithUnread:YES];
+        conversation.isArchived = YES;
+        [conversation clearMessageHistory];
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+    }];
 }
 
 @end
