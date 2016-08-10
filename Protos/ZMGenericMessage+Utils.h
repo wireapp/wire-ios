@@ -77,6 +77,10 @@
 + (ZMGenericMessage *)messageWithDeleteMessage:(NSString *)messageID
                                          nonce:(NSString *)nonce;
 
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                       nonce:(NSString *)nonce
+                                     newText:(NSString *)newText;
+
 - (BOOL)knownMessage;
 
 @end

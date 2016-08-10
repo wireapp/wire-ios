@@ -36,6 +36,9 @@
 
 @end
 
+
+
+
 @interface ZMMessageHide (Utils)
 
 + (instancetype)messageHideWithMessageID:(NSString *)messageID
@@ -43,8 +46,21 @@
 
 @end
 
+
+
+
 @interface ZMMessageDelete (Utils)
 
 + (instancetype)messageDeleteWithMessageID:(NSString *)messageID;
 
 @end
+
+
+
+
+@interface ZMMessageEdit (Utils)
+
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText;
+
+@end
+
