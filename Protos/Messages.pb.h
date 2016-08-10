@@ -101,8 +101,12 @@
 @class ZMLocationBuilder;
 @class ZMMention;
 @class ZMMentionBuilder;
-@class ZMMsgDeleted;
-@class ZMMsgDeletedBuilder;
+@class ZMMessageDelete;
+@class ZMMessageDeleteBuilder;
+@class ZMMessageEdit;
+@class ZMMessageEditBuilder;
+@class ZMMessageHide;
+@class ZMMessageHideBuilder;
 @class ZMText;
 @class ZMTextBuilder;
 @class ZMTweet;
@@ -150,8 +154,10 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define GenericMessage_clientAction @"clientAction"
 #define GenericMessage_calling @"calling"
 #define GenericMessage_asset @"asset"
-#define GenericMessage_deleted @"deleted"
+#define GenericMessage_hidden @"hidden"
 #define GenericMessage_location @"location"
+#define GenericMessage_deleted @"deleted"
+#define GenericMessage_edited @"edited"
 @interface ZMGenericMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasMessageId_:1;
@@ -163,8 +169,10 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasExternal_:1;
   BOOL hasCalling_:1;
   BOOL hasAsset_:1;
-  BOOL hasDeleted_:1;
+  BOOL hasHidden_:1;
   BOOL hasLocation_:1;
+  BOOL hasDeleted_:1;
+  BOOL hasEdited_:1;
   BOOL hasLiking_:1;
   BOOL hasClientAction_:1;
   NSString* messageId;
@@ -176,8 +184,10 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   ZMExternal* external;
   ZMCalling* calling;
   ZMAsset* asset;
-  ZMMsgDeleted* deleted;
+  ZMMessageHide* hidden;
   ZMLocation* location;
+  ZMMessageDelete* deleted;
+  ZMMessageEdit* edited;
   ZMLikeAction liking;
   ZMClientAction clientAction;
 }
@@ -192,8 +202,10 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hasClientAction;
 - (BOOL) hasCalling;
 - (BOOL) hasAsset;
-- (BOOL) hasDeleted;
+- (BOOL) hasHidden;
 - (BOOL) hasLocation;
+- (BOOL) hasDeleted;
+- (BOOL) hasEdited;
 @property (readonly, strong) NSString* messageId;
 @property (readonly, strong) ZMText* text;
 @property (readonly, strong) ZMImageAsset* image;
@@ -205,8 +217,10 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @property (readonly) ZMClientAction clientAction;
 @property (readonly, strong) ZMCalling* calling;
 @property (readonly, strong) ZMAsset* asset;
-@property (readonly, strong) ZMMsgDeleted* deleted;
+@property (readonly, strong) ZMMessageHide* hidden;
 @property (readonly, strong) ZMLocation* location;
+@property (readonly, strong) ZMMessageDelete* deleted;
+@property (readonly, strong) ZMMessageEdit* edited;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -314,12 +328,12 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMGenericMessageBuilder*) mergeAsset:(ZMAsset*) value;
 - (ZMGenericMessageBuilder*) clearAsset;
 
-- (BOOL) hasDeleted;
-- (ZMMsgDeleted*) deleted;
-- (ZMGenericMessageBuilder*) setDeleted:(ZMMsgDeleted*) value;
-- (ZMGenericMessageBuilder*) setDeletedBuilder:(ZMMsgDeletedBuilder*) builderForValue;
-- (ZMGenericMessageBuilder*) mergeDeleted:(ZMMsgDeleted*) value;
-- (ZMGenericMessageBuilder*) clearDeleted;
+- (BOOL) hasHidden;
+- (ZMMessageHide*) hidden;
+- (ZMGenericMessageBuilder*) setHidden:(ZMMessageHide*) value;
+- (ZMGenericMessageBuilder*) setHiddenBuilder:(ZMMessageHideBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeHidden:(ZMMessageHide*) value;
+- (ZMGenericMessageBuilder*) clearHidden;
 
 - (BOOL) hasLocation;
 - (ZMLocation*) location;
@@ -327,6 +341,20 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMGenericMessageBuilder*) setLocationBuilder:(ZMLocationBuilder*) builderForValue;
 - (ZMGenericMessageBuilder*) mergeLocation:(ZMLocation*) value;
 - (ZMGenericMessageBuilder*) clearLocation;
+
+- (BOOL) hasDeleted;
+- (ZMMessageDelete*) deleted;
+- (ZMGenericMessageBuilder*) setDeleted:(ZMMessageDelete*) value;
+- (ZMGenericMessageBuilder*) setDeletedBuilder:(ZMMessageDeleteBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeDeleted:(ZMMessageDelete*) value;
+- (ZMGenericMessageBuilder*) clearDeleted;
+
+- (BOOL) hasEdited;
+- (ZMMessageEdit*) edited;
+- (ZMGenericMessageBuilder*) setEdited:(ZMMessageEdit*) value;
+- (ZMGenericMessageBuilder*) setEditedBuilder:(ZMMessageEditBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeEdited:(ZMMessageEdit*) value;
+- (ZMGenericMessageBuilder*) clearEdited;
 @end
 
 #define Text_content @"content"
@@ -897,9 +925,9 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMClearedBuilder*) clearClearedTimestamp;
 @end
 
-#define MsgDeleted_conversation_id @"conversationId"
-#define MsgDeleted_message_id @"messageId"
-@interface ZMMsgDeleted : PBGeneratedMessage<GeneratedMessageProtocol> {
+#define MessageHide_conversation_id @"conversationId"
+#define MessageHide_message_id @"messageId"
+@interface ZMMessageHide : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasConversationId_:1;
   BOOL hasMessageId_:1;
@@ -916,45 +944,157 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 
 - (BOOL) isInitialized;
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
-- (ZMMsgDeletedBuilder*) builder;
-+ (ZMMsgDeletedBuilder*) builder;
-+ (ZMMsgDeletedBuilder*) builderWithPrototype:(ZMMsgDeleted*) prototype;
-- (ZMMsgDeletedBuilder*) toBuilder;
+- (ZMMessageHideBuilder*) builder;
++ (ZMMessageHideBuilder*) builder;
++ (ZMMessageHideBuilder*) builderWithPrototype:(ZMMessageHide*) prototype;
+- (ZMMessageHideBuilder*) toBuilder;
 
-+ (ZMMsgDeleted*) parseFromData:(NSData*) data;
-+ (ZMMsgDeleted*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
-+ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input;
-+ (ZMMsgDeleted*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
-+ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input;
-+ (ZMMsgDeleted*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMessageHide*) parseFromData:(NSData*) data;
++ (ZMMessageHide*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMessageHide*) parseFromInputStream:(NSInputStream*) input;
++ (ZMMessageHide*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMessageHide*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMMessageHide*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
 @end
 
-@interface ZMMsgDeletedBuilder : PBGeneratedMessageBuilder {
+@interface ZMMessageHideBuilder : PBGeneratedMessageBuilder {
 @private
-  ZMMsgDeleted* resultMsgDeleted;
+  ZMMessageHide* resultMessageHide;
 }
 
-- (ZMMsgDeleted*) defaultInstance;
+- (ZMMessageHide*) defaultInstance;
 
-- (ZMMsgDeletedBuilder*) clear;
-- (ZMMsgDeletedBuilder*) clone;
+- (ZMMessageHideBuilder*) clear;
+- (ZMMessageHideBuilder*) clone;
 
-- (ZMMsgDeleted*) build;
-- (ZMMsgDeleted*) buildPartial;
+- (ZMMessageHide*) build;
+- (ZMMessageHide*) buildPartial;
 
-- (ZMMsgDeletedBuilder*) mergeFrom:(ZMMsgDeleted*) other;
-- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
-- (ZMMsgDeletedBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+- (ZMMessageHideBuilder*) mergeFrom:(ZMMessageHide*) other;
+- (ZMMessageHideBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMMessageHideBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
 
 - (BOOL) hasConversationId;
 - (NSString*) conversationId;
-- (ZMMsgDeletedBuilder*) setConversationId:(NSString*) value;
-- (ZMMsgDeletedBuilder*) clearConversationId;
+- (ZMMessageHideBuilder*) setConversationId:(NSString*) value;
+- (ZMMessageHideBuilder*) clearConversationId;
 
 - (BOOL) hasMessageId;
 - (NSString*) messageId;
-- (ZMMsgDeletedBuilder*) setMessageId:(NSString*) value;
-- (ZMMsgDeletedBuilder*) clearMessageId;
+- (ZMMessageHideBuilder*) setMessageId:(NSString*) value;
+- (ZMMessageHideBuilder*) clearMessageId;
+@end
+
+#define MessageDelete_message_id @"messageId"
+@interface ZMMessageDelete : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasMessageId_:1;
+  NSString* messageId;
+}
+- (BOOL) hasMessageId;
+@property (readonly, strong) NSString* messageId;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMMessageDeleteBuilder*) builder;
++ (ZMMessageDeleteBuilder*) builder;
++ (ZMMessageDeleteBuilder*) builderWithPrototype:(ZMMessageDelete*) prototype;
+- (ZMMessageDeleteBuilder*) toBuilder;
+
++ (ZMMessageDelete*) parseFromData:(NSData*) data;
++ (ZMMessageDelete*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMessageDelete*) parseFromInputStream:(NSInputStream*) input;
++ (ZMMessageDelete*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMessageDelete*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMMessageDelete*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMMessageDeleteBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMMessageDelete* resultMessageDelete;
+}
+
+- (ZMMessageDelete*) defaultInstance;
+
+- (ZMMessageDeleteBuilder*) clear;
+- (ZMMessageDeleteBuilder*) clone;
+
+- (ZMMessageDelete*) build;
+- (ZMMessageDelete*) buildPartial;
+
+- (ZMMessageDeleteBuilder*) mergeFrom:(ZMMessageDelete*) other;
+- (ZMMessageDeleteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMMessageDeleteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasMessageId;
+- (NSString*) messageId;
+- (ZMMessageDeleteBuilder*) setMessageId:(NSString*) value;
+- (ZMMessageDeleteBuilder*) clearMessageId;
+@end
+
+#define MessageEdit_replacing_message_id @"replacingMessageId"
+#define MessageEdit_text @"text"
+@interface ZMMessageEdit : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasReplacingMessageId_:1;
+  BOOL hasText_:1;
+  NSString* replacingMessageId;
+  ZMText* text;
+}
+- (BOOL) hasReplacingMessageId;
+- (BOOL) hasText;
+@property (readonly, strong) NSString* replacingMessageId;
+@property (readonly, strong) ZMText* text;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMMessageEditBuilder*) builder;
++ (ZMMessageEditBuilder*) builder;
++ (ZMMessageEditBuilder*) builderWithPrototype:(ZMMessageEdit*) prototype;
+- (ZMMessageEditBuilder*) toBuilder;
+
++ (ZMMessageEdit*) parseFromData:(NSData*) data;
++ (ZMMessageEdit*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMessageEdit*) parseFromInputStream:(NSInputStream*) input;
++ (ZMMessageEdit*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMMessageEdit*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMMessageEdit*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMMessageEditBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMMessageEdit* resultMessageEdit;
+}
+
+- (ZMMessageEdit*) defaultInstance;
+
+- (ZMMessageEditBuilder*) clear;
+- (ZMMessageEditBuilder*) clone;
+
+- (ZMMessageEdit*) build;
+- (ZMMessageEdit*) buildPartial;
+
+- (ZMMessageEditBuilder*) mergeFrom:(ZMMessageEdit*) other;
+- (ZMMessageEditBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMMessageEditBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasReplacingMessageId;
+- (NSString*) replacingMessageId;
+- (ZMMessageEditBuilder*) setReplacingMessageId:(NSString*) value;
+- (ZMMessageEditBuilder*) clearReplacingMessageId;
+
+- (BOOL) hasText;
+- (ZMText*) text;
+- (ZMMessageEditBuilder*) setText:(ZMText*) value;
+- (ZMMessageEditBuilder*) setTextBuilder:(ZMTextBuilder*) builderForValue;
+- (ZMMessageEditBuilder*) mergeText:(ZMText*) value;
+- (ZMMessageEditBuilder*) clearText;
 @end
 
 #define Location_longitude @"longitude"

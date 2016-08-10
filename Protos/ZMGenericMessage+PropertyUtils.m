@@ -48,13 +48,24 @@
 
 @end
 
-@implementation ZMMsgDeleted (Utils)
+@implementation ZMMessageHide (Utils)
 
-+ (instancetype)msgDeletedWithMessageID:(NSString *)messageID
-                         conversationID:(NSString *)conversationID;
++ (instancetype)messageHideWithMessageID:(NSString *)messageID
+                          conversationID:(NSString *)conversationID;
 {
-    ZMMsgDeletedBuilder *builder = [ZMMsgDeleted builder];
+    ZMMessageHideBuilder *builder = [ZMMessageHide builder];
     builder.conversationId = conversationID;
+    builder.messageId = messageID;
+    return [builder build];
+}
+
+@end
+
+@implementation ZMMessageDelete (Utils)
+
++ (instancetype)messageDeleteWithMessageID:(NSString *)messageID;
+{
+    ZMMessageDeleteBuilder *builder = [ZMMessageDelete builder];
     builder.messageId = messageID;
     return [builder build];
 }
