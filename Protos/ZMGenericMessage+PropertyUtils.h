@@ -36,9 +36,15 @@
 
 @end
 
-@interface ZMMsgDeleted (Utils)
+@interface ZMMessageHide (Utils)
 
-+ (instancetype)msgDeletedWithMessageID:(NSString *)messageID
-                         conversationID:(NSString *)conversationID;
++ (instancetype)messageHideWithMessageID:(NSString *)messageID
+                          conversationID:(NSString *)conversationID;
+
+@end
+
+@interface ZMMessageDelete (Utils)
+
++ (instancetype)messageDeleteWithMessageID:(NSString *)messageID;
 
 @end

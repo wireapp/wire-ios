@@ -193,12 +193,21 @@
     return [builder build];
 }
 
++ (ZMGenericMessage *)messageWithHideMessage:(NSString *)messageID
+                              inConversation:(NSString *)conversationID
+                                       nonce:(NSString *)nonce;
+{
+    ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
+    builder.hidden = [ZMMessageHide messageHideWithMessageID:messageID conversationID:conversationID];
+    builder.messageId = nonce;
+    return [builder build];
+}
+
 + (ZMGenericMessage *)messageWithDeleteMessage:(NSString *)messageID
-                                inConversation:(NSString *)conversationID
                                          nonce:(NSString *)nonce;
 {
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
-    builder.deleted = [ZMMsgDeleted msgDeletedWithMessageID:messageID conversationID:conversationID];
+    builder.deleted = [ZMMessageDelete messageDeleteWithMessageID:messageID];
     builder.messageId = nonce;
     return [builder build];
 }
