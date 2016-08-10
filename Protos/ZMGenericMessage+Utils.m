@@ -94,7 +94,8 @@
     self.hasClientAction ||
     self.hasAsset ||
     self.hasLocation ||
-    self.hasDeleted;
+    self.hasDeleted ||
+    self.hasHidden;
 }
 
 + (instancetype)messageWithImageData:(NSData *)imageData format:(ZMImageFormat)format nonce:(NSString *)nonce
