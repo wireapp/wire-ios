@@ -75,7 +75,11 @@
     systemMessage.nonce = [NSUUID new];
     systemMessage.serverTimestamp = timestamp;
     
-    *index = [self sortedAppendMessage:systemMessage];
+    NSUInteger insertedIndex = [self sortedAppendMessage:systemMessage];
+    if (nil != index) {
+        *index = insertedIndex;
+    }
+
     systemMessage.visibleInConversation = self;
     return systemMessage;
     
@@ -373,10 +377,14 @@
     ZMSystemMessageType type = (errorCode == CBErrorCodeRemoteIdentityChanged) ? ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged : ZMSystemMessageTypeDecryptionFailed;
     NSSet *clients = (client != nil) ? [NSSet setWithObject:client] : [NSSet set];
     NSDate *serverTimestamp = timestamp ?: [self timestampAfterMessage:self.messages.lastObject];
+
+    [self appendSystemMessageOfType:type sender:sender users:nil clients:clients timestamp:serverTimestamp outInsertedAtIndex:nil];
     
-    NSUInteger index = 0;
-    [self appendSystemMessageOfType:type sender:sender users:nil clients:clients timestamp:serverTimestamp outInsertedAtIndex:&index];
-    
+}
+
+- (void)appendDeletedForEveryoneSystemMessageWithTimestamp:(NSDate *)timestamp sender:(ZMUser *)sender
+{
+    [self appendSystemMessageOfType:ZMSystemMessageTypeMessageDeletedForEveryone sender:sender users:nil clients:nil timestamp:timestamp outInsertedAtIndex:nil];
 }
 
 

@@ -70,7 +70,18 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 - (BOOL)shouldGenerateUnreadCount;
 
 - (void)removeMessage;
-+ (void)removeMessageWithRemotelyDeletedMessage:(ZMMsgDeleted *)deletedMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
+
+/// Removes the message only for clients of the selfUser
++ (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage
+                                      fromUser:(ZMUser *)user
+                        inManagedObjectContext:(NSManagedObjectContext *)moc;
+
+/// Removes the message for all participants of the message's conversation
+/// Clients that don't belong to the selfUser will see a system message indicating the deletion
++ (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage
+                                 inConversation:(ZMConversation *)conversation
+                                       senderID:(NSUUID *)senderID
+                         inManagedObjectContext:(NSManagedObjectContext *)moc;
 @end
 
 

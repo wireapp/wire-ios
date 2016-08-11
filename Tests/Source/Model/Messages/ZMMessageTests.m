@@ -2387,7 +2387,7 @@ NSString * const IsExpiredKey = @"isExpired";
 }
 
 
-- (void)testThatAMessageIsRemovedWhenAskForDeletionWithMsgDeleted;
+- (void)testThatAMessageIsRemovedWhenAskForDeletionWithMessageHide;
 {
     // given
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
@@ -2401,10 +2401,10 @@ NSString * const IsExpiredKey = @"isExpired";
     textMessage.nonce = nonce;
     textMessage.visibleInConversation = conversation;
     
-    ZMMsgDeletedBuilder *builder = [ZMMsgDeleted builder];
+    ZMMessageHideBuilder *builder = [ZMMessageHide builder];
     builder.conversationId = conversation.remoteIdentifier.transportString;
     builder.messageId = nonce.transportString;
-    ZMMsgDeleted *msgDeleted = [builder build];
+    ZMMessageHide *hidden = [builder build];
     
     //sanity check
     XCTAssertNotNil(conversation);
@@ -2413,7 +2413,7 @@ NSString * const IsExpiredKey = @"isExpired";
     
     //when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMMessage removeMessageWithRemotelyDeletedMessage:msgDeleted fromUser:selfUser inManagedObjectContext:self.uiMOC];
+        [ZMMessage removeMessageWithRemotelyHiddenMessage:hidden fromUser:selfUser inManagedObjectContext:self.uiMOC];
     }];
     [self.uiMOC saveOrRollback];
     

@@ -52,6 +52,8 @@
 /// Creates the message that warns user about the fact that decryption of incoming message is failed
 - (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client errorCode:(NSInteger)errorCode;
 
+- (void)appendDeletedForEveryoneSystemMessageWithTimestamp:(NSDate *)timestamp sender:(ZMUser *)sender;
+
 @end
 
 
