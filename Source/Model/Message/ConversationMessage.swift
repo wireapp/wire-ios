@@ -156,7 +156,7 @@ extension ZMMessage : ZMConversationMessage {
     }
     
     public var hasBeenDeleted: Bool {
-        return isZombieObject;
+        return visibleInConversation == nil && hiddenInConversation != nil;
     }
     
 }

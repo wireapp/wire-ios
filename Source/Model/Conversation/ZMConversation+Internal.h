@@ -40,6 +40,7 @@
 @class ZMCleared;
 @class ZMUpdateEvent;
 @class ZMLocationData;
+@class ZMGenericMessage;
 
 extern NSString *const ZMConversationConnectionKey;
 extern NSString *const ZMConversationHasUnreadMissedCallKey;
@@ -50,6 +51,7 @@ extern NSString *const ZMConversationIsArchivedKey;
 extern NSString *const ZMConversationIsSelfAnActiveMemberKey;
 extern NSString *const ZMConversationIsSilencedKey;
 extern NSString *const ZMConversationMessagesKey;
+extern NSString *const ZMConversationHiddenMessagesKey;
 extern NSString *const ZMConversationOtherActiveParticipantsKey;
 extern NSString *const ZMConversationHasUnreadKnock;
 extern NSString *const ZMConversationLastReadEventIDDataKey;
@@ -203,6 +205,11 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 - (ZMClientMessage *)appendOTRMessageWithLocationData:(ZMLocationData *)locationData nonce:(NSUUID *)nonce;
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce;
 - (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce;
+
+/// Appends a new message to the conversation.
+/// @param genericMessage: the generic message that should be appended
+/// @param hidden: weather the message should be hidden in the conversation or not
+- (ZMClientMessage *)appendNonExpiringGenericMessage:(ZMGenericMessage *)genericMessage hidden:(BOOL)hidden;
 
 - (void)appendNewConversationSystemMessageIfNeeded;
 

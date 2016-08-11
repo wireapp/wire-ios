@@ -1,11 +1,21 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
 
-//
-//  ZMConversation.m
-//  zmessaging-cocoa
-//
-//  Created by Daniel Eggert on 08/05/14.
-//  Copyright (c) 2014 Zeta Project Gmbh. All rights reserved.
-//
 
 @import Foundation;
 @import zimages;
@@ -46,6 +56,7 @@ NSString *const ZMConversationIsSelfAnActiveMemberKey = @"isSelfAnActiveMember";
 NSString *const ZMConversationIsSilencedKey = @"isSilenced";
 NSString *const ZMConversationLastReadEventIDDataKey = @"lastReadEventID_data";
 NSString *const ZMConversationMessagesKey = @"messages";
+NSString *const ZMConversationHiddenMessagesKey = @"hiddenMessages";
 NSString *const ZMConversationOtherActiveParticipantsKey = @"otherActiveParticipants";
 NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
 NSString *const ZMConversationUnsyncedActiveParticipantsKey = @"unsyncedActiveParticipants";
@@ -106,7 +117,7 @@ static NSString *const VoiceChannelKey = @"voiceChannel";
 static NSString *const VoiceChannelStateKey = @"voiceChannelState";
 static NSString *const CallDeviceIsActiveKey = @"callDeviceIsActive";
 static NSString *const IsFlowActiveKey = @"isFlowActive";
-static NSString *const HiddenMessagesKey = @"hiddenMessages";
+
 static NSString *const SecurityLevelKey = @"securityLevel";
 
 
@@ -410,7 +421,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
             ZMConversationHasUnreadMissedCallKey,
             ZMConversationHasUnreadUnsentMessageKey,
             ZMConversationMessagesKey,
-            HiddenMessagesKey,
+            ZMConversationHiddenMessagesKey,
             ZMConversationLastServerTimeStampKey,
             SecurityLevelKey,
             ZMConversationLastUnreadKnockDateKey,
@@ -1477,6 +1488,24 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationRequestToLoadConversationEventsNotification object:self userInfo:nil];
 }
 
+- (ZMClientMessage *)appendNonExpiringGenericMessage:(ZMGenericMessage *)genericMessage hidden:(BOOL)hidden
+{
+    VerifyReturnNil(genericMessage != nil);
+    
+    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
+    [message addData:genericMessage.data];
+    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    message.isEncrypted = YES;
+    
+    if(hidden) {
+        message.hiddenInConversation = self;
+    }
+    else {
+        [self sortedAppendMessage:message];
+    }
+    return message;
+}
+
 - (ZMClientMessage *)appendClientMessageWithData:(NSData *)data
 {
     VerifyReturnNil(data != nil);
@@ -1493,11 +1522,11 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
 {
     ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:self.managedObjectContext];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    if(!hidden) {
-        [self sortedAppendMessage:message];
+    if(hidden) {
+        message.hiddenInConversation = self;
     }
     else {
-        message.hiddenInConversation = self;
+        [self sortedAppendMessage:message];
     }
     return message;
 }
