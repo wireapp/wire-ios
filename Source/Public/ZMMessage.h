@@ -70,7 +70,8 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged,
     ZMSystemMessageTypeNewConversation,
     ZMSystemMessageTypeReactivatedDevice,
-    ZMSystemMessageTypeUsingNewDevice
+    ZMSystemMessageTypeUsingNewDevice,
+    ZMSystemMessageTypeMessageDeletedForEveryone
 };
 
 

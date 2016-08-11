@@ -340,17 +340,38 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     [self.managedObjectContext deleteObject:self];
 }
 
-+ (void)removeMessageWithRemotelyDeletedMessage:(ZMMsgDeleted *)deletedMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
 {
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
     if(user != selfUser) {
         return;
     }
-    NSUUID *messageID = [NSUUID uuidWithTransportString:deletedMessage.messageId];
-    NSUUID *conversationID = [NSUUID uuidWithTransportString:deletedMessage.conversationId];
-
+    
+    NSUUID *conversationID = [NSUUID uuidWithTransportString:hiddenMessage.conversationId];
     ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:NO inContext:moc];
+    
+    NSUUID *messageID = [NSUUID uuidWithTransportString:hiddenMessage.messageId];
     ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
+    [message removeMessage];
+}
+
++ (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    NSUUID *messageID = [NSUUID uuidWithTransportString:deletedMessage.messageId];
+    ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
+
+    // Only the sender of the original message can delete it
+    if (![senderID isEqual:message.sender.remoteIdentifier]) {
+        return;
+    }
+    
+    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
+
+    // Only clients other than self should see the system message
+    if (nil != message && ![senderID isEqual:selfUser.remoteIdentifier]) {
+        [conversation appendDeletedForEveryoneSystemMessageWithTimestamp:message.serverTimestamp sender:message.sender];
+    }
+    
     [message removeMessage];
 }
 

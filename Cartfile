@@ -1,6 +1,6 @@
 github "wireapp/wire-ios-cryptobox" ~> 2.8.1
 github "wireapp/wire-ios-images"
-github "wireapp/wire-ios-protos" ~> 6.0
+github "wireapp/wire-ios-protos" ~> 6.1
 github "wireapp/libPhoneNumber-iOS" "0.8.12"
 github "wireapp/PINCache" ~> 2.2.1
 github "wireapp/wire-ios-transport"
