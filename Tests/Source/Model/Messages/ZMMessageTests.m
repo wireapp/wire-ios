@@ -1165,7 +1165,7 @@ NSString * const IsExpiredKey = @"isExpired";
         XCTAssertNotNil(conversation);
         
         // load a message from the second context and check that the objectIDs for users are as expected
-        ZMSystemMessage *message = [self createConversationConnectRequestSystemMessageInConversation:conversation  inManagedObjectContext:self.syncMOC];
+        ZMSystemMessage *message = [self createConversationConnectRequestSystemMessageInConversation:conversation inManagedObjectContext:self.syncMOC];
         XCTAssertNotNil(message);
     }];
     [self.syncMOC saveOrRollback];
@@ -2350,7 +2350,7 @@ NSString * const IsExpiredKey = @"isExpired";
     
     //then
     ZMMessage *fetchedMessage = [ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    return fetchedMessage == nil && conversation.messages.count == 0LU;
+    return fetchedMessage.visibleInConversation == nil && [fetchedMessage.hiddenInConversation isEqual:conversation];
 }
 
 - (void)testThatATextMessageIsRemovedWhenAskForDeletion;
@@ -2419,8 +2419,10 @@ NSString * const IsExpiredKey = @"isExpired";
     
     //then
     textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    XCTAssertNil(textMessage);
-    XCTAssertEqual(conversation.messages.count, 0LU);
+    XCTAssertNotNil(textMessage);
+    XCTAssertNil(textMessage.visibleInConversation);
+    XCTAssertEqual(textMessage.hiddenInConversation, conversation);
+    XCTAssertEqual(conversation.messages.count, 0lu);
 }
 
 @end

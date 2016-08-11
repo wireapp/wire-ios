@@ -335,9 +335,8 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 
 - (void)removeMessage
 {
-    RequireString(self.managedObjectContext.zm_isSyncContext, "Tried to delete a messa from the UI context");
+    self.hiddenInConversation = self.conversation;
     self.visibleInConversation = nil;
-    [self.managedObjectContext deleteObject:self];
 }
 
 + (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -478,22 +477,35 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];
     NSPredicate *noncePredicate = [NSPredicate predicateWithFormat:@"%K == %@", ZMMessageNonceDataKey, [nonce data]];
     
-    BOOL checkedAllMessages = NO;
+    BOOL checkedAllHiddenMessages = NO;
+    BOOL checkedAllVisibleMessage = NO;
+
     if (![conversation hasFaultForRelationshipNamed:ZMConversationMessagesKey]) {
-        checkedAllMessages = YES;
+        checkedAllVisibleMessage = YES;
         for (ZMMessage *message in conversation.messages) {
             if (message.isFault) {
-                checkedAllMessages = NO;
+                checkedAllVisibleMessage = NO;
             } else if ([message.entity isKindOfEntity:entity] && [noncePredicate evaluateWithObject:message]) {
                 return (id) message;
             }
         }
     }
     
-    if (checkedAllMessages) {
+    if (![conversation hasFaultForRelationshipNamed:ZMConversationHiddenMessagesKey]) {
+        checkedAllHiddenMessages = YES;
+        for (ZMMessage *message in conversation.hiddenMessages) {
+            if (message.isFault) {
+                checkedAllHiddenMessages = NO;
+            } else if ([message.entity isKindOfEntity:entity] && [noncePredicate evaluateWithObject:message]) {
+                return (id) message;
+            }
+        }
+    }
+
+    if (checkedAllVisibleMessage && checkedAllHiddenMessages) {
         return nil;
     }
-    
+
     NSPredicate *conversationPredicate = [NSPredicate predicateWithFormat:@"%K == %@ OR %K == %@", ZMMessageConversationKey, conversation.objectID, ZMMessageHiddenInConversationKey, conversation.objectID];
     
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[noncePredicate, conversationPredicate]];

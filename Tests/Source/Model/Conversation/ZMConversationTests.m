@@ -3792,7 +3792,9 @@
         
         // then
         ZMMessage *fetchedMessage = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:self.syncMOC];
-        XCTAssertNil(fetchedMessage);
+        XCTAssertNotNil(fetchedMessage);
+        XCTAssertNil(fetchedMessage.visibleInConversation);
+        XCTAssertEqual(fetchedMessage.hiddenInConversation, conversation);
     }];
 }
 

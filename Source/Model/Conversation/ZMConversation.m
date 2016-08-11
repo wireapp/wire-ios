@@ -56,6 +56,7 @@ NSString *const ZMConversationIsSelfAnActiveMemberKey = @"isSelfAnActiveMember";
 NSString *const ZMConversationIsSilencedKey = @"isSilenced";
 NSString *const ZMConversationLastReadEventIDDataKey = @"lastReadEventID_data";
 NSString *const ZMConversationMessagesKey = @"messages";
+NSString *const ZMConversationHiddenMessagesKey = @"hiddenMessages";
 NSString *const ZMConversationOtherActiveParticipantsKey = @"otherActiveParticipants";
 NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
 NSString *const ZMConversationUnsyncedActiveParticipantsKey = @"unsyncedActiveParticipants";
@@ -116,7 +117,7 @@ static NSString *const VoiceChannelKey = @"voiceChannel";
 static NSString *const VoiceChannelStateKey = @"voiceChannelState";
 static NSString *const CallDeviceIsActiveKey = @"callDeviceIsActive";
 static NSString *const IsFlowActiveKey = @"isFlowActive";
-static NSString *const HiddenMessagesKey = @"hiddenMessages";
+
 static NSString *const SecurityLevelKey = @"securityLevel";
 
 
@@ -420,7 +421,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
             ZMConversationHasUnreadMissedCallKey,
             ZMConversationHasUnreadUnsentMessageKey,
             ZMConversationMessagesKey,
-            HiddenMessagesKey,
+            ZMConversationHiddenMessagesKey,
             ZMConversationLastServerTimeStampKey,
             SecurityLevelKey,
             ZMConversationLastUnreadKnockDateKey,

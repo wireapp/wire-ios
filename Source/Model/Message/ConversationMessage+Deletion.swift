@@ -44,7 +44,7 @@ extension ZMMessage {
     func hideForSelfUser() {
         guard !isZombieObject else { return }
         ZMConversation.appendHideMessageToSelfConversation(self)
-        managedObjectContext?.deleteObject(self)
+        removeMessage()
     }
     
     public static func deleteForEveryone(message: ZMConversationMessage) {
@@ -60,6 +60,6 @@ extension ZMMessage {
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         
         conversation.appendNonExpiringGenericMessage(deletedMessage, hidden: true)
-        managedObjectContext?.deleteObject(self)
+        removeMessage()
     }
 }
