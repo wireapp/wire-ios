@@ -1165,7 +1165,7 @@ NSString * const IsExpiredKey = @"isExpired";
         XCTAssertNotNil(conversation);
         
         // load a message from the second context and check that the objectIDs for users are as expected
-        ZMSystemMessage *message = [self createConversationConnectRequestSystemMessageInConversation:conversation  inManagedObjectContext:self.syncMOC];
+        ZMSystemMessage *message = [self createConversationConnectRequestSystemMessageInConversation:conversation inManagedObjectContext:self.syncMOC];
         XCTAssertNotNil(message);
     }];
     [self.syncMOC saveOrRollback];
@@ -2350,7 +2350,7 @@ NSString * const IsExpiredKey = @"isExpired";
     
     //then
     ZMMessage *fetchedMessage = [ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    return fetchedMessage == nil && conversation.messages.count == 0LU;
+    return fetchedMessage.visibleInConversation == nil && [fetchedMessage.hiddenInConversation isEqual:conversation];
 }
 
 - (void)testThatATextMessageIsRemovedWhenAskForDeletion;
@@ -2387,7 +2387,7 @@ NSString * const IsExpiredKey = @"isExpired";
 }
 
 
-- (void)testThatAMessageIsRemovedWhenAskForDeletionWithMsgDeleted;
+- (void)testThatAMessageIsRemovedWhenAskForDeletionWithMessageHide;
 {
     // given
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
@@ -2401,10 +2401,10 @@ NSString * const IsExpiredKey = @"isExpired";
     textMessage.nonce = nonce;
     textMessage.visibleInConversation = conversation;
     
-    ZMMsgDeletedBuilder *builder = [ZMMsgDeleted builder];
+    ZMMessageHideBuilder *builder = [ZMMessageHide builder];
     builder.conversationId = conversation.remoteIdentifier.transportString;
     builder.messageId = nonce.transportString;
-    ZMMsgDeleted *msgDeleted = [builder build];
+    ZMMessageHide *hidden = [builder build];
     
     //sanity check
     XCTAssertNotNil(conversation);
@@ -2413,14 +2413,16 @@ NSString * const IsExpiredKey = @"isExpired";
     
     //when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMMessage removeMessageWithRemotelyDeletedMessage:msgDeleted fromUser:selfUser inManagedObjectContext:self.uiMOC];
+        [ZMMessage removeMessageWithRemotelyHiddenMessage:hidden fromUser:selfUser inManagedObjectContext:self.uiMOC];
     }];
     [self.uiMOC saveOrRollback];
     
     //then
     textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    XCTAssertNil(textMessage);
-    XCTAssertEqual(conversation.messages.count, 0LU);
+    XCTAssertNotNil(textMessage);
+    XCTAssertNil(textMessage.visibleInConversation);
+    XCTAssertEqual(textMessage.hiddenInConversation, conversation);
+    XCTAssertEqual(conversation.messages.count, 0lu);
 }
 
 @end
