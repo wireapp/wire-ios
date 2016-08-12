@@ -65,6 +65,7 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 // Use these for sorting:
 + (NSArray *)defaultSortDescriptors;
 - (NSComparisonResult)compare:(ZMMessage *)other;
+- (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload;
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys;
 - (void)resend;
 - (BOOL)shouldGenerateUnreadCount;
@@ -82,6 +83,12 @@ extern NSString * const ZMMessageHiddenInConversationKey;
                                  inConversation:(ZMConversation *)conversation
                                        senderID:(NSUUID *)senderID
                          inManagedObjectContext:(NSManagedObjectContext *)moc;
+
+/// Clears the content of a message for a ZMEditMessage
+/// Returns NO when the message was not found
+/// or if the sender of the ZMEditMessage is not the same as the sender of the original message
++ (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
+
 @end
 
 
@@ -188,7 +195,9 @@ extern NSString * const ZMMessageHiddenInConversationKey;
                               inManagedObjectContext:(NSManagedObjectContext *)moc
                                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
 
-- (void)updateWithUpdateEvent:(ZMUpdateEvent *)updateEvent forConversation:(ZMConversation *)conversation messageWasAlreadyReceived:(BOOL)wasDelivered;
+- (void)updateWithUpdateEvent:(ZMUpdateEvent *)updateEvent forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
+
+- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID eventID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
 /// Returns whether the data represents animated GIF
 + (BOOL)isDataAnimatedGIF:(NSData *)data;
