@@ -215,8 +215,8 @@
 }
 
 + (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
-                                       nonce:(NSString *)nonce
-                                     newText:(NSString *)newText;
+                                     newText:(NSString *)newText
+                                       nonce:(NSString *)nonce;
 {
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
     builder.edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText];
