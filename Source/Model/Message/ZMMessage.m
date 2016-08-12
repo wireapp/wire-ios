@@ -77,11 +77,13 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 
 + (ZMConversation *)conversationForUpdateEvent:(ZMUpdateEvent *)event inContext:(NSManagedObjectContext *)context prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
 
-// wasAlreadyReceived parameter means that update event updates already existing message (i.e. for image messages)
+// isUpdatingExistingMessage parameter means that update event updates already existing message (i.e. for image messages)
 // it will affect updating serverTimestamp and messages sorting
-- (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation messageWasAlreadyReceived:(BOOL)wasAlreadyReceived;
+- (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
-- (void)updateTimestamp:(NSDate *)timestamp messageWasAlreadyReceived:(BOOL)wasAlreadyReceived;
+- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID eventID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
+
+- (void)updateTimestamp:(NSDate *)timestamp isUpdatingExistingMessage:(BOOL)isUpdate;
 
 @property (nonatomic) NSSet *missingRecipients;
 
@@ -207,9 +209,9 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     self.conversation.hasUnreadUnsentMessage = YES;
 }
 
-- (void)updateTimestamp:(NSDate *)timestamp messageWasAlreadyReceived:(BOOL)wasAlreadyReceived
+- (void)updateTimestamp:(NSDate *)timestamp isUpdatingExistingMessage:(BOOL)isUpdate
 {
-    if (wasAlreadyReceived) {
+    if (isUpdate) {
         self.serverTimestamp = [NSDate lastestOfDate:self.serverTimestamp and:timestamp];
     } else if (timestamp != nil) {
         self.serverTimestamp = timestamp;
@@ -282,21 +284,21 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     return NSOrderedSame;
 }
 
-- (void)updateWithUpdateEvent:(ZMUpdateEvent *)updateEvent forConversation:(ZMConversation *)conversation messageWasAlreadyReceived:(BOOL)wasAlreadyReceived;
+- (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 {
-    ZMEventID *eventID = updateEvent.eventID;
-    NSDate *serverTimestamp = updateEvent.timeStamp;
-    NSUUID *senderUUID = updateEvent.senderUUID;
-    
+    [self updateWithTimestamp:event.timeStamp senderUUID:event.senderUUID eventID:event.eventID forConversation:conversation isUpdatingExistingMessage:isUpdate];
+}
+
+- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID eventID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
+{
     self.eventID = [ZMEventID latestOfEventID:self.eventID and:eventID];
-    [self updateTimestamp:serverTimestamp messageWasAlreadyReceived:wasAlreadyReceived];
-    
+    [self updateTimestamp:serverTimestamp isUpdatingExistingMessage:isUpdate];
     
     /**
      * Florian, the 07.06.16
      * In some cases, the conversation relationship assignement crashes for the reason that both object are coming from a different context.
      * I think this is a bug on Apple's side as the sender assignement also has caused a crash for the same reason (https://rink.hockeyapp.net/manage/apps/42908/app_versions/558/crash_reasons/123911635?order=asc&sort_by=date&type=crashes#crash_data)
-     *  
+     *
      * There is no way that the user and self (the message) are in different context as we EXPLICITLY fetch(or create) it from the self.managedObjectContext
      *
      * And after a thourough digging in the code, the conversation ALSO can't come from a different context, as both prefetched batches and fetch creation is done on SyncMOC (same for message).
@@ -374,34 +376,56 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     [message removeMessage];
 }
 
++ (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    if (!genericEditMessage.hasEdited) {
+        return nil;
+    }
+    NSUUID *messageID = [NSUUID uuidWithTransportString:genericEditMessage.edited.replacingMessageId];
+    ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
+    
+    // Only the sender of the original message can edit it
+    if (message == nil || ![senderID isEqual:message.sender.remoteIdentifier]) {
+        return nil;
+    }
+    [message removeMessage];
+    return message;
+}
+
+
+- (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload
+{
+    ZMUpdateEventType eventType = [ZMUpdateEvent updateEventTypeForEventTypeString:[payload optionalStringForKey:@"type"]];
+    switch (eventType) {
+            
+        case ZMUpdateEventConversationMessageAdd:
+        case ZMUpdateEventConversationKnock:
+            return [[payload dictionaryForKey:@"data"] uuidForKey:@"nonce"];
+
+        case ZMUpdateEventConversationClientMessageAdd:
+        case ZMUpdateEventConversationOtrMessageAdd:
+        {
+            //if event is otr message than payload should be already decrypted and should contain generic message data
+            NSString *base64Content = [payload stringForKey:@"data"];
+            ZMGenericMessage *message;
+            @try {
+                message = [ZMGenericMessage messageWithBase64String:base64Content];
+            }
+            @catch(NSException *e) {
+                ZMLogError(@"Cannot create message from protobuffer: %@ event payload: %@", e, payload);
+                return nil;
+            }
+            return [NSUUID uuidWithTransportString:message.messageId];
+        }
+            
+        default:
+            return nil;
+    }
+}
+
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys
 {
-    NSUUID *nonce;
-    ZMUpdateEventType eventType = [ZMUpdateEvent updateEventTypeForEventTypeString:[payload optionalStringForKey:@"type"]];
-    if (eventType == ZMUpdateEventConversationMessageAdd ||
-        eventType == ZMUpdateEventConversationKnock) {
-        nonce = [[payload dictionaryForKey:@"data"] uuidForKey:@"nonce"];
-    }
-    else if (eventType == ZMUpdateEventConversationClientMessageAdd ||
-             eventType == ZMUpdateEventConversationOtrMessageAdd) {
-        
-        //if event is otr message than payload should be already decrypted and should contain generic message data
-
-        NSString *base64Content = [payload stringForKey:@"data"];
-        ZMGenericMessage *message;
-        @try {
-            message = [ZMGenericMessage messageWithBase64String:base64Content];
-        }
-        @catch(NSException *e) {
-            ZMLogError(@"Cannot create message from protobuffer: %@ event payload: %@", e, payload);
-            return;
-        }
-        nonce = [NSUUID uuidWithTransportString:message.messageId];
-    }
-    else if (eventType == ZMUpdateEventUnknown) {
-        return;
-    }
-    
+    NSUUID *nonce = [self nonceFromPostPayload:payload];
     if (nonce != nil && ![self.nonce isEqual:nonce]) {
         ZMLogWarn(@"send message response nonce does not match");
         return;
@@ -415,26 +439,23 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
         self.serverTimestamp = timestamp;
         updatedTimestamp = YES;
     }
-    [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:timestamp andSync:YES];
+    [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:timestamp andSync:NO];
     [self.conversation updateLastServerTimeStampIfNeeded:timestamp];
     [self.conversation updateLastModifiedDateIfNeeded:timestamp];
- 
-    
-    ZMEventID *eventID = [payload eventForKey:@"id"];
-    [self.conversation addEventToDownloadedEvents:eventID timeStamp:timestamp];
-    if ((self.eventID == nil) ||
-        ([eventID compare:self.eventID] == NSOrderedAscending))
-    {
-        self.eventID = eventID;
-    }
-    
-    if (eventID != nil) {
-        [self.conversation updateLastReadEventIDIfNeededWithEventID:eventID];
-        [self.conversation updateLastEventIDIfNeededWithEventID:eventID];
-    }
-    
     if (updatedTimestamp) {
         [self.conversation resortMessagesWithUpdatedMessage:self];
+    }
+    
+    ZMEventID *eventID = [payload optionalEventForKey:@"id"];
+    if (eventID != nil) {
+        [self.conversation addEventToDownloadedEvents:eventID timeStamp:timestamp];
+        if ((self.eventID == nil) ||
+            ([eventID compare:self.eventID] == NSOrderedAscending))
+        {
+            self.eventID = eventID;
+        }
+        [self.conversation updateLastReadEventIDIfNeededWithEventID:eventID];
+        [self.conversation updateLastEventIDIfNeededWithEventID:eventID];
     }
 }
 
@@ -485,6 +506,13 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
         for (ZMMessage *message in conversation.messages) {
             if (message.isFault) {
                 checkedAllVisibleMessage = NO;
+            } else if ([message.entity isKindOfEntity:entity] && [noncePredicate evaluateWithObject:message]) {
+                return (id) message;
+            }
+        }
+        for (ZMMessage *message in conversation.hiddenMessages) {
+            if (message.isFault) {
+                checkedAllHiddenMessages = NO;
             } else if ([message.entity isKindOfEntity:entity] && [noncePredicate evaluateWithObject:message]) {
                 return (id) message;
             }
@@ -678,7 +706,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     message.isPlainText = YES;
     message.isEncrypted = NO;
     message.nonce = nonce;
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation messageWasAlreadyReceived:(message.eventID != nil)];
+    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:(message.eventID != nil)];
     message.text = text;
     
     return message;
@@ -760,7 +788,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     }
     
     message.nonce = nonce;
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation messageWasAlreadyReceived:(message.eventID != nil)];
+    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:(message.eventID != nil)];
     message.isEncrypted = NO;
     message.isPlainText = YES;
     return message;
@@ -848,7 +876,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     message.systemMessageType = type;
     message.visibleInConversation = conversation;
     
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation messageWasAlreadyReceived:(message.eventID != nil)];
+    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:(message.eventID != nil)];
     
     if (![usersSet isEqual:[NSSet setWithObject:message.sender]]) {
         [usersSet removeObject:message.sender];

@@ -156,6 +156,13 @@ NSString * const DeliveredKey = @"delivered";
         [ZMMessage removeMessageWithRemotelyDeletedMessage:message.deleted inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
         return nil;
     }
+    ZMMessage *clearedMessage;
+    if (message.hasEdited) {
+        clearedMessage = [ZMMessage clearedMessageForRemotelyEditedMessage:message inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
+        if (clearedMessage == nil) {
+            return nil;
+        }
+    }
     
     if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction) {
         [conversation addEventToDownloadedEvents:updateEvent.eventID timeStamp:updateEvent.timeStamp];
@@ -190,7 +197,12 @@ NSString * const DeliveredKey = @"delivered";
     clientMessage.nonce = nonce;
     clientMessage.senderClientID = updateEvent.senderClientID;
     [clientMessage updateWithGenericMessage:message updateEvent:updateEvent];
-    [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation messageWasAlreadyReceived:clientMessage.delivered];
+    
+    if (clearedMessage == nil) {
+        [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:clientMessage.delivered];
+    } else {
+        [clientMessage updateWithTimestamp:clearedMessage.serverTimestamp senderUUID:clearedMessage.sender.remoteIdentifier eventID:nil forConversation:conversation isUpdatingExistingMessage:NO];
+    }
     
     return clientMessage;
 
