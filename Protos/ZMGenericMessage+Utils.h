@@ -78,8 +78,8 @@
                                          nonce:(NSString *)nonce;
 
 + (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
-                                       nonce:(NSString *)nonce
-                                     newText:(NSString *)newText;
+                                     newText:(NSString *)newText
+                                       nonce:(NSString *)nonce;
 
 - (BOOL)knownMessage;
 
