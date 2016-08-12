@@ -71,3 +71,18 @@
 }
 
 @end
+
+
+@implementation ZMMessageEdit (Utils)
+
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText;
+{
+    ZMMessageEditBuilder *builder = [ZMMessageEdit builder];
+    builder.replacingMessageId = messageID;
+    ZMTextBuilder *textBuilder = [ZMText builder];
+    textBuilder.content = newText;
+    builder.text = [textBuilder build];
+    return [builder build];
+}
+
+@end
