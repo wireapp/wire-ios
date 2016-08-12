@@ -303,7 +303,7 @@
     
     [self addChildViewController:self.audioRecordViewController];
     [self.inputBar addSubview:self.audioRecordViewController.view];
-    [self.audioRecordViewController.view autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.inputBar.buttonRowBox];
+    [self.audioRecordViewController.view autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.inputBar.buttonBox];
     
     CGRect recordButtonFrame = [self.inputBar convertRect:self.audioButton.bounds fromView:self.audioButton];
     CGFloat width = CGRectGetMaxX(recordButtonFrame) + 60;
@@ -440,13 +440,21 @@
     }
     _mode = mode;
     
+    if (mode == ConversationInputBarViewControllerModeTextEditing) {
+        self.inputBar.inputbarState = InputBarStateEditing;
+    } else {
+        self.inputBar.inputbarState = InputBarStateWriting;
+    }
+    
     switch (mode) {
+        case ConversationInputBarViewControllerModeTextEditing:
         case ConversationInputBarViewControllerModeTextInput:
             self.inputController = nil;
             self.singleTapGestureRecognizer.enabled = NO;
             self.audioButton.selected = NO;
             self.photoButton.selected = NO;
             break;
+    
         case ConversationInputBarViewControllerModeAudioRecord:
             if (nil != [UITextInputAssistantItem class]) {
                 UITextInputAssistantItem* item = self.inputBar.textView.inputAssistantItem;
@@ -468,6 +476,7 @@
             self.audioButton.selected = YES;
             self.photoButton.selected = NO;
             break;
+            
         case ConversationInputBarViewControllerModeCamera:
             if (nil != [UITextInputAssistantItem class]) {
                 UITextInputAssistantItem* item = self.inputBar.textView.inputAssistantItem;
@@ -487,7 +496,6 @@
             self.audioButton.selected = NO;
             self.photoButton.selected = YES;
             break;
-            
     }
 }
 

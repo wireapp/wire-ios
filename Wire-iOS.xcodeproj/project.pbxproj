@@ -741,6 +741,7 @@
 		BFAF4CB51CECEF3C00780537 /* WaveFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF4CB41CECEF3C00780537 /* WaveFormView.swift */; };
 		BFAF4CB71CEDB9FC00780537 /* AudioButtonOverlayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF4CB61CEDB9FC00780537 /* AudioButtonOverlayState.swift */; };
 		BFAF4CB91CEDE82400780537 /* NumberHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF4CB81CEDE82400780537 /* NumberHelper.swift */; };
+		BFBB03061D5DF4CB0065AF4F /* InputBarButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB03051D5DF4CB0065AF4F /* InputBarButtonsView.swift */; };
 		BFC914921D1814AF001F068B /* LocationMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC914911D1814AF001F068B /* LocationMessageCell.swift */; };
 		BFC9149B1D181BE7001F068B /* LocationMessageCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC914991D181B7C001F068B /* LocationMessageCellTests.swift */; };
 		BFE08C1C1D5B5CFA002367F6 /* MessageDeletedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE08C1B1D5B5CFA002367F6 /* MessageDeletedCell.swift */; };
@@ -2007,6 +2008,7 @@
 		BFAF4CB41CECEF3C00780537 /* WaveFormView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveFormView.swift; sourceTree = "<group>"; };
 		BFAF4CB61CEDB9FC00780537 /* AudioButtonOverlayState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioButtonOverlayState.swift; sourceTree = "<group>"; };
 		BFAF4CB81CEDE82400780537 /* NumberHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumberHelper.swift; sourceTree = "<group>"; };
+		BFBB03051D5DF4CB0065AF4F /* InputBarButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarButtonsView.swift; sourceTree = "<group>"; };
 		BFC914911D1814AF001F068B /* LocationMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMessageCell.swift; sourceTree = "<group>"; };
 		BFC914991D181B7C001F068B /* LocationMessageCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMessageCellTests.swift; sourceTree = "<group>"; };
 		BFE08C1B1D5B5CFA002367F6 /* MessageDeletedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDeletedCell.swift; sourceTree = "<group>"; };
@@ -4116,6 +4118,7 @@
 			children = (
 				87BEB03A1D3E44BA00DE9575 /* CameraKeyboard */,
 				16B2DE2D1CCFB3B0000D7C30 /* InputBar.swift */,
+				BFBB03051D5DF4CB0065AF4F /* InputBarButtonsView.swift */,
 				BF2A74721CEB4882002608BF /* AudioButtonOverlay.swift */,
 				BFAF4CB61CEDB9FC00780537 /* AudioButtonOverlayState.swift */,
 				BFAF4CAC1CEB670F00780537 /* AudioRecordViewController.swift */,
@@ -5221,6 +5224,7 @@
 				871BC00E1D34F56300DF0793 /* Analytics+Navigation.m in Sources */,
 				DB888FBB1ADD195F00CE9A88 /* EmailStepViewController.m in Sources */,
 				870815861BF4E76A00D321BC /* SettingsCell.swift in Sources */,
+				BFBB03061D5DF4CB0065AF4F /* InputBarButtonsView.swift in Sources */,
 				871BC2651D34F8F800DF0793 /* BackgroundViewImageProcessor.m in Sources */,
 				871BC24C1D34F8F800DF0793 /* WAZUIMagic.m in Sources */,
 				F95E08B41D0EAFE80098A9EE /* TTTAttributedLabel+Links.swift in Sources */,
