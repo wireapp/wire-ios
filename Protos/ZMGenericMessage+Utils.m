@@ -95,7 +95,8 @@
     self.hasAsset ||
     self.hasLocation ||
     self.hasDeleted ||
-    self.hasHidden;
+    self.hasHidden ||
+    self.hasEdited;
 }
 
 + (instancetype)messageWithImageData:(NSData *)imageData format:(ZMImageFormat)format nonce:(NSString *)nonce
@@ -209,6 +210,16 @@
 {
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
     builder.deleted = [ZMMessageDelete messageDeleteWithMessageID:messageID];
+    builder.messageId = nonce;
+    return [builder build];
+}
+
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                     newText:(NSString *)newText
+                                       nonce:(NSString *)nonce;
+{
+    ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
+    builder.edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText];
     builder.messageId = nonce;
     return [builder build];
 }
