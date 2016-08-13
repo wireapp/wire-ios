@@ -27,7 +27,7 @@
 #import "Analytics+Events.h"
 #import "UIAlertView+Zeta.h"
 #import <WireExtensionComponents/WireExtensionComponents.h>
-#import "ConfirmImageViewController.h"
+#import "ConfirmAssetViewController.h"
 #import "TextView.h"
 #import "TypingConversationView.h"
 #import "CameraViewController.h"
@@ -37,7 +37,6 @@
 
 #import "ZClientViewController.h"
 #import "Analytics+iOS.h"
-#import "AnalyticsTracker+Camera.h"
 #import "AnalyticsTracker+Sketchpad.h"
 #import "AnalyticsTracker+FileTransfer.h"
 #import "NSString+Wire.h"
@@ -70,17 +69,12 @@
 
 @interface ConversationInputBarViewController (CameraViewController)
 - (void)cameraButtonPressed:(id)sender;
+- (void)videoButtonPressed:(id)sender;
 @end
 
 @interface ConversationInputBarViewController (Ping)
 
 - (void)pingButtonPressed:(UIButton *)button;
-
-@end
-
-@interface ConversationInputBarViewController (Sketch) <SketchViewControllerDelegate>
-
-- (void)sketchButtonPressed:(id)sender;
 
 @end
 
@@ -119,6 +113,7 @@
 @interface ConversationInputBarViewController ()
 
 @property (nonatomic) IconButton *audioButton;
+@property (nonatomic) IconButton *videoButton;
 @property (nonatomic) IconButton *photoButton;
 @property (nonatomic) IconButton *uploadFileButton;
 @property (nonatomic) IconButton *sketchButton;
@@ -142,6 +137,8 @@
 @property (nonatomic) id <ZMConversationObserverOpaqueToken> conversationObserverToken;
 
 @property (nonatomic) UIViewController *inputController;
+
+@property (nonatomic) BOOL inRotation;
 @end
 
 
@@ -194,6 +191,7 @@
     [self configureAudioButton:self.audioButton];
     
     [self.photoButton addTarget:self action:@selector(cameraButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.videoButton addTarget:self action:@selector(videoButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.sketchButton addTarget:self action:@selector(sketchButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.uploadFileButton addTarget:self action:@selector(docUploadPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.pingButton addTarget:self action:@selector(pingButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -222,6 +220,17 @@
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    self.inRotation = YES;
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        self.inRotation = NO;
+    }];
+}
+
 - (void)setAnalyticsTracker:(AnalyticsTracker *)analyticsTracker
 {
     _analyticsTracker = analyticsTracker;
@@ -236,6 +245,11 @@
     [self.audioButton setIcon:ZetaIconTypeMicrophone withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
     [self.audioButton setIconColor:[UIColor accentColor] forState:UIControlStateSelected];
 
+    self.videoButton = [[IconButton alloc] init];
+    self.videoButton.hitAreaPadding = CGSizeZero;
+    self.videoButton.accessibilityIdentifier = @"videoButton";
+    [self.videoButton setIcon:ZetaIconTypeVideoMessage withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
+    
     self.photoButton = [[IconButton alloc] init];
     self.photoButton.hitAreaPadding = CGSizeZero;
     self.photoButton.accessibilityIdentifier = @"photoButton";
@@ -263,7 +277,7 @@
     [self.locationButton setIcon:ZetaIconTypeLocationPin withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
     
 
-    self.inputBar = [[InputBar alloc] initWithButtons:@[self.photoButton, self.sketchButton, self.locationButton, self.audioButton, self.pingButton, self.uploadFileButton]];
+    self.inputBar = [[InputBar alloc] initWithButtons:@[self.photoButton, self.videoButton, self.sketchButton, self.locationButton, self.audioButton, self.pingButton, self.uploadFileButton]];
     self.inputBar.translatesAutoresizingMaskIntoConstraints = NO;
     self.inputBar.textView.delegate = self;
     
@@ -361,6 +375,11 @@
     [self.typingView autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:14];
 }
 
+- (void)updateNewButtonTitleLabel
+{
+    self.photoButton.titleLabel.hidden = self.inputBar.textView.isFirstResponder;
+}
+
 - (void)updateLeftAccessoryView
 {
     self.authorImageView.alpha = self.inputBar.textView.isFirstResponder ? 1 : 0;
@@ -429,6 +448,12 @@
             self.photoButton.selected = NO;
             break;
         case ConversationInputBarViewControllerModeAudioRecord:
+            if (nil != [UITextInputAssistantItem class]) {
+                UITextInputAssistantItem* item = self.inputBar.textView.inputAssistantItem;
+                item.leadingBarButtonGroups = @[];
+                item.trailingBarButtonGroups = @[];
+            }
+            
             if (self.inputController == nil || self.inputController != self.audioRecordKeyboardViewController) {
                 if (self.audioRecordKeyboardViewController == nil) {
                     self.audioRecordKeyboardViewController = [[AudioRecordKeyboardViewController alloc] init];
@@ -444,11 +469,15 @@
             self.photoButton.selected = NO;
             break;
         case ConversationInputBarViewControllerModeCamera:
+            if (nil != [UITextInputAssistantItem class]) {
+                UITextInputAssistantItem* item = self.inputBar.textView.inputAssistantItem;
+                item.leadingBarButtonGroups = @[];
+                item.trailingBarButtonGroups = @[];
+            }
             
             if (self.inputController == nil || self.inputController != self.cameraKeyboardViewController) {
                 if (self.cameraKeyboardViewController == nil) {
-                    self.cameraKeyboardViewController = [[CameraKeyboardViewController alloc] initWithSplitLayoutObservable:[ZClientViewController sharedZClientViewController].splitViewController];
-                    self.cameraKeyboardViewController.delegate = self;
+                    [self createCameraKeyboardViewController];
                 }
                 self.audioRecordViewController = nil;
                 self.inputController = self.cameraKeyboardViewController;
@@ -494,7 +523,9 @@
 
 - (void)keyboardDidHide:(NSNotification *)notification
 {
-    self.mode = ConversationInputBarViewControllerModeTextInput;
+    if (!self.inRotation) {
+        self.mode = ConversationInputBarViewControllerModeTextInput;
+    }
 }
 
 @end
@@ -565,6 +596,7 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
     [self updateAccessoryViews];
+    [self updateNewButtonTitleLabel];
     [[ZMUserSession sharedSession] checkNetworkAndFlashIndicatorIfNecessary];
 }
 
@@ -588,7 +620,7 @@
 
 - (void)textView:(UITextView *)textView hasImageToPaste:(id<MediaAsset>)image
 {
-    ConfirmImageViewController *confirmImageViewController = [[ConfirmImageViewController alloc] init];
+    ConfirmAssetViewController *confirmImageViewController = [[ConfirmAssetViewController alloc] init];
     confirmImageViewController.image = image;
     confirmImageViewController.previewTitle = [self.conversation.displayName uppercaseStringWithCurrentLocale];
     
@@ -611,12 +643,15 @@
 - (void)textView:(UITextView *)textView firstResponderChanged:(NSNumber *)resigned
 {
     [self updateAccessoryViews];
+    [self updateNewButtonTitleLabel];
 }
 
 - (void)postImage:(id<MediaAsset>)image
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [self.sendController sendMessageWithImageData:image.data completion:nil];
+        [self.sendController sendMessageWithImageData:image.data completion:^() {
+            [[Analytics shared] tagMediaSentPictureSourceOtherInConversation:self.conversation source:ConversationMediaPictureSourcePaste];
+        }];
     });
 }
 
@@ -635,13 +670,20 @@
         });
     }
     else {
-        [self executeWithVideoPermissions:^{
-            [self executeWithCameraRollPermission:^{
+        [UIApplication wr_requestOrWarnAboutVideoAccess:^(BOOL granted) {
+            [self executeWithCameraRollPermission:^(BOOL success){
                 self.mode = ConversationInputBarViewControllerModeCamera;
                 [self.inputBar.textView becomeFirstResponder];
             }];
         }];
     }
+}
+
+- (void)videoButtonPressed:(IconButton *)sender
+{
+    [Analytics.shared tagMediaAction:ConversationMediaActionVideoMessage inConversation:self.conversation];
+    self.videoSendContext = ConversationMediaVideoContextCursorButton;
+    [self presentImagePickerWithSourceType:UIImagePickerControllerSourceTypeCamera mediaTypes:@[(id)kUTTypeMovie] allowsEditing:false];
 }
 
 #pragma mark - Video save callback
@@ -665,6 +707,7 @@
     SketchViewController *viewController = [[SketchViewController alloc] init];
     viewController.sketchTitle = self.conversation.displayName;
     viewController.delegate = self;
+    viewController.source = ConversationMediaSketchSourceSketchButton;
     
     ZMUser *lastSender = self.conversation.lastMessageSender;
     [self.parentViewController presentViewController:viewController animated:YES completion:^{
@@ -682,14 +725,17 @@
 
 - (void)sketchViewController:(SketchViewController *)controller didSketchImage:(UIImage *)image
 {
-    [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
-    if (image) {
-        
-        NSData *imageData = UIImagePNGRepresentation(image);
-        [self.sendController sendMessageWithImageData:imageData completion:^{
-            [self.analyticsTracker tagPictureTakenWithSource:AnalyticsEventTypePictureTakenSourceSketch];
-        }];
-    }
+    @weakify(self);
+    [self hideCameraKeyboardViewController:^{
+        @strongify(self);
+        [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
+        if (image) {
+            NSData *imageData = UIImagePNGRepresentation(image);
+            [self.sendController sendMessageWithImageData:imageData completion:^{
+                   [[Analytics shared] tagMediaSentPictureSourceSketchInConversation:self.conversation sketchSource:controller.source];
+            }];
+        }
+    }];
 }
 
 @end
@@ -700,7 +746,11 @@
 {
     [[Analytics shared] tagMediaAction:ConversationMediaActionLocation inConversation:self.conversation];
     
-    LocationSelectionViewController *locationSelectionViewController = [[LocationSelectionViewController alloc] init];
+    LocationSelectionViewController *locationSelectionViewController = [[LocationSelectionViewController alloc] initForPopoverPresentation:IS_IPAD];
+    locationSelectionViewController.modalPresentationStyle = UIModalPresentationPopover;
+    UIPopoverPresentationController* popoverPresentationController = locationSelectionViewController.popoverPresentationController;
+    popoverPresentationController.sourceView = sender.superview;
+    popoverPresentationController.sourceRect = sender.frame;
     locationSelectionViewController.title = self.conversation.displayName;
     locationSelectionViewController.delegate = self;
     [self.parentViewController presentViewController:locationSelectionViewController animated:YES completion:nil];

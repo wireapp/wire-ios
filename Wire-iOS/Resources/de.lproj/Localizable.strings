@@ -14,8 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 
 
@@ -179,7 +178,7 @@
 // Image confirmation dialogue
 "image_confirmer.confirm" = "OK";
 "image_confirmer.cancel" = "Abbrechen";
-
+"image.add_sketch" = "Skizze hinzufügen";
 "image.edit_image" = "Bild bearbeiten";
 
 // Camera access

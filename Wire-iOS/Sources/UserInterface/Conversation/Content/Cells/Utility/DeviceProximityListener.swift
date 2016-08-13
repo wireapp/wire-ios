@@ -21,7 +21,6 @@ import Foundation
 import CoreMotion
 
 class DeviceProximityListener: NSObject {
-    private var heldVertically: Bool = false
     
     private(set) var raisedToEar: Bool = false {
         didSet {
@@ -31,50 +30,22 @@ class DeviceProximityListener: NSObject {
         }
     }
     
-    var stateChanged:((raisedToEar: Bool)->())? = nil
+    typealias RaisedToEarHandler = (raisedToEar: Bool) -> Void
     
+    var stateChanged: RaisedToEarHandler? = nil
     var listening: Bool = false
-    
-    override init() {
-        super.init()
-        let motionManager = CMMotionManager()
-        motionManager.deviceMotionUpdateInterval = 10.0 / 60.0
-        
-        // Only listen for UIDevice proximity if the device is held vertically
-        let handler: CMDeviceMotionHandler = { [weak self] weakMotion, error in
-            guard let `self` = self, motion = weakMotion else {
-                return
-            }
-            
-            self.heldVertically = (motion.gravity.z > -0.4 &&
-                                   motion.gravity.z < 0.4 &&
-                                   motion.gravity.y < -0.7)
-        }
-        motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryZVertical,
-                                                          toQueue: NSOperationQueue(),
-                                                      withHandler: handler)
-    }
-    
-    static var totalListeners: UInt = 0 {
-        didSet {
-            if self.totalListeners > 0 {
-                UIDevice.currentDevice().proximityMonitoringEnabled = true
-            }
-            else {
-                UIDevice.currentDevice().proximityMonitoringEnabled = false
-            }
-        }
-    }
     
     func startListening() {
         guard !self.listening else {
             return
         }
+
         self.listening = true
-        self.dynamicType.totalListeners = self.dynamicType.totalListeners + 1
+        UIDevice.currentDevice().proximityMonitoringEnabled = true
         NSNotificationCenter.defaultCenter().addObserver(self,
-                                               selector: #selector(DeviceProximityListener.handleProximityChange(_:)),
-                                                   name: UIDeviceProximityStateDidChangeNotification, object: nil)
+                                               selector: #selector(handleProximityChange),
+                                                   name: UIDeviceProximityStateDidChangeNotification,
+                                                 object: nil)
     }
     
     func stopListening() {
@@ -82,13 +53,12 @@ class DeviceProximityListener: NSObject {
             return
         }
         self.listening = false
-        self.dynamicType.totalListeners = self.dynamicType.totalListeners - 1
+        UIDevice.currentDevice().proximityMonitoringEnabled = false
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     func handleProximityChange(notification: NSNotification) {
-        self.raisedToEar = UIDevice.currentDevice().proximityState &&
-                           self.heldVertically
+        self.raisedToEar = UIDevice.currentDevice().proximityState
     }
     
     deinit {

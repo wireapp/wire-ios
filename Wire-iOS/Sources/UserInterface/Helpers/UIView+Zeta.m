@@ -41,9 +41,10 @@ static NSString * const WireLastCachedKeyboardHeightKey = @"WireLastCachedKeyboa
     CGRect keyboardFrame = [self keyboardFrameInView:view forKeyboardNotification:notification];
     
     UIResponder *currentFirstResponder = [UIResponder wr_currentFirstResponder];
-    CGSize keyboardSize = CGSizeMake(keyboardFrame.size.width, keyboardFrame.size.height - currentFirstResponder.inputAccessoryView.bounds.size.height);
-
-    [self wr_setLastKeyboardSize:keyboardSize];
+    if (currentFirstResponder != nil) {
+        CGSize keyboardSize = CGSizeMake(keyboardFrame.size.width, keyboardFrame.size.height - currentFirstResponder.inputAccessoryView.bounds.size.height);
+        [self wr_setLastKeyboardSize:keyboardSize];
+    }
     
     NSDictionary *userInfo = notification.userInfo;
     double animationLength = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
@@ -86,8 +87,19 @@ static NSString * const WireLastCachedKeyboardHeightKey = @"WireLastCachedKeyboa
     else {
         CGSize keyboardSize = CGSizeFromString(currentLastValue);
         
+        // If keyboardSize value is clearly off we need to pull default value
         if (keyboardSize.height < 150) {
-            keyboardSize.height = 216;
+            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+                if (UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation)) {
+                    keyboardSize.height = 264;
+                }
+                else {
+                    keyboardSize.height = 352;
+                }
+            }
+            else {
+                keyboardSize.height = 216;
+            }
         }
         
         return keyboardSize;

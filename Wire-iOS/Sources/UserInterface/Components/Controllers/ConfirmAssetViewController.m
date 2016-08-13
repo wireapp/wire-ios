@@ -17,10 +17,12 @@
 // 
 
 
-#import "ConfirmImageViewController.h"
+#import "ConfirmAssetViewController.h"
 
 #import <PureLayout/PureLayout.h>
 #import <Classy/Classy.h>
+@import AVKit;
+@import AVFoundation;
 #import "WAZUIMagicIOS.h"
 
 #import "UIColor+WAZExtensions.h"
@@ -34,13 +36,13 @@
 #import "UIImage+ImageUtilities.h"
 #import "MediaAsset.h"
 
-static const CGFloat TopBarHeight = 56;
+static const CGFloat TopBarHeight = 64;
 static const CGFloat BottomBarMinHeight = 88;
 static const CGFloat MarginInset = 24;
 
 
 
-@interface ConfirmImageViewController ()
+@interface ConfirmAssetViewController ()
 
 @property (nonatomic) UIView *topPanel;
 @property (nonatomic) UIView *bottomPanel;
@@ -52,8 +54,7 @@ static const CGFloat MarginInset = 24;
 @property (nonatomic) Button *acceptImageButton;
 @property (nonatomic) Button *rejectImageButton;
 @property (nonatomic) FLAnimatedImageView *imagePreviewView;
-
-@property (nonatomic) BOOL initialConstraintsCreated;
+@property (nonatomic) AVPlayerViewController *playerViewController;
 
 @property (nonatomic) NSLayoutConstraint *topBarHeightConstraint;
 
@@ -63,18 +64,24 @@ static const CGFloat MarginInset = 24;
 
 
 
-@implementation ConfirmImageViewController
+@implementation ConfirmAssetViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self createPreviewPanel];
+    if (self.image != nil) {
+        [self createPreviewPanel];
+    }
+    else if (self.videoURL != nil) {
+        [self createVideoPanel];
+    }
     [self createTopPanel];
     [self createBottomPanel];
     [self createEditButton];
+    [self createConstraints];
     
-    [self updateViewConstraints];
+    [[CASStyler defaultStyler] styleItem:self];
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -92,7 +99,20 @@ static const CGFloat MarginInset = 24;
 
 - (BOOL)prefersStatusBarHidden
 {
-    return YES;
+    return NO;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    switch ([ColorScheme defaultColorScheme].variant) {
+        case ColorSchemeVariantLight:
+            return UIStatusBarStyleDefault;
+            break;
+            
+        case ColorSchemeVariantDark:
+            return UIStatusBarStyleLightContent;
+            break;
+    }
 }
 
 #pragma mark - View Creation
@@ -105,6 +125,18 @@ static const CGFloat MarginInset = 24;
     [self.view addSubview:self.imagePreviewView];
     
     [self.imagePreviewView setMediaAsset:self.image];
+}
+
+- (void)createVideoPanel
+{
+    self.playerViewController = [[AVPlayerViewController alloc] init];
+    
+    self.playerViewController.player = [AVPlayer playerWithURL:self.videoURL];
+    [self.playerViewController.player play];
+    self.playerViewController.showsPlaybackControls = YES;
+    self.playerViewController.view.backgroundColor = [UIColor whiteColor];
+    
+    [self.view addSubview:self.playerViewController.view];
 }
 
 - (void)createTopPanel
@@ -121,7 +153,12 @@ static const CGFloat MarginInset = 24;
 
 - (void)createEditButton
 {
-    self.editButton = [IconButton iconButtonCircularDark];
+    self.editButton = [IconButton iconButtonCircularLight];
+    [self.editButton setTitleImageSpacing:12 horizontalMargin:12];
+    
+    NSString *editButtonTitle = NSLocalizedString(@"image.add_sketch", @"").uppercaseString;
+    [self.editButton setTitle:editButtonTitle forState:UIControlStateNormal];
+    
     [self.editButton setIcon:ZetaIconTypeBrush withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
     self.editButton.accessibilityIdentifier = @"editNotConfirmedImageButton";
     
@@ -159,60 +196,61 @@ static const CGFloat MarginInset = 24;
     [self.confirmButtonsContainer addSubview:self.rejectImageButton];
 }
 
-- (void)updateViewConstraints
+- (void)createConstraints
 {
-    if (! self.initialConstraintsCreated) {
-        // Top panel
-        [self.topPanel autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeBottom];
-        self.topBarHeightConstraint = [self.topPanel autoSetDimension:ALDimensionHeight toSize:TopBarHeight];
-        
-        [self.titleLabel autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.topPanel];
-        [self.titleLabel autoAlignAxisToSuperviewAxis:ALAxisVertical];
-        
-        // Bottom panel
-        [self.bottomPanel autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeTop];
-        [self.bottomPanel autoSetDimension:ALDimensionHeight toSize:BottomBarMinHeight];
-        
-        // Accept/Reject panel
-        [self.confirmButtonsContainer autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.bottomPanel];
-        [self.confirmButtonsContainer autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:0 relation:NSLayoutRelationGreaterThanOrEqual];
-        [self.confirmButtonsContainer autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:0 relation:NSLayoutRelationGreaterThanOrEqual];
-        [self.confirmButtonsContainer autoAlignAxisToSuperviewAxis:ALAxisVertical];
-        [self.confirmButtonsContainer autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:self.bottomPanel];
-        
-        [self.acceptImageButton autoSetDimension:ALDimensionHeight toSize:40];
-        [self.acceptImageButton autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
-        [self.acceptImageButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:MarginInset];
-        [self.acceptImageButton setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        
-        [self.rejectImageButton autoSetDimension:ALDimensionHeight toSize:40];
-        [self.rejectImageButton autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
-        [self.rejectImageButton autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:MarginInset];
-        [self.rejectImageButton setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        
-        [NSLayoutConstraint autoSetPriority:UILayoutPriorityDefaultHigh forConstraints:^{
-            [self.acceptImageButton autoSetDimension:ALDimensionWidth toSize:184];
-            [self.rejectImageButton autoSetDimension:ALDimensionWidth toSize:184];
-            [self.acceptImageButton autoPinEdge:ALEdgeLeft toEdge:ALEdgeRight ofView:self.rejectImageButton withOffset:16];
-        }];
-        [self.acceptImageButton autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:self.rejectImageButton];
-        
-        // Preview image
-        [self.imagePreviewView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.topPanel];
-        [self.imagePreviewView autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.bottomPanel];
-        [self.imagePreviewView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
-        [self.imagePreviewView autoPinEdgeToSuperviewEdge:ALEdgeRight];
-        
-        [self.editButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:20];
-        [self.editButton autoSetDimensionsToSize:CGSizeMake(32, 32)];
-        [self.editButton autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.bottomPanel withOffset:-20];
-        
-        self.initialConstraintsCreated = YES;
-    }
+    // Top panel
+    [self.topPanel autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeBottom];
+    self.topBarHeightConstraint = [self.topPanel autoSetDimension:ALDimensionHeight toSize:TopBarHeight];
+    
+    [self.titleLabel autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:20];
+    [self.titleLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom];
+    [self.titleLabel autoAlignAxisToSuperviewAxis:ALAxisVertical];
+    
+    // Bottom panel
+    [self.bottomPanel autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeTop];
+    [self.bottomPanel autoSetDimension:ALDimensionHeight toSize:BottomBarMinHeight];
+    
+    // Accept/Reject panel
+    [self.confirmButtonsContainer autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.bottomPanel];
+    [self.confirmButtonsContainer autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:0 relation:NSLayoutRelationGreaterThanOrEqual];
+    [self.confirmButtonsContainer autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:0 relation:NSLayoutRelationGreaterThanOrEqual];
+    [self.confirmButtonsContainer autoAlignAxisToSuperviewAxis:ALAxisVertical];
+    [self.confirmButtonsContainer autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:self.bottomPanel];
+    
+    [self.acceptImageButton autoSetDimension:ALDimensionHeight toSize:40];
+    [self.acceptImageButton autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
+    [self.acceptImageButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:MarginInset];
+    [self.acceptImageButton setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+    
+    [self.rejectImageButton autoSetDimension:ALDimensionHeight toSize:40];
+    [self.rejectImageButton autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
+    [self.rejectImageButton autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:MarginInset];
+    [self.rejectImageButton setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+    
+    [NSLayoutConstraint autoSetPriority:UILayoutPriorityDefaultHigh forConstraints:^{
+        [self.acceptImageButton autoSetDimension:ALDimensionWidth toSize:184];
+        [self.rejectImageButton autoSetDimension:ALDimensionWidth toSize:184];
+        [self.acceptImageButton autoPinEdge:ALEdgeLeft toEdge:ALEdgeRight ofView:self.rejectImageButton withOffset:16];
+    }];
+    [self.acceptImageButton autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:self.rejectImageButton];
+    
+    // Preview image
+    [self.imagePreviewView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.topPanel];
+    [self.imagePreviewView autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.bottomPanel];
+    [self.imagePreviewView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
+    [self.imagePreviewView autoPinEdgeToSuperviewEdge:ALEdgeRight];
+
+    [self.editButton autoAlignAxisToSuperviewAxis:ALAxisVertical];
+    [self.editButton autoSetDimension:ALDimensionHeight toSize:32];
+    [self.editButton autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:self.view withOffset:-112];
+
+    [self.playerViewController.view autoPinEdgeToSuperviewEdge:ALEdgeLeft];
+    [self.playerViewController.view autoPinEdgeToSuperviewEdge:ALEdgeRight];
+
+    [self.playerViewController.view autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.topPanel];
+    [self.playerViewController.view autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.bottomPanel];
     
     self.topBarHeightConstraint.constant = (self.titleLabel.text != nil) ? TopBarHeight : 0;
-    
-    [super updateViewConstraints];
 }
 
 #pragma mark - Actions

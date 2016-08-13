@@ -23,6 +23,12 @@
 @protocol SketchViewControllerDelegate;
 
 
+typedef NS_ENUM(NSUInteger, ConversationMediaSketchSource) {
+    ConversationMediaSketchSourceNone,
+    ConversationMediaSketchSourceSketchButton,
+    ConversationMediaSketchSourceCameraGallery,
+    ConversationMediaSketchSourceImageFullView
+};
 
 /// Sketchpad view controller
 @interface SketchViewController : UIViewController
@@ -32,7 +38,9 @@
 @property (nonatomic) UIImage *canvasBackgroundImage;
 @property (nonatomic, weak) id <SketchViewControllerDelegate> delegate;
 @property (nonatomic, copy) NSString *sketchTitle;
+@property (nonatomic) BOOL confirmsWithoutSketch;
 
+@property (nonatomic, assign) ConversationMediaSketchSource source;
 @end
 
 

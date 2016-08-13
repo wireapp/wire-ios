@@ -1,6 +1,8 @@
 # Wire™
 
-![Wire logo](https://github.com/wireapp/wire/blob/master/assets/logo.png?raw=true)
+[![Wire logo](https://github.com/wireapp/wire/blob/master/assets/header-small.png?raw=true)](https://wire.com/jobs/)
+
+[![Build Status](https://travis-ci.org/wireapp/wire-ios.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios)
 
 This repository is part of the source code of Wire. You can find more information at [wire.com](https://wire.com) or by contacting opensource@wire.com.
 
@@ -31,11 +33,11 @@ The iOS application follows closely the overall mobile architecture, adding its 
 
 ![iOS app architecture](https://github.com/wireapp/wire/blob/master/assets/ios-architecture.png?raw=true)
 
-*ZMessaging-cocoa* is the top-most layer of the iOS *sync engine*, and it is using on a number of lower-level frameworks.
+*wire-ios-sync-engine* is the top-most layer of the iOS *sync engine*, and it is using on a number of lower-level frameworks.
 
 ### Repositories
 
-- [zmessaging-cocoa](https://github.com/wireapp/zmessaging-cocoa): topmost layer that implements client-side business logic, caching, encryption and client-side backend communication protocol
+- [wire-ios-sync-engine](https://github.com/wireapp/wire-ios-sync-engine): topmost layer that implements client-side business logic, caching, encryption and client-side backend communication protocol
 
 
 ## How to build the open source client

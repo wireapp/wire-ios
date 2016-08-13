@@ -772,6 +772,12 @@ VideoMessageCell {
     }
 }
 
+ImageMessageCell {
+    imageViewContainer: @{
+        backgroundColor: $color-placeholder-background;
+    }
+}
+
 AudioMessageCell {
     ProgressView {
         backgroundColor: $color-separator;
@@ -845,7 +851,7 @@ ConversationInputBarViewController {
 
 /* Image confirmer */
 
-ConfirmImageViewController {
+ConfirmAssetViewController {
     view: @{
         backgroundColor: $color-background;
     }
@@ -855,12 +861,16 @@ ConfirmImageViewController {
     }
     
     titleLabel: @{
-        font: $font-small-light;
+        font: $font-medium-medium;
         textColor: $color-text-foreground;
     }
     
     editButton: @{
-        backgroundColor: white;
+        backgroundImageColor[state:normal]: $color-accent-current;
+        backgroundImageColor[state:highlighted]: $color-accent-current-darken;
+        titleLabel: @{
+            font: $font-small;
+        }
     }
 }
 

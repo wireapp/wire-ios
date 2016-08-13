@@ -34,6 +34,7 @@ public class AssetCell: UICollectionViewCell {
         self.contentView.clipsToBounds = true
         
         self.imageView.contentMode = .ScaleAspectFill
+        self.imageView.backgroundColor = UIColor(white: 0, alpha: 0.1)
         self.contentView.addSubview(self.imageView)
         
         self.durationView.textAlignment = .Center
@@ -81,17 +82,20 @@ public class AssetCell: UICollectionViewCell {
             }
             
             let maxDimensionRetina = max(self.bounds.size.width, self.bounds.size.height) * (self.window ?? UIApplication.sharedApplication().keyWindow!).screen.scale
-            
             self.imageRequestTag = manager.requestImageForAsset(asset,
                                                                  targetSize: CGSizeMake(maxDimensionRetina, maxDimensionRetina),
                                                                  contentMode: .AspectFill,
                                                                  options: self.dynamicType.imageFetchOptions,
                                                                  resultHandler: { [weak self] result, info -> Void in
-                                                                    guard let `self` = self else {
+                                                                    guard let `self` = self,
+                                                                        let requesId = info?[PHImageResultRequestIDKey] as? Int
+                                                                        else {
                                                                         return
                                                                     }
                                                                     
-                                                                    self.imageView.image = result
+                                                                    if requesId == Int(self.imageRequestTag) {
+                                                                        self.imageView.image = result
+                                                                    }
             })
             
             if asset.mediaType == .Video {
