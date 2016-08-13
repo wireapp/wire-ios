@@ -48,8 +48,6 @@ NSString *const AnalyticsTriggerTypeButton = @"button";
 NSString *const AnalyticsEventTypeEditSelfUser = @"EditSelfUser";
 NSString *const AnalyticsEventTypeNavigation = @"Navigation";
 NSString *const AnalyticsEventTypePermissions = @"PermissionRequested";
-NSString *const AnalyticsEventTypePictureTaken = @"PictureTaken";
-NSString *const AnalyticsEventTypeMessage = @"Message";
 NSString *const AnalyticsEventTypeMedia = @"Media";
 
 #pragma mark - AnalyticsEventTypeEditSelfUser
@@ -100,21 +98,10 @@ NSString *const AnalyticsEventTypePermissionsStateKey = @"state";
 
 NSString *const AnalyticsEventTypePermissionsCategoryCamera = @"camera";
 NSString *const AnalyticsEventTypePermissionsCategoryPhotoLibrary = @"photoLibrary";
-NSString *const AnalyticsEventTypePermissionsCategoryAddressBook = @"addressBook";
 NSString *const AnalyticsEventTypePermissionsCategoryPushNotifications = @"pushNotifications";
 
 NSString *const AnalyticsEventTypePermissionsStateAllowed = @"allowed";
 NSString *const AnalyticsEventTypePermissionsStateDenied = @"denied";
-
-
-#pragma mark - AnalyticsEventTypePictureTaken;
-
-NSString *const AnalyticsEventTypePictureTakenSourceKey = @"source";
-NSString *const AnalyticsEventTypePicutreTakenSourceCamera = @"camera";
-NSString *const AnalyticsEventTypePictureTakenSourcePhotoLibrary = @"photoLibrary";
-NSString *const AnalyticsEventTypePictureTakenSourceGiphy = @"giphy";
-NSString *const AnalyticsEventTypePictureTakenSourceSketch = @"sketch";
-
 
 #pragma mark - AnalyticsEventTypeMedia
 
@@ -154,7 +141,7 @@ NSString *const AnalyticsEventAcceptedGenericInvite = @"connect.accepted_generic
 
 @implementation AnalyticsTracker
 
-+(instancetype)analyticsTrackerWithContext:(NSString *)context
++ (instancetype)analyticsTrackerWithContext:(NSString *)context
 {
     id tracker = [[self alloc] initWithContext:context];
     return tracker;

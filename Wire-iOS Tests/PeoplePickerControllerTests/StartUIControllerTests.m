@@ -84,14 +84,14 @@
     self.searchResultGroupConversations = [MockLoader mockObjectsOfClass:[MockConversation class]
                                                                 fromFile:@"conversations-01.json"];
     
-    self.controller = [[StartUIViewController alloc] init];
+    self.controller = [[StartUIViewController alloc] initWithSearchDirectoryClass:nil];
     self.controllerPartialMock = OCMPartialMock(self.controller);
     
     self.topPeopleLineSectionPartialMock = OCMPartialMock(self.controller.topPeopleLineSection);
     self.usersInContactsSectionPartialMock = OCMPartialMock(self.controller.usersInContactsSection);
     self.usersInDirectorySectionPartialMock = OCMPartialMock(self.controller.usersInDirectorySection);
     self.groupConversationsSectionPartialMock = OCMPartialMock(self.controller.groupConversationsSection);
-    
+        
     OCMStub([self.controllerPartialMock topPeopleLineSection]).andReturn(self.topPeopleLineSectionPartialMock);
     OCMStub([self.controllerPartialMock usersInContactsSection]).andReturn(self.usersInContactsSectionPartialMock);
     OCMStub([self.controllerPartialMock usersInDirectorySection]).andReturn(self.usersInDirectorySectionPartialMock);
@@ -103,10 +103,6 @@
     OCMStub([self.groupConversationsSectionPartialMock groupConversations]).andCall(self, @selector(searchResultGroupConversations));
     
     OCMStub([self.usersInDirectorySectionPartialMock setSuggestions:[OCMArg any]]).andCall(self, @selector(setSearchResultUsersInDirectory:));
-    
-    id userMock = OCMClassMock([ZMUser class]);
-    OCMStub([[userMock classMethod] selfUser]).andReturn(OCMOCK_ANY);
-    OCMStub([[userMock stub] addUserObserver:[OCMArg any] forUsers:[OCMArg any] inUserSession:[OCMArg any]]).andReturn(nil);
     
     (void)self.controller.view;
     self.collectionView = OCMClassMock([UICollectionView class]);
@@ -160,12 +156,17 @@
     self.numberOfItemsDeletedForSection = [NSMutableDictionary new];
     self.numberOfItemsMovedInForSection = [NSMutableDictionary new];
     self.numberOfItemsMovedOutForSection = [NSMutableDictionary new];
+    
 }
 
 - (void)tearDown
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+    self.controller = nil;
+    
+    [(id)self.collectionView stopMocking];
+    [(id)self.controllerPartialMock stopMocking];
 }
 
 #pragma mark - UICollectionView Batch Updates

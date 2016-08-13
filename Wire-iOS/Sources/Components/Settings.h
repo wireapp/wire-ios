@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import "CameraController.h"
 
 @class ZMLocationData;
 @class ZMConversation;
@@ -48,6 +49,7 @@ extern NSString * const UserDefaultContactTipWasDisplayed;
 extern NSString * const UserDefaultLastViewedConversation;
 extern NSString * const UserDefaultColorScheme;
 extern NSString * const UserDefaultLastViewedScreen;
+extern NSString * const UserDefaultPreferredCamera;
 extern NSString * const UserDefaultPreferredCameraFlashMode;
 extern NSString * const AVSMediaManagerPersistentIntensity;
 extern NSString * const UserDefaultLastUserLocation;
@@ -81,6 +83,7 @@ extern NSString * const UserDefaultDisableAnalytics;
 @property (nonatomic) ZMConversation *lastViewedConversation;
 @property (nonatomic) SettingsLastScreen lastViewedScreen;
 @property (nonatomic) AVCaptureFlashMode preferredFlashMode;
+@property (nonatomic) CameraControllerCamera preferredCamera;
 @property (nonatomic) SettingsColorScheme colorScheme;
 @property (nonatomic, readonly) NSTimeInterval blacklistDownloadInterval;
 @property (nonatomic) ZMLocationData *lastUserLocation;
@@ -104,9 +107,6 @@ extern NSString * const UserDefaultDisableAnalytics;
 
 /// when true, send the next message 500 times (!)
 @property (nonatomic) BOOL shouldSend500Messages;
-
-/// Credentials used by automation tests
-@property (nonatomic, readonly) ZMEmailCredentials *automationTestEmailCredentials;
 
 // Max audio recording duration in seconds
 @property (nonatomic) NSTimeInterval maxRecordingDurationDebug;

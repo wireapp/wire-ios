@@ -45,7 +45,8 @@
 #import "ConnectRequestsCell.h"
 #import "ConversationListCell.h"
 
-
+#import "ConversationContentViewController.h"
+#import "Wire-Swift.h"
 
 static NSString * const CellReuseIdConversation = @"CellId";
 
@@ -74,6 +75,10 @@ static NSString * const CellReuseIdConversation = @"CellId";
 @end
 
 @interface ConversationListContentController (ConversationListCellDelegate) <ConversationListCellDelegate>
+
+@end
+
+@interface ConversationListContentController (PeekAndPop) <UIViewControllerPreviewingDelegate>
 
 @end
 
@@ -110,6 +115,12 @@ static NSString * const CellReuseIdConversation = @"CellId";
     self.listViewModel.delegate = self;
     [self setupViews];
     [self createInitialConstraints];
+    
+    if ([self respondsToSelector:@selector(registerForPreviewingWithDelegate:sourceView:)] &&
+        [[UIApplication sharedApplication] keyWindow].traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
+        
+        [self registerForPreviewingWithDelegate:self sourceView:self.collectionView];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -530,6 +541,46 @@ static NSString * const CellReuseIdConversation = @"CellId";
     if ([self.contentDelegate respondsToSelector:@selector(conversationListContentController:wantsActionMenuForConversation:)]) {
         [self.contentDelegate conversationListContentController:self wantsActionMenuForConversation:conversation];
     }
+}
+
+@end
+
+@implementation ConversationListContentController (PeekAndPop)
+
+- (UIViewController *)previewingContext:(id<UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location
+{
+    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:location];
+    if (indexPath == nil) {
+        return nil;
+    }
+    
+    UICollectionViewLayoutAttributes *layoutAttributes = [self.collectionView layoutAttributesForItemAtIndexPath:indexPath];
+    if (layoutAttributes == nil) {
+        return nil;
+    }
+    
+    id conversation = [self.listViewModel itemForIndexPath:indexPath];
+    if (![conversation isKindOfClass:[ZMConversation class]]) {
+        return nil;
+    }
+    
+    previewingContext.sourceRect = layoutAttributes.frame;
+    ConversationPreviewViewController *previewViewController = [[ConversationPreviewViewController alloc] initWithConversation:conversation];
+    
+    return previewViewController;
+}
+
+- (void)previewingContext:(id<UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit
+{
+    if (![viewControllerToCommit isKindOfClass:[ConversationPreviewViewController class]]) {
+        return;
+    }
+    
+    ConversationPreviewViewController *previewViewController = (ConversationPreviewViewController*)viewControllerToCommit;
+    
+    self.focusOnNextSelection = YES;
+    self.animateNextSelection = YES;
+    [self selectModelItem:previewViewController.conversation];
 }
 
 @end

@@ -26,6 +26,8 @@ public protocol AssetLibraryDelegate: class {
 
 public class AssetLibrary {
     public weak var delegate: AssetLibraryDelegate?
+    private var fetchingAssets = false
+    public let synchronous: Bool
     
     public var count: UInt {
         guard let fetch = self.fetch else {
@@ -49,17 +51,43 @@ public class AssetLibrary {
         return fetch.objectAtIndex(Int(index)) as! PHAsset
     }
     
-    private var fetch: PHFetchResult?
-    
-    init() {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+    public func refetchAssets(synchronous synchronous: Bool = false) {
+        guard !self.fetchingAssets else {
+            return
+        }
+        
+        self.fetchingAssets = true
+        
+        let syncOperation = {
             let options = PHFetchOptions()
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
             self.fetch = PHAsset.fetchAssetsWithOptions(options)
             
-            dispatch_async(dispatch_get_main_queue(), { 
+            let completion = {
                 self.delegate?.assetLibraryDidChange(self)
-            })
+                self.fetchingAssets = false
+            }
+            
+            if synchronous {
+                completion()
+            }
+            else {
+                dispatch_async(dispatch_get_main_queue(), completion)
+            }
         }
+        
+        if synchronous {
+            syncOperation()
+        }
+        else {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), syncOperation)
+        }
+    }
+    
+    private var fetch: PHFetchResult?
+    
+    init(synchronous: Bool = false) {
+        self.synchronous = synchronous
+        self.refetchAssets(synchronous: synchronous)
     }
 }

@@ -43,7 +43,6 @@
 #import "SketchViewController.h"
 
 #import "AnalyticsTracker+Permissions.h"
-#import "AnalyticsTracker+Camera.h"
 #import "UIViewController+Orientation.h"
 
 #import "Wire-Swift.h"
@@ -83,6 +82,7 @@ static CameraControllerCamera CameraViewControllerToCameraControllerCamera(Camer
 @property (nonatomic) NSData *cameraImageData;
 
 @property (nonatomic, copy) void (^acceptedBlock)();
+@property (nonatomic, strong) ImageMetadata *imageMetadata;
 
 @property (nonatomic, readonly) CameraViewControllerPreviewSize previewSize;
 
@@ -433,7 +433,9 @@ static CameraControllerCamera CameraViewControllerToCameraControllerCamera(Camer
     self.imagePreviewView.image = [UIImage imageFromData:imageData withMaxSize:MAX(CGRectGetWidth(UIScreen.mainScreen.nativeBounds), CGRectGetHeight(UIScreen.mainScreen.nativeBounds))];
     self.imagePreviewView.transform = CGAffineTransformMakeScale(mirror ? -1 : 1, 1);
  
-    self.editButton.hidden = NO;
+    if (!self.disableSketch) {
+        self.editButton.hidden = NO;
+    }
     
     // FLAnimatedImageView doesn't draw the normal background color so we need set it on the layer.
     self.imagePreviewView.layer.backgroundColor = UIColor.blackColor.CGColor;
@@ -502,6 +504,7 @@ static CameraControllerCamera CameraViewControllerToCameraControllerCamera(Camer
 {
     SketchViewController *viewController = [[SketchViewController alloc] init];
     viewController.delegate = self;
+    viewController.source = ConversationMediaSketchSourceCameraGallery;
     
     [self presentViewController:viewController animated:YES completion:^{
         viewController.canvasBackgroundImage = self.imagePreviewView.image;
@@ -517,36 +520,33 @@ static CameraControllerCamera CameraViewControllerToCameraControllerCamera(Camer
     }
 }
 
-- (void)cameraBottomToolsViewController:(id)controller didCaptureImageData:(NSData *)imageData
+- (void)cameraBottomToolsViewController:(id)controller didCaptureImageData:(NSData *)imageData imageMetadata:(ImageMetadata *)metadata
 {
-    [self.analyticsTracker tagPictureTakenWithSource:AnalyticsEventTypePicutreTakenSourceCamera];
-
     self.cameraImageData = imageData;
+    self.imageMetadata = metadata;
     
     BOOL frontCameraImage = self.cameraController.currentCamera == CameraControllerCameraFront;
-    
     @weakify(self);
     
     [self presentConfirmDialogForImageData:imageData mirror:frontCameraImage acceptedBlock:^{
         @strongify(self);
         
-        if ([self.delegate respondsToSelector:@selector(cameraViewController:didPickImageData:)]) {
+        if ([self.delegate respondsToSelector:@selector(cameraViewController:didPickImageData:imageMetadata:)]) {
             
             if (self.savePhotosToCameraRoll) {
                 UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
             }
             
-            [self.delegate cameraViewController:self didPickImageData:self.cameraImageData];
+            [self.delegate cameraViewController:self didPickImageData:self.cameraImageData imageMetadata:self.imageMetadata];
         }
     }];
 }
 
-- (void)cameraBottomToolsViewController:(id)controller didPickImageData:(NSData *)imageData
+- (void)cameraBottomToolsViewController:(id)controller didPickImageData:(NSData *)imageData imageMetadata:(ImageMetadata *)metadata
 {
-    [self.analyticsTracker tagPictureTakenWithSource:AnalyticsEventTypePictureTakenSourcePhotoLibrary];
-    
-    if ([self.delegate respondsToSelector:@selector(cameraViewController:didPickImageData:)]) {
-        [self.delegate cameraViewController:self didPickImageData:imageData];
+    self.imageMetadata = metadata;
+    if ([self.delegate respondsToSelector:@selector(cameraViewController:didPickImageData:imageMetadata:)]) {
+        [self.delegate cameraViewController:self didPickImageData:imageData imageMetadata:self.imageMetadata];
     }
 }
 
@@ -628,6 +628,11 @@ static CameraControllerCamera CameraViewControllerToCameraControllerCamera(Camer
 {
     self.imagePreviewView.image = image;
     self.cameraImageData = UIImagePNGRepresentation(image);
+    ImageMetadata *newImageMetadata = [[ImageMetadata alloc] init];
+    newImageMetadata.source = ConversationMediaPictureSourceSketch;
+    newImageMetadata.method = ConversationMediaPictureTakeMethodQuickMenu;
+    newImageMetadata.sketchSource = ConversationMediaSketchSourceCameraGallery;
+    self.imageMetadata = newImageMetadata;
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }

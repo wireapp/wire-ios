@@ -17,16 +17,20 @@
 // 
 
 
-attribute vec4 position;
-attribute vec2 textureCoords;
+#import <UIKit/UIKit.h>
 
-uniform mat4 modelViewProjectionMatrix;
+@protocol MediaAsset;
 
-varying vec2 textureCoordsOut;
+@interface ConfirmAssetViewController : UIViewController
 
-void main()
-{
-    textureCoordsOut = textureCoords;
-    
-    gl_Position = modelViewProjectionMatrix * position;
-}
+/// Can either be UIImage or FLAnimatedImage
+@property (nonatomic) id<MediaAsset> image;
+@property (nonatomic) NSURL *videoURL;
+@property (nonatomic, copy) void (^onConfirm)();
+@property (nonatomic, copy) void (^onCancel)();
+@property (nonatomic, getter=isEditButtonVisible) BOOL editButtonVisible;
+@property (nonatomic, copy) void (^onEdit)();
+
+@property (nonatomic, copy) NSString *previewTitle;
+
+@end

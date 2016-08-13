@@ -1,0 +1,26 @@
+language: objective-c
+osx_image: xcode7.3
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+branches:
+  only:
+  - develop
+  - master
+cache:
+  bundler: true
+  cocoapods: true
+  directories:
+  - Carthage
+  - Libraries
+install:
+  - xcrun simctl erase all
+  - open -b com.apple.iphonesimulator
+  - ./setup.sh
+script:
+- set -o pipefail
+- xcodebuild build test -workspace Wire-iOS.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | tee >build.log >(xcpretty -s)
+- bundle exec danger
+after_failure:
+  - tail -n 500 build.log

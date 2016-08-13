@@ -259,6 +259,11 @@
 {
     self.rootNavigationController.showLoadingView = NO;
     
+    if (AutomationHelper.sharedHelper.skipFirstLoginAlerts) {
+        [self.delegate registrationViewControllerDidSignIn];
+        return;
+    }
+    
     if (! [[ZMUserSession sharedSession] registeredOnThisDevice] && [ZMUser selfUserHasIncompleteUserDetails]) {
         self.rootNavigationController.logoEnabled = NO;
         self.rootNavigationController.backButtonEnabled = NO;

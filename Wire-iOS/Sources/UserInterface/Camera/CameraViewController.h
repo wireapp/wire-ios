@@ -24,7 +24,7 @@
 @class CameraController;
 @class CameraViewController;
 @class AnalyticsTracker;
-
+@class ImageMetadata;
 
 
 typedef NS_ENUM(NSInteger, CameraViewControllerCamera) {
@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, CameraViewControllerPreviewSize) {
 @protocol CameraViewControllerDelegate <NSObject>
 
 - (void)cameraViewControllerDidCancel:(CameraViewController *)cameraViewController;
-- (void)cameraViewController:(CameraViewController *)cameraViewController didPickImageData:(NSData *)imageData;
+- (void)cameraViewController:(CameraViewController *)cameraViewController didPickImageData:(NSData *)imageData imageMetadata:(ImageMetadata *)metadata;
 
 @end
 
@@ -54,6 +54,7 @@ typedef NS_ENUM(NSInteger, CameraViewControllerPreviewSize) {
 @property (nonatomic, weak) id <CameraViewControllerDelegate> delegate;
 @property (nonatomic) AnalyticsTracker *analyticsTracker;
 @property (nonatomic) BOOL savePhotosToCameraRoll;
+@property (nonatomic) BOOL disableSketch;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;

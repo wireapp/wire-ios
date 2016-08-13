@@ -23,13 +23,15 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 
 #import "Constants.h"
-#import "ConfirmImageViewController.h"
+#import "ConfirmAssetViewController.h"
 #import "UIView+PopoverBorder.h"
 #import "UIImagePickerController+GetImage.h"
 #import "FLAnimatedImage.h"
 #import "FLAnimatedImageView.h"
 #import "SketchViewController.h"
 #import "MediaAsset.h"
+
+#import "Wire-Swift.h"
 
 
 
@@ -53,7 +55,7 @@
         @weakify(self);
         
         if (picker.sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
-            ConfirmImageViewController *confirmImageViewController = [[ConfirmImageViewController alloc] init];
+            ConfirmAssetViewController *confirmImageViewController = [[ConfirmAssetViewController alloc] init];
             confirmImageViewController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
             confirmImageViewController.image = image;
             confirmImageViewController.previewTitle = self.previewTitle;
@@ -72,7 +74,14 @@
                 
                 [UIImagePickerController imageDataFromMediaInfo:info resultBlock:^(NSData *imageData) {
                     if (imageData != nil) {
-                        self.imagePickedBlock(imageData);
+                        ImageMetadata *metadata = [[ImageMetadata alloc] init];
+                        metadata.source = picker.sourceType == UIImagePickerControllerSourceTypeCamera ? ConversationMediaPictureSourceCamera : ConversationMediaPictureSourceGallery;
+                        if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+                            metadata.camera = picker.cameraDevice == UIImagePickerControllerCameraDeviceFront ? ConversationMediaPictureCameraFront : ConversationMediaPictureCameraBack;
+                        }
+                        metadata.method = ConversationMediaPictureTakeMethodQuickMenu;
+                        
+                        self.imagePickedBlock(imageData, metadata);
                     }
                 }];
             };
@@ -83,6 +92,7 @@
                 SketchViewController *sketchViewController = [[SketchViewController alloc] init];
                 sketchViewController.sketchTitle = NSLocalizedString(@"image.edit_image", @"");
                 sketchViewController.delegate = self;
+                sketchViewController.source = ConversationMediaSketchSourceCameraGallery;
                 
                 [picker presentViewController:sketchViewController animated:YES completion:^{
                     sketchViewController.canvasBackgroundImage = image;
@@ -132,7 +142,7 @@
     [self.presentingPickerController dismissViewControllerAnimated:YES completion:^{
         @strongify(self);
         
-        ConfirmImageViewController *confirmImageViewController = [[ConfirmImageViewController alloc] init];
+        ConfirmAssetViewController *confirmImageViewController = [[ConfirmAssetViewController alloc] init];
         confirmImageViewController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
         confirmImageViewController.image = image;
         confirmImageViewController.previewTitle = self.previewTitle;
@@ -146,7 +156,12 @@
         };
         
         confirmImageViewController.onConfirm = ^{
-            self.imagePickedBlock(UIImagePNGRepresentation(image));
+            ImageMetadata *metadata = [[ImageMetadata alloc] init];
+            metadata.source = ConversationMediaPictureSourceSketch;
+            metadata.sketchSource = ConversationMediaSketchSourceCameraGallery;
+            metadata.method = ConversationMediaPictureTakeMethodQuickMenu;
+            
+            self.imagePickedBlock(UIImagePNGRepresentation(image), metadata);
         };
         
         [self.presentingPickerController presentViewController:confirmImageViewController animated:YES completion:nil];

@@ -20,30 +20,42 @@
 import Foundation
 import Photos
 import Cartography
+import WireExtensionComponents
+import CocoaLumberjackSwift
+import AVFoundation
 
-@objc public protocol CameraKeyboardViewControllerDelegate: NSObjectProtocol {
-    func cameraKeyboardViewController(controller: CameraKeyboardViewController, didSelectAsset: PHAsset)
-    func cameraKeyboardViewController(controller: CameraKeyboardViewController, didSelectImageData: NSData)
+public protocol CameraKeyboardViewControllerDelegate: class {
+    func cameraKeyboardViewController(controller: CameraKeyboardViewController, didSelectVideo: NSURL, duration: NSTimeInterval)
+    func cameraKeyboardViewController(controller: CameraKeyboardViewController, didSelectImageData: NSData, metadata: ImageMetadata)
     func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(controller: CameraKeyboardViewController)
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(controller: CameraKeyboardViewController)
 }
 
 
 public class CameraKeyboardViewController: UIViewController {
-    private let assetLibrary = AssetLibrary()
+    internal let assetLibrary: AssetLibrary
     
     private let collectionViewLayout = UICollectionViewFlowLayout()
-    private var collectionView: UICollectionView!
+    internal var collectionView: UICollectionView!
     
-    private let leftSidebarView = UIView()
-    private let goBackButton = IconButton()
-    private let rightSidebarView = UIView()
-    private let cameraRollButton = IconButton()
+    internal let goBackButton = IconButton()
+    internal let cameraRollButton = IconButton()
     private var lastLayoutSize = CGSizeZero
-
-    private var leftSidebarRevealed: Bool = false {
+    
+    private let sideMargin: CGFloat = 14
+    
+    private var viewWasHidden: Bool = false
+    
+    private var goBackButtonRevealed: Bool = false {
         didSet {
-            self.leftSidebarView.hidden = !self.leftSidebarRevealed
+            if goBackButtonRevealed {
+                UIView.animateWithDuration(0.35) {
+                    self.goBackButton.alpha = self.goBackButtonRevealed ? 1 : 0
+                }
+            }
+            else {
+                self.goBackButton.alpha = 0
+            }
         }
     }
     
@@ -59,11 +71,13 @@ public class CameraKeyboardViewController: UIViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    @objc init(splitLayoutObservable: SplitLayoutObservable) {
+    init(splitLayoutObservable: SplitLayoutObservable, assetLibrary: AssetLibrary = AssetLibrary()) {
         self.splitLayoutObservable = splitLayoutObservable
+        self.assetLibrary = assetLibrary
         super.init(nibName: nil, bundle: nil)
         self.assetLibrary.delegate = self
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(splitLayoutChanged(_:)), name: SplitLayoutObservableDidChangeToLayoutSizeNotification, object: self.splitLayoutObservable)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -79,64 +93,71 @@ public class CameraKeyboardViewController: UIViewController {
         }
     }
     
+    @objc public func applicationDidBecomeActive(notification: NSNotification!) {
+        self.assetLibrary.refetchAssets()
+    }
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
         
         self.createCollectionView()
         
-        self.view.backgroundColor = UIColor.blackColor()
-        self.view.addSubview(self.collectionView)
-        
-        self.leftSidebarView.translatesAutoresizingMaskIntoConstraints = false
-        self.leftSidebarView.backgroundColor = UIColor(white: 0, alpha: 0.88)
-        self.view.addSubview(self.leftSidebarView)
+        self.view.backgroundColor = UIColor.whiteColor()
         
         self.goBackButton.translatesAutoresizingMaskIntoConstraints = false
+        self.goBackButton.backgroundColor = UIColor(white: 0, alpha: 0.88)
+        self.goBackButton.circular = true
         self.goBackButton.setIcon(.BackArrow, withSize: .Tiny, forState: .Normal)
         self.goBackButton.setIconColor(UIColor.whiteColor(), forState: .Normal)
         self.goBackButton.accessibilityIdentifier = "goBackButton"
         self.goBackButton.addTarget(self, action: #selector(goBackPressed(_:)), forControlEvents: .TouchUpInside)
-        self.leftSidebarView.addSubview(self.goBackButton)
-        
-        self.rightSidebarView.translatesAutoresizingMaskIntoConstraints = false
-        self.rightSidebarView.backgroundColor = UIColor(white: 0, alpha: 0.88)
-        self.view.addSubview(self.rightSidebarView)
         
         self.cameraRollButton.translatesAutoresizingMaskIntoConstraints = false
+        self.cameraRollButton.backgroundColor = UIColor(white: 0, alpha: 0.88)
+        self.cameraRollButton.circular = true
         self.cameraRollButton.setIcon(.Photo, withSize: .Tiny, forState: .Normal)
         self.cameraRollButton.setIconColor(UIColor.whiteColor(), forState: .Normal)
         self.cameraRollButton.accessibilityIdentifier = "cameraRollButton"
         self.cameraRollButton.addTarget(self, action: #selector(openCameraRollPressed(_:)), forControlEvents: .TouchUpInside)
-        self.rightSidebarView.addSubview(self.cameraRollButton)
         
-        constrain(self.view, self.collectionView, self.leftSidebarView, self.rightSidebarView) { view, collectionView, leftSidebarView, rightSidebarView in
+        [self.collectionView, self.goBackButton, self.cameraRollButton].forEach(self.view.addSubview)
+        
+        constrain(self.view, self.collectionView, self.goBackButton, self.cameraRollButton) { view, collectionView, goBackButton, cameraRollButton in
             collectionView.edges == view.edges
             
-            leftSidebarView.left == view.left
-            leftSidebarView.top == view.top
-            leftSidebarView.bottom == view.bottom
-            leftSidebarView.width == 48
+            goBackButton.width == 36
+            goBackButton.height == goBackButton.width
+            goBackButton.left == view.left + self.sideMargin
+            goBackButton.bottom == view.bottom - 18
             
-            rightSidebarView.right == view.right
-            rightSidebarView.top == view.top
-            rightSidebarView.bottom == view.bottom
-            rightSidebarView.width == 48
+            cameraRollButton.width == 36
+            cameraRollButton.height == goBackButton.width
+            cameraRollButton.right == view.right - self.sideMargin
+            cameraRollButton.centerY == goBackButton.centerY
         }
-        
-        constrain(self.leftSidebarView, self.goBackButton) { leftSidebarView, goBackButton in
-            goBackButton.edges == leftSidebarView.edges
+    }
+    
+    public override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.collectionViewLayout.invalidateLayout()
+        self.collectionView.reloadData()
+        DeviceOrientationObserver.sharedInstance().startMonitoringDeviceOrientation()
+        if self.viewWasHidden {
+            self.assetLibrary.refetchAssets()
         }
-        
-        constrain(self.rightSidebarView, self.cameraRollButton) { rightSidebarView, cameraRollButton in
-            cameraRollButton.edges == rightSidebarView.edges
-        }
+    }
+    
+    public override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.viewWasHidden = true
+        DeviceOrientationObserver.sharedInstance().stopMonitoringDeviceOrientation()
     }
     
     private func createCollectionView() {
         self.collectionViewLayout.scrollDirection = .Horizontal
-        self.collectionViewLayout.minimumLineSpacing = 0
-        self.collectionViewLayout.minimumInteritemSpacing = 0
-        self.collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        self.collectionViewLayout.minimumLineSpacing = 1
+        self.collectionViewLayout.minimumInteritemSpacing = 0.5
+        self.collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 1)
         self.collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: collectionViewLayout)
         self.collectionView.registerClass(CameraCell.self, forCellWithReuseIdentifier: CameraCell.reuseIdentifier)
         self.collectionView.registerClass(AssetCell.self, forCellWithReuseIdentifier: AssetCell.reuseIdentifier)
@@ -160,6 +181,102 @@ public class CameraKeyboardViewController: UIViewController {
     @objc func splitLayoutChanged(notification: NSNotification!) {
         self.collectionViewLayout.invalidateLayout()
         self.collectionView.reloadData()
+    }
+    
+    private func forwardSelectedPhotoAsset(asset: PHAsset) {
+        let manager = PHImageManager.defaultManager()
+
+        let options = PHImageRequestOptions()
+        options.deliveryMode = .HighQualityFormat
+        options.networkAccessAllowed = false
+        options.synchronous = false
+        manager.requestImageDataForAsset(asset, options: options, resultHandler: { data, uti, orientation, info in
+            guard let data = data else {
+                let options = PHImageRequestOptions()
+                options.deliveryMode = .HighQualityFormat
+                options.networkAccessAllowed = true
+                options.synchronous = false
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.showLoadingView = true
+                })
+                
+                manager.requestImageDataForAsset(asset, options: options, resultHandler: { data, uti, orientation, info in
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.showLoadingView = false
+                    })
+                    guard let data = data else {
+                        DDLogError("Failure: cannot fetch image")
+                        return
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        let metadata = ImageMetadata()
+                        metadata.camera = .None
+                        metadata.method = ConversationMediaPictureTakeMethod.Keyboard
+                        metadata.source = ConversationMediaPictureSource.Gallery
+                        metadata.sketchSource = .None
+                        
+                        self.delegate?.cameraKeyboardViewController(self, didSelectImageData: data, metadata: metadata)
+                    })
+                })
+                
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                let metadata = ImageMetadata()
+                metadata.camera = .None
+                metadata.method = ConversationMediaPictureTakeMethod.Keyboard
+                metadata.source = ConversationMediaPictureSource.Gallery
+                metadata.sketchSource = .None
+                
+                self.delegate?.cameraKeyboardViewController(self, didSelectImageData: data, metadata: metadata)
+            })
+        })
+    }
+    
+    private func forwardSelectedVideoAsset(asset: PHAsset) {
+        let manager = PHImageManager.defaultManager()
+
+        let options = PHVideoRequestOptions()
+        options.deliveryMode = .HighQualityFormat
+        options.networkAccessAllowed = true
+        options.version = .Current
+
+        self.showLoadingView = true
+        manager.requestExportSessionForVideo(asset, options: options, exportPreset: AVAssetExportPresetMediumQuality) { exportSession, info in
+            
+            dispatch_async(dispatch_get_main_queue(), {
+            
+                guard let exportSession = exportSession else {
+                    self.showLoadingView = false
+                    return
+                }
+                
+                let exportURL = NSURL(fileURLWithPath: (NSTemporaryDirectory() as NSString).stringByAppendingPathComponent("video-export.mp4"))
+                
+                if NSFileManager.defaultManager().fileExistsAtPath(exportURL.path!) {
+                    do {
+                        try NSFileManager.defaultManager().removeItemAtURL(exportURL)
+                    }
+                    catch let error {
+                        DDLogError("Cannot remove \(exportURL): \(error)")
+                    }
+                }
+                
+                exportSession.outputURL = exportURL
+                exportSession.outputFileType = AVFileTypeQuickTimeMovie
+                exportSession.shouldOptimizeForNetworkUse = true
+                exportSession.outputFileType = AVFileTypeMPEG4
+
+                exportSession.exportAsynchronouslyWithCompletionHandler {
+                    self.showLoadingView = false
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.delegate?.cameraKeyboardViewController(self, didSelectVideo: exportSession.outputURL!, duration: CMTimeGetSeconds(exportSession.asset.duration))
+                    })
+                }
+            })
+        }
     }
 }
 
@@ -186,7 +303,9 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
             return cell
         case .Photos:
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(AssetCell.reuseIdentifier, forIndexPath: indexPath) as! AssetCell
-            cell.asset = try! assetLibrary.asset(atIndex: UInt(indexPath.row))
+            if let asset = try? assetLibrary.asset(atIndex: UInt(indexPath.row)) {
+                cell.asset = asset
+            }
             return cell
         }
     }
@@ -203,26 +322,42 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
                 return CGSizeMake(self.splitLayoutObservable.leftViewControllerWidth, self.view.bounds.size.height)
             }
         case .Photos:
-            let photoSize = self.view.bounds.size.height / 3
+            let photoSize = self.view.bounds.size.height / 2 - 0.5
             return CGSizeMake(photoSize, photoSize)
         }
     }
     
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let asset = try! assetLibrary.asset(atIndex: UInt(indexPath.row))
         
-        self.delegate?.cameraKeyboardViewController(self, didSelectAsset: asset)
+        switch CameraKeyboardSection(rawValue: UInt(indexPath.section))! {
+        case .Camera:
+            break
+        case .Photos:
+            let asset = try! assetLibrary.asset(atIndex: UInt(indexPath.row))
+            
+            switch asset.mediaType {
+            case .Video:
+                self.forwardSelectedVideoAsset(asset)
+            
+            case .Image:
+                self.forwardSelectedPhotoAsset(asset)
+                
+            default:
+                // not supported
+                break;
+            }
+        }
     }
     
     public func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         if cell is CameraCell {
-            self.leftSidebarRevealed = true
+            self.goBackButtonRevealed = true
         }
     }
     
     public func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         if cell is CameraCell {
-            self.leftSidebarRevealed = false
+            self.goBackButtonRevealed = false
         }
     }
 }
@@ -234,7 +369,17 @@ extension CameraKeyboardViewController: CameraCellDelegate {
     }
     
     public func cameraCell(cameraCell: CameraCell, didPickImageData imageData: NSData) {
-        self.delegate?.cameraKeyboardViewController(self, didSelectImageData: imageData)
+        let isFrontCamera = cameraCell.cameraController.currentCamera == .Front
+        
+        let camera: ConversationMediaPictureCamera = isFrontCamera ? ConversationMediaPictureCamera.Front : ConversationMediaPictureCamera.Back
+        
+        let metadata = ImageMetadata()
+        metadata.camera = camera
+        metadata.method = ConversationMediaPictureTakeMethod.Keyboard
+        metadata.source = ConversationMediaPictureSource.Camera
+        metadata.sketchSource = .None
+        
+        self.delegate?.cameraKeyboardViewController(self, didSelectImageData: imageData, metadata: metadata)
     }
 }
 
