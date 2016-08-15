@@ -316,7 +316,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.showsMenu = NO;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if (self.menuConfigurationProperties.selectedMenuBlock != nil ) {
+    if (self.menuConfigurationProperties.selectedMenuBlock != nil && !self.layoutProperties.isEditing) {
         self.menuConfigurationProperties.selectedMenuBlock(NO, YES);
     }
 }
@@ -348,6 +348,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     [self becomeFirstResponder];
     
     UIMenuController *menuController = [UIMenuController sharedMenuController];
+    menuController.menuItems = menuConfigurationProperties.additionalItems;
     [menuController setTargetRect:menuConfigurationProperties.targetRect inView:menuConfigurationProperties.targetView];
     [menuController setMenuVisible:YES animated:YES];
     

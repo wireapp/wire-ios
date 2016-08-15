@@ -322,6 +322,9 @@
     else if (action == @selector(select:) || action == @selector(selectAll:)) {
         return NO;
     }
+    else if (action == @selector(edit:)) {
+        return YES;
+    }
     
     return [super canPerformAction:action withSender:sender];
 }
@@ -338,6 +341,16 @@
         [[Analytics shared] tagOpenedMessageAction:MessageActionTypeCopy];
         [[Analytics shared] tagMessageCopy];
         [UIPasteboard generalPasteboard].string = self.message.textMessageData.messageText;
+    }
+}
+
+- (void)edit:(id)sender;
+{
+    if([self.delegate respondsToSelector:@selector(conversationCell:didSelectAction:)]) {
+        self.layoutProperties.editing = YES;
+        [self configureForMessage:self.message layoutProperties:self.layoutProperties];
+        [self.delegate conversationCell:self didSelectAction:ConversationCellActionEdit];
+        // TODO: Add tracking
     }
 }
 
@@ -360,6 +373,7 @@
 - (MenuConfigurationProperties *)menuConfigurationProperties
 {
     MenuConfigurationProperties *properties = [[MenuConfigurationProperties alloc] init];
+    properties.additionalItems = @[[[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.text.edit", @"") action:@selector(edit:)]];
     
     if (self.message.textMessageData.linkPreview && self.linkAttachmentView) {
         properties.targetRect = self.messageTextView.bounds;

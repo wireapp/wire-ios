@@ -25,10 +25,10 @@ private struct InputBarRowConstants {
     let minimumButtonWidthIPhone5: CGFloat = 53
     let minimumButtonWidth: CGFloat = 56
     let buttonsBarHeight: CGFloat = 56
-    let contentLeftMargin = CGFloat(WAZUIMagic.floatForIdentifier("content.left_margin"))
-    let contentRightMargin = CGFloat(WAZUIMagic.floatForIdentifier("content.right_margin"))
+    let contentLeftMargin = WAZUIMagic.cgFloatForIdentifier("content.left_margin")
+    let contentRightMargin = WAZUIMagic.cgFloatForIdentifier("content.right_margin")
     let iconSize = UIImage.sizeForZetaIconSize(.Tiny)
-    let buttonMargin = (CGFloat(WAZUIMagic.floatForIdentifier("content.left_margin")) / 2) - (UIImage.sizeForZetaIconSize(.Tiny) / 2)
+    let buttonMargin = WAZUIMagic.cgFloatForIdentifier("content.left_margin") / 2 - UIImage.sizeForZetaIconSize(.Tiny) / 2
     
     private let screenWidthIPhone5: CGFloat = 320
     
