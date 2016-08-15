@@ -272,6 +272,7 @@ static NSString *const ConversationMessageDeletedCellId     = @"conversationMess
             case ZMSystemMessageTypeParticipantsRemoved:
             case ZMSystemMessageTypeNewConversation:
                 cellIdentifier = ConversationParticipantsCellId;
+                break;
                 
             case ZMSystemMessageTypeMessageDeletedForEveryone:
                 cellIdentifier = ConversationMessageDeletedCellId;
