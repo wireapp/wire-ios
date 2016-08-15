@@ -81,6 +81,34 @@
     }
 }
 
+- (void)testThatItInsertsTheNewMessageAtTheSameIndex
+{
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
+
+    // Add some more messages
+    [conversation appendMessageWithText:@"Foo"];
+    [conversation appendMessageWithText:@"Foo"];
+    [conversation appendMessageWithText:@"Foo"];
+    
+    NSUInteger oldIndex = [conversation.messages indexOfObject:message];
+    
+    // when
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    NSUInteger newIndex = [conversation.messages indexOfObject:newMessage];
+    XCTAssertEqual(newIndex, oldIndex);
+}
+
 
 - (void)testThatItCanEditAMessage_SameSender
 {

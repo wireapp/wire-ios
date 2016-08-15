@@ -78,7 +78,10 @@ extension ZMMessage {
         newMessage.isEncrypted = true
         newMessage.updatedTimestamp = newMessage.serverTimestamp
         newMessage.serverTimestamp = serverTimestamp
-
+        let oldIndex = conversation.messages.indexOfObject(self)
+        let newIndex = conversation.messages.indexOfObject(newMessage)
+        conversation.mutableMessages.moveObjectsAtIndexes(NSIndexSet(index:newIndex), toIndex: oldIndex)
+        
         hiddenInConversation = conversation
         visibleInConversation = nil
         return newMessage
