@@ -135,6 +135,13 @@
     return [NSString stringWithFormat:localizedDeletedFormat, receivedDate];
 }
 
++ (NSString *)formattedEditedDateForMessage:(id <ZMConversationMessage>)message
+{
+    NSString *receivedDate = [self formattedReceivedDateLongVersion:message];
+    NSString *localizedEditedFormat = NSLocalizedString(@"content.system.edited_message_prefix_timestamp", @"");
+    return [NSString stringWithFormat:localizedEditedFormat, receivedDate];
+}
+
 + (BOOL)isPresentableAsNotification:(id<ZMConversationMessage>)message
 {
     BOOL isChatHeadsDisabled = [[Settings sharedSettings] chatHeadsDisabled];

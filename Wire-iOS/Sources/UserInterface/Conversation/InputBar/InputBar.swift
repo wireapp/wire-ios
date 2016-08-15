@@ -19,6 +19,7 @@
 
 import UIKit
 import Cartography
+import Classy
 import WireExtensionComponents
 
 extension UIView {
@@ -75,6 +76,9 @@ private struct InputBarConstants {
     public let buttonContainer = UIView()
     public let buttonBox = UIView()
     public let editingRow = InputBarEditView()
+    
+    public var editingBackgroundColor: UIColor?
+    public var barBackgroundColor: UIColor?
 
     private var contentSizeObserver: NSObject? = nil
     private var rowTopInsetConstraint: NSLayoutConstraint? = nil
@@ -138,6 +142,7 @@ private struct InputBarConstants {
         buttonBox.addSubview(buttonContainer)
         [buttonRow, editingRow].forEach(buttonContainer.addSubview)
         textView.addSubview(fakeCursor)
+        CASStyler.defaultStyler().styleItem(self)
 
         setupViews()
         createConstraints()
@@ -170,6 +175,7 @@ private struct InputBarConstants {
         textView.placeholderTextTransform = .Upper
         
         contentSizeObserver = KeyValueObserver.observeObject(textView, keyPath: "contentSize", target: self, selector: #selector(textViewContentSizeDidChange))
+        updateBackgroundColor()
     }
     
     private func createConstraints() {
@@ -285,23 +291,35 @@ private struct InputBarConstants {
     
     // MARK: - InputBarState
     
+    public func setEditingWithText(text: String) {
+        inputbarState = .Editing
+        textView.text = text
+    }
+    
     func updateInputBar(withState state: InputBarState) {
         if state == .Writing {
             textView.text = nil
+        } else {
+            textView.becomeFirstResponder()
         }
 
         updateEditViewState()
         rowTopInsetConstraint?.constant = state == .Writing ? -constants.buttonsBarHeight : 0
         UIView.wr_animateWithEasing(RBBEasingFunctionEaseInOutExpo, duration: 0.35, animations: layoutIfNeeded) { _ in
             UIView.animateWithDuration(0.2) {
-                self.backgroundColor = self.backgroundColor(forInputBarState: state)
+                self.updateBackgroundColor()
             }
         }
     }
     
-    func backgroundColor(forInputBarState state: InputBarState) -> UIColor {
-        let editingColor = UIColor.yellowColor().mix(.whiteColor(), amount: 0.7)
-        return state == .Editing ? editingColor : .whiteColor()
+    func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
+        guard let writingColor = barBackgroundColor, editingColor = editingBackgroundColor else { return nil }
+        let mixed = writingColor.mix(editingColor, amount: 0.16)
+        return state == .Editing ? mixed : writingColor
+    }
+    
+    func updateBackgroundColor() {
+        backgroundColor = backgroundColor(forInputBarState: inputbarState)
     }
     
     // MARK: – Editing View State

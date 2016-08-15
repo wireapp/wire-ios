@@ -582,8 +582,7 @@
     NSString *text = message.textMessageData.messageText;
     
     if (nil != text) {
-        [self.inputBarController.inputBar setInputbarState:InputBarStateEditing];
-        self.inputBarController.inputBar.textView.text = text;
+        [self.inputBarController editMessage:message];
     }
 }
 
@@ -668,6 +667,20 @@
 - (BOOL)conversationInputBarViewControllerShouldEndEditing:(ConversationInputBarViewController *)controller
 {
     return YES;
+}
+
+- (void)conversationInputBarViewControllerDidFinishEditingMessage:(id<ZMConversationMessage>)message withText:(NSString *)newText
+{
+    [self.contentViewController didFinishEditingMessage:message];
+    
+    [[ZMUserSession sharedSession] enqueueChanges:^{
+        [ZMMessage edit:message newText:newText];
+    }];
+}
+
+- (void)conversationInputBarViewControllerDidCancelEditingMessage:(id<ZMConversationMessage>)message
+{
+    [self.contentViewController didFinishEditingMessage:message];
 }
 
 @end

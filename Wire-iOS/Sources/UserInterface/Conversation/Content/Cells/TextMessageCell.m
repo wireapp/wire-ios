@@ -55,6 +55,7 @@
 @property (nonatomic, strong) MessageStatusIndicator *messageStatusIndicator;
 @property (nonatomic, strong) TextViewWithDataDetectorWorkaround *messageTextView;
 @property (nonatomic, strong) UIView *linkAttachmentContainer;
+@property (nonatomic, strong) UIImageView *editedImageView;
 @property (nonatomic, strong) LinkAttachment *linkAttachment;
 @property (nonatomic, strong) UIViewController <LinkAttachmentPresenter> *linkAttachmentViewController;
 @property (nonatomic, strong) MessageTimestampView *messageTimestampView;
@@ -101,10 +102,11 @@
     self.messageTextView.textViewInteractionDelegate = self;
     [self.messageContentView addSubview:self.messageTextView];
     
+    ColorScheme *scheme = ColorScheme.defaultColorScheme;
     self.messageTextView.dataDetectorTypes = UIDataDetectorTypeNone;
     self.messageTextView.editable = NO;
     self.messageTextView.selectable = YES;
-    self.messageTextView.backgroundColor = [[ColorScheme defaultColorScheme] colorWithName:ColorSchemeColorBackground];
+    self.messageTextView.backgroundColor = [scheme colorWithName:ColorSchemeColorBackground];
     self.messageTextView.scrollEnabled = NO;
     self.messageTextView.textContainerInset = UIEdgeInsetsZero;
     self.messageTextView.textContainer.lineFragmentPadding = 0;
@@ -124,6 +126,12 @@
     self.messageTimestampView = [[MessageTimestampView alloc] init];
     self.messageTimestampView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.messageContentView addSubview:self.messageTimestampView];
+    
+    self.editedImageView = [[UIImageView alloc] init];
+    self.editedImageView.image = [UIImage imageForIcon:ZetaIconTypePencil
+                                              iconSize:ZetaIconSizeMessageStatus
+                                                 color:[scheme colorWithName:ColorSchemeColorIconNormal]];
+    [self.contentView addSubview:self.editedImageView];
     
     UILongPressGestureRecognizer *attachmentLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleAttachmentLongPress:)];
     [self.linkAttachmentContainer addGestureRecognizer:attachmentLongPressRecognizer];
@@ -153,6 +161,9 @@
     [self.messageTimestampView autoPinEdgeToSuperviewMargin:ALEdgeRight];
     [self.messageTimestampView autoPinEdgeToSuperviewMargin:ALEdgeLeft];
     [self.messageTimestampView autoPinEdgeToSuperviewEdge:ALEdgeBottom];
+
+    [self.editedImageView autoPinEdge:ALEdgeLeft toEdge:ALEdgeRight ofView:self.authorLabel withOffset:8];
+    [self.editedImageView autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.authorLabel];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
@@ -178,6 +189,12 @@
     self.messageTimestampView.alpha = self.selected ? 1 : 0;
 }
 
+- (void)setContentEditing:(BOOL)contentEditing
+{
+    [super setContentEditing:contentEditing];
+    [self configureForMessage:self.message layoutProperties:self.layoutProperties];
+}
+
 - (void)configureForMessage:(id<ZMConversationMessage>)message layoutProperties:(ConversationCellLayoutProperties *)layoutProperties
 {
     if ( ! [Message isTextMessage:message]) {
@@ -199,7 +216,8 @@
     [self.messageTextView layoutIfNeeded];
     self.messageTimestampView.timestampLabel.text = [Message formattedReceivedDateLongVersion:self.message];
     self.textViewHeightConstraint.active = attributedMessageText.length == 0;
-    
+    self.editedImageView.hidden = nil == self.message.updatedAt;
+
     LinkPreview *linkPreview = textMesssageData.linkPreview;
     
     if (self.linkAttachmentView != nil) {
@@ -245,6 +263,7 @@
         self.messageStatusIndicator.deliveryState = message.deliveryState;
     }
     
+    [self updateTimestampLabel];
     [self updateTextMessageConstraintConstants];
 }
 
@@ -279,7 +298,7 @@
     // If a text message changes, the only thing that can change at the moment is its delivery state
     if (change.deliveryStateChanged) {
         self.messageStatusIndicator.deliveryState = change.message.deliveryState;
-        self.messageTimestampView.timestampLabel.text = [Message formattedReceivedDateLongVersion:self.message];
+        [self updateTimestampLabel];
     }
     
     if (change.linkPreviewChanged && self.linkAttachmentView == nil) {
@@ -304,6 +323,15 @@
     return needsLayout;
 }
 
+- (void)updateTimestampLabel
+{
+    if (nil != self.message.updatedAt) {
+        self.messageTimestampView.timestampLabel.text = [Message formattedEditedDateForMessage:self.message];
+    } else {
+        self.messageTimestampView.timestampLabel.text = [Message formattedReceivedDateLongVersion:self.message];
+    }
+}
+
 
 #pragma mark - Copy/Paste
 
@@ -322,7 +350,7 @@
     else if (action == @selector(select:) || action == @selector(selectAll:)) {
         return NO;
     }
-    else if (action == @selector(edit:)) {
+    else if (action == @selector(edit:) && self.message.sender.isSelfUser) {
         return YES;
     }
     
@@ -347,8 +375,7 @@
 - (void)edit:(id)sender;
 {
     if([self.delegate respondsToSelector:@selector(conversationCell:didSelectAction:)]) {
-        self.layoutProperties.editing = YES;
-        [self configureForMessage:self.message layoutProperties:self.layoutProperties];
+        self.contentEditing = YES;
         [self.delegate conversationCell:self didSelectAction:ConversationCellActionEdit];
         // TODO: Add tracking
     }
@@ -373,7 +400,7 @@
 - (MenuConfigurationProperties *)menuConfigurationProperties
 {
     MenuConfigurationProperties *properties = [[MenuConfigurationProperties alloc] init];
-    properties.additionalItems = @[[[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.text.edit", @"") action:@selector(edit:)]];
+    properties.additionalItems = @[[[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"message.menu.edit.title", @"") action:@selector(edit:)]];
     
     if (self.message.textMessageData.linkPreview && self.linkAttachmentView) {
         properties.targetRect = self.messageTextView.bounds;

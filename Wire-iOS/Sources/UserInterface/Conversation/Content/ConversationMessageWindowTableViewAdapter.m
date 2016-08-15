@@ -122,7 +122,7 @@ static NSString *const ConversationMessageDeletedCellId     = @"conversationMess
         [self.tableView beginUpdates];
         
         if (change.deletedIndexes.count) {
-            [self.tableView deleteRowsAtIndexPaths:[change.deletedIndexes indexPaths] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [self.tableView deleteRowsAtIndexPaths:[change.deletedIndexes indexPaths] withRowAnimation:UITableViewRowAnimationFade];
         }
         
         if (change.insertedIndexes.count) {
@@ -144,6 +144,12 @@ static NSString *const ConversationMessageDeletedCellId     = @"conversationMess
         
         [self.tableView endUpdates];
     }
+}
+
+- (void)setEditingMessage:(ZMMessage *)editingMessage
+{
+    _editingMessage = editingMessage;
+    [self reconfigureVisibleCells];
 }
 
 - (void)reconfigureVisibleCells
@@ -298,6 +304,7 @@ static NSString *const ConversationMessageDeletedCellId     = @"conversationMess
     ConversationCellLayoutProperties *layoutProperties = [self.messageWindow layoutPropertiesForMessage:message lastUnreadMessage:self.lastUnreadMessage];
     
     conversationCell.selected = [message isEqual:self.selectedMessage];
+    conversationCell.contentEditing = [message isEqual:self.editingMessage];
     [conversationCell configureForMessage:message layoutProperties:layoutProperties];
 }
 

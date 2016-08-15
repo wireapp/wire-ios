@@ -85,6 +85,9 @@
 @end
 
 @interface ConversationInputBarViewController (Editing) <InputBarEditViewDelegate>
+
+- (void)sendEditedMessageAndUpdateStateWithText:(NSString *)text;
+
 @end
 
 @interface ConversationInputBarViewController (ZMConversationObserver) <ZMConversationObserver>
@@ -133,6 +136,7 @@
 @property (nonatomic) ButtonWithLargerHitArea *verifiedShieldButton;
 @property (nonatomic) NSLayoutConstraint *collapseViewConstraint;
 
+@property (nonatomic) id <ZMConversationMessage> editingMessage;
 @property (nonatomic) InputBar *inputBar;
 @property (nonatomic) ZMConversation *conversation;
 
@@ -427,6 +431,13 @@
     }
 }
 
+- (void)editMessage:(id<ZMConversationMessage>)message
+{
+    if (message.textMessageData.messageText) {
+        self.editingMessage = message;
+        [self.inputBar setEditingWithText:message.textMessageData.messageText];
+    }
+}
 
 #pragma mark - Input views handling
 
@@ -578,11 +589,13 @@
             
             NSArray *args = candidateText.args;
             if(args.count > 0) {
-                
                 [self runCommand:args];
             }
-            else {
+            else if (self.inputBar.inputbarState == InputBarStateWriting) {
                 [self.sendController sendTextMessage:candidateText];
+            }
+            else if (self.inputBar.inputbarState == InputBarStateEditing && nil != self.editingMessage) {
+                [self sendEditedMessageAndUpdateStateWithText:candidateText];
             }
         }
 
@@ -960,7 +973,7 @@
         return;
     }
     
-    [self.sendController  sendTextMessage:[NSString stringWithFormat:@"/%@", [args componentsJoinedByString:@" "]]];
+    [self.sendController sendTextMessage:[NSString stringWithFormat:@"/%@", [args componentsJoinedByString:@" "]]];
 }
 
 @end
@@ -1017,12 +1030,22 @@
             break;
             
         case EditButtonTypeCancel:
+            [self.delegate conversationInputBarViewControllerDidCancelEditingMessage:self.editingMessage];
+            self.editingMessage = nil;
             self.inputBar.inputbarState = InputBarStateWriting;
             break;
             
-        case EditButtonTypeConfirm: // TODO: Edit message
+        case EditButtonTypeConfirm:
+            [self sendEditedMessageAndUpdateStateWithText:self.inputBar.textView.text];
             break;
     }
+}
+
+- (void)sendEditedMessageAndUpdateStateWithText:(NSString *)text
+{
+    [self.delegate conversationInputBarViewControllerDidFinishEditingMessage:self.editingMessage withText:text];
+    self.editingMessage = nil;
+    self.inputBar.inputbarState = InputBarStateWriting;
 }
 
 @end

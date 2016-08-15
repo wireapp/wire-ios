@@ -184,6 +184,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.topMarginConstraint.constant = 0;
     self.authorImageTopMarginConstraint.constant = 0;
     self.message = nil;
+    self.contentEditing = NO;
 }
 
 - (void)willDisplayInTableView
@@ -316,14 +317,26 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.showsMenu = NO;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if (self.menuConfigurationProperties.selectedMenuBlock != nil && !self.layoutProperties.isEditing) {
+    if (self.menuConfigurationProperties.selectedMenuBlock != nil && !self.contentEditing) {
         self.menuConfigurationProperties.selectedMenuBlock(NO, YES);
+    }
+}
+
+- (void)setContentEditing:(BOOL)contentEditing
+{
+    if (_contentEditing == contentEditing) {
+        return;
+    }
+
+    _contentEditing = contentEditing;
+
+    if (self.menuConfigurationProperties.selectedMenuBlock != nil) {
+        self.menuConfigurationProperties.selectedMenuBlock(contentEditing, YES);
     }
 }
 
 - (void)showMenu;
 {
-    
     MenuConfigurationProperties *menuConfigurationProperties = [self menuConfigurationProperties];
     if (!menuConfigurationProperties) {
         return;
