@@ -108,7 +108,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     if (self.nonce == nil) {
         self.nonce = [NSUUID uuidWithTransportString:messageData.genericMessage.messageId];
     }
-    // TODO Sabine: Do we really want to set locally modified keys on the syncMOC?
+    
     if (self.managedObjectContext.zm_isUserInterfaceContext) {
         [self setLocallyModifiedKeys:[NSSet setWithObject:ClientMessageDataSetKey]];
     }
