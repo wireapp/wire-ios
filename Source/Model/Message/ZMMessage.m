@@ -405,7 +405,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
         case ZMUpdateEventConversationClientMessageAdd:
         case ZMUpdateEventConversationOtrMessageAdd:
         {
-            //if event is otr message than payload should be already decrypted and should contain generic message data
+            //if event is otr message then payload should be already decrypted and should contain generic message data
             NSString *base64Content = [payload stringForKey:@"data"];
             ZMGenericMessage *message;
             @try {
