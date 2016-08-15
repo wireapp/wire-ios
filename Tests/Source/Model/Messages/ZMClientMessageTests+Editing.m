@@ -459,6 +459,8 @@
     XCTAssertEqualObjects(conversation.lastModifiedDate, oldDate);
     XCTAssertEqualObjects(conversation.lastServerTimeStamp, oldDate);
     XCTAssertEqualObjects(newMessage.serverTimestamp, oldDate);
+    XCTAssertEqualObjects(newMessage.updatedAt, updateEvent.timeStamp);
+
     XCTAssertEqual(conversation.estimatedUnreadCount, 0u);
 }
 

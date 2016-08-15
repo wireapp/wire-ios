@@ -200,8 +200,9 @@ NSString * const DeliveredKey = @"delivered";
     
     if (clearedMessage == nil) {
         [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:clientMessage.delivered];
-    } else {
+    } else if ([clientMessage isKindOfClass:[ZMClientMessage class]]) {
         [clientMessage updateWithTimestamp:clearedMessage.serverTimestamp senderUUID:clearedMessage.sender.remoteIdentifier eventID:nil forConversation:conversation isUpdatingExistingMessage:NO];
+        [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
     }
     
     return clientMessage;
