@@ -217,13 +217,10 @@
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         NOT_USED(session);
-        XCTAssertEqual(user1.connectionsTo.count, 2u); // new connection should be created
-        MockConnection *firstConnection = [user1.connectionsTo firstObject];
-
-        XCTAssertNil(firstConnection.conversation);
-        MockConnection *newConnection = [user1.connectionsTo lastObject];
-        XCTAssertEqualObjects(newConnection.status, @"sent");
-        XCTAssertEqual(newConnection.conversation, conversation);
+        XCTAssertEqual(user1.connectionsTo.count, 1u); // new connection should not be created after resending
+        MockConnection *connection = [user1.connectionsTo lastObject];
+        XCTAssertEqualObjects(connection.status, @"sent");
+        XCTAssertEqualObjects(connection.conversation, conversation);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 }

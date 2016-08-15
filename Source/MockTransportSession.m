@@ -322,6 +322,17 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     [request completeWithResponse:response];
 }
 
+- (MockConnection *)connectionFromUserIdentifier:(NSString *)fromUserIdentifier toUserIdentifier:(NSString *)toUserIdentifier;
+{
+    NSFetchRequest *request = [MockConnection sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat:@"from.identifier == %@ AND to.identifier == %@", fromUserIdentifier, toUserIdentifier];
+    
+    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    RequireString(connections.count <= 1, "Too many connections with one identifier");
+    
+    return [connections firstObject];
+}
+
 @end
 
 
@@ -1041,7 +1052,14 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             break;
         }
     }
-    MockConnection *connection = [MockConnection connectionInMOC:self.managedObjectContext from:fromUser to:toUser message:message];
+    
+    MockConnection *connection = [self connectionFromUserIdentifier:fromUser.identifier toUserIdentifier:toUser.identifier];
+    if (nil == connection) {
+        connection = [MockConnection connectionInMOC:self.managedObjectContext from:fromUser to:toUser message:message];
+    } else {
+        connection.message = message;
+        connection.conversation.type = ZMTConversationTypeConnection;
+    }
     connection.status = @"sent";
     MockConversation *conversation = existingConversation ?: [MockConversation conversationInMoc:self.managedObjectContext withCreator:fromUser otherUsers:@[] type:ZMTConversationTypeConnection];
     [conversation connectRequestByUser:fromUser toUser:toUser message:message];

@@ -27,16 +27,6 @@
 
 @implementation MockTransportSession (ConnectionsHelper)
 
-- (MockConnection *)connectionByIdentifier:(NSString *)identifier
-{
-    NSFetchRequest *request = [MockConnection sortedFetchRequest];
-    request.predicate = [NSPredicate predicateWithFormat:@"to.identifier == %@", identifier];
-    
-    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    RequireString(connections.count <= 1, "Too many connections with one identifier");
-    
-    return connections.count > 0 ? connections[0] : nil;
-}
 
 
 /// handles /connections
@@ -63,7 +53,7 @@
 - (ZMTransportResponse *)processPutConnection:(TestTransportSessionRequest *)sessionRequest
 {
     NSString *remoteID = sessionRequest.pathComponents[0];
-    MockConnection *connection = [self connectionByIdentifier:remoteID];
+    MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }
@@ -96,7 +86,8 @@
                     break;
                     
                 default:
-                connection.conversation.type = ZMTConversationTypeInvalid;
+                    connection.conversation.type = ZMTConversationTypeInvalid;
+                    break;	
             }
         }
     }
@@ -109,7 +100,7 @@
 - (ZMTransportResponse *)processGetSpecifiedConnection:(TestTransportSessionRequest *)sessionRequest
 {
     NSString *remoteID = sessionRequest.pathComponents[0];
-    MockConnection *connection = [self connectionByIdentifier:remoteID];
+    MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }
