@@ -388,6 +388,10 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     if (message == nil || ![senderID isEqual:message.sender.remoteIdentifier]) {
         return nil;
     }
+    // If the original message was previously hidden locally by the user, we should not reinsert it with an edit message
+    if ([message.hiddenInConversation isEqual:conversation]) {
+        return nil;
+    }
     [message removeMessage];
     return message;
 }
