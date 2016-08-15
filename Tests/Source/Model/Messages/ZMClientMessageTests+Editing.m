@@ -464,4 +464,43 @@
     XCTAssertEqual(conversation.estimatedUnreadCount, 0u);
 }
 
+- (void)testThatItDoesNotReinsertAMessageThatHasBeenPreviouslyHiddenLocally
+{
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    NSDate *oldDate = [NSDate dateWithTimeIntervalSinceNow:-20];
+    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    sender.remoteIdentifier = [NSUUID createUUID];
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    // insert message locally
+    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    message.sender = sender;
+    message.serverTimestamp = oldDate;
+    
+    // hide message locally
+    [ZMMessage hideMessage:message];
+    XCTAssertNil(message.visibleInConversation);
+    XCTAssertEqual(message.hiddenInConversation, conversation);
+    
+    ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:sender.remoteIdentifier newText:newText];
+    
+    // when
+    __block ZMClientMessage *newMessage;
+    
+    [self performPretendingUiMocIsSyncMoc:^{
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertNil(newMessage);
+    XCTAssertNil(message.visibleInConversation);
+    XCTAssertEqual(message.hiddenInConversation, conversation);
+}
+
+
 @end
