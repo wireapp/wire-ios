@@ -577,6 +577,16 @@
     }];
 }
 
+- (void)conversationContentViewController:(ConversationContentViewController *)contentViewController didTriggerEditingMessage:(ZMMessage *)message
+{
+    NSString *text = message.textMessageData.messageText;
+    
+    if (nil != text) {
+        [self.inputBarController.inputBar setInputbarState:InputBarStateEditing];
+        self.inputBarController.inputBar.textView.text = text;
+    }
+}
+
 @end
 
 

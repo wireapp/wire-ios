@@ -74,10 +74,9 @@ private struct InputBarConstants {
     public let buttonRow: InputBarButtonsView
     public let buttonContainer = UIView()
     public let buttonBox = UIView()
-    public let editingRow = UIView()
+    public let editingRow = InputBarEditView()
 
     private var contentSizeObserver: NSObject? = nil
-    private var textObserver: NSObject? = nil
     private var rowTopInsetConstraint: NSLayoutConstraint? = nil
     
     private let fakeCursor = UIView()
@@ -124,7 +123,6 @@ private struct InputBarConstants {
     deinit {
         notificationCenter.removeObserver(self)
         contentSizeObserver = nil
-        textObserver = nil
     }
 
     required public init(buttons: [UIButton]) {
@@ -134,22 +132,21 @@ private struct InputBarConstants {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapBackground))
         addGestureRecognizer(tapGestureRecognizer)
         buttonRow.clipsToBounds = true
+        buttonBox.clipsToBounds = true
         
         [leftAccessoryView, textView, rightAccessoryView, inputBarSeparator, buttonBox, buttonRowSeparator].forEach(addSubview)
         buttonBox.addSubview(buttonContainer)
         [buttonRow, editingRow].forEach(buttonContainer.addSubview)
-        editingRow.backgroundColor = .yellowColor()
         textView.addSubview(fakeCursor)
 
         setupViews()
         createConstraints()
         updateTopSeparator()
 
+        notificationCenter.addObserver(self, selector: #selector(textViewTextDidChange), name: UITextViewTextDidChangeNotification, object: textView)
         notificationCenter.addObserver(self, selector: #selector(textViewDidBeginEditing), name: UITextViewTextDidBeginEditingNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(textViewDidEndEditing), name: UITextViewTextDidEndEditingNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplicationDidBecomeActiveNotification, object: nil)
-        
-        debug()
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -173,7 +170,6 @@ private struct InputBarConstants {
         textView.placeholderTextTransform = .Upper
         
         contentSizeObserver = KeyValueObserver.observeObject(textView, keyPath: "contentSize", target: self, selector: #selector(textViewContentSizeDidChange))
-        textObserver = KeyValueObserver.observeObject(textView, keyPath: "text", target: self, selector: #selector(textViewTextDidChange))
     }
     
     private func createConstraints() {
@@ -290,31 +286,59 @@ private struct InputBarConstants {
     // MARK: - InputBarState
     
     func updateInputBar(withState state: InputBarState) {
-        rowTopInsetConstraint?.constant = state == .Writing ? constants.buttonsBarHeight : 0
-        
-        backgroundColor = backgroundColor(forInputBarState: state)
+        if state == .Writing {
+            textView.text = nil
+        }
+
+        updateEditViewState()
+        rowTopInsetConstraint?.constant = state == .Writing ? -constants.buttonsBarHeight : 0
+        UIView.wr_animateWithEasing(RBBEasingFunctionEaseInOutExpo, duration: 0.35, animations: layoutIfNeeded) { _ in
+            UIView.animateWithDuration(0.2) {
+                self.backgroundColor = self.backgroundColor(forInputBarState: state)
+            }
+        }
     }
     
     func backgroundColor(forInputBarState state: InputBarState) -> UIColor {
-        return state == .Editing ? .yellowColor() : .whiteColor() // TODO: Use classy
+        let editingColor = UIColor.yellowColor().mix(.whiteColor(), amount: 0.7)
+        return state == .Editing ? editingColor : .whiteColor()
+    }
+    
+    // MARK: – Editing View State
+    
+    public func undo() {
+        guard inputbarState == .Editing else { return }
+        guard let undoManager = textView.undoManager where undoManager.canUndo else { return }
+        undoManager.undo()
+        updateEditViewState()
+    }
+    
+    func updateEditViewState() {
+        guard inputbarState == .Editing else { return }
+        let hasChanges = textView.undoManager?.canUndo ?? false
+        editingRow.undoButton.enabled = hasChanges
+        editingRow.confirmButton.enabled = hasChanges
     }
     
 }
 
 extension InputBar {
-    
+
     func textViewTextDidChange(notification: NSNotification) {
         updateFakeCursorVisibility()
+        updateEditViewState()
     }
     
     func textViewDidBeginEditing(notification: NSNotification) {
         updateFakeCursorVisibility(notification.object as? UIResponder)
+        updateEditViewState()
     }
     
     func textViewDidEndEditing(notification: NSNotification) {
         updateFakeCursorVisibility()
+        updateEditViewState()
     }
-    
+
 }
 
 extension InputBar {

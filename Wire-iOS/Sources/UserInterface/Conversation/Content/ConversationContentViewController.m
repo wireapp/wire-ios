@@ -796,6 +796,11 @@
             [self openDocumentControllerForMessage:cell.message atIndexPath:[self.tableView indexPathForCell:cell] withPreview:NO];
         }
             break;
+        case ConversationCellActionEdit:
+        {
+            [self.delegate conversationContentViewController:self didTriggerEditingMessage:cell.message];
+        }
+            break;
     }
 }
 

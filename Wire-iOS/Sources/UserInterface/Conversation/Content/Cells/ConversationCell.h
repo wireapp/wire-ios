@@ -35,6 +35,7 @@ typedef NS_ENUM(NSUInteger, ConversationCellAction) {
     ConversationCellActionDelete,
     ConversationCellActionPresent,
     ConversationCellActionSave,
+    ConversationCellActionEdit
 };
 
 extern const CGFloat ConversationCellSelectedOpacity;
@@ -47,12 +48,14 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 @property (nonatomic) CGRect targetRect;
 @property (nonatomic) UIView *targetView;
 @property (nonatomic) SelectedMenuBlock selectedMenuBlock;
+@property (nonatomic) NSArray <UIMenuItem *> *additionalItems;
 
 @end
 
 @interface ConversationCellLayoutProperties : NSObject
 
 @property (nonatomic, assign) BOOL showSender;
+@property (nonatomic, assign, getter=isEditing) BOOL editing;
 @property (nonatomic, assign) BOOL showBurstTimestamp;
 @property (nonatomic, assign) BOOL showUnreadMarker;
 @property (nonatomic, assign) CGFloat topPadding;

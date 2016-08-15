@@ -84,6 +84,9 @@
 
 @end
 
+@interface ConversationInputBarViewController (Editing) <InputBarEditViewDelegate>
+@end
+
 @interface ConversationInputBarViewController (ZMConversationObserver) <ZMConversationObserver>
 @end
 
@@ -283,6 +286,7 @@
     
     [self.view addSubview:self.inputBar];
     [self.inputBar autoPinEdgesToSuperviewEdges];
+    self.inputBar.editingRow.delegate = self;
 }
 
 - (void)createSingleTapGestureRecognizer
@@ -389,7 +393,7 @@
 {
     const NSUInteger textLength = self.inputBar.textView.text.length;
     
-    self.gifButton.hidden = ! (textLength > 0 && textLength < 20);
+    self.gifButton.hidden = ! (textLength > 0 && textLength < 20) || self.inputBar.inputbarState == InputBarStateEditing;
     self.verifiedShieldButton.hidden = self.conversation.securityLevel != ZMConversationSecurityLevelSecure || self.inputBar.textView.isFirstResponder || textLength > 0;
 }
 
@@ -1003,3 +1007,22 @@
 @end
 
 
+@implementation ConversationInputBarViewController (Editing)
+
+- (void)inputBarEditView:(InputBarEditView *)editView didTapButtonWithType:(EditButtonType)buttonType
+{
+    switch (buttonType) {
+        case EditButtonTypeUndo:
+            [self.inputBar undo];
+            break;
+            
+        case EditButtonTypeCancel:
+            self.inputBar.inputbarState = InputBarStateWriting;
+            break;
+            
+        case EditButtonTypeConfirm: // TODO: Edit message
+            break;
+    }
+}
+
+@end

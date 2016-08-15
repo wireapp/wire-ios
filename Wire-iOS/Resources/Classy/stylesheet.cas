@@ -840,7 +840,7 @@ InputBar: {
         font: $font-normal-light;
         placeholderFont: $font-small-light;
         textColor: $color-text-foreground;
-        backgroundColor: $color-text-background;
+        backgroundColor: clear;
         placeholderTextColor: $color-text-placeholder;
     }
 }
