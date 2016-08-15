@@ -672,9 +672,13 @@
 - (void)conversationInputBarViewControllerDidFinishEditingMessage:(id<ZMConversationMessage>)message withText:(NSString *)newText
 {
     [self.contentViewController didFinishEditingMessage:message];
-    
+
     [[ZMUserSession sharedSession] enqueueChanges:^{
-        [ZMMessage edit:message newText:newText];
+        if (newText == nil || [newText isEqualToString:@""]) {
+            [ZMMessage deleteForEveryone:message];
+        } else {
+            [ZMMessage edit:message newText:newText];
+        }
     }];
 }
 
