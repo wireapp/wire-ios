@@ -244,8 +244,8 @@ private struct InputBarConstants {
         inputBarSeparator.hidden = !textIsOverflowing && !separatorEnabled
     }
     
-    private func updateFakeCursorVisibility(firstReponder: UIResponder? = nil) {
-        fakeCursor.hidden = textView.isFirstResponder() || textView.text.characters.count != 0 || firstReponder != nil
+    private func updateFakeCursorVisibility(firstResponder: UIResponder? = nil) {
+        fakeCursor.hidden = textView.isFirstResponder() || textView.text.characters.count != 0 || firstResponder != nil
     }
     
     func textViewContentSizeDidChange(notification: NSNotification) {
@@ -268,7 +268,7 @@ private struct InputBarConstants {
             return super.pointInside(point, withEvent: event)
         }
     }
-    
+
     // MARK: - InputBarState
 
     private func updateInputBar(withState state: InputBarState) {
@@ -288,7 +288,9 @@ private struct InputBarConstants {
         UIView.wr_animateWithEasing(RBBEasingFunctionEaseInOutExpo, duration: 0.3, animations: layoutIfNeeded)
         UIView.transitionWithView(self.textView, duration: 0.1, options: [], animations: textViewAnimations) { _ in
             UIView.animateWithDuration(0.2, delay: 0.1, options:  .CurveEaseInOut, animations: self.updateBackgroundColor) { _ in
-                self.textView.becomeFirstResponder()
+                if case .Editing(_) = state {
+                    self.textView.becomeFirstResponder()
+                }
             }
         }
     }

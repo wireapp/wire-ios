@@ -32,6 +32,24 @@ extension ConversationInputBarViewController {
         mode = .TextInput
         editingMessage = message
         inputBar.inputbarState = .Editing(originalText: text)
+        NSNotificationCenter.defaultCenter().addObserver(
+            self,
+            selector: #selector(endEditingMessageIfNeeded),
+            name: ConversationInputBarViewControllerEndEditingNotification,
+            object: nil
+        )
+    }
+    
+    func endEditingMessageIfNeeded() {
+        guard nil != editingMessage else { return }
+        delegate.conversationInputBarViewControllerDidCancelEditingMessage?(editingMessage)
+        editingMessage = nil
+        inputBar.inputbarState = .Writing
+        NSNotificationCenter.defaultCenter().removeObserver(
+            self,
+            name: ConversationInputBarViewControllerEndEditingNotification,
+            object: nil
+        )
     }
 
 }
@@ -41,14 +59,9 @@ extension ConversationInputBarViewController: InputBarEditViewDelegate {
 
     public func inputBarEditView(editView: InputBarEditView, didTapButtonWithType buttonType: EditButtonType) {
         switch buttonType {
-        case .Undo:
-            inputBar.undo()
-        case .Cancel:
-            delegate.conversationInputBarViewControllerDidCancelEditingMessage?(editingMessage)
-            editingMessage = nil
-            inputBar.inputbarState = .Writing
-        case .Confirm:
-            sendEditedMessageAndUpdateState(withText: inputBar.textView.text)
+        case .Undo: inputBar.undo()
+        case .Cancel: endEditingMessageIfNeeded()
+        case .Confirm: sendEditedMessageAndUpdateState(withText: inputBar.textView.text)
         }
     }
 

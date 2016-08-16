@@ -806,6 +806,11 @@
     }
 }
 
+- (void)conversationCell:(ConversationCell *)cell willOpenMenuForCellType:(MessageType)messageType;
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:ConversationInputBarViewControllerEndEditingNotification object:nil];
+}
+
 - (void)conversationCell:(ConversationCell *)cell didOpenMenuForCellType:(MessageType)messageType;
 {
     ConversationType conversationType = self.conversation.conversationType == ZMConversationTypeGroup ? ConversationTypeGroup : ConversationTypeOneToOne;

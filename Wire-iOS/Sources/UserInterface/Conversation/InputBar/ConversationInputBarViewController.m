@@ -110,6 +110,10 @@
 
 @end
 
+
+NSString * const ConversationInputBarViewControllerEndEditingNotification = @"ConversationInputBarViewControllerEndEditingNotification";
+
+
 @interface ConversationInputBarViewController ()
 
 @property (nonatomic) IconButton *audioButton;
@@ -216,7 +220,7 @@
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-    
+    [self endEditingMessageIfNeeded];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
@@ -389,7 +393,6 @@
 - (void)updateRightAccessoryView
 {
     const NSUInteger textLength = self.inputBar.textView.text.length;
-    
     self.gifButton.hidden = ! (textLength > 0 && textLength < 20) || self.inputBar.isEditing;
     self.verifiedShieldButton.hidden = self.conversation.securityLevel != ZMConversationSecurityLevelSecure || self.inputBar.textView.isFirstResponder || textLength > 0;
 }
