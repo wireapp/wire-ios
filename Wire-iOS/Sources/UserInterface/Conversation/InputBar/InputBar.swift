@@ -270,49 +270,48 @@ private struct InputBarConstants {
     }
     
     // MARK: - InputBarState
-    
-    private func startEditingText(text: String) {
-        textView.becomeFirstResponder()
-        textView.text = text
-        textView.undoManager?.removeAllActions()
-        textView.setContentOffset(.zero, animated: false)
-        textView.layoutIfNeeded()
-    }
-    
-    private func updateInputBar(withState state: InputBarState) {
-        switch state {
-        case .Writing: textView.text = nil
-        case .Editing(let text): startEditingText(text)
-        }
 
+    private func updateInputBar(withState state: InputBarState) {
         updateEditViewState()
         rowTopInsetConstraint?.constant = state == .Writing ? -constants.buttonsBarHeight : 0
-        UIView.wr_animateWithEasing(RBBEasingFunctionEaseInOutExpo, duration: 0.35, animations: layoutIfNeeded) { _ in
-            UIView.animateWithDuration(0.2) {
-                self.updateBackgroundColor()
+
+        let textViewAnimations = {
+            switch state {
+            case .Writing:
+                self.textView.text = nil
+            case .Editing(let text):
+                self.textView.text = text
+                self.textView.setContentOffset(.zero, animated: false)
+            }
+        }
+        
+        UIView.wr_animateWithEasing(RBBEasingFunctionEaseInOutExpo, duration: 0.3, animations: layoutIfNeeded)
+        UIView.transitionWithView(self.textView, duration: 0.1, options: [], animations: textViewAnimations) { _ in
+            UIView.animateWithDuration(0.2, delay: 0.1, options:  .CurveEaseInOut, animations: self.updateBackgroundColor) { _ in
+                self.textView.becomeFirstResponder()
             }
         }
     }
-    
+
     private func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
         guard let writingColor = barBackgroundColor, editingColor = editingBackgroundColor else { return nil }
         let mixed = writingColor.mix(editingColor, amount: 0.16)
         return state == .Writing ? writingColor : mixed
     }
-    
+
     private func updateBackgroundColor() {
         backgroundColor = backgroundColor(forInputBarState: inputbarState)
     }
-    
+
     // MARK: – Editing View State
-    
+
     public func undo() {
         guard inputbarState != .Writing else { return }
         guard let undoManager = textView.undoManager where undoManager.canUndo else { return }
         undoManager.undo()
         updateEditViewState()
     }
-    
+
     private func updateEditViewState() {
         if case .Editing(let text) = inputbarState {
             let canUndo = textView.undoManager?.canUndo ?? false
