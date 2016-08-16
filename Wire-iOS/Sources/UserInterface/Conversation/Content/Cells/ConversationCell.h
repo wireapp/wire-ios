@@ -70,12 +70,13 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 - (void)conversationCell:(ConversationCell *)cell userTapped:(ZMUser *)user inView:(UIView *)view;
 - (void)conversationCell:(ConversationCell *)cell resendMessageTapped:(ZMMessage *)message;
 - (void)conversationCell:(ConversationCell *)cell didSelectAction:(ConversationCellAction)actionId;
+- (void)conversationCell:(ConversationCell *)cell willOpenMenuForCellType:(MessageType)messageType;
 - (void)conversationCell:(ConversationCell *)cell didOpenMenuForCellType:(MessageType)messageType;
 
 @end
 
 
-@interface ConversationCell : UITableViewCell <UserImageViewDelegate>
+@interface ConversationCell : UITableViewCell <UserImageViewDelegate, UIKeyInput>
 
 @property (nonatomic, readonly) ConversationCellLayoutProperties *layoutProperties;
 
