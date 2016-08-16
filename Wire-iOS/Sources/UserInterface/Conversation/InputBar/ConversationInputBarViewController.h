@@ -29,8 +29,7 @@
 typedef NS_ENUM(NSUInteger, ConversationInputBarViewControllerMode) {
     ConversationInputBarViewControllerModeTextInput,
     ConversationInputBarViewControllerModeAudioRecord,
-    ConversationInputBarViewControllerModeCamera,
-    ConversationInputBarViewControllerModeTextEditing
+    ConversationInputBarViewControllerModeCamera
 };
 
 
@@ -56,6 +55,5 @@ typedef NS_ENUM(NSUInteger, ConversationInputBarViewControllerMode) {
 @property (nonatomic, readonly) UIViewController *inputController;
 
 - (instancetype)initWithConversation:(ZMConversation *)conversation;
-- (void)editMessage:(id <ZMConversationMessage>)message;
 
 @end

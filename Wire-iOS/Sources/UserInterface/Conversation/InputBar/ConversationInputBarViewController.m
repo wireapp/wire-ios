@@ -84,12 +84,6 @@
 
 @end
 
-@interface ConversationInputBarViewController (Editing) <InputBarEditViewDelegate>
-
-- (void)sendEditedMessageAndUpdateStateWithText:(NSString *)text;
-
-@end
-
 @interface ConversationInputBarViewController (ZMConversationObserver) <ZMConversationObserver>
 @end
 
@@ -136,7 +130,6 @@
 @property (nonatomic) ButtonWithLargerHitArea *verifiedShieldButton;
 @property (nonatomic) NSLayoutConstraint *collapseViewConstraint;
 
-@property (nonatomic) id <ZMConversationMessage> editingMessage;
 @property (nonatomic) InputBar *inputBar;
 @property (nonatomic) ZMConversation *conversation;
 
@@ -290,7 +283,7 @@
     
     [self.view addSubview:self.inputBar];
     [self.inputBar autoPinEdgesToSuperviewEdges];
-    self.inputBar.editingRow.delegate = self;
+    self.inputBar.editingView.delegate = self;
 }
 
 - (void)createSingleTapGestureRecognizer
@@ -311,7 +304,7 @@
     
     [self addChildViewController:self.audioRecordViewController];
     [self.inputBar addSubview:self.audioRecordViewController.view];
-    [self.audioRecordViewController.view autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.inputBar.buttonBox];
+    [self.audioRecordViewController.view autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.inputBar.buttonContainer];
     
     CGRect recordButtonFrame = [self.inputBar convertRect:self.audioButton.bounds fromView:self.audioButton];
     CGFloat width = CGRectGetMaxX(recordButtonFrame) + 60;
@@ -397,7 +390,7 @@
 {
     const NSUInteger textLength = self.inputBar.textView.text.length;
     
-    self.gifButton.hidden = ! (textLength > 0 && textLength < 20) || self.inputBar.inputbarState == InputBarStateEditing;
+    self.gifButton.hidden = ! (textLength > 0 && textLength < 20) || self.inputBar.isEditing;
     self.verifiedShieldButton.hidden = self.conversation.securityLevel != ZMConversationSecurityLevelSecure || self.inputBar.textView.isFirstResponder || textLength > 0;
 }
 
@@ -431,14 +424,6 @@
     }
 }
 
-- (void)editMessage:(id<ZMConversationMessage>)message
-{
-    if (message.textMessageData.messageText) {
-        self.editingMessage = message;
-        [self.inputBar setEditingWithText:message.textMessageData.messageText];
-    }
-}
-
 #pragma mark - Input views handling
 
 - (void)onSingleTap:(UITapGestureRecognizer *)recognier
@@ -454,15 +439,8 @@
         return;
     }
     _mode = mode;
-    
-    if (mode == ConversationInputBarViewControllerModeTextEditing) {
-        self.inputBar.inputbarState = InputBarStateEditing;
-    } else {
-        self.inputBar.inputbarState = InputBarStateWriting;
-    }
-    
+
     switch (mode) {
-        case ConversationInputBarViewControllerModeTextEditing:
         case ConversationInputBarViewControllerModeTextInput:
             self.inputController = nil;
             self.singleTapGestureRecognizer.enabled = NO;
@@ -591,11 +569,11 @@
             if(args.count > 0) {
                 [self runCommand:args];
             }
-            else if (self.inputBar.inputbarState == InputBarStateWriting) {
-                [self.sendController sendTextMessage:candidateText];
-            }
-            else if (self.inputBar.inputbarState == InputBarStateEditing && nil != self.editingMessage) {
+            else if (self.inputBar.isEditing && nil != self.editingMessage) {
                 [self sendEditedMessageAndUpdateStateWithText:candidateText];
+            }
+            else {
+                [self.sendController sendTextMessage:candidateText];
             }
         }
 
@@ -1015,37 +993,6 @@
     else {
         return CGRectContainsPoint(gestureRecognizer.view.bounds, [touch locationInView:gestureRecognizer.view]);
     }
-}
-
-@end
-
-
-@implementation ConversationInputBarViewController (Editing)
-
-- (void)inputBarEditView:(InputBarEditView *)editView didTapButtonWithType:(EditButtonType)buttonType
-{
-    switch (buttonType) {
-        case EditButtonTypeUndo:
-            [self.inputBar undo];
-            break;
-            
-        case EditButtonTypeCancel:
-            [self.delegate conversationInputBarViewControllerDidCancelEditingMessage:self.editingMessage];
-            self.editingMessage = nil;
-            self.inputBar.inputbarState = InputBarStateWriting;
-            break;
-            
-        case EditButtonTypeConfirm:
-            [self sendEditedMessageAndUpdateStateWithText:self.inputBar.textView.text];
-            break;
-    }
-}
-
-- (void)sendEditedMessageAndUpdateStateWithText:(NSString *)text
-{
-    [self.delegate conversationInputBarViewControllerDidFinishEditingMessage:self.editingMessage withText:text];
-    self.editingMessage = nil;
-    self.inputBar.inputbarState = InputBarStateWriting;
 }
 
 @end

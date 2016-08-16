@@ -22,43 +22,19 @@ import Cartography
 import Classy
 import WireExtensionComponents
 
-extension UIView {
-    
-    static var debugColors: [UIColor] {
-        return [
-            .redColor(),
-            .blackColor(),
-            .darkGrayColor(),
-            .grayColor(),
-            .redColor(),
-            .greenColor(),
-            .blueColor(),
-            .cyanColor(),
-            .yellowColor(),
-            .magentaColor(),
-            .orangeColor(),
-            .purpleColor(),
-            .brownColor()
-            ]
-    }
-    
-    func debug(startIndex: Int? = nil) {
-        var index = startIndex ?? 0
 
-        subviews.forEach { view in
-            view.layer.borderWidth = 1
-            let color = UIView.debugColors[index]
-            view.layer.borderColor = color.colorWithAlphaComponent(0.2).CGColor
-            view.backgroundColor = color.colorWithAlphaComponent(0.02)
-            index = index == UIView.debugColors.count - 1 ? 0 : index + 1
-            view.debug(index)
-        }
-    }
+
+public enum InputBarState: Equatable {
+    case Writing
+    case Editing(originalText: String)
 }
 
-
-@objc public enum InputBarState: UInt {
-    case Writing, Editing
+public func ==(lhs: InputBarState, rhs: InputBarState) -> Bool {
+    switch (lhs, rhs) {
+    case (.Writing, .Writing): return true
+    case (.Editing(let lhsText), .Editing(let rhsText)): return lhsText == rhsText
+    default: return false
+    }
 }
 
 private struct InputBarConstants {
@@ -72,10 +48,9 @@ private struct InputBarConstants {
     public let textView: TextView = ResizingTextView()
     public let leftAccessoryView  = UIView()
     public let rightAccessoryView = UIView()
-    public let buttonRow: InputBarButtonsView
     public let buttonContainer = UIView()
-    public let buttonBox = UIView()
-    public let editingRow = InputBarEditView()
+    public let editingView = InputBarEditView()
+    public let buttonsView: InputBarButtonsView
     
     public var editingBackgroundColor: UIColor?
     public var barBackgroundColor: UIColor?
@@ -83,13 +58,19 @@ private struct InputBarConstants {
     private var contentSizeObserver: NSObject? = nil
     private var rowTopInsetConstraint: NSLayoutConstraint? = nil
     
+    private let buttonInnerContainer = UIView()
     private let fakeCursor = UIView()
     private let inputBarSeparator = UIView()
     private let buttonRowSeparator = UIView()
     private let constants = InputBarConstants()
     private let notificationCenter = NSNotificationCenter.defaultCenter()
     
-    public var inputbarState: InputBarState = .Writing {
+    var isEditing: Bool {
+        if case .Editing(_) = inputbarState { return true }
+        return false
+    }
+    
+    var inputbarState: InputBarState = .Writing {
         didSet {
             updateInputBar(withState: inputbarState)
         }
@@ -130,17 +111,17 @@ private struct InputBarConstants {
     }
 
     required public init(buttons: [UIButton]) {
-        buttonRow = InputBarButtonsView(buttons: buttons)
+        buttonsView = InputBarButtonsView(buttons: buttons)
         super.init(frame: CGRectZero)
                 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapBackground))
         addGestureRecognizer(tapGestureRecognizer)
-        buttonRow.clipsToBounds = true
-        buttonBox.clipsToBounds = true
+        buttonsView.clipsToBounds = true
+        buttonContainer.clipsToBounds = true
         
-        [leftAccessoryView, textView, rightAccessoryView, inputBarSeparator, buttonBox, buttonRowSeparator].forEach(addSubview)
-        buttonBox.addSubview(buttonContainer)
-        [buttonRow, editingRow].forEach(buttonContainer.addSubview)
+        [leftAccessoryView, textView, rightAccessoryView, inputBarSeparator, buttonContainer, buttonRowSeparator].forEach(addSubview)
+        buttonContainer.addSubview(buttonInnerContainer)
+        [buttonsView, editingView].forEach(buttonInnerContainer.addSubview)
         textView.addSubview(fakeCursor)
         CASStyler.defaultStyler().styleItem(self)
 
@@ -180,7 +161,7 @@ private struct InputBarConstants {
     
     private func createConstraints() {
         
-        constrain(buttonBox, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryView) { buttonRow, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryView in
+        constrain(buttonContainer, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryView) { buttonRow, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryView in
             leftAccessoryView.leading == leftAccessoryView.superview!.leading
             leftAccessoryView.top == leftAccessoryView.superview!.top
             leftAccessoryView.bottom == buttonRow.top
@@ -203,7 +184,7 @@ private struct InputBarConstants {
             buttonRowSeparator.height == 0.5
         }
         
-        constrain(editingRow, buttonRow, buttonContainer) { editRow, buttonRow, container in
+        constrain(editingView, buttonsView, buttonInnerContainer) { editRow, buttonRow, container in
             editRow.top == container.top
             editRow.leading == container.leading
             editRow.trailing == container.trailing
@@ -215,7 +196,7 @@ private struct InputBarConstants {
             buttonRow.bottom == container.bottom
         }
         
-        constrain(buttonBox, buttonContainer)  { buttonBox, container in
+        constrain(buttonContainer, buttonInnerContainer)  { buttonBox, container in
             buttonBox.bottom == buttonBox.superview!.bottom
             buttonBox.left == buttonBox.superview!.left
             buttonBox.right <= buttonBox.superview!.right
@@ -244,7 +225,7 @@ private struct InputBarConstants {
     
     @objc private func didTapBackground(gestureRecognizer: UITapGestureRecognizer!) {
         guard gestureRecognizer.state == .Recognized else { return }
-        buttonRow.showRow(0, animated: true)
+        buttonsView.showRow(0, animated: true)
     }
     
     private func startCursorBlinkAnimation() {
@@ -255,7 +236,6 @@ private struct InputBarConstants {
             animation.duration = 0.64
             animation.autoreverses = true
             animation.repeatCount = FLT_MAX
-            
             fakeCursor.layer.addAnimation(animation, forKey: "blinkAnimation")
         }
     }
@@ -272,13 +252,13 @@ private struct InputBarConstants {
         textIsOverflowing = textView.contentSize.height > textView.bounds.size.height
     }
 
-    // MARK: - Disable interaction on lower part of buttons not to interfer with keyboard
+    // MARK: - Disable interactions on the lower part to not to interfere with the keyboard
     
     override public func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
         if self.textView.isFirstResponder() {
             if super.pointInside(point, withEvent: event) {
-                let locationInButtonRow = self.buttonContainer.convertPoint(point, fromView: self)
-                return locationInButtonRow.y < self.buttonContainer.bounds.size.height / 1.3
+                let locationInButtonRow = buttonInnerContainer.convertPoint(point, fromView: self)
+                return locationInButtonRow.y < buttonInnerContainer.bounds.height / 1.3
             }
             else {
                 return false
@@ -291,16 +271,18 @@ private struct InputBarConstants {
     
     // MARK: - InputBarState
     
-    public func setEditingWithText(text: String) {
-        inputbarState = .Editing
+    private func startEditingText(text: String) {
+        textView.becomeFirstResponder()
         textView.text = text
+        textView.undoManager?.removeAllActions()
+        textView.setContentOffset(.zero, animated: false)
+        textView.layoutIfNeeded()
     }
     
-    func updateInputBar(withState state: InputBarState) {
-        if state == .Writing {
-            textView.text = nil
-        } else {
-            textView.becomeFirstResponder()
+    private func updateInputBar(withState state: InputBarState) {
+        switch state {
+        case .Writing: textView.text = nil
+        case .Editing(let text): startEditingText(text)
         }
 
         updateEditViewState()
@@ -312,32 +294,36 @@ private struct InputBarConstants {
         }
     }
     
-    func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
+    private func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
         guard let writingColor = barBackgroundColor, editingColor = editingBackgroundColor else { return nil }
         let mixed = writingColor.mix(editingColor, amount: 0.16)
-        return state == .Editing ? mixed : writingColor
+        return state == .Writing ? writingColor : mixed
     }
     
-    func updateBackgroundColor() {
+    private func updateBackgroundColor() {
         backgroundColor = backgroundColor(forInputBarState: inputbarState)
     }
     
     // MARK: – Editing View State
     
     public func undo() {
-        guard inputbarState == .Editing else { return }
+        guard inputbarState != .Writing else { return }
         guard let undoManager = textView.undoManager where undoManager.canUndo else { return }
         undoManager.undo()
         updateEditViewState()
     }
     
-    func updateEditViewState() {
-        guard inputbarState == .Editing else { return }
-        let hasChanges = textView.undoManager?.canUndo ?? false
-        editingRow.undoButton.enabled = hasChanges
-        editingRow.confirmButton.enabled = hasChanges
+    private func updateEditViewState() {
+        if case .Editing(let text) = inputbarState {
+            let canUndo = textView.undoManager?.canUndo ?? false
+            editingView.undoButton.enabled = canUndo
+
+            // We do not want to enable the confirm button when
+            // the text is the same as the original message
+            let hasChanges = text != textView.text && canUndo
+            editingView.confirmButton.enabled = hasChanges
+        }
     }
-    
 }
 
 extension InputBar {

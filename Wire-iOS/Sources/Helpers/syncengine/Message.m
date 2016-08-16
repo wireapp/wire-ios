@@ -98,46 +98,46 @@
     return [serverTimestamp wr_formattedDate];
 }
 
-+ (NSString *)formattedReceivedDateLongVersion:(id<ZMConversationMessage>)message
++ (NSString *)formattedTimestampStringLongVersion:(NSDate *)timestamp
 {
     static NSDateFormatter *longVersionDateFormatter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         longVersionDateFormatter = [[NSDateFormatter alloc] init];
     });
-    
-    NSString *timestampString = nil;
+
+    [longVersionDateFormatter setDateStyle:NSDateFormatterFullStyle];
+    [longVersionDateFormatter setTimeStyle:NSDateFormatterNoStyle];
+    NSString *dateString = [longVersionDateFormatter stringFromDate:timestamp];
+
+    [longVersionDateFormatter setDateStyle:NSDateFormatterNoStyle];
+    [longVersionDateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    NSString *timeString = [longVersionDateFormatter stringFromDate:timestamp];
+
+    return [NSString stringWithFormat:@"%@ ∙ %@", dateString, timeString];
+}
+
++ (NSString *)formattedReceivedDateLongVersion:(id<ZMConversationMessage>)message
+{
     if (message.deliveryState == ZMDeliveryStateDelivered) {
-        NSDate *timestamp = message.serverTimestamp;
-        
-        [longVersionDateFormatter setDateStyle:NSDateFormatterFullStyle];
-        [longVersionDateFormatter setTimeStyle:NSDateFormatterNoStyle];
-        NSString *dateString = [longVersionDateFormatter stringFromDate:timestamp];
-        
-        [longVersionDateFormatter setDateStyle:NSDateFormatterNoStyle];
-        [longVersionDateFormatter setTimeStyle:NSDateFormatterShortStyle];
-        NSString *timeString = [longVersionDateFormatter stringFromDate:timestamp];
-        
-        timestampString = [NSString stringWithFormat:@"%@ ∙ %@", dateString, timeString];
+        return [self formattedTimestampStringLongVersion:message.serverTimestamp];
     } else if (message.deliveryState == ZMDeliveryStatePending) {
-        timestampString = NSLocalizedString(@"content.system.pending_message_timestamp", @"");
+        return NSLocalizedString(@"content.system.pending_message_timestamp", @"");
     } else {
-        timestampString = NSLocalizedString(@"content.system.failedtosend_message_timestamp", @"");
+        return NSLocalizedString(@"content.system.failedtosend_message_timestamp", @"");
     }
-    
-    return timestampString;
 }
 
 + (NSString *)formattedDeletedDateForMessage:(id <ZMConversationMessage>)message
 {
-    NSString *receivedDate = [self formattedReceivedDateLongVersion:message];
+    NSString *receivedDate = [self formattedTimestampStringLongVersion:message.serverTimestamp];
     NSString *localizedDeletedFormat = NSLocalizedString(@"content.system.deleted_message_prefix_timestamp", @"");
     return [NSString stringWithFormat:localizedDeletedFormat, receivedDate];
 }
 
 + (NSString *)formattedEditedDateForMessage:(id <ZMConversationMessage>)message
 {
-    NSString *receivedDate = [self formattedReceivedDateLongVersion:message];
+    NSString *receivedDate = [self formattedTimestampStringLongVersion:message.updatedAt];
     NSString *localizedEditedFormat = NSLocalizedString(@"content.system.edited_message_prefix_timestamp", @"");
     return [NSString stringWithFormat:localizedEditedFormat, receivedDate];
 }
