@@ -271,11 +271,11 @@ private struct InputBarConstants {
 
     // MARK: - InputBarState
 
-    private func updateInputBar(withState state: InputBarState) {
+    func updateInputBar(withState state: InputBarState, animated: Bool = true) {
         updateEditViewState()
         rowTopInsetConstraint?.constant = state == .Writing ? -constants.buttonsBarHeight : 0
 
-        let textViewAnimations = {
+        let textViewChanges = {
             switch state {
             case .Writing:
                 self.textView.text = nil
@@ -285,13 +285,22 @@ private struct InputBarConstants {
             }
         }
         
-        UIView.wr_animateWithEasing(RBBEasingFunctionEaseInOutExpo, duration: 0.3, animations: layoutIfNeeded)
-        UIView.transitionWithView(self.textView, duration: 0.1, options: [], animations: textViewAnimations) { _ in
-            UIView.animateWithDuration(0.2, delay: 0.1, options:  .CurveEaseInOut, animations: self.updateBackgroundColor) { _ in
-                if case .Editing(_) = state {
-                    self.textView.becomeFirstResponder()
-                }
+        let completion: Bool -> Void = { _ in
+            if case .Editing(_) = state {
+                self.textView.becomeFirstResponder()
             }
+        }
+        
+        if animated {
+            UIView.wr_animateWithEasing(RBBEasingFunctionEaseInOutExpo, duration: 0.3, animations: layoutIfNeeded)
+            UIView.transitionWithView(self.textView, duration: 0.1, options: [], animations: textViewChanges) { _ in
+                UIView.animateWithDuration(0.2, delay: 0.1, options:  .CurveEaseInOut, animations: self.updateBackgroundColor, completion: completion)
+            }
+        } else {
+            layoutIfNeeded()
+            textViewChanges()
+            updateBackgroundColor()
+            completion(true)
         }
     }
 

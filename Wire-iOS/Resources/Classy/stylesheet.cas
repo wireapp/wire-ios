@@ -846,6 +846,13 @@ InputBar: {
     }
 }
 
+InputBarEditView: {
+    IconButton {
+        iconColor[state:normal]: $color-icon-normal;
+        iconColor[state:highlighted]: $color-icon-highlighted;
+    }
+}
+
 ConversationInputBarViewController {
     audioRecorderTooltip: @{
         font: $font-small;
