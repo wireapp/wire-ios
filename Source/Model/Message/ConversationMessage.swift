@@ -88,6 +88,8 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     
     /// True if the message has been deleted
     var hasBeenDeleted : Bool { get }
+    
+    var updatedAt : NSDate? { get }
 }
 
 
@@ -157,6 +159,10 @@ extension ZMMessage : ZMConversationMessage {
     
     public var hasBeenDeleted: Bool {
         return visibleInConversation == nil && hiddenInConversation != nil;
+    }
+    
+    public var updatedAt : NSDate? {
+        return nil
     }
     
 }

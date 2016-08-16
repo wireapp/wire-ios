@@ -60,3 +60,10 @@ fastlane/screenshots
 
 *.pyc
 ZMCDataModel.framework.zip
+
+
+## Test Output
+xcode-analyze.log
+xcode-build.log
+xcode-test.log
+tests.xml

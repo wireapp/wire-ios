@@ -40,6 +40,7 @@
 
 static NSString * const ClientMessageDataSetKey = @"dataSet";
 static NSString * const ClientMessageGenericMessageKey = @"genericMessage";
+static NSString * const ClientMessageUpdateTimestamp = @"updatedTimestamp";
 
 NSString * const ZMClientMessageLinkPreviewImageDownloadNotificationName = @"ZMClientMessageLinkPreviewImageDownloadNotificationName";
 NSString * const ZMClientMessageLinkPreviewStateKey = @"linkPreviewState";
@@ -70,6 +71,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 @implementation ZMClientMessage
 
 @dynamic linkPreviewState;
+@dynamic updatedTimestamp;
 
 @synthesize genericMessage = _genericMessage;
 
@@ -82,6 +84,16 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 + (NSString *)entityName;
 {
     return @"ClientMessage";
+}
+
+- (NSSet *)ignoredKeys
+{
+    return [[super ignoredKeys] setByAddingObject:ClientMessageUpdateTimestamp];
+}
+
+- (NSDate *)updatedAt
+{
+    return self.updatedTimestamp;
 }
 
 - (void)addData:(NSData *)data
@@ -195,12 +207,44 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     [self addData:message.data];
 }
 
+- (void)removeMessage
+{
+    _genericMessage = nil;
+    self.dataSet = [NSOrderedSet orderedSet];
+    [super removeMessage];
+}
+
+- (void)expire
+{
+    if (self.genericMessage.hasEdited) {
+        // Fetch original message
+        NSUUID *originalID = [NSUUID uuidWithTransportString:self.genericMessage.edited.replacingMessageId];
+        ZMMessage *originalMessage = [ZMMessage fetchMessageWithNonce:originalID forConversation:self.conversation inManagedObjectContext:self.managedObjectContext];
+        
+        // Replace the nonce with the original
+        // This way if we get a delete from a different device while we are waiting for the response it will delete this message
+        self.nonce = originalID;
+        
+        // delete the original message - we do not care about the old one anymore
+        [self.managedObjectContext deleteObject:originalMessage];
+    }
+    [super expire];
+}
+
+- (void)resend
+{
+    if (self.genericMessage.hasEdited) {
+        [ZMMessage edit:self newText:self.textMessageData.messageText];
+    } else {
+        [super resend];
+    }
+}
+
 - (id<ZMTextMessageData>)textMessageData
 {
-    if (self.genericMessage.hasText) {
+    if (self.genericMessage.hasText || self.genericMessage.hasEdited) {
         return self;
     }
-    
     return nil;
 }
 
@@ -232,15 +276,22 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys
 {
-    [super updateWithPostPayload:payload updatedKeys:nil];
-    
-    NSDate *serverTimestamp = [payload dateForKey:@"time"];
-    if (serverTimestamp != nil) {
-        self.serverTimestamp = serverTimestamp;
+    if (self.genericMessage.hasEdited) {
+        NSUUID *nonce = [self nonceFromPostPayload:payload];
+        if (nonce != nil && ![self.nonce isEqual:nonce]) {
+            ZMLogWarn(@"send message response nonce does not match");
+            return;
+        }
+        NSDate *serverTimestamp = [payload dateForKey:@"time"];
+        if (serverTimestamp != nil) {
+            self.updatedTimestamp = serverTimestamp;
+        }
+        NSUUID *originalID = [NSUUID uuidWithTransportString:self.genericMessage.edited.replacingMessageId];
+        ZMMessage *original = [ZMMessage fetchMessageWithNonce:originalID forConversation:self.conversation inManagedObjectContext:self.managedObjectContext];
+        [original removeMessage];
+    } else {
+        [super updateWithPostPayload:payload updatedKeys:nil];
     }
-    [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:serverTimestamp andSync:NO];
-    [self.conversation resortMessagesWithUpdatedMessage:self];
-    [self.conversation updateWithMessage:self timeStamp:serverTimestamp eventID:self.eventID];
 }
 
 + (NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream
@@ -455,7 +506,15 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (NSString *)messageText
 {
+    if (self.genericMessage.hasEdited) {
+        return self.genericMessage.edited.text.content;
+    }
     return self.genericMessage.text.content;
+}
+
+- (BOOL)isEdited
+{
+    return self.genericMessage.hasEdited;
 }
 
 - (LinkPreview *)linkPreview
