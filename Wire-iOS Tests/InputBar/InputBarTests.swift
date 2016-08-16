@@ -52,7 +52,7 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = ""
         inputBar.layer.speed = 0
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -63,7 +63,7 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = shortText
         inputBar.layer.speed = 0
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -74,7 +74,7 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = longText
         inputBar.layer.speed = 0
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -93,7 +93,7 @@ class InputBarTests: ZMSnapshotTestCase {
         let inputBar = InputBar(buttons: buttonsWithText)
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.layer.speed = 0
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -104,11 +104,10 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = ""
         inputBar.layer.speed = 0
-        
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
     }
-    
+
 }

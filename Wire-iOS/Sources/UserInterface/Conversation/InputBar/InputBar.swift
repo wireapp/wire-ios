@@ -78,7 +78,7 @@ private struct InputBarConstants {
     
     private var textIsOverflowing = false {
         didSet {
-            updateTopSeparator()
+            updateTopSeparator() 
         }
     }
     
@@ -244,7 +244,7 @@ private struct InputBarConstants {
         inputBarSeparator.hidden = !textIsOverflowing && !separatorEnabled
     }
     
-    private func updateFakeCursorVisibility(firstResponder: UIResponder? = nil) {
+    func updateFakeCursorVisibility(firstResponder: UIResponder? = nil) {
         fakeCursor.hidden = textView.isFirstResponder() || textView.text.characters.count != 0 || firstResponder != nil
     }
     
