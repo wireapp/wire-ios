@@ -110,4 +110,26 @@ class InputBarTests: ZMSnapshotTestCase {
         verifyInAllPhoneWidths(view: inputBar)
     }
 
+    func testThatItRendersCorrectlyInEditState() {
+        let sut = InputBar(buttons: buttons())
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.layer.speed = 0
+        sut.updateInputBar(withState: .Editing(originalText: "This text is being edited"), animated: false)
+
+        sut.updateFakeCursorVisibility()
+        CASStyler.defaultStyler().styleItem(sut)
+        verifyInAllPhoneWidths(view: sut)
+    }
+    
+    func testThatItRendersCorrectlyInEditState_LongText() {
+        let sut = InputBar(buttons: buttons())
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.layer.speed = 0
+        sut.updateInputBar(withState: .Editing(originalText: longText), animated: false)
+
+        sut.updateFakeCursorVisibility()
+        CASStyler.defaultStyler().styleItem(sut)
+        verifyInAllPhoneWidths(view: sut)
+    }
+
 }
