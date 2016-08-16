@@ -62,4 +62,45 @@ extension ZMMessage {
         conversation.appendNonExpiringGenericMessage(deletedMessage, hidden: true)
         removeMessage()
     }
+    
+    public static func edit(message: ZMConversationMessage, newText: String) -> ZMMessage? {
+        guard let castedMessage = message as? ZMMessage else { return nil }
+        return castedMessage.edit(newText)
+    }
+    
+    func edit(newText: String) -> ZMMessage? {
+        guard isEditableMessage else { return nil }
+        guard !isZombieObject, let sender = sender where sender.isSelfUser else { return nil }
+        guard let conversation = conversation else { return nil }
+        
+        let edited = ZMGenericMessage(editMessage: nonce.transportString(), newText: newText, nonce: NSUUID().transportString())
+        let newMessage = conversation.appendClientMessageWithData(edited.data())
+        newMessage.isEncrypted = true
+        newMessage.updatedTimestamp = newMessage.serverTimestamp
+        newMessage.serverTimestamp = serverTimestamp
+        let oldIndex = conversation.messages.indexOfObject(self)
+        let newIndex = conversation.messages.indexOfObject(newMessage)
+        conversation.mutableMessages.moveObjectsAtIndexes(NSIndexSet(index:newIndex), toIndex: oldIndex)
+        
+        hiddenInConversation = conversation
+        visibleInConversation = nil
+        return newMessage
+    }
+    
+    var isEditableMessage : Bool {
+        return false
+    }
 }
+
+extension ZMClientMessage {
+    override var isEditableMessage : Bool {
+        if let genericMsg = genericMessage {
+            return genericMsg.hasEdited() || genericMsg.hasText()
+        }
+        return false
+    }
+
+}
+
+
+

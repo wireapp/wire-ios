@@ -572,9 +572,9 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 //For image messages we have two events - for preview and medium format
 //To preserve messages order we need to keep the earliest serverTimestamp of these two events
-- (void)updateTimestamp:(NSDate *)timestamp messageWasAlreadyReceived:(BOOL)wasAlreadyReceived
+- (void)updateTimestamp:(NSDate *)timestamp isUpdatingExistingMessage:(BOOL)isUpdate
 {
-    if (wasAlreadyReceived) {
+    if (isUpdate) {
         self.serverTimestamp = [NSDate earliestOfDate:self.serverTimestamp and:timestamp];
     } else if (timestamp != nil) {
         self.serverTimestamp = timestamp;

@@ -1959,7 +1959,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
-        sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, messageWasAlreadyReceived: true)
+        sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
         
         // then
         XCTAssertEqual(sut.serverTimestamp, firstDate)
@@ -1993,7 +1993,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
-        sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, messageWasAlreadyReceived: true)
+        sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
         
         // then
         XCTAssertEqual(sut.serverTimestamp, firstDate)
