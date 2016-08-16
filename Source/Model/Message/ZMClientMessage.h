@@ -33,7 +33,7 @@ extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotifica
 
 /// Link Preview state
 @property (nonatomic) ZMLinkPreviewState linkPreviewState;
-
+@property (nonatomic) NSDate * _Nullable updatedTimestamp;
 @property (nonatomic, readonly) ZMGenericMessage * _Nullable genericMessage;
 
 - (void)addData:(NSData * _Nonnull)data;
