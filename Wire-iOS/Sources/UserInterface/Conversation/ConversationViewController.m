@@ -404,7 +404,7 @@
     ZM_WEAK(self);
     self.titleView.tapHandler = ^(UIButton * _Nonnull button) {
         ZM_STRONG(self);
-        [[NSNotificationCenter defaultCenter] postNotificationName:ConversationInputBarViewControllerEndEditingNotification object:nil];
+        [ConversationInputBarViewController endEditingMessage];
         [self.inputBarController.inputBar.textView resignFirstResponder];
         
         UIViewController *participantsController = [self participantsController];

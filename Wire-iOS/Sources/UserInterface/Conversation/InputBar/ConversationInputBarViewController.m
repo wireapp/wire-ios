@@ -111,8 +111,6 @@
 @end
 
 
-NSString * const ConversationInputBarViewControllerEndEditingNotification = @"ConversationInputBarViewControllerEndEditingNotification";
-
 
 @interface ConversationInputBarViewController ()
 

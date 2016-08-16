@@ -66,13 +66,13 @@ private struct InputBarConstants {
     private let notificationCenter = NSNotificationCenter.defaultCenter()
     
     var isEditing: Bool {
-        if case .Editing(_) = inputbarState { return true }
+        if case .Editing(_) = inputBarState { return true }
         return false
     }
     
-    var inputbarState: InputBarState = .Writing {
+    var inputBarState: InputBarState = .Writing {
         didSet {
-            updateInputBar(withState: inputbarState)
+            updateInputBar(withState: inputBarState)
         }
     }
     
@@ -311,20 +311,20 @@ private struct InputBarConstants {
     }
 
     private func updateBackgroundColor() {
-        backgroundColor = backgroundColor(forInputBarState: inputbarState)
+        backgroundColor = backgroundColor(forInputBarState: inputBarState)
     }
 
     // MARK: – Editing View State
 
     public func undo() {
-        guard inputbarState != .Writing else { return }
+        guard inputBarState != .Writing else { return }
         guard let undoManager = textView.undoManager where undoManager.canUndo else { return }
         undoManager.undo()
         updateEditViewState()
     }
 
     private func updateEditViewState() {
-        if case .Editing(let text) = inputbarState {
+        if case .Editing(let text) = inputBarState {
             let canUndo = textView.undoManager?.canUndo ?? false
             editingView.undoButton.enabled = canUndo
 

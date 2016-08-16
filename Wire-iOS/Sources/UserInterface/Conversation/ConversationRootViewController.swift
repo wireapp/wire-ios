@@ -140,13 +140,13 @@ public extension ConversationViewController {
     }
     
     func voiceCallItemTapped(sender: UIBarButtonItem) {
-        NSNotificationCenter.defaultCenter().postNotificationName(ConversationInputBarViewControllerEndEditingNotification, object: nil)
+        ConversationInputBarViewController.endEditingMessage()
         conversation.startAudioCallWithCompletionHandler(nil)
         Analytics.shared()?.tagMediaAction(.AudioCall, inConversation: conversation)
     }
     
     func videoCallItemTapped(sender: UIBarButtonItem) {
-        NSNotificationCenter.defaultCenter().postNotificationName(ConversationInputBarViewControllerEndEditingNotification, object: nil)
+        ConversationInputBarViewController.endEditingMessage()
         conversation.startVideoCallWithCompletionHandler(nil)
         Analytics.shared()?.tagMediaAction(.VideoCall, inConversation: conversation)
     }

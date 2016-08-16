@@ -808,7 +808,7 @@
 
 - (void)conversationCell:(ConversationCell *)cell willOpenMenuForCellType:(MessageType)messageType;
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:ConversationInputBarViewControllerEndEditingNotification object:nil];
+    [ConversationInputBarViewController endEditingMessage];
 }
 
 - (void)conversationCell:(ConversationCell *)cell didOpenMenuForCellType:(MessageType)messageType;

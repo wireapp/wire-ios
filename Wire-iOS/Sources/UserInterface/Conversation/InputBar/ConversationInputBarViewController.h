@@ -26,8 +26,6 @@
 @class AudioRecordViewController;
 @protocol ZMConversationMessage;
 
-extern NSString * const ConversationInputBarViewControllerEndEditingNotification;
-
 typedef NS_ENUM(NSUInteger, ConversationInputBarViewControllerMode) {
     ConversationInputBarViewControllerModeTextInput,
     ConversationInputBarViewControllerModeAudioRecord,

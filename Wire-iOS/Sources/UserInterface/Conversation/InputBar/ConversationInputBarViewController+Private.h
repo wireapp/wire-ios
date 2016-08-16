@@ -24,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class CameraKeyboardViewController;
 @class ConversationInputBarSendController;
 
-
 @interface ConversationInputBarViewController ()
 @property (nonatomic, nullable) AudioRecordViewController *audioRecordViewController;
 @property (nonatomic, nullable) AudioRecordKeyboardViewController *audioRecordKeyboardViewController;
