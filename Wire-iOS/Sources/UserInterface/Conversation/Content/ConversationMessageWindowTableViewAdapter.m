@@ -305,7 +305,7 @@ static NSString *const ConversationMessageDeletedCellId     = @"conversationMess
     ConversationCellLayoutProperties *layoutProperties = [self.messageWindow layoutPropertiesForMessage:message lastUnreadMessage:self.lastUnreadMessage];
     
     conversationCell.selected = [message isEqual:self.selectedMessage];
-    conversationCell.contentEditing = [message isEqual:self.editingMessage];
+    conversationCell.beingEdited = [message isEqual:self.editingMessage];
     [conversationCell configureForMessage:message layoutProperties:layoutProperties];
 }
 

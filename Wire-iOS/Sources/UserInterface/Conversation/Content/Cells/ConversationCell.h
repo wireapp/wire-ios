@@ -88,7 +88,7 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 
 @property (nonatomic) CGFloat burstTimestampSpacing;
 @property (nonatomic) BOOL showsMenu;
-@property (nonatomic) BOOL contentEditing;
+@property (nonatomic) BOOL beingEdited;
 
 @property (nonatomic, weak) id<ConversationCellDelegate> delegate;
 

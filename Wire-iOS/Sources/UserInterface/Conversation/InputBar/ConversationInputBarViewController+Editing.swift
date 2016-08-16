@@ -19,23 +19,27 @@
 
 import Foundation
 
+
+private let endEditingNotificationName = "ConversationInputBarViewControllerShouldEndEditingNotification"
+
+
 extension ConversationInputBarViewController {
 
     func sendEditedMessageAndUpdateState(withText text: String) {
         delegate.conversationInputBarViewControllerDidFinishEditingMessage?(editingMessage, withText: text)
         editingMessage = nil
-        inputBar.inputbarState = .Writing
+        inputBar.inputBarState = .Writing
     }
     
     func editMessage(message: ZMConversationMessage) {
         guard let text = message.textMessageData?.messageText else { return }
         mode = .TextInput
         editingMessage = message
-        inputBar.inputbarState = .Editing(originalText: text)
+        inputBar.inputBarState = .Editing(originalText: text)
         NSNotificationCenter.defaultCenter().addObserver(
             self,
             selector: #selector(endEditingMessageIfNeeded),
-            name: ConversationInputBarViewControllerEndEditingNotification,
+            name: endEditingNotificationName,
             object: nil
         )
     }
@@ -44,12 +48,16 @@ extension ConversationInputBarViewController {
         guard nil != editingMessage else { return }
         delegate.conversationInputBarViewControllerDidCancelEditingMessage?(editingMessage)
         editingMessage = nil
-        inputBar.inputbarState = .Writing
+        inputBar.inputBarState = .Writing
         NSNotificationCenter.defaultCenter().removeObserver(
             self,
-            name: ConversationInputBarViewControllerEndEditingNotification,
+            name: endEditingNotificationName,
             object: nil
         )
+    }
+    
+    static func endEditingMessage() {
+        NSNotificationCenter.defaultCenter().postNotificationName(endEditingNotificationName, object: nil)
     }
 
 }

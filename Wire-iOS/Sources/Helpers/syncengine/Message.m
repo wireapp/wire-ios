@@ -98,21 +98,36 @@
     return [serverTimestamp wr_formattedDate];
 }
 
-+ (NSString *)formattedTimestampStringLongVersion:(NSDate *)timestamp
++ (NSDateFormatter *)longVersionDateFormatter
 {
-    static NSDateFormatter *longVersionDateFormatter;
+    static NSDateFormatter *longVersionDateFormatter = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         longVersionDateFormatter = [[NSDateFormatter alloc] init];
+        [longVersionDateFormatter setDateStyle:NSDateFormatterFullStyle];
+        [longVersionDateFormatter setTimeStyle:NSDateFormatterNoStyle];
     });
+    
+    return longVersionDateFormatter;
+}
 
-    [longVersionDateFormatter setDateStyle:NSDateFormatterFullStyle];
-    [longVersionDateFormatter setTimeStyle:NSDateFormatterNoStyle];
-    NSString *dateString = [longVersionDateFormatter stringFromDate:timestamp];
++ (NSDateFormatter *)longVersionTimeFormatter
+{
+    static NSDateFormatter *longVersionTimeFormatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        longVersionTimeFormatter = [[NSDateFormatter alloc] init];
+        [longVersionTimeFormatter setDateStyle:NSDateFormatterNoStyle];
+        [longVersionTimeFormatter setTimeStyle:NSDateFormatterShortStyle];
+    });
+    
+    return longVersionTimeFormatter;
+}
 
-    [longVersionDateFormatter setDateStyle:NSDateFormatterNoStyle];
-    [longVersionDateFormatter setTimeStyle:NSDateFormatterShortStyle];
-    NSString *timeString = [longVersionDateFormatter stringFromDate:timestamp];
++ (NSString *)formattedTimestampStringLongVersion:(NSDate *)timestamp
+{
+    NSString *dateString = [self.longVersionDateFormatter stringFromDate:timestamp];
+    NSString *timeString = [self.longVersionTimeFormatter stringFromDate:timestamp];
 
     return [NSString stringWithFormat:@"%@ ∙ %@", dateString, timeString];
 }
