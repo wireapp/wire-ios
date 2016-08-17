@@ -37,6 +37,9 @@ class TextMessageCellTests: ZMSnapshotTestCase {
         accentColor = .StrongBlue
         sut = TextMessageCell(style: .Default, reuseIdentifier: name!)
         sut.layer.speed = 0
+        [Message.longVersionDateFormatter(), Message.longVersionTimeFormatter()].forEach {
+            $0.locale = NSLocale(localeIdentifier: "en_US")
+        }
     }
     
     func testThatItRendersATextMessage() {
