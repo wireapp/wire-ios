@@ -17,7 +17,7 @@
 // 
 
 
-#import "Message.h"
+#import "Message+Private.h"
 #import "Constants.h"
 #import "Settings.h"
 @import WireExtensionComponents;

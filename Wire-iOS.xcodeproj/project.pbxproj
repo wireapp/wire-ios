@@ -1996,6 +1996,7 @@
 		BF8EE5551D62FBCD00B0D6D7 /* ConversationInputBarViewController+Editing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Editing.swift"; sourceTree = "<group>"; };
 		BF8EE5571D6351B100B0D6D7 /* InputBarEditViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarEditViewTests.swift; sourceTree = "<group>"; };
 		BF8EE5591D636F4600B0D6D7 /* TextMessageCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextMessageCellTests.swift; sourceTree = "<group>"; };
+		BF8EE55B1D64576400B0D6D7 /* Message+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Message+Private.h"; sourceTree = "<group>"; };
 		BF9453311CE5CF4C0024E00C /* FileMetaDataGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileMetaDataGenerator.swift; sourceTree = "<group>"; };
 		BF999B5E1C0C984C008D5414 /* ProfileDevicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileDevicesViewController.h; sourceTree = "<group>"; };
 		BF999B5F1C0C984C008D5414 /* ProfileDevicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileDevicesViewController.m; sourceTree = "<group>"; };
@@ -3940,8 +3941,9 @@
 			children = (
 				8F41CFC4199297C600E3B032 /* ZMConversation+Additions.h */,
 				8F41CFC5199297C600E3B032 /* ZMConversation+Additions.m */,
-				8F41CFC7199297C600E3B032 /* Message.m */,
 				8F41CFC6199297C600E3B032 /* Message.h */,
+				BF8EE55B1D64576400B0D6D7 /* Message+Private.h */,
+				8F41CFC7199297C600E3B032 /* Message.m */,
 				8F41CFC119926B7A00E3B032 /* ZMUser+Additions.h */,
 				8F41CFC219926B7A00E3B032 /* ZMUser+Additions.m */,
 				8FC856B019925B680008B66B /* zmessaging+iOS.h */,
