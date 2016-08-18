@@ -61,6 +61,7 @@
 @interface ZMMessageEdit (Utils)
 
 + (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText;
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview;
 
 @end
 
