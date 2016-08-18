@@ -558,10 +558,20 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     if ([text isEqualToString:@"\n"]) {
-        
+
         NSString *candidateText = textView.text;
         candidateText = [candidateText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        BOOL conversationWasNotDeleted  = self.conversation.managedObjectContext != nil;
+        BOOL conversationWasNotDeleted = self.conversation.managedObjectContext != nil;
+
+        if (self.inputBar.isEditing && nil != self.editingMessage) {
+            NSString *previousText = [self.editingMessage.textMessageData.messageText stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+            if (![candidateText isEqualToString:previousText]) {
+                [self sendEditedMessageAndUpdateStateWithText:candidateText];
+            }
+   
+            return NO;
+        }
+        
         if (candidateText.length && conversationWasNotDeleted) {
             
             [self clearInputBar];
@@ -569,9 +579,6 @@
             NSArray *args = candidateText.args;
             if(args.count > 0) {
                 [self runCommand:args];
-            }
-            else if (self.inputBar.isEditing && nil != self.editingMessage) {
-                [self sendEditedMessageAndUpdateStateWithText:candidateText];
             }
             else {
                 [self.sendController sendTextMessage:candidateText];
