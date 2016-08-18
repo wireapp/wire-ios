@@ -519,7 +519,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (LinkPreview *)linkPreview
 {
-    if (self.genericMessage.text.linkPreview.count > 0) {
+    ZMGenericMessage *genericMessage = self.genericMessage;
+    if (genericMessage.text.linkPreview.count > 0 || genericMessage.edited.text.linkPreview.count > 0) {
         ZMLinkPreview *linkPreview = self.firstZMLinkPreview;
         
         if (linkPreview.hasTweet) {
@@ -536,7 +537,9 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (ZMLinkPreview *)firstZMLinkPreview
 {
-    return self.genericMessage.text.linkPreview.firstObject;
+    ZMLinkPreview *textLinkPreview = self.genericMessage.text.linkPreview.firstObject;
+    ZMLinkPreview *editedLinkPreview = self.genericMessage.edited.text.linkPreview.firstObject;
+    return textLinkPreview ?: editedLinkPreview;
 }
 
 - (void)requestImageDownload
