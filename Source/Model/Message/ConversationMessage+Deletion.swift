@@ -84,6 +84,7 @@ extension ZMMessage {
         
         hiddenInConversation = conversation
         visibleInConversation = nil
+        newMessage.linkPreviewState = .WaitingToBeProcessed
         return newMessage
     }
     
