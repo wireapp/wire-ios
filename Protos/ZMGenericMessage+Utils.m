@@ -224,6 +224,17 @@
     return [builder build];
 }
 
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                     newText:(NSString *)newText
+                                 linkPreview:(ZMLinkPreview *)linkPreview
+                                       nonce:(NSString *)nonce;
+{
+    ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
+    builder.edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText linkPreview:linkPreview];
+    builder.messageId = nonce;
+    return [builder build];
+}
+
 @end
 
 
