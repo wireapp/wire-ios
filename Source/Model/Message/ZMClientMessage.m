@@ -519,17 +519,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (LinkPreview *)linkPreview
 {
-    ZMGenericMessage *genericMessage = self.genericMessage;
-    if (genericMessage.text.linkPreview.count > 0 || genericMessage.edited.text.linkPreview.count > 0) {
-        ZMLinkPreview *linkPreview = self.firstZMLinkPreview;
-        
-        if (linkPreview.hasTweet) {
-            return [[TwitterStatus alloc] initWithProtocolBuffer:linkPreview];
-        }
-        else if (linkPreview.hasArticle) {
-            return [[Article alloc] initWithProtocolBuffer:linkPreview];
-        }
-        
+    ZMLinkPreview *linkPreview = self.firstZMLinkPreview;
+    
+    if (linkPreview.hasTweet) {
+        return [[TwitterStatus alloc] initWithProtocolBuffer:linkPreview];
+    }
+    else if (linkPreview.hasArticle) {
+        return [[Article alloc] initWithProtocolBuffer:linkPreview];
     }
     
     return nil;
@@ -537,9 +533,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (ZMLinkPreview *)firstZMLinkPreview
 {
-    ZMLinkPreview *textLinkPreview = self.genericMessage.text.linkPreview.firstObject;
-    ZMLinkPreview *editedLinkPreview = self.genericMessage.edited.text.linkPreview.firstObject;
-    return textLinkPreview ?: editedLinkPreview;
+    return self.genericMessage.linkPreviews.firstObject;
 }
 
 - (void)requestImageDownload
@@ -611,7 +605,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         return;
     }
     
-    ZMLinkPreview *linkPreview = [self.genericMessage.text.linkPreview firstObject];
+    ZMLinkPreview *linkPreview = [self firstZMLinkPreview];
     
     if (nil == linkPreview) {
         return;
@@ -638,7 +632,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 /// The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
 - (NSOrderedSet *)requiredImageFormats;
 {
-    if (self.genericMessage.text.linkPreview.count > 0) {
+    if (self.genericMessage.linkPreviews.count > 0) {
         return [NSOrderedSet orderedSetWithObject:@(ZMImageFormatMedium)];
     }
     return [NSOrderedSet orderedSet];

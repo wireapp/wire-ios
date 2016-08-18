@@ -89,15 +89,10 @@ extension ZMMessage : ObjectInSnapshot {
     private var linkPreviewDataChanged: Bool {
         guard let genericMessage = (message as? ZMClientMessage)?.genericMessage else { return false }
         guard let oldGenericMessage = changedKeysAndOldValues[MessageKey.GenericMessage.rawValue] as? ZMGenericMessage else { return false }
-        let oldLinks = oldGenericMessage.text.linkPreview as? [ZMLinkPreview]
-        let newLinks = genericMessage.text.linkPreview as? [ZMLinkPreview]
+        let oldLinks = oldGenericMessage.linkPreviews
+        let newLinks = genericMessage.linkPreviews
         
-        switch (oldLinks, newLinks) {
-        case (.None, .Some): return true
-        case (.None, .None): return false
-        case let (left?, right?): return left != right
-        default: return false
-        }
+        return oldLinks != newLinks
     }
     
     public var linkPreviewChanged: Bool {
