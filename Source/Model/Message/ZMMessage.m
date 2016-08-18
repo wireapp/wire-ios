@@ -353,7 +353,9 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     
     NSUUID *messageID = [NSUUID uuidWithTransportString:hiddenMessage.messageId];
     ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
-    [message removeMessage];
+    
+    // To avoid reinserting when receiving an edit we delete the message locally
+    [moc deleteObject:message];
 }
 
 + (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -365,14 +367,14 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     if (![senderID isEqual:message.sender.remoteIdentifier]) {
         return;
     }
-    
+
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
 
     // Only clients other than self should see the system message
     if (nil != message && ![senderID isEqual:selfUser.remoteIdentifier]) {
         [conversation appendDeletedForEveryoneSystemMessageWithTimestamp:message.serverTimestamp sender:message.sender];
     }
-    
+
     [message removeMessage];
 }
 
@@ -388,14 +390,10 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     if (message == nil || ![senderID isEqual:message.sender.remoteIdentifier]) {
         return nil;
     }
-    // If the original message was previously hidden locally by the user, we should not reinsert it with an edit message
-    if ([message.hiddenInConversation isEqual:conversation]) {
-        return nil;
-    }
+
     [message removeMessage];
     return message;
 }
-
 
 - (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload
 {

@@ -44,7 +44,9 @@ extension ZMMessage {
     func hideForSelfUser() {
         guard !isZombieObject else { return }
         ZMConversation.appendHideMessageToSelfConversation(self)
-        removeMessage()
+
+        // To avoid reinserting when receiving an edit we delete the message locally
+        managedObjectContext?.deleteObject(self)
     }
     
     public static func deleteForEveryone(message: ZMConversationMessage) {
