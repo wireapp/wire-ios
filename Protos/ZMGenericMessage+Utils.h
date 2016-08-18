@@ -81,6 +81,10 @@
                                      newText:(NSString *)newText
                                        nonce:(NSString *)nonce;
 
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                     newText:(NSString *)newText
+                                 linkPreview:(ZMLinkPreview *)linkPreview
+                                       nonce:(NSString *)nonce;
 - (BOOL)knownMessage;
 
 @end

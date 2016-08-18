@@ -85,4 +85,15 @@
     return [builder build];
 }
 
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview;
+{
+    ZMMessageEditBuilder *builder = [ZMMessageEdit builder];
+    builder.replacingMessageId = messageID;
+    ZMTextBuilder *textBuilder = [ZMText builder];
+    textBuilder.content = newText;
+    [textBuilder addLinkPreview:linkPreview];
+    builder.text = [textBuilder build];
+    return [builder build];
+}
+
 @end
