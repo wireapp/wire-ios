@@ -43,7 +43,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.sender = sender;
-    
+    [message markAsDelivered];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
     NSUUID *originalNonce = message.nonce;
     
@@ -81,6 +81,16 @@
     }
 }
 
+- (void)testThatItCanEditAMessage_SameSender
+{
+    [self checkThatItCanEditAMessageFromSameSender:YES shouldEdit:YES];
+}
+
+- (void)testThatItCanNotEditAMessage_DifferentSender
+{
+    [self checkThatItCanEditAMessageFromSameSender:NO shouldEdit:NO];
+}
+
 - (void)testThatItInsertsTheNewMessageAtTheSameIndex
 {
     // given
@@ -91,6 +101,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
+    [message markAsDelivered];
 
     // Add some more messages
     [conversation appendMessageWithText:@"Foo"];
@@ -109,15 +120,54 @@
     XCTAssertEqual(newIndex, oldIndex);
 }
 
-
-- (void)testThatItCanEditAMessage_SameSender
+- (void)testThatItResetsTheLinkPreviewState
 {
-    [self checkThatItCanEditAMessageFromSameSender:YES shouldEdit:YES];
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMClientMessage *message = (ZMClientMessage *)[conversation appendMessageWithText:oldText];
+    message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
+    message.linkPreviewState = ZMLinkPreviewStateDone;
+    [message markAsDelivered];
+
+    XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewStateDone);
+    
+    // when
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(newMessage.linkPreviewState, ZMLinkPreviewStateWaitingToBeProcessed);
 }
 
-- (void)testThatItCanNotEditAMessage_DifferentSender
+- (void)testThatItDoesNotEditAMessageThatFailedToSend
 {
-    [self checkThatItCanEditAMessageFromSameSender:NO shouldEdit:NO];
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
+    [message expire];
+    XCTAssertEqual(message.deliveryState, ZMDeliveryStateFailedToSend);
+    
+    // when
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(conversation.hiddenMessages.count, 0u);
+    
+    XCTAssertNil(newMessage);
+    XCTAssertNil(message.hiddenInConversation);
+    XCTAssertEqual(message.visibleInConversation, conversation);
+    XCTAssertEqualObjects(message.textMessageData.messageText, oldText);
 }
 
 - (void)checkThatItCanNotEditAnImageMessage
@@ -127,7 +177,8 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithImageData:self.verySmallJPEGData];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
-    
+    [message markAsDelivered];
+
     XCTAssertEqual(message.visibleInConversation, conversation);
     XCTAssertEqual(conversation.messages.count, 1u);
     XCTAssertEqual(conversation.hiddenMessages.count, 0u);
@@ -152,6 +203,8 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
+    [message markAsDelivered];
+
     conversation.lastModifiedDate = originalDate;
     conversation.lastServerTimeStamp = originalDate;
 
@@ -194,6 +247,8 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
+    [message markAsDelivered];
+
     conversation.lastModifiedDate = originalDate;
     conversation.lastServerTimeStamp = originalDate;
     NSUUID *originalNonce = message.nonce;
@@ -236,6 +291,8 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
+    [message markAsDelivered];
+
     conversation.lastModifiedDate = originalDate;
     conversation.lastServerTimeStamp = originalDate;
     NSUUID *originalNonce = message.nonce;
@@ -483,8 +540,7 @@
     
     // hide message locally
     [ZMMessage hideMessage:message];
-    XCTAssertNil(message.visibleInConversation);
-    XCTAssertEqual(message.hiddenInConversation, conversation);
+    XCTAssertTrue(message.isZombieObject);
     
     ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:sender.remoteIdentifier newText:newText];
     
@@ -498,8 +554,6 @@
     
     // then
     XCTAssertNil(newMessage);
-    XCTAssertNil(message.visibleInConversation);
-    XCTAssertEqual(message.hiddenInConversation, conversation);
 }
 
 

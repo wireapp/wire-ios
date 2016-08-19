@@ -44,7 +44,10 @@ extension ZMMessage {
     func hideForSelfUser() {
         guard !isZombieObject else { return }
         ZMConversation.appendHideMessageToSelfConversation(self)
+
+        // To avoid reinserting when receiving an edit we delete the message locally
         removeMessage()
+        managedObjectContext?.deleteObject(self)
     }
     
     public static func deleteForEveryone(message: ZMConversationMessage) {
@@ -84,6 +87,7 @@ extension ZMMessage {
         
         hiddenInConversation = conversation
         visibleInConversation = nil
+        newMessage.linkPreviewState = .WaitingToBeProcessed
         return newMessage
     }
     
@@ -95,7 +99,8 @@ extension ZMMessage {
 extension ZMClientMessage {
     override var isEditableMessage : Bool {
         if let genericMsg = genericMessage {
-            return genericMsg.hasEdited() || genericMsg.hasText()
+            return  genericMsg.hasEdited() ||
+                   (genericMsg.hasText() && deliveryState == .Delivered)
         }
         return false
     }

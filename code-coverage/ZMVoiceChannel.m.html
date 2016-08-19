@@ -1,0 +1,2137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>ZMVoiceChannel.m - Slather</title>
+<link href="slather.css" media="all" rel="stylesheet">
+</head>
+<body>
+<header><div class="row"><a href="index.html"><img src="logo.jpg" alt="Slather logo"></a></div></header><div class="row"><div id="reports">
+<h2 class="cov_title">
+<span>Coverage for "ZMVoiceChannel.m" : </span><span class="cov_low">28.52%</span>
+</h2>
+<h4 class="cov_subtitle">(81 of 284 relevant lines covered)</h4>
+<h4 class="cov_filepath">../Home/workspace/Utility jobs/Create a new version of framework/Source/VoiceChannel/ZMVoiceChannel.m</h4>
+<table class="source_code">
+<tr class="never">
+<td class="num">1</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">2</td>
+<td class="src"><pre><code class="objc">// Wire</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">3</td>
+<td class="src"><pre><code class="objc">// Copyright (C) 2016 Wire Swiss GmbH</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">4</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">5</td>
+<td class="src"><pre><code class="objc">// This program is free software: you can redistribute it and/or modify</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">6</td>
+<td class="src"><pre><code class="objc">// it under the terms of the GNU General Public License as published by</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">7</td>
+<td class="src"><pre><code class="objc">// the Free Software Foundation, either version 3 of the License, or</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">8</td>
+<td class="src"><pre><code class="objc">// (at your option) any later version.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">9</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">10</td>
+<td class="src"><pre><code class="objc">// This program is distributed in the hope that it will be useful,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">11</td>
+<td class="src"><pre><code class="objc">// but WITHOUT ANY WARRANTY; without even the implied warranty of</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">12</td>
+<td class="src"><pre><code class="objc">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">13</td>
+<td class="src"><pre><code class="objc">// GNU General Public License for more details.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">14</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">15</td>
+<td class="src"><pre><code class="objc">// You should have received a copy of the GNU General Public License</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">16</td>
+<td class="src"><pre><code class="objc">// along with this program. If not, see http://www.gnu.org/licenses/.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">17</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">18</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">19</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">20</td>
+<td class="src"><pre><code class="objc">@import UIKit;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">21</td>
+<td class="src"><pre><code class="objc">@import CoreTelephony;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">22</td>
+<td class="src"><pre><code class="objc">@import ZMUtilities;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">23</td>
+<td class="src"><pre><code class="objc">@import ZMCSystem;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">24</td>
+<td class="src"><pre><code class="objc">@import ZMTransport;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">25</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">26</td>
+<td class="src"><pre><code class="objc">#import "ZMVoiceChannel+Internal.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">27</td>
+<td class="src"><pre><code class="objc">#import "ZMVoiceChannel+Testing.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">28</td>
+<td class="src"><pre><code class="objc">#import "ZMManagedObject+Internal.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">29</td>
+<td class="src"><pre><code class="objc">#import "ZMUser+Internal.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">30</td>
+<td class="src"><pre><code class="objc">#import "ZMConversation+Internal.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">31</td>
+<td class="src"><pre><code class="objc">#import "NSManagedObjectContext+zmessaging.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">32</td>
+<td class="src"><pre><code class="objc">#import &lt;ZMCDataModel/ZMCDataModel-Swift.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">33</td>
+<td class="src"><pre><code class="objc">#import "NSError+ZMConversationInternal.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">34</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">35</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">36</td>
+<td class="src"><pre><code class="objc">@implementation ZMVoiceChannelParticipantState</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">37</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">38</td>
+<td class="src"><pre><code class="objc">- (BOOL)isEqual:(id)object;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">39</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">40</td>
+<td class="src"><pre><code class="objc">    if (! [object isKindOfClass:[ZMVoiceChannelParticipantState class]]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">41</td>
+<td class="src"><pre><code class="objc">        return NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">42</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">43</td>
+<td class="src"><pre><code class="objc">    ZMVoiceChannelParticipantState *other = object;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">44</td>
+<td class="src"><pre><code class="objc">    return ((other.connectionState == self.connectionState) &amp;&amp;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">45</td>
+<td class="src"><pre><code class="objc">            (other.muted == self.muted));</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">46</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">47</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">48</td>
+<td class="src"><pre><code class="objc">- (NSString *)description;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">49</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">50</td>
+<td class="src"><pre><code class="objc">    NSString *d;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">51</td>
+<td class="src"><pre><code class="objc">    switch (self.connectionState) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">52</td>
+<td class="src"><pre><code class="objc">        default:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">53</td>
+<td class="src"><pre><code class="objc">        case ZMVoiceChannelConnectionStateInvalid:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">54</td>
+<td class="src"><pre><code class="objc">            d = @"Invalid";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">55</td>
+<td class="src"><pre><code class="objc">            break;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">56</td>
+<td class="src"><pre><code class="objc">        case ZMVoiceChannelConnectionStateNotConnected:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">57</td>
+<td class="src"><pre><code class="objc">            d = @"NotConnected";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">58</td>
+<td class="src"><pre><code class="objc">            break;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">59</td>
+<td class="src"><pre><code class="objc">        case ZMVoiceChannelConnectionStateConnecting:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">60</td>
+<td class="src"><pre><code class="objc">            d = @"Connecting";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">61</td>
+<td class="src"><pre><code class="objc">            break;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">62</td>
+<td class="src"><pre><code class="objc">        case ZMVoiceChannelConnectionStateConnected:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">63</td>
+<td class="src"><pre><code class="objc">            d = @"Connected";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">64</td>
+<td class="src"><pre><code class="objc">            break;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">65</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">66</td>
+<td class="src"><pre><code class="objc">    return [NSString stringWithFormat:@"&lt;%@: %p&gt; %@%@", self.class, self,</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">67</td>
+<td class="src"><pre><code class="objc">            d,</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">68</td>
+<td class="src"><pre><code class="objc">            self.muted ? @" muted" : @""];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">69</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">70</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">71</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">72</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">73</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">74</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">75</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">76</td>
+<td class="src"><pre><code class="objc">@interface ZMVoiceChannel ()</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">77</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">78</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelState)stateForIsSelfJoined:(BOOL)selfJoined otherJoined:(BOOL)otherJoined isDeviceActive:(BOOL)isDeviceActive flowActive:(BOOL)flowActive isIgnoringCall:(BOOL)isIgnoringCall;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">79</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">80</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">81</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) ZMTimer *timer;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">82</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">83</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) CTCallCenter *callCenter;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">84</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">85</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">86</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">87</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">88</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">89</td>
+<td class="src"><pre><code class="objc">@implementation ZMConversation (CallParticipants)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">90</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">91</td>
+<td class="src"><pre><code class="objc">@dynamic callParticipants;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">92</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">93</td>
+<td class="src"><pre><code class="objc">- (BOOL)hasActiveVoiceChannel</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">94</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">95</td>
+<td class="src"><pre><code class="objc">    return (self.callDeviceIsActive) || (self.callParticipants.count != 0);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">96</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">97</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">98</td>
+<td class="src"><pre><code class="objc">- (ZMConversation *)firstOtherConversationWithActiveCall</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">99</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">100</td>
+<td class="src"><pre><code class="objc">    ZMConversation *otherActiveConversation = [self firstOtherConversationWithActiveCallOnCurrentDevice];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">101</td>
+<td class="src"><pre><code class="objc">    if (otherActiveConversation == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">102</td>
+<td class="src"><pre><code class="objc">        // If we don't have conversation with active call on this device,</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">103</td>
+<td class="src"><pre><code class="objc">        // there still could be conversation with active call on another device,</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">104</td>
+<td class="src"><pre><code class="objc">        // so we fetch conversations with call participants</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">105</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">106</td>
+<td class="src"><pre><code class="objc">        NSFetchRequest *request = [ZMConversation sortedFetchRequestWithPredicateFormat:@"(%K.@count &gt; 0) AND self != %@",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">107</td>
+<td class="src"><pre><code class="objc">                                   ZMConversationCallParticipantsKey,</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">108</td>
+<td class="src"><pre><code class="objc">                                   self];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">109</td>
+<td class="src"><pre><code class="objc">        NSArray *result = [self.managedObjectContext executeFetchRequestOrAssert:request];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">110</td>
+<td class="src"><pre><code class="objc">        otherActiveConversation = [result firstObjectMatchingWithBlock:^BOOL(ZMConversation *conv) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">111</td>
+<td class="src"><pre><code class="objc">            return (conv.voiceChannelState == ZMVoiceChannelStateDeviceTransferReady || conv.isIgnoringCall == NO);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">112</td>
+<td class="src"><pre><code class="objc">        }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">113</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">114</td>
+<td class="src"><pre><code class="objc">    return otherActiveConversation;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">115</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">116</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">117</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelState)voiceChannelState</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">118</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">119</td>
+<td class="src"><pre><code class="objc">    VerifyReturnValue(self.managedObjectContext != nil, ZMVoiceChannelStateInvalid);</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">120</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">121</td>
+<td class="src"><pre><code class="objc">    ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">122</td>
+<td class="src"><pre><code class="objc">    ZMUser *otherUser = [self.callParticipants.array firstObjectMatchingWithBlock:^BOOL(ZMUser *user) {</code></pre></td>
+<td class="coverage">211x</td>
+</tr>
+<tr class="covered">
+<td class="num">123</td>
+<td class="src"><pre><code class="objc">        return user != selfUser;</code></pre></td>
+<td class="coverage">211x</td>
+</tr>
+<tr class="covered">
+<td class="num">124</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">211x</td>
+</tr>
+<tr class="covered">
+<td class="num">125</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">126</td>
+<td class="src"><pre><code class="objc">    const BOOL selfJoined = [self.callParticipants containsObject:selfUser];</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">127</td>
+<td class="src"><pre><code class="objc">    const BOOL otherJoined = otherUser != nil;</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">128</td>
+<td class="src"><pre><code class="objc">    const BOOL isDeviceActive = self.callDeviceIsActive;</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">129</td>
+<td class="src"><pre><code class="objc">    const BOOL flowActive = self.isFlowActive;</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">130</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">131</td>
+<td class="src"><pre><code class="objc">    return [self.voiceChannel stateForIsSelfJoined:selfJoined otherJoined:otherJoined isDeviceActive:isDeviceActive flowActive:flowActive isIgnoringCall:self.isIgnoringCall];</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="covered">
+<td class="num">132</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">8940x</td>
+</tr>
+<tr class="never">
+<td class="num">133</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">134</td>
+<td class="src"><pre><code class="objc">+ (NSSet *)keyPathsForValuesAffectingVoiceChannelState {</code></pre></td>
+<td class="coverage">2590x</td>
+</tr>
+<tr class="covered">
+<td class="num">135</td>
+<td class="src"><pre><code class="objc">    return [NSSet setWithArray:@[@"callParticipants", ZMConversationCallDeviceIsActiveKey, @"activeFlowParticipants"]];</code></pre></td>
+<td class="coverage">2590x</td>
+</tr>
+<tr class="covered">
+<td class="num">136</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2590x</td>
+</tr>
+<tr class="never">
+<td class="num">137</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">138</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">139</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">140</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">141</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">142</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">143</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">144</td>
+<td class="src"><pre><code class="objc">@implementation ZMVoiceChannel</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">145</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">146</td>
+<td class="src"><pre><code class="objc">- (instancetype)initWithConversation:(ZMConversation *)conversation;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">147</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">148</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(conversation != nil);</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">149</td>
+<td class="src"><pre><code class="objc">    self = [super init];</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">150</td>
+<td class="src"><pre><code class="objc">    if (self) {</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">151</td>
+<td class="src"><pre><code class="objc">        _conversation = conversation;</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">152</td>
+<td class="src"><pre><code class="objc">        NSManagedObjectContext *context = self.conversation.managedObjectContext;</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">153</td>
+<td class="src"><pre><code class="objc">        if (context.zm_isUserInterfaceContext) {</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">154</td>
+<td class="src"><pre><code class="objc">            self.callCenter = context.globalManagedObjectContextObserver.callCenter;</code></pre></td>
+<td class="coverage">442x</td>
+</tr>
+<tr class="covered">
+<td class="num">155</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">442x</td>
+</tr>
+<tr class="covered">
+<td class="num">156</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">157</td>
+<td class="src"><pre><code class="objc">    return self;</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="covered">
+<td class="num">158</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">443x</td>
+</tr>
+<tr class="never">
+<td class="num">159</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">160</td>
+<td class="src"><pre><code class="objc">- (instancetype)initWithConversation:(ZMConversation *)conversation callCenter:(CTCallCenter *)callCenter</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">161</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">162</td>
+<td class="src"><pre><code class="objc">    self = [self initWithConversation:conversation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">163</td>
+<td class="src"><pre><code class="objc">    self.callCenter = callCenter;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">164</td>
+<td class="src"><pre><code class="objc">    return self;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">165</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">166</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">167</td>
+<td class="src"><pre><code class="objc">static NSString *lastSessionIdentifier;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">168</td>
+<td class="src"><pre><code class="objc">static NSDate *lastSessionStartDate;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">169</td>
+<td class="src"><pre><code class="objc">static dispatch_queue_t lastSessionIdentifierIsolation(void)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">170</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">171</td>
+<td class="src"><pre><code class="objc">    static dispatch_once_t onceToken;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">172</td>
+<td class="src"><pre><code class="objc">    static dispatch_queue_t queue;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">173</td>
+<td class="src"><pre><code class="objc">    dispatch_once(&amp;onceToken, ^{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">174</td>
+<td class="src"><pre><code class="objc">        queue = dispatch_queue_create("ZMVoiceChannel.lastSessionIdentifier", DISPATCH_QUEUE_CONCURRENT);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">175</td>
+<td class="src"><pre><code class="objc">    });</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">176</td>
+<td class="src"><pre><code class="objc">    return queue;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">177</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">178</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">179</td>
+<td class="src"><pre><code class="objc">+ (void)setLastSessionIdentifier:(NSString *)sessionID;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">180</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">181</td>
+<td class="src"><pre><code class="objc">    sessionID = [sessionID copy];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">182</td>
+<td class="src"><pre><code class="objc">    dispatch_barrier_async(lastSessionIdentifierIsolation(), ^{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">183</td>
+<td class="src"><pre><code class="objc">        lastSessionIdentifier = sessionID;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">184</td>
+<td class="src"><pre><code class="objc">    });</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">185</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">186</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">187</td>
+<td class="src"><pre><code class="objc">+ (NSString *)lastSessionIdentifier;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">188</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">189</td>
+<td class="src"><pre><code class="objc">    __block NSString *result;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">190</td>
+<td class="src"><pre><code class="objc">    dispatch_sync(lastSessionIdentifierIsolation(), ^{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">191</td>
+<td class="src"><pre><code class="objc">        result = [lastSessionIdentifier copy];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">192</td>
+<td class="src"><pre><code class="objc">    });</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">193</td>
+<td class="src"><pre><code class="objc">    return result;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">194</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">195</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">196</td>
+<td class="src"><pre><code class="objc">+ (void)setLastSessionStartDate:(NSDate *)date;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">197</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">198</td>
+<td class="src"><pre><code class="objc">    date = [date copy];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">199</td>
+<td class="src"><pre><code class="objc">    dispatch_barrier_async(lastSessionIdentifierIsolation(), ^{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">200</td>
+<td class="src"><pre><code class="objc">        lastSessionStartDate = date;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">201</td>
+<td class="src"><pre><code class="objc">    });</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">202</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">203</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">204</td>
+<td class="src"><pre><code class="objc">+ (NSDate *)lastSessionStartDate;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">205</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">206</td>
+<td class="src"><pre><code class="objc">    __block NSDate *result;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">207</td>
+<td class="src"><pre><code class="objc">    dispatch_sync(lastSessionIdentifierIsolation(), ^{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">208</td>
+<td class="src"><pre><code class="objc">        result = [lastSessionStartDate copy];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">209</td>
+<td class="src"><pre><code class="objc">    });</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">210</td>
+<td class="src"><pre><code class="objc">    return result;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">211</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">212</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">213</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">214</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelState)stateForIsSelfJoined:(BOOL)selfJoined otherJoined:(BOOL)otherJoined isDeviceActive:(BOOL)isDeviceActive flowActive:(BOOL)flowActive isIgnoringCall:(BOOL)isIgnoringCall</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">215</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1830x</td>
+</tr>
+<tr class="covered">
+<td class="num">216</td>
+<td class="src"><pre><code class="objc">    const BOOL selfActiveInCall = selfJoined || isDeviceActive;</code></pre></td>
+<td class="coverage">1760x</td>
+</tr>
+<tr class="covered">
+<td class="num">217</td>
+<td class="src"><pre><code class="objc">    ZMConversation *conversation = self.conversation;</code></pre></td>
+<td class="coverage">1830x</td>
+</tr>
+<tr class="covered">
+<td class="num">218</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1830x</td>
+</tr>
+<tr class="covered">
+<td class="num">219</td>
+<td class="src"><pre><code class="objc">    if (!conversation.isSelfAnActiveMember) {</code></pre></td>
+<td class="coverage">1830x</td>
+</tr>
+<tr class="covered">
+<td class="num">220</td>
+<td class="src"><pre><code class="objc">        return ZMVoiceChannelStateNoActiveUsers;</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">221</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">222</td>
+<td class="src"><pre><code class="objc">    else if (isIgnoringCall) {</code></pre></td>
+<td class="coverage">1780x</td>
+</tr>
+<tr class="covered">
+<td class="num">223</td>
+<td class="src"><pre><code class="objc">        if (conversation.conversationType == ZMConversationTypeOneOnOne ||</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="missed">
+<td class="num">224</td>
+<td class="src"><pre><code class="objc">            (conversation.isOutgoingCall &amp;&amp; !otherJoined)) // we cancelled an outgoing call</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">225</td>
+<td class="src"><pre><code class="objc">        {</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">226</td>
+<td class="src"><pre><code class="objc">            return ZMVoiceChannelStateNoActiveUsers;</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">227</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">228</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="missed">
+<td class="num">229</td>
+<td class="src"><pre><code class="objc">        if (otherJoined) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">230</td>
+<td class="src"><pre><code class="objc">            return ZMVoiceChannelStateIncomingCallInactive;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">231</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">232</td>
+<td class="src"><pre><code class="objc">        else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">233</td>
+<td class="src"><pre><code class="objc">            return ZMVoiceChannelStateNoActiveUsers;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">234</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">235</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">236</td>
+<td class="src"><pre><code class="objc">    else if (selfJoined &amp;&amp; !isDeviceActive &amp;&amp; !conversation.isOutgoingCall)</code></pre></td>
+<td class="coverage">1780x</td>
+</tr>
+<tr class="covered">
+<td class="num">237</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="covered">
+<td class="num">238</td>
+<td class="src"><pre><code class="objc">        return ZMVoiceChannelStateDeviceTransferReady;</code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="covered">
+<td class="num">239</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="covered">
+<td class="num">240</td>
+<td class="src"><pre><code class="objc">    else if(selfActiveInCall &amp;&amp; !otherJoined) {</code></pre></td>
+<td class="coverage">1730x</td>
+</tr>
+<tr class="covered">
+<td class="num">241</td>
+<td class="src"><pre><code class="objc">        return [self currentOutgoingCallState];</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">242</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">243</td>
+<td class="src"><pre><code class="objc">    else if (!selfActiveInCall &amp;&amp; otherJoined) {</code></pre></td>
+<td class="coverage">1700x</td>
+</tr>
+<tr class="covered">
+<td class="num">244</td>
+<td class="src"><pre><code class="objc">        return [self currentIncomingCallState];</code></pre></td>
+<td class="coverage">83x</td>
+</tr>
+<tr class="covered">
+<td class="num">245</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">83x</td>
+</tr>
+<tr class="covered">
+<td class="num">246</td>
+<td class="src"><pre><code class="objc">    else if (selfActiveInCall &amp;&amp; otherJoined) {</code></pre></td>
+<td class="coverage">1620x</td>
+</tr>
+<tr class="covered">
+<td class="num">247</td>
+<td class="src"><pre><code class="objc">        if (flowActive) {</code></pre></td>
+<td class="coverage">68x</td>
+</tr>
+<tr class="covered">
+<td class="num">248</td>
+<td class="src"><pre><code class="objc">            return ZMVoiceChannelStateSelfConnectedToActiveChannel;</code></pre></td>
+<td class="coverage">63x</td>
+</tr>
+<tr class="covered">
+<td class="num">249</td>
+<td class="src"><pre><code class="objc">        } else {</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">250</td>
+<td class="src"><pre><code class="objc">            return ZMVoiceChannelStateSelfIsJoiningActiveChannel;</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">251</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">252</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">1550x</td>
+</tr>
+<tr class="covered">
+<td class="num">253</td>
+<td class="src"><pre><code class="objc">        return  ZMVoiceChannelStateNoActiveUsers;</code></pre></td>
+<td class="coverage">1550x</td>
+</tr>
+<tr class="covered">
+<td class="num">254</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1550x</td>
+</tr>
+<tr class="covered">
+<td class="num">255</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1830x</td>
+</tr>
+<tr class="covered">
+<td class="num">256</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1830x</td>
+</tr>
+<tr class="never">
+<td class="num">257</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">258</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">259</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelState)currentOutgoingCallState</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">260</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">261</td>
+<td class="src"><pre><code class="objc">    return self.conversation.callTimedOut ? ZMVoiceChannelStateOutgoingCallInactive :ZMVoiceChannelStateOutgoingCall;</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">262</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="never">
+<td class="num">263</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">264</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelState)currentIncomingCallState</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">265</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">83x</td>
+</tr>
+<tr class="covered">
+<td class="num">266</td>
+<td class="src"><pre><code class="objc">    return self.conversation.callTimedOut ? ZMVoiceChannelStateIncomingCallInactive : ZMVoiceChannelStateIncomingCall;</code></pre></td>
+<td class="coverage">83x</td>
+</tr>
+<tr class="covered">
+<td class="num">267</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">83x</td>
+</tr>
+<tr class="covered">
+<td class="num">268</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">83x</td>
+</tr>
+<tr class="never">
+<td class="num">269</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">270</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelState)state;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">271</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">272</td>
+<td class="src"><pre><code class="objc">    return self.conversation.voiceChannelState;</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">273</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="never">
+<td class="num">274</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">275</td>
+<td class="src"><pre><code class="objc">+ (instancetype)activeVoiceChannelInSession:(id&lt;ZMManagedObjectContextProvider&gt;)session;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">276</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">277</td>
+<td class="src"><pre><code class="objc">    return [self activeVoiceChannelInManagedObjectContext:session.managedObjectContext];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">278</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">279</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">280</td>
+<td class="src"><pre><code class="objc">+ (instancetype)activeVoiceChannelInManagedObjectContext:(NSManagedObjectContext *)moc;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">281</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">282</td>
+<td class="src"><pre><code class="objc">    __block ZMConversation *activeConversation;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">283</td>
+<td class="src"><pre><code class="objc">    [ZMConversation enumerateObjectsInContext:moc withBlock:^(ZMManagedObject *object, BOOL *stop) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">284</td>
+<td class="src"><pre><code class="objc">        ZMConversation *conversation = (ZMConversation *)object;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">285</td>
+<td class="src"><pre><code class="objc">        if(conversation.voiceChannel.state == ZMVoiceChannelStateSelfConnectedToActiveChannel) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">286</td>
+<td class="src"><pre><code class="objc">            *stop = YES;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">287</td>
+<td class="src"><pre><code class="objc">            activeConversation = conversation;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">288</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">289</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">290</td>
+<td class="src"><pre><code class="objc">    return activeConversation.voiceChannel;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">291</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">292</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">293</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">294</td>
+<td class="src"><pre><code class="objc">- (BOOL)hasOngoingGSMCall</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">295</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">296</td>
+<td class="src"><pre><code class="objc">    NSSet *connectedCalls = [self.callCenter.currentCalls filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(CTCall *call, ZM_UNUSED id bindings) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">297</td>
+<td class="src"><pre><code class="objc">        return [call.callState isEqualToString:CTCallStateConnected];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">298</td>
+<td class="src"><pre><code class="objc">    }]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">299</td>
+<td class="src"><pre><code class="objc">    if (connectedCalls.count &gt; 0) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">300</td>
+<td class="src"><pre><code class="objc">        return YES;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">301</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">302</td>
+<td class="src"><pre><code class="objc">    return NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">303</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">304</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">305</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">306</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">307</td>
+<td class="src"><pre><code class="objc">- (void)enumerateParticipantStatesWithBlock:(void(^)(ZMUser *user, ZMVoiceChannelConnectionState connectionState, BOOL muted))block;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">308</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">309</td>
+<td class="src"><pre><code class="objc">    [self.conversation.callParticipants.array enumerateObjectsUsingBlock:^(ZMUser *user, ZM_UNUSED NSUInteger idx, ZM_UNUSED BOOL *stop) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">310</td>
+<td class="src"><pre><code class="objc">        if(block) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">311</td>
+<td class="src"><pre><code class="objc">            ZMVoiceChannelParticipantState *state = [self participantStateForUser:user];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">312</td>
+<td class="src"><pre><code class="objc">            block(user, state.connectionState, state.muted);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">313</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">314</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">315</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">316</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">317</td>
+<td class="src"><pre><code class="objc">- (NSOrderedSet *)participants;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">318</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">24x</td>
+</tr>
+<tr class="covered">
+<td class="num">319</td>
+<td class="src"><pre><code class="objc">    ZMConversation *conversation = self.conversation;</code></pre></td>
+<td class="coverage">24x</td>
+</tr>
+<tr class="covered">
+<td class="num">320</td>
+<td class="src"><pre><code class="objc">    ZMUser *selfUser = [ZMUser selfUserInContext:conversation.managedObjectContext];</code></pre></td>
+<td class="coverage">24x</td>
+</tr>
+<tr class="covered">
+<td class="num">321</td>
+<td class="src"><pre><code class="objc">    NSMutableOrderedSet *participants = conversation.callParticipants.mutableCopy;</code></pre></td>
+<td class="coverage">24x</td>
+</tr>
+<tr class="covered">
+<td class="num">322</td>
+<td class="src"><pre><code class="objc">    [participants removeObject:selfUser];</code></pre></td>
+<td class="coverage">24x</td>
+</tr>
+<tr class="covered">
+<td class="num">323</td>
+<td class="src"><pre><code class="objc">    return participants;</code></pre></td>
+<td class="coverage">24x</td>
+</tr>
+<tr class="covered">
+<td class="num">324</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">24x</td>
+</tr>
+<tr class="never">
+<td class="num">325</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">326</td>
+<td class="src"><pre><code class="objc">+ (ZMVoiceChannelParticipantState *)participantStateForCallUserWithIsJoined:(BOOL)joined flowActive:(BOOL)flowActive</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">327</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">328</td>
+<td class="src"><pre><code class="objc">    ZMVoiceChannelParticipantState *state = [[ZMVoiceChannelParticipantState alloc] init];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">329</td>
+<td class="src"><pre><code class="objc">    if (! joined) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">330</td>
+<td class="src"><pre><code class="objc">        state.connectionState = ZMVoiceChannelConnectionStateNotConnected;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">331</td>
+<td class="src"><pre><code class="objc">    } else if (flowActive) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">332</td>
+<td class="src"><pre><code class="objc">        state.connectionState = ZMVoiceChannelConnectionStateConnected;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">333</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">334</td>
+<td class="src"><pre><code class="objc">        state.connectionState = ZMVoiceChannelConnectionStateConnecting;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">335</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">336</td>
+<td class="src"><pre><code class="objc">    return state;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">337</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">338</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">339</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelParticipantState *)participantStateForUser:(ZMUser *)user;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">340</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">341</td>
+<td class="src"><pre><code class="objc">    ZMConversation *conversation = self.conversation;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">342</td>
+<td class="src"><pre><code class="objc">    const BOOL joined = [conversation.callParticipants containsObject:user];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">343</td>
+<td class="src"><pre><code class="objc">    const BOOL flowActive = user.isSelfUser ? conversation.isFlowActive : [conversation.activeFlowParticipants containsObject:user];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">344</td>
+<td class="src"><pre><code class="objc">    ZMVoiceChannelParticipantState *state = [self.class participantStateForCallUserWithIsJoined:joined flowActive:flowActive];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">345</td>
+<td class="src"><pre><code class="objc">    state.isSendingVideo = user.isSelfUser ? conversation.isSendingVideo : [conversation.otherActiveVideoCallParticipants containsObject:user];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">346</td>
+<td class="src"><pre><code class="objc">    return state;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">347</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">348</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">349</td>
+<td class="src"><pre><code class="objc">- (ZMVoiceChannelConnectionState)selfUserConnectionState;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">350</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">351</td>
+<td class="src"><pre><code class="objc">    ZMConversation *conv = self.conversation;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">352</td>
+<td class="src"><pre><code class="objc">    ZMVoiceChannelParticipantState *state = [self participantStateForUser:[ZMUser selfUserInContext:conv.managedObjectContext]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">353</td>
+<td class="src"><pre><code class="objc">    return state.connectionState;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">354</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">355</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">356</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">357</td>
+<td class="src"><pre><code class="objc">- (id&lt;CallingInitialisationObserverToken&gt;)addCallingInitializationObserver:(id&lt;CallingInitialisationObserver&gt;)observer;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">358</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">359</td>
+<td class="src"><pre><code class="objc">    ZM_WEAK(observer);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">360</td>
+<td class="src"><pre><code class="objc">    return (id&lt;CallingInitialisationObserverToken&gt;)[CallingInitialisationNotification addObserverWithBlock:^(CallingInitialisationNotification * notification) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">361</td>
+<td class="src"><pre><code class="objc">        ZM_STRONG(observer);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">362</td>
+<td class="src"><pre><code class="objc">        if ([observer respondsToSelector:@selector(couldNotInitialiseCallWithError:)]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">363</td>
+<td class="src"><pre><code class="objc">            [observer couldNotInitialiseCallWithError:notification.error];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">364</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">365</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">366</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">367</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">368</td>
+<td class="src"><pre><code class="objc">- (void)removeCallingInitialisationObserver:(id&lt;CallingInitialisationObserverToken&gt;)token;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">369</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">370</td>
+<td class="src"><pre><code class="objc">    [CallingInitialisationNotification removeObserver:token];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">371</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">372</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">373</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">374</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">375</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">376</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">377</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">378</td>
+<td class="src"><pre><code class="objc">@implementation ZMVoiceChannel (ZMDebug)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">379</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">380</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">381</td>
+<td class="src"><pre><code class="objc">+ (NSAttributedString *)voiceChannelDebugInformation;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">382</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">383</td>
+<td class="src"><pre><code class="objc">    NSMutableAttributedString *result = [[NSMutableAttributedString alloc] init];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">384</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">385</td>
+<td class="src"><pre><code class="objc">    UIFont *font = [UIFont systemFontOfSize:11];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">386</td>
+<td class="src"><pre><code class="objc">    UIFont *boldFont = [UIFont boldSystemFontOfSize:11];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">387</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">388</td>
+<td class="src"><pre><code class="objc">    NSDictionary *attributes = @{NSFontAttributeName: font};</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">389</td>
+<td class="src"><pre><code class="objc">    NSDictionary *boldAttributes = @{NSFontAttributeName: boldFont};</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">390</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">391</td>
+<td class="src"><pre><code class="objc">    void(^append)(NSString *) = ^(NSString *text){</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">392</td>
+<td class="src"><pre><code class="objc">        NSAttributedString *s = [[NSAttributedString alloc] initWithString:text ?: @"" attributes:attributes];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">393</td>
+<td class="src"><pre><code class="objc">        [result appendAttributedString:s];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">394</td>
+<td class="src"><pre><code class="objc">    };</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">395</td>
+<td class="src"><pre><code class="objc">    void(^appendBold)(NSString *) = ^(NSString *text){</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">396</td>
+<td class="src"><pre><code class="objc">        NSAttributedString *s = [[NSAttributedString alloc] initWithString:text ?: @"" attributes:boldAttributes];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">397</td>
+<td class="src"><pre><code class="objc">        [result appendAttributedString:s];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">398</td>
+<td class="src"><pre><code class="objc">    };</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">399</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">400</td>
+<td class="src"><pre><code class="objc">    // Session ID</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">401</td>
+<td class="src"><pre><code class="objc">    append(@"Session ID: ");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">402</td>
+<td class="src"><pre><code class="objc">    appendBold(self.lastSessionIdentifier);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">403</td>
+<td class="src"><pre><code class="objc">    append(@"\n");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">404</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">405</td>
+<td class="src"><pre><code class="objc">    // Session date:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">406</td>
+<td class="src"><pre><code class="objc">    append(@"Session start date: ");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">407</td>
+<td class="src"><pre><code class="objc">    NSDate *date = [self lastSessionStartDate];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">408</td>
+<td class="src"><pre><code class="objc">    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">409</td>
+<td class="src"><pre><code class="objc">    formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">410</td>
+<td class="src"><pre><code class="objc">    formatter.dateStyle = kCFDateFormatterLongStyle;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">411</td>
+<td class="src"><pre><code class="objc">    formatter.timeStyle = kCFDateFormatterLongStyle;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">412</td>
+<td class="src"><pre><code class="objc">    appendBold(date == nil ? @"" : [formatter stringFromDate:date]);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">413</td>
+<td class="src"><pre><code class="objc">    append(@"\n");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">414</td>
+<td class="src"><pre><code class="objc">    // Session date in GMT:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">415</td>
+<td class="src"><pre><code class="objc">    append(@"Session start date (GMT): ");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">416</td>
+<td class="src"><pre><code class="objc">    formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">417</td>
+<td class="src"><pre><code class="objc">    appendBold(date == nil ? @"" : [formatter stringFromDate:date]);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">418</td>
+<td class="src"><pre><code class="objc">    append(@"\n");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">419</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">420</td>
+<td class="src"><pre><code class="objc">    return result;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">421</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">422</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">423</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+</table>
+</div></div>
+<footer><div class="row">
+<p><a href="https://github.com/SlatherOrg/slather">Fork me on Github</a></p>
+<p>&copy; 2016 Slather</p>
+</div></footer><script src="highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

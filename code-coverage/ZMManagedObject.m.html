@@ -1,0 +1,3937 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>ZMManagedObject.m - Slather</title>
+<link href="slather.css" media="all" rel="stylesheet">
+</head>
+<body>
+<header><div class="row"><a href="index.html"><img src="logo.jpg" alt="Slather logo"></a></div></header><div class="row"><div id="reports">
+<h2 class="cov_title">
+<span>Coverage for "ZMManagedObject.m" : </span><span class="cov_low">69.83%</span>
+</h2>
+<h4 class="cov_subtitle">(405 of 580 relevant lines covered)</h4>
+<h4 class="cov_filepath">../Home/workspace/Utility jobs/Create a new version of framework/Source/Model/ZMManagedObject.m</h4>
+<table class="source_code">
+<tr class="never">
+<td class="num">1</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">2</td>
+<td class="src"><pre><code class="objc">// Wire</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">3</td>
+<td class="src"><pre><code class="objc">// Copyright (C) 2016 Wire Swiss GmbH</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">4</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">5</td>
+<td class="src"><pre><code class="objc">// This program is free software: you can redistribute it and/or modify</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">6</td>
+<td class="src"><pre><code class="objc">// it under the terms of the GNU General Public License as published by</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">7</td>
+<td class="src"><pre><code class="objc">// the Free Software Foundation, either version 3 of the License, or</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">8</td>
+<td class="src"><pre><code class="objc">// (at your option) any later version.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">9</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">10</td>
+<td class="src"><pre><code class="objc">// This program is distributed in the hope that it will be useful,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">11</td>
+<td class="src"><pre><code class="objc">// but WITHOUT ANY WARRANTY; without even the implied warranty of</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">12</td>
+<td class="src"><pre><code class="objc">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">13</td>
+<td class="src"><pre><code class="objc">// GNU General Public License for more details.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">14</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">15</td>
+<td class="src"><pre><code class="objc">// You should have received a copy of the GNU General Public License</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">16</td>
+<td class="src"><pre><code class="objc">// along with this program. If not, see http://www.gnu.org/licenses/.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">17</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">18</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">19</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">20</td>
+<td class="src"><pre><code class="objc">@import ZMUtilities;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">21</td>
+<td class="src"><pre><code class="objc">@import ZMTransport;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">22</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">23</td>
+<td class="src"><pre><code class="objc">#import "ZMManagedObject+Internal.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">24</td>
+<td class="src"><pre><code class="objc">#import "NSManagedObjectContext+zmessaging.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">25</td>
+<td class="src"><pre><code class="objc">#import "ZMUser+Internal.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">26</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">27</td>
+<td class="src"><pre><code class="objc">NSString * const ZMDataPropertySuffix = @"_data";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">28</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">29</td>
+<td class="src"><pre><code class="objc">static NSString * const NeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">30</td>
+<td class="src"><pre><code class="objc">NSString * const ZMManagedObjectLocallyModifiedDataFieldsKey = @"modifiedDataFields";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">31</td>
+<td class="src"><pre><code class="objc">static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">32</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">33</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">34</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">35</td>
+<td class="src"><pre><code class="objc">@interface ZMManagedObject ()</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">36</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">37</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">38</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">39</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">40</td>
+<td class="src"><pre><code class="objc">@implementation ZMManagedObject</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">41</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">42</td>
+<td class="src"><pre><code class="objc">+ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inUserSession:(id&lt;ZMManagedObjectContextProvider&gt;)userSession;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">43</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">44</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(url != nil);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">45</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(userSession != nil);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">46</td>
+<td class="src"><pre><code class="objc">    NSManagedObjectContext *moc = userSession.managedObjectContext;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">47</td>
+<td class="src"><pre><code class="objc">    NSPersistentStoreCoordinator *psc = moc.persistentStoreCoordinator;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">48</td>
+<td class="src"><pre><code class="objc">    return [psc managedObjectIDForURIRepresentation:url];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">49</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">50</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">51</td>
+<td class="src"><pre><code class="objc">+ (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id&lt;ZMManagedObjectContextProvider&gt;)userSession;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">52</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">53</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(identifier);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">54</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(userSession);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">55</td>
+<td class="src"><pre><code class="objc">    NSError *error;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">56</td>
+<td class="src"><pre><code class="objc">    ZMManagedObject *mo = (id) [userSession.managedObjectContext existingObjectWithID:identifier error:&amp;error];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">57</td>
+<td class="src"><pre><code class="objc">    if (mo != nil) {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">58</td>
+<td class="src"><pre><code class="objc">        // [self entityName] throws an exception when called on ZMManagedObject</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">59</td>
+<td class="src"><pre><code class="objc">        //        RequireString([mo.entity.name isEqualToString:[self entityName]], @"Retrieved an object of a different entity.");</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">60</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">61</td>
+<td class="src"><pre><code class="objc">    return mo;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">62</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">63</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">64</td>
+<td class="src"><pre><code class="objc">+ (instancetype)existingObjectWithObjectIdentifier:(NSString *)identifier inManagedObjectContext:(NSManagedObjectContext *)context;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">65</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">66</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(identifier != nil);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">67</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(context != nil);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">68</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">69</td>
+<td class="src"><pre><code class="objc">    NSURL *moURL = [NSURL URLWithString:identifier];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">70</td>
+<td class="src"><pre><code class="objc">    if (moURL == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">71</td>
+<td class="src"><pre><code class="objc">        return nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">72</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">73</td>
+<td class="src"><pre><code class="objc">    NSManagedObjectID *moID = [context.persistentStoreCoordinator managedObjectIDForURIRepresentation:moURL];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">74</td>
+<td class="src"><pre><code class="objc">    if (moID == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">75</td>
+<td class="src"><pre><code class="objc">        return nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">76</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">77</td>
+<td class="src"><pre><code class="objc">    ZMManagedObject *mo = (id)[context existingObjectWithID:moID error:nil];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">78</td>
+<td class="src"><pre><code class="objc">    return mo;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">79</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">80</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">81</td>
+<td class="src"><pre><code class="objc">- (BOOL)isZombieObject</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">82</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">29000x</td>
+</tr>
+<tr class="covered">
+<td class="num">83</td>
+<td class="src"><pre><code class="objc">    return self.isDeleted || self.managedObjectContext == nil;</code></pre></td>
+<td class="coverage">28700x</td>
+</tr>
+<tr class="covered">
+<td class="num">84</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">29000x</td>
+</tr>
+<tr class="never">
+<td class="num">85</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">86</td>
+<td class="src"><pre><code class="objc">- (void)willSave;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">87</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">41100x</td>
+</tr>
+<tr class="covered">
+<td class="num">88</td>
+<td class="src"><pre><code class="objc">    [super willSave];</code></pre></td>
+<td class="coverage">41100x</td>
+</tr>
+<tr class="covered">
+<td class="num">89</td>
+<td class="src"><pre><code class="objc">    if (self.managedObjectContext.zm_isUserInterfaceContext) {</code></pre></td>
+<td class="coverage">41100x</td>
+</tr>
+<tr class="covered">
+<td class="num">90</td>
+<td class="src"><pre><code class="objc">        [self updateKeysThatHaveLocalModifications];</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="covered">
+<td class="num">91</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="covered">
+<td class="num">92</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">41100x</td>
+</tr>
+<tr class="never">
+<td class="num">93</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">94</td>
+<td class="src"><pre><code class="objc">- (NSDictionary *)filteredChangedValues;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">95</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="covered">
+<td class="num">96</td>
+<td class="src"><pre><code class="objc">    NSSet *ignoredKeys = self.ignoredKeys;</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="never">
+<td class="num">97</td>
+<td class="src"><pre><code class="objc">    NSArray *changedKeys = [self.changedValues.allKeys filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *k, NSDictionary *bindings) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">98</td>
+<td class="src"><pre><code class="objc">        NOT_USED(bindings);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">99</td>
+<td class="src"><pre><code class="objc">        return ! [ignoredKeys containsObject:k];</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">100</td>
+<td class="src"><pre><code class="objc">    }]];</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">101</td>
+<td class="src"><pre><code class="objc">    return [self.changedValues dictionaryWithValuesForKeys:changedKeys];</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="covered">
+<td class="num">102</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="never">
+<td class="num">103</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">104</td>
+<td class="src"><pre><code class="objc">- (void)setKeysThatHaveLocalModifications:(NSSet *)keys;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">105</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">3020x</td>
+</tr>
+<tr class="covered">
+<td class="num">106</td>
+<td class="src"><pre><code class="objc">    if (! [[self class] hasLocallyModifiedDataFields]) {</code></pre></td>
+<td class="coverage">3020x</td>
+</tr>
+<tr class="missed">
+<td class="num">107</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">108</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">109</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">3020x</td>
+</tr>
+<tr class="covered">
+<td class="num">110</td>
+<td class="src"><pre><code class="objc">    // The stored value is a bitfield. C.f. the -keysThatAreMissingDataFromBackend method.</code></pre></td>
+<td class="coverage">3020x</td>
+</tr>
+<tr class="covered">
+<td class="num">111</td>
+<td class="src"><pre><code class="objc">    __block int64_t bits = 0;</code></pre></td>
+<td class="coverage">3020x</td>
+</tr>
+<tr class="covered">
+<td class="num">112</td>
+<td class="src"><pre><code class="objc">    [self.keysTrackedForLocalModifications enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {</code></pre></td>
+<td class="coverage">11500x</td>
+</tr>
+<tr class="covered">
+<td class="num">113</td>
+<td class="src"><pre><code class="objc">        NOT_USED(stop);</code></pre></td>
+<td class="coverage">11500x</td>
+</tr>
+<tr class="covered">
+<td class="num">114</td>
+<td class="src"><pre><code class="objc">        if ([keys containsObject:key]) {</code></pre></td>
+<td class="coverage">11500x</td>
+</tr>
+<tr class="covered">
+<td class="num">115</td>
+<td class="src"><pre><code class="objc">            bits |= 1ll &lt;&lt; (int) idx;</code></pre></td>
+<td class="coverage">3670x</td>
+</tr>
+<tr class="covered">
+<td class="num">116</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">3670x</td>
+</tr>
+<tr class="covered">
+<td class="num">117</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">11500x</td>
+</tr>
+<tr class="covered">
+<td class="num">118</td>
+<td class="src"><pre><code class="objc">    if (! [[self valueForKey:ZMManagedObjectLocallyModifiedDataFieldsKey] isEqualToValue:@(bits)]) {</code></pre></td>
+<td class="coverage">3020x</td>
+</tr>
+<tr class="covered">
+<td class="num">119</td>
+<td class="src"><pre><code class="objc">        [self setValue:@(bits) forKey:ZMManagedObjectLocallyModifiedDataFieldsKey];</code></pre></td>
+<td class="coverage">2590x</td>
+</tr>
+<tr class="covered">
+<td class="num">120</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">2590x</td>
+</tr>
+<tr class="covered">
+<td class="num">121</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">3020x</td>
+</tr>
+<tr class="never">
+<td class="num">122</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">123</td>
+<td class="src"><pre><code class="objc">- (NSString *)objectIDURLString</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">124</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">125</td>
+<td class="src"><pre><code class="objc">    NSError *error = nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">126</td>
+<td class="src"><pre><code class="objc">    if (self.objectID.isTemporaryID) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">127</td>
+<td class="src"><pre><code class="objc">        if (! [self.managedObjectContext obtainPermanentIDsForObjects:@[self] error:&amp;error]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">128</td>
+<td class="src"><pre><code class="objc">            return nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">129</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">130</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">131</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">132</td>
+<td class="src"><pre><code class="objc">    return [[self.objectID URIRepresentation] absoluteString];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">133</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">134</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">135</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">136</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">137</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">138</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">139</td>
+<td class="src"><pre><code class="objc">@implementation ZMManagedObject (Internal)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">140</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">141</td>
+<td class="src"><pre><code class="objc">@dynamic needsToBeUpdatedFromBackend;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">142</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">143</td>
+<td class="src"><pre><code class="objc">+ (BOOL)hasLocallyModifiedDataFields;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">144</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">52300x</td>
+</tr>
+<tr class="covered">
+<td class="num">145</td>
+<td class="src"><pre><code class="objc">    return YES;</code></pre></td>
+<td class="coverage">52300x</td>
+</tr>
+<tr class="covered">
+<td class="num">146</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">52300x</td>
+</tr>
+<tr class="never">
+<td class="num">147</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">148</td>
+<td class="src"><pre><code class="objc">+ (NSString *)entityName;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">149</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">150</td>
+<td class="src"><pre><code class="objc">    NSAssert(NO, @"Subclasses must override this ZMManagedObject -entityName");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">151</td>
+<td class="src"><pre><code class="objc">    return nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">152</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">153</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">154</td>
+<td class="src"><pre><code class="objc">+ (NSString *)sortKey;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">155</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">156</td>
+<td class="src"><pre><code class="objc">    NSAssert(NO, @"Subclasses must override this ZMManagedObject -sortKey");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">157</td>
+<td class="src"><pre><code class="objc">    return nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">158</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">159</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">160</td>
+<td class="src"><pre><code class="objc">+ (NSString *)remoteIdentifierDataKey</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">161</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">542x</td>
+</tr>
+<tr class="covered">
+<td class="num">162</td>
+<td class="src"><pre><code class="objc">    return @"remoteIdentifier_data";</code></pre></td>
+<td class="coverage">542x</td>
+</tr>
+<tr class="covered">
+<td class="num">163</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">542x</td>
+</tr>
+<tr class="never">
+<td class="num">164</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">165</td>
+<td class="src"><pre><code class="objc">+ (instancetype)insertNewObjectInManagedObjectContext:(NSManagedObjectContext *)moc;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">166</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">41000x</td>
+</tr>
+<tr class="covered">
+<td class="num">167</td>
+<td class="src"><pre><code class="objc">    return [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:moc];</code></pre></td>
+<td class="coverage">41000x</td>
+</tr>
+<tr class="covered">
+<td class="num">168</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">41000x</td>
+</tr>
+<tr class="never">
+<td class="num">169</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">170</td>
+<td class="src"><pre><code class="objc">- (ZMEventID *)transientEventIDForKey:(NSString *)key;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">171</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">3160x</td>
+</tr>
+<tr class="covered">
+<td class="num">172</td>
+<td class="src"><pre><code class="objc">    [self willAccessValueForKey:key];</code></pre></td>
+<td class="coverage">3160x</td>
+</tr>
+<tr class="covered">
+<td class="num">173</td>
+<td class="src"><pre><code class="objc">    ZMEventID *eventID = [self primitiveValueForKey:key];</code></pre></td>
+<td class="coverage">3160x</td>
+</tr>
+<tr class="covered">
+<td class="num">174</td>
+<td class="src"><pre><code class="objc">    [self didAccessValueForKey:key];</code></pre></td>
+<td class="coverage">3160x</td>
+</tr>
+<tr class="covered">
+<td class="num">175</td>
+<td class="src"><pre><code class="objc">    if (eventID == nil) {</code></pre></td>
+<td class="coverage">3160x</td>
+</tr>
+<tr class="covered">
+<td class="num">176</td>
+<td class="src"><pre><code class="objc">        NSData *eventIDData = [self valueForKey:[key stringByAppendingString:ZMDataPropertySuffix]];</code></pre></td>
+<td class="coverage">1670x</td>
+</tr>
+<tr class="covered">
+<td class="num">177</td>
+<td class="src"><pre><code class="objc">        if (eventIDData != nil) {</code></pre></td>
+<td class="coverage">1670x</td>
+</tr>
+<tr class="covered">
+<td class="num">178</td>
+<td class="src"><pre><code class="objc">            eventID = [ZMEventID decodeFromData:eventIDData];</code></pre></td>
+<td class="coverage">10x</td>
+</tr>
+<tr class="covered">
+<td class="num">179</td>
+<td class="src"><pre><code class="objc">            [self setPrimitiveValue:eventID forKey:key];</code></pre></td>
+<td class="coverage">10x</td>
+</tr>
+<tr class="covered">
+<td class="num">180</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">10x</td>
+</tr>
+<tr class="covered">
+<td class="num">181</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1670x</td>
+</tr>
+<tr class="covered">
+<td class="num">182</td>
+<td class="src"><pre><code class="objc">    return eventID;</code></pre></td>
+<td class="coverage">3160x</td>
+</tr>
+<tr class="covered">
+<td class="num">183</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">3160x</td>
+</tr>
+<tr class="never">
+<td class="num">184</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">185</td>
+<td class="src"><pre><code class="objc">- (void)setTransientEventID:(ZMEventID *)newEventID forKey:(NSString *)key;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">186</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">31500x</td>
+</tr>
+<tr class="covered">
+<td class="num">187</td>
+<td class="src"><pre><code class="objc">    NSString *dataKey = [key stringByAppendingString:ZMDataPropertySuffix];</code></pre></td>
+<td class="coverage">31500x</td>
+</tr>
+<tr class="covered">
+<td class="num">188</td>
+<td class="src"><pre><code class="objc">    [self willChangeValueForKey:key];</code></pre></td>
+<td class="coverage">31500x</td>
+</tr>
+<tr class="covered">
+<td class="num">189</td>
+<td class="src"><pre><code class="objc">    [self setPrimitiveValue:newEventID forKey:key];</code></pre></td>
+<td class="coverage">31500x</td>
+</tr>
+<tr class="covered">
+<td class="num">190</td>
+<td class="src"><pre><code class="objc">    [self setValue:[newEventID encodeToData] forKey:dataKey];</code></pre></td>
+<td class="coverage">31500x</td>
+</tr>
+<tr class="covered">
+<td class="num">191</td>
+<td class="src"><pre><code class="objc">    [self didChangeValueForKey:key];</code></pre></td>
+<td class="coverage">31500x</td>
+</tr>
+<tr class="covered">
+<td class="num">192</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">31500x</td>
+</tr>
+<tr class="never">
+<td class="num">193</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">194</td>
+<td class="src"><pre><code class="objc">- (NSUUID *)transientUUIDForKey:(NSString *)key;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">195</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">3560x</td>
+</tr>
+<tr class="covered">
+<td class="num">196</td>
+<td class="src"><pre><code class="objc">    [self willAccessValueForKey:key];</code></pre></td>
+<td class="coverage">3560x</td>
+</tr>
+<tr class="covered">
+<td class="num">197</td>
+<td class="src"><pre><code class="objc">    NSUUID *uuid = [self primitiveValueForKey:key];</code></pre></td>
+<td class="coverage">3560x</td>
+</tr>
+<tr class="covered">
+<td class="num">198</td>
+<td class="src"><pre><code class="objc">    [self didAccessValueForKey:key];</code></pre></td>
+<td class="coverage">3560x</td>
+</tr>
+<tr class="covered">
+<td class="num">199</td>
+<td class="src"><pre><code class="objc">    if (uuid == nil) {</code></pre></td>
+<td class="coverage">3560x</td>
+</tr>
+<tr class="covered">
+<td class="num">200</td>
+<td class="src"><pre><code class="objc">        NSData *uuidData = [self valueForKey:[key stringByAppendingString:ZMDataPropertySuffix]];</code></pre></td>
+<td class="coverage">1630x</td>
+</tr>
+<tr class="covered">
+<td class="num">201</td>
+<td class="src"><pre><code class="objc">        if (uuidData != nil) {</code></pre></td>
+<td class="coverage">1630x</td>
+</tr>
+<tr class="covered">
+<td class="num">202</td>
+<td class="src"><pre><code class="objc">            if (uuidData.length == sizeof(uuid_t)) {</code></pre></td>
+<td class="coverage">190x</td>
+</tr>
+<tr class="covered">
+<td class="num">203</td>
+<td class="src"><pre><code class="objc">                uuid = [[NSUUID alloc] initWithUUIDBytes:uuidData.bytes];</code></pre></td>
+<td class="coverage">190x</td>
+</tr>
+<tr class="missed">
+<td class="num">204</td>
+<td class="src"><pre><code class="objc">            } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">205</td>
+<td class="src"><pre><code class="objc">                uuid = nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">206</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">207</td>
+<td class="src"><pre><code class="objc">            [self setPrimitiveValue:uuid forKey:key];</code></pre></td>
+<td class="coverage">190x</td>
+</tr>
+<tr class="covered">
+<td class="num">208</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">190x</td>
+</tr>
+<tr class="covered">
+<td class="num">209</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1630x</td>
+</tr>
+<tr class="covered">
+<td class="num">210</td>
+<td class="src"><pre><code class="objc">    return uuid;</code></pre></td>
+<td class="coverage">3560x</td>
+</tr>
+<tr class="covered">
+<td class="num">211</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">3560x</td>
+</tr>
+<tr class="never">
+<td class="num">212</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">213</td>
+<td class="src"><pre><code class="objc">- (void)setTransientUUID:(NSUUID *)newUUID forKey:(NSString *)key;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">214</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">39600x</td>
+</tr>
+<tr class="covered">
+<td class="num">215</td>
+<td class="src"><pre><code class="objc">    [self willChangeValueForKey:key];</code></pre></td>
+<td class="coverage">39600x</td>
+</tr>
+<tr class="covered">
+<td class="num">216</td>
+<td class="src"><pre><code class="objc">    [self setPrimitiveValue:newUUID forKey:key];</code></pre></td>
+<td class="coverage">39600x</td>
+</tr>
+<tr class="covered">
+<td class="num">217</td>
+<td class="src"><pre><code class="objc">    [self didChangeValueForKey:key];</code></pre></td>
+<td class="coverage">39600x</td>
+</tr>
+<tr class="covered">
+<td class="num">218</td>
+<td class="src"><pre><code class="objc">    NSString *dataKey = [key stringByAppendingString:ZMDataPropertySuffix];</code></pre></td>
+<td class="coverage">39600x</td>
+</tr>
+<tr class="covered">
+<td class="num">219</td>
+<td class="src"><pre><code class="objc">    if (newUUID != nil) {</code></pre></td>
+<td class="coverage">39600x</td>
+</tr>
+<tr class="covered">
+<td class="num">220</td>
+<td class="src"><pre><code class="objc">        NSData *data = [newUUID data];</code></pre></td>
+<td class="coverage">38600x</td>
+</tr>
+<tr class="covered">
+<td class="num">221</td>
+<td class="src"><pre><code class="objc">        [self setValue:data forKeyPath:dataKey];</code></pre></td>
+<td class="coverage">38600x</td>
+</tr>
+<tr class="covered">
+<td class="num">222</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">986x</td>
+</tr>
+<tr class="covered">
+<td class="num">223</td>
+<td class="src"><pre><code class="objc">        [self setValue:nil forKeyPath:dataKey];</code></pre></td>
+<td class="coverage">986x</td>
+</tr>
+<tr class="covered">
+<td class="num">224</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">986x</td>
+</tr>
+<tr class="covered">
+<td class="num">225</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">39600x</td>
+</tr>
+<tr class="never">
+<td class="num">226</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">227</td>
+<td class="src"><pre><code class="objc">- (CGSize)transientCGSizeForKey:(NSString *)key</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">228</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">229</td>
+<td class="src"><pre><code class="objc">    [self willAccessValueForKey:key];</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">230</td>
+<td class="src"><pre><code class="objc">    NSValue *sizeValue = [self primitiveValueForKey:key];</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">231</td>
+<td class="src"><pre><code class="objc">    [self didAccessValueForKey:key];</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">232</td>
+<td class="src"><pre><code class="objc">    if (sizeValue == nil) {</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">233</td>
+<td class="src"><pre><code class="objc">        NSData *sizeData = [self valueForKey:[key stringByAppendingString:ZMDataPropertySuffix]];</code></pre></td>
+<td class="coverage">44x</td>
+</tr>
+<tr class="covered">
+<td class="num">234</td>
+<td class="src"><pre><code class="objc">        if (sizeData) {</code></pre></td>
+<td class="coverage">44x</td>
+</tr>
+<tr class="covered">
+<td class="num">235</td>
+<td class="src"><pre><code class="objc">            // Make sure we can read both 'double' (64 bit platforms) and 'float' (32 bit platforms):</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">236</td>
+<td class="src"><pre><code class="objc">            CGSize s = {};</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">237</td>
+<td class="src"><pre><code class="objc">            struct {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">238</td>
+<td class="src"><pre><code class="objc">                double width;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">239</td>
+<td class="src"><pre><code class="objc">                double height;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">240</td>
+<td class="src"><pre><code class="objc">            } doubleSize;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">241</td>
+<td class="src"><pre><code class="objc">            struct {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">242</td>
+<td class="src"><pre><code class="objc">                float width;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">243</td>
+<td class="src"><pre><code class="objc">                float height;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">244</td>
+<td class="src"><pre><code class="objc">            } floatSize;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">245</td>
+<td class="src"><pre><code class="objc">            if (sizeData.length == sizeof(doubleSize)) {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">246</td>
+<td class="src"><pre><code class="objc">                [sizeData getBytes:&amp;doubleSize length:sizeof(doubleSize)];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">247</td>
+<td class="src"><pre><code class="objc">                s = CGSizeMake((CGFloat) doubleSize.width, (CGFloat) doubleSize.height);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="missed">
+<td class="num">248</td>
+<td class="src"><pre><code class="objc">            } else if (sizeData.length == sizeof(floatSize)) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">249</td>
+<td class="src"><pre><code class="objc">                [sizeData getBytes:&amp;floatSize length:sizeof(floatSize)];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">250</td>
+<td class="src"><pre><code class="objc">                s = CGSizeMake((CGFloat) floatSize.width, (CGFloat) floatSize.height);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">251</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">252</td>
+<td class="src"><pre><code class="objc">            sizeValue = [NSValue valueWithBytes:&amp;s objCType:@encode(CGSize)];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">253</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">254</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">44x</td>
+</tr>
+<tr class="covered">
+<td class="num">255</td>
+<td class="src"><pre><code class="objc">    CGSize result = CGSizeZero;</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">256</td>
+<td class="src"><pre><code class="objc">    [sizeValue getValue:&amp;result];</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">257</td>
+<td class="src"><pre><code class="objc">    return result;</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="covered">
+<td class="num">258</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">61x</td>
+</tr>
+<tr class="never">
+<td class="num">259</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">260</td>
+<td class="src"><pre><code class="objc">- (void)setTransientCGSize:(CGSize)size forKey:(NSString *)key</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">261</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">262</td>
+<td class="src"><pre><code class="objc">    NSValue *sizeValue = [NSValue valueWithBytes:&amp;size objCType:@encode(CGSize)];</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">263</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">264</td>
+<td class="src"><pre><code class="objc">    [self willChangeValueForKey:key];</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">265</td>
+<td class="src"><pre><code class="objc">    [self setPrimitiveValue:sizeValue forKey:key];</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">266</td>
+<td class="src"><pre><code class="objc">    [self didChangeValueForKey:key];</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">267</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">268</td>
+<td class="src"><pre><code class="objc">    NSData *rawSize = [NSData dataWithBytes:&amp;size length:sizeof(size)];</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">269</td>
+<td class="src"><pre><code class="objc">    [self setValue:rawSize forKey:[key stringByAppendingString:ZMDataPropertySuffix]];</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">270</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="never">
+<td class="num">271</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">272</td>
+<td class="src"><pre><code class="objc">+ (NSArray *)defaultSortDescriptors;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">273</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1410x</td>
+</tr>
+<tr class="covered">
+<td class="num">274</td>
+<td class="src"><pre><code class="objc">    return @[[NSSortDescriptor sortDescriptorWithKey:[self sortKey] ascending:YES]];</code></pre></td>
+<td class="coverage">1410x</td>
+</tr>
+<tr class="covered">
+<td class="num">275</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1410x</td>
+</tr>
+<tr class="never">
+<td class="num">276</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">277</td>
+<td class="src"><pre><code class="objc">+ (NSArray *)sortDescriptorsForUpdating;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">278</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">279</td>
+<td class="src"><pre><code class="objc">    return [self defaultSortDescriptors];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">280</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">281</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">282</td>
+<td class="src"><pre><code class="objc">+ (NSPredicate *)predicateForFilteringResults;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">283</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2880x</td>
+</tr>
+<tr class="covered">
+<td class="num">284</td>
+<td class="src"><pre><code class="objc">    return nil;</code></pre></td>
+<td class="coverage">2880x</td>
+</tr>
+<tr class="covered">
+<td class="num">285</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2880x</td>
+</tr>
+<tr class="never">
+<td class="num">286</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">287</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">288</td>
+<td class="src"><pre><code class="objc">+ (NSFetchRequest *)sortedFetchRequest</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">289</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="covered">
+<td class="num">290</td>
+<td class="src"><pre><code class="objc">    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[self entityName]];</code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="covered">
+<td class="num">291</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="covered">
+<td class="num">292</td>
+<td class="src"><pre><code class="objc">    if(self.predicateForFilteringResults == nil) {</code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="covered">
+<td class="num">293</td>
+<td class="src"><pre><code class="objc">        // nope</code></pre></td>
+<td class="coverage">2880x</td>
+</tr>
+<tr class="covered">
+<td class="num">294</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">2880x</td>
+</tr>
+<tr class="covered">
+<td class="num">295</td>
+<td class="src"><pre><code class="objc">    else if(request.predicate == nil) {</code></pre></td>
+<td class="coverage">125x</td>
+</tr>
+<tr class="covered">
+<td class="num">296</td>
+<td class="src"><pre><code class="objc">        request.predicate = self.predicateForFilteringResults;</code></pre></td>
+<td class="coverage">125x</td>
+</tr>
+<tr class="covered">
+<td class="num">297</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">125x</td>
+</tr>
+<tr class="missed">
+<td class="num">298</td>
+<td class="src"><pre><code class="objc">    else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">299</td>
+<td class="src"><pre><code class="objc">        request.predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[request.predicate, self.predicateForFilteringResults]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">300</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">301</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="covered">
+<td class="num">302</td>
+<td class="src"><pre><code class="objc">    request.sortDescriptors = [self defaultSortDescriptors];</code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="covered">
+<td class="num">303</td>
+<td class="src"><pre><code class="objc">    return request;</code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="covered">
+<td class="num">304</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">3010x</td>
+</tr>
+<tr class="never">
+<td class="num">305</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">306</td>
+<td class="src"><pre><code class="objc">+ (NSFetchRequest *)sortedFetchRequestWithPredicate:(NSPredicate *)predicate</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">307</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">308</td>
+<td class="src"><pre><code class="objc">    NSFetchRequest *request = [self sortedFetchRequest];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">309</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">310</td>
+<td class="src"><pre><code class="objc">    if(request.predicate) {</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">311</td>
+<td class="src"><pre><code class="objc">        request.predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[request.predicate, predicate]];</code></pre></td>
+<td class="coverage">29x</td>
+</tr>
+<tr class="covered">
+<td class="num">312</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">29x</td>
+</tr>
+<tr class="covered">
+<td class="num">313</td>
+<td class="src"><pre><code class="objc">    else {</code></pre></td>
+<td class="coverage">20x</td>
+</tr>
+<tr class="covered">
+<td class="num">314</td>
+<td class="src"><pre><code class="objc">        request.predicate = predicate;</code></pre></td>
+<td class="coverage">20x</td>
+</tr>
+<tr class="covered">
+<td class="num">315</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">20x</td>
+</tr>
+<tr class="covered">
+<td class="num">316</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">317</td>
+<td class="src"><pre><code class="objc">    return request;</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">318</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="never">
+<td class="num">319</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">320</td>
+<td class="src"><pre><code class="objc">+ (NSFetchRequest *)sortedFetchRequestWithPredicateFormat:(NSString *)format, ...</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">321</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">322</td>
+<td class="src"><pre><code class="objc">    va_list args;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">323</td>
+<td class="src"><pre><code class="objc">    va_start(args, format);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">324</td>
+<td class="src"><pre><code class="objc">    NSPredicate *predicate = [NSPredicate predicateWithFormat:format arguments:args];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">325</td>
+<td class="src"><pre><code class="objc">    va_end(args);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">326</td>
+<td class="src"><pre><code class="objc">    return [self sortedFetchRequestWithPredicate:predicate];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">327</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">328</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">329</td>
+<td class="src"><pre><code class="objc">+ (void)enumerateObjectsInContext:(NSManagedObjectContext *)moc withBlock:(ObjectsEnumerationBlock)block;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">330</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">331</td>
+<td class="src"><pre><code class="objc">    BOOL stop = NO;</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">332</td>
+<td class="src"><pre><code class="objc">    NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">333</td>
+<td class="src"><pre><code class="objc">    Require(entity != nil);</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">334</td>
+<td class="src"><pre><code class="objc">    for (ZMManagedObject *mo in moc.registeredObjects) {</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">335</td>
+<td class="src"><pre><code class="objc">        if (mo.entity == entity) {</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">336</td>
+<td class="src"><pre><code class="objc">            block(mo, &amp;stop);</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">337</td>
+<td class="src"><pre><code class="objc">            if (stop) {</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">338</td>
+<td class="src"><pre><code class="objc">                break;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">339</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">340</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">341</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">342</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="never">
+<td class="num">343</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">344</td>
+<td class="src"><pre><code class="objc">+ (instancetype)fetchObjectWithRemoteIdentifier:(NSUUID *)uuid inManagedObjectContext:(NSManagedObjectContext *)moc;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">345</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">346</td>
+<td class="src"><pre><code class="objc">    // Executing a fetch request is quite expensive, because it will _always_ (1) round trip through</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">347</td>
+<td class="src"><pre><code class="objc">    // (1) the persistent store coordinator and the SQLite engine, and (2) touch the file system.</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">348</td>
+<td class="src"><pre><code class="objc">    // Looping through all objects in the context is way cheaper, because it does not involve (1)</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">349</td>
+<td class="src"><pre><code class="objc">    // taking any locks, nor (2) touching the file system.</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">350</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">351</td>
+<td class="src"><pre><code class="objc">    NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">352</td>
+<td class="src"><pre><code class="objc">    Require(entity != nil);</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">353</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">354</td>
+<td class="src"><pre><code class="objc">    NSString *key = [self remoteIdentifierDataKey];</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">355</td>
+<td class="src"><pre><code class="objc">    NSData *data = uuid.data;</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="covered">
+<td class="num">356</td>
+<td class="src"><pre><code class="objc">    for (NSManagedObject *mo in moc.registeredObjects) {</code></pre></td>
+<td class="coverage">19500x</td>
+</tr>
+<tr class="covered">
+<td class="num">357</td>
+<td class="src"><pre><code class="objc">        if ((mo.entity == entity) &amp;&amp; [data isEqual:[mo valueForKey:key]]) {</code></pre></td>
+<td class="coverage">19500x</td>
+</tr>
+<tr class="covered">
+<td class="num">358</td>
+<td class="src"><pre><code class="objc">            return (id) mo;</code></pre></td>
+<td class="coverage">10100x</td>
+</tr>
+<tr class="covered">
+<td class="num">359</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">10100x</td>
+</tr>
+<tr class="covered">
+<td class="num">360</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">19500x</td>
+</tr>
+<tr class="covered">
+<td class="num">361</td>
+<td class="src"><pre><code class="objc">    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:self.entityName];</code></pre></td>
+<td class="coverage">176x</td>
+</tr>
+<tr class="covered">
+<td class="num">362</td>
+<td class="src"><pre><code class="objc">    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", [self remoteIdentifierDataKey], uuid.data];</code></pre></td>
+<td class="coverage">176x</td>
+</tr>
+<tr class="covered">
+<td class="num">363</td>
+<td class="src"><pre><code class="objc">    fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.</code></pre></td>
+<td class="coverage">176x</td>
+</tr>
+<tr class="covered">
+<td class="num">364</td>
+<td class="src"><pre><code class="objc">    NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];</code></pre></td>
+<td class="coverage">176x</td>
+</tr>
+<tr class="covered">
+<td class="num">365</td>
+<td class="src"><pre><code class="objc">    RequireString([fetchResult count] &lt;= 1, "More than one object with the same UUID: %s", uuid.transportString.UTF8String);</code></pre></td>
+<td class="coverage">176x</td>
+</tr>
+<tr class="covered">
+<td class="num">366</td>
+<td class="src"><pre><code class="objc">    return fetchResult.firstObject;</code></pre></td>
+<td class="coverage">176x</td>
+</tr>
+<tr class="covered">
+<td class="num">367</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">10300x</td>
+</tr>
+<tr class="never">
+<td class="num">368</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">369</td>
+<td class="src"><pre><code class="objc">+ (NSOrderedSet *)fetchObjectsWithRemoteIdentifiers:(NSOrderedSet &lt;NSUUID *&gt; *)uuids inManagedObjectContext:(NSManagedObjectContext *)moc;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">370</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">371</td>
+<td class="src"><pre><code class="objc">    // Executing a fetch request is quite expensive, because it will _always_ (1) round trip through</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">372</td>
+<td class="src"><pre><code class="objc">    // (1) the persistent store coordinator and the SQLite engine, and (2) touch the file system.</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">373</td>
+<td class="src"><pre><code class="objc">    // Looping through all objects in the context is way cheaper, because it does not involve (1)</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">374</td>
+<td class="src"><pre><code class="objc">    // taking any locks, nor (2) touching the file system.</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">375</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">376</td>
+<td class="src"><pre><code class="objc">    NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">377</td>
+<td class="src"><pre><code class="objc">    Require(entity != nil);</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">378</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">379</td>
+<td class="src"><pre><code class="objc">    NSMutableOrderedSet *objects = [[NSMutableOrderedSet alloc] init];</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">380</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">381</td>
+<td class="src"><pre><code class="objc">    NSString *key = [self remoteIdentifierDataKey];</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">382</td>
+<td class="src"><pre><code class="objc">    NSMutableSet &lt;NSData *&gt; *uuidDataArray = [[uuids mapWithBlock:^NSData *(NSUUID *uuid) {</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">383</td>
+<td class="src"><pre><code class="objc">        return uuid.data;</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">384</td>
+<td class="src"><pre><code class="objc">    }] mutableCopy];</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">385</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">386</td>
+<td class="src"><pre><code class="objc">    for (NSManagedObject *mo in moc.registeredObjects) {</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">387</td>
+<td class="src"><pre><code class="objc">        if ((mo.entity == entity) &amp;&amp; [uuidDataArray containsObject:[mo valueForKey:key]]) {</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">388</td>
+<td class="src"><pre><code class="objc">            [objects addObject:mo];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">389</td>
+<td class="src"><pre><code class="objc">            [uuidDataArray removeObject:[mo valueForKey:key]];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">390</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">391</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">392</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">393</td>
+<td class="src"><pre><code class="objc">    if (uuidDataArray.count == 0) {</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">394</td>
+<td class="src"><pre><code class="objc">        return objects;</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">395</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">396</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">397</td>
+<td class="src"><pre><code class="objc">    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:self.entityName];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">398</td>
+<td class="src"><pre><code class="objc">    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K IN %@", [self remoteIdentifierDataKey], uuidDataArray];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">399</td>
+<td class="src"><pre><code class="objc">    fetchRequest.fetchLimit = uuidDataArray.count + 1; // We only want 1 object for each uuid, but want to check if there are too many.</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">400</td>
+<td class="src"><pre><code class="objc">    NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">401</td>
+<td class="src"><pre><code class="objc">    RequireString([fetchResult count] &lt;= uuidDataArray.count, "More than one object with the same UUID");</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">402</td>
+<td class="src"><pre><code class="objc">    [objects addObjectsFromArray:fetchResult];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">403</td>
+<td class="src"><pre><code class="objc">    return objects;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">404</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="never">
+<td class="num">405</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">406</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">407</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">408</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">409</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">410</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">411</td>
+<td class="src"><pre><code class="objc">@implementation ZMManagedObject (PersistentChangeTracking)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">412</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">413</td>
+<td class="src"><pre><code class="objc">+ (NSPredicate *)predicateForNeedingToBeUpdatedFromBackend;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">414</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">415</td>
+<td class="src"><pre><code class="objc">    return [NSPredicate predicateWithFormat:@"%K != 0", NeedsToBeUpdatedFromBackendKey];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">416</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">417</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">418</td>
+<td class="src"><pre><code class="objc">+ (NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">419</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">420</td>
+<td class="src"><pre><code class="objc">    return [NSPredicate predicateWithFormat:@"%K != 0 &amp;&amp; %K != NULL",</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">421</td>
+<td class="src"><pre><code class="objc">            ZMManagedObjectLocallyModifiedDataFieldsKey, ZMManagedObjectLocallyModifiedDataFieldsKey];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">422</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="never">
+<td class="num">423</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">424</td>
+<td class="src"><pre><code class="objc">+ (NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">425</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">426</td>
+<td class="src"><pre><code class="objc">    return [NSPredicate predicateWithFormat:@"%K == NULL", RemoteIdentifierDataKey];</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">427</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="never">
+<td class="num">428</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">429</td>
+<td class="src"><pre><code class="objc">- (NSSet *)ignoredKeys;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">430</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">431</td>
+<td class="src"><pre><code class="objc">    NSString * const KeysIgnoredForTrackingModifications[] = {</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">432</td>
+<td class="src"><pre><code class="objc">        ZMManagedObjectLocallyModifiedDataFieldsKey,</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">433</td>
+<td class="src"><pre><code class="objc">        NeedsToBeUpdatedFromBackendKey,</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">434</td>
+<td class="src"><pre><code class="objc">        RemoteIdentifierDataKey,</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">435</td>
+<td class="src"><pre><code class="objc">    };</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">436</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">437</td>
+<td class="src"><pre><code class="objc">    NSSet *ignoredKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">438</td>
+<td class="src"><pre><code class="objc">    return ignoredKeys;</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="covered">
+<td class="num">439</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2140x</td>
+</tr>
+<tr class="never">
+<td class="num">440</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">441</td>
+<td class="src"><pre><code class="objc">- (NSSet *)keysThatHaveLocalModifications;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">442</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">443</td>
+<td class="src"><pre><code class="objc">    if (! [[self class] hasLocallyModifiedDataFields]) {</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="missed">
+<td class="num">444</td>
+<td class="src"><pre><code class="objc">        return [NSSet set];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">445</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">446</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">447</td>
+<td class="src"><pre><code class="objc">    NSNumber *n = [self valueForKey:ZMManagedObjectLocallyModifiedDataFieldsKey];</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">448</td>
+<td class="src"><pre><code class="objc">    return [self keysThatHaveLocalModificationsForLocallyModifiedFlag:n];</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">449</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="never">
+<td class="num">450</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">451</td>
+<td class="src"><pre><code class="objc">- (BOOL)hasLocalModificationsForKey:(NSString *)key withModifiedFlag:(NSNumber *)n;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">452</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">453</td>
+<td class="src"><pre><code class="objc">    return [[self keysThatHaveLocalModificationsForLocallyModifiedFlag:n] containsObject:key];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">454</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">455</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">456</td>
+<td class="src"><pre><code class="objc">- (NSSet *)keysThatHaveLocalModificationsForLocallyModifiedFlag:(NSNumber *)n;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">457</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">458</td>
+<td class="src"><pre><code class="objc">    // The stored value is a bitfield. We use the fact that the allKeysTrackedAsMissing</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">459</td>
+<td class="src"><pre><code class="objc">    // keys are always sorted alphabetically.</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">460</td>
+<td class="src"><pre><code class="objc">    NSMutableSet *keys = [NSMutableSet set];</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">461</td>
+<td class="src"><pre><code class="objc">    int64_t const bits = [n integerValue];</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="never">
+<td class="num">462</td>
+<td class="src"><pre><code class="objc">    [self.keysTrackedForLocalModifications enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">463</td>
+<td class="src"><pre><code class="objc">        NOT_USED(stop);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">464</td>
+<td class="src"><pre><code class="objc">        if (bits &amp; (1ll &lt;&lt; (int) idx)) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">465</td>
+<td class="src"><pre><code class="objc">            [keys addObject:key];</code></pre></td>
+<td class="coverage">7110x</td>
+</tr>
+<tr class="covered">
+<td class="num">466</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">7110x</td>
+</tr>
+<tr class="never">
+<td class="num">467</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">468</td>
+<td class="src"><pre><code class="objc">    return keys;</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="covered">
+<td class="num">469</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">49300x</td>
+</tr>
+<tr class="never">
+<td class="num">470</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">471</td>
+<td class="src"><pre><code class="objc">- (void)resetLocallyModifiedKeys:(NSSet *)keys;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">472</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">473</td>
+<td class="src"><pre><code class="objc">    NSMutableSet *newKeys = [self.keysThatHaveLocalModifications mutableCopy];</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">474</td>
+<td class="src"><pre><code class="objc">    [newKeys minusSet:keys];</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">475</td>
+<td class="src"><pre><code class="objc">    [self setKeysThatHaveLocalModifications:newKeys];</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">476</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="never">
+<td class="num">477</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">478</td>
+<td class="src"><pre><code class="objc">- (void)setLocallyModifiedKeys:(NSSet *)keys;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">479</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">480</td>
+<td class="src"><pre><code class="objc">    VerifyReturn(keys != nil);</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">481</td>
+<td class="src"><pre><code class="objc">    RequireString([keys isSubsetOfSet:[NSSet setWithArray:self.keysTrackedForLocalModifications]],</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">482</td>
+<td class="src"><pre><code class="objc">                  "Trying to set keys that are not being tracked: %s",</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">483</td>
+<td class="src"><pre><code class="objc">                  [keys.allObjects componentsJoinedByString:@", "].UTF8String);</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">484</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">485</td>
+<td class="src"><pre><code class="objc">    NSMutableSet *newKeys = [self.keysThatHaveLocalModifications mutableCopy];</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">486</td>
+<td class="src"><pre><code class="objc">    for (NSString *key in keys) {</code></pre></td>
+<td class="coverage">1950x</td>
+</tr>
+<tr class="covered">
+<td class="num">487</td>
+<td class="src"><pre><code class="objc">        [newKeys addObject:key];</code></pre></td>
+<td class="coverage">1950x</td>
+</tr>
+<tr class="covered">
+<td class="num">488</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1950x</td>
+</tr>
+<tr class="covered">
+<td class="num">489</td>
+<td class="src"><pre><code class="objc">    [self setKeysThatHaveLocalModifications:newKeys];</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="covered">
+<td class="num">490</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1870x</td>
+</tr>
+<tr class="never">
+<td class="num">491</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">492</td>
+<td class="src"><pre><code class="objc">- (BOOL)hasLocalModificationsForKeys:(NSSet *)keys;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">493</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">494</td>
+<td class="src"><pre><code class="objc">    return [self.keysThatHaveLocalModifications intersectsSet:keys];</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">495</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="never">
+<td class="num">496</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">497</td>
+<td class="src"><pre><code class="objc">- (BOOL)hasLocalModificationsForKey:(NSString *)key;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">498</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">11x</td>
+</tr>
+<tr class="covered">
+<td class="num">499</td>
+<td class="src"><pre><code class="objc">    return [self.keysThatHaveLocalModifications containsObject:key];</code></pre></td>
+<td class="coverage">11x</td>
+</tr>
+<tr class="covered">
+<td class="num">500</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">11x</td>
+</tr>
+<tr class="never">
+<td class="num">501</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">502</td>
+<td class="src"><pre><code class="objc">- (NSArray *)keysTrackedForLocalModifications;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">503</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="covered">
+<td class="num">504</td>
+<td class="src"><pre><code class="objc">    NSMutableArray *keys = [NSMutableArray array];</code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="covered">
+<td class="num">505</td>
+<td class="src"><pre><code class="objc">    NSSet *ignoredKeys = self.ignoredKeys;</code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="covered">
+<td class="num">506</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="never">
+<td class="num">507</td>
+<td class="src"><pre><code class="objc">    [self.entity.attributesByName enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSAttributeDescription *attribute, BOOL *stop) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">508</td>
+<td class="src"><pre><code class="objc">        NOT_USED(stop);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">509</td>
+<td class="src"><pre><code class="objc">        if (attribute.attributeType != NSUndefinedAttributeType &amp;&amp; ! [ignoredKeys containsObject:key]) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">510</td>
+<td class="src"><pre><code class="objc">            [keys addObject:key];</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">511</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">512</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">513</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="never">
+<td class="num">514</td>
+<td class="src"><pre><code class="objc">    [self.entity.relationshipsByName enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSRelationshipDescription *relationship, BOOL *stop) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">515</td>
+<td class="src"><pre><code class="objc">        NOT_USED(relationship);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">516</td>
+<td class="src"><pre><code class="objc">        NOT_USED(stop);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">517</td>
+<td class="src"><pre><code class="objc">        if (! [ignoredKeys containsObject:key]) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">518</td>
+<td class="src"><pre><code class="objc">            [keys addObject:key];</code></pre></td>
+<td class="coverage">6410x</td>
+</tr>
+<tr class="covered">
+<td class="num">519</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">6410x</td>
+</tr>
+<tr class="never">
+<td class="num">520</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">521</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="covered">
+<td class="num">522</td>
+<td class="src"><pre><code class="objc">    return [keys sortedArrayUsingSelector:NSSelectorFromString(@"compare:")];</code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="covered">
+<td class="num">523</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">52900x</td>
+</tr>
+<tr class="never">
+<td class="num">524</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">525</td>
+<td class="src"><pre><code class="objc">static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">526</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">527</td>
+<td class="src"><pre><code class="objc">- (NSArray *)keysForCachedValues;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">528</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="covered">
+<td class="num">529</td>
+<td class="src"><pre><code class="objc">    NSArray *keys = self.managedObjectContext.userInfo[KeysForCachedValuesKey][self.entity.name];</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="covered">
+<td class="num">530</td>
+<td class="src"><pre><code class="objc">    if (keys == nil) {</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="covered">
+<td class="num">531</td>
+<td class="src"><pre><code class="objc">        NSMutableDictionary *map = self.managedObjectContext.userInfo[KeysForCachedValuesKey];</code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">532</td>
+<td class="src"><pre><code class="objc">        if (map == nil) {</code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">533</td>
+<td class="src"><pre><code class="objc">            map = [NSMutableDictionary dictionary];</code></pre></td>
+<td class="coverage">128x</td>
+</tr>
+<tr class="covered">
+<td class="num">534</td>
+<td class="src"><pre><code class="objc">            self.managedObjectContext.userInfo[KeysForCachedValuesKey] = map;</code></pre></td>
+<td class="coverage">128x</td>
+</tr>
+<tr class="covered">
+<td class="num">535</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">128x</td>
+</tr>
+<tr class="covered">
+<td class="num">536</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">537</td>
+<td class="src"><pre><code class="objc">        NSMutableArray *allNames = [NSMutableArray array];</code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">538</td>
+<td class="src"><pre><code class="objc">        NSSet *allKeys = [NSSet setWithArray:self.entity.attributesByName.allKeys];</code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">539</td>
+<td class="src"><pre><code class="objc">        [self.entity.attributesByName enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSAttributeDescription *attribute, BOOL *stop) {</code></pre></td>
+<td class="coverage">4410x</td>
+</tr>
+<tr class="covered">
+<td class="num">540</td>
+<td class="src"><pre><code class="objc">            if (attribute.isTransient &amp;&amp;</code></pre></td>
+<td class="coverage">4410x</td>
+</tr>
+<tr class="covered">
+<td class="num">541</td>
+<td class="src"><pre><code class="objc">                ([allKeys containsObject:[name stringByAppendingString:@"_data"]] ||</code></pre></td>
+<td class="coverage">979x</td>
+</tr>
+<tr class="covered">
+<td class="num">542</td>
+<td class="src"><pre><code class="objc">                 [allKeys containsObject:[name stringByAppendingString:@"_ids"]] ||</code></pre></td>
+<td class="coverage">68x</td>
+</tr>
+<tr class="covered">
+<td class="num">543</td>
+<td class="src"><pre><code class="objc">                 [allKeys containsObject:[name stringByAppendingString:@"_id"]]))</code></pre></td>
+<td class="coverage">68x</td>
+</tr>
+<tr class="covered">
+<td class="num">544</td>
+<td class="src"><pre><code class="objc">            {</code></pre></td>
+<td class="coverage">911x</td>
+</tr>
+<tr class="covered">
+<td class="num">545</td>
+<td class="src"><pre><code class="objc">                [allNames addObject:name];</code></pre></td>
+<td class="coverage">911x</td>
+</tr>
+<tr class="covered">
+<td class="num">546</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">911x</td>
+</tr>
+<tr class="covered">
+<td class="num">547</td>
+<td class="src"><pre><code class="objc">            NOT_USED(stop);</code></pre></td>
+<td class="coverage">4410x</td>
+</tr>
+<tr class="covered">
+<td class="num">548</td>
+<td class="src"><pre><code class="objc">        }];</code></pre></td>
+<td class="coverage">4410x</td>
+</tr>
+<tr class="covered">
+<td class="num">549</td>
+<td class="src"><pre><code class="objc">        keys = [allNames copy];</code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">550</td>
+<td class="src"><pre><code class="objc">        map[self.entity.name] = keys;</code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">551</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">183x</td>
+</tr>
+<tr class="covered">
+<td class="num">552</td>
+<td class="src"><pre><code class="objc">    return keys;</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="covered">
+<td class="num">553</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="never">
+<td class="num">554</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">555</td>
+<td class="src"><pre><code class="objc">- (void)awakeFromSnapshotEvents:(NSSnapshotEventType)flags;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">556</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="covered">
+<td class="num">557</td>
+<td class="src"><pre><code class="objc">    [super awakeFromSnapshotEvents:flags];</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="covered">
+<td class="num">558</td>
+<td class="src"><pre><code class="objc">    for (NSString *key in self.keysForCachedValues) {</code></pre></td>
+<td class="coverage">1660x</td>
+</tr>
+<tr class="covered">
+<td class="num">559</td>
+<td class="src"><pre><code class="objc">        [self setPrimitiveValue:nil forKey:key];</code></pre></td>
+<td class="coverage">1660x</td>
+</tr>
+<tr class="covered">
+<td class="num">560</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1660x</td>
+</tr>
+<tr class="covered">
+<td class="num">561</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">321x</td>
+</tr>
+<tr class="never">
+<td class="num">562</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">563</td>
+<td class="src"><pre><code class="objc">- (void)updateKeysThatHaveLocalModifications;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">564</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="covered">
+<td class="num">565</td>
+<td class="src"><pre><code class="objc">    NSSet *oldKeys = self.keysThatHaveLocalModifications;</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="covered">
+<td class="num">566</td>
+<td class="src"><pre><code class="objc">    NSMutableSet *newKeys = [oldKeys mutableCopy];</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="missed">
+<td class="num">567</td>
+<td class="src"><pre><code class="objc">    [newKeys addObjectsFromArray:self.filteredChangedValues.allKeys ?: @[]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">568</td>
+<td class="src"><pre><code class="objc">    if (! [oldKeys isEqualToSet:newKeys]) {</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="covered">
+<td class="num">569</td>
+<td class="src"><pre><code class="objc">        [self setKeysThatHaveLocalModifications:newKeys];</code></pre></td>
+<td class="coverage">1120x</td>
+</tr>
+<tr class="covered">
+<td class="num">570</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1120x</td>
+</tr>
+<tr class="covered">
+<td class="num">571</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">37000x</td>
+</tr>
+<tr class="never">
+<td class="num">572</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">573</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">574</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">575</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">576</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">577</td>
+<td class="src"><pre><code class="objc">@implementation ZMManagedObject (Debugging)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">578</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">579</td>
+<td class="src"><pre><code class="objc">- (id)debugQuickLookObject</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">580</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">581</td>
+<td class="src"><pre><code class="objc">    ZMQuickLookString *quickLook = [[ZMQuickLookString alloc] init];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">582</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">583</td>
+<td class="src"><pre><code class="objc">    // First off some basic info:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">584</td>
+<td class="src"><pre><code class="objc">    // &lt;ZMImageMessage: 0x107bad5f0&gt; (entity: ImageMessage; id: 0x107bb1b70 &lt;x-coredata:///ImageMessage/t7EAE7A86-7CA2-49E5-BA5F-BA4AFB35897B581&gt;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">585</td>
+<td class="src"><pre><code class="objc">    [quickLook appendLabel:@"self" textWithFormat:@"&lt;%@: %p&gt;", self.class, self];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">586</td>
+<td class="src"><pre><code class="objc">    [quickLook appendLabel:@"entity" text:self.entity.name];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">587</td>
+<td class="src"><pre><code class="objc">    [quickLook appendLabel:@"ID" textWithFormat:@"%@", self.objectID.URIRepresentation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">588</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">589</td>
+<td class="src"><pre><code class="objc">    if (self.isFault) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">590</td>
+<td class="src"><pre><code class="objc">        [quickLook appendLabel:@"fault" text:@"YES"];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">591</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">592</td>
+<td class="src"><pre><code class="objc">        NSEntityDescription *entity = self.entity;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">593</td>
+<td class="src"><pre><code class="objc">        NSArray *attributes = [entity.attributesByName.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSString *str1, NSString *str2) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">594</td>
+<td class="src"><pre><code class="objc">            return [str1 compare:str2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">595</td>
+<td class="src"><pre><code class="objc">        }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">596</td>
+<td class="src"><pre><code class="objc">        attributes = [attributes filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not self contains \"_\""]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">597</td>
+<td class="src"><pre><code class="objc">        for (NSString *key in attributes) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">598</td>
+<td class="src"><pre><code class="objc">            [quickLook appendLabel:key textWithFormat:@"%@", [self valueForKey:key]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">599</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">600</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">601</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">602</td>
+<td class="src"><pre><code class="objc">    return quickLook.text;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">603</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">604</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">605</td>
+<td class="src"><pre><code class="objc">- (NSString *)debugDescription;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">606</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">607</td>
+<td class="src"><pre><code class="objc">    // N.B.: In overriding this, we need to be very carefull not to fire any faults.</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">608</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">609</td>
+<td class="src"><pre><code class="objc">    // The standard format (provided by Core Data) is:</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">610</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">611</td>
+<td class="src"><pre><code class="objc">    // &lt;ZMConversation: 0x1750b060&gt; (entity: Conversation; id: 0x17509a50 &lt;x-coredata://F6899F76-3F8C-4360-8B74-DAEE28CD942C/Conversation/p9&gt; ; data: &lt;fault&gt;)</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">612</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">613</td>
+<td class="src"><pre><code class="objc">    // or</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">614</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">615</td>
+<td class="src"><pre><code class="objc">    // &lt;ZMConversation: 0x1750b060&gt; (entity: Conversation; id: 0x17509a50 &lt;x-coredata://F6899F76-3F8C-4360-8B74-DAEE28CD942C/Conversation/p9&gt; ; data: {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">616</td>
+<td class="src"><pre><code class="objc">    //     activeParticipants = "&lt;relationship fault: 0x176d6b20 'activeParticipants'&gt;";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">617</td>
+<td class="src"><pre><code class="objc">    //     connection = nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">618</td>
+<td class="src"><pre><code class="objc">    //     conversationType = 2;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">619</td>
+<td class="src"><pre><code class="objc">    //     creator = "0x1750bb40 &lt;x-coredata://F6899F76-3F8C-4360-8B74-DAEE28CD942C/User/p10&gt;";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">620</td>
+<td class="src"><pre><code class="objc">    // ...</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">621</td>
+<td class="src"><pre><code class="objc">    // })</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">622</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">623</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">624</td>
+<td class="src"><pre><code class="objc">    NSString *entityDescription = [NSString stringWithFormat:@"entity: %@", self.entity.name];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">625</td>
+<td class="src"><pre><code class="objc">    NSString *identifierDescription = [NSString stringWithFormat:@"id: %p %@", self.objectID, self.objectID.URIRepresentation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">626</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">627</td>
+<td class="src"><pre><code class="objc">    NSString *dataDescription = nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">628</td>
+<td class="src"><pre><code class="objc">    if (self.isFault) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">629</td>
+<td class="src"><pre><code class="objc">        dataDescription = @"data: fault";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">630</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">631</td>
+<td class="src"><pre><code class="objc">        // NSMutableArray *values = [NSMutableArray array];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">632</td>
+<td class="src"><pre><code class="objc">        NSMutableDictionary *values = [NSMutableDictionary dictionary];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">633</td>
+<td class="src"><pre><code class="objc">        NSPredicate *filter = [NSPredicate predicateWithFormat:@"not self contains \"_\""];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">634</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">635</td>
+<td class="src"><pre><code class="objc">        NSComparisonResult(^stringCompare)(id, id) = ^(NSString *s1, NSString *s2) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">636</td>
+<td class="src"><pre><code class="objc">            return [s1 compare:s2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">637</td>
+<td class="src"><pre><code class="objc">        };</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">638</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">639</td>
+<td class="src"><pre><code class="objc">        [self.entity.attributesByName enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSAttributeDescription *attribute, BOOL *stop) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">640</td>
+<td class="src"><pre><code class="objc">            NOT_USED(stop);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">641</td>
+<td class="src"><pre><code class="objc">            NOT_USED(attribute);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">642</td>
+<td class="src"><pre><code class="objc">            if (! [filter evaluateWithObject:key]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">643</td>
+<td class="src"><pre><code class="objc">                return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">644</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">645</td>
+<td class="src"><pre><code class="objc">            if ([key isEqualToString:ZMManagedObjectLocallyModifiedDataFieldsKey]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">646</td>
+<td class="src"><pre><code class="objc">                NSArray *keys = [self.keysThatHaveLocalModifications.allObjects sortedArrayUsingComparator:stringCompare];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">647</td>
+<td class="src"><pre><code class="objc">                values[key] = (keys.count == 0) ? @"0" : [keys componentsJoinedByString:@" | "];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">648</td>
+<td class="src"><pre><code class="objc">            } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">649</td>
+<td class="src"><pre><code class="objc">                NSObject *value = [self valueForKey:key];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">650</td>
+<td class="src"><pre><code class="objc">                if ([value isKindOfClass:[NSUUID class]]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">651</td>
+<td class="src"><pre><code class="objc">                    NSUUID *uuid = (id) value;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">652</td>
+<td class="src"><pre><code class="objc">                    values[key] = (uuid == nil) ? @"nil" : uuid.UUIDString.lowercaseString;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">653</td>
+<td class="src"><pre><code class="objc">                } else if ([value isKindOfClass:[NSData class]]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">654</td>
+<td class="src"><pre><code class="objc">                    NSData *data = (id) value;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">655</td>
+<td class="src"><pre><code class="objc">                    values[key] = (data == nil) ? @"nil" : [NSString stringWithFormat:@"%llu bytes", (unsigned long long) data.length];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">656</td>
+<td class="src"><pre><code class="objc">                } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">657</td>
+<td class="src"><pre><code class="objc">                    values[key] = (value == nil) ? @"nil" : value.debugDescription;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">658</td>
+<td class="src"><pre><code class="objc">                }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">659</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">660</td>
+<td class="src"><pre><code class="objc">        }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">661</td>
+<td class="src"><pre><code class="objc">        [self.entity.relationshipsByName enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSRelationshipDescription *relationship, BOOL *stop) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">662</td>
+<td class="src"><pre><code class="objc">            NOT_USED(stop);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">663</td>
+<td class="src"><pre><code class="objc">            if ([self hasFaultForRelationshipNamed:key]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">664</td>
+<td class="src"><pre><code class="objc">                values[key] = @"relationship fault";</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">665</td>
+<td class="src"><pre><code class="objc">            } else if (! relationship.isToMany) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">666</td>
+<td class="src"><pre><code class="objc">                ZMManagedObject *mo = [self valueForKey:key];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">667</td>
+<td class="src"><pre><code class="objc">                values[key] = (mo == nil) ? @"nil" : mo.objectID.URIRepresentation.debugDescription;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">668</td>
+<td class="src"><pre><code class="objc">            } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">669</td>
+<td class="src"><pre><code class="objc">                // to many</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">670</td>
+<td class="src"><pre><code class="objc">                NSSet *value = [self valueForKey:key];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">671</td>
+<td class="src"><pre><code class="objc">                NSMutableArray *comp = [NSMutableArray array];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">672</td>
+<td class="src"><pre><code class="objc">                size_t idx = 0;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">673</td>
+<td class="src"><pre><code class="objc">                for (ZMManagedObject *mo in value) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">674</td>
+<td class="src"><pre><code class="objc">                    if (5 &lt; idx++) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">675</td>
+<td class="src"><pre><code class="objc">                        [comp addObject:@"..."];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">676</td>
+<td class="src"><pre><code class="objc">                        break;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">677</td>
+<td class="src"><pre><code class="objc">                    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">678</td>
+<td class="src"><pre><code class="objc">                    [comp addObject:mo.objectID.URIRepresentation.debugDescription];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">679</td>
+<td class="src"><pre><code class="objc">                }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">680</td>
+<td class="src"><pre><code class="objc">                values[key] = [NSString stringWithFormat:@"count: %llu {%@}",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">681</td>
+<td class="src"><pre><code class="objc">                               (unsigned long long) value.count, [comp componentsJoinedByString:@", "]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">682</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">683</td>
+<td class="src"><pre><code class="objc">        }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">684</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">685</td>
+<td class="src"><pre><code class="objc">        dataDescription = [NSString stringWithFormat:@"data: %@", values];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">686</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">687</td>
+<td class="src"><pre><code class="objc">    NSMutableString *description = [NSMutableString stringWithFormat:@"&lt;%@: %p&gt; (", self.class, self];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">688</td>
+<td class="src"><pre><code class="objc">    [description appendString:[@[entityDescription, identifierDescription, dataDescription] componentsJoinedByString:@"; "]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">689</td>
+<td class="src"><pre><code class="objc">    [description appendString:@")"];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">690</td>
+<td class="src"><pre><code class="objc">    return description;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">691</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">692</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">693</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">694</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">695</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">696</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">697</td>
+<td class="src"><pre><code class="objc">@implementation ZMManagedObject (KeyValueValidation)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">698</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">699</td>
+<td class="src"><pre><code class="objc">- (BOOL)validateForUpdate:(NSError **)outError</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">700</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="covered">
+<td class="num">701</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="covered">
+<td class="num">702</td>
+<td class="src"><pre><code class="objc">    // We override this method in order to only validate those values that have changed.</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="covered">
+<td class="num">703</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="covered">
+<td class="num">704</td>
+<td class="src"><pre><code class="objc">    __block BOOL allValid = YES;</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="covered">
+<td class="num">705</td>
+<td class="src"><pre><code class="objc">    __block NSMutableArray *errors;</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="covered">
+<td class="num">706</td>
+<td class="src"><pre><code class="objc">    [self.changedValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">707</td>
+<td class="src"><pre><code class="objc">        NOT_USED(stop);</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">708</td>
+<td class="src"><pre><code class="objc">        NSError *error;</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">709</td>
+<td class="src"><pre><code class="objc">        if (value == [NSNull null]) {</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">710</td>
+<td class="src"><pre><code class="objc">            value = nil;</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">711</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">712</td>
+<td class="src"><pre><code class="objc">        id changedValue = value;</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">713</td>
+<td class="src"><pre><code class="objc">        BOOL valid = [self validateValue:&amp;changedValue forKey:key error:&amp;error];</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">714</td>
+<td class="src"><pre><code class="objc">        if (valid) {</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">715</td>
+<td class="src"><pre><code class="objc">            if (changedValue != value) {</code></pre></td>
+<td class="coverage">3030x</td>
+</tr>
+<tr class="covered">
+<td class="num">716</td>
+<td class="src"><pre><code class="objc">                [self setValue:changedValue forKey:key];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">717</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">718</td>
+<td class="src"><pre><code class="objc">        } else {</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">719</td>
+<td class="src"><pre><code class="objc">            allValid = NO;</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">720</td>
+<td class="src"><pre><code class="objc">            if (error != nil) {</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">721</td>
+<td class="src"><pre><code class="objc">                if (errors == nil) {</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">722</td>
+<td class="src"><pre><code class="objc">                    errors = [NSMutableArray array];</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">723</td>
+<td class="src"><pre><code class="objc">                }</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">724</td>
+<td class="src"><pre><code class="objc">                [errors addObject:error];</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">725</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">726</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">727</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">3100x</td>
+</tr>
+<tr class="covered">
+<td class="num">728</td>
+<td class="src"><pre><code class="objc">    if (! allValid &amp;&amp; (outError != nil)) {</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="missed">
+<td class="num">729</td>
+<td class="src"><pre><code class="objc">        NSDictionary *userInfo = @{NSDetailedErrorsKey: errors ?: @[]};</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">730</td>
+<td class="src"><pre><code class="objc">        *outError = [NSError errorWithDomain:NSCocoaErrorDomain code:NSValidationMultipleErrorsError userInfo:userInfo];</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">731</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">72x</td>
+</tr>
+<tr class="covered">
+<td class="num">732</td>
+<td class="src"><pre><code class="objc">    return allValid;</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="covered">
+<td class="num">733</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2480x</td>
+</tr>
+<tr class="never">
+<td class="num">734</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">735</td>
+<td class="src"><pre><code class="objc">- (BOOL)validateValue:(inout id *)ioValue forKeyPath:(NSString *)inKeyPath error:(out NSError **)outError</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">736</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">737</td>
+<td class="src"><pre><code class="objc">    //Because we need to validate changes made only by UI</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">738</td>
+<td class="src"><pre><code class="objc">    if (! self.managedObjectContext.zm_isUserInterfaceContext) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">739</td>
+<td class="src"><pre><code class="objc">        return YES;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">740</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">741</td>
+<td class="src"><pre><code class="objc">    return [super validateValue:ioValue forKeyPath:inKeyPath error:outError];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">742</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">743</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">744</td>
+<td class="src"><pre><code class="objc">- (BOOL)validateValue:(id *)ioValue forKey:(NSString *)key error:(NSError **)outError</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">745</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">746</td>
+<td class="src"><pre><code class="objc">    //Because we need to validate changes made only by UI</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">747</td>
+<td class="src"><pre><code class="objc">    if (! self.managedObjectContext.zm_isUserInterfaceContext) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">748</td>
+<td class="src"><pre><code class="objc">        return YES;</code></pre></td>
+<td class="coverage">19800x</td>
+</tr>
+<tr class="covered">
+<td class="num">749</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">19800x</td>
+</tr>
+<tr class="never">
+<td class="num">750</td>
+<td class="src"><pre><code class="objc">    return [super validateValue:ioValue forKey:key error:outError];</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">751</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">752</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">753</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">754</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">755</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">756</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">757</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">758</td>
+<td class="src"><pre><code class="objc">@implementation ZMManagedObject (NonpersistedObjectIdentifer)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">759</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">760</td>
+<td class="src"><pre><code class="objc">- (NSString *)nonpersistedObjectIdentifer;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">761</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">762</td>
+<td class="src"><pre><code class="objc">    return [NSString stringWithFormat:@"Z%tx", (long long) self];</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">763</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="never">
+<td class="num">764</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">765</td>
+<td class="src"><pre><code class="objc">+ (instancetype)existingObjectWithNonpersistedObjectIdentifer:(NSString *)identifier inUserSession:(id&lt;ZMManagedObjectContextProvider&gt;)userSession;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">766</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">767</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil(identifier != nil);</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">768</td>
+<td class="src"><pre><code class="objc">    intptr_t value = 0;</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">769</td>
+<td class="src"><pre><code class="objc">    if (sscanf([identifier UTF8String], "Z%tx", &amp;value) != 1) {</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">770</td>
+<td class="src"><pre><code class="objc">        return nil;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">771</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">772</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">773</td>
+<td class="src"><pre><code class="objc">    NSManagedObjectContext *moc =  userSession.managedObjectContext;</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">774</td>
+<td class="src"><pre><code class="objc">    for (ZMManagedObject *mo in moc.registeredObjects) {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">775</td>
+<td class="src"><pre><code class="objc">        intptr_t otherValue = (intptr_t) ((__bridge void *) mo);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">776</td>
+<td class="src"><pre><code class="objc">        if (otherValue == value) {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">777</td>
+<td class="src"><pre><code class="objc">            return mo;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">778</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">779</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">780</td>
+<td class="src"><pre><code class="objc">    return nil;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">781</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="never">
+<td class="num">782</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">783</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+</table>
+</div></div>
+<footer><div class="row">
+<p><a href="https://github.com/SlatherOrg/slather">Fork me on Github</a></p>
+<p>&copy; 2016 Slather</p>
+</div></footer><script src="highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

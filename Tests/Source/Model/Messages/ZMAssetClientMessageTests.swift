@@ -1932,71 +1932,74 @@ extension ZMAssetClientMessageTests {
     }
     
     func testThatItDoesNotUpdateTheTimestampIfLater() {
-        
-        // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
-        conversation.remoteIdentifier = NSUUID.createUUID()
-        let nonce = NSUUID.createUUID()
-        let thumbnailId = NSUUID.createUUID()
-        let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: NSData.zmRandomSHA256Key(), sha256: NSData.zmRandomSHA256Key())
-        let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
-        let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: 256, mimeType: "video/mp4", remoteData: remoteData, imageMetaData: imageMetaData))
-        let firstDate = NSDate(timeIntervalSince1970: 12334)
-        let secondDate = firstDate.dateByAddingTimeInterval(234444)
-        
-        let genericMessage = ZMGenericMessage.genericMessage(withAsset: asset, messageID: nonce.transportString())
-        
-        let dataPayload = [
-            "info" : genericMessage.data().base64String(),
-            "id" : thumbnailId.transportString()
-        ]
-        
-        let payload1 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: firstDate)
-        let updateEvent1 = ZMUpdateEvent(fromEventStreamPayload: payload1, uuid: nil)
-        let payload2 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: secondDate)
-        let updateEvent2 = ZMUpdateEvent(fromEventStreamPayload: payload2, uuid: nil)
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
+            conversation.remoteIdentifier = NSUUID.createUUID()
+            let nonce = NSUUID.createUUID()
+            let thumbnailId = NSUUID.createUUID()
+            let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: NSData.zmRandomSHA256Key(), sha256: NSData.zmRandomSHA256Key())
+            let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
+            let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: 256, mimeType: "video/mp4", remoteData: remoteData, imageMetaData: imageMetaData))
+            let firstDate = NSDate(timeIntervalSince1970: 12334)
+            let secondDate = firstDate.dateByAddingTimeInterval(234444)
+            
+            let genericMessage = ZMGenericMessage.genericMessage(withAsset: asset, messageID: nonce.transportString())
+            
+            let dataPayload = [
+                "info" : genericMessage.data().base64String(),
+                "id" : thumbnailId.transportString()
+            ]
+            
+            let payload1 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: firstDate)
+            let updateEvent1 = ZMUpdateEvent(fromEventStreamPayload: payload1, uuid: nil)
+            let payload2 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: secondDate)
+            let updateEvent2 = ZMUpdateEvent(fromEventStreamPayload: payload2, uuid: nil)
+            
+            
+            // when
+            let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
+            sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
+            
+            // then
+            XCTAssertEqual(sut.serverTimestamp, firstDate)
 
-        
-        // when
-        let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
-        sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
-        
-        // then
-        XCTAssertEqual(sut.serverTimestamp, firstDate)
+        }
     }
     
     func testThatItUpdatesTheTimestampIfEarlier() {
-        
-        // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
-        conversation.remoteIdentifier = NSUUID.createUUID()
-        let nonce = NSUUID.createUUID()
-        let thumbnailId = NSUUID.createUUID()
-        let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: NSData.zmRandomSHA256Key(), sha256: NSData.zmRandomSHA256Key())
-        let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
-        let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: 256, mimeType: "video/mp4", remoteData: remoteData, imageMetaData: imageMetaData))
-        let firstDate = NSDate(timeIntervalSince1970: 12334)
-        let secondDate = firstDate.dateByAddingTimeInterval(234444)
-        
-        let genericMessage = ZMGenericMessage.genericMessage(withAsset: asset, messageID: nonce.transportString())
-        
-        let dataPayload = [
-            "info" : genericMessage.data().base64String(),
-            "id" : thumbnailId.transportString()
-        ]
-        
-        let payload1 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: secondDate)
-        let updateEvent1 = ZMUpdateEvent(fromEventStreamPayload: payload1, uuid: nil)
-        let payload2 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: firstDate)
-        let updateEvent2 = ZMUpdateEvent(fromEventStreamPayload: payload2, uuid: nil)
-        
-        
-        // when
-        let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
-        sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
-        
-        // then
-        XCTAssertEqual(sut.serverTimestamp, firstDate)
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
+            conversation.remoteIdentifier = NSUUID.createUUID()
+            let nonce = NSUUID.createUUID()
+            let thumbnailId = NSUUID.createUUID()
+            let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: NSData.zmRandomSHA256Key(), sha256: NSData.zmRandomSHA256Key())
+            let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
+            let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: 256, mimeType: "video/mp4", remoteData: remoteData, imageMetaData: imageMetaData))
+            let firstDate = NSDate(timeIntervalSince1970: 12334)
+            let secondDate = firstDate.dateByAddingTimeInterval(234444)
+            
+            let genericMessage = ZMGenericMessage.genericMessage(withAsset: asset, messageID: nonce.transportString())
+            
+            let dataPayload = [
+                "info" : genericMessage.data().base64String(),
+                "id" : thumbnailId.transportString()
+            ]
+            
+            let payload1 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: secondDate)
+            let updateEvent1 = ZMUpdateEvent(fromEventStreamPayload: payload1, uuid: nil)
+            let payload2 = self.payloadForMessageInConversation(conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: firstDate)
+            let updateEvent2 = ZMUpdateEvent(fromEventStreamPayload: payload2, uuid: nil)
+            
+            
+            // when
+            let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
+            sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
+            
+            // then
+            XCTAssertEqual(sut.serverTimestamp, firstDate)
+        }
     }
 }
 
