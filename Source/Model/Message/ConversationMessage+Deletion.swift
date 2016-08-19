@@ -46,6 +46,7 @@ extension ZMMessage {
         ZMConversation.appendHideMessageToSelfConversation(self)
 
         // To avoid reinserting when receiving an edit we delete the message locally
+        removeMessage()
         managedObjectContext?.deleteObject(self)
     }
     
