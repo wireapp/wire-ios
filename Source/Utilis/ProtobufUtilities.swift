@@ -76,6 +76,19 @@ public extension ZMGenericMessage {
     
 }
 
+// Accessor helpers for linkpreviews
+extension ZMGenericMessage {
+    public var linkPreviews: [ZMLinkPreview] {
+        if hasText(), let previews = text.linkPreview {
+            return previews.flatMap { $0 as? ZMLinkPreview }
+        } else if hasEdited(), let previews = edited.text.linkPreview {
+            return previews.flatMap { $0 as? ZMLinkPreview }
+        }
+
+        return []
+    }
+}
+
 public extension ZMLocation {
 
     public static func location(withLatitude latitude: Float, longitude: Float, name: String? = nil, zoomLevel: Int32? = nil) -> ZMLocation {

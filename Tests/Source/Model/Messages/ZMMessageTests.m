@@ -2419,9 +2419,7 @@ NSString * const IsExpiredKey = @"isExpired";
     
     //then
     textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    XCTAssertNotNil(textMessage);
-    XCTAssertNil(textMessage.visibleInConversation);
-    XCTAssertEqual(textMessage.hiddenInConversation, conversation);
+    XCTAssertNil(textMessage);
     XCTAssertEqual(conversation.messages.count, 0lu);
 }
 

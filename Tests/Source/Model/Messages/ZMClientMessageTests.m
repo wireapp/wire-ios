@@ -613,70 +613,75 @@
 - (void)testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob
 {
     // given
-    [self createSelfClient];
-    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-    otherUser.remoteIdentifier = NSUUID.createUUID;
-    UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
-    UserClient *secondClient =[self createClientForUser:otherUser createSessionWithSelfUser:YES];
-    NSUUID *nonce = NSUUID.createUUID;
-    ZMGenericMessageBuilder *builder = ZMGenericMessage.builder;
-    ZMTextBuilder *textBuilder = ZMText.builder;
-    textBuilder.content = [self textMessageRequiringExternalMessageWithNumberOfClients:2];
-    builder.text = textBuilder.build;
-    builder.messageId = nonce.transportString;
-    ZMGenericMessage *textMessage = builder.build;
-    
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    conversation.remoteIdentifier = NSUUID.createUUID;
-    [conversation addParticipant:otherUser];
-    
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
-    
-    // when
-    NSData *data = [ZMClientMessage encryptedMessagePayloadDataWithGenericMessage:textMessage
-                                                                     conversation:conversation
-                                                             managedObjectContext:self.syncMOC
-                                                                     externalData:nil];
-    
-    // then
-    ZMNewOtrMessage *createdMessage = (ZMNewOtrMessage *)[ZMNewOtrMessage.builder mergeFromData:data].build;
-    XCTAssertNotNil(createdMessage);
-    XCTAssertTrue(createdMessage.hasBlob);
-    
-    NSArray <ZMClientId *>* clientIds = [createdMessage.recipients flattenWithBlock:^NSArray *(ZMUserEntry *userEntry) {
-        return [userEntry.clients mapWithBlock:^ZMClientId *(ZMClientEntry *clientEntry) {
-            return clientEntry.client;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self createSelfClient];
+
+        ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        otherUser.remoteIdentifier = NSUUID.createUUID;
+        UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
+        UserClient *secondClient =[self createClientForUser:otherUser createSessionWithSelfUser:YES];
+        NSUUID *nonce = NSUUID.createUUID;
+        ZMGenericMessageBuilder *builder = ZMGenericMessage.builder;
+        ZMTextBuilder *textBuilder = ZMText.builder;
+        textBuilder.content = [self textMessageRequiringExternalMessageWithNumberOfClients:2];
+        builder.text = textBuilder.build;
+        builder.messageId = nonce.transportString;
+        ZMGenericMessage *textMessage = builder.build;
+        
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        conversation.remoteIdentifier = NSUUID.createUUID;
+        [conversation addParticipant:otherUser];
+        
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+        
+        // when
+        NSData *data = [ZMClientMessage encryptedMessagePayloadDataWithGenericMessage:textMessage
+                                                                         conversation:conversation
+                                                                 managedObjectContext:self.syncMOC
+                                                                         externalData:nil];
+        
+        // then
+        ZMNewOtrMessage *createdMessage = (ZMNewOtrMessage *)[ZMNewOtrMessage.builder mergeFromData:data].build;
+        XCTAssertNotNil(createdMessage);
+        XCTAssertTrue(createdMessage.hasBlob);
+        
+        NSArray <ZMClientId *>* clientIds = [createdMessage.recipients flattenWithBlock:^NSArray *(ZMUserEntry *userEntry) {
+            return [userEntry.clients mapWithBlock:^ZMClientId *(ZMClientEntry *clientEntry) {
+                return clientEntry.client;
+            }];
         }];
+        
+        XCTAssertEqual(clientIds.count, 2lu);
+        XCTAssertTrue([clientIds containsObject:firstClient.clientId]);
+        XCTAssertTrue([clientIds containsObject:secondClient.clientId]);
     }];
-    
-    XCTAssertEqual(clientIds.count, 2lu);
-    XCTAssertTrue([clientIds containsObject:firstClient.clientId]);
-    XCTAssertTrue([clientIds containsObject:secondClient.clientId]);
 }
 
 
 - (void)testThatItDecryptsMessageWithExternalBlobCorrectly
 {
     // given
-    [self createSelfClient];
-    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-    otherUser.remoteIdentifier = NSUUID.createUUID;
-    UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
-    
-    ZMUpdateEvent *messageEvent = [self encryptedExternalMessageFixtureWithBlobFromClient:firstClient];
-    NSString *base64SHA = @"kKSSlbMxXEdd+7fekxB8Qr67/mpjjboBsr2wLcW7wzE=";
-    NSString *base64OTRKey = @"4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7w=";
-    ZMExternalBuilder *builder = ZMExternal.builder;
-    builder.sha256 = [[NSData alloc] initWithBase64EncodedString:base64SHA options:0];
-    builder.otrKey = [[NSData alloc] initWithBase64EncodedString:base64OTRKey options:0];
-
-    // when
-    ZMGenericMessage *message = [ZMGenericMessage genericMessageFromUpdateEventWithExternal:messageEvent external:builder.build];
-    
-    // then
-    XCTAssertNotNil(message);
-    XCTAssertEqualObjects(message.text.content, self.expectedExternalMessageText);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self createSelfClient];
+        ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        otherUser.remoteIdentifier = NSUUID.createUUID;
+        UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
+        
+        ZMUpdateEvent *messageEvent = [self encryptedExternalMessageFixtureWithBlobFromClient:firstClient];
+        NSString *base64SHA = @"kKSSlbMxXEdd+7fekxB8Qr67/mpjjboBsr2wLcW7wzE=";
+        NSString *base64OTRKey = @"4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7w=";
+        ZMExternalBuilder *builder = ZMExternal.builder;
+        builder.sha256 = [[NSData alloc] initWithBase64EncodedString:base64SHA options:0];
+        builder.otrKey = [[NSData alloc] initWithBase64EncodedString:base64OTRKey options:0];
+        
+        // when
+        ZMGenericMessage *message = [ZMGenericMessage genericMessageFromUpdateEventWithExternal:messageEvent external:builder.build];
+        
+        // then
+        XCTAssertNotNil(message);
+        XCTAssertEqualObjects(message.text.content, self.expectedExternalMessageText);
+    }];
 }
 
 #pragma mark - Helper
@@ -726,68 +731,71 @@
 
 - (void)testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes
 {
-    // given
-    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
-    NSUUID *nonce = NSUUID.createUUID;
-    message.nonce = nonce;
-    NSData *otrKey = NSData.randomEncryptionKey, *sha256 = NSData.zmRandomSHA256Key;
-    
-    // when
-    {
-        ZMTextBuilder *builder = ZMText.builder;
-        [builder setContent:self.name];
-        ZMLinkPreviewBuilder *previewBuilder = ZMLinkPreview.builder;
-        [previewBuilder setUrl:self.name];
-        [previewBuilder setUrlOffset:0];
-        ZMArticleBuilder *articleBuilder = ZMArticle.builder;
-        [articleBuilder setTitle:@"Title"];
-        [articleBuilder setSummary:@"Summary"];
-        ZMAssetBuilder *assetBuilder = ZMAsset.builder;
-        ZMAssetRemoteDataBuilder *remoteBuilder = ZMAssetRemoteData.builder;
-        [remoteBuilder setOtrKey:otrKey];
-        [remoteBuilder setSha256:sha256];
-        [assetBuilder setUploadedBuilder:remoteBuilder];
-        [articleBuilder setImageBuilder:assetBuilder];
-        [articleBuilder setPermanentUrl:@"www.example.de"];
-        [previewBuilder setArticleBuilder:articleBuilder];
-        [builder setLinkPreviewArray:@[previewBuilder.build]];
-        ZMGenericMessageBuilder *messageBuilder = ZMGenericMessage.builder;
-        [messageBuilder setText:builder.build];
-        [messageBuilder setMessageId:nonce.transportString];
-        ZMGenericMessage *firstMessage = messageBuilder.build;
-        [message addData:firstMessage.data];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *nonce = NSUUID.createUUID;
+        message.nonce = nonce;
+        NSData *otrKey = NSData.randomEncryptionKey, *sha256 = NSData.zmRandomSHA256Key;
         
-        // then
-        XCTAssertEqual(message.dataSet.count, 1lu);
-        XCTAssertTrue(message.genericMessage.hasText);
-        XCTAssertEqual(message.genericMessage.text.linkPreview.count, 1lu);
-    }
+        // when
+        {
+            ZMTextBuilder *builder = ZMText.builder;
+            [builder setContent:self.name];
+            ZMLinkPreviewBuilder *previewBuilder = ZMLinkPreview.builder;
+            [previewBuilder setUrl:self.name];
+            [previewBuilder setUrlOffset:0];
+            ZMArticleBuilder *articleBuilder = ZMArticle.builder;
+            [articleBuilder setTitle:@"Title"];
+            [articleBuilder setSummary:@"Summary"];
+            ZMAssetBuilder *assetBuilder = ZMAsset.builder;
+            ZMAssetRemoteDataBuilder *remoteBuilder = ZMAssetRemoteData.builder;
+            [remoteBuilder setOtrKey:otrKey];
+            [remoteBuilder setSha256:sha256];
+            [assetBuilder setUploadedBuilder:remoteBuilder];
+            [articleBuilder setImageBuilder:assetBuilder];
+            [articleBuilder setPermanentUrl:@"www.example.de"];
+            [previewBuilder setArticleBuilder:articleBuilder];
+            [builder setLinkPreviewArray:@[previewBuilder.build]];
+            ZMGenericMessageBuilder *messageBuilder = ZMGenericMessage.builder;
+            [messageBuilder setText:builder.build];
+            [messageBuilder setMessageId:nonce.transportString];
+            ZMGenericMessage *firstMessage = messageBuilder.build;
+            [message addData:firstMessage.data];
+            
+            // then
+            XCTAssertEqual(message.dataSet.count, 1lu);
+            XCTAssertTrue(message.genericMessage.hasText);
+            XCTAssertEqual(message.genericMessage.text.linkPreview.count, 1lu);
+        }
+        
+        // when
+        {
+            ZMGenericMessageBuilder *secondBuilder = [[ZMGenericMessage builder] mergeFrom:message.genericMessage];
+            ZMTextBuilder *builder = secondBuilder.text.toBuilder;
+            ZMLinkPreviewBuilder *linkBuilder = [(ZMLinkPreview *)secondBuilder.text.linkPreview.firstObject toBuilder];
+            ZMArticleBuilder *articleBuilder = linkBuilder.article.toBuilder;
+            ZMAssetBuilder *assetBuilder = linkBuilder.article.image.toBuilder;
+            ZMAssetRemoteDataBuilder *remoteBuilder = linkBuilder.article.image.uploaded.toBuilder;
+            [remoteBuilder setAssetId:@"Asset ID"];
+            [remoteBuilder setAssetToken:@"Asset Token"];
+            [assetBuilder setUploadedBuilder:remoteBuilder];
+            [articleBuilder setImageBuilder:assetBuilder];
+            [linkBuilder setArticleBuilder:articleBuilder];
+            [builder setLinkPreviewArray:@[linkBuilder.build]];
+            [secondBuilder setTextBuilder:builder];
+            [message addData:secondBuilder.build.data];
+            
+            // then
+            XCTAssertEqual(message.dataSet.count, 1lu);
+            XCTAssertTrue(message.genericMessage.hasText);
+            XCTAssertEqual(message.genericMessage.text.linkPreview.count, 1lu);
+            ZMAssetRemoteData *remote = [(ZMLinkPreview *)message.genericMessage.text.linkPreview.firstObject article].image.uploaded;
+            XCTAssertEqualObjects(remote.assetId, @"Asset ID");
+            XCTAssertEqualObjects(remote.assetToken, @"Asset Token");
+        }
 
-    // when
-    {
-        ZMGenericMessageBuilder *secondBuilder = [[ZMGenericMessage builder] mergeFrom:message.genericMessage];
-        ZMTextBuilder *builder = secondBuilder.text.toBuilder;
-        ZMLinkPreviewBuilder *linkBuilder = [(ZMLinkPreview *)secondBuilder.text.linkPreview.firstObject toBuilder];
-        ZMArticleBuilder *articleBuilder = linkBuilder.article.toBuilder;
-        ZMAssetBuilder *assetBuilder = linkBuilder.article.image.toBuilder;
-        ZMAssetRemoteDataBuilder *remoteBuilder = linkBuilder.article.image.uploaded.toBuilder;
-        [remoteBuilder setAssetId:@"Asset ID"];
-        [remoteBuilder setAssetToken:@"Asset Token"];
-        [assetBuilder setUploadedBuilder:remoteBuilder];
-        [articleBuilder setImageBuilder:assetBuilder];
-        [linkBuilder setArticleBuilder:articleBuilder];
-        [builder setLinkPreviewArray:@[linkBuilder.build]];
-        [secondBuilder setTextBuilder:builder];
-        [message addData:secondBuilder.build.data];
-
-        // then
-        XCTAssertEqual(message.dataSet.count, 1lu);
-        XCTAssertTrue(message.genericMessage.hasText);
-        XCTAssertEqual(message.genericMessage.text.linkPreview.count, 1lu);
-        ZMAssetRemoteData *remote = [(ZMLinkPreview *)message.genericMessage.text.linkPreview.firstObject article].image.uploaded;
-        XCTAssertEqualObjects(remote.assetId, @"Asset ID");
-        XCTAssertEqualObjects(remote.assetToken, @"Asset Token");
-    }
+    }];
 }
 
 @end
