@@ -99,7 +99,8 @@ extension ZMMessage {
 extension ZMClientMessage {
     override var isEditableMessage : Bool {
         if let genericMsg = genericMessage {
-            return genericMsg.hasEdited() || genericMsg.hasText()
+            return  genericMsg.hasEdited() ||
+                   (genericMsg.hasText() && deliveryState == .Delivered)
         }
         return false
     }
