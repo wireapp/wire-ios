@@ -519,16 +519,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (LinkPreview *)linkPreview
 {
-    if (self.genericMessage.text.linkPreview.count > 0) {
-        ZMLinkPreview *linkPreview = self.firstZMLinkPreview;
-        
-        if (linkPreview.hasTweet) {
-            return [[TwitterStatus alloc] initWithProtocolBuffer:linkPreview];
-        }
-        else if (linkPreview.hasArticle) {
-            return [[Article alloc] initWithProtocolBuffer:linkPreview];
-        }
-        
+    ZMLinkPreview *linkPreview = self.firstZMLinkPreview;
+    
+    if (linkPreview.hasTweet) {
+        return [[TwitterStatus alloc] initWithProtocolBuffer:linkPreview];
+    }
+    else if (linkPreview.hasArticle) {
+        return [[Article alloc] initWithProtocolBuffer:linkPreview];
     }
     
     return nil;
@@ -536,7 +533,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (ZMLinkPreview *)firstZMLinkPreview
 {
-    return self.genericMessage.text.linkPreview.firstObject;
+    return self.genericMessage.linkPreviews.firstObject;
 }
 
 - (void)requestImageDownload
@@ -608,7 +605,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         return;
     }
     
-    ZMLinkPreview *linkPreview = [self.genericMessage.text.linkPreview firstObject];
+    ZMLinkPreview *linkPreview = [self firstZMLinkPreview];
     
     if (nil == linkPreview) {
         return;
@@ -620,10 +617,19 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     ZMAssetImageMetaData *imageMetaData = [ZMAssetImageMetaData imageMetaDataWithWidth:(int32_t)properties.size.width height:(int32_t)properties.size.height];
     ZMAssetOriginal *original = [ZMAssetOriginal originalWithSize:imageData.length mimeType:properties.mimeType name:nil imageMetaData:imageMetaData];
     
-    [self addData:[ZMGenericMessage messageWithText:self.textMessageData.messageText
-                                        linkPreview:[linkPreview updateWithOtrKey:keys.otrKey sha256:keys.sha256 original:original]
-                                              nonce:self.nonce.transportString].data];
+    ZMLinkPreview *updatedPreview = [linkPreview updateWithOtrKey:keys.otrKey sha256:keys.sha256 original:original];
     
+    if (self.genericMessage.hasText) {
+        [self addData:[ZMGenericMessage messageWithText:self.textMessageData.messageText
+                                            linkPreview:updatedPreview
+                                                  nonce:self.nonce.transportString].data];
+    } else if (self.genericMessage.hasEdited) {
+        [self addData:[ZMGenericMessage messageWithEditMessage:self.genericMessage.edited.replacingMessageId
+                                                       newText:self.textMessageData.messageText
+                                                   linkPreview:updatedPreview
+                                                         nonce:self.nonce.transportString].data];
+    }
+
     [self.managedObjectContext enqueueDelayedSave];
 }
 
@@ -635,7 +641,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 /// The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
 - (NSOrderedSet *)requiredImageFormats;
 {
-    if (self.genericMessage.text.linkPreview.count > 0) {
+    if (self.genericMessage.linkPreviews.count > 0) {
         return [NSOrderedSet orderedSetWithObject:@(ZMImageFormatMedium)];
     }
     return [NSOrderedSet orderedSet];

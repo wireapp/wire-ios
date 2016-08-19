@@ -22,6 +22,10 @@ import ZMCLinkPreview
 
 @testable import ZMCDataModel
 
+enum ContentType {
+    case TextMessage, EditMessage
+}
+
 class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
     
     override func setUp() {
@@ -29,8 +33,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         self.setUpCaches()
     }
     
-    func testThatItCachesAndEncryptsTheMediumImage() {
-        // given
+    func insertMessageWithLinkPreview(contentType: ContentType) -> ZMClientMessage {
         let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
         let nonce = NSUUID()
         let article = Article(
@@ -40,8 +43,22 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         )
         article.title = "title"
         article.summary = "tile"
-        clientMessage.addData(ZMGenericMessage(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce.transportString()).data())
+        let text = "sample text"
+        var genericMessage : ZMGenericMessage!
+        switch contentType{
+        case .TextMessage:
+            genericMessage = ZMGenericMessage(text: text, linkPreview: article.protocolBuffer, nonce: nonce.transportString())
+        case .EditMessage:
+            genericMessage = ZMGenericMessage(editMessage: NSUUID.createUUID().transportString(), newText: text, linkPreview: article.protocolBuffer, nonce: nonce.transportString())
+        }
+        clientMessage.addData(genericMessage.data())
         clientMessage.nonce = nonce
+        return clientMessage
+    }
+    
+    func testThatItCachesAndEncryptsTheMediumImage_TextMessage() {
+        // given
+        let clientMessage = insertMessageWithLinkPreview(.TextMessage)
         let imageData = mediumJPEGData()
         
         // when
@@ -52,10 +69,35 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: false))
         XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: true))
         
-        let linkPreview = clientMessage.genericMessage?.text.linkPreview.first as! ZMLinkPreview
+        guard let linkPreview = clientMessage.genericMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
         XCTAssertNotNil(linkPreview.article.image.uploaded.otrKey)
         XCTAssertNotNil(linkPreview.article.image.uploaded.sha256)
 
+        let original = linkPreview.article.image.original
+        XCTAssertEqual(Int(original.size), imageData.length)
+        XCTAssertEqual(original.mimeType, "image/jpeg")
+        XCTAssertEqual(original.image.width, 42)
+        XCTAssertEqual(original.image.height, 12)
+        XCTAssertFalse(original.hasName())
+    }
+    
+    func testThatItCachesAndEncryptsTheMediumImage_EditMessage() {
+        // given
+        let clientMessage = insertMessageWithLinkPreview(.EditMessage)
+        let imageData = mediumJPEGData()
+        
+        // when
+        let properties = ZMIImageProperties(size: CGSize(width: 42, height: 12), length: UInt(imageData.length), mimeType: "image/jpeg")
+        clientMessage.setImageData(imageData, forFormat: .Medium, properties: properties)
+        
+        // then
+        XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: false))
+        XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: true))
+        
+        guard let linkPreview = clientMessage.genericMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
+        XCTAssertNotNil(linkPreview.article.image.uploaded.otrKey)
+        XCTAssertNotNil(linkPreview.article.image.uploaded.sha256)
+        
         let original = linkPreview.article.image.original
         XCTAssertEqual(Int(original.size), imageData.length)
         XCTAssertEqual(original.mimeType, "image/jpeg")
@@ -94,3 +136,4 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
     }
     
 }
+
