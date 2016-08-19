@@ -120,6 +120,28 @@
     XCTAssertEqual(newIndex, oldIndex);
 }
 
+- (void)testThatItResetsTheLinkPreviewState
+{
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMClientMessage *message = (ZMClientMessage *)[conversation appendMessageWithText:oldText];
+    message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
+    message.linkPreviewState = ZMLinkPreviewStateDone;
+    [message markAsDelivered];
+
+    XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewStateDone);
+    
+    // when
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(newMessage.linkPreviewState, ZMLinkPreviewStateWaitingToBeProcessed);
+}
 
 - (void)testThatItDoesNotEditAMessageThatFailedToSend
 {
@@ -518,8 +540,7 @@
     
     // hide message locally
     [ZMMessage hideMessage:message];
-    XCTAssertNil(message.visibleInConversation);
-    XCTAssertEqual(message.hiddenInConversation, conversation);
+    XCTAssertTrue(message.isZombieObject);
     
     ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:sender.remoteIdentifier newText:newText];
     
@@ -533,8 +554,6 @@
     
     // then
     XCTAssertNil(newMessage);
-    XCTAssertNil(message.visibleInConversation);
-    XCTAssertEqual(message.hiddenInConversation, conversation);
 }
 
 
