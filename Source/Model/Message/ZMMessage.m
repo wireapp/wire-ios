@@ -355,7 +355,10 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
     
     // To avoid reinserting when receiving an edit we delete the message locally
-    [moc deleteObject:message];
+    if (message != nil) {
+        [message removeMessage];
+        [moc deleteObject:message];
+    }
 }
 
 + (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -387,7 +390,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
     
     // Only the sender of the original message can edit it
-    if (message == nil || ![senderID isEqual:message.sender.remoteIdentifier]) {
+    if (message == nil  || message.isZombieObject || ![senderID isEqual:message.sender.remoteIdentifier]) {
         return nil;
     }
 

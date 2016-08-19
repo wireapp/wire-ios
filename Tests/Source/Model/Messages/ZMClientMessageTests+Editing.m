@@ -503,8 +503,7 @@
     
     // hide message locally
     [ZMMessage hideMessage:message];
-    XCTAssertNil(message.visibleInConversation);
-    XCTAssertEqual(message.hiddenInConversation, conversation);
+    XCTAssertTrue(message.isZombieObject);
     
     ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:sender.remoteIdentifier newText:newText];
     
@@ -518,8 +517,6 @@
     
     // then
     XCTAssertNil(newMessage);
-    XCTAssertNil(message.visibleInConversation);
-    XCTAssertEqual(message.hiddenInConversation, conversation);
 }
 
 
