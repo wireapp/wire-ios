@@ -397,7 +397,7 @@
     user.name = @"Fancy One";
     
     // when
-    [conversation appendDecryptionFailedSystemMessageAtTime:[NSDate date] sender:user client:nil errorCode:CBErrorCodeRemoteIdentityChanged];
+    [conversation appendDecryptionFailedSystemMessageAtTime:[NSDate date] sender:user client:nil errorCode:CBOX_REMOTE_IDENTITY_CHANGED];
     
     // then
     ZMSystemMessage *lastMessage = conversation.messages.lastObject;
@@ -413,7 +413,7 @@
     user.name = @"Fancy One";
     
     // when
-    [conversation appendDecryptionFailedSystemMessageAtTime:[NSDate date] sender:user client:nil errorCode:CBErrorCodeInvalidMessage];
+    [conversation appendDecryptionFailedSystemMessageAtTime:[NSDate date] sender:user client:nil errorCode:CBOX_INVALID_MESSAGE];
     
     // then
     ZMSystemMessage *lastMessage = conversation.messages.lastObject;
