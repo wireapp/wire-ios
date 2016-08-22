@@ -70,7 +70,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
     private var conversationTokens : [NSManagedObjectID : GeneralConversationObserverToken<GlobalConversationObserver>] = [:]
     private var voiceChannelParticipantsTokens : [NSManagedObjectID : InternalVoiceChannelParticipantsObserverToken] = [:]
 
-    private let managedObjectContext : NSManagedObjectContext
+    private weak var managedObjectContext : NSManagedObjectContext?
     
     private var conversationLists : [UnownedObject<ZMConversationList>] = Array()
     
@@ -92,7 +92,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
 
         let fetchRequest = NSFetchRequest(entityName:ZMConversation.entityName())
         fetchRequest.includesPendingChanges = false;
-        let allConversations = (try? managedObjectContext.executeFetchRequest(fetchRequest)) as? [ZMConversation] ?? []
+        let allConversations = (try? managedObjectContext?.executeFetchRequest(fetchRequest)) as? [ZMConversation] ?? []
         registerTokensForConversations(allConversations)
         
         let observedLists = conversationListObserverTokens.observerTokens.keys
@@ -173,8 +173,8 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
     }
     
     func checkAllConversationsForChanges(){
-        let conversations = conversationObserverTokens.observerTokens.flatMap{try? self.managedObjectContext.existingObjectWithID($0.0 as! NSManagedObjectID)}
-        conversations.forEach{
+        let conversations = conversationObserverTokens.observerTokens.flatMap{try? self.managedObjectContext?.existingObjectWithID($0.0 as! NSManagedObjectID)}
+        conversations.flatMap{$0}.forEach {
             let changeInfo = GeneralConversationChangeInfo(object: $0)
             changeInfo.setAllKeys()
             conversationDidChange(changeInfo)
@@ -342,7 +342,7 @@ extension GlobalConversationObserver {
         if voiceChannelParticipantsTokens[conversation.objectID] == nil {
             let internalToken = InternalVoiceChannelParticipantsObserverToken(observer: self, conversation: conversation)
             voiceChannelParticipantsTokens[conversation.objectID] = internalToken
-            managedObjectContext.globalManagedObjectContextObserver.addChangeObserver(internalToken, type: .VoiceChannel)
+            managedObjectContext?.globalManagedObjectContextObserver.addChangeObserver(internalToken, type: .VoiceChannel)
         }
         return voiceChannelParticipantsObserverTokens.addObserver(observer, object: conversation.objectID, globalObserver: self)
     }
@@ -353,7 +353,7 @@ extension GlobalConversationObserver {
         else { return }
         
         // when all observers unregistered from this conversation, we can unregister for changes as well
-        managedObjectContext.globalManagedObjectContextObserver.removeChangeObserver(participantToken, type: .VoiceChannel)
+        managedObjectContext?.globalManagedObjectContextObserver.removeChangeObserver(participantToken, type: .VoiceChannel)
         participantToken.tearDown()
         voiceChannelParticipantsTokens.removeValueForKey(conversation.objectID)
     }
