@@ -782,7 +782,9 @@
         
         case ConversationCellActionDelete:
         {
-            [self presentDeletionAlertControllerForMessage:cell.message];
+            [self presentDeletionAlertControllerForMessage:cell.message completion:^{
+                cell.beingEdited = NO;
+            }];
         }
             break;
         case ConversationCellActionPresent:
