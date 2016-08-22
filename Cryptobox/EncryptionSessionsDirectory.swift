@@ -19,12 +19,37 @@
 
 import Foundation
 
+@objc enum EncryptionSessionError : Int {
+    
+    case Unknown, EncryptionFailed, DecryptionFailed
+    
+    internal var userInfo : [String : AnyObject] {
+        var info : String
+        
+        switch self {
+        case .Unknown:
+            info = "Unknown EncryptionSessionError"
+        case .EncryptionFailed:
+            info = "Encryption Failed"
+        case .DecryptionFailed:
+            info = "Decryption Failed"
+        }
+        
+        return [kCFErrorLocalizedDescriptionKey as String : info]
+    }
+    
+    var error : NSError {
+        return NSError(domain: "EncryptionSessionsDirectoryDomain", code: rawValue, userInfo: userInfo)
+    }
+    
+}
+
 class _CBoxSession : PointerWrapper {}
 
 /// An encryption state that is usable to encrypt/decrypt messages
 /// It maintains an in-memory cache of encryption sessions with other clients
 /// that is persisted to disk as soon as it is deallocated.
-public class EncryptionSessionsDirectory {
+public class EncryptionSessionsDirectory : NSObject {
     
     /// Used for testing only. If set to true,
     /// will not try to validate with the generating context
@@ -53,6 +78,7 @@ public class EncryptionSessionsDirectory {
     init(generatingContext: EncryptionContext) {
         self.generatingContext = generatingContext
         self.localFingerprint = generatingContext.implementation.localFingerprint
+        super.init()
     }
     
     /// The underlying implementation of the box
@@ -185,6 +211,14 @@ extension EncryptionSessionsDirectory {
             return (id: $0, prekey: prekey)
         }
     }
+    
+    /// Generates prekeys from a range of IDs. If prekeys with those IDs exist already,
+    /// they will be replaced
+    /// This method wraps the Swift only method generatePrekeys(range: Range<UInt16>) for objC interoparability
+    @objc public func generatePrekeys(nsRange: NSRange) throws -> [[String : AnyObject]] {
+        let prekeys = try generatePrekeys(Range(UInt16(nsRange.location)..<UInt16(nsRange.length)))
+        return prekeys.map{ ["id": NSNumber(unsignedShort: $0.id), "prekey": $0.prekey] }
+    }
 }
 
 // MARK: - Fingerprint
@@ -240,6 +274,11 @@ extension EncryptionSessionsDirectory {
         default:
             fatalError("Error in loading from cbox: \(result)")
         }
+    }
+    
+    /// Returns true if there is an existing session for this client ID
+    public func hasSessionForID(clientId: String) -> Bool {
+        return (clientSessionById(clientId) != nil)
     }
     
     /// Closes all transient sessions without saving them
@@ -336,10 +375,10 @@ extension EncryptionSessionsDirectory {
     /// Encrypts data for a client
     /// It immediately saves the session
     /// - returns: nil if there is no session with that client
-    public func encrypt(plainText: NSData, recipientClientId: String) throws -> NSData? {
+    @objc public func encrypt(plainText: NSData, recipientClientId: String) throws -> NSData {
         self.validateContext()
         guard let session = self.clientSessionById(recipientClientId) else {
-            return nil
+            throw EncryptionSessionError.EncryptionFailed.error
         }
         let cypherText = try session.encrypt(plainText)
         self.saveSession(recipientClientId)
@@ -349,10 +388,10 @@ extension EncryptionSessionsDirectory {
     /// Decrypts data from a client
     /// The session is not saved to disk until the cache is committed
     /// - returns: nil if there is no session with that client
-    public func decrypt(cypherText: NSData, senderClientId: String) throws -> NSData? {
+    @objc public func decrypt(cypherText: NSData, senderClientId: String) throws -> NSData {
         self.validateContext()
         guard let session = self.clientSessionById(senderClientId) else {
-            return nil
+            throw EncryptionSessionError.DecryptionFailed.error
         }
         return try session.decrypt(cypherText)
     }
