@@ -57,3 +57,5 @@ xcode-build.log
 xcode-summary.log
 xcode-test.log
 tests.xml
+cobertura.xml
+code-coverage/*
