@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites tests='104' failures='0'>
+  <testsuite name='ZMCLinkPreviewTests.ImageDownloaderTests' tests='9' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatitCallsTheCompletionOnTheResultsQueue' time='0.217'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItCreatesADataTaskForTheImageURL' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItCreatesAndResumesADataTaskForAllURLs' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItDoesNotReturnTheDataInTheCompletionIfTheResponseHeaderDoesNotContainContentTypeImage' time='0.096'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItDoesNotReturnTheDataInTheCompletionIfTheResponseHeaderDoesNotContainContentTypeImage_lowercase' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_GIF' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_JPEG' time='0.076'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_JPG' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.ImageDownloaderTests' name='testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_PNG' time='0.001'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.IntegrationTests' tests='15' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataFoursquare' time='1.498'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataGuardian' time='1.011'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataInstagram' time='0.395'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataiTunes' time='0.636'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataiTunesWithoutTitle' time='0.230'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataMedium' time='0.822'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataPolygon' time='0.135'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataTheVerge' time='0.230'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataTwitter' time='0.676'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataTwitterWithImages' time='0.705'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataVimeo' time='0.356'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataWashington' time='0.453'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataWire' time='0.438'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataYahooSports' time='0.303'/>
+    <testcase classname='ZMCLinkPreviewTests.IntegrationTests' name='testThatItParsesSampleDataYouTube' time='0.318'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.LinkPreviewDetectorTests' tests='12' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItCallsTheCompletionClosureOnTheResultsQueue_LinkInText_Data' time='0.325'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItCallsTheCompletionClosureOnTheResultsQueue_LinkInText_NoData' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItCallsTheCompletionClosureOnTheResultsQueue_NoLinkInText' time='0.003'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItCallsTheCompletionWithAnEmptyArrayWhenThereIsNoLinkInTheText' time='0.029'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItDoesNotReturnALinkIfThereIsNoneInAText' time='0.041'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItImmediatelyCallsTheCompletionHandlerForHostsOnTheBlacklist' time='0.005'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItRequestsToDownloadOnlyTheFirstImageDataWhenThereIsALinkAndThePreviewDownloaderReturnsOpenGraphData' time='0.003'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItRequestsToDownloadTheImageDataWhenThereIsALinkAndThePreviewDownloaderReturnsOpenGraphData' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItRequestsToDownloadTheOpenGraphDataWhenThereIsALink' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItReturnsAnEmptyArrayIfThePreviewDownloaderReturnsANilOpenGraphData' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItReturnsTheDetectedLinkAndOffsetInAText' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.LinkPreviewDetectorTests' name='testThatItReturnsTheURLsAndOffsetsOfMultipleLinksInAText' time='0.001'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.MetaStreamContainerTests' tests='8' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItAppendsBytes' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItExtractsTheHead_whenAllInOneLine' time='0.014'/>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItExtractsTheHead_whenItHasAttributes' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItExtractsTheHead_whenOneASeparateLine' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItSets_rechaedEndOfHead_WhenDataContainsHead_Capitalized' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItSets_rechaedEndOfHead_WhenDataContainsHead_Lowercase' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItSets_rechaedEndOfHead_WhenDataContainsHead_Uppercase' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.MetaStreamContainerTests' name='testThatItSets_rechaedEndOfHead_WhenDataContainsHead_WithSpaces' time='0.001'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.OpenGraphDataTests' tests='20' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesAValidOpenGraphDataFromPropertyMapping' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Foursqaure' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Guardian' time='0.004'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Instagram' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_iTunes' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_iTunesWithoutTitle' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Medium' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Nytimes' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Polygon' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_TheVerge' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Twitter' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_TwitterWithImages' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Vimeo' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_WashingtonPost' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_YahooSports' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItCreatesTheCorrectLinkPreview_Youtube' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItReturnsNilWhenRequiredPropertiesAreMissing' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItSetsTheCorrectSiteName' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItSetsTheTypeToWebsiteIfThereIsNoTypeInTheMapping' time='0.016'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphDataTests' name='testThatItUsesTheGivenOriginalURLAndCharacterOffsetWhenCreatingALinkPreview' time='0.001'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.OpenGraphScannerTests' tests='15' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Foursquare' time='0.003'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Guardian' time='0.006'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Imstagram' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_iTunes' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_iTunesWithoutTitle' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_NYTimes' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Polygon' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Twitter' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_TwitterWithImages' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Verge' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Vimeo' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_WashingtonPost' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_Wire' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_yahooSports' time='0.002'/>
+    <testcase classname='ZMCLinkPreviewTests.OpenGraphScannerTests' name='testThatItCanParseCorrectlyStrippedSampleData_YouTube' time='0.002'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.PreviewBlackListTests' tests='1' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.PreviewBlackListTests' name='testThatCorrectHostsAreAllBlacklisted' time='0.001'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.PreviewDownloaderTests' tests='12' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItAppendsReceivedBytesToContainerForDataTask' time='0.013'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItAsksTheSessionForADataTaskWhenOpenGraphDataIsRequested' time='0.009'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItCallsTheCompletionAndCleansUpIfItReceivesANetworkError' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItCallsTheCompletionHandlerAndCancelsTheRequestIfTheContentTypeOfTheResponseIfNotHTML' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTML' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTMLUppercase' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTMLWithCharset' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItCancelsTheDataTaskAndCallsTheCompletionHandlerIfTheHeaderEnded' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItDoesNotCallTheCompletionAndCleansUpIfItReceivesANilError' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItDoesntCallTheCompletionWhenRequestIsCancelled' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItOverridesTheContentTypeOfTheURLSessionUsedForParsing' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.PreviewDownloaderTests' name='testThatItRemovesTheCompletionBlockAndDataContainerOnCompletion_Unsuccessful' time='0.001'/>
+  </testsuite>
+  <testsuite name='ZMCLinkPreviewTests.StringXMLEntityParserTests' tests='12' failures='0'>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItIgnoresEmptyString' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItIgnoresStringWithChineese' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItIgnoresStringWithEmoji' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItIgnoresStringWithOneAmp' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItIgnoresStringWithoutEntities' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItIgnoresStringWithRTL' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItIgnoresStringWithSeveralAmps' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItReplacesAmp' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItReplacesQuot' time='0.001'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItReplacesSeveralAmps' time='0.000'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItReplacesSeveralSpecialCharacters' time='0.013'/>
+    <testcase classname='ZMCLinkPreviewTests.StringXMLEntityParserTests' name='testThatItReplacesSpecialCharacters' time='0.001'/>
+  </testsuite>
+</testsuites>
