@@ -57,7 +57,7 @@ class _CBox : PointerWrapper {}
  3. When the block passed to `perform:` is completed, the sessions are persisted to disk.
     The lock is relased.
  */
-public class EncryptionContext {
+public class EncryptionContext : NSObject {
     
     /// What to do with modified sessions
     public enum ModifiedSessionsBehaviour {
@@ -76,16 +76,17 @@ public class EncryptionContext {
     private(set) var currentSessionsDirectory: EncryptionSessionsDirectory?
     
     /// Folder file descriptor
-    private let fileDescriptor : CInt
+    private var fileDescriptor : CInt!
     
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error
     public init(path: NSURL) {
         let result = cbox_file_open((path.path! as NSString).UTF8String, &self.implementation.ptr)
+        self.path = path
+        super.init()
         if result != CBOX_SUCCESS {
             fatalError("Failed to open cryptobox: ERROR \(result.rawValue)")
         }
-        self.path = path
         self.fileDescriptor = open(self.path.path!, 0)
         if self.fileDescriptor <= 0 {
             fatalError("Can't obtain FD for folder \(self.path)")
@@ -97,6 +98,8 @@ public class EncryptionContext {
         self.releaseDirectoryLock()
         // close
         close(self.fileDescriptor)
+        // close cbox
+        cbox_close(implementation.ptr)
     }
     
 }
