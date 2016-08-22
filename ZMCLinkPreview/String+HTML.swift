@@ -27,10 +27,91 @@ extension String {
      - returns: The String with resolved XML character references or `nil` if the String can't be converted to data using `UTF8` encoding.
      */
     func resolvingXMLEntityReferences() -> String? {
-        guard let data = dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) else { return nil }
-        let options: [String: AnyObject] = [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: NSUTF8StringEncoding]
-        let attributed = try? NSAttributedString(data: data, options: options, documentAttributes: nil)
-        return attributed?.string ?? self
+    
+        guard let _ = self.rangeOfString("&", options:.LiteralSearch) else {
+            return self;
+        }
+        
+    
+        let result = NSMutableString()
+    
+        let scanner = NSScanner(string: self)
+    
+        scanner.charactersToBeSkipped = nil
+    
+        let boundaryCharacterSet = NSCharacterSet(charactersInString:" \t\n\r;")
+    
+        repeat {
+            
+            var nonEntityString: NSString?
+            if scanner.scanUpToString("&", intoString:&nonEntityString) {
+                result.appendString(nonEntityString! as String)
+            }
+            
+            if scanner.atEnd {
+                return result as String
+            }
+            
+            var dummyInout: NSString?
+            if scanner.scanString("&amp;", intoString:&dummyInout) {
+                result.appendString("&")
+            }
+            else if scanner.scanString("&apos;", intoString:&dummyInout) {
+                result.appendString("'")
+            }
+            else if scanner.scanString("&quot;", intoString:&dummyInout) {
+                result.appendString("\"")
+            }
+            else if scanner.scanString("&lt;", intoString:&dummyInout) {
+                result.appendString("<")
+            }
+            else if scanner.scanString("&gt;", intoString:&dummyInout) {
+                result.appendString(">")
+            }
+            else if scanner.scanString("&#", intoString:&dummyInout) {
+                var gotNumber: Bool
+                var charCode: unichar
+                var hexStartString: NSString?
+            
+                if scanner.scanString("x", intoString:&hexStartString) {
+                    var charCodeUInt32: UInt32 = 0
+                    gotNumber = scanner.scanHexInt(&charCodeUInt32)
+                    charCode = unichar(charCodeUInt32)
+                }
+                else {
+                    var charCodeInt32: Int32 = 0
+                    gotNumber = scanner.scanInt(&charCodeInt32)
+                    charCode = unichar(charCodeInt32)
+                }
+                
+                if (gotNumber) {
+                    result.appendFormat("%C", charCode)
+                    
+                    scanner.scanString(";", intoString:&dummyInout)
+                }
+                else {
+                    var unknownEntity: NSString?
+                    scanner.scanUpToCharactersFromSet(boundaryCharacterSet, intoString:&unknownEntity)
+                    if let hexStartString = hexStartString, let unknownEntity = unknownEntity {
+                        result.appendFormat("&#%@%@", hexStartString, unknownEntity)
+                        print("Expected numeric character entity but got &#%@%@;", hexStartString, unknownEntity)
+                    }
+                }
+            }
+            else {
+                var amp: NSString?
+                scanner.scanString("&", intoString:&amp)
+                if let amp = amp {
+                    result.appendString(amp as String)
+                    
+                }
+            
+            }
+            
+        }
+        while !scanner.atEnd
+        
+        return result as String
     }
-
+    
 }

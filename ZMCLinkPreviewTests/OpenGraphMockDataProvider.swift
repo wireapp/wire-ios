@@ -161,7 +161,7 @@ class OpenGraphMockDataProvider: NSObject {
             url: "https://vimeo.com/170888135",
             imageUrls: ["https://i.vimeocdn.com/video/576126576_1280x720.jpg"],
             siteName: "Vimeo",
-            description: "Cars dance on highways, crowds of people wash across sidewalk shores. RISD Senior film - 2016"
+            description: "Cars dance on highways, crowds of people wash across sidewalk shores.   RISD Senior film - 2016"
         )
 
         return OpenGraphMockData(
