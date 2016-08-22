@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -64,7 +64,7 @@ extension EncryptionSessionsDirectoryTests {
     func establishSessionBetweenAliceAndBob() {
         let prekey = try! statusBob.generatePrekey(2)
         try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: prekey)
-        let prekeyMessage = try! statusAlice.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)!
+        let prekeyMessage = try! statusAlice.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)
         try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
         
         /// This will force commit
@@ -128,10 +128,7 @@ extension EncryptionSessionsDirectoryTests {
         let plainText = "निर्वाण".dataUsingEncoding(NSUTF8StringEncoding)!
         do {
             let cypherText = try status1.encrypt(plainText, recipientClientId: clientId2)
-            guard let toDecrypt = cypherText else {
-                return false
-            }
-            let decoded = try status2.decrypt(toDecrypt, senderClientId: clientId1)
+            let decoded = try status2.decrypt(cypherText, senderClientId: clientId1)
             return decoded == plainText
         } catch {
             return false
@@ -156,7 +153,7 @@ extension EncryptionSessionsDirectoryTests {
         }
         
         // THEN
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
         let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
     }
@@ -182,7 +179,7 @@ extension EncryptionSessionsDirectoryTests {
         }
         
         // THEN
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
         let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
         
@@ -339,12 +336,8 @@ extension EncryptionSessionsDirectoryTests {
         statusAlice.delete(Person.Bob.clientId)
         
         // THEN
-        do {
-            let cypherText = try statusAlice.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)
-            XCTAssertNil(cypherText)
-        } catch {
-            XCTFail()
-        }
+        let cypherText = try? statusAlice.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)
+        XCTAssertNil(cypherText)
     }
     
     func testThatItCanDeleteASessionThatDoesNotExist() {
@@ -372,7 +365,7 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
         statusAliceCopy.debug_disableContextValidityCheck = true
-        let cypher = try! statusAliceCopy.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)
+        let cypher = try? statusAliceCopy.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)
         XCTAssertNil(cypher)
     }
 
@@ -389,11 +382,7 @@ extension EncryptionSessionsDirectoryTests {
         let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
         statusAliceCopy.debug_disableContextValidityCheck = true
         let prekeyMessage = try! statusAliceCopy.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        guard let toDecode = prekeyMessage else {
-            XCTFail()
-            return
-        }
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: toDecode)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
         XCTAssertEqual(plainText, decoded)
     }
     
@@ -409,7 +398,7 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
         statusAliceCopy.debug_disableContextValidityCheck = true
-        let cypher = try! statusAliceCopy.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)
+        let cypher = try? statusAliceCopy.encrypt("foo".dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: Person.Bob.clientId)
         XCTAssertNil(cypher)
     }
     
@@ -418,12 +407,12 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         let plainText = "foo".dataUsingEncoding(NSUTF8StringEncoding)!
         try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(1))
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
         try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
         self.recreateStatuses() // force save
         
         // WHEN
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
+        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
         try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
         statusBob.discardCache()
         statusBob = nil
@@ -465,7 +454,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = "foo".dataUsingEncoding(NSUTF8StringEncoding)!
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
+        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
         try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
         
         // WHEN
@@ -485,8 +474,8 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = "foo".dataUsingEncoding(NSUTF8StringEncoding)!
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
-        try! statusBob.decrypt(cypherText, senderClientId: Person.Bob.clientId)
+        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
+        try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
         
         // WHEN
         statusBob.discardCache()
@@ -504,7 +493,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = "foo".dataUsingEncoding(NSUTF8StringEncoding)!
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
+        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
         try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
         
         // WHEN
@@ -532,7 +521,7 @@ extension EncryptionSessionsDirectoryTests {
         self.recreateStatuses() // force save
         
         // THEN
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)!
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
         let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
     }
