@@ -38,7 +38,7 @@
 @dynamic model;
 @dynamic time;
 
-@synthesize box;
+@synthesize encryptionContext;
 
 + (NSFetchRequest *)fetchRequestWithPredicate:(NSPredicate *)predicate
 {
@@ -108,21 +108,27 @@
 
     NSURL *clientOtrLocation = [location URLByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@", newClient.identifier, newClient.label]];
     [[NSFileManager defaultManager] createDirectoryAtURL:clientOtrLocation withIntermediateDirectories:YES attributes:nil error:nil];
-    NSError *error;
-    CBCryptoBox *box = [CBCryptoBox cryptoBoxWithPathURL:clientOtrLocation error:&error];
-    if (error) NSLog(@"%@", error);
-    VerifyReturnNil(box != nil && error == nil);
-    newClient.box = box;
+    EncryptionContext *encryptionContext = [[EncryptionContext alloc] initWithPath:clientOtrLocation];
+    VerifyReturnNil(encryptionContext != nil);
+    newClient.encryptionContext = encryptionContext;
     
-    
-    NSArray <CBPreKey *> *prekeys = [box generatePreKeys:NSMakeRange(0, 100) error:&error];
+    __block NSArray *prekeys;
+    __block NSString *lastPrekey;
+    __block NSError *error;
+    [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
+        prekeys = [sessionsDirectory generatePrekeys:NSMakeRange(0, 100) error:&error];
+        lastPrekey = [sessionsDirectory generateLastPrekeyAndReturnError:&error];
+    }];
+    VerifyReturnNil([prekeys count] > 0 && error == nil);
+    NSArray *preKeyStrings = [prekeys mapWithBlock:^id(NSDictionary *keyInfo) {
+        return keyInfo[@"prekey"];
+    }];
     VerifyReturnNil([prekeys count] > 0 && error == nil);
     
-    NSArray <MockPreKey *> *mockPrekeys = [MockPreKey insertMockPrekeysFromPrekeys:prekeys forClient:newClient inManagedObjectContext:moc];
+    NSArray <MockPreKey *> *mockPrekeys = [MockPreKey insertMockPrekeysFromPrekeys:preKeyStrings forClient:newClient inManagedObjectContext:moc];
     newClient.prekeys = [NSSet setWithArray:mockPrekeys];
     
-    CBPreKey *lastprekey = [box lastPreKey:&error];
-    MockPreKey *mockLastPrekey = [MockPreKey insertNewKeyWithPrekey:lastprekey forClient:newClient inManagedObjectContext:moc];
+    MockPreKey *mockLastPrekey = [MockPreKey insertNewKeyWithPrekey:lastPrekey forClient:newClient inManagedObjectContext:moc];
     newClient.lastPrekey = mockLastPrekey;
     
     VerifyReturnNil(prekeys);
@@ -152,40 +158,48 @@
     return data;
 }
 
-+ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient identifier:(NSString *)identifier data:(NSData *)data;
++ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data
 {
-    NSError *error;
-    CBCryptoBox *box = fromClient.box;
-    CBSession *session = [box sessionById:identifier error:&error];
-    if (!session) {
-        session = [box sessionWithId:identifier fromStringPreKey:toClient.lastPrekey.value error:&error];
-    }
-    
-    NSData *encryptedData = [session encrypt:data error:&error];
+    __block NSError *error;
+    __block NSData *encryptedData;
+    EncryptionContext *encryptionContext = fromClient.encryptionContext;
+    [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
+        if (![sessionsDirectory hasSessionForID:toClient.identifier]) {
+            [sessionsDirectory createClientSession:toClient.identifier base64PreKeyString:toClient.lastPrekey.value error:&error];
+        }
+        encryptedData = [sessionsDirectory encrypt:data recipientClientId:toClient.identifier error:&error];
+    }];
     return encryptedData;
 }
 
 
-+ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
++ (NSData *)sessionMessageDataForEncryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data
 {
-    return [self encryptedDataFromClient:fromClient toClient:toClient identifier:toClient.identifier data:data];
+    EncryptionContext *encryptionContext = toClient.encryptionContext;
+    __block NSData *decryptedData;
+    [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
+        NSError *error;
+        decryptedData = [sessionsDirectory createClientSessionAndReturnPlaintext:fromClient.identifier prekeyMessage:data error:&error];
+    }];
+    return decryptedData;
 }
 
-+ (CBSessionMessage *)sessionMessageForEncryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
+- (BOOL)establishConnectionWithClient:(MockUserClient *)client
 {
-    NSError *error;
-    CBCryptoBox *box = toClient.box;
-    CBSessionMessage *sessionMessage = [box sessionMessageWithId:fromClient.identifier fromMessage:data error:&error];
-    return sessionMessage;
+    __block NSError *error = nil;
+    __block BOOL hasSession = NO;
+    [self.encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
+        if (! [sessionsDirectory hasSessionForID:client.identifier]) {
+            [sessionsDirectory createClientSession:client.identifier base64PreKeyString:client.lastPrekey.value error:&error];
+        }
+        hasSession = [sessionsDirectory hasSessionForID:client.identifier];
+    }];
+    return hasSession;
 }
 
-- (BOOL)establishConnectionWithClient:(MockUserClient *)client2;
+- (void)dealloc
 {
-    NSError *error = nil;
-    if ([self.box sessionById:client2.identifier error:&error]) return YES;
-    CBSession *session = [self.box sessionWithId:client2.identifier fromStringPreKey:client2.lastPrekey.value error:&error];
-    
-    return session != nil;
+    self.encryptionContext = nil;
 }
 
 

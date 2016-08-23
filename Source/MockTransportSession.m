@@ -59,6 +59,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 @interface MockTransportSession ()
 
+@property (nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) MockUser *selfUser;
 @property (atomic, weak) id<ZMPushChannelConsumer> pushChannelConsumer;
 @property (atomic, weak) id<ZMSGroupQueue> pushChannelGroupQueue;
@@ -83,7 +84,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 @property (nonatomic) NSMutableArray *pushTokens;
 @property (nonatomic) MockFlowManager *flowManager;
-@property (nonatomic) id <ZMNetworkStateDelegate> networkStateDelegate;
+@property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
 
@@ -200,7 +201,10 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 - (void)tearDown
 {
+    self.managedObjectContext = nil;
     [self expireAllBlockedRequests];
+    [self.generatedPushEvents removeAllObjects];
+    [self.generatedTransportRequests removeAllObjects];
     self.shouldSendPushChannelEvents = NO;
 }
 
@@ -222,10 +226,10 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     __unused id store = [psc addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
     NSAssert(store != nil, @"");
     
-    _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-    [_managedObjectContext createDispatchGroups];
-    [_managedObjectContext addGroup:group];
-    _managedObjectContext.persistentStoreCoordinator = psc;
+    self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    [self.managedObjectContext createDispatchGroups];
+    [self.managedObjectContext addGroup:group];
+    self.managedObjectContext.persistentStoreCoordinator = psc;
     
     if(!_cookieStorage) {
         _cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"ztest.example.com"];
@@ -234,7 +238,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 -(void)resetReceivedRequests
 {
+    ZM_WEAK(self);
     [self.managedObjectContext performGroupedBlockAndWait:^{
+        ZM_STRONG(self);
         [self.generatedTransportRequests removeAllObjects];
     }];
 }
@@ -242,7 +248,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 -(NSArray *)receivedRequests
 {
     __block NSArray *requests;
+    ZM_WEAK(self);
     [self.managedObjectContext performBlockAndWait:^{
+        ZM_STRONG(self);
         requests = [self.generatedTransportRequests copy];
     }];
     return requests;
@@ -365,8 +373,10 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t) (delay * NSEC_PER_SEC) );
 
         [self.requestGroup enter];
+        ZM_WEAK(self);
         dispatch_after(dispatchTime, dispatch_get_main_queue(), ^(void){
             [self.managedObjectContext performGroupedBlock:^{
+                ZM_STRONG(self);
                 ZMTransportResponse *response = [ZMTransportResponse responseWithTransportSessionError:[NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil]];
                 response.dispatchGroup = self.requestGroup;
                 [self completeRequestAndRemoveFromLists:request response:response];
@@ -377,7 +387,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     }
     else if(request && self.doNotRespondToRequests == NO) {
         [self.requestGroup enter];
+        ZM_WEAK(self);
         [self.managedObjectContext performGroupedBlock:^{
+            ZM_STRONG(self);
             [self processRequest:request completionHandler:^(ZMTransportResponse *response) {
                 if(response != nil) {
                     response.dispatchGroup = self.requestGroup;
@@ -836,7 +848,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 - (void)performRemoteChanges:(void(^)(MockTransportSession<MockTransportSessionObjectCreation> *))block;
 {
     // If you crash here, it's probably due to bug in the block being passed to this method
+    ZM_WEAK(self);
     [self.managedObjectContext performGroupedBlockAndWait:^{
+        ZM_STRONG(self);
         block(self);
         [self saveAndCreatePushChannelEvents:YES];
     }];
@@ -1448,7 +1462,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 - (void)sendIsTypingEventForConversation:(MockConversation *)conversation user:(MockUser *)user started:(BOOL)started;
 {
+    ZM_WEAK(self);
     [self.managedObjectContext performGroupedBlock:^{
+        ZM_STRONG(self);
         NSDictionary *payload = @{@"conversation": conversation.identifier,
                                   @"from": user.identifier,
                                   @"data": @{@"status": started ? @"started" : @"stopped"},

@@ -23,6 +23,6 @@
 
 @interface MockUserClient ()
 
-@property (nonatomic) CBCryptoBox *box;
+@property (nonatomic) EncryptionContext *encryptionContext;
 
 @end
