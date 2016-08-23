@@ -34,7 +34,7 @@
 
 + (NSSet *)insertNewKeysWithPayload:(NSArray *)payload context:(NSManagedObjectContext *)context;;
 
-+ (NSArray <MockPreKey *> *)insertMockPrekeysFromPrekeys:(NSArray <CBPreKey *> *)prekeys forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
-+ (MockPreKey *)insertNewKeyWithPrekey:(CBPreKey *)prekey forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (NSArray <MockPreKey *> *)insertMockPrekeysFromPrekeys:(NSArray <NSString *> *)prekeys forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (MockPreKey *)insertNewKeyWithPrekey:(NSString *)prekey forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
 
 @end
