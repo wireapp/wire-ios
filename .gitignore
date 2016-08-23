@@ -27,3 +27,13 @@ DerivedData
 .DS_Store
 Carthage
 ZMCMockTransport.framework.zip
+
+## Test Output
+#
+xcode-analyze.log
+xcode-build.log
+xcode-summary.log
+xcode-test.log
+tests.xml
+cobertura.xml
+code-coverage/*
