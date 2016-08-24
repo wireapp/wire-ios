@@ -670,7 +670,6 @@
 		8FC8549D199245770008B66B /* NotificationWindowRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC85256199245760008B66B /* NotificationWindowRootViewController.m */; };
 		8FC8549F199245770008B66B /* ParticipantsFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC8525B199245760008B66B /* ParticipantsFooterView.m */; };
 		8FC854A0199245770008B66B /* ParticipantsHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC8525D199245760008B66B /* ParticipantsHeaderView.m */; };
-		8FC854A1199245770008B66B /* ParticipantsList.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC8525F199245760008B66B /* ParticipantsList.m */; };
 		8FC854A2199245770008B66B /* ParticipantsListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC85261199245760008B66B /* ParticipantsListCell.m */; };
 		8FC854A4199245770008B66B /* ParticipantsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC85265199245760008B66B /* ParticipantsViewController.m */; };
 		8FC854B9199245770008B66B /* MagicConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC85292199245760008B66B /* MagicConfig.m */; };
@@ -724,6 +723,7 @@
 		BF74EE4C1CD249B000D626CB /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74EE4B1CD249B000D626CB /* HockeySDK.framework */; };
 		BF8042271BFC741F004CD789 /* NSURL+WireURLs.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8042261BFC741F004CD789 /* NSURL+WireURLs.m */; };
 		BF86E11B1C245BF9001D9430 /* UserClient+Fingerprint.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF86E11A1C245BF9001D9430 /* UserClient+Fingerprint.swift */; };
+		BF8CADD91D6CAAFC007602B8 /* Conversation+SortedParticipants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8CADD81D6CAAFC007602B8 /* Conversation+SortedParticipants.swift */; };
 		BF8EE5561D62FBCD00B0D6D7 /* ConversationInputBarViewController+Editing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8EE5551D62FBCD00B0D6D7 /* ConversationInputBarViewController+Editing.swift */; };
 		BF8EE5581D6351B100B0D6D7 /* InputBarEditViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8EE5571D6351B100B0D6D7 /* InputBarEditViewTests.swift */; };
 		BF8EE55A1D636F4600B0D6D7 /* TextMessageCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8EE5591D636F4600B0D6D7 /* TextMessageCellTests.swift */; };
@@ -1897,8 +1897,6 @@
 		8FC8525B199245760008B66B /* ParticipantsFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticipantsFooterView.m; sourceTree = "<group>"; };
 		8FC8525C199245760008B66B /* ParticipantsHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticipantsHeaderView.h; sourceTree = "<group>"; };
 		8FC8525D199245760008B66B /* ParticipantsHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticipantsHeaderView.m; sourceTree = "<group>"; };
-		8FC8525E199245760008B66B /* ParticipantsList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticipantsList.h; sourceTree = "<group>"; };
-		8FC8525F199245760008B66B /* ParticipantsList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ParticipantsList.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		8FC85260199245760008B66B /* ParticipantsListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticipantsListCell.h; sourceTree = "<group>"; };
 		8FC85261199245760008B66B /* ParticipantsListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticipantsListCell.m; sourceTree = "<group>"; };
 		8FC85264199245760008B66B /* ParticipantsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticipantsViewController.h; sourceTree = "<group>"; };
@@ -1994,6 +1992,7 @@
 		BF8042251BFC741F004CD789 /* NSURL+WireURLs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+WireURLs.h"; sourceTree = "<group>"; };
 		BF8042261BFC741F004CD789 /* NSURL+WireURLs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+WireURLs.m"; sourceTree = "<group>"; };
 		BF86E11A1C245BF9001D9430 /* UserClient+Fingerprint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserClient+Fingerprint.swift"; sourceTree = "<group>"; };
+		BF8CADD81D6CAAFC007602B8 /* Conversation+SortedParticipants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Conversation+SortedParticipants.swift"; sourceTree = "<group>"; };
 		BF8EE5551D62FBCD00B0D6D7 /* ConversationInputBarViewController+Editing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Editing.swift"; sourceTree = "<group>"; };
 		BF8EE5571D6351B100B0D6D7 /* InputBarEditViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarEditViewTests.swift; sourceTree = "<group>"; };
 		BF8EE5591D636F4600B0D6D7 /* TextMessageCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextMessageCellTests.swift; sourceTree = "<group>"; };
@@ -3950,6 +3949,7 @@
 				8F41CFC7199297C600E3B032 /* Message.m */,
 				8F41CFC119926B7A00E3B032 /* ZMUser+Additions.h */,
 				8F41CFC219926B7A00E3B032 /* ZMUser+Additions.m */,
+				BF8CADD81D6CAAFC007602B8 /* Conversation+SortedParticipants.swift */,
 				8FC856B019925B680008B66B /* zmessaging+iOS.h */,
 				8FC85132199245760008B66B /* ZMUserSession+iOS.h */,
 				8FC85133199245760008B66B /* ZMUserSession+iOS.m */,
@@ -4259,8 +4259,6 @@
 				8FC8525B199245760008B66B /* ParticipantsFooterView.m */,
 				8FC8525C199245760008B66B /* ParticipantsHeaderView.h */,
 				8FC8525D199245760008B66B /* ParticipantsHeaderView.m */,
-				8FC8525E199245760008B66B /* ParticipantsList.h */,
-				8FC8525F199245760008B66B /* ParticipantsList.m */,
 				8FC85260199245760008B66B /* ParticipantsListCell.h */,
 				8FC85261199245760008B66B /* ParticipantsListCell.m */,
 				8FC85264199245760008B66B /* ParticipantsViewController.h */,
@@ -5401,6 +5399,7 @@
 				871BC0021D34F56300DF0793 /* AnalyticsDecryptionFailedObserver.m in Sources */,
 				871BC27D1D34F8F800DF0793 /* CAMediaTimingFunction+AdditionalEquations.m in Sources */,
 				871BBFFF1D34F56300DF0793 /* AnalyticsBase.m in Sources */,
+				BF8CADD91D6CAAFC007602B8 /* Conversation+SortedParticipants.swift in Sources */,
 				87BEB0401D3E44E600DE9575 /* AssetCell.swift in Sources */,
 				871BC2301D34F8F800DF0793 /* FormGuidance.m in Sources */,
 				879718921D1C109900163C07 /* AudioRecordKeyboardViewController.swift in Sources */,
@@ -5457,7 +5456,6 @@
 				87DCF4EF1D34EA4500BB420F /* TopPeopleLineSection.m in Sources */,
 				8FC854B9199245770008B66B /* MagicConfig.m in Sources */,
 				168634DF1ADD671100EDC7D9 /* NameStepViewController.m in Sources */,
-				8FC854A1199245770008B66B /* ParticipantsList.m in Sources */,
 				871BC2211D34F8F800DF0793 /* ActionSheetContainerView.m in Sources */,
 				871BC0111D34F56300DF0793 /* Analytics+ProfileEvents.m in Sources */,
 				87BEB03E1D3E44DE00DE9575 /* CameraCell.swift in Sources */,
