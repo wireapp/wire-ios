@@ -749,6 +749,12 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     return nil;
 }
 
+- (void)removeMessage
+{
+    self.text = nil;
+    [super removeMessage];
+}
+
 @end
 
 

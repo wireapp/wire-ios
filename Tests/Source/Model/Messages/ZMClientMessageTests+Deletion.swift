@@ -24,7 +24,7 @@ import XCTest
 
 class ZMClientMessageTests_Deletion: BaseZMMessageTests {
     
-    func testThatItDeletesAMessageFromTheManagedObjectContext() {
+    func testThatItDeletesAMessage() {
         // given
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
         guard let sut = conversation.appendMessageWithText(name!) as? ZMMessage else { return XCTFail() }
@@ -41,11 +41,18 @@ class ZMClientMessageTests_Deletion: BaseZMMessageTests {
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
     }
     
-    func testThatItDeletesAnAssetMessageFromTheManagedObjectContext() {
+    func testThatItDeletesAnAssetMessage_Image() {
         // given
         setUpCaches()
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
         guard let sut = conversation.appendOTRMessageWithImageData(mediumJPEGData(), nonce: .createUUID()) else { return XCTFail() }
+        
+        let cache = uiMOC.zm_imageAssetCache
+        cache.storeAssetData(sut.nonce, format: .Preview, encrypted: false, data: verySmallJPEGData())
+        cache.storeAssetData(sut.nonce, format: .Medium, encrypted: false, data: mediumJPEGData())
+        cache.storeAssetData(sut.nonce, format: .Original, encrypted: false, data: mediumJPEGData())
+        cache.storeAssetData(sut.nonce, format: .Preview, encrypted: true, data: verySmallJPEGData())
+        cache.storeAssetData(sut.nonce, format: .Medium, encrypted: true, data: mediumJPEGData())
         
         // when
         performPretendingUiMocIsSyncMoc {
@@ -57,6 +64,132 @@ class ZMClientMessageTests_Deletion: BaseZMMessageTests {
         
         // then
         assertDeletedContent(ofMessage: sut, inConversation: conversation)
+        wipeCaches()
+    }
+    
+    func testThatItDeletesAnAssetMessage_File() {
+        // given
+        setUpCaches()
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        let data = "Hello World".dataUsingEncoding(NSUTF8StringEncoding)!
+        let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
+        let url = NSURL(fileURLWithPath: documents).URLByAppendingPathComponent("file.dat")
+
+        defer { try! NSFileManager.defaultManager().removeItemAtURL(url) }
+
+        data.writeToURL(url, atomically: true)
+        let fileMetaData = ZMFileMetadata(fileURL: url, thumbnail: verySmallJPEGData())
+        guard let sut = conversation.appendOTRMessageWithFileMetadata(fileMetaData, nonce: .createUUID()) else { return XCTFail() }
+
+        let cache = uiMOC.zm_imageAssetCache
+        let fileCache = uiMOC.zm_fileAssetCache
+        
+        cache.storeAssetData(sut.nonce, format: .Original, encrypted: true, data: verySmallJPEGData())
+        fileCache.storeAssetData(sut.nonce, fileName: "file.dat", encrypted: true, data: mediumJPEGData())
+        
+        XCTAssertNotNil(cache.assetData(sut.nonce, format: .Original, encrypted: false))
+        XCTAssertNotNil(fileCache.assetData(sut.nonce, fileName: "file.dat", encrypted: false))
+        
+        // when
+        performPretendingUiMocIsSyncMoc {
+            sut.deleteForEveryone()
+        }
+        
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        assertDeletedContent(ofMessage: sut, inConversation: conversation, fileName: "file.dat")
+        wipeCaches()
+    }
+    
+    func testThatItDeletesAPreEndtoEndPlainTextMessage() {
+        // given
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        let sut = ZMTextMessage.insertNewObjectInManagedObjectContext(uiMOC) // Pre e2ee plain text message
+        
+        sut.visibleInConversation = conversation
+        sut.nonce = .createUUID()
+        sut.sender = selfUser
+
+        // when
+        performPretendingUiMocIsSyncMoc {
+            sut.deleteForEveryone()
+        }
+
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertTrue(sut.hasBeenDeleted)
+        XCTAssertNil(sut.visibleInConversation)
+        XCTAssertEqual(sut.hiddenInConversation, conversation)
+        XCTAssertNil(sut.text)
+        XCTAssertNil(sut.messageText)
+        XCTAssertNil(sut.sender)
+        XCTAssertNil(sut.senderClientID)
+    }
+    
+    func testThatItDeletesAPreEndtoEndKnockMessage() {
+        // given
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        let sut = ZMKnockMessage.insertNewObjectInManagedObjectContext(uiMOC) // Pre e2ee knock message
+        
+        sut.visibleInConversation = conversation
+        sut.nonce = .createUUID()
+        sut.sender = selfUser
+        
+        // when
+        performPretendingUiMocIsSyncMoc {
+            sut.deleteForEveryone()
+        }
+        
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertTrue(sut.hasBeenDeleted)
+        XCTAssertNil(sut.visibleInConversation)
+        XCTAssertEqual(sut.hiddenInConversation, conversation)
+        XCTAssertNil(sut.sender)
+        XCTAssertNil(sut.senderClientID)
+    }
+    
+    func testThatItDeletesAPreEndToEndImageMessage() {
+        // given
+        setUpCaches()
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        let sut = ZMImageMessage.insertNewObjectInManagedObjectContext(uiMOC) // Pre e2ee image message
+        
+        sut.visibleInConversation = conversation
+        sut.nonce = .createUUID()
+        sut.sender = selfUser
+        
+        let cache = uiMOC.zm_imageAssetCache
+        cache.storeAssetData(sut.nonce, format: .Preview, encrypted: false, data: verySmallJPEGData())
+        cache.storeAssetData(sut.nonce, format: .Medium, encrypted: false, data: mediumJPEGData())
+        cache.storeAssetData(sut.nonce, format: .Original, encrypted: false, data: mediumJPEGData())
+        
+        // when
+        performPretendingUiMocIsSyncMoc {
+            sut.deleteForEveryone()
+        }
+        
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        XCTAssertTrue(sut.hasBeenDeleted)
+        XCTAssertNil(sut.visibleInConversation)
+        XCTAssertEqual(sut.hiddenInConversation, conversation)
+        XCTAssertNil(sut.mediumRemoteIdentifier)
+        XCTAssertNil(sut.mediumData)
+        XCTAssertNil(sut.sender)
+        XCTAssertNil(sut.senderClientID)
+        
+        XCTAssertNil(cache.assetData(sut.nonce, format: .Original, encrypted: false))
+        XCTAssertNil(cache.assetData(sut.nonce, format: .Medium, encrypted: false))
+        XCTAssertNil(cache.assetData(sut.nonce, format: .Preview, encrypted: false))
         wipeCaches()
     }
     
@@ -291,7 +424,7 @@ extension ZMClientMessageTests_Deletion {
         return createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: senderID)
     }
     
-    func assertDeletedContent(ofMessage message: ZMOTRMessage, inConversation conversation: ZMConversation, line: UInt = #line) {
+    func assertDeletedContent(ofMessage message: ZMOTRMessage, inConversation conversation: ZMConversation, fileName: String? = nil, line: UInt = #line) {
         XCTAssertTrue(message.hasBeenDeleted, line: line)
         XCTAssertNil(message.visibleInConversation, line: line)
         XCTAssertEqual(message.hiddenInConversation, conversation, line: line)
@@ -309,6 +442,19 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertEqual(assetMessage.size, 0, line: line)
             XCTAssertEqual(assetMessage.mimeType, "", line: line)
             XCTAssertNil(assetMessage.genericAssetMessage, line: line)
+
+            let cache = uiMOC.zm_imageAssetCache
+            XCTAssertNil(cache.assetData(message.nonce, format: .Original, encrypted: false))
+            XCTAssertNil(cache.assetData(message.nonce, format: .Medium, encrypted: false))
+            XCTAssertNil(cache.assetData(message.nonce, format: .Preview, encrypted: false))
+            XCTAssertNil(cache.assetData(message.nonce, format: .Medium, encrypted: true))
+            XCTAssertNil(cache.assetData(message.nonce, format: .Preview, encrypted: true))
+
+            guard let fileName = fileName else { return }
+            let fileCache = uiMOC.zm_fileAssetCache
+            XCTAssertNil(fileCache.assetData(message.nonce, fileName: fileName, encrypted: true))
+            XCTAssertNil(fileCache.assetData(message.nonce, fileName: fileName, encrypted: false))
+            
         } else if let clientMessage = message as? ZMClientMessage {
             XCTAssertNil(clientMessage.genericMessage, line: line)
         }

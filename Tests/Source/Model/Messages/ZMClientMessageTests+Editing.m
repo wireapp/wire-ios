@@ -577,7 +577,7 @@
     // then
     XCTAssertNil(newMessage);
     XCTAssertNil(message.visibleInConversation);
-    XCTAssertEqual(message.hiddenInConversation, conversation);
+    XCTAssertTrue(message.isZombieObject);
     XCTAssertNil(message.textMessageData);
     XCTAssertNil(message.sender);
     XCTAssertNil(message.senderClientID);
