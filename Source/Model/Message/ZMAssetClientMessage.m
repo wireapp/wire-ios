@@ -1118,6 +1118,13 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
         [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self.nonce fileName:self.filename encrypted:NO];
         [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self.nonce fileName:self.filename encrypted:YES];
     }
+
+    self.dataSet = [NSOrderedSet orderedSet];
+    self.cachedGenericAssetMessage = nil;
+    self.assetId = nil;
+    self.associatedTaskIdentifier = nil;
+    self.preprocessedSize = CGSizeZero;
+
     [super removeMessage];
 }
 

@@ -38,9 +38,26 @@ class ZMClientMessageTests_Deletion: BaseZMMessageTests {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertTrue(sut.hasBeenDeleted)
-        XCTAssertNil(sut.visibleInConversation)
-        XCTAssertEqual(sut.hiddenInConversation, conversation)
+        assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
+    }
+    
+    func testThatItDeletesAnAssetMessageFromTheManagedObjectContext() {
+        // given
+        setUpCaches()
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        guard let sut = conversation.appendOTRMessageWithImageData(mediumJPEGData(), nonce: .createUUID()) else { return XCTFail() }
+        
+        // when
+        performPretendingUiMocIsSyncMoc {
+            sut.deleteForEveryone()
+        }
+        
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+        // then
+        assertDeletedContent(ofMessage: sut, inConversation: conversation)
+        wipeCaches()
     }
     
     func testThatAMessageSentByAnotherUserCanotBeDeleted() {
@@ -162,9 +179,7 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertTrue(sut.hasBeenDeleted)
-        XCTAssertNil(sut.visibleInConversation)
-        XCTAssertEqual(sut.hiddenInConversation, conversation)
+        assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
         // No system message as the selfUser was the sender
         XCTAssertEqual(conversation.messages.count, 0)
         // A deletion should not update the lastModified date
@@ -177,9 +192,10 @@ extension ZMClientMessageTests_Deletion {
         conversation.remoteIdentifier = .createUUID()
         let otherUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
         otherUser.remoteIdentifier = .createUUID()
-        let message = ZMMessage.insertNewObjectInManagedObjectContext(uiMOC)
+        let message = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         message.sender = otherUser
         message.visibleInConversation = conversation
+        message.nonce = .createUUID()
         let timestamp = NSDate(timeIntervalSince1970: 123456789)
         message.serverTimestamp = timestamp
         
@@ -196,11 +212,9 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertTrue(message.hasBeenDeleted)
-        XCTAssertNil(message.visibleInConversation)
-        XCTAssertEqual(message.hiddenInConversation, conversation)
+        assertDeletedContent(ofMessage: message, inConversation: conversation)
         XCTAssertEqual(conversation.messages.count, 1)
-        
+
         // A deletion should not update the lastModified date
         XCTAssertEqual(conversation.lastModifiedDate, lastModified)
         
@@ -231,10 +245,8 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertNil(sut.visibleInConversation)
-        XCTAssertEqual(sut.hiddenInConversation, conversation)
-        XCTAssertTrue(sut.hasBeenDeleted)
-        
+        assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
+
         //when
         let genericMessage = ZMGenericMessage(text: name!, nonce: nonce.transportString())
         let nextEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
@@ -245,10 +257,8 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
         // then
-        XCTAssertNil(sut.visibleInConversation)
-        XCTAssertEqual(sut.hiddenInConversation, conversation)
-        XCTAssertTrue(sut.hasBeenDeleted)
-        print(conversation.messages)
+        assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
+
         // No system message as the selfUser was the sender
         XCTAssertEqual(conversation.messages.count, 0)
         // A deletion should not update the lastModified date
@@ -279,6 +289,29 @@ extension ZMClientMessageTests_Deletion {
     func createMessageDeletedUpdateEvent(nonce: NSUUID, conversationID: NSUUID, senderID: NSUUID = .createUUID()) -> ZMUpdateEvent {
         let genericMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID.createUUID().transportString())
         return createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: senderID)
+    }
+    
+    func assertDeletedContent(ofMessage message: ZMOTRMessage, inConversation conversation: ZMConversation, line: UInt = #line) {
+        XCTAssertTrue(message.hasBeenDeleted, line: line)
+        XCTAssertNil(message.visibleInConversation, line: line)
+        XCTAssertEqual(message.hiddenInConversation, conversation, line: line)
+        XCTAssertEqual(message.dataSet.count, 0, line: line)
+        XCTAssertNil(message.textMessageData, line: line)
+        XCTAssertNil(message.sender, line: line)
+        XCTAssertNil(message.senderClientID, line: line)
+        
+        if let assetMessage = message as? ZMAssetClientMessage {
+            XCTAssertNil(assetMessage.assetId, line: line)
+            XCTAssertNil(assetMessage.associatedTaskIdentifier, line: line)
+            XCTAssertNil(assetMessage.fileMessageData, line: line)
+            XCTAssertNil(assetMessage.filename, line: line)
+            XCTAssertNil(assetMessage.imageMessageData, line: line)
+            XCTAssertEqual(assetMessage.size, 0, line: line)
+            XCTAssertEqual(assetMessage.mimeType, "", line: line)
+            XCTAssertNil(assetMessage.genericAssetMessage, line: line)
+        } else if let clientMessage = message as? ZMClientMessage {
+            XCTAssertNil(clientMessage.genericMessage, line: line)
+        }
     }
 
 }
