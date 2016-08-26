@@ -1,0 +1,3 @@
+framework=WireRequestStrategy
+organization=wireapp
+repository=wire-ios-request-strategy
