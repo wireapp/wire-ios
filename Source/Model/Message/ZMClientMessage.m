@@ -211,6 +211,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 {
     _genericMessage = nil;
     self.dataSet = [NSOrderedSet orderedSet];
+    self.genericMessage = nil;
     [super removeMessage];
 }
 
@@ -346,45 +347,51 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         return nil;
     }
     
-    NSArray <ZMUserEntry *>*recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
-                                                                           selfClient:selfClient
-                                                                         conversation:conversation];
-    ZMNewOtrMessage *message = [ZMNewOtrMessage messageWithSender:selfClient nativePush:YES recipients:recipients blob:externalData];
-    
-    
-    NSData *messageData = message.data;
-    if (messageData.length > ZMClientMessageByteSizeExternalThreshold && nil == externalData) {
-        
-        // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
-        // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
-        [self rollbackUsersClientsSessionFromConversation:conversation selfClient:selfClient];
-        return [self encryptedMessageDataWithExternalDataBlobFromMessage:genericMessage
-                                                          inConversation:conversation
-                                                    managedObjectContext:moc];
+    if (selfClient.keysStore.encryptionContext == nil) {
+        return nil;
     }
     
-    // here we know that the encrypted message(s) are going to be used to send a request, we persist the sessions
-    [selfClient.keysStore.box saveSessionsRequiringSave];
+    __block NSData *messageData;
+    ZM_WEAK(self);
+    [selfClient.keysStore.encryptionContext perform:^(EncryptionSessionsDirectory *sessionsDirectory) {
+        ZM_STRONG(self);
+        if (self == nil) {
+            return;
+        }
+        NSArray <ZMUserEntry *>*recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
+                                                                               selfClient:selfClient
+                                                                             conversation:conversation
+                                                                        sessionsDirectory:sessionsDirectory];
+        
+        ZMNewOtrMessage *message = [ZMNewOtrMessage messageWithSender:selfClient nativePush:YES recipients:recipients blob:externalData];
+        messageData = message.data;
+        
+        if (messageData.length > ZMClientMessageByteSizeExternalThreshold && nil == externalData) {
+            
+            // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
+            // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
+            [sessionsDirectory discardCache];
+            messageData = [self encryptedMessageDataWithExternalDataBlobFromMessage:genericMessage
+                                                                     inConversation:conversation
+                                                               managedObjectContext:moc];
+        }
+    }];
+    
     return messageData;
 }
 
-+ (NSArray <ZMUserEntry *>*)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt selfClient:(UserClient *)selfClient conversation:(ZMConversation *)conversation;
++ (NSArray <ZMUserEntry *>*)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt selfClient:(UserClient *)selfClient conversation:(ZMConversation *)conversation sessionsDirectory:(EncryptionSessionsDirectory *)sessionsDirectory
 {
-    CBCryptoBox *box = selfClient.keysStore.box;
-    
     NSArray <ZMUserEntry *>*recipients = [conversation.activeParticipants.array mapWithBlock:^ZMUserEntry *(ZMUser *user) {
+        
         NSArray <ZMClientEntry *>*clientsEntries = [user.clients.allObjects mapWithBlock:^ZMClientEntry *(UserClient *client) {
             
-            NSError *error;
-            if (![client.remoteIdentifier isEqual:selfClient.remoteIdentifier]) {
-                CBSession *session = [box sessionById:client.remoteIdentifier error:&error];
-                
-                // We do not have a session and will insert bogus data for this client
-                // in order to show him a "failed to decrypt" message
+            if (![client isEqual:selfClient]) {
                 BOOL corruptedClient = client.failedToEstablishSession;
                 client.failedToEstablishSession = NO;
                 
-                if (nil == session) {
+                BOOL hasSessionWithSelfClient = [sessionsDirectory hasSessionForID:client.remoteIdentifier];
+                if (!hasSessionWithSelfClient) {
                     if(corruptedClient) {
                         NSData *data = [ZMFailedToCreateEncryptedMessagePayloadString dataUsingEncoding:NSUTF8StringEncoding];
                         return [ZMClientEntry entryWithClient:client data:data];
@@ -393,15 +400,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
                     }
                 }
                 
-                NSData *encryptedData = [session encrypt:dataToEncrypt error:&error];
-                if (encryptedData != nil) {
-                    [box setSessionToRequireSave:session];
+                NSError *error;
+                NSData *encryptedData = [sessionsDirectory encrypt:dataToEncrypt recipientClientId:client.remoteIdentifier error: &error];
+                if (error == nil && encryptedData != nil) {
                     return [ZMClientEntry entryWithClient:client data:encryptedData];
-                } else {
-                    // We failed to encrypt the data using that session, which is not normal.
-                    // We rollback the session to the last serialised state
-                    [box rollbackSession:session];
                 }
+                
+                return nil;
             }
 
             return nil;
@@ -415,27 +420,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     }];
 
     return recipients;
-}
-
-+ (void)rollbackUsersClientsSessionFromConversation:(ZMConversation *)conversation selfClient:(UserClient *)selfClient;
-{
-    CBCryptoBox *box = selfClient.keysStore.box;
-    for (ZMUser *user in conversation.activeParticipants) {
-        for (UserClient *client in user.clients) {
-            if (![client.remoteIdentifier isEqual:selfClient.remoteIdentifier]) {
-
-                NSError *error;
-                CBSession *session = [box sessionById:client.remoteIdentifier error:&error];
-                
-                BOOL corruptedClient = client.failedToEstablishSession;
-                client.failedToEstablishSession = NO;
-                
-                if (nil != session && !corruptedClient) {
-                    [box rollbackSession:session];
-                }
-            }
-        }
-    }
 }
 
 @end

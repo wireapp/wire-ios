@@ -32,7 +32,7 @@ final class GlobalUserObserver : NSObject, ObjectsDidChangeDelegate, ZMUserObser
     private var userObserverTokens : TokenCollection<UserObserverToken> = TokenCollection()
     private var displayNameObservers : [DisplayNameObserver] = []
     
-    private let managedObjectContext : NSManagedObjectContext
+    private weak var managedObjectContext : NSManagedObjectContext?
     private var needsToRecalculateNames : Bool = false
     var isTornDown : Bool = false
     
@@ -90,6 +90,8 @@ final class GlobalUserObserver : NSObject, ObjectsDidChangeDelegate, ZMUserObser
 extension GlobalUserObserver {
     
     func addUserObserver(observer: ZMUserObserver, user: ZMBareUser) -> UserObserverToken? {
+        guard let managedObjectContext = managedObjectContext else { return nil }
+        
         switch (user) {
         case let user as ZMUser:
             if userTokens[user] == nil {
