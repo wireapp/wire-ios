@@ -97,3 +97,16 @@
 }
 
 @end
+
+
+@implementation ZMConfirmation (Utils)
+
++ (instancetype)messageWithMessageID:(NSString *)messageID confirmationType:(ZMConfirmationType)confirmationType;
+{
+    ZMConfirmationBuilder *builder = [ZMConfirmation builder];
+    builder.messageId = messageID;
+    builder.type = confirmationType;
+    return [builder build];
+}
+
+@end
