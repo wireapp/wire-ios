@@ -61,8 +61,8 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func testThatItCanGenerateMoreKeys() {
         // when
         do {
-            let (newKey, _, _) = try sut.generateMoreKeys(1)
-            XCTAssertNotNil(newKey, "Should generate more keys")
+            let newKeys = try sut.generateMoreKeys(1, start: 0)
+            XCTAssertNotEqual(newKeys.count, 0, "Should generate more keys")
             
         } catch let error as NSError {
             XCTAssertNil(error, "Should not return error while generating key")
@@ -73,20 +73,24 @@ class UserClientKeysStoreTests: OtrBaseTest {
     
     func testThatItWrapsKeysTo0WhenReachingTheMaximum() {
         // given
-        let prekeyBatchSize : UInt = 50
-        let startingPrekey = CBMaxPreKeyID - prekeyBatchSize - 1 // -1 is to generate at least 2 batches
+        let maxPreKey : UInt16 = UserClientKeysStore.MaxPreKeyID
+        print(maxPreKey)
+        let prekeyBatchSize : UInt16 = 50
+        let startingPrekey = maxPreKey - prekeyBatchSize - 1 // -1 is to generate at least 2 batches
         let maxIterations = 2
         
-        var previousMaxKeyId : UInt = startingPrekey
+        var previousMaxKeyId : UInt16 = startingPrekey
         var iterations = 0
         
         // when
-        while(true) {
-            var newKey : [CBPreKey] = []
-            var maxKey : UInt = 0
-            var minKey : UInt = 0
+        while (true) {
+            var newKeys : [(id: UInt16, prekey: String)]!
+            var maxKey : UInt16!
+            var minKey : UInt16!
             do {
-                (newKey, minKey, maxKey) = try sut.generateMoreKeys(UInt(prekeyBatchSize), start: previousMaxKeyId)
+                newKeys = try sut.generateMoreKeys(50, start: previousMaxKeyId)
+                maxKey = newKeys.last?.id ?? 0
+                minKey = newKeys.first?.id ?? 0
             } catch let error as NSError {
                 XCTAssertNil(error, "Should not return error while generating key: \(error)")
                 return
@@ -94,13 +98,13 @@ class UserClientKeysStoreTests: OtrBaseTest {
             
             // then
             iterations += 1
-            if(iterations > maxIterations) {
+            if (iterations > maxIterations) {
                 XCTFail("Too many keys are generated without wrapping: \(iterations) iterations, max key is \(maxKey)")
                 return
             }
             
-            XCTAssertNotNil(newKey, "Should generate more keys")
-            if(minKey == 0) { // it wrapped!!
+            XCTAssertGreaterThan(newKeys.count, 0, "Should generate more keys")
+            if (minKey == 0) { // it wrapped!!
                 XCTAssertGreaterThan(iterations, 1)
                 // success!
                 return
@@ -109,7 +113,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
             XCTAssertEqual(minKey, previousMaxKeyId) // is it the right starting point?
             
             previousMaxKeyId = maxKey
-            if(maxKey > CBMaxPreKeyID) {
+            if (maxKey > UserClientKeysStore.MaxPreKeyID) {
                 XCTFail("Prekey \(maxKey) is too big")
                 return
             }

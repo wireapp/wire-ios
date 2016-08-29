@@ -374,7 +374,7 @@
 
 - (void)appendDecryptionFailedSystemMessageAtTime:(NSDate *)timestamp sender:(ZMUser *)sender client:(UserClient *)client errorCode:(NSInteger)errorCode
 {
-    ZMSystemMessageType type = (errorCode == CBErrorCodeRemoteIdentityChanged) ? ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged : ZMSystemMessageTypeDecryptionFailed;
+    ZMSystemMessageType type = (errorCode == CBOX_REMOTE_IDENTITY_CHANGED) ? ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged : ZMSystemMessageTypeDecryptionFailed;
     NSSet *clients = (client != nil) ? [NSSet setWithObject:client] : [NSSet set];
     NSDate *serverTimestamp = timestamp ?: [self timestampAfterMessage:self.messages.lastObject];
 

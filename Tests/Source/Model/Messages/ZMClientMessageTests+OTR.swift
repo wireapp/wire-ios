@@ -27,9 +27,16 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func assertMessageMetadata(payload: NSData!) {
         let messageMetadata = ZMNewOtrMessageBuilder().mergeFromData(payload).build() as? ZMNewOtrMessage
         AssertOptionalNotNil(messageMetadata) { messageMetadata in
-            
-            XCTAssertEqual(messageMetadata.sender.client, self.selfClient1.clientId.client)
-            self.assertRecipients(messageMetadata.recipients as! [ZMUserEntry])
+            if let sender = messageMetadata.sender {
+                XCTAssertEqual(sender.client, self.selfClient1.clientId.client)
+            } else {
+                XCTFail("Metadata does not contain sender")
+            }
+            if let recipients = messageMetadata.recipients as? [ZMUserEntry] {
+                self.assertRecipients(recipients)
+            } else {
+                XCTFail("Metadata does not contain recipients")
+            }
         }
     }
 

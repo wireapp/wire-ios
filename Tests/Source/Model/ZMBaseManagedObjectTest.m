@@ -469,8 +469,8 @@ static int16_t imageCounter;
     if (createSessionWithSeflUser) {
         UserClient *selfClient = [ZMUser selfUserInContext:self.syncMOC].selfClient;
         NSError *error;
-        CBPreKey *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
-        [selfClient establishSessionWithClient:userClient usingPreKey:key.data.base64String];
+        NSString *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
+        [selfClient establishSessionWithClient:userClient usingPreKey:key];
     }
     return userClient;
 }
