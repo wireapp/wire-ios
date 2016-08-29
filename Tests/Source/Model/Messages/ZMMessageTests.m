@@ -37,6 +37,7 @@
 #import "NSString+RandomString.h"
 
 NSString * const IsExpiredKey = @"isExpired";
+NSString * const ReactionsKey = @"reactions";
 
 @implementation BaseZMMessageTests : ModelObjectsTests
 @end
@@ -482,7 +483,7 @@ NSString * const IsExpiredKey = @"isExpired";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForTextMessages
 {
     //given
-    NSArray *expected = @[IsExpiredKey];
+    NSArray *expected = @[IsExpiredKey, ReactionsKey];
 
     // when
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -507,13 +508,13 @@ NSString * const IsExpiredKey = @"isExpired";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForImageMessages
 {
     // given
-    NSSet *expected = [NSSet setWithObjects:IsExpiredKey, nil];
+    NSArray *expected = @[IsExpiredKey, ReactionsKey];
     
     // when
     ZMImageMessage *message = [ZMImageMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:message.keysTrackedForLocalModifications], expected);
+    XCTAssertEqualObjects(message.keysTrackedForLocalModifications, expected);
 }
 
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForClientMessages
@@ -522,7 +523,7 @@ NSString * const IsExpiredKey = @"isExpired";
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    NSArray *keysThatShouldBeTracked = @[@"dataSet", @"linkPreviewState"];
+    NSArray *keysThatShouldBeTracked = @[@"dataSet", @"linkPreviewState", ReactionsKey];
     AssertArraysContainsSameObjects(message.keysTrackedForLocalModifications, keysThatShouldBeTracked);
 }
 
@@ -2421,6 +2422,145 @@ NSString * const IsExpiredKey = @"isExpired";
     textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
     XCTAssertNil(textMessage);
     XCTAssertEqual(conversation.messages.count, 0lu);
+}
+
+@end
+
+@implementation ZMMessageTests (Reaction)
+
+- (void)testThatAddingAReactionAddsAReactionGenericMessage_fromUI;
+{
+    ZMEventID *convEventID = [self createEventID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadEventID = convEventID;
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    textMessage.nonce = nonce;
+    textMessage.visibleInConversation = conversation;
+    [self.uiMOC saveOrRollback];
+    
+    //when
+    NSString *reactionUnicode = @"a bit of sweetness please";
+    // this is the UI facing call to add reaction
+    [ZMMessage addReaction:reactionUnicode toMessage:textMessage];
+    [self.uiMOC saveOrRollback];
+    
+    //then
+    XCTAssertEqual(conversation.hiddenMessages.count, 1lu);
+    ZMClientMessage *reactionMessage = [conversation.hiddenMessages lastObject];
+    XCTAssertNotNil(reactionMessage.genericMessage);
+    XCTAssertTrue(reactionMessage.genericMessage.hasReaction);
+    XCTAssertEqualObjects(reactionMessage.genericMessage.reaction.emoji, reactionUnicode);
+
+}
+
+- (void)testThatAddingAReactionWithUnicodeProperlyAddReactionForUserOnMessage;
+{
+    //given
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    ZMEventID *convEventID = [self createEventID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadEventID = convEventID;
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    textMessage.nonce = nonce;
+    textMessage.visibleInConversation = conversation;
+    [self.uiMOC saveOrRollback];
+    
+    //when
+    NSString *reactionUnicode = @"a bit of sweetness please";
+    // this is the UI facing call to add reaction
+    [textMessage addReaction:reactionUnicode forUser:selfUser];
+    [self.uiMOC saveOrRollback];
+    
+    
+    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
+    
+    //then
+    NSDictionary *reactions = textMessage.usersReaction;
+    XCTAssertEqual(reactions.count, 1lu);
+    NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
+    XCTAssertEqual(usersThatReacted.count, 1lu);
+    XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
+}
+
+- (void)testThatAddingAReactionWithoutUnicodeRemnoveUserOnReaction;
+{
+    //given
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    ZMEventID *convEventID = [self createEventID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadEventID = convEventID;
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    textMessage.nonce = nonce;
+    textMessage.visibleInConversation = conversation;
+    [self.uiMOC saveOrRollback];
+    
+    NSString *reactionUnicode = @"a bit of sweetness please";
+    // this is the UI facing call to add reaction
+    [textMessage addReaction:reactionUnicode forUser:selfUser];
+    [self.uiMOC saveOrRollback];
+
+    //sanity check
+    
+    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
+    
+    NSDictionary *reactions = textMessage.usersReaction;
+    XCTAssertEqual(reactions.count, 1lu);
+    NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
+    XCTAssertEqual(usersThatReacted.count, 1lu);
+    XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
+
+    //when
+    [textMessage addReaction:@"" forUser:selfUser];
+    [self.uiMOC saveOrRollback];
+    
+    //then
+    reactions = textMessage.usersReaction;
+    XCTAssertEqual(reactions.count, 1lu);
+    usersThatReacted = reactions[reactionUnicode];
+    XCTAssertEqual(usersThatReacted.count, 0lu);
+
+}
+
+- (void)testThatAddingAReactionForTwoUserWithSameUnicodeAgregates;
+{
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    ZMEventID *convEventID = [self createEventID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadEventID = convEventID;
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    textMessage.nonce = nonce;
+    textMessage.visibleInConversation = conversation;
+    [self.uiMOC saveOrRollback];
+    
+    //when
+    NSString *reactionUnicode = @"a bit of sweetness please";
+    // this is the UI facing call to add reaction
+    [textMessage addReaction:reactionUnicode forUser:selfUser];
+    [textMessage addReaction:reactionUnicode forUser:user1];
+    [self.uiMOC saveOrRollback];
+    
+    
+    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
+    
+    //then
+    NSDictionary *reactions = textMessage.usersReaction;
+    XCTAssertEqual(reactions.count, 1lu);
+    NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
+    XCTAssertEqual(usersThatReacted.count, 2lu);
 }
 
 @end

@@ -28,6 +28,7 @@
 
 @class ZMEventID;
 @class ZMUser;
+@class Reaction;
 @class ZMConversation;
 @class ZMUpdateEvent;
 
@@ -150,10 +151,13 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 @property (nonatomic) ZMEventID *eventID;
 @property (nonatomic) NSUUID *nonce;
 
+
 @property (nonatomic, readonly) BOOL isUnreadMessage;
 
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic, readonly) NSDate *expirationDate;
+@property (nonatomic) NSSet <Reaction *> *reactions;
+
 - (void)setExpirationDate;
 - (void)removeExpirationDate;
 - (void)markAsDelivered;
