@@ -1,20 +1,21 @@
-//
+// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-//
+// 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-//
+// 
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-//
+// 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-//
+// 
+
 
 #import "Messages.pb.h"
 // @@protoc_insertion_point(imports)
@@ -1411,8 +1412,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 
 @interface ZMText ()
 @property (strong) NSString* content;
-@property (strong) NSMutableArray<ZMMention*> * mentionArray;
-@property (strong) NSMutableArray<ZMLinkPreview*> * linkPreviewArray;
+@property (strong) NSMutableArray * mentionArray;
+@property (strong) NSMutableArray * linkPreviewArray;
 @end
 
 @implementation ZMText
@@ -1446,13 +1447,13 @@ static ZMText* defaultZMTextInstance = nil;
 - (instancetype) defaultInstance {
   return defaultZMTextInstance;
 }
-- (NSArray<ZMMention*> *)mention {
+- (NSArray *)mention {
   return mentionArray;
 }
 - (ZMMention*)mentionAtIndex:(NSUInteger)index {
   return [mentionArray objectAtIndex:index];
 }
-- (NSArray<ZMLinkPreview*> *)linkPreview {
+- (NSArray *)linkPreview {
   return linkPreviewArray;
 }
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index {
@@ -1718,7 +1719,7 @@ static ZMText* defaultZMTextInstance = nil;
   resultText.content = @"";
   return self;
 }
-- (NSMutableArray<ZMMention*> *)mention {
+- (NSMutableArray *)mention {
   return resultText.mentionArray;
 }
 - (ZMMention*)mentionAtIndex:(NSUInteger)index {
@@ -1731,7 +1732,7 @@ static ZMText* defaultZMTextInstance = nil;
   [resultText.mentionArray addObject:value];
   return self;
 }
-- (ZMTextBuilder *)setMentionArray:(NSArray<ZMMention*> *)array {
+- (ZMTextBuilder *)setMentionArray:(NSArray *)array {
   resultText.mentionArray = [[NSMutableArray alloc]initWithArray:array];
   return self;
 }
@@ -1739,7 +1740,7 @@ static ZMText* defaultZMTextInstance = nil;
   resultText.mentionArray = nil;
   return self;
 }
-- (NSMutableArray<ZMLinkPreview*> *)linkPreview {
+- (NSMutableArray *)linkPreview {
   return resultText.linkPreviewArray;
 }
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index {
@@ -1752,7 +1753,7 @@ static ZMText* defaultZMTextInstance = nil;
   [resultText.linkPreviewArray addObject:value];
   return self;
 }
-- (ZMTextBuilder *)setLinkPreviewArray:(NSArray<ZMLinkPreview*> *)array {
+- (ZMTextBuilder *)setLinkPreviewArray:(NSArray *)array {
   resultText.linkPreviewArray = [[NSMutableArray alloc]initWithArray:array];
   return self;
 }

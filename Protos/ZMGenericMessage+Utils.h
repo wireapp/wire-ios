@@ -86,6 +86,11 @@
                                      newText:(NSString *)newText
                                  linkPreview:(ZMLinkPreview *)linkPreview
                                        nonce:(NSString *)nonce;
+
+
++ (ZMGenericMessage *)messageWithEmojiString:(NSString *)emojiString
+                                   messageID:(NSString *)messageID
+                                       nonce:(NSString *)nonce;
 - (BOOL)knownMessage;
 
 @end
