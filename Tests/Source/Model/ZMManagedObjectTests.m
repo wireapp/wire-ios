@@ -55,6 +55,9 @@
 
 @interface ZMManagedObjectTests : ZMBaseManagedObjectTest
 
+@property (nonatomic) NSManagedObjectContext *testMOC;
+@property (nonatomic) NSManagedObjectContext *alternativeTestMOC;
+
 @end
 
 
@@ -66,6 +69,10 @@
 - (void)setUp
 {
     [super setUp];
+    
+    self.testMOC = [MockModelObjectContextFactory testContext];
+    self.alternativeTestMOC = [MockModelObjectContextFactory alternativeMocForPSC:self.testMOC.persistentStoreCoordinator];
+    
     OriginalPredicate = [NSPredicate predicateWithFormat:@"original_condition == 0"];
     [self.testMOC markAsUIContext];
 }

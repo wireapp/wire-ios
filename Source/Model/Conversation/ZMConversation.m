@@ -825,7 +825,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
         self.lastReadEventIDUpdateCounter++;
         int64_t currentCount = self.lastReadEventIDUpdateCounter;
         
-        [self.managedObjectContext.dispatchGroup enter];
+        __block NSArray *groups = [self.managedObjectContext enterAllGroups];
         ZM_WEAK(self);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.lastReadEventIDSaveDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             ZM_STRONG(self);
@@ -833,11 +833,11 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
                 return;
             }
             if (currentCount != self.lastReadEventIDUpdateCounter) {
-                [self.managedObjectContext.dispatchGroup leave];
+                [self.managedObjectContext leaveAllGroups:groups];
                 return;
             }
             [self savePendingLastRead];
-            [self.managedObjectContext.dispatchGroup leave];
+            [self.managedObjectContext leaveAllGroups:groups];
         });
     }
     else {
