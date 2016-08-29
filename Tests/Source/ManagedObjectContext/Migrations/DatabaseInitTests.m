@@ -23,38 +23,32 @@
 #import <CoreData/CoreData.h>
 #import <ZMTesting/ZMTesting.h>
 #import <OCMock/OCMock.h>
+#import "DatabaseBaseTest.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 
-@interface DatabaseInitTests : ZMTBaseTest
-@property (nonatomic, strong) NSURL *testStoreDirectory;
+
+
+@interface DatabaseInitTests : DatabaseBaseTest
+
 @end
+
+
 
 @implementation DatabaseInitTests
 
 - (void)setUp
 {
-    [self cleanUp];
-    self.testStoreDirectory = [NSFileManager.defaultManager URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-    [NSManagedObjectContext setUseInMemoryStore:NO];
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.testStoreDirectory backingUpCorruptedDatabase:NO completionHandler:nil];
-    }];
     [super setUp];
-}
-
-- (void)tearDown
-{
-    [self cleanUp];
-    [super tearDown];
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
 }
 
 - (void)cleanUp
 {
     NSError *error;
-    XCTAssertTrue([NSFileManager.defaultManager removeItemAtURL:self.testStoreDirectory error:&error]);
+    XCTAssertTrue([NSFileManager.defaultManager removeItemAtURL:self.sharedContainerDirectoryURL error:&error]);
     XCTAssertNil(error);
-    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+    [super cleanUp];
 }
 
 - (void)testThatItReturnsNeedsMigrationInCaseDatabaseEncrypted {
@@ -65,13 +59,13 @@
     [[[classMock stub] andReturnValue:@NO] databaseExistsInApplicationSupportDirectory];
     [self verifyMockLater:classMock];
 
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.testStoreDirectory]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
     
     // when
     [[[classMock stub] andReturnValue:@YES] databaseExistsAndNotReadableDueToEncryption];
     
     // then
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.testStoreDirectory]);
+    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
     [classMock stopMocking];
 }
 
@@ -82,13 +76,13 @@
     [[classMock expect] initPersistentStoreCoordinatorBackingUpCorrupedDatabases:NO];
     [self verifyMockLater:classMock];
     
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.testStoreDirectory]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
     
     // when
     [[[classMock stub] andReturnValue:@YES] databaseExistsInApplicationSupportDirectory];
     
     // then
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.testStoreDirectory]);
+    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
     [classMock stopMocking];
 }
 
@@ -104,7 +98,7 @@
     
     // when
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
-    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.testStoreDirectory backingUpCorruptedDatabase:NO completionHandler:^{
+    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.sharedContainerDirectoryURL backingUpCorruptedDatabase:NO completionHandler:^{
         completionCalled = YES;
     }];
     XCTAssertFalse(completionCalled);
@@ -131,7 +125,7 @@
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     
     // when
-    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.testStoreDirectory backingUpCorruptedDatabase:NO completionHandler:^{
+    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.sharedContainerDirectoryURL backingUpCorruptedDatabase:NO completionHandler:^{
         completionCalledTimes++;
     }];
     XCTAssertEqual(completionCalledTimes, 0);
