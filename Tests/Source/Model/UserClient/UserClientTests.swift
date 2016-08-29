@@ -140,7 +140,11 @@ class UserClientTests: ZMBaseManagedObjectTest {
         self.syncMOC.performGroupedBlockAndWait{
             // given
             let selfClient = self.createSelfClient()
-            let preKeys = try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, 2)).map { $0.data!.base64String() }.flatMap{$0}
+            
+            var preKeys : [(id: UInt16, prekey: String)] = []
+            selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
+                preKeys = try! sessionsDirectory.generatePrekeys(Range(0..<2)).flatMap{$0}
+            })
             
             let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
             otherClient.remoteIdentifier = NSUUID.createUUID().transportString()
@@ -151,7 +155,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
                     return
             }
             
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey:preKey))
+            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey:preKey.prekey))
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
             
             // when
@@ -168,7 +172,10 @@ class UserClientTests: ZMBaseManagedObjectTest {
         self.syncMOC.performGroupedBlockAndWait{
             // given
             let selfClient = self.createSelfClient()
-            let preKeys = try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, 2)).map { $0.data!.base64String() }.flatMap{$0}
+            var preKeys : [(id: UInt16, prekey: String)] = []
+            selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
+                preKeys = try! sessionsDirectory.generatePrekeys(Range(0..<2)).flatMap{$0}
+            })
             
             let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
             otherClient.remoteIdentifier = NSUUID.createUUID().transportString()
@@ -179,7 +186,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
                     return
             }
             
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey:preKey))
+            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey:preKey.prekey))
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
             
             // when
@@ -245,7 +252,10 @@ class UserClientTests: ZMBaseManagedObjectTest {
         self.syncMOC.performGroupedBlockAndWait {
             let selfClient = self.createSelfClient()
             
-            let preKeys = try! selfClient.keysStore.box.generatePreKeys(NSMakeRange(0, 2)).map { $0.data!.base64String() }.flatMap{$0}
+            var preKeys : [(id: UInt16, prekey: String)] = []
+            selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
+                preKeys = try! sessionsDirectory.generatePrekeys(Range(0..<2)).flatMap{$0}
+            })
             
             let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
             otherClient.remoteIdentifier = otherClientId
@@ -255,7 +265,9 @@ class UserClientTests: ZMBaseManagedObjectTest {
                     XCTFail("could not generate prekeys")
                     return }
             
-            try! selfClient.keysStore.box.sessionWithId(otherClient.remoteIdentifier, fromStringPreKey: preKey)
+            selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
+                try! sessionsDirectory.createClientSession(otherClient.remoteIdentifier, base64PreKeyString: preKey.prekey)
+            })
             
             XCTAssertNil(otherClient.fingerprint)
             otherClient.managedObjectContext?.saveOrRollback()
