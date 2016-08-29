@@ -70,6 +70,8 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: ZMLocationMessageData? { get }
     
+    var usersReaction : Dictionary<String, [ZMUser]> { get }
+    
     /// Request the download of the file if not already present.
     /// The download will be executed asynchronously. The caller can be notified by observing the message window.
     /// This method can safely be called multiple times, even if the content is already available locally
@@ -152,6 +154,15 @@ extension ZMMessage : ZMConversationMessage {
     public func requestFileDownload() {}
     
     public func requestImageDownload() {}
+    
+    public var usersReaction : Dictionary<String, [ZMUser]> {
+        var result = Dictionary<String, [ZMUser]>()
+        for reaction in self.reactions {
+            result[reaction.unicodeValue!] = Array<ZMUser>(reaction.users)
+        }
+        return result
+    }
+    
     
     public var canBeDeleted : Bool {
         return deliveryState == .Delivered || deliveryState == .FailedToSend
