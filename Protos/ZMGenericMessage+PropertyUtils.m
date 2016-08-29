@@ -98,6 +98,18 @@
 
 @end
 
+@implementation ZMReaction (Utils)
+
++ (instancetype)reactionWithEmoji:(NSString *)emoji messageID:(NSString *)messageID;
+{
+    ZMReactionBuilder *builder = [ZMReaction builder];
+    builder.emoji = emoji;
+    builder.messageId = messageID;
+    return [builder build];
+}
+
+
+@end
 
 @implementation ZMConfirmation (Utils)
 

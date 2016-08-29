@@ -21,3 +21,5 @@ cat ios.proto otr.proto > ./tmp/otr.proto
 /usr/local/bin/protoc ./tmp/otr.proto --objc_out="${BASE_FOLDER}/Protos/" --plugin=/usr/local/bin/protoc-gen-objc
 rm -rf ./tmp
 rm otr.proto
+
+echo "✅ Done!"

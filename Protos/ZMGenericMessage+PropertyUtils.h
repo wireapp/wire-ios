@@ -66,6 +66,12 @@
 @end
 
 
+@interface ZMReaction (Utils)
+
++ (instancetype)reactionWithEmoji:(NSString *)emoji messageID:(NSString *)messageID;
+
+@end
+
 @interface ZMConfirmation (Utils)
 
 + (instancetype)messageWithMessageID:(NSString *)messageID confirmationType:(ZMConfirmationType)confirmationType;
