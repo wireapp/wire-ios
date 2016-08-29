@@ -274,25 +274,6 @@
     return users;
 }
 
-- (void)confirmReceptionWithPrefetchedConversation:(ZMConversation *)conversation onManagedObjectContext:(NSManagedObjectContext *)moc {
-    if (self.messageNonce == nil) {
-        return;
-    }
-    ZMConversation *conv = conversation;
-    if (conv == nil) {
-        if (self.conversationUUID == nil) {
-            return;
-        }
-        // TODO Sabine - this might lead to no confirmation in newly created conversationsUUID
-        conv = [ZMConversation fetchObjectWithRemoteIdentifier:self.conversationUUID inManagedObjectContext:moc];
-    }
-    
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithConfirmation:self.messageNonce.transportString
-                                                                            type:ZMConfirmationTypeDELIVERED
-                                                                           nonce:[NSUUID UUID].transportString];
-    [conv appendGenericMessage:genericMessage expires:NO hidden:YES];
-}
-
 @end
 
 
