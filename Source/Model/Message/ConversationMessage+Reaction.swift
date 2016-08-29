@@ -1,5 +1,5 @@
 //
-// Wire
+// Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify

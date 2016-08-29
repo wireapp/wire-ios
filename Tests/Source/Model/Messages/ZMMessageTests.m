@@ -2488,7 +2488,7 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
 }
 
-- (void)testThatAddingAReactionWithoutUnicodeRemnoveUserOnReaction;
+- (void)testThatAddingAReactionWithoutUnicodeRemoveUserOnReaction;
 {
     //given
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];

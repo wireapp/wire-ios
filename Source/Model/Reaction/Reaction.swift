@@ -30,7 +30,7 @@ public class Reaction : ZMManagedObject {
     @NSManaged var users        : Set<ZMUser>
     
     
-    public static func insertReaction(unicodeValue: String, users: [ZMUser], inMessage message:ZMMessage) -> Reaction
+    public static func insertReaction(unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage) -> Reaction
     {
         let reaction = self.insertNewObjectInManagedObjectContext(message.managedObjectContext)
         reaction.message = message
@@ -49,10 +49,5 @@ public class Reaction : ZMManagedObject {
     
     public override static func sortKey() -> String! {
         return ZMReactionUnicodeValueKey
-    }
-    
-    public override static func hasLocallyModifiedDataFields() -> Bool {
-//        return false
-        return true
     }
 }

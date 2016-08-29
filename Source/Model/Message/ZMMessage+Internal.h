@@ -85,6 +85,9 @@ extern NSString * const ZMMessageHiddenInConversationKey;
                                        senderID:(NSUUID *)senderID
                          inManagedObjectContext:(NSManagedObjectContext *)moc;
 
+
++ (void)addReaction:(ZMReaction *)reaction senderID:(NSUUID *)senderID conversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc;
+
 /// Clears the content of a message for a ZMEditMessage
 /// Returns NO when the message was not found
 /// or if the sender of the ZMEditMessage is not the same as the sender of the original message

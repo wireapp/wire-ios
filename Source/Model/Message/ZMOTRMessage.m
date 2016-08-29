@@ -158,16 +158,7 @@ NSString * const DeliveredKey = @"delivered";
     }
     
     if (message.hasReaction) {
-        Class messageClass = [ZMGenericMessage entityClassForGenericMessage:message];
-        ZMUser *user = [ZMUser fetchObjectWithRemoteIdentifier:updateEvent.senderUUID inManagedObjectContext:moc];
-        NSUUID *nonce = [NSUUID uuidWithTransportString:message.reaction.messageId];
-        ZMMessage *localMessage = [messageClass fetchMessageWithNonce:nonce
-                                                     forConversation:conversation
-                                              inManagedObjectContext:moc
-                                                      prefetchResult:prefetchResult];
-
-        [localMessage addReaction:message.reaction.emoji forUser:user];
-        
+        [ZMMessage addReaction:message.reaction senderID:updateEvent.senderUUID conversation:conversation inManagedObjectContext:moc];
         return nil;
     }
     

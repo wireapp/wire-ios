@@ -364,6 +364,17 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     }
 }
 
++ (void)addReaction:(ZMReaction *)reaction senderID:(NSUUID *)senderID conversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    ZMUser *user = [ZMUser fetchObjectWithRemoteIdentifier:senderID inManagedObjectContext:moc];
+    NSUUID *nonce = [NSUUID uuidWithTransportString:reaction.messageId];
+    ZMMessage *localMessage = [ZMMessage fetchMessageWithNonce:nonce
+                                               forConversation:conversation
+                                        inManagedObjectContext:moc];
+    
+    [localMessage addReaction:reaction.emoji forUser:user];
+}
+
 + (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
 {
     NSUUID *messageID = [NSUUID uuidWithTransportString:deletedMessage.messageId];
