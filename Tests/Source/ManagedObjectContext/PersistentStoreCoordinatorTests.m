@@ -41,7 +41,11 @@
 
 - (void)setUp
 {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSURL * const directory = [fm URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    [NSManagedObjectContext setDatabaseDirectoryURL:directory];
     NSURL *storeURL = [NSManagedObjectContext storeURL];
+    
     if ([[NSFileManager defaultManager] fileExistsAtPath:storeURL.path]) {
         NSError *error = nil;
         NSURL *parentURL;

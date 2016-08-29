@@ -36,14 +36,18 @@
 - (void)setPersistentStoreMetadata:(id)metaData forKey:(NSString *)key;
 
 /// Checks if migration is needed or the database has to be moved
-+ (BOOL)needsToPrepareLocalStore;
++ (BOOL)needsToPrepareLocalStoreInDirectroy:(NSURL *)databaseDirectory;
 
 /// Creates persistent store coordinator and migrates store if needed
 /// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
 ///         synchronously when @c +needsToPrepareLocalStore is YES)
 /// @param backupCorruptedDatabase: if true, will copy a corrupted database to another folder for later investigation
 /// @param completionHandler callback to be executed on completion (nullable)
-+ (void)prepareLocalStoreSync:(BOOL)sync backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreSync:(BOOL)sync
+                  inDirectory:(NSURL *)directory
+   backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase
+            completionHandler:(void(^)())completionHandler;
+
 /// Returns whether the store is ready to be opened
 + (BOOL)storeIsReady;
 
@@ -84,6 +88,8 @@
 
 /// This is used for unit tests.
 + (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
+
++ (void)setDatabaseDirectoryURL:(NSURL *)directory;
 
 /// This is used for unit tests. It only has an effect when @c setUseInMemoryStore: was set to @c YES
 + (void)resetSharedPersistentStoreCoordinator;

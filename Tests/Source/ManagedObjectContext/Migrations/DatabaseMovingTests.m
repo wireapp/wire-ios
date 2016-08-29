@@ -28,6 +28,8 @@
 @property (nonatomic) NSFileManager *fm;
 @property (nonatomic) NSURL *cachesDirectoryStoreURL;
 @property (nonatomic) NSURL *applicationSupportStoreURL;
+@property (nonatomic) NSURL *testSharedDatabaseDirectory;
+@property (nonatomic) NSURL *testSharedDatabaseStoreURL;
 
 @end
 
@@ -42,6 +44,8 @@
     self.fm = [NSFileManager defaultManager];
     self.cachesDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSCachesDirectory];
     self.applicationSupportStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
+    self.testSharedDatabaseStoreURL = [NSManagedObjectContext storeURLInDirectory:NSDocumentDirectory];
+    self.testSharedDatabaseDirectory = [self.fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
 }
 
 - (void)tearDown
@@ -62,6 +66,11 @@
         [self.fm removeItemAtPath:supportApplicationSupportPath error:nil];
     }
     
+    NSString *testSharedContainerPath = self.testSharedDatabaseStoreURL.URLByDeletingLastPathComponent.path;
+    if([self.fm fileExistsAtPath:testSharedContainerPath]) {
+        [self.fm removeItemAtPath:testSharedContainerPath error:nil];
+    }
+    
     for(NSString *backupFolder in [self currentBackupFoldersInApplicationSupport]) {
         [self.fm removeItemAtPath:backupFolder error:nil];
     }
@@ -69,41 +78,34 @@
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
 }
 
-- (void)testThatItMovesTheDatabaseFromCachesToApplicationSupportDirectory
+- (void)testThatItMovesTheDatabaseFromCachesToSharedDirectory
 {
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self moveDatabaseToCachesDirectory]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+        NSURL *dbDirectory = self.testSharedDatabaseDirectory.URLByDeletingLastPathComponent;
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:dbDirectory]);
     }];
     
     for (NSString *extension in self.databaseFileExtensions) {
         NSString *fromPath = [self.cachesDirectoryStoreURL.path stringByAppendingString:extension];
-        NSString *toPath = [self.applicationSupportStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.testSharedDatabaseStoreURL.path stringByAppendingString:extension];
         XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
         XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
     }
-    
+
     // when
-    XCTestExpectation *moveExpectation = [self expectationWithDescription:@"It should move the database files"];
-    
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
-            [moveExpectation fulfill];
-        }];
-    
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
-    }];
-    
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+
     // then
+    XCTAssertTrue([self.fm fileExistsAtPath:self.testSharedDatabaseDirectory.path]);
+
     for (NSString *extension in self.databaseFileExtensions) {
         NSString *fromPath = [self.cachesDirectoryStoreURL.path stringByAppendingString:extension];
-        NSString *toPath = [self.applicationSupportStoreURL.path stringByAppendingString:extension];
-        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
         XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
     }
-    
-    NSString *supportURL = [self.applicationSupportStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+
+    NSString *supportURL = [self.testSharedDatabaseStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
     XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
 }
 
@@ -112,30 +114,22 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnredableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+        NSURL *dbDirectory = self.testSharedDatabaseDirectory.URLByDeletingLastPathComponent;
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:dbDirectory]);
     }];
     
-    NSString *storeFile = [self.applicationSupportStoreURL.path stringByAppendingString:@""];
+    NSString *storeFile = [self.testSharedDatabaseStoreURL.path stringByAppendingString:@""];
     NSData *oldStoreFileData = [NSData dataWithContentsOfFile:storeFile];
     XCTAssertNotNil(storeFile);
     XCTAssertEqualObjects(oldStoreFileData, self.invalidData);
     
     // when
-    XCTestExpectation *donePreparing = [self expectationWithDescription:@"It is done preparing"];
-    
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
-            [donePreparing fulfill];
-        }];
-        
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
-    }];
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
     
     // then
     NSData *newData = [NSData dataWithContentsOfFile:storeFile];
     XCTAssertNotEqualObjects(newData, oldStoreFileData);
     XCTAssertNotNil(newData);
-
 }
 
 - (void)testThatItCreatesACopyOfTheLocalStoreWhenItIsUnreadable
@@ -143,22 +137,16 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnredableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+        NSURL *dbDirectory = self.testSharedDatabaseDirectory.URLByDeletingLastPathComponent;
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:dbDirectory]);
     }];
     
-    NSString *storeFile = [self.applicationSupportStoreURL.path stringByAppendingString:@""];
+    NSString *storeFile = [self.testSharedDatabaseStoreURL.path stringByAppendingString:@""];
     NSData *oldStoreFileData = [NSData dataWithContentsOfFile:storeFile];
     XCTAssertNotNil(storeFile);
     
     // when
-    XCTestExpectation *donePreparing = [self expectationWithDescription:@"It is done preparing"];
-    
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:YES completionHandler:^{
-            [donePreparing fulfill];
-        }];
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
-    }];
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:YES];
     
     // then
     NSURL *storeFolder;
@@ -179,7 +167,7 @@
 
 - (NSArray<NSString *>*)currentBackupFoldersInApplicationSupport
 {
-    NSURL *containerFolder = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory].URLByDeletingLastPathComponent.URLByDeletingLastPathComponent;
+    NSURL *containerFolder = self.testSharedDatabaseStoreURL.URLByDeletingLastPathComponent.URLByDeletingLastPathComponent;
     NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:containerFolder.path
                                                                               error:NULL];
     NSMutableArray *backupFolders = [NSMutableArray array];
@@ -217,7 +205,7 @@
 {
     NSError *error;
     NSURL *cachesStoreURL = [NSManagedObjectContext storeURLInDirectory:NSCachesDirectory];
-    NSURL *applicationDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
+    NSURL *applicationDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSDocumentDirectory];
     
     for (NSString *extension in self.databaseFileExtensions) {
         NSString *fromPath = [cachesStoreURL.path stringByAppendingString:extension];
@@ -252,11 +240,10 @@
 - (BOOL)createdUnredableLocalStore
 {
     NSData *data = self.invalidData;
-    NSURL *applicationDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
-    
+
     for (NSString *extension in self.databaseFileExtensions) {
-        NSString *filePath = [applicationDirectoryStoreURL.path stringByAppendingString:extension];
-        
+        NSString *filePath = [self.testSharedDatabaseStoreURL.path stringByAppendingString:extension];
+
         if (! [self.fm createFileAtPath:filePath contents:data attributes:nil]) {
             XCTFail();
             return NO;
@@ -268,6 +255,17 @@
 - (NSArray <NSString *>*)databaseFileExtensions
 {
     return @[@"", @"-wal", @"-shm"];
+}
+
+- (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase
+{
+    [self performIgnoringZMLogError:^{
+        [NSManagedObjectContext prepareLocalStoreSync:YES
+                                          inDirectory:self.testSharedDatabaseDirectory
+                           backingUpCorruptedDatabase:backupCorruptedDatabase
+                                    completionHandler:nil];
+         WaitForAllGroupsToBeEmpty(0.5);
+    }];
 }
 
 @end

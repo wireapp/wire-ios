@@ -35,6 +35,8 @@
 
 #import "NSString+RandomString.h"
 
+#import "NSManagedObjectContext+zmessaging-Internal.h"
+
 static const int32_t Mersenne1 = 524287;
 static const int32_t Mersenne2 = 131071;
 static const int32_t Mersenne3 = 8191;
@@ -143,6 +145,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)tearDown;
 {
+    [NSManagedObjectContext setDatabaseDirectoryURL:nil];
     ZMConversationDefaultLastReadEventIDSaveDelay = self.originalConversationLastReadEventIDTimerValue;
     [self resetState];
     [self wipeCaches];
@@ -226,12 +229,19 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     }
     [self performIgnoringZMLogError:^{
-        self.uiMOC = [NSManagedObjectContext createUserInterfaceContext];
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSURL * const directory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+        [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:directory backingUpCorruptedDatabase:NO completionHandler:^{
+                self.uiMOC = [NSManagedObjectContext createUserInterfaceContext];
+                self.syncMOC = [NSManagedObjectContext createSyncContext];
+        }];
     }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.name;
     
-    self.syncMOC = [NSManagedObjectContext createSyncContext];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.name;
     }];
