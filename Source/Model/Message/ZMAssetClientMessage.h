@@ -77,7 +77,7 @@ typedef NS_ENUM(int16_t, ZMAssetUploadState) {
 /// Remote asset ID
 @property (nonatomic) NSUUID * _Nullable assetId;
 
-/// Whether the asset was delivered
+/// Whether the asset was delivered to the Backend
 @property (nonatomic) BOOL delivered;
 
 /// MIME type of the file being transfered (implied from file extension)
