@@ -1117,7 +1117,18 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     if(self.fileMessageData != nil) {
         [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self.nonce fileName:self.filename encrypted:NO];
         [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self.nonce fileName:self.filename encrypted:YES];
+
+        // Delete thumbnail data
+        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatOriginal encrypted:NO];
+        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatOriginal encrypted:YES];
     }
+
+    self.dataSet = [NSOrderedSet orderedSet];
+    self.cachedGenericAssetMessage = nil;
+    self.assetId = nil;
+    self.associatedTaskIdentifier = nil;
+    self.preprocessedSize = CGSizeZero;
+
     [super removeMessage];
 }
 

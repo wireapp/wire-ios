@@ -67,9 +67,10 @@
         XCTAssertEqualObjects(newMessage.textMessageData.messageText, newText);
         XCTAssertEqualObjects(newMessage.genericMessage.edited.replacingMessageId, originalNonce.transportString);
         XCTAssertNotEqualObjects(newMessage.nonce, originalNonce);
-        
+
         XCTAssertEqual(message.hiddenInConversation, conversation);
         XCTAssertNil(message.visibleInConversation);
+
         XCTAssertEqualObjects(message.textMessageData.messageText, oldText);
     } else {
         XCTAssertEqual(conversation.hiddenMessages.count, 0u);
@@ -234,6 +235,13 @@
     XCTAssertEqual(message.hiddenInConversation, conversation);
     XCTAssertNil(message.visibleInConversation);
     XCTAssertNil(message.textMessageData.messageText);
+
+    ZMClientMessage *clientMessage = (ZMClientMessage *)message;
+    XCTAssertNil(clientMessage.genericMessage);
+    XCTAssertEqual(clientMessage.dataSet.count, 0lu);
+    XCTAssertNil(message.textMessageData);
+    XCTAssertNil(message.sender);
+    XCTAssertNil(message.senderClientID);
 }
 
 - (void)testThatItDoesNotOverwritesEditedTextWhenMessageExpiresButReplacesNonce
@@ -397,6 +405,13 @@
         XCTAssertEqualObjects(message.nonce, oldNonce);
         XCTAssertNil(message.visibleInConversation);
         XCTAssertEqual(message.hiddenInConversation, conversation);
+
+        ZMClientMessage *clientMessage = (ZMClientMessage *)message;
+        XCTAssertNil(clientMessage.genericMessage);
+        XCTAssertEqual(clientMessage.dataSet.count, 0lu);
+        XCTAssertNil(message.textMessageData);
+        XCTAssertNil(message.sender);
+        XCTAssertNil(message.senderClientID);
     } else {
         XCTAssertNotNil(message.textMessageData.messageText);
         XCTAssertEqualObjects(message.nonce, oldNonce);
@@ -443,6 +458,13 @@
         XCTAssertEqualObjects(newMessage.nonce, newNonce);
         XCTAssertEqual(newMessage.visibleInConversation, conversation);
         XCTAssertNil(newMessage.hiddenInConversation);
+
+        ZMClientMessage *clientMessage = (ZMClientMessage *)message;
+        XCTAssertNil(clientMessage.genericMessage);
+        XCTAssertEqual(clientMessage.dataSet.count, 0lu);
+        XCTAssertNil(message.textMessageData);
+        XCTAssertNil(message.sender);
+        XCTAssertNil(message.senderClientID);
     } else {
         XCTAssertNil(newMessage);
     }
@@ -554,6 +576,15 @@
     
     // then
     XCTAssertNil(newMessage);
+    XCTAssertNil(message.visibleInConversation);
+    XCTAssertTrue(message.isZombieObject);
+    XCTAssertNil(message.textMessageData);
+    XCTAssertNil(message.sender);
+    XCTAssertNil(message.senderClientID);
+    
+    ZMClientMessage *clientMessage = (ZMClientMessage *)message;
+    XCTAssertNil(clientMessage.genericMessage);
+    XCTAssertEqual(clientMessage.dataSet.count, 0lu);
 }
 
 
