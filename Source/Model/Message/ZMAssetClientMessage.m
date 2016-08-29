@@ -20,6 +20,7 @@
 @import ZMTransport;
 @import MobileCoreServices;
 @import ZMUtilities;
+@import Cryptobox;
 #import "ZMAssetClientMessage.h"
 #import "ZMGenericMessageData.h"
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
@@ -488,9 +489,13 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     ZMGenericMessage *genericMessage = [self genericMessageForDataType:dataType];
     VerifyReturnNil(nil != genericMessage);
     
-    NSArray <ZMUserEntry *>* recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
-                                                                            selfClient:selfClient
-                                                                          conversation:self.conversation];
+    __block NSArray <ZMUserEntry *>* recipients;
+    [selfClient.keysStore.encryptionContext perform:^(EncryptionSessionsDirectory *sessionsDirectory){
+        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
+                                                       selfClient:selfClient
+                                                     conversation:self.conversation
+                                                sessionsDirectory:sessionsDirectory];
+    }];
     
     if (dataType == ZMAssetClientMessageDataTypeFullAsset || dataType == ZMAssetClientMessageDataTypeThumbnail) {
         ZMOtrAssetMeta *assetMeta = [ZMOtrAssetMeta otrAssetMetaWithSender:selfClient nativePush:YES inline:NO recipients:recipients];
@@ -658,7 +663,13 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     if(genericMessage == nil) {
         return nil;
     }
-    NSArray *recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data selfClient:selfClient conversation:self.conversation];
+    __block NSArray <ZMUserEntry *>* recipients;
+    [selfClient.keysStore.encryptionContext perform:^(EncryptionSessionsDirectory *sessionsDirectory){
+        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
+                                                       selfClient:selfClient
+                                                     conversation:self.conversation
+                                                sessionsDirectory:sessionsDirectory];
+    }];
     [builder setRecipientsArray:recipients];
     
     ZMOtrAssetMeta *metaData = [builder build];

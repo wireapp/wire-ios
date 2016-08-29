@@ -22,6 +22,7 @@
 #import "ZMOTRMessage.h"
 
 @class UserClient;
+@class EncryptionSessionsDirectory;
 @protocol ZMConversationMessage;
 
 extern NSString * _Nonnull const ZMFailedToCreateEncryptedMessagePayloadString;
@@ -46,9 +47,10 @@ extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotifica
 
 - (NSData * _Nullable)encryptedMessagePayloadData;
 
-+ (NSArray * _Nullable)recipientsWithDataToEncrypt:(NSData * _Nonnull)dataToEncrypt
-                              selfClient:(UserClient * _Nonnull)selfClient
-                            conversation:(ZMConversation * _Nonnull)converation;
++ (NSArray <ZMUserEntry *>* _Nonnull)recipientsWithDataToEncrypt:(NSData * _Nonnull)dataToEncrypt
+                                                      selfClient:(UserClient * _Nonnull)selfClient
+                                                    conversation:(ZMConversation * _Nonnull)conversation
+                                               sessionsDirectory:(EncryptionSessionsDirectory * _Nonnull)sessionsDirectory;
 
 + (NSData * _Nullable)encryptedMessagePayloadDataWithGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage
                                              conversation:(ZMConversation * _Nonnull)conversation
