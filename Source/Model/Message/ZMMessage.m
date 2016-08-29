@@ -72,6 +72,7 @@ NSString * const ZMMessageRemovedUsersKey = @"removedUsers";
 NSString * const ZMMessageNeedsUpdatingUsersKey = @"needsUpdatingUsers";
 NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
+NSString * const ZMMessageReactionKey = @"reactions";
 
 @interface ZMMessage ()
 
@@ -925,7 +926,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 - (NSSet *)ignoredKeys;
 {
     NSSet *ignoredKeys = [super ignoredKeys];
-    return [ignoredKeys setByAddingObject:@"reactions"];
+    return [ignoredKeys setByAddingObject:ZMMessageReactionKey];
 }
 
 - (ZMDeliveryState)deliveryState
