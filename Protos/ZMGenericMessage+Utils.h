@@ -55,6 +55,7 @@
 + (ZMGenericMessage *)messageWithText:(NSString *)message nonce:(NSString *)nonce;
 + (ZMGenericMessage *)messageWithText:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview nonce:(NSString *)nonce;
 + (ZMGenericMessage *)messageWithImageData:(NSData *)imageData format:(ZMImageFormat)format nonce:(NSString *)nonce;
++ (ZMGenericMessage *)messageWithConfirmation:(NSString *)messageID type:(ZMConfirmationType)type nonce:(NSString *)nonce;
 
 + (ZMGenericMessage *)messageWithMediumImageProperties:(ZMIImageProperties *)mediumProperties
                               processedImageProperties:(ZMIImageProperties *)processedProperties

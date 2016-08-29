@@ -65,3 +65,10 @@
 
 @end
 
+
+@interface ZMConfirmation (Utils)
+
++ (instancetype)messageWithMessageID:(NSString *)messageID confirmationType:(ZMConfirmationType)confirmationType;
+
+@end
+
