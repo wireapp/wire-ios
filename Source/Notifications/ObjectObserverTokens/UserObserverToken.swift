@@ -96,7 +96,7 @@ class GenericUserObserverToken<T : NSObject where T: ObjectInSnapshot>: ObjectOb
 
     private let observedUser: T?
     private weak var observer : ZMUserObserver?
-    private let managedObjectContext: NSManagedObjectContext
+    private weak var managedObjectContext: NSManagedObjectContext?
     private var clientTokens = [UserClient: UserClientObserverToken]()
 
     private static func objectDidChange(container: GenericUserObserverToken<T>, changeInfo: UserChangeInfo) {
@@ -144,8 +144,10 @@ class GenericUserObserverToken<T : NSObject where T: ObjectInSnapshot>: ObjectOb
     }
 
     private func registerObserverForClients(clients: Set<UserClient>) {
+        guard let managedObjectContext = managedObjectContext else { return }
+        
         clients.forEach {
-            clientTokens[$0] = UserClientObserverToken(observer: self, managedObjectContext: self.managedObjectContext, userClient: $0)
+            clientTokens[$0] = UserClientObserverToken(observer: self, managedObjectContext: managedObjectContext, userClient: $0)
         }
     }
 

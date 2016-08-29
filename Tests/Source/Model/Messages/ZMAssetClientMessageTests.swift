@@ -1242,17 +1242,18 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(otrMessage, "Unable to generate OTR message")
         let clientEntries = otrMessage?.recipients.flatMap { $0 as? ZMUserEntry }.flatMap { $0.clients }.flatten()
 
-        let box = syncMOC.zm_cryptKeyStore.box
         guard let entry = clientEntries?.first as? ZMClientEntry else { XCTFail("Unable to get client entry"); return nil }
         
-        do {
-            let session = try box.sessionById(client.remoteIdentifier)
-            let decryptedData = try session.decrypt(entry.text)
-            return ZMGenericMessage.builder().mergeFromData(decryptedData).build() as? ZMGenericMessage
-        } catch {
-            XCTFail("Failed to decrypt generic message: \(error)")
-            return nil
+        var message : ZMGenericMessage?
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
+            do {
+                let decryptedData = try sessionsDirectory.decrypt(entry.text, senderClientId: client.remoteIdentifier)
+                message = ZMGenericMessage.builder().mergeFromData(decryptedData).build() as? ZMGenericMessage
+            } catch {
+                XCTFail("Failed to decrypt generic message: \(error)")
+            }
         }
+        return message
     }
     
     func createOtherClientAndConversation() -> (UserClient, ZMConversation) {

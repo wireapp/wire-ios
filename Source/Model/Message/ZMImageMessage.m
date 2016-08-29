@@ -148,6 +148,18 @@
     return self;
 }
 
+- (void)removeMessage
+{
+    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatPreview encrypted:NO];
+    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatMedium encrypted:NO];
+    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatOriginal encrypted:NO];
+
+    self.originalSize = CGSizeZero;
+    self.mediumRemoteIdentifier = nil;
+
+    [super removeMessage];
+}
+
 @end
 
 
@@ -322,7 +334,6 @@
 {
     return [NSOrderedSet orderedSetWithObjects:@(ZMImageFormatPreview), @(ZMImageFormatMedium), nil];
 }
-
 
 - (void)processingDidFinish;
 {

@@ -39,6 +39,10 @@ extension NSManagedObjectContext {
         self.userInfo.setObject(newKeyStore, forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
         return newKeyStore
     }
+    
+    public func zm_tearDownCryptKeyStore() {
+        self.userInfo.removeObjectForKey(NSManagedObjectContext.ZMUserClientKeysStoreKey)
+    }
 
 }
 
@@ -50,16 +54,17 @@ public enum UserClientKeyStoreError: ErrorType {
 @objc(UserClientKeysStore)
 public class UserClientKeysStore: NSObject {
     
+    public static let MaxPreKeyID : UInt16 = UInt16.max-1;
     static private let otrFolderPrefix = "otr"
-    public var box : CBCryptoBox
-    private var internalLastPreKey: CBPreKey?
+    public var encryptionContext : EncryptionContext
+    private var internalLastPreKey: String?
     
     public override init() {
-        box = UserClientKeysStore.setupBox()!
+        encryptionContext = UserClientKeysStore.setupContext()!
     }
     
-    static func setupBox() -> CBCryptoBox? {
-        let box : CBCryptoBox
+    static func setupContext() -> EncryptionContext? {
+        let encryptionContext : EncryptionContext
         do {
             if self.isPreviousOTRDirectoryPresent {
                 do {
@@ -71,13 +76,13 @@ public class UserClientKeysStore: NSObject {
             }
             
             let otrDirectoryURL = UserClientKeysStore.otrDirectory
-            box = try CBCryptoBox(pathURL: otrDirectoryURL)
+            encryptionContext = EncryptionContext(path: otrDirectoryURL)
             try otrDirectoryURL.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
 
             let attributes = [NSFileProtectionKey: NSFileProtectionCompleteUntilFirstUserAuthentication]
             try NSFileManager.defaultManager().setAttributes(attributes, ofItemAtPath: otrDirectoryURL.path!)
 
-            return box
+            return encryptionContext
         }
         catch let err {
             fatal("failed to init cryptobox: \(err)")
@@ -91,7 +96,7 @@ public class UserClientKeysStore: NSObject {
         _ = try? fm.removeItemAtURL(UserClientKeysStore.otrDirectory)
         internalLastPreKey = nil
         
-        box = UserClientKeysStore.setupBox()!
+         encryptionContext = UserClientKeysStore.setupContext()!
         
     }
     
@@ -153,46 +158,54 @@ public class UserClientKeysStore: NSObject {
         }
     }
 
-    public func lastPreKey() throws -> CBPreKey {
+    public func lastPreKey() throws -> String {
+        var error: NSError?
         if internalLastPreKey == nil {
-            do {
-                internalLastPreKey = try box.lastPreKey()
-            }
-            catch let error as NSError {
-                throw error
-            }
+            encryptionContext.perform({ [weak self] (sessionsDirectory) in
+                guard let strongSelf = self  else { return }
+                do {
+                    strongSelf.internalLastPreKey = try sessionsDirectory.generateLastPrekey()
+                } catch let anError as NSError {
+                    error = anError
+                }
+                })
+        }
+        if let error = error {
+            throw error
         }
         return internalLastPreKey!
     }
     
-    public func generateMoreKeys(count: UInt = 1, start: UInt = 0) throws -> (keys: [CBPreKey], minIndex: UInt, maxIndex: UInt) {
+    public func generateMoreKeys(count: UInt16 = 1, start: UInt16 = 0) throws -> [(id: UInt16, prekey: String)] {
         if count > 0 {
+            var error : ErrorType?
+            var newPreKeys : [(id: UInt16, prekey: String)] = []
+            
             let range = preKeysRange(count, start: start)
-            do {
-                let newPreKeys = try box.generatePreKeys(range) as? [CBPreKey]
-                if newPreKeys?.count == 0 {
-                    throw UserClientKeyStoreError.CanNotGeneratePreKeys
+            encryptionContext.perform({(sessionsDirectory) in
+                do {
+                    newPreKeys = try sessionsDirectory.generatePrekeys(range)
+                    if newPreKeys.count == 0 {
+                        error = UserClientKeyStoreError.CanNotGeneratePreKeys
+                    }
                 }
-                let preKeysRangeMax = UInt(NSMaxRange(range))
-                return (keys: newPreKeys!, minIndex: UInt(range.location), maxIndex: preKeysRangeMax)
-            }
-            catch let error as NSError {
+                catch let anError as NSError {
+                    error = anError
+                }
+            })
+            if let error = error {
                 throw error
             }
+            return newPreKeys
         }
         throw UserClientKeyStoreError.PreKeysCountNeedsToBePositive
     }
     
-    private func preKeysRange(count: UInt, start: UInt) -> NSRange {
-        var preKeysRange = NSMakeRange(Int(start), Int(count))
-        if NSMaxRange(preKeysRange) >= Int(CBMaxPreKeyID) {
-            preKeysRange = NSMakeRange(0, Int(count))
+    private func preKeysRange(count: UInt16, start: UInt16) -> Range<UInt16> {
+        if start >= UserClientKeysStore.MaxPreKeyID-count {
+            return Range(0..<count)
         }
-        return preKeysRange
-    }
-    
-    deinit {
-        self.box.close()
+        return Range(start..<(start + count))
     }
     
 }

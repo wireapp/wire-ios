@@ -339,6 +339,8 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 {
     self.hiddenInConversation = self.conversation;
     self.visibleInConversation = nil;
+    self.sender = nil;
+    self.senderClientID = nil;
 }
 
 + (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -745,6 +747,12 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 - (NSString *)imageDataIdentifier
 {
     return nil;
+}
+
+- (void)removeMessage
+{
+    self.text = nil;
+    [super removeMessage];
 }
 
 @end
