@@ -715,9 +715,6 @@ static dispatch_once_t clearStoreOnceToken;
 {
     [self rollback];
     [self.persistentStoreCoordinator setMetadata:oldMetadata forPersistentStore:[self firstPersistentStore]];
-    if (self.zm_isSyncContext) {
-        [self.zm_cryptKeyStore.box resetSessionsRequiringSave];
-    }
 }
 
 - (NSDate *)timeOfLastSave;

@@ -80,4 +80,22 @@
     return details;
 }
 
+- (BOOL)isEqual:(id)object
+{
+    if(![object isKindOfClass:ZMAddressBookContact.class]) {
+        return false;
+    }
+    return [self isEqualToAddressBookContact:object];
+}
+
+- (BOOL)isEqualToAddressBookContact:(ZMAddressBookContact *)addressBookContact {
+    return [self.emailAddresses isEqualToArray:addressBookContact.emailAddresses]
+    && [self.phoneNumbers isEqualToArray:addressBookContact.phoneNumbers]
+    && [self.name isEqualToString:addressBookContact.name];
+}
+
+- (NSUInteger)hash {
+    return self.emailAddresses.hash ^ self.phoneNumbers.hash ^ self.name.hash;
+}
+
 @end
