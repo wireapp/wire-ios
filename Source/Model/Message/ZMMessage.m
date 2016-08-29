@@ -113,6 +113,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 @dynamic isExpired;
 @dynamic expirationDate;
 @dynamic senderClientID;
+@dynamic reactions;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
@@ -902,10 +903,21 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     return message;
 }
 
+- (NSSet *)ignoredKeys;
+{
+    NSSet *ignoredKeys = [super ignoredKeys];
+    return [ignoredKeys setByAddingObject:@"reactions"];
+}
+
 - (ZMDeliveryState)deliveryState
 {
     // SystemMessages are either from the BE or inserted on device
     return ZMDeliveryStateDelivered;
+}
+
+- (NSDictionary<NSString *,NSArray<ZMUser *> *> *)usersReaction
+{
+    return [NSDictionary dictionary];
 }
 
 + (ZMSystemMessage *)fetchMessageWithID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation

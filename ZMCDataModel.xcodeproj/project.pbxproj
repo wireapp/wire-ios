@@ -34,6 +34,8 @@
 		BFD2E79A1CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD2E7981CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m */; };
 		BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */; };
 		BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */; };
+		CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EDC081D6D9A3D002A20AA /* Reaction.swift */; };
+		CE4EDC0B1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EDC0A1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift */; };
 		CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */; };
 		CEE525AA1CCA4C97001D06F9 /* NSString+RandomString.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE525A91CCA4C97001D06F9 /* NSString+RandomString.m */; };
 		F90E5AB31D2276FD00555CD0 /* ZMConversationTests+Timestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = F90E5AB21D2276FD00555CD0 /* ZMConversationTests+Timestamp.m */; };
@@ -363,6 +365,9 @@
 		BFD2E7981CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMGenericMessage+UpdateEvent.m"; sourceTree = "<group>"; };
 		BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationMessage+Deletion.swift"; sourceTree = "<group>"; };
 		BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Deletion.swift"; sourceTree = "<group>"; };
+		CE4EDC061D6D9914002A20AA /* zmessaging2.9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.9.xcdatamodel; sourceTree = "<group>"; };
+		CE4EDC081D6D9A3D002A20AA /* Reaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Reaction.swift; path = Reaction/Reaction.swift; sourceTree = "<group>"; };
+		CE4EDC0A1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationMessage+Reaction.swift"; sourceTree = "<group>"; };
 		CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
 		CEE525A81CCA4C97001D06F9 /* NSString+RandomString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+RandomString.h"; sourceTree = "<group>"; };
 		CEE525A91CCA4C97001D06F9 /* NSString+RandomString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+RandomString.m"; sourceTree = "<group>"; };
@@ -746,6 +751,14 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		CE4EDC071D6D9A04002A20AA /* Reaction */ = {
+			isa = PBXGroup;
+			children = (
+				CE4EDC081D6D9A3D002A20AA /* Reaction.swift */,
+			);
+			name = Reaction;
+			sourceTree = "<group>";
+		};
 		F9331C5D1CB3C7D500139ECC /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
@@ -777,6 +790,7 @@
 		F9A705D41CAEE01D00C2F5FE /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CE4EDC071D6D9A04002A20AA /* Reaction */,
 				F9A705D51CAEE01D00C2F5FE /* Connection */,
 				F9A705D91CAEE01D00C2F5FE /* Conversation */,
 				F9A705F01CAEE01D00C2F5FE /* Message */,
@@ -852,6 +866,7 @@
 				F9A706001CAEE01D00C2F5FE /* ZMMessage.m */,
 				F9A706011CAEE01D00C2F5FE /* ZMOTRMessage.h */,
 				F9A706021CAEE01D00C2F5FE /* ZMOTRMessage.m */,
+				CE4EDC0A1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -1720,6 +1735,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9A706AE1CAEE01D00C2F5FE /* SetSnapshot.swift in Sources */,
+				CE4EDC0B1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift in Sources */,
 				F9A706AF1CAEE01D00C2F5FE /* ManagedObjectContextObserver.swift in Sources */,
 				BFD2E79A1CBE796600BF195A /* ZMGenericMessage+UpdateEvent.m in Sources */,
 				54EDE67E1CBBF0AB0044A17E /* ZMGenericMessageImageOwner.swift in Sources */,
@@ -1757,6 +1773,7 @@
 				F9A706A41CAEE01D00C2F5FE /* ConversationObserverToken.swift in Sources */,
 				F9B71F0D1CB264DF001DB03F /* ZMConversationListDirectory.m in Sources */,
 				F9A706881CAEE01D00C2F5FE /* ZMDisplayNameGenerator.m in Sources */,
+				CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */,
 				F9A7068A1CAEE01D00C2F5FE /* ZMPersonName.m in Sources */,
 				F9A7067A1CAEE01D00C2F5FE /* ZMGenericMessage+External.m in Sources */,
 				F9A706B51CAEE01D00C2F5FE /* SearchUserObserverToken.swift in Sources */,
@@ -2210,6 +2227,7 @@
 		F9331C8D1CB42FCF00139ECC /* zmessaging.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				CE4EDC061D6D9914002A20AA /* zmessaging2.9.xcdatamodel */,
 				F964701D1D5CBA3A00A81A92 /* zmessaging2.8.xcdatamodel */,
 				16313D691D2523AA001B2AB3 /* zmessaging2.7.xcdatamodel */,
 				BF710FC81CE0B83400DC92C4 /* zmessaging2.6.xcdatamodel */,
@@ -2220,7 +2238,7 @@
 				F9331C901CB42FCF00139ECC /* zmessaging1.28.xcdatamodel */,
 				F9331C911CB42FCF00139ECC /* zmessaging2.3.xcdatamodel */,
 			);
-			currentVersion = F964701D1D5CBA3A00A81A92 /* zmessaging2.8.xcdatamodel */;
+			currentVersion = CE4EDC061D6D9914002A20AA /* zmessaging2.9.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
