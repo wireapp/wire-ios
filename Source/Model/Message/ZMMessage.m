@@ -72,6 +72,7 @@ NSString * const ZMMessageRemovedUsersKey = @"removedUsers";
 NSString * const ZMMessageNeedsUpdatingUsersKey = @"needsUpdatingUsers";
 NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
+NSString * const ZMMessageReactionKey = @"reactions";
 
 @interface ZMMessage ()
 
@@ -113,6 +114,7 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 @dynamic isExpired;
 @dynamic expirationDate;
 @dynamic senderClientID;
+@dynamic reactions;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
@@ -361,6 +363,17 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
         [message removeMessage];
         [moc deleteObject:message];
     }
+}
+
++ (void)addReaction:(ZMReaction *)reaction senderID:(NSUUID *)senderID conversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    ZMUser *user = [ZMUser fetchObjectWithRemoteIdentifier:senderID inManagedObjectContext:moc];
+    NSUUID *nonce = [NSUUID uuidWithTransportString:reaction.messageId];
+    ZMMessage *localMessage = [ZMMessage fetchMessageWithNonce:nonce
+                                               forConversation:conversation
+                                        inManagedObjectContext:moc];
+    
+    [localMessage addReaction:reaction.emoji forUser:user];
 }
 
 + (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -910,10 +923,21 @@ NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
     return message;
 }
 
+- (NSSet *)ignoredKeys;
+{
+    NSSet *ignoredKeys = [super ignoredKeys];
+    return [ignoredKeys setByAddingObject:ZMMessageReactionKey];
+}
+
 - (ZMDeliveryState)deliveryState
 {
     // SystemMessages are either from the BE or inserted on device
     return ZMDeliveryStateDelivered;
+}
+
+- (NSDictionary<NSString *,NSArray<ZMUser *> *> *)usersReaction
+{
+    return [NSDictionary dictionary];
 }
 
 + (ZMSystemMessage *)fetchMessageWithID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation

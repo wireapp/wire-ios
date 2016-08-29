@@ -28,6 +28,7 @@
 
 @class ZMEventID;
 @class ZMUser;
+@class Reaction;
 @class ZMConversation;
 @class ZMUpdateEvent;
 
@@ -83,6 +84,9 @@ extern NSString * const ZMMessageHiddenInConversationKey;
                                  inConversation:(ZMConversation *)conversation
                                        senderID:(NSUUID *)senderID
                          inManagedObjectContext:(NSManagedObjectContext *)moc;
+
+
++ (void)addReaction:(ZMReaction *)reaction senderID:(NSUUID *)senderID conversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc;
 
 /// Clears the content of a message for a ZMEditMessage
 /// Returns NO when the message was not found
@@ -150,10 +154,13 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 @property (nonatomic) ZMEventID *eventID;
 @property (nonatomic) NSUUID *nonce;
 
+
 @property (nonatomic, readonly) BOOL isUnreadMessage;
 
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic, readonly) NSDate *expirationDate;
+@property (nonatomic) NSSet <Reaction *> *reactions;
+
 - (void)setExpirationDate;
 - (void)removeExpirationDate;
 - (void)markAsDelivered;

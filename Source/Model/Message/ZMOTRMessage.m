@@ -156,6 +156,12 @@ NSString * const DeliveredKey = @"delivered";
         [ZMMessage removeMessageWithRemotelyDeletedMessage:message.deleted inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
         return nil;
     }
+    
+    if (message.hasReaction) {
+        [ZMMessage addReaction:message.reaction senderID:updateEvent.senderUUID conversation:conversation inManagedObjectContext:moc];
+        return nil;
+    }
+    
     ZMMessage *clearedMessage;
     if (message.hasEdited) {
         clearedMessage = [ZMMessage clearedMessageForRemotelyEditedMessage:message inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
