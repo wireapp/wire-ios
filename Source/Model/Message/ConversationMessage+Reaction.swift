@@ -27,7 +27,7 @@ extension ZMMessage {
               let context = message.managedObjectContext else { return }
         
         let genericMessage = ZMGenericMessage(emojiString: unicodeValue, messageID:message.nonce.transportString(), nonce: NSUUID().transportString())
-        message.conversation?.appendNonExpiringGenericMessage(genericMessage, hidden: true)
+        message.conversation?.appendGenericMessage(genericMessage, expires:false, hidden: true)
         
         message.addReaction(unicodeValue, forUser: ZMUser.selfUserInContext(context))
     }

@@ -31,6 +31,8 @@
 @class Reaction;
 @class ZMConversation;
 @class ZMUpdateEvent;
+@class ZMMessageConfirmation;
+@class ZMReaction;
 
 @protocol UserClientType;
 
@@ -59,6 +61,7 @@ extern NSString * const ZMMessageUserIDsKey;
 extern NSString * const ZMMessageUsersKey;
 extern NSString * const ZMMessageClientsKey;
 extern NSString * const ZMMessageHiddenInConversationKey;
+extern NSString * const ZMMessageConfirmationKey;
 
 @interface ZMMessage : ZMManagedObject
 
@@ -92,6 +95,7 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 /// Returns NO when the message was not found
 /// or if the sender of the ZMEditMessage is not the same as the sender of the original message
 + (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
+
 
 @end
 
@@ -156,16 +160,21 @@ extern NSString * const ZMMessageHiddenInConversationKey;
 
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
-
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic, readonly) NSDate *expirationDate;
 @property (nonatomic) NSSet <Reaction *> *reactions;
+@property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> *confirmations;
 
 - (void)setExpirationDate;
 - (void)removeExpirationDate;
-- (void)markAsDelivered;
-
 - (void)expire;
+
+/// Sets a flag to mark the message as being delivered to the backend
+- (void)markAsSent;
+
+/// Inserts a ZMConfirmation message into the conversation that is sent back to the sender
+- (void)confirmReception;
+
 
 + (instancetype)fetchMessageWithNonce:(NSUUID *)nonce
                       forConversation:(ZMConversation *)conversation
