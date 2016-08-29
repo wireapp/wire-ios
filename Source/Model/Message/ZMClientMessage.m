@@ -211,6 +211,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 {
     _genericMessage = nil;
     self.dataSet = [NSOrderedSet orderedSet];
+    self.genericMessage = nil;
     [super removeMessage];
 }
 
