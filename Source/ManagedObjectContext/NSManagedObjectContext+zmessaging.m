@@ -45,6 +45,7 @@ static NSString * const IsSaveDisabled = @"ZMIsSaveDisabled";
 static NSString * const IsFailingToSave = @"ZMIsFailingToSave";
 
 static BOOL UsesInMemoryStore;
+static NSURL * DatabaseDirectoryURL;
 static NSPersistentStoreCoordinator *sharedPersistentStoreCoordinator;
 static NSPersistentStoreCoordinator *inMemorySharedPersistentStoreCoordinator;
 static NSString * const ClearPersistentStoreOnStartKey = @"ZMClearPersistentStoreOnStart";
@@ -78,24 +79,25 @@ static char* const ZMLogTag ZM_UNUSED = "NSManagedObjectContext";
 
 static BOOL storeIsReady = NO;
 
-+ (BOOL)needsToPrepareLocalStore
++ (BOOL)needsToPrepareLocalStoreInDirectroy:(NSURL *)databaseDirectory;
 {
-    NSError *error = nil;
-    NSManagedObjectModel *mom = [self loadManagedObjectModel];
-    NSDictionary *metadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType
-                                                                                        URL:[self storeURL]
-                                                                                      error:&error];
     
-    if (nil != error) {
-        ZMLogError(@"Cannot open store metadata: %@", error);
-    }
-    
-    BOOL needsMigration = ![mom isConfiguration:nil compatibleWithStoreMetadata:metadata];
-    return needsMigration || [self databaseExistsInCachesDirectory] || [self databaseExistsAndNotReadableDueToEncryption];
+    [self setDatabaseDirectoryURL:databaseDirectory];
+
+    NSManagedObjectModel *mom = self.loadManagedObjectModel;
+    NSDictionary *sharedContainerMetadata = [self metadataForStoreAtURL:self.storeURL];
+    BOOL needsMigration = ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
+
+    BOOL needsToMoveDatabase = self.databaseExistsInCachesDirectory || self.databaseExistsInApplicationSupportDirectory;
+    return needsMigration || needsToMoveDatabase || self.databaseExistsAndNotReadableDueToEncryption;
 }
 
-+ (void)prepareLocalStoreInternalBackingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase completionHandler:(void (^)())completionHandler
++ (void)prepareLocalStoreInternalBackingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase
+                                                inDirectory:(NSURL *)directory
+                                          completionHandler:(void (^)())completionHandler
 {
+    [self setDatabaseDirectoryURL:directory];
+
     dispatch_block_t finally = ^() {
         dispatch_async(dispatch_get_main_queue(), ^{
             storeIsReady = YES;
@@ -143,10 +145,13 @@ static BOOL storeIsReady = NO;
     }
 }
 
-+ (void)prepareLocalStoreSync:(BOOL)sync backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreSync:(BOOL)sync
+                  inDirectory:(NSURL *)directory
+   backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase
+            completionHandler:(void(^)())completionHandler;
 {
     (sync ? dispatch_sync : dispatch_async)(singletonContextIsolation(), ^{
-        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:backupCorrputedDatabase completionHandler:completionHandler];
+        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:backupCorrputedDatabase inDirectory:directory completionHandler:completionHandler];
     });
 }
 
@@ -155,41 +160,14 @@ static BOOL storeIsReady = NO;
     return storeIsReady;
 }
 
-+ (NSPersistentStoreCoordinator *)requirePersistentStoreCoordinatorInternal
-{
-    NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
-    
-    if (psc == nil) {
-        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:NO completionHandler:nil];
-        psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
-        Require(psc != nil);
-    }
-    
-    return psc;
-}
-
-+ (NSPersistentStoreCoordinator *)requirePersistentStoreCoordinator
-{
-    NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
-    
-    if (psc == nil) {
-        dispatch_sync(singletonContextIsolation(), ^() {
-            [self prepareLocalStoreInternalBackingUpCorruptedDatabase:NO completionHandler:nil];
-        });
-        psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
-        Require(psc != nil);
-    }
-    
-    return psc;
-}
-
 + (instancetype)createUserInterfaceContext;
 {
     __block NSManagedObjectContext *result = nil;
     dispatch_sync(singletonContextIsolation(), ^{
         result = SharedUserInterfaceContext;
         if (result == nil) {
-            NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInternal];
+            NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+            RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
             
             result = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
             [result markAsUIContext];
@@ -212,7 +190,8 @@ static BOOL storeIsReady = NO;
 
 + (instancetype)createSyncContext;
 {
-    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinator];
+    NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+    RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
 
     NSManagedObjectContext *moc = [[self alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     [moc markAsSyncContext];
@@ -224,7 +203,8 @@ static BOOL storeIsReady = NO;
 
 + (instancetype)createSearchContext;
 {
-    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinator];
+    NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+    RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
     
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     [moc markAsSearchContext];
@@ -317,6 +297,11 @@ static BOOL storeIsReady = NO;
     UsesInMemoryStore = useInMemoryStore;
 }
 
++ (void)setDatabaseDirectoryURL:(NSURL *)directory;
+{
+    DatabaseDirectoryURL = directory;
+}
+
 + (NSPersistentStoreCoordinator *)inMemoryPersistentStoreCoordinator;
 {
     NSManagedObjectModel *mom = [self loadManagedObjectModel];
@@ -348,7 +333,7 @@ static BOOL storeIsReady = NO;
     dispatch_once(&clearStoreOnceToken, ^{
         if ([[NSUserDefaults standardUserDefaults] boolForKey:ClearPersistentStoreOnStartKey]) {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:ClearPersistentStoreOnStartKey];
-            [self removePersistentStoreFromFilesystemAndCopyToBackup:NO];
+            [self removePersistentStoreFromFilesystemAndCopyToBackup:NO storeURL:self.storeURL];
         }
     });
 }
@@ -367,12 +352,11 @@ static BOOL storeIsReady = NO;
 }
 
 /// @param copyToBackup: if true, will dump the database to a safe location before deleting it
-+ (void)removePersistentStoreFromFilesystemAndCopyToBackup:(BOOL)copyToBackup;
++ (void)removePersistentStoreFromFilesystemAndCopyToBackup:(BOOL)copyToBackup storeURL:(NSURL *)storeFileURL;
 {
     // Enumerate all files in the store directory and find the ones that match the store name.
     // We need to do this, because the store consists of several files.
     
-    NSURL *const storeFileURL = [self storeURL];
     NSString * const storeName = [storeFileURL lastPathComponent];
     NSURL *storeFolder;
     if (![storeFileURL getResourceValue:&storeFolder forKey:NSURLParentDirectoryURLKey error:NULL]) {
@@ -428,6 +412,7 @@ static dispatch_once_t clearStoreOnceToken;
     sharedPersistentStoreCoordinator = nil;
     storeURLOnceToken = 0;
     clearStoreOnceToken = 0;
+    DatabaseDirectoryURL = nil;
 }
 
 + (NSPersistentStoreCoordinator *)onDiskPersistentStoreCoordinator
@@ -437,66 +422,120 @@ static dispatch_once_t clearStoreOnceToken;
 
 + (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorBackingUpCorrupedDatabases:(BOOL)backupCorruptedDatabase;
 {
-    [self clearPersistentStoreOnStart];
+    RequireString(nil != DatabaseDirectoryURL, "No database url set, call -setDatabaseDirectoryURL: to set it first.");
     
+    [self clearPersistentStoreOnStart];
     [self moveDatabaseFromCachesToApplicationSupportIfNeeded];
     
-    NSError *error = nil;
     NSManagedObjectModel *mom = [self loadManagedObjectModel];
     NSPersistentStoreCoordinator* psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
+
+    // The database is still in the application support directory, we need to move it into the shared container
+    if (self.databaseExistsInApplicationSupportDirectory) {
+        [self moveDatabaseFromApplicationSupportIntoSharedContainerWithCoordinator:psc backupCorruptedDatabase:backupCorruptedDatabase];
+        return psc;
+    }
+
+    BOOL shouldMigrate = [self shouldMigrateStoreToNewModelVersion:self.storeURL];
+    [self addPersistenStoreWithMigration:shouldMigrate toCoordinator:psc storeURL:self.storeURL backupCorruptedDatabase:backupCorruptedDatabase];
+
+    return psc;
+}
+
++ (void)moveDatabaseFromApplicationSupportIntoSharedContainerWithCoordinator:(NSPersistentStoreCoordinator *)psc backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+{
+    // Migrate the to a new model version before moving the store if needed
+    BOOL shouldMigrate = [self shouldMigrateStoreToNewModelVersion:self.applicationSupportDirectoryStoreURL];
+    NSPersistentStore __unused *oldStore = [self addPersistenStoreWithMigration:shouldMigrate
+                                                                  toCoordinator:psc
+                                                                       storeURL:self.applicationSupportDirectoryStoreURL
+                                                        backupCorruptedDatabase:backupCorruptedDatabase];
     
+    // perform the migration to the new store location
+    [psc performBlockAndWait:^{
+        NSError *migrationError = nil;
+        [psc migratePersistentStore:oldStore toURL:self.storeURL options:nil withType:NSSQLiteStoreType error:&migrationError];
+        if (nil != migrationError) {
+            ZMLogError(@"Unable to migrate persistent store form application directory into directory %@: %@", DatabaseDirectoryURL, migrationError);
+        }
+
+        if ([NSFileManager.defaultManager fileExistsAtPath:oldStore.URL.path]) {
+            [self removePersistentStoreFromFilesystemAndCopyToBackup:NO storeURL:oldStore.URL];
+        }
+    }];
+}
+
++ (BOOL)shouldMigrateStoreToNewModelVersion:(NSURL *)storeURL
+{
+    NSManagedObjectModel *mom = self.loadManagedObjectModel;
+    NSDictionary *metadata = [self metadataForStoreAtURL:storeURL];
+    NSString *oldModelVersion = [metadata[NSStoreModelVersionIdentifiersKey] firstObject];
+    
+    // Between non-E2EE and E2EE we should not migrate the DB for privacy reasons.
+    // We know that the old mom is a version supporting E2EE when it
+    // contains the 'ClientMessage' entity or is at least of version 1.25
+    BOOL otrBuild = [[metadata[NSStoreModelVersionHashesKey] allKeys] containsObject:ZMClientMessage.entityName];
+    BOOL atLeastVersion1_25 = oldModelVersion != nil &&  [oldModelVersion compare:@"1.25" options:NSNumericSearch] != NSOrderedDescending;
+
+    // Unfortunately the 1.24 Release has a mom version of 1.3 but we do not want to migrate from it
+    NSString *currentModelIdentifier = mom.versionIdentifiers.anyObject;
+    BOOL newerOTRVersion = atLeastVersion1_25 && ![oldModelVersion isEqualToString:@"1.3"];
+    BOOL shouldMigrate = otrBuild || newerOTRVersion;
+
+    // this is used to avoid migrating internal builds when we update the DB internally between releases
+    BOOL isSameAsCurrent = [currentModelIdentifier isEqualToString:oldModelVersion];
+    
+    return shouldMigrate && !isSameAsCurrent;
+}
+
++ (NSDictionary *)metadataForStoreAtURL:(NSURL *)storeURL
+{
     NSError *metadataError = nil;
-    NSDictionary *sourceMetadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType URL:[self storeURL] error:&metadataError];
+    NSDictionary *sourceMetadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType URL:storeURL error:&metadataError];
     
     // Something happened while reading the current database metadata
     if (nil != metadataError) {
         ZMLogError(@"Error reading store metadata: %@", metadataError);
     }
-    
-    NSString *oldModelVersion = [sourceMetadata[NSStoreModelVersionIdentifiersKey] firstObject];
-    
-    // Between non-E2EE and E2EE we should not migrate the DB for privacy reasons.
-    // We know that the old mom is a version supporting E2EE when it
-    // contains the 'ClientMessage' entity or is at least of version 1.25
-    BOOL otrBuild = [[sourceMetadata[NSStoreModelVersionHashesKey] allKeys] containsObject:ZMClientMessage.entityName];
-    BOOL atLeastVersion1_25 = oldModelVersion != nil &&  [oldModelVersion compare:@"1.25" options:NSNumericSearch] != NSOrderedDescending;
-    
-    // Unfortunately the 1.24 Release has a mom version of 1.3 but we do not want to migrate from it
-    // This additional check is also important as the string comparison with NSNumericSearch will return
-    // NSOrderedAscending for 1.25 and 1.30 but NSOrderedDescending for 1.25 and 1.3
-    NSString *currentModelIdentifier = mom.versionIdentifiers.anyObject;
-    BOOL newerOTRVersion = atLeastVersion1_25 && ![oldModelVersion isEqualToString:@"1.3"];
-    BOOL shouldMigrate = otrBuild || newerOTRVersion;
-    BOOL isSameAsCurrent =  [currentModelIdentifier isEqualToString:oldModelVersion]; // this is used to avoid migrating internal
-    // builds when we update the DB internally
-    // between releases
-    
-    if (shouldMigrate && !isSameAsCurrent) {
-        NSDictionary *options = [self persistentStoreOptionsDictionarySupportingMigration:YES];
-        NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:[self storeURL] options:options error:&error];
-        NSString *errorString = [NSString stringWithFormat:@"when adding persistent store: %@", error];
-        RequireString(nil != store, "Unable to perform migration and create SQLite Core Data store: %s. "
-                      "-- Old model version was: %s, current version: %s, otr build: %d",
-                      errorString.UTF8String,
-                      oldModelVersion.UTF8String,
-                      currentModelIdentifier.UTF8String,
-                      (int) otrBuild);
-        if (nil != store) {
-            return psc;
-        }
-    }
-    [self addPersistentStoreBackingUpCorruptedDatabases:backupCorruptedDatabase toPSC:psc];
-    return psc;
+
+    return sourceMetadata;
 }
 
-+ (void)addPersistentStoreBackingUpCorruptedDatabases:(BOOL)backupCorruptedDatabase toPSC:(NSPersistentStoreCoordinator *)psc
++ (NSPersistentStore *)addPersistenStoreWithMigration:(BOOL)migrate
+                                        toCoordinator:(NSPersistentStoreCoordinator *)psc
+                                             storeURL:(NSURL *)storeURL
+                              backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+{
+    if (migrate) {
+        NSError *error = nil;
+        NSDictionary *metadata = [self metadataForStoreAtURL:storeURL];
+        NSDictionary *options = [self persistentStoreOptionsDictionarySupportingMigration:YES];
+        NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
+        NSString *errorString = [NSString stringWithFormat:@"when adding persistent store: %@", error];
+        NSString *oldModelVersion = [metadata[NSStoreModelVersionIdentifiersKey] firstObject];
+        NSString *currentModelIdentifier = psc.managedObjectModel.versionIdentifiers.anyObject;
+
+        RequireString(nil != store, "Unable to perform migration and create SQLite Core Data store %s. "
+                      "-- Old model version was: %s, current version: %s",
+                      errorString.UTF8String,
+                      oldModelVersion.UTF8String,
+                      currentModelIdentifier.UTF8String);
+        if (nil != store) {
+            return store;
+        }
+    }
+
+    return [self addPersistentStoreBackingUpCorruptedDatabases:backupCorruptedDatabase storeURL:storeURL toPSC:psc];
+}
+
++ (NSPersistentStore *)addPersistentStoreBackingUpCorruptedDatabases:(BOOL)backupCorruptedDatabase storeURL:(NSURL *)storeURL toPSC:(NSPersistentStoreCoordinator *)psc
 {
     // If we do not have a store by now, we are either already at the current version, or updating from a non E2EE build, or the migration failed.
     // Either way we will try to create a persistent store without perfoming any migrations.
     NSDictionary *options = [self persistentStoreOptionsDictionarySupportingMigration:NO];
     NSError *error;
     
-    NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:[self storeURL] options:options error:&error];
+    NSPersistentStore *store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
     if (store == nil) {
         // Something really wrong
         // Try to remove the store and create from scratch
@@ -509,11 +548,13 @@ static dispatch_once_t clearStoreOnceToken;
         }
         ZMLogError(@"Failed to open database. Corrupted database? Error: %@", error);
         
-        [self removePersistentStoreFromFilesystemAndCopyToBackup:backupCorruptedDatabase];
+        [self removePersistentStoreFromFilesystemAndCopyToBackup:backupCorruptedDatabase storeURL:storeURL];
         // Re-try to add the store
-        store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:[self storeURL] options:options error:&error];
+        store = [psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
     }
     RequireString(store != nil, "Unable to create SQLite Core Data store: %lu", (long) error.code);
+
+    return store;
 }
 
 
@@ -565,6 +606,35 @@ static dispatch_once_t clearStoreOnceToken;
 
 + (NSURL *)storeURL;
 {
+    RequireString(DatabaseDirectoryURL != nil, "Database directory not set");
+    NSString *identifier = [NSBundle mainBundle].bundleIdentifier;
+    if (identifier == nil) {
+        identifier = [NSBundle bundleForClass:ZMUser.class].bundleIdentifier;
+    }
+    
+    NSURL * const directory = [DatabaseDirectoryURL URLByAppendingPathComponent:identifier];
+    NSFileManager *fm = NSFileManager.defaultManager;
+    
+    if (! [fm fileExistsAtPath:directory.path]) {
+        NSError *error;
+        short const permissions = 0700;
+        NSDictionary *attr = @{NSFilePosixPermissions: @(permissions)};
+        RequireString([fm createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:attr error:&error],
+                      "Failed to create directory: %lu, error: %lu", (unsigned long)directory,  (unsigned long) error.code);
+    }
+    
+    // Make sure this is not backed up:
+    NSError *error;
+    if (! [directory setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+        ZMLogError(@"Error excluding %@ from backup %@", directory.path, error);
+    }
+    
+    NSString *storeFilename = @"store.wiredatabase";
+    return [directory URLByAppendingPathComponent:storeFilename];
+}
+
++ (NSURL *)applicationSupportDirectoryStoreURL;
+{
     return [self storeURLInDirectory:NSApplicationSupportDirectory];
 }
 
@@ -576,17 +646,26 @@ static dispatch_once_t clearStoreOnceToken;
 /// If this is false it means we have succesfully moved the database from the caches directory to the application support directory
 + (BOOL)databaseExistsInCachesDirectory
 {
+    return [self databaseExistsAtURL:self.cachesDirectoryStoreURL];
+}
+
+/// If this is false it means we have succesfully moved the database from the applications directory to the shared container
++ (BOOL)databaseExistsInApplicationSupportDirectory;
+{
+    return [self databaseExistsAtURL:self.applicationSupportDirectoryStoreURL];
+}
+
++ (BOOL)databaseExistsAtURL:(NSURL *)url;
+{
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSURL *databaseURL = [self cachesDirectoryStoreURL];
-    BOOL fileExists = [fm fileExistsAtPath:databaseURL.path isDirectory:nil];
-    return fileExists;
+    return [fm fileExistsAtPath:url.path isDirectory:nil];
 }
 
 /// Checks if database is created, but it is still locked with iOS file protection
-+ (BOOL)databaseExistsAndNotReadableDueToEncryption
++ (BOOL)databaseExistsAndNotReadableDueToEncryption;
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSURL *databaseURL = [self storeURL];
+    NSURL *databaseURL = self.databaseExistsInApplicationSupportDirectory ? self.applicationSupportDirectoryStoreURL : self.storeURL;
     BOOL fileExists = [fm fileExistsAtPath:databaseURL.path isDirectory:nil];
     
     NSError *readError = nil;
@@ -606,8 +685,8 @@ static dispatch_once_t clearStoreOnceToken;
     if ([self databaseExistsInCachesDirectory]) {
         
         NSError *error;
-        NSURL *toURL   = [self storeURL];
-        NSURL *fromURL = [self cachesDirectoryStoreURL];
+        NSURL *toURL   = self.applicationSupportDirectoryStoreURL;
+        NSURL *fromURL = self.cachesDirectoryStoreURL;
         NSFileManager *fm = [NSFileManager defaultManager];
         
         ZMLogDebug(@"Starting to move database from path: %@ to path: %@", fromURL, toURL);

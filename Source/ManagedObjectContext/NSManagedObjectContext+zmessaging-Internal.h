@@ -22,7 +22,9 @@
 
 @interface NSManagedObjectContext (zmessaging_Internal)
 
++ (NSURL *)applicationSupportDirectoryStoreURL;
 + (BOOL)databaseExistsInCachesDirectory;
++ (BOOL)databaseExistsInApplicationSupportDirectory;
 + (BOOL)databaseExistsAndNotReadableDueToEncryption;
 + (NSURL *)storeURLInDirectory:(NSSearchPathDirectory)directory;
 + (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorBackingUpCorrupedDatabases:(BOOL)backupCorruptedDatabase;

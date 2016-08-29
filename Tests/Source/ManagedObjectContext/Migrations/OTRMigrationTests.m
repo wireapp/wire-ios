@@ -22,7 +22,7 @@
 #import <CoreData/CoreData.h>
 #import <ZMTesting/ZMTesting.h>
 #import <OCMock/OCMock.h>
-
+#import "NSManagedObjectContext+zmessaging-Internal.h"
 
 
 static NSString * const DataBaseFileExtensionName = @"wiredatabase";
@@ -516,14 +516,13 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 - (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStore
 {
     __block NSManagedObjectContext *syncContext;
-    
-    XCTestExpectation *contextExpectation = [self expectationWithDescription:@"It should create context"];
-    [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
+
+    NSURL *directory = [NSFileManager.defaultManager URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:directory backingUpCorruptedDatabase:NO completionHandler:^{
         syncContext = [NSManagedObjectContext createSyncContext];
-        [contextExpectation fulfill];
     }];
     
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+    WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertNotNil(syncContext);
     
     return syncContext;
@@ -587,8 +586,8 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     // We want to make sure the version in the .sql file actually matches the one we want to test the migration from
     NSError *error = nil;
     NSDictionary *metadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType
-                                                                                                 URL:databaseURLs.firstObject
-                                                                                               error:&error];
+                                                                                        URL:databaseURLs.firstObject
+                                                                                      error:&error];
     XCTAssertNil(error);
     NSArray <NSString *>* versionIdentifiers = metadata[NSStoreModelVersionIdentifiersKey];
     XCTAssertEqual(versionIdentifiers.count, 1lu);
@@ -613,12 +612,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     // Perform the migration test
     block();
     
-    // Clean up & remove the database
-    [mock stopMocking];
     for (NSUInteger idx = 0; idx < databaseURLs.count; idx++) {
         XCTAssertTrue([fm removeItemAtURL:mockURLs[idx] error:&error]);
         XCTAssertNil(error);
     }
+
+    [mock stopMocking];
 }
 
 #pragma mark - Fixtures
