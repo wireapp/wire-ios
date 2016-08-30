@@ -71,6 +71,9 @@
 
     NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
     XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
+    
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
 }
 
 - (void)testThatItMovesTheDatabaseFromTheApplicationSupportDirectoryToTheSharedDirectory
@@ -80,6 +83,9 @@
         XCTAssertTrue([self moveDatabaseToApplicationSupportDirectory]);
         XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
     }];
+    
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
     
     for (NSString *extension in self.databaseFileExtensions) {
         NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
@@ -98,8 +104,12 @@
         NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
         XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
     }
+    
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
 
-    // TODO: The `.store_SUPPORT` file does not get moved to the new locatoin somehow,
+    // TODO: The `.store_SUPPORT` file does not get moved to the new location somehow,
     // either some validation happening (it's empty in the test) or we need to fallback to manually copying it
     //
     // NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
