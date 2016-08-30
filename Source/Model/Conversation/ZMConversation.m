@@ -783,7 +783,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
             __block ZMMessage *lastDeliveredMessage;
             __block NSUInteger newIdx;
             [self.messages.array enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, idx)] options:NSEnumerationReverse usingBlock:^(ZMMessage *aMessage, NSUInteger anIdx, BOOL *stop) {
-                if (aMessage.deliveryState == ZMDeliveryStateDelivered && message.deliveryState != ZMDeliveryStateSent) {
+                if (aMessage.deliveryState == ZMDeliveryStateDelivered || message.deliveryState == ZMDeliveryStateSent) {
                     lastDeliveredMessage = aMessage;
                     newIdx = anIdx;
                     *stop = YES;
