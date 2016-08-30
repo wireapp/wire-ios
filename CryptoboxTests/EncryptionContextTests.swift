@@ -147,6 +147,35 @@ class EncryptionContextTests: XCTestCase {
         self.waitForExpectationsWithTimeout(0) { _ in }
     }
     
+    func testThatItSafelyEncryptDecryptDuringNestedPerform() {
+        
+        // GIVEN
+        let tempDir = createTempFolder()
+        
+        let mainContext = EncryptionContext(path: tempDir)
+        
+        let someTextToEncrypt = "ENCRYPT THIS!"
+        
+        // WHEN
+        
+        // enter critical section
+        mainContext.perform { context1 in
+            
+            try! context1.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
+            
+            mainContext.perform { context2 in
+                try! context2.encrypt(someTextToEncrypt.dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: hardcodedClientId)
+                
+            }
+            
+            try! context1.encrypt(someTextToEncrypt.dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: hardcodedClientId)
+        }
+        
+        // THEN 
+        // it didn't crash
+    }
+
+    
     func testThatItDoesNotReceivesTheSameSessionStatusIfDonePerforming() {
         
         // GIVEN
