@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		06ED3820666AEA1987796AA9 /* libPods-WireExtensionComponents.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8571A3524311D898C8012582 /* libPods-WireExtensionComponents.a */; };
-		14BFB267B7F0CF9B1E6973FD /* libPods-Wire-iOS-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC9C38FFEE2CB1B4A68D125E /* libPods-Wire-iOS-Tests.a */; };
+		151A5D74DB0D9419EC0AE403 /* libPods-Wire-Main-Wire-iOS-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7366A6BE379735C5D50A198A /* libPods-Wire-Main-Wire-iOS-Tests.a */; };
 		1600E2051AD5799400C0DBA8 /* PhoneNumberStepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1600E2041AD5799400C0DBA8 /* PhoneNumberStepViewController.m */; };
 		160546DA1BF0DB9D001FE3F6 /* EmailInvitationStepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 160546D91BF0DB9D001FE3F6 /* EmailInvitationStepViewController.m */; };
 		16063CEB1BCFCEB70097F62C /* InviteBannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 16063CEA1BCFCEB70097F62C /* InviteBannerViewController.m */; };
@@ -752,6 +752,7 @@
 		BFE49C321C0F39590061C16F /* NSString+FingerprintTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFE49C311C0F39580061C16F /* NSString+FingerprintTests.m */; };
 		BFE57B4B1D52335A00CB0806 /* ConversationPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE57B4A1D52335A00CB0806 /* ConversationPreviewViewController.swift */; };
 		BFEA26591D410F9F000D0ED5 /* audio_sample.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BFEA26581D410F9F000D0ED5 /* audio_sample.m4a */; };
+		C0B863F8AD7B3EF259CF7F40 /* libPods-Wire-Main-Wire-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B5137DDE71B7BF164C29B922 /* libPods-Wire-Main-Wire-iOS.a */; };
 		CE3FBF1E1CE22B4900ED087A /* DeleteMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3FBF1D1CE22B4900ED087A /* DeleteMessageTests.m */; };
 		CEC0FE3B1C4FBF120093BF0D /* ConversationIgnoredDeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0FE3A1C4FBF120093BF0D /* ConversationIgnoredDeviceCell.swift */; };
 		CED176471D0074610005234F /* ConversationParticipantsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED176461D0074610005234F /* ConversationParticipantsCell.swift */; };
@@ -766,6 +767,7 @@
 		DB7FEC921B8729AD00BA72DE /* ConversationInputBarSendController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB7FEC911B8729AD00BA72DE /* ConversationInputBarSendController.m */; };
 		DB888FB61ADD18B400CE9A88 /* RegistrationEmailFlowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB888FB51ADD18B400CE9A88 /* RegistrationEmailFlowViewController.m */; };
 		DB888FBB1ADD195F00CE9A88 /* EmailStepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB888FBA1ADD195F00CE9A88 /* EmailStepViewController.m */; };
+		DBA7BC5D515943A9B7783A6A /* libPods-Wire-iOS-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC9C38FFEE2CB1B4A68D125E /* libPods-Wire-iOS-Tests.a */; };
 		DBACFF7A1B3C96E1004062E0 /* MentionsBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = DBACFF781B3C96E1004062E0 /* MentionsBubbleView.m */; };
 		DBB45F3B1B53F8DE0010053C /* NSString+MentionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DBB45F3A1B53F8DE0010053C /* NSString+MentionsTests.m */; };
 		DBBC190F1B5E3C5D00E84607 /* StopWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = DBBC190E1B5E3C5D00E84607 /* StopWatch.m */; };
@@ -837,7 +839,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		05C3FBA8E5E8291D48C0C674 /* Pods-Wire-iOS-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		095275931B7E834400123BAF /* zmessaging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = zmessaging.framework; path = Carthage/Build/iOS/zmessaging.framework; sourceTree = "<group>"; };
 		1600E2031AD5799400C0DBA8 /* PhoneNumberStepViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneNumberStepViewController.h; sourceTree = "<group>"; };
 		1600E2041AD5799400C0DBA8 /* PhoneNumberStepViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneNumberStepViewController.m; sourceTree = "<group>"; };
@@ -1114,12 +1115,17 @@
 		1EFBFF3A1B81FF7D0011A94A /* NSExtensionContext+Attachments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSExtensionContext+Attachments.swift"; sourceTree = "<group>"; };
 		1EFBFF3B1B81FF7D0011A94A /* NSExtensionItem+Attachments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSExtensionItem+Attachments.swift"; sourceTree = "<group>"; };
 		1EFBFF3E1B81FFA50011A94A /* NSItemProvider+Attachments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSItemProvider+Attachments.swift"; sourceTree = "<group>"; };
-		31B0C492806D1F272057FE51 /* Pods-Wire-iOS-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests.release.xcconfig"; sourceTree = "<group>"; };
+		2246B21A79F8DDBDA5190832 /* Pods-Wire-Main-Wire-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-Main-Wire-iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-Main-Wire-iOS/Pods-Wire-Main-Wire-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		28B056F3799690B56CB0AA81 /* Pods-Wire-Main-Wire-iOS-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-Main-Wire-iOS-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-Main-Wire-iOS-Tests/Pods-Wire-Main-Wire-iOS-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		5407B8C21A643CCE009090C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		54F7C27E1D74367E004D8087 /* AddressBookHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressBookHelper.swift; sourceTree = "<group>"; };
 		54F7C2841D746F3F004D8087 /* AddressBookHelper+Automation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AddressBookHelper+Automation.swift"; sourceTree = "<group>"; };
 		64D671EBEE8C57217EB00733 /* Pods-Wire-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS/Pods-Wire-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		66AD75C42C8F83C7D2E38BAC /* Pods-Wire-iOS-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests.release.xcconfig"; sourceTree = "<group>"; };
+		7366A6BE379735C5D50A198A /* libPods-Wire-Main-Wire-iOS-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Wire-Main-Wire-iOS-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		739F64F2BAD5B1F48316C598 /* Pods-Wire-Main-Wire-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-Main-Wire-iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-Main-Wire-iOS/Pods-Wire-Main-Wire-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		848DE12A1A83D20000E154B1 /* emoticons.min.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = emoticons.min.json; path = ../Sources/emoticons.min.json; sourceTree = "<group>"; };
+		84FD2B6481BD09149BD23D47 /* Pods-Wire-Main-Wire-iOS-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-Main-Wire-iOS-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-Main-Wire-iOS-Tests/Pods-Wire-Main-Wire-iOS-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		8571A3524311D898C8012582 /* libPods-WireExtensionComponents.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WireExtensionComponents.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		87071CBF1CB68BDA0039388A /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		87071CC31CB6A3790039388A /* FileTransferCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileTransferCellTests.swift; sourceTree = "<group>"; };
@@ -1931,6 +1937,7 @@
 		B4446E1E1CFDF115005C83A7 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B4446E1F1CFDF115005C83A7 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "pt-BR"; path = "pt-BR.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
 		B4446E201CFDF116005C83A7 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		B5137DDE71B7BF164C29B922 /* libPods-Wire-Main-Wire-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Wire-Main-Wire-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9CC3BACA5F83DE94F1D4A0A /* Pods-Wire-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS/Pods-Wire-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		BA79B0A31B6284D900F23AFB /* SoundEventRulesWatchDog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundEventRulesWatchDog.h; sourceTree = "<group>"; };
 		BA79B0A41B6284D900F23AFB /* SoundEventRulesWatchDog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundEventRulesWatchDog.m; sourceTree = "<group>"; };
@@ -2078,6 +2085,7 @@
 		F5EAB12A1B120665008DB66A /* SketchBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SketchBottomView.m; path = Sketchpad/SketchBottomView.m; sourceTree = "<group>"; };
 		F5F52F701B11D7050053F1C8 /* SketchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SketchViewController.h; path = Sketchpad/SketchViewController.h; sourceTree = "<group>"; };
 		F5F52F711B11D7050053F1C8 /* SketchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SketchViewController.m; path = Sketchpad/SketchViewController.m; sourceTree = "<group>"; };
+		F825CDCAA3BD327F3FF10116 /* Pods-Wire-iOS-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		F95E08B31D0EAFE80098A9EE /* TTTAttributedLabel+Links.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TTTAttributedLabel+Links.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2122,6 +2130,7 @@
 				876FAEDB1C762CFC00EBA732 /* TTTAttributedLabel.framework in Frameworks */,
 				87BEB0361D39018600DE9575 /* FormatterKit.framework in Frameworks */,
 				39260D2402C36A8DE422A998 /* libPods-Wire-iOS.a in Frameworks */,
+				C0B863F8AD7B3EF259CF7F40 /* libPods-Wire-Main-Wire-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2138,7 +2147,8 @@
 				871BE95B1CD0C3A5002267E8 /* OCMock.framework in Frameworks */,
 				1E2267E81B382EB2003980E3 /* ziphy.framework in Frameworks */,
 				871BE95A1CD0C2E7002267E8 /* FBSnapshotTestCase.framework in Frameworks */,
-				14BFB267B7F0CF9B1E6973FD /* libPods-Wire-iOS-Tests.a in Frameworks */,
+				DBA7BC5D515943A9B7783A6A /* libPods-Wire-iOS-Tests.a in Frameworks */,
+				151A5D74DB0D9419EC0AE403 /* libPods-Wire-Main-Wire-iOS-Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2630,6 +2640,8 @@
 				8571A3524311D898C8012582 /* libPods-WireExtensionComponents.a */,
 				C88A846215D617F8CCFBEB80 /* libPods-Wire-iOS.a */,
 				CC9C38FFEE2CB1B4A68D125E /* libPods-Wire-iOS-Tests.a */,
+				B5137DDE71B7BF164C29B922 /* libPods-Wire-Main-Wire-iOS.a */,
+				7366A6BE379735C5D50A198A /* libPods-Wire-Main-Wire-iOS-Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -4350,8 +4362,12 @@
 				A396BED0D8DCF345008F06DF /* Pods-WireExtensionComponents.release.xcconfig */,
 				B9CC3BACA5F83DE94F1D4A0A /* Pods-Wire-iOS.debug.xcconfig */,
 				64D671EBEE8C57217EB00733 /* Pods-Wire-iOS.release.xcconfig */,
-				05C3FBA8E5E8291D48C0C674 /* Pods-Wire-iOS-Tests.debug.xcconfig */,
-				31B0C492806D1F272057FE51 /* Pods-Wire-iOS-Tests.release.xcconfig */,
+				F825CDCAA3BD327F3FF10116 /* Pods-Wire-iOS-Tests.debug.xcconfig */,
+				66AD75C42C8F83C7D2E38BAC /* Pods-Wire-iOS-Tests.release.xcconfig */,
+				2246B21A79F8DDBDA5190832 /* Pods-Wire-Main-Wire-iOS.debug.xcconfig */,
+				739F64F2BAD5B1F48316C598 /* Pods-Wire-Main-Wire-iOS.release.xcconfig */,
+				28B056F3799690B56CB0AA81 /* Pods-Wire-Main-Wire-iOS-Tests.debug.xcconfig */,
+				84FD2B6481BD09149BD23D47 /* Pods-Wire-Main-Wire-iOS-Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -6009,7 +6025,7 @@
 		};
 		BACB885A1AF7C48900DDCDB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 05C3FBA8E5E8291D48C0C674 /* Pods-Wire-iOS-Tests.debug.xcconfig */;
+			baseConfigurationReference = F825CDCAA3BD327F3FF10116 /* Pods-Wire-iOS-Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6062,7 +6078,7 @@
 		};
 		BACB885B1AF7C48900DDCDB0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31B0C492806D1F272057FE51 /* Pods-Wire-iOS-Tests.release.xcconfig */;
+			baseConfigurationReference = 66AD75C42C8F83C7D2E38BAC /* Pods-Wire-iOS-Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
