@@ -38,7 +38,7 @@
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 
-static NSTimeInterval ZMDefaultMessageExpirationTime = 60;
+static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
 
 NSString * const ZMMessageEventIDDataKey = @"eventID_data";
 NSString * const ZMMessageIsEncryptedKey = @"isEncrypted";
@@ -73,6 +73,7 @@ NSString * const ZMMessageNeedsUpdatingUsersKey = @"needsUpdatingUsers";
 NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 NSString * const ZMMessageReactionKey = @"reactions";
+NSString * const ZMMessageConfirmationKey = @"confirmations";
 
 @interface ZMMessage ()
 
@@ -115,6 +116,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
 @dynamic expirationDate;
 @dynamic senderClientID;
 @dynamic reactions;
+@dynamic confirmations;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
@@ -199,9 +201,15 @@ NSString * const ZMMessageReactionKey = @"reactions";
     self.expirationDate = nil;
 }
 
-- (void)markAsDelivered
+- (void)markAsSent
 {
     self.isExpired = NO;
+}
+
+- (void)confirmReception
+{
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithConfirmation:self.nonce.transportString type:ZMConfirmationTypeDELIVERED nonce:[NSUUID UUID].transportString];
+    [self.conversation appendGenericMessage:genericMessage expires:YES hidden:YES];
 }
 
 - (void)expire;
@@ -222,7 +230,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
 
 + (NSSet *)keyPathsForValuesAffectingDeliveryState;
 {
-    return [NSMutableSet setWithObjects:ZMMessageEventIDKey, ZMMessageEventIDDataKey, ZMMessageIsExpiredKey, nil];
+    return [NSMutableSet setWithObjects: ZMMessageIsExpiredKey, ZMMessageConfirmationKey, nil];
 }
 
 - (void)awakeFromInsert;
@@ -412,6 +420,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
     [message removeMessage];
     return message;
 }
+
 
 - (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload
 {
@@ -662,7 +671,8 @@ NSString * const ZMMessageReactionKey = @"reactions";
                              ZMMessageAddedUsersKey,
                              ZMMessageRemovedUsersKey,
                              ZMMessageNeedsUpdatingUsersKey,
-                             ZMMessageSenderClientIDKey
+                             ZMMessageSenderClientIDKey,
+                             ZMMessageConfirmationKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
