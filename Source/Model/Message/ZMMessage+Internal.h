@@ -75,7 +75,7 @@ extern NSString * const ZMMessageConfirmationKey;
 - (BOOL)shouldGenerateUnreadCount;
 
 /// Removes the message and deletes associated content
-/// @param clearingSender Wether information about the sender should be removed or not
+/// @param clearingSender Whether information about the sender should be removed or not
 - (void)removeMessageClearingSender:(BOOL)clearingSender;
 
 /// Removes the message only for clients of the selfUser
