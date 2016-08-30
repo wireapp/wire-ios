@@ -208,8 +208,9 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 /// Appends a new message to the conversation.
 /// @param genericMessage: the generic message that should be appended
-/// @param hidden: weather the message should be hidden in the conversation or not
-- (ZMClientMessage *)appendNonExpiringGenericMessage:(ZMGenericMessage *)genericMessage hidden:(BOOL)hidden;
+/// @param expires: wether the message should expire or tried to be send infinitively
+/// @param hidden: wether the message should be hidden in the conversation or not
+- (ZMClientMessage *)appendGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden;
 
 - (void)appendNewConversationSystemMessageIfNeeded;
 

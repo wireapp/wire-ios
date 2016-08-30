@@ -134,7 +134,7 @@
     ZMClientMessage *message = [self createClientTextMessage:self.name encrypted:YES];
     [message setExpirationDate];
     
-    [message markAsDelivered];
+    [message markAsSent];
     XCTAssertTrue(message.delivered);
     XCTAssertFalse(message.isExpired);
 }
