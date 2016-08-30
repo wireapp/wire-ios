@@ -70,3 +70,14 @@ extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotifica
 @interface ZMClientMessage (ZMImageOwner) <ZMImageOwner>
 
 @end
+
+
+@interface ZMClientMessage (Testing)
+
++ (ZMNewOtrMessage * _Nullable)otrMessageForGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage
+                                                selfClient:(UserClient * _Nonnull)selfClient
+                                              conversation:(ZMConversation * _Nonnull)conversation
+                                              externalData:(NSData * _Nullable)externalData
+                                         sessionsDirectory:(EncryptionSessionsDirectory * _Nonnull)sessionsDirectory;
+
+@end

@@ -292,6 +292,11 @@ static BOOL storeIsReady = NO;
     return self.zm_isUserInterfaceContext && !self.zm_isRefreshOfObjectsDisabled;
 }
 
++ (BOOL)useInMemoryStore;
+{
+    return UsesInMemoryStore;
+}
+
 + (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
 {
     UsesInMemoryStore = useInMemoryStore;
