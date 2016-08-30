@@ -2345,13 +2345,22 @@ NSString * const ReactionsKey = @"reactions";
     
     //when
     [self performPretendingUiMocIsSyncMoc:^{
-        [testMessage removeMessage];
+        [testMessage removeMessageClearingSender:YES];
     }];
     [self.uiMOC saveOrRollback];
     
     //then
     ZMMessage *fetchedMessage = [ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    return fetchedMessage.visibleInConversation == nil && [fetchedMessage.hiddenInConversation isEqual:conversation];
+    BOOL removed = fetchedMessage.visibleInConversation == nil &&
+                  [fetchedMessage.hiddenInConversation isEqual:conversation] &&
+                   fetchedMessage.sender == nil;
+
+    if ([fetchedMessage isKindOfClass:ZMClientMessage.class]) {
+        ZMClientMessage *clientMessage = (ZMClientMessage *)fetchedMessage;
+        removed &= clientMessage.dataSet.count == 0 && clientMessage.genericMessage == nil;
+    }
+
+    return removed;
 }
 
 - (void)testThatATextMessageIsRemovedWhenAskForDeletion;
@@ -2387,6 +2396,38 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertTrue(removed);
 }
 
+- (void)testThatAnPreE2EETextMessageIsRemovedWhenAskedForDeletion;
+{
+    // when
+    BOOL removed = [self checkThatAMessageIsRemoved:^ZMMessage *{
+        return [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    }];
+    
+    // then
+    XCTAssertTrue(removed);
+}
+
+- (void)testThatAnPreE2EEImageMessageIsRemovedWhenAskedForDeletion;
+{
+    // when
+    BOOL removed = [self checkThatAMessageIsRemoved:^ZMMessage *{
+        return [ZMImageMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    }];
+    
+    // then
+    XCTAssertTrue(removed);
+}
+
+- (void)testThatAnPreE2EEKnockMessageIsRemovedWhenAskedForDeletion;
+{
+    // when
+    BOOL removed = [self checkThatAMessageIsRemoved:^ZMMessage *{
+        return [ZMKnockMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    }];
+    
+    // then
+    XCTAssertTrue(removed);
+}
 
 - (void)testThatAMessageIsRemovedWhenAskForDeletionWithMessageHide;
 {
