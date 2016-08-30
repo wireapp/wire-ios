@@ -3,7 +3,6 @@ source 'https://github.com/CocoaPods/Specs.git'
 def ios_pods
     pod 'GoogleAPIClient/YouTube', '1.0.4', :inhibit_warnings => true
     pod 'CocoaSecurity', '1.2.4', :inhibit_warnings => true
-
     pod 'Localytics', '4.0.0', :inhibit_warnings => true
     pod 'NSObject-ObjectMap', :git => 'https://github.com/wireapp/NSObject-ObjectMap', :tag => 'v2.3.1'
     pod 'AFNetworking', :git => 'https://github.com/wireapp/AFNetworking', :tag => '2.6.3'
@@ -15,30 +14,30 @@ def ios_pods
     pod 'FLAnimatedImage', :git => 'https://github.com/wireapp/FLAnimatedImage', :tag => '1.0.12'
     pod 'MTAnimation', :git => 'https://github.com/wireapp/MTAnimation', :tag => '1.2.2-wire'
 end
-
+    
+    
 target 'Wire-iOS' do
 
     platform :ios, '8.0'
-
     ios_pods
 
     post_install do |installer_representation|
-		installer_representation.pods_project.targets.each do |target|
+        installer_representation.pods_project.targets.each do |target|
             target.build_configurations.each do |config|
                 config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
             end
-	    end
+        end
     end
-end
-
-target 'WireExtensionComponents' do
-
-    platform :ios, '8.0'
-    pod 'PureLayout', :git => 'https://github.com/wireapp/PureLayout', :tag => 'v3.0.0'
 end
 
 target 'Wire-iOS-Tests' do
     platform :ios, '8.0'
-
-    ios_pods
 end
+
+
+target 'WireExtensionComponents' do
+    platform :ios, '8.0'
+end
+
+
+
