@@ -48,7 +48,11 @@
 /// List of all groups associated with this context
 - (NSArray *)allGroups;
 
-/// Performs a block and wait for completion. Be *very careful* not to create deadlocks.
+/// Performs a block and wait for completion.
+/// @note: The block is not retained after its execution. This means that if the queue
+/// is not running (e.g. blocked by a deadlock), the block and all its captured variables
+/// will be retained, otherwise it will eventually be released.
+/// @attention: Be *very careful* not to create deadlocks.
 - (void)performGroupedBlockAndWait:(dispatch_block_t)block ZM_NON_NULL(1);
 
 /// Executes the fetch request or asserts in case of failure
