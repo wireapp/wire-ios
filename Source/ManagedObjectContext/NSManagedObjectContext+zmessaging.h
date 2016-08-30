@@ -84,6 +84,7 @@
 
 /// This is used for unit tests.
 + (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
++ (BOOL)useInMemoryStore;
 
 /// This is used for unit tests. It only has an effect when @c setUseInMemoryStore: was set to @c YES
 + (void)resetSharedPersistentStoreCoordinator;
