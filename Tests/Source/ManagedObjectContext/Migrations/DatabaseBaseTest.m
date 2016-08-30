@@ -81,19 +81,19 @@
 - (BOOL)moveDatabaseToSearchPathDirectory:(NSUInteger)directory
 {
     NSError *error;
-    NSURL *cachesStoreURL = [NSManagedObjectContext storeURLInDirectory:directory];
-    NSURL *testStoreURL = [NSManagedObjectContext storeURLInDirectory:NSDocumentDirectory];
+    NSURL *toStoreURL = [NSManagedObjectContext storeURLInDirectory:directory];
+    NSURL *fromStoreURL = [NSManagedObjectContext storeURLInDirectory:NSDocumentDirectory];
     
     for (NSString *extension in self.databaseFileExtensions) {
-        NSString *fromPath = [cachesStoreURL.path stringByAppendingString:extension];
-        NSString *toPath = [testStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [toStoreURL.path stringByAppendingString:extension];
+        NSString *fromPath = [fromStoreURL.path stringByAppendingString:extension];
         
-        if (! [self.fm createFileAtPath:fromPath contents:nil attributes:nil]) {
+        if (! [self.fm createFileAtPath:toPath contents:nil attributes:nil]) {
             XCTFail();
             return NO;
         }
-        if ([self.fm fileExistsAtPath:toPath isDirectory:nil]) {
-            [self.fm removeItemAtPath:toPath error:&error];
+        if ([self.fm fileExistsAtPath:fromPath isDirectory:nil]) {
+            [self.fm removeItemAtPath:fromPath error:&error];
             XCTAssertNil(error);
             
             if (nil != error) {
@@ -102,7 +102,7 @@
         }
     }
     
-    NSString *supportPath = [cachesStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    NSString *supportPath = [toStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
     XCTAssertTrue([self.fm createDirectoryAtPath:supportPath withIntermediateDirectories:NO attributes:nil error:&error]);
     XCTAssertNil(error);
     
