@@ -186,7 +186,7 @@
         if (previousSecurityLevel == ZMConversationSecurityLevelSecure) {
             if (nil != message) {
                 [self appendNewAddedClientsSystemMessageWithClients:ignoredClients beforeMessage:message];
-                if(message.deliveryState != ZMDeliveryStateDelivered) { // we were trying to send this message
+                if(message.deliveryState != ZMDeliveryStateSent && message.deliveryState != ZMDeliveryStateDelivered) { // we were trying to send this message
                     [self expireAllPendingMessagesStartingFrom:message]; // then we should display a security warning and block the message
                 }
             }
@@ -284,7 +284,7 @@
 
 - (void)expireAllPendingMessagesStartingFrom:(ZMMessage * __unused)message {
     [self.messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ZMMessage *msg, __unused NSUInteger idx, BOOL *stop) {
-        if (msg.deliveryState != ZMDeliveryStateDelivered) {
+        if (msg.deliveryState != ZMDeliveryStateDelivered && msg.deliveryState != ZMDeliveryStateSent) {
             [msg expire];
         }
         if(msg == message) {

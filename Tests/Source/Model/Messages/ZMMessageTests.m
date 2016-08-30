@@ -295,7 +295,7 @@ NSString * const ReactionsKey = @"reactions";
     }];
 }
 
-- (void)testThatItReturnsZMDeliveryStateDeliveredWhenItHasAnEventID
+- (void)testThatItReturnsZMDeliveryStateSentWhenItHasAnEventID
 {
     // given
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -304,10 +304,10 @@ NSString * const ReactionsKey = @"reactions";
     message.eventID = [ZMEventID eventIDWithMajor:10 minor:10];
     
     // then
-    XCTAssertEqual(message.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
 }
 
-- (void)testThatItReturnsZMDeliveryStateDeliveredWhenItHasAnEventIDAndTheExpiredFlagIsSet
+- (void)testThatItReturnsZMDeliveryStateSentWhenItHasAnEventIDAndTheExpiredFlagIsSet
 {
     // given
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -317,7 +317,7 @@ NSString * const ReactionsKey = @"reactions";
     [message expire];
     
     // then
-    XCTAssertEqual(message.deliveryState, ZMDeliveryStateDelivered);
+    XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
 }
 
 
