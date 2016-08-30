@@ -148,7 +148,7 @@
     return self;
 }
 
-- (void)removeMessage
+- (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatPreview encrypted:NO];
     [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatMedium encrypted:NO];
@@ -157,7 +157,7 @@
     self.originalSize = CGSizeZero;
     self.mediumRemoteIdentifier = nil;
 
-    [super removeMessage];
+    [super removeMessageClearingSender:clearingSender];
 }
 
 @end
