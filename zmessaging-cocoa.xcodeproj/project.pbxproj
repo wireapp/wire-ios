@@ -642,7 +642,6 @@
 		3E1858B31951D69B005FE78F /* MemoryLeaksObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemoryLeaksObserver.m; sourceTree = "<group>"; };
 		3E18605C191A4F3B000FE027 /* zmessaging-iOS.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "zmessaging-iOS.pch"; sourceTree = "<group>"; };
 		3E18605F191A4F6A000FE027 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		3E186067191A4F82000FE027 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3E186088191A56F6000FE027 /* zmessaging Test Host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "zmessaging Test Host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E1860B4191A5D99000FE027 /* Test-Host-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Test-Host-Info.plist"; sourceTree = "<group>"; };
 		3E1860B5191A5D99000FE027 /* Test-Host-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Test-Host-Prefix.pch"; sourceTree = "<group>"; };
@@ -1372,7 +1371,6 @@
 			isa = PBXGroup;
 			children = (
 				3E799CC9192134900020A438 /* Configurations */,
-				3E186066191A4F82000FE027 /* InfoPlist.strings */,
 				3E27131A1A8A68BF008EE50F /* Push.strings */,
 				3E27131C1A8A68BF008EE50F /* Push.stringsdict */,
 				549815961A43232400A7CE2E /* zmessaging-ios-Info.plist */,
@@ -3027,14 +3025,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		3E186066191A4F82000FE027 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3E186067191A4F82000FE027 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		3E27131A1A8A68BF008EE50F /* Push.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
