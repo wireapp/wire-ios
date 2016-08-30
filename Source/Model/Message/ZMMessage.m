@@ -38,7 +38,7 @@
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 
-static NSTimeInterval ZMDefaultMessageExpirationTime = 60;
+static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
 
 NSString * const ZMMessageEventIDDataKey = @"eventID_data";
 NSString * const ZMMessageIsEncryptedKey = @"isEncrypted";
