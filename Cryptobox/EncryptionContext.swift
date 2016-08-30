@@ -78,6 +78,9 @@ public class EncryptionContext : NSObject {
     /// Folder file descriptor
     private var fileDescriptor : CInt!
     
+    
+    private var performCount : UInt = 0
+    
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error
     public init(path: NSURL) {
@@ -106,7 +109,8 @@ public class EncryptionContext : NSObject {
 
 // MARK: - Start and stop using sessions
 extension EncryptionContext {
-        
+    
+    
     /// Access sessions and other data in this context. While the block is executed,
     /// no other process can use sessions from this context. If another process or thread is already
     /// using sessions from a context with the same path, this call will block until the other process
@@ -118,8 +122,12 @@ extension EncryptionContext {
         if self.currentSessionsDirectory == nil {
             self.currentSessionsDirectory = EncryptionSessionsDirectory(generatingContext: self)
         }
+        performCount += 1
         block(sessionsDirectory: self.currentSessionsDirectory!)
-        self.currentSessionsDirectory = nil
+        performCount -= 1
+        if 0 == performCount {
+            self.currentSessionsDirectory = nil
+        }
         self.releaseDirectoryLock()
     }
     
