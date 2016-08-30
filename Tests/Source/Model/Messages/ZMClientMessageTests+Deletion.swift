@@ -220,7 +220,7 @@ class ZMClientMessageTests_Deletion: BaseZMMessageTests {
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         
         // when
-        let sut = conversation.appendNonExpiringGenericMessage(deletedMessage, hidden: true)
+        let sut = conversation.appendGenericMessage(deletedMessage, expires: false, hidden: true)
         
         // then
         XCTAssertNil(sut.expirationDate)

@@ -23,8 +23,9 @@ import Foundation
 public enum ZMDeliveryState : UInt {
     case Invalid = 0
     case Pending = 1
-    case Delivered = 2
-    case FailedToSend = 3
+    case Sent = 2
+    case Delivered = 3
+    case FailedToSend = 4
 }
 
 @objc
@@ -69,6 +70,8 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: ZMLocationMessageData? { get }
+    
+    var usersReaction : Dictionary<String, [ZMUser]> { get }
     
     /// Request the download of the file if not already present.
     /// The download will be executed asynchronously. The caller can be notified by observing the message window.
@@ -137,24 +140,33 @@ extension ZMMessage : ZMConversationMessage {
     }
     
     public var deliveryState : ZMDeliveryState {
-        if self.eventID != nil {
+        if self.confirmations.count > 0 {
             return .Delivered
         }
-        else if self.isExpired {
+        if self.eventID != nil {
+            return .Sent
+        }
+        if self.isExpired {
             return .FailedToSend
         }
-        else  {
-            return .Pending
-        }
-
+        return .Pending
     }
     
     public func requestFileDownload() {}
     
     public func requestImageDownload() {}
     
+    public var usersReaction : Dictionary<String, [ZMUser]> {
+        var result = Dictionary<String, [ZMUser]>()
+        for reaction in self.reactions {
+            result[reaction.unicodeValue!] = Array<ZMUser>(reaction.users)
+        }
+        return result
+    }
+    
+    
     public var canBeDeleted : Bool {
-        return deliveryState == .Delivered || deliveryState == .FailedToSend
+        return deliveryState == .Delivered || deliveryState == .Sent || deliveryState == .FailedToSend
     }
     
     public var hasBeenDeleted: Bool {

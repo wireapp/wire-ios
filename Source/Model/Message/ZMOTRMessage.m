@@ -76,22 +76,23 @@ NSString * const DeliveredKey = @"delivered";
         if (self.isExpired) {
             return ZMDeliveryStateFailedToSend;
         }
-        else if (self.delivered == NO) {
+        if (self.delivered == NO) {
             return ZMDeliveryStatePending;
         }
-        else {
-            return ZMDeliveryStateDelivered;
+        if (self.confirmations.count == 0){
+            return ZMDeliveryStateSent;
         }
+        return ZMDeliveryStateDelivered;
     }
     else {
         return [super deliveryState];
     }
 }
 
-- (void)markAsDelivered
+- (void)markAsSent
 {
     self.delivered = YES;
-    [super markAsDelivered];
+    [super markAsSent];
 }
 
 - (void)expire
@@ -156,6 +157,15 @@ NSString * const DeliveredKey = @"delivered";
         [ZMMessage removeMessageWithRemotelyDeletedMessage:message.deleted inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
         return nil;
     }
+    if (message.hasReaction) {
+        [ZMMessage addReaction:message.reaction senderID:updateEvent.senderUUID conversation:conversation inManagedObjectContext:moc];
+        return nil;
+    }
+    if (message.hasConfirmation) {
+        ZMUser *sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:YES inContext:moc];
+        [ZMMessageConfirmation createOrUpdateMessageConfirmation:message conversation:conversation sender:sender];
+        return nil;
+    }
     ZMMessage *clearedMessage;
     if (message.hasEdited) {
         clearedMessage = [ZMMessage clearedMessageForRemotelyEditedMessage:message inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
@@ -185,9 +195,10 @@ NSString * const DeliveredKey = @"delivered";
                                                       forConversation:conversation
                                                inManagedObjectContext:moc
                                                        prefetchResult:prefetchResult];
-    
+    BOOL isNewMessage = NO;
     if (clientMessage == nil) {
         clientMessage = [messageClass insertNewObjectInManagedObjectContext:moc];
+        isNewMessage = YES;
     } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
         return nil;
     }
@@ -203,6 +214,10 @@ NSString * const DeliveredKey = @"delivered";
     } else if ([clientMessage isKindOfClass:[ZMClientMessage class]]) {
         [clientMessage updateWithTimestamp:clearedMessage.serverTimestamp senderUUID:clearedMessage.sender.remoteIdentifier eventID:nil forConversation:conversation isUpdatingExistingMessage:NO];
         [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
+    }
+    
+    if (isNewMessage && !clientMessage.sender.isSelfUser && conversation.conversationType == ZMConversationTypeOneOnOne) {
+        [clientMessage confirmReception];
     }
     
     return clientMessage;

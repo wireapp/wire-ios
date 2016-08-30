@@ -62,7 +62,7 @@ extension ZMMessage {
         // We insert a message of type `ZMMessageDelete` containing the nonce of the message that should be deleted
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         
-        conversation.appendNonExpiringGenericMessage(deletedMessage, hidden: true)
+        conversation.appendGenericMessage(deletedMessage, expires:false, hidden: true)
         removeMessage()
     }
     
@@ -100,7 +100,7 @@ extension ZMClientMessage {
     override var isEditableMessage : Bool {
         if let genericMsg = genericMessage {
             return  genericMsg.hasEdited() ||
-                   (genericMsg.hasText() && deliveryState == .Delivered)
+                   (genericMsg.hasText() && (deliveryState == .Sent || deliveryState == .Delivered))
         }
         return false
     }

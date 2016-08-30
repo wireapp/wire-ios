@@ -88,6 +88,7 @@
 
 /// This is used for unit tests.
 + (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
++ (BOOL)useInMemoryStore;
 
 + (void)setDatabaseDirectoryURL:(NSURL *)directory;
 
