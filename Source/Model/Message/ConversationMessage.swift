@@ -23,8 +23,9 @@ import Foundation
 public enum ZMDeliveryState : UInt {
     case Invalid = 0
     case Pending = 1
-    case Delivered = 2
-    case FailedToSend = 3
+    case Sent = 2
+    case Delivered = 3
+    case FailedToSend = 4
 }
 
 @objc
@@ -139,16 +140,16 @@ extension ZMMessage : ZMConversationMessage {
     }
     
     public var deliveryState : ZMDeliveryState {
-        if self.eventID != nil {
+        if self.confirmations.count > 0 {
             return .Delivered
         }
-        else if self.isExpired {
+        if self.eventID != nil {
+            return .Sent
+        }
+        if self.isExpired {
             return .FailedToSend
         }
-        else  {
-            return .Pending
-        }
-
+        return .Pending
     }
     
     public func requestFileDownload() {}
@@ -165,7 +166,7 @@ extension ZMMessage : ZMConversationMessage {
     
     
     public var canBeDeleted : Bool {
-        return deliveryState == .Delivered || deliveryState == .FailedToSend
+        return deliveryState == .Delivered || deliveryState == .Sent || deliveryState == .FailedToSend
     }
     
     public var hasBeenDeleted: Bool {

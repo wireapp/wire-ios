@@ -41,7 +41,8 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
     
     override func setUp() {
         super.setUp()
-        
+        setUpCaches()
+
         syncSelfUser = ZMUser.selfUserInContext(self.syncMOC);
         
         selfClient1 = createSelfClient()
@@ -79,6 +80,7 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
     
     override func tearDown() {
         syncMOC.setPersistentStoreMetadata(nil, forKey: "PersistedClientId")
+        wipeCaches()
         super.tearDown()
     }
     

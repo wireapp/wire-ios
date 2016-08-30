@@ -43,7 +43,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.sender = sender;
-    [message markAsDelivered];
+    [message markAsSent];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
     NSUUID *originalNonce = message.nonce;
     
@@ -102,7 +102,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
-    [message markAsDelivered];
+    [message markAsSent];
 
     // Add some more messages
     [conversation appendMessageWithText:@"Foo"];
@@ -132,7 +132,7 @@
     ZMClientMessage *message = (ZMClientMessage *)[conversation appendMessageWithText:oldText];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
     message.linkPreviewState = ZMLinkPreviewStateDone;
-    [message markAsDelivered];
+    [message markAsSent];
 
     XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewStateDone);
     
@@ -178,7 +178,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithImageData:self.verySmallJPEGData];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
-    [message markAsDelivered];
+    [message markAsSent];
 
     XCTAssertEqual(message.visibleInConversation, conversation);
     XCTAssertEqual(conversation.messages.count, 1u);
@@ -204,7 +204,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
-    [message markAsDelivered];
+    [message markAsSent];
 
     conversation.lastModifiedDate = originalDate;
     conversation.lastServerTimeStamp = originalDate;
@@ -255,7 +255,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
-    [message markAsDelivered];
+    [message markAsSent];
 
     conversation.lastModifiedDate = originalDate;
     conversation.lastServerTimeStamp = originalDate;
@@ -299,7 +299,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
-    [message markAsDelivered];
+    [message markAsSent];
 
     conversation.lastModifiedDate = originalDate;
     conversation.lastServerTimeStamp = originalDate;
