@@ -26,7 +26,7 @@
 #import "Message.h"
 #import "UIColor+WR_ColorScheme.h"
 #import "UIView+Borders.h"
-#import "MessageTimestampView.h"
+#import "Wire-Swift.h"
 #import "UserImageView.h"
 #import "AccentColorChangeHandler.h"
 #import "Analytics+iOS.h"
@@ -47,42 +47,48 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 @interface ConversationCell ()
 
-@property (nonatomic, readwrite, strong) id<ZMConversationMessage>message;
-@property (nonatomic, readwrite, strong) UIView *messageContentView;
+@property (nonatomic, readwrite) id<ZMConversationMessage>message;
+@property (nonatomic, readwrite) UIView *messageContentView;
 
-@property (nonatomic, readwrite, strong) UILabel *authorLabel;
-@property (nonatomic, readwrite, strong) NSParagraphStyle *authorParagraphStyle;
+@property (nonatomic, readwrite) UILabel *authorLabel;
+@property (nonatomic, readwrite) NSParagraphStyle *authorParagraphStyle;
 
-@property (nonatomic, readwrite, strong) UILabel *burstTimestampLabel;
-@property (nonatomic, readwrite, strong) NSParagraphStyle *burstTimestampParagraphStyle;
-@property (nonatomic, strong) NSTimer *burstTimestampTimer;
+@property (nonatomic, readwrite) UILabel *burstTimestampLabel;
+@property (nonatomic, readwrite) NSParagraphStyle *burstTimestampParagraphStyle;
+@property (nonatomic) NSTimer *burstTimestampTimer;
 
-@property (nonatomic, readwrite, strong) UIView *unreadDotView;
-@property (nonatomic, readwrite, strong) UserImageView *authorImageView;
-@property (nonatomic, readwrite, strong) UIView *authorImageContainer;
+@property (nonatomic, readwrite) UIView *unreadDotView;
+@property (nonatomic, readwrite) UserImageView *authorImageView;
+@property (nonatomic, readwrite) UIView *authorImageContainer;
 
-@property (nonatomic, strong) AccentColorChangeHandler *accentColorChangeHandler;
+@property (nonatomic) MessageToolboxView *messageToolboxView;
 
-@property (nonatomic, readwrite, strong) ConversationCellLayoutProperties *layoutProperties;
+@property (nonatomic) AccentColorChangeHandler *accentColorChangeHandler;
+
+@property (nonatomic, readwrite) ConversationCellLayoutProperties *layoutProperties;
 
 #pragma mark - Constraints
 
-@property (nonatomic, strong) NSLayoutConstraint *authorHeightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *authorLeftMarginConstraint;
+@property (nonatomic) NSLayoutConstraint *authorHeightConstraint;
+@property (nonatomic) NSLayoutConstraint *authorLeftMarginConstraint;
 
-@property (nonatomic, strong) NSLayoutConstraint *authorImageTopMarginConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *authorImageHeightConstraint;
+@property (nonatomic) NSLayoutConstraint *authorImageTopMarginConstraint;
+@property (nonatomic) NSLayoutConstraint *authorImageHeightConstraint;
 
-@property (nonatomic, strong) NSLayoutConstraint *burstTimestampHeightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *topMarginConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *messageToolsHeightConstraint;
+@property (nonatomic) NSLayoutConstraint *burstTimestampHeightConstraint;
+@property (nonatomic) NSLayoutConstraint *topMarginConstraint;
+@property (nonatomic) NSLayoutConstraint *messageToolsHeightConstraint;
 
-@property (nonatomic, strong) NSLayoutConstraint *unreadDotHeightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *messageContentBottomMarginConstraint;
+@property (nonatomic) NSLayoutConstraint *unreadDotHeightConstraint;
+@property (nonatomic) NSLayoutConstraint *messageContentBottomMarginConstraint;
+
+@property (nonatomic) NSLayoutConstraint *toolboxHeightConstraint;
 
 @end
 
+@interface ConversationCell (MessageToolboxViewDelegate) <MessageToolboxViewDelegate>
 
+@end
 
 @implementation ConversationCell
 
@@ -117,6 +123,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
         // NOTE Layout margins are not being preserved beyond the UITableViewCell.contentView so we must re-apply them
         // here until we re-factor the the ConversationCell
         self.messageContentView.layoutMargins = layoutMargins;
+        self.messageToolboxView.layoutMargins = layoutMargins;
     }
     
     return self;
@@ -176,6 +183,11 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.unreadDotView.backgroundColor = [UIColor accentColor];
     self.unreadDotView.layer.cornerRadius = 4;
     [self.contentView addSubview:self.unreadDotView];
+    
+    self.messageToolboxView = [[MessageToolboxView alloc] init];
+    self.messageToolboxView.delegate = self;
+    self.messageToolboxView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.contentView addSubview:self.messageToolboxView];
 }
 
 - (void)prepareForReuse
@@ -236,24 +248,31 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     [self.messageContentView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.authorImageView];
     [self.messageContentView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
     [self.messageContentView autoPinEdgeToSuperviewEdge:ALEdgeRight];
-    self.messageContentBottomMarginConstraint = [self.messageContentView autoPinEdgeToSuperviewEdge:ALEdgeBottom];
     
     [NSLayoutConstraint autoSetPriority:UILayoutPriorityDefaultHigh + 1 forConstraints:^{
         [self.unreadDotView autoSetDimension:ALDimensionHeight toSize:8];
         [self.authorImageView autoSetDimension:ALDimensionHeight toSize:authorImageDiameter];
     }];
+    
+    self.toolboxHeightConstraint = [self.messageToolboxView autoSetDimension:ALDimensionHeight toSize:0];
+    [self.messageToolboxView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.messageContentView];
+    [self.messageToolboxView autoPinEdgeToSuperviewEdge:ALEdgeRight];
+    [self.messageToolboxView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
+    self.messageContentBottomMarginConstraint = [self.messageToolboxView autoPinEdgeToSuperviewEdge:ALEdgeBottom];
 }
 
 - (void)updateConstraintConstants
 {
-    self.unreadDotHeightConstraint.active = ! self.layoutProperties.showUnreadMarker;
-    self.authorImageHeightConstraint.active = ! self.layoutProperties.showSender;
-    self.authorImageTopMarginConstraint.constant = self.layoutProperties.showBurstTimestamp ? self.burstTimestampSpacing : 0;
-    self.topMarginConstraint.constant = self.layoutProperties.topPadding;
-    self.authorHeightConstraint.active = ! self.layoutProperties.showSender;
-    self.authorLabel.hidden = ! self.layoutProperties.showSender;
-    self.authorImageContainer.hidden = ! self.layoutProperties.showSender;
-    self.burstTimestampHeightConstraint.active = ! self.layoutProperties.showBurstTimestamp;
+    self.unreadDotHeightConstraint.active        = ! self.layoutProperties.showUnreadMarker;
+    self.authorImageHeightConstraint.active      = ! self.layoutProperties.showSender;
+    self.authorImageTopMarginConstraint.constant =   self.layoutProperties.showBurstTimestamp ? self.burstTimestampSpacing : 0;
+    self.topMarginConstraint.constant            =   self.layoutProperties.topPadding;
+    self.authorHeightConstraint.active           = ! self.layoutProperties.showSender;
+    self.authorLabel.hidden                      = ! self.layoutProperties.showSender;
+    self.authorImageContainer.hidden             = ! self.layoutProperties.showSender;
+    self.burstTimestampHeightConstraint.active   = ! self.layoutProperties.showBurstTimestamp;
+    
+    [self updateToolboxVisibilityAnimated:NO];
 }
 
 - (void)configureForMessage:(id<ZMConversationMessage>)message layoutProperties:(ConversationCellLayoutProperties *)layoutProperties;
@@ -270,7 +289,28 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
         [self updateBurstTimestamp];
     }
     
+    [self.messageToolboxView configureForMessage:message];
     [self updateConstraintConstants];
+}
+
+- (void)updateToolboxVisibilityAnimated:(BOOL)animated
+{
+    BOOL shouldBeVisible = self.selected || self.layoutProperties.showToolbox;
+    
+    if (! [Message shouldShowTimestamp:self.message]) {
+        shouldBeVisible = NO;
+    }
+    
+    self.toolboxHeightConstraint.active = ! shouldBeVisible;
+    
+    if (animated) {
+        [UIView animateWithDuration:0.35 animations:^{
+            self.messageToolboxView.alpha = shouldBeVisible ? 1 : 0;
+        }];
+    }
+    else {
+        self.messageToolboxView.alpha = shouldBeVisible ? 1 : 0;
+    }
 }
 
 - (void)updateSenderAndSenderImage:(id<ZMConversationMessage>)message
@@ -381,7 +421,9 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     UIMenuController *menuController = [UIMenuController sharedMenuController];
     UIMenuItem *deleteItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.message.delete", @"") action:@selector(deleteMessage:)];
     NSArray <UIMenuItem *> *items = menuConfigurationProperties.additionalItems ?: @[];
-    menuController.menuItems = [items arrayByAddingObject:deleteItem];
+    if (self.message.deliveryState == ZMDeliveryStateDelivered || self.message.deliveryState == ZMDeliveryStateSent) {
+        menuController.menuItems = [items arrayByAddingObject:deleteItem];
+    }
     [menuController setTargetRect:menuConfigurationProperties.targetRect inView:menuConfigurationProperties.targetView];
     [menuController setMenuVisible:YES animated:YES];
 
@@ -424,6 +466,13 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     }
 }
 
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
+    [super setSelected:selected animated:animated];
+    
+    [self updateToolboxVisibilityAnimated:YES];
+}
+
 #pragma mark - UserImageView delegate
 
 - (void)userImageViewTouchUpInside:(UserImageView *)userImageView
@@ -441,11 +490,30 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 - (BOOL)updateForMessage:(MessageChangeInfo *)change
 {
+    // If a text message changes, the only thing that can change at the moment is its delivery state
+    if (change.deliveryStateChanged) {
+        [self.messageToolboxView configureForMessage:change.message];
+    }
+    
     if (change.userChangeInfo.nameChanged || change.senderChanged) {
         [self updateSenderAndSenderImage:change.message];
     }
     
     return NO;
+}
+
+@end
+
+@implementation ConversationCell (MessageToolboxViewDelegate)
+
+- (void)messageToolboxViewDidSelectReactions:(MessageToolboxView *)messageToolboxView
+{
+    // TODO LIKE:
+}
+
+- (void)messageToolboxViewDidSelectResend:(MessageToolboxView *)messageToolboxView
+{
+    [self.delegate conversationCell:self resendMessageTapped:self.message];
 }
 
 @end

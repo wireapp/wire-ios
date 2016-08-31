@@ -364,7 +364,7 @@ NSString *const ZMUserSessionDidBecomeAvailableNotification = @"ZMUserSessionDid
     (void)[Settings sharedSettings];
     
     NSBundle *bundle = NSBundle.mainBundle;
-    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *) kCFBundleVersionKey];
+    NSString *appVersion = [[bundle infoDictionary] objectForKey:(NSString *) kCFBundleVersionKey];
     NSString *groupIdentifier = [NSString stringWithFormat:@"group.%@", bundle.bundleIdentifier];
     
     _zetaUserSession = [[ZMUserSession alloc] initWithMediaManager:(id)AVSProvider.shared.mediaManager
