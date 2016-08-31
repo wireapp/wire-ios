@@ -11,7 +11,7 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # Cryptobox for iOS
 
-This framework is used in [Wire iOS SyncEngine](http://github.com/wireapp/zmessaging-cocoa).
+This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/wire-ios-sync-engine) for an overview of the architecture.
 
 This project provides for cross-compilation of [cryptobox](https://github.com/shared-secret/cryptobox) for iOS, currently only in the form of static libraries.
 
