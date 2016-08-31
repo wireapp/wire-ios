@@ -125,7 +125,7 @@
     return [@"Trollolol" dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-- (BOOL)createdUnredableLocalStore
+- (BOOL)createdUnreadableLocalStore
 {
     NSData *data = self.invalidData;
     
