@@ -35,8 +35,13 @@
 /// If shouldUseRealKeychain is set to YES the real keychain is accessed. Defaults to NO
 @property (nonatomic) BOOL shouldUseRealKeychain;
 
+/// User interface context. The UI makes changes to objects on this context.
 @property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
+
+/// Synchronization context. Synchronized changes are made on this context.
 @property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
+
+/// Search context. Results from searches are retrieved on this context.
 @property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
 
 /// Prepare the fixture for running a test.
