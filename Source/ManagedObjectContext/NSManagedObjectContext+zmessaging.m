@@ -79,7 +79,7 @@ static char* const ZMLogTag ZM_UNUSED = "NSManagedObjectContext";
 
 static BOOL storeIsReady = NO;
 
-+ (BOOL)needsToPrepareLocalStoreInDirectroy:(NSURL *)databaseDirectory;
++ (BOOL)needsToPrepareLocalStoreInDirectory:(NSURL *)databaseDirectory;
 {
     
     [self setDatabaseDirectoryURL:databaseDirectory];
@@ -160,13 +160,26 @@ static BOOL storeIsReady = NO;
     return storeIsReady;
 }
 
-+ (instancetype)createUserInterfaceContext;
++ (NSPersistentStoreCoordinator *)requirePersistentStoreCoordinatorInDirectory:(NSURL *)directory
+{
+    NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+    
+    if (psc == nil) {
+        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:NO inDirectory:directory completionHandler:nil];
+        psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+        Require(psc != nil);
+    }
+    
+    return psc;
+}
+
++ (instancetype)createUserInterfaceContextWithStoreDirectory:(NSURL *)storeDirectory;
 {
     __block NSManagedObjectContext *result = nil;
     dispatch_sync(singletonContextIsolation(), ^{
         result = SharedUserInterfaceContext;
         if (result == nil) {
-            NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+            NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
             RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
             
             result = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
@@ -188,9 +201,9 @@ static BOOL storeIsReady = NO;
     });
 }
 
-+ (instancetype)createSyncContext;
++ (instancetype)createSyncContextWithStoreDirectory:(NSURL *)storeDirectory;
 {
-    NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
 
     NSManagedObjectContext *moc = [[self alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
@@ -201,9 +214,10 @@ static BOOL storeIsReady = NO;
     return moc;
 }
 
-+ (instancetype)createSearchContext;
++ (instancetype)createSearchContextWithStoreDirectory:(NSURL *)storeDirectory;
 {
-    NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
+    [self setDatabaseDirectoryURL:storeDirectory];
+    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
     
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
@@ -302,7 +316,12 @@ static BOOL storeIsReady = NO;
     UsesInMemoryStore = useInMemoryStore;
 }
 
-+ (void)setDatabaseDirectoryURL:(NSURL *)directory;
++ (void)resetDatabaseDirectory;
+{
+    DatabaseDirectoryURL = nil;
+}
+
++ (void)setDatabaseDirectoryURL:(NSURL *)directory
 {
     DatabaseDirectoryURL = directory;
 }

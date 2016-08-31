@@ -44,7 +44,7 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self moveDatabaseToCachesDirectory]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
     for (NSString *extension in self.databaseFileExtensions) {
@@ -81,7 +81,7 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self moveDatabaseToApplicationSupportDirectory]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
     XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
@@ -107,7 +107,7 @@
     
     XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
     XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
 
     // TODO: The `.store_SUPPORT` file does not get moved to the new location somehow,
     // either some validation happening (it's empty in the test) or we need to fallback to manually copying it
@@ -121,7 +121,7 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnredableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
     NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
@@ -143,7 +143,7 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnredableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
     NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
@@ -195,7 +195,7 @@
 
     // There is no store in the shared container, thus reading the metadata will fail
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
 }
 
@@ -215,7 +215,7 @@
 
     // There is no store in the shared container, thus reading the metadata will fail
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
 }
 
