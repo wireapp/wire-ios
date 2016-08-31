@@ -345,12 +345,15 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
     return [ZMConversation conversationWithRemoteID:conversationUUID createIfNeeded:YES inContext:moc];
 }
 
-- (void)removeMessage
+- (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     self.hiddenInConversation = self.conversation;
     self.visibleInConversation = nil;
-    self.sender = nil;
-    self.senderClientID = nil;
+
+    if (clearingSender) {
+        self.sender = nil;
+        self.senderClientID = nil;
+    }
 }
 
 + (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -368,7 +371,7 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
     
     // To avoid reinserting when receiving an edit we delete the message locally
     if (message != nil) {
-        [message removeMessage];
+        [message removeMessageClearingSender:YES];
         [moc deleteObject:message];
     }
 }
@@ -401,7 +404,7 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
         [conversation appendDeletedForEveryoneSystemMessageWithTimestamp:message.serverTimestamp sender:message.sender];
     }
 
-    [message removeMessage];
+    [message removeMessageClearingSender:YES];
 }
 
 + (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -417,7 +420,8 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
         return nil;
     }
 
-    [message removeMessage];
+    // We do not want to clear the sender in case of an edit, as the message will still be visible
+    [message removeMessageClearingSender:NO];
     return message;
 }
 
@@ -772,10 +776,10 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
     return nil;
 }
 
-- (void)removeMessage
+- (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     self.text = nil;
-    [super removeMessage];
+    [super removeMessageClearingSender:clearingSender];
 }
 
 @end

@@ -38,8 +38,10 @@ public enum ObjectObserverType: Int {
     case VoiceChannel
     case ConversationMessageWindow
     case ConversationList
+    case Reaction
 
     static func observerTypeForObject(object: NSObject) -> ObjectObserverType {
+        
         if object is ZMConnection {
             return .Connection
         } else if object is ZMUser {
@@ -50,6 +52,8 @@ public enum ObjectObserverType: Int {
             return .Conversation
         } else if object is ZMSearchUser {
             return .SearchUser
+        } else if object is ZMCDataModel.Reaction {
+            return .Reaction
         } else if object is UserClient {
             return .Client
         }
@@ -58,7 +62,7 @@ public enum ObjectObserverType: Int {
     
     var shouldForwardDuringSync : Bool {
         switch self {
-        case .Invalid, .Client, .UserList, .User, .SearchUser, .Message, .Conversation, .VoiceChannel, .ConversationMessageWindow, .DisplayName:
+        case .Invalid, .Client, .UserList, .User, .SearchUser, .Message, .Conversation, .VoiceChannel, .ConversationMessageWindow, .DisplayName, .Reaction:
             return false
         case .ConversationList, .Connection:
             return true
@@ -102,6 +106,8 @@ public enum ObjectObserverType: Int {
             return "UserList"
         case .DisplayName:
             return "DisplayName"
+        case .Reaction:
+            return "Reaction"
         }
     }
 }
