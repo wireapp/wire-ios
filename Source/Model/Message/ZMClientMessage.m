@@ -207,12 +207,12 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     [self addData:message.data];
 }
 
-- (void)removeMessage
+- (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     _genericMessage = nil;
     self.dataSet = [NSOrderedSet orderedSet];
     self.genericMessage = nil;
-    [super removeMessage];
+    [super removeMessageClearingSender:clearingSender];
 }
 
 - (void)expire
@@ -293,7 +293,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         }
         NSUUID *originalID = [NSUUID uuidWithTransportString:self.genericMessage.edited.replacingMessageId];
         ZMMessage *original = [ZMMessage fetchMessageWithNonce:originalID forConversation:self.conversation inManagedObjectContext:self.managedObjectContext];
-        [original removeMessage];
+        [original removeMessageClearingSender:NO];
     } else {
         [super updateWithPostPayload:payload updatedKeys:nil];
     }
