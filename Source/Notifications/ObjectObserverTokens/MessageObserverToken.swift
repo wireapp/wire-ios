@@ -157,7 +157,6 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
                 if let strongSelf = self {
                     strongSelf.createTokensForReactions(Array<Reaction>(strongSelf.observedMessage.reactions))
                 }
-                // add a new the new reaction observer
             }
             self?.observer?.messageDidChange(changeInfo)
         }
