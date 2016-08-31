@@ -46,7 +46,7 @@ extension ZMMessage {
         ZMConversation.appendHideMessageToSelfConversation(self)
 
         // To avoid reinserting when receiving an edit we delete the message locally
-        removeMessage()
+        removeMessageClearingSender(true)
         managedObjectContext?.deleteObject(self)
     }
     
@@ -63,7 +63,7 @@ extension ZMMessage {
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         
         conversation.appendGenericMessage(deletedMessage, expires:false, hidden: true)
-        removeMessage()
+        removeMessageClearingSender(true)
     }
     
     public static func edit(message: ZMConversationMessage, newText: String) -> ZMMessage? {
@@ -84,7 +84,7 @@ extension ZMMessage {
         let oldIndex = conversation.messages.indexOfObject(self)
         let newIndex = conversation.messages.indexOfObject(newMessage)
         conversation.mutableMessages.moveObjectsAtIndexes(NSIndexSet(index:newIndex), toIndex: oldIndex)
-        
+
         hiddenInConversation = conversation
         visibleInConversation = nil
         newMessage.linkPreviewState = .WaitingToBeProcessed

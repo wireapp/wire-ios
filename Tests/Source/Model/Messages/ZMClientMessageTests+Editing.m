@@ -240,8 +240,7 @@
     XCTAssertNil(clientMessage.genericMessage);
     XCTAssertEqual(clientMessage.dataSet.count, 0lu);
     XCTAssertNil(message.textMessageData);
-    XCTAssertNil(message.sender);
-    XCTAssertNil(message.senderClientID);
+    XCTAssertNotNil(message.sender);
 }
 
 - (void)testThatItDoesNotOverwritesEditedTextWhenMessageExpiresButReplacesNonce
@@ -410,8 +409,7 @@
         XCTAssertNil(clientMessage.genericMessage);
         XCTAssertEqual(clientMessage.dataSet.count, 0lu);
         XCTAssertNil(message.textMessageData);
-        XCTAssertNil(message.sender);
-        XCTAssertNil(message.senderClientID);
+        XCTAssertNotNil(message.sender);
     } else {
         XCTAssertNotNil(message.textMessageData.messageText);
         XCTAssertEqualObjects(message.nonce, oldNonce);
@@ -463,8 +461,7 @@
         XCTAssertNil(clientMessage.genericMessage);
         XCTAssertEqual(clientMessage.dataSet.count, 0lu);
         XCTAssertNil(message.textMessageData);
-        XCTAssertNil(message.sender);
-        XCTAssertNil(message.senderClientID);
+        XCTAssertNotNil(message.sender);
     } else {
         XCTAssertNil(newMessage);
     }
