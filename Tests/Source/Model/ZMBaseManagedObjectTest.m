@@ -26,7 +26,7 @@
 #import "NSManagedObjectContext+tests.h"
 #import "MockModelObjectContextFactory.h"
 #import "ZMAssetClientMessage.h"
-#import "ZMManagedObjectContextTestFixture.h"
+#import "ZMTestSession.h"
 
 #import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
@@ -44,7 +44,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 @interface ZMBaseManagedObjectTest ()
 
-@property (nonatomic) ZMManagedObjectContextTestFixture *mocFixture;
+@property (nonatomic) ZMTestSession *testSession;
 @property (nonatomic) NSTimeInterval originalConversationLastReadEventIDTimerValue; // this will speed up the tests A LOT
 
 @end
@@ -64,19 +64,19 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;
 {
-    [self.mocFixture performPretendingUiMocIsSyncMoc:block];
+    [self.testSession performPretendingUiMocIsSyncMoc:block];
 }
 
 - (void)setUp;
 {
     [super setUp];
     
-    self.mocFixture = [[ZMManagedObjectContextTestFixture alloc] initWithDispatchGroup:self.dispatchGroup];
-    self.mocFixture.shouldUseInMemoryStore = self.shouldUseInMemoryStore;
-    self.mocFixture.shouldUseRealKeychain = self.shouldUseRealKeychain;
+    self.testSession = [[ZMTestSession alloc] initWithDispatchGroup:self.dispatchGroup];
+    self.testSession.shouldUseInMemoryStore = self.shouldUseInMemoryStore;
+    self.testSession.shouldUseRealKeychain = self.shouldUseRealKeychain;
     
     [self performIgnoringZMLogError:^{
-        [self.mocFixture prepareForTestNamed:self.name];
+        [self.testSession prepareForTestNamed:self.name];
     }];
     
     NSString *testName = NSStringFromSelector(self.invocation.selector);
@@ -91,35 +91,36 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)tearDown;
 {
-    [self.mocFixture tearDown];
-    [super tearDown];
-    
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
+    
+    [self.testSession tearDown];
+    
+    [super tearDown];
 }
 
 - (NSManagedObjectContext *)uiMOC
 {
-    return self.mocFixture.uiMOC;
+    return self.testSession.uiMOC;
 }
 
 - (NSManagedObjectContext *)syncMOC
 {
-    return self.mocFixture.syncMOC;
+    return self.testSession.syncMOC;
 }
 
 - (NSManagedObjectContext *)searchMOC
 {
-    return self.mocFixture.searchMOC;
+    return self.testSession.searchMOC;
 }
 
 - (void)cleanUpAndVerify {
-    [self.mocFixture waitAndDeleteAllManagedObjectContexts];
+    [self.testSession waitAndDeleteAllManagedObjectContexts];
     [self verifyMocksNow];
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore
 {
-    [self.mocFixture resetUIandSyncContextsAndResetPersistentStore:resetPersistentStore];
+    [self.testSession resetUIandSyncContextsAndResetPersistentStore:resetPersistentStore];
 }
 
 static int32_t eventIdCounter;
@@ -177,12 +178,12 @@ static int32_t eventIdCounter;
 /// Sets up the asset caches on the managed object contexts
 - (void)setUpCaches
 {
-    [self.mocFixture setUpCaches];
+    [self.testSession setUpCaches];
 }
 
 - (void)wipeCaches
 {
-    [self.mocFixture wipeCaches];
+    [self.testSession wipeCaches];
 }
 
 @end

@@ -24,8 +24,8 @@
 @class ZMSDispatchGroup;
 
 
-/// This class provides a fixture for running tests against our data model.
-@interface ZMManagedObjectContextTestFixture : NSObject
+/// This class provides a contexts & caches for running tests against our data model.
+@interface ZMTestSession : NSObject
 
 - (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup;
 
@@ -57,7 +57,7 @@
 @end
 
 
-@interface ZMManagedObjectContextTestFixture (FilesInCache)
+@interface ZMTestSession (FilesInCache)
 
 /// Sets up the asset caches on the managed object contexts
 - (void)setUpCaches;

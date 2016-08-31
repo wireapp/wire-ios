@@ -85,5 +85,5 @@
 #import <ZMCDataModel/NSFetchRequest+ZMRelationshipKeyPaths.h>
 
 #import <ZMCDataModel/ZMAddressBookContact.h>
-#import <ZMCDataModel/ZMManagedObjectContextTestFixture.h>
+#import <ZMCDataModel/ZMTestSession.h>
 

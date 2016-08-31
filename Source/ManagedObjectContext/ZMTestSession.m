@@ -17,7 +17,7 @@
 // 
 
 
-#import "ZMManagedObjectContextTestFixture.h"
+#import "ZMTestSession.h"
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 #import "NSManagedObjectContext+zmessaging.h"
@@ -27,7 +27,7 @@
 NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 
-@interface ZMManagedObjectContextTestFixture ()
+@interface ZMTestSession ()
 
 @property (nonatomic) NSManagedObjectContext *uiMOC;
 @property (nonatomic) NSManagedObjectContext *syncMOC;
@@ -43,7 +43,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 
 
-@implementation ZMManagedObjectContextTestFixture
+@implementation ZMTestSession
 
 - (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup
 {
@@ -189,7 +189,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 
 
-@implementation ZMManagedObjectContextTestFixture (FilesInCache)
+@implementation ZMTestSession (FilesInCache)
 
 /// Sets up the asset caches on the managed object contexts
 - (void)setUpCaches
