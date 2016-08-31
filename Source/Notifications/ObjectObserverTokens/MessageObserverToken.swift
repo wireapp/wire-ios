@@ -19,6 +19,8 @@
 
 import Foundation
 
+// MARK: Message observing 
+
 private enum MessageKey: String {
     case DeliveryState = "deliveryState"
     case MediumData = "mediumData"
@@ -122,59 +124,6 @@ extension ZMMessage : ObjectInSnapshot {
 }
 
 
-extension Reaction : ObjectInSnapshot {
-    
-    public var observableKeys : [String] {
-        return ["users"]
-    }
-}
-
-
-public final class ReactionChangeInfo : ObjectChangeInfo {
- 
-    var usersChanged : Bool {
-        return changedKeysAndOldValues.keys.contains("users")
-    }
-}
-
-@objc protocol ReactionObserver {
-    func reactionDidChange(reactionInfo: ReactionChangeInfo)
-}
-
-
-final class ReactionObserverToken : ObjectObserverTokenContainer {
-    typealias ReactionTokenType = ObjectObserverToken<ReactionChangeInfo, ReactionObserverToken>
-    
-    private let observedReaction : Reaction
-    private weak var observer : ReactionObserver?
-    
-    init (observer: ReactionObserver, observedObject: Reaction) {
-        
-        self.observer = observer
-        self.observedReaction = observedObject
-        
-        var changeHandler: (ReactionObserverToken, ReactionChangeInfo) -> () = { _ in  }
-        
-        let innerToken = ReactionTokenType.token(observedObject,
-                                                 observableKeys: ["users"],
-                                                 managedObjectContextObserver: observedObject.managedObjectContext!.globalManagedObjectContextObserver,
-                                                 changeHandler: { changeHandler($0, $1) })
-        super.init(object: observedObject, token: innerToken)
-
-        changeHandler = { (_, changeInfo) in self.observer?.reactionDidChange(changeInfo) }
-        
-    }
-    
-    override func tearDown() {
-        if let t = self.token as? ReactionTokenType {
-            t.tearDown()
-        }
-        
-        super.tearDown()
-    }
-}
-
-
 public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObserver, ReactionObserver {
     
     typealias InnerTokenType = ObjectObserverToken<MessageChangeInfo,MessageObserverToken>
@@ -205,10 +154,15 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         changeHandler = {
             [weak self] (_, changeInfo) in
             if changeInfo.reactionsChanged {
+                if let strongSelf = self {
+                    strongSelf.createTokensForReactions(Array<Reaction>(strongSelf.observedMessage.reactions))
+                }
                 // add a new the new reaction observer
             }
             self?.observer?.messageDidChange(changeInfo)
         }
+        
+        self.createTokensForReactions(Array<Reaction>(self.observedMessage.reactions))
         
         if let sender = object.sender {
             self.userTokens.append(self.createTokenForUser(sender))
@@ -216,6 +170,15 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         if let systemMessage = object as? ZMSystemMessage {
             for user in systemMessage.users {
                 userTokens.append(self.createTokenForUser(user))
+            }
+        }
+    }
+    
+    private func createTokensForReactions(reactions: [Reaction]) {
+        for reaction in reactions {
+            if self.reactionTokens[reaction] == nil {
+                let reactionToken = ReactionObserverToken(observer: self, observedObject: reaction)
+                self.reactionTokens[reaction] = reactionToken
             }
         }
     }
@@ -264,5 +227,68 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         self.tearDown()
     }
     
+}
+
+// MARK: - Reaction observer
+
+private let ReactionUsersKey = "users"
+
+extension Reaction : ObjectInSnapshot {
+    
+    public var observableKeys : [String] {
+        return [ReactionUsersKey]
+    }
+}
+
+
+public final class ReactionChangeInfo : ObjectChangeInfo {
+    
+    var usersChanged : Bool {
+        return changedKeysAndOldValues.keys.contains(ReactionUsersKey)
+    }
+}
+
+@objc protocol ReactionObserver {
+    func reactionDidChange(reactionInfo: ReactionChangeInfo)
+}
+
+
+final class ReactionObserverToken : ObjectObserverTokenContainer {
+    typealias ReactionTokenType = ObjectObserverToken<ReactionChangeInfo, ReactionObserverToken>
+    
+    private let observedReaction : Reaction
+    private weak var observer : ReactionObserver?
+    
+    init (observer: ReactionObserver, observedObject: Reaction) {
+        
+        self.observer = observer
+        self.observedReaction = observedObject
+        
+        var changeHandler: (ReactionObserverToken, ReactionChangeInfo) -> () = { _ in  }
+        
+        let innerToken = ReactionTokenType.token(observedObject,
+                                                 observableKeys: [ReactionUsersKey],
+                                                 managedObjectContextObserver: observedObject.managedObjectContext!.globalManagedObjectContextObserver,
+                                                 changeHandler: { changeHandler($0, $1) })
+        super.init(object: observedObject, token: innerToken)
+        
+        innerToken.addContainer(self)
+        
+        changeHandler = { (_, changeInfo) in
+            self.observer?.reactionDidChange(changeInfo)
+        }
+        
+    }
+    
+    override func tearDown() {
+        if let t = self.token as? ReactionTokenType {
+            t.removeContainer(self)
+            if t.hasNoContainers {
+                t.tearDown()
+            }
+        }
+        
+        super.tearDown()
+    }
 }
 
