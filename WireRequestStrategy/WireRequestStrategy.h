@@ -38,7 +38,6 @@ FOUNDATION_EXPORT const unsigned char WireRequestStrategyVersionString[];
 #import <WireRequestStrategy/ZMRemoteIdentifierObjectSync.h>
 #import <WireRequestStrategy/ZMSingleRequestSync.h>
 #import <WireRequestStrategy/ZMSyncOperationSet.h>
-#import <WireRequestStrategy/ZMSyncStateDelegate.h>
 #import <WireRequestStrategy/ZMTimedSingleRequestSync.h>
 #import <WireRequestStrategy/ZMUpstreamAssetSync.h>
 #import <WireRequestStrategy/ZMUpstreamInsertedObjectSync.h>
