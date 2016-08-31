@@ -1117,7 +1117,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 #pragma mark - Deletion
 @implementation ZMAssetClientMessage (Deletion)
 
-- (void)removeMessage {
+- (void)removeMessageClearingSender:(BOOL)clearingSender {
     if(self.imageMessageData != nil) {
         [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatOriginal encrypted:NO];
         [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatPreview encrypted:NO];
@@ -1140,7 +1140,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     self.associatedTaskIdentifier = nil;
     self.preprocessedSize = CGSizeZero;
 
-    [super removeMessage];
+    [super removeMessageClearingSender:clearingSender];
 }
 
 @end
