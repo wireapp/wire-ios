@@ -775,7 +775,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     if (idx+1  == self.messages.count) {
         timeStamp = self.lastServerTimeStamp;
     }
-    else if (message.deliveryState != ZMDeliveryStateDelivered) {
+    else if (message.deliveryState != ZMDeliveryStateDelivered && message.deliveryState != ZMDeliveryStateSent) {
         if (idx == 0) {
             timeStamp = self.lastServerTimeStamp;
         }
@@ -783,7 +783,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
             __block ZMMessage *lastDeliveredMessage;
             __block NSUInteger newIdx;
             [self.messages.array enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, idx)] options:NSEnumerationReverse usingBlock:^(ZMMessage *aMessage, NSUInteger anIdx, BOOL *stop) {
-                if (aMessage.deliveryState == ZMDeliveryStateDelivered) {
+                if (aMessage.deliveryState == ZMDeliveryStateDelivered || aMessage.deliveryState == ZMDeliveryStateSent) {
                     lastDeliveredMessage = aMessage;
                     newIdx = anIdx;
                     *stop = YES;
@@ -1488,7 +1488,7 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationRequestToLoadConversationEventsNotification object:self userInfo:nil];
 }
 
-- (ZMClientMessage *)appendNonExpiringGenericMessage:(ZMGenericMessage *)genericMessage hidden:(BOOL)hidden
+- (ZMClientMessage *)appendGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden
 {
     VerifyReturnNil(genericMessage != nil);
     
@@ -1497,6 +1497,9 @@ const NSUInteger ZMLeadingEventIDWindowBleed = 50;
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     message.isEncrypted = YES;
     
+    if (expires) {
+        [message setExpirationDate];
+    }
     if(hidden) {
         message.hiddenInConversation = self;
     }

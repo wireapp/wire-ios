@@ -28,15 +28,15 @@ public struct AnyClassTuple<T : Hashable> : Hashable {
     public init(classOfObject: AnyClass, secondElement: T) {
         self.classOfObject = classOfObject
         self.secondElement = secondElement
-        self.hashValue = self.classOfObject.hash() ^ self.secondElement.hashValue
+        let classHash = "\(self.classOfObject)".hashValue
+        let elementHash = self.secondElement.hashValue
+        self.hashValue = classHash ^ elementHash
     }
 }
 
 public func ==<T>(lhs: AnyClassTuple<T>, rhs: AnyClassTuple<T>) -> Bool {
     // We store the hash which makes comparison very cheap.
-    let secondAreEqual = (lhs.secondElement == rhs.secondElement)
-    let classesAreEqual = (lhs.classOfObject === rhs.classOfObject)
     return (lhs.hashValue == rhs.hashValue)
-        && secondAreEqual
-        && classesAreEqual
+        && (lhs.secondElement == rhs.secondElement)
+        && (lhs.classOfObject === rhs.classOfObject)
 }

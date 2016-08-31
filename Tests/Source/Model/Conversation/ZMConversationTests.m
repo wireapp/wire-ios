@@ -834,7 +834,7 @@
 
     // then
     XCTAssertNotNil(message.expirationDate);
-    NSDate *expectedDate = [NSDate dateWithTimeIntervalSinceNow:ZMTransportRequestDefaultExpirationInterval];
+    NSDate *expectedDate = [NSDate dateWithTimeIntervalSinceNow:[ZMMessage defaultExpirationTime]];
     XCTAssertLessThan(fabs([message.expirationDate timeIntervalSinceDate:expectedDate]), 1);
 }
 

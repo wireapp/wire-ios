@@ -38,7 +38,7 @@
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 
-static NSTimeInterval ZMDefaultMessageExpirationTime = 60;
+static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
 
 NSString * const ZMMessageEventIDDataKey = @"eventID_data";
 NSString * const ZMMessageIsEncryptedKey = @"isEncrypted";
@@ -73,6 +73,7 @@ NSString * const ZMMessageNeedsUpdatingUsersKey = @"needsUpdatingUsers";
 NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 NSString * const ZMMessageReactionKey = @"reactions";
+NSString * const ZMMessageConfirmationKey = @"confirmations";
 
 @interface ZMMessage ()
 
@@ -115,6 +116,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
 @dynamic expirationDate;
 @dynamic senderClientID;
 @dynamic reactions;
+@dynamic confirmations;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
@@ -199,9 +201,15 @@ NSString * const ZMMessageReactionKey = @"reactions";
     self.expirationDate = nil;
 }
 
-- (void)markAsDelivered
+- (void)markAsSent
 {
     self.isExpired = NO;
+}
+
+- (void)confirmReception
+{
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithConfirmation:self.nonce.transportString type:ZMConfirmationTypeDELIVERED nonce:[NSUUID UUID].transportString];
+    [self.conversation appendGenericMessage:genericMessage expires:YES hidden:YES];
 }
 
 - (void)expire;
@@ -222,7 +230,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
 
 + (NSSet *)keyPathsForValuesAffectingDeliveryState;
 {
-    return [NSMutableSet setWithObjects:ZMMessageEventIDKey, ZMMessageEventIDDataKey, ZMMessageIsExpiredKey, nil];
+    return [NSMutableSet setWithObjects: ZMMessageIsExpiredKey, ZMMessageConfirmationKey, nil];
 }
 
 - (void)awakeFromInsert;
@@ -337,12 +345,15 @@ NSString * const ZMMessageReactionKey = @"reactions";
     return [ZMConversation conversationWithRemoteID:conversationUUID createIfNeeded:YES inContext:moc];
 }
 
-- (void)removeMessage
+- (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     self.hiddenInConversation = self.conversation;
     self.visibleInConversation = nil;
-    self.sender = nil;
-    self.senderClientID = nil;
+
+    if (clearingSender) {
+        self.sender = nil;
+        self.senderClientID = nil;
+    }
 }
 
 + (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -360,7 +371,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
     
     // To avoid reinserting when receiving an edit we delete the message locally
     if (message != nil) {
-        [message removeMessage];
+        [message removeMessageClearingSender:YES];
         [moc deleteObject:message];
     }
 }
@@ -393,7 +404,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
         [conversation appendDeletedForEveryoneSystemMessageWithTimestamp:message.serverTimestamp sender:message.sender];
     }
 
-    [message removeMessage];
+    [message removeMessageClearingSender:YES];
 }
 
 + (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -409,9 +420,11 @@ NSString * const ZMMessageReactionKey = @"reactions";
         return nil;
     }
 
-    [message removeMessage];
+    // We do not want to clear the sender in case of an edit, as the message will still be visible
+    [message removeMessageClearingSender:NO];
     return message;
 }
+
 
 - (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload
 {
@@ -662,7 +675,8 @@ NSString * const ZMMessageReactionKey = @"reactions";
                              ZMMessageAddedUsersKey,
                              ZMMessageRemovedUsersKey,
                              ZMMessageNeedsUpdatingUsersKey,
-                             ZMMessageSenderClientIDKey
+                             ZMMessageSenderClientIDKey,
+                             ZMMessageConfirmationKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -762,10 +776,10 @@ NSString * const ZMMessageReactionKey = @"reactions";
     return nil;
 }
 
-- (void)removeMessage
+- (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     self.text = nil;
-    [super removeMessage];
+    [super removeMessageClearingSender:clearingSender];
 }
 
 @end

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+@import ZMProtos;
 
 #import "ZMUpdateEvent+ZMCDataModel.h"
 #import "ZMConversation+Internal.h"
@@ -272,7 +273,6 @@
     }
     return users;
 }
-
 
 @end
 
