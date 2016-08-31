@@ -45,7 +45,7 @@
 /// @param completionHandler callback to be executed on completion (nullable)
 + (void)prepareLocalStoreSync:(BOOL)sync
                   inDirectory:(NSURL *)directory
-   backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase
+   backingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
             completionHandler:(void(^)())completionHandler;
 
 /// Returns whether the store is ready to be opened
