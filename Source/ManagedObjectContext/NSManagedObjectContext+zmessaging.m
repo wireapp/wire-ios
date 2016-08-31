@@ -450,43 +450,15 @@ static dispatch_once_t clearStoreOnceToken;
     
     [self clearPersistentStoreOnStart];
     [self moveDatabaseFromCachesToApplicationSupportIfNeeded];
+    [self moveDatabaseFromApplicationSupportToSharedContainerIfNeeded];
     
     NSManagedObjectModel *mom = [self loadManagedObjectModel];
     NSPersistentStoreCoordinator* psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
-
-    // The database is still in the application support directory, we need to move it into the shared container
-    if (self.databaseExistsInApplicationSupportDirectory) {
-        [self moveDatabaseFromApplicationSupportIntoSharedContainerWithCoordinator:psc backupCorruptedDatabase:backupCorruptedDatabase];
-        return psc;
-    }
 
     BOOL shouldMigrate = [self shouldMigrateStoreToNewModelVersion:self.storeURL];
     [self addPersistenStoreWithMigration:shouldMigrate toCoordinator:psc storeURL:self.storeURL backupCorruptedDatabase:backupCorruptedDatabase];
 
     return psc;
-}
-
-+ (void)moveDatabaseFromApplicationSupportIntoSharedContainerWithCoordinator:(NSPersistentStoreCoordinator *)psc backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
-{
-    // Migrate the to a new model version before moving the store if needed
-    BOOL shouldMigrate = [self shouldMigrateStoreToNewModelVersion:self.applicationSupportDirectoryStoreURL];
-    NSPersistentStore __unused *oldStore = [self addPersistenStoreWithMigration:shouldMigrate
-                                                                  toCoordinator:psc
-                                                                       storeURL:self.applicationSupportDirectoryStoreURL
-                                                        backupCorruptedDatabase:backupCorruptedDatabase];
-    
-    // perform the migration to the new store location
-    [psc performBlockAndWait:^{
-        NSError *migrationError = nil;
-        [psc migratePersistentStore:oldStore toURL:self.storeURL options:nil withType:NSSQLiteStoreType error:&migrationError];
-        if (nil != migrationError) {
-            ZMLogError(@"Unable to migrate persistent store from application support directory into %@: %@", DatabaseDirectoryURL, migrationError);
-        }
-
-        if ([NSFileManager.defaultManager fileExistsAtPath:oldStore.URL.path]) {
-            [self removePersistentStoreFromFilesystemAndCopyToBackup:NO storeURL:oldStore.URL];
-        }
-    }];
 }
 
 + (BOOL)shouldMigrateStoreToNewModelVersion:(NSURL *)storeURL
@@ -703,15 +675,11 @@ static dispatch_once_t clearStoreOnceToken;
     return result;
 }
 
-+ (BOOL)moveDatabaseFromCachesToApplicationSupportIfNeeded
++ (BOOL)moveDatabaseFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL
 {
-    // we need to move if true
-    if ([self databaseExistsInCachesDirectory]) {
-        
+    if ([self databaseExistsAtURL:fromURL]) {
         NSError *error;
-        NSURL *toURL   = self.applicationSupportDirectoryStoreURL;
-        NSURL *fromURL = self.cachesDirectoryStoreURL;
-        NSFileManager *fm = [NSFileManager defaultManager];
+        NSFileManager *fm = NSFileManager.defaultManager;
         
         ZMLogDebug(@"Starting to move database from path: %@ to path: %@", fromURL, toURL);
         
@@ -719,7 +687,7 @@ static dispatch_once_t clearStoreOnceToken;
             
             NSString *destinationPath = [toURL.path stringByAppendingString:extension];
             NSString *sourcePath = [fromURL.path stringByAppendingString:extension];
-            
+
             if (! [fm fileExistsAtPath:sourcePath isDirectory:nil]) {
                 continue;
             }
@@ -730,25 +698,34 @@ static dispatch_once_t clearStoreOnceToken;
             }
         }
         
-        [self moveExternalBinaryFilesFromCachesToApplicationSupport];
+        [self moveExternalBinaryFilesFromDatabaseAtURL:fromURL toDatabaseAtURL:toURL];
     }
     
     return YES;
 }
 
-+ (void)moveExternalBinaryFilesFromCachesToApplicationSupport;
++ (BOOL)moveDatabaseFromCachesToApplicationSupportIfNeeded
 {
-    NSURL *const cachesURL = [self cachesDirectoryStoreURL];
-    NSString * const storeName = [cachesURL.URLByDeletingPathExtension lastPathComponent];
-    NSURL *parentURL = cachesURL.URLByDeletingLastPathComponent;
+    return [self moveDatabaseFromURL:self.cachesDirectoryStoreURL toURL:self.applicationSupportDirectoryStoreURL];
+}
+
++ (BOOL)moveDatabaseFromApplicationSupportToSharedContainerIfNeeded
+{
+    return [self moveDatabaseFromURL:self.applicationSupportDirectoryStoreURL toURL:self.storeURL];
+}
+
++ (void)moveExternalBinaryFilesFromDatabaseAtURL:(NSURL *)fromDatabaseURL toDatabaseAtURL:(NSURL *)toDatabaseURL
+{
+    NSString * const storeName = fromDatabaseURL.URLByDeletingPathExtension.lastPathComponent;
+    NSURL *parentURL = fromDatabaseURL.URLByDeletingLastPathComponent;
     
-    NSFileManager *fm = [NSFileManager defaultManager];
+    NSFileManager *fm = NSFileManager.defaultManager;
     BOOL isDirectory = NO;
     if (![fm fileExistsAtPath:parentURL.path isDirectory:&isDirectory] || !isDirectory) {
         return;
     }
-
-    NSURL *toURLParent = [self storeURL].URLByDeletingLastPathComponent;
+    
+    NSURL *toURLParent = toDatabaseURL.URLByDeletingLastPathComponent;
     NSString *supportExtension = [NSString stringWithFormat:@".%@_SUPPORT", storeName];
     NSURL *fromURL = [parentURL URLByAppendingPathComponent:supportExtension];
     NSURL *toURL = [toURLParent URLByAppendingPathComponent:supportExtension];
