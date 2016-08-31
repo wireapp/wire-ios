@@ -83,29 +83,31 @@
 {
     NSError *error;
     NSURL *toStoreURL = [NSManagedObjectContext storeURLInDirectory:directory];
-    NSURL *fromStoreURL = [NSManagedObjectContext storeURLInDirectory:NSDocumentDirectory];
-    
+    NSURL *fromStoreURL = NSManagedObjectContext.storeURL;
+
+    // We need to create a database before we move it.
+    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.sharedContainerDirectoryURL backingUpCorruptedDatabase:NO completionHandler:nil];
+
     for (NSString *extension in self.databaseFileExtensions) {
         NSString *toPath = [toStoreURL.path stringByAppendingString:extension];
         NSString *fromPath = [fromStoreURL.path stringByAppendingString:extension];
+        XCTAssertTrue([self.fm moveItemAtPath:fromPath toPath:toPath error:&error]);
+        XCTAssertNil(error);
+        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
         
-        if (! [self.fm createFileAtPath:toPath contents:nil attributes:nil]) {
-            XCTFail();
+        if (nil != error) {
             return NO;
         }
-        if ([self.fm fileExistsAtPath:fromPath isDirectory:nil]) {
-            [self.fm removeItemAtPath:fromPath error:&error];
-            XCTAssertNil(error);
-            
-            if (nil != error) {
-                return NO;
-            }
-        }
     }
-    
+
     NSString *supportPath = [toStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
     XCTAssertTrue([self.fm createDirectoryAtPath:supportPath withIntermediateDirectories:NO attributes:nil error:&error]);
+
+    NSString *path = [supportPath stringByAppendingString:@"/image.dat"];
+    XCTAssertTrue([self.mediumJPEGData writeToFile:path atomically:YES]);
     XCTAssertNil(error);
+
+    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     
     return YES;
 }
