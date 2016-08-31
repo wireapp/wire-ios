@@ -46,7 +46,7 @@ extension ZMMessage {
         ZMConversation.appendHideMessageToSelfConversation(self)
 
         // To avoid reinserting when receiving an edit we delete the message locally
-        removeMessage()
+        removeMessageClearingSender(true)
         managedObjectContext?.deleteObject(self)
     }
     
@@ -62,8 +62,8 @@ extension ZMMessage {
         // We insert a message of type `ZMMessageDelete` containing the nonce of the message that should be deleted
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         
-        conversation.appendNonExpiringGenericMessage(deletedMessage, hidden: true)
-        removeMessage()
+        conversation.appendGenericMessage(deletedMessage, expires:false, hidden: true)
+        removeMessageClearingSender(true)
     }
     
     public static func edit(message: ZMConversationMessage, newText: String) -> ZMMessage? {
@@ -84,7 +84,7 @@ extension ZMMessage {
         let oldIndex = conversation.messages.indexOfObject(self)
         let newIndex = conversation.messages.indexOfObject(newMessage)
         conversation.mutableMessages.moveObjectsAtIndexes(NSIndexSet(index:newIndex), toIndex: oldIndex)
-        
+
         hiddenInConversation = conversation
         visibleInConversation = nil
         newMessage.linkPreviewState = .WaitingToBeProcessed
@@ -100,7 +100,7 @@ extension ZMClientMessage {
     override var isEditableMessage : Bool {
         if let genericMsg = genericMessage {
             return  genericMsg.hasEdited() ||
-                   (genericMsg.hasText() && deliveryState == .Delivered)
+                   (genericMsg.hasText() && (deliveryState == .Sent || deliveryState == .Delivered))
         }
         return false
     }

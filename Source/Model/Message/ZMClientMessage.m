@@ -207,12 +207,12 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     [self addData:message.data];
 }
 
-- (void)removeMessage
+- (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     _genericMessage = nil;
     self.dataSet = [NSOrderedSet orderedSet];
     self.genericMessage = nil;
-    [super removeMessage];
+    [super removeMessageClearingSender:clearingSender];
 }
 
 - (void)expire
@@ -277,6 +277,10 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys
 {
+    // we don't want to update the conversation if the message is a confirmation message
+    if (self.genericMessage.hasConfirmation) {
+        return;
+    }
     if (self.genericMessage.hasEdited) {
         NSUUID *nonce = [self nonceFromPostPayload:payload];
         if (nonce != nil && ![self.nonce isEqual:nonce]) {
@@ -289,7 +293,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         }
         NSUUID *originalID = [NSUUID uuidWithTransportString:self.genericMessage.edited.replacingMessageId];
         ZMMessage *original = [ZMMessage fetchMessageWithNonce:originalID forConversation:self.conversation inManagedObjectContext:self.managedObjectContext];
-        [original removeMessage];
+        [original removeMessageClearingSender:NO];
     } else {
         [super updateWithPostPayload:payload updatedKeys:nil];
     }
@@ -305,9 +309,9 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[notSynced, notExpired]];
 }
 
-- (void)markAsDelivered
+- (void)markAsSent
 {
-    [super markAsDelivered];
+    [super markAsSent];
     
     if (self.linkPreviewState == ZMLinkPreviewStateUploaded) {
         self.linkPreviewState = ZMLinkPreviewStateDone;
@@ -337,6 +341,39 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
                                                              externalData:nil];
 }
 
++ (ZMNewOtrMessage *)otrMessageForGenericMessage:(ZMGenericMessage *)genericMessage
+                                      selfClient:(UserClient *)selfClient
+                                 conversation:(ZMConversation *)conversation
+                                 externalData:(NSData *)externalData
+                               sessionsDirectory:(EncryptionSessionsDirectory *)sessionsDirectory
+{
+    NSArray <ZMUserEntry *>*recipients;
+    
+//    if (genericMessage.hasConfirmation) {
+//        // In case of confirmation messages, we want to send the confirmation only to the clients of the sender of the original message, not to everyone in the conversation
+//        // This still needs to be supported by the backend
+//        NSUUID *messageID = [NSUUID uuidWithTransportString:genericMessage.confirmation.messageId];
+//        ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID
+//                                              forConversation:conversation
+//                                       inManagedObjectContext:conversation.managedObjectContext];
+//        
+//        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
+//                                                       selfClient:selfClient
+//                                                       recipients:@[message.sender]
+//                                                sessionsDirectory:sessionsDirectory];
+//    } else {
+        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
+                                                       selfClient:selfClient
+                                                     conversation:conversation
+                                                sessionsDirectory:sessionsDirectory];
+//    }
+
+    ZMNewOtrMessage *message = [ZMNewOtrMessage messageWithSender:selfClient nativePush:YES recipients:recipients blob:externalData];
+    
+    return message;
+}
+
+
 + (NSData *)encryptedMessagePayloadDataWithGenericMessage:(ZMGenericMessage *)genericMessage
                                              conversation:(ZMConversation *)conversation
                                      managedObjectContext:(NSManagedObjectContext *)moc
@@ -351,6 +388,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         return nil;
     }
     
+    
     __block NSData *messageData;
     ZM_WEAK(self);
     [selfClient.keysStore.encryptionContext perform:^(EncryptionSessionsDirectory *sessionsDirectory) {
@@ -358,12 +396,12 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         if (self == nil) {
             return;
         }
-        NSArray <ZMUserEntry *>*recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
-                                                                               selfClient:selfClient
-                                                                             conversation:conversation
-                                                                        sessionsDirectory:sessionsDirectory];
         
-        ZMNewOtrMessage *message = [ZMNewOtrMessage messageWithSender:selfClient nativePush:YES recipients:recipients blob:externalData];
+        ZMNewOtrMessage *message = [self otrMessageForGenericMessage:genericMessage
+                                                          selfClient:selfClient
+                                                        conversation:conversation
+                                                        externalData:externalData
+                                                   sessionsDirectory:sessionsDirectory];
         messageData = message.data;
         
         if (messageData.length > ZMClientMessageByteSizeExternalThreshold && nil == externalData) {
@@ -382,8 +420,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 + (NSArray <ZMUserEntry *>*)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt selfClient:(UserClient *)selfClient conversation:(ZMConversation *)conversation sessionsDirectory:(EncryptionSessionsDirectory *)sessionsDirectory
 {
-    NSArray <ZMUserEntry *>*recipients = [conversation.activeParticipants.array mapWithBlock:^ZMUserEntry *(ZMUser *user) {
-        
+    return [self recipientsWithDataToEncrypt:dataToEncrypt selfClient:selfClient recipients:conversation.activeParticipants.array sessionsDirectory:sessionsDirectory];
+}
+
+
++ (NSArray <ZMUserEntry *>*)recipientsWithDataToEncrypt:(NSData *)dataToEncrypt selfClient:(UserClient *)selfClient recipients:(NSArray <ZMUser *>*)recipients sessionsDirectory:(EncryptionSessionsDirectory *)sessionsDirectory;
+{    
+    NSArray <ZMUserEntry *>*userEntries = [recipients mapWithBlock:^ZMUserEntry *(ZMUser *user) {
         NSArray <ZMClientEntry *>*clientsEntries = [user.clients.allObjects mapWithBlock:^ZMClientEntry *(UserClient *client) {
             
             if (![client isEqual:selfClient]) {
@@ -419,7 +462,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         return [ZMUserEntry entryWithUser:user clientEntries:clientsEntries];
     }];
 
-    return recipients;
+    return userEntries;
 }
 
 @end
