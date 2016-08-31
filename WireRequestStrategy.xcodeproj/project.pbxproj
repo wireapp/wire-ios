@@ -71,7 +71,6 @@
 		166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901BC1D7081C7000FE4AF /* ZMSingleRequestSync.m */; };
 		166901E51D7081C7000FE4AF /* ZMSyncOperationSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901BD1D7081C7000FE4AF /* ZMSyncOperationSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166901E61D7081C7000FE4AF /* ZMSyncOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901BE1D7081C7000FE4AF /* ZMSyncOperationSet.m */; };
-		166901E71D7081C7000FE4AF /* ZMSyncStateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901BF1D7081C7000FE4AF /* ZMSyncStateDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166901EB1D7081C7000FE4AF /* ZMTimedSingleRequestSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901C31D7081C7000FE4AF /* ZMTimedSingleRequestSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901C41D7081C7000FE4AF /* ZMTimedSingleRequestSync.m */; };
 		166901ED1D7081C7000FE4AF /* ZMUpstreamAssetSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901C51D7081C7000FE4AF /* ZMUpstreamAssetSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -164,7 +163,6 @@
 		166901BC1D7081C7000FE4AF /* ZMSingleRequestSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSingleRequestSync.m; sourceTree = "<group>"; };
 		166901BD1D7081C7000FE4AF /* ZMSyncOperationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSyncOperationSet.h; sourceTree = "<group>"; };
 		166901BE1D7081C7000FE4AF /* ZMSyncOperationSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSyncOperationSet.m; sourceTree = "<group>"; };
-		166901BF1D7081C7000FE4AF /* ZMSyncStateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSyncStateDelegate.h; sourceTree = "<group>"; };
 		166901C31D7081C7000FE4AF /* ZMTimedSingleRequestSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTimedSingleRequestSync.h; sourceTree = "<group>"; };
 		166901C41D7081C7000FE4AF /* ZMTimedSingleRequestSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimedSingleRequestSync.m; sourceTree = "<group>"; };
 		166901C51D7081C7000FE4AF /* ZMUpstreamAssetSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUpstreamAssetSync.h; sourceTree = "<group>"; };
@@ -295,7 +293,6 @@
 				166901BC1D7081C7000FE4AF /* ZMSingleRequestSync.m */,
 				166901BD1D7081C7000FE4AF /* ZMSyncOperationSet.h */,
 				166901BE1D7081C7000FE4AF /* ZMSyncOperationSet.m */,
-				166901BF1D7081C7000FE4AF /* ZMSyncStateDelegate.h */,
 				166901C31D7081C7000FE4AF /* ZMTimedSingleRequestSync.h */,
 				166901C41D7081C7000FE4AF /* ZMTimedSingleRequestSync.m */,
 				166901C51D7081C7000FE4AF /* ZMUpstreamAssetSync.h */,
@@ -428,7 +425,6 @@
 				166901D81D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h in Headers */,
 				1621D2301D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h in Headers */,
 				166901DA1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h in Headers */,
-				166901E71D7081C7000FE4AF /* ZMSyncStateDelegate.h in Headers */,
 				166901EB1D7081C7000FE4AF /* ZMTimedSingleRequestSync.h in Headers */,
 				166901D71D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist+Internal.h in Headers */,
 				166901E11D7081C7000FE4AF /* ZMRequestGenerator.h in Headers */,
