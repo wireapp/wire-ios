@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
-               BuildableName = "wire-ios-share-engine.framework"
+               BuildableName = "WireShareEngine.framework"
                BlueprintName = "wire-ios-share-engine"
                ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
-            BuildableName = "wire-ios-share-engine.framework"
+            BuildableName = "WireShareEngine.framework"
             BlueprintName = "wire-ios-share-engine"
             ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
-            BuildableName = "wire-ios-share-engine.framework"
+            BuildableName = "WireShareEngine.framework"
             BlueprintName = "wire-ios-share-engine"
             ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
-            BuildableName = "wire-ios-share-engine.framework"
+            BuildableName = "WireShareEngine.framework"
             BlueprintName = "wire-ios-share-engine"
             ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
          </BuildableReference>
