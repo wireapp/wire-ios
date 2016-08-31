@@ -36,7 +36,7 @@
 - (void)setPersistentStoreMetadata:(id)metaData forKey:(NSString *)key;
 
 /// Checks if migration is needed or the database has to be moved
-+ (BOOL)needsToPrepareLocalStoreInDirectroy:(NSURL *)databaseDirectory;
++ (BOOL)needsToPrepareLocalStoreInDirectory:(NSURL *)databaseDirectory;
 
 /// Creates persistent store coordinator and migrates store if needed
 /// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
@@ -51,15 +51,15 @@
 /// Returns whether the store is ready to be opened
 + (BOOL)storeIsReady;
 
-+ (instancetype)createUserInterfaceContext;
++ (instancetype)createUserInterfaceContextWithStoreDirectory:(NSURL *)storeDirectory;
 + (void)resetUserInterfaceContext;
 
 /// This context will mark updates to objects in such a way that these fields are "up to date", ie. that these fields have been fetched.
 /// C.f. @c zm_isSyncContext
-+ (instancetype)createSyncContext;
++ (instancetype)createSyncContextWithStoreDirectory:(NSURL *)storeDirectory;
 
 /// Context used for searching
-+ (instancetype)createSearchContext;
++ (instancetype)createSearchContextWithStoreDirectory:(NSURL *)storeDirectory;
 
 /// Returns @c YES if the receiver is a context that is used for synchronisation with the backend.
 ///
@@ -89,8 +89,6 @@
 /// This is used for unit tests.
 + (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
 + (BOOL)useInMemoryStore;
-
-+ (void)setDatabaseDirectoryURL:(NSURL *)directory;
 
 /// This is used for unit tests. It only has an effect when @c setUseInMemoryStore: was set to @c YES
 + (void)resetSharedPersistentStoreCoordinator;

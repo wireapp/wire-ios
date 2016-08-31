@@ -23,7 +23,7 @@
 
 #import "ZMClientMessage.h"
 #import "NSManagedObjectContext+zmessaging.h"
-#import "NSManagedObjectContext+tests.h"
+#import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "MockModelObjectContextFactory.h"
 #import "ZMAssetClientMessage.h"
 
@@ -34,8 +34,6 @@
 #import "ZMConversation+UnreadCount.h"
 
 #import "NSString+RandomString.h"
-
-#import "NSManagedObjectContext+zmessaging-Internal.h"
 
 static const int32_t Mersenne1 = 524287;
 static const int32_t Mersenne2 = 131071;
@@ -50,6 +48,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 @property (nonatomic) NSManagedObjectContext *testMOC;
 @property (nonatomic) NSManagedObjectContext *alternativeTestMOC;
 @property (nonatomic) NSManagedObjectContext *searchMOC;
+@property (nonatomic) NSURL *databaseDirectory;
 
 
 @property (nonatomic) NSTimeInterval originalConversationLastReadEventIDTimerValue; // this will speed up the tests A LOT
@@ -108,7 +107,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
     
-    
+    NSFileManager *fm = NSFileManager.defaultManager;
+    self.databaseDirectory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
     [NSManagedObjectContext setUseInMemoryStore:self.shouldUseInMemoryStore];
     
     [self resetState];
@@ -138,14 +138,14 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self.testMOC addGroup:self.dispatchGroup];
     self.alternativeTestMOC = [MockModelObjectContextFactory alternativeMocForPSC:self.testMOC.persistentStoreCoordinator];
     [self.alternativeTestMOC addGroup:self.dispatchGroup];
-    self.searchMOC = [NSManagedObjectContext createSearchContext];
+    self.searchMOC = [NSManagedObjectContext createSearchContextWithStoreDirectory:self.databaseDirectory];
     [self.searchMOC addGroup:self.dispatchGroup];
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
 }
 
 - (void)tearDown;
 {
-    [NSManagedObjectContext setDatabaseDirectoryURL:nil];
+    [NSManagedObjectContext resetDatabaseDirectory];
     ZMConversationDefaultLastReadEventIDSaveDelay = self.originalConversationLastReadEventIDTimerValue;
     [self resetState];
     [self wipeCaches];
@@ -229,19 +229,12 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     }
     [self performIgnoringZMLogError:^{
-        NSFileManager *fm = [NSFileManager defaultManager];
-        NSURL * const directory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-        [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:directory backingUpCorruptedDatabase:NO completionHandler:^{
-                self.uiMOC = [NSManagedObjectContext createUserInterfaceContext];
-                self.syncMOC = [NSManagedObjectContext createSyncContext];
-        }];
+        self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreDirectory:self.databaseDirectory];
     }];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.name;
     
+    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreDirectory:self.databaseDirectory];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.name;
     }];

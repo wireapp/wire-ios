@@ -558,11 +558,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 {
     __block NSManagedObjectContext *syncContext;
 
-    NSURL *directory = [NSFileManager.defaultManager URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSURL *directory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
     [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:directory backingUpCorruptedDatabase:NO completionHandler:^{
-        syncContext = [NSManagedObjectContext createSyncContext];
+        syncContext = [NSManagedObjectContext createSyncContextWithStoreDirectory:directory];
     }];
-    
+
     WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertNotNil(syncContext);
     

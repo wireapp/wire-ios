@@ -48,6 +48,7 @@
     self.applicationSupportDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
     self.sharedContainerStoreURL = [NSManagedObjectContext storeURLInDirectory:NSDocumentDirectory];
     self.sharedContainerDirectoryURL = [self.fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    [NSManagedObjectContext setDatabaseDirectoryURL:self.sharedContainerDirectoryURL];
 }
 
 - (void)tearDown

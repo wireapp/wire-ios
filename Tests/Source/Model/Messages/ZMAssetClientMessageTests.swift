@@ -29,6 +29,11 @@ class ZMAssetClientMessageTests : BaseZMClientMessageTests {
         self.setUpCaches()
     }
     
+    override func tearDown() {
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(5))
+        super.tearDown()
+    }
+    
     func appendImageMessage() {
         let imageData = verySmallJPEGData()
         let messageNonce = NSUUID.createUUID()

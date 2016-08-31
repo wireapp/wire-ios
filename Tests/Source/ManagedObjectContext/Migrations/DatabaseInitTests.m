@@ -40,7 +40,9 @@
 - (void)setUp
 {
     [super setUp];
-    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+    [self performIgnoringZMLogError:^{
+        [NSManagedObjectContext initPersistentStoreCoordinatorBackingUpCorrupedDatabases:NO];
+    }];
 }
 
 - (void)cleanUp
@@ -59,13 +61,13 @@
     [[[classMock stub] andReturnValue:@NO] databaseExistsInApplicationSupportDirectory];
     [self verifyMockLater:classMock];
 
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     
     // when
     [[[classMock stub] andReturnValue:@YES] databaseExistsAndNotReadableDueToEncryption];
     
     // then
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     [classMock stopMocking];
 }
 
@@ -76,13 +78,13 @@
     [[classMock expect] initPersistentStoreCoordinatorBackingUpCorrupedDatabases:NO];
     [self verifyMockLater:classMock];
     
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     
     // when
     [[[classMock stub] andReturnValue:@YES] databaseExistsInApplicationSupportDirectory];
     
     // then
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectroy:self.sharedContainerDirectoryURL]);
+    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     [classMock stopMocking];
 }
 

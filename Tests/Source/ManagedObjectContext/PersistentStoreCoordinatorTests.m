@@ -20,7 +20,7 @@
 #import "ZMBaseManagedObjectTest.h"
 
 #import "ZMConversation+Internal.h"
-#import "NSManagedObjectContext+zmessaging.h"
+#import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "ZMManagedObject+Internal.h"
 
 
@@ -45,8 +45,8 @@
     NSURL * const directory = [fm URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
     [NSManagedObjectContext setDatabaseDirectoryURL:directory];
     NSURL *storeURL = [NSManagedObjectContext storeURL];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:storeURL.path]) {
+
+    if ([fm fileExistsAtPath:storeURL.path]) {
         NSError *error = nil;
         NSURL *parentURL;
         XCTAssert([storeURL getResourceValue:&parentURL forKey:NSURLParentDirectoryURLKey error:&error], @"%@", error);
