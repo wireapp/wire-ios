@@ -16,14 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <UIKit/UIKit.h>
+import Foundation
+import ZMCDataModel
 
-//! Project version number for wire-ios-share-engine.
-FOUNDATION_EXPORT double wire_ios_share_engineVersionNumber;
-
-//! Project version string for wire-ios-share-engine.
-FOUNDATION_EXPORT const unsigned char wire_ios_share_engineVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <wire_ios_share_engine/PublicHeader.h>
-
-
+/// A conversation
+protocol Conversation : SharingTarget {
+    
+    /// User defined name for a group conversation, or standard name
+    var name : String { get }
+    
+    /// Type of the conversation
+    var conversationType : ZMConversationType { get }
+    
+    /// Image associated with conversation
+    /// E.g. will be nil for group conversation and will 
+    /// be user's image for one-to-one
+    var image : NSData? { get }
+}
