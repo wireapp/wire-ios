@@ -147,11 +147,11 @@ static BOOL storeIsReady = NO;
 
 + (void)prepareLocalStoreSync:(BOOL)sync
                   inDirectory:(NSURL *)directory
-   backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase
+   backingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
             completionHandler:(void(^)())completionHandler;
 {
     (sync ? dispatch_sync : dispatch_async)(singletonContextIsolation(), ^{
-        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:backupCorrputedDatabase inDirectory:directory completionHandler:completionHandler];
+        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:backupCorruptedDatabase inDirectory:directory completionHandler:completionHandler];
     });
 }
 
