@@ -29,6 +29,8 @@
 		1621D26B1D75C7FF007108C2 /* ZMUpstreamInsertedObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */; };
 		1621D26C1D75C803007108C2 /* ZMUpstreamModifiedObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */; };
 		1621D26D1D75C806007108C2 /* NSManagedObjectContext+TestHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */; };
+		1621D2741D7715EA007108C2 /* ZMObjectSyncStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1621D2721D7715EA007108C2 /* ZMObjectSyncStrategy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2731D7715EA007108C2 /* ZMObjectSyncStrategy.m */; };
 		1669016E1D707509000FE4AF /* WireRequestStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1669016D1D707509000FE4AF /* WireRequestStrategy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166901751D707509000FE4AF /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		166901971D7075D7000FE4AF /* version.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901861D7075D7000FE4AF /* version.xcconfig */; };
@@ -118,6 +120,8 @@
 		1621D22D1D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMChangeTrackerBootstrap+Testing.h"; sourceTree = "<group>"; };
 		1621D2311D75B221007108C2 /* NSManagedObjectContext+TestHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+TestHelpers.h"; sourceTree = "<group>"; };
 		1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+TestHelpers.m"; sourceTree = "<group>"; };
+		1621D2721D7715EA007108C2 /* ZMObjectSyncStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMObjectSyncStrategy.h; sourceTree = "<group>"; };
+		1621D2731D7715EA007108C2 /* ZMObjectSyncStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMObjectSyncStrategy.m; sourceTree = "<group>"; };
 		1669016A1D707509000FE4AF /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1669016D1D707509000FE4AF /* WireRequestStrategy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireRequestStrategy.h; sourceTree = "<group>"; };
 		1669016F1D707509000FE4AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -271,6 +275,8 @@
 				1621D22D1D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h */,
 				166902111D70851E000FE4AF /* ZMOutstandingItems.h */,
 				166901A81D7081C7000FE4AF /* ZMContextChangeTracker.h */,
+				1621D2721D7715EA007108C2 /* ZMObjectSyncStrategy.h */,
+				1621D2731D7715EA007108C2 /* ZMObjectSyncStrategy.m */,
 				166901A91D7081C7000FE4AF /* ZMDependentObjects.h */,
 				166901AA1D7081C7000FE4AF /* ZMDependentObjects.m */,
 				166901AB1D7081C7000FE4AF /* ZMDownstreamObjectSync.h */,
@@ -414,6 +420,7 @@
 				166901E31D7081C7000FE4AF /* ZMSingleRequestSync.h in Headers */,
 				166901DE1D7081C7000FE4AF /* ZMObjectSync.h in Headers */,
 				166901FC1D7081D1000FE4AF /* ZMImagePreprocessingTracker.h in Headers */,
+				1621D2741D7715EA007108C2 /* ZMObjectSyncStrategy.h in Headers */,
 				166901FB1D7081D1000FE4AF /* ZMImagePreprocessingTracker+Testing.h in Headers */,
 				1621D22E1D75AC36007108C2 /* ZMChangeTrackerBootstrap.h in Headers */,
 				166901EF1D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.h in Headers */,
@@ -559,6 +566,7 @@
 				166901FD1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m in Sources */,
 				166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */,
 				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
+				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
 				1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */,

@@ -26,6 +26,7 @@ FOUNDATION_EXPORT const unsigned char WireRequestStrategyVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <WireRequestStrategy/PublicHeader.h>
 
+#import <WireRequestStrategy/ZMObjectSyncStrategy.h>
 #import <WireRequestStrategy/ZMContextChangeTracker.h>
 #import <WireRequestStrategy/ZMRequestGenerator.h>
 #import <WireRequestStrategy/ZMOutstandingItems.h>
