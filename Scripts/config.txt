@@ -1,4 +1,4 @@
-framework=wire-ios-share-engine
+framework=WireShareEngine
 organization=wireapp
 repository=wire-ios-share-engine
 release-name-format=I'd like a {ADJECTIVE} {FOOD_INGREDIENT} and {FOOD_INGREDIENT} burger without {FOOD_INGREDIENT}, please
