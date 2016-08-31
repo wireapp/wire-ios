@@ -79,22 +79,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     
     [self resetState];
     
-    if (self.shouldUseRealKeychain) {
-        [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
-        
-#if ! TARGET_IPHONE_SIMULATOR
-        // On the Xcode Continuous Intergration server the tests run as a user whose username starts with an underscore.
-        BOOL const runningOnIntegrationServer = [[[NSProcessInfo processInfo] environment][@"USER"] hasPrefix:@"_"];
-        if (runningOnIntegrationServer) {
-            [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
-        }
-#endif
-    } else {
-        [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
-    }
-    
+    [ZMPersistentCookieStorage setDoNotPersistToKeychain:!self.shouldUseRealKeychain];
     [self resetUIandSyncContextsAndResetPersistentStore:YES];
-    
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     
     self.searchMOC = [NSManagedObjectContext createSearchContext];
