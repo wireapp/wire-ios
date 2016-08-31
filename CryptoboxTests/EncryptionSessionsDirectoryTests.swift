@@ -194,8 +194,8 @@ extension EncryptionSessionsDirectoryTests {
             _ = try statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: "aabb")
             XCTFail("should have failed to use prekey")
         }
-        catch let err as CBoxResult {
-            XCTAssertEqual(err, CBOX_DECODE_ERROR)
+        catch let err as CryptoboxError {
+            XCTAssertEqual(err, CryptoboxError.CryptoboxDecodeError)
         } catch {
             XCTFail("should have thrown a CBoxResult")
         }

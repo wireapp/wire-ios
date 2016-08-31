@@ -132,7 +132,7 @@ extension EncryptionSessionsDirectory {
                                                    &cbsession.ptr
         )
         guard result == CBOX_SUCCESS else {
-            throw result
+            throw CryptoboxError(rawValue: result.rawValue)!
         }
         let session = EncryptionSession(id: clientId,
                                         session: cbsession,
@@ -155,7 +155,7 @@ extension EncryptionSessionsDirectory {
                                                     &cbsession.ptr,
                                                     &plainTextBacking)
         guard result == CBOX_SUCCESS else {
-            throw result
+            throw CryptoboxError(rawValue: result.rawValue)!
         }
         let plainText = NSData.moveFromCBoxVector(plainTextBacking)
         let session = EncryptionSession(id: clientId,
