@@ -32,7 +32,7 @@
 @class ZMConnection;
 @protocol ZMObjectStrategyDirectory;
 @class ZMAssetClientMessage;
-@class ZMManagedObjectContextTestFixture;
+@class ZMTestSession;
 
 @import Cryptobox;
 @import zimages;
@@ -49,7 +49,7 @@
 - (ZMEventID *)createEventID;
 + (ZMEventID *)createEventID;
 
-@property (nonatomic, readonly) ZMManagedObjectContextTestFixture *mocFixture;
+@property (nonatomic, readonly) ZMTestSession *testSession;
 @property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
