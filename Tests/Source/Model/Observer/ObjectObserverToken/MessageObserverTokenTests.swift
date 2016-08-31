@@ -258,6 +258,43 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         )
     }
     
+    func testThatItNotifiesWhenAReactionIsAddedOnMessage() {
+        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { message in
+                if let textMessage = message as? ZMTextMessage {
+                    textMessage.addReaction("LOVE IT, HUH", forUser: ZMUser.selfUserInContext(self.uiMOC))
+                }
+                
+            },
+            expectedChangedField: "reactionsChanged"
+        )
+        
+    }
+    
+    func testThatItNotifiesWhenAReactionIsUpdateForAUserOnMessage() {
+        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let selfUser = ZMUser.selfUserInContext(self.uiMOC)
+        message.addReaction("LOVE IT, HUH", forUser: selfUser)
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { message in
+                if let textMessage = message as? ZMTextMessage {
+                    textMessage.addReaction(nil, forUser: selfUser)
+                }
+                
+            },
+            expectedChangedField: "reactionsChanged"
+        )
+        
+    }
+
+    
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
