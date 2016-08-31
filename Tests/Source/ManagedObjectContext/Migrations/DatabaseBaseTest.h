@@ -35,7 +35,7 @@
 - (BOOL)moveDatabaseToCachesDirectory;
 - (BOOL)moveDatabaseToApplicationSupportDirectory;
 - (NSData *)invalidData;
-- (BOOL)createdUnredableLocalStore;
+- (BOOL)createdUnreadableLocalStore;
 - (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase;
 
 

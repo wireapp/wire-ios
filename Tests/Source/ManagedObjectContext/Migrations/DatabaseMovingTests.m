@@ -120,7 +120,7 @@
 {
     // given
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([self createdUnredableLocalStore]);
+        XCTAssertTrue([self createdUnreadableLocalStore]);
         XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
@@ -142,7 +142,7 @@
 {
     // given
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([self createdUnredableLocalStore]);
+        XCTAssertTrue([self createdUnreadableLocalStore]);
         XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     

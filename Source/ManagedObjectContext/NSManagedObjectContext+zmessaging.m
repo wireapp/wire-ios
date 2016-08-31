@@ -92,7 +92,7 @@ static BOOL storeIsReady = NO;
     return needsMigration || needsToMoveDatabase || self.databaseExistsAndNotReadableDueToEncryption;
 }
 
-+ (void)prepareLocalStoreInternalBackingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase
++ (void)prepareLocalStoreInternalBackingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
                                                 inDirectory:(NSURL *)directory
                                           completionHandler:(void (^)())completionHandler
 {
@@ -132,14 +132,14 @@ static BOOL storeIsReady = NO;
                                                                    queue:nil
                                                               usingBlock:^(NSNotification * _Nonnull __unused note) {
                                                                   ZM_STRONG(self);
-                                                                  sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorBackingUpCorrupedDatabases:backupCorrputedDatabase];
+                                                                  sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorBackingUpCorrupedDatabases:backupCorruptedDatabase];
                                                                   finally();
                                                                   [[NSNotificationCenter defaultCenter] removeObserver:applicationProtectedDataDidBecomeAvailableObserver];
                                                                   applicationProtectedDataDidBecomeAvailableObserver = nil;
                                                               }];
         }
         else {
-            sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorBackingUpCorrupedDatabases:backupCorrputedDatabase];
+            sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorBackingUpCorrupedDatabases:backupCorruptedDatabase];
             finally();
         }
     }
@@ -480,7 +480,7 @@ static dispatch_once_t clearStoreOnceToken;
         NSError *migrationError = nil;
         [psc migratePersistentStore:oldStore toURL:self.storeURL options:nil withType:NSSQLiteStoreType error:&migrationError];
         if (nil != migrationError) {
-            ZMLogError(@"Unable to migrate persistent store form application directory into directory %@: %@", DatabaseDirectoryURL, migrationError);
+            ZMLogError(@"Unable to migrate persistent store from application support directory into %@: %@", DatabaseDirectoryURL, migrationError);
         }
 
         if ([NSFileManager.defaultManager fileExistsAtPath:oldStore.URL.path]) {
@@ -686,7 +686,7 @@ static dispatch_once_t clearStoreOnceToken;
 }
 
 /// Checks if database is created, but it is still locked with iOS file protection
-+ (BOOL)databaseExistsAndNotReadableDueToEncryption;
++ (BOOL)databaseExistsAndNotReadableDueToEncryption
 {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSURL *databaseURL = self.databaseExistsInApplicationSupportDirectory ? self.applicationSupportDirectoryStoreURL : self.storeURL;
