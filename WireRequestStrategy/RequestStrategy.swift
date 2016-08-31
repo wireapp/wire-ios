@@ -20,7 +20,8 @@
 import ZMTransport
 
 /// A request strategy decides what is the next request to send
-@objc protocol RequestStrategy {
+@objc public protocol RequestStrategy {
     
     @objc func nextRequest() -> ZMTransportRequest?
+    
 }
