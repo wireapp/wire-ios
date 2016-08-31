@@ -24,7 +24,7 @@
 @class ZMSDispatchGroup;
 
 
-/// This class provides a contexts & caches for running tests against our data model.
+/// This class provides contexts & caches for running tests against our data model.
 @interface ZMTestSession : NSObject
 
 - (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup;
