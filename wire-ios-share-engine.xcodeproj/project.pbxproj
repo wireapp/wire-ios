@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		5470D3EC1D76E1B000FDE440 /* WireShareEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
-		5470D3F81D76E1B000FDE440 /* wire_ios_share_engineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D3F71D76E1B000FDE440 /* wire_ios_share_engineTests.swift */; };
 		5470D4301D77154200FDE440 /* SharingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D42F1D77154200FDE440 /* SharingSession.swift */; };
 		5470D4321D77165800FDE440 /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; };
 		5470D4551D77169900FDE440 /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* Cryptobox.framework */; };
@@ -26,6 +25,18 @@
 		5470D4611D771BD600FDE440 /* SharingTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4601D771BD600FDE440 /* SharingTarget.swift */; };
 		5470D4631D7722A500FDE440 /* Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4621D7722A500FDE440 /* Sendable.swift */; };
 		5470D4651D772A6000FDE440 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4641D772A6000FDE440 /* Conversation.swift */; };
+		54B04A621D77359900CED57C /* Cryptobox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* Cryptobox.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A631D77359900CED57C /* libPhoneNumber.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44B1D77169900FDE440 /* libPhoneNumber.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A641D77359900CED57C /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44C1D77169900FDE440 /* Ono.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A651D77359900CED57C /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A661D77359900CED57C /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A671D77359900CED57C /* zimages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44F1D77169900FDE440 /* zimages.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A681D77359900CED57C /* ZMCLinkPreview.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4501D77169900FDE440 /* ZMCLinkPreview.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A691D77359900CED57C /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4511D77169900FDE440 /* ZMCSystem.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A6A1D77359900CED57C /* ZMProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4521D77169900FDE440 /* ZMProtos.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A6B1D77359A00CED57C /* ZMTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* ZMTransport.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A6C1D77359A00CED57C /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54B04A6D1D77359A00CED57C /* ZMCDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,12 +49,35 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		54B04A611D77359000CED57C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				54B04A621D77359900CED57C /* Cryptobox.framework in CopyFiles */,
+				54B04A631D77359900CED57C /* libPhoneNumber.framework in CopyFiles */,
+				54B04A641D77359900CED57C /* Ono.framework in CopyFiles */,
+				54B04A651D77359900CED57C /* PINCache.framework in CopyFiles */,
+				54B04A661D77359900CED57C /* ProtocolBuffers.framework in CopyFiles */,
+				54B04A671D77359900CED57C /* zimages.framework in CopyFiles */,
+				54B04A681D77359900CED57C /* ZMCLinkPreview.framework in CopyFiles */,
+				54B04A691D77359900CED57C /* ZMCSystem.framework in CopyFiles */,
+				54B04A6A1D77359900CED57C /* ZMProtos.framework in CopyFiles */,
+				54B04A6B1D77359A00CED57C /* ZMTransport.framework in CopyFiles */,
+				54B04A6C1D77359A00CED57C /* ZMUtilities.framework in CopyFiles */,
+				54B04A6D1D77359A00CED57C /* ZMCDataModel.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireShareEngine.h; sourceTree = "<group>"; };
 		5470D3ED1D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "wire-ios-share-engine/Info.plist"; sourceTree = "<group>"; };
 		5470D3F21D76E1B000FDE440 /* wire-ios-share-engineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "wire-ios-share-engineTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5470D3F71D76E1B000FDE440 /* wire_ios_share_engineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wire_ios_share_engineTests.swift; sourceTree = "<group>"; };
 		5470D3F91D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5470D4041D76E2A400FDE440 /* libs.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libs.xcconfig; sourceTree = "<group>"; };
 		5470D4051D76E2A400FDE440 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -153,7 +187,6 @@
 		5470D3F61D76E1B000FDE440 /* wire-ios-share-engineTests */ = {
 			isa = PBXGroup;
 			children = (
-				5470D3F71D76E1B000FDE440 /* wire_ios_share_engineTests.swift */,
 				5470D3F91D76E1B000FDE440 /* Info.plist */,
 			);
 			path = "wire-ios-share-engineTests";
@@ -259,6 +292,7 @@
 				5470D3EE1D76E1B000FDE440 /* Sources */,
 				5470D3EF1D76E1B000FDE440 /* Frameworks */,
 				5470D3F01D76E1B000FDE440 /* Resources */,
+				54B04A611D77359000CED57C /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -340,7 +374,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5470D3F81D76E1B000FDE440 /* wire_ios_share_engineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
