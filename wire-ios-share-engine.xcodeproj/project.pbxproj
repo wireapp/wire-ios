@@ -7,11 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5470D3EC1D76E1B000FDE440 /* wire-ios-share-engine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5470D3EB1D76E1B000FDE440 /* wire-ios-share-engine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5470D3F31D76E1B000FDE440 /* wire-ios-share-engine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* wire-ios-share-engine.framework */; };
+		5470D3EC1D76E1B000FDE440 /* WireShareEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		5470D3F81D76E1B000FDE440 /* wire_ios_share_engineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D3F71D76E1B000FDE440 /* wire_ios_share_engineTests.swift */; };
-		5470D42D1D770CEE00FDE440 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 5470D42B1D770CEE00FDE440 /* LICENSE */; };
-		5470D42E1D770CEE00FDE440 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 5470D42C1D770CEE00FDE440 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,8 +23,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5470D3E81D76E1B000FDE440 /* wire-ios-share-engine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "wire-ios-share-engine.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5470D3EB1D76E1B000FDE440 /* wire-ios-share-engine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "wire-ios-share-engine.h"; sourceTree = "<group>"; };
+		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireShareEngine.h; sourceTree = "<group>"; };
 		5470D3ED1D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5470D3F21D76E1B000FDE440 /* wire-ios-share-engineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "wire-ios-share-engineTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3F71D76E1B000FDE440 /* wire_ios_share_engineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wire_ios_share_engineTests.swift; sourceTree = "<group>"; };
@@ -66,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5470D3F31D76E1B000FDE440 /* wire-ios-share-engine.framework in Frameworks */,
+				5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +86,7 @@
 		5470D3E91D76E1B000FDE440 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5470D3E81D76E1B000FDE440 /* wire-ios-share-engine.framework */,
+				5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */,
 				5470D3F21D76E1B000FDE440 /* wire-ios-share-engineTests.xctest */,
 			);
 			name = Products;
@@ -97,7 +95,7 @@
 		5470D3EA1D76E1B000FDE440 /* wire-ios-share-engine */ = {
 			isa = PBXGroup;
 			children = (
-				5470D3EB1D76E1B000FDE440 /* wire-ios-share-engine.h */,
+				5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */,
 				5470D3ED1D76E1B000FDE440 /* Info.plist */,
 			);
 			path = "wire-ios-share-engine";
@@ -161,7 +159,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5470D3EC1D76E1B000FDE440 /* wire-ios-share-engine.h in Headers */,
+				5470D3EC1D76E1B000FDE440 /* WireShareEngine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,7 +181,7 @@
 			);
 			name = "wire-ios-share-engine";
 			productName = "wire-ios-share-engine";
-			productReference = 5470D3E81D76E1B000FDE440 /* wire-ios-share-engine.framework */;
+			productReference = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		5470D3F11D76E1B000FDE440 /* wire-ios-share-engineTests */ = {
@@ -246,7 +244,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5470D42D1D770CEE00FDE440 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +261,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5470D42E1D770CEE00FDE440 /* README.md in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,49 +287,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4111D76E2A400FDE440 /* project-debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
@@ -341,42 +301,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4121D76E2A400FDE440 /* project.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -385,16 +315,9 @@
 			baseConfigurationReference = 5470D4061D76E2A400FDE440 /* wire-ios-share-engine-ios.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "wire-ios-share-engine/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engine";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -403,16 +326,9 @@
 			baseConfigurationReference = 5470D4061D76E2A400FDE440 /* wire-ios-share-engine-ios.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "wire-ios-share-engine/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engine";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -457,6 +373,7 @@
 				5470D3FE1D76E1B000FDE440 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5470D3FF1D76E1B000FDE440 /* Build configuration list for PBXNativeTarget "wire-ios-share-engineTests" */ = {
 			isa = XCConfigurationList;
@@ -465,6 +382,7 @@
 				5470D4011D76E1B000FDE440 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
