@@ -7,9 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1621D21F1D75A71E007108C2 /* RequestAvailableNotification.swift */; };
+		1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2231D75AB2D007108C2 /* MockEntity.m */; };
+		1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2251D75AB2D007108C2 /* MockEntity2.m */; };
+		1621D22A1D75AB2D007108C2 /* MockModelObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */; };
+		1621D22E1D75AC36007108C2 /* ZMChangeTrackerBootstrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1621D22B1D75AC36007108C2 /* ZMChangeTrackerBootstrap.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1621D22F1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D22C1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m */; };
+		1621D2301D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 1621D22D1D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1621D25F1D75C132007108C2 /* ZMDependentObjectsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902161D709110000FE4AF /* ZMDependentObjectsTests.m */; };
+		1621D2601D75C73E007108C2 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902171D709110000FE4AF /* ZMDownstreamObjectSyncOrderingTests.m */; };
+		1621D2611D75C742007108C2 /* ZMDownstreamObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902181D709110000FE4AF /* ZMDownstreamObjectSyncTests.m */; };
+		1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902191D709110000FE4AF /* ZMDownstreamObjectSyncWithWhitelistingTests.m */; };
+		1621D2631D75C749007108C2 /* ZMImagePreprocessingTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021A1D709110000FE4AF /* ZMImagePreprocessingTrackerTests.m */; };
+		1621D2641D75C74D007108C2 /* ZMLocalInsertedObjectSetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021B1D709110000FE4AF /* ZMLocalInsertedObjectSetTests.m */; };
+		1621D2651D75C750007108C2 /* ZMLocallyModifiedObjectSetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021C1D709110000FE4AF /* ZMLocallyModifiedObjectSetTests.m */; };
+		1621D2661D75C755007108C2 /* ZMLocallyModifiedObjectSyncStatusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021D1D709110000FE4AF /* ZMLocallyModifiedObjectSyncStatusTests.m */; };
+		1621D2671D75C776007108C2 /* ZMRemoteIdentifierObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021E1D709110000FE4AF /* ZMRemoteIdentifierObjectSyncTests.m */; };
+		1621D2681D75C77B007108C2 /* ZMRequestGeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021F1D709110000FE4AF /* ZMRequestGeneratorTests.m */; };
+		1621D2691D75C77E007108C2 /* ZMSingleRequestSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902201D709110000FE4AF /* ZMSingleRequestSyncTests.m */; };
+		1621D26A1D75C782007108C2 /* ZMTimedSingleRequestSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902211D709110000FE4AF /* ZMTimedSingleRequestSyncTests.m */; };
+		1621D26B1D75C7FF007108C2 /* ZMUpstreamInsertedObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */; };
+		1621D26C1D75C803007108C2 /* ZMUpstreamModifiedObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */; };
+		1621D26D1D75C806007108C2 /* NSManagedObjectContext+TestHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */; };
 		1669016E1D707509000FE4AF /* WireRequestStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1669016D1D707509000FE4AF /* WireRequestStrategy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166901751D707509000FE4AF /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
-		1669017A1D707509000FE4AF /* WireRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166901791D707509000FE4AF /* WireRequestStrategyTests.swift */; };
 		166901971D7075D7000FE4AF /* version.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901861D7075D7000FE4AF /* version.xcconfig */; };
 		166901981D7075D7000FE4AF /* ios-test-host.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901881D7075D7000FE4AF /* ios-test-host.xcconfig */; };
 		166901991D7075D7000FE4AF /* ios-test-target.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901891D7075D7000FE4AF /* ios-test-target.xcconfig */; };
@@ -26,6 +47,53 @@
 		166901A41D7075D7000FE4AF /* warnings.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901941D7075D7000FE4AF /* warnings.xcconfig */; };
 		166901A51D7075D7000FE4AF /* WireRequestStrategy-ios.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901951D7075D7000FE4AF /* WireRequestStrategy-ios.xcconfig */; };
 		166901A61D7075D7000FE4AF /* WireRequestStrategy.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */; };
+		166901CF1D7081C7000FE4AF /* RequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166901A71D7081C7000FE4AF /* RequestStrategy.swift */; };
+		166901D01D7081C7000FE4AF /* ZMContextChangeTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901A81D7081C7000FE4AF /* ZMContextChangeTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901D11D7081C7000FE4AF /* ZMDependentObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901A91D7081C7000FE4AF /* ZMDependentObjects.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901D21D7081C7000FE4AF /* ZMDependentObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901AA1D7081C7000FE4AF /* ZMDependentObjects.m */; };
+		166901D31D7081C7000FE4AF /* ZMDownstreamObjectSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901AB1D7081C7000FE4AF /* ZMDownstreamObjectSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901AC1D7081C7000FE4AF /* ZMDownstreamObjectSync.m */; };
+		166901D51D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901AD1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901D61D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901AE1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m */; };
+		166901D71D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901AF1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist+Internal.h */; };
+		166901D81D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901B01D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901B11D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m */; };
+		166901DA1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901B21D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901DB1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901B31D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m */; };
+		166901DC1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901B41D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901DD1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901B51D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m */; };
+		166901DE1D7081C7000FE4AF /* ZMObjectSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901B61D7081C7000FE4AF /* ZMObjectSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901DF1D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901B71D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901B81D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m */; };
+		166901E11D7081C7000FE4AF /* ZMRequestGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901B91D7081C7000FE4AF /* ZMRequestGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901BA1D7081C7000FE4AF /* ZMRequestGenerator.m */; };
+		166901E31D7081C7000FE4AF /* ZMSingleRequestSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901BB1D7081C7000FE4AF /* ZMSingleRequestSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901BC1D7081C7000FE4AF /* ZMSingleRequestSync.m */; };
+		166901E51D7081C7000FE4AF /* ZMSyncOperationSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901BD1D7081C7000FE4AF /* ZMSyncOperationSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901E61D7081C7000FE4AF /* ZMSyncOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901BE1D7081C7000FE4AF /* ZMSyncOperationSet.m */; };
+		166901E71D7081C7000FE4AF /* ZMSyncStateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901BF1D7081C7000FE4AF /* ZMSyncStateDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901EB1D7081C7000FE4AF /* ZMTimedSingleRequestSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901C31D7081C7000FE4AF /* ZMTimedSingleRequestSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901C41D7081C7000FE4AF /* ZMTimedSingleRequestSync.m */; };
+		166901ED1D7081C7000FE4AF /* ZMUpstreamAssetSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901C51D7081C7000FE4AF /* ZMUpstreamAssetSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901EE1D7081C7000FE4AF /* ZMUpstreamAssetSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901C61D7081C7000FE4AF /* ZMUpstreamAssetSync.m */; };
+		166901EF1D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901C71D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901F01D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901C81D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m */; };
+		166901F11D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901C91D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901CA1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m */; };
+		166901F31D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901CB1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync+Testing.h */; };
+		166901F41D7081C7000FE4AF /* ZMUpstreamRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901CC1D7081C7000FE4AF /* ZMUpstreamRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901CD1D7081C7000FE4AF /* ZMUpstreamRequest.m */; };
+		166901F61D7081C7000FE4AF /* ZMUpstreamTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901CE1D7081C7000FE4AF /* ZMUpstreamTranscoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901FB1D7081D1000FE4AF /* ZMImagePreprocessingTracker+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901F81D7081D1000FE4AF /* ZMImagePreprocessingTracker+Testing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901FC1D7081D1000FE4AF /* ZMImagePreprocessingTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901F91D7081D1000FE4AF /* ZMImagePreprocessingTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166901FD1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901FA1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m */; };
+		166902011D7082B8000FE4AF /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166901FE1D7082B8000FE4AF /* ZMCSystem.framework */; };
+		166902021D7082B8000FE4AF /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166901FF1D7082B8000FE4AF /* ZMTransport.framework */; };
+		166902031D7082B8000FE4AF /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166902001D7082B8000FE4AF /* ZMUtilities.framework */; };
+		166902101D7083C5000FE4AF /* zimages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669020F1D7083C5000FE4AF /* zimages.framework */; };
+		166902121D70851E000FE4AF /* ZMOutstandingItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 166902111D70851E000FE4AF /* ZMOutstandingItems.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166902141D708709000FE4AF /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166902131D708709000FE4AF /* ZMCDataModel.framework */; };
+		166902331D7092D6000FE4AF /* ZMTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166902321D7092D6000FE4AF /* ZMTesting.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,11 +107,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1621D21F1D75A71E007108C2 /* RequestAvailableNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestAvailableNotification.swift; sourceTree = "<group>"; };
+		1621D2221D75AB2D007108C2 /* MockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEntity.h; sourceTree = "<group>"; };
+		1621D2231D75AB2D007108C2 /* MockEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockEntity.m; sourceTree = "<group>"; };
+		1621D2241D75AB2D007108C2 /* MockEntity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEntity2.h; sourceTree = "<group>"; };
+		1621D2251D75AB2D007108C2 /* MockEntity2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockEntity2.m; sourceTree = "<group>"; };
+		1621D2261D75AB2D007108C2 /* MockModelObjectContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockModelObjectContextFactory.h; sourceTree = "<group>"; };
+		1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockModelObjectContextFactory.m; sourceTree = "<group>"; };
+		1621D22B1D75AC36007108C2 /* ZMChangeTrackerBootstrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMChangeTrackerBootstrap.h; sourceTree = "<group>"; };
+		1621D22C1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMChangeTrackerBootstrap.m; sourceTree = "<group>"; };
+		1621D22D1D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMChangeTrackerBootstrap+Testing.h"; sourceTree = "<group>"; };
+		1621D2311D75B221007108C2 /* NSManagedObjectContext+TestHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+TestHelpers.h"; sourceTree = "<group>"; };
+		1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+TestHelpers.m"; sourceTree = "<group>"; };
 		1669016A1D707509000FE4AF /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1669016D1D707509000FE4AF /* WireRequestStrategy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireRequestStrategy.h; sourceTree = "<group>"; };
 		1669016F1D707509000FE4AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		166901741D707509000FE4AF /* WireRequestStrategyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireRequestStrategyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		166901791D707509000FE4AF /* WireRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireRequestStrategyTests.swift; sourceTree = "<group>"; };
 		1669017B1D707509000FE4AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		166901861D7075D7000FE4AF /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		166901881D7075D7000FE4AF /* ios-test-host.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
@@ -61,6 +140,68 @@
 		166901941D7075D7000FE4AF /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		166901951D7075D7000FE4AF /* WireRequestStrategy-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "WireRequestStrategy-ios.xcconfig"; sourceTree = "<group>"; };
 		166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WireRequestStrategy.xcconfig; sourceTree = "<group>"; };
+		166901A71D7081C7000FE4AF /* RequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestStrategy.swift; sourceTree = "<group>"; };
+		166901A81D7081C7000FE4AF /* ZMContextChangeTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMContextChangeTracker.h; sourceTree = "<group>"; };
+		166901A91D7081C7000FE4AF /* ZMDependentObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMDependentObjects.h; sourceTree = "<group>"; };
+		166901AA1D7081C7000FE4AF /* ZMDependentObjects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDependentObjects.m; sourceTree = "<group>"; };
+		166901AB1D7081C7000FE4AF /* ZMDownstreamObjectSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMDownstreamObjectSync.h; sourceTree = "<group>"; };
+		166901AC1D7081C7000FE4AF /* ZMDownstreamObjectSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDownstreamObjectSync.m; sourceTree = "<group>"; };
+		166901AD1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMDownstreamObjectSyncWithWhitelist.h; sourceTree = "<group>"; };
+		166901AE1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDownstreamObjectSyncWithWhitelist.m; sourceTree = "<group>"; };
+		166901AF1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMDownstreamObjectSyncWithWhitelist+Internal.h"; sourceTree = "<group>"; };
+		166901B01D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMLocallyInsertedObjectSet.h; sourceTree = "<group>"; };
+		166901B11D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLocallyInsertedObjectSet.m; sourceTree = "<group>"; };
+		166901B21D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMLocallyModifiedObjectSet.h; sourceTree = "<group>"; };
+		166901B31D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLocallyModifiedObjectSet.m; sourceTree = "<group>"; };
+		166901B41D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMLocallyModifiedObjectSyncStatus.h; sourceTree = "<group>"; };
+		166901B51D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLocallyModifiedObjectSyncStatus.m; sourceTree = "<group>"; };
+		166901B61D7081C7000FE4AF /* ZMObjectSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMObjectSync.h; sourceTree = "<group>"; };
+		166901B71D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMRemoteIdentifierObjectSync.h; sourceTree = "<group>"; };
+		166901B81D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMRemoteIdentifierObjectSync.m; sourceTree = "<group>"; };
+		166901B91D7081C7000FE4AF /* ZMRequestGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMRequestGenerator.h; sourceTree = "<group>"; };
+		166901BA1D7081C7000FE4AF /* ZMRequestGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMRequestGenerator.m; sourceTree = "<group>"; };
+		166901BB1D7081C7000FE4AF /* ZMSingleRequestSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSingleRequestSync.h; sourceTree = "<group>"; };
+		166901BC1D7081C7000FE4AF /* ZMSingleRequestSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSingleRequestSync.m; sourceTree = "<group>"; };
+		166901BD1D7081C7000FE4AF /* ZMSyncOperationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSyncOperationSet.h; sourceTree = "<group>"; };
+		166901BE1D7081C7000FE4AF /* ZMSyncOperationSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSyncOperationSet.m; sourceTree = "<group>"; };
+		166901BF1D7081C7000FE4AF /* ZMSyncStateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSyncStateDelegate.h; sourceTree = "<group>"; };
+		166901C31D7081C7000FE4AF /* ZMTimedSingleRequestSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTimedSingleRequestSync.h; sourceTree = "<group>"; };
+		166901C41D7081C7000FE4AF /* ZMTimedSingleRequestSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimedSingleRequestSync.m; sourceTree = "<group>"; };
+		166901C51D7081C7000FE4AF /* ZMUpstreamAssetSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUpstreamAssetSync.h; sourceTree = "<group>"; };
+		166901C61D7081C7000FE4AF /* ZMUpstreamAssetSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamAssetSync.m; sourceTree = "<group>"; };
+		166901C71D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUpstreamInsertedObjectSync.h; sourceTree = "<group>"; };
+		166901C81D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamInsertedObjectSync.m; sourceTree = "<group>"; };
+		166901C91D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUpstreamModifiedObjectSync.h; sourceTree = "<group>"; };
+		166901CA1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamModifiedObjectSync.m; sourceTree = "<group>"; };
+		166901CB1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync+Testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMUpstreamModifiedObjectSync+Testing.h"; sourceTree = "<group>"; };
+		166901CC1D7081C7000FE4AF /* ZMUpstreamRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUpstreamRequest.h; sourceTree = "<group>"; };
+		166901CD1D7081C7000FE4AF /* ZMUpstreamRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamRequest.m; sourceTree = "<group>"; };
+		166901CE1D7081C7000FE4AF /* ZMUpstreamTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUpstreamTranscoder.h; sourceTree = "<group>"; };
+		166901F81D7081D1000FE4AF /* ZMImagePreprocessingTracker+Testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMImagePreprocessingTracker+Testing.h"; sourceTree = "<group>"; };
+		166901F91D7081D1000FE4AF /* ZMImagePreprocessingTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMImagePreprocessingTracker.h; sourceTree = "<group>"; };
+		166901FA1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImagePreprocessingTracker.m; sourceTree = "<group>"; };
+		166901FE1D7082B8000FE4AF /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
+		166901FF1D7082B8000FE4AF /* ZMTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTransport.framework; path = Carthage/Build/iOS/ZMTransport.framework; sourceTree = "<group>"; };
+		166902001D7082B8000FE4AF /* ZMUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMUtilities.framework; path = Carthage/Build/iOS/ZMUtilities.framework; sourceTree = "<group>"; };
+		1669020F1D7083C5000FE4AF /* zimages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = zimages.framework; path = Carthage/Build/iOS/zimages.framework; sourceTree = "<group>"; };
+		166902111D70851E000FE4AF /* ZMOutstandingItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMOutstandingItems.h; sourceTree = "<group>"; };
+		166902131D708709000FE4AF /* ZMCDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCDataModel.framework; path = Carthage/Build/iOS/ZMCDataModel.framework; sourceTree = "<group>"; };
+		166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireRequestStrategyTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		166902161D709110000FE4AF /* ZMDependentObjectsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDependentObjectsTests.m; sourceTree = "<group>"; };
+		166902171D709110000FE4AF /* ZMDownstreamObjectSyncOrderingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDownstreamObjectSyncOrderingTests.m; sourceTree = "<group>"; };
+		166902181D709110000FE4AF /* ZMDownstreamObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDownstreamObjectSyncTests.m; sourceTree = "<group>"; };
+		166902191D709110000FE4AF /* ZMDownstreamObjectSyncWithWhitelistingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDownstreamObjectSyncWithWhitelistingTests.m; sourceTree = "<group>"; };
+		1669021A1D709110000FE4AF /* ZMImagePreprocessingTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImagePreprocessingTrackerTests.m; sourceTree = "<group>"; };
+		1669021B1D709110000FE4AF /* ZMLocalInsertedObjectSetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLocalInsertedObjectSetTests.m; sourceTree = "<group>"; };
+		1669021C1D709110000FE4AF /* ZMLocallyModifiedObjectSetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLocallyModifiedObjectSetTests.m; sourceTree = "<group>"; };
+		1669021D1D709110000FE4AF /* ZMLocallyModifiedObjectSyncStatusTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMLocallyModifiedObjectSyncStatusTests.m; sourceTree = "<group>"; };
+		1669021E1D709110000FE4AF /* ZMRemoteIdentifierObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMRemoteIdentifierObjectSyncTests.m; sourceTree = "<group>"; };
+		1669021F1D709110000FE4AF /* ZMRequestGeneratorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMRequestGeneratorTests.m; sourceTree = "<group>"; };
+		166902201D709110000FE4AF /* ZMSingleRequestSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSingleRequestSyncTests.m; sourceTree = "<group>"; };
+		166902211D709110000FE4AF /* ZMTimedSingleRequestSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimedSingleRequestSyncTests.m; sourceTree = "<group>"; };
+		166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamInsertedObjectSyncTests.m; sourceTree = "<group>"; };
+		166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamModifiedObjectSyncTests.m; sourceTree = "<group>"; };
+		166902321D7092D6000FE4AF /* ZMTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTesting.framework; path = Carthage/Build/iOS/ZMTesting.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +209,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				166902141D708709000FE4AF /* ZMCDataModel.framework in Frameworks */,
+				166902101D7083C5000FE4AF /* zimages.framework in Frameworks */,
+				166902011D7082B8000FE4AF /* ZMCSystem.framework in Frameworks */,
+				166902021D7082B8000FE4AF /* ZMTransport.framework in Frameworks */,
+				166902031D7082B8000FE4AF /* ZMUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +221,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				166902331D7092D6000FE4AF /* ZMTesting.framework in Frameworks */,
 				166901751D707509000FE4AF /* WireRequestStrategy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,6 +229,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1621D2211D75AB2D007108C2 /* MockDataModel */ = {
+			isa = PBXGroup;
+			children = (
+				1621D2221D75AB2D007108C2 /* MockEntity.h */,
+				1621D2231D75AB2D007108C2 /* MockEntity.m */,
+				1621D2241D75AB2D007108C2 /* MockEntity2.h */,
+				1621D2251D75AB2D007108C2 /* MockEntity2.m */,
+				1621D2261D75AB2D007108C2 /* MockModelObjectContextFactory.h */,
+				1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */,
+			);
+			path = MockDataModel;
+			sourceTree = "<group>";
+		};
 		166901601D707509000FE4AF = {
 			isa = PBXGroup;
 			children = (
@@ -89,6 +249,7 @@
 				166901781D707509000FE4AF /* WireRequestStrategyTests */,
 				1669016B1D707509000FE4AF /* Products */,
 				166901841D7075D7000FE4AF /* Resources */,
+				166902041D7082C7000FE4AF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -104,6 +265,49 @@
 		1669016C1D707509000FE4AF /* WireRequestStrategy */ = {
 			isa = PBXGroup;
 			children = (
+				166901F71D7081D1000FE4AF /* ImagePreprocessing */,
+				166901A71D7081C7000FE4AF /* RequestStrategy.swift */,
+				1621D21F1D75A71E007108C2 /* RequestAvailableNotification.swift */,
+				1621D22B1D75AC36007108C2 /* ZMChangeTrackerBootstrap.h */,
+				1621D22C1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m */,
+				1621D22D1D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h */,
+				166902111D70851E000FE4AF /* ZMOutstandingItems.h */,
+				166901A81D7081C7000FE4AF /* ZMContextChangeTracker.h */,
+				166901A91D7081C7000FE4AF /* ZMDependentObjects.h */,
+				166901AA1D7081C7000FE4AF /* ZMDependentObjects.m */,
+				166901AB1D7081C7000FE4AF /* ZMDownstreamObjectSync.h */,
+				166901AC1D7081C7000FE4AF /* ZMDownstreamObjectSync.m */,
+				166901AD1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.h */,
+				166901AE1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m */,
+				166901AF1D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist+Internal.h */,
+				166901B01D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h */,
+				166901B11D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m */,
+				166901B21D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h */,
+				166901B31D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m */,
+				166901B41D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.h */,
+				166901B51D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m */,
+				166901B61D7081C7000FE4AF /* ZMObjectSync.h */,
+				166901B71D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.h */,
+				166901B81D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m */,
+				166901B91D7081C7000FE4AF /* ZMRequestGenerator.h */,
+				166901BA1D7081C7000FE4AF /* ZMRequestGenerator.m */,
+				166901BB1D7081C7000FE4AF /* ZMSingleRequestSync.h */,
+				166901BC1D7081C7000FE4AF /* ZMSingleRequestSync.m */,
+				166901BD1D7081C7000FE4AF /* ZMSyncOperationSet.h */,
+				166901BE1D7081C7000FE4AF /* ZMSyncOperationSet.m */,
+				166901BF1D7081C7000FE4AF /* ZMSyncStateDelegate.h */,
+				166901C31D7081C7000FE4AF /* ZMTimedSingleRequestSync.h */,
+				166901C41D7081C7000FE4AF /* ZMTimedSingleRequestSync.m */,
+				166901C51D7081C7000FE4AF /* ZMUpstreamAssetSync.h */,
+				166901C61D7081C7000FE4AF /* ZMUpstreamAssetSync.m */,
+				166901C71D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.h */,
+				166901C81D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m */,
+				166901C91D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.h */,
+				166901CA1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m */,
+				166901CB1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync+Testing.h */,
+				166901CC1D7081C7000FE4AF /* ZMUpstreamRequest.h */,
+				166901CD1D7081C7000FE4AF /* ZMUpstreamRequest.m */,
+				166901CE1D7081C7000FE4AF /* ZMUpstreamTranscoder.h */,
 				1669016D1D707509000FE4AF /* WireRequestStrategy.h */,
 				1669016F1D707509000FE4AF /* Info.plist */,
 			);
@@ -113,8 +317,25 @@
 		166901781D707509000FE4AF /* WireRequestStrategyTests */ = {
 			isa = PBXGroup;
 			children = (
-				166901791D707509000FE4AF /* WireRequestStrategyTests.swift */,
+				1621D2211D75AB2D007108C2 /* MockDataModel */,
 				1669017B1D707509000FE4AF /* Info.plist */,
+				166902161D709110000FE4AF /* ZMDependentObjectsTests.m */,
+				166902171D709110000FE4AF /* ZMDownstreamObjectSyncOrderingTests.m */,
+				166902181D709110000FE4AF /* ZMDownstreamObjectSyncTests.m */,
+				166902191D709110000FE4AF /* ZMDownstreamObjectSyncWithWhitelistingTests.m */,
+				1669021A1D709110000FE4AF /* ZMImagePreprocessingTrackerTests.m */,
+				1669021B1D709110000FE4AF /* ZMLocalInsertedObjectSetTests.m */,
+				1669021C1D709110000FE4AF /* ZMLocallyModifiedObjectSetTests.m */,
+				1669021D1D709110000FE4AF /* ZMLocallyModifiedObjectSyncStatusTests.m */,
+				1669021E1D709110000FE4AF /* ZMRemoteIdentifierObjectSyncTests.m */,
+				1669021F1D709110000FE4AF /* ZMRequestGeneratorTests.m */,
+				166902201D709110000FE4AF /* ZMSingleRequestSyncTests.m */,
+				166902211D709110000FE4AF /* ZMTimedSingleRequestSyncTests.m */,
+				166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */,
+				166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */,
+				166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */,
+				1621D2311D75B221007108C2 /* NSManagedObjectContext+TestHelpers.h */,
+				1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */,
 			);
 			path = WireRequestStrategyTests;
 			sourceTree = "<group>";
@@ -158,6 +379,29 @@
 			path = "wire-ios-xcconfig";
 			sourceTree = "<group>";
 		};
+		166901F71D7081D1000FE4AF /* ImagePreprocessing */ = {
+			isa = PBXGroup;
+			children = (
+				166901F81D7081D1000FE4AF /* ZMImagePreprocessingTracker+Testing.h */,
+				166901F91D7081D1000FE4AF /* ZMImagePreprocessingTracker.h */,
+				166901FA1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m */,
+			);
+			path = ImagePreprocessing;
+			sourceTree = "<group>";
+		};
+		166902041D7082C7000FE4AF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				166902321D7092D6000FE4AF /* ZMTesting.framework */,
+				166902131D708709000FE4AF /* ZMCDataModel.framework */,
+				1669020F1D7083C5000FE4AF /* zimages.framework */,
+				166901FE1D7082B8000FE4AF /* ZMCSystem.framework */,
+				166901FF1D7082B8000FE4AF /* ZMTransport.framework */,
+				166902001D7082B8000FE4AF /* ZMUtilities.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -165,7 +409,33 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				166901DF1D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.h in Headers */,
+				166901F61D7081C7000FE4AF /* ZMUpstreamTranscoder.h in Headers */,
+				166901E51D7081C7000FE4AF /* ZMSyncOperationSet.h in Headers */,
+				166901F31D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync+Testing.h in Headers */,
+				166901D01D7081C7000FE4AF /* ZMContextChangeTracker.h in Headers */,
+				166901E31D7081C7000FE4AF /* ZMSingleRequestSync.h in Headers */,
+				166901DE1D7081C7000FE4AF /* ZMObjectSync.h in Headers */,
+				166901FC1D7081D1000FE4AF /* ZMImagePreprocessingTracker.h in Headers */,
+				166901FB1D7081D1000FE4AF /* ZMImagePreprocessingTracker+Testing.h in Headers */,
+				1621D22E1D75AC36007108C2 /* ZMChangeTrackerBootstrap.h in Headers */,
+				166901EF1D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.h in Headers */,
+				166901F11D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.h in Headers */,
+				166901F41D7081C7000FE4AF /* ZMUpstreamRequest.h in Headers */,
+				166901D31D7081C7000FE4AF /* ZMDownstreamObjectSync.h in Headers */,
 				1669016E1D707509000FE4AF /* WireRequestStrategy.h in Headers */,
+				166901D11D7081C7000FE4AF /* ZMDependentObjects.h in Headers */,
+				166901D81D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h in Headers */,
+				1621D2301D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h in Headers */,
+				166901DA1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h in Headers */,
+				166901E71D7081C7000FE4AF /* ZMSyncStateDelegate.h in Headers */,
+				166901EB1D7081C7000FE4AF /* ZMTimedSingleRequestSync.h in Headers */,
+				166901D71D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist+Internal.h in Headers */,
+				166901E11D7081C7000FE4AF /* ZMRequestGenerator.h in Headers */,
+				166902121D70851E000FE4AF /* ZMOutstandingItems.h in Headers */,
+				166901DC1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.h in Headers */,
+				166901D51D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.h in Headers */,
+				166901ED1D7081C7000FE4AF /* ZMUpstreamAssetSync.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +552,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				166901DB1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m in Sources */,
+				166901F01D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m in Sources */,
+				166901D61D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m in Sources */,
+				166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */,
+				166901EE1D7081C7000FE4AF /* ZMUpstreamAssetSync.m in Sources */,
+				166901CF1D7081C7000FE4AF /* RequestStrategy.swift in Sources */,
+				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
+				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
+				166901FD1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m in Sources */,
+				166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */,
+				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
+				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
+				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
+				1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */,
+				166901E61D7081C7000FE4AF /* ZMSyncOperationSet.m in Sources */,
+				166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */,
+				166901D21D7081C7000FE4AF /* ZMDependentObjects.m in Sources */,
+				1621D22F1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m in Sources */,
+				166901DD1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,7 +578,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1669017A1D707509000FE4AF /* WireRequestStrategyTests.swift in Sources */,
+				1621D2601D75C73E007108C2 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
+				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistingTests.m in Sources */,
+				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
+				1621D2631D75C749007108C2 /* ZMImagePreprocessingTrackerTests.m in Sources */,
+				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
+				1621D26B1D75C7FF007108C2 /* ZMUpstreamInsertedObjectSyncTests.m in Sources */,
+				1621D2691D75C77E007108C2 /* ZMSingleRequestSyncTests.m in Sources */,
+				1621D2661D75C755007108C2 /* ZMLocallyModifiedObjectSyncStatusTests.m in Sources */,
+				1621D2611D75C742007108C2 /* ZMDownstreamObjectSyncTests.m in Sources */,
+				1621D25F1D75C132007108C2 /* ZMDependentObjectsTests.m in Sources */,
+				1621D2641D75C74D007108C2 /* ZMLocalInsertedObjectSetTests.m in Sources */,
+				1621D26C1D75C803007108C2 /* ZMUpstreamModifiedObjectSyncTests.m in Sources */,
+				1621D2681D75C77B007108C2 /* ZMRequestGeneratorTests.m in Sources */,
+				1621D22A1D75AB2D007108C2 /* MockModelObjectContextFactory.m in Sources */,
+				1621D2651D75C750007108C2 /* ZMLocallyModifiedObjectSetTests.m in Sources */,
+				1621D26D1D75C806007108C2 /* NSManagedObjectContext+TestHelpers.m in Sources */,
+				1621D2671D75C776007108C2 /* ZMRemoteIdentifierObjectSyncTests.m in Sources */,
+				1621D26A1D75C782007108C2 /* ZMTimedSingleRequestSyncTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,7 +648,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -385,7 +691,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -399,16 +705,22 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901951D7075D7000FE4AF /* WireRequestStrategy-ios.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = WireRequestStrategy/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -416,10 +728,15 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901951D7075D7000FE4AF /* WireRequestStrategy-ios.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = WireRequestStrategy/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -433,10 +750,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901891D7075D7000FE4AF /* ios-test-target.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = WireRequestStrategyTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WireRequestStrategyTests/WireRequestStrategyTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -444,10 +769,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901891D7075D7000FE4AF /* ios-test-target.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = WireRequestStrategyTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WireRequestStrategyTests/WireRequestStrategyTests-Bridging-Header.h";
 			};
 			name = Release;
 		};
