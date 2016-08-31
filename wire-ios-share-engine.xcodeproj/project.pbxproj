@@ -10,6 +10,22 @@
 		5470D3EC1D76E1B000FDE440 /* WireShareEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		5470D3F81D76E1B000FDE440 /* wire_ios_share_engineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D3F71D76E1B000FDE440 /* wire_ios_share_engineTests.swift */; };
+		5470D4301D77154200FDE440 /* SharingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D42F1D77154200FDE440 /* SharingSession.swift */; };
+		5470D4321D77165800FDE440 /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; };
+		5470D4551D77169900FDE440 /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* Cryptobox.framework */; };
+		5470D4561D77169900FDE440 /* libPhoneNumber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44B1D77169900FDE440 /* libPhoneNumber.framework */; };
+		5470D4571D77169900FDE440 /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44C1D77169900FDE440 /* Ono.framework */; };
+		5470D4581D77169900FDE440 /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; };
+		5470D4591D77169900FDE440 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; };
+		5470D45A1D77169900FDE440 /* zimages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44F1D77169900FDE440 /* zimages.framework */; };
+		5470D45B1D77169900FDE440 /* ZMCLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4501D77169900FDE440 /* ZMCLinkPreview.framework */; };
+		5470D45C1D77169900FDE440 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4511D77169900FDE440 /* ZMCSystem.framework */; };
+		5470D45D1D77169900FDE440 /* ZMProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4521D77169900FDE440 /* ZMProtos.framework */; };
+		5470D45E1D77169900FDE440 /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* ZMTransport.framework */; };
+		5470D45F1D77169900FDE440 /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* ZMUtilities.framework */; };
+		5470D4611D771BD600FDE440 /* SharingTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4601D771BD600FDE440 /* SharingTarget.swift */; };
+		5470D4631D7722A500FDE440 /* Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4621D7722A500FDE440 /* Sendable.swift */; };
+		5470D4651D772A6000FDE440 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4641D772A6000FDE440 /* Conversation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,7 +41,7 @@
 /* Begin PBXFileReference section */
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireShareEngine.h; sourceTree = "<group>"; };
-		5470D3ED1D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5470D3ED1D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "wire-ios-share-engine/Info.plist"; sourceTree = "<group>"; };
 		5470D3F21D76E1B000FDE440 /* wire-ios-share-engineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "wire-ios-share-engineTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3F71D76E1B000FDE440 /* wire_ios_share_engineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wire_ios_share_engineTests.swift; sourceTree = "<group>"; };
 		5470D3F91D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -50,6 +66,22 @@
 		5470D4171D76E2A400FDE440 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5470D42B1D770CEE00FDE440 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5470D42F1D77154200FDE440 /* SharingSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingSession.swift; sourceTree = "<group>"; };
+		5470D4311D77165800FDE440 /* ZMCDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCDataModel.framework; path = Carthage/Build/iOS/ZMCDataModel.framework; sourceTree = "<group>"; };
+		5470D44A1D77169900FDE440 /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cryptobox.framework; path = Carthage/Build/iOS/Cryptobox.framework; sourceTree = "<group>"; };
+		5470D44B1D77169900FDE440 /* libPhoneNumber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumber.framework; path = Carthage/Build/iOS/libPhoneNumber.framework; sourceTree = "<group>"; };
+		5470D44C1D77169900FDE440 /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
+		5470D44D1D77169900FDE440 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
+		5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
+		5470D44F1D77169900FDE440 /* zimages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = zimages.framework; path = Carthage/Build/iOS/zimages.framework; sourceTree = "<group>"; };
+		5470D4501D77169900FDE440 /* ZMCLinkPreview.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCLinkPreview.framework; path = Carthage/Build/iOS/ZMCLinkPreview.framework; sourceTree = "<group>"; };
+		5470D4511D77169900FDE440 /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
+		5470D4521D77169900FDE440 /* ZMProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMProtos.framework; path = Carthage/Build/iOS/ZMProtos.framework; sourceTree = "<group>"; };
+		5470D4531D77169900FDE440 /* ZMTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTransport.framework; path = Carthage/Build/iOS/ZMTransport.framework; sourceTree = "<group>"; };
+		5470D4541D77169900FDE440 /* ZMUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMUtilities.framework; path = Carthage/Build/iOS/ZMUtilities.framework; sourceTree = "<group>"; };
+		5470D4601D771BD600FDE440 /* SharingTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTarget.swift; sourceTree = "<group>"; };
+		5470D4621D7722A500FDE440 /* Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sendable.swift; sourceTree = "<group>"; };
+		5470D4641D772A6000FDE440 /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +89,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5470D4581D77169900FDE440 /* PINCache.framework in Frameworks */,
+				5470D4561D77169900FDE440 /* libPhoneNumber.framework in Frameworks */,
+				5470D4571D77169900FDE440 /* Ono.framework in Frameworks */,
+				5470D45A1D77169900FDE440 /* zimages.framework in Frameworks */,
+				5470D4321D77165800FDE440 /* ZMCDataModel.framework in Frameworks */,
+				5470D45E1D77169900FDE440 /* ZMTransport.framework in Frameworks */,
+				5470D4591D77169900FDE440 /* ProtocolBuffers.framework in Frameworks */,
+				5470D45C1D77169900FDE440 /* ZMCSystem.framework in Frameworks */,
+				5470D45F1D77169900FDE440 /* ZMUtilities.framework in Frameworks */,
+				5470D45B1D77169900FDE440 /* ZMCLinkPreview.framework in Frameworks */,
+				5470D45D1D77169900FDE440 /* ZMProtos.framework in Frameworks */,
+				5470D4551D77169900FDE440 /* Cryptobox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,9 +121,11 @@
 				5470D42B1D770CEE00FDE440 /* LICENSE */,
 				5470D42C1D770CEE00FDE440 /* README.md */,
 				5470D4021D76E2A400FDE440 /* Resources */,
+				5470D3ED1D76E1B000FDE440 /* Info.plist */,
 				5470D3EA1D76E1B000FDE440 /* wire-ios-share-engine */,
 				5470D3F61D76E1B000FDE440 /* wire-ios-share-engineTests */,
 				5470D3E91D76E1B000FDE440 /* Products */,
+				5470D4331D77165E00FDE440 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -96,7 +142,10 @@
 			isa = PBXGroup;
 			children = (
 				5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */,
-				5470D3ED1D76E1B000FDE440 /* Info.plist */,
+				5470D42F1D77154200FDE440 /* SharingSession.swift */,
+				5470D4641D772A6000FDE440 /* Conversation.swift */,
+				5470D4601D771BD600FDE440 /* SharingTarget.swift */,
+				5470D4621D7722A500FDE440 /* Sendable.swift */,
 			);
 			path = "wire-ios-share-engine";
 			sourceTree = "<group>";
@@ -150,6 +199,25 @@
 				5470D4171D76E2A400FDE440 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+		5470D4331D77165E00FDE440 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5470D44A1D77169900FDE440 /* Cryptobox.framework */,
+				5470D44B1D77169900FDE440 /* libPhoneNumber.framework */,
+				5470D44C1D77169900FDE440 /* Ono.framework */,
+				5470D44D1D77169900FDE440 /* PINCache.framework */,
+				5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */,
+				5470D44F1D77169900FDE440 /* zimages.framework */,
+				5470D4501D77169900FDE440 /* ZMCLinkPreview.framework */,
+				5470D4511D77169900FDE440 /* ZMCSystem.framework */,
+				5470D4521D77169900FDE440 /* ZMProtos.framework */,
+				5470D4531D77169900FDE440 /* ZMTransport.framework */,
+				5470D4541D77169900FDE440 /* ZMUtilities.framework */,
+				5470D4311D77165800FDE440 /* ZMCDataModel.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,6 +329,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5470D4301D77154200FDE440 /* SharingSession.swift in Sources */,
+				5470D4631D7722A500FDE440 /* Sendable.swift in Sources */,
+				5470D4611D771BD600FDE440 /* SharingTarget.swift in Sources */,
+				5470D4651D772A6000FDE440 /* Conversation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,10 +386,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4061D76E2A400FDE440 /* wire-ios-share-engine-ios.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "wire-ios-share-engine/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engine";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -325,9 +405,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4061D76E2A400FDE440 /* wire-ios-share-engine-ios.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "wire-ios-share-engine/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engine";
 			};
 			name = Release;
