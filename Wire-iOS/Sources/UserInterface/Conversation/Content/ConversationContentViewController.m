@@ -707,15 +707,11 @@
     ZMMessage *message = [self.messageWindow.messages objectAtIndex:indexPath.row];
     NSIndexPath *selectedIndexPath = nil;
     
-    if (![Message isVideoMessage:message] &&
-        ![Message isFileTransferMessage:message] &&
-        ![Message isImageMessage:message] &&
-        ![Message isLocationMessage:message] &&
-        [message isEqual:self.conversationMessageWindowTableViewAdapter.selectedMessage]) {
+    if ([message isEqual:self.conversationMessageWindowTableViewAdapter.selectedMessage]) {
         
         // If this cell is already selected, deselect it.
         self.conversationMessageWindowTableViewAdapter.selectedMessage  = nil;
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
         // Make table view to update cells with animation
         [tableView beginUpdates];
@@ -730,7 +726,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self presentDetailsForMessageAtIndexPath:indexPath];
+    id<ZMConversationMessage>message = [self.messageWindow.messages objectAtIndex:indexPath.row];
+    BOOL isFile = [Message isFileTransferMessage:message];
+    
+    if (! isFile) {
+        [self presentDetailsForMessageAtIndexPath:indexPath];
+    }
     
     // Make table view to update cells with animation
     [tableView beginUpdates];
@@ -808,6 +809,19 @@
     }
 }
 
+- (void)conversationCell:(ConversationCell *)cell didSelectURL:(NSURL *)url
+{
+    [self.tableView selectRowAtIndexPath:[self.tableView indexPathForCell:cell] animated:NO scrollPosition:UITableViewScrollPositionNone];
+    self.conversationMessageWindowTableViewAdapter.selectedMessage = cell.message;
+
+    if (! [UIApplication.sharedApplication openURL:url]) {
+        DDLogError(@"Unable to open URL: %@", url);
+    }
+    
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+}
+
 - (BOOL)conversationCell:(ConversationCell *)cell shouldBecomeFirstResponderWhenShowMenuWithCellType:(MessageType)messageType;
 {
     BOOL shouldBecomeFirstResponder = YES;
@@ -825,6 +839,13 @@
     [[Analytics shared] tagSelectedMessage:SelectionTypeSingle
                           conversationType:conversationType
                                messageType:messageType];
+}
+
+- (void)conversationCell:(ConversationCell *)cell openReactionsPressed:(ZMMessage *)message
+{
+    ReactionsListViewController *reactionsListController = [[ReactionsListViewController alloc] initWithMessage:message];
+    UINavigationController *wrapNavigationController = [[UINavigationController alloc] initWithRootViewController:reactionsListController];
+    [self.parentViewController presentViewController:wrapNavigationController animated:YES completion:nil];
 }
 
 @end
