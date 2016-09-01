@@ -43,4 +43,4 @@ xcode-analyze.log
 xcode-build.log
 xcode-test.log
 tests.xml
-code-coverage/*%
+code-coverage/*

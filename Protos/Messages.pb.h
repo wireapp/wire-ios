@@ -151,7 +151,6 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define GenericMessage_text @"text"
 #define GenericMessage_image @"image"
 #define GenericMessage_knock @"knock"
-#define GenericMessage_reaction @"reaction"
 #define GenericMessage_lastRead @"lastRead"
 #define GenericMessage_cleared @"cleared"
 #define GenericMessage_external @"external"
@@ -163,13 +162,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define GenericMessage_deleted @"deleted"
 #define GenericMessage_edited @"edited"
 #define GenericMessage_confirmation @"confirmation"
+#define GenericMessage_reaction @"reaction"
 @interface ZMGenericMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasMessageId_:1;
   BOOL hasText_:1;
   BOOL hasImage_:1;
   BOOL hasKnock_:1;
-  BOOL hasReaction_:1;
   BOOL hasLastRead_:1;
   BOOL hasCleared_:1;
   BOOL hasExternal_:1;
@@ -180,12 +179,12 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasDeleted_:1;
   BOOL hasEdited_:1;
   BOOL hasConfirmation_:1;
+  BOOL hasReaction_:1;
   BOOL hasClientAction_:1;
   NSString* messageId;
   ZMText* text;
   ZMImageAsset* image;
   ZMKnock* knock;
-  ZMReaction* reaction;
   ZMLastRead* lastRead;
   ZMCleared* cleared;
   ZMExternal* external;
@@ -196,13 +195,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   ZMMessageDelete* deleted;
   ZMMessageEdit* edited;
   ZMConfirmation* confirmation;
+  ZMReaction* reaction;
   ZMClientAction clientAction;
 }
 - (BOOL) hasMessageId;
 - (BOOL) hasText;
 - (BOOL) hasImage;
 - (BOOL) hasKnock;
-- (BOOL) hasReaction;
 - (BOOL) hasLastRead;
 - (BOOL) hasCleared;
 - (BOOL) hasExternal;
@@ -214,11 +213,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hasDeleted;
 - (BOOL) hasEdited;
 - (BOOL) hasConfirmation;
+- (BOOL) hasReaction;
 @property (readonly, strong) NSString* messageId;
 @property (readonly, strong) ZMText* text;
 @property (readonly, strong) ZMImageAsset* image;
 @property (readonly, strong) ZMKnock* knock;
-@property (readonly, strong) ZMReaction* reaction;
 @property (readonly, strong) ZMLastRead* lastRead;
 @property (readonly, strong) ZMCleared* cleared;
 @property (readonly, strong) ZMExternal* external;
@@ -230,6 +229,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @property (readonly, strong) ZMMessageDelete* deleted;
 @property (readonly, strong) ZMMessageEdit* edited;
 @property (readonly, strong) ZMConfirmation* confirmation;
+@property (readonly, strong) ZMReaction* reaction;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -291,13 +291,6 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMGenericMessageBuilder*) setKnockBuilder:(ZMKnockBuilder*) builderForValue;
 - (ZMGenericMessageBuilder*) mergeKnock:(ZMKnock*) value;
 - (ZMGenericMessageBuilder*) clearKnock;
-
-- (BOOL) hasReaction;
-- (ZMReaction*) reaction;
-- (ZMGenericMessageBuilder*) setReaction:(ZMReaction*) value;
-- (ZMGenericMessageBuilder*) setReactionBuilder:(ZMReactionBuilder*) builderForValue;
-- (ZMGenericMessageBuilder*) mergeReaction:(ZMReaction*) value;
-- (ZMGenericMessageBuilder*) clearReaction;
 
 - (BOOL) hasLastRead;
 - (ZMLastRead*) lastRead;
@@ -373,6 +366,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMGenericMessageBuilder*) setConfirmationBuilder:(ZMConfirmationBuilder*) builderForValue;
 - (ZMGenericMessageBuilder*) mergeConfirmation:(ZMConfirmation*) value;
 - (ZMGenericMessageBuilder*) clearConfirmation;
+
+- (BOOL) hasReaction;
+- (ZMReaction*) reaction;
+- (ZMGenericMessageBuilder*) setReaction:(ZMReaction*) value;
+- (ZMGenericMessageBuilder*) setReactionBuilder:(ZMReactionBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeReaction:(ZMReaction*) value;
+- (ZMGenericMessageBuilder*) clearReaction;
 @end
 
 #define Text_content @"content"
