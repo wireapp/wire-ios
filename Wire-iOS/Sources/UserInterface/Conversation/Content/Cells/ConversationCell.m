@@ -187,6 +187,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.messageToolboxView = [[MessageToolboxView alloc] init];
     self.messageToolboxView.delegate = self;
     self.messageToolboxView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.messageToolboxView.isAccessibilityElement = YES;
     [self.contentView addSubview:self.messageToolboxView];
 }
 
