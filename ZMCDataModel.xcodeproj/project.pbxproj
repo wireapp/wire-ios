@@ -30,6 +30,8 @@
 		BF79303B1CE48CED00CE020F /* store25.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BF79303A1CE48CED00CE020F /* store25.wiredatabase */; };
 		BF794FE31D143DE300E618C6 /* LocationMessage+Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF794FE21D143DE300E618C6 /* LocationMessage+Coordinate.swift */; };
 		BF794FE61D1442B100E618C6 /* ZMClientMessageTests+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF794FE41D14425E00E618C6 /* ZMClientMessageTests+Location.swift */; };
+		BF7AFFCC1D747B5D00B2E089 /* DatabaseBaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7AFFCB1D747B5D00B2E089 /* DatabaseBaseTest.m */; };
+		BF7AFFCE1D747EFD00B2E089 /* DatabaseBaseTest.h in Sources */ = {isa = PBXBuildFile; fileRef = BF7AFFCD1D747EFD00B2E089 /* DatabaseBaseTest.h */; };
 		BF85CF5F1D227A78006EDB97 /* LocationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF85CF5E1D227A78006EDB97 /* LocationData.swift */; };
 		BF949E5B1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF949E5A1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift */; };
 		BFA4D57C1CCF74600028C9E1 /* store23.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BFA4D57B1CCF74600028C9E1 /* store23.wiredatabase */; };
@@ -366,6 +368,8 @@
 		BF79303A1CE48CED00CE020F /* store25.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = store25.wiredatabase; path = Tests/Resources/store25.wiredatabase; sourceTree = SOURCE_ROOT; };
 		BF794FE21D143DE300E618C6 /* LocationMessage+Coordinate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LocationMessage+Coordinate.swift"; sourceTree = "<group>"; };
 		BF794FE41D14425E00E618C6 /* ZMClientMessageTests+Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Location.swift"; sourceTree = "<group>"; };
+		BF7AFFCB1D747B5D00B2E089 /* DatabaseBaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseBaseTest.m; sourceTree = "<group>"; };
+		BF7AFFCD1D747EFD00B2E089 /* DatabaseBaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseBaseTest.h; sourceTree = "<group>"; };
 		BF85CF5E1D227A78006EDB97 /* LocationData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationData.swift; sourceTree = "<group>"; };
 		BF949E5A1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LinkPreview+ProtobufTests.swift"; sourceTree = "<group>"; };
 		BFA4D57B1CCF74600028C9E1 /* store23.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = store23.wiredatabase; path = Tests/Resources/store23.wiredatabase; sourceTree = SOURCE_ROOT; };
@@ -775,6 +779,8 @@
 		F9331C5D1CB3C7D500139ECC /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
+				BF7AFFCD1D747EFD00B2E089 /* DatabaseBaseTest.h */,
+				BF7AFFCB1D747B5D00B2E089 /* DatabaseBaseTest.m */,
 				F9331C5E1CB3C7D500139ECC /* DatabaseInitTests.m */,
 				F9331C5F1CB3C7D500139ECC /* DatabaseMovingTests.m */,
 				F9331C601CB3C7D500139ECC /* OTRMigrationTests.m */,
@@ -1874,6 +1880,7 @@
 				F9B71F941CB2BF08001DB03F /* UserImageLocalCacheTests.swift in Sources */,
 				F9A708441CAEEB7500C2F5FE /* ZMConnectionTests.m in Sources */,
 				F9331C621CB3C7D500139ECC /* DatabaseMovingTests.m in Sources */,
+				BF7AFFCE1D747EFD00B2E089 /* DatabaseBaseTest.h in Sources */,
 				F9A7085C1CAEED1B00C2F5FE /* ZMBaseManagedObjectTest.m in Sources */,
 				F9A708351CAEEB7500C2F5FE /* ManagedObjectContextTests.m in Sources */,
 				54DE05DD1CF8711F00C35253 /* ProtobufUtilitiesTests.swift in Sources */,
@@ -1941,6 +1948,7 @@
 				F93A302F1D6F2633005CCB1D /* ZMMessageTests+Confirmation.swift in Sources */,
 				F9B71FFD1CB2C4C6001DB03F /* ObjectSnapshotTests.swift in Sources */,
 				F9331C561CB3BCF300139ECC /* OtrBaseTest.swift in Sources */,
+				BF7AFFCC1D747B5D00B2E089 /* DatabaseBaseTest.m in Sources */,
 				F9B71F901CB2BEE9001DB03F /* ZMAssetClientMessageTests.swift in Sources */,
 				F991CE191CB55E95004D8465 /* ZMSearchUserTests.m in Sources */,
 				F9A7083F1CAEEB7500C2F5FE /* PersistentChangeTrackingTests.m in Sources */,

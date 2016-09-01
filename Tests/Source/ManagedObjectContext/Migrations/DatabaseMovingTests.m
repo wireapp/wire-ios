@@ -20,90 +20,185 @@
 #import <ZMTesting/ZMTesting.h>
 @import ZMCDataModel;
 #import "NSManagedObjectContext+zmessaging-Internal.h"
+#import "DatabaseBaseTest.h"
 
 
 
-@interface DatabaseMovingTests : ZMTBaseTest
-
-@property (nonatomic) NSFileManager *fm;
-@property (nonatomic) NSURL *cachesDirectoryStoreURL;
-@property (nonatomic) NSURL *applicationSupportStoreURL;
+@interface DatabaseMovingTests : DatabaseBaseTest
 
 @end
 
 
-
 @implementation DatabaseMovingTests
-
-- (void)setUp {
-    [super setUp];
-    [NSManagedObjectContext setUseInMemoryStore:NO];
-    [self cleanUp];
-    self.fm = [NSFileManager defaultManager];
-    self.cachesDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSCachesDirectory];
-    self.applicationSupportStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
-}
-
-- (void)tearDown
-{
-    [self cleanUp];
-    [super tearDown];
-}
 
 - (void)cleanUp
 {
-    NSString *supportCachesPath = self.cachesDirectoryStoreURL.URLByDeletingLastPathComponent.path;
-    if([self.fm fileExistsAtPath:supportCachesPath]) {
-        [self.fm removeItemAtPath:supportCachesPath error:nil];
-    }
-    
-    NSString *supportApplicationSupportPath = self.applicationSupportStoreURL.URLByDeletingLastPathComponent.path;
-    if([self.fm fileExistsAtPath:supportApplicationSupportPath]) {
-        [self.fm removeItemAtPath:supportApplicationSupportPath error:nil];
-    }
-    
-    for(NSString *backupFolder in [self currentBackupFoldersInApplicationSupport]) {
+    [super cleanUp];
+    for (NSString *backupFolder in self.currentBackupFoldersInApplicationSupport) {
         [self.fm removeItemAtPath:backupFolder error:nil];
     }
-    
-    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
 }
 
-- (void)testThatItMovesTheDatabaseFromCachesToApplicationSupportDirectory
+- (void)testThatItMovesTheDatabaseFromCachesToSharedDirectory
 {
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self moveDatabaseToCachesDirectory]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
+    
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
     
     for (NSString *extension in self.databaseFileExtensions) {
         NSString *fromPath = [self.cachesDirectoryStoreURL.path stringByAppendingString:extension];
-        NSString *toPath = [self.applicationSupportStoreURL.path stringByAppendingString:extension];
+        NSString *intermediatePath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
+        XCTAssertFalse([self.fm fileExistsAtPath:intermediatePath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
+    }
+
+    // when
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+
+    // then
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [self.cachesDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *intermediatePath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
+        XCTAssertFalse([self.fm fileExistsAtPath:intermediatePath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
+    }
+    
+
+    NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
+    
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+}
+
+- (void)testThatItMovesTheDatabaseFromTheApplicationSupportDirectoryToTheSharedDirectory
+{
+    // given
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self moveDatabaseToApplicationSupportDirectory]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    }];
+    
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
         XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
         XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
     }
     
     // when
-    XCTestExpectation *moveExpectation = [self expectationWithDescription:@"It should move the database files"];
-    
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
-            [moveExpectation fulfill];
-        }];
-    
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
-    }];
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
     
     // then
     for (NSString *extension in self.databaseFileExtensions) {
-        NSString *fromPath = [self.cachesDirectoryStoreURL.path stringByAppendingString:extension];
-        NSString *toPath = [self.applicationSupportStoreURL.path stringByAppendingString:extension];
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
+    }
+    
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+
+     NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+     XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
+}
+
+- (void)testThatItMovesRemainingDatabaseFilesFromTheApplicationSupportDirectoryToTheSharedDirectory
+{
+    // given
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self moveDatabaseToApplicationSupportDirectory]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    }];
+    
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    
+    // We simulate that we already moved the main database file previously
+    NSError *error;
+    XCTAssertTrue([self.fm moveItemAtPath:self.applicationSupportDirectoryStoreURL.path toPath:self.sharedContainerStoreURL.path error:&error]);
+    XCTAssertNil(error);
+
+    XCTAssertFalse([self.fm fileExistsAtPath:self.applicationSupportDirectoryStoreURL.path]);
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+
+    NSArray *journalingExtensions = [self.databaseFileExtensions subarrayWithRange:NSMakeRange(1, self.databaseFileExtensions.count - 1)];
+    
+    for (NSString *extension in journalingExtensions) {
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
+    }
+    
+    // when
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+    
+    // then
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
+    }
+    
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    
+    NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
+}
+
+- (void)testThatItMovesRemainingExternalDatabaseFilesFromTheApplicationSupportDirectoryToTheSharedDirectory
+{
+    // given
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+    
+    // We simulate that we already moved all main database files
+    XCTAssertTrue([self createExternalSupportFileForDatabaseAtURL:self.applicationSupportDirectoryStoreURL]);
+    
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
         XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
         XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
     }
+
+    // when
+    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+
+    // then
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
+    }
     
-    NSString *supportURL = [self.applicationSupportStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    
+    NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
     XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
 }
 
@@ -111,54 +206,38 @@
 {
     // given
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([self createdUnredableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+        XCTAssertTrue([self createdUnreadableLocalStore]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
-    NSString *storeFile = [self.applicationSupportStoreURL.path stringByAppendingString:@""];
+    NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
     NSData *oldStoreFileData = [NSData dataWithContentsOfFile:storeFile];
     XCTAssertNotNil(storeFile);
     XCTAssertEqualObjects(oldStoreFileData, self.invalidData);
     
     // when
-    XCTestExpectation *donePreparing = [self expectationWithDescription:@"It is done preparing"];
-    
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
-            [donePreparing fulfill];
-        }];
-        
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
-    }];
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
     
     // then
     NSData *newData = [NSData dataWithContentsOfFile:storeFile];
     XCTAssertNotEqualObjects(newData, oldStoreFileData);
     XCTAssertNotNil(newData);
-
 }
 
 - (void)testThatItCreatesACopyOfTheLocalStoreWhenItIsUnreadable
 {
     // given
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([self createdUnredableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStore]);
+        XCTAssertTrue([self createdUnreadableLocalStore]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
-    NSString *storeFile = [self.applicationSupportStoreURL.path stringByAppendingString:@""];
+    NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
     NSData *oldStoreFileData = [NSData dataWithContentsOfFile:storeFile];
     XCTAssertNotNil(storeFile);
     
     // when
-    XCTestExpectation *donePreparing = [self expectationWithDescription:@"It is done preparing"];
-    
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:YES completionHandler:^{
-            [donePreparing fulfill];
-        }];
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:1]);
-    }];
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:YES];
     
     // then
     NSURL *storeFolder;
@@ -179,13 +258,13 @@
 
 - (NSArray<NSString *>*)currentBackupFoldersInApplicationSupport
 {
-    NSURL *containerFolder = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory].URLByDeletingLastPathComponent.URLByDeletingLastPathComponent;
-    NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:containerFolder.path
+    NSURL *dbDirectory = self.sharedContainerDirectoryURL;
+    NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:dbDirectory.path
                                                                               error:NULL];
     NSMutableArray *backupFolders = [NSMutableArray array];
     for(NSString *file in dirContent) {
         if([file hasPrefix:@"DB-"] && [file hasSuffix:@".bak"]) {
-            [backupFolders addObject:[containerFolder URLByAppendingPathComponent:file].path];
+            [backupFolders addObject:[dbDirectory URLByAppendingPathComponent:file].path];
         }
     }
     return backupFolders;
@@ -194,13 +273,44 @@
 - (void)testThatItReportsDatabaseExistsInCachesDirectoryAfterMovingIt
 {
     // given
-    XCTAssertTrue([self moveDatabaseToCachesDirectory]);
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self moveDatabaseToCachesDirectory]);
+    }];
+    
     
     // then
     XCTAssertTrue([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+
+    // There is no store in the shared container, thus reading the metadata will fail
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    }];
 }
 
-- (void)testThatItReportsDatabaseDoesNotExistsInCachesDirectoryWhenItIsNotThere
+- (void)testThatItReportsDatabaseDoesNotExistInCachesDirectoryWhenItIsNotThere
+{
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+}
+
+- (void)testThatItReportsDatabaseExistsInApplicationsDirectoryWhenItIsThere
+{
+    // given
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self moveDatabaseToApplicationSupportDirectory]);
+    }];
+
+    // then
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+
+    // There is no store in the shared container, thus reading the metadata will fail
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    }];
+}
+
+- (void)testThatItReportsDatabaseDoesNotExistInApplicationsDirectoryWhenItIsNotThere
 {
     XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
 }
@@ -208,66 +318,7 @@
 - (void)testThatItConstructsTheStoreURLUsingThePassedSearchPathDirectory
 {
     XCTAssertTrue([self.cachesDirectoryStoreURL.path containsString:@"Caches"]);
-    XCTAssertTrue([self.applicationSupportStoreURL.path containsString:@"Application Support"]);
-}
-
-#pragma mark - Helper
-
-- (BOOL)moveDatabaseToCachesDirectory
-{
-    NSError *error;
-    NSURL *cachesStoreURL = [NSManagedObjectContext storeURLInDirectory:NSCachesDirectory];
-    NSURL *applicationDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
-    
-    for (NSString *extension in self.databaseFileExtensions) {
-        NSString *fromPath = [cachesStoreURL.path stringByAppendingString:extension];
-        NSString *toPath = [applicationDirectoryStoreURL.path stringByAppendingString:extension];
-
-        if (! [self.fm createFileAtPath:fromPath contents:nil attributes:nil]) {
-            XCTFail();
-            return NO;
-        }
-        if ([self.fm fileExistsAtPath:toPath isDirectory:nil]) {
-            [self.fm removeItemAtPath:toPath error:&error];
-            XCTAssertNil(error);
-            
-            if (nil != error) {
-                return NO;
-            }
-        }
-    }
-    
-    NSString *supportPath = [cachesStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
-    XCTAssertTrue([self.fm createDirectoryAtPath:supportPath withIntermediateDirectories:NO attributes:nil error:&error]);
-    XCTAssertNil(error);
-    
-    return YES;
-}
-
-- (NSData *)invalidData
-{
-    return [@"Trollolol" dataUsingEncoding:NSUTF8StringEncoding];
-}
-
-- (BOOL)createdUnredableLocalStore
-{
-    NSData *data = self.invalidData;
-    NSURL *applicationDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
-    
-    for (NSString *extension in self.databaseFileExtensions) {
-        NSString *filePath = [applicationDirectoryStoreURL.path stringByAppendingString:extension];
-        
-        if (! [self.fm createFileAtPath:filePath contents:data attributes:nil]) {
-            XCTFail();
-            return NO;
-        }
-    }
-    return YES;
-}
-
-- (NSArray <NSString *>*)databaseFileExtensions
-{
-    return @[@"", @"-wal", @"-shm"];
+    XCTAssertTrue([self.applicationSupportDirectoryStoreURL.path containsString:@"Application Support"]);
 }
 
 @end
