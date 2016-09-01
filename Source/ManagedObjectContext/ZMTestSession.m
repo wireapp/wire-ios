@@ -34,6 +34,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 @property (nonatomic) NSManagedObjectContext *searchMOC;
 @property (nonatomic) ZMSDispatchGroup *dispatchGroup;
 @property (nonatomic) NSString *testName;
+@property (nonatomic) NSURL *databaseDirectory;
 
 
 @property (nonatomic) NSTimeInterval originalConversationLastReadEventIDTimerValue; // this will speed up the tests A LOT
@@ -75,6 +76,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     self.originalConversationLastReadEventIDTimerValue = ZMConversationDefaultLastReadEventIDSaveDelay;
     ZMConversationDefaultLastReadEventIDSaveDelay = 0.02;
     
+    NSFileManager *fm = NSFileManager.defaultManager;
+    self.databaseDirectory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
     [NSManagedObjectContext setUseInMemoryStore:self.shouldUseInMemoryStore];
     
     [self resetState];
@@ -83,7 +86,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self resetUIandSyncContextsAndResetPersistentStore:YES];
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     
-    self.searchMOC = [NSManagedObjectContext createSearchContext];
+    self.searchMOC = [NSManagedObjectContext createSearchContextWithStoreDirectory:self.databaseDirectory];
     [self.searchMOC addGroup:self.dispatchGroup];
 }
 
@@ -151,11 +154,11 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     }
     
     // NOTE this produces logs if self.useInMemoryStore = NO
-    self.uiMOC = [NSManagedObjectContext createUserInterfaceContext];
+    self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreDirectory:self.databaseDirectory];
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.testName;
     
-    self.syncMOC = [NSManagedObjectContext createSyncContext];
+    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreDirectory:self.databaseDirectory];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.testName;
     }];

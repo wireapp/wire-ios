@@ -36,26 +36,30 @@
 - (void)setPersistentStoreMetadata:(id)metaData forKey:(NSString *)key;
 
 /// Checks if migration is needed or the database has to be moved
-+ (BOOL)needsToPrepareLocalStore;
++ (BOOL)needsToPrepareLocalStoreInDirectory:(NSURL *)databaseDirectory;
 
 /// Creates persistent store coordinator and migrates store if needed
 /// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
 ///         synchronously when @c +needsToPrepareLocalStore is YES)
 /// @param backupCorruptedDatabase: if true, will copy a corrupted database to another folder for later investigation
 /// @param completionHandler callback to be executed on completion (nullable)
-+ (void)prepareLocalStoreSync:(BOOL)sync backingUpCorruptedDatabase:(BOOL)backupCorrputedDatabase completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreSync:(BOOL)sync
+                  inDirectory:(NSURL *)directory
+   backingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
+            completionHandler:(void(^)())completionHandler;
+
 /// Returns whether the store is ready to be opened
 + (BOOL)storeIsReady;
 
-+ (instancetype)createUserInterfaceContext;
++ (instancetype)createUserInterfaceContextWithStoreDirectory:(NSURL *)storeDirectory;
 + (void)resetUserInterfaceContext;
 
 /// This context will mark updates to objects in such a way that these fields are "up to date", ie. that these fields have been fetched.
 /// C.f. @c zm_isSyncContext
-+ (instancetype)createSyncContext;
++ (instancetype)createSyncContextWithStoreDirectory:(NSURL *)storeDirectory;
 
 /// Context used for searching
-+ (instancetype)createSearchContext;
++ (instancetype)createSearchContextWithStoreDirectory:(NSURL *)storeDirectory;
 
 /// Returns @c YES if the receiver is a context that is used for synchronisation with the backend.
 ///
