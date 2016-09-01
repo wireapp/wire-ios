@@ -653,8 +653,32 @@ static dispatch_once_t clearStoreOnceToken;
 
 + (BOOL)databaseExistsAtURL:(NSURL *)url;
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    return [fm fileExistsAtPath:url.path isDirectory:nil];
+    BOOL databaseExists = NO;
+    NSFileManager *fm = NSFileManager.defaultManager;
+    
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *path = [url.path stringByAppendingString:extension];
+        databaseExists |= [fm fileExistsAtPath:path];
+    }
+
+    return databaseExists || [self externalBinaryFileExistsForDatabaseAtURL:url];
+}
+
++ (BOOL)externalBinaryFileExistsForDatabaseAtURL:(NSURL *)databaseURL;
+{
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSString * const storeName = databaseURL.URLByDeletingPathExtension.lastPathComponent;
+    NSURL *parentURL = databaseURL.URLByDeletingLastPathComponent;
+    
+    BOOL isDirectory = NO;
+    if (![fm fileExistsAtPath:parentURL.path isDirectory:&isDirectory] || !isDirectory) {
+        return NO;
+    }
+
+    NSString *supportExtension = [NSString stringWithFormat:@".%@_SUPPORT", storeName];
+    NSURL *externalFileURL = [parentURL URLByAppendingPathComponent:supportExtension];
+    
+    return [fm fileExistsAtPath:externalFileURL.path];
 }
 
 /// Checks if database is created, but it is still locked with iOS file protection
@@ -671,7 +695,7 @@ static dispatch_once_t clearStoreOnceToken;
     if (result) {
         ZMLogError(@"databaseExistsAndNotReadableDueToEncryption=true, error=%@", readError);
     }
-    
+
     return result;
 }
 
@@ -720,11 +744,10 @@ static dispatch_once_t clearStoreOnceToken;
     NSURL *parentURL = fromDatabaseURL.URLByDeletingLastPathComponent;
     
     NSFileManager *fm = NSFileManager.defaultManager;
-    BOOL isDirectory = NO;
-    if (![fm fileExistsAtPath:parentURL.path isDirectory:&isDirectory] || !isDirectory) {
+    if (! [self externalBinaryFileExistsForDatabaseAtURL:fromDatabaseURL]) {
         return;
     }
-    
+
     NSURL *toURLParent = toDatabaseURL.URLByDeletingLastPathComponent;
     NSString *supportExtension = [NSString stringWithFormat:@".%@_SUPPORT", storeName];
     NSURL *fromURL = [parentURL URLByAppendingPathComponent:supportExtension];
