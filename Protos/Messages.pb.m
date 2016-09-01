@@ -60,7 +60,6 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property (strong) ZMText* text;
 @property (strong) ZMImageAsset* image;
 @property (strong) ZMKnock* knock;
-@property (strong) ZMReaction* reaction;
 @property (strong) ZMLastRead* lastRead;
 @property (strong) ZMCleared* cleared;
 @property (strong) ZMExternal* external;
@@ -72,6 +71,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property (strong) ZMMessageDelete* deleted;
 @property (strong) ZMMessageEdit* edited;
 @property (strong) ZMConfirmation* confirmation;
+@property (strong) ZMReaction* reaction;
 @end
 
 @implementation ZMGenericMessage
@@ -104,13 +104,6 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasKnock_ = !!_value_;
 }
 @synthesize knock;
-- (BOOL) hasReaction {
-  return !!hasReaction_;
-}
-- (void) setHasReaction:(BOOL) _value_ {
-  hasReaction_ = !!_value_;
-}
-@synthesize reaction;
 - (BOOL) hasLastRead {
   return !!hasLastRead_;
 }
@@ -188,13 +181,19 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasConfirmation_ = !!_value_;
 }
 @synthesize confirmation;
+- (BOOL) hasReaction {
+  return !!hasReaction_;
+}
+- (void) setHasReaction:(BOOL) _value_ {
+  hasReaction_ = !!_value_;
+}
+@synthesize reaction;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
     self.text = [ZMText defaultInstance];
     self.image = [ZMImageAsset defaultInstance];
     self.knock = [ZMKnock defaultInstance];
-    self.reaction = [ZMReaction defaultInstance];
     self.lastRead = [ZMLastRead defaultInstance];
     self.cleared = [ZMCleared defaultInstance];
     self.external = [ZMExternal defaultInstance];
@@ -206,6 +205,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.deleted = [ZMMessageDelete defaultInstance];
     self.edited = [ZMMessageEdit defaultInstance];
     self.confirmation = [ZMConfirmation defaultInstance];
+    self.reaction = [ZMReaction defaultInstance];
   }
   return self;
 }
@@ -237,11 +237,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasKnock) {
     if (!self.knock.isInitialized) {
-      return NO;
-    }
-  }
-  if (self.hasReaction) {
-    if (!self.reaction.isInitialized) {
       return NO;
     }
   }
@@ -295,6 +290,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasReaction) {
+    if (!self.reaction.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -309,9 +309,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasKnock) {
     [output writeMessage:4 value:self.knock];
-  }
-  if (self.hasReaction) {
-    [output writeMessage:5 value:self.reaction];
   }
   if (self.hasLastRead) {
     [output writeMessage:6 value:self.lastRead];
@@ -346,6 +343,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (self.hasConfirmation) {
     [output writeMessage:16 value:self.confirmation];
   }
+  if (self.hasReaction) {
+    [output writeMessage:17 value:self.reaction];
+  }
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -366,9 +366,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasKnock) {
     size_ += computeMessageSize(4, self.knock);
-  }
-  if (self.hasReaction) {
-    size_ += computeMessageSize(5, self.reaction);
   }
   if (self.hasLastRead) {
     size_ += computeMessageSize(6, self.lastRead);
@@ -402,6 +399,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasConfirmation) {
     size_ += computeMessageSize(16, self.confirmation);
+  }
+  if (self.hasReaction) {
+    size_ += computeMessageSize(17, self.reaction);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -456,12 +456,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (self.hasKnock) {
     [output appendFormat:@"%@%@ {\n", indent, @"knock"];
     [self.knock writeDescriptionTo:output
-                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
-    [output appendFormat:@"%@}\n", indent];
-  }
-  if (self.hasReaction) {
-    [output appendFormat:@"%@%@ {\n", indent, @"reaction"];
-    [self.reaction writeDescriptionTo:output
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
@@ -528,6 +522,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasReaction) {
+    [output appendFormat:@"%@%@ {\n", indent, @"reaction"];
+    [self.reaction writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -548,11 +548,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
    [self.knock storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"knock"];
-  }
-  if (self.hasReaction) {
-   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
-   [self.reaction storeInDictionary:messageDictionary];
-   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"reaction"];
   }
   if (self.hasLastRead) {
    NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
@@ -607,6 +602,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.confirmation storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"confirmation"];
   }
+  if (self.hasReaction) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.reaction storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"reaction"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -626,8 +626,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasImage || [self.image isEqual:otherMessage.image]) &&
       self.hasKnock == otherMessage.hasKnock &&
       (!self.hasKnock || [self.knock isEqual:otherMessage.knock]) &&
-      self.hasReaction == otherMessage.hasReaction &&
-      (!self.hasReaction || [self.reaction isEqual:otherMessage.reaction]) &&
       self.hasLastRead == otherMessage.hasLastRead &&
       (!self.hasLastRead || [self.lastRead isEqual:otherMessage.lastRead]) &&
       self.hasCleared == otherMessage.hasCleared &&
@@ -650,6 +648,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasEdited || [self.edited isEqual:otherMessage.edited]) &&
       self.hasConfirmation == otherMessage.hasConfirmation &&
       (!self.hasConfirmation || [self.confirmation isEqual:otherMessage.confirmation]) &&
+      self.hasReaction == otherMessage.hasReaction &&
+      (!self.hasReaction || [self.reaction isEqual:otherMessage.reaction]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -665,9 +665,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasKnock) {
     hashCode = hashCode * 31 + [self.knock hash];
-  }
-  if (self.hasReaction) {
-    hashCode = hashCode * 31 + [self.reaction hash];
   }
   if (self.hasLastRead) {
     hashCode = hashCode * 31 + [self.lastRead hash];
@@ -701,6 +698,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasConfirmation) {
     hashCode = hashCode * 31 + [self.confirmation hash];
+  }
+  if (self.hasReaction) {
+    hashCode = hashCode * 31 + [self.reaction hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -757,9 +757,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   if (other.hasKnock) {
     [self mergeKnock:other.knock];
   }
-  if (other.hasReaction) {
-    [self mergeReaction:other.reaction];
-  }
   if (other.hasLastRead) {
     [self mergeLastRead:other.lastRead];
   }
@@ -792,6 +789,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasConfirmation) {
     [self mergeConfirmation:other.confirmation];
+  }
+  if (other.hasReaction) {
+    [self mergeReaction:other.reaction];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -843,15 +843,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setKnock:[subBuilder buildPartial]];
-        break;
-      }
-      case 42: {
-        ZMReactionBuilder* subBuilder = [ZMReaction builder];
-        if (self.hasReaction) {
-          [subBuilder mergeFrom:self.reaction];
-        }
-        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
-        [self setReaction:[subBuilder buildPartial]];
         break;
       }
       case 50: {
@@ -951,6 +942,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setConfirmation:[subBuilder buildPartial]];
+        break;
+      }
+      case 138: {
+        ZMReactionBuilder* subBuilder = [ZMReaction builder];
+        if (self.hasReaction) {
+          [subBuilder mergeFrom:self.reaction];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setReaction:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1060,36 +1060,6 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearKnock {
   resultGenericMessage.hasKnock = NO;
   resultGenericMessage.knock = [ZMKnock defaultInstance];
-  return self;
-}
-- (BOOL) hasReaction {
-  return resultGenericMessage.hasReaction;
-}
-- (ZMReaction*) reaction {
-  return resultGenericMessage.reaction;
-}
-- (ZMGenericMessageBuilder*) setReaction:(ZMReaction*) value {
-  resultGenericMessage.hasReaction = YES;
-  resultGenericMessage.reaction = value;
-  return self;
-}
-- (ZMGenericMessageBuilder*) setReactionBuilder:(ZMReactionBuilder*) builderForValue {
-  return [self setReaction:[builderForValue build]];
-}
-- (ZMGenericMessageBuilder*) mergeReaction:(ZMReaction*) value {
-  if (resultGenericMessage.hasReaction &&
-      resultGenericMessage.reaction != [ZMReaction defaultInstance]) {
-    resultGenericMessage.reaction =
-      [[[ZMReaction builderWithPrototype:resultGenericMessage.reaction] mergeFrom:value] buildPartial];
-  } else {
-    resultGenericMessage.reaction = value;
-  }
-  resultGenericMessage.hasReaction = YES;
-  return self;
-}
-- (ZMGenericMessageBuilder*) clearReaction {
-  resultGenericMessage.hasReaction = NO;
-  resultGenericMessage.reaction = [ZMReaction defaultInstance];
   return self;
 }
 - (BOOL) hasLastRead {
@@ -1406,6 +1376,36 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearConfirmation {
   resultGenericMessage.hasConfirmation = NO;
   resultGenericMessage.confirmation = [ZMConfirmation defaultInstance];
+  return self;
+}
+- (BOOL) hasReaction {
+  return resultGenericMessage.hasReaction;
+}
+- (ZMReaction*) reaction {
+  return resultGenericMessage.reaction;
+}
+- (ZMGenericMessageBuilder*) setReaction:(ZMReaction*) value {
+  resultGenericMessage.hasReaction = YES;
+  resultGenericMessage.reaction = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setReactionBuilder:(ZMReactionBuilder*) builderForValue {
+  return [self setReaction:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeReaction:(ZMReaction*) value {
+  if (resultGenericMessage.hasReaction &&
+      resultGenericMessage.reaction != [ZMReaction defaultInstance]) {
+    resultGenericMessage.reaction =
+      [[[ZMReaction builderWithPrototype:resultGenericMessage.reaction] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.reaction = value;
+  }
+  resultGenericMessage.hasReaction = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearReaction {
+  resultGenericMessage.hasReaction = NO;
+  resultGenericMessage.reaction = [ZMReaction defaultInstance];
   return self;
 }
 @end
