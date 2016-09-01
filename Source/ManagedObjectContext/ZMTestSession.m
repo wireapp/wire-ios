@@ -89,9 +89,10 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)tearDown;
 {
+    
+    [self wipeCaches];
     ZMConversationDefaultLastReadEventIDSaveDelay = self.originalConversationLastReadEventIDTimerValue;
     [self resetState];
-    [self wipeCaches];
 }
 
 - (void)resetState
