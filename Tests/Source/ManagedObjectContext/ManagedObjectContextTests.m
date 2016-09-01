@@ -23,16 +23,28 @@
 #import "NSManagedObjectContext+zmessaging.h"
 #import "NSManagedObjectContext+tests.h"
 #import "MockEntity.h"
+#import "MockModelObjectContextFactory.h"
 
 
 
 @interface ManagedObjectContextTests : ZMBaseManagedObjectTest
+
+@property (nonatomic) NSManagedObjectContext *testMOC;
+@property (nonatomic) NSManagedObjectContext *alternativeTestMOC;
 
 @end
 
 
 
 @implementation ManagedObjectContextTests
+
+- (void)setUp
+{
+    [super setUp];
+    
+    self.testMOC = [MockModelObjectContextFactory testContext];
+    self.alternativeTestMOC = [MockModelObjectContextFactory alternativeMocForPSC:self.testMOC.persistentStoreCoordinator];
+}
 
 - (void)testThatWeCanCreateTheUserInterfaceContext
 {
