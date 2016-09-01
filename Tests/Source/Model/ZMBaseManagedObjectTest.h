@@ -32,6 +32,7 @@
 @class ZMConnection;
 @protocol ZMObjectStrategyDirectory;
 @class ZMAssetClientMessage;
+@class ZMTestSession;
 
 @import Cryptobox;
 @import zimages;
@@ -47,16 +48,10 @@
 
 - (ZMEventID *)createEventID;
 + (ZMEventID *)createEventID;
-+ (NSInteger)randomSignedIntWithMax:(NSInteger)max;
 
-/// Wait for the block to return @c YES. The block is called on the given @c queue. The block is only called after each @c NSManagedObjectContextDidChange notification of the given context.
-/// Should be wrapped in call to @c XCTAssert()
-- (BOOL)waitWithTimeout:(NSTimeInterval)timeout forSaveOfContext:(NSManagedObjectContext *)moc untilBlock:(BOOL(^)(void))block ZM_MUST_USE_RETURN;
-
+@property (nonatomic, readonly) ZMTestSession *testSession;
 @property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
-@property (nonatomic, readonly) NSManagedObjectContext *testMOC;
-@property (nonatomic, readonly) NSManagedObjectContext *alternativeTestMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
 
 
@@ -70,22 +65,11 @@
 
 
 
-@interface ZMBaseManagedObjectTest (Asynchronous)
-
-typedef BOOL (^SaveExpectationHandler)(ZMManagedObject *);
-- (XCTestExpectation *)expectationForSaveOnContext:(NSManagedObjectContext *)moc withUpdateOfClass:(Class)aClass handler:(SaveExpectationHandler)handler;
-
-@end
-
-
-
 @interface ZMBaseManagedObjectTest (DisplayNameGenerator)
 
 - (void)updateDisplayNameGeneratorWithUsers:(NSArray *)users;
 
 @end
-
-
 
 
 
