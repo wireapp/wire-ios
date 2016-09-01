@@ -100,16 +100,23 @@
         }
     }
 
-    NSString *supportPath = [toStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
-    XCTAssertTrue([self.fm createDirectoryAtPath:supportPath withIntermediateDirectories:NO attributes:nil error:&error]);
-
-    NSString *path = [supportPath stringByAppendingString:@"/image.dat"];
-    XCTAssertTrue([self.mediumJPEGData writeToFile:path atomically:YES]);
-    XCTAssertNil(error);
-
+    XCTAssertTrue([self createExternalSupportFileForDatabaseAtURL:toStoreURL]);
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     
     return YES;
+}
+
+- (BOOL)createExternalSupportFileForDatabaseAtURL:(NSURL *)databaseURL
+{
+    BOOL success = YES;
+    NSError *error;
+    NSString *supportPath = [databaseURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    success &= [self.fm createDirectoryAtPath:supportPath withIntermediateDirectories:NO attributes:nil error:&error];
+    XCTAssertNil(error);
+    
+    NSString *path = [supportPath stringByAppendingString:@"/image.dat"];
+    success &= [self.mediumJPEGData writeToFile:path atomically:YES];
+    return success;
 }
 
 - (BOOL)moveDatabaseToCachesDirectory

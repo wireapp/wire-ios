@@ -37,6 +37,6 @@
 - (NSData *)invalidData;
 - (BOOL)createdUnreadableLocalStore;
 - (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase;
-
+- (BOOL)createExternalSupportFileForDatabaseAtURL:(NSURL *)databaseURL;
 
 @end
