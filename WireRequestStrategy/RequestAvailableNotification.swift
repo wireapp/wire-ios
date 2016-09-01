@@ -19,7 +19,7 @@
 import Foundation
 
 
-private let RequestsAvailableNotificationName = "RequestsAvailableNotification"
+private let RequestsAvailableNotificationName = "RequestAvailableNotification"
 
 
 @objc(ZMRequestAvailableObserver) public protocol RequestAvailableObserver : NSObjectProtocol {
@@ -37,7 +37,7 @@ private let RequestsAvailableNotificationName = "RequestsAvailableNotification"
     }
     
     public static func addObserver(observer: RequestAvailableObserver) {
-        NSNotificationCenter.defaultCenter().addObserver(observer, selector: Selector(observer.newRequestsAvailable()), name: RequestsAvailableNotificationName, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(observer, selector: #selector(RequestAvailableObserver.newRequestsAvailable), name: RequestsAvailableNotificationName, object: nil)
     }
     
     public static func removeObserver(observer: RequestAvailableObserver) {
