@@ -462,10 +462,37 @@ extension EncryptionSessionsDirectoryTests {
             try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
             XCTFail("Should have failed")
             return
-        } catch let err as CBoxResult where err == CBOX_DUPLICATE_MESSAGE {
+        } catch let err as CryptoboxError where err == .CryptoboxDuplicateMessage {
             // pass
         } catch {
             XCTFail("Wrong error")
+        }
+    }
+    
+    func testThatItCanNotDecodeDuplicatedMessageIfTheCacheIsNotDiscardedAndReportsTheCorrectErrorInObjC() {
+        
+        // GIVEN
+        establishSessionBetweenAliceAndBob()
+        let plainText = "foo".dataUsingEncoding(NSUTF8StringEncoding)!
+        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
+        try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+        
+        // WHEN
+        do {
+            try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+            XCTFail("Should have failed")
+            return
+        } catch {
+            let matcher = ObjCInteroperabilityMatcher()
+            let correctObjCError = matcher.returnsCorrectErrorCodeDecryptingCypher(
+                cypherText,
+                senderClientId:
+                Person.Alice.clientId,
+                expectedError: .CryptoboxDuplicateMessage,
+                sessionDirectory: statusBob
+            )
+            
+            XCTAssertTrue(correctObjCError)
         }
     }
     
@@ -504,7 +531,7 @@ extension EncryptionSessionsDirectoryTests {
             try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
             XCTFail("Should have failed")
             return
-        } catch let err as CBoxResult where err == CBOX_DUPLICATE_MESSAGE {
+        } catch let err as CryptoboxError where err == .CryptoboxDuplicateMessage {
             // pass
         } catch {
             XCTFail("Wrong error")
