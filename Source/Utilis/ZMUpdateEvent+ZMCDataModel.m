@@ -22,7 +22,7 @@
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "ZMUser+Internal.h"
-
+#import "ZMGenericMessage+UpdateEvent.h"
 
 @implementation ZMUpdateEvent (ZMCDataModel)
 
@@ -178,28 +178,7 @@
         case ZMUpdateEventConversationOtrMessageAdd:
         case ZMUpdateEventConversationOtrAssetAdd:
         {
-            NSString *base64Content;
-            if (self.type == ZMUpdateEventConversationOtrAssetAdd) {
-                base64Content = [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"info"];
-            } else {
-                id dataPayload = self.payload[@"data"];
-                if ([dataPayload isKindOfClass:NSDictionary.class]) {
-                    base64Content = [[self.payload dictionaryForKey:@"data"] optionalStringForKey:@"text"];
-                } else {
-                    base64Content = [self.payload optionalStringForKey:@"data"];
-                }
-            }
-            if(base64Content == nil) {
-                return nil;
-            }
-            ZMGenericMessage *message;
-            @try {
-                message = [ZMGenericMessage messageWithBase64String:base64Content];
-            }
-            @catch(NSException *e) {
-                ZMLogError(@"Cannot create message from protobuffer: %@ event: %@", e, self);
-                return nil;
-            }
+            ZMGenericMessage *message = [ZMGenericMessage genericMessageFromUpdateEvent:self];
             return [NSUUID uuidWithTransportString:message.messageId];
         }
         default:
