@@ -192,7 +192,7 @@ extension EncryptionSessionsDirectory {
         let result = cbox_new_prekey(context.implementation.ptr, id, &vectorBacking)
         let prekey = NSData.moveFromCBoxVector(vectorBacking)
         guard result == CBOX_SUCCESS else {
-            throw result
+            throw CryptoboxError(rawValue: result.rawValue)!
         }
         return prekey.base64EncodedStringWithOptions([])
     }
@@ -409,7 +409,7 @@ extension EncryptionSession {
                                   cypher.length,
                                   &vectorBacking)
         guard result == CBOX_SUCCESS else {
-            throw result
+            throw CryptoboxError(rawValue: result.rawValue)!
         }
         self.hasChanges = true
         return NSData.moveFromCBoxVector(vectorBacking)
@@ -425,7 +425,7 @@ extension EncryptionSession {
                                   &vectorBacking
         )
         guard result == CBOX_SUCCESS else {
-            throw result
+            throw CryptoboxError(rawValue: result.rawValue)!
         }
         self.hasChanges = true
         return NSData.moveFromCBoxVector(vectorBacking)
