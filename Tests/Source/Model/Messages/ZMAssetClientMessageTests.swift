@@ -30,7 +30,7 @@ class ZMAssetClientMessageTests : BaseZMClientMessageTests {
     }
     
     override func tearDown() {
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(2))
         super.tearDown()
     }
     
