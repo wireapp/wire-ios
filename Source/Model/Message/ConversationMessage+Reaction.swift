@@ -34,10 +34,7 @@ extension ZMMessage {
     
     public static func removeReaction(onMessage message:ZMConversationMessage)
     {
-        guard let message = message as? ZMMessage,
-            let context = message.managedObjectContext else { return }
-        
-        message.addReaction(nil, forUser: ZMUser.selfUserInContext(context))
+        addReaction(nil, toMessage: message)
     }
     
     @objc public func addReaction(unicodeValue: String?, forUser user:ZMUser) {
