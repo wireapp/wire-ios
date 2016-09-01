@@ -84,18 +84,20 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         super.tearDown()
     }
     
-    func assertRecipients(recipients: [ZMUserEntry]) {
-        XCTAssertEqual(recipients.count, expectedRecipients.count)
+    func assertRecipients(recipients: [ZMUserEntry], file: StaticString = #file, line: UInt = #line) {
+        XCTAssertEqual(recipients.count, expectedRecipients.count, file: file, line: line)
         
         for recipientEntry in recipients {
             let uuid = NSUUID(UUIDBytes: UnsafePointer(recipientEntry.user.uuid.bytes)).transportString()
-            let expectedClientsIds = self.expectedRecipients[uuid]?.sort()
-            AssertOptionalNotNil(expectedClientsIds, "Unexpected otr client in recipients") { expectedClientsIds in
-                let clientIds = (recipientEntry.clients as! [ZMClientEntry]).map { String(format: "%llx", $0.client.client) } .sort()
-                XCTAssertEqual(clientIds, expectedClientsIds)
-                let hasTexts = (recipientEntry.clients as! [ZMClientEntry]).map { $0.hasText() }
-                XCTAssertFalse(hasTexts.contains(false))
+            guard let expectedClientsIds = self.expectedRecipients[uuid]?.sort() else {
+                XCTFail("Unexpected otr client in recipients", file: file, line: line)
+                return
             }
+            let clientIds = (recipientEntry.clients as! [ZMClientEntry]).map { String(format: "%llx", $0.client.client) } .sort()
+            XCTAssertEqual(clientIds, expectedClientsIds, file: file, line: line)
+            let hasTexts = (recipientEntry.clients as! [ZMClientEntry]).map { $0.hasText() }
+            XCTAssertFalse(hasTexts.contains(false), file: file, line: line)
+            
         }
     }
     

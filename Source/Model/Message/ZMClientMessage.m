@@ -349,24 +349,24 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 {
     NSArray <ZMUserEntry *>*recipients;
     
-//    if (genericMessage.hasConfirmation) {
-//        // In case of confirmation messages, we want to send the confirmation only to the clients of the sender of the original message, not to everyone in the conversation
-//        // This still needs to be supported by the backend
-//        NSUUID *messageID = [NSUUID uuidWithTransportString:genericMessage.confirmation.messageId];
-//        ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID
-//                                              forConversation:conversation
-//                                       inManagedObjectContext:conversation.managedObjectContext];
-//        
-//        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
-//                                                       selfClient:selfClient
-//                                                       recipients:@[message.sender]
-//                                                sessionsDirectory:sessionsDirectory];
-//    } else {
+    if (genericMessage.hasConfirmation) {
+        // In case of confirmation messages, we want to send the confirmation only to the clients of the sender of the original message, not to everyone in the conversation
+        // This still needs to be supported by the backend
+        NSUUID *messageID = [NSUUID uuidWithTransportString:genericMessage.confirmation.messageId];
+        ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID
+                                              forConversation:conversation
+                                       inManagedObjectContext:conversation.managedObjectContext];
+        
+        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
+                                                       selfClient:selfClient
+                                                       recipients:@[message.sender]
+                                                sessionsDirectory:sessionsDirectory];
+    } else {
         recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
                                                        selfClient:selfClient
                                                      conversation:conversation
                                                 sessionsDirectory:sessionsDirectory];
-//    }
+    }
 
     ZMNewOtrMessage *message = [ZMNewOtrMessage messageWithSender:selfClient nativePush:YES recipients:recipients blob:externalData];
     
