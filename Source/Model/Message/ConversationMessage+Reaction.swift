@@ -32,6 +32,14 @@ extension ZMMessage {
         message.addReaction(unicodeValue, forUser: ZMUser.selfUserInContext(context))
     }
     
+    public static func removeReaction(onMessage message:ZMConversationMessage)
+    {
+        guard let message = message as? ZMMessage,
+            let context = message.managedObjectContext else { return }
+        
+        message.addReaction(nil, forUser: ZMUser.selfUserInContext(context))
+    }
+    
     @objc public func addReaction(unicodeValue: String?, forUser user:ZMUser) {
         
         removeReaction(forUser:user)
