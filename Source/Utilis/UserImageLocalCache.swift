@@ -53,9 +53,9 @@ let NSManagedObjectContextUserImageCacheKey = "zm_userImageCacheKey"
 
 extension NSManagedObjectContext
 {
-    public var zm_userImageCache : UserImageLocalCache {
+    public var zm_userImageCache : UserImageLocalCache! {
         get {
-            return self.userInfo[NSManagedObjectContextUserImageCacheKey] as! UserImageLocalCache
+            return self.userInfo[NSManagedObjectContextUserImageCacheKey] as? UserImageLocalCache
         }
         
         set {

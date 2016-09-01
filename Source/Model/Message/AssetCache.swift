@@ -16,9 +16,9 @@ private let NSManagedObjectContextImageAssetCacheKey = "zm_imageAssetCache"
 
 extension NSManagedObjectContext
 {
-    public var zm_imageAssetCache : ImageAssetCache {
+    public var zm_imageAssetCache : ImageAssetCache! {
         get {
-            return self.userInfo[NSManagedObjectContextImageAssetCacheKey] as! ImageAssetCache
+            return self.userInfo[NSManagedObjectContextImageAssetCacheKey] as? ImageAssetCache
         }
         
         set {
