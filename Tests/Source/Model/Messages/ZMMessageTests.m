@@ -2565,7 +2565,7 @@ NSString * const ReactionsKey = @"reactions";
     
     //then
     reactions = textMessage.usersReaction;
-    XCTAssertEqual(reactions.count, 1lu);
+    XCTAssertEqual(reactions.count, 0lu);
     usersThatReacted = reactions[reactionUnicode];
     XCTAssertEqual(usersThatReacted.count, 0lu);
 
