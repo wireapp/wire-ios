@@ -2115,10 +2115,12 @@ extension ZMAssetClientMessageTests {
     func testThatAnAssetClientMessageWithImageDataCan_Not_BeDeleted_Pending() {
         checkThatImageAssetMessageCanBeDeleted(false, .Pending)
     }
+}
+
+extension ZMAssetClientMessageTests {
 
     // MARK: Helper
-    
-    func checkThatFileMessageCanBeDeleted(canBeDeleted: Bool, _ state: ZMDeliveryState) {
+    func checkThatFileMessageCanBeDeleted(canBeDeleted: Bool, _ state: ZMDeliveryState, line: UInt = #line) {
         syncMOC.performBlockAndWait {
             // given
             _ = self.createTestFile(self.testURL)
@@ -2134,20 +2136,20 @@ extension ZMAssetClientMessageTests {
             sut.sender = ZMUser.selfUserInContext(self.syncMOC)
             sut.sender?.remoteIdentifier = NSUUID()
             
-            XCTAssertNotNil(sut.fileMessageData)
-            XCTAssertTrue(sut.isEncrypted)
-            XCTAssertTrue(self.syncMOC.saveOrRollback())
+            XCTAssertNotNil(sut.fileMessageData, line: line)
+            XCTAssertTrue(sut.isEncrypted, line: line)
+            XCTAssertTrue(self.syncMOC.saveOrRollback(), line: line)
             
             // when
             self.updateMessageState(sut, state: state)
-            XCTAssertEqual(sut.deliveryState.rawValue, state.rawValue)
+            XCTAssertEqual(sut.deliveryState.rawValue, state.rawValue, line: line)
             
             // then
-            XCTAssertEqual(sut.canBeDeleted, canBeDeleted)
+            XCTAssertEqual(sut.canBeDeleted, canBeDeleted, line: line)
         }
     }
     
-    func checkThatImageAssetMessageCanBeDeleted(canBeDeleted: Bool, _ state: ZMDeliveryState) {
+    func checkThatImageAssetMessageCanBeDeleted(canBeDeleted: Bool, _ state: ZMDeliveryState, line: UInt = #line) {
         // given
         let sut = createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
         
@@ -2157,19 +2159,19 @@ extension ZMAssetClientMessageTests {
         sut.sender = ZMUser.selfUserInContext(uiMOC)
         sut.sender?.remoteIdentifier = NSUUID()
         
-        XCTAssertNil(sut.fileMessageData)
-        XCTAssertTrue(sut.isEncrypted)
-        XCTAssertNotNil(sut.imageAssetStorage)
-        XCTAssertNotNil(sut.imageMessageData)
-        XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertNil(sut.fileMessageData, line: line)
+        XCTAssertTrue(sut.isEncrypted, line: line)
+        XCTAssertNotNil(sut.imageAssetStorage, line: line)
+        XCTAssertNotNil(sut.imageMessageData, line: line)
+        XCTAssertTrue(uiMOC.saveOrRollback(), line: line)
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5), line: line)
         
         // when
         updateMessageState(sut, state: state)
-        XCTAssertEqual(sut.deliveryState, state)
+        XCTAssertEqual(sut.deliveryState, state, line: line)
         
         // then
-        XCTAssertEqual(sut.canBeDeleted, canBeDeleted)
+        XCTAssertEqual(sut.canBeDeleted, canBeDeleted, line: line)
     }
     
     func updateMessageState(message: ZMOTRMessage, state: ZMDeliveryState) {

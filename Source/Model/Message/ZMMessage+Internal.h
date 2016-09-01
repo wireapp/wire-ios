@@ -33,6 +33,7 @@
 @class ZMUpdateEvent;
 @class ZMMessageConfirmation;
 @class ZMReaction;
+@class ZMClientMessage;
 
 @protocol UserClientType;
 
@@ -175,7 +176,7 @@ extern NSString * const ZMMessageConfirmationKey;
 - (void)markAsSent;
 
 /// Inserts a ZMConfirmation message into the conversation that is sent back to the sender
-- (void)confirmReception;
+- (ZMClientMessage *)confirmReception;
 
 
 + (instancetype)fetchMessageWithNonce:(NSUUID *)nonce

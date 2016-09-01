@@ -24,21 +24,7 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
     
     var message: ZMClientMessage!
     
-    func assertMessageMetadata(payload: NSData!) {
-        let messageMetadata = ZMNewOtrMessageBuilder().mergeFromData(payload).build() as? ZMNewOtrMessage
-        AssertOptionalNotNil(messageMetadata) { messageMetadata in
-            if let sender = messageMetadata.sender {
-                XCTAssertEqual(sender.client, self.selfClient1.clientId.client)
-            } else {
-                XCTFail("Metadata does not contain sender")
-            }
-            if let recipients = messageMetadata.recipients as? [ZMUserEntry] {
-                self.assertRecipients(recipients)
-            } else {
-                XCTFail("Metadata does not contain recipients")
-            }
-        }
-    }
+
 
     func testThatItCreatesPayloadDataForTextMessage() {
         self.syncMOC.performGroupedBlockAndWait {
@@ -93,7 +79,7 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
         
         syncMOC.performGroupedBlockAndWait {
             // given
-            self.message = self.conversation.appendOTRMessageWithText(self.textRequiringExternalMessage, nonce: NSUUID.createUUID())
+            self.message = self.conversation.appendOTRMessageWithText(self.name, nonce: NSUUID.createUUID())
             
             //when
             let payload = self.message.encryptedMessagePayloadData()
@@ -102,10 +88,48 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
             self.assertMessageMetadata(payload)
         }
     }
+}
+
+// MARK: - Delivery
+extension ClientMessageTests_OTR {
     
-    // MARK: - Helper
+    func testThatItCreatesPayloadDataForConfirmationMessage() {
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            //given
+            let senderID = self.user1.clients.first!.remoteIdentifier
+            let textMessage = self.conversation.appendOTRMessageWithText(self.stringLargeEnoughToRequireExternal, nonce: NSUUID.createUUID())
+            textMessage.sender = self.user1
+            textMessage.senderClientID = senderID
+            let confirmationMessage = textMessage.confirmReception()
+            
+            //when
+            let payload = confirmationMessage.encryptedMessagePayloadData()
+            
+            //then
+            guard let messageMetadata = ZMNewOtrMessageBuilder().mergeFromData(payload).build() as? ZMNewOtrMessage else {
+                XCTFail()
+                return
+            }
+            
+            if let recipients = messageMetadata.recipients as? [ZMUserEntry] {
+                let payloadClients = recipients.flatMap { user -> [String] in
+                    return (user.clients as? [ZMClientEntry])?.map({ String(format: "%llx", $0.client.client) }) ?? []
+                }.flatMap { $0 }
+                XCTAssertEqual(payloadClients.sort(), self.user1.clients.map { $0.remoteIdentifier }.sort())
+            } else {
+                XCTFail("Metadata does not contain recipients")
+            }
+        }
+    }
     
-    private var textRequiringExternalMessage: String {
+}
+
+// MARK: - Helper
+extension ClientMessageTests_OTR {
+    
+    /// Returns a string large enough to have to be encoded in an external message
+    private var stringLargeEnoughToRequireExternal: String {
         var text = "Hello"
         while (text.dataUsingEncoding(NSUTF8StringEncoding)?.length < Int(ZMClientMessageByteSizeExternalThreshold)) {
             text.appendContentsOf(text)
@@ -113,4 +137,21 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
         return text
     }
     
+    /// Asserts that the message metadata is as expected
+    private func assertMessageMetadata(payload: NSData!, file: StaticString = #file, line: UInt = #line) {
+        guard let messageMetadata = ZMNewOtrMessageBuilder().mergeFromData(payload).build() as? ZMNewOtrMessage else {
+            XCTFail(file: file, line: line)
+            return
+        }
+        if let sender = messageMetadata.sender {
+            XCTAssertEqual(sender.client, self.selfClient1.clientId.client, file: file, line: line)
+        } else {
+            XCTFail("Metadata does not contain sender", file: file, line: line)
+        }
+        if let recipients = messageMetadata.recipients as? [ZMUserEntry] {
+            self.assertRecipients(recipients, file: file, line: line)
+        } else {
+            XCTFail("Metadata does not contain recipients", file: file, line: line)
+        }
+    }
 }
