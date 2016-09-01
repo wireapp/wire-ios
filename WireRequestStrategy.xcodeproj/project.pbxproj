@@ -31,6 +31,7 @@
 		1621D26D1D75C806007108C2 /* NSManagedObjectContext+TestHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */; };
 		1621D2741D7715EA007108C2 /* ZMObjectSyncStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1621D2721D7715EA007108C2 /* ZMObjectSyncStrategy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2731D7715EA007108C2 /* ZMObjectSyncStrategy.m */; };
+		1621D2811D783529007108C2 /* RequestAvailableNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2801D783529007108C2 /* RequestAvailableNotificationTests.swift */; };
 		1669016E1D707509000FE4AF /* WireRequestStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1669016D1D707509000FE4AF /* WireRequestStrategy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166901751D707509000FE4AF /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		166901971D7075D7000FE4AF /* version.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 166901861D7075D7000FE4AF /* version.xcconfig */; };
@@ -122,6 +123,7 @@
 		1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+TestHelpers.m"; sourceTree = "<group>"; };
 		1621D2721D7715EA007108C2 /* ZMObjectSyncStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMObjectSyncStrategy.h; sourceTree = "<group>"; };
 		1621D2731D7715EA007108C2 /* ZMObjectSyncStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMObjectSyncStrategy.m; sourceTree = "<group>"; };
+		1621D2801D783529007108C2 /* RequestAvailableNotificationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestAvailableNotificationTests.swift; sourceTree = "<group>"; };
 		1669016A1D707509000FE4AF /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1669016D1D707509000FE4AF /* WireRequestStrategy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireRequestStrategy.h; sourceTree = "<group>"; };
 		1669016F1D707509000FE4AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -339,6 +341,7 @@
 				166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */,
 				1621D2311D75B221007108C2 /* NSManagedObjectContext+TestHelpers.h */,
 				1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */,
+				1621D2801D783529007108C2 /* RequestAvailableNotificationTests.swift */,
 			);
 			path = WireRequestStrategyTests;
 			sourceTree = "<group>";
@@ -583,6 +586,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1621D2601D75C73E007108C2 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
+				1621D2811D783529007108C2 /* RequestAvailableNotificationTests.swift in Sources */,
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistingTests.m in Sources */,
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
 				1621D2631D75C749007108C2 /* ZMImagePreprocessingTrackerTests.m in Sources */,
