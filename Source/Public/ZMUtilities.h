@@ -34,7 +34,6 @@ FOUNDATION_EXPORT const unsigned char ZMUtilitiesVersionString[];
 #import <ZMUtilities/NSSet+Zeta.h>
 #import <ZMUtilities/NSURL+QueryComponents.h>
 #import <ZMUtilities/NSUUID+Data.h>
-#import <ZMUtilities/ZMApplication.h>
 #import <ZMUtilities/ZMAssertQueue.h>
 #import <ZMUtilities/ZMDebugHelpers.h>
 #import <ZMUtilities/ZMFunctional.h>
