@@ -23,13 +23,17 @@ extension ZMMessage {
     
     public static func addReaction(unicodeValue: String?, toMessage message: ZMConversationMessage)
     {
-        guard let message = message as? ZMMessage,
-              let context = message.managedObjectContext else { return }
-        
-        let genericMessage = ZMGenericMessage(emojiString: unicodeValue, messageID:message.nonce.transportString(), nonce: NSUUID().transportString())
+        guard let message = message as? ZMMessage, context = message.managedObjectContext else { return }
+        guard message.deliveryState == .Sent || message.deliveryState == .Delivered else { return }
+
+        let genericMessage = ZMGenericMessage(
+            emojiString: unicodeValue,
+            messageID: message.nonce.transportString(),
+            nonce: NSUUID().transportString()
+        )
+    
         message.conversation?.appendGenericMessage(genericMessage, expires:false, hidden: true)
-        
-        message.addReaction(unicodeValue, forUser: ZMUser.selfUserInContext(context))
+        message.addReaction(unicodeValue, forUser: .selfUserInContext(context))
     }
     
     public static func removeReaction(onMessage message:ZMConversationMessage)
@@ -37,8 +41,8 @@ extension ZMMessage {
         addReaction(nil, toMessage: message)
     }
     
-    @objc public func addReaction(unicodeValue: String?, forUser user:ZMUser) {
-        
+    @objc public func addReaction(unicodeValue: String?, forUser user:ZMUser)
+    {
         removeReaction(forUser:user)
         if let unicodeValue = unicodeValue where unicodeValue.characters.count > 0 {
             for reaction in self.reactions {
@@ -54,7 +58,7 @@ extension ZMMessage {
         }
     }
     
-    @objc internal func removeReaction(forUser user: ZMUser)
+    private func removeReaction(forUser user: ZMUser)
     {
         for reaction in self.reactions {
             if reaction.users.contains(user) {
