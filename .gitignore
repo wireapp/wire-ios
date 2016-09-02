@@ -39,8 +39,6 @@ xcode-analyze.log
 tests.xml
 
 ## Test Output
-xcode-analyze.log
-xcode-build.log
-xcode-test.log
+xcode-summary.log
 tests.xml
 code-coverage/*
