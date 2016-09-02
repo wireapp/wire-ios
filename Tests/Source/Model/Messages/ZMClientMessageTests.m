@@ -27,6 +27,7 @@
 
 @import CoreGraphics;
 @import ZMCLinkPreview;
+@import ZMCDataModel;
 
 @interface ZMClientMessageTests : BaseZMMessageTests
 
@@ -609,54 +610,6 @@
 
 
 @implementation ZMClientMessageTests (ExternalMessage)
-
-- (void)testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob
-{
-    // given
-    [self.syncMOC performGroupedBlockAndWait:^{
-        [self createSelfClient];
-
-        ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        otherUser.remoteIdentifier = NSUUID.createUUID;
-        UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
-        UserClient *secondClient =[self createClientForUser:otherUser createSessionWithSelfUser:YES];
-        NSUUID *nonce = NSUUID.createUUID;
-        ZMGenericMessageBuilder *builder = ZMGenericMessage.builder;
-        ZMTextBuilder *textBuilder = ZMText.builder;
-        textBuilder.content = [self textMessageRequiringExternalMessageWithNumberOfClients:2];
-        builder.text = textBuilder.build;
-        builder.messageId = nonce.transportString;
-        ZMGenericMessage *textMessage = builder.build;
-        
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        conversation.conversationType = ZMConversationTypeGroup;
-        conversation.remoteIdentifier = NSUUID.createUUID;
-        [conversation addParticipant:otherUser];
-        
-        XCTAssertTrue([self.syncMOC saveOrRollback]);
-        
-        // when
-        NSData *data = [ZMClientMessage encryptedMessagePayloadDataWithGenericMessage:textMessage
-                                                                         conversation:conversation
-                                                                 managedObjectContext:self.syncMOC
-                                                                         externalData:nil];
-        
-        // then
-        ZMNewOtrMessage *createdMessage = (ZMNewOtrMessage *)[ZMNewOtrMessage.builder mergeFromData:data].build;
-        XCTAssertNotNil(createdMessage);
-        XCTAssertTrue(createdMessage.hasBlob);
-        
-        NSArray <ZMClientId *>* clientIds = [createdMessage.recipients flattenWithBlock:^NSArray *(ZMUserEntry *userEntry) {
-            return [userEntry.clients mapWithBlock:^ZMClientId *(ZMClientEntry *clientEntry) {
-                return clientEntry.client;
-            }];
-        }];
-        
-        XCTAssertEqual(clientIds.count, 2lu);
-        XCTAssertTrue([clientIds containsObject:firstClient.clientId]);
-        XCTAssertTrue([clientIds containsObject:secondClient.clientId]);
-    }];
-}
 
 
 - (void)testThatItDecryptsMessageWithExternalBlobCorrectly

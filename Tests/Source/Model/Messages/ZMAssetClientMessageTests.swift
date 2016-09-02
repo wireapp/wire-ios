@@ -582,10 +582,20 @@ extension ZMAssetClientMessageTests {
             self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier, forKey: "PersistedClientId")
             XCTAssertNotNil(ZMUser.selfUserInContext(self.syncMOC).selfClient())
             
+            let user2 = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
+            user2.remoteIdentifier = NSUUID.createUUID()
+            let user2Client = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
+            user2Client.remoteIdentifier = NSUUID.createUUID().transportString()
+            
+            let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
+            conversation.conversationType = .Group
+            conversation.addParticipant(user2)
+            
             let sut = ZMAssetClientMessage(
                 fileMetadata: fileMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC)
+            sut.visibleInConversation = conversation
             
             // when
             sut.addGenericMessage(.genericMessage(
@@ -1413,7 +1423,7 @@ extension ZMAssetClientMessageTests {
         let message = appendImageMessage(.Medium)
         
         //when
-        let payload = message.imageAssetStorage!.encryptedMessagePayloadForImageFormat(.Medium)?.data()
+        let payload = message.encryptedMessagePayloadForImageFormat(.Medium)?.data()
         
         //then
         assertPayloadData(payload, forMessage: message, format: .Medium)
@@ -1425,7 +1435,7 @@ extension ZMAssetClientMessageTests {
         let message = appendImageMessage(ZMImageFormat.Preview)
         
         //when
-        let payload = message.imageAssetStorage!.encryptedMessagePayloadForImageFormat(.Preview)?.data()
+        let payload = message.encryptedMessagePayloadForImageFormat(.Preview)?.data()
         
         //then
         assertPayloadData(payload, forMessage: message, format: .Preview)
