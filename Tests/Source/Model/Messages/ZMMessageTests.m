@@ -2225,7 +2225,7 @@ NSString * const ReactionsKey = @"reactions";
     // when
     __block ZMClientMessage *message;
     [self performPretendingUiMocIsSyncMoc:^{
-        message = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        message = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
