@@ -175,6 +175,7 @@ extern NSString * const ZMMessageConfirmationKey;
 /// Sets a flag to mark the message as being delivered to the backend
 - (void)markAsSent;
 
+
 /// Inserts and returns a ZMConfirmation message into the conversation that is sent back to the sender
 - (ZMClientMessage *)confirmReception;
 
