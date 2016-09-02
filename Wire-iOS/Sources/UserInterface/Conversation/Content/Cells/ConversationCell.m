@@ -318,7 +318,11 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 - (void)updateToolboxVisibilityAnimated:(BOOL)animated
 {
-    BOOL shouldBeVisible = self.selected || self.layoutProperties.showToolbox;
+    ZMDeliveryState deliveryState = self.message.deliveryState;
+    
+    BOOL shouldShowPendingDeliveryState = self.message.conversation.conversationType == ZMConversationTypeOneOnOne;
+    BOOL shouldShowDeliveryState = (deliveryState == ZMDeliveryStatePending && shouldShowPendingDeliveryState) || deliveryState == ZMDeliveryStateFailedToSend || self.layoutProperties.alwaysShowDeliveryState;
+    BOOL shouldBeVisible = self.selected || self.message.usersReaction.count > 0 || shouldShowDeliveryState;
     
     if (! [Message shouldShowTimestamp:self.message]) {
         shouldBeVisible = NO;
@@ -555,6 +559,8 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     if (change.userChangeInfo.nameChanged || change.senderChanged) {
         [self updateSenderAndSenderImage:change.message];
     }
+    
+    [self updateToolboxVisibilityAnimated:YES];
     
     return change.reactionsChanged || (change.deliveryStateChanged);
 }
