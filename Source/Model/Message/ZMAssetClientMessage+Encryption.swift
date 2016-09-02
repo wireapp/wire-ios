@@ -79,3 +79,4 @@ extension ZMAssetClientMessage {
         return builder.build()
     }
 }
+
