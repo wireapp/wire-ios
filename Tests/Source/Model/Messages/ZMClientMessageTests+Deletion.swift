@@ -243,7 +243,7 @@ extension ZMClientMessageTests_Deletion {
         // when
         let updateEvent = createMessageDeletedUpdateEvent(.createUUID(), conversationID: conversation.remoteIdentifier, senderID: selfUser.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.createOrUpdateMessageFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
@@ -282,7 +282,7 @@ extension ZMClientMessageTests_Deletion {
         // when
         let updateEvent = createMessageDeletedUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier)
         performPretendingUiMocIsSyncMoc { 
-            ZMOTRMessage.createOrUpdateMessageFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
@@ -306,7 +306,7 @@ extension ZMClientMessageTests_Deletion {
         let updateEvent = createMessageDeletedUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier, senderID: sut.sender!.remoteIdentifier!)
 
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.createOrUpdateMessageFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
@@ -339,7 +339,7 @@ extension ZMClientMessageTests_Deletion {
         let updateEvent = createMessageDeletedUpdateEvent(message.nonce, conversationID: conversation.remoteIdentifier, senderID: otherUser.remoteIdentifier!)
         
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.createOrUpdateMessageFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
@@ -372,7 +372,7 @@ extension ZMClientMessageTests_Deletion {
         // when
         let updateEvent = createMessageDeletedUpdateEvent(nonce, conversationID: conversation.remoteIdentifier, senderID: sut.sender!.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.createOrUpdateMessageFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
@@ -384,7 +384,7 @@ extension ZMClientMessageTests_Deletion {
         let genericMessage = ZMGenericMessage(text: name!, nonce: nonce.transportString())
         let nextEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.createOrUpdateMessageFromUpdateEvent(nextEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(nextEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
