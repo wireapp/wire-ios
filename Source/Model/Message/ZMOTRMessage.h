@@ -20,6 +20,7 @@
 #import "ZMMessage+Internal.h"
 
 @class UserClient;
+@class MessageUpdateResult;
 
 extern NSString * const DeliveredKey;
 
@@ -40,5 +41,13 @@ extern NSString * const DeliveredKey;
                                          inConversation:(ZMConversation *)conversation
                                  inManagedObjectContext:(NSManagedObjectContext *)moc
                                          prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
+
++ (MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
+                                     inManagedObjectContext:(NSManagedObjectContext *)moc
+                                             prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
+
++ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
+                              inManagedObjectContext:(NSManagedObjectContext *)moc
+                                      prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult NS_UNAVAILABLE;
 
 @end

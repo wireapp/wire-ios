@@ -215,7 +215,7 @@
     // when
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -251,7 +251,7 @@
     // when
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -291,7 +291,7 @@
     // when
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -383,7 +383,7 @@
     // when
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -408,7 +408,7 @@
     // when
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -473,7 +473,7 @@
     // when
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -511,7 +511,7 @@
     // when
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -542,7 +542,7 @@
     
     // when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMAssetClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        [ZMAssetClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     
     // then
@@ -572,7 +572,7 @@
     
     // when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     
     // then
@@ -596,7 +596,7 @@
     __block ZMClientMessage *sut;
     [self performPretendingUiMocIsSyncMoc:^{
         [self performIgnoringZMLogError:^{
-            sut = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+            sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
         }];
     }];
     

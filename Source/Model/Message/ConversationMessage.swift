@@ -159,7 +159,9 @@ extension ZMMessage : ZMConversationMessage {
     public var usersReaction : Dictionary<String, [ZMUser]> {
         var result = Dictionary<String, [ZMUser]>()
         for reaction in self.reactions {
-            result[reaction.unicodeValue!] = Array<ZMUser>(reaction.users)
+            if reaction.users.count > 0 {
+                result[reaction.unicodeValue!] = Array<ZMUser>(reaction.users)
+            }
         }
         return result
     }

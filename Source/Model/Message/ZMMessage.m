@@ -209,8 +209,7 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
 - (ZMClientMessage *)confirmReception
 {
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithConfirmation:self.nonce.transportString type:ZMConfirmationTypeDELIVERED nonce:[NSUUID UUID].transportString];
-    ZMClientMessage *message = [self.conversation appendGenericMessage:genericMessage expires:YES hidden:YES];
-    return message;
+    return [self.conversation appendGenericMessage:genericMessage expires:YES hidden:YES];
 }
 
 - (void)expire;

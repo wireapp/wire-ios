@@ -23,7 +23,7 @@
 
 #import "ZMClientMessage.h"
 #import "NSManagedObjectContext+zmessaging.h"
-#import "NSManagedObjectContext+tests.h"
+#import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "MockModelObjectContextFactory.h"
 #import "ZMAssetClientMessage.h"
 #import "ZMTestSession.h"
@@ -94,7 +94,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
     
     [self.testSession tearDown];
-    
     [super tearDown];
 }
 
