@@ -511,6 +511,11 @@
 {
     [controller dismissViewControllerAnimated:NO completion:nil];
 
+    [self openSketchForMessage:message];
+}
+
+- (void)openSketchForMessage:(id<ZMConversationMessage>)message
+{
     SketchViewController *viewController = [[SketchViewController alloc] init];
     viewController.sketchTitle = message.conversation.displayName;
     viewController.delegate = self;
@@ -728,8 +733,9 @@
 {
     id<ZMConversationMessage>message = [self.messageWindow.messages objectAtIndex:indexPath.row];
     BOOL isFile = [Message isFileTransferMessage:message];
+    BOOL isImage = [Message isImageMessage:message];
     
-    if (! isFile) {
+    if (! isFile && ! isImage) {
         [self presentDetailsForMessageAtIndexPath:indexPath];
     }
     
@@ -755,9 +761,9 @@
     }
 }
 
-- (void)conversationCell:(ConversationCell *)cell resendMessageTapped:(ZMMessage *)message
+- (void)conversationCellDidTapResendMessage:(ConversationCell *)cell
 {
-    [self.delegate conversationContentViewController:self didTriggerResendingMessage:message];
+    [self.delegate conversationContentViewController:self didTriggerResendingMessage:cell.message];
 }
 
 - (void)conversationCell:(ConversationCell *)cell didSelectAction:(ConversationCellAction)actionId
@@ -806,6 +812,11 @@
             [self.delegate conversationContentViewController:self didTriggerEditingMessage:cell.message];
         }
             break;
+        case ConversationCellActionSketch:
+        {
+            [self openSketchForMessage:cell.message];
+        }
+            break;
     }
 }
 
@@ -841,11 +852,12 @@
                                messageType:messageType];
 }
 
-- (void)conversationCell:(ConversationCell *)cell openReactionsPressed:(ZMMessage *)message
+- (void)conversationCellDidTapOpenReactions:(ConversationCell *)cell
 {
-    ReactionsListViewController *reactionsListController = [[ReactionsListViewController alloc] initWithMessage:message];
-    UINavigationController *wrapNavigationController = [[UINavigationController alloc] initWithRootViewController:reactionsListController];
-    [self.parentViewController presentViewController:wrapNavigationController animated:YES completion:nil];
+    if ([Message hasReactions:cell.message]) {
+        ReactionsListViewController *reactionsListController = [[ReactionsListViewController alloc] initWithMessage:cell.message];
+        [self.parentViewController presentViewController:reactionsListController animated:YES completion:nil];
+    }
 }
 
 @end
