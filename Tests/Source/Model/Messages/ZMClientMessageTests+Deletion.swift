@@ -22,7 +22,7 @@ import XCTest
 
 // MARK: - Sending
 
-class ZMClientMessageTests_Deletion: BaseZMMessageTests {
+class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatItDeletesAMessage() {
         // given
@@ -403,21 +403,6 @@ extension ZMClientMessageTests_Deletion {
 // MARK: - Helper
 
 extension ZMClientMessageTests_Deletion {
-    
-    func createUpdateEvent(nonce: NSUUID, conversationID: NSUUID, genericMessage: ZMGenericMessage, senderID: NSUUID = .createUUID()) -> ZMUpdateEvent {
-        let payload = [
-            "id": NSUUID.createUUID().transportString(),
-            "conversation": conversationID.transportString(),
-            "from": senderID.transportString(),
-            "time": NSDate().transportString(),
-            "data": [
-                "text": genericMessage.data().base64String()
-            ],
-            "type": "conversation.otr-message-add"
-        ]
-        
-        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nonce)
-    }
 
     func createMessageDeletedUpdateEvent(nonce: NSUUID, conversationID: NSUUID, senderID: NSUUID = .createUUID()) -> ZMUpdateEvent {
         let genericMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID.createUUID().transportString())
