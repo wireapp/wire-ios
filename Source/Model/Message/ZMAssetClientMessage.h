@@ -43,8 +43,6 @@ extern NSString * _Nonnull const ZMAssetClientMessageUploadedStateKey;
 
 - (NSData * _Nullable)imageDataForFormat:(ZMImageFormat)format encrypted:(BOOL)encrypted;
 
-- (ZMOtrAssetMeta * _Nullable)encryptedMessagePayloadForImageFormat:(ZMImageFormat)imageFormat;
-
 // returns whether image data should be reprocessed
 - (BOOL)shouldReprocessForFormat:(ZMImageFormat)format;
 
@@ -124,11 +122,6 @@ typedef NS_ENUM(int16_t, ZMAssetUploadState) {
 
 /// Adds a (protobuf) data entry to the list of generic message data
 - (void)addGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage;
-
-/// Returns the binary data of the encrypted @c Asset.Uploaded protobuf message or @c nil
-/// in case the receiver does not contain a @c Asset.Uploaded generic message.
-/// Also returns @c nil for messages representing an image
-- (NSData * _Nullable)encryptedMessagePayloadForDataType:(ZMAssetClientMessageDataType)dataType;
 
 /// Marks file to be downloaded
 - (void)requestFileDownload;
