@@ -67,6 +67,8 @@
 
 @property (nonatomic, strong) FLAnimatedImageView *fullImageView;
 @property (nonatomic, strong) ThreeDotsLoadingView *loadingView;
+@property (nonatomic, strong) IconButton *sketchButton;
+@property (nonatomic, strong) IconButton *fullScreenButton;
 @property (nonatomic, strong) UIView *imageViewContainer;
 @property (nonatomic) UIEdgeInsets defaultLayoutMargins;
 
@@ -185,6 +187,20 @@ static ImageCache *imageCache(void)
     self.accessibilityIdentifier = @"ImageCell";
     
     self.loadingView.hidden = NO;
+    
+    self.sketchButton = [IconButton iconButtonCircularLight];
+    [self.sketchButton addTarget:self action:@selector(onSketchPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.sketchButton setIcon:ZetaIconTypeBrush withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
+    [self.sketchButton setBackgroundImageColor:[[ColorScheme defaultColorScheme] colorWithName:ColorSchemeColorBackground variant:ColorSchemeVariantDark] forState:UIControlStateNormal];
+    self.sketchButton.alpha = self.selected ? 1 : 0;
+    [self.imageViewContainer addSubview:self.sketchButton];
+    
+    self.fullScreenButton = [IconButton iconButtonCircularLight];
+    [self.fullScreenButton addTarget:self action:@selector(onFullScreenPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.fullScreenButton setIcon:ZetaIconTypeFullScreen withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
+    [self.fullScreenButton setBackgroundImageColor:[[ColorScheme defaultColorScheme] colorWithName:ColorSchemeColorBackground variant:ColorSchemeVariantDark] forState:UIControlStateNormal];
+    self.fullScreenButton.alpha = self.selected ? 1 : 0;
+    [self.imageViewContainer addSubview:self.fullScreenButton];
 }
 
 - (void)createConstraints
@@ -200,6 +216,16 @@ static ImageCache *imageCache(void)
         [self.imageViewContainer autoPinEdgeToSuperviewEdge:ALEdgeBottom];
         self.imageWidthConstraint = [self.imageViewContainer autoSetDimension:ALDimensionWidth toSize:0];
     }];
+    
+    [self.sketchButton autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:16];
+    [self.sketchButton autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:16];
+    [self.sketchButton autoSetDimensionsToSize:CGSizeMake(32, 32)];
+    
+    [self.fullScreenButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:16];
+    [self.fullScreenButton autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:16];
+    [self.fullScreenButton autoSetDimensionsToSize:CGSizeMake(32, 32)];
+    
+    self.toolboxTopOffsetConstraint.constant = 8;
 }
 
  - (void)updateImageMessageConstraintConstants
@@ -311,6 +337,24 @@ static ImageCache *imageCache(void)
     }
 }
 
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
+    [super setSelected:selected animated:animated];
+    
+    dispatch_block_t changeBlock = ^{
+        self.sketchButton.alpha = self.selected ? 1 : 0;
+        self.fullScreenButton.alpha = self.selected ? 1 : 0;
+    };
+    
+    if (animated) {
+        [UIView animateWithDuration:0.15 animations:changeBlock completion:nil];
+    }
+    else {
+        changeBlock();
+    }
+    
+}
+
 - (void)showImageView:(UIView *)imageView
 {
     self.fullImageView.hidden = imageView != self.fullImageView;
@@ -319,6 +363,16 @@ static ImageCache *imageCache(void)
 - (void)recycleImage
 {
     self.image = nil;
+}
+
+#pragma mark - Actions
+
+- (void)onFullScreenPressed:(id)sender {
+    [self.delegate conversationCell:self didSelectAction:ConversationCellActionPresent];
+}
+
+- (void)onSketchPressed:(id)sender {
+    [self.delegate conversationCell:self didSelectAction:ConversationCellActionSketch];
 }
 
 #pragma mark - Message updates

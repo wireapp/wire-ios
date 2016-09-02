@@ -50,12 +50,23 @@ extension ZMMessage {
     private static let resendLink = NSURL(string: "settings://resend-message")!
     
     public let statusLabel = TTTAttributedLabel(frame: CGRectZero)
-    public let likeButton = IconButton()
     public let reactionsView = ReactionsView()
-    //    private var tapGestureRecogniser: UITapGestureRecognizer! // TODO LIKE:
+    private var tapGestureRecogniser: UITapGestureRecognizer!
     
     public weak var delegate: MessageToolboxViewDelegate?
 
+    private var previousLayoutBounds: CGRect = CGRectZero
+    
+    private(set) weak var message: ZMMessage?
+    public var forceShowTimestamp: Bool = false {
+        didSet {
+            guard let message = self.message else {
+                return
+            }
+            self.configureForMessage(message)
+        }
+    }
+    
     override init(frame: CGRect) {
         
         super.init(frame: frame)
@@ -63,13 +74,13 @@ extension ZMMessage {
         
         reactionsView.translatesAutoresizingMaskIntoConstraints = false
         reactionsView.accessibilityIdentifier = "reactionsView"
-        reactionsView.hidden = true // TODO LIKE:
         self.addSubview(reactionsView)
     
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
         statusLabel.delegate = self
         statusLabel.extendsLinkTouchArea = true
         statusLabel.userInteractionEnabled = true
+        statusLabel.verticalAlignment = .Center
         statusLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
         statusLabel.linkAttributes = [NSUnderlineStyleAttributeName: NSUnderlineStyle.StyleSingle.rawValue,
                                       NSForegroundColorAttributeName: UIColor(forZMAccentColor: .VividRed)]
@@ -78,35 +89,23 @@ extension ZMMessage {
         
         self.addSubview(statusLabel)
         
-        self.likeButton.translatesAutoresizingMaskIntoConstraints = false
-        self.likeButton.accessibilityIdentifier = "likeButton"
-        self.likeButton.addTarget(self, action: #selector(MessageToolboxView.onLikePressed(_:)), forControlEvents: .TouchUpInside)
-        self.likeButton.setIcon(.Like, withSize: .MessageStatus, forState: .Normal)
-        self.likeButton.setIconColor(UIColor.grayColor(), forState: .Normal)
-        self.likeButton.setIcon(.Liked, withSize: .MessageStatus, forState: .Selected)
-        self.likeButton.setIconColor(UIColor(forZMAccentColor: .VividRed), forState: .Selected)
-        self.likeButton.hitAreaPadding = CGSizeMake(20, 20)
-        self.likeButton.hidden = true // TODO LIKE:
-        self.addSubview(self.likeButton)
-        
-        constrain(self, self.reactionsView, self.statusLabel, self.likeButton) { selfView, reactionsView, statusLabel, likeButton in
-            statusLabel.top == selfView.top + 4
-            statusLabel.left == selfView.leftMargin
-            statusLabel.right == selfView.rightMargin
+        constrain(self, self.reactionsView, self.statusLabel) { selfView, reactionsView, statusLabel in
+            statusLabel.top >= selfView.top
+            statusLabel.left <= selfView.left
+            statusLabel.centerY == selfView.centerY
+            statusLabel.right <= selfView.rightMargin
             selfView.height == 20 ~ 750
+            selfView.height <= 20
             
+            reactionsView.left >= statusLabel.right
             reactionsView.right == selfView.rightMargin
             reactionsView.centerY == selfView.centerY
-            
-            likeButton.left == selfView.left
-            likeButton.right == selfView.leftMargin
-            likeButton.centerY == selfView.centerY
         }
         
-//        TODO LIKE: tapGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(MessageToolboxView.onTapContent(_:)))
-//        tapGestureRecogniser.delegate = self
-//        
-//        self.addGestureRecognizer(tapGestureRecogniser)
+        tapGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(MessageToolboxView.onTapContent(_:)))
+        tapGestureRecogniser.delegate = self
+        
+        self.addGestureRecognizer(tapGestureRecogniser)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -114,16 +113,12 @@ extension ZMMessage {
     }
     
     public func configureForMessage(message: ZMMessage) {
-        self.configureTimestamp(message)
-        self.configureLikedState(message)
+        self.message = message
+        self.configureInfoLabel(message)
     }
     
     private func configureLikedState(message: ZMMessage) {
-        // TODO LIKE: self.likesView.reactions = message.reactions
-        //self.reactionsView.likers = message.reactions
-        
-        //let liked = message.isLiked
-        //self.likeButton.selected = liked
+        self.reactionsView.likers = message.likers()
     }
     
     private func timestampString(message: ZMMessage) -> String? {
@@ -147,7 +142,40 @@ extension ZMMessage {
         return timestampString
     }
     
-    private func configureTimestamp(message: ZMMessage) {       
+    private func configureInfoLabel(message: ZMMessage) {
+        if !self.forceShowTimestamp && message.hasReactions() {
+            self.configureReactions(message)
+            self.configureLikedState(message)
+            self.reactionsView.hidden = false
+        }
+        else {
+            self.configureTimestamp(message)
+            self.reactionsView.hidden = true
+        }
+    }
+    
+    private func configureReactions(message: ZMMessage) {
+        let likers = message.likers()
+        
+        let likersNames = likers.map { user in
+            return user.displayName
+        }.joinWithSeparator(", ")
+        
+        let attributes = [NSFontAttributeName: statusLabel.font, NSForegroundColorAttributeName: statusLabel.textColor]
+        
+        let labelSize = (likersNames as NSString).sizeWithAttributes(attributes)
+        if labelSize.width > self.bounds.size.width {
+            let likersCount = String(format: "participants.people.count".localized, likers.count)
+            statusLabel.attributedText = likersCount && attributes
+        }
+        else {
+            statusLabel.attributedText = likersNames && attributes
+        }
+        
+        statusLabel.accessibilityLabel = statusLabel.attributedText.string
+    }
+    
+    private func configureTimestamp(message: ZMMessage) {
         var deliveryStateString: String? = .None
         
         if let sender = message.sender where sender.isSelfUser {
@@ -164,7 +192,7 @@ extension ZMMessage {
                 deliveryStateString = .None
             }
         }
-    
+        
         let finalText: String
         
         if let timestampString = self.timestampString(message) where message.deliveryState == .Delivered || message.deliveryState == .Sent {
@@ -190,18 +218,23 @@ extension ZMMessage {
         statusLabel.addLinks()
     }
     
-    // MARK: - Events
-    
-    @objc func onLikePressed(button: UIButton!) {
-        ZMUserSession.sharedSession().performChanges {
-            // message.liked = !message.liked // TODO LIKE:
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        guard let message = self.message where CGRectEqualToRect(self.bounds, self.previousLayoutBounds) else {
+            return
         }
         
-        self.likeButton.selected = !self.likeButton.selected;
+        self.previousLayoutBounds = self.bounds
+        
+        self.configureInfoLabel(message)
     }
     
-    @objc func onTapContent(button: UIButton!) {
-        self.delegate?.messageToolboxViewDidSelectReactions(self)
+    // MARK: - Events
+    
+    @objc func onTapContent(button: UIButton!) {        
+        if let message = self.message where message.hasReactions() {
+            self.delegate?.messageToolboxViewDidSelectReactions(self)
+        }
     }
 }
 
@@ -217,8 +250,8 @@ extension MessageToolboxView: TTTAttributedLabelDelegate {
     }
 }
 
-// TODO LIKE: extension MessageToolboxView: UIGestureRecognizerDelegate {
-//    public func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return gestureRecognizer.isEqual(self.tapGestureRecogniser)
-//    }
-//}
+extension MessageToolboxView: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return gestureRecognizer.isEqual(self.tapGestureRecogniser)
+    }
+}

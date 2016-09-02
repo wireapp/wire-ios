@@ -65,6 +65,8 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 @property (nonatomic) AccentColorChangeHandler *accentColorChangeHandler;
 
+@property (nonatomic) UITapGestureRecognizer *doubleTapGestureRecognizer;
+
 @property (nonatomic, readwrite) ConversationCellLayoutProperties *layoutProperties;
 
 #pragma mark - Constraints
@@ -83,6 +85,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 @property (nonatomic) NSLayoutConstraint *messageContentBottomMarginConstraint;
 
 @property (nonatomic) NSLayoutConstraint *toolboxHeightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *toolboxTopOffsetConstraint;
 
 @end
 
@@ -123,7 +126,6 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
         // NOTE Layout margins are not being preserved beyond the UITableViewCell.contentView so we must re-apply them
         // here until we re-factor the the ConversationCell
         self.messageContentView.layoutMargins = layoutMargins;
-        self.messageToolboxView.layoutMargins = layoutMargins;
     }
     
     return self;
@@ -145,6 +147,9 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 - (void)createViews
 {
+    self.clipsToBounds = NO;
+    self.contentView.clipsToBounds = NO;
+    
     self.messageContentView = [[UIView alloc] init];
     self.messageContentView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.messageContentView];
@@ -190,6 +195,13 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.messageToolboxView.isAccessibilityElement = YES;
     self.messageToolboxView.accessibilityIdentifier = @"MessageToolbox";
     [self.contentView addSubview:self.messageToolboxView];
+    
+    [self createLikeButton];
+    
+    self.doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(likeMessage:)];
+    self.doubleTapGestureRecognizer.numberOfTapsRequired = 2;
+    self.doubleTapGestureRecognizer.delaysTouchesBegan = YES;
+    [self.contentView addGestureRecognizer:self.doubleTapGestureRecognizer];
 }
 
 - (void)prepareForReuse
@@ -207,6 +219,8 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     if (self.layoutProperties.showBurstTimestamp) {
         self.burstTimestampTimer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(updateBurstTimestamp) userInfo:nil repeats:YES];
     }
+    
+    [self.contentView bringSubviewToFront:self.likeButton];
 }
 
 - (void)didEndDisplayingInTableView
@@ -257,10 +271,19 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     }];
     
     self.toolboxHeightConstraint = [self.messageToolboxView autoSetDimension:ALDimensionHeight toSize:0];
-    [self.messageToolboxView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.messageContentView];
-    [self.messageToolboxView autoPinEdgeToSuperviewEdge:ALEdgeRight];
-    [self.messageToolboxView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
+    self.toolboxTopOffsetConstraint = [self.messageToolboxView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.messageContentView];
+    self.toolboxTopOffsetConstraint.active = NO;
+    // Backup 0-inset constraint
+    [NSLayoutConstraint autoSetPriority:UILayoutPriorityDefaultHigh + 1 forConstraints:^{
+       [self.messageToolboxView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.messageContentView];
+    }];
+    [self.messageToolboxView autoPinEdgeToSuperviewMargin:ALEdgeRight];
+
+    [self.messageToolboxView autoPinEdgeToSuperviewMargin:ALEdgeLeft];
     self.messageContentBottomMarginConstraint = [self.messageToolboxView autoPinEdgeToSuperviewEdge:ALEdgeBottom];
+    
+    [self.likeButton autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.messageToolboxView];
+    [self.likeButton autoAlignAxis:ALAxisVertical toSameAxisOfView:self.authorImageContainer];
 }
 
 - (void)updateConstraintConstants
@@ -291,7 +314,10 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
         [self updateBurstTimestamp];
     }
     
+    [self configureReactionsForMessage:message];
+    
     [self.messageToolboxView configureForMessage:message];
+    self.messageToolboxView.forceShowTimestamp = self.selected;
     [self updateConstraintConstants];
 }
 
@@ -304,14 +330,33 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     }
     
     self.toolboxHeightConstraint.active = ! shouldBeVisible;
+    self.toolboxTopOffsetConstraint.active = shouldBeVisible;
     
     if (animated) {
-        [UIView animateWithDuration:0.35 animations:^{
-            self.messageToolboxView.alpha = shouldBeVisible ? 1 : 0;
-        }];
+        if (shouldBeVisible) {
+            [self.messageToolboxView configureForMessage:self.message];
+            [UIView animateWithDuration:0.35 animations:^{
+                self.messageToolboxView.alpha = 1;
+            } completion:^(BOOL finished) {
+                if (self.messageToolboxView.alpha == 1) {
+                    [UIView animateWithDuration:0.15 animations:^{
+                        self.likeButton.alpha = 1;
+                    }];
+                }
+            }];
+        }
+        else {
+            self.likeButton.alpha = 0;
+            [UIView animateWithDuration:0.35 animations:^{
+                self.messageToolboxView.alpha = 0;
+            }];
+        }
     }
     else {
+        [self.messageToolboxView.layer removeAllAnimations];
+        [self.likeButton.layer removeAllAnimations];
         self.messageToolboxView.alpha = shouldBeVisible ? 1 : 0;
+        self.likeButton.alpha = shouldBeVisible ? 1 : 0;
     }
 }
 
@@ -422,10 +467,24 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     
     UIMenuController *menuController = [UIMenuController sharedMenuController];
     UIMenuItem *deleteItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.message.delete", @"") action:@selector(deleteMessage:)];
-    NSArray <UIMenuItem *> *items = menuConfigurationProperties.additionalItems ?: @[];
-    if (self.message.deliveryState == ZMDeliveryStateDelivered || self.message.deliveryState == ZMDeliveryStateSent) {
-        menuController.menuItems = [items arrayByAddingObject:deleteItem];
+
+    NSMutableArray <UIMenuItem *> *items = [[NSMutableArray<UIMenuItem *> alloc] init];
+    if ([Message isLikedMessage:self.message]) {
+        UIMenuItem *unlikeItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.message.unlike", @"") action:@selector(likeMessage:)];
+        [items addObject:unlikeItem];
     }
+    else {
+        UIMenuItem *likeItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.message.like", @"") action:@selector(likeMessage:)];
+        [items addObject:likeItem];
+    }
+    [items addObjectsFromArray:menuConfigurationProperties.additionalItems];
+    
+    if (self.message.deliveryState == ZMDeliveryStateDelivered || self.message.deliveryState == ZMDeliveryStateSent) {
+        [items addObject:deleteItem];
+    }
+    
+    menuController.menuItems = items;
+    
     [menuController setTargetRect:menuConfigurationProperties.targetRect inView:menuConfigurationProperties.targetView];
     [menuController setMenuVisible:YES animated:YES];
 
@@ -435,7 +494,6 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 }
 
-
 - (void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer;
 {
     if (! CGRectContainsPoint(self.contentView.bounds, [gestureRecognizer locationInView:self.contentView]) ||
@@ -443,7 +501,6 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
         gestureRecognizer.enabled = NO;
         gestureRecognizer.enabled = YES;
     }
-    
     
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
         [self showMenu];
@@ -453,6 +510,10 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender;
 {
     if (action == @selector(deleteMessage:) && self.message.canBeDeleted) {
+        return YES;
+    }
+    
+    if (action == @selector(likeMessage:)) {
         return YES;
     }
     
@@ -471,7 +532,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-    
+    self.messageToolboxView.forceShowTimestamp = selected;
     [self updateToolboxVisibilityAnimated:YES];
 }
 
@@ -492,16 +553,22 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 - (BOOL)updateForMessage:(MessageChangeInfo *)change
 {
+    
     // If a text message changes, the only thing that can change at the moment is its delivery state
-    if (change.deliveryStateChanged) {
+    if (change.deliveryStateChanged || change.reactionsChanged) {
+        self.messageToolboxView.forceShowTimestamp = NO;
         [self.messageToolboxView configureForMessage:change.message];
+    }
+    
+    if (change.reactionsChanged) {
+        [self configureReactionsForMessage:change.message];
     }
     
     if (change.userChangeInfo.nameChanged || change.senderChanged) {
         [self updateSenderAndSenderImage:change.message];
     }
     
-    return NO;
+    return (change.reactionChangeInfo != nil) || (change.deliveryStateChanged);
 }
 
 @end
@@ -510,12 +577,12 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
 
 - (void)messageToolboxViewDidSelectReactions:(MessageToolboxView *)messageToolboxView
 {
-    // TODO LIKE:
+    [self.delegate conversationCellDidTapOpenReactions:self];
 }
 
 - (void)messageToolboxViewDidSelectResend:(MessageToolboxView *)messageToolboxView
 {
-    [self.delegate conversationCell:self resendMessageTapped:self.message];
+    [self.delegate conversationCellDidTapResendMessage:self];
 }
 
 @end

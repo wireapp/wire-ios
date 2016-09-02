@@ -27,6 +27,7 @@
 @class ConversationCell;
 @class MessageToolboxView;
 @class AnalyticsTracker;
+@class LikeButton;
 
 
 typedef NS_ENUM(NSUInteger, ConversationCellAction) {
@@ -35,7 +36,8 @@ typedef NS_ENUM(NSUInteger, ConversationCellAction) {
     ConversationCellActionDelete,
     ConversationCellActionPresent,
     ConversationCellActionSave,
-    ConversationCellActionEdit
+    ConversationCellActionEdit,
+    ConversationCellActionSketch
 };
 
 extern const CGFloat ConversationCellSelectedOpacity;
@@ -69,12 +71,12 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 @optional
 /// Called on touch up inside event on the user image (@c fromImage)
 - (void)conversationCell:(ConversationCell *)cell userTapped:(ZMUser *)user inView:(UIView *)view;
-- (void)conversationCell:(ConversationCell *)cell resendMessageTapped:(ZMMessage *)message;
+- (void)conversationCellDidTapResendMessage:(ConversationCell *)cell;
 - (void)conversationCell:(ConversationCell *)cell didSelectAction:(ConversationCellAction)actionId;
 - (void)conversationCell:(ConversationCell *)cell didSelectURL:(NSURL *)url;
 - (BOOL)conversationCell:(ConversationCell *)cell shouldBecomeFirstResponderWhenShowMenuWithCellType:(MessageType)messageType;
 - (void)conversationCell:(ConversationCell *)cell didOpenMenuForCellType:(MessageType)messageType;
-- (void)conversationCell:(ConversationCell *)cell openReactionsPressed:(ZMMessage *)message;
+- (void)conversationCellDidTapOpenReactions:(ConversationCell *)cell;
 @end
 
 
@@ -85,6 +87,7 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 @property (nonatomic, readonly) id<ZMConversationMessage>message;
 @property (nonatomic, readonly) UILabel *authorLabel;
 @property (nonatomic, readonly) UIView *messageContentView;
+@property (nonatomic) LikeButton *likeButton;
 @property (nonatomic, strong, readonly) UIView *selectionView;
 @property (nonatomic, readonly) CGRect selectionRect;
 
@@ -96,6 +99,8 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 
 @property (nonatomic) AnalyticsTracker *analyticsTracker;
 @property (nonatomic) UILongPressGestureRecognizer *longPressGestureRecognizer;
+
+@property (nonatomic, readonly) NSLayoutConstraint *toolboxTopOffsetConstraint;
 
 - (void)configureForMessage:(id<ZMConversationMessage>)message layoutProperties:(ConversationCellLayoutProperties *)layoutProperties;
 /// Update cell due since the message content has changed. Return True if the change requires the cell to be re-sized.

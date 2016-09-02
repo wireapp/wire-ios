@@ -25,12 +25,17 @@ import Cartography
     public let reactionsUsers: [ZMUser]
     private let collectionViewLayout = UICollectionViewFlowLayout()
     private var collectionView: UICollectionView!
+    public let topBar = UIView()
+    public let separatorView = UIView()
+    public let backButton = IconButton.iconButtonDefault()
+    public let titleLabel = UILabel()
     
     public init(message: ZMMessage) {
         self.message = message
-        ///self.reactionsUsers = self.message.likers
-        self.reactionsUsers = [ZMUser.selfUser(), ZMUser.selfUser(), ZMUser.selfUser(), ZMUser.selfUser()]
+
+        self.reactionsUsers = self.message.likers()
         super.init(nibName: .None, bundle: .None)
+        self.modalPresentationStyle = UIModalPresentationStyle.FormSheet
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -39,18 +44,71 @@ import Cartography
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.title = "content.reactions_list.likers".localized.uppercaseString
+        self.titleLabel.text = self.title
+        
+        self.separatorView.cas_styleClass = "separator"
+        
+        backButton.setIcon(.BackArrow, withSize: .Tiny, forState: .Normal)
+        backButton.addTarget(self, action: #selector(ReactionsListViewController.backPressed(_:)), forControlEvents: .TouchUpInside)
+        backButton.accessibilityIdentifier = "BackButton"
+        backButton.hitAreaPadding = CGSizeMake(20, 20)
+        
+        self.navigationItem.leftItemsSupplementBackButton = true
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        
         self.collectionViewLayout.scrollDirection = .Vertical
         self.collectionViewLayout.minimumLineSpacing = 0
         self.collectionViewLayout.minimumInteritemSpacing = 0
         self.collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
         self.collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: collectionViewLayout)
-        self.collectionView.registerClass(SearchResultCell.self, forCellWithReuseIdentifier: "SearchResultCell")
+        self.collectionView.registerClass(ReactionCell.self, forCellWithReuseIdentifier: ReactionCell.reuseIdentifier)
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         self.collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.collectionView.allowsMultipleSelection = false
         self.collectionView.allowsSelection = true
+        self.collectionView.alwaysBounceVertical = true
+        self.collectionView.scrollEnabled = true
         self.collectionView.backgroundColor = UIColor.clearColor()
+        self.view.addSubview(self.collectionView)
+        
+        self.topBar.addSubview(titleLabel)
+        self.topBar.addSubview(separatorView)
+        self.topBar.addSubview(backButton)
+        self.view.addSubview(self.topBar)
+        
+        constrain(self.view, self.collectionView, self.topBar) { selfView, collectionView, topBar in
+            topBar.top == selfView.top + 20
+            topBar.left == selfView.left
+            topBar.right == selfView.right
+            topBar.height == 44
+        
+            collectionView.left == selfView.left
+            collectionView.right == selfView.right
+            collectionView.bottom == selfView.bottom
+            collectionView.top == topBar.bottom
+        }
+        
+        constrain(self.topBar, self.titleLabel, self.backButton, self.separatorView) { topBar, titleLabel, backButton, separatorView in
+            separatorView.bottom == topBar.bottom
+            separatorView.right == topBar.right
+            separatorView.left == topBar.left
+            separatorView.height == 1
+            
+            titleLabel.center == topBar.center
+            titleLabel.left >= backButton.right + 4
+            
+            backButton.centerY == topBar.centerY
+            backButton.left == topBar.left + 16
+        }
+        
+        CASStyler.defaultStyler().styleItem(self)
+    }
+    
+    @objc public func backPressed(button: AnyObject!) {
+        self.dismissViewControllerAnimated(true, completion: .None)
     }
 }
 
@@ -64,17 +122,16 @@ extension ReactionsListViewController: UICollectionViewDelegate, UICollectionVie
     }
     
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("SearchResultCell", forIndexPath: indexPath) as! SearchResultCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(ReactionCell.reuseIdentifier, forIndexPath: indexPath) as! ReactionCell
         cell.user = self.reactionsUsers[indexPath.item]
         return cell
     }
     
     public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(collectionView.bounds.width, 44)
+        return CGSizeMake(collectionView.bounds.width, 52)
     }
     
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-
     }
 }
