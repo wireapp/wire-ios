@@ -28,7 +28,7 @@ class TextMessageCellTests: ZMSnapshotTestCase {
         layoutProperties.showSender = true
         layoutProperties.showBurstTimestamp = false
         layoutProperties.showUnreadMarker = false
-        layoutProperties.showToolbox = true
+        layoutProperties.alwaysShowDeliveryState = true
         return layoutProperties
     }
 
