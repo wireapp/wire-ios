@@ -30,6 +30,7 @@ extern NSUInteger const ZMClientMessageByteSizeExternalThreshold;
 extern NSString * _Nonnull const ZMClientMessageLinkPreviewStateKey;
 extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotificationName;
 
+
 @interface ZMClientMessage : ZMOTRMessage
 
 /// Link Preview state
@@ -43,29 +44,7 @@ extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotifica
 
 @end
 
-@interface ZMClientMessage (OTR)
 
-- (NSData * _Nullable)encryptedMessagePayloadData;
-
-+ (NSArray <ZMUserEntry *>* _Nonnull)recipientsWithDataToEncrypt:(NSData * _Nonnull)dataToEncrypt
-                                                      selfClient:(UserClient * _Nonnull)selfClient
-                                                    conversation:(ZMConversation * _Nonnull)conversation
-                                               sessionsDirectory:(EncryptionSessionsDirectory * _Nonnull)sessionsDirectory;
-
-+ (NSData * _Nullable)encryptedMessagePayloadDataWithGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage
-                                             conversation:(ZMConversation * _Nonnull)conversation
-                                     managedObjectContext:(NSManagedObjectContext * _Nonnull)moc
-                                             externalData:(NSData * _Nullable)externalData;
-
-@end
-
-@interface ZMClientMessage (External)
-
-+ (NSData * _Nullable)encryptedMessageDataWithExternalDataBlobFromMessage:(ZMGenericMessage * _Nonnull)message
-                                                 inConversation:(ZMConversation * _Nonnull)conversation
-                                           managedObjectContext:(NSManagedObjectContext * _Nonnull)context;
-
-@end
 
 @interface ZMClientMessage (ZMImageOwner) <ZMImageOwner>
 
