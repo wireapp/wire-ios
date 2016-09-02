@@ -69,7 +69,6 @@
 		54CA313B1B74F36B00B820C0 /* Sets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA311E1B74F36B00B820C0 /* Sets.swift */; };
 		54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */; };
 		54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA31201B74F36B00B820C0 /* UnownedObject.swift */; };
-		54CA31411B74F36B00B820C0 /* ZMApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31211B74F36B00B820C0 /* ZMApplication.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA31431B74F36B00B820C0 /* ZMAssertQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31221B74F36B00B820C0 /* ZMAssertQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA31451B74F36B00B820C0 /* ZMDebugHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31231B74F36B00B820C0 /* ZMDebugHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA31471B74F36B00B820C0 /* ZMFunctional.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA31241B74F36B00B820C0 /* ZMFunctional.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -247,7 +246,6 @@
 		54CA311E1B74F36B00B820C0 /* Sets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sets.swift; sourceTree = "<group>"; };
 		54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftDebugging.swift; sourceTree = "<group>"; };
 		54CA31201B74F36B00B820C0 /* UnownedObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnownedObject.swift; sourceTree = "<group>"; };
-		54CA31211B74F36B00B820C0 /* ZMApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMApplication.h; sourceTree = "<group>"; };
 		54CA31221B74F36B00B820C0 /* ZMAssertQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssertQueue.h; sourceTree = "<group>"; };
 		54CA31231B74F36B00B820C0 /* ZMDebugHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMDebugHelpers.h; sourceTree = "<group>"; };
 		54CA31241B74F36B00B820C0 /* ZMFunctional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMFunctional.h; sourceTree = "<group>"; };
@@ -514,7 +512,6 @@
 				54CA311B1B74F36B00B820C0 /* NSURL+QueryComponents.h */,
 				54CA311C1B74F36B00B820C0 /* NSUserDefaults+SharedUserDefaults.h */,
 				54CA311D1B74F36B00B820C0 /* NSUUID+Data.h */,
-				54CA31211B74F36B00B820C0 /* ZMApplication.h */,
 				54CA31221B74F36B00B820C0 /* ZMAssertQueue.h */,
 				54CA31231B74F36B00B820C0 /* ZMDebugHelpers.h */,
 				54CA31241B74F36B00B820C0 /* ZMFunctional.h */,
@@ -600,7 +597,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				091799551B7DFB8800E60DD9 /* ZMMobileProvisionParser.h in Headers */,
-				54CA31411B74F36B00B820C0 /* ZMApplication.h in Headers */,
 				54CA31311B74F36B00B820C0 /* NSOrderedSet+Zeta.h in Headers */,
 				097E36C51B7B631C0039CC4C /* NSLocale+Internal.h in Headers */,
 				54CA314F1B74F36B00B820C0 /* ZMUtilities.h in Headers */,
