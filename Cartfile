@@ -1,2 +1,2 @@
-github "wireapp/protobuf-objc" "1.9.9.2"
+github "wireapp/protobuf-objc" "1.9.11"
 github "wireapp/wire-ios-images"
