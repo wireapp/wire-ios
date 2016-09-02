@@ -42,3 +42,4 @@ tests.xml
 xcode-summary.log
 tests.xml
 code-coverage/*
+cobertura.xml
