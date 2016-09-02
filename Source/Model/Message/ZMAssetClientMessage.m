@@ -481,35 +481,6 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     }
 }
 
-- (NSData *)encryptedMessagePayloadForDataType:(ZMAssetClientMessageDataType)dataType
-{
-    UserClient *selfClient = [ZMUser selfUserInContext:self.managedObjectContext].selfClient;
-    VerifyReturnNil(nil != selfClient.remoteIdentifier);
-    
-    ZMGenericMessage *genericMessage = [self genericMessageForDataType:dataType];
-    VerifyReturnNil(nil != genericMessage);
-    
-    __block NSArray <ZMUserEntry *>* recipients;
-    [selfClient.keysStore.encryptionContext perform:^(EncryptionSessionsDirectory *sessionsDirectory){
-        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
-                                                       selfClient:selfClient
-                                                     conversation:self.conversation
-                                                sessionsDirectory:sessionsDirectory];
-    }];
-    
-    if (dataType == ZMAssetClientMessageDataTypeFullAsset || dataType == ZMAssetClientMessageDataTypeThumbnail) {
-        ZMOtrAssetMeta *assetMeta = [ZMOtrAssetMeta otrAssetMetaWithSender:selfClient nativePush:YES inline:NO recipients:recipients];
-        return assetMeta.data;
-    }
-    
-    if (dataType == ZMAssetClientMessageDataTypePlaceholder) {
-        ZMNewOtrMessage *otrMessage = [ZMNewOtrMessage messageWithSender:selfClient nativePush:YES recipients:recipients blob:nil];
-        return otrMessage.data;
-    }
-    
-    return nil;
-}
-
 - (ZMGenericMessage *)genericMessageForDataType:(ZMAssetClientMessageDataType)dataType
 {
     if (nil != self.fileMessageData) {
@@ -644,37 +615,6 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     }];
     ZMGenericMessageData *messageData = [self.dataSet filteredOrderedSetUsingPredicate:predicate].firstObject;
     return messageData;
-}
-
-- (ZMOtrAssetMeta *)encryptedMessagePayloadForImageFormat:(ZMImageFormat)imageFormat
-{
-    UserClient *selfClient = [ZMUser selfUserInContext:self.managedObjectContext].selfClient;
-    if (selfClient.remoteIdentifier == nil) {
-        return nil;
-    }
-    
-    ZMOtrAssetMetaBuilder *builder = [ZMOtrAssetMeta builder];
-    [builder setIsInline:[self isInlineForFormat:imageFormat]];
-    [builder setNativePush:[self isUsingNativePushForFormat:imageFormat]];
-    
-    [builder setSender:selfClient.clientId];
-    
-    ZMGenericMessage *genericMessage = [self genericMessageForFormat:imageFormat];
-    if(genericMessage == nil) {
-        return nil;
-    }
-    __block NSArray <ZMUserEntry *>* recipients;
-    [selfClient.keysStore.encryptionContext perform:^(EncryptionSessionsDirectory *sessionsDirectory){
-        recipients = [ZMClientMessage recipientsWithDataToEncrypt:genericMessage.data
-                                                       selfClient:selfClient
-                                                     conversation:self.conversation
-                                                sessionsDirectory:sessionsDirectory];
-    }];
-    [builder setRecipientsArray:recipients];
-    
-    ZMOtrAssetMeta *metaData = [builder build];
-    
-    return metaData;
 }
 
 - (NSData *)originalImageData
