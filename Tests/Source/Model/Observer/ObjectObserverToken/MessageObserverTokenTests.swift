@@ -272,7 +272,20 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
             },
             expectedChangedField: "reactionsChanged"
         )
+    }
+    
+    func testThatItNotifiesWhenAReactionIsAddedOnMessageFromADifferentUser() {
+        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(uiMOC)
+        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
+        otherUser.name = "Hans"
+        otherUser.remoteIdentifier = .createUUID()
         
+        // when
+        checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { ($0 as? ZMTextMessage)?.addReaction("👻", forUser: otherUser) },
+            expectedChangedField: "reactionsChanged"
+        )
     }
     
     func testThatItNotifiesWhenAReactionIsUpdateForAUserOnMessage() {
