@@ -22,35 +22,20 @@
 #import <CoreData/CoreData.h>
 #import <ZMTesting/ZMTesting.h>
 #import <OCMock/OCMock.h>
-
+#import "NSManagedObjectContext+zmessaging-Internal.h"
+#import "DatabaseBaseTest.h"
 
 
 static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 
 
-@interface OTRMigrationTests : ZMTBaseTest
+@interface OTRMigrationTests : DatabaseBaseTest
 
 @end
 
+
+
 @implementation OTRMigrationTests
-
-- (void)setUp
-{
-    [self cleanUp];
-    [NSManagedObjectContext setUseInMemoryStore:NO];
-    [super setUp];
-}
-
-- (void)tearDown
-{
-    [self cleanUp];
-    [super tearDown];
-}
-
-- (void)cleanUp
-{
-    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
-}
 
 - (void)testThatItDoesNotMigrateFromANonE2EEVersionAndWipesTheDB {
     
@@ -572,14 +557,14 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 - (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStore
 {
     __block NSManagedObjectContext *syncContext;
-    
-    XCTestExpectation *contextExpectation = [self expectationWithDescription:@"It should create context"];
-    [NSManagedObjectContext prepareLocalStoreSync:NO backingUpCorruptedDatabase:NO completionHandler:^{
-        syncContext = [NSManagedObjectContext createSyncContext];
-        [contextExpectation fulfill];
+
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSURL *directory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:directory backingUpCorruptedDatabase:NO completionHandler:^{
+        syncContext = [NSManagedObjectContext createSyncContextWithStoreDirectory:directory];
     }];
-    
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+
+    WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertNotNil(syncContext);
     
     return syncContext;
@@ -597,17 +582,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              ];
 }
 
-- (NSArray <NSString *>*)fileExtensions
-{
-    return @[@"", @"-wal", @"-shm"];
-}
-
 - (NSArray *)testBundleDataBaseURLsWithSuffix:(NSString *)suffix
 {
     NSString *ressourceName = [@"store" stringByAppendingString:suffix];
     NSMutableArray *urls = [[NSMutableArray alloc] init];
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    for (NSString *extension in self.fileExtensions) {
+    for (NSString *extension in self.databaseFileExtensions) {
         NSURL *url = [bundle URLForResource:ressourceName withExtension:[DataBaseFileExtensionName stringByAppendingString:extension]];
         if (url) {
             [urls addObject:url];
@@ -623,7 +603,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     NSUUID *pathUUID = NSUUID.UUID;
     NSURL *baseURL = [url URLByAppendingPathComponent:pathUUID.transportString];
     NSMutableArray *urls = [[NSMutableArray alloc] init];
-    for (NSString *extension in self.fileExtensions) {
+    for (NSString *extension in self.databaseFileExtensions) {
         [urls addObject:[baseURL URLByAppendingPathExtension:[DataBaseFileExtensionName stringByAppendingString:extension]]];
     }
     return urls;
@@ -635,7 +615,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     if (! [@[@"1.24", @"1.25", @"1.27", @"1.28", @"2.3", @"2.4", @"2.5", @"2.6", @"2.7", @"2.8"] containsObject:version]) {
         XCTFail(@"Can only copy a database version with an existing SQL fixture in the test target");
     }
-    
+
     NSString *suffix = [version stringByReplacingOccurrencesOfString:@"." withString:@""];
     NSArray <NSURL *>*databaseURLs = [self testBundleDataBaseURLsWithSuffix:suffix];
     NSArray <NSURL *>*mockURLs = [self generateMockURLsWithBaseURL:databaseURLs.firstObject.URLByDeletingLastPathComponent];
@@ -643,8 +623,8 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     // We want to make sure the version in the .sql file actually matches the one we want to test the migration from
     NSError *error = nil;
     NSDictionary *metadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType
-                                                                                                 URL:databaseURLs.firstObject
-                                                                                               error:&error];
+                                                                                        URL:databaseURLs.firstObject
+                                                                                      error:&error];
     XCTAssertNil(error);
     NSArray <NSString *>* versionIdentifiers = metadata[NSStoreModelVersionIdentifiersKey];
     XCTAssertEqual(versionIdentifiers.count, 1lu);
@@ -661,20 +641,20 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
         XCTAssertTrue([fm copyItemAtURL:databaseURLs[idx] toURL:mockURLs[idx] error:&error]);
         XCTAssertNil(error);
     }
-    
+
     // Mock the storeURL to return the unique path
     id mock = [OCMockObject mockForClass:[NSManagedObjectContext class]];
     [[[[mock stub] classMethod] andReturn:mockURLs.firstObject] storeURL];
-    
+
     // Perform the migration test
     block();
-    
-    // Clean up & remove the database
-    [mock stopMocking];
+
     for (NSUInteger idx = 0; idx < databaseURLs.count; idx++) {
         XCTAssertTrue([fm removeItemAtURL:mockURLs[idx] error:&error]);
         XCTAssertNil(error);
     }
+
+    [mock stopMocking];
 }
 
 #pragma mark - Fixtures

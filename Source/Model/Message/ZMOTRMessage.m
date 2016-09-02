@@ -123,9 +123,10 @@ NSString * const DeliveredKey = @"delivered";
                                 prefetchResult:prefetchResult];
 }
 
-+ (id)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                    inManagedObjectContext:(NSManagedObjectContext *)moc
-                            prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
+
++ (MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
+                                     inManagedObjectContext:(NSManagedObjectContext *)moc
+                                             prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
 {
     ZMGenericMessage *message;
     @try {
@@ -216,12 +217,14 @@ NSString * const DeliveredKey = @"delivered";
         [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
     }
     
+    BOOL needsConfirmation = NO;
     if (isNewMessage && !clientMessage.sender.isSelfUser && conversation.conversationType == ZMConversationTypeOneOnOne) {
-        [clientMessage confirmReception];
+        needsConfirmation = YES;
     }
     
-    return clientMessage;
-
+    MessageUpdateResult *result = [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:needsConfirmation wasInserted:isNewMessage];
+    return result;
 }
+
 
 @end

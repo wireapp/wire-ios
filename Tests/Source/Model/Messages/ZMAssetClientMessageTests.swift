@@ -30,7 +30,7 @@ class ZMAssetClientMessageTests : BaseZMClientMessageTests {
     }
     
     override func tearDown() {
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(2))
         super.tearDown()
     }
     
@@ -1940,7 +1940,7 @@ extension ZMAssetClientMessageTests {
             // when
             var sut : ZMAssetClientMessage? = nil
             self.performPretendingUiMocIsSyncMoc { () -> Void in
-                sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+                sut = ZMAssetClientMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil).message as? ZMAssetClientMessage
             }
             
             // then
@@ -1981,7 +1981,7 @@ extension ZMAssetClientMessageTests {
         // when
         var sut: ZMAssetClientMessage!
         performPretendingUiMocIsSyncMoc {
-            sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            sut = ZMAssetClientMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil).message as! ZMAssetClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         
@@ -2025,7 +2025,7 @@ extension ZMAssetClientMessageTests {
             
             
             // when
-            let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
+            let sut = ZMAssetClientMessage.messageUpdateResultFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
             sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
             
             // then
@@ -2061,7 +2061,7 @@ extension ZMAssetClientMessageTests {
             
             
             // when
-            let sut = ZMAssetClientMessage.createOrUpdateMessageFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil)
+            let sut = ZMAssetClientMessage.messageUpdateResultFromUpdateEvent(updateEvent1, inManagedObjectContext: self.syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
             sut.updateWithUpdateEvent(updateEvent2, forConversation: conversation, isUpdatingExistingMessage: true)
             
             // then

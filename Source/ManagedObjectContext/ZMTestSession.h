@@ -44,6 +44,9 @@
 /// Search context. Results from searches are retrieved on this context.
 @property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
 
+/// The url in which the database will be stored (in case @c shouldUseInMemoryStore is set to @c NO)
+@property (nonatomic, readonly) NSURL *databaseDirectory;
+
 /// Prepare the fixture for running a test.
 - (void)prepareForTestNamed:(NSString *)testName;
 

@@ -2225,7 +2225,7 @@ NSString * const ReactionsKey = @"reactions";
     // when
     __block ZMClientMessage *message;
     [self performPretendingUiMocIsSyncMoc:^{
-        message = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        message = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
     }];
     
     // then
@@ -2565,7 +2565,7 @@ NSString * const ReactionsKey = @"reactions";
     
     //then
     reactions = textMessage.usersReaction;
-    XCTAssertEqual(reactions.count, 1lu);
+    XCTAssertEqual(reactions.count, 0lu);
     usersThatReacted = reactions[reactionUnicode];
     XCTAssertEqual(usersThatReacted.count, 0lu);
 
