@@ -118,7 +118,7 @@ extension ZMMessage : ObjectInSnapshot {
     }
     
     public var userChangeInfo : UserChangeInfo?
-    public var reactionChangeInfo : ReactionChangeInfo?
+    private var reactionChangeInfo : ReactionChangeInfo?
     
     public let message : ZMMessage
 }
