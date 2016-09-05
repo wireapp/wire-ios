@@ -349,6 +349,7 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
 {
     self.hiddenInConversation = self.conversation;
     self.visibleInConversation = nil;
+    [self clearAllReactions];
 
     if (clearingSender) {
         self.sender = nil;
