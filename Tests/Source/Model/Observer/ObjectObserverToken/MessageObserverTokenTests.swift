@@ -306,6 +306,24 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         )
         
     }
+    
+    func testThatItNotifiesWhenAReactionFromADifferentUserIsAddedOnTopOfSelfReaction() {
+        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(uiMOC)
+        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
+        otherUser.name = "Hans"
+        otherUser.remoteIdentifier = .createUUID()
+        
+        let selfUser = ZMUser.selfUserInContext(self.uiMOC)
+        message.addReaction("👻", forUser: selfUser)
+        
+        // when
+        checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { ($0 as? ZMTextMessage)?.addReaction("👻", forUser: otherUser) },
+            expectedChangedField: "reactionsChanged"
+        )
+    }
+
 
     
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
