@@ -66,6 +66,8 @@ extension ZMMessage {
 
     @objc public func clearAllReactions() {
         reactions.removeAll()
+        guard let moc = managedObjectContext else { return }
+        reactions.forEach(moc.deleteObject)
     }
     
 }
