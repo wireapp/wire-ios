@@ -202,7 +202,7 @@ extension ZMConversationMessage {
         }
         
         if animated {
-            statusLabel.wr_animateSlideTo(newState: changeBlock)
+            statusLabel.wr_animateSlideTo(.Down, newState: changeBlock)
         }
         else {
             changeBlock()
@@ -259,7 +259,7 @@ extension ZMConversationMessage {
         }
         
         if animated {
-            statusLabel.wr_animateSlideTo(newState: changeBlock)
+            statusLabel.wr_animateSlideTo(.Up, newState: changeBlock)
         }
         else {
             changeBlock()
