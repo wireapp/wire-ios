@@ -30,11 +30,14 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
     
     override func tearDown() {
         self.uiMOC.globalManagedObjectContextObserver.tearDown()
+        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         super.tearDown()
     }
+}
+
+// MARK: - Adding confirmation locally
+extension ZMMessageTests_Confirmation {
     
-    
-    // MARK: Sending
     func checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(conversationType: ZMConversationType, shouldSendConfirmation: Bool){
         // given
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
@@ -70,7 +73,7 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
         checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(.Group, shouldSendConfirmation:false)
     }
     
-    func testThatItDoesNotSendAConfirmationMessageIfTheMessageWasSentByTheSelfUser(){
+    func testThatItDoesNotRequiresAConfirmationMessageIfTheMessageWasSentByTheSelfUser(){
         // given
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
         conversation.remoteIdentifier = .createUUID()
@@ -90,47 +93,41 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
         XCTAssertEqual(conversation.messages.firstObject as? ZMClientMessage, sut.message)
         XCTAssertFalse(sut.needsConfirmation)
     }
+}
+
+// MARK: - Deletion
+extension ZMMessageTests_Confirmation {
     
-//    func testThatThePayloadOnlyContainsTheSender(){
-//        // Future proof - in case we start sending confirmations in groups as well
-//        // given
-//        createSelfClient()
-//
-//        let user1 = ZMUser.insertNewObjectInManagedObjectContext(syncMOC)
-//        user1.remoteIdentifier = NSUUID()
-//        createClientForUser(user1, createSessionWithSelfUser: true)
-//
-//        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
-//        
-//        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(syncMOC)
-//        conversation.remoteIdentifier = .createUUID()
-//        conversation.connection = ZMConnection.insertNewObjectInManagedObjectContext(syncMOC)
-//        conversation.connection.to = user1
-//        conversation.conversationType = .OneOnOne
-//        
-//        let message = insertMessage(conversation, fromSender: user1, moc: syncMOC)
-//        XCTAssertTrue(syncMOC.saveOrRollback())
-//        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
-//        
-//        let genericMessage = ZMGenericMessage(confirmation: message.nonce.transportString(), type: .DELIVERED, nonce: NSUUID().transportString())
-//        
-//        // when
-//        var otrMessage: ZMNewOtrMessage?
-//        syncSelfUser.selfClient()!.keysStore.encryptionContext.perform{ (sessionsDirectory) in
-//            otrMessage =  ZMClientMessage.otrMessageForGenericMessage(genericMessage, selfClient:self.syncSelfUser.selfClient()!, conversation: conversation, externalData: nil, sessionsDirectory:sessionsDirectory)
-//        }
-//        
-//        // then
-//        XCTAssertNotNil(otrMessage)
-//        XCTAssertEqual(otrMessage?.recipients.count, 1)
-//        guard let recipient = otrMessage?.recipients.first else {return XCTFail()}
-//        XCTAssertTrue(recipient.hasUser())
-//        
-//        XCTAssertEqual(recipient.user.uuid, user1.remoteIdentifier?.data())
-//    }
+    func testThatItCanDeleteAMessageThatWasConfirmed() {
+        
+        // given
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        conversation.remoteIdentifier = .createUUID()
+        let message = conversation.appendMessageWithText("foo") as! ZMClientMessage
+        message.markAsSent()
+        let confirmationUpdate = createMessageConfirmationUpdateEvent(message.nonce, conversationID: conversation.remoteIdentifier)
+        performPretendingUiMocIsSyncMoc {
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(confirmationUpdate, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        guard let confirmation = message.confirmations.first else {
+            XCTFail()
+            return
+        }
+        
+        // when
+        self.uiMOC.deleteObject(message)
+        self.uiMOC.saveOrRollback()
+
+        // then
+        XCTAssertNil(confirmation.managedObjectContext) // this will detect if it was deleted
+    }
     
-    // MARK: Receiving Confirmation GenericMessage
-    
+}
+
+// MARK: - Receiving confirmation remotely
+extension ZMMessageTests_Confirmation {
+
     func testThatItUpdatesTheConfirmationStatusWhenItRecievesAConfirmationMessage(){
         // given
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
@@ -253,7 +250,7 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
     }
 }
 
-
+// MARK: - Helpers
 extension ZMMessageTests_Confirmation {
     
     func insertMessage(conversation: ZMConversation, fromSender: ZMUser? = nil, moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .Download) -> MessageUpdateResult {
@@ -276,30 +273,6 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(MOC!.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         return messageUpdateResult
-    }
-    
-    func createUpdateEvent(nonce: NSUUID, conversationID: NSUUID, genericMessage: ZMGenericMessage, senderID: NSUUID = .createUUID(), eventSource: ZMUpdateEventSource = .Download) -> ZMUpdateEvent {
-        let payload = [
-            "id": NSUUID.createUUID().transportString(),
-            "conversation": conversationID.transportString(),
-            "from": senderID.transportString(),
-            "time": NSDate().transportString(),
-            "data": [
-                "text": genericMessage.data().base64String()
-            ],
-            "type": "conversation.otr-message-add"
-        ]
-        switch eventSource {
-        case .Download:
-            return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nonce)
-        default:
-            let streamPayload = ["payload" : [payload],
-                                 "id" : NSUUID.createUUID().transportString()]
-            let event = ZMUpdateEvent.eventsArrayFromTransportData(streamPayload,
-                                                              source: eventSource)!.first!
-            XCTAssertNotNil(event)
-            return event
-        }
     }
     
     func createMessageConfirmationUpdateEvent(nonce: NSUUID, conversationID: NSUUID, senderID: NSUUID = .createUUID()) -> ZMUpdateEvent {
