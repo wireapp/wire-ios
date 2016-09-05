@@ -33,9 +33,11 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
         super.tearDown()
     }
+}
+
+// MARK: - Adding confirmation locally
+extension ZMMessageTests_Confirmation {
     
-    
-    // MARK: Sending
     func checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(conversationType: ZMConversationType, shouldSendConfirmation: Bool){
         // given
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
@@ -71,7 +73,7 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
         checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(.Group, shouldSendConfirmation:false)
     }
     
-    func testThatItDoesNotSendAConfirmationMessageIfTheMessageWasSentByTheSelfUser(){
+    func testThatItDoesNotRequiresAConfirmationMessageIfTheMessageWasSentByTheSelfUser(){
         // given
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
         conversation.remoteIdentifier = .createUUID()
@@ -91,9 +93,41 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
         XCTAssertEqual(conversation.messages.firstObject as? ZMClientMessage, sut.message)
         XCTAssertFalse(sut.needsConfirmation)
     }
+}
+
+// MARK: - Deletion
+extension ZMMessageTests_Confirmation {
     
-    // MARK: Receiving Confirmation GenericMessage
+    func testThatItCanDeleteAMessageThatWasConfirmed() {
+        
+        // given
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        conversation.remoteIdentifier = .createUUID()
+        let message = conversation.appendMessageWithText("foo") as! ZMClientMessage
+        message.markAsSent()
+        let confirmationUpdate = createMessageConfirmationUpdateEvent(message.nonce, conversationID: conversation.remoteIdentifier)
+        performPretendingUiMocIsSyncMoc {
+            ZMOTRMessage.messageUpdateResultFromUpdateEvent(confirmationUpdate, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        guard let confirmation = message.confirmations.first else {
+            XCTFail()
+            return
+        }
+        
+        // when
+        self.uiMOC.deleteObject(message)
+        self.uiMOC.saveOrRollback()
+
+        // then
+        XCTAssertNil(confirmation.managedObjectContext) // this will detect if it was deleted
+    }
     
+}
+
+// MARK: - Receiving confirmation remotely
+extension ZMMessageTests_Confirmation {
+
     func testThatItUpdatesTheConfirmationStatusWhenItRecievesAConfirmationMessage(){
         // given
         let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
@@ -216,7 +250,7 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
     }
 }
 
-
+// MARK: - Helpers
 extension ZMMessageTests_Confirmation {
     
     func insertMessage(conversation: ZMConversation, fromSender: ZMUser? = nil, moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .Download) -> MessageUpdateResult {
