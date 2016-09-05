@@ -21,28 +21,28 @@ import AssetsLibrary
 
 @objc final public class SavableImage: NSObject {
 
-    typealias ImageSaveCompletion = () -> Void
+    public typealias ImageSaveCompletion = () -> Void
     
     private let imageData: NSData
     private let imageOrientation: UIImageOrientation
     private let library = ALAssetsLibrary()
     private var writeInProgess = false
-    private let saveCompletion: ImageSaveCompletion?
-    
-    init(data: NSData, orientation: UIImageOrientation, completion: ImageSaveCompletion?) {
+
+    init(data: NSData, orientation: UIImageOrientation) {
         imageData = data
         imageOrientation = orientation
-        saveCompletion = completion
         super.init()
     }
     
-    public func saveToLibrary() {
+    public func saveToLibrary(withCompletion completion: ImageSaveCompletion?) {
         guard !writeInProgess else { return }
         writeInProgess = true
-        
+
         let metadata: [String: NSObject] = [ALAssetPropertyOrientation: imageOrientation.exifOrientiation]
         library.writeImageDataToSavedPhotosAlbum(imageData, metadata: metadata) { [weak self] _, _ in
-            self?.saveCompletion?()
+            guard let `self` = self else { return }
+            self.writeInProgess = false
+            completion?()
         }
     }
 
