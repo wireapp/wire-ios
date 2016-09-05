@@ -389,6 +389,9 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     ZMMessage *message = [conversation appendMessageWithText:oldText];
     
+    [message addReaction:@"👻" forUser:self.selfUser];
+    [self.uiMOC saveOrRollback];
+
     ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:senderID newText:newText];
     NSUUID *oldNonce = message.nonce;
 
@@ -410,6 +413,13 @@
         XCTAssertEqual(clientMessage.dataSet.count, 0lu);
         XCTAssertNil(message.textMessageData);
         XCTAssertNotNil(message.sender);
+        
+        XCTAssertTrue(message.reactions.isEmpty);
+        XCTAssertEqual(conversation.messages.count, 1lu);
+        ZMMessage *editedMessage = conversation.messages.firstObject;
+
+        XCTAssertTrue(editedMessage.reactions.isEmpty);
+        XCTAssertEqualObjects(editedMessage.textMessageData.messageText, newText);
     } else {
         XCTAssertNotNil(message.textMessageData.messageText);
         XCTAssertEqualObjects(message.nonce, oldNonce);
@@ -584,5 +594,80 @@
     XCTAssertEqual(clientMessage.dataSet.count, 0lu);
 }
 
+- (void)testThatItClearsReactionsWhenAMessageIsEdited
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMMessage *message = [conversation appendMessageWithText:@"Hallo"];
+
+    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser.remoteIdentifier = NSUUID.createUUID;
+    
+    [message addReaction:@"😱" forUser:self.selfUser];
+    [message addReaction:@"🤗" forUser:otherUser];
+    
+    [self.uiMOC saveOrRollback];
+    XCTAssertFalse(message.reactions.isEmpty);
+
+    ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce
+                                                                       newNonce:NSUUID.createUUID
+                                                                 conversationID:conversation.remoteIdentifier
+                                                                       senderID:message.sender.remoteIdentifier
+                                                                        newText:@"Hello"];
+    // when
+    __block ZMClientMessage *newMessage;
+
+    [self performPretendingUiMocIsSyncMoc:^{
+        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertTrue(message.reactions.isEmpty);
+    XCTAssertEqual(conversation.messages.count, 1lu);
+
+    ZMMessage *editedMessage = conversation.messages.firstObject;
+    XCTAssertTrue(editedMessage.reactions.isEmpty);
+    XCTAssertEqualObjects(editedMessage.textMessageData.messageText, @"Hello");
+}
+
+- (void)testThatItClearsReactionsWhenAMessageIsEditedRemotely
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMMessage *message = [conversation appendMessageWithText:@"Hallo"];
+    
+    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    otherUser.remoteIdentifier = NSUUID.createUUID;
+    
+    [message addReaction:@"😱" forUser:self.selfUser];
+    [message addReaction:@"🤗" forUser:otherUser];
+    
+    [self.uiMOC saveOrRollback];
+    XCTAssertFalse(message.reactions.isEmpty);
+    
+    ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce
+                                                                       newNonce:NSUUID.createUUID
+                                                                 conversationID:conversation.remoteIdentifier
+                                                                       senderID:message.sender.remoteIdentifier
+                                                                        newText:@"Hello"];
+    // when
+    __block ZMClientMessage *newMessage;
+    
+    [self performPretendingUiMocIsSyncMoc:^{
+        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertTrue(message.reactions.isEmpty);
+    XCTAssertEqual(conversation.messages.count, 1lu);
+    
+    ZMMessage *editedMessage = conversation.messages.firstObject;
+    XCTAssertTrue(editedMessage.reactions.isEmpty);
+    XCTAssertEqualObjects(editedMessage.textMessageData.messageText, @"Hello");
+}
 
 @end

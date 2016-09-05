@@ -63,5 +63,9 @@ extension ZMMessage {
             }
         }
     }
+
+    @objc public func clearAllReactions() {
+        reactions.removeAll()
+    }
     
 }
