@@ -2471,30 +2471,48 @@ NSString * const ReactionsKey = @"reactions";
 
 - (void)testThatAddingAReactionAddsAReactionGenericMessage_fromUI;
 {
-    ZMEventID *convEventID = [self createEventID];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    conversation.lastReadEventID = convEventID;
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    textMessage.nonce = nonce;
-    textMessage.visibleInConversation = conversation;
+    conversation.lastReadEventID = self.createEventID;
+
+    ZMMessage *message = [conversation appendMessageWithText:self.name];
+    [message markAsSent];
     [self.uiMOC saveOrRollback];
-    
+    XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
+
     //when
     NSString *reactionUnicode = @"a bit of sweetness please";
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:reactionUnicode toMessage:textMessage];
+    [ZMMessage addReaction:reactionUnicode toMessage:message];
     [self.uiMOC saveOrRollback];
-    
+
     //then
     XCTAssertEqual(conversation.hiddenMessages.count, 1lu);
     ZMClientMessage *reactionMessage = [conversation.hiddenMessages lastObject];
     XCTAssertNotNil(reactionMessage.genericMessage);
     XCTAssertTrue(reactionMessage.genericMessage.hasReaction);
     XCTAssertEqualObjects(reactionMessage.genericMessage.reaction.emoji, reactionUnicode);
+}
 
+- (void)testThatAUnSentMessageCanNotBeLiked;
+{
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadEventID = self.createEventID;
+
+    ZMMessage *message = [conversation appendMessageWithText:self.name];
+    [self.uiMOC saveOrRollback];
+    XCTAssertEqual(message.deliveryState, ZMDeliveryStatePending);
+
+    //when
+    NSString *reactionUnicode = @"a bit of sweetness please";
+    // this is the UI facing call to add reaction
+    [ZMMessage addReaction:reactionUnicode toMessage:message];
+    [self.uiMOC saveOrRollback];
+
+    //then
+    XCTAssertEqual(conversation.hiddenMessages.count, 0lu);
+    XCTAssertTrue(message.reactions.isEmpty);
 }
 
 - (void)testThatAddingAReactionWithUnicodeProperlyAddReactionForUserOnMessage;
