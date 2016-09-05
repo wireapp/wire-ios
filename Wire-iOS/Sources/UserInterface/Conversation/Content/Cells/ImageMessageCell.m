@@ -193,6 +193,7 @@ static ImageCache *imageCache(void)
     [self.sketchButton setIcon:ZetaIconTypeBrush withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
     [self.sketchButton setBackgroundImageColor:[[ColorScheme defaultColorScheme] colorWithName:ColorSchemeColorBackground variant:ColorSchemeVariantDark] forState:UIControlStateNormal];
     self.sketchButton.alpha = self.selected ? 1 : 0;
+    self.sketchButton.accessibilityIdentifier = @"sketchButton";
     [self.imageViewContainer addSubview:self.sketchButton];
     
     self.fullScreenButton = [IconButton iconButtonCircularLight];
@@ -200,6 +201,7 @@ static ImageCache *imageCache(void)
     [self.fullScreenButton setIcon:ZetaIconTypeFullScreen withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
     [self.fullScreenButton setBackgroundImageColor:[[ColorScheme defaultColorScheme] colorWithName:ColorSchemeColorBackground variant:ColorSchemeVariantDark] forState:UIControlStateNormal];
     self.fullScreenButton.alpha = self.selected ? 1 : 0;
+    self.fullScreenButton.accessibilityIdentifier = @"openFullScreenButton";
     [self.imageViewContainer addSubview:self.fullScreenButton];
 }
 
