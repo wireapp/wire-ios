@@ -101,5 +101,28 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         }
     }
     
+    func createUpdateEvent(nonce: NSUUID, conversationID: NSUUID, genericMessage: ZMGenericMessage, senderID: NSUUID = .createUUID(), eventSource: ZMUpdateEventSource = .Download) -> ZMUpdateEvent {
+        let payload = [
+            "id": NSUUID.createUUID().transportString(),
+            "conversation": conversationID.transportString(),
+            "from": senderID.transportString(),
+            "time": NSDate().transportString(),
+            "data": [
+                "text": genericMessage.data().base64String()
+            ],
+            "type": "conversation.otr-message-add"
+        ]
+        switch eventSource {
+        case .Download:
+            return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nonce)
+        default:
+            let streamPayload = ["payload" : [payload],
+                                 "id" : NSUUID.createUUID().transportString()]
+            let event = ZMUpdateEvent.eventsArrayFromTransportData(streamPayload,
+                                                                   source: eventSource)!.first!
+            XCTAssertNotNil(event)
+            return event
+        }
+    }
 
 }

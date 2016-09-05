@@ -240,7 +240,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
 {
     if ([event canUnarchiveConversation:self]){
         self.internalIsArchived = NO;
-        [self updateArchivedChangedTimeStampIfNeeded:event.timeStamp andSync:YES];
+        [self updateArchivedChangedTimeStampIfNeeded:event.timeStamp andSync:NO];
     }
 }
 
