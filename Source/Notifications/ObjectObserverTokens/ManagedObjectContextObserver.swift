@@ -26,6 +26,9 @@ import ZMCSystem
 private let zmLog = ZMSLog(tag: "Observer")
 
 public enum ObjectObserverType: Int {
+    
+    // The order of this enum is important, because some event create additional observer to fire (reaction fires message notification), 
+    // and therefore needs to happen before the message observer handler to propagate properly to the UI
     case Invalid = 0
     case Connection
     case Client
@@ -36,9 +39,9 @@ public enum ObjectObserverType: Int {
     case Message
     case Conversation
     case VoiceChannel
+    case Reaction
     case ConversationMessageWindow
     case ConversationList
-    case Reaction
 
     static func observerTypeForObject(object: NSObject) -> ObjectObserverType {
         
