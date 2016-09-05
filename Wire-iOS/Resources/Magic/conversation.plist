@@ -30,7 +30,7 @@
 		<key>left_margin</key>
 		<integer>64</integer>
 		<key>right_margin</key>
-		<integer>34</integer>
+		<integer>24</integer>
 		<key>line_height</key>
 		<integer>22</integer>
 		<key>voice_button_pulser</key>
