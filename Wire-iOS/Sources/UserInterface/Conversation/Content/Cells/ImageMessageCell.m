@@ -39,6 +39,7 @@
 
 
 
+
 @interface Message (DataIdentifier)
 
 + (NSString *)nonNilImageDataIdentifier:(id<ZMConversationMessage>)message;
@@ -71,6 +72,7 @@
 @property (nonatomic, strong) IconButton *fullScreenButton;
 @property (nonatomic, strong) UIView *imageViewContainer;
 @property (nonatomic) UIEdgeInsets defaultLayoutMargins;
+@property (nonatomic) SavableImage *savableImage;
 
 /// Can either be UIImage or FLAnimatedImage
 @property (nonatomic, strong) id<MediaAsset> image;
@@ -332,9 +334,18 @@ static ImageCache *imageCache(void)
         [self.loadingView stopProgressAnimation];
         [self.fullImageView setMediaAsset:image];
         [self showImageView:self.fullImageView];
+        [self updateSavableImage];
     } else {
+        self.savableImage = nil;
         [self.fullImageView setMediaAsset:nil];
     }
+}
+
+- (void)updateSavableImage
+{
+    NSData *data = self.message.imageMessageData.mediumData;
+    UIImageOrientation orientation = self.fullImageView.image.imageOrientation;
+    self.savableImage = [[SavableImage alloc] initWithData:data orientation:orientation];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
@@ -464,12 +475,9 @@ static ImageCache *imageCache(void)
 
 - (void)saveImage
 {
-    NSData *data = [self.message imageMessageData].mediumData;
-    SavableImage *savableImage = [[SavableImage alloc] initWithData:data
-                                                        orientation:self.fullImageView.image.imageOrientation
-                                                         completion:nil];
-
-    [savableImage saveToLibrary];
+    if ([self.delegate respondsToSelector:@selector(conversationCell:didSelectAction:)]) {
+        [self.delegate conversationCell:self didSelectAction:ConversationCellActionSave];
+    }
 }
 
 - (MessageType)messageType;
