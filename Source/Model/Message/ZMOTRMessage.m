@@ -217,6 +217,8 @@ NSString * const DeliveredKey = @"delivered";
         [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
     }
     
+    [clientMessage unarchiveConversationIfNeeded:conversation];
+    
     BOOL needsConfirmation = NO;
     if (isNewMessage && !clientMessage.sender.isSelfUser && conversation.conversationType == ZMConversationTypeOneOnOne) {
         needsConfirmation = YES;
@@ -226,5 +228,20 @@ NSString * const DeliveredKey = @"delivered";
     return result;
 }
 
+
+- (void)unarchiveConversationIfNeeded:(ZMConversation *)conversation
+{
+    if (!conversation.isArchived || conversation.isSilenced) {
+        return;
+    }
+    
+    BOOL olderThanClearTimestamp = (conversation.clearedTimeStamp != nil) &&
+                                   ([self.serverTimestamp compare:conversation.clearedTimeStamp] == NSOrderedAscending);
+    
+    if (!olderThanClearTimestamp) {
+        conversation.internalIsArchived = NO;
+        [conversation updateArchivedChangedTimeStampIfNeeded:self.serverTimestamp andSync:NO];
+    }
+}
 
 @end
