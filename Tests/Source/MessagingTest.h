@@ -41,6 +41,7 @@
 @class MockUser;
 @class ZMClientMessage;
 
+
 /// This is a base test class with utility stuff for all tests.
 @interface MessagingTest : ZMTBaseTest
 
