@@ -32,11 +32,25 @@
 @interface MockTransportSession (OTR)
 
 - (MockUserClient *)otrMessageSender:(NSDictionary *)payload;
-- (NSDictionary *)missedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender;
+
+/// Returns a list of missing clients in the conversation that were not included in the list of intendend recipients
+/// @param recipients list of intender recipients
+/// @param onlyForUserId if not nil, only return missing recipients matching this user ID
+- (NSDictionary *)missedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
+
+/// Returns a list of redundant clients in the conversation that were included in the list of intendend recipients
+/// @param recipients list of intender recipients
 - (NSDictionary *)redundantClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation;
 
 - (MockUserClient *)otrMessageSenderFromClientId:(ZMClientId *)sender;
-- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender;
+
+/// Returns a list of missing clients in the conversation that were not included in the list of intendend recipients
+/// @param recipients list of intender recipients
+/// @param onlyForUserId if not nil, only return missing recipients matching this user ID
+- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
+
+/// Returns a list of redundant clients in the conversation that were included in the list of intendend recipients
+/// @param recipients list of intender recipients
 - (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation;
 
 
