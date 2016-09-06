@@ -159,6 +159,12 @@ NSString * const DeliveredKey = @"delivered";
         return nil;
     }
     if (message.hasReaction) {
+        
+        // if we don't understand the reaction received, discard it
+        if ([Reaction transportReaction:message.reaction.emoji] == TransportReactionNone) {
+            return nil;
+        }
+        
         [ZMMessage addReaction:message.reaction senderID:updateEvent.senderUUID conversation:conversation inManagedObjectContext:moc];
         return nil;
     }
