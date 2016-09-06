@@ -42,24 +42,19 @@ public class FileTransferCell: ConversationCell {
         self.containerView.translatesAutoresizingMaskIntoConstraints = false
         self.containerView.layer.cornerRadius = 4
         self.containerView.cas_styleClass = "container-view"
-        self.containerView.isAccessibilityElement = true
-        self.containerView.accessibilityElementsHidden = false
         
         self.topLabel.numberOfLines = 1
         self.topLabel.lineBreakMode = .ByTruncatingMiddle
         self.topLabel.accessibilityLabel = "FileTransferTopLabel"
-        self.topLabel.isAccessibilityElement = true
 
         self.bottomLabel.numberOfLines = 1
         self.bottomLabel.accessibilityLabel = "FileTransferBottomLabel"
-        self.bottomLabel.isAccessibilityElement = true
 
         self.fileTypeIconView.accessibilityLabel = "FileTransferFileTypeIcon"
 
         self.actionButton.contentMode = .ScaleAspectFit
         self.actionButton.addTarget(self, action: #selector(FileTransferCell.onActionButtonPressed(_:)), forControlEvents: .TouchUpInside)
         self.actionButton.accessibilityLabel = "FileTransferActionButton"
-        self.actionButton.isAccessibilityElement = true
 
         self.progressView.accessibilityLabel = "FileTransferProgressView"
         self.progressView.userInteractionEnabled = false
@@ -75,6 +70,8 @@ public class FileTransferCell: ConversationCell {
         CASStyler.defaultStyler().styleItem(self)
         
         self.createConstraints()
+        
+        self.accessibilityElements = [topLabel, bottomLabel, fileTypeIconView, actionButton]
     }
     
     public required init?(coder aDecoder: NSCoder) {
