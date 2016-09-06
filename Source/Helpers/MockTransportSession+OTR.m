@@ -87,6 +87,9 @@
     NSMutableDictionary *missedClients = [NSMutableDictionary new];
 
     for (MockUser *user in conversation.activeUsers) {
+        if (onlyForUserId != nil && ![[NSUUID uuidWithTransportString:user.identifier] isEqual:[NSUUID uuidWithTransportString:onlyForUserId]]) {
+            continue;
+        }
         ZMUserEntry *userEntry = [[recipients filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUserEntry  * _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable __unused bindings) {
             NSUUID *uuid = [[NSUUID alloc] initWithUUIDBytes:evaluatedObject.user.uuid.bytes];
             NSUUID *userId = [NSUUID uuidWithTransportString:user.identifier];
