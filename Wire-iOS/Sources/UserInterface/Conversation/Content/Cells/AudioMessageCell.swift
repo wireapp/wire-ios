@@ -77,7 +77,9 @@ import CocoaLumberjackSwift
 
         self.createConstraints()
         
-        self.accessibilityElements = [self.playButton, self.timeLabel]
+        var currentElements = self.accessibilityElements ?? []
+        currentElements.appendContentsOf([playButton, timeLabel, likeButton, messageToolboxView])
+        self.accessibilityElements = currentElements
         
         let audioTrackPlayer = self.audioTrackPlayer()
         

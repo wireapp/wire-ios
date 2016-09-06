@@ -71,7 +71,9 @@ public class FileTransferCell: ConversationCell {
         
         self.createConstraints()
         
-        self.accessibilityElements = [topLabel, bottomLabel, fileTypeIconView, actionButton]
+        var currentElements = self.accessibilityElements ?? []
+        currentElements.appendContentsOf([topLabel, bottomLabel, fileTypeIconView, actionButton, likeButton, messageToolboxView])
+        self.accessibilityElements = currentElements
     }
     
     public required init?(coder aDecoder: NSCoder) {
