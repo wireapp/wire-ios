@@ -194,7 +194,8 @@ static NSString * const IdleString = @"idle";
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }
 
-    NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient];
+    NSString *onlyForUser = sessionRequest.query[@"report_missing"];
+    NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
     NSDictionary *redundantClients = [self redundantClients:recipients conversation:conversation];
     
     NSDictionary *payload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
@@ -226,7 +227,9 @@ static NSString * const IdleString = @"idle";
     if (senderClient == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }
-    NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetaData.recipients conversation:conversation sender:senderClient];
+    
+    NSString *onlyForUser = sessionRequest.query[@"report_missing"];
+    NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetaData.recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
     NSDictionary *redundantClients = [self redundantClientsFromRecipients:otrMetaData.recipients conversation:conversation];
     
     NSDictionary *payload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
