@@ -196,7 +196,7 @@
     
     NSDictionary *recipients = payload[@"recipients"];
     
-    NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient];
+    NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient onlyForUserId:nil];
     NSDictionary * redundantClients = [self redundantClients:recipients conversation:conversation];
     
     BOOL inlineData = [payload[@"inline"] boolValue];
@@ -246,7 +246,7 @@
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }
     
-    NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetadata.recipients conversation:conversation sender:senderClient];
+    NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetadata.recipients conversation:conversation sender:senderClient onlyForUserId:nil];
     NSDictionary *redundantClients = [self redundantClientsFromRecipients:otrMetadata.recipients conversation:conversation];
     
     BOOL inlineData = otrMetadata.isInline;

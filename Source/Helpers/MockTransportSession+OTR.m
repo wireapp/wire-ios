@@ -30,10 +30,13 @@
     return client;
 }
 
-- (NSDictionary *)missedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender
+- (NSDictionary *)missedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
 {
     NSMutableDictionary *missedClients = [NSMutableDictionary new];
     for (MockUser *user in conversation.activeUsers) {
+        if (onlyForUserId != nil && ![[NSUUID uuidWithTransportString:user.identifier] isEqual:[NSUUID uuidWithTransportString:onlyForUserId]]) {
+            continue;
+        }
         NSArray *recipientClients = [recipients[user.identifier] allKeys];
         NSSet *userClients = [user.clients mapWithBlock:^id(MockUserClient *client) {
             if (client != sender) {
@@ -79,7 +82,7 @@
     return client;
 }
 
-- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender
+- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
 {
     NSMutableDictionary *missedClients = [NSMutableDictionary new];
 
@@ -87,7 +90,7 @@
         ZMUserEntry *userEntry = [[recipients filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUserEntry  * _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable __unused bindings) {
             NSUUID *uuid = [[NSUUID alloc] initWithUUIDBytes:evaluatedObject.user.uuid.bytes];
             NSUUID *userId = [NSUUID uuidWithTransportString:user.identifier];
-            return [uuid isEqual:userId];
+            return [uuid isEqual:userId] && (onlyForUserId == nil || [[NSUUID uuidWithTransportString:onlyForUserId] isEqual:userId]);
         }]] firstObject];
         
         NSArray *recipientClients = [userEntry.clients mapWithBlock:^id(ZMClientEntry *clientEntry) {
