@@ -22,6 +22,13 @@ public let ZMReactionUnicodeValueKey    = "unicodeValue"
 public let ZMReactionMessageValueKey    = "message"
 public let ZMReactionUsersValueKey      = "users"
 
+
+@objc public enum TransportReaction : UInt32 {
+    case None  = 0
+    case Heart = 1
+}
+
+
 @objc(Reaction)
 public class Reaction : ZMManagedObject {
     
@@ -50,4 +57,15 @@ public class Reaction : ZMManagedObject {
     public override static func sortKey() -> String! {
         return ZMReactionUnicodeValueKey
     }
+    
+    @objc public static func transportReaction(fromUnicode: String) -> TransportReaction {
+        switch fromUnicode {
+        case "❤️":
+            return .Heart
+        default:
+            return .None
+        }
+
+    }
+    
 }
