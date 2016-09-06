@@ -72,4 +72,34 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertEqual(message.reactions.count, 0)
         XCTAssertEqual(message.usersReaction.count, 0)
     }
+    
+    func testThatItRemovesAReactionWhenReceivingUpdateEventWithValidReaction() {
+        
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        conversation.remoteIdentifier = .createUUID()
+        conversation.conversationType = .OneOnOne
+        
+        let sender = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
+        sender.remoteIdentifier = .createUUID()
+        
+        let message = conversation.appendMessageWithText("JCVD, full split please") as! ZMMessage
+        message.sender = sender
+        message.addReaction("❤️", forUser: sender)
+        
+        uiMOC.saveOrRollback()
+        
+        let genericMessage = ZMGenericMessage(emojiString: "", messageID: message.nonce.transportString(), nonce: NSUUID.createUUID().transportString())
+        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
+        
+        // when
+        performPretendingUiMocIsSyncMoc {
+            ZMClientMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        
+
+        XCTAssertEqual(message.usersReaction.count, 0)
+    }
+
 }

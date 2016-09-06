@@ -248,6 +248,23 @@ extension ZMMessageTests_Confirmation {
         }
         XCTAssertTrue(messageChangeInfo.deliveryStateChanged)
     }
+    
+    func testThatAMessageConfirmationDoesNotExpire() {
+        
+        // given
+        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
+        conversation.remoteIdentifier = .createUUID()
+        let lastModified = NSDate(timeIntervalSince1970: 1234567890)
+        conversation.lastModifiedDate = lastModified
+        
+        let message = conversation.appendMessageWithText("foo") as! ZMClientMessage
+
+        // when
+        let sut = message.confirmReception()
+        
+        // then
+        XCTAssertNil(sut.expirationDate)
+    }
 }
 
 // MARK: - Helpers
