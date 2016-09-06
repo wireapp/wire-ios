@@ -2481,7 +2481,7 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
 
     //when
-    NSString *reactionUnicode = @"a bit of sweetness please";
+    NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
     [ZMMessage addReaction:reactionUnicode toMessage:message];
     [self.uiMOC saveOrRollback];
@@ -2505,7 +2505,7 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqual(message.deliveryState, ZMDeliveryStatePending);
 
     //when
-    NSString *reactionUnicode = @"a bit of sweetness please";
+    NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
     [ZMMessage addReaction:reactionUnicode toMessage:message];
     [self.uiMOC saveOrRollback];
@@ -2531,7 +2531,7 @@ NSString * const ReactionsKey = @"reactions";
     [self.uiMOC saveOrRollback];
     
     //when
-    NSString *reactionUnicode = @"a bit of sweetness please";
+    NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
     [textMessage addReaction:reactionUnicode forUser:selfUser];
     [self.uiMOC saveOrRollback];
@@ -2562,7 +2562,7 @@ NSString * const ReactionsKey = @"reactions";
     textMessage.visibleInConversation = conversation;
     [self.uiMOC saveOrRollback];
     
-    NSString *reactionUnicode = @"a bit of sweetness please";
+    NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
     [textMessage addReaction:reactionUnicode forUser:selfUser];
     [self.uiMOC saveOrRollback];
@@ -2606,8 +2606,7 @@ NSString * const ReactionsKey = @"reactions";
     [self.uiMOC saveOrRollback];
     
     //when
-    NSString *reactionUnicode = @"a bit of sweetness please";
-    // this is the UI facing call to add reaction
+    NSString *reactionUnicode = @"❤️";
     [textMessage addReaction:reactionUnicode forUser:selfUser];
     [textMessage addReaction:reactionUnicode forUser:user1];
     [self.uiMOC saveOrRollback];
