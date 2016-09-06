@@ -131,7 +131,7 @@ extension ZMConversationMessage {
         
         // Show like tip
         if let sender = message.sender where !sender.isSelfUser && canShowTooltip {
-            self.reactionsView.hidden = !message.hasReactions()
+            showReactionsView(message.hasReactions(), animated: false)
             self.likeTooltipArrow.hidden = false
             self.tapGestureRecogniser.enabled = message.hasReactions()
             self.configureLikeTip(message, animated: animated)
@@ -139,18 +139,35 @@ extension ZMConversationMessage {
         else {
             self.likeTooltipArrow.hidden = true
             if !self.forceShowTimestamp && message.hasReactions() {
-                self.reactionsView.hidden = false
                 self.configureLikedState(message)
                 self.layoutIfNeeded()
+                showReactionsView(true, animated: animated)
                 self.configureReactions(message, animated: animated)
                 self.tapGestureRecogniser.enabled = true
             }
             else {
-                self.reactionsView.hidden = true
                 self.layoutIfNeeded()
+                showReactionsView(false, animated: animated)
                 self.configureTimestamp(message, animated: animated)
                 self.tapGestureRecogniser.enabled = false
             }
+        }
+    }
+    
+    private func showReactionsView(show: Bool, animated: Bool) {
+        guard show == reactionsView.hidden else { return }
+
+        if show {
+            reactionsView.alpha = 0
+            reactionsView.hidden = false
+        }
+
+        let animations = {
+            self.reactionsView.alpha = show ? 1 : 0
+        }
+
+        UIView.animateWithDuration(animated ? 0.2 : 0, animations: animations) { _ in
+            self.reactionsView.hidden = !show
         }
     }
     
