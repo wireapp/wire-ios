@@ -317,6 +317,126 @@
     XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount);
 }
 
+- (void)testThatItReturnsMissingClientsOnlyForOneUserWhenReceivingOTRMessage
+{
+    // given
+    __block MockUser *selfUser;
+    __block MockUserClient *selfClient;
+    __block MockUserClient *secondSelfClient;
+    
+    __block MockUser *otherUser;
+    __block MockUserClient *otherUserClient1;
+    __block MockUserClient *otherUserClient2;
+    
+    __block MockConversation *conversation;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        otherUser = [session insertUserWithName:@"bar"];
+        MockUser *extraUser = [session insertUserWithName:@"bar"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser, extraUser] type:ZMTConversationTypeOneOnOne];
+        
+        selfClient = [selfUser.clients anyObject];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        
+        otherUserClient1 = [otherUser.clients anyObject];
+        otherUserClient2 = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
+    
+    NSString *messageText = @"Fofooof";
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString];
+    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+    
+    NSDictionary *payload = @{
+                              @"sender": selfClient.identifier,
+                              @"recipients" : @{
+                                      otherUser.identifier: @{
+                                              otherUserClient1.identifier: base64Content,
+                                              }
+                                      }
+                              };
+    
+    // when
+    NSString *requestBasePath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
+    NSString *requestPath = [NSString stringWithFormat:@"%@?report_missing=%@", requestBasePath, otherUser.identifier];
+    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
+    
+    XCTAssertNotNil(response);
+    XCTAssertNil(response.transportSessionError);
+    
+    if (response != nil) {
+        XCTAssertEqual(response.HTTPStatus, 412);
+        
+        NSDictionary *expectedResponsePayload = @{
+                                                  @"missing": @{
+                                                          otherUser.identifier: @[otherUserClient2.identifier]
+                                                          },
+                                                  };
+        
+        AssertEqualDictionaries(expectedResponsePayload[@"missing"], response.payload.asDictionary[@"missing"]);
+    }
+    
+    XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount);
+}
+
+- (void)testThatItDoesNotReturnsMissingClientsOnlyForOneUserWhenReceivingOTRMessage
+{
+    // given
+    __block MockUser *selfUser;
+    __block MockUserClient *selfClient;
+    __block MockUserClient *secondSelfClient;
+    
+    __block MockUser *otherUser;
+    __block MockUserClient *otherUserClient;
+    
+    __block MockConversation *conversation;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        otherUser = [session insertUserWithName:@"bar"];
+        MockUser *extraUser = [session insertUserWithName:@"bar"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser, extraUser] type:ZMTConversationTypeOneOnOne];
+        
+        selfClient = [selfUser.clients anyObject];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        
+        otherUserClient = [otherUser.clients anyObject];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
+    
+    NSString *messageText = @"Fofooof";
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString];
+    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+    
+    NSDictionary *payload = @{
+                              @"sender": selfClient.identifier,
+                              @"recipients" : @{
+                                      otherUser.identifier: @{
+                                              otherUserClient.identifier: base64Content,
+                                              }
+                                      }
+                              };
+    
+    // when
+    NSString *requestBasePath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
+    NSString *requestPath = [NSString stringWithFormat:@"%@?report_missing=%@", requestBasePath, otherUser.identifier];
+    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
+    
+    XCTAssertNotNil(response);
+    XCTAssertNil(response.transportSessionError);
+    
+    if (response != nil) {
+        XCTAssertEqual(response.HTTPStatus, 201);
+    }
+    
+    XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount+1);
+}
+
 - (void)testThatItReturnsMissingClientsWhenReceivingOTRMessage_Protobuf
 {
     // given
