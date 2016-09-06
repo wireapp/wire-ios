@@ -21,24 +21,40 @@ import Foundation
 
 extension ZMMessage {
     
-    public static func addReaction(unicodeValue: String?, toMessage message: ZMConversationMessage)
+    static func appendReaction(unicodeValue: String?, toMessage message: ZMConversationMessage)
     {
         guard let message = message as? ZMMessage, context = message.managedObjectContext else { return }
         guard message.deliveryState == .Sent || message.deliveryState == .Delivered else { return }
-
+        
+        let emoji = unicodeValue ?? ""
+        
         let genericMessage = ZMGenericMessage(
-            emojiString: unicodeValue,
+            emojiString: emoji,
             messageID: message.nonce.transportString(),
             nonce: NSUUID().transportString()
         )
     
         message.conversation?.appendGenericMessage(genericMessage, expires:false, hidden: true)
         message.addReaction(unicodeValue, forUser: .selfUserInContext(context))
+
+    
+    
+    }
+    
+    public static func addReaction(unicodeValue: String, toMessage message: ZMConversationMessage) {
+            
+        // confirmation that we understand the emoji
+        // the UI should never send an emoji we dont handle
+        if Reaction.transportReaction(unicodeValue) == .None{
+            fatal("We can't append this reaction \(unicodeValue), this is a programmer error.")
+        }
+        
+        appendReaction(unicodeValue, toMessage: message)
     }
     
     public static func removeReaction(onMessage message:ZMConversationMessage)
     {
-        addReaction(nil, toMessage: message)
+        appendReaction(nil, toMessage: message)
     }
     
     @objc public func addReaction(unicodeValue: String?, forUser user:ZMUser)
