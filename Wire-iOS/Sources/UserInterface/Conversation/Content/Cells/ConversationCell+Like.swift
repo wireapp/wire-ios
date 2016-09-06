@@ -40,9 +40,13 @@ public extension ConversationCell {
     
     @objc public func likeMessage(sender: AnyObject!) {
         guard message.canBeLiked else { return }
+
+        Settings.sharedSettings().likeTutorialCompleted = true
         
+        let reactionType : ReactionType = message.liked ? .Unlike : .Like
+        trackReaction(sender, reaction: reactionType)
+
         self.likeButton.setSelected(!self.message.liked, animated: true)
-        
         delegate.conversationCell!(self, didSelectAction: .Like)
     }
     
