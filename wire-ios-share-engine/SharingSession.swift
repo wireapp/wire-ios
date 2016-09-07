@@ -28,26 +28,73 @@ import ZMCDataModel
 /// is not supported and will result in undefined behaviour
 public class SharingSession {
     
+     /// The failure reason of a `SharingSession` initialization
+     /// - NeedsMigration: The database needs a migration which is only done in the main app
+     /// - LoggedOut:      No user is logged in
+    enum InitializationError: ErrorType {
+        case NeedsMigration, LoggedOut
+    }
+    
+    /// The location of the database in the shared container
+    let sharedDatabaseDirectory: NSURL
+    
+    /// The `NSManagedObjectContext` used to retrieve the conversations,
+    /// we only use a single context in the sharing session for now
+    let managedObjectContext: NSManagedObjectContext
+
+    /// The authentication status used to verify a user is authenticated
+    private let authenticationStatus: AuthenticationStatusProvider
+    
+    /// The `ZMConversationListDirectory` containing all conversation lists
+    private var directory: ZMConversationListDirectory {
+        return managedObjectContext.conversationListDirectory()
+    }
+    
+    /// Whether all prerequsisties for sharing are met
+    var canShare: Bool {
+        return authenticationStatus.state == .Authenticated
+    }
+
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
     var writeableNonArchivedConversations : [Conversation] {
-        // TODO
-        return []
+        return directory.unarchivedAndNotCallingConversations.conversationArray
     }
     
     /// List of archived conversations in which the user can write
     var writebleArchivedConversations : [Conversation] {
-        // TODO
-        return []
+        return directory.archivedConversations.conversationArray
     }
     
+    /// Initializes a new `SessionDirectory` to be used in an extension environment
+    /// - parameter databaseDirectory: The `NSURL` of the shared group container
+    /// - throws: `InitializationError.NeedsMigration` in case the local store needs to be
+    /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
+    /// no user is currently logged in.
+    /// - returns: The initialized session object if no error is thrown
+    init(databaseDirectory: NSURL, authenticationStatusProvider: AuthenticationStatusProvider) throws {
+        sharedDatabaseDirectory = databaseDirectory
+        authenticationStatus = authenticationStatusProvider
+        
+        guard !NSManagedObjectContext.needsToPrepareLocalStoreInDirectory(databaseDirectory) else { throw InitializationError.NeedsMigration }
+        guard authenticationStatusProvider.state == .Authenticated else { throw InitializationError.LoggedOut }
+        managedObjectContext = NSManagedObjectContext.createUserInterfaceContextWithStoreDirectory(databaseDirectory)
+    }
+
     /// Cancel all pending tasks.
     /// Should be called when the extension is dismissed
     func cancelAllPendingTasks() {
         // TODO
     }
-    
-    init() {
-        // TODO
+
+}
+
+// MARK: - Helper
+
+extension ZMConversationList {
+
+    var conversationArray: [Conversation] {
+        return self.flatMap { $0 as? Conversation }
     }
+
 }
