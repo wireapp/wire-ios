@@ -86,7 +86,7 @@ static BOOL storeIsReady = NO;
 
     NSManagedObjectModel *mom = self.loadManagedObjectModel;
     NSDictionary *sharedContainerMetadata = [self metadataForStoreAtURL:self.storeURL];
-    BOOL needsMigration = ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
+    BOOL needsMigration = sharedContainerMetadata != nil && ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
 
     BOOL databaseShouldBeInApplicationSupport = [self.applicationSupportDirectoryStoreURL.absoluteString hasPrefix:databaseDirectory.absoluteString];
     BOOL needsToMoveDatabase = self.databaseExistsInCachesDirectory || (!databaseShouldBeInApplicationSupport && self.databaseExistsInApplicationSupportDirectory);
