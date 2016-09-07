@@ -165,4 +165,14 @@
     }];
 }
 
+- (void)useApplicationSupportDirectoryAsDefault
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSError *error = nil;
+    NSURL * const directory = [fm URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
+    Require(error == nil);
+    self.sharedContainerDirectoryURL = directory;
+    [NSManagedObjectContext setDatabaseDirectoryURL:self.sharedContainerDirectoryURL];
+}
+
 @end

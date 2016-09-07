@@ -118,6 +118,7 @@
 - (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
 
 + (NSURL *)storeURL;
++ (NSURL *)applicationSupportDirectoryStoreURL;
 
 @end
 

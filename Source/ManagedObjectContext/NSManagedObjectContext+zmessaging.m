@@ -88,7 +88,8 @@ static BOOL storeIsReady = NO;
     NSDictionary *sharedContainerMetadata = [self metadataForStoreAtURL:self.storeURL];
     BOOL needsMigration = ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
 
-    BOOL needsToMoveDatabase = self.databaseExistsInCachesDirectory || self.databaseExistsInApplicationSupportDirectory;
+    BOOL databaseShouldBeInApplicationSupport = [self.applicationSupportDirectoryStoreURL.absoluteString hasPrefix:databaseDirectory.absoluteString];
+    BOOL needsToMoveDatabase = self.databaseExistsInCachesDirectory || (!databaseShouldBeInApplicationSupport && self.databaseExistsInApplicationSupportDirectory);
     return needsMigration || needsToMoveDatabase || self.databaseExistsAndNotReadableDueToEncryption;
 }
 
