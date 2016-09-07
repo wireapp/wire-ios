@@ -117,6 +117,45 @@
      XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
 }
 
+- (void)testThatItDoesNotMovesTheDatabaseFromTheApplicationSupportDirectoryToTheSharedDirectoryIfNotPossible
+{
+    // given
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self moveDatabaseToApplicationSupportDirectory]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    }];
+    
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
+    }
+    
+    [self useApplicationSupportDirectoryAsDefault];
+
+    // when
+    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+    
+    // then
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [self.applicationSupportDirectoryStoreURL.path stringByAppendingString:extension];
+        NSString *toPath = [self.sharedContainerStoreURL.path stringByAppendingString:extension];
+        XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
+        XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
+    }
+    
+    XCTAssertTrue([NSManagedObjectContext databaseExistsInApplicationSupportDirectory]);
+    XCTAssertFalse([NSManagedObjectContext databaseExistsInCachesDirectory]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+    
+    NSString *supportURL = [self.applicationSupportDirectoryStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
+}
+
 - (void)testThatItMovesRemainingDatabaseFilesFromTheApplicationSupportDirectoryToTheSharedDirectory
 {
     // given
