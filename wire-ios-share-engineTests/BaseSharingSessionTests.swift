@@ -16,21 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import ZMCDataModel
 
-/// A target of sharing content
-public protocol SharingTarget {
-    
-    /// Appends a text message in the conversation
-    func appendTextMessage(message: String) -> Sendable?
-    
-    /// Appends an image in the conversation
-    func appendImage(image: NSURL) -> Sendable?
-    
-    /// Appends a file in the conversation
-    func appendFile(metaData: ZMFileMetadata) -> Sendable?
-    
-    /// Append a location in the conversation
-    func appendLocation(location: LocationData) -> Sendable?
+import XCTest
+import ZMCDataModel
+@testable import WireShareEngine
+
+class BaseSharingSessionTests: XCTestCase {
+
+    var moc: NSManagedObjectContext!
+    var sharingSession: SharingSession!
+    var authenticationStatus: FakeAuthenticationStatus!
+
+    override func setUp() {
+        super.setUp()
+        
+        let fm = NSFileManager.defaultManager()
+        let url = try! fm.URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create:true)
+        
+        authenticationStatus = FakeAuthenticationStatus()
+        sharingSession = try! SharingSession(databaseDirectory: url, authenticationStatusProvider: authenticationStatus)
+        moc = sharingSession.managedObjectContext
+    }
+
 }

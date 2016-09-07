@@ -37,6 +37,10 @@
 		54B04A6B1D77359A00CED57C /* ZMTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* ZMTransport.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		54B04A6C1D77359A00CED57C /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		54B04A6D1D77359A00CED57C /* ZMCDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
+		BFE7F7511D78820700FEA685 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */; };
+		BFE7F7531D7885ED00FEA685 /* ZMMessage+Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7521D7885ED00FEA685 /* ZMMessage+Sendable.swift */; };
+		BFE7F7551D7885FF00FEA685 /* ZMConversation+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +120,11 @@
 		5470D4601D771BD600FDE440 /* SharingTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTarget.swift; sourceTree = "<group>"; };
 		5470D4621D7722A500FDE440 /* Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sendable.swift; sourceTree = "<group>"; };
 		5470D4641D772A6000FDE440 /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		BF64A2111D796DC300725918 /* wire-ios-share-engineTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "wire-ios-share-engineTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
+		BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationStatusProvider.swift; sourceTree = "<group>"; };
+		BFE7F7521D7885ED00FEA685 /* ZMMessage+Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Sendable.swift"; sourceTree = "<group>"; };
+		BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Conversation.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,8 +187,11 @@
 				5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */,
 				5470D42F1D77154200FDE440 /* SharingSession.swift */,
 				5470D4641D772A6000FDE440 /* Conversation.swift */,
+				BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */,
+				BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */,
 				5470D4601D771BD600FDE440 /* SharingTarget.swift */,
 				5470D4621D7722A500FDE440 /* Sendable.swift */,
+				BFE7F7521D7885ED00FEA685 /* ZMMessage+Sendable.swift */,
 			);
 			path = "wire-ios-share-engine";
 			sourceTree = "<group>";
@@ -188,6 +200,8 @@
 			isa = PBXGroup;
 			children = (
 				5470D3F91D76E1B000FDE440 /* Info.plist */,
+				BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */,
+				BF64A2111D796DC300725918 /* wire-ios-share-engineTests-Bridging-Header.h */,
 			);
 			path = "wire-ios-share-engineTests";
 			sourceTree = "<group>";
@@ -363,9 +377,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFE7F7551D7885FF00FEA685 /* ZMConversation+Conversation.swift in Sources */,
+				BFE7F7511D78820700FEA685 /* AuthenticationStatusProvider.swift in Sources */,
 				5470D4301D77154200FDE440 /* SharingSession.swift in Sources */,
 				5470D4631D7722A500FDE440 /* Sendable.swift in Sources */,
 				5470D4611D771BD600FDE440 /* SharingTarget.swift in Sources */,
+				BFE7F7531D7885ED00FEA685 /* ZMMessage+Sendable.swift in Sources */,
 				5470D4651D772A6000FDE440 /* Conversation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -374,6 +391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,10 +474,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4071D76E2A400FDE440 /* wire-ios-share-engine-test-target.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "wire-ios-share-engineTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engineTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "wire-ios-share-engineTests/wire-ios-share-engineTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -467,10 +488,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4071D76E2A400FDE440 /* wire-ios-share-engine-test-target.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "wire-ios-share-engineTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engineTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "wire-ios-share-engineTests/wire-ios-share-engineTests-Bridging-Header.h";
 			};
 			name = Release;
 		};

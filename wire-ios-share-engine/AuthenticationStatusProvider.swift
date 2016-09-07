@@ -16,21 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import ZMCDataModel
 
-/// A target of sharing content
-public protocol SharingTarget {
-    
-    /// Appends a text message in the conversation
-    func appendTextMessage(message: String) -> Sendable?
-    
-    /// Appends an image in the conversation
-    func appendImage(image: NSURL) -> Sendable?
-    
-    /// Appends a file in the conversation
-    func appendFile(metaData: ZMFileMetadata) -> Sendable?
-    
-    /// Append a location in the conversation
-    func appendLocation(location: LocationData) -> Sendable?
+import Foundation
+
+enum AuthenticationState {
+    case Authenticated, Unauthenticated
+}
+
+protocol AuthenticationStatusProvider {
+
+    var state: AuthenticationState { get }
+
 }
