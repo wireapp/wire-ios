@@ -17,8 +17,8 @@
 // 
 
 
-#import <os/activity.h>
-#import <os/trace.h>
+#include <os/activity.h>
+#include <os/trace.h>
 
 
 //

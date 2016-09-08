@@ -49,7 +49,7 @@ class ZMLogSwiftTests: XCTestCase {
         let _ = ZMSLog(tag: tag)
         
         // then
-        XCTAssertEqual(ZMLogGetLevelForTag(tag), ZMLogLevel_t.Warn)
+        XCTAssertEqual(ZMLogGetLevelForTag(tag), ZMLogLevel_t.warn)
     }
     
     func testThatTheLevelIsDebug() {
@@ -57,7 +57,7 @@ class ZMLogSwiftTests: XCTestCase {
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
-        ZMLogSetLevelForTag(.Debug, tag)
+        ZMLogSetLevelForTag(.debug, tag)
         
         // when
         var isDebug = false
@@ -78,7 +78,7 @@ class ZMLogSwiftTests: XCTestCase {
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
-        ZMLogSetLevelForTag(.Warn, tag)
+        ZMLogSetLevelForTag(.warn, tag)
         
         // when
         var isDebug = false
@@ -99,7 +99,7 @@ class ZMLogSwiftTests: XCTestCase {
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
-        ZMLogSetLevelForTag(.Info, tag)
+        ZMLogSetLevelForTag(.info, tag)
         
         // when
         var isDebug = false
@@ -120,7 +120,7 @@ class ZMLogSwiftTests: XCTestCase {
         // given
         let tag = "22test"
         let sut = ZMSLog(tag: tag)
-        ZMLogSetLevelForTag(.Error, tag)
+        ZMLogSetLevelForTag(.error, tag)
         
         // when
         var isDebug = false

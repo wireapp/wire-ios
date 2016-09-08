@@ -30,38 +30,38 @@ import Foundation
 
 public struct ZMSLog {
    
-    private static var privateRegisteredTags : Set<String> = Set()
+    fileprivate static var privateRegisteredTags : Set<String> = Set()
     
     /// List of registered tags
     public static var registeredTags : Set<String> {
         return privateRegisteredTags
     }
     
-    private let tag: String
+    fileprivate let tag: String
     
     public init(tag: String) {
         self.tag = tag
         
         ZMLogInitForTag(tag)
         
-        let identifier = NSBundle.mainBundle().bundleIdentifier ?? "com.wire.zmessaging.test"
+        let identifier = Bundle.main.bundleIdentifier ?? "com.wire.zmessaging.test"
         
         logClient = ZMSASLClient(identifier: identifier, facility: nil)
     }
     
-    private let logClient : ZMSASLClient;
+    fileprivate let logClient : ZMSASLClient;
     
-    public func error(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
-        logWithLevel(.Error, message, file: file, line:line)
+    public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+        logWithLevel(.error, message, file: file, line:line)
     }
-    public func warn(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
-        logWithLevel(.Warn, message, file: file, line:line)
+    public func warn(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+        logWithLevel(.warn, message, file: file, line:line)
     }
-    public func info(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
-        logWithLevel(.Info, message, file: file, line:line)
+    public func info(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+        logWithLevel(.info, message, file: file, line:line)
     }
-    public func debug(@autoclosure message: () -> String, file: String = #file, line: UInt = #line) {
-        logWithLevel(.Debug, message, file: file, line:line)
+    public func debug(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+        logWithLevel(.debug, message, file: file, line:line)
     }
 }
 
@@ -73,18 +73,18 @@ public struct ZMSLog {
 /// }
 extension ZMSLog {
 
-    public func ifWarn(closure: () -> Void) -> Void {
-        if (ZMLogLevel_t.Warn.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).UTF8String).rawValue) {
+    public func ifWarn(_ closure: () -> Void) -> Void {
+        if (ZMLogLevel_t.warn.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).utf8String).rawValue) {
             closure()
         }
     }
-    public func ifInfo(closure: () -> Void) -> Void {
-        if (ZMLogLevel_t.Info.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).UTF8String).rawValue) {
+    public func ifInfo(_ closure: () -> Void) -> Void {
+        if (ZMLogLevel_t.info.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).utf8String).rawValue) {
             closure()
         }
     }
-    public func ifDebug(closure: () -> Void) -> Void {
-        if (ZMLogLevel_t.Debug.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).UTF8String).rawValue) {
+    public func ifDebug(_ closure: () -> Void) -> Void {
+        if (ZMLogLevel_t.debug.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).utf8String).rawValue) {
             closure()
         }
     }
@@ -93,15 +93,15 @@ extension ZMSLog {
 /// Internal stuff
 extension ZMSLog {
     
-    private func logWithLevel(level: ZMLogLevel_t, @autoclosure _ message: () -> String, file: String = #file, line: UInt = #line) {
-        if (level.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).UTF8String).rawValue) {
+    fileprivate func logWithLevel(_ level: ZMLogLevel_t, _ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+        if (level.rawValue <= ZMLogGetLevelForTag((self.tag as NSString).utf8String).rawValue) {
             let m = message()
             logToAppleSystemLogFacility(level, m, file: file, line: line)
         }
     }
     
-    private func logToAppleSystemLogFacility(level: ZMLogLevel_t, _ message: String, file: String, line: UInt) {
-        self.logClient.sendMessage(
+    fileprivate func logToAppleSystemLogFacility(_ level: ZMLogLevel_t, _ message: String, file: String, line: UInt) {
+        self.logClient.send(
             ZMSASLMessage(message: "\(file):\(line) \(message)", level: level.aslLevel)
         )
     }
@@ -109,16 +109,16 @@ extension ZMSLog {
 }
 
 extension ZMLogLevel_t {
-    private var aslLevel: ZMASLLevel {
+    fileprivate var aslLevel: ZMASLLevel {
         switch (self) {
-        case .Error:
-            return ZMASLLevel.Error
-        case .Warn:
-            return ZMASLLevel.Warning
-        case .Info:
-            return ZMASLLevel.Notice
-        case .Debug:
-            return ZMASLLevel.Debug
+        case .error:
+            return ZMASLLevel.error
+        case .warn:
+            return ZMASLLevel.warning
+        case .info:
+            return ZMASLLevel.notice
+        case .debug:
+            return ZMASLLevel.debug
         }
     }
 }
