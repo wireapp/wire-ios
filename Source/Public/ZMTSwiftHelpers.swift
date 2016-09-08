@@ -21,13 +21,13 @@ import Foundation
 import XCTest
 
 
-public func AssertOptionalNil<T>(@autoclosure condition: () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func AssertOptionalNil<T>(_ condition: @autoclosure () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     if let value = condition() {
         XCTFail("\(value) is not nil: \(message)", file: file, line: line)
     }
 }
 
-public func AssertOptionalEqual<T : Equatable>(@autoclosure expression1: () -> T?, @autoclosure expression2: () -> T, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func AssertOptionalEqual<T : Equatable>(_ expression1: @autoclosure () -> T?, expression2: @autoclosure () -> T, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     if let v = expression1() {
         XCTAssertEqual(v, expression2(), message, file: file, line: line)
     } else {
@@ -35,7 +35,7 @@ public func AssertOptionalEqual<T : Equatable>(@autoclosure expression1: () -> T
     }
 }
 
-public func AssertOptionalNotNil<T>(@autoclosure expression: () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line, block: T -> () = {_ in}) {
+public func AssertOptionalNotNil<T>(_ expression: @autoclosure () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line, block: (T) -> () = {_ in}) {
     if let v = expression() {
         block(v)
     } else {
@@ -43,7 +43,7 @@ public func AssertOptionalNotNil<T>(@autoclosure expression: () -> T?, _ message
     }
 }
 
-public func AssertDictionaryHasOptionalValue<T: NSObject>(@autoclosure dictionary: () -> [String: T?], @autoclosure key: () -> String, @autoclosure expected: () -> T, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func AssertDictionaryHasOptionalValue<T: NSObject>(_ dictionary: @autoclosure () -> [String: T?], key: @autoclosure () -> String, expected: @autoclosure () -> T, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     if let v = dictionary()[key()] {
         AssertOptionalEqual(v, expression2: expected(), message, file: file, line: line)
     } else {
@@ -52,7 +52,7 @@ public func AssertDictionaryHasOptionalValue<T: NSObject>(@autoclosure dictionar
 }
 
 
-public func AssertDictionaryHasOptionalNilValue<T: NSObject>(@autoclosure dictionary: () -> [String: T?], @autoclosure key: () -> String, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func AssertDictionaryHasOptionalNilValue<T: NSObject>(_ dictionary: @autoclosure () -> [String: T?], key: @autoclosure () -> String, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     if let v = dictionary()[key()] {
         AssertOptionalNil(v, message , file: file, line: line)
     } else {

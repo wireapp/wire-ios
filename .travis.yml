@@ -4,7 +4,7 @@ env:
   - secure: 1sZkkwso0pyZ3S+VsRzx0ecs6GICdw4UoFLmj9XBRYl8xbFWOBFrjHMmrfMDYKbvcY2deYDiY4tXKT1tJiXV0us8b2pFl/pGxs8taQQDIiOjGGzX4EMZ4XwFJHgUwc4teitarC3p51lt7VYndCNrqJIxA1TejCeV6GILxGaRMbBTGQz3WM2zJWGUY5tRmMVZcQcSuUat4uDQbAGcPvPkMTVRNp3iYmZ4iAyK6ptLdKYl0U9yvJBS6tsLPThUQ3YNnFFrhlxkzRRhbmVgOwrK0KdHZfap4KhrYbILYSFHVwFKHkLelt3ZlErs4Y5CkG0K/mVB8PUmXCWeWTFTOz+IuQgrQoaYC6Aj1LH3vnQ5xnesDwGCuuuoiDvoNM166Racz+gDXoTAtwA8YwPrCZycgZvtWc+X0ADs5xGYOtM31NBzf2fpmYKcrPO9Nx+96LwIht1OevcSfIE8dN5iRVE1ylP5K+35zvAbEaRJelWwq0IkjONp2/SKFxlFnqcWQ8U4786E2njETXzSWdWYjan5y9FzVBoXbkBMppDvDeD9uqbh5dE3e1WBCC+IxjCQX7c32PcK6z5SgQQ9/cAI6mpMWyTTBSV50FsS6UyLDf6Dn9YcX/uV6253DZkFH6V/woqCMJRsUDYJabYdNOgwY8+9uzvpp6hpRpKpFj0WEk89PN8=
 
 language: objective-c
-osx_image: xcode7.3
+osx_image: xcode8
 
 install:
   - bundle install
@@ -14,7 +14,7 @@ install:
 script:
   - open -b com.apple.iphonesimulator
   - set -o pipefail
-  - xcodebuild build test -scheme ZMTesting-ios -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | tee >build.log >(xcpretty -s)
+  - xcodebuild build test -scheme ZMTesting-ios -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | tee >build.log >(xcpretty -s)
   - bundle exec danger
 
 after_failure:
