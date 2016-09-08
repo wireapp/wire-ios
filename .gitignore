@@ -27,3 +27,10 @@ DerivedData
 .DS_Store
 Carthage
 ZMCSystem.framework.zip
+
+
+# Test artefacts
+xcode-*.log
+tests.xml
+code-coverage/*
+cobertura.xml
