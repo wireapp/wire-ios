@@ -23,22 +23,22 @@ import ZMCSystem
 public class FakeGroupContext: NSObject, ZMSGroupQueue {
 
     public let dispatchGroup: ZMSDispatchGroup!
-    private let queue: dispatch_queue_t!
+    fileprivate let queue: DispatchQueue!
     
-    public static let mainContext = FakeGroupContext(queue: dispatch_get_main_queue(), group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
-    public static let sycnContext = FakeGroupContext(queue: dispatch_queue_create("FakeGroupContext syncContext", DISPATCH_QUEUE_SERIAL), group: ZMSDispatchGroup(label: "FakeSyncContext"))
+    public static let mainContext = FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
+    public static let sycnContext = FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
     
-    public init(queue: dispatch_queue_t, group: ZMSDispatchGroup) {
+    public init(queue: DispatchQueue, group: ZMSDispatchGroup) {
         self.queue = queue
         self.dispatchGroup = group
     }
     
     public override convenience init() {
-        self.init(queue: dispatch_queue_create("FakeGroupContextPrivateQueue-\(arc4random()%1000)", DISPATCH_QUEUE_SERIAL), group: ZMSDispatchGroup(label: "FakeGroupContext"))
+        self.init(queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random()%1000)"), group: ZMSDispatchGroup(label: "FakeGroupContext"))
     }
     
-    public func performGroupedBlock(block: dispatch_block_t) {
-        dispatchGroup.asyncOnQueue(queue, block: block);
+    public func performGroupedBlock(_ block: @escaping ()->()) {
+        dispatchGroup.async(on: queue, block: block);
     }
 
 }
