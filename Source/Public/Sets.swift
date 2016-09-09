@@ -23,11 +23,11 @@ import Swift
 
 /// START https://gist.github.com/anonymous/9bb5f5d9f6918b1482b6
 /// Taken from that gist & slightly adapted.
-public struct SetGenerator<Element : Hashable> : GeneratorType {
-    var dictGenerator : DictionaryGenerator<Element, Void>
+public struct SetGenerator<Element : Hashable> : IteratorProtocol {
+    var dictGenerator : DictionaryIterator<Element, Void>
     
     public init(_ d : Dictionary<Element,Void>) {
-        dictGenerator = d.generate()
+        dictGenerator = d.makeIterator()
     }
     
     public mutating func next() -> Element? {
@@ -44,17 +44,17 @@ public struct SetGenerator<Element : Hashable> : GeneratorType {
 extension Set {
     
     /// Returns a set with elements filtered out
-    func filter(includeElement: (Element) -> Bool)-> Set<Element> {
+    func filter(_ includeElement: (Element) -> Bool)-> Set<Element> {
         return Set(Array(self).filter(includeElement))
     }
     
-    func reduce<U>(initial: U, combine: (U, Element) -> U) -> U {
-        return Array(self).reduce(initial, combine: combine)
+    func reduce<U>(_ initial: U, combine: (U, Element) -> U) -> U {
+        return Array(self).reduce(initial, combine)
     }
     
     /// Returns a set with mapped elements. The resulting set might be smaller than self because
     /// of collisions in the mapping.
-    func map<U>(transform: (Element) -> U) -> Set<U> {
+    func map<U>(_ transform: (Element) -> U) -> Set<U> {
         return Set<U>(Array(self).map(transform))
     }
 
@@ -63,9 +63,9 @@ extension Set {
 
 /// Make NSSet more Set like:
 extension NSSet {
-    public func union(s: NSSet) -> NSSet {
+    public func union(_ s: NSSet) -> NSSet {
         let r = NSMutableSet(set: s)
-        r.unionSet(self as Set<NSObject>)
+        r.union(self as Set<NSObject>)
         return r
     }
     public var isEmpty: Bool {
@@ -73,98 +73,17 @@ extension NSSet {
             return count == 0
         }
     }
-    public func contains(obj: NSObject) -> Bool {
-        return self.containsObject(obj)
+    public func contains(_ obj: NSObject) -> Bool {
+        return self.contains(obj)
     }
 
-}
-
-// MARK: OrderedSet
-public final class OrderedSet<T  where T : NSObject, T : Hashable> : Equatable, SequenceType {
-    
-    private let innerSet : NSOrderedSet
-    
-    public func toNSOrderedSet() -> NSOrderedSet {
-        return self.innerSet.copy() as! NSOrderedSet
-    }
-    
-    public func generate() -> AnyGenerator<T> {
-        let enumeration = self.innerSet.objectEnumerator()
-        
-        return AnyGenerator {
-            return enumeration.nextObject() as? T
-        }
-    }
-    
-    public var count : Int {
-        return self.innerSet.count
-    }
-    
-    public init() {
-        self.innerSet = NSOrderedSet()
-    }
-    
-    public init(array: [T]) {
-        self.innerSet = NSOrderedSet(array: array)
-    }
-    
-    public init(object: T) {
-        self.innerSet = NSOrderedSet(object: object)
-    }
-    
-    public init(orderedSet: NSOrderedSet) {
-        self.innerSet = orderedSet.copy() as! NSOrderedSet
-    }
-    
-    public init(set: OrderedSet<T>) {
-        self.innerSet = set.innerSet.copy() as! NSOrderedSet
-    }
-    
-    public func minus(set: OrderedSet<T>) -> OrderedSet<T> {
-        let mutableInnerset = self.innerSet.mutableCopy() as! NSMutableOrderedSet
-        mutableInnerset.minusOrderedSet(set.innerSet)
-        return OrderedSet<T>(orderedSet: mutableInnerset)
-    }
-    
-    public func union(set: OrderedSet<T>) -> OrderedSet<T> {
-        let mutableInnerset = self.innerSet.mutableCopy() as! NSMutableOrderedSet
-        mutableInnerset.unionOrderedSet(set.innerSet)
-        return OrderedSet<T>(orderedSet: mutableInnerset)
-    }
-    
-    public func set() -> Set<T> {
-        return Set(self.innerSet.array as! [T])
-    }
-    public var array: [T] {
-        get {
-            return self.innerSet.array as! [T]
-        }
-    }
-}
-
-public func ==<T>(lhs : OrderedSet<T>, rhs : OrderedSet<T>) -> Bool {
-    return lhs.innerSet.isEqualToOrderedSet(rhs.innerSet)
 }
 
 // MARK: Dictionary
 extension Dictionary {
-
-    // Does not compile with Swift 1.1
-//    /// Creates a dictionary by applying a function over a sequence, and assigning the calculated value to the sequence element
-//    init<S: SequenceType where S.Generator.Element == Key>(_ sequence: S, valueMapping: (Key) -> Value) {
-//        
-//        self.init()
-//        var dict : [Key:Value] = [:]
-//        
-//        for key in sequence {
-//            let value = valueMapping(key)
-//            self[key] = value
-//        }
-//    }
-    
     
     /// Creates a dictionary by applying a function over a sequence, and assigning the calculated value to the sequence element. Also maps the keys
-    init<T, S: SequenceType where S.Generator.Element == T>(_ sequence: S, keyMapping: (T) -> Key, valueMapping: (T) -> Value) {
+    init<T, S: Sequence>(_ sequence: S, keyMapping: (T) -> Key, valueMapping: (T) -> Value) where S.Iterator.Element == T {
         
         self.init()
         
@@ -176,7 +95,7 @@ extension Dictionary {
     }
 
     /// Maps the key keeping the association with values
-    func mapKeys<T: Hashable>(transform: (Key) -> T) -> [T: Value] {
+    func mapKeys<T: Hashable>(_ transform: (Key) -> T) -> [T: Value] {
         var mapping : [T : Value] = [:]
         for (key, value) in self {
             mapping[transform(key)] = value

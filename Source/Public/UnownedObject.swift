@@ -36,5 +36,5 @@ public final class UnownedObject<T: AnyObject> {
         self.unbox = unbox
     }
     
-    public var isValid: Bool { return self.unbox != nil }
+    open var isValid: Bool { return self.unbox != nil }
 }

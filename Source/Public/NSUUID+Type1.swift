@@ -24,20 +24,19 @@ public extension NSUUID {
     /// Returns whether this UUID is of Type 1
     public var isType1UUID : Bool {
         // looking at most significant bits of #7, as defined in: https://tools.ietf.org/html/rfc4122
-        var time_high_and_variant : UInt64 = 0
-        self.data().getBytes(&time_high_and_variant, range: NSRange.init(location: 4+2, length: 1))
-        let type = (time_high_and_variant & 0xf0) >> 4
+        let type = ((self as UUID).uuid.6 & 0xf0) >> 4
         return type == 1
     }
     
     /// Read the given number of octets starting at the given location and reverts the octects order
-    private func readOctectsReverted(start: UInt, len: UInt) -> UInt64 {
+    fileprivate func readOctectsReverted(_ start: UInt, len: UInt) -> UInt64 {
         let data = self.data()
         var result : UInt64 = 0
         for i in 0..<len {
-            var readData : UInt32 = 0
+            var readData : UInt8 = 0
             let finalOctetIndex = len-i-1
-            data.getBytes(&readData, range: NSRange.init(location: Int(start+i), length: 1))
+            let range = Range((Int(start+i))...(Int(start+i)))
+            data?.copyBytes(to: &readData, from: range)
             let shiftedData = UInt64(readData) << UInt64(8*finalOctetIndex)
             result = result | shiftedData
         }
@@ -46,7 +45,7 @@ public extension NSUUID {
     
     /// Returns the type 1 timestamp
     /// - returns: NSDate, or `nil` if the NSUUID is not of Type 1
-    public var type1Timestamp : NSDate? {
+    public var type1Timestamp : Date? {
         /*
         see https://tools.ietf.org/html/rfc4122
         UUID schema
@@ -74,23 +73,45 @@ public extension NSUUID {
         let nanoseconds100SinceUnixTimestamp = time - referenceDate
         let nanoseconds100ToSeconds = Double(10000000)
         let unixTimestamp = Double(nanoseconds100SinceUnixTimestamp) / nanoseconds100ToSeconds
-        return NSDate(timeIntervalSince1970: unixTimestamp)
+        return Date(timeIntervalSince1970: unixTimestamp)
     }
 
     /// Returns the comparison result for this NSUUID of type 1 and another NSUUID of type 1
     /// - Requires: will assert if any UUID is not of type 1
-    public func compareWithType1(uuid: NSUUID) -> NSComparisonResult {
-        assert(self.isType1UUID && uuid.isType1UUID)
-        return self.type1Timestamp!.compare(uuid.type1Timestamp!)
+    public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
+        assert(self.isType1UUID && type1UUID.isType1UUID)
+        return self.type1Timestamp!.compare(type1UUID.type1Timestamp!)
     }
 
-    public class func timeBasedUUID() -> NSUUID {
-        let uuidSize = sizeof(uuid_t)
-        let uuidPointer = UnsafeMutablePointer<UInt8>.alloc(uuidSize)
+    public static func timeBasedUUID() -> NSUUID {
+        let uuidSize = MemoryLayout<uuid_t>.size
+        let uuidPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: uuidSize)
         uuid_generate_time(uuidPointer)
-        let uuid = NSUUID(UUIDBytes: uuidPointer)
-        uuidPointer.dealloc(uuidSize)
+        let uuid = NSUUID(uuidBytes: uuidPointer) as NSUUID
+        uuidPointer.deallocate(capacity: uuidSize)
         return uuid
     }
 }
 
+
+public extension UUID {
+    public var isType1UUID : Bool {
+        return (self as NSUUID).isType1UUID
+    }
+    
+    fileprivate func readOctectsReverted(_ start: UInt, len: UInt) -> UInt64 {
+        return (self as NSUUID).readOctectsReverted(start, len: len)
+    }
+    
+    public var type1Timestamp : Date? {
+        return (self as NSUUID).type1Timestamp
+    }
+    
+    public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
+        return (self as NSUUID).compare(withType1UUID: type1UUID)
+    }
+    
+    public static func timeBasedUUID() -> NSUUID {
+        return NSUUID.timeBasedUUID()
+    }
+}
