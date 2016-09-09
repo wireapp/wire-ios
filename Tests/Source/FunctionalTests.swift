@@ -26,7 +26,7 @@ class FunctionalTests: XCTestCase {
         
         let mutableArray = NSMutableArray()
         for i in 0 ..< 10 {
-            mutableArray.addObject(NSNumber(integer: i))
+            mutableArray.add(NSNumber(value: i as Int))
         }
         let baseArray = (mutableArray.copy() as! [NSObject])
         

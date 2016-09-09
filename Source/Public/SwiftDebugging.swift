@@ -22,28 +22,28 @@ import CoreData
 
 public struct SwiftDebugging {
     
-    public static func address(object: AnyObject) -> Int {
-        return unsafeBitCast(object, Int.self)
+    public static func address(_ object: AnyObject) -> Int {
+        return unsafeBitCast(object, to: Int.self)
     }
     
-    public static func pointerDescription(object: NSManagedObject) -> String {
-        return "<\(object.dynamicType) 0x\(String(self.address(object), radix:16))>"
+    public static func pointerDescription(_ object: NSManagedObject) -> String {
+        return "<\(type(of: object)) 0x\(String(self.address(object), radix:16))>"
     }
     
-    public static func sequenceDescription<T>(sequence : AnySequence<T>) -> String {
+    public static func sequenceDescription<T>(_ sequence : AnySequence<T>) -> String {
         
         return "( " + sequence.map({ obj -> String in self.shortDescription(obj) + ", " })
-            .reduce("", combine: +) + " )"
+            .reduce("", +) + " )"
     }
     
-    public static func sequenceDescription<S : SequenceType>(sequence : S) -> String {
+    public static func sequenceDescription<S : Sequence>(_ sequence : S) -> String {
         
         return "( " + sequence.map( { obj -> String in self.shortDescription(obj) + ", " })
-            .reduce("", combine: +) + " )"
+            .reduce("", +) + " )"
     }
     
     
-    public static func shortDescription(value: Any) -> String {
+    public static func shortDescription(_ value: Any) -> String {
         switch (value) {
         case let managedObject as NSManagedObject:
             return pointerDescription(managedObject)

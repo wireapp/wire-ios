@@ -27,10 +27,10 @@ class String_MIMETypeTests: XCTestCase {
         // This test is only intended to validate that parameters are passed correctly to the underlaying 
         // function. No need to re-test UTTypeConformsTo from MobileCoreServices.
         
-        XCTAssertTrue("video/mp4".zm_conformsToUTI(kUTTypeMPEG4))
-        XCTAssertFalse("video/mp4".zm_conformsToUTI(kUTTypeQuickTimeMovie))
+        XCTAssertTrue("video/mp4".zm_conforms(to: kUTTypeMPEG4))
+        XCTAssertFalse("video/mp4".zm_conforms(to: kUTTypeQuickTimeMovie))
         
-        XCTAssertTrue("video/mp4".zm_conformsToUTI(kUTTypeMovie))
-        XCTAssertFalse("video/mp4".zm_conformsToUTI(kUTTypeAudio))
+        XCTAssertTrue("video/mp4".zm_conforms(to: kUTTypeMovie))
+        XCTAssertFalse("video/mp4".zm_conforms(to: kUTTypeAudio))
     }
 }
