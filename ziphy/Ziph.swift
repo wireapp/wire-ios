@@ -19,7 +19,7 @@
 
 import Foundation
 
-@objc open class Ziph : NSObject {
+@objc public class Ziph : NSObject {
     
     open let ziphId:String!
     open let ziphyImages:[String:ZiphyImageRep]!

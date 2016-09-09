@@ -21,7 +21,7 @@ import Foundation
 
 
 
-@objc open class ZiphySearchResultsController : NSObject {
+@objc public class ZiphySearchResultsController : NSObject {
     
     
     open var ziphyClient:ZiphyClient?

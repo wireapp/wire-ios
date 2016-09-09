@@ -33,7 +33,7 @@ public typealias ZiphsCallBack = (_ success:Bool, _ ziphs:[Ziph], _ error:Error?
 public typealias ZiphByIdCallBack = (_ success:Bool, _ ziphId:String, _ error:Error?)->()
 public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _ ziph:Ziph, _ data:Data?, _ error:Error?) -> ()
 
-@objc open class ZiphyClient : NSObject {
+@objc public class ZiphyClient : NSObject {
     
     
     open static var logLevel:ZiphyLogLevel = ZiphyLogLevel.error
@@ -213,9 +213,9 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
             
     }
     
-    fileprivate func performDataTask(_ request:URLRequest, requester:ZiphyURLRequester) -> NSURLRequestPromise {
+    fileprivate func performDataTask(_ request:URLRequest, requester:ZiphyURLRequester) -> URLRequestPromise {
         
-        let promise = NSURLRequestPromise()
+        let promise = URLRequestPromise()
         
         requester.doRequest(request){ (data, response, nError) -> Void in
             
