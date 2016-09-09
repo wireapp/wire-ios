@@ -34,5 +34,5 @@ import Foundation
  ```
  */
 class PointerWrapper {
-    var ptr : COpaquePointer = nil
+    var ptr : OpaquePointer? = nil
 }
