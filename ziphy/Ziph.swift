@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,10 +21,10 @@ import Foundation
 
 @objc public class Ziph : NSObject {
     
-    public let ziphId:String!
-    public let ziphyImages:[String:ZiphyImageRep]!
+    open let ziphId:String!
+    open let ziphyImages:[String:ZiphyImageRep]!
     
-    public override var description: String {
+    open override var description: String {
         
         get{
             return "ziphId: \(self.ziphId)\n" +
@@ -50,7 +50,7 @@ import Foundation
                 
                 let ziphyImageType = ZiphyClient.fromStringToZiphyImageType(key)
                 var dictionaryValue = value as? [String:AnyObject]
-                dictionaryValue?["type"] = ziphyImageType.rawValue
+                dictionaryValue?["type"] = ziphyImageType.rawValue as AnyObject
 
                 if let dictionaryValue = dictionaryValue {
                     ziphyImagesDict[key] = ZiphyImageRep(dictionary:dictionaryValue)
@@ -79,7 +79,7 @@ import Foundation
         }
     }
     
-    public func imageWithType(type:ZiphyImageType)->ZiphyImageRep? {
+    open func imageWithType(_ type:ZiphyImageType)->ZiphyImageRep? {
     
         return self.ziphyImages[ZiphyClient.fromZiphyImageTypeToString(type)]
     }

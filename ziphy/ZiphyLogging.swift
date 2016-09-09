@@ -23,11 +23,11 @@ import Foundation
 
 @objc public enum ZiphyLogLevel: Int, Comparable {
     
-    case Verbose = 0
-    case Debug
-    case Info
-    case Warning
-    case Error
+    case verbose = 0
+    case debug
+    case info
+    case warning
+    case error
 }
 
 
@@ -36,7 +36,7 @@ public func <(x: ZiphyLogLevel, y: ZiphyLogLevel) -> Bool { return x.rawValue < 
 
 
 
-func Log(message: String,
+func Log(_ message: String,
     function: String = #function,
     file: String = #file,
     line: Int = #line,
@@ -48,42 +48,42 @@ func Log(message: String,
         }
 }
 
-func LogVerbose(message:String,
+func LogVerbose(_ message:String,
     function: String = #function,
     file: String = #file,
     line: Int = #line){
         
-        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.Verbose)
+        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.verbose)
 }
 
-func LogDebug(message:String,
+func LogDebug(_ message:String,
     function: String = #function,
     file: String = #file,
     line: Int = #line){
         
-        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.Debug)
+        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.debug)
 }
 
-func LogInfo(message:String,
+func LogInfo(_ message:String,
     function: String = #function,
     file: String = #file,
     line: Int = #line){
         
-        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.Info)
+        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.info)
 }
 
-func LogWarn(message:String,
+func LogWarn(_ message:String,
     function: String = #function,
     file: String = #file,
     line: Int = #line){
         
-        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.Warning)
+        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.warning)
 }
 
-func LogError(message:String,
+func LogError(_ message:String,
     function: String = #function,
     file: String = #file,
     line: Int = #line){
         
-        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.Error)
+        Log(message, function:function, file:file, line:line, level: ZiphyLogLevel.error)
 }

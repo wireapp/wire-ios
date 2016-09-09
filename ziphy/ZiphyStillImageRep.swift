@@ -23,12 +23,12 @@ import Foundation
 @objc public class ZiphyStillImageRep: NSObject {
     
     
-    public let imageType:ZiphyImageType
-    public let url:String
-    public let width:Int
-    public let height:Int
+    open let imageType:ZiphyImageType
+    open let url:String
+    open let width:Int
+    open let height:Int
     
-    public override var description: String {
+    open override var description: String {
         
         get{
             return "type: \(ZiphyClient.fromZiphyImageTypeToString(self.imageType)) , " +
@@ -54,7 +54,7 @@ import Foundation
         let width = Int(dictionary["width"] as? String ?? "0") ?? 0
         let height = Int(dictionary["height"] as? String ?? "0") ?? 0
         
-        let ziphyImageType = typeAsInt == nil ? ZiphyImageType.Unknown : ZiphyImageType(rawValue: typeAsInt!)
+        let ziphyImageType = typeAsInt == nil ? ZiphyImageType.unknown : ZiphyImageType(rawValue: typeAsInt!)
         
         self.init(type:ziphyImageType!, url:url, width:width, height:height)
     }

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,30 +23,30 @@ import Foundation
 
 private let apiVersionPath = "/v1"
 private let gifsEndpoint = "/gifs"
-private let searchEndpoint = gifsEndpoint.stringByAppendingString("/search")
-private let randomEndpoint = gifsEndpoint.stringByAppendingString("/random")
+private let searchEndpoint = gifsEndpoint + "/search"
+private let randomEndpoint = gifsEndpoint + "/random"
 private let requestScheme = "https"
 
 
 
-public typealias ZiphsCallBack = (success:Bool, ziphs:[Ziph], error:NSError?) -> ()
-public typealias ZiphByIdCallBack = (success:Bool, ziphId:String, error:NSError?)->()
-public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:Ziph, data:NSData?, error:NSError?) -> ()
+public typealias ZiphsCallBack = (_ success:Bool, _ ziphs:[Ziph], _ error:Error?) -> ()
+public typealias ZiphByIdCallBack = (_ success:Bool, _ ziphId:String, _ error:Error?)->()
+public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _ ziph:Ziph, _ data:Data?, _ error:Error?) -> ()
 
 @objc public class ZiphyClient : NSObject {
     
     
-    public static var logLevel:ZiphyLogLevel = ZiphyLogLevel.Error
+    open static var logLevel:ZiphyLogLevel = ZiphyLogLevel.error
     let host:String
     let requester:ZiphyURLRequester
-    let downloadSession:NSURLSession
+    let downloadSession:URLSession
     let requestGenerator:ZiphyRequestGenerator
     
     public required init(host:String, requester: ZiphyURLRequester) {
         
         self.requester = requester
         self.host = host
-        self.downloadSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+        self.downloadSession = URLSession(configuration: URLSessionConfiguration.default)
         self.requestGenerator = ZiphyRequestGenerator(host:self.host,
             requestScheme:requestScheme,
             apiVersionPath:apiVersionPath,
@@ -55,18 +55,18 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
             gifsEndpoint:gifsEndpoint)
     }
     
-    public func search(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
+    open func search(_ callBackQueue:DispatchQueue = DispatchQueue.main,
         term:String,
         resultsLimit:Int = 25,
         offset:Int = 0,
-        onCompletion:ZiphsCallBack) {
+        onCompletion:@escaping ZiphsCallBack) {
         
         let eitherRequest = self.requestGenerator.searchRequestWithParameters(term, resultsLimit:resultsLimit, offset:offset)
         
         eitherRequest.leftMap { error in
             
             performOnQueue(callBackQueue) {
-                onCompletion(success: false, ziphs:[Ziph](), error: error)
+                onCompletion(false, [Ziph](), error)
             }
         }
         
@@ -85,7 +85,7 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                     return eitherImageArray.rightMap { ziphs in
                         
                         performOnQueue(callBackQueue) {
-                            onCompletion(success: true, ziphs: ziphs, error: nil)
+                            onCompletion(true, ziphs, nil)
                         }
                         
                     }.left
@@ -93,55 +93,55 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                 }.fail { error in
                     
                     performOnQueue(callBackQueue) {
-                        onCompletion(success: false, ziphs: [Ziph](), error: error)
+                        onCompletion(false, [Ziph](), error)
                     }
             }
         }
     }
     
-    public func randomGif(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
-        onCompletion:ZiphByIdCallBack) {
+    open func randomGif(_ callBackQueue:DispatchQueue = DispatchQueue.main,
+        onCompletion:@escaping ZiphByIdCallBack) {
         
         let eitherRequest = self.requestGenerator.randomRequests()
         
         eitherRequest.leftMap { error in
             
             performOnQueue(callBackQueue) {
-                onCompletion(success: false, ziphId: "", error: error)
+                onCompletion(false, "", error)
             }
         }
         
         eitherRequest.rightMap { request in
             
-            self.performDataTask(request, requester:self.requester).then { (data, response, error) -> NSError? in
+            self.performDataTask(request, requester:self.requester).then { (data, response, error) -> Error? in
                 
                 let eitherGifID = self.checkDataForGifId(data)
                 
                 return eitherGifID.rightMap { ziphId in
                     
                     performOnQueue(callBackQueue) {
-                        onCompletion(success: true, ziphId: ziphId, error: nil)
+                        onCompletion(true, ziphId, nil)
                     }
                 }.left
                 
             }.fail { error in
                 performOnQueue(callBackQueue) {
-                    onCompletion(success:false, ziphId:"", error:error)
+                    onCompletion(false, "", error)
                 }
             }
         }
     }
     
-    public func gifsById(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
+    open func gifsById(_ callBackQueue:DispatchQueue = DispatchQueue.main,
         ids:[String],
-        onCompletion:ZiphsCallBack) {
+        onCompletion:@escaping ZiphsCallBack) {
         
         let eitherRequest = self.requestGenerator.gifsByIdRequest(ids)
         
         eitherRequest.leftMap { error in
             
             performOnQueue(callBackQueue) {
-                onCompletion(success: false, ziphs: [Ziph](), error: error)
+                onCompletion(false, [Ziph](), error)
             }
         }
         
@@ -154,46 +154,46 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                 return eitherImageArray.rightMap { ziphs in
                     
                     performOnQueue(callBackQueue) {
-                        onCompletion(success: true, ziphs: ziphs, error:nil)
+                        onCompletion(true, ziphs, nil)
                     }
                 }.left
                 
             }.fail { error in
                     
                 performOnQueue(callBackQueue) {
-                    onCompletion(success:false, ziphs:[Ziph](), error:error)
+                    onCompletion(false, [Ziph](), error)
                 }
             }
         }
         
     }
     
-    public func fetchImage(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
+    open func fetchImage(_ callBackQueue:DispatchQueue = DispatchQueue.main,
         ziph:Ziph,
         imageType:ZiphyImageType,
-        onCompletion:ZiphyImageCallBack) {
+        onCompletion:@escaping ZiphyImageCallBack) {
             
             if let ziphyImage = ziph.imageWithType(imageType) {
                 
                 LogDebug("Trying to fetch image at url \(ziphyImage.url)")
                 
-                if let components = NSURLComponents(string:ziphyImage.url) {
+                if let components = URLComponents(string:ziphyImage.url) {
                     
-                    if let url = components.URL {
+                    if let url = components.url {
                         
-                        let request = NSURLRequest(URL:url)
+                        let request = URLRequest(url:url)
                         
-                        self.performDataTask(request, requester:self.downloadSession).then { (data, response, error) -> NSError? in
+                        self.performDataTask(request, requester:self.downloadSession).then { (data, response, error) -> Error? in
                             LogDebug("Fetch of image at url \(ziphyImage.url) succeeded")
                             
                             performOnQueue(callBackQueue) {
-                                onCompletion(success: true, image:ziphyImage, ziph:ziph, data: data, error: error)
+                                onCompletion(true, ziphyImage, ziph, data, error)
                             }
                             return nil
                             }.fail({ (error) -> () in
                                 LogError("Fetch of image \(ziphyImage) failed")
                                 performOnQueue(callBackQueue) {
-                                    onCompletion(success: false, image:ziphyImage, ziph:ziph, data:nil, error: error)
+                                    onCompletion(false, ziphyImage, ziph, nil, error)
                                 }
                             })
                     }
@@ -204,8 +204,8 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                 LogError("Ziphy asked to fetch image of type \(imageType), but no such type exists in \(ziph)")
                 performOnQueue(callBackQueue){
                     let userInfo = [NSLocalizedDescriptionKey:"No type \(imageType) in ziph: \(ziph)"]
-                    let error = NSError(domain: ZiphyErrorDomain, code: ZiphyError.NoSuchResource.rawValue, userInfo:userInfo)
-                    onCompletion(success: false, image:nil, ziph:ziph, data:nil, error: error)
+                    let error = NSError(domain: ZiphyErrorDomain, code: ZiphyError.noSuchResource.rawValue, userInfo:userInfo)
+                    onCompletion(false, nil, ziph, nil, error)
                 }
             }
             
@@ -213,9 +213,9 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
             
     }
     
-    private func performDataTask(request:NSURLRequest, requester:ZiphyURLRequester) -> NSURLRequestPromise {
+    fileprivate func performDataTask(_ request:URLRequest, requester:ZiphyURLRequester) -> URLRequestPromise {
         
-        let promise = NSURLRequestPromise()
+        let promise = URLRequestPromise()
         
         requester.doRequest(request){ (data, response, nError) -> Void in
             
@@ -223,23 +223,23 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                 promise.reject(error)
             }
             
-            promise.resolve()(data: data, response: response, error: nError)
+            promise.resolve()(data, response, nError)
         }
         
         return promise
     }
     
-    private func checkDataForPagination(data:NSData!, resultsLimit:Int, offset:Int)->Either<NSError, AnyObject> {
+    fileprivate func checkDataForPagination(_ data:Data!, resultsLimit:Int, offset:Int)->Either<Error, AnyObject> {
         
         if data == nil {
             
             return Either.Left(NSError(domain: ZiphyErrorDomain,
-                code:ZiphyError.BadResponse.rawValue,
+                code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
         
         do {
-            let maybeResponse = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0)) as? [String:AnyObject]
+            let maybeResponse = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String:AnyObject]
             
             if let paginationInfo = maybeResponse?["pagination"] as? [String:AnyObject] {
                 
@@ -252,7 +252,7 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                         if offset >= total_count {
                             
                             return  Either.Left(NSError(domain: ZiphyErrorDomain,
-                                code:ZiphyError.NoMorePages.rawValue,
+                                code:ZiphyError.noMorePages.rawValue,
                                 userInfo:[NSLocalizedDescriptionKey:"No more pages in JSON"]))
                         }
                 }
@@ -260,31 +260,31 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
             else{
                 
                 return Either.Left(NSError(domain: ZiphyErrorDomain,
-                    code:ZiphyError.BadResponse.rawValue,
+                    code:ZiphyError.badResponse.rawValue,
                     userInfo:[NSLocalizedDescriptionKey:"Pagination error in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
             return Either.Left(NSError(domain: ZiphyErrorDomain,
-                code:ZiphyError.BadResponse.rawValue,
+                code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
         
         
-        return Either.Right([])
+        return Either.Right([] as AnyObject)
     }
     
-    private func checkDataForImageArray(data:NSData!) -> Either<NSError,[Ziph]> {
+    fileprivate func checkDataForImageArray(_ data:Data!) -> Either<Error,[Ziph]> {
         
         if data == nil {
             
             return Either.Left(NSError(domain: ZiphyErrorDomain,
-                code:ZiphyError.BadResponse.rawValue,
+                code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
         
         do {
-            let maybeResponse = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0)) as? [String:AnyObject]
+            let maybeResponse = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String:AnyObject]
             
             if let gifsArray = maybeResponse?["data"] as? [[String:AnyObject]] {
                 
@@ -303,27 +303,27 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                 LogError("Response Error: \(maybeResponse)")
                 
                 return Either.Left(NSError(domain: ZiphyErrorDomain,
-                    code:ZiphyError.BadResponse.rawValue,
+                    code:ZiphyError.badResponse.rawValue,
                     userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
             return Either.Left(NSError(domain: ZiphyErrorDomain,
-                code:ZiphyError.BadResponse.rawValue,
+                code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
     }
     
-    private func checkDataForGifId(data:NSData!) -> Either<NSError,String> {
+    fileprivate func checkDataForGifId(_ data:Data!) -> Either<NSError,String> {
         
         if data == nil {
             
             return Either.Left(NSError(domain: ZiphyErrorDomain,
-                code:ZiphyError.BadResponse.rawValue,
+                code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
         do {
-            let maybeResponse = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0)) as? [String:AnyObject]
+            let maybeResponse = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String:AnyObject]
             if let randomGifDesc = maybeResponse?["data"] as? [String:AnyObject] {
                 
                 let gifId:String? = randomGifDesc["id"] as? String
@@ -334,13 +334,13 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
                 LogError("Response Error: \(maybeResponse)")
                 
                 return Either.Left(NSError(domain: ZiphyErrorDomain,
-                    code:ZiphyError.BadResponse.rawValue,
+                    code:ZiphyError.badResponse.rawValue,
                     userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
             return Either.Left(NSError(domain: ZiphyErrorDomain,
-                code:ZiphyError.BadResponse.rawValue,
+                code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
         
@@ -349,47 +349,47 @@ public typealias ZiphyImageCallBack = (success:Bool, image:ZiphyImageRep?, ziph:
 
 extension ZiphyClient {
     
-    public class func fromZiphyImageTypeToString(type:ZiphyImageType) -> String
+    public class func fromZiphyImageTypeToString(_ type:ZiphyImageType) -> String
     {
         switch type {
-        case .FixedHeight: return "fixed_height"
-        case .FixedHeightStill: return "fixed_height_still"
-        case .FixedHeightDownsampled: return "fixed_height_downsampled"
-        case .FixedWidth: return "fixed_width"
-        case .FixedWidthStill: return "fixed_width_still"
-        case .FixedWidthDownsampled: return "fixed_width_downsampled"
-        case .FixedHeightSmall: return "fixed_height_small"
-        case .FixedHeightSmallStill: return "fixed_height_small_still"
-        case .FixedWidthSmall: return "fixed_width_small"
-        case .FixedWidthSmallStill: return "fixed_width_small_still"
-        case .Downsized: return "downsized"
-        case .DownsizedStill: return "downsized_still"
-        case .DownsizedLarge: return "downsized_large"
-        case .Original: return "original"
-        case .OriginalStill: return "original_still"
+        case .fixedHeight: return "fixed_height"
+        case .fixedHeightStill: return "fixed_height_still"
+        case .fixedHeightDownsampled: return "fixed_height_downsampled"
+        case .fixedWidth: return "fixed_width"
+        case .fixedWidthStill: return "fixed_width_still"
+        case .fixedWidthDownsampled: return "fixed_width_downsampled"
+        case .fixedHeightSmall: return "fixed_height_small"
+        case .fixedHeightSmallStill: return "fixed_height_small_still"
+        case .fixedWidthSmall: return "fixed_width_small"
+        case .fixedWidthSmallStill: return "fixed_width_small_still"
+        case .downsized: return "downsized"
+        case .downsizedStill: return "downsized_still"
+        case .downsizedLarge: return "downsized_large"
+        case .original: return "original"
+        case .originalStill: return "original_still"
         default: return "unkwnown"
         }
     }
     
-    public class func fromStringToZiphyImageType(string:String) -> ZiphyImageType
+    public class func fromStringToZiphyImageType(_ string:String) -> ZiphyImageType
     {
         switch string {
-        case "fixed_height": return .FixedHeight
-        case "fixed_height_still": return .FixedHeightStill
-        case "fixed_height_downsampled": return .FixedHeightDownsampled
-        case "fixed_width": return .FixedWidth
-        case "fixed_width_still": return .FixedWidthStill
-        case "fixed_width_downsampled": return .FixedWidthDownsampled
-        case "fixed_height_small": return .FixedHeightSmall
-        case "fixed_height_small_still": return .FixedHeightSmallStill
-        case "fixed_width_small": return .FixedWidthSmall
-        case "fixed_width_small_still": return .FixedWidthSmallStill
-        case "downsized": return .Downsized
-        case "downsized_still": return .DownsizedStill
-        case "downsized_large": return .DownsizedLarge
-        case "original": return .Original
-        case "original_still": return .OriginalStill
-        default: return .Unknown
+        case "fixed_height": return .fixedHeight
+        case "fixed_height_still": return .fixedHeightStill
+        case "fixed_height_downsampled": return .fixedHeightDownsampled
+        case "fixed_width": return .fixedWidth
+        case "fixed_width_still": return .fixedWidthStill
+        case "fixed_width_downsampled": return .fixedWidthDownsampled
+        case "fixed_height_small": return .fixedHeightSmall
+        case "fixed_height_small_still": return .fixedHeightSmallStill
+        case "fixed_width_small": return .fixedWidthSmall
+        case "fixed_width_small_still": return .fixedWidthSmallStill
+        case "downsized": return .downsized
+        case "downsized_still": return .downsizedStill
+        case "downsized_large": return .downsizedLarge
+        case "original": return .original
+        case "original_still": return .originalStill
+        default: return .unknown
         }
     }
 }

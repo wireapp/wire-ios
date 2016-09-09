@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,9 +21,9 @@ import Foundation
 
 
 
-func performOnQueue(callBackQueue:dispatch_queue_t, a:()->() ){
+func performOnQueue(_ callBackQueue:DispatchQueue, a:@escaping ()->() ){
     
-    dispatch_async(callBackQueue, a)
+    callBackQueue.async(execute: a)
 }
 
 enum Either<L, R> {
@@ -34,7 +34,7 @@ enum Either<L, R> {
     var isLeft: Bool {
         
         switch self {
-        case Left:
+        case .Left:
             return true
         case .Right:
             return false
@@ -44,7 +44,7 @@ enum Either<L, R> {
     var isRight: Bool {
         
         switch self {
-        case Right:
+        case .Right:
             return true
         case .Left:
             return false
@@ -54,7 +54,7 @@ enum Either<L, R> {
     var right: R? {
     
         switch self {
-        case let Right(r):
+        case let .Right(r):
             return r
         case .Left:
             return nil
@@ -65,14 +65,14 @@ enum Either<L, R> {
     var left: L? {
         
         switch self {
-        case let Left(l):
+        case let .Left(l):
             return l
         case .Right:
             return nil
         }
     }
     
-    func bimap<B, D>(f : L -> B, _ g : (R -> D)) -> Either<B, D> {
+    func bimap<B, D>(_ f : (L) -> B, _ g : ((R) -> D)) -> Either<B, D> {
         
         switch self {
         case let .Left(bx):
@@ -83,45 +83,45 @@ enum Either<L, R> {
     }
     
     
-    func leftMap<B>(f : L -> B) -> Either<B, R> {
+    @discardableResult func leftMap<B>(_ f : (L) -> B) -> Either<B, R> {
         return self.bimap(f, identity)
     }
     
-    func rightMap<D>(g : R -> D) -> Either<L, D> {
+    @discardableResult func rightMap<D>(_ g : (R) -> D) -> Either<L, D> {
         return self.bimap(identity, g)
     }
     
-    func identity<A>(a: A) -> A {
+    func identity<A>(_ a: A) -> A {
         return a
     }
 
 }
 
-typealias NSURLRequestCallBack = (data:NSData?, response:NSURLResponse?, error:NSError?)->NSError?
+typealias URLRequestCallBack = (_ data:Data?, _ response:URLResponse?, _ error:Error?)->Error?
 
-class NSURLRequestPromise {
+class URLRequestPromise {
     
-    var pending: [NSURLRequestCallBack] = []
-    var onFailure: (error: NSError) -> () = { error in return }
-    var failure: NSError? = nil
+    var pending: [URLRequestCallBack] = []
+    var onFailure: (_ error: Error) -> () = { error in return }
+    var failure: Error? = nil
     
-    func resolve() -> NSURLRequestCallBack {
+    @discardableResult func resolve() -> URLRequestCallBack {
         
-        func performAResolution(data:NSData?, response:NSURLResponse?, error:NSError?) -> NSError? {
+        func performAResolution(_ data:Data?, response:URLResponse?, error:Error?) -> Error? {
             
             if error != nil {
                 
-                onFailure(error: error!)
+                onFailure(error!)
                 return nil
             }
             
             for f in self.pending {
                 
-                self.failure = f(data: data, response: response, error: error)
+                self.failure = f(data, response, error)
                 
                 if let error = self.failure {
                     
-                    onFailure(error: error)
+                    onFailure(error)
                     break
                 }
             }
@@ -132,18 +132,18 @@ class NSURLRequestPromise {
         return performAResolution
     }
     
-    func fail(onFailure: (error: NSError) ->() ) -> NSURLRequestPromise {
+    @discardableResult func fail(_ onFailure: @escaping (_ error: Error) ->() ) -> URLRequestPromise {
         
         self.onFailure = onFailure
         return self
     }
     
-    func reject(error:NSError) {
+    func reject(_ error:Error) {
         
         self.failure = error
     }
     
-    func then(what: NSURLRequestCallBack) -> NSURLRequestPromise {
+    func then(_ what: @escaping URLRequestCallBack) -> URLRequestPromise {
         
         self.pending.append(what)
         return self
@@ -152,32 +152,31 @@ class NSURLRequestPromise {
 
 @objc public protocol ZiphyURLRequester {
     
-    func doRequest(request :NSURLRequest, completionHandler: ((NSData?, NSURLResponse?, NSError?) -> Void))
+    func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void))
 }
 
-extension NSURLSession : ZiphyURLRequester {
-    
-    public func doRequest(request :NSURLRequest, completionHandler: ((NSData?, NSURLResponse?, NSError?) -> Void)) {
-        self.dataTaskWithRequest(request, completionHandler: completionHandler).resume()
+extension URLSession : ZiphyURLRequester {
+    public func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) {
+        self.dataTask(with: request, completionHandler: completionHandler).resume()
     }
 }
 
 @objc public enum ZiphyImageType:Int {
     
-    case FixedHeight
-    case FixedHeightStill
-    case FixedHeightDownsampled
-    case FixedWidth
-    case FixedWidthStill
-    case FixedWidthDownsampled
-    case FixedHeightSmall
-    case FixedHeightSmallStill
-    case FixedWidthSmall
-    case FixedWidthSmallStill
-    case Downsized
-    case DownsizedStill
-    case DownsizedLarge
-    case Original
-    case OriginalStill
-    case Unknown
+    case fixedHeight
+    case fixedHeightStill
+    case fixedHeightDownsampled
+    case fixedWidth
+    case fixedWidthStill
+    case fixedWidthDownsampled
+    case fixedHeightSmall
+    case fixedHeightSmallStill
+    case fixedWidthSmall
+    case fixedWidthSmallStill
+    case downsized
+    case downsizedStill
+    case downsizedLarge
+    case original
+    case originalStill
+    case unknown
 }
