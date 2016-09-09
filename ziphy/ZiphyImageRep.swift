@@ -22,14 +22,14 @@ import Foundation
 
 @objc public class ZiphyImageRep:ZiphyStillImageRep {
     
-    public let size:Int
-    public let frames:Int
-    public let mp4:String
-    public let mp4Size:Int
-    public let webp:String
-    public let webpSize:Int
+    open let size:Int
+    open let frames:Int
+    open let mp4:String
+    open let mp4Size:Int
+    open let webp:String
+    open let webpSize:Int
     
-    public override var description: String {
+    open override var description: String {
         
         get{
             return "<<" + super.description + "size: \(self.size) , " +
@@ -76,7 +76,7 @@ import Foundation
         let width : Int = Int((dictionary["width"] as? String) ?? "0") ?? 0
         let height : Int = Int((dictionary["height"] as? String) ?? "0") ?? 0
         
-        let ziphyImageType = typeAsInt == nil ? ZiphyImageType.Unknown : ZiphyImageType(rawValue: typeAsInt!)
+        let ziphyImageType = typeAsInt == nil ? ZiphyImageType.unknown : ZiphyImageType(rawValue: typeAsInt!)
         
         self.init(type:ziphyImageType!,
             url:url, width:width,

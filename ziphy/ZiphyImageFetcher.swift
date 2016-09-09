@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -18,31 +18,51 @@
 
 
 import Foundation
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l <= r
+  default:
+    return !(rhs < lhs)
+  }
+}
+
 
 private let giphyApiHost = "api.giphy.com"
 
 
-public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSError?) -> ()
+public typealias SingleZiphCallBack = (_ imageData:Data?, _ ziph:Ziph?,  _ error:Error?) -> ()
 
 
-@available(*, deprecated=2.0)
+@available(*, deprecated: 2.0)
 @objc public class ZiphyImageFetcher: NSObject {
     
-    public let term:String
-    public let sizeLimit:Int
-    public let resultsLimit:Int
-    public let imageType:ZiphyImageType
-    public let host:String
+    open let term:String
+    open let sizeLimit:Int
+    open let resultsLimit:Int
+    open let imageType:ZiphyImageType
+    open let host:String
     
-    private let ziphyClient:ZiphyClient
+    fileprivate let ziphyClient:ZiphyClient
     
-    private(set) public var ziphs:[Ziph]?
+    fileprivate(set) open var ziphs:[Ziph]?
     
-    private var iterationIndex = 0
-    private var unsuccesfullIterations = 0
-    private var gifsThisBatch = 0
-    private var offset = 0
-    private var usedIndexes = [Int]();
+    fileprivate var iterationIndex = 0
+    fileprivate var unsuccesfullIterations = 0
+    fileprivate var gifsThisBatch = 0
+    fileprivate var offset = 0
+    fileprivate var usedIndexes = [Int]();
     
     
     public required init(term:String,
@@ -62,8 +82,8 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
     }
     
     
-    public func nextImage(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
-        onCompletion:SingleZiphCallBack) {
+    open func nextImage(_ callBackQueue:DispatchQueue = DispatchQueue.main,
+        onCompletion:@escaping SingleZiphCallBack) {
             
             switch self.term {
             case "":
@@ -75,9 +95,9 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
             }
     }
     
-    public func fetchNewBatch(currentBatch:[Ziph]?,
-        callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
-        onCompletion:ZiphsCallBack) {
+    open func fetchNewBatch(_ currentBatch:[Ziph]?,
+        callBackQueue:DispatchQueue = DispatchQueue.main,
+        onCompletion:@escaping ZiphsCallBack) {
             
             let justZiphs = currentBatch ?? [Ziph]()
             
@@ -94,15 +114,15 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
                         self.unsuccesfullIterations = 0;
                         self.ziphs = justZiphs + ziphs
                         
-                        onCompletion(success: true, ziphs:self.ziphs!, error: error)
+                        onCompletion(true, self.ziphs!, error)
                     }
                     else {
-                        onCompletion(success: false, ziphs:[Ziph](), error: error)
+                        onCompletion(false, [Ziph](), error)
                     }
             }
     }
     
-    private func fetchNewImage(callBackQueue:dispatch_queue_t, onCompletion:SingleZiphCallBack) {
+    fileprivate func fetchNewImage(_ callBackQueue:DispatchQueue, onCompletion:@escaping SingleZiphCallBack) {
         
         self.fetchNewBatch(self.ziphs, callBackQueue:callBackQueue) { (success, gifs, error) -> () in
             
@@ -110,13 +130,13 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
                 self.nextImage(callBackQueue, onCompletion:onCompletion)
             }
             else {
-                onCompletion(imageData: nil, ziph: nil, error: error)
+                onCompletion(nil, nil, error)
             }
         }
     }
     
-    private func fetchGifFromSearch(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
-        onCompletion:SingleZiphCallBack) {
+    fileprivate func fetchGifFromSearch(_ callBackQueue:DispatchQueue = DispatchQueue.main,
+        onCompletion:@escaping SingleZiphCallBack) {
             
             if let justZiphs = self.ziphs {
                 
@@ -161,28 +181,28 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
                                     
                                     if error == nil {
                                         
-                                        onCompletion(imageData:data, ziph:ziph, error: nil)
+                                        onCompletion(data, ziph, nil)
                                     }
                                     else {
-                                        onCompletion(imageData: nil, ziph:nil, error:error)
+                                        onCompletion(nil, nil, error)
                                     }
                             })
                             
-                            self.iterationIndex++
+                            self.iterationIndex += 1
                             
                         }
                         else {
                             
-                            self.unsuccesfullIterations++
+                            self.unsuccesfullIterations += 1
                             
                             LogDebug("Image at iteration \(self.iterationIndex) didn't match size requirements")
                             LogDebug("Total images exceeding size requirements this batch \(self.unsuccesfullIterations)")
                             
-                            self.iterationIndex++
+                            self.iterationIndex += 1
                             if (unsuccesfullIterations == self.gifsThisBatch) {
                                 
-                                onCompletion(imageData: nil, ziph: nil, error:NSError(domain: ZiphyErrorDomain,
-                                    code: ZiphyError.MaxRetries.rawValue,
+                                onCompletion(nil, nil, NSError(domain: ZiphyErrorDomain,
+                                    code: ZiphyError.maxRetries.rawValue,
                                     userInfo:[NSLocalizedDescriptionKey:"The are no images in this batch that are of size \(self.sizeLimit). Giving up."]))
                             }
                             else {
@@ -197,9 +217,9 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
                         
                         performOnQueue(callBackQueue) {
                             
-                            onCompletion(imageData: nil, ziph:nil,
-                                error:NSError(domain: ZiphyErrorDomain,
-                                    code: ZiphyError.NoSuchResource.rawValue,
+                            onCompletion(nil, nil,
+                                         NSError(domain: ZiphyErrorDomain,
+                                    code: ZiphyError.noSuchResource.rawValue,
                                     userInfo:[NSLocalizedDescriptionKey:"No more images"]))
                         }
                     }
@@ -214,8 +234,8 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
     }
     
     
-    private func fetchGifFromRandom(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
-        onCompletion:(imageData:NSData?, ziph:Ziph?,  error:NSError?) -> ()) {
+    fileprivate func fetchGifFromRandom(_ callBackQueue:DispatchQueue = DispatchQueue.main,
+        onCompletion:@escaping (_ imageData:Data?, _ ziph:Ziph?,  _ error:Error?) -> ()) {
             
             self.tryFetchGifFromRandom(callBackQueue,
                 iteration:0,
@@ -224,16 +244,16 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
             
     }
     
-    private func tryFetchGifFromRandom(callBackQueue:dispatch_queue_t = dispatch_get_main_queue(),
+    fileprivate func tryFetchGifFromRandom(_ callBackQueue:DispatchQueue = DispatchQueue.main,
         iteration:Int,
         giveUpAt:Int,
-        onCompletion:(imageData:NSData?, ziph:Ziph?,  error:NSError?) -> ()) {
+        onCompletion:@escaping (_ imageData:Data?, _ ziph:Ziph?,  _ error:Error?) -> ()) {
             
             if (iteration == giveUpAt) {
                 performOnQueue(callBackQueue) {
-                    onCompletion(imageData: nil, ziph:nil,
-                        error:NSError(domain: ZiphyErrorDomain,
-                            code: ZiphyError.MaxRetries.rawValue,
+                    onCompletion(nil, nil,
+                                 NSError(domain: ZiphyErrorDomain,
+                            code: ZiphyError.maxRetries.rawValue,
                             userInfo:[NSLocalizedDescriptionKey:"Attempted random fetch \(iteration) times, giving up."]))
                 }
             }
@@ -262,10 +282,10 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
                                             
                                             if success && error == nil {
                                                 
-                                                onCompletion(imageData:data, ziph:ziph, error: nil)
+                                                onCompletion(data, ziph, nil)
                                             }
                                             else {
-                                                onCompletion(imageData: nil, ziph:nil, error:error)
+                                                onCompletion(nil, nil, error)
                                             }
                                     })
                                     
@@ -277,9 +297,9 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
                             }
                             else {
                                 
-                                onCompletion(imageData: nil, ziph:nil,
-                                    error:NSError(domain: ZiphyErrorDomain,
-                                        code: ZiphyError.NoSuchResource.rawValue,
+                                onCompletion(nil, nil,
+                                             NSError(domain: ZiphyErrorDomain,
+                                        code: ZiphyError.noSuchResource.rawValue,
                                         userInfo:[NSLocalizedDescriptionKey:"Could not gifs with ids: \(gifId)"]))
                             }
                     })
@@ -287,18 +307,18 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
                 }
                 else {
                     
-                    onCompletion(imageData: nil, ziph:nil,
-                        error:NSError(domain: ZiphyErrorDomain,
-                            code: ZiphyError.BadResponse.rawValue,
+                    onCompletion(nil, nil,
+                                 NSError(domain: ZiphyErrorDomain,
+                            code: ZiphyError.badResponse.rawValue,
                             userInfo:[NSLocalizedDescriptionKey:"Could not get a random gif id"]))
                 }
             }
     }
     
     
-    private func whileNotIn<T: Comparable>(array:[T], f:()->T) -> T? {
+    fileprivate func whileNotIn<T: Comparable>(_ array:[T], f:@escaping ()->T) -> T? {
         
-        var _whileNotIn:(array:[T], generator:()->T, index:Int) -> T? = { (_, gen, _) in  return gen()}
+        var _whileNotIn:(_ array:[T], _ generator:()->T, _ index:Int) -> T? = { (_, gen, _) in  return gen()}
         
         _whileNotIn = { (array, generator, iterIndex) in
             
@@ -310,13 +330,13 @@ public typealias SingleZiphCallBack = (imageData:NSData?, ziph:Ziph?,  error:NSE
             else {
                 var result:T? = f()
                 if array.contains(result!) {
-                    result = _whileNotIn(array: array, generator: generator, index: iterIndex+1)
+                    result = _whileNotIn(array, generator, iterIndex+1)
                 }
                 LogVerbose("Generated new element \(result) which is not in \(array) at iteration \(iterIndex)")
                 return result
             }
         }
         
-        return _whileNotIn(array: array, generator: f, index: 0)
+        return _whileNotIn(array, f, 0)
     }
 }

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -29,68 +29,68 @@ struct ZiphyRequestGenerator {
     let randomEndpoint:String
     let gifsEndpoint:String
     
-    private func requestWithParameters(endPoint:String, query:String? = nil) -> Either<NSError, NSURLRequest> {
+    fileprivate func requestWithParameters(_ endPoint:String, query:String? = nil) -> Either<Error, URLRequest> {
         
-        let components = NSURLComponents()
+        var components = URLComponents()
         
         components.scheme = self.requestScheme
         components.host = self.host
         
-        let path = self.apiVersionPath.stringByAppendingString(endPoint)
+        let path = self.apiVersionPath + endPoint
         
         components.path = path
         components.query = query ?? ""
         
-        if let requestURL = components.URL {
+        if let requestURL = components.url {
             
-            return Either.Right(NSURLRequest(URL: requestURL))
+            return Either.Right(URLRequest(url: requestURL))
         }
         else {
             
-            let invalidURL = requestScheme + "://" + ((self.host as NSString).stringByAppendingPathComponent(path) as NSString).stringByAppendingPathComponent(query ?? "")
+            let invalidURL = requestScheme + "://" + ((self.host as NSString).appendingPathComponent(path) as NSString).appendingPathComponent(query ?? "")
             
             return Either.Left(NSError(domain: ZiphyErrorDomain,
-                code: ZiphyError.MalformedURL.rawValue,
+                code: ZiphyError.malformedURL.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:invalidURL + " is not a valid URL"]))
         }
     }
     
-    func searchRequestWithParameters(term:String, resultsLimit:Int, offset:Int) -> Either<NSError, NSURLRequest> {
+    func searchRequestWithParameters(_ term:String, resultsLimit:Int, offset:Int) -> Either<Error, URLRequest> {
         
         let query = "limit=\(resultsLimit)&offset=\(offset)"
         
-        return self.requestWithParameters(self.searchEndpoint, query: query).rightMap { (urlRequest: NSURLRequest) in
+        return self.requestWithParameters(self.searchEndpoint, query: query).rightMap { (urlRequest: URLRequest) in
             
             let escapedSearchTerm = self.escape(term)
-            let finalSearchTerm = escapedSearchTerm ?? ""
+            let finalSearchTerm = escapedSearchTerm
             LogDebug("Escaped search term from \(term) to \(finalSearchTerm)")
-            let finalURLString = urlRequest.URL!.absoluteString+"&q=\(finalSearchTerm)"
+            let finalURLString = urlRequest.url!.absoluteString+"&q=\(finalSearchTerm)"
             LogDebug("Create request with URL: \(finalURLString)")
             
-            return NSURLRequest(URL: NSURL(string: finalURLString)!)
+            return URLRequest(url: URL(string: finalURLString)!)
         }
     }
     
-    func randomRequests() -> Either<NSError, NSURLRequest> {
+    func randomRequests() -> Either<Error, URLRequest> {
         
         return self.requestWithParameters(self.randomEndpoint)
     }
     
-    func gifsByIdRequest(ids:[String]) -> Either<NSError, NSURLRequest> {
+    func gifsByIdRequest(_ ids:[String]) -> Either<Error, URLRequest> {
         
-        let commaSeparatedIds = ids.reduce("", combine:{ $0 == "" ? $1 : $0 + "," + $1 })
+        let commaSeparatedIds = ids.reduce("", { $0 == "" ? $1 : $0 + "," + $1 })
         let query = String(format:"ids=%@", commaSeparatedIds)
         
         return self.requestWithParameters(self.gifsEndpoint, query: query)
         
     }
     
-    private func escape(string: String) -> String {
+    fileprivate func escape(_ string: String) -> String {
         
         let funkyChars = "!*'\"();:@&=+$,/?%#[]% "
         
-        let legalURLCharactersToBeEscaped: CFStringRef = funkyChars
-        return CFURLCreateStringByAddingPercentEscapes(nil, string, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as String
+        let legalURLCharactersToBeEscaped: CFString = funkyChars as CFString
+        return CFURLCreateStringByAddingPercentEscapes(nil, string as CFString!, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as String
     }
     
 }

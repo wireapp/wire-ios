@@ -24,10 +24,10 @@ let ZiphyErrorDomain = "com.wearezeta.ziphy"
 
 @objc public enum ZiphyError:Int {
     
-    case MalformedURL = -1001
-    case BadResponse
-    case NoSuchResource
-    case NoMorePages
-    case MaxRetries
+    case malformedURL = -1001
+    case badResponse
+    case noSuchResource
+    case noMorePages
+    case maxRetries
     
 }

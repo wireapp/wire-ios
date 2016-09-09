@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,39 +20,39 @@
 import Foundation
 
 
-public typealias SuccessOrErrorCallback = (success:Bool, error:NSError?)->()
-public typealias FetchBlock = (offset:Int)->()
+public typealias SuccessOrErrorCallback = (_ success:Bool, _ error:Error?)->()
+public typealias FetchBlock = (_ offset:Int)->()
 
 public class ZiphyPaginationController {
     
-    private(set) public var ziphs:[Ziph]?
+    fileprivate(set) open var ziphs:[Ziph]?
     
-    private (set) var ziphsThisFetch = 0
-    private (set) public var totalPagesFetched = 0
+    fileprivate (set) var ziphsThisFetch = 0
+    fileprivate (set) open var totalPagesFetched = 0
 
-    private var offset = 0
+    fileprivate var offset = 0
     
-    public var fetchBlock:FetchBlock?
-    public var completionBlock:SuccessOrErrorCallback?
-    public var callBackQueue:dispatch_queue_t
+    open var fetchBlock:FetchBlock?
+    open var completionBlock:SuccessOrErrorCallback?
+    open var callBackQueue:DispatchQueue
     
     
-    public init(callBackQueue:dispatch_queue_t = dispatch_get_main_queue()){
+    public init(callBackQueue:DispatchQueue = DispatchQueue.main){
         
         self.callBackQueue = callBackQueue;
     }
     
-    public func fetchNewPage() {
+    open func fetchNewPage() {
         
         self.fetchNewPage(self.offset)
     }
     
-    private func fetchNewPage(offset:Int) {
+    fileprivate func fetchNewPage(_ offset:Int) {
         
-        self.fetchBlock?(offset: offset)
+        self.fetchBlock?(offset)
     }
     
-    public func updatePagination(success:Bool, ziphs:[Ziph], error:NSError?) {
+    open func updatePagination(_ success:Bool, ziphs:[Ziph], error:Error?) {
         
         self.ziphsThisFetch = ziphs.count
         
@@ -64,7 +64,7 @@ public class ZiphyPaginationController {
         }
         
         performOnQueue(self.callBackQueue){
-            self.completionBlock?(success: success, error: error)
+            self.completionBlock?(success, error)
         }
     }
 }

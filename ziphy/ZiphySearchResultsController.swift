@@ -24,31 +24,31 @@ import Foundation
 @objc public class ZiphySearchResultsController : NSObject {
     
     
-    public var ziphyClient:ZiphyClient?
-    public let searchTerm:String
+    open var ziphyClient:ZiphyClient?
+    open let searchTerm:String
     
-    public var results:[Ziph]? {
+    open var results:[Ziph]? {
         
         return self.paginationController.ziphs
     }
 
-    public var resultsLastFetch:Int {
+    open var resultsLastFetch:Int {
     
         return self.paginationController.ziphsThisFetch
     }
     
-    public var totalPagesFetched:Int {
+    open var totalPagesFetched:Int {
     
         return self.paginationController.totalPagesFetched
     }
     
-    private let paginationController:ZiphyPaginationController
-    private (set) public var pageSize:Int
+    fileprivate let paginationController:ZiphyPaginationController
+    fileprivate (set) open var pageSize:Int
     
     
     public init(searchTerm:String,
         pageSize:Int,
-        callBackQueue:dispatch_queue_t = dispatch_get_main_queue()) {
+        callBackQueue:DispatchQueue = DispatchQueue.main) {
             
             self.searchTerm = searchTerm
             self.pageSize = pageSize
@@ -72,7 +72,7 @@ import Foundation
             }
     }
     
-    public func fetchSearchResults(completion:SuccessOrErrorCallback) {
+    open func fetchSearchResults(_ completion:@escaping SuccessOrErrorCallback) {
         
         self.paginationController.completionBlock = completion
         self.paginationController.fetchNewPage()

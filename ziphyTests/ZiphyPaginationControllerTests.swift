@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -28,7 +28,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
     override func setUp() {
         super.setUp()
         
-        ZiphyClient.logLevel = ZiphyLogLevel.Verbose
+        ZiphyClient.logLevel = ZiphyLogLevel.verbose
         self.ziphyClient = ZiphyClient(host:"api.giphy.com", requester:self.defaultRequester)
         self.paginationController = ZiphyPaginationController()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -39,7 +39,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         super.tearDown()
     }
     
-    func fetchBlockForSearch(paginationController:ZiphyPaginationController, searchTerm:String, resultsLimit:Int) -> FetchBlock {
+    func fetchBlockForSearch(_ paginationController:ZiphyPaginationController, searchTerm:String, resultsLimit:Int) -> FetchBlock {
         
         let fetchBlock:FetchBlock = { [weak paginationController, weak self](offset) in
             
@@ -54,7 +54,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
     func testThatFistPageIsFetched() {
         // This is an example of a functional test case.
         
-        let expectation = expectationWithDescription("That a page is fetched")
+        let expectation = self.expectation(description: "That a page is fetched")
 
         let completionBlock:SuccessOrErrorCallback = { [weak paginationController](success, error) in
             
@@ -63,7 +63,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
             if (success) {
                 
                 let _ = paginationController?.ziphs?.first
-                XCTAssertTrue(paginationController?.ziphs?.count > 0 , "Paged fetched but no ziphs")
+                XCTAssertTrue((paginationController?.ziphs?.count)! > 0 , "Paged fetched but no ziphs")
             }
             else {
                 
@@ -76,17 +76,17 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         
         self.paginationController.fetchNewPage()
         
-        waitForExpectationsWithTimeout(10, handler:nil)
+        waitForExpectations(timeout: 10, handler:nil)
     }
     
     func testThatSeveralPagesAreFetched() {
         
-        let expectation = expectationWithDescription("That several pages are fetched")
+        let expectation = self.expectation(description: "That several pages are fetched")
         
         self.paginationController.fetchBlock = self.fetchBlockForSearch(self.paginationController, searchTerm: "cat", resultsLimit: 25)
         self.paginationController.completionBlock = { [weak self](success, error) in
             
-            if (success && self?.paginationController.totalPagesFetched < 3) {
+            if (success && (self?.paginationController.totalPagesFetched)! < 3) {
                 self?.paginationController.fetchNewPage()
             }
             else if (success && self?.paginationController.totalPagesFetched == 3) {
@@ -101,36 +101,31 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         
         self.paginationController.fetchNewPage()
         
-        waitForExpectationsWithTimeout(10, handler:nil)
+        waitForExpectations(timeout: 10, handler:nil)
     }
     
     func testThatFechingEndsIfNoMorePages () {
         
-        let expectation = expectationWithDescription("That several pages are fetched")
+        let expectation = self.expectation(description: "That several pages are fetched")
         
-        //There are only 13 results for this search term so this should not trigger more than 2 requests of 10 each
         self.paginationController.fetchBlock = self.fetchBlockForSearch(self.paginationController, searchTerm: "awg", resultsLimit: 10)
         self.paginationController.completionBlock = { [weak self](success, error) in
             
-            if (success && self?.paginationController.totalPagesFetched < 3) {
+            if (success) {
                 self?.paginationController.fetchNewPage()
-            }
-            else if (success && self?.paginationController.totalPagesFetched == 3) {
-                expectation.fulfill()
-                XCTFail("Too many fetch requests where fired.")
             }
             else if (!success) {
                 expectation.fulfill()
                 
-                let isNoMorePagesError = error?.code == ZiphyError.NoMorePages.rawValue
+                let isNoMorePagesError = (error as! NSError).code == ZiphyError.noMorePages.rawValue
                 
-                XCTAssertTrue(isNoMorePagesError && self?.paginationController.totalPagesFetched < 3, "Failed because of some other error")
+                XCTAssertTrue(isNoMorePagesError, "Failed because of some other error")
             }
         }
         
         self.paginationController.fetchNewPage()
         
-        waitForExpectationsWithTimeout(10, handler:nil)
+        waitForExpectations(timeout: 10, handler:nil)
     
     }
 }
