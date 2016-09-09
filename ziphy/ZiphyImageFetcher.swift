@@ -46,7 +46,7 @@ public typealias SingleZiphCallBack = (_ imageData:Data?, _ ziph:Ziph?,  _ error
 
 
 @available(*, deprecated: 2.0)
-@objc open class ZiphyImageFetcher: NSObject {
+@objc public class ZiphyImageFetcher: NSObject {
     
     open let term:String
     open let sizeLimit:Int

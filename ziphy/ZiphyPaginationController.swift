@@ -23,7 +23,7 @@ import Foundation
 public typealias SuccessOrErrorCallback = (_ success:Bool, _ error:Error?)->()
 public typealias FetchBlock = (_ offset:Int)->()
 
-open class ZiphyPaginationController {
+public class ZiphyPaginationController {
     
     fileprivate(set) open var ziphs:[Ziph]?
     

@@ -97,15 +97,15 @@ enum Either<L, R> {
 
 }
 
-typealias NSURLRequestCallBack = (_ data:Data?, _ response:URLResponse?, _ error:Error?)->Error?
+typealias URLRequestCallBack = (_ data:Data?, _ response:URLResponse?, _ error:Error?)->Error?
 
-class NSURLRequestPromise {
+class URLRequestPromise {
     
-    var pending: [NSURLRequestCallBack] = []
+    var pending: [URLRequestCallBack] = []
     var onFailure: (_ error: Error) -> () = { error in return }
     var failure: Error? = nil
     
-    @discardableResult func resolve() -> NSURLRequestCallBack {
+    @discardableResult func resolve() -> URLRequestCallBack {
         
         func performAResolution(_ data:Data?, response:URLResponse?, error:Error?) -> Error? {
             
@@ -132,7 +132,7 @@ class NSURLRequestPromise {
         return performAResolution
     }
     
-    @discardableResult func fail(_ onFailure: @escaping (_ error: Error) ->() ) -> NSURLRequestPromise {
+    @discardableResult func fail(_ onFailure: @escaping (_ error: Error) ->() ) -> URLRequestPromise {
         
         self.onFailure = onFailure
         return self
@@ -143,7 +143,7 @@ class NSURLRequestPromise {
         self.failure = error
     }
     
-    func then(_ what: @escaping NSURLRequestCallBack) -> NSURLRequestPromise {
+    func then(_ what: @escaping URLRequestCallBack) -> URLRequestPromise {
         
         self.pending.append(what)
         return self

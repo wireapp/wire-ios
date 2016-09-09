@@ -20,7 +20,7 @@
 import Foundation
 
 
-@objc open class ZiphyImageRep:ZiphyStillImageRep {
+@objc public class ZiphyImageRep:ZiphyStillImageRep {
     
     open let size:Int
     open let frames:Int
