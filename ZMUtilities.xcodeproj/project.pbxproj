@@ -53,7 +53,6 @@
 		546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A521B7501D0009EBA02 /* NSUUID+DataTests.m */; };
 		546E8A591B750384009EBA02 /* NSManagedObjectContext+ZMUtilitiesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A581B750384009EBA02 /* NSManagedObjectContext+ZMUtilitiesTests.m */; };
 		546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */; };
-		546E8A5F1B7503E8009EBA02 /* SetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A5E1B7503E8009EBA02 /* SetsTests.swift */; };
 		546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */; };
 		54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */; };
 		54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */; };
@@ -222,7 +221,6 @@
 		546E8A521B7501D0009EBA02 /* NSUUID+DataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUUID+DataTests.m"; path = "Source/NSUUID+DataTests.m"; sourceTree = "<group>"; };
 		546E8A581B750384009EBA02 /* NSManagedObjectContext+ZMUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedObjectContext+ZMUtilitiesTests.m"; path = "Source/NSManagedObjectContext+ZMUtilitiesTests.m"; sourceTree = "<group>"; };
 		546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FunctionalTests.swift; path = Source/FunctionalTests.swift; sourceTree = "<group>"; };
-		546E8A5E1B7503E8009EBA02 /* SetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SetsTests.swift; path = Source/SetsTests.swift; sourceTree = "<group>"; };
 		546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedObjectTests.swift; path = Source/UnownedObjectTests.swift; sourceTree = "<group>"; };
 		54BD49EB1D41FA16006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		54BD49EC1D41FA16006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
@@ -581,7 +579,6 @@
 				0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */,
 				091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */,
 				546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */,
-				546E8A5E1B7503E8009EBA02 /* SetsTests.swift */,
 				871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */,
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
@@ -841,7 +838,6 @@
 				F9C9A7C61CAEAFE10039E10C /* ZMEmailAddressValidatorTests.m in Sources */,
 				091799741B7E2E4D00E60DD9 /* ZMAPNSEnvironmentTests.m in Sources */,
 				546E8A591B750384009EBA02 /* NSManagedObjectContext+ZMUtilitiesTests.m in Sources */,
-				546E8A5F1B7503E8009EBA02 /* SetsTests.swift in Sources */,
 				546E8A4C1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m in Sources */,
 				F9D381AA1B70B91F00E6E4EB /* NSURL+QueryComponentsTest.m in Sources */,
 				F9FCE0A51C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m in Sources */,

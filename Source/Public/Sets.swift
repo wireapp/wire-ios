@@ -79,89 +79,8 @@ extension NSSet {
 
 }
 
-// MARK: OrderedSet
-public final class OrderedSet<T> : Equatable, Sequence  where T : NSObject, T : Hashable {
-    
-    fileprivate let innerSet : NSOrderedSet
-    
-    public func toNSOrderedSet() -> NSOrderedSet {
-        return self.innerSet.copy() as! NSOrderedSet
-    }
-    
-    public func makeIterator() -> AnyIterator<T> {
-        let enumeration = self.innerSet.objectEnumerator()
-        
-        return AnyIterator {
-            return enumeration.nextObject() as? T
-        }
-    }
-    
-    public var count : Int {
-        return self.innerSet.count
-    }
-    
-    public init() {
-        self.innerSet = NSOrderedSet()
-    }
-    
-    public init(array: [T]) {
-        self.innerSet = NSOrderedSet(array: array)
-    }
-    
-    public init(object: T) {
-        self.innerSet = NSOrderedSet(object: object)
-    }
-    
-    public init(orderedSet: NSOrderedSet) {
-        self.innerSet = orderedSet.copy() as! NSOrderedSet
-    }
-    
-    public init(set: OrderedSet<T>) {
-        self.innerSet = set.innerSet.copy() as! NSOrderedSet
-    }
-    
-    public func minus(_ set: OrderedSet<T>) -> OrderedSet<T> {
-        let mutableInnerset = self.innerSet.mutableCopy() as! NSMutableOrderedSet
-        mutableInnerset.minus(set.innerSet)
-        return OrderedSet<T>(orderedSet: mutableInnerset)
-    }
-    
-    public func union(_ set: OrderedSet<T>) -> OrderedSet<T> {
-        let mutableInnerset = self.innerSet.mutableCopy() as! NSMutableOrderedSet
-        mutableInnerset.union(set.innerSet)
-        return OrderedSet<T>(orderedSet: mutableInnerset)
-    }
-    
-    public func set() -> Set<T> {
-        return Set(self.innerSet.array as! [T])
-    }
-    public var array: [T] {
-        get {
-            return self.innerSet.array as! [T]
-        }
-    }
-}
-
-public func ==<T>(lhs : OrderedSet<T>, rhs : OrderedSet<T>) -> Bool {
-    return lhs.innerSet.isEqual(to: rhs.innerSet)
-}
-
 // MARK: Dictionary
 extension Dictionary {
-
-    // Does not compile with Swift 1.1
-//    /// Creates a dictionary by applying a function over a sequence, and assigning the calculated value to the sequence element
-//    init<S: SequenceType where S.Generator.Element == Key>(_ sequence: S, valueMapping: (Key) -> Value) {
-//        
-//        self.init()
-//        var dict : [Key:Value] = [:]
-//        
-//        for key in sequence {
-//            let value = valueMapping(key)
-//            self[key] = value
-//        }
-//    }
-    
     
     /// Creates a dictionary by applying a function over a sequence, and assigning the calculated value to the sequence element. Also maps the keys
     init<T, S: Sequence>(_ sequence: S, keyMapping: (T) -> Key, valueMapping: (T) -> Value) where S.Iterator.Element == T {
