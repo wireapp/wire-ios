@@ -61,3 +61,10 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
+
+
+## Test Output
+xcode-*.log
+tests.xml
+cobertura.xml
+code-coverage/*

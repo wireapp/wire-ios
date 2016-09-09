@@ -24,91 +24,91 @@ class IntegrationTests: XCTestCase {
     func testThatItParsesSampleDataTwitter() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Twitter", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.twitterData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataTwitterWithImages() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 4, type: "article", siteNameString: "Twitter", userGeneratedImage: true, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.twitterDataWithImages()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataTheVerge() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "The Verge", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.vergeData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataWashington() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Washington Post", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.washingtonPostData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataYouTube() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video", siteNameString: "YouTube", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.youtubeData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataGuardian() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "the Guardian", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.guardianData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataInstagram() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "instapp:photo", siteNameString: "Instagram", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.instagramData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataVimeo() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video", siteNameString: "Vimeo", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.vimeoData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataFoursquare() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 4, type: "playfoursquare:venue", siteNameString: "Foursquare", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: true)
         let mockData = OpenGraphMockDataProvider.foursqaureData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataMedium() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Medium", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.mediumData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataWire() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: nil, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.wireData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataPolygon() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: "Polygon", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.polygonData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataiTunes() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: "iTunes", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.iTunesData()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataiTunesWithoutTitle() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: "iTunes", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.iTunesDataWithoutTitle()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     func testThatItParsesSampleDataYahooSports() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Yahoo Sport", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.yahooSports()
-        assertThatItCanParseSampleData(mockData, expectation: expectation)
+        assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
     struct OpenGraphDataExpectation {
@@ -120,33 +120,33 @@ class IntegrationTests: XCTestCase {
         let hasFoursquareMetaData: Bool
     }
     
-    func assertThatItCanParseSampleData(mockData: OpenGraphMockData, expectation: OpenGraphDataExpectation, line: UInt = #line) {
+    func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData, expected: OpenGraphDataExpectation, line: UInt = #line) {
 
         // given
-        let expection = expectationWithDescription("It should parse the data")
-        let sut = PreviewDownloader(resultsQueue: .mainQueue(), parsingQueue: .mainQueue())
+        let completionExpectation = expectation(description: "It should parse the data")
+        let sut = PreviewDownloader(resultsQueue: .main, parsingQueue: .main)
 
         // when
         var result: OpenGraphData?
-        sut.requestOpenGraphData(fromURL: NSURL(string: mockData.urlString)!) { data in
+        sut.requestOpenGraphData(fromURL: URL(string: mockData.urlString)!) { data in
             result = data
             if (data != nil) {
-                expection.fulfill()
+                completionExpectation.fulfill()
             }
         }
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         guard let data = result else {
             return XCTFail("Could not extract open graph data from \(mockData.urlString)", line: line)
         }
         
         // then
-        XCTAssertEqual(data.content != nil, expectation.hasDescription, line: line)
-        XCTAssertEqual(data.foursquareMetaData != nil, expectation.hasFoursquareMetaData, line: line)
-        XCTAssertEqual(data.type, expectation.type, line: line)
-        XCTAssertEqual(data.siteNameString, expectation.siteNameString, line: line)
-        XCTAssertEqual(data.userGeneratedImage, expectation.userGeneratedImage, line: line)
-        XCTAssertTrue(data.imageUrls.count == expectation.numberOfImages, line: line)
+        XCTAssertEqual(data.content != nil, expected.hasDescription, line: line)
+        XCTAssertEqual(data.foursquareMetaData != nil, expected.hasFoursquareMetaData, line: line)
+        XCTAssertEqual(data.type, expected.type, line: line)
+        XCTAssertEqual(data.siteNameString, expected.siteNameString, line: line)
+        XCTAssertEqual(data.userGeneratedImage, expected.userGeneratedImage, line: line)
+        XCTAssertTrue(data.imageUrls.count == expected.numberOfImages, line: line)
     }
     
 }

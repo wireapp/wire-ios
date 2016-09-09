@@ -37,8 +37,8 @@ class PreviewBlackListTests: XCTestCase {
         }
     }
     
-    func assertThatHostIsBlacklisted(host: String, line: UInt = #line) {
-        let url = NSURL(string: "www.\(host).com/example")!
+    func assertThatHostIsBlacklisted(_ host: String, line: UInt = #line) {
+        let url = URL(string: "www.\(host).com/example")!
         XCTAssertTrue(sut.isBlacklisted(url), "\(host) was not blacklisted", line: line)
     }
     

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,80 +22,68 @@ import Foundation
 private let userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
 
 protocol PreviewDownloaderType {
-    func requestOpenGraphData(fromURL url: NSURL, completion: OpenGraphData? -> Void)
+    func requestOpenGraphData(fromURL url: URL, completion: @escaping (OpenGraphData?) -> Void)
 }
 
 enum HeaderKey: String {
-    case UserAgent = "User-Agent"
-    case ContentType = "Content-Type"
+    case userAgent = "User-Agent"
+    case contentType = "Content-Type"
 }
 
-public class PreviewDownloader: NSObject, NSURLSessionDataDelegate, PreviewDownloaderType {
+final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownloaderType {
     
-    public typealias DownloadCompletion = OpenGraphData? -> Void
+    typealias DownloadCompletion = (OpenGraphData?) -> Void
     
     var containerByTaskID = [Int: MetaStreamContainer]()
-    var completionByURL = [NSURL: DownloadCompletion]()
+    var completionByURL = [URL: DownloadCompletion]()
     var session: URLSessionType! = nil
-    let resultsQueue: NSOperationQueue
-    let parsingQueue: NSOperationQueue
+    let resultsQueue: OperationQueue
+    let parsingQueue: OperationQueue
     
-    init(resultsQueue: NSOperationQueue, parsingQueue: NSOperationQueue? = nil, urlSession: URLSessionType? = nil) {
+    init(resultsQueue: OperationQueue, parsingQueue: OperationQueue? = nil, urlSession: URLSessionType? = nil) {
         self.resultsQueue = resultsQueue
-        self.parsingQueue = parsingQueue ?? NSOperationQueue()
-        self.parsingQueue.name = String(self.dynamicType) + "Queue"
+        self.parsingQueue = parsingQueue ?? OperationQueue()
+        self.parsingQueue.name = String(describing: type(of: self)) + "Queue"
         super.init()
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 20
-        configuration.HTTPAdditionalHeaders = [HeaderKey.UserAgent.rawValue: userAgent] // Override the user agent to not get served mobile pages
-        session = urlSession ?? NSURLSession(configuration: configuration, delegate: self, delegateQueue: parsingQueue)
+        configuration.httpAdditionalHeaders = [HeaderKey.userAgent.rawValue: userAgent] // Override the user agent to not get served mobile pages
+        session = urlSession ?? Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: parsingQueue)
     }
     
-    func requestOpenGraphData(fromURL url: NSURL, completion: DownloadCompletion) {
+    func requestOpenGraphData(fromURL url: URL, completion: @escaping DownloadCompletion) {
         completionByURL[url] = completion
         session.dataTaskWithURL(url).resume()
     }
     
-    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        processReceivedData(data, forTask: dataTask, withIdentifier: dataTask.taskIdentifier)
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        processReceivedData(data, forTask: dataTask as URLSessionDataTaskType, withIdentifier: dataTask.taskIdentifier)
     }
 
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        URLSession(session as URLSessionType , task: task as URLSessionDataTaskType, didCompleteWithError: error)
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        urlSession(session as URLSessionType , task: task as URLSessionDataTaskType, didCompleteWithError: error as NSError?)
     }
     
-    func URLSession(session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
-        guard let errorCode = error?.code where errorCode != NSURLError.Cancelled.rawValue else { return }
-        guard let url = task.originalRequest?.URL, completion = completionByURL[url] where error != nil else { return }
+    func urlSession(_ session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
+        guard let errorCode = error?.code , errorCode != URLError.cancelled.rawValue else { return }
+        guard let url = task.originalRequest?.url, let completion = completionByURL[url] , error != nil else { return }
         completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
     }
     
-    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
-        guard let httpResponse = response as? NSHTTPURLResponse else { return }
-        URLSession(session, dataTask: dataTask, didReceiveHTTPResponse: httpResponse, completionHandler: completionHandler)
-    }
-    
-    func URLSession(session: URLSessionType, dataTask: URLSessionDataTaskType, didReceiveHTTPResponse response: NSHTTPURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
-        guard let url = dataTask.originalRequest?.URL, completion = completionByURL[url] else { return }
-        let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.ContentType.rawValue)
-        let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercaseString] as? String
-        if let contentType = contentType where !contentType.lowercaseString.containsString("text/html") {
-            completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: dataTask.taskIdentifier)
-            return completionHandler(.Cancel)
-        }
-        
-        return completionHandler(.Allow)
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        guard let httpResponse = response as? HTTPURLResponse else { return }
+        urlSession(session as URLSessionType, dataTask: dataTask as URLSessionDataTaskType, didReceiveHTTPResponse: httpResponse, completionHandler: completionHandler)
     }
 
-    func processReceivedData(data: NSData, forTask task: URLSessionDataTaskType, withIdentifier identifier: Int) {
+    func processReceivedData(_ data: Data, forTask task: URLSessionDataTaskType, withIdentifier identifier: Int) {
         let container = containerByTaskID[identifier] ?? MetaStreamContainer()
         container.addData(data)
         containerByTaskID[identifier] = container
 
         guard container.reachedEndOfHead,
-            let url = task.originalRequest?.URL,
-            completion = completionByURL[url] else { return }
+            let url = task.originalRequest?.url,
+            let completion = completionByURL[url] else { return }
 
         task.cancel()
         
@@ -105,20 +93,40 @@ public class PreviewDownloader: NSObject, NSURLSessionDataDelegate, PreviewDownl
         }
     }
     
-    func completeAndCleanUp(completion: DownloadCompletion, result: OpenGraphData?, url: NSURL, taskIdentifier: Int) {
+    func completeAndCleanUp(_ completion: DownloadCompletion, result: OpenGraphData?, url: URL, taskIdentifier: Int) {
         completion(result)
         self.containerByTaskID[taskIdentifier] = nil
         self.completionByURL[url] = nil
     }
 
-    func parseMetaHeader(container: MetaStreamContainer, url: NSURL, completion: DownloadCompletion) {
+    func parseMetaHeader(_ container: MetaStreamContainer, url: URL, completion: @escaping DownloadCompletion) {
         guard let xmlString = container.head else { return completion(nil) }
         let scanner = OpenGraphScanner(xmlString, url: url) { [weak self] result in
-            self?.resultsQueue.addOperationWithBlock {
+            self?.resultsQueue.addOperation {
                 completion(result)
             }
         }
         
         scanner.parse()
     }
+
+}
+
+
+extension PreviewDownloader {
+
+     /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
+     /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
+    func urlSession(_ session: URLSessionType, dataTask: URLSessionDataTaskType, didReceiveHTTPResponse response: HTTPURLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
+        guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
+        let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
+        let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String
+        if let contentType = contentType , !contentType.lowercased().contains("text/html") {
+            completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: dataTask.taskIdentifier)
+            return completionHandler(.cancel)
+        }
+        
+        return completionHandler(.allow)
+    }
+
 }

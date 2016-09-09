@@ -21,14 +21,14 @@
 
 class MockPreviewDownloader: PreviewDownloaderType {
     
-    typealias Completion = OpenGraphData? -> Void
+    typealias Completion = (OpenGraphData?) -> Void
     
     var mockOpenGraphData: OpenGraphData? = nil
     var requestOpenGraphDataCallCount = 0
-    var requestOpenGraphDataURLs = [NSURL]()
+    var requestOpenGraphDataURLs = [URL]()
     var requestOpenGraphDataCompletions = [Completion]()
     
-    func requestOpenGraphData(fromURL url: NSURL, completion: OpenGraphData? -> Void) {
+    func requestOpenGraphData(fromURL url: URL, completion: @escaping Completion) {
         requestOpenGraphDataCallCount += 1
         requestOpenGraphDataURLs.append(url)
         requestOpenGraphDataCompletions.append(completion)
@@ -38,28 +38,28 @@ class MockPreviewDownloader: PreviewDownloaderType {
 
 class MockImageDownloader: ImageDownloaderType {
     
-    typealias ImageCompletion = NSData? -> Void
-    var mockImageData: NSData? = nil
-    var downloadImageURLs = [NSURL]()
+    typealias ImageCompletion = (Data?) -> Void
+    var mockImageData: Data? = nil
+    var downloadImageURLs = [URL]()
     var downloadImageCallCount = 0
     var downloadImageCompletion = [ImageCompletion]()
     
-    typealias ImagesCompletion = [NSURL : NSData] -> Void
-    var mockImageDataByUrl = [NSURL: NSData]()
+    typealias ImagesCompletion = ([URL : Data]) -> Void
+    var mockImageDataByUrl = [URL: Data]()
     var downloadImagesCallCount = 0
-    var downloadImagesURLs = [NSURL]()
+    var downloadImagesURLs = [URL]()
     var downloadImagesCompletion = [ImagesCompletion]()
     
-    func downloadImage(fromURL url: NSURL, completion: NSData? -> Void) {
+    func downloadImage(fromURL url: URL, completion: @escaping ImageCompletion) {
         downloadImageCallCount += 1
         downloadImageURLs.append(url)
         downloadImageCompletion.append(completion)
         completion(mockImageData)
     }
     
-    func downloadImages(fromURLs urls: [NSURL], completion: [NSURL : NSData] -> Void) {
+    func downloadImages(fromURLs urls: [URL], completion: @escaping ImagesCompletion) {
         downloadImagesCallCount += 1
-        downloadImageURLs.appendContentsOf(urls)
+        downloadImageURLs.append(contentsOf: urls)
         downloadImagesCompletion.append(completion)
         return completion(mockImageDataByUrl)
     }

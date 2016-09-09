@@ -19,11 +19,6 @@
 		AF2A6B161D26A51900A59905 /* instagram_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = AF2A6B151D26A51900A59905 /* instagram_head.txt */; };
 		AF2A6B1A1D26A57000A59905 /* vimeo_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = AF2A6B191D26A57000A59905 /* vimeo_head.txt */; };
 		AF2A6B1E1D26A5E900A59905 /* nytimes_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = AF2A6B1D1D26A5E900A59905 /* nytimes_head.txt */; };
-		AF2A6B2E1D26B1C400A59905 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF2A6B2D1D26B1C400A59905 /* AppDelegate.swift */; };
-		AF2A6B301D26B1C400A59905 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF2A6B2F1D26B1C400A59905 /* ViewController.swift */; };
-		AF2A6B331D26B1C400A59905 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AF2A6B311D26B1C400A59905 /* Main.storyboard */; };
-		AF2A6B351D26B1C400A59905 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF2A6B341D26B1C400A59905 /* Assets.xcassets */; };
-		AF2A6B381D26B1C400A59905 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AF2A6B361D26B1C400A59905 /* LaunchScreen.storyboard */; };
 		AF2A6B431D26B26F00A59905 /* MetaStreamContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF2A6B421D26B26F00A59905 /* MetaStreamContainerTests.swift */; };
 		AFA947F81D3AF374007F53A1 /* itunes_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = AFA947F71D3AF374007F53A1 /* itunes_head.txt */; };
 		AFA947FC1D3AFC82007F53A1 /* itunes_without_title_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = AFA947FB1D3AFC82007F53A1 /* itunes_without_title_head.txt */; };
@@ -42,6 +37,8 @@
 		BF949E661D3D282600587597 /* PreviewBlacklist.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF949E651D3D282600587597 /* PreviewBlacklist.swift */; };
 		BF949E681D3D2B7300587597 /* PreviewBlackListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF949E671D3D2B7300587597 /* PreviewBlackListTests.swift */; };
 		BF9FA50A1D2ACFE100ED0AAC /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF9FA5091D2ACFE100ED0AAC /* foursquare_head.txt */; };
+		BFB7B3D21D81ACE300EBD1C5 /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; };
+		BFB7B3D41D81AE8100EBD1C5 /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFBB01C21D2A4B7800DA7163 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB01C11D2A4B7800DA7163 /* ImageDownloader.swift */; };
 		BFBB01C41D2A4F1500DA7163 /* URLSessionProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB01C31D2A4F1500DA7163 /* URLSessionProtocols.swift */; };
 		BFBB01C61D2A5BC900DA7163 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB01C51D2A5BC900DA7163 /* ImageDownloaderTests.swift */; };
@@ -51,21 +48,12 @@
 		BFBB01D31D2A8AD900DA7163 /* twitter_images_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BFBB01D21D2A8AD900DA7163 /* twitter_images_head.txt */; };
 		BFE08AE21D3644AE0065985A /* medium_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BFE08AE11D3644AE0065985A /* medium_head.txt */; };
 		BFE08AED1D377EFC0065985A /* wire_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BFE08AEC1D377EFC0065985A /* wire_head.txt */; };
-		BFE08AEE1D3780170065985A /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; };
-		BFE08AEF1D3780170065985A /* Ono.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFF0578E1D25434D004A2C29 /* ZMCLinkPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF0578D1D25434D004A2C29 /* ZMCLinkPreview.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFF057951D25434E004A2C29 /* ZMCLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF0578A1D25434D004A2C29 /* ZMCLinkPreview.framework */; };
 		BFF0C9221D3E66510016F41B /* yahoo_sports_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BFF0C9211D3E66510016F41B /* yahoo_sports_head.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		AF2A6B3D1D26B1D600A59905 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFF057811D25434D004A2C29 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AF2A6B2A1D26B1C400A59905;
-			remoteInfo = ZMCLinkPreviewTestHost;
-		};
 		BFF057961D25434E004A2C29 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFF057811D25434D004A2C29 /* Project object */;
@@ -76,15 +64,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		BFE08AF01D3780170065985A /* Embed Frameworks */ = {
+		BFB7B3D31D81AE7200EBD1C5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BFE08AEF1D3780170065985A /* Ono.framework in Embed Frameworks */,
+				BFB7B3D41D81AE8100EBD1C5 /* Ono.framework in CopyFiles */,
 			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -106,13 +93,6 @@
 		AF2A6B151D26A51900A59905 /* instagram_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = instagram_head.txt; sourceTree = "<group>"; };
 		AF2A6B191D26A57000A59905 /* vimeo_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vimeo_head.txt; sourceTree = "<group>"; };
 		AF2A6B1D1D26A5E900A59905 /* nytimes_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nytimes_head.txt; sourceTree = "<group>"; };
-		AF2A6B2B1D26B1C400A59905 /* ZMCLinkPreviewTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZMCLinkPreviewTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AF2A6B2D1D26B1C400A59905 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		AF2A6B2F1D26B1C400A59905 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		AF2A6B321D26B1C400A59905 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		AF2A6B341D26B1C400A59905 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AF2A6B371D26B1C400A59905 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		AF2A6B391D26B1C400A59905 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AF2A6B421D26B26F00A59905 /* MetaStreamContainerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetaStreamContainerTests.swift; sourceTree = "<group>"; };
 		AFA947F71D3AF374007F53A1 /* itunes_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = itunes_head.txt; sourceTree = "<group>"; };
 		AFA947FB1D3AFC82007F53A1 /* itunes_without_title_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = itunes_without_title_head.txt; sourceTree = "<group>"; };
@@ -166,14 +146,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		AF2A6B281D26B1C400A59905 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BFE08AEE1D3780170065985A /* Ono.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BFF057861D25434D004A2C29 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -186,6 +158,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFB7B3D21D81ACE300EBD1C5 /* Ono.framework in Frameworks */,
 				BFF057951D25434E004A2C29 /* ZMCLinkPreview.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,19 +166,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AF2A6B2C1D26B1C400A59905 /* ZMCLinkPreviewTestHost */ = {
-			isa = PBXGroup;
-			children = (
-				AF2A6B2D1D26B1C400A59905 /* AppDelegate.swift */,
-				AF2A6B2F1D26B1C400A59905 /* ViewController.swift */,
-				AF2A6B311D26B1C400A59905 /* Main.storyboard */,
-				AF2A6B341D26B1C400A59905 /* Assets.xcassets */,
-				AF2A6B361D26B1C400A59905 /* LaunchScreen.storyboard */,
-				AF2A6B391D26B1C400A59905 /* Info.plist */,
-			);
-			path = ZMCLinkPreviewTestHost;
-			sourceTree = "<group>";
-		};
 		BF3DD26D1D25445600D51DED /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,7 +249,6 @@
 				BF7699871D34F881009C378B /* Ono.framework */,
 				BFF0578C1D25434D004A2C29 /* ZMCLinkPreview */,
 				BFF057981D25434E004A2C29 /* ZMCLinkPreviewTests */,
-				AF2A6B2C1D26B1C400A59905 /* ZMCLinkPreviewTestHost */,
 				BFF0578B1D25434D004A2C29 /* Products */,
 				BF3DD26D1D25445600D51DED /* Resources */,
 			);
@@ -300,7 +259,6 @@
 			children = (
 				BFF0578A1D25434D004A2C29 /* ZMCLinkPreview.framework */,
 				BFF057941D25434E004A2C29 /* ZMCLinkPreviewTests.xctest */,
-				AF2A6B2B1D26B1C400A59905 /* ZMCLinkPreviewTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -358,24 +316,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		AF2A6B2A1D26B1C400A59905 /* ZMCLinkPreviewTestHost */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AF2A6B3A1D26B1C400A59905 /* Build configuration list for PBXNativeTarget "ZMCLinkPreviewTestHost" */;
-			buildPhases = (
-				AF2A6B271D26B1C400A59905 /* Sources */,
-				AF2A6B281D26B1C400A59905 /* Frameworks */,
-				AF2A6B291D26B1C400A59905 /* Resources */,
-				BFE08AF01D3780170065985A /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ZMCLinkPreviewTestHost;
-			productName = ZMCLinkPreviewTestHost;
-			productReference = AF2A6B2B1D26B1C400A59905 /* ZMCLinkPreviewTestHost.app */;
-			productType = "com.apple.product-type.application";
-		};
 		BFF057891D25434D004A2C29 /* ZMCLinkPreview */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BFF0579E1D25434E004A2C29 /* Build configuration list for PBXNativeTarget "ZMCLinkPreview" */;
@@ -401,12 +341,12 @@
 				BFF057901D25434E004A2C29 /* Sources */,
 				BFF057911D25434E004A2C29 /* Frameworks */,
 				BFF057921D25434E004A2C29 /* Resources */,
+				BFB7B3D31D81AE7200EBD1C5 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				BFF057971D25434E004A2C29 /* PBXTargetDependency */,
-				AF2A6B3E1D26B1D600A59905 /* PBXTargetDependency */,
 			);
 			name = ZMCLinkPreviewTests;
 			productName = ZMCLinkPreviewTests;
@@ -420,17 +360,15 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				TargetAttributes = {
-					AF2A6B2A1D26B1C400A59905 = {
-						CreatedOnToolsVersion = 7.3.1;
-					};
 					BFF057891D25434D004A2C29 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 					};
 					BFF057931D25434E004A2C29 = {
 						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = AF2A6B2A1D26B1C400A59905;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -449,22 +387,11 @@
 			targets = (
 				BFF057891D25434D004A2C29 /* ZMCLinkPreview */,
 				BFF057931D25434E004A2C29 /* ZMCLinkPreviewTests */,
-				AF2A6B2A1D26B1C400A59905 /* ZMCLinkPreviewTestHost */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		AF2A6B291D26B1C400A59905 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AF2A6B381D26B1C400A59905 /* LaunchScreen.storyboard in Resources */,
-				AF2A6B351D26B1C400A59905 /* Assets.xcassets in Resources */,
-				AF2A6B331D26B1C400A59905 /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BFF057881D25434D004A2C29 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -498,15 +425,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		AF2A6B271D26B1C400A59905 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AF2A6B301D26B1C400A59905 /* ViewController.swift in Sources */,
-				AF2A6B2E1D26B1C400A59905 /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BFF057851D25434D004A2C29 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -547,11 +465,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		AF2A6B3E1D26B1D600A59905 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AF2A6B2A1D26B1C400A59905 /* ZMCLinkPreviewTestHost */;
-			targetProxy = AF2A6B3D1D26B1D600A59905 /* PBXContainerItemProxy */;
-		};
 		BFF057971D25434E004A2C29 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BFF057891D25434D004A2C29 /* ZMCLinkPreview */;
@@ -559,56 +472,7 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		AF2A6B311D26B1C400A59905 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				AF2A6B321D26B1C400A59905 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		AF2A6B361D26B1C400A59905 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				AF2A6B371D26B1C400A59905 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
-		AF2A6B3B1D26B1C400A59905 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				INFOPLIST_FILE = ZMCLinkPreviewTestHost/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.ZMCLinkPreviewTestHost;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		AF2A6B3C1D26B1C400A59905 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				INFOPLIST_FILE = ZMCLinkPreviewTestHost/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.ZMCLinkPreviewTestHost;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		BFF0579C1D25434E004A2C29 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -624,8 +488,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -676,8 +542,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -711,17 +579,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD27F1D25445600D51DED /* ZMCLinkPreview-ios.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"@executable_path/../../Frameworks",
 				);
 				INFOPLIST_FILE = ZMCLinkPreview/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -731,6 +600,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -738,17 +608,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD27F1D25445600D51DED /* ZMCLinkPreview-ios.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"@executable_path/../../Frameworks",
 				);
 				INFOPLIST_FILE = ZMCLinkPreview/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -757,6 +628,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.ZMCLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -764,6 +636,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD2731D25445600D51DED /* ios-test-target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -772,14 +646,16 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.ZMCLinkPreviewTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZMCLinkPreviewTestHost.app/ZMCLinkPreviewTestHost";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		BFF057A31D25434E004A2C29 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF3DD2751D25445600D51DED /* osx-test-target.xcconfig */;
+			baseConfigurationReference = BF3DD2731D25445600D51DED /* ios-test-target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -788,22 +664,13 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.ZMCLinkPreviewTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZMCLinkPreviewTestHost.app/ZMCLinkPreviewTestHost";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AF2A6B3A1D26B1C400A59905 /* Build configuration list for PBXNativeTarget "ZMCLinkPreviewTestHost" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AF2A6B3B1D26B1C400A59905 /* Debug */,
-				AF2A6B3C1D26B1C400A59905 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		BFF057841D25434D004A2C29 /* Build configuration list for PBXProject "ZMCLinkPreview" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

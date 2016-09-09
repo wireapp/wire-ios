@@ -37,8 +37,8 @@ class LinkPreviewDetectorTests: XCTestCase {
         sut = LinkPreviewDetector(
             previewDownloader: previewDownloader,
             imageDownloader: imageDownloader,
-            resultsQueue: .mainQueue(),
-            workerQueue: .mainQueue()
+            resultsQueue: .main,
+            workerQueue: .main
         )
     }
     
@@ -52,7 +52,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         // then
         XCTAssertEqual(links.count, 1)
         let linkWithOffset = links.first
-        XCTAssertEqual(linkWithOffset?.URL, NSURL(string: "http://www.example.com")!)
+        XCTAssertEqual(linkWithOffset?.URL, URL(string: "http://www.example.com")!)
         XCTAssertEqual(linkWithOffset?.range.location, 35)
     }
     
@@ -66,7 +66,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         // then
         XCTAssertEqual(links.count, 1)
         let linkWithOffset = links.first
-        XCTAssertEqual(linkWithOffset?.URL, NSURL(string: "http://www.example.com")!)
+        XCTAssertEqual(linkWithOffset?.URL, URL(string: "http://www.example.com")!)
         XCTAssertEqual(linkWithOffset?.range.location, 35)
     }
     
@@ -80,26 +80,26 @@ class LinkPreviewDetectorTests: XCTestCase {
         // then
         XCTAssertEqual(links.count, 2)
         let (first, second) = (links.first, links.last)
-        XCTAssertEqual(first?.URL, NSURL(string: "http://www.example.com/first")!)
+        XCTAssertEqual(first?.URL, URL(string: "http://www.example.com/first")!)
         XCTAssertEqual(first?.range.location, 7)
-        XCTAssertEqual(second?.URL, NSURL(string: "http://www.example.com/second")!)
+        XCTAssertEqual(second?.URL, URL(string: "http://www.example.com/second")!)
         XCTAssertEqual(second?.range.location, 41)
     }
     
     func testThatItCallsTheCompletionWithAnEmptyArrayWhenThereIsNoLinkInTheText() {
         // given
         let text = "This is a sample containig no link"
-        let expectation = expectationWithDescription("It calls the completion closure")
+        let completionExpectation = expectation(description: "It calls the completion closure")
 
         // when
         var result = [LinkPreview]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
-            expectation.fulfill()
+            completionExpectation.fulfill()
         }
 
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 0)
         XCTAssertEqual(result, [])
     }
@@ -113,32 +113,32 @@ class LinkPreviewDetectorTests: XCTestCase {
         
         // then
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
-        XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [NSURL(string: "http://www.example.com")!])
+        XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://www.example.com")!])
     }
     
     func testThatItReturnsAnEmptyArrayIfThePreviewDownloaderReturnsANilOpenGraphData() {
         // given
         let text = "This is a sample containig a link: www.example.com"
-        let expectation = expectationWithDescription("It calls the completion closure")
+        let completionExpectation = expectation(description: "It calls the completion closure")
         
         // when
         var result = [LinkPreview]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
-            expectation.fulfill()
+            completionExpectation.fulfill()
         }
         
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
-        XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [NSURL(string: "http://www.example.com")!])
+        XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://www.example.com")!])
         XCTAssertEqual(result, [])
     }
     
     func testThatItRequestsToDownloadTheImageDataWhenThereIsALinkAndThePreviewDownloaderReturnsOpenGraphData() {
         // given
         let text = "This is a sample containig a link: example.com"
-        let expectation = expectationWithDescription("It calls the completion closure")
+        let completionExpectation = expectation(description: "It calls the completion closure")
         let openGraphData = OpenGraphMockDataProvider.nytimesData().expected!
         previewDownloader.mockOpenGraphData = openGraphData
         
@@ -146,11 +146,11 @@ class LinkPreviewDetectorTests: XCTestCase {
         var result = [LinkPreview]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
-            expectation.fulfill()
+            completionExpectation.fulfill()
         }
         
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(result.first?.imageURLs.first?.absoluteString, openGraphData.imageUrls.first)
         guard let article = result.first as? Article else { return XCTFail("Wrong preview type") }
@@ -163,7 +163,7 @@ class LinkPreviewDetectorTests: XCTestCase {
     func testThatItRequestsToDownloadOnlyTheFirstImageDataWhenThereIsALinkAndThePreviewDownloaderReturnsOpenGraphData() {
         // given
         let text = "This is a sample containig a link: www.example.com"
-        let expectation = expectationWithDescription("It calls the completion closure")
+        let completionExpectation = expectation(description: "It calls the completion closure")
         let openGraphData = OpenGraphMockDataProvider.twitterDataWithImages().expected!
         previewDownloader.mockOpenGraphData = openGraphData
         
@@ -171,11 +171,11 @@ class LinkPreviewDetectorTests: XCTestCase {
         var result = [LinkPreview]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
-            expectation.fulfill()
+            completionExpectation.fulfill()
         }
         
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(imageDownloader.downloadImagesCallCount, 0)
 
@@ -207,34 +207,34 @@ class LinkPreviewDetectorTests: XCTestCase {
     func testThatItImmediatelyCallsTheCompletionHandlerForHostsOnTheBlacklist() {
         // given
         let url = "www.soundcloud.com"
-        let expectation = expectationWithDescription("It calls the completion closure")
+        let completionExpectation = expectation(description: "It calls the completion closure")
         var result = [LinkPreview]()
         
         // when
         sut.downloadLinkPreviews(inText: url) {
             result = $0
-            expectation.fulfill()
+            completionExpectation.fulfill()
         }
         
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertTrue(result.isEmpty)
     }
     
     func assertThatItCallsTheCompletionClosureOnTheResultsQueue(withText text: String, line: UInt = #line) {
         // given
-        let queue = NSOperationQueue()
+        let queue = OperationQueue()
         sut = LinkPreviewDetector(previewDownloader: previewDownloader, imageDownloader: imageDownloader, resultsQueue: queue, workerQueue: queue)
-        let expectation = expectationWithDescription("It calls the completion closure")
+        let completionExpectation = expectation(description: "It calls the completion closure")
         
         // when
         sut.downloadLinkPreviews(inText: text) { _ in
-            XCTAssertEqual(NSOperationQueue.currentQueue(), queue, line: line)
-            expectation.fulfill()
+            XCTAssertEqual(OperationQueue.current, queue, line: line)
+            completionExpectation.fulfill()
         }
         
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
     }
     
 }

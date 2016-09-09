@@ -25,84 +25,84 @@ class StringXMLEntityParserTests: XCTestCase {
         // given 
         let string = ""
         // when & then
-        XCTAssertEqual(string, string.resolvingXMLEntityReferences())
+        XCTAssertEqual(string, string.resolvedXMLEntityReferences())
     }
     
     func testThatItIgnoresStringWithoutEntities() {
         // given
         let string = "WebKit crashes on background thread"
         // when & then
-        XCTAssertEqual(string, string.resolvingXMLEntityReferences())
+        XCTAssertEqual(string, string.resolvedXMLEntityReferences())
     }
     
     func testThatItIgnoresStringWithOneAmp() {
         // given
         let string = "NSAttributedString crashes on background thread & no one tells that it uses WebKit"
         // when & then
-        XCTAssertEqual(string, string.resolvingXMLEntityReferences())
+        XCTAssertEqual(string, string.resolvedXMLEntityReferences())
     }
     
     func testThatItIgnoresStringWithSeveralAmps() {
         // given
         let string = "if webKit && thread.current().isBackground() then fatalError()"
         // when & then
-        XCTAssertEqual(string, string.resolvingXMLEntityReferences())
+        XCTAssertEqual(string, string.resolvedXMLEntityReferences())
     }
     
     func testThatItIgnoresStringWithEmoji() {
         // given
         let string = "WebKit crashes on background thread 😱"
         // when & then
-        XCTAssertEqual(string, string.resolvingXMLEntityReferences())
+        XCTAssertEqual(string, string.resolvedXMLEntityReferences())
     }
     
     func testThatItIgnoresStringWithRTL() {
         // given
         let string = "تحطم بكت على موضوع الخلفية"
         // when & then
-        XCTAssertEqual(string, string.resolvingXMLEntityReferences())
+        XCTAssertEqual(string, string.resolvedXMLEntityReferences())
     }
     
     func testThatItIgnoresStringWithChineese() {
         // given
         let string = "在后台线程WebKit的崩溃"
         // when & then
-        XCTAssertEqual(string, string.resolvingXMLEntityReferences())
+        XCTAssertEqual(string, string.resolvedXMLEntityReferences())
     }
     
     func testThatItReplacesAmp() {
         // given
         let string = "&amp;"
         // when & then
-        XCTAssertEqual("&", string.resolvingXMLEntityReferences())
+        XCTAssertEqual("&", string.resolvedXMLEntityReferences())
     }
     
     func testThatItReplacesSeveralAmps() {
         // given
         let string = "if webKit &amp;&amp; thread.current().isBackground() then fatalError()"
         // when & then
-        XCTAssertEqual("if webKit && thread.current().isBackground() then fatalError()", string.resolvingXMLEntityReferences())
+        XCTAssertEqual("if webKit && thread.current().isBackground() then fatalError()", string.resolvedXMLEntityReferences())
     }
     
     func testThatItReplacesQuot() {
         // given
         let string = "I said: &quot;WebKit crashes on background thread&quot;"
         // when & then
-        XCTAssertEqual("I said: \"WebKit crashes on background thread\"", string.resolvingXMLEntityReferences())
+        XCTAssertEqual("I said: \"WebKit crashes on background thread\"", string.resolvedXMLEntityReferences())
     }
     
     func testThatItReplacesSpecialCharacters() {
         // given
         let string = "Checkout: 0,00 &#8364;"
         // when & then
-        XCTAssertEqual("Checkout: 0,00 €", string.resolvingXMLEntityReferences())
+        XCTAssertEqual("Checkout: 0,00 €", string.resolvedXMLEntityReferences())
     }
     
     func testThatItReplacesSeveralSpecialCharacters() {
         // given
         let string = "Restaurant is &#8364;&#8364;&#8364;"
         // when & then
-        XCTAssertEqual("Restaurant is €€€", string.resolvingXMLEntityReferences())
+        XCTAssertEqual("Restaurant is €€€", string.resolvedXMLEntityReferences())
     }
     
 }

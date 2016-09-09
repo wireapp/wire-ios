@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,29 +20,29 @@
 import Foundation
 
 
-@objc public class LinkPreview : NSObject {
+@objc open class LinkPreview : NSObject {
     
-    public let originalURLString: String
-    public let permanentURL: NSURL?
-    public let characterOffsetInText: Int
-    public var imageURLs = [NSURL]()
-    public var imageData = [NSData]()
+    open let originalURLString: String
+    open let permanentURL: URL?
+    open let characterOffsetInText: Int
+    open var imageURLs = [URL]()
+    open var imageData = [Data]()
     
-    public typealias DownloadCompletion = (successful: Bool) -> Void
+    public typealias DownloadCompletion = (_ successful: Bool) -> Void
     
     public init(originalURLString: String, permamentURLString: String, offset: Int) {
         self.originalURLString = originalURLString
-        permanentURL = NSURL(string: permamentURLString)
+        permanentURL = URL(string: permamentURLString)
         characterOffsetInText = offset
         super.init()
     }
     
-    func requestAssets(withImageDownloader downloader: ImageDownloaderType, completion: DownloadCompletion) {
-        guard let imageURL = imageURLs.first else { return completion(successful: false) }
+    func requestAssets(withImageDownloader downloader: ImageDownloaderType, completion: @escaping DownloadCompletion) {
+        guard let imageURL = imageURLs.first else { return completion(false) }
         downloader.downloadImage(fromURL: imageURL) { [weak self] imageData in
-            guard let `self` = self, data = imageData else { return completion(successful: false) }
+            guard let `self` = self, let data = imageData else { return completion(false) }
             self.imageData.append(data)
-            completion(successful: imageData != nil)
+            completion(imageData != nil)
         }
     }
 

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -19,53 +19,53 @@
 
 import Foundation
 
-public protocol ImageDownloaderType {
-    func downloadImage(fromURL url: NSURL, completion: NSData? -> Void)
-    func downloadImages(fromURLs urls: [NSURL], completion: [NSURL: NSData] -> Void)
+protocol ImageDownloaderType {
+    func downloadImage(fromURL url: URL, completion: @escaping (Data?) -> Void)
+    func downloadImages(fromURLs urls: [URL], completion: @escaping ([URL: Data]) -> Void)
 }
 
-public final class ImageDownloader: NSObject, ImageDownloaderType {
+final class ImageDownloader: NSObject, ImageDownloaderType {
     
-    public typealias ImageData = NSData
+    typealias ImageData = Data
     
-    let workerQueue: NSOperationQueue
-    let resultsQueue: NSOperationQueue
+    let workerQueue: OperationQueue
+    let resultsQueue: OperationQueue
     let session: URLSessionType
     
-    init(resultsQueue: NSOperationQueue, workerQueue: NSOperationQueue = NSOperationQueue(), session: URLSessionType? = nil) {
+    init(resultsQueue: OperationQueue, workerQueue: OperationQueue = OperationQueue(), session: URLSessionType? = nil) {
         self.resultsQueue = resultsQueue
         self.workerQueue = workerQueue
-        self.workerQueue.name = String(self.dynamicType) + "Queue"
+        self.workerQueue.name = String(describing: type(of: self)) + "Queue"
         workerQueue.maxConcurrentOperationCount = 3
-        workerQueue.qualityOfService = .Default
-        self.session = session ?? NSURLSession(configuration: .ephemeralSessionConfiguration())
+        workerQueue.qualityOfService = .default
+        self.session = session ?? URLSession(configuration: .ephemeral)
         super.init()
     }
     
-    public func downloadImage(fromURL url: NSURL, completion: ImageData? -> Void) {
+    func downloadImage(fromURL url: URL, completion: @escaping (Data?) -> Void) {
         downloadImages(fromURLs: [url]) { imagesByURL in
             completion(imagesByURL.values.first)
         }
     }
     
-    public func downloadImages(fromURLs urls: [NSURL], completion: [NSURL: ImageData] -> Void) {
-        workerQueue.addOperationWithBlock { [weak self] in
+    func downloadImages(fromURLs urls: [URL], completion: @escaping ([URL: ImageData]) -> Void) {
+        workerQueue.addOperation { [weak self] in
             guard let `self` = self else { return }
-            var result = [NSURL: ImageData]()
-            let group = dispatch_group_create()
+            var result = [URL: ImageData]()
+            let group = DispatchGroup()
             
             urls.forEach { url in
-                dispatch_group_enter(group)
+                group.enter()
                 self.session.dataTaskWithURL(url) { data, response, _ in
-                    if let httpResponse = response as? NSHTTPURLResponse where httpResponse.contentTypeImage {
+                    if let httpResponse = response as? HTTPURLResponse , httpResponse.contentTypeImage {
                         result[url] = data
                     }
-                    dispatch_group_leave(group)
+                    group.leave()
                 }.resume()
             }
             
-            dispatch_group_wait(group, DISPATCH_TIME_FOREVER)
-            self.resultsQueue.addOperationWithBlock {
+            _ = group.wait(timeout: DispatchTime.distantFuture)
+            self.resultsQueue.addOperation {
                 completion(result)
             }
         }
@@ -73,12 +73,12 @@ public final class ImageDownloader: NSObject, ImageDownloaderType {
     
 }
 
-extension NSHTTPURLResponse {
+extension HTTPURLResponse {
 
     var contentTypeImage: Bool {
-        let contentTypeKey = HeaderKey.ContentType.rawValue
-        guard let contentType = allHeaderFields[contentTypeKey] as? String ?? allHeaderFields[contentTypeKey.lowercaseString] as? String else { return false }
-        return contentType.containsString("image")
+        let contentTypeKey = HeaderKey.contentType.rawValue
+        guard let contentType = allHeaderFields[contentTypeKey] as? String ?? allHeaderFields[contentTypeKey.lowercased()] as? String else { return false }
+        return contentType.contains("image")
     }
 
 }

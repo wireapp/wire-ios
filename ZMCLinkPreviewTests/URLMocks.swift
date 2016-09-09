@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import ZMCLinkPreview
+@testable import ZMCLinkPreview
 
 class MockURLSessionDataTask: URLSessionDataTaskType {
     
     var taskIdentifier = 0
     var resumeCallCount = 0
     var cancelCallCount = 0
-    var mockOriginalRequest: NSURLRequest? = nil
+    var mockOriginalRequest: URLRequest? = nil
     
-    var originalRequest: NSURLRequest? {
+    var originalRequest: URLRequest? {
         return mockOriginalRequest
     }
     
@@ -41,19 +41,19 @@ class MockURLSessionDataTask: URLSessionDataTaskType {
 class MockURLSession: URLSessionType {
     
     var dataTaskWithURLCallCount = 0
-    var dataTaskWithURLParameters = [NSURL]()
+    var dataTaskWithURLParameters = [URL]()
     var dataTaskWithURLClosureCallCount = 0
     var dataTaskWithURLClosureCompletions = [DataTaskCompletion]()
     var mockDataTask: MockURLSessionDataTask? = nil
-    var dataTaskGenerator: ((NSURL, DataTaskCompletion) -> URLSessionDataTaskType)? = nil
+    var dataTaskGenerator: ((URL, DataTaskCompletion) -> URLSessionDataTaskType)? = nil
     
-    func dataTaskWithURL(url: NSURL) -> URLSessionDataTaskType {
+    func dataTaskWithURL(_ url: URL) -> URLSessionDataTaskType {
         dataTaskWithURLCallCount += 1
         dataTaskWithURLParameters.append(url)
         return mockDataTask!
     }
     
-    func dataTaskWithURL(url: NSURL, completionHandler: DataTaskCompletion) -> URLSessionDataTaskType {
+    func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType {
         dataTaskWithURLClosureCallCount += 1
         dataTaskWithURLClosureCompletions.append(completionHandler)
         if let generator = dataTaskGenerator {
