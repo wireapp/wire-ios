@@ -1,0 +1,15 @@
+language: objective-c
+osx_image: xcode8
+xcode_sdk: iphonesimulator10
+script: xcodebuild test -project ziphy.xcodeproj -scheme ziphy -destination 'platform=iOS Simulator,name=iPhone 6s,OS=10.0' | xcpretty
+env:
+  global: 
+    - FRAMEWORK_NAME=ziphy
+before_install:
+  - set -o pipefail
+  - brew update
+  - brew outdated carthage || brew upgrade carthage
+before_script:
+before_deploy:
+  - carthage build --no-skip-current
+  - carthage archive $FRAMEWORK_NAME
