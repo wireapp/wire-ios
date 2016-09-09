@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -24,24 +24,24 @@ import ziphy
 class GiphyRequester : ZiphyURLRequester {
     
     let apiKey:String
-    let searchSession:NSURLSession
+    let searchSession:URLSession
     
     init(apiKey:String) {
         
         self.apiKey = apiKey
-        self.searchSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+        self.searchSession = URLSession(configuration: URLSessionConfiguration.default)
     }
     
-    @objc func doRequest(request: NSURLRequest, completionHandler: ((NSData?, NSURLResponse?, NSError?) -> Void)) {
+    @objc func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) {
         
-        if let originalURL:NSURL = request.URL {
+        if let originalURL:URL = request.url {
             
             var urlString = originalURL.absoluteString
             urlString = urlString+"&api_key=\(self.apiKey)"
             
-            let newURL = NSURL(string: urlString)
+            let newURL = URL(string: urlString)
             
-            let task = self.searchSession.dataTaskWithURL(newURL!, completionHandler: completionHandler)
+            let task = self.searchSession.dataTask(with: newURL!, completionHandler: completionHandler)
             task.resume()
         }
         else {
