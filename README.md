@@ -28,7 +28,7 @@ Consumers of this framework should mostly interact with the `LinkPreviewDetector
 
 ```swift
 let text = "Text containing a link to your awesome tweet"
-let detector = LinkPreviewDetector(resultsQueue: .mainQueue())
+let detector = LinkPreviewDetector(resultsQueue: .main)
 
 guard detector.containsLink(inText: text) else { return }
 detector.downloadLinkPreviews(inText: text) { previews in

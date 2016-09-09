@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -34,11 +34,11 @@ public struct OpenGraphData {
     
     init(title: String, type: String?, url: String, imageUrls: [String], siteName: String? = nil, description: String? = nil, userGeneratedImage: Bool = false) {
         self.title = title
-        self.type = type ?? OpenGraphTypeType.Website.rawValue
+        self.type = type ?? OpenGraphTypeType.website.rawValue
         self.url = url
         self.imageUrls = imageUrls
         self.siteNameString = siteName
-        self.siteName = siteName.map { OpenGraphSiteName(string: $0) ?? .Other } ?? .Other
+        self.siteName = siteName.map { OpenGraphSiteName(string: $0) ?? .other } ?? .other
         self.content = description
         self.userGeneratedImage = userGeneratedImage
     }
@@ -46,7 +46,7 @@ public struct OpenGraphData {
 
 extension OpenGraphData: CustomStringConvertible {
     public var description: String {
-        var description = "<\(self.dynamicType)> \(siteNameString): \(url):\n\t\(title)"
+        var description = "<\(type(of: self))> \(siteNameString): \(url):\n\t\(title)"
         if let content = content { description += "\n\(content)" }
         return description
     }
@@ -62,7 +62,7 @@ public struct FoursquareMetaData {
     }
     
     init?(propertyMapping mapping: OpenGraphData.PropertyMapping) {
-        guard let latitude = mapping[.LatitudeFSQ].flatMap(Float.init), longitude = mapping[.LongitudeFSQ].flatMap(Float.init) else { return nil }
+        guard let latitude = mapping[.latitudeFSQ].flatMap(Float.init), let longitude = mapping[.longitudeFSQ].flatMap(Float.init) else { return nil }
         self.init(latitude: latitude, longitude: longitude)
     }
 }
@@ -72,17 +72,17 @@ extension OpenGraphData {
     typealias PropertyMapping = [OpenGraphPropertyType: String]
     
     init?(propertyMapping mapping: PropertyMapping, images: [String]) {
-        guard let title = mapping[.Title],
-            url = mapping[.Url] else { return nil }
+        guard let title = mapping[.title],
+            let url = mapping[.url] else { return nil }
      
         self.init(
             title: title,
-            type: mapping[.Type],
+            type: mapping[.type],
             url: url,
             imageUrls: images,
-            siteName: mapping[.SiteName],
-            description: mapping[.Description],
-            userGeneratedImage: mapping[.UserGeneratedImage] == "true"
+            siteName: mapping[.siteName],
+            description: mapping[.description],
+            userGeneratedImage: mapping[.userGeneratedImage] == "true"
         )
         
         foursquareMetaData = FoursquareMetaData(propertyMapping: mapping)
@@ -111,32 +111,32 @@ extension Article {
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
         title = openGraphData.title
         summary = openGraphData.content
-        guard let imageURL = openGraphData.imageUrls.flatMap ({ NSURL(string: $0) }).first else { return }
+        guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
         imageURLs.append(imageURL)
     }
 }
 
 extension FoursquareLocation {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        guard openGraphData.type  == OpenGraphTypeType.Foursqaure.rawValue && openGraphData.siteName == .Foursquare else { return nil }
+        guard openGraphData.type  == OpenGraphTypeType.foursquare.rawValue && openGraphData.siteName == .foursquare else { return nil }
         
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
         title = openGraphData.title
         subtitle = openGraphData.content
         longitude = openGraphData.foursquareMetaData?.longitude
         latitude = openGraphData.foursquareMetaData?.latitude
-        guard let imageURL = openGraphData.imageUrls.flatMap ({ NSURL(string: $0) }).first else { return }
+        guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
         imageURLs.append(imageURL)
     }
 }
 
 extension InstagramPicture {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        guard openGraphData.type == OpenGraphTypeType.Instagram.rawValue && openGraphData.siteName == .Instagram else { return nil }
+        guard openGraphData.type == OpenGraphTypeType.instagram.rawValue && openGraphData.siteName == .instagram else { return nil }
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
         title = openGraphData.title
         subtitle = openGraphData.content
-        guard let imageURL = openGraphData.imageUrls.flatMap ({ NSURL(string: $0) }).first else { return }
+        guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
         imageURLs.append(imageURL)
     }
 }
@@ -144,30 +144,30 @@ extension InstagramPicture {
 extension TwitterStatus {
 
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        guard openGraphData.type == OpenGraphTypeType.Article.rawValue && openGraphData.siteName == .Twitter else { return nil }
+        guard openGraphData.type == OpenGraphTypeType.article.rawValue && openGraphData.siteName == .twitter else { return nil }
         self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
         
         message = tweetContentFromOpenGraphData(openGraphData)
         author = tweetAuthorFromOpenGraphData(openGraphData)
-        imageURLs = openGraphData.userGeneratedImage ? openGraphData.imageUrls.flatMap { NSURL(string: $0) } : []
+        imageURLs = openGraphData.userGeneratedImage ? openGraphData.imageUrls.flatMap(URL.init) : []
     }
     
-    private func tweetContentFromOpenGraphData(data: OpenGraphData) -> String? {
+    private func tweetContentFromOpenGraphData(_ data: OpenGraphData) -> String? {
         var tweet = data.content
-        tweet = tweet?.stringByReplacingOccurrencesOfString("“", withString: "", options: .AnchoredSearch, range: nil)
-        tweet = tweet?.stringByReplacingOccurrencesOfString("”", withString: "", options: [.AnchoredSearch, .BackwardsSearch], range: nil)
+        tweet = tweet?.replacingOccurrences(of: "“", with: "", options: .anchored, range: nil)
+        tweet = tweet?.replacingOccurrences(of: "”", with: "", options: [.anchored, .backwards], range: nil)
         return tweet
     }
     
-    private func tweetAuthorFromOpenGraphData(data: OpenGraphData) -> String {
+    private func tweetAuthorFromOpenGraphData(_ data: OpenGraphData) -> String {
         let authorSuffix = " on Twitter"
-        return data.title.stringByReplacingOccurrencesOfString(authorSuffix, withString: "", options: [.AnchoredSearch, .BackwardsSearch], range: nil)
+        return data.title.replacingOccurrences(of: authorSuffix, with: "", options: [.anchored, .backwards], range: nil)
     }
 }
 
 extension OpenGraphData  {
     
-    func linkPreview(originalURLString: String, offset: Int) -> LinkPreview {
+    func linkPreview(_ originalURLString: String, offset: Int) -> LinkPreview {
         return TwitterStatus(openGraphData: self, originalURLString: originalURLString, offset: offset) ??
             Article(openGraphData: self, originalURLString: originalURLString, offset: offset)
     }

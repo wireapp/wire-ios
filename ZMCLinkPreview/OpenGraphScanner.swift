@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,15 +21,15 @@ import Ono
 
 final class OpenGraphScanner: NSObject {
     
-    typealias ParserCompletion = OpenGraphData? -> Void
+    typealias ParserCompletion = (OpenGraphData?) -> Void
     
     let xmlString: String
     var contentsByProperty = [OpenGraphPropertyType: String]()
     var images = [String]()
     var completion: ParserCompletion
-    var originalURL: NSURL
+    var originalURL: URL
     
-    init(_ xmlString: String, url: NSURL, completion: ParserCompletion) {
+    init(_ xmlString: String, url: URL, completion: @escaping ParserCompletion) {
         self.xmlString = xmlString
         self.completion = completion
         originalURL = url
@@ -37,49 +37,49 @@ final class OpenGraphScanner: NSObject {
     }
     
     func parse() {
-        guard let document = try? ONOXMLDocument(string: xmlString, encoding: NSUTF8StringEncoding) else { return }
+        guard let document = try? ONOXMLDocument(string: xmlString, encoding: String.Encoding.utf8.rawValue) else { return }
         parseXML(document)
         createObjectAndComplete(document)
     }
 
-    private func parseXML(xmlDocument: ONOXMLDocument) {
-        xmlDocument.enumerateElementsWithXPath("//meta", usingBlock: { [weak self] (element, _, _) in
+    private func parseXML(_ xmlDocument: ONOXMLDocument) {
+        xmlDocument.enumerateElements(withXPath: "//meta", using: { [weak self] (element, _, _) in
             guard let `self` = self,
-                property = element[OpenGraphAttribute.Property.rawValue] as? String,
-                content = element[OpenGraphAttribute.Content.rawValue] as? String,
-                type = OpenGraphPropertyType(rawValue: property) else { return }
+                let property = element?[OpenGraphAttribute.property.rawValue] as? String,
+                let content = element?[OpenGraphAttribute.content.rawValue] as? String,
+                let type = OpenGraphPropertyType(rawValue: property) else { return }
 
             self.addProperty(type, value: content)
         })
     }
     
-    func addProperty(property: OpenGraphPropertyType, value: String) {
-        guard let content = value.resolvingXMLEntityReferences() else { return }
-        if property == .Image {
+    private func addProperty(_ property: OpenGraphPropertyType, value: String) {
+        guard let content = value.resolvedXMLEntityReferences() else { return }
+        if property == .image {
             images.append(content)
         } else {
             contentsByProperty[property] = content
         }
     }
 
-    func createObjectAndComplete(xmlDocument: ONOXMLDocument) {
+    private func createObjectAndComplete(_ xmlDocument: ONOXMLDocument) {
         insertMissingUrlIfNeeded()
         insertMissingTitleIfNeeded(xmlDocument)
         let data = OpenGraphData(propertyMapping: contentsByProperty, images: images)
         completion(data)
     }
 
-    func insertMissingUrlIfNeeded() {
-        guard !contentsByProperty.keys.contains(.Url) else { return }
-        contentsByProperty[.Url] = originalURL.absoluteString
+    private func insertMissingUrlIfNeeded() {
+        guard !contentsByProperty.keys.contains(.url) else { return }
+        contentsByProperty[.url] = originalURL.absoluteString
     }
 
-    func insertMissingTitleIfNeeded(xmlDocument: ONOXMLDocument) {
-        guard !contentsByProperty.keys.contains(.Title) else { return }
+    private func insertMissingTitleIfNeeded(_ xmlDocument: ONOXMLDocument) {
+        guard !contentsByProperty.keys.contains(.title) else { return }
 
-        xmlDocument.enumerateElementsWithXPath("//title", usingBlock: { [weak self] (element, _, _) in
-            guard let `self` = self else { return }
-            self.addProperty(.Title, value: element.stringValue())
+        xmlDocument.enumerateElements(withXPath: "//title", using: { [weak self] (element, _, _) in
+            guard let `self` = self, let value = element?.stringValue() else { return }
+            self.addProperty(.title, value: value)
         })
     }
 }

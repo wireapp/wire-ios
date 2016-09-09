@@ -19,20 +19,20 @@
 
 import Foundation
 
-public class LinkPreviewDetector : NSObject {
+public final class LinkPreviewDetector : NSObject {
     
     private let blacklist = PreviewBlacklist()
-    private let linkDetector : NSDataDetector? = try? NSDataDetector(types: NSTextCheckingType.Link.rawValue)
+    private let linkDetector : NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
     private let previewDownloader: PreviewDownloaderType
     private let imageDownloader: ImageDownloaderType
-    private let workerQueue: NSOperationQueue
-    private let resultsQueue: NSOperationQueue
+    private let workerQueue: OperationQueue
+    private let resultsQueue: OperationQueue
     
-    public typealias DetectCompletion = [LinkPreview] -> Void
-    typealias URLWithRange = (URL: NSURL, range: NSRange)
+    public typealias DetectCompletion = ([LinkPreview]) -> Void
+    typealias URLWithRange = (URL: URL, range: NSRange)
     
-    public convenience init(resultsQueue: NSOperationQueue) {
-        let workerQueue = NSOperationQueue()
+    public convenience init(resultsQueue: OperationQueue) {
+        let workerQueue = OperationQueue()
         self.init(
             previewDownloader: PreviewDownloader(resultsQueue: workerQueue),
             imageDownloader: ImageDownloader(resultsQueue: workerQueue),
@@ -41,7 +41,7 @@ public class LinkPreviewDetector : NSObject {
         )
     }
     
-    init(previewDownloader: PreviewDownloaderType, imageDownloader: ImageDownloaderType, resultsQueue: NSOperationQueue, workerQueue: NSOperationQueue) {
+    init(previewDownloader: PreviewDownloaderType, imageDownloader: ImageDownloaderType, resultsQueue: OperationQueue, workerQueue: OperationQueue) {
         self.resultsQueue = resultsQueue
         self.workerQueue = workerQueue
         self.previewDownloader = previewDownloader
@@ -55,9 +55,9 @@ public class LinkPreviewDetector : NSObject {
     
     func containedLinks(inText text: String) -> [URLWithRange] {
         let range = NSRange(location: 0, length: text.characters.count)
-        guard let matches = linkDetector?.matchesInString(text, options: [], range: range) else { return [] }
+        guard let matches = linkDetector?.matches(in: text, options: [], range: range) else { return [] }
         return matches.flatMap {
-            guard let url = $0.URL else { return nil }
+            guard let url = $0.url else { return nil }
             return (url, $0.range)
         }
     }
@@ -73,11 +73,11 @@ public class LinkPreviewDetector : NSObject {
      - parameter text:       The text with potentially contained links, if links are found the preview data is downloaded.
      - parameter completion: The completion closure called when the link previews (and it's images) have been downloaded.
      */
-    public func downloadLinkPreviews(inText text: String, completion : DetectCompletion) {
-        guard let (url, range) = containedLinks(inText: text).first where !blacklist.isBlacklisted(url) else { return callCompletion(completion, result: []) }
+    public func downloadLinkPreviews(inText text: String, completion : @escaping DetectCompletion) {
+        guard let (url, range) = containedLinks(inText: text).first , !blacklist.isBlacklisted(url) else { return callCompletion(completion, result: []) }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
             guard let `self` = self else { return }
-            let originalURLString = (text as NSString).substringWithRange(range)
+            let originalURLString = (text as NSString).substring(with: range)
             guard let data = openGraphData else { return self.callCompletion(completion, result: []) }
 
             let linkPreview = data.linkPreview(originalURLString, offset: range.location)
@@ -87,8 +87,8 @@ public class LinkPreviewDetector : NSObject {
         }
     }
     
-    private func callCompletion(completion: DetectCompletion, result: [LinkPreview]) {
-        resultsQueue.addOperationWithBlock { 
+    private func callCompletion(_ completion: @escaping DetectCompletion, result: [LinkPreview]) {
+        resultsQueue.addOperation { 
             completion(result)
         }
     }

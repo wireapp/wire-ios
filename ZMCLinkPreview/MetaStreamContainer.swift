@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,33 +22,33 @@ import Foundation
 
 final class MetaStreamContainer {
     
-    let bytes = NSMutableData()
+    var bytes = Data()
     
     var stringContent: String? {
-        return String(data: bytes, encoding: NSUTF8StringEncoding)
+        return String(data: bytes, encoding: String.Encoding.utf8)
     }
     
     var head: String? {
         guard let content = stringContent else { return nil }
-        let startRange = content.rangeOfString(OpenGraphXMLNode.HeadStart.rawValue)
-        let endRange = content.rangeOfString(OpenGraphXMLNode.HeadEnd.rawValue)
+        let startRange = content.range(of: OpenGraphXMLNode.headStart.rawValue)
+        let endRange = content.range(of: OpenGraphXMLNode.headEnd.rawValue)
         
-        guard let start = startRange?.startIndex, end = endRange?.endIndex else { return nil }
-        let result = content.characters[start..<end].map { String($0) }.joinWithSeparator("")
+        guard let start = startRange?.lowerBound, let end = endRange?.upperBound else { return nil }
+        let result = content.characters[start..<end].map { String($0) }.joined(separator: "")
         return result
     }
     
     var reachedEndOfHead = false
     
-    func addData(data: NSData) -> NSData {
+    @discardableResult func addData(_ data: Data) -> Data {
         updateReachedEndOfHead(withData: data)
-        bytes.appendData(data)
-        return bytes
+        bytes.append(data)
+        return bytes as Data
     }
 
-    private func updateReachedEndOfHead(withData data: NSData) {
-        guard let string = String(data: data, encoding: NSUTF8StringEncoding)?.lowercaseString else { return }
-        if string.containsString(OpenGraphXMLNode.HeadEnd.rawValue) {
+    private func updateReachedEndOfHead(withData data: Data) {
+        guard let string = String(data: data, encoding: String.Encoding.utf8)?.lowercased() else { return }
+        if string.contains(OpenGraphXMLNode.headEnd.rawValue) {
             reachedEndOfHead = true
         }
     }

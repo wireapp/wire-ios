@@ -86,7 +86,7 @@ class MetaStreamContainerTests: XCTestCase {
     
     // MARK: - Helper
     
-    func assertThatItExtractsTheCorrectHead(html: String, expectedHead: String, line: UInt = #line) {
+    func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, line: UInt = #line) {
         // when
         sut.addData(html.utf8Data)
         
@@ -96,7 +96,7 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(head, expectedHead, line: line)
     }
     
-    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(head: String, shouldUpdate: Bool = true, line: UInt = #line) {
+    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(_ head: String, shouldUpdate: Bool = true, line: UInt = #line) {
         // given
         let first = "First".utf8Data
         let second = "Head".utf8Data
@@ -122,7 +122,7 @@ class MetaStreamContainerTests: XCTestCase {
 }
 
 extension String {
-    var utf8Data: NSData {
-        return dataUsingEncoding(NSUTF8StringEncoding)!
+    var utf8Data: Data {
+        return data(using: String.Encoding.utf8)!
     }
 }

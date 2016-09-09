@@ -82,13 +82,13 @@ class OpenGraphScannerTests: XCTestCase {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.yahooSports())
     }
 
-    func assertThatItParsesSampleDataCorrectly(mockData: OpenGraphMockData, line: UInt = #line) {
+    func assertThatItParsesSampleDataCorrectly(_ mockData: OpenGraphMockData, line: UInt = #line) {
         // given
         var receivedData: OpenGraphData?
         let head = mockData.head
 
         // when
-        let sut = OpenGraphScanner(head, url: NSURL(string: mockData.urlString)!) { receivedData = $0 }
+        let sut = OpenGraphScanner(head, url: URL(string: mockData.urlString)!) { receivedData = $0 }
         sut.parse()
 
         // then

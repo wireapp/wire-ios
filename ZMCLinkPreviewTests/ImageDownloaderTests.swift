@@ -28,52 +28,52 @@ class ImageDownloaderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockSession = MockURLSession()
-        sut = ImageDownloader(resultsQueue: .mainQueue(), workerQueue:.mainQueue(), session: mockSession)
+        sut = ImageDownloader(resultsQueue: .main, workerQueue:.main, session: mockSession)
     }
     
     func testThatItCreatesADataTaskForTheImageURL() {
         // given
-        let expectation = expectationWithDescription("It should call the completion handler")
-        let url = NSURL(string: "www.example.com")!
+        let completionExpectation = expectation(description: "It should call the completion handler")
+        let url = URL(string: "www.example.com")!
         let mockTask = MockURLSessionDataTask()
         mockSession.mockDataTask = mockTask
         
         // when
         sut.downloadImage(fromURL: url) { _ in
-            expectation.fulfill()
+            completionExpectation.fulfill()
         }
         
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 1)
         XCTAssertEqual(mockTask.resumeCallCount, 1)
     }
     
     func testThatitCallsTheCompletionOnTheResultsQueue() {
-        let expectation = expectationWithDescription("It should call the completion handler")
-        let url = NSURL(string: "www.example.com")!
+        let completionExpectation = expectation(description: "It should call the completion handler")
+        let url = URL(string: "www.example.com")!
         mockSession.mockDataTask = MockURLSessionDataTask()
 
-        let queue = NSOperationQueue()
+        let queue = OperationQueue()
         sut = ImageDownloader(resultsQueue: queue, session: mockSession)
         
         // when
         sut.downloadImage(fromURL: url) { _ in
-            XCTAssertEqual(NSOperationQueue.currentQueue(), queue)
-            expectation.fulfill()
+            XCTAssertEqual(OperationQueue.current, queue)
+            completionExpectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func testThatItCreatesAndResumesADataTaskForAllURLs() {
         // given
-        let expectation = expectationWithDescription("It should call the completion handler")
+        let completionExpectation = expectation(description: "It should call the completion handler")
         let urls = [
-            NSURL(string: "www.example.com/1")!,
-            NSURL(string: "www.example.com/2")!,
-            NSURL(string: "www.example.com/3")!,
-            NSURL(string: "www.example.com/4")!
+            URL(string: "www.example.com/1")!,
+            URL(string: "www.example.com/2")!,
+            URL(string: "www.example.com/3")!,
+            URL(string: "www.example.com/4")!
         ]
         
         let mockTask = MockURLSessionDataTask()
@@ -83,7 +83,7 @@ class ImageDownloaderTests: XCTestCase {
             completion(nil, nil, nil)
             callCount += 1
             if callCount == 4 {
-                expectation.fulfill()
+                completionExpectation.fulfill()
             }
             return mockTask
         }
@@ -92,7 +92,7 @@ class ImageDownloaderTests: XCTestCase {
         sut.downloadImages(fromURLs: urls) { _ in }
         
         // then
-        waitForExpectationsWithTimeout(0.2, handler: nil)
+        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 4)
         XCTAssertEqual(mockTask.resumeCallCount, 4)
     }
@@ -121,29 +121,29 @@ class ImageDownloaderTests: XCTestCase {
         assertThatItReturnsTheImageData(false, withHeaderFields: ["content-type": "text/html"])
     }
     
-    func assertThatItReturnsTheImageData(shouldReturn: Bool, withHeaderFields headers: [String: String], line: UInt = #line) {
+    func assertThatItReturnsTheImageData(_ shouldReturn: Bool, withHeaderFields headers: [String: String], line: UInt = #line) {
         // given
-        let expectation = expectationWithDescription("It should call the completion handler")
-        let url = NSURL(string: "www.example.com")!
+        let completionExpectation = expectation(description: "It should call the completion handler")
+        let url = URL(string: "www.example.com")!
         
         let data = "test data".utf8Data
-        let response = NSHTTPURLResponse(URL: url, statusCode: 200, HTTPVersion: nil, headerFields: headers)
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headers)
         
         mockSession.dataTaskGenerator = { url, completion in
             completion(data, response, nil)
             return MockURLSessionDataTask()
         }
         
-        var result: NSData? = nil
+        var result: Data? = nil
         
         // when
         sut.downloadImage(fromURL: url) {
             result = $0
-            expectation.fulfill()
+            completionExpectation.fulfill()
         }
         
         // then
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
         if shouldReturn {
             XCTAssertEqual(result, data, line: line)
         } else {

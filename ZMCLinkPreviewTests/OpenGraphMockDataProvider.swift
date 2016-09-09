@@ -307,10 +307,10 @@ class OpenGraphMockDataProvider: NSObject {
 
     // MARK: - Helper
     
-    private static func fixtureWithName(name: String) -> String {
-        let bundle = NSBundle(forClass: OpenGraphMockDataProvider.self)
-        let url = bundle.URLForResource(name, withExtension: "txt")!
-        return try! String(contentsOfURL: url)
+    private static func fixtureWithName(_ name: String) -> String {
+        let bundle = Bundle(for: OpenGraphMockDataProvider.self)
+        let url = bundle.url(forResource: name, withExtension: "txt")!
+        return try! String(contentsOf: url)
     }
     
 }

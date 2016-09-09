@@ -31,9 +31,9 @@ final class PreviewBlacklist {
         "giphy"
     ]
     
-    func isBlacklisted(url: NSURL) -> Bool {
+    func isBlacklisted(_ url: URL) -> Bool {
         return blacklistedHosts.contains { blacklisted in
-            url.absoluteString.lowercaseString.containsString(blacklisted)
+            url.absoluteString.lowercased().contains(blacklisted)
         }
     }
 

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,45 +20,45 @@
 import Foundation
 
 enum OpenGraphAttribute: String {
-    case Property = "property"
-    case Content = "content"
+    case property = "property"
+    case content = "content"
 }
 
 enum OpenGraphXMLNode: String {
-    case HeadStart = "<head"
-    case HeadEnd = "</head>"
+    case headStart = "<head"
+    case headEnd = "</head>"
 }
 
 enum OpenGraphPropertyType: String {
-    case Title = "og:title"
-    case Type = "og:type"
-    case Image = "og:image"
-    case Url = "og:url"
-    case Description = "og:description"
-    case SiteName = "og:site_name"
-    case UserGeneratedImage = "og:image:user_generated"
+    case title = "og:title"
+    case type = "og:type"
+    case image = "og:image"
+    case url = "og:url"
+    case description = "og:description"
+    case siteName = "og:site_name"
+    case userGeneratedImage = "og:image:user_generated"
     
     // MARK: Foursquare
-    case LatitudeFSQ = "playfoursquare:location:latitude"
-    case LongitudeFSQ = "playfoursquare:location:longitude"
+    case latitudeFSQ = "playfoursquare:location:latitude"
+    case longitudeFSQ = "playfoursquare:location:longitude"
 }
 
 enum OpenGraphSiteName: String {
-    case Other
-    case Twitter = "twitter"
-    case Vimeo = "vimeo"
-    case YouTube = "youtube"
-    case Instagram = "instagram"
-    case Foursquare = "foursquare"
+    case other
+    case twitter = "twitter"
+    case vimeo = "vimeo"
+    case youtube = "youtube"
+    case instagram = "instagram"
+    case foursquare = "foursquare"
     
     init?(string: String) {
-        self.init(rawValue: string.lowercaseString)
+        self.init(rawValue: string.lowercased())
     }
 }
 
 enum OpenGraphTypeType: String {
-    case Article = "article"
-    case Website = "website"
-    case Foursqaure = "playfoursquare:venue"
-    case Instagram = "instapp:photo"
+    case article = "article"
+    case website = "website"
+    case foursquare = "playfoursquare:venue"
+    case instagram = "instapp:photo"
 }

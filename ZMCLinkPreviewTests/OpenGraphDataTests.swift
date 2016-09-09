@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -27,7 +27,7 @@ class OpenGraphDataTests: XCTestCase {
         let title = "title"
         let url = "www.example.com/url"
         let type = "article"
-        let mapping: [OpenGraphPropertyType: String] = [.Title: title, .Type: type, .Description: name!, .Url: url]
+        let mapping: [OpenGraphPropertyType: String] = [.title: title, .type: type, .description: name!, .url: url]
         let images = ["www.example.com/image"]
         
         // when
@@ -40,7 +40,7 @@ class OpenGraphDataTests: XCTestCase {
         XCTAssertEqual(sut.url, url)
         XCTAssertEqual(sut.imageUrls.first, images.first)
         XCTAssertNil(sut.siteNameString)
-        XCTAssertEqual(sut.siteName, OpenGraphSiteName.Other)
+        XCTAssertEqual(sut.siteName, OpenGraphSiteName.other)
         XCTAssertFalse(sut.userGeneratedImage)
     }
 
@@ -48,7 +48,7 @@ class OpenGraphDataTests: XCTestCase {
         // given
         let title = "title"
         let url = "www.example.com/url"
-        let mapping: [OpenGraphPropertyType: String] = [.Title: title, .Description: name!, .Url: url]
+        let mapping: [OpenGraphPropertyType: String] = [.title: title, .description: name!, .url: url]
         let images = ["www.example.com/image"]
 
         // when
@@ -62,7 +62,7 @@ class OpenGraphDataTests: XCTestCase {
     func testThatItReturnsNilWhenRequiredPropertiesAreMissing() {
         // given
         let title = "title"
-        let mapping: [OpenGraphPropertyType: String] = [.Title: title, .Description: name!]
+        let mapping: [OpenGraphPropertyType: String] = [.title: title, .description: name!]
         let images = ["www.example.com/image"]
         
         // when
@@ -73,9 +73,9 @@ class OpenGraphDataTests: XCTestCase {
     }
     
     func testThatItSetsTheCorrectSiteName() {
-        [OpenGraphSiteName.Twitter, .YouTube, .Vimeo, .Instagram, .Foursquare].forEach { siteName in
+        [OpenGraphSiteName.twitter, .youtube, .vimeo, .instagram, .foursquare].forEach { siteName in
             asserThatItSetsTheCorrectSiteName(siteName.rawValue, expected: siteName)
-            asserThatItSetsTheCorrectSiteName(siteName.rawValue.capitalizedString, expected: siteName)
+            asserThatItSetsTheCorrectSiteName(siteName.rawValue.capitalized, expected: siteName)
         }
     }
     
@@ -150,17 +150,17 @@ class OpenGraphDataTests: XCTestCase {
         // then
         XCTAssertEqual(preview?.characterOffsetInText, 42)
         XCTAssertEqual(preview?.originalURLString, originalURLString)
-        XCTAssertNotEqual(preview?.permanentURL, originalURLString)
+        XCTAssertNotEqual(preview?.permanentURL?.absoluteString, originalURLString)
     }
     
     // MARK: - Helper
 
-    func asserThatItSetsTheCorrectSiteName(siteNameString: String, expected: OpenGraphSiteName, line: UInt = #line) {
+    func asserThatItSetsTheCorrectSiteName(_ siteNameString: String, expected: OpenGraphSiteName, line: UInt = #line) {
         // given
         let title = "title"
         let url = "www.example.com/url"
         let type = "article"
-        let mapping: [OpenGraphPropertyType: String] = [.Title: title, .Type: type, .SiteName: siteNameString, .Url: url]
+        let mapping: [OpenGraphPropertyType: String] = [.title: title, .type: type, .siteName: siteNameString, .url: url]
         let images = ["www.example.com/image"]
         
         // when
@@ -173,7 +173,7 @@ class OpenGraphDataTests: XCTestCase {
     func assertLinkPreviewMapping(ofOpenGraphData openGraphData: OpenGraphMockData, expectedClass: AnyClass = LinkPreview.self, expectedFailure: Bool = false, line: UInt = #line) {
         if let linkPreview = openGraphData.expected?.linkPreview(openGraphData.urlString, offset: 12) {
             XCTAssertFalse(expectedFailure, line: line)
-            XCTAssertTrue(linkPreview.isKindOfClass(expectedClass), "Wrong class", line: line)
+            XCTAssertTrue(linkPreview.isKind(of: expectedClass), "Wrong class", line: line)
         } else {
             XCTAssertTrue(expectedFailure, "No link preview present", line: line)
         }

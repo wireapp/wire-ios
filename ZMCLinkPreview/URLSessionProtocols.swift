@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -19,29 +19,29 @@
 
 import Foundation
 
-public typealias DataTaskCompletion = (NSData?, NSURLResponse?, NSError?) -> Void
+typealias DataTaskCompletion = (Data?, URLResponse?, NSError?) -> Void
 
-public protocol URLSessionType {
-    func dataTaskWithURL(url: NSURL) -> URLSessionDataTaskType
-    func dataTaskWithURL(url: NSURL, completionHandler: DataTaskCompletion) -> URLSessionDataTaskType
+protocol URLSessionType {
+    func dataTaskWithURL(_ url: URL) -> URLSessionDataTaskType
+    func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType
 }
 
-public protocol URLSessionDataTaskType {
+protocol URLSessionDataTaskType {
     func resume()
     func cancel()
     
-    var originalRequest: NSURLRequest? { get }
+    var originalRequest: URLRequest? { get }
     var taskIdentifier: Int { get }
 }
 
-extension NSURLSessionTask: URLSessionDataTaskType {}
+extension URLSessionTask: URLSessionDataTaskType {}
 
-extension NSURLSession: URLSessionType {
-    public func dataTaskWithURL(url: NSURL) -> URLSessionDataTaskType {
-        return (dataTaskWithURL(url) as NSURLSessionDataTask) as URLSessionDataTaskType
+extension URLSession: URLSessionType {
+    func dataTaskWithURL(_ url: URL) -> URLSessionDataTaskType {
+        return (dataTask(with: url) as URLSessionDataTask) as URLSessionDataTaskType
     }
     
-    public func dataTaskWithURL(url: NSURL, completionHandler: DataTaskCompletion) -> URLSessionDataTaskType {
-        return (dataTaskWithURL(url, completionHandler: completionHandler) as NSURLSessionDataTask) as URLSessionDataTaskType
+    func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType {
+        return (dataTask(with: url, completionHandler: completionHandler as! (Data?, URLResponse?, Error?) -> Void) as URLSessionDataTask) as URLSessionDataTaskType
     }
 }
