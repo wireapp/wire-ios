@@ -195,7 +195,7 @@ extension EncryptionSessionsDirectoryTests {
             XCTFail("should have failed to use prekey")
         }
         catch let err as CryptoboxError {
-            XCTAssertEqual(err, CryptoboxError.cryptoboxDecodeError)
+            XCTAssertEqual(err, CryptoboxError.decodeError)
         } catch {
             XCTFail("should have thrown a CBoxResult")
         }
@@ -462,7 +462,7 @@ extension EncryptionSessionsDirectoryTests {
             _ = try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
             XCTFail("Should have failed")
             return
-        } catch let err as CryptoboxError where err == .cryptoboxDuplicateMessage {
+        } catch let err as CryptoboxError where err == .duplicateMessage {
             // pass
         } catch {
             XCTFail("Wrong error")
@@ -488,7 +488,7 @@ extension EncryptionSessionsDirectoryTests {
                 cypherText,
                 senderClientId:
                 Person.Alice.clientId,
-                expectedError: .cryptoboxDuplicateMessage,
+                expectedError: .duplicateMessage,
                 sessionDirectory: statusBob
             )
             
@@ -531,7 +531,7 @@ extension EncryptionSessionsDirectoryTests {
             _ = try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
             XCTFail("Should have failed")
             return
-        } catch let err as CryptoboxError where err == .cryptoboxDuplicateMessage {
+        } catch let err as CryptoboxError where err == .duplicateMessage {
             // pass
         } catch {
             XCTFail("Wrong error")
