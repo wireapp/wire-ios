@@ -102,7 +102,11 @@ static unsigned long ReferenceTimestamp = 1388534400; // 01 Jan 2014 00:00:00
     uint8_t initialData[BUFFER_SIZE];
     
     // 14 bytes random data
-    SecRandomCopyBytes(kSecRandomDefault, RANDOM_DATA_SIZE, initialData);
+    int result = SecRandomCopyBytes(kSecRandomDefault, RANDOM_DATA_SIZE, initialData);
+    if (result != 0) {
+        ZMLogError(@"ZMEncodedNSUUIDWithTimestamp cannot copy random bytes: %d", result);
+        return;
+    }
     
     // 2 bytes time
     uint16_t hours = [self.class hoursBetweenReferenceDateAndDate:self.timestampDate];

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -25,16 +25,16 @@ class UnownedNSObjectTests: XCTestCase {
     
     func testThatCreatingAnUnownedNSObjectWithALocallyScopedObjectIsValid() {
         
-        let unown = UnownedNSObject(NSNumber(integer: 10))
+        let unown = UnownedNSObject(NSNumber(value: 10))
         XCTAssertTrue(unown.isValid)
-        XCTAssertEqual(NSNumber(integer: 10), unown.unbox!)
+        XCTAssertEqual(NSNumber(value: 10), unown.unbox!)
     }
     
     
     func testThatUnownedNSObjectIsInvalidIfValueDoesNotExistAnymore() {
         
-        var array : Array<NSDate>? = [NSDate()]
-        let unownedObject = UnownedNSObject(array![0])
+        var array : Array<Date>? = [Date()]
+        let unownedObject = UnownedNSObject(array![0] as NSObject)
         array = nil
         XCTAssertFalse(unownedObject.isValid)
         XCTAssertNil(unownedObject.unbox)

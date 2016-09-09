@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,26 +23,26 @@ import ZMTesting
 class NSData_ZMSCryptoTests: XCTestCase {
     
     /// Key to use to read the test data
-    var sampleKey : NSData {
-        return NSData(base64EncodedString: "A5NEu/TETPw0XT2G4EUNVB4ZRDmi05wetFJEucHmlXI=", options: NSDataBase64DecodingOptions())!
+    var sampleKey : Data {
+        return Data(base64Encoded: "A5NEu/TETPw0XT2G4EUNVB4ZRDmi05wetFJEucHmlXI=", options: NSData.Base64DecodingOptions())!
     }
     
-    var sampleEncryptedImageData : NSData {
-        let dataPath = NSBundle(forClass: self.dynamicType).pathForResource("android_image", ofType: "encrypted")
-        return NSData(contentsOfFile: dataPath!)!
+    var sampleEncryptedImageData : Data {
+        let dataPath = Bundle(for: type(of: self)).path(forResource: "android_image", ofType: "encrypted")
+        return (try! Data(contentsOf: URL(fileURLWithPath: dataPath!)))
     }
     
-    var sampleDecryptedImageData : NSData {
-        let dataPath = NSBundle(forClass: self.dynamicType).pathForResource("android_image", ofType: "decrypted")
-        return NSData(contentsOfFile: dataPath!)!
+    var sampleDecryptedImageData : Data {
+        let dataPath = Bundle(for: type(of: self)).path(forResource: "android_image", ofType: "decrypted")
+        return (try! Data(contentsOf: URL(fileURLWithPath: dataPath!)))
     }
     
-    var sampleSHADigestOfImageData : NSData {
-        return NSData(base64EncodedString: "yeElK+949uC/WdbLxx61b1+JWx2uyk07YEVU/7KeeV8=", options: NSDataBase64DecodingOptions())!
+    var sampleSHADigestOfImageData : Data {
+        return Data(base64Encoded: "yeElK+949uC/WdbLxx61b1+JWx2uyk07YEVU/7KeeV8=", options: NSData.Base64DecodingOptions())!
     }
     
-    var sampleSHAKeyOfImageData : NSData {
-        return NSData(base64EncodedString: "UnxAVuKFdWs53VwIihrfPbvUNwk5nqCbM1tb+Row8ng=", options: NSDataBase64DecodingOptions())!
+    var sampleSHAKeyOfImageData : Data {
+        return Data(base64Encoded: "UnxAVuKFdWs53VwIihrfPbvUNwk5nqCbM1tb+Row8ng=", options: NSData.Base64DecodingOptions())!
     }
 }
 
@@ -56,13 +56,13 @@ extension NSData_ZMSCryptoTests {
         let key = self.sampleKey
         
         // when
-        let encryptedData = data.zmEncryptPrefixingPlainTextIVWithKey(key)
+        let encryptedData = data.zmEncryptPrefixingPlainTextIV(key: key)
         
         // then
         XCTAssertNotEqual(encryptedData, data)
         
         // and when
-        let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIVWithKey(key)
+        let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: key)
         
         // then
         AssertOptionalEqual(decryptedData, expression2: data)
@@ -71,12 +71,12 @@ extension NSData_ZMSCryptoTests {
     func testThatTheEncodedDataIsDifferentEveryTime_plaintextIV() {
         
         // given
-        var generatedDataSet = Set<NSData>()
+        var generatedDataSet = Set<Data>()
         let sampleData = self.sampleDecryptedImageData
         
         // when
         for _ in 0..<100 {
-            let data = sampleData.zmEncryptPrefixingPlainTextIVWithKey(self.sampleKey)
+            let data = sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
@@ -89,16 +89,16 @@ extension NSData_ZMSCryptoTests {
         let expectedDecryptedImage = self.sampleDecryptedImageData
         
         // when
-        let decryptedImage = encryptedImage.zmDecryptPrefixedPlainTextIVWithKey(self.sampleKey)
+        let decryptedImage = encryptedImage.zmDecryptPrefixedPlainTextIV(key: self.sampleKey)
         
         // then
         XCTAssertEqual(decryptedImage, expectedDecryptedImage)
     }
     
     func testThatItGeneratesUniqueEncryptionKey() {
-        var generatedDataSet = Set<NSData>()
+        var generatedDataSet = Set<Data>()
         for _ in 0..<100 {
-            let data = NSData.randomEncryptionKey()
+            let data = Data.randomEncryptionKey()
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
@@ -116,13 +116,13 @@ extension NSData_ZMSCryptoTests {
         let key = self.sampleKey
         
         // when
-        let encryptedData = data.zmEncryptPrefixingIVWithKey(key)
+        let encryptedData = data.zmEncryptPrefixingIV(key: key)
         
         // then
         XCTAssertNotEqual(encryptedData, data)
         
         // and when
-        let decryptedData = encryptedData.zmDecryptPrefixedIVWithKey(key)
+        let decryptedData = encryptedData.zmDecryptPrefixedIV(key: key)
         
         // then
         AssertOptionalEqual(decryptedData, expression2: data)
@@ -131,12 +131,12 @@ extension NSData_ZMSCryptoTests {
     func testThatTheEncodedDataIsDifferentEveryTime_encryptedIV() {
         
         // given
-        var generatedDataSet = Set<NSData>()
+        var generatedDataSet = Set<Data>()
         let sampleData = self.sampleDecryptedImageData
         
         // when
         for _ in 0..<100 {
-            let data = sampleData.zmEncryptPrefixingIVWithKey(self.sampleKey)
+            let data = sampleData.zmEncryptPrefixingIV(key: self.sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
@@ -149,26 +149,25 @@ extension NSData_ZMSCryptoTests {
     func testThatItGeneratesRandomDataWithTheRightSize() {
         
         // positive data
-        XCTAssertEqual(NSData.secureRandomDataOfLength(128).length, 128)
-        XCTAssertEqual(NSData.secureRandomDataOfLength(12).length, 12)
-        XCTAssertEqual(NSData.secureRandomDataOfLength(789).length, 789)
-        XCTAssertEqual(NSData.secureRandomDataOfLength(0).length, 0)
+        XCTAssertEqual(Data.secureRandomData(length: 128).count, 128)
+        XCTAssertEqual(Data.secureRandomData(length: 12).count, 12)
+        XCTAssertEqual(Data.secureRandomData(length: 789).count, 789)
+        XCTAssertEqual(Data.secureRandomData(length: 0).count, 0)
     }
     
     func testThatItGeneratesDifferentDataValues() {
-        var generatedDataSet = Set<NSData>()
+        var generatedDataSet = Set<Data>()
         for _ in 0..<100 {
-            let data = NSData.secureRandomDataOfLength(10)
+            let data = Data.secureRandomData(length: 10)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
     }
     
     func testThatItReturnsNilIfDecryptingKeyIsNotOfAES256Length() {
-        
-        let badKey = self.sampleKey.subdataWithRange(NSRange(location: 0, length: 16))
-        XCTAssertNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIVWithKey(badKey))
-        XCTAssertNotNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIVWithKey(self.sampleKey))
+        let badKey = self.sampleKey.subdata(in: Range(0...15))
+        XCTAssertNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: badKey))
+        XCTAssertNotNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: self.sampleKey))
     }
 }
 
@@ -176,29 +175,29 @@ extension NSData_ZMSCryptoTests {
 // MARK: - Hashing
 extension NSData_ZMSCryptoTests {
     
-    var samplePlainData : NSData {
+    var samplePlainData : Data {
         let text = "A HMAC is a small set of data that helps authenticate the nature of message; it protects the integrity and the authenticity of the message."
-        return text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)!
+        return text.data(using: String.Encoding.utf8, allowLossyConversion: true)!
     }
     
-    var sampleHashKey : NSData {
+    var sampleHashKey : Data {
         let key = "nhrMEF8DX1ymQFJu4Xwbb"
-        return key.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)!
+        return key.data(using: String.Encoding.utf8, allowLossyConversion: true)!
     }
 
-    var sampleSHA256Result : NSData {
+    var sampleSHA256Result : Data {
         let base64 = "Qvrf4frfLVm5GxHhx6Y/evOXMy9lMXAHEpVamCtpEp4="
-        return NSData(base64EncodedString: base64, options: NSDataBase64DecodingOptions())!
+        return Data(base64Encoded: base64, options: NSData.Base64DecodingOptions())!
     }
     
-    var sampleHMACSHA256Result : NSData {
+    var sampleHMACSHA256Result : Data {
         let base64 = "5Zsca82rFG2ymFH2SG16C5ds+AaBRm+kVrxzmr5wmyA="
-        return NSData(base64EncodedString: base64, options: NSDataBase64DecodingOptions())!
+        return Data(base64Encoded: base64, options: NSData.Base64DecodingOptions())!
     }
     
-    var sampleMD5Result : NSData {
+    var sampleMD5Result : Data {
         let base64 = "gDcfGZldpqxaxaGNzyN16A=="
-        return NSData(base64EncodedString: base64, options: NSDataBase64DecodingOptions())!
+        return Data(base64Encoded: base64, options: NSData.Base64DecodingOptions())!
     }
     
     func testThatItCalculatesTheMD5Digest() {
@@ -231,7 +230,7 @@ extension NSData_ZMSCryptoTests {
         let data = samplePlainData
         
         // when
-        let digest = data.zmHMACSHA256DigestWithKey(sampleHashKey)
+        let digest = data.zmHMACSHA256Digest(key: sampleHashKey)
         
         // then
         XCTAssertEqual(digest, sampleHMACSHA256Result)
@@ -243,7 +242,7 @@ extension NSData_ZMSCryptoTests {
         let data = sampleEncryptedImageData
         
         // when
-        let digest = data.zmHMACSHA256DigestWithKey(sampleSHAKeyOfImageData)
+        let digest = data.zmHMACSHA256Digest(key: sampleSHAKeyOfImageData)
         
         // then
         XCTAssertEqual(digest, sampleSHADigestOfImageData)
@@ -252,9 +251,9 @@ extension NSData_ZMSCryptoTests {
     func testThatItCalculatesSHA256AsAndroid() {
         
         // given
-        let dataPath = NSBundle(forClass: self.dynamicType).pathForResource("data_to_hash", ofType: "enc")
-        let inputData = NSData(contentsOfFile: dataPath!)!
-        let expectedHash = NSData(base64EncodedString: "qztWViO7awf67Z1EQbGt5ENiHMibJ5j9wc/DP3M6N3Y=", options: NSDataBase64DecodingOptions())!
+        let dataPath = Bundle(for: type(of: self)).path(forResource: "data_to_hash", ofType: "enc")
+        let inputData = try! Data(contentsOf: URL(fileURLWithPath: dataPath!))
+        let expectedHash = Data(base64Encoded: "qztWViO7awf67Z1EQbGt5ENiHMibJ5j9wc/DP3M6N3Y=", options: NSData.Base64DecodingOptions())!
         
         // when
         let digest = inputData.zmSHA256Digest()
@@ -264,9 +263,9 @@ extension NSData_ZMSCryptoTests {
     }
     
     func testThatItGeneratesUniqueHashKey() {
-        var generatedDataSet = Set<NSData>()
+        var generatedDataSet = Set<Data>()
         for _ in 0..<100 {
-            let data = NSData.zmRandomSHA256Key()
+            let data = Data.zmRandomSHA256Key()
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
