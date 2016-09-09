@@ -71,9 +71,9 @@ class NSUUIDType1Tests: XCTestCase {
         let sameUUID = UUID.init(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[1].0)!
         
         // then
-        XCTAssertEqual(earlierUUID.compareWithType1(laterUUID as NSUUID), ComparisonResult.orderedAscending)
-        XCTAssertEqual(laterUUID.compareWithType1(earlierUUID as NSUUID), ComparisonResult.orderedDescending)
-        XCTAssertEqual(earlierUUID.compareWithType1(sameUUID as NSUUID), ComparisonResult.orderedSame)
+        XCTAssertEqual(earlierUUID.compare(withType1UUID: laterUUID as NSUUID), ComparisonResult.orderedAscending)
+        XCTAssertEqual(laterUUID.compare(withType1UUID: earlierUUID as NSUUID), ComparisonResult.orderedDescending)
+        XCTAssertEqual(earlierUUID.compare(withType1UUID: sameUUID as NSUUID), ComparisonResult.orderedSame)
     }
     
     func testThatItComparesType1UUIDsByTime() {
@@ -87,9 +87,9 @@ class NSUUIDType1Tests: XCTestCase {
             guard let last = previous else {
                 continue
             }
-            XCTAssertEqual(last.compareWithType1(uuid as NSUUID), ComparisonResult.orderedAscending)
-            XCTAssertEqual(uuid.compareWithType1(last as NSUUID), ComparisonResult.orderedDescending)
-            XCTAssertEqual(uuid.compareWithType1(uuid as NSUUID), ComparisonResult.orderedSame)
+            XCTAssertEqual(last.compare(withType1UUID: uuid as NSUUID), ComparisonResult.orderedAscending)
+            XCTAssertEqual(uuid.compare(withType1UUID: last as NSUUID), ComparisonResult.orderedDescending)
+            XCTAssertEqual(uuid.compare(withType1UUID: uuid as NSUUID), ComparisonResult.orderedSame)
 
         }
     }
