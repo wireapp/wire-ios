@@ -5,7 +5,7 @@ script: xcodebuild test -project ziphy.xcodeproj -scheme ziphy -destination 'pla
 env:
   global: 
     - FRAMEWORK_NAME=ziphy
-before_install:i
+before_install:
   - set -o pipefail
   - brew update
   - brew outdated carthage || brew upgrade carthage
