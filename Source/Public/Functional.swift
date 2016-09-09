@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct Enumerator : SequenceType {
+public struct Enumerator : Sequence {
     
     let enumerable : NSFastEnumeration
     
@@ -27,8 +27,8 @@ public struct Enumerator : SequenceType {
         self.enumerable = object
     }
     
-    public func generate() -> NSFastGenerator {
-        return NSFastGenerator(self.enumerable)
+    public func makeIterator() -> NSFastEnumerationIterator {
+        return NSFastEnumerationIterator(self.enumerable)
     }
     
     /**
@@ -37,7 +37,7 @@ public struct Enumerator : SequenceType {
     public func allObjects() -> [AnyObject] {
         var array : [AnyObject] = []
         for object in self {
-            array.append(object)
+            array.append(object as AnyObject)
         }
         return array
     }

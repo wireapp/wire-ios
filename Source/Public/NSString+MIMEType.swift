@@ -23,7 +23,7 @@ import MobileCoreServices;
 public extension NSString {
     
     /// Returns true if the string represents a valid MIME type and conforms to given uniform type identifier (see UTCoreTypes)
-    func zm_conformsToUTI(UTI: CFString) -> Bool {
+    func zm_conformsToUTI(_ UTI: CFString) -> Bool {
         if let preferedUTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, self, nil)?.takeRetainedValue() {
             return UTTypeConformsTo(preferedUTI, UTI)
         }

@@ -24,17 +24,17 @@ class UnownedObjectTests: XCTestCase {
 
     
     func testThatCreatingAnUnownedObjectWithALocallyScopedObjectIsValid() {
-        
-        let unown = UnownedObject(10)
+        let nsnumber = 10 as AnyObject
+        let unown = UnownedObject(nsnumber)
         XCTAssertTrue(unown.isValid)
-        XCTAssertEqual(10, unown.unbox!)
+        XCTAssertEqual(10, unown.unbox! as! Int)
     }
     
     
     func testThatUnownedObjectIsInvalidIfValueDoesNotExistAnymore() {
         
-        var array : Array<NSDate>? = [NSDate()]
-        let unownedObject = UnownedObject(array![0])
+        var array : Array<Date>? = [Date()]
+        let unownedObject = UnownedObject(array![0] as AnyObject)
         array = nil
         XCTAssertFalse(unownedObject.isValid)
         XCTAssertNil(unownedObject.unbox)
