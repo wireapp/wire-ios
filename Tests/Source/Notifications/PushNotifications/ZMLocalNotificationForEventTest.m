@@ -22,6 +22,7 @@
 #import "ZMLocalNotificationForEventTest.h"
 #import "UILocalNotification+UserInfo.h"
 #import <zmessaging/zmessaging-Swift.h>
+#import "zmessaging_iOS_Tests-Swift.h"
 
 @implementation ZMLocalNotificationForEventTest
 
@@ -112,7 +113,7 @@
     return nil;
 }
 
-- (ZMLocalNotificationForEvent *)noteWithPayload:(NSDictionary *)data fromUserID:(NSUUID *)fromUserID inConversation:(ZMConversation *)conversation type:(NSString *)type application:(UIApplication *)application
+- (ZMLocalNotificationForEvent *)noteWithPayload:(NSDictionary *)data fromUserID:(NSUUID *)fromUserID inConversation:(ZMConversation *)conversation type:(NSString *)type application:(id<ZMApplication>)application
 {
     __block ZMLocalNotificationForEvent *note;
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -130,7 +131,7 @@
                       fromUserID:fromUser.remoteIdentifier
                   inConversation:conversation
                             type:type
-                     application:nil];
+                     application:self.application];
 }
 
 - (ZMLocalNotificationForEvent *)copyNote:(ZMLocalNotificationForEvent*)note withPayload:(NSDictionary *)data fromUser:(ZMUser *)fromUser inConversation:(ZMConversation *)conversation type:(NSString *)type
@@ -403,19 +404,15 @@
     // given
     NSDictionary *data2 = @{@"content": @"Ahhhhh!"};
     
-    id mockApplication = [OCMockObject mockForClass:[UIApplication class]];
-    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.groupConversation fromUser:self.sender unreadCrount:6 application:mockApplication];
+    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.groupConversation fromUser:self.sender unreadCrount:6 application:self.application];
     XCTAssertNotNil(note1);
-    
-    // expect
-    [[mockApplication reject] cancelLocalNotification:note1.uiNotifications.firstObject];
     
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:data2 fromUser:self.sender inConversation:self.groupConversation type:EventConversationAdd];
     
     // then
     XCTAssertNil(note2);
-    [mockApplication verify];
+    XCTAssertEqual(self.application.cancelledLocalNotifications.count, 0u);
 }
 
 
@@ -607,7 +604,7 @@
 - (void)testThatItDoesntBundleFileAddNotification
 {
     // given
-    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
+    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:self.application];
     
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"application/pdf" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
@@ -653,7 +650,7 @@
 - (void)testThatItDoesntBundleVideoAddNotification
 {
     // given
-    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
+    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:self.application];
     
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"video/mp4" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
@@ -701,7 +698,7 @@
 - (void)testThatItDoesntBundleAudioAddNotification
 {
     // given
-    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:nil];
+    ZMLocalNotificationForEvent *note1 = [self notificationForType:EventConversationAdd inConversation:self.oneOnOneConversation fromUser:self.sender unreadCrount:4 application:self.application];
     
     // when
     ZMLocalNotificationForEvent *note2 = [self copyNote:note1 withPayload:[self payloadForEncryptedOTRMessageWithFileNonce:[NSUUID UUID] mimeType:@"audio/x-m4a" sender:self.sender conversation:self.oneOnOneConversation] fromUser:self.sender inConversation:self.oneOnOneConversation type:EventConversationAddOTRAsset];
@@ -893,7 +890,7 @@
     NSDictionary *data = @{@"user_ids" : users};
     
     // when
-    ZMLocalNotificationForEvent *note1 = [self noteWithPayload:data fromUserID:userID inConversation:conversation type:event application:nil];
+    ZMLocalNotificationForEvent *note1 = [self noteWithPayload:data fromUserID:userID inConversation:conversation type:event application:self.application];
     
     // then
     
@@ -1252,7 +1249,7 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-        note = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:nil];
+        note = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:self.application];
     }];
     
     return note;
@@ -1287,7 +1284,7 @@
     // when
     __block ZMLocalNotificationForEvent *note;
     [self.syncMOC performGroupedBlockAndWait:^{
-        note = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:nil];
+        note = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:self.application];
         XCTAssertNotNil(note);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1361,7 +1358,7 @@
     ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:eventPayload uuid:nil];
 
     // when
-    ZMLocalNotificationForEvent *note = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:nil];
+    ZMLocalNotificationForEvent *note = [ZMLocalNotificationForEvent notificationForEvent:event managedObjectContext:self.syncMOC application:self.application];
     
     // then
     UILocalNotification *notif = note.uiNotifications.firstObject;
