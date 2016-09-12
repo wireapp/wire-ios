@@ -156,7 +156,7 @@
             self.cookieStorage.authenticationCookieData = [cookiesValue dataUsingEncoding:NSUTF8StringEncoding];
         }
 
-        return [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]}];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]}];
     }
     
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
@@ -184,7 +184,7 @@
                 if(!dryrun) {
                     [self.phoneNumbersWaitingForVerificationForRegistration removeObject:phone];
                 }
-                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 
             }
         }
@@ -198,7 +198,7 @@
                     self.selfUser.phone = phone;
                     [self saveAndCreatePushChannelEventForSelfUser];
                 }
-                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
                 
             }
         }
@@ -242,7 +242,7 @@
             [self.phoneNumbersWaitingForVerificationForRegistration addObject:phone];
         }
         
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
     }
     
     return [self errorResponseWithCode:400 reason:@"invalid-method"];

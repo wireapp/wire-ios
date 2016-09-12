@@ -37,7 +37,7 @@
         return [self processDeleteInivitationRequest:request];
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processPostInivitationRequest:(TestTransportSessionRequest *)request;
@@ -76,17 +76,17 @@
         NSArray *connections = [self.managedObjectContext executeFetchRequest:connectionRequest error:nil];
         if ([connections count] > 0) { //yes, return existing connection
             MockConnection *connection = connections[0];
-            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:303 transportSessionError:nil headers:@{@"Location" : connection.to.identifier}];
+            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:303 transportSessionError:nil headers:@{@"Location" : connection.to.identifier}];
         }
         
         //create connection
         MockConnection *connection = [self createConnectionFrom:self.selfUser to:toUser message:message];
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:201 transportSessionError:nil headers:@{@"Location" : connection.to.identifier}];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:201 transportSessionError:nil headers:@{@"Location" : connection.to.identifier}];
     }
     
     // user does not exist, create an invitation 
     MockPersonalInvitation *personalInvitation = [MockPersonalInvitation invitationInMOC:self.managedObjectContext fromUser:self.selfUser toInviteeWithName:inviteeName email:inviteeEmail phoneNumber:inviteePhone];
-    return [ZMTransportResponse responseWithPayload:personalInvitation.transportData HTTPstatus:201 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:personalInvitation.transportData HTTPStatus:201 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processGetInvitationRequest:(__unused TestTransportSessionRequest *)request;
@@ -94,7 +94,7 @@
     NSFetchRequest *fetchRequest = [MockPersonalInvitation sortedFetchRequest];
     [fetchRequest setFetchLimit:10];
     NSArray *invitations = [self.managedObjectContext executeFetchRequest:fetchRequest error:nil];
-    return [ZMTransportResponse responseWithPayload:[self invitationsTransportDataFromInvitations:invitations] HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:[self invitationsTransportDataFromInvitations:invitations] HTTPStatus:200 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processGetSpecificInivitationRequest:(TestTransportSessionRequest *)request;
@@ -109,7 +109,7 @@
     if (invitations.count == 0) {
         return [self errorResponseWithCode:404 reason:@"ID to delete does not exist"];
     }
-    return [ZMTransportResponse responseWithPayload:[[invitations firstObject] transportData] HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:[[invitations firstObject] transportData] HTTPStatus:200 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processDeleteInivitationRequest:(TestTransportSessionRequest *)request;
@@ -122,7 +122,7 @@
         return [self errorResponseWithCode:404 reason:@"ID to delete does not exist"];
     }
     [self.managedObjectContext deleteObject:[invitations firstObject]];
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
 #pragma mark Helpers

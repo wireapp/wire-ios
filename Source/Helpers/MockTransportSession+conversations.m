@@ -160,7 +160,7 @@ static NSString * const IdleString = @"idle";
         return [self processAssetRequest:sessionRequest];
     }
 
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 
 }
 
@@ -177,7 +177,7 @@ static NSString * const IdleString = @"idle";
     
     MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
     MockEvent *event = [conversation insertClientMessageFromUser:self.selfUser data:message.data];
-    return [ZMTransportResponse responseWithPayload:[event transportData] HTTPstatus:201 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:[event transportData] HTTPStatus:201 transportSessionError:nil];
 }
 
 // POST /conversations/<id>/otr/messages
@@ -191,7 +191,7 @@ static NSString * const IdleString = @"idle";
     NSDictionary *recipients = [sessionRequest.payload asDictionary][@"recipients"];
     MockUserClient *senderClient = [self otrMessageSender:sessionRequest.payload.asDictionary];
     if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
 
     NSString *onlyForUser = sessionRequest.query[@"report_missing"];
@@ -208,7 +208,7 @@ static NSString * const IdleString = @"idle";
         }];
     }
     
-    return [ZMTransportResponse responseWithPayload:payload HTTPstatus:statusCode transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processAddOTRMessageToConversationWithRequestWithProtobuffData:(TestTransportSessionRequest *)sessionRequest;
@@ -220,12 +220,12 @@ static NSString * const IdleString = @"idle";
     
     ZMNewOtrMessage *otrMetaData = (ZMNewOtrMessage *)[[[ZMNewOtrMessage builder] mergeFromData:sessionRequest.embeddedRequest.binaryData] build];
     if (otrMetaData == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     MockUserClient *senderClient = [self otrMessageSenderFromClientId:otrMetaData.sender];
     if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     NSString *onlyForUser = sessionRequest.query[@"report_missing"];
@@ -242,7 +242,7 @@ static NSString * const IdleString = @"idle";
         }];
     }
     
-    return [ZMTransportResponse responseWithPayload:payload HTTPstatus:statusCode transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
 }
 
 // PUT /conversations/<id>
@@ -250,17 +250,17 @@ static NSString * const IdleString = @"idle";
 {
     MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
     if (conversation == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     NSString *newName = [[sessionRequest.payload asDictionary] stringForKey:@"name"];
     
     if(newName == nil) {
-        return [ZMTransportResponse responseWithPayload:@{@"error":@"no name in payload"} HTTPstatus:400 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:@{@"error":@"no name in payload"} HTTPStatus:400 transportSessionError:nil];
     }
     
     MockEvent *event = [conversation changeNameByUser:self.selfUser name:newName];
-    return [ZMTransportResponse responseWithPayload:event.transportData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 // returns YES if the payload contains "archived" information
@@ -354,7 +354,7 @@ static NSString * const IdleString = @"idle";
 {
     MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
     if (conversation == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     NSDictionary *payload = [sessionRequest.payload asDictionary];
@@ -368,10 +368,10 @@ static NSString * const IdleString = @"idle";
     BOOL hadCleared = [self updateConversation:conversation clearedEventIDFromPutSelfConversationPayload:payload];
 
     if( ! hadMuted && ! hadArchived && ! hadLastRead && !hadCleared && !hadOTRArchived && !hadOTRMuted) {
-        return [ZMTransportResponse responseWithPayload:@{@"error":@"no useful payload"} HTTPstatus:400 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:@{@"error":@"no useful payload"} HTTPStatus:400 transportSessionError:nil];
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
 // GET /conversations
@@ -397,7 +397,7 @@ static NSString * const IdleString = @"idle";
         }
     }
     
-    return [ZMTransportResponse responseWithPayload:@{@"conversations":data} HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:@{@"conversations":data} HTTPStatus:200 transportSessionError:nil];
 
 }
 
@@ -406,10 +406,10 @@ static NSString * const IdleString = @"idle";
 {
     MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
     if (conversation == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    return [ZMTransportResponse responseWithPayload:conversation.transportData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:conversation.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 // POST /conversations
@@ -436,7 +436,7 @@ static NSString * const IdleString = @"idle";
     if(name != nil) {
         [conversation changeNameByUser:self.selfUser name:name];
     }
-    return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
 
 
@@ -445,13 +445,13 @@ static NSString * const IdleString = @"idle";
 {
     MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
     if (conversation == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     MockUser *user = [self fetchUserWithIdentifier:sessionRequest.pathComponents[2]];
     MockEvent *event = [conversation removeUsersByUser:self.selfUser removedUser:user];
     
-    return [ZMTransportResponse responseWithPayload:event.transportData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 
@@ -472,7 +472,7 @@ static NSString * const IdleString = @"idle";
                                                               @"code" : @403,
                                                               @"message": @"Unknown user",
                                                               @"label": @""
-                                                              } HTTPstatus:403 transportSessionError:nil];
+                                                              } HTTPStatus:403 transportSessionError:nil];
         }
         
         MockConnection *connection = [self fetchConnectionFrom:selfUser to:user];
@@ -481,14 +481,14 @@ static NSString * const IdleString = @"idle";
                                                               @"code" : @403,
                                                               @"message": @"Requestor is not connected to users invited",
                                                               @"label": @""
-                                                              } HTTPstatus:403 transportSessionError:nil];
+                                                              } HTTPStatus:403 transportSessionError:nil];
         }
         [addedUsers addObject:user];
     }
     
     
     MockEvent *event = [conversation addUsersByUser:self.selfUser addedUsers:addedUsers];
-    return [ZMTransportResponse responseWithPayload:event.transportData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 // GET /conversations/<id>/events
@@ -514,13 +514,13 @@ static NSString * const IdleString = @"idle";
     if(parameters[@"start"] != nil) {
         startEventID = [ZMEventID eventIDWithString:parameters[@"start"]];
         if(startEventID == nil) {
-            return [ZMTransportResponse responseWithPayload:@{@"message":@"invalid format for start event", @"value":parameters[@"start"]} HTTPstatus:400 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:@{@"message":@"invalid format for start event", @"value":parameters[@"start"]} HTTPStatus:400 transportSessionError:nil];
         }
     }
     if(parameters[@"end"] != nil) {
         endEventID = [ZMEventID eventIDWithString:parameters[@"end"]];
         if(endEventID == nil) {
-            return [ZMTransportResponse responseWithPayload:@{@"message":@"invalid format for end event", @"value":parameters[@"end"]} HTTPstatus:400 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:@{@"message":@"invalid format for end event", @"value":parameters[@"end"]} HTTPStatus:400 transportSessionError:nil];
         }
     }
     
@@ -543,7 +543,7 @@ static NSString * const IdleString = @"idle";
     }
     
     NSDictionary *payload = @{@"events": eventsData};
-    return [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
 }
 
 - (MockConversation *)conversationByIdentifier:(NSString *)identifier
@@ -634,7 +634,7 @@ static NSString * const IdleString = @"idle";
     }
     
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payLoad HTTPstatus:statusCode transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payLoad HTTPStatus:statusCode transportSessionError:nil];
     return response;
 }
 
@@ -657,7 +657,7 @@ static NSString * const IdleString = @"idle";
         payload = [self combinedCallStateForConversation:conversation];
     }
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:statusCode transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
     return response;
 }
 
@@ -689,7 +689,7 @@ static NSString * const IdleString = @"idle";
         payload = [self combinedCallStateForConversation:conversation];
     }
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:statusCode transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
     return response;
 }
 
@@ -719,7 +719,7 @@ static NSString * const IdleString = @"idle";
         payload = [event transportData].asDictionary;
     }
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:statusCode transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
     return response;
 }
 
@@ -741,7 +741,7 @@ static NSString * const IdleString = @"idle";
         payload = [event transportData].asDictionary;
     }
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:statusCode transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
     return response;
 }
 
@@ -763,7 +763,7 @@ static NSString * const IdleString = @"idle";
         payload = [event transportData].asDictionary;
     }
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:statusCode transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
     return response;
 }
 
@@ -801,7 +801,7 @@ static NSString * const IdleString = @"idle";
                               @"conversations": conversationIDs
                               };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     return response;
 }
 

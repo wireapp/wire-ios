@@ -51,12 +51,12 @@
         }
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)sampleImageResponse {
     NSData *data =  [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:self.class] URLForResource:@"medium"withExtension:@"jpg"]];
-    return [[ZMTransportResponse alloc ] initWithImageData:data HTTPstatus:200 transportSessionError:nil headers:nil];
+    return [[ZMTransportResponse alloc ] initWithImageData:data HTTPStatus:200 transportSessionError:nil headers:nil];
 }
 
 - (ZMTransportResponse *)processAssetUploadRequest:(TestTransportSessionRequest *)sessionRequest;
@@ -77,14 +77,14 @@
             NSError *error;
             disposition = [NSJSONSerialization JSONObjectWithData:metaDataItem.data options:0 error:&error];
             if (error) {
-                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
             }
             
             imageData = imageDataItem.data;
             mimeType = imageDataItem.contentType;
         }
         else {
-            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
         }
     }
     else {
@@ -104,7 +104,7 @@
         [self createAssetWithData:imageData identifier:event.data[@"id"] contentType:mimeType forConversation:conversation.identifier];
     }
     
-    return [ZMTransportResponse responseWithPayload:event.transportData HTTPstatus:201 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:201 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processAssetGetRequest:(TestTransportSessionRequest *)request
@@ -124,13 +124,13 @@
 
     MockAsset *asset = [MockAsset assetInContext:self.managedObjectContext forID:identifier];
     if([asset.conversation isEqualToString:conversationID]) {
-        return [[ZMTransportResponse alloc ] initWithImageData:asset.data HTTPstatus:200 transportSessionError:nil headers:nil];
+        return [[ZMTransportResponse alloc ] initWithImageData:asset.data HTTPStatus:200 transportSessionError:nil headers:nil];
     }
     else {
-        return [ZMTransportResponse responseWithPayload:@{@"error":@"mismatching conversation"} HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:@{@"error":@"mismatching conversation"} HTTPStatus:404 transportSessionError:nil];
     }
         
-    return [ZMTransportResponse responseWithPayload:@{@"error":@"not found"} HTTPstatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:@{@"error":@"not found"} HTTPStatus:404 transportSessionError:nil];
 }
 
 // POST /conversations/<id>/otr/assets
@@ -147,7 +147,7 @@
     }
     
     if (((bodyItems.count != 2 && containsAsset) || (bodyItems.count != 1 && !containsAsset))) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     ZMMultipartBodyItem *metaDataItem = bodyItems.firstObject;
@@ -164,7 +164,7 @@
     if (error) {
         otrMetadata = (ZMOtrAssetMeta *)[[[ZMOtrAssetMeta builder] mergeFromData:metaDataItem.data] build];
         if (otrMetadata == nil) {
-            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
         }
         else {
             return [self responseForAddOTRAssetWithProtobufData:otrMetadata
@@ -191,7 +191,7 @@
 {
     MockUserClient *senderClient = [self otrMessageSender:payload];
     if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     NSDictionary *recipients = payload[@"recipients"];
@@ -232,7 +232,7 @@
         [self createAssetWithData:imageData identifier:assetID.transportString contentType:mimeType forConversation:conversation.identifier];
     }
     
-    return [[ZMTransportResponse alloc] initWithPayload:responsePayload HTTPstatus:statusCode transportSessionError:nil headers:headers];
+    return [[ZMTransportResponse alloc] initWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil headers:headers];
 }
 
 - (ZMTransportResponse *)responseForAddOTRAssetWithProtobufData:(ZMOtrAssetMeta *)otrMetadata
@@ -243,7 +243,7 @@
 {
     MockUserClient *senderClient = [self otrMessageSenderFromClientId:otrMetadata.sender];
     if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetadata.recipients conversation:conversation sender:senderClient onlyForUserId:nil];
@@ -283,7 +283,7 @@
         [self createAssetWithData:imageData identifier:assetID.transportString contentType:mimeType forConversation:conversation.identifier];
     }
     
-    return [[ZMTransportResponse alloc] initWithPayload:responsePayload HTTPstatus:statusCode transportSessionError:nil headers:headers];
+    return [[ZMTransportResponse alloc] initWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil headers:headers];
 }
 
 
@@ -335,10 +335,10 @@
             payload[@"token"] = asset.token;
         }
         
-        return [[ZMTransportResponse alloc] initWithPayload:[payload copy] HTTPstatus:201 transportSessionError:nil headers:@{@"Location" : [NSString stringWithFormat:@"/asset/v3/%@", asset.identifier]}];
+        return [[ZMTransportResponse alloc] initWithPayload:[payload copy] HTTPStatus:201 transportSessionError:nil headers:@{@"Location" : [NSString stringWithFormat:@"/asset/v3/%@", asset.identifier]}];
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:400 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processAssetV3GetWithKey:(NSString *)key;
@@ -346,9 +346,9 @@
     MockAsset *asset = [MockAsset assetInContext:self.managedObjectContext forID:key];
     if (asset != nil) {
         
-        return [[ZMTransportResponse alloc] initWithImageData:asset.data HTTPstatus:200 transportSessionError:nil headers:nil];
+        return [[ZMTransportResponse alloc] initWithImageData:asset.data HTTPStatus:200 transportSessionError:nil headers:nil];
     }
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
 
