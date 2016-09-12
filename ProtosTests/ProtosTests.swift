@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,11 +23,11 @@ import ZMProtos
 class ProtosTests: XCTestCase {
     
     func testTextMessageEncodingPerformance() {
-        measureBlock { () -> Void in
+        measure { () -> Void in
             for _ in 0..<1000 {
-                let messageBuilder = ZMGenericMessage.builder()
-                messageBuilder.setMessageId(NSUUID().UUIDString)
-                let textBuilder = ZMText.builder()
+                let messageBuilder = ZMGenericMessage.builder()!
+                messageBuilder.setMessageId(NSUUID().uuidString)
+                let textBuilder = ZMText.builder()!
                 textBuilder.setContent("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
                 messageBuilder.setText(textBuilder.build())
                 _ = messageBuilder.build().data()
@@ -36,17 +36,17 @@ class ProtosTests: XCTestCase {
     }
     
     func testTextMessageDecodingPerformance() {
-        let messageBuilder = ZMGenericMessage.builder()
-        messageBuilder.setMessageId(NSUUID().UUIDString)
-        let textBuilder = ZMText.builder()
+        let messageBuilder = ZMGenericMessage.builder()!
+        messageBuilder.setMessageId(NSUUID().uuidString)
+        let textBuilder = ZMText.builder()!
         textBuilder.setContent("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
         messageBuilder.setText(textBuilder.build())
         let data = messageBuilder.build().data()
         messageBuilder.clear()
         
-        measureBlock { () -> Void in
+        measure { () -> Void in
             for _ in 0..<1000 {
-                let _ = messageBuilder.mergeFromData(data).build()
+                let _ = messageBuilder.merge(from: data).build()
             }
         }
     }
@@ -54,13 +54,13 @@ class ProtosTests: XCTestCase {
     func testThatItCreatesGenericMessageForUnencryptedImage() {
         //given
         let nonce = NSUUID();
-        let format = ZMImageFormat.Preview
+        let format = ZMImageFormat.preview
         
-        let mediumProperties = ZMIImageProperties(size: CGSizeMake(10000, 20000), length: 200000, mimeType: "fancy image")
-        let processedProperties = ZMIImageProperties(size: CGSizeMake(640, 480), length: 200, mimeType: "downsized image")
+        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200000, mimeType: "fancy image")!
+        let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
         
         // when
-        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: nil, nonce: nonce.description, format: format)
+        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: nil, nonce: nonce.description, format: format)!
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -72,25 +72,25 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.image.tag, StringFromImageFormat(format))
         XCTAssertNil(message.image.otrKey)
         XCTAssertNil(message.image.sha256)
-        XCTAssertEqual(message.image.mac, NSData())
-        XCTAssertEqual(message.image.macKey, NSData())
+        XCTAssertEqual(message.image.mac, NSData() as Data)
+        XCTAssertEqual(message.image.macKey, NSData() as Data)
     }
 
     func testThatItCreatesGenericMessageForEncryptedImage() {
         //given
         let nonce = NSUUID();
-        let otrKey = "OTR KEY".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)!
-        let macKey = "MAC KEY".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)!
-        let mac = "MAC".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)!
+        let otrKey = "OTR KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
+        let macKey = "MAC KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
+        let mac = "MAC".data(using: String.Encoding.utf8, allowLossyConversion: true)!
 
-        let mediumProperties = ZMIImageProperties(size: CGSizeMake(10000, 20000), length: 200000, mimeType: "fancy image")
-        let processedProperties = ZMIImageProperties(size: CGSizeMake(640, 480), length: 200, mimeType: "downsized image")
+        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200000, mimeType: "fancy image")!
+        let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
         _ = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
-        let format = ZMImageFormat.Preview
+        let format = ZMImageFormat.preview
         let keys = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
         
         // when
-        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: keys, nonce: nonce.description, format: format)
+        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: keys, nonce: nonce.description, format: format)!
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -102,20 +102,20 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.image.tag, StringFromImageFormat(format))
         XCTAssertEqual(message.image.otrKey, otrKey)
         XCTAssertNil(message.image.sha256)
-        XCTAssertEqual(message.image.mac, NSData())
-        XCTAssertEqual(message.image.macKey, NSData())
+        XCTAssertEqual(message.image.mac, Data())
+        XCTAssertEqual(message.image.macKey, Data())
     }
     
     func testThatItCreatesGenericMessageFromImageData() {
         
         // given
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let url = bundle.URLForResource("medium", withExtension: "jpg")!
-        let data = NSData(contentsOfURL: url)!
+        let bundle = Bundle(for: type(of: self))
+        let url = bundle.url(forResource: "medium", withExtension: "jpg")!
+        let data = NSData(contentsOf: url)!
         let nonce = "nonceeeee";
         
         // when
-        let message = ZMGenericMessage(imageData: data, format: .Medium, nonce: nonce)
+        let message = ZMGenericMessage(imageData: data as Data, format: .medium, nonce: nonce)!
         
         // then
         XCTAssertEqual(message.image.width, 0)
@@ -124,20 +124,20 @@ class ProtosTests: XCTestCase {
         XCTAssertGreaterThan(message.image.originalHeight, 0)
         XCTAssertEqual(message.image.size, 0)
         XCTAssertEqual(message.image.mimeType, "image/jpeg")
-        XCTAssertEqual(message.image.tag, StringFromImageFormat(.Medium))
-        XCTAssertEqual(message.image.otrKey.length, 0)
-        XCTAssertEqual(message.image.mac.length, 0)
-        XCTAssertEqual(message.image.macKey.length, 0)
+        XCTAssertEqual(message.image.tag, StringFromImageFormat(.medium))
+        XCTAssertEqual(message.image.otrKey.count, 0)
+        XCTAssertEqual(message.image.mac.count, 0)
+        XCTAssertEqual(message.image.macKey.count, 0)
     }
     
     func testThatItCanCreateKnock() {
         let nonce = NSUUID()
-        let message = ZMGenericMessage.knockWithNonce(nonce.UUIDString.lowercaseString)
+        let message = ZMGenericMessage.knock(withNonce: nonce.uuidString.lowercased())!
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasKnock())
         XCTAssertFalse(message.knock.hotKnock())
-        XCTAssertEqual(message.messageId, nonce.UUIDString.lowercaseString)
+        XCTAssertEqual(message.messageId, nonce.uuidString.lowercased())
     }
     
     
@@ -145,7 +145,7 @@ class ProtosTests: XCTestCase {
         let conversationID = "someID"
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = "nonce"
-        let message =  ZMGenericMessage(lastRead: timeStamp, ofConversationWithID: conversationID, nonce: nonce)
+        let message = ZMGenericMessage(lastRead: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)!
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasLastRead())
@@ -161,7 +161,7 @@ class ProtosTests: XCTestCase {
         let conversationID = "someID"
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = "nonce"
-        let message =  ZMGenericMessage(clearedTimestamp: timeStamp, ofConversationWithID: conversationID, nonce: nonce)
+        let message = ZMGenericMessage(clearedTimestamp: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)!
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasCleared())
@@ -174,12 +174,12 @@ class ProtosTests: XCTestCase {
     
     func testThatItCanCreateSessionReset() {
         let nonce = NSUUID()
-        let message = ZMGenericMessage.sessionResetWithNonce(nonce.UUIDString.lowercaseString)
+        let message = ZMGenericMessage.sessionReset(withNonce: nonce.uuidString.lowercased())!
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasClientAction())
         XCTAssertEqual(message.clientAction, ZMClientAction.RESETSESSION)
-        XCTAssertEqual(message.messageId, nonce.UUIDString.lowercaseString)
+        XCTAssertEqual(message.messageId, nonce.uuidString.lowercased())
     }
     
     
