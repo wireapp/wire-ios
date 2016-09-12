@@ -57,40 +57,40 @@ class _CBox : PointerWrapper {}
  3. When the block passed to `perform:` is completed, the sessions are persisted to disk.
     The lock is relased.
  */
-public class EncryptionContext : NSObject {
+public final class EncryptionContext : NSObject {
     
     /// What to do with modified sessions
     public enum ModifiedSessionsBehaviour {
-        case Save
-        case Discard
+        case save
+        case discard
     }
     
     /// Underlying C-style implementation
     let implementation = _CBox()
     
     /// File directory with the implementation files
-    private let path : NSURL
+    fileprivate let path : URL
     
     /// The latest created and still open session directory
     /// will be set to `nil` after calling `doneUsingSessions`
-    private(set) var currentSessionsDirectory: EncryptionSessionsDirectory?
+    fileprivate(set) var currentSessionsDirectory: EncryptionSessionsDirectory?
     
     /// Folder file descriptor
-    private var fileDescriptor : CInt!
+    fileprivate var fileDescriptor : CInt!
     
     
-    private var performCount : UInt = 0
+    fileprivate var performCount : UInt = 0
     
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error
-    public init(path: NSURL) {
-        let result = cbox_file_open((path.path! as NSString).UTF8String, &self.implementation.ptr)
+    public init(path: URL) {
+        let result = cbox_file_open((path.path as NSString).utf8String, &self.implementation.ptr)
         self.path = path
         super.init()
         if result != CBOX_SUCCESS {
             fatalError("Failed to open cryptobox: ERROR \(result.rawValue)")
         }
-        self.fileDescriptor = open(self.path.path!, 0)
+        self.fileDescriptor = open(self.path.path, 0)
         if self.fileDescriptor <= 0 {
             fatalError("Can't obtain FD for folder \(self.path)")
         }
@@ -117,13 +117,13 @@ extension EncryptionContext {
     /// stops using sessions. Nested calls to this method on the same objects on the same
     /// thread are allowed.
     /// - warning: this method is not thread safe
-    public func perform(block: (sessionsDirectory: EncryptionSessionsDirectory) -> () ) {
+    public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> () ) {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
             self.currentSessionsDirectory = EncryptionSessionsDirectory(generatingContext: self)
         }
         performCount += 1
-        block(sessionsDirectory: self.currentSessionsDirectory!)
+        block(self.currentSessionsDirectory!)
         performCount -= 1
         if 0 == performCount {
             self.currentSessionsDirectory = nil
@@ -131,13 +131,13 @@ extension EncryptionContext {
         self.releaseDirectoryLock()
     }
     
-    private func acquireDirectoryLock() {
+    fileprivate func acquireDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
             fatalError("Failed to lock \(self.path)")
         }
     }
     
-    private func releaseDirectoryLock() {
+    fileprivate func releaseDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_UN) != 0 {
             fatalError("Failed to unlock \(self.path)")
         }

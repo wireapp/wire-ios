@@ -19,79 +19,79 @@
 
 import Foundation
 
-extension CBoxResult : ErrorType {
+extension CBoxResult : Error {
 }
 
-@objc public enum CryptoboxError : UInt32, ErrorType {
+@objc public enum CryptoboxError : UInt32, Error {
     
-    case CryptoboxSuccess                 = 0
+    case success                 = 0
     
-    case CryptoboxStorageError            = 1
+    case storageError            = 1
     
-    case CryptoboxSessionNotFound         = 2
+    case sessionNotFound         = 2
     
-    case CryptoboxDecodeError             = 3
+    case decodeError             = 3
     
-    case CryptoboxRemoteIdentityChanged   = 4
+    case remoteIdentityChanged   = 4
     
-    case CryptoboxInvalidSignature        = 5
+    case invalidSignature        = 5
     
-    case CryptoboxInvalidMessage          = 6
+    case invalidMessage          = 6
     
-    case CryptoboxDuplicateMessage        = 7
+    case duplicateMessage        = 7
     
-    case CryptoboxTooDistantFuture        = 8
+    case tooDistantFuture        = 8
     
-    case CryptoboxOutdatedMessage         = 9
+    case outdatedMessage         = 9
     
-    case CryptoboxUTF8Error               = 10
+    case UTF8Error               = 10
     
-    case CryptoboxNulError                = 11
+    case nulError                = 11
     
-    case CryptoboxEncodeError             = 12
+    case encodeError             = 12
     
-    case CryptoboxIdentityError           = 13
+    case identityError           = 13
     
-    case CryptoboxPrekeyNotFound          = 14
+    case prekeyNotFound          = 14
     
-    case CryptoboxPanic                   = 15
+    case panic                   = 15
     
     
     public init?(rawValue: UInt32)
     {
         switch rawValue {
         case CBOX_SUCCESS.rawValue:
-            self = .CryptoboxSuccess
+            self = .success
         case CBOX_STORAGE_ERROR.rawValue:
-            self = .CryptoboxStorageError
+            self = .storageError
         case CBOX_SESSION_NOT_FOUND.rawValue:
-            self = .CryptoboxSessionNotFound
+            self = .sessionNotFound
         case CBOX_DECODE_ERROR.rawValue:
-            self = .CryptoboxDecodeError
+            self = .decodeError
         case CBOX_REMOTE_IDENTITY_CHANGED.rawValue:
-            self = .CryptoboxRemoteIdentityChanged
+            self = .remoteIdentityChanged
         case CBOX_INVALID_SIGNATURE.rawValue:
-            self = .CryptoboxInvalidSignature
+            self = .invalidSignature
         case CBOX_INVALID_MESSAGE.rawValue:
-            self = .CryptoboxInvalidMessage
+            self = .invalidMessage
         case CBOX_DUPLICATE_MESSAGE.rawValue:
-            self = .CryptoboxDuplicateMessage
+            self = .duplicateMessage
         case CBOX_TOO_DISTANT_FUTURE.rawValue:
-            self = .CryptoboxTooDistantFuture
+            self = .tooDistantFuture
         case CBOX_OUTDATED_MESSAGE.rawValue:
-            self = .CryptoboxOutdatedMessage
+            self = .outdatedMessage
         case CBOX_UTF8_ERROR.rawValue:
-            self = .CryptoboxUTF8Error
+            self = .UTF8Error
         case CBOX_NUL_ERROR.rawValue:
-            self = .CryptoboxNulError
+            self = .nulError
         case CBOX_ENCODE_ERROR.rawValue:
-            self = .CryptoboxEncodeError
+            self = .encodeError
         case CBOX_IDENTITY_ERROR.rawValue:
-            self = .CryptoboxIdentityError
+            self = .identityError
         case CBOX_PREKEY_NOT_FOUND.rawValue:
-            self = .CryptoboxPrekeyNotFound
+            self = .prekeyNotFound
         case CBOX_PANIC.rawValue:
-            self = .CryptoboxPanic
+            self = .panic
             
         default:
             return nil

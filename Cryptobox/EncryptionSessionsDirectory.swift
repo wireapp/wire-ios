@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,21 +21,21 @@ import Foundation
 
 @objc enum EncryptionSessionError : Int {
     
-    case Unknown, EncryptionFailed, DecryptionFailed
+    case unknown, encryptionFailed, decryptionFailed
     
     internal var userInfo : [String : AnyObject] {
         var info : String
         
         switch self {
-        case .Unknown:
+        case .unknown:
             info = "Unknown EncryptionSessionError"
-        case .EncryptionFailed:
+        case .encryptionFailed:
             info = "Encryption Failed"
-        case .DecryptionFailed:
+        case .decryptionFailed:
             info = "Decryption Failed"
         }
         
-        return [kCFErrorLocalizedDescriptionKey as String : info]
+        return [kCFErrorLocalizedDescriptionKey as String : info as AnyObject]
     }
     
     var error : NSError {
@@ -49,17 +49,17 @@ class _CBoxSession : PointerWrapper {}
 /// An encryption state that is usable to encrypt/decrypt messages
 /// It maintains an in-memory cache of encryption sessions with other clients
 /// that is persisted to disk as soon as it is deallocated.
-public class EncryptionSessionsDirectory : NSObject {
+public final class EncryptionSessionsDirectory : NSObject {
     
     /// Used for testing only. If set to true,
     /// will not try to validate with the generating context
     var debug_disableContextValidityCheck = false
     
     /// Context that created this status
-    private weak var generatingContext: EncryptionContext!
+    fileprivate weak var generatingContext: EncryptionContext!
     
     /// Local fingerprint
-    public var localFingerprint : NSData
+    public var localFingerprint : Data
     
     /// Cache of transient sessions, indexed by client ID.
     /// Transient sessions are session that are (potentially) modified in memory
@@ -73,7 +73,7 @@ public class EncryptionSessionsDirectory : NSObject {
     /// the same execution block, we don't need to spend time reading
     /// and writing to disk every time we use the session, we can just
     /// load once and save once at the end.
-    private var pendingSessionsCache : [String : EncryptionSession] = [:]
+    fileprivate var pendingSessionsCache : [String : EncryptionSession] = [:]
     
     init(generatingContext: EncryptionContext) {
         self.generatingContext = generatingContext
@@ -90,7 +90,7 @@ public class EncryptionSessionsDirectory : NSObject {
     /// this is the current status. If not, it means that we are using this status after
     /// the context was done using this status.
     /// Will assert if this is the case.
-    private func validateContext() -> EncryptionContext {
+    fileprivate func validateContext() -> EncryptionContext {
         guard self.debug_disableContextValidityCheck || self.generatingContext.currentSessionsDirectory === self else {
             // If you hit this line, check if the status was stored in a variable for later use,
             // or if it was used from different threads - it should never be.
@@ -110,10 +110,10 @@ extension EncryptionSessionsDirectory {
     /// Creates a session to a client using a prekey of that client
     /// The session is not saved to disk until the cache is committed
     /// - throws: CryptoBox error in case of lower-level error
-    public func createClientSession(clientId: String, base64PreKeyString: String) throws {
+    public func createClientSession(_ clientId: String, base64PreKeyString: String) throws {
         
         // validate
-        guard let prekeyData = NSData(base64EncodedString: base64PreKeyString, options: []) else {
+        guard let prekeyData = Data(base64Encoded: base64PreKeyString, options: []) else {
             fatalError("String is not base64 encoded")
         }
         let context = self.validateContext()
@@ -122,15 +122,17 @@ extension EncryptionSessionsDirectory {
         if clientSessionById(clientId) != nil {
             return
         }
-
+        
         // init
         let cbsession = _CBoxSession()
-        let result = cbox_session_init_from_prekey(context.implementation.ptr,
-                                                   clientId,
-                                                   UnsafeMutablePointer<UInt8>(prekeyData.bytes),
-                                                   prekeyData.length,
-                                                   &cbsession.ptr
-        )
+        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer : UnsafePointer<UInt8>) -> CBoxResult in
+            cbox_session_init_from_prekey(context.implementation.ptr,
+                                          clientId,
+                                          prekeyDataPointer,
+                                          prekeyData.count,
+                                          &cbsession.ptr)
+        }
+        
         guard result == CBOX_SUCCESS else {
             throw CryptoboxError(rawValue: result.rawValue)!
         }
@@ -144,20 +146,24 @@ extension EncryptionSessionsDirectory {
     /// The session is not saved to disk until the cache is committed
     /// - returns: the plaintext
     /// - throws: CryptoBox error in case of lower-level error
-    public func createClientSessionAndReturnPlaintext(clientId: String, prekeyMessage: NSData) throws -> NSData {
+    public func createClientSessionAndReturnPlaintext(_ clientId: String, prekeyMessage: Data) throws -> Data {
         let context = self.validateContext()
         let cbsession = _CBoxSession()
-        var plainTextBacking : COpaquePointer = nil
-        let result = cbox_session_init_from_message(context.implementation.ptr,
-                                                    clientId,
-                                                    UnsafePointer<UInt8>(prekeyMessage.bytes),
-                                                    prekeyMessage.length,
-                                                    &cbsession.ptr,
-                                                    &plainTextBacking)
+        var plainTextBacking : OpaquePointer? = nil
+        
+        let result = prekeyMessage.withUnsafeBytes { (prekeyMessagePointer : UnsafePointer<UInt8>) -> CBoxResult in
+            cbox_session_init_from_message(context.implementation.ptr,
+                                           clientId,
+                                           prekeyMessagePointer,
+                                           prekeyMessage.count,
+                                           &cbsession.ptr,
+                                           &plainTextBacking)
+        }
+        
         guard result == CBOX_SUCCESS else {
             throw CryptoboxError(rawValue: result.rawValue)!
         }
-        let plainText = NSData.moveFromCBoxVector(plainTextBacking)
+        let plainText = Data.moveFromCBoxVector(plainTextBacking)!
         let session = EncryptionSession(id: clientId,
                                         session: cbsession,
                                         requiresSave: true)
@@ -166,7 +172,7 @@ extension EncryptionSessionsDirectory {
     }
     
     /// Deletes a session with a client
-    public func delete(clientId: String) {
+    public func delete(_ clientId: String) {
         let context = self.validateContext()
         self.discardFromCache(clientId)
         let result = cbox_session_delete(context.implementation.ptr, clientId)
@@ -182,19 +188,21 @@ extension EncryptionSessionsDirectory {
     /// Generates one prekey of the given ID. If the prekey exists already,
     /// it will replace that prekey
     /// - returns: base 64 encoded string
-    public func generatePrekey(id: UInt16) throws -> String {
+    public func generatePrekey(_ id: UInt16) throws -> String {
         guard id <= CBOX_LAST_PREKEY_ID else {
             // this should never happen, as CBOX_LAST_PREKEY_ID is UInt16.max
             fatalError("Prekey out of bound")
         }
-        var vectorBacking : COpaquePointer = nil
+        var vectorBacking : OpaquePointer?
         let context = self.validateContext()
         let result = cbox_new_prekey(context.implementation.ptr, id, &vectorBacking)
-        let prekey = NSData.moveFromCBoxVector(vectorBacking)
+        let prekey = Data.moveFromCBoxVector(vectorBacking)
+        
         guard result == CBOX_SUCCESS else {
             throw CryptoboxError(rawValue: result.rawValue)!
         }
-        return prekey.base64EncodedStringWithOptions([])
+        
+        return prekey!.base64EncodedString(options: [])
     }
     
     /// Generates the last prekey. If the prekey exists already,
@@ -205,7 +213,7 @@ extension EncryptionSessionsDirectory {
     
     /// Generates prekeys from a range of IDs. If prekeys with those IDs exist already,
     /// they will be replaced
-    public func generatePrekeys(range: Range<UInt16>) throws -> [(id: UInt16, prekey: String)] {
+    public func generatePrekeys(_ range: CountableRange<UInt16>) throws -> [(id: UInt16, prekey: String)] {
         return try range.map {
             let prekey = try self.generatePrekey($0)
             return (id: $0, prekey: prekey)
@@ -215,9 +223,9 @@ extension EncryptionSessionsDirectory {
     /// Generates prekeys from a range of IDs. If prekeys with those IDs exist already,
     /// they will be replaced
     /// This method wraps the Swift only method generatePrekeys(range: Range<UInt16>) for objC interoparability
-    @objc public func generatePrekeys(nsRange: NSRange) throws -> [[String : AnyObject]] {
-        let prekeys = try generatePrekeys(Range(UInt16(nsRange.location)..<UInt16(nsRange.length)))
-        return prekeys.map{ ["id": NSNumber(unsignedShort: $0.id), "prekey": $0.prekey] }
+    @objc public func generatePrekeys(_ nsRange: NSRange) throws -> [[String : AnyObject]] {
+        let prekeys = try generatePrekeys(UInt16(nsRange.location)..<UInt16(nsRange.length))
+        return prekeys.map{ ["id": NSNumber(value: $0.id as UInt16), "prekey": $0.prekey as AnyObject] }
     }
 }
 
@@ -225,20 +233,20 @@ extension EncryptionSessionsDirectory {
 extension _CBox {
     
     /// Local fingerprint
-    private var localFingerprint : NSData {
-        var vectorBacking : COpaquePointer = nil
+    fileprivate var localFingerprint : Data {
+        var vectorBacking : OpaquePointer? = nil
         let result = cbox_fingerprint_local(self.ptr, &vectorBacking)
         guard result == CBOX_SUCCESS else {
             fatalError("Can't get local fingerprint") // this is so rare, that we don't even throw
         }
-        return NSData.moveFromCBoxVector(vectorBacking)
+        return Data.moveFromCBoxVector(vectorBacking)!
     }
 }
 
 extension EncryptionSessionsDirectory {
     
     /// Returns the remote fingerprint of a client session
-    public func fingerprintForClient(clientId: String) -> NSData? {
+    public func fingerprintForClient(_ clientId: String) -> Data? {
         guard let session = self.clientSessionById(clientId) else {
             return nil
         }
@@ -252,7 +260,7 @@ extension EncryptionSessionsDirectory {
     
     /// Returns an existing session for a client
     /// - returns: a session if it exists, or nil if not there
-    private func clientSessionById(clientId: String) -> EncryptionSession? {
+    fileprivate func clientSessionById(_ clientId: String) -> EncryptionSession? {
         let context = self.validateContext()
         
         // check cache
@@ -277,7 +285,7 @@ extension EncryptionSessionsDirectory {
     }
     
     /// Returns true if there is an existing session for this client ID
-    public func hasSessionForID(clientId: String) -> Bool {
+    public func hasSessionForID(_ clientId: String) -> Bool {
         return (clientSessionById(clientId) != nil)
     }
     
@@ -287,7 +295,7 @@ extension EncryptionSessionsDirectory {
     }
     
     /// Save and unload all transient sessions
-    private func commitCache() {
+    fileprivate func commitCache() {
         for (_, session) in self.pendingSessionsCache {
             session.save(self.box)
         }
@@ -295,12 +303,12 @@ extension EncryptionSessionsDirectory {
     }
     
     /// Closes a transient session. Any unsaved change will be lost
-    private func discardFromCache(clientId: String) {
-        self.pendingSessionsCache.removeValueForKey(clientId)
+    fileprivate func discardFromCache(_ clientId: String) {
+        self.pendingSessionsCache.removeValue(forKey: clientId)
     }
 
     /// Saves the cached session for a client and removes it from the cache
-    private func saveSession(clientId: String) {
+    fileprivate func saveSession(_ clientId: String) {
         guard let session = pendingSessionsCache[clientId] else {
             return
         }
@@ -331,7 +339,7 @@ private class EncryptionSession {
     let implementation: _CBoxSession
     
     /// The fingerpint of the client
-    let remoteFingerprint: NSData
+    let remoteFingerprint: Data
     
     /// Creates a session from a C-level session pointer
     /// - parameter id: id of the client
@@ -347,12 +355,12 @@ private class EncryptionSession {
     }
     
     /// Closes the session in CBox
-    private func closeInCryptobox() {
+    fileprivate func closeInCryptobox() {
         cbox_session_close(self.implementation.ptr)
     }
     
     /// Save the session to disk
-    private func save(cryptobox: _CBox) {
+    fileprivate func save(_ cryptobox: _CBox) {
         if self.hasChanges {
             let result = cbox_session_save(cryptobox.ptr, self.implementation.ptr)
             switch(result) {
@@ -375,10 +383,10 @@ extension EncryptionSessionsDirectory {
     /// Encrypts data for a client
     /// It immediately saves the session
     /// - returns: nil if there is no session with that client
-    @objc public func encrypt(plainText: NSData, recipientClientId: String) throws -> NSData {
-        self.validateContext()
+    @objc public func encrypt(_ plainText: Data, recipientClientId: String) throws -> Data {
+        _ = self.validateContext()
         guard let session = self.clientSessionById(recipientClientId) else {
-            throw EncryptionSessionError.EncryptionFailed.error
+            throw EncryptionSessionError.encryptionFailed.error
         }
         let cypherText = try session.encrypt(plainText)
         self.saveSession(recipientClientId)
@@ -388,10 +396,10 @@ extension EncryptionSessionsDirectory {
     /// Decrypts data from a client
     /// The session is not saved to disk until the cache is committed
     /// - returns: nil if there is no session with that client
-    @objc public func decrypt(cypherText: NSData, senderClientId: String) throws -> NSData {
-        self.validateContext()
+    @objc public func decrypt(_ cypherText: Data, senderClientId: String) throws -> Data {
+        _ = self.validateContext()
         guard let session = self.clientSessionById(senderClientId) else {
-            throw EncryptionSessionError.DecryptionFailed.error
+            throw EncryptionSessionError.decryptionFailed.error
         }
         return try session.decrypt(cypherText)
     }
@@ -402,33 +410,40 @@ extension EncryptionSession {
     
     /// Decrypts data using the session. This function modifies the session
     /// and it should be saved later
-    private func decrypt(cypher: NSData) throws -> NSData {
-        var vectorBacking : COpaquePointer = nil
-        let result = cbox_decrypt(self.implementation.ptr,
-                                  UnsafePointer<UInt8>(cypher.bytes),
-                                  cypher.length,
-                                  &vectorBacking)
+    fileprivate func decrypt(_ cypher: Data) throws -> Data {
+        var vectorBacking : OpaquePointer? = nil
+
+        let result = cypher.withUnsafeBytes { (cypherPointer: UnsafePointer<UInt8>) -> CBoxResult in
+            cbox_decrypt(self.implementation.ptr,
+                         cypherPointer,
+                         cypher.count,
+                         &vectorBacking)
+        }
+        
         guard result == CBOX_SUCCESS else {
             throw CryptoboxError(rawValue: result.rawValue)!
         }
         self.hasChanges = true
-        return NSData.moveFromCBoxVector(vectorBacking)
+        return Data.moveFromCBoxVector(vectorBacking)!
     }
     
     /// Encrypts data using the session. This function modifies the session
     /// and it should be saved later
-    private func encrypt(plainText: NSData) throws -> NSData {
-        var vectorBacking : COpaquePointer = nil
-        let result = cbox_encrypt(self.implementation.ptr,
-                                  UnsafePointer<UInt8>(plainText.bytes),
-                                  plainText.length,
-                                  &vectorBacking
-        )
+    fileprivate func encrypt(_ plainText: Data) throws -> Data {
+        var vectorBacking : OpaquePointer? = nil
+        
+        let result = plainText.withUnsafeBytes { (plainTextPointer: UnsafePointer<UInt8>) -> CBoxResult in
+            cbox_encrypt(self.implementation.ptr,
+                         plainTextPointer,
+                         plainText.count,
+                         &vectorBacking)
+        }
+        
         guard result == CBOX_SUCCESS else {
             throw CryptoboxError(rawValue: result.rawValue)!
         }
         self.hasChanges = true
-        return NSData.moveFromCBoxVector(vectorBacking)
+        return Data.moveFromCBoxVector(vectorBacking)!
     }
 }
 
@@ -436,12 +451,12 @@ extension EncryptionSession {
 extension _CBoxSession {
     
     /// Returns the remote fingerprint associated with a session
-    private var remoteFingerprint : NSData {
-        var backingVector : COpaquePointer = nil
+    fileprivate var remoteFingerprint : Data {
+        var backingVector : OpaquePointer? = nil
         let result = cbox_fingerprint_remote(self.ptr, &backingVector)
         guard result == CBOX_SUCCESS else {
             fatalError("Can't access remote fingerprint of session")
         }
-        return NSData.moveFromCBoxVector(backingVector)
+        return Data.moveFromCBoxVector(backingVector)!
     }
 }
