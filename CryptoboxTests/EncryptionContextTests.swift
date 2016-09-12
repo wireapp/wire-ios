@@ -30,13 +30,13 @@ class EncryptionContextTests: XCTestCase {
         let tempDir = createTempFolder()
         
         // have to do work on other queues because the main thread can't be blocked
-        let queue1 = dispatch_queue_create(self.name!, DISPATCH_QUEUE_SERIAL)
-        let queue2 = dispatch_queue_create(self.name!, DISPATCH_QUEUE_SERIAL)
+        let queue1 = DispatchQueue(label: self.name!)
+        let queue2 = DispatchQueue(label: self.name!)
         
         // coordinate between the two threads to make sure that they are executed in the right order
-        let context2CanEnterSemaphore = dispatch_semaphore_create(0)
-        let context1CanCompleteSemaphore = dispatch_semaphore_create(0)
-        let queue2IsDoneSemaphore = dispatch_semaphore_create(0)
+        let context2CanEnterSemaphore = DispatchSemaphore(value: 0)
+        let context1CanCompleteSemaphore = DispatchSemaphore(value: 0)
+        let queue2IsDoneSemaphore = DispatchSemaphore(value: 0)
         
         // whether the queues entered the critical section
         var queue1EnteredCriticalSection = false
@@ -47,34 +47,34 @@ class EncryptionContextTests: XCTestCase {
         // WHEN
         
         // queue 1 will enter critical section and wait there until told to complete
-        dispatch_async(queue1) {
+        queue1.async {
 
             // entering the critical section
             EncryptionContext(path: tempDir).perform { _ in
                 queue1EnteredCriticalSection = true
                 // signal queue2 other thread that it should attempt to enter critical section
-                dispatch_semaphore_signal(context2CanEnterSemaphore)
+                context2CanEnterSemaphore.signal()
                 // wait until it's told to leave critical section
-                dispatch_semaphore_wait(context1CanCompleteSemaphore, DISPATCH_TIME_FOREVER)
+                context1CanCompleteSemaphore.wait()
             }
             queue1LeftCriticalSection = true
         }
         
         // queue 2 will try to enter critical section, but should block (because of queue 1)
-        dispatch_async(queue2) {
+        queue2.async {
             
             // make sure queue 1 is in the right place (critical section) before attempting to enter critical section
-            dispatch_semaphore_wait(context2CanEnterSemaphore, DISPATCH_TIME_FOREVER)
+            context2CanEnterSemaphore.wait()
             EncryptionContext(path: tempDir).perform { _ in
                 // will not get here until queue1 has quit critical section
                 queue2EnteredCriticalSection = true
             }
             queue2LeftCriticalSection = true
-            dispatch_semaphore_signal(queue2IsDoneSemaphore)
+            queue2IsDoneSemaphore.signal()
         }
         
         // wait a few ms so that all threads are ready
-        NSThread.sleepForTimeInterval(0.3)
+        Thread.sleep(forTimeInterval: 0.3)
         
         // THEN
         XCTAssertTrue(queue1EnteredCriticalSection)
@@ -83,10 +83,10 @@ class EncryptionContextTests: XCTestCase {
         XCTAssertFalse(queue2LeftCriticalSection)
         
         // WHEN
-        dispatch_semaphore_signal(context1CanCompleteSemaphore)
+        context1CanCompleteSemaphore.signal()
         
         // THEN
-        dispatch_semaphore_wait(queue2IsDoneSemaphore, DISPATCH_TIME_FOREVER)
+        queue2IsDoneSemaphore.wait()
         XCTAssertTrue(queue1EnteredCriticalSection)
         XCTAssertTrue(queue1LeftCriticalSection)
         XCTAssertTrue(queue2EnteredCriticalSection)
@@ -99,8 +99,8 @@ class EncryptionContextTests: XCTestCase {
         let tempDir = createTempFolder()
         
         let mainContext = EncryptionContext(path: tempDir)
-        let invocation1 = self.expectationWithDescription("first begin using session")
-        let invocation2 = self.expectationWithDescription("second begin using session")
+        let invocation1 = self.expectation(description: "first begin using session")
+        let invocation2 = self.expectation(description: "second begin using session")
 
         
         // WHEN
@@ -115,7 +115,7 @@ class EncryptionContextTests: XCTestCase {
         }
         
         // THEN
-        self.waitForExpectationsWithTimeout(0) { _ in }
+        self.waitForExpectations(timeout: 0) { _ in }
 
     }
     
@@ -127,8 +127,8 @@ class EncryptionContextTests: XCTestCase {
         let mainContext = EncryptionContext(path: tempDir)
         var lastStatus : EncryptionSessionsDirectory? = nil
  
-        let invocation1 = self.expectationWithDescription("first begin using session")
-        let invocation2 = self.expectationWithDescription("second begin using session")
+        let invocation1 = self.expectation(description: "first begin using session")
+        let invocation2 = self.expectation(description: "second begin using session")
         
         // WHEN
         
@@ -144,7 +144,7 @@ class EncryptionContextTests: XCTestCase {
         }
         
         // THEN
-        self.waitForExpectationsWithTimeout(0) { _ in }
+        self.waitForExpectations(timeout: 0) { _ in }
     }
     
     func testThatItSafelyEncryptDecryptDuringNestedPerform() {
@@ -164,11 +164,11 @@ class EncryptionContextTests: XCTestCase {
             try! context1.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
             
             mainContext.perform { context2 in
-                try! context2.encrypt(someTextToEncrypt.dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: hardcodedClientId)
+                _ = try! context2.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, recipientClientId: hardcodedClientId)
                 
             }
             
-            try! context1.encrypt(someTextToEncrypt.dataUsingEncoding(NSUTF8StringEncoding)!, recipientClientId: hardcodedClientId)
+            _ = try! context1.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, recipientClientId: hardcodedClientId)
         }
         
         // THEN 
@@ -184,8 +184,8 @@ class EncryptionContextTests: XCTestCase {
         let mainContext = EncryptionContext(path: tempDir)
         var lastStatus : EncryptionSessionsDirectory? = nil
         
-        let invocation1 = self.expectationWithDescription("first begin using session")
-        let invocation2 = self.expectationWithDescription("second begin using session")
+        let invocation1 = self.expectation(description: "first begin using session")
+        let invocation2 = self.expectation(description: "second begin using session")
         
         // WHEN
         
@@ -202,6 +202,6 @@ class EncryptionContextTests: XCTestCase {
             XCTAssertFalse(lastStatus === context)
         }
         
-        self.waitForExpectationsWithTimeout(0) { _ in }
+        self.waitForExpectations(timeout: 0) { _ in }
     }
 }
