@@ -20,6 +20,8 @@
 #import <Foundation/Foundation.h>
 #import <ZMTransport/ZMTransportData.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ZMPushChannelConsumer;
 @protocol ZMSGroupQueue;
 @class ZMWebSocket;
@@ -32,7 +34,7 @@
 @interface ZMPushChannelConnection : NSObject
 
 - (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
-- (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue webSocket:(ZMWebSocket *)webSocket accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue webSocket:(nullable ZMWebSocket *)webSocket accessToken:(ZMAccessToken *)accessToken clientID:(nullable NSString *)clientID userAgentString:(NSString *)userAgentString NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, readonly, weak) id<ZMPushChannelConsumer> consumer;
 @property (nonatomic, readonly) BOOL isOpen;
@@ -60,3 +62,5 @@
 @property (nonatomic) NSTimeInterval pingInterval;
 
 @end
+
+NS_ASSUME_NONNULL_END

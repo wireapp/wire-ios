@@ -238,11 +238,6 @@
                                ];
 }
 
-- (void)testThatNilStringReturnsNil;
-{
-    XCTAssertNil([ZMEventID eventIDWithString:nil], @"nil string should return nil");
-}
-
 - (void)testThatValidStringsCreateValidEventIDs
 {
     for (NSString *string in self.identifierStrings) {
@@ -356,17 +351,6 @@
     // then
     XCTAssertEqualObjects([ZMEventID latestOfEventID:event1 and:event2], event2);
     XCTAssertEqualObjects([ZMEventID latestOfEventID:event1 and:event3], event1);
-}
-
-- (void)testThatItReturnsTheNonNullEventID
-{
-    // given
-    ZMEventID *event = [ZMEventID eventIDWithMajor:481 minor:5162342];
-    
-    // then
-    XCTAssertEqualObjects([ZMEventID earliestOfEventID:event and:nil], event);
-    XCTAssertEqualObjects([ZMEventID earliestOfEventID:nil and:event], event);
-    
 }
 
 - (void)testThatCompareDoesNotCrashWithNullEventID

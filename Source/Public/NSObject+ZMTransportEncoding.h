@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMTransportEncoding <NSObject>
 
@@ -30,7 +31,7 @@
 
 @interface NSDate (ZMTransportEncoding) <ZMTransportEncoding>
 
-+ (instancetype)dateWithTransportString:(NSString *)transportString;
++ (nullable instancetype)dateWithTransportString:(NSString *)transportString;
 
 @end
 
@@ -42,3 +43,5 @@
 + (instancetype)uuidWithTransportString:(NSString *)transportString;
 
 @end
+
+NS_ASSUME_NONNULL_END

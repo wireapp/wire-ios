@@ -75,7 +75,13 @@
     self.clientID = @"12do34l90as23a";
     
     [self verifyMockLater:self.webSocketMock];
-    self.sut = [[ZMPushChannelConnection alloc] initWithURL:nil consumer:self queue:self.fakeSyncContext webSocket:self.webSocketMock accessToken:self.accessToken clientID:self.clientID userAgentString:nil];
+    self.sut = [[ZMPushChannelConnection alloc] initWithURL:[NSURL URLWithString:@"127.0.0.1"]
+                                                   consumer:self
+                                                      queue:self.fakeSyncContext
+                                                  webSocket:self.webSocketMock
+                                                accessToken:self.accessToken
+                                                   clientID:self.clientID
+                                            userAgentString:@"User-Agent: Mozilla/5.0"];
     
     self.receivedData = [NSMutableArray array];
     self.closeCounter = 0;
@@ -190,7 +196,14 @@
     (void) [[[webSocketMock expect] andReturn:nil] initWithConsumer:OCMOCK_ANY queue:OCMOCK_ANY group:self.fakeSyncContext.dispatchGroup url:expectedURL additionalHeaderFields:expectedHeaders];
 
     // when
-    self.sut = [[ZMPushChannelConnection alloc] initWithURL:expectedURL consumer:self queue:self.fakeSyncContext accessToken:self.accessToken clientID:self.clientID userAgentString:nil];
+    id userAgent = nil;
+    
+    self.sut = [[ZMPushChannelConnection alloc] initWithURL:expectedURL
+                                                   consumer:self
+                                                      queue:self.fakeSyncContext
+                                                accessToken:self.accessToken
+                                                   clientID:self.clientID
+                                            userAgentString:userAgent];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // after

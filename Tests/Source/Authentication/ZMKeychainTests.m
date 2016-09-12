@@ -28,6 +28,8 @@
 
 @implementation ZMKeychainTests
 
+#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+
 - (void)testThatItOnlyDeletesItemsOfSpecificAccount
 {
     // given
@@ -70,5 +72,6 @@
     XCTAssertNil([ZMKeychain dataForAccount:accountB]);
     
 }
+#endif
 
 @end

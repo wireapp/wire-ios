@@ -20,10 +20,12 @@
 #import <Foundation/Foundation.h>
 #import <ZMTransport/ZMTransportData.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZMTransportCodec : NSObject
 
 /// interprets the response and tries to parse the body as a JSON
-+ (id<ZMTransportData>) interpretResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError *)error;
++ (nullable id<ZMTransportData>) interpretResponse:(NSHTTPURLResponse *)response data:(nullable NSData *)data error:(nullable NSError *)error;
 
 + (NSData *)encodedTransportData:(id<ZMTransportData>)object;
 
@@ -31,3 +33,5 @@
 + (NSString *)encodedContentType;
 
 @end
+
+NS_ASSUME_NONNULL_END

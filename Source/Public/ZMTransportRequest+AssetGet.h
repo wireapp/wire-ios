@@ -19,6 +19,6 @@
 
 @interface ZMTransportRequest (AssetGet)
 
-+ (__nullable instancetype)assetGetRequestFromPath:(NSString * __nonnull)path assetToken:(NSString *__nullable)token;
++ (nullable instancetype)assetGetRequestFromPath:(nonnull NSString *)path assetToken:(nullable NSString *)token;
 
 @end

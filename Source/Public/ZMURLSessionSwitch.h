@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @class ZMURLSession;
 
@@ -38,7 +39,7 @@
 @property (nonatomic, readonly) NSArray <ZMURLSession *> *allSessions;
 
 - (instancetype)initWithForegroundSession:(ZMURLSession *)foregroundSession backgroundSession:(ZMURLSession *)backgroundSession voipSession:(ZMURLSession *)voipSession;
-- (instancetype)initWithForegroundSession:(ZMURLSession *)foregroundSession backgroundSession:(ZMURLSession *)backgroundSession voipSession:(ZMURLSession *)voipSession sessionCancelTimerClass:(Class)sessionCancelTimerClass NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithForegroundSession:(ZMURLSession *)foregroundSession backgroundSession:(ZMURLSession *)backgroundSession voipSession:(ZMURLSession *)voipSession sessionCancelTimerClass:(nullable Class)sessionCancelTimerClass NS_DESIGNATED_INITIALIZER;
 
 - (void)tearDown;
 
@@ -46,3 +47,5 @@
 - (void)switchToBackgroundSession;
 
 @end
+
+NS_ASSUME_NONNULL_END

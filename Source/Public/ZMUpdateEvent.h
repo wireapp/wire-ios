@@ -20,6 +20,8 @@
 @import Foundation;
 @import ZMCSystem;
 
+
+
 @protocol ZMTransportData;
 
 typedef NS_ENUM(NSInteger, ZMUpdateEventsPolicy) {
@@ -34,10 +36,6 @@ typedef NS_ENUM(NSInteger, ZMUpdateEventSource) {
     ZMUpdateEventSourcePushNotification,
     ZMUpdateEventSourceDownload
 };
-
-// taken from: https://github.com/wearezeta/galley/blob/master/galley-types/src/Galley/Types.hs
-// and https://github.com/wearezeta/brig/blob/master/brig/src/Brig/IO/Intra.hs#L139-L159
-// and https://github.com/wearezeta/belfry/blob/master/belfry-types/src/Belfry/Types/Event.hs
 
 typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
     

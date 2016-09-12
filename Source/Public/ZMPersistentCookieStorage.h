@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 
 
+NS_ASSUME_NONNULL_BEGIN
 
 /// This overrides the @c NSHTTPCookieStorage and adds convenience to check for the cookies relevant for our backend.
 ///
@@ -30,7 +31,7 @@
 + (void)deleteAllKeychainItems;
 + (void)setDoNotPersistToKeychain:(BOOL)disabled;
 
-@property (nonatomic) NSData *authenticationCookieData;
+@property (nonatomic, nullable) NSData *authenticationCookieData;
 
 @end
 
@@ -49,3 +50,5 @@
 - (void)setRequestHeaderFieldsOnRequest:(NSMutableURLRequest *)request;
 
 @end
+
+NS_ASSUME_NONNULL_END

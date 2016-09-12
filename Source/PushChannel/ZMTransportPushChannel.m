@@ -28,20 +28,20 @@
 
 static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
-NS_ENUM(int, Trace) {
-    TraceCreateNew = 0,
-    TraceCreateNewRequestNewTokenFirst = 1,
-    TraceClosingAndRemovingConsumer = 2,
-    TraceClosing = 3,
-    TraceOpenIfClosed = 4,
+NS_ENUM(int, PushChannelTrace) {
+    PushChannelTraceCreateNew = 0,
+    PushChannelTraceCreateNewRequestNewTokenFirst = 1,
+    PushChannelTraceClosingAndRemovingConsumer = 2,
+    PushChannelTraceClosing = 3,
+    PushChannelTraceOpenIfClosed = 4,
     
-    TraceCreatingNewPushChannel = 10,
-    TraceConsumerOrGroupInvalid = 11,
-    TraceIsAlreadyCreating = 12,
-    TraceCreatingInstance = 13,
-    TraceCreatingNow = 14,
-    TraceCreatingWithBackoff = 15,
-    TraceBackoffExpired = 16,
+    PushChannelTraceCreatingNewPushChannel = 10,
+    PushChannelTraceConsumerOrGroupInvalid = 11,
+    PushChannelTraceIsAlreadyCreating = 12,
+    PushChannelTraceCreatingInstance = 13,
+    PushChannelTraceCreatingNow = 14,
+    PushChannelTraceCreatingWithBackoff = 15,
+    PushChannelTraceBackoffExpired = 16,
 };
 
 NS_ENUM(int, TraceEvent) {
@@ -117,26 +117,26 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)createPushChannelWithAccessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID;
 {
-    ZMTraceTransportSessionPushChannel(TraceOpenIfClosed, self.pushChannel, (int) self.pushChannel.isOpen);
+    ZMTraceTransportSessionPushChannel(PushChannelTraceOpenIfClosed, self.pushChannel, (int) self.pushChannel.isOpen);
     id<ZMPushChannelConsumer> consumer = self.consumer;
     if (consumer != nil){
         if (self.pushChannel.isOpen) {
-            ZMTraceTransportSessionPushChannel(TraceCreatingNewPushChannel, nil, 1);
+            ZMTraceTransportSessionPushChannel(PushChannelTraceCreatingNewPushChannel, nil, 1);
         } else {
             self.pushChannel = [[self.pushChannelClass alloc] initWithURL:self.url consumer:self queue:self.groupQueue accessToken:accessToken clientID:clientID userAgentString:self.userAgentString];
             
-            ZMTraceTransportSessionPushChannel(TraceCreatingInstance, self.pushChannel, 0);
+            ZMTraceTransportSessionPushChannel(PushChannelTraceCreatingInstance, self.pushChannel, 0);
             ZMLogInfo(@"Opening push channel");
         }
     }
     else {
-        ZMTraceTransportSessionPushChannel(TraceConsumerOrGroupInvalid, nil, 0);
+        ZMTraceTransportSessionPushChannel(PushChannelTraceConsumerOrGroupInvalid, nil, 0);
     }
 }
 
 - (void)closeAndRemoveConsumer;
 {
-    ZMTraceTransportSessionPushChannel(TraceClosingAndRemovingConsumer, nil, 0);
+    ZMTraceTransportSessionPushChannel(PushChannelTraceClosingAndRemovingConsumer, nil, 0);
     ZMLogInfo(@"Remove push channel consumer");
     self.consumer = nil;
     self.groupQueue = nil;
@@ -145,7 +145,7 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)close;
 {
-    ZMTraceTransportSessionPushChannel(TraceClosing, nil, 0);
+    ZMTraceTransportSessionPushChannel(PushChannelTraceClosing, nil, 0);
     ZMLogInfo(@"close");
     [self.pushChannel close];
 }

@@ -1463,7 +1463,7 @@ static __weak FakeReachability *currentReachability;
     
     // when
     id<ZMURLSessionDelegate> d = (id) self.sut;
-    [d URLSession:self.URLSession taskDidComplete:task transportRequest:nil responseData:nil];
+    [d URLSession:self.URLSession taskDidComplete:task transportRequest:[[ZMTransportRequest alloc] init] responseData:[NSData data]];
     
     // then
     XCTAssertEqual(self.scheduler.processedResponses.count, 1u);
@@ -1954,7 +1954,7 @@ static __weak FakeReachability *currentReachability;
         configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
     }
     
-    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:nil];
+    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:@"session"];
     if (backgroundSession) {
         XCTAssertTrue(session.isBackgroundSession);
     }
@@ -2258,7 +2258,7 @@ static __weak FakeReachability *currentReachability;
     [[observer expect] didGoOffline];
     
     // when
-    [self.sut schedulerWentOffline:nil];
+    [self.sut schedulerWentOffline:currentFakePushChannel.scheduler];
     
     // then
     [observer verify];
@@ -2566,7 +2566,7 @@ static __weak FakeReachability *currentReachability;
     NSURLSessionTask *expectedTask = [NSURLSessionTask new];
     id backgroundSessionMock = [OCMockObject mockForClass:ZMURLSession.class];
     [[(id)backgroundSessionMock expect] isBackgroundSession];
-    [[[backgroundSessionMock stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name]] configuration];
+    [(NSURLSession *)[[backgroundSessionMock stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name]] configuration];
     [[[(id)self.URLSessionSwitch stub] andReturn:backgroundSessionMock] backgroundSession];
     [[(id)self.URLSession expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:foregroundRequest];
     [[(id)backgroundSessionMock expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:backgroundRequest];

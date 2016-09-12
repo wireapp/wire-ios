@@ -21,6 +21,8 @@
 #import <Foundation/Foundation.h>
 #import <ZMCSystem/ZMCSystem.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ZMTransportResponse;
 @protocol ZMTransportData;
 @protocol ZMSGroupQueue;
@@ -34,26 +36,30 @@ typedef void(^ZMProgressHandlerBlock)(float);
 
 extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 
+
 @interface ZMCompletionHandler : NSObject
 
-+ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMCompletionHandlerBlock)block ZM_NON_NULL(1,2);
++ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMCompletionHandlerBlock)block;
 @property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
 
 @end;
 
+
 @interface ZMTaskCreatedHandler : NSObject
 
-+ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMTaskCreatedBlock)block ZM_NON_NULL(1,2);
++ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMTaskCreatedBlock)block;
 @property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
 
 @end
+
 
 @interface ZMTaskProgressHandler : NSObject
 
-+ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMProgressHandlerBlock)block ZM_NON_NULL(1,2);
++ (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMProgressHandlerBlock)block;
 @property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
 
 @end
+
 
 typedef NS_ENUM(uint8_t, ZMTransportRequestMethod) {
     ZMMethodGET,
@@ -82,11 +88,11 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 + (ZMTransportRequestMethod)methodFromString:(NSString *)string;
 
 /// Returns a request that needs authentication, ie. @c ZMTransportRequestAuthNeedsAccess
-- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(id <ZMTransportData>)payload;
-- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(id <ZMTransportData>)payload authentication:(ZMTransportRequestAuth)authentication;
+- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(nullable id <ZMTransportData>)payload;
+- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(nullable id <ZMTransportData>)payload authentication:(ZMTransportRequestAuth)authentication;
 
-+ (instancetype)requestWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(id <ZMTransportData>)payload;
-+ (instancetype)requestWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(id <ZMTransportData>)payload shouldCompress:(BOOL)shouldCompress;
++ (instancetype)requestWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(nullable id <ZMTransportData>)payload;
++ (instancetype)requestWithPath:(NSString *)path method:(ZMTransportRequestMethod)method payload:(nullable id <ZMTransportData>)payload shouldCompress:(BOOL)shouldCompress;
 
 + (instancetype)requestGetFromPath:(NSString *)path;
 + (instancetype)compressedGetFromPath:(NSString *)path;
@@ -99,21 +105,21 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 /// @c type is a (Uniform Type Identifier) UTI.
 /// @link https://en.wikipedia.org/wiki/Uniform_Type_Identifier @/link
 /// @link https://developer.apple.com/library/ios/documentation/General/Conceptual/DevPedia-CocoaCore/UniformTypeIdentifier.html @/link
-- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(NSData *)data type:(NSString *)type contentDisposition:(NSDictionary *)contentDisposition;
-- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(NSData *)data type:(NSString *)type contentDisposition:(NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress;
+- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(nullable NSData *)data type:(nullable NSString *)type contentDisposition:(nullable NSDictionary *)contentDisposition;
+- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(nullable NSData *)data type:(nullable NSString *)type contentDisposition:(nullable NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress;
 
 
 @property (nonatomic, readonly) NSString *methodAsString;
-@property (nonatomic, readonly, copy) id<ZMTransportData> payload;
+@property (nonatomic, readonly, copy, nullable) id<ZMTransportData> payload;
 @property (nonatomic, readonly, copy) NSString *path;
 @property (nonatomic, readonly) ZMTransportRequestMethod method;
-@property (nonatomic, readonly, copy) NSData *binaryData;
-@property (nonatomic, readonly) NSURL *fileUploadURL;
-@property (nonatomic, readonly, copy) NSString *binaryDataType; ///< Uniform type identifier (UTI) of the binary data
+@property (nonatomic, readonly, copy, nullable) NSData *binaryData;
+@property (nonatomic, readonly, nullable) NSURL *fileUploadURL;
+@property (nonatomic, readonly, copy, nullable) NSString *binaryDataType; ///< Uniform type identifier (UTI) of the binary data
 @property (nonatomic, readonly) BOOL needsAuthentication;
 @property (nonatomic, readonly) BOOL responseWillContainAccessToken;
 @property (nonatomic, readonly) BOOL responseWillContainCookie;
-@property (nonatomic, readonly) NSDate *expirationDate;
+@property (nonatomic, readonly, nullable) NSDate *expirationDate;
 @property (nonatomic, readonly) BOOL shouldCompress;
 @property (nonatomic) BOOL shouldFailInsteadOfRetry;
 @property (nonatomic) BOOL doesNotFollowRedirects;
@@ -122,7 +128,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @property (nonatomic, readonly) BOOL shouldUseOnlyBackgroundSession;
 @property (nonatomic, readonly) BOOL shouldUseVoipSession;
 
-@property (nonatomic, readonly, copy) NSDictionary *contentDisposition; ///< C.f. <https://tools.ietf.org/html/rfc2183>
+@property (nonatomic, readonly, copy, nullable) NSDictionary *contentDisposition; ///< C.f. <https://tools.ietf.org/html/rfc2183>
 
 - (void)addTaskCreatedHandler:(ZMTaskCreatedHandler *)taskCreatedHandler;
 - (void)addCompletionHandler:(ZMCompletionHandler *)completionHandler;
@@ -161,7 +167,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
                      metaDataContentType:(NSString *)metaDataContentType
                         mediaContentType:(NSString *)mediaContentType;
 
-- (NSArray *)multipartBodyItems;
+- (nullable NSArray *)multipartBodyItems;
 
 @end
 
@@ -171,7 +177,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @class ZMSyncState;
 @interface ZMTransportRequest (Debugging)
 
-@property (nonatomic, readonly) NSDate *startOfUploadTimestamp;
+@property (nonatomic, readonly, nullable) NSDate *startOfUploadTimestamp;
 
 - (void)setDebugInformationTranscoder:(NSObject *)transcoder;
 - (void)setDebugInformationState:(ZMSyncState *)state;
@@ -180,3 +186,6 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 - (void)markStartOfUploadTimestamp;
 
 @end
+
+
+NS_ASSUME_NONNULL_END

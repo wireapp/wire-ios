@@ -19,11 +19,13 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZMKeychain : NSObject
-+ (NSData *)dataForAccount:(NSString *)accountName;
-+ (NSData *)dataForAccount:(NSString *)accountName fallbackToDefaultGroup:(BOOL)fallback;
-+ (NSString *)stringForAccount:(NSString *)accountName;
-+ (NSString *)stringForAccount:(NSString *)accountName fallbackToDefaultGroup:(BOOL)fallback;
++ (nullable NSData *)dataForAccount:(NSString *)accountName;
++ (nullable NSData *)dataForAccount:(NSString *)accountName fallbackToDefaultGroup:(BOOL)fallback;
++ (nullable NSString *)stringForAccount:(NSString *)accountName;
++ (nullable NSString *)stringForAccount:(NSString *)accountName fallbackToDefaultGroup:(BOOL)fallback;
 
 + (BOOL)setData:(NSData *)data forAccount:(NSString *)accountName;
 
@@ -33,6 +35,8 @@
 /// Deletes all items of all account names
 + (void)deleteAllKeychainItems;
 
-+ (NSString *)defaultAccessGroup;
++ (nullable NSString *)defaultAccessGroup;
 
 @end
+
+NS_ASSUME_NONNULL_END

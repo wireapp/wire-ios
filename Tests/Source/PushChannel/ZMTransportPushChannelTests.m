@@ -418,7 +418,8 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     [[self.scheduler reject] processCompletedURLResponse:OCMOCK_ANY URLError:OCMOCK_ANY];
     
     // when
-    [self.sut pushChannelDidOpen:(id)currentFakePushChannelConnection withResponse:nil];
+    id response = nil;
+    [self.sut pushChannelDidOpen:(id)currentFakePushChannelConnection withResponse:response];
     [self.scheduler verify];
 }
 
@@ -431,7 +432,8 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     [[self.scheduler reject] processCompletedURLResponse:OCMOCK_ANY URLError:OCMOCK_ANY];
     
     // when
-    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:nil];
+    id response = nil;
+    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response];
     [self.scheduler verify];
 }
 
