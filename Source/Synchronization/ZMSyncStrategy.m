@@ -535,7 +535,6 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     if(ignoreBuffer) {
         [self consumeUpdateEvents:events];
-        [self.syncMOC enqueueDelayedSave]; // make sure we save at least once
         return;
     }
     
@@ -572,7 +571,6 @@ ZM_EMPTY_ASSERTING_INIT()
             break;
         }
     }
-    [self.syncMOC enqueueDelayedSave]; // make sure we save at least once
 }
 
 - (ZMFetchRequestBatch *)fetchRequestBatchForEvents:(NSArray<ZMUpdateEvent *> *)events
@@ -621,7 +619,7 @@ ZM_EMPTY_ASSERTING_INIT()
             }
         }
         [self.localNotificationDispatcher processEvents:decryptedEvents liveEvents:YES prefetchResult:nil];
-        [self.syncMOC saveIfTooManyChanges];
+        [self.syncMOC enqueueDelayedSave];
     }];
 }
 
