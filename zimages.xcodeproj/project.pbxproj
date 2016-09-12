@@ -465,9 +465,11 @@
 					0969600B1B663E7B006DF53B = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = W5KEQBF9B5;
+						LastSwiftMigration = 0800;
 					};
 					096960151B663E7C006DF53B = {
 						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -584,6 +586,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758481B70C23B00AD5A78 /* zimages-ios.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -596,6 +599,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -603,6 +607,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758481B70C23B00AD5A78 /* zimages-ios.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -615,6 +620,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -623,7 +629,7 @@
 			baseConfigurationReference = 5471F81B1B73E6E000460C35 /* ios-test-target.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -649,6 +655,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -658,7 +665,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = NO;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -679,6 +686,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

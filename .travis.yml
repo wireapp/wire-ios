@@ -4,7 +4,7 @@ env:
   - secure: btw04xsEAWtlSkSvH6u0+exIideCGY5LWnMuRD301j5GLr0eltb22e5bqeCCanVw/e8agVv32VgpJ4vrOFNreZrwKJEdExNnd9m7IkC24UYW+f8dMZHYVBmBQa93v4rlhlwLUqIEPk3W5cx/9STakXWFANSt4K7PMD78qn61Vd33XbKvAeKBYQp+RvGjPj1NmlTwgJxVnHYfmyN+53wQFNofNSFplMLKUW8EbLSX8dtF7HTyf9piQ8T1PQ8II/isb7N0SX7laJ89Xrw4sTZzxEim1w7z5QMnzTiVOP8AOKQ+Lm3ithXkkFq3D39wOT7m4jMzNiokB1Uc891KWZUIjCp7iRUeNsqubB/yIj9gHuMKjwS5bIJSijvI2I47IdMD4kMW6+3iRlmFqSQKR6TdOEv2WE5kbT5p232Zud0fRbJLXgskqq9cwQK4BpanJ3yvZ2fEq/DQvCr8Q1TnJw8p9GWue3CQ/ThutuzS0sNVA7H5o0laYrtrHf+GCy1CpI3V3FQA3yPoOiy8mKuWpEfXY00yggwWN8u9fcvwLslw73ZEUV1SnlsNn3p/HYu5OWBkEY9XNKxpyINPLaWt4uGPhpNqePliecMLORM9GINYfTWI9B1/XvB98jesd7KzbJJcEei4pq0jZ5vAGUe9UvQYMTIARxnX6NvwMshGKQb6MQQ=
 
 language: objective-c
-osx_image: xcode7.3
+osx_image: xcode8
 
 notifications:
   email:
@@ -23,7 +23,7 @@ install:
 script:
   - open -b com.apple.iphonesimulator
   - set -o pipefail
-  - xcodebuild build test -scheme zimages-ios -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | tee >build.log >(xcpretty -s)
+  - xcodebuild build test -scheme zimages-ios -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | tee >build.log >(xcpretty -s)
   - bundle exec danger
 
 after_failure:
