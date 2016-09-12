@@ -35,7 +35,7 @@
         return [self processPostPushes:sessionRequest];
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processPostPushes:(TestTransportSessionRequest *)sessionRequest;
@@ -47,10 +47,10 @@
         NSString *transport = [payload stringForKey:@"transport"];
         if ((token != nil) && (0 < app.length) && ([transport isEqualToString:@"APNS"] || [transport isEqualToString:@"APNS_VOIP"])) {
             [self addPushToken:@{@"token": token, @"app": app,  @"transport" : transport}];
-            return [ZMTransportResponse responseWithPayload:@{@"token": token, @"app": app, @"transport": transport} HTTPstatus:201 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:@{@"token": token, @"app": app, @"transport": transport} HTTPStatus:201 transportSessionError:nil];
         }
     }
-    return [ZMTransportResponse responseWithPayload:@{@"code": @400} HTTPstatus:400 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:@{@"code": @400} HTTPStatus:400 transportSessionError:nil];
 }
 
 @end

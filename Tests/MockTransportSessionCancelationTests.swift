@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -28,15 +28,15 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
         // given
         let request = ZMTransportRequest(getFromPath: "Foo")
         var identifier : ZMTaskIdentifier?
-        request.addTaskCreatedHandler(ZMTaskCreatedHandler(onGroupQueue: self.fakeSyncContext) {
+        request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
             identifier = $0
         })
         
         // when
-        sut.mockedTransportSession().attemptToEnqueueSyncRequestWithGenerator { () -> ZMTransportRequest! in
+        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
             return request
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertNotNil(identifier)
@@ -49,32 +49,32 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
         var requestCompleted = false
         var identifier : ZMTaskIdentifier?
 
-        request.addCompletionHandler(ZMCompletionHandler(onGroupQueue: self.fakeSyncContext) { response in
-            XCTAssertEqual(response.HTTPStatus, 0)
-            XCTAssertTrue(response.transportSessionError.isTryAgainLaterError)
+        request.add(ZMCompletionHandler(on: self.fakeSyncContext) { response in
+            XCTAssertEqual(response.httpStatus, 0)
+            XCTAssertTrue((response.transportSessionError as! NSError).isTryAgainLaterError)
             requestCompleted = true
             })
-        request.addTaskCreatedHandler(ZMTaskCreatedHandler(onGroupQueue: self.fakeSyncContext) {
+        request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
             identifier = $0
             })
         
-        sut.responseGeneratorBlock = { (_ : ZMTransportRequest!) -> ZMTransportResponse! in
+        sut.responseGeneratorBlock = { (_ : ZMTransportRequest?) -> ZMTransportResponse! in
             return ResponseGenerator.ResponseNotCompleted
         }
         
         // when
-        sut.mockedTransportSession().attemptToEnqueueSyncRequestWithGenerator { () -> ZMTransportRequest! in
+        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
             return request
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertFalse(requestCompleted)
         XCTAssertNotNil(identifier)
         
         // when
-        sut.mockedTransportSession().cancelTaskWithIdentifier(identifier)
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        sut.mockedTransportSession().cancelTask(with: identifier!)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(requestCompleted)
@@ -87,28 +87,28 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
         var requestCompletedCount = 0
         var identifier : ZMTaskIdentifier?
         
-        request.addCompletionHandler(ZMCompletionHandler(onGroupQueue: self.fakeSyncContext) { response in
+        request.add(ZMCompletionHandler(on: self.fakeSyncContext) { response in
             XCTAssertEqual(requestCompletedCount, 0)
-            XCTAssertEqual(response.HTTPStatus, 404)
+            XCTAssertEqual(response.httpStatus, 404)
             requestCompletedCount += 1
             })
-        request.addTaskCreatedHandler(ZMTaskCreatedHandler(onGroupQueue: self.fakeSyncContext) {
+        request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
             identifier = $0
             })
         
         // when
-        sut.mockedTransportSession().attemptToEnqueueSyncRequestWithGenerator { () -> ZMTransportRequest! in
+        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
             return request
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(requestCompletedCount, 1)
         XCTAssertNotNil(identifier)
         
         // when
-        sut.mockedTransportSession().cancelTaskWithIdentifier(identifier)
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        sut.mockedTransportSession().cancelTask(with: identifier!)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(requestCompletedCount, 1)

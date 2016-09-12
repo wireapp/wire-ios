@@ -266,7 +266,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     NSDictionary *payload = @{
                               @"label":reason
                               };
-    return [ZMTransportResponse responseWithPayload:payload HTTPstatus:code transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:code transportSessionError:nil];
 }
 
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
@@ -503,7 +503,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             LogNetwork(@"<--- Not completing request to %@ due to custom responseHandler", originalRequest.path);
             [self.nonCompletedRequests addObject:originalRequest];
             if(completionHandler) {
-                completionHandler(nil);
+                completionHandler((ZMTransportResponse * _Nonnull) nil);
             }
             return;
         }
@@ -539,7 +539,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         }
         else {
             [self.phoneNumbersWaitingForVerificationForLogin addObject:phone];
-            return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
         }
 
     }
@@ -605,7 +605,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                           @"token_type" : @"Bearer"
         };
         
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     }
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }
@@ -642,7 +642,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             }
             
             NSDictionary *payload = @{@"documents" : resultData};
-            return [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
         }
     }
     
@@ -688,7 +688,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         id responsePayload = @{@"found": @(contacts.count),
                                @"returned": @(contacts.count),
                                @"documents": contacts,};
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     }
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }
@@ -732,7 +732,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                           @"documents": userPayload
                                           };
         
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     }
     
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
@@ -761,7 +761,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                           };
         )
         
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
         
     }
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
@@ -771,7 +771,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 - (ZMTransportResponse *)processNotificationFallbackRequest:(TestTransportSessionRequest *)request
 {
     if(request.method == ZMMethodPOST && ! self.simulateFallbackFailure) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
     }
     
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
@@ -1008,7 +1008,8 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 {
     [self.pushChannelGroupQueue performGroupedBlock:^{
         self.shouldSendPushChannelEvents = NO;
-        [self.pushChannelConsumer pushChannelDidClose:nil withResponse:nil];
+        [self.pushChannelConsumer pushChannelDidClose:(ZMPushChannelConnection * _Nonnull) nil
+                                         withResponse:(NSHTTPURLResponse * _Nonnull) nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:ZMPushChannelStateChangeNotificationName
                                                             object:self
                                                           userInfo:@{ZMPushChannelIsOpenKey: @(NO)}];
@@ -1020,7 +1021,8 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     [self.pushChannelGroupQueue performGroupedBlock:^{
         if(self.clientCompletedLogin && self.clientRequestedPushChannel) {
             self.shouldSendPushChannelEvents = YES;
-            [self.pushChannelConsumer pushChannelDidOpen:nil withResponse:nil];
+            [self.pushChannelConsumer pushChannelDidOpen:(ZMPushChannelConnection * _Nonnull) nil
+                                            withResponse:(NSHTTPURLResponse * _Nonnull) nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:ZMPushChannelStateChangeNotificationName
                                                                 object:self
                                                               userInfo:@{ZMPushChannelIsOpenKey: @(YES)}];
@@ -1167,14 +1169,14 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             return event.transportData;
         }];
         NSInteger statusCode = notFound ? 404 : 200;
-        return [ZMTransportResponse responseWithPayload:@{@"notifications":payload} HTTPstatus:statusCode transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:@{@"notifications":payload} HTTPStatus:statusCode transportSessionError:nil];
     }
     // /notifications/last
     else if((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 1) && [sessionRequest.pathComponents[0] isEqualToString:@"last"])
     {
         MockPushEvent *last = self.generatedPushEvents.lastObject;
         if(last != nil) {
-            return [ZMTransportResponse responseWithPayload:last.transportData HTTPstatus:200 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:last.transportData HTTPStatus:200 transportSessionError:nil];
         }
         else {
             return [self errorResponseWithCode:404 reason:@"no notification to send"];
@@ -1448,7 +1450,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             
             id<ZMTransportData> payload = event.transportData;
             [self.pushChannelGroupQueue performGroupedBlock:^{
-                [self.pushChannelConsumer pushChannel:nil didReceiveTransportData:payload];
+                [self.pushChannelConsumer pushChannel:(ZMPushChannelConnection * _Nonnull) nil didReceiveTransportData:payload];
             }];
         }
     }

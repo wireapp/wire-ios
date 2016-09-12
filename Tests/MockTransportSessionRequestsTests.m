@@ -42,7 +42,7 @@
     self.sut.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NOT_USED(request);
         receivedRequest = request;
-        return [ZMTransportResponse responseWithPayload:expectedPayload HTTPstatus:expectedStatus transportSessionError:expectedError];
+        return [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:expectedStatus transportSessionError:expectedError];
     };
     
     // when

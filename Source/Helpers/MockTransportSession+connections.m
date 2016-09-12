@@ -45,7 +45,7 @@
         return [self processPutConnection:sessionRequest];
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
 
@@ -55,7 +55,7 @@
     NSString *remoteID = sessionRequest.pathComponents[0];
     MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
     NSDictionary *changedFields = [sessionRequest.embeddedRequest.payload asDictionary];
@@ -70,7 +70,7 @@
             ZMTConnectionStatus status = [MockConnection statusFromString:connection.status];
             
             if (status == ZMTConnectionStatusSent && oldStatus == ZMTConnectionStatusCancelled) {
-                return [ZMTransportResponse responseWithPayload:nil HTTPstatus:403 transportSessionError:nil];
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
             }
             
             switch (status) {
@@ -92,7 +92,7 @@
         }
     }
     
-    return [ZMTransportResponse responseWithPayload:connection.transportData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:connection.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 
@@ -102,10 +102,10 @@
     NSString *remoteID = sessionRequest.pathComponents[0];
     MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    return [ZMTransportResponse responseWithPayload:connection.transportData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:connection.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 /// GET /connections
@@ -149,7 +149,7 @@
     }
     resultData[@"connections"] = connectionData;
     
-    return [ZMTransportResponse responseWithPayload:resultData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:resultData HTTPStatus:200 transportSessionError:nil];
 }
 
 /// POST /connections
@@ -160,7 +160,7 @@
     
     MockUser *user = [self fetchUserWithIdentifier:userID];
     MockConnection *connection = [self createConnectionRequestFromUser:self.selfUser toUser:user message:message];
-    return [ZMTransportResponse responseWithPayload:connection.transportData HTTPstatus:201 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:connection.transportData HTTPStatus:201 transportSessionError:nil];
 }
 
 @end
