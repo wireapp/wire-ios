@@ -62,7 +62,7 @@
         } else {
             MockUser *user = users[0];
             id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
-            return [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
         }
     } else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 0)) {
         NSString *justIDs = [sessionRequest.URL.query componentsSeparatedByString:@"="][1];
@@ -91,7 +91,7 @@
             id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
             [resultArray addObject:payload];
         }
-        return [ZMTransportResponse responseWithPayload:resultArray HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
     }
     else if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 1 && [sessionRequest.pathComponents.lastObject isEqualToString:@"prekeys"]) {
         return [self processUsersPreKeysRequest:sessionRequest];
@@ -115,7 +115,7 @@
         if (self.selfUser.trackingIdentifier != nil) {
             payload[@"tracking_id"] = self.selfUser.trackingIdentifier;
         }
-        return [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     }
     else if(sessionRequest.method == ZMMethodPUT) {
         if(sessionRequest.pathComponents.count == 0) {
@@ -150,7 +150,7 @@
     }
     else {
         [self.phoneNumbersWaitingForVerificationForProfile addObject:phone];
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
     }
 }
 
@@ -169,7 +169,7 @@
         return [self errorResponseWithCode:409 reason:@"key-exist"];
     }
     else {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
     }
     
 }
@@ -188,7 +188,7 @@
     }
     else {
         self.selfUser.password = new_password;
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
     }
 }
 
@@ -207,7 +207,7 @@
             self.selfUser.accentID = (int16_t) [changedFields[key] integerValue];
         }
     }
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
 // /users/prekeys
@@ -235,7 +235,7 @@
             }
         }
         
-        return [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     }
     else {
         return [self errorResponseWithCode:403 reason:@"too-many-clients"];

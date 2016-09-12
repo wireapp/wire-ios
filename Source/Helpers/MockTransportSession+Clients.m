@@ -87,7 +87,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
     newClient.user = self.selfUser;
     
     if (newClient != nil) {
-        return [ZMTransportResponse responseWithPayload:[newClient transportData] HTTPstatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:[newClient transportData] HTTPStatus:200 transportSessionError:nil];
     }
     
     return invalidRequestResponse;
@@ -109,7 +109,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
     NSArray *payload = [self.selfUser.clients mapWithBlock:^id(MockUserClient *client) {
         return [client transportData];
     }].allObjects;
-    return [ZMTransportResponse responseWithPayload:payload HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
 }
 
 // GET /clients/id
@@ -117,10 +117,10 @@ static NSInteger const MaxUserClientsAllowed = 2;
 {
     MockUserClient *userClient = [self userClientByIdentifier:sessionRequest.pathComponents[0]];
     if (userClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    return [ZMTransportResponse responseWithPayload:userClient.transportData HTTPstatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:userClient.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 // GET /clients/id/prekeys
@@ -140,11 +140,11 @@ static NSInteger const MaxUserClientsAllowed = 2;
 {
     MockUserClient *userClient = [self userClientByIdentifier:sessionRequest.pathComponents[0]];
     if (userClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     [self.managedObjectContext deleteObject:userClient];
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPstatus:200 transportSessionError:nil];    
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];    
 }
 
 
