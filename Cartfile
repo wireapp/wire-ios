@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-utilities"
+github "wireapp/wire-ios-utilities" ~> 11.0

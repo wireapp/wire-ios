@@ -22,43 +22,42 @@ import Foundation
 ///Implementation of ZMImageOwner protocol. Used to store and access processed image data.
 public class ImageOwner: NSObject, ZMImageOwner {
     
-    var previewData: NSData? = nil
-    var mediumData: NSData? = nil
-    var imageData: NSData?
+    var previewData: Data? = nil
+    var mediumData: Data? = nil
+    var imageData: Data?
     
     public let imageSize: CGSize
-    public let nonce: NSUUID
+    public let nonce: UUID
     
-    public init(data: NSData, size: CGSize, nonce: NSUUID) {
+    public init(data: Data, size: CGSize, nonce: UUID) {
         self.imageData = data
         self.imageSize = size
         self.nonce = nonce
     }
     
-    public func setImageData(imageData: NSData!, forFormat format: ZMImageFormat, properties: ZMIImageProperties) {
+    public func setImageData(_ imageData: Data!, for format: ZMImageFormat, properties: ZMIImageProperties) {
         switch format {
-        case .Preview:
+        case .preview:
             previewData = imageData
-        case .Medium:
+        case .medium:
             mediumData = imageData
         default: break
         }
     }
     
-    public func imageDataForFormat(format: ZMImageFormat) -> NSData! {
+    public func imageData(for format: ZMImageFormat) -> Data! {
         switch format {
-        case .Preview: return previewData
-        case .Medium: return mediumData
+        case .preview: return previewData
+        case .medium: return mediumData
         default: return nil
         }
     }
     
-    public
-    func requiredImageFormats() -> NSOrderedSet! {
-        return NSOrderedSet(objects: ZMImageFormat.Preview.rawValue, ZMImageFormat.Medium.rawValue)
+    public func requiredImageFormats() -> NSOrderedSet! {
+        return NSOrderedSet(objects: ZMImageFormat.preview.rawValue, ZMImageFormat.medium.rawValue)
     }
     
-    public func originalImageData() -> NSData! {
+    public func originalImageData() -> Data! {
         return self.imageData
     }
     
@@ -66,18 +65,18 @@ public class ImageOwner: NSObject, ZMImageOwner {
         return self.imageSize
     }
     
-    public func isInlineForFormat(format: ZMImageFormat) -> Bool {
+    public func isInline(for format: ZMImageFormat) -> Bool {
         switch format {
-        case .Preview: return true
+        case .preview: return true
         default: return false
         }
     }
     
-    public func isPublicForFormat(format: ZMImageFormat) -> Bool {
+    public func isPublic(for format: ZMImageFormat) -> Bool {
         return false
     }
     
-    public func isUsingNativePushForFormat(format: ZMImageFormat) -> Bool {
+    public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
         return false
     }
     
@@ -85,9 +84,9 @@ public class ImageOwner: NSObject, ZMImageOwner {
         imageData = nil
     }
     
-    override public func isEqual(object: AnyObject?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         if let object = object as? ImageOwner {
-            return object.nonce == self.nonce && CGSizeEqualToSize(object.imageSize, self.imageSize)
+            return object.nonce == self.nonce && object.imageSize.equalTo(self.imageSize)
         }
         else {
             return false;
@@ -95,9 +94,7 @@ public class ImageOwner: NSObject, ZMImageOwner {
     }
     
     override public var hash: Int {
-        get {
-            return nonce.hash ^ imageSize.width.hashValue ^ imageSize.height.hashValue
-        }
+            return (nonce as NSUUID).hash ^ imageSize.width.hashValue ^ imageSize.height.hashValue
     }
     
 }
