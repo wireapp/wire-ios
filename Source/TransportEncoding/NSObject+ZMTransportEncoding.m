@@ -58,6 +58,10 @@ static locale_t posixLocale()
     if (c == 1) {
         interval += 0.001 * milli;
     }
+    if (interval < 1) {
+        return nil;
+    }
+    
     return [NSDate dateWithTimeIntervalSince1970:interval];
 }
 

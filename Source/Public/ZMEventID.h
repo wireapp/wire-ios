@@ -19,12 +19,12 @@
 
 #import <Foundation/Foundation.h>
 
-
+NS_ASSUME_NONNULL_BEGIN
 
 /// An event ID returned by the back-end
 @interface ZMEventID : NSValue
 
-+ (instancetype)eventIDWithString:(NSString *)string;
++ (nullable instancetype)eventIDWithString:(NSString *)string;
 + (instancetype)eventIDWithMajor:(uint64_t)major minor:(uint64_t)minor;
 - (instancetype)initWithMajor:(uint64_t)major minor:(uint64_t)minor;
 
@@ -44,7 +44,9 @@
 /// Used to store in database
 @interface ZMEventID (SerializingToData)
 
-+ (ZMEventID *)decodeFromData:(NSData *)data;
++ (nullable ZMEventID *)decodeFromData:(NSData *)data;
 - (NSData *)encodeToData;
 
 @end
+
+NS_ASSUME_NONNULL_END

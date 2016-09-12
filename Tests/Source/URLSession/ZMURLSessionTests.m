@@ -495,7 +495,7 @@ willPerformHTTPRedirection:response
     self.sut = (id) [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:self.queue identifier:@"test-session"];
     self.sut.backingSession = [OCMockObject niceMockForClass:NSURLSession.class];
     
-    [[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:ZMURLSessionBackgroundIdentifier]] configuration];
+    [(NSURLSession *)[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:ZMURLSessionBackgroundIdentifier]] configuration];
     
     [(id) self.sut.backingSession verify];
 }

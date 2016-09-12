@@ -90,13 +90,6 @@
     XCTAssertEqualObjects(components, expectedComponents);
 }
 
-- (void)testThatItReturnsNilForNilSeparator
-{
-    NSData *fullData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
-    NSArray *components = [fullData componentsSeparatedByData:nil];
-    XCTAssertNil(components);
-}
-
 - (void)testThatItReturnsLines
 {
     NSData *data1 = [@"1" dataUsingEncoding:NSUTF8StringEncoding];

@@ -22,6 +22,8 @@
 #import <ZMUtilities/ZMUtilities.h>
 #import <ZMTransport/ZMReachability.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ZMExponentialBackoff;
 @protocol ZMTransportRequestSchedulerItem;
 @protocol ZMTransportRequestSchedulerSession;
@@ -51,14 +53,14 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 @interface ZMTransportRequestScheduler : NSObject <ZMReachabilityObserver, ZMSGroupQueue>
 
 - (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group;
-- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group backoff:(ZMExponentialBackoff *)backoff NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group backoff:(nullable ZMExponentialBackoff *)backoff NS_DESIGNATED_INITIALIZER;
 
 - (void)tearDown;
 
 - (void)addItem:(id<ZMTransportRequestSchedulerItem>)item;
 /// The task given access to the NSHTTPURLResponse and NSError.
 - (void)processCompletedURLTask:(NSURLSessionTask *)task;
-- (void)processCompletedURLResponse:(NSHTTPURLResponse *)response URLError:(NSError *)error;
+- (void)processCompletedURLResponse:(nullable NSHTTPURLResponse *)response URLError:(nullable NSError *)error;
 
 - (void)sessionDidReceiveAccessToken:(id<ZMTransportRequestSchedulerSession>)session;
 /// The scheduler uses this to retry sending requests if it's in offline mode.
@@ -111,3 +113,5 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 @property (nonatomic) NSTimeInterval timeUntilRetryModeWhenRateLimited;
 
 @end
+
+NS_ASSUME_NONNULL_END

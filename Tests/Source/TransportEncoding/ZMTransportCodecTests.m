@@ -132,14 +132,6 @@
     XCTAssertEqualObjects(arr, arrOutput);
 }
 
--(void)testThatItReturnsEmptyDataFromNil
-{
-    
-    NSData *output = [ZMTransportCodec encodedTransportData:nil];
-    XCTAssertEqualObjects(output, [NSData data]);
-    
-}
-
 -(void)testThatItAssertsOnUnserializableData
 {
     NSArray *arr = @[ [[NSError alloc] init] ];

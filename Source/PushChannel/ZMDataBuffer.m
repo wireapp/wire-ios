@@ -32,7 +32,8 @@
 {
     self = [super init];
     if(self) {
-        self.data = dispatch_data_create(NULL, 0, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+        void *emptyPointer = NULL;
+        self.data = dispatch_data_create(emptyPointer, 0, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
     }
     return self;
 }

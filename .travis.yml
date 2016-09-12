@@ -4,7 +4,7 @@ env:
     - secure: fPlYvh+ezjSZKwXY2vef4QNecF7oB2CN0LsLez9ufWUolk/bBtI5lVVE7ACt+7zJumCVA9sQOwhf4RS42626elpfpOWD5TIl4yMMoG9/B7ABtx2bsD5+L2ztW8+WvBjT9weTZUk5XC63VJy/oTsvhB38xprCVypm/DT/sDV3z1MaP5WSsXLymNgbVxhbdiPwZ+c/boHnVnx+kPLyvvr2+9YPB8cXAXJKOs9O77+HsFKLZqx+ra1tM7gqD7AY5oW5WTHUwFM0ccXd8/uCi+qWSsFqUUQlbv7wAIlto8Bnq6DVd7x6bc915Tz8FKfakXuMbEjQ47Kq+Wr4QgUMhybtcE5lwCzxTs5vz/6OkeIWSvSAFyXOHCA2/7rjNrIgT10SEL1TbRNLozKB3SjnTr/vMmPENqh/ZjuEcPte/Eb0rJrw0OfTu3ft/qttTF9Dimk5jBkgqGI2SFSNWq0MhH+flK69Q+ZJsVdfcqJl8PzU3wk/G58SXZYCsVW0i7CsxctRB18+0MUMsGvDIEDZVMIzdfCLXaniwrD8cRaRrVzrbTsxVVQHY3kUELYarA3H33rDev85jTma9My+Ny+YiqXkSvuxRlhJnYbPDFf7Tg/dyDbGyolxWWlP9N8lHO/eZBP9iUoseBJUcz7O46f4beyMTEE1CeGWT48LlpyJ+iQTKK0=
 
 language: objective-c
-osx_image: xcode7.3
+osx_image: xcode8
 
 notifications:
   email:
@@ -22,7 +22,7 @@ branches:
 
 script:
   - set -o pipefail
-  - xcodebuild clean build test -scheme Transport-ios -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | tee >build.log >(xcpretty -s)
+  - xcodebuild clean build test -scheme Transport-ios -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | tee >build.log >(xcpretty -s)
   - bundle exec danger
 
 after_failure:

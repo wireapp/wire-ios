@@ -20,6 +20,8 @@
 #import <Foundation/Foundation.h>
 #import <ZMCSystem/ZMCSystem.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ZMTransportRequest;
 @class ZMTimer;
 @class ZMURLSession;
@@ -40,13 +42,13 @@ extern NSString * const ZMURLSessionBackgroundIdentifier;
 
 - (void)cancelAndRemoveAllTimers;
 - (void)cancelAllTasksWithCompletionHandler:(dispatch_block_t)handler;
-- (void)countTasksWithCompletionHandler:(void(^)(NSUInteger count))handler ZM_NON_NULL(1);
+- (void)countTasksWithCompletionHandler:(void(^)(NSUInteger count))handler;
 - (void)getTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler;
 
 - (void)tearDown;
 
 /// The completion handler will be called with YES if the task was cancelled.
-- (void)cancelTaskWithIdentifier:(NSUInteger)taskIdentifier completionHandler:(void(^)(BOOL))handler;
+- (void)cancelTaskWithIdentifier:(NSUInteger)taskIdentifier completionHandler:(nullable void(^)(BOOL))handler;
 
 @property (nonatomic, readonly) NSURLSessionConfiguration *configuration;
 
@@ -59,7 +61,7 @@ extern NSString * const ZMURLSessionBackgroundIdentifier;
 
 @property (nonatomic, readonly) BOOL isBackgroundSession;
 
-- (NSURLSessionTask *)taskWithRequest:(NSURLRequest *)request bodyData:(NSData *)bodyData transportRequest:(ZMTransportRequest *)request;
+- (NSURLSessionTask *)taskWithRequest:(NSURLRequest *)request bodyData:(nullable NSData *)bodyData transportRequest:(nullable ZMTransportRequest *)request;
 
 @end
 
@@ -82,3 +84,5 @@ didReceiveResponse:(NSURLResponse *)response
 - (void)URLSessionDidFinishEventsForBackgroundURLSession:(ZMURLSession *)URLSession;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -311,7 +311,7 @@
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
     [transportRequest markStartOfUploadTimestamp];
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPstatus:213 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPStatus:213 transportSessionError:nil];
     
     // when
     [transportRequest completeWithResponse:response];
@@ -332,7 +332,7 @@
     }]];
 
     // when
-    [transportRequest completeWithResponse:nil];
+    [transportRequest completeWithResponse:[[ZMTransportResponse alloc] init]];
 
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -357,7 +357,7 @@
     }]];
     
     // when
-    [transportRequest completeWithResponse:nil];
+    [transportRequest completeWithResponse:[[ZMTransportResponse alloc] init]];
     
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -370,7 +370,7 @@
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
 
     // when
-    XCTAssertNoThrow([transportRequest completeWithResponse:nil]);
+    XCTAssertNoThrow([transportRequest completeWithResponse:[[ZMTransportResponse alloc] init]]);
 }
 
 
@@ -378,7 +378,7 @@
 {
     // given
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPstatus:213 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPStatus:213 transportSessionError:nil];
     __block ZMTransportResponse *receivedResponse;
     
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"" method:ZMMethodGET payload:nil];
@@ -403,7 +403,7 @@
     XCTestExpectation *expectation1 = [self expectationWithDescription:@"Completion 1 handler called"];
     XCTestExpectation *expectation2 = [self expectationWithDescription:@"Completion 2 handler called"];
     XCTestExpectation *expectation3 = [self expectationWithDescription:@"Completion 3 handler called"];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPstatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil];
 
     __block NSMutableString *responses = [[NSMutableString alloc] init];
 
@@ -792,7 +792,9 @@
     // given
     NSString *contentType = @"multipart/mixed; boundary=frontier";
     NSURL *fileURL = [NSURL URLWithString:@"file://url/to/file"];
-    ZMTransportRequest *sut = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:nil contentType:contentType];
+    ZMTransportRequest *sut = [ZMTransportRequest uploadRequestWithFileURL:fileURL
+                                                                      path:[[NSBundle mainBundle] bundlePath]
+                                                               contentType:contentType];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when

@@ -19,12 +19,13 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMTransportData <NSObject>
 
-- (NSDictionary *)asDictionary;
-- (NSArray *)asArray;
-- (id)asTransportData;
+- (nullable NSDictionary *)asDictionary;
+- (nullable NSArray *)asArray;
+- (nullable id)asTransportData;
 
 @end
 
@@ -41,3 +42,5 @@
 
 @interface NSString (ZMTransportData) <ZMTransportData>
 @end
+
+NS_ASSUME_NONNULL_END

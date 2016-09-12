@@ -56,7 +56,9 @@
 
 - (void)setUp {
     [super setUp];
-    
+#if TARGET_IPHONE_SIMULATOR
+    [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
+#endif
     NSURL *baseURL = [NSURL URLWithString:@"http://www.example.com"];
 
     self.taskCount = 0;

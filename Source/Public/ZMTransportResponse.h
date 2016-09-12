@@ -20,6 +20,8 @@
 #import <Foundation/Foundation.h>
 #import <ZMTransport/ZMTransportData.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(uint8_t, ZMTransportResponseContentType) {
     ZMTransportResponseContentTypeInvalid,
     ZMTransportResponseContentTypeEmpty,
@@ -41,29 +43,29 @@ typedef NS_ENUM(uint8_t, ZMTransportResponseStatus) {
 
 @interface ZMTransportResponse : NSObject
 
-- (instancetype)initWithHTTPURLResponse:(NSHTTPURLResponse *)HTTPResponse data:(NSData *)data error:(NSError *)error;
+- (instancetype)initWithHTTPURLResponse:(NSHTTPURLResponse *)HTTPResponse data:(nullable NSData *)data error:(nullable NSError *)error;
 
-- (instancetype)initWithImageData:(NSData *)imageData HTTPstatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers;
+- (instancetype)initWithImageData:(NSData *)imageData HTTPStatus:(NSInteger)status transportSessionError:(nullable NSError *)error headers:(nullable NSDictionary *)headers;
 
-- (instancetype)initWithPayload:(id<ZMTransportData>)payload HTTPstatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers;
-+ (instancetype)responseWithPayload:(id<ZMTransportData>)payload HTTPstatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers;
-+ (instancetype)responseWithPayload:(id<ZMTransportData>)payload HTTPstatus:(NSInteger)status transportSessionError:(NSError *)error;
+- (instancetype)initWithPayload:(nullable id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(nullable NSError *)error headers:(nullable NSDictionary *)headers;
++ (instancetype)responseWithPayload:(nullable id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(nullable NSError *)error headers:(nullable NSDictionary *)headers;
++ (instancetype)responseWithPayload:(nullable id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(nullable NSError *)error;
 + (instancetype)responseWithTransportSessionError:(NSError *)error;
 
-@property (nonatomic, readonly) id<ZMTransportData> payload;
-@property (nonatomic, readonly) NSData *imageData;
-@property (nonatomic, readonly, copy) NSDictionary *headers;
+@property (nonatomic, readonly, nullable) id<ZMTransportData> payload;
+@property (nonatomic, readonly, nullable) NSData * imageData;
+@property (nonatomic, readonly, copy, nullable) NSDictionary * headers;
 
 @property (nonatomic, readonly) NSInteger HTTPStatus;
-@property (nonatomic, readonly) NSError *transportSessionError;
+@property (nonatomic, readonly, nullable) NSError * transportSessionError;
 @property (nonatomic) ZMSDispatchGroup *dispatchGroup;
 
-@property (nonatomic, readonly) NSHTTPURLResponse *rawResponse;
-@property (nonatomic, readonly) NSData *rawData;
+@property (nonatomic, readonly, nullable) NSHTTPURLResponse * rawResponse;
+@property (nonatomic, readonly, nullable) NSData * rawData;
 
 @property (nonatomic, readonly) ZMTransportResponseStatus result;
 
-- (NSString *)payloadLabel;
+- (nullable NSString *)payloadLabel;
 
 @property (nonatomic) NSDate *startOfUploadTimestamp;
 @end
@@ -75,3 +77,6 @@ typedef NS_ENUM(uint8_t, ZMTransportResponseStatus) {
 - (ZMTransportResponseContentType)zmContentTypeForBodyData:(NSData *)bodyData;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
