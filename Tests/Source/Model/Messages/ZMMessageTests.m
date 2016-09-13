@@ -2621,4 +2621,18 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqual(usersThatReacted.count, 2lu);
 }
 
+- (void)testThatReactionKeyIsIgnored
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadEventID = self.createEventID;
+    
+    // when
+    ZMMessage *message = [conversation appendMessageWithText:self.name];
+    
+    // then
+    XCTAssertTrue([message.ignoredKeys containsObject:@"reactions"]);
+}
+
 @end
