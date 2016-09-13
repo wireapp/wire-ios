@@ -73,10 +73,6 @@ extension NSSet {
             return count == 0
         }
     }
-    public func contains(_ obj: NSObject) -> Bool {
-        return self.contains(obj)
-    }
-
 }
 
 // MARK: Dictionary
