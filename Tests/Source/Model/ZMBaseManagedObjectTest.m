@@ -192,35 +192,51 @@ static int32_t eventIdCounter;
 
 - (UserClient *)createSelfClient
 {
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = selfUser.remoteIdentifier ?: [NSUUID createUUID];
+    return [self createSelfClientOnMOC:self.uiMOC];
+}
+
+- (UserClient *)createSelfClientOnMOC:(NSManagedObjectContext *)moc
+{
+    __block ZMUser *selfUser = nil;
     
-    UserClient *selfClient = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+    selfUser = [ZMUser selfUserInContext:moc];
+    selfUser.remoteIdentifier = selfUser.remoteIdentifier ?: [NSUUID createUUID];
+    UserClient *selfClient = [UserClient insertNewObjectInManagedObjectContext:moc];
     selfClient.remoteIdentifier = [NSString createAlphanumericalString];
     selfClient.user = selfUser;
     
-    [self.syncMOC setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];
+    [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];
     
-    [UserClient createOrUpdateClient:@{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]} context:self.syncMOC];
-    [self.syncMOC saveOrRollback];
+    [self performPretendingUiMocIsSyncMoc:^{
+        [UserClient createOrUpdateClient:@{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]} context:moc];
+    }];
+    
+    [moc saveOrRollback];
     
     return selfClient;
 }
 
 - (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser
 {
+    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSeflUser onMOC:self.uiMOC];
+}
+
+- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(NSManagedObjectContext *)moc
+{
     if(user.remoteIdentifier == nil) {
         user.remoteIdentifier = [NSUUID createUUID];
     }
-    UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+    UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:moc];
     userClient.remoteIdentifier = [NSString createAlphanumericalString];
     userClient.user = user;
     
     if (createSessionWithSeflUser) {
-        UserClient *selfClient = [ZMUser selfUserInContext:self.syncMOC].selfClient;
-        NSError *error;
-        NSString *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
-        [selfClient establishSessionWithClient:userClient usingPreKey:key];
+        UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
+        [self performPretendingUiMocIsSyncMoc:^{
+            NSError *error;
+            NSString *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
+            [selfClient establishSessionWithClient:userClient usingPreKey:key];
+        }];
     }
     return userClient;
 }
@@ -232,7 +248,7 @@ static int32_t eventIdCounter;
 
 - (ZMClientMessage *)createClientTextMessage:(NSString *)text encrypted:(BOOL)encrypted
 {
-    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     NSUUID *messageNonce = [NSUUID createUUID];
     ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:text nonce:messageNonce.transportString];
     [message addData:textMessage.data];

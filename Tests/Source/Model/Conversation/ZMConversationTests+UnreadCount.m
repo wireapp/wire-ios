@@ -65,10 +65,12 @@
     
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
-    XCTAssertEqual(conv.estimatedUnreadCount, 3u);
-    XCTAssertFalse([conv.unreadTimeStamps containsObject:excludedMessage.serverTimestamp]);
-    XCTAssertEqualObjects(conv.unreadTimeStamps, expectedTimeStamps);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // then
+        XCTAssertEqual(conv.estimatedUnreadCount, 3u);
+        XCTAssertFalse([conv.unreadTimeStamps containsObject:excludedMessage.serverTimestamp]);
+        XCTAssertEqualObjects(conv.unreadTimeStamps, expectedTimeStamps);
+    }];
 }
 
 - (void)testThatItAddsNewTimeStampsToTheEndIfTheyAreNewerThanTheLastUnread
@@ -93,13 +95,14 @@
     }];
     
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssertEqual(conv.estimatedUnreadCount, 1u);
     
     [self.syncMOC performGroupedBlockAndWait:^{
+        // then #1
+        XCTAssertEqual(conv.estimatedUnreadCount, 1u);
         // when
         [conv insertTimeStamp:newDate];
         
-        // then
+        // then #2
         XCTAssertEqual(conv.estimatedUnreadCount, 2u);
         XCTAssertEqualObjects(conv.unreadTimeStamps, expectedTimeStamps);
     }];
@@ -187,9 +190,9 @@
         [conv awakeFromFetch];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssertEqual(conv.estimatedUnreadCount, 3u);
     
     [self.syncMOC performGroupedBlockAndWait:^{
+        XCTAssertEqual(conv.estimatedUnreadCount, 3u);
         // expect
         NSOrderedSet *expectedTimeStamps = [NSOrderedSet orderedSetWithArray:@[lastMessage.serverTimestamp]];
         

@@ -56,7 +56,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
 
     func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID()
         let article = Article(
             originalURLString: "www.example.com/article/original",
@@ -78,7 +78,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage() {
         
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID()
         let article = Article(
             originalURLString: "example.com/article/original",
@@ -99,7 +99,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage_TwitterStatus() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID.createUUID()
         let preview = TwitterStatus(
             originalURLString: "example.com/article/original",
@@ -123,7 +123,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage_TwitterStatus() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID.createUUID()
         let preview = TwitterStatus(
             originalURLString: "example.com/article/original",
@@ -145,7 +145,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     func testThatItHasImageReturnsTrueIfTheImageIsNotYetProcessedButTheOriginalIsInTheCache() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID.createUUID()
         let preview = TwitterStatus(
             originalURLString: "example.com/article/original",
@@ -158,7 +158,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         let genericMessage = ZMGenericMessage(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString())
         clientMessage.addData(genericMessage.data())
         clientMessage.nonce = nonce
-        syncMOC.zm_imageAssetCache.storeAssetData(nonce, format: .Original, encrypted: false, data: .secureRandomDataOfLength(256))
+        uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .Original, encrypted: false, data: .secureRandomDataOfLength(256))
         
         // when
         let willHaveAnImage = clientMessage.textMessageData!.hasImageData
@@ -169,7 +169,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     func testThatItReturnsImageDataIdentifier_whenArticleHasImage() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID.createUUID()
         let article = Article(
             originalURLString: "example.com/article/original",
@@ -195,7 +195,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     func testThatItDoesntReturnsImageDataIdentifier_whenArticleHasNoImage() {
         
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID()
         let article = Article(originalURLString: "example.com/article/original", permamentURLString: "http://www.example.com/article/1", offset: 12)
         article.title = "title"
@@ -212,7 +212,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     func testThatItReturnsImageDataIdentifier_whenTwitterStatusHasImage() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID.createUUID()
         let assetKey = "123"
         let twitterStatus = TwitterStatus(
@@ -237,7 +237,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     func testThatItDoesntReturnsImageDataIdentifier_whenTwitterStatusHasNoImage() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID.createUUID()
         let preview = TwitterStatus(
             originalURLString: "example.com/tweet",
@@ -294,14 +294,14 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         setUpCaches()
         
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID.createUUID()
         
         let updated = preview.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
         let withID = updated.update(withAssetKey: "ID", assetToken: nil)
         clientMessage.addData(ZMGenericMessage(text: "Text", linkPreview: withID, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
-        try! syncMOC.obtainPermanentIDsForObjects([clientMessage])
+        try! uiMOC.obtainPermanentIDsForObjects([clientMessage])
         
         // when
         

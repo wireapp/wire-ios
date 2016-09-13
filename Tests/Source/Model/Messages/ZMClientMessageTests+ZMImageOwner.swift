@@ -34,7 +34,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
     }
     
     func insertMessageWithLinkPreview(contentType: ContentType) -> ZMClientMessage {
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         let nonce = NSUUID()
         let article = Article(
             originalURLString: "example.com/article/original",
@@ -66,8 +66,8 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         clientMessage.setImageData(imageData, forFormat: .Medium, properties: properties)
         
         // then
-        XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: false))
-        XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: true))
+        XCTAssertNotNil(self.uiMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: false))
+        XCTAssertNotNil(self.uiMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: true))
         
         guard let linkPreview = clientMessage.genericMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
         XCTAssertNotNil(linkPreview.article.image.uploaded.otrKey)
@@ -91,8 +91,8 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         clientMessage.setImageData(imageData, forFormat: .Medium, properties: properties)
         
         // then
-        XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: false))
-        XCTAssertNotNil(self.syncMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: true))
+        XCTAssertNotNil(self.uiMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: false))
+        XCTAssertNotNil(self.uiMOC.zm_imageAssetCache.assetData(clientMessage.nonce, format: .Medium, encrypted: true))
         
         guard let linkPreview = clientMessage.genericMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
         XCTAssertNotNil(linkPreview.article.image.uploaded.otrKey)
@@ -109,24 +109,24 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
     func testThatUpdatesLinkPreviewStateAndDeleteOriginalDataAfterProcessingFinishes() {
         // given
         let nonce = NSUUID()
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         clientMessage.nonce = nonce
-        self.syncMOC.zm_imageAssetCache.storeAssetData(nonce, format: .Original, encrypted: false, data: mediumJPEGData())
+        self.uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .Original, encrypted: false, data: mediumJPEGData())
         
         // when
         clientMessage.processingDidFinish()
         
         // then
         XCTAssertEqual(clientMessage.linkPreviewState, ZMLinkPreviewState.Processed)
-        XCTAssertNil(self.syncMOC.zm_imageAssetCache.assetData(nonce, format: .Original, encrypted: false))
+        XCTAssertNil(self.uiMOC.zm_imageAssetCache.assetData(nonce, format: .Original, encrypted: false))
     }
     
     func testThatItReturnsCorrectOriginalImageSize() {
         // given
         let nonce = NSUUID()
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         clientMessage.nonce = nonce
-        self.syncMOC.zm_imageAssetCache.storeAssetData(nonce, format: .Original, encrypted: false, data: mediumJPEGData())
+        self.uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .Original, encrypted: false, data: mediumJPEGData())
         
         // when
         let imageSize = clientMessage.originalImageSize()
