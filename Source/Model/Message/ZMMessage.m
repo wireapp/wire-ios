@@ -677,7 +677,8 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
                              ZMMessageRemovedUsersKey,
                              ZMMessageNeedsUpdatingUsersKey,
                              ZMMessageSenderClientIDKey,
-                             ZMMessageConfirmationKey
+                             ZMMessageConfirmationKey,
+                             ZMMessageReactionKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -936,12 +937,6 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
     message.isEncrypted = NO;
     message.isPlainText = YES;
     return message;
-}
-
-- (NSSet *)ignoredKeys;
-{
-    NSSet *ignoredKeys = [super ignoredKeys];
-    return [ignoredKeys setByAddingObject:ZMMessageReactionKey];
 }
 
 - (ZMDeliveryState)deliveryState

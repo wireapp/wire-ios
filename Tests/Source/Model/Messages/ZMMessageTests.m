@@ -483,7 +483,7 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForTextMessages
 {
     //given
-    NSArray *expected = @[IsExpiredKey, ReactionsKey];
+    NSArray *expected = @[IsExpiredKey];
 
     // when
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -508,7 +508,7 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForImageMessages
 {
     // given
-    NSArray *expected = @[IsExpiredKey, ReactionsKey];
+    NSArray *expected = @[IsExpiredKey];
     
     // when
     ZMImageMessage *message = [ZMImageMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -523,7 +523,7 @@ NSString * const ReactionsKey = @"reactions";
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    NSArray *keysThatShouldBeTracked = @[@"dataSet", @"linkPreviewState", ReactionsKey];
+    NSArray *keysThatShouldBeTracked = @[@"dataSet", @"linkPreviewState"];
     AssertArraysContainsSameObjects(message.keysTrackedForLocalModifications, keysThatShouldBeTracked);
 }
 
@@ -2619,6 +2619,20 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqual(reactions.count, 1lu);
     NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
     XCTAssertEqual(usersThatReacted.count, 2lu);
+}
+
+- (void)testThatReactionKeyIsIgnored
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.lastReadEventID = self.createEventID;
+    
+    // when
+    ZMMessage *message = [conversation appendMessageWithText:self.name];
+    
+    // then
+    XCTAssertTrue([message.ignoredKeys containsObject:@"reactions"]);
 }
 
 @end
