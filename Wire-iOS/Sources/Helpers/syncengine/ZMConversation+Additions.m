@@ -100,6 +100,25 @@
     return nil;
 }
 
+- (nullable id<ZMConversationMessage>)lastMessageSentByUser:(ZMUser *)user limit:(NSUInteger)limit
+{
+    ZMMessage *lastUserMessage = nil;
+    
+    NSUInteger index = 0;
+    for (ZMMessage *enumeratedMessage in self.messages.reverseObjectEnumerator) {
+        if (index > limit) {
+            break;
+        }
+        if (enumeratedMessage.sender == user) {
+            lastUserMessage = enumeratedMessage;
+            break;
+        }
+        index++;
+    }
+    
+    return lastUserMessage;
+}
+
 - (void)removeParticipants:(NSArray *)participants
 {
     for (ZMUser *user in participants) {
@@ -156,19 +175,6 @@
     }
     
     return message;
-}
-
-- (ZMUser *)participantWithObjectIDString:(NSString *)objectIDString
-{
-    ZMUser *user = nil;
-    NSManagedObjectID *moid = [ZMConversation objectIDForURIRepresentation:[NSURL URLWithString:objectIDString] inUserSession:[ZMUserSession sharedSession]];
-    for (ZMUser *current in self.allParticipants) {
-        if ([current.objectID isEqual:moid]) {
-            user = current;
-            break;
-        }
-    }
-    return user;
 }
 
 - (BOOL)shouldShowBurstSeparatorForMessage:(id<ZMConversationMessage>)message

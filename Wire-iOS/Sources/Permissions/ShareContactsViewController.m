@@ -22,7 +22,6 @@
 #import "Button.h"
 #import "WAZUIMagicIOS.h"
 #import "UIColor+WAZExtensions.h"
-#import "AddressBookHelper.h"
 #import "AnalyticsTracker+Permissions.h"
 #import "NSString+Wire.h"
 #import "Wire-Swift.h"
@@ -38,6 +37,7 @@
 @property (nonatomic) UIView *shareContactsContainerView;
 @property (nonatomic) PermissionDeniedViewController *addressBookAccessDeniedViewController;
 @property (nonatomic) UIVisualEffectView *backgroundBlurView;
+@property (nonatomic) BOOL showingAddressBookAccessDeniedViewController;
 
 @end
 
@@ -153,6 +153,8 @@
 
 - (void)displayContactsAccessDeniedMessageAnimated:(BOOL)animated
 {
+    self.showingAddressBookAccessDeniedViewController = YES;
+
     if (animated) {
         [UIView transitionFromView:self.shareContactsContainerView
                             toView:self.addressBookAccessDeniedViewController.view
@@ -187,13 +189,7 @@
         [self.analyticsTracker tagAddressBookSystemPermissions:success];
 
         if (success) {
-            if (self.uploadAddressBookImmediately) {
-                [[AddressBookHelper sharedHelper] forceUploadAddressBook];
-            }
-            else {
-                [[AddressBookHelper sharedHelper] uploadAddressBook];
-            }
-            
+            [[AddressBookHelper sharedHelper] startRemoteSearchWithCheckingIfEnoughTimeSinceLast:self.uploadAddressBookImmediately];
             [self.formStepDelegate didCompleteFormStep:self];
         } else {
             [self displayContactsAccessDeniedMessageAnimated:YES];
@@ -203,8 +199,11 @@
 
 - (IBAction)shareContactsLater:(id)sender
 {
-    [self.analyticsTracker tagAddressBookPreflightPermissions:NO];
-    [[AddressBookHelper sharedHelper] addressBookUploadWasProposed];
+    if (!self.showingAddressBookAccessDeniedViewController) {
+        [self.analyticsTracker tagAddressBookPreflightPermissions:NO];
+    }
+
+    [[AddressBookHelper sharedHelper] addressBookSearchWasProposed];
     [self.formStepDelegate didSkipFormStep:self];
 }
 
@@ -213,7 +212,7 @@
 
 - (void)continueWithoutPermission:(PermissionDeniedViewController *)viewController
 {
-    [[AddressBookHelper sharedHelper] addressBookUploadWasProposed];
+    [[AddressBookHelper sharedHelper] addressBookSearchWasProposed];
     [self.formStepDelegate didSkipFormStep:self];
 }
 
@@ -222,7 +221,7 @@
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
     if ([[AddressBookHelper sharedHelper] isAddressBookAccessGranted]) {
-        [[AddressBookHelper sharedHelper] uploadAddressBook];
+        [[AddressBookHelper sharedHelper] startRemoteSearchWithCheckingIfEnoughTimeSinceLast:YES];
         [self.formStepDelegate didCompleteFormStep:self];
     }
 }

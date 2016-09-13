@@ -62,6 +62,7 @@
 #import "TextMessageCell.h"
 #import "PingCell.h"
 #import "StopWatch.h"
+#import "ImageMessageCell.h"
 
 #import "SketchViewController.h"
 #import "AnalyticsTracker+Sketchpad.h"
@@ -113,6 +114,7 @@
 @property (nonatomic) id <ZMConversationMessageWindowObserverOpaqueToken> messageWindowObserverToken;
 @property (nonatomic) BOOL waitingForFileDownload;
 @property (nonatomic) UIDocumentInteractionController *documentInteractionController;
+
 @end
 
 
@@ -333,8 +335,8 @@
 {
     id<ZMConversationMessage>message = [self.messageWindow.messages objectAtIndex:indexPath.row];
     BOOL isFile = [Message isFileTransferMessage:message],
-        isImage = [Message isImageMessage:message],
-        isLocation = [Message isLocationMessage:message];
+         isImage = [Message isImageMessage:message],
+         isLocation = [Message isLocationMessage:message];
     
     if (! isFile && ! isImage && ! isLocation) {
         return;
@@ -343,7 +345,7 @@
     UITableViewCell *cell = [self cellForMessage:message];
     
     // If the user tapped on a file or image and the menu controller is currently visible,
-    // we do not want to show the detail but isntead hide the menu controller first.
+    // we do not want to show the detail but instead hide the menu controller first.
     if ([cell isKindOfClass:ConversationCell.class] && [(ConversationCell *)cell showsMenu]) {
         [self removeHighlightsAndMenu];
         return;
@@ -506,10 +508,25 @@
     [Analytics shared].sessionSummary.imageContentsClicks++;
 }
 
+- (void)saveImageFromCell:(ImageMessageCell *)cell
+{
+    [cell.savableImage saveToLibraryWithCompletion:^{
+        UIView *snapshot = [cell.fullImageView snapshotViewAfterScreenUpdates:YES];
+        snapshot.translatesAutoresizingMaskIntoConstraints = YES;
+        CGRect sourceRect = [self.view convertRect:cell.fullImageView.frame fromView:cell.fullImageView.superview];
+        [self.delegate conversationContentViewController:self performImageSaveAnimation:snapshot sourceRect:sourceRect];
+    }];
+}
+
 - (void)fullscreenImageViewController:(FullscreenImageViewController *)controller wantsEditImageMessage:(id<ZMConversationMessage>)message
 {
     [controller dismissViewControllerAnimated:NO completion:nil];
 
+    [self openSketchForMessage:message];
+}
+
+- (void)openSketchForMessage:(id<ZMConversationMessage>)message
+{
     SketchViewController *viewController = [[SketchViewController alloc] init];
     viewController.sketchTitle = message.conversation.displayName;
     viewController.delegate = self;
@@ -706,15 +723,11 @@
     ZMMessage *message = [self.messageWindow.messages objectAtIndex:indexPath.row];
     NSIndexPath *selectedIndexPath = nil;
     
-    if (![Message isVideoMessage:message] &&
-        ![Message isFileTransferMessage:message] &&
-        ![Message isImageMessage:message] &&
-        ![Message isLocationMessage:message] &&
-        [message isEqual:self.conversationMessageWindowTableViewAdapter.selectedMessage]) {
+    if ([message isEqual:self.conversationMessageWindowTableViewAdapter.selectedMessage]) {
         
         // If this cell is already selected, deselect it.
         self.conversationMessageWindowTableViewAdapter.selectedMessage  = nil;
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
         // Make table view to update cells with animation
         [tableView beginUpdates];
@@ -728,9 +741,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [self presentDetailsForMessageAtIndexPath:indexPath];
-    
+{    
     // Make table view to update cells with animation
     [tableView beginUpdates];
     [tableView endUpdates];
@@ -753,9 +764,9 @@
     }
 }
 
-- (void)conversationCell:(ConversationCell *)cell resendMessageTapped:(ZMMessage *)message
+- (void)conversationCellDidTapResendMessage:(ConversationCell *)cell
 {
-    [self.delegate conversationContentViewController:self didTriggerResendingMessage:message];
+    [self.delegate conversationContentViewController:self didTriggerResendingMessage:cell.message];
 }
 
 - (void)conversationCell:(ConversationCell *)cell didSelectAction:(ConversationCellAction)actionId
@@ -781,23 +792,9 @@
         
         case ConversationCellActionDelete:
         {
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"message.delete_dialog.title", nil)
-                                                                                     message:NSLocalizedString(@"message.delete_dialog.message", nil)
-                                                                              preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"message.delete_dialog.button_cancel", nil)
-                                                                   style:UIAlertActionStyleCancel handler:nil];
-            UIAlertAction *deleteMessageAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"message.delete_dialog.button_delete", nil)
-                                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
-            {
-                [[ZMUserSession sharedSession] enqueueChanges:^{
-                    [ZMMessage deleteMessage:cell.message];
-                }];
-                [[Analytics shared] tagDeletedMessage];
+            [self presentDeletionAlertControllerForMessage:cell.message completion:^{
+                cell.beingEdited = NO;
             }];
-            [alertController addAction:cancelAction];
-            [alertController addAction:deleteMessageAction];
-            [self presentViewController:alertController animated:YES completion:nil];
         }
             break;
         case ConversationCellActionPresent:
@@ -808,11 +805,73 @@
             break;
         case ConversationCellActionSave:
         {
-            self.conversationMessageWindowTableViewAdapter.selectedMessage = cell.message;
-            [self openDocumentControllerForMessage:cell.message atIndexPath:[self.tableView indexPathForCell:cell] withPreview:NO];
+            if ([cell isKindOfClass:ImageMessageCell.class]) {
+                [self saveImageFromCell:(ImageMessageCell *)cell];
+            } else {
+                self.conversationMessageWindowTableViewAdapter.selectedMessage = cell.message;
+                [self openDocumentControllerForMessage:cell.message atIndexPath:[self.tableView indexPathForCell:cell] withPreview:NO];
+            }
+        }
+            break;
+        case ConversationCellActionEdit:
+        {
+            self.conversationMessageWindowTableViewAdapter.editingMessage = cell.message;
+            [self.delegate conversationContentViewController:self didTriggerEditingMessage:cell.message];
+        }
+            break;
+        case ConversationCellActionSketch:
+        {
+            [self openSketchForMessage:cell.message];
+        }
+            break;
+        case ConversationCellActionLike:
+        {
+            BOOL liked = ![Message isLikedMessage:cell.message];
+            
+            NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+            
+            [[ZMUserSession sharedSession] enqueueChanges:^{
+                [Message setLikedMessage:cell.message liked:liked];
+                
+                if (liked) {
+                    // Deselect if necessary to show list of likers
+                    if (self.conversationMessageWindowTableViewAdapter.selectedMessage == cell.message) {
+                        [self tableView:self.tableView willSelectRowAtIndexPath:indexPath];
+                    }
+                } else {
+                    // Select if necessary to prevent message from collapsing
+                    if (self.conversationMessageWindowTableViewAdapter.selectedMessage != cell.message && ![Message hasReactions:cell.message]) {
+                        [self tableView:self.tableView willSelectRowAtIndexPath:indexPath];
+                        [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+                    }
+                }
+            }];
         }
             break;
     }
+}
+
+- (void)conversationCell:(ConversationCell *)cell didSelectURL:(NSURL *)url
+{
+    [self.tableView selectRowAtIndexPath:[self.tableView indexPathForCell:cell] animated:NO scrollPosition:UITableViewScrollPositionNone];
+    self.conversationMessageWindowTableViewAdapter.selectedMessage = cell.message;
+
+    if (! [UIApplication.sharedApplication openURL:url]) {
+        DDLogError(@"Unable to open URL: %@", url);
+    }
+    
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+}
+
+- (BOOL)conversationCell:(ConversationCell *)cell shouldBecomeFirstResponderWhenShowMenuWithCellType:(MessageType)messageType;
+{
+    BOOL shouldBecomeFirstResponder = YES;
+    if ([self.delegate respondsToSelector:@selector(conversationContentViewController:shouldBecomeFirstResponderWhenShowMenuFromCell:)]) {
+        shouldBecomeFirstResponder = [self.delegate conversationContentViewController:self shouldBecomeFirstResponderWhenShowMenuFromCell:cell];
+    }
+    [ConversationInputBarViewController endEditingMessage];
+    return shouldBecomeFirstResponder;
 }
 
 - (void)conversationCell:(ConversationCell *)cell didOpenMenuForCellType:(MessageType)messageType;
@@ -824,8 +883,25 @@
                                messageType:messageType];
 }
 
+- (void)conversationCellDidTapOpenLikers:(ConversationCell *)cell
+{
+    if ([Message hasLikers:cell.message]) {
+        ReactionsListViewController *reactionsListController = [[ReactionsListViewController alloc] initWithMessage:cell.message showsStatusBar:!IS_IPAD];
+        [self.parentViewController presentViewController:reactionsListController animated:YES completion:nil];
+    }
+}
+
 @end
 
+
+@implementation ConversationContentViewController (EditMessages)
+
+- (void)didFinishEditingMessage:(id<ZMConversationMessage>)message
+{
+    self.conversationMessageWindowTableViewAdapter.editingMessage = nil;
+}
+
+@end
 
 
 @implementation ConversationContentViewController (MessageWindow)

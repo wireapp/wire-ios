@@ -537,6 +537,12 @@
             [debugOptionsController dismissViewControllerAnimated:YES completion:nil];
         }];
         
+        UIAlertAction *uploadAddresBookAction = [UIAlertAction actionWithTitle:@"Force upload address book"
+                                                               style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                                                                   [AddressBookHelper.sharedHelper startRemoteSearchWithCheckingIfEnoughTimeSinceLast:NO];
+                                                                   [debugOptionsController dismissViewControllerAnimated:YES completion:nil];
+                                                               }];
+        
         UIAlertAction *send500Times = [UIAlertAction actionWithTitle:@"Send next text message 500 times"
                                                                   style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                                                                       [Settings sharedSettings].shouldSend500Messages = YES;
@@ -581,6 +587,7 @@
         [debugOptionsController addAction:logSnapshot];
         [debugOptionsController addAction:send500Times];
         [debugOptionsController addAction:decreaseMaxRecording];
+        [debugOptionsController addAction:uploadAddresBookAction];
         [debugOptionsController addAction:cancelAction];
         
         [self dismissViewControllerAnimated:YES completion:^{

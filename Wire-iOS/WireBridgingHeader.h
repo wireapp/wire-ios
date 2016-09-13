@@ -28,6 +28,8 @@
 #import <CommonCrypto/CommonCrypto.h>
 #import "Settings.h"
 #import "AppDelegate.h"
+#import "Message.h"
+#import "Message+Private.h"
 
 // UI
 @import WireExtensionComponents;
@@ -42,10 +44,13 @@
 #import "GapLoadingBar.h"
 #import "WAZUIMagicIOS.h"
 #import "ResizingTextView.h"
+#import "NextResponderTextView.h"
 #import "InvisibleInputAccessoryView.h"
 #import <SCSiriWaveformView/SCSiriWaveformView.h>
 #import "ConversationInputBarSendController.h"
-#import "ConversationContentViewController.h"
+#import "ConversationContentViewController+Private.h"
+#import "StackView.h"
+#import "SearchResultCell.h"
 
 // View Controllers
 #import "ZClientViewController.h"
@@ -79,7 +84,6 @@
 #import "UIColor+MagicAccess.h"
 #import "Analytics.h"
 #import "Analytics+iOS.h"
-#import "AddressBookHelper.h"
 #import "NSURL+WireURLs.h"
 #import "NSURL+WireLocale.h"
 #import "Analytics+ProfileEvents.h"
@@ -101,6 +105,7 @@
 #import "ImageCache.h"
 #import "AVAsset+VideoConvert.h"
 #import "DeviceOrientationObserver.h"
+#import "Analytics+ConversationEvents.h"
 
 // Camera
 #import "CameraController.h"

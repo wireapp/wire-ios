@@ -21,6 +21,7 @@
 
 #import "zmessaging+iOS.h"
 #import "ZMUserSession+Additions.h"
+#import "Wire-Swift.h"
 
 #import "Settings.h"
 #import "ColorScheme.h"
@@ -37,7 +38,6 @@
 #import "Constants.h"
 #import <AdSupport/AdSupport.h>
 #import "AppDelegate+Hockey.h"
-#import "AppDelegate+AddressBook.h"
 #import "Application+runDuration.h"
 
 #import "AppDelegate+Logging.h"
@@ -152,6 +152,9 @@
 {
     DDLogInfo(@"applicationWillEnterForeground: (applicationState = %ld)", (long)application.applicationState);
     [self.appController applicationWillEnterForeground:application];
+    
+    // Calling this in `applicationDidBecomeActive:` and `applicationWillEnterForeground:` is safe, since subsequent calls are ignored by Localytics
+    [[Analytics shared] resume];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application;
@@ -188,8 +191,6 @@
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     DDLogInfo(@"applicationWillResignActive:  (applicationState = %ld)", (long)application.applicationState);
-    
-    [[Analytics shared] closeAndUpload];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -207,8 +208,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     DDLogInfo(@"applicationWillTerminate:  (applicationState = %ld)", (long)application.applicationState);
-    [[Analytics shared] upload];
-    [[Analytics shared] close];
+    [[Analytics shared] closeAndUpload];
     
     // In case of normal termination we do not need the run duration to persist
     [[UIApplication sharedApplication] resetRunDuration];
@@ -334,10 +334,8 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
 {
     DDLogWarn(@"Received APNS token: %@", newDeviceToken);
-    if(![Settings sharedSettings].shouldRegisterForVoIPNotificationsOnly ) {
-        [[ZMUserSession sharedSession] application:application didRegisterForRemoteNotificationsWithDeviceToken:newDeviceToken];
-        [[Analytics shared] setPushToken:newDeviceToken];
-    }
+    [[Analytics shared] setPushToken:newDeviceToken];
+    [[ZMUserSession sharedSession] application:application didRegisterForRemoteNotificationsWithDeviceToken:newDeviceToken];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
@@ -379,6 +377,7 @@
         [[ZMUserSession sharedSession] application:application didReceiveLocalNotification:notification];
     }];
     
+    [[Analytics shared] handleRemoteNotification:notification.userInfo];
     self.launchType = (application.applicationState == UIApplicationStateInactive || application.applicationState == UIApplicationStateBackground) ? ApplicationLaunchPush: ApplicationLaunchDirect;
 }
 
@@ -424,7 +423,7 @@
         [[self zetaUserSession] checkIfLoggedInWithCallback:^(BOOL isLoggedIn) {
             if (note.networkState == ZMNetworkStateOnline && isLoggedIn && self.addressBookUploadShouldBeChecked) {
                 self.addressBookUploadShouldBeChecked = NO;
-                [self checkAndUploadAddressBookIfNeeded];
+                [AddressBookHelper.sharedHelper startRemoteSearchWithCheckingIfEnoughTimeSinceLast:YES];
             }
         }];
     });

@@ -56,6 +56,7 @@ import AddressBook
         mapView.showsPointsOfInterest = true
         mapView.showsBuildings = true
         mapView.userInteractionEnabled = false
+        containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openInMaps)))
         messageContentView.addSubview(containerView)
         [mapView, addressContainerView].forEach(containerView.addSubview)
         addressContainerView.addSubview(addressLabel)
@@ -136,6 +137,16 @@ import AddressBook
         return .Location
     }
     
+    // MARK: - Selection
+    
+    public override var selectionRect: CGRect {
+        return containerView.bounds
+    }
+    
+    public override var selectionView: UIView! {
+        return containerView
+    }
+    
     // MARK: - Selection, Copy & Delete
     
     public override func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {
@@ -157,8 +168,8 @@ import AddressBook
     
     public override func menuConfigurationProperties() -> MenuConfigurationProperties! {
         let properties = MenuConfigurationProperties()
-        properties.targetRect = containerView.bounds
-        properties.targetView = containerView
+        properties.targetRect = selectionRect
+        properties.targetView = selectionView
         properties.selectedMenuBlock = setSelectedByMenu
         return properties
     }

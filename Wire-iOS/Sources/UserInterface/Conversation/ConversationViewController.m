@@ -404,6 +404,7 @@
     ZM_WEAK(self);
     self.titleView.tapHandler = ^(UIButton * _Nonnull button) {
         ZM_STRONG(self);
+        [ConversationInputBarViewController endEditingMessage];
         [self.inputBarController.inputBar.textView resignFirstResponder];
         
         UIViewController *participantsController = [self participantsController];
@@ -502,6 +503,12 @@
     [self.parentViewController.wr_splitViewController setLeftViewControllerRevealed:!leftControllerRevealed animated:YES completion:nil];
 }
 
+- (void)menuDidHide:(NSNotification *)notification
+{
+    self.inputBarController.inputBar.textView.overrideNextResponder = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIMenuControllerDidHideMenuNotification object:nil];
+}
+
 @end
 
 
@@ -577,6 +584,52 @@
     }];
 }
 
+- (void)conversationContentViewController:(ConversationContentViewController *)contentViewController didTriggerEditingMessage:(ZMMessage *)message
+{
+    NSString *text = message.textMessageData.messageText;
+    
+    if (nil != text) {
+        [self.inputBarController editMessage:message];
+    }
+}
+
+- (BOOL)conversationContentViewController:(ConversationContentViewController *)controller shouldBecomeFirstResponderWhenShowMenuFromCell:(UITableViewCell *)cell
+{
+    if ([self.inputBarController.inputBar.textView isFirstResponder]) {
+        self.inputBarController.inputBar.textView.overrideNextResponder = cell;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(menuDidHide:)
+                                                     name:UIMenuControllerDidHideMenuNotification
+                                                   object:nil];
+        
+        return NO;
+    }
+    else {
+        return YES;
+    }
+}
+
+- (void)conversationContentViewController:(ConversationContentViewController *)contentViewController
+                performImageSaveAnimation:(UIView *)snapshotView
+                               sourceRect:(CGRect)sourceRect
+{
+    [self.view addSubview:snapshotView];
+    snapshotView.frame = [self.view convertRect:sourceRect fromView:contentViewController.view];
+
+    UIView *targetView = self.inputBarController.photoButton;
+    CGPoint targetCenter = [self.view convertPoint:targetView.center fromView:targetView.superview];
+    
+    [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+        snapshotView.center = targetCenter;
+        snapshotView.alpha = 0;
+        snapshotView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+    } completion:^(__unused BOOL finished) {
+        [snapshotView removeFromSuperview];
+        [self.inputBarController bounceCameraIcon];
+    }];
+}
+
 @end
 
 
@@ -646,9 +699,9 @@
 
 @implementation ConversationViewController (InputBar)
 
-- (BOOL)conversationInputBarViewControllerShouldBeginEditing:(ConversationInputBarViewController *)controller
+- (BOOL)conversationInputBarViewControllerShouldBeginEditing:(ConversationInputBarViewController *)controller isEditingMessage:(BOOL)isEditing
 {
-    if (! self.contentViewController.isScrolledToBottom) {
+    if (! self.contentViewController.isScrolledToBottom && !isEditing) {
         [self.contentViewController scrollToBottomAnimated:YES];
     }
 
@@ -658,6 +711,28 @@
 - (BOOL)conversationInputBarViewControllerShouldEndEditing:(ConversationInputBarViewController *)controller
 {
     return YES;
+}
+
+- (void)conversationInputBarViewControllerDidFinishEditingMessage:(id<ZMConversationMessage>)message withText:(NSString *)newText
+{
+    [self.contentViewController didFinishEditingMessage:message];
+    ConversationType conversationType = (self.conversation.conversationType == ZMConversationTypeGroup) ? ConversationTypeGroup : ConversationTypeOneToOne;
+    MessageType messageType = [Message messageType:message];
+    NSTimeInterval elapsedTime = 0 - [message.serverTimestamp timeIntervalSinceNow];
+    [[ZMUserSession sharedSession] enqueueChanges:^{
+        if (newText == nil || [newText isEqualToString:@""]) {
+            [[Analytics shared] tagDeletedMessage:messageType messageDeletionType:MessageDeletionTypeEverywhere conversationType:conversationType timeElapsed:elapsedTime];
+            [ZMMessage deleteForEveryone:message];
+        } else {
+            [[Analytics shared] tagEditedMessageConversationType:conversationType timeElapsed:elapsedTime];
+            [ZMMessage edit:message newText:newText];
+        }
+    }];
+}
+
+- (void)conversationInputBarViewControllerDidCancelEditingMessage:(id<ZMConversationMessage>)message
+{
+    [self.contentViewController didFinishEditingMessage:message];
 }
 
 @end

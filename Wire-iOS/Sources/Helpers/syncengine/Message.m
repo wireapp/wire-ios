@@ -17,12 +17,46 @@
 // 
 
 
-#import "Message.h"
+#import "Message+Private.h"
+#import "Message+Formatting.h"
 #import "Constants.h"
 #import "Settings.h"
+
 @import WireExtensionComponents;
 
 @implementation Message
+
++ (MessageType)messageType:(id<ZMConversationMessage>)message
+{
+    if ([self isImageMessage:message]) {
+        return MessageTypeImage;
+    }
+    if ([self isKnockMessage:message]) {
+        return MessageTypePing;
+    }
+    if ([self isTextMessage:message]) {
+        if ((message.textMessageData.linkPreview != nil) || ([self linkAttachments:message.textMessageData].count > 0)) {
+            return MessageTypeRichMedia;
+        }
+        return MessageTypeText;
+    }
+    if ([self isFileTransferMessage:message]) {
+        if (message.fileMessageData.isVideo) {
+            return MessageTypeVideo;
+        }
+        if (message.fileMessageData.isAudio) {
+            return MessageTypeAudio;
+        }
+        return MessageTypeFile;
+    }
+    if ([self isSystemMessage:message]) {
+        return MessageTypeSystem;
+    }
+    if ([self isLocationMessage:message]) {
+        return MessageTypeLocation;
+    }
+    return MessageTypeUnknown;
+}
 
 + (BOOL)isTextMessage:(id<ZMConversationMessage>)message
 {
@@ -66,7 +100,7 @@
 
 + (BOOL)isNormalMessage:(id<ZMConversationMessage>)message
 {
-    return [self isTextMessage:message] || [self isImageMessage:message] || [self isKnockMessage:message] || [self isFileTransferMessage:message] || [self isVideoMessage:message] || [self isAudioMessage:message] || [self isLocationMessage:message] ;
+    return [self isTextMessage:message] || [self isImageMessage:message] || [self isKnockMessage:message] || [self isFileTransferMessage:message] || [self isVideoMessage:message] || [self isAudioMessage:message] || [self isLocationMessage:message];
 }
 
 + (BOOL)isConnectionRequestMessage:(id<ZMConversationMessage>)message
@@ -85,6 +119,11 @@
     return NO;
 }
 
++ (BOOL)isDeletedMessage:(id<ZMConversationMessage>)message
+{
+    return [Message isSystemMessage:message] && ((ZMSystemMessage *)message).systemMessageType == ZMSystemMessageTypeMessageDeletedForEveryone;
+}
+
 + (NSString *)formattedReceivedDateForMessage:(id<ZMConversationMessage>)message
 {
     // Today's date
@@ -98,34 +137,42 @@
     return [serverTimestamp wr_formattedDate];
 }
 
-+ (NSString *)formattedReceivedDateLongVersion:(id<ZMConversationMessage>)message
++ (BOOL)shouldShowTimestamp:(id<ZMConversationMessage>)message
 {
-    static NSDateFormatter *longVersionDateFormatter;
+    BOOL allowedType =  [Message isTextMessage:message] ||
+                        [Message isImageMessage:message] ||
+                        [Message isFileTransferMessage:message] ||
+                        [Message isKnockMessage:message] ||
+                        [Message isLocationMessage:message] ||
+                        [Message isDeletedMessage:message];
+    
+    return allowedType;
+}
+
++ (NSDateFormatter *)shortVersionDateFormatter
+{
+    static NSDateFormatter *shortVersionDateFormatter = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        longVersionDateFormatter = [[NSDateFormatter alloc] init];
+        shortVersionDateFormatter = [[NSDateFormatter alloc] init];
+        [shortVersionDateFormatter setDateStyle:NSDateFormatterShortStyle];
+        [shortVersionDateFormatter setTimeStyle:NSDateFormatterNoStyle];
     });
     
-    NSString *timestampString = nil;
-    if (message.deliveryState == ZMDeliveryStateDelivered) {
-        NSDate *timestamp = message.serverTimestamp;
-        
-        [longVersionDateFormatter setDateStyle:NSDateFormatterFullStyle];
-        [longVersionDateFormatter setTimeStyle:NSDateFormatterNoStyle];
-        NSString *dateString = [longVersionDateFormatter stringFromDate:timestamp];
-        
-        [longVersionDateFormatter setDateStyle:NSDateFormatterNoStyle];
-        [longVersionDateFormatter setTimeStyle:NSDateFormatterShortStyle];
-        NSString *timeString = [longVersionDateFormatter stringFromDate:timestamp];
-        
-        timestampString = [NSString stringWithFormat:@"%@ ∙ %@", dateString, timeString];
-    } else if (message.deliveryState == ZMDeliveryStatePending) {
-        timestampString = NSLocalizedString(@"content.system.pending_message_timestamp", @"");
-    } else {
-        timestampString = NSLocalizedString(@"content.system.failedtosend_message_timestamp", @"");
-    }
+    return shortVersionDateFormatter;
+}
+
++ (NSDateFormatter *)longVersionTimeFormatter
+{
+    static NSDateFormatter *longVersionTimeFormatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        longVersionTimeFormatter = [[NSDateFormatter alloc] init];
+        [longVersionTimeFormatter setDateStyle:NSDateFormatterNoStyle];
+        [longVersionTimeFormatter setTimeStyle:NSDateFormatterShortStyle];
+    });
     
-    return timestampString;
+    return longVersionTimeFormatter;
 }
 
 + (BOOL)isPresentableAsNotification:(id<ZMConversationMessage>)message

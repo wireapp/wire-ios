@@ -28,26 +28,38 @@
 
 + (MockMessage *)textMessageIncludingRichMedia:(BOOL)shouldIncludeRichMedia;
 {
+    return [self textMessageWithText:@"Just a random text message" includingRichMedia:shouldIncludeRichMedia];
+}
+
++ (MockMessage *)textMessageWithText:(NSString *)text;
+{
+    return [self textMessageWithText:text includingRichMedia:NO];
+}
+
++ (MockMessage *)textMessageWithText:(NSString *)text includingRichMedia:(BOOL)shouldIncludeRichMedia;
+{
     MockMessage *message = [[MockMessage alloc] init];
-    
-    message.conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    MockConversation *conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    message.conversation = (ZMConversation *)conversation;
     message.serverTimestamp = [NSDate date];
     message.sender = (id)[MockUser mockSelfUser];
+    conversation.activeParticipants = [[NSOrderedSet alloc] initWithObjects:message.sender, nil];
     MockTextMessageData *textMessageData = [[MockTextMessageData alloc] init];
-    textMessageData.messageText = shouldIncludeRichMedia ? @"Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : @"Just a random text message";
+    textMessageData.messageText = shouldIncludeRichMedia ? @"Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text;
     message.backingTextMessageData = textMessageData;
     
     return message;
-
 }
 
 + (MockMessage *)pingMessage;
 {
     MockMessage *message = [[MockMessage alloc] init];
     
-    message.conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    MockConversation *conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    message.conversation = (ZMConversation *)conversation;
     message.serverTimestamp = [NSDate date];
     message.sender = (id)[MockUser mockSelfUser];
+    conversation.activeParticipants = [[NSOrderedSet alloc] initWithObjects:message.sender, nil];
     message.knockMessageData = [[MockKnockMessageData alloc] init];
     
     return message;
@@ -57,9 +69,11 @@
 {
     MockMessage *message = [[MockMessage alloc] init];
     
-    message.conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    MockConversation *conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    message.conversation = (ZMConversation *)conversation;
     message.serverTimestamp = [NSDate date];
     message.sender = (id)[MockUser mockSelfUser];
+    conversation.activeParticipants = [[NSOrderedSet alloc] initWithObjects:message.sender, nil];
     message.imageMessageData = [[MockImageMessageData alloc] init];
 
     return message;
@@ -71,10 +85,13 @@
 
     MockSystemMessageData *mockSystemMessageData = [[MockSystemMessageData alloc] initWithSystemMessageType:systemMessageType];
     
-    message.conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
-    message.serverTimestamp = [NSDate date];
+    MockConversation *conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    message.conversation = (ZMConversation *)conversation;
+    message.serverTimestamp = [NSDate dateWithTimeIntervalSince1970:12345678564];
 
     message.sender = (id)[MockUser mockSelfUser];
+    conversation.activeParticipants = [[NSOrderedSet alloc] initWithObjects:message.sender, nil];
+
     mockSystemMessageData.users = [[MockUser mockUsers] subarrayWithRange:NSMakeRange(0, numUsers)].set;
     
     NSMutableArray *userClients = [NSMutableArray array];
@@ -92,10 +109,14 @@
 + (MockMessage *)fileTransferMessage
 {
     MockMessage *message = [[MockMessage alloc] init];
-    message.conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    
+    MockConversation *conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    message.conversation = (ZMConversation *)conversation;
     message.serverTimestamp = [NSDate date];
     
     message.sender = (id)[MockUser mockSelfUser];
+    conversation.activeParticipants = [[NSOrderedSet alloc] initWithObjects:message.sender, nil];
+
     message.backingFileMessageData = [[MockFileMessageData alloc] init];
     return message;
 }
@@ -103,10 +124,14 @@
 + (MockMessage *)locationMessage
 {
     MockMessage *message = [[MockMessage alloc] init];
-    message.conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    
+    MockConversation *conversation = [MockLoader mockObjectsOfClass:[MockConversation class] fromFile:@"conversations-01.json"][0];
+    message.conversation = (ZMConversation *)conversation;
     message.serverTimestamp = [NSDate date];
     
     message.sender = (id)[MockUser mockSelfUser];
+    conversation.activeParticipants = [[NSOrderedSet alloc] initWithObjects:message.sender, nil];
+
     message.backingLocationMessageData = [[MockLocationMessageData alloc] init];
     return message;
 }

@@ -27,13 +27,17 @@ typedef NS_ENUM(NSUInteger, SelectionType) {
 
 typedef NS_ENUM(NSUInteger, MessageActionType) {
     MessageActionTypeCopy,
-    MessageActionTypeDelete
+    MessageActionTypeDelete,
+    MessageActionTypeEdit
 };
 
 typedef NS_ENUM(NSUInteger, MessageType) {
+    MessageTypeUnknown,
     MessageTypeText,
     MessageTypeImage,
     MessageTypeFile,
+    MessageTypeAudio,
+    MessageTypeVideo,
     MessageTypeRichMedia,
     MessageTypePing,
     MessageTypeSystem,
@@ -45,6 +49,25 @@ typedef NS_ENUM(NSUInteger, ConversationType) {
     ConversationTypeGroup
 };
 
+typedef NS_ENUM(NSUInteger, MessageDeletionType) {
+    MessageDeletionTypeLocal,
+    MessageDeletionTypeEverywhere
+};
+
+typedef NS_ENUM(NSUInteger, ReactionType) {
+    ReactionTypeUndefined,
+    ReactionTypeLike,
+    ReactionTypeUnlike
+};
+
+typedef NS_ENUM(NSUInteger, InteractionMethod) {
+    InteractionMethodUndefined,
+    InteractionMethodButton,
+    InteractionMethodMenu,
+    InteractionMethodDoubleTap
+};
+
+
 @interface Analytics (ConversationEvents)
 
 - (void)tagArchivedConversation;
@@ -53,7 +76,10 @@ typedef NS_ENUM(NSUInteger, ConversationType) {
 
 - (void)tagSelectedMessage:(SelectionType)type conversationType:(ConversationType)conversationType messageType:(MessageType)messageType;
 - (void)tagOpenedMessageAction:(MessageActionType)actionType;
-- (void)tagDeletedMessage;
+
+- (void)tagDeletedMessage:(MessageType)messageType messageDeletionType:(MessageDeletionType)messageDeletionType conversationType:(ConversationType)conversationType timeElapsed:(NSTimeInterval)timeElapsed;
+- (void)tagEditedMessageConversationType:(ConversationType)conversationType timeElapsed:(NSTimeInterval)timeElapsed;
+
 - (void)tagMessageCopy;
 
 @end

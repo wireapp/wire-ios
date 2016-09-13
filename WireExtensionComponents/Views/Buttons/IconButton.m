@@ -17,7 +17,7 @@
 // 
 
 
-#import <Classy/Classy.h>
+@import Classy;
 
 #import "IconButton.h"
 #import "UIImage+ZetaIconsNeue.h"
@@ -249,6 +249,18 @@
     }
     
     [self updateTintColor];
+}
+
+- (ZetaIconType)iconTypeForState:(UIControlState)state
+{
+    IconDefinition *definition = self.iconDefinitionsByState[@(state)];
+    
+    if (nil != definition) {
+        return definition.iconType;
+    }
+    else {
+        return ZetaIconTypeNone;
+    }
 }
 
 - (UIColor *)iconColorForState:(UIControlState)state

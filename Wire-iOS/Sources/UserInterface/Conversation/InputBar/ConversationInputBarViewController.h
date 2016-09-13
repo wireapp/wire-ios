@@ -20,30 +20,35 @@
 #import <UIKit/UIKit.h>
 
 @class InputBar;
+@class IconButton;
 @class ZMConversation;
 @class ConversationInputBarViewController;
 @class AnalyticsTracker;
 @class AudioRecordViewController;
+@protocol ZMConversationMessage;
 
 typedef NS_ENUM(NSUInteger, ConversationInputBarViewControllerMode) {
     ConversationInputBarViewControllerModeTextInput,
     ConversationInputBarViewControllerModeAudioRecord,
-    ConversationInputBarViewControllerModeCamera,
+    ConversationInputBarViewControllerModeCamera
 };
 
 
 @protocol ConversationInputBarViewControllerDelegate <NSObject>
 
 @optional
-- (BOOL)conversationInputBarViewControllerShouldBeginEditing:(ConversationInputBarViewController *)controller;
+- (BOOL)conversationInputBarViewControllerShouldBeginEditing:(ConversationInputBarViewController *)controller isEditingMessage:(BOOL)isEditing;
 - (BOOL)conversationInputBarViewControllerShouldEndEditing:(ConversationInputBarViewController *)controller;
 - (void)conversationInputBarViewControllerDidNotSendMessageConversationDegraded:(ConversationInputBarViewController *)controller;
+- (void)conversationInputBarViewControllerDidFinishEditingMessage:(id <ZMConversationMessage>)message withText:(NSString *)newText;
+- (void)conversationInputBarViewControllerDidCancelEditingMessage:(id <ZMConversationMessage>)message;
 
 @end
 
 
 @interface ConversationInputBarViewController : UIViewController <UIPopoverPresentationControllerDelegate>
 
+@property (nonatomic, readonly) IconButton *photoButton;
 @property (nonatomic, readonly) InputBar *inputBar;
 @property (nonatomic, readonly) ZMConversation *conversation;
 @property (nonatomic, weak) id <ConversationInputBarViewControllerDelegate> delegate;
@@ -52,5 +57,6 @@ typedef NS_ENUM(NSUInteger, ConversationInputBarViewControllerMode) {
 @property (nonatomic, readonly) UIViewController *inputController;
 
 - (instancetype)initWithConversation:(ZMConversation *)conversation;
+- (void)bounceCameraIcon;
 
 @end

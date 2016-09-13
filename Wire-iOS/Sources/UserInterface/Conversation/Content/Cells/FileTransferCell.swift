@@ -46,15 +46,16 @@ public class FileTransferCell: ConversationCell {
         self.topLabel.numberOfLines = 1
         self.topLabel.lineBreakMode = .ByTruncatingMiddle
         self.topLabel.accessibilityLabel = "FileTransferTopLabel"
+
         self.bottomLabel.numberOfLines = 1
         self.bottomLabel.accessibilityLabel = "FileTransferBottomLabel"
-        
+
         self.fileTypeIconView.accessibilityLabel = "FileTransferFileTypeIcon"
 
         self.actionButton.contentMode = .ScaleAspectFit
         self.actionButton.addTarget(self, action: #selector(FileTransferCell.onActionButtonPressed(_:)), forControlEvents: .TouchUpInside)
         self.actionButton.accessibilityLabel = "FileTransferActionButton"
-        
+
         self.progressView.accessibilityLabel = "FileTransferProgressView"
         self.progressView.userInteractionEnabled = false
         
@@ -69,6 +70,10 @@ public class FileTransferCell: ConversationCell {
         CASStyler.defaultStyler().styleItem(self)
         
         self.createConstraints()
+        
+        var currentElements = self.accessibilityElements ?? []
+        currentElements.appendContentsOf([topLabel, bottomLabel, fileTypeIconView, actionButton, likeButton, messageToolboxView])
+        self.accessibilityElements = currentElements
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -80,17 +85,17 @@ public class FileTransferCell: ConversationCell {
             containerView.left == authorLabel.left
             containerView.right == messageContentView.rightMargin
             containerView.top == messageContentView.top
-            containerView.bottom  == messageContentView.bottom
-            containerView.height == 56 ~ 100
+            containerView.bottom == messageContentView.bottom ~ 100
+            containerView.height == 56
             
             topLabel.top == containerView.top + 12
             topLabel.left == actionButton.right + 12
             topLabel.right == containerView.right - 12
         }
         
-        constrain(self.fileTypeIconView, self.actionButton) { fileTypeIconView, actionButton in
-            actionButton.centerY == actionButton.superview!.centerY
-            actionButton.left == actionButton.superview!.left + 12
+        constrain(self.fileTypeIconView, self.actionButton, self.containerView) { fileTypeIconView, actionButton, containerView in
+            actionButton.centerY == containerView.centerY
+            actionButton.left == containerView.left + 12
             actionButton.height == 32
             actionButton.width == 32
             
@@ -240,6 +245,16 @@ public class FileTransferCell: ConversationCell {
         self.actionButton.layer.cornerRadius = self.actionButton.bounds.size.width / 2.0
     }
     
+    // MARK: - Selection
+    
+    public override var selectionView: UIView! {
+        return containerView
+    }
+    
+    public override var selectionRect: CGRect {
+        return containerView.bounds
+    }
+
     // MARK: - Actions
     
     public func onActionButtonPressed(sender: UIButton) {
@@ -257,7 +272,10 @@ public class FileTransferCell: ConversationCell {
             self.delegate?.conversationCell?(self, didSelectAction: .Resend)
         case .FailedDownload:
             self.delegate?.conversationCell?(self, didSelectAction: .Present)
-        default:
+        case .Downloaded:
+            self.delegate?.conversationCell?(self, didSelectAction: .Present)
+        case .Uploaded:
+            self.delegate?.conversationCell?(self, didSelectAction: .Present)
             break
         }
     }
@@ -266,8 +284,8 @@ public class FileTransferCell: ConversationCell {
     
     override public func menuConfigurationProperties() -> MenuConfigurationProperties! {
         let properties = MenuConfigurationProperties()
-        properties.targetRect = self.messageContentView.bounds
-        properties.targetView = self.messageContentView
+        properties.targetRect = selectionRect
+        properties.targetView = selectionView
         properties.selectedMenuBlock = { [weak self] selected, animated in
             UIView.animateWithDuration(animated ? ConversationCellSelectionAnimationDuration : 0) {
                 self?.messageContentView.alpha = selected ? ConversationCellSelectedOpacity : 1.0

@@ -83,6 +83,9 @@ extension ZMConversationMessage {
         CASStyler.defaultStyler().styleItem(self)
         
         self.createConstraints()
+        var currentElements = self.accessibilityElements ?? []
+        currentElements.appendContentsOf([previewImageView, playButton, timeLabel, progressView, likeButton, messageToolboxView])
+        self.accessibilityElements = currentElements
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -220,6 +223,16 @@ extension ZMConversationMessage {
         }
     }
 
+    // MARK: - Selection
+    
+    public override var selectionView: UIView! {
+        return previewImageView
+    }
+    
+    public override var selectionRect: CGRect {
+        return previewImageView.bounds
+    }
+    
     // MARK: - Menu
     
     public func setSelectedByMenu(selected: Bool, animated: Bool) {
@@ -237,25 +250,20 @@ extension ZMConversationMessage {
     
     override public func menuConfigurationProperties() -> MenuConfigurationProperties! {
         let properties = MenuConfigurationProperties()
-        properties.targetRect = self.previewImageView.bounds
-        properties.targetView = self.previewImageView
+        properties.targetRect = selectionRect
+        properties.targetView = selectionView
         properties.selectedMenuBlock = setSelectedByMenu
-        
+
+        if message.videoCanBeSavedToCameraRoll() {
+            let menuItem = UIMenuItem(title:"content.file.save_video".localized, action:#selector(wr_saveVideo))
+            properties.additionalItems = [menuItem]
+        } else {
+            properties.additionalItems = []
+        }
+
         return properties
     }
-    
-    override public func showMenu() {
-        if self.message.videoCanBeSavedToCameraRoll() {
-            
-            let menuItem = UIMenuItem(title:"content.file.save_video".localized, action:#selector(wr_saveVideo))
-            UIMenuController.sharedMenuController().menuItems = [menuItem]
-        }
-        else {
-            UIMenuController.sharedMenuController().menuItems = nil
-        }
-        super.showMenu()
-    }
-    
+
     override public func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {
         if action == #selector(wr_saveVideo) {
             if self.message.videoCanBeSavedToCameraRoll() {
