@@ -27,3 +27,5 @@ DerivedData
 .DS_Store
 Carthage
 ZMUtilities.framework.zip
+tests.xml
+xcode-summary.log
