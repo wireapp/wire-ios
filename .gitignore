@@ -13,11 +13,11 @@ xcuserdata
 *.moved-aside
 .idea/
 Pods
-Podfile.lock
 contents.xcworkspacedata
 Carthage/
 *.xcuserstate
 *.xcscmblueprint
 Wire-iOS/ComponentsVersions.plist
 /Libraries
-/ConfigurationSets/Private
+/wire-ios-build-assets
+.bundle/

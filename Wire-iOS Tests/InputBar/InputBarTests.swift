@@ -30,6 +30,7 @@ class InputBarTests: ZMSnapshotTestCase {
     
     let shortText = "Lorem ipsum dolor"
     let longText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est"
+    let LTRText = "ناك حقيقة مثبتة منذ"
     
     let buttons = { () -> [UIButton] in
         let b1 = IconButton()
@@ -52,7 +53,7 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = ""
         inputBar.layer.speed = 0
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -63,7 +64,7 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = shortText
         inputBar.layer.speed = 0
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -74,7 +75,20 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = longText
         inputBar.layer.speed = 0
+        inputBar.updateFakeCursorVisibility()
+        CASStyler.defaultStyler().styleItem(inputBar)
         
+        verifyInAllPhoneWidths(view: inputBar)
+        verifyInAllTabletWidths(view: inputBar)
+    }
+    
+    func testRTLText() {
+        let inputBar = InputBar(buttons: buttons())
+        inputBar.translatesAutoresizingMaskIntoConstraints = false
+        inputBar.textView.text = LTRText
+        inputBar.textView.textAlignment = .Right
+        inputBar.layer.speed = 0
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -93,7 +107,7 @@ class InputBarTests: ZMSnapshotTestCase {
         let inputBar = InputBar(buttons: buttonsWithText)
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.layer.speed = 0
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
@@ -104,11 +118,32 @@ class InputBarTests: ZMSnapshotTestCase {
         inputBar.translatesAutoresizingMaskIntoConstraints = false
         inputBar.textView.text = ""
         inputBar.layer.speed = 0
-        
-        
+        inputBar.updateFakeCursorVisibility()
         CASStyler.defaultStyler().styleItem(inputBar)
         
         verifyInAllPhoneWidths(view: inputBar)
     }
+
+    // Disabled until we figure out the `[MockUser conversationType]` crash after resetting the simulator / on CI
+    func disabled_testThatItRendersCorrectlyInEditState() {
+        let sut = InputBar(buttons: buttons())
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.layer.speed = 0
+        sut.updateInputBar(withState: .Editing(originalText: "This text is being edited"), animated: false)
+        sut.updateFakeCursorVisibility()
+        CASStyler.defaultStyler().styleItem(sut)
+        verifyInAllPhoneWidths(view: sut)
+    }
     
+    func disabled_testThatItRendersCorrectlyInEditState_LongText() {
+        let sut = InputBar(buttons: buttons())
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.layer.speed = 0
+        sut.updateInputBar(withState: .Editing(originalText: longText), animated: false)
+
+        sut.updateFakeCursorVisibility()
+        CASStyler.defaultStyler().styleItem(sut)
+        verifyInAllPhoneWidths(view: sut)
+    }
+
 }

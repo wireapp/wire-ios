@@ -21,20 +21,18 @@
 #import "Message.h"
 #import "Message+Formatting.h"
 #import "ConversationCell.h"
+#import "Wire-Swift.h"
 
 @implementation ZMConversationMessageWindow (Formatting)
 
 - (ConversationCellLayoutProperties *)layoutPropertiesForMessage:(id<ZMConversationMessage>)message lastUnreadMessage:(ZMMessage *)lastUnreadMessage
 {
     ConversationCellLayoutProperties *layoutProperties = [[ConversationCellLayoutProperties alloc] init];
-    
-    if (! [Message isSystemMessage:message]) {
-        layoutProperties.showSender = ! [self isPreviousSenderSameForMessage:message];
-    }
-    
+    layoutProperties.showSender       = [self shouldShowSenderForMessage:message];
     layoutProperties.showUnreadMarker = lastUnreadMessage != nil && [message isEqual:lastUnreadMessage];
     layoutProperties.showBurstTimestamp = [self shouldShowBurstSeparatorForMessage:message] || layoutProperties.showUnreadMarker;
-    layoutProperties.topPadding = [self topPaddingForMessage:message showingSender:layoutProperties.showSender showingTimestamp:layoutProperties.showBurstTimestamp];
+    layoutProperties.topPadding       = [self topPaddingForMessage:message showingSender:layoutProperties.showSender showingTimestamp:layoutProperties.showBurstTimestamp];
+    layoutProperties.alwaysShowDeliveryState = [self shouldShowAlwaysDeliveryStateForMessage:message];
     
     if ([Message isTextMessage:message]) {
         layoutProperties.linkAttachments = [Message linkAttachments:message.textMessageData];
@@ -68,6 +66,34 @@
     return NO;
 }
 
+- (BOOL)shouldShowAlwaysDeliveryStateForMessage:(id<ZMConversationMessage>)message
+{
+    // Code disabled until the majority would send the delivery receipts
+//    // Loop back and check if this was last message sent by us
+//    if (message.sender.isSelfUser && message.conversation.conversationType == ZMConversationTypeOneOnOne) {
+//        if ([message.conversation lastMessageSentByUser:[ZMUser selfUser] limit:10] == message) {
+//            return YES;
+//        }
+//    }
+//    
+    return NO;
+}
+
+- (BOOL)shouldShowSenderForMessage:(id<ZMConversationMessage>)message
+{
+    BOOL systemMessage = [Message isSystemMessage:message];
+    if (systemMessage && [(ZMSystemMessage *)message systemMessageType] == ZMSystemMessageTypeMessageDeletedForEveryone) {
+        // Message Deleted system messages always show the sender image
+        return YES;
+    }
+    
+    if (!systemMessage) {
+        return ![self isPreviousSenderSameForMessage:message] || message.updatedAt != nil;
+    }
+    
+    return NO;
+}
+
 - (BOOL)shouldShowBurstSeparatorForMessage:(id<ZMConversationMessage>)message
 {
     if ([Message isSystemMessage:message]) {
@@ -77,7 +103,8 @@
                 systemMessage.systemMessageType != ZMSystemMessageTypeConversationIsSecure &&
                 systemMessage.systemMessageType != ZMSystemMessageTypeReactivatedDevice &&
                 systemMessage.systemMessageType != ZMSystemMessageTypeNewConversation &&
-                systemMessage.systemMessageType != ZMSystemMessageTypeUsingNewDevice;
+                systemMessage.systemMessageType != ZMSystemMessageTypeUsingNewDevice &&
+                systemMessage.systemMessageType != ZMSystemMessageTypeMessageDeletedForEveryone;
     }
     
     if ([Message isKnockMessage:message]) {

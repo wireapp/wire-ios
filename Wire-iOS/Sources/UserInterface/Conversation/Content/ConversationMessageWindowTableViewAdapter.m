@@ -53,6 +53,7 @@ static NSString *const ConversationVideoMessageCellId       = @"conversationVide
 static NSString *const ConversationAudioMessageCellId       = @"conversationAudioMessageCellId";
 static NSString *const ConversationParticipantsCellId       = @"conversationParticipantsCellId";
 static NSString *const ConversationLocationMessageCellId    = @"conversationLocationMessageCellId";
+static NSString *const ConversationMessageDeletedCellId     = @"conversationMessageDeletedCellId";
 
 
 
@@ -121,7 +122,7 @@ static NSString *const ConversationLocationMessageCellId    = @"conversationLoca
         [self.tableView beginUpdates];
         
         if (change.deletedIndexes.count) {
-            [self.tableView deleteRowsAtIndexPaths:[change.deletedIndexes indexPaths] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [self.tableView deleteRowsAtIndexPaths:[change.deletedIndexes indexPaths] withRowAnimation:UITableViewRowAnimationFade];
         }
         
         if (change.insertedIndexes.count) {
@@ -134,23 +135,38 @@ static NSString *const ConversationLocationMessageCellId    = @"conversationLoca
             [self.tableView moveRowAtIndexPath:from toIndexPath:to];
         }];
         
-        // Unless a message was appended to the bottom of the conversation we need re-configure the cells
-        // since they might (not) need to display an name & avatar after the insertion/deletion/move.
-        BOOL messageWasInsertedAtBottom = change.insertedIndexes.count == 1 && change.insertedIndexes.firstIndex == 0;
-        if (! messageWasInsertedAtBottom || change.deletedIndexes.count > 0 || change.movedIndexPairs.count > 0) {
-            [self reconfigureVisibleCells];
+        if (change.insertedIndexes.count > 0 || change.deletedIndexes.count > 0 || change.movedIndexPairs.count > 0) {
+            // deleted index paths need to be passed in because this method is called before `endUpdates`, when
+            // the cells have not yet been removed from the view but the messages they refer to can not be
+            // materialized anymore
+            [self reconfigureVisibleCellsWithDeletedIndexPaths:[NSSet setWithArray:[change.deletedIndexes indexPaths]]];
         }
         
         [self.tableView endUpdates];
     }
 }
 
-- (void)reconfigureVisibleCells
+- (void)setEditingMessage:(ZMMessage *)editingMessage
+{
+    _editingMessage = editingMessage;
+    [self reconfigureVisibleCellsWithDeletedIndexPaths:nil];
+}
+
+- (void)reconfigureVisibleCellsWithDeletedIndexPaths:(NSSet<NSIndexPath *>*)deletedIndexPaths
 {
     for (ConversationCell *cell in self.tableView.visibleCells) {
         
         if (! [cell isKindOfClass:ConversationCell.class]) {
             continue;
+        }
+        
+        // ignore deleted cells, or it will configure them, which might be
+        // unsafe if the original message was deleted
+        if (deletedIndexPaths != nil) {
+            NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+            if ([deletedIndexPaths containsObject:indexPath]) {
+                continue;
+            }
         }
         
         [self configureConversationCell:cell withMessage:cell.message];
@@ -265,7 +281,11 @@ static NSString *const ConversationLocationMessageCellId    = @"conversationLoca
             case ZMSystemMessageTypeParticipantsRemoved:
             case ZMSystemMessageTypeNewConversation:
                 cellIdentifier = ConversationParticipantsCellId;
+                break;
                 
+            case ZMSystemMessageTypeMessageDeletedForEveryone:
+                cellIdentifier = ConversationMessageDeletedCellId;
+
             default:
                 break;
         }
@@ -294,6 +314,7 @@ static NSString *const ConversationLocationMessageCellId    = @"conversationLoca
     ConversationCellLayoutProperties *layoutProperties = [self.messageWindow layoutPropertiesForMessage:message lastUnreadMessage:self.lastUnreadMessage];
     
     conversationCell.selected = [message isEqual:self.selectedMessage];
+    conversationCell.beingEdited = [message isEqual:self.editingMessage];
     [conversationCell configureForMessage:message layoutProperties:layoutProperties];
 }
 
@@ -315,6 +336,7 @@ static NSString *const ConversationLocationMessageCellId    = @"conversationLoca
     [self.tableView registerClass:[AudioMessageCell class] forCellReuseIdentifier:ConversationAudioMessageCellId];
     [self.tableView registerClass:[ConversationParticipantsCell class] forCellReuseIdentifier:ConversationParticipantsCellId];
     [self.tableView registerClass:[LocationMessageCell class] forCellReuseIdentifier:ConversationLocationMessageCellId];
+    [self.tableView registerClass:[MessageDeletedCell class] forCellReuseIdentifier:ConversationMessageDeletedCellId];
 
     // unknown message types
     [self.tableView registerClass:[EmptyCell class] forCellReuseIdentifier:ConversationUnknownCellId];

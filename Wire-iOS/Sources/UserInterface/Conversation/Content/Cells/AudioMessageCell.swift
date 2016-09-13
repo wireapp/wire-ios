@@ -46,12 +46,12 @@ import CocoaLumberjackSwift
         self.containerView.translatesAutoresizingMaskIntoConstraints = false
         self.containerView.layer.cornerRadius = 4
         self.containerView.cas_styleClass = "container-view"
-        
+
         self.playButton.translatesAutoresizingMaskIntoConstraints = false
         self.playButton.addTarget(self, action: #selector(AudioMessageCell.onActionButtonPressed(_:)), forControlEvents: .TouchUpInside)
         self.playButton.accessibilityLabel = "AudioActionButton"
         self.playButton.layer.masksToBounds = true
-        
+
         self.downloadProgressView.translatesAutoresizingMaskIntoConstraints = false
         self.downloadProgressView.userInteractionEnabled = false
         self.downloadProgressView.accessibilityLabel = "AudioProgressView"
@@ -60,7 +60,7 @@ import CocoaLumberjackSwift
         self.timeLabel.numberOfLines = 1
         self.timeLabel.textAlignment = .Center
         self.timeLabel.accessibilityLabel = "AudioTimeLabel"
-        
+
         self.playerProgressView.setDeterministic(true, animated: false)
         self.playerProgressView.accessibilityLabel = "PlayerProgressView"
         
@@ -76,6 +76,10 @@ import CocoaLumberjackSwift
         self.timeLabel.font = self.timeLabel.font.monospacedFont()
 
         self.createConstraints()
+        
+        var currentElements = self.accessibilityElements ?? []
+        currentElements.appendContentsOf([playButton, timeLabel, likeButton, messageToolboxView])
+        self.accessibilityElements = currentElements
         
         let audioTrackPlayer = self.audioTrackPlayer()
         
@@ -426,24 +430,27 @@ import CocoaLumberjackSwift
         }
     }
     
-    override public func menuConfigurationProperties() -> MenuConfigurationProperties! {
-        let properties = MenuConfigurationProperties()
-        properties.targetRect = self.containerView.bounds
-        properties.targetView = self.containerView
-        properties.selectedMenuBlock = setSelectedByMenu
-        
-        return properties
+    public override var selectionRect: CGRect {
+        return containerView.bounds
     }
     
-    override public func showMenu() {
-        if self.message.audioCanBeSaved() {
+    public override var selectionView: UIView! {
+        return containerView
+    }
+    
+    override public func menuConfigurationProperties() -> MenuConfigurationProperties! {
+        let properties = MenuConfigurationProperties()
+        properties.targetRect = selectionRect
+        properties.targetView = selectionView
+        properties.selectedMenuBlock = setSelectedByMenu
+        if message.audioCanBeSaved() {
             let menuItem = UIMenuItem(title:"content.file.save_audio".localized, action:#selector(wr_saveAudio))
-            UIMenuController.sharedMenuController().menuItems = [menuItem]
+            properties.additionalItems = [menuItem]
+        } else {
+            properties.additionalItems = []
         }
-        else {
-            UIMenuController.sharedMenuController().menuItems = nil
-        }
-        super.showMenu()
+        
+        return properties
     }
     
     override public func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {

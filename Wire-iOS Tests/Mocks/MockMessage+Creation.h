@@ -23,6 +23,7 @@
 
 @interface MockMessageFactory: NSObject
 + (MockMessage *)textMessageIncludingRichMedia:(BOOL)shouldIncludeRichMedia;
++ (MockMessage *)textMessageWithText:(NSString *)text;
 + (MockMessage *)pingMessage;
 + (MockMessage *)imageMessage;
 + (MockMessage *)systemMessageWithType:(ZMSystemMessageType)systemMessageType

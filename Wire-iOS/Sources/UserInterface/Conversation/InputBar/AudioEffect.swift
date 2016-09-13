@@ -108,6 +108,8 @@ extension AVSAudioEffectType: CustomStringConvertible {
                 return "VocoderMed"
             case .None:
                 return "None"
+            default:
+                return "Unknown"
             }
         }
     }
