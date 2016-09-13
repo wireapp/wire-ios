@@ -336,7 +336,14 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
             user.needsToBeUpdatedFromBackend = YES;
             ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];
             connection.message = text;
-            self.user = user;
+            
+            [self.syncMOC saveOrRollback];
+            
+            [self.uiMOC performGroupedBlockAndWait:^{
+                NSError *uiObjectError = nil;
+                self.user = [self.uiMOC existingObjectWithID:user.objectID error:&uiObjectError];
+                Require(uiObjectError == nil);
+            }];
             
             // Do a delayed save and run the handler on the main queue, once it's done:
             ZMSDispatchGroup * g = [ZMSDispatchGroup groupWithLabel:@"ZMSearchUser"];

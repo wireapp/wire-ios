@@ -27,7 +27,7 @@
 
 @implementation ZMConversationTests (OTR)
 
-- (NSArray<ZMUser *> *)createUsersWithClients
+- (NSArray<ZMUser *> *)createUsersWithClientsOnSyncMOC
 {
     self.selfUser = [ZMUser selfUserInContext:self.syncMOC];
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -49,7 +49,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray *users = [self createUsersWithClients];
+        NSArray *users = [self createUsersWithClientsOnSyncMOC];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         
         // then
@@ -59,31 +59,36 @@
 
 - (void)testThatItIncreasesSecurityLevelIfAllClientsInConversationAreTrusted
 {
+    __block NSManagedObjectID *conversationObjectID = nil;
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClients];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
         // when
         [selfClient trustClients:[NSSet setWithObjects:[[users.firstObject clients] anyObject], [[users.lastObject clients] anyObject], nil]];
-        
-        // then
-        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
+
+        [self.syncMOC saveOrRollback];
+        conversationObjectID = conversation.objectID;
     }];
+    
+    ZMConversation *uiConversation = [self.uiMOC existingObjectWithID:conversationObjectID error:nil];
+    // then
+    XCTAssertEqual(uiConversation.securityLevel, ZMConversationSecurityLevelSecure);
 }
 
 - (void)testThatItDoesNotIncreaseTheSecurityLevelIfAConversationContainsUsersWithoutAConnection
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClients];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
         
         ZMUser *unconnectedUser = users.firstObject, *connectedUser = users.lastObject;
         unconnectedUser.connection.status = ZMConnectionStatusSent;
         
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
         // when
         [selfClient trustClients:connectedUser.clients];
@@ -124,9 +129,9 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClients];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
         // when
         [selfClient trustClients:[NSSet setWithObjects:[[users.firstObject clients] anyObject], nil]];
@@ -141,9 +146,9 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMUser *userWithoutClients = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        NSArray<ZMUser *> *users = [[self createUsersWithClients] arrayByAddingObject:userWithoutClients];
+        NSArray<ZMUser *> *users = [[self createUsersWithClientsOnSyncMOC] arrayByAddingObject:userWithoutClients];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
         NSMutableSet *allClients = [NSMutableSet set];
         for(ZMUser *user in users) {
@@ -164,9 +169,9 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClients];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
         // when
         [selfClient trustClients:[NSSet setWithObjects:[[users.firstObject clients] anyObject], [[users.lastObject clients] anyObject], nil]];
@@ -181,9 +186,9 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClients];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
         // when
         [selfClient trustClients:[NSSet setWithObjects:[[users.firstObject clients] anyObject], [[users.lastObject clients] anyObject], nil]];
@@ -230,20 +235,25 @@
         return YES;
     }];
     
+    __block NSManagedObjectID *conversationObjectID = nil;
+    
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClients];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
         // when
         XCTAssertNotEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
         [selfClient trustClients:[NSSet setWithObjects:[[users.firstObject clients] anyObject], [[users.lastObject clients] anyObject], nil]];
         
-        // then
-        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
+        conversationObjectID = conversation.objectID;
+        [self.syncMOC saveOrRollback];
     }];
 
+    // then
+    ZMConversation *uiConversation = [self.uiMOC existingObjectWithID:conversationObjectID error:nil];
+    XCTAssertEqual(uiConversation.securityLevel, ZMConversationSecurityLevelSecure);
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
@@ -252,14 +262,14 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray <ZMUser *> *users = [self createUsersWithClients];
+        NSArray <ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
         NSSet *clients = [users.firstObject.clients setByAddingObjectsFromSet:users.lastObject.clients];
-        UserClient *selfClient = [self createSelfClient];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         [selfClient trustClients:clients];
         
         // when
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        
+        [self.syncMOC saveOrRollback];
         // then
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
         XCTAssertEqual(conversation.messages.count, 2lu);
@@ -277,8 +287,8 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray <ZMUser *> *users = [self createUsersWithClients];
-        UserClient *selfClient = [self createSelfClient];
+        NSArray <ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         [selfClient trustClients:users.firstObject.clients];
         
         // when

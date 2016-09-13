@@ -174,7 +174,12 @@
 {
     // given
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorStrongLimeGreen remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                      accentColor:ZMAccentColorStrongLimeGreen
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     OCMockObject *userSession = [OCMockObject niceMockForProtocol:@protocol(ZMManagedObjectContextProvider)];
@@ -194,11 +199,15 @@
         XCTAssertNotNil(user);
         XCTAssertEqualObjects(user.name, @"Hans");
         XCTAssertEqual(user.accentColorValue, ZMAccentColorStrongLimeGreen);
-        XCTAssertEqualObjects(user.remoteIdentifier, searchUser.remoteIdentifier);
+        __block NSUUID *searchContextRemoteID = nil;
+        [self.syncMOC performGroupedBlockAndWait:^{
+            searchContextRemoteID = searchUser.remoteIdentifier;
+            XCTAssertTrue(searchUser.isPendingApprovalByOtherUser);
+        }];
+        XCTAssertEqualObjects(user.remoteIdentifier, searchContextRemoteID);
         XCTAssertNotNil(connection.conversation);
         XCTAssertEqual(connection.status, ZMConnectionStatusSent);
         XCTAssertEqualObjects(connection.message, @"Hey!");
-        XCTAssertTrue(searchUser.isPendingApprovalByOtherUser);
     }];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
@@ -207,7 +216,13 @@
 {
     // given
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorStrongLimeGreen remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                      accentColor:ZMAccentColorStrongLimeGreen
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
+    
     searchUser.remoteIdentifier = [NSUUID createUUID];
     XCTAssertFalse(searchUser.isPendingApprovalByOtherUser);
     
@@ -249,9 +264,11 @@
     
     // then
     XCTAssertFalse(self.uiMOC.hasChanges);
-    XCTAssertFalse(self.syncMOC.hasChanges);
     XCTAssertEqual([self.uiMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 0u);
-    XCTAssertEqual([self.syncMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 0u);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        XCTAssertFalse(self.syncMOC.hasChanges);
+        XCTAssertEqual([self.syncMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 0u);
+    }];
 }
 
 
@@ -333,9 +350,11 @@
     
     // then
     XCTAssertFalse(self.uiMOC.hasChanges);
-    XCTAssertFalse(self.syncMOC.hasChanges);
     XCTAssertEqual([self.uiMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 1u);
-    XCTAssertEqual([self.syncMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 1u);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        XCTAssertFalse(self.syncMOC.hasChanges);
+        XCTAssertEqual([self.syncMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 1u);
+    }];
     XCTAssertEqual(user.connection.status, ZMConnectionStatusSent);
 }
 
@@ -416,9 +435,11 @@
     
     // then
     XCTAssertFalse(self.uiMOC.hasChanges);
-    XCTAssertFalse(self.syncMOC.hasChanges);
     XCTAssertEqual([self.uiMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 1u);
-    XCTAssertEqual([self.syncMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 1u);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        XCTAssertFalse(self.syncMOC.hasChanges);
+        XCTAssertEqual([self.syncMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 1u);
+    }];
 }
 
 @end

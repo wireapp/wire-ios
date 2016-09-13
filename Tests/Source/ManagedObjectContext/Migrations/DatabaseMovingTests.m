@@ -246,7 +246,7 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnreadableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+        XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
     NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
@@ -268,7 +268,7 @@
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnreadableLocalStore]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
+        XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreInDirectory:self.sharedContainerDirectoryURL]);
     }];
     
     NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
