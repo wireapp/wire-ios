@@ -29,6 +29,7 @@
 #import "ZMTransportSession.h"
 #import "Collections+ZMTSafeTypes.h"
 #import "ZMTLogging.h"
+#import <ZMTransport/ZMTransport-Swift.h>
 
 
 static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;

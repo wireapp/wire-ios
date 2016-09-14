@@ -21,30 +21,6 @@
 
 @class ZMEventID;
 
-/// This extension allow to fetch for values that are expected to be of a specific type and
-/// will return nil in case the key is not present or the value is not of the expected type
-///
-/// The @c optional version will not log an error if the key doesn't exist.
-@interface NSDictionary (ZMSafeTypes)
-
-- (NSString *)stringForKey:(NSString *)key;
-- (NSString *)optionalStringForKey:(NSString *)key;
-- (NSNumber *)numberForKey:(NSString *)key;
-- (NSNumber *)optionalNumberForKey:(NSString *)key;
-- (NSArray *)arrayForKey:(NSString *)key;
-- (NSArray *)optionalArrayForKey:(NSString *)key;
-- (NSData *)dataForKey:(NSString *)key;
-- (NSDictionary *)dictionaryForKey:(NSString *)key;
-- (NSDictionary *)optionalDictionaryForKey:(NSString *)key;
-- (NSUUID *)uuidForKey:(NSString *)key;
-- (NSDate *)dateForKey:(NSString *)key;
-- (NSUUID *)optionalUuidForKey:(NSString *)key;
-- (ZMEventID *)eventForKey:(NSString *)key;
-- (ZMEventID *)optionalEventForKey:(NSString *)key;
-
-@end
-
-
 
 @interface NSArray (ZMSafeTypes)
 
