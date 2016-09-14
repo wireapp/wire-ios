@@ -66,8 +66,14 @@ static NSString *const ValidEmail = @"foo77@example.com";
     self.validPhoneNumbers = @[@"+491621312533", @"+4901756698655", @"+49 152 22824948", @"+49 157 71898972", @"+49 176 35791100", @"+49 1721496444", @"+79263387698", @"+79160546401", @"+7(927)674-59-42", @"+71231234567", @"+491234567890123456", @"+49123456789012345678901", @"+49123456"];
     self.shortPhoneNumbers = @[@"+", @"4", @"+4", @"+49", @"+491", @"+4912", @"+49123", @"+491234", @"+491235"];
     self.longPhoneNumbers = @[@"+491234567890123456789015", @"+4912345678901234567890156"];
-    self.syncMOC.zm_userImageCache = [[UserImageLocalCache alloc] init];
-    self.uiMOC.zm_userImageCache = self.syncMOC.zm_userImageCache;
+    
+    UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] init];
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        self.syncMOC.zm_userImageCache = userImageCache;
+    }];
+    
+    self.uiMOC.zm_userImageCache = userImageCache;
 }
 
 - (void)testThatItHasLocallyModifiedDataFields
@@ -368,10 +374,12 @@ static NSString *const ValidEmail = @"foo77@example.com";
     user.imageMediumData = imageData;
     XCTAssertEqual(user.imageMediumData, imageData);
     
-    [self.syncMOC saveOrRollback];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC saveOrRollback];
+    }];
     
     //when
-    NSData* extractedData = [self.syncMOC.zm_userImageCache largeUserImage:user];
+    NSData* extractedData = [self.uiMOC.zm_userImageCache largeUserImage:user];
     
     //then
     XCTAssertEqualObjects(imageData, extractedData);
@@ -387,10 +395,12 @@ static NSString *const ValidEmail = @"foo77@example.com";
     user.imageSmallProfileData = imageData;
     XCTAssertEqual(user.imageSmallProfileData, imageData);
     
-    [self.syncMOC saveOrRollback];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC saveOrRollback];
+    }];
     
     //when
-    NSData* extractedData = [self.syncMOC.zm_userImageCache smallUserImage:user];
+    NSData* extractedData = [self.uiMOC.zm_userImageCache smallUserImage:user];
     
     //then
     XCTAssertEqualObjects(imageData, extractedData);
@@ -406,10 +416,12 @@ static NSString *const ValidEmail = @"foo77@example.com";
     user.imageMediumData = imageData;
     XCTAssertEqual(user.imageMediumData, imageData);
     
-    [self.syncMOC saveOrRollback];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC saveOrRollback];
+    }];
     
     //when
-    NSData* extractedData = [self.syncMOC.zm_userImageCache largeUserImage:user];
+    NSData* extractedData = [self.uiMOC.zm_userImageCache largeUserImage:user];
     
     //then
     XCTAssertNil(extractedData);
@@ -693,16 +705,22 @@ static NSString *const ValidEmail = @"foo77@example.com";
     WaitForAllGroupsToBeEmpty(0.5);
 
     [self checkSelfUserIsCreatedCorrectlyInContext:self.uiMOC];
-    [self checkSelfUserIsCreatedCorrectlyInContext:self.syncMOC];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkSelfUserIsCreatedCorrectlyInContext:self.syncMOC];
+    }];
     
     //when
     // request again
     ZMUser *uiUser = [ZMUser selfUserInContext:self.uiMOC];
-    ZMUser *syncUser = [ZMUser selfUserInContext:self.syncMOC];
+    __block NSManagedObjectID *syncUserObjectID = nil;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMUser *syncUser = [ZMUser selfUserInContext:self.syncMOC];
+        syncUserObjectID = syncUser.objectID;
+    }];
     
     //then
     //Check that the same object is returned
-    XCTAssertEqualObjects(uiUser.objectID, syncUser.objectID);
+    XCTAssertEqualObjects(uiUser.objectID, syncUserObjectID);
 }
 
 - (void)checkSelfUserIsCreatedCorrectlyInContext:(NSManagedObjectContext *)moc
@@ -950,32 +968,34 @@ static NSString *const ValidEmail = @"foo77@example.com";
 
 - (void)testThatClientsRequiringUserAttentionContainsUntrustedClientsWithNeedsToNotifyFlagSet
 {
-    // given
-    ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
-    UserClient *selfClient = [self createSelfClient];
-    
-    UserClient *trustedClient1 = [self createClientForUser:user createSessionWithSelfUser:NO];
-    [selfClient trustClient:trustedClient1];
-    trustedClient1.needsToNotifyUser = YES;
-    
-    UserClient *trustedClient2 = [self createClientForUser:user createSessionWithSelfUser:NO];
-    [selfClient trustClient:trustedClient2];
-    trustedClient2.needsToNotifyUser = NO;
-    
-    UserClient *ignoredClient1 = [self createClientForUser:user createSessionWithSelfUser:NO];
-    [selfClient ignoreClient:ignoredClient1];
-    ignoredClient1.needsToNotifyUser = YES;
-    
-    UserClient *ignoredClient2 = [self createClientForUser:user createSessionWithSelfUser:NO];
-    [selfClient ignoreClient:ignoredClient2];
-    ignoredClient2.needsToNotifyUser = NO;
-    
-    // when
-    NSSet<UserClient *> *result = user.clientsRequiringUserAttention;
-    
-    // then
-    NSSet<UserClient *> *expected = [NSSet setWithObjects:ignoredClient1, nil];
-    XCTAssertEqualObjects(result, expected);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
+        
+        UserClient *trustedClient1 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        [selfClient trustClient:trustedClient1];
+        trustedClient1.needsToNotifyUser = YES;
+        
+        UserClient *trustedClient2 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        [selfClient trustClient:trustedClient2];
+        trustedClient2.needsToNotifyUser = NO;
+        
+        UserClient *ignoredClient1 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        [selfClient ignoreClient:ignoredClient1];
+        ignoredClient1.needsToNotifyUser = YES;
+        
+        UserClient *ignoredClient2 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        [selfClient ignoreClient:ignoredClient2];
+        ignoredClient2.needsToNotifyUser = NO;
+        
+        // when
+        NSSet<UserClient *> *result = user.clientsRequiringUserAttention;
+        
+        // then
+        NSSet<UserClient *> *expected = [NSSet setWithObjects:ignoredClient1, nil];
+        XCTAssertEqualObjects(result, expected);
+    }];
 }
 
 @end

@@ -133,12 +133,16 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     }];
     
     [refUiMOC.globalManagedObjectContextObserver tearDown];
-    [refSyncMoc.globalManagedObjectContextObserver tearDown];
+    [refSyncMoc performGroupedBlockAndWait:^{
+        [refSyncMoc.globalManagedObjectContextObserver tearDown];
+    }];
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore
 {
-    [self.syncMOC.globalManagedObjectContextObserver tearDown];
+    [self.syncMOC performGroupedBlockAndWait:^ {        
+        [self.syncMOC.globalManagedObjectContextObserver tearDown];
+    }];
     [self.uiMOC.globalManagedObjectContextObserver tearDown];
     
     NSString *clientID = [self.uiMOC persistentStoreMetadataForKey:ZMPersistedClientIdKey];
@@ -161,16 +165,18 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreDirectory:self.databaseDirectory];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.testName;
+        [self.syncMOC addGroup:self.dispatchGroup];
+        [self.syncMOC saveOrRollback];
     }];
-    [self.syncMOC addGroup:self.dispatchGroup];
-    [self.syncMOC saveOrRollback];
     [self.dispatchGroup waitWithTimeout:2];
     
     [self.uiMOC setPersistentStoreMetadata:clientID forKey:ZMPersistedClientIdKey];
     [self.uiMOC saveOrRollback];
     [self.dispatchGroup waitWithTimeout:2];
     
-    [self.syncMOC setZm_userInterfaceContext:self.uiMOC];
+    [self.syncMOC performGroupedBlockAndWait:^{        
+        [self.syncMOC setZm_userInterfaceContext:self.uiMOC];
+    }];
     [self.uiMOC setZm_syncContext:self.syncMOC];
 }
 
@@ -184,24 +190,26 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (void)setUpCaches
 {
     self.uiMOC.zm_imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:5];
-    self.syncMOC.zm_imageAssetCache = self.uiMOC.zm_imageAssetCache;
-    
     self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] init];
-    self.syncMOC.zm_userImageCache = self.uiMOC.zm_userImageCache;
-    
     self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] init];
-    self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;
+
+    [self.syncMOC performGroupedBlockAndWait:^{
+        self.syncMOC.zm_imageAssetCache = self.uiMOC.zm_imageAssetCache;
+        self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;
+        self.syncMOC.zm_userImageCache = self.uiMOC.zm_userImageCache;
+    }];
 }
 
 - (void)wipeCaches
 {
     [FileAssetCache wipeCaches];
-    
-    [self.uiMOC.zm_imageAssetCache wipeCache];
-    [self.syncMOC.zm_imageAssetCache wipeCache];
-    
     [self.uiMOC.zm_userImageCache wipeCache];
-    [self.syncMOC.zm_userImageCache wipeCache];
+    [self.uiMOC.zm_imageAssetCache wipeCache];
+
+    [self.syncMOC performGroupedBlockAndWait:^{        
+        [self.syncMOC.zm_imageAssetCache wipeCache];
+        [self.syncMOC.zm_userImageCache wipeCache];
+    }];
 }
 
 @end

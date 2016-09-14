@@ -81,14 +81,14 @@ static BOOL storeIsReady = NO;
 
 + (BOOL)needsToPrepareLocalStoreInDirectory:(NSURL *)databaseDirectory;
 {
-    
     [self setDatabaseDirectoryURL:databaseDirectory];
 
     NSManagedObjectModel *mom = self.loadManagedObjectModel;
     NSDictionary *sharedContainerMetadata = [self metadataForStoreAtURL:self.storeURL];
-    BOOL needsMigration = ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
+    BOOL needsMigration = sharedContainerMetadata != nil && ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
 
-    BOOL needsToMoveDatabase = self.databaseExistsInCachesDirectory || self.databaseExistsInApplicationSupportDirectory;
+    BOOL databaseShouldBeInApplicationSupport = [self.applicationSupportDirectoryStoreURL.absoluteString hasPrefix:databaseDirectory.absoluteString];
+    BOOL needsToMoveDatabase = self.databaseExistsInCachesDirectory || (!databaseShouldBeInApplicationSupport && self.databaseExistsInApplicationSupportDirectory);
     return needsMigration || needsToMoveDatabase || self.databaseExistsAndNotReadableDueToEncryption;
 }
 
@@ -187,7 +187,6 @@ static BOOL storeIsReady = NO;
             [result configureWithPersistentStoreCoordinator:psc];
             result.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSRollbackMergePolicyType];
             SharedUserInterfaceContext = result;
-            [result continuouslyCheckForUnsavedChanges];
             (void)result.globalManagedObjectContextObserver;
         }
     });
@@ -196,7 +195,7 @@ static BOOL storeIsReady = NO;
 
 + (void)resetUserInterfaceContext
 {
-    dispatch_async(singletonContextIsolation(), ^{
+    dispatch_sync(singletonContextIsolation(), ^{
         SharedUserInterfaceContext = nil;
     });
 }
@@ -207,10 +206,12 @@ static BOOL storeIsReady = NO;
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
 
     NSManagedObjectContext *moc = [[self alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-    [moc markAsSyncContext];
-    [moc configureWithPersistentStoreCoordinator:psc];
-    moc.undoManager = nil;
-    moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSMergeByPropertyObjectTrumpMergePolicyType];
+    [moc performBlockAndWait:^{
+        [moc markAsSyncContext];
+        [moc configureWithPersistentStoreCoordinator:psc];
+        moc.undoManager = nil;
+        moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSMergeByPropertyObjectTrumpMergePolicyType];
+    }];
     return moc;
 }
 
@@ -221,10 +222,12 @@ static BOOL storeIsReady = NO;
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
     
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-    [moc markAsSearchContext];
-    [moc configureWithPersistentStoreCoordinator:psc];
-    moc.undoManager = nil;
-    moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSRollbackMergePolicyType];
+    [moc performBlockAndWait:^{        
+        [moc markAsSearchContext];
+        [moc configureWithPersistentStoreCoordinator:psc];
+        moc.undoManager = nil;
+        moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSRollbackMergePolicyType];
+    }];
     return moc;
 }
 
@@ -1075,43 +1078,6 @@ static dispatch_once_t clearStoreOnceToken;
     NSArray *result = [self executeFetchRequest:request error:&error];
     RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
     return result;
-}
-
-- (void)continuouslyCheckForUnsavedChanges;
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (! [[NSUserDefaults standardUserDefaults] boolForKey:@"ZMCheckForUnsavedChangesOnUIContext"]) {
-            return;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self checkForUnsavedChanges];
-        });
-    });
-}
-
-- (void)checkForUnsavedChanges;
-{
-    // When ZMCheckForUnsavedChangesOnUIContext is set to YES, this will log a warning when
-    // the UI forgets to wrap changes inside a call to -performChanges:
-    //
-    // To use this, pass
-    //     -ZMCheckForUnsavedChangesOnUIContext YES
-    // as a launch argument.
-    //
-    if ([self hasChanges]) {
-        ZMLogWarn(@"User Interface context is out of sync.");
-        ZMLogWarn(@"Context <%@: %p> has unsaved changes:", self.class, self);
-        ZMLogWarn(@"Please use -[ZMUserSession performChanges:].");
-        for (NSManagedObject *mo in self.updatedObjects) {
-            ZMLogWarn(@"    <%@: %p>: %@", mo.class, mo, [mo.changedValues.allKeys componentsJoinedByString:@", "]);
-        }
-        for (NSManagedObject *mo in self.insertedObjects) {
-            ZMLogWarn(@"    <%@: %p> (inserted)", mo.class, mo);
-        }
-        __builtin_trap();
-    }
-    [self performSelector:_cmd withObject:nil afterDelay:0.5];
 }
 
 @end

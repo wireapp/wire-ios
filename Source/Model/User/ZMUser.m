@@ -319,9 +319,7 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
         }
     }
     if (handler) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            handler();
-        });
+        handler();
     }
 }
 

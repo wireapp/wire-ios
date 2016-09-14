@@ -335,7 +335,7 @@
 
     // when
     __block NSSet *keysWithLocalModifications;
-    [self.syncMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.alternativeTestMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
         MockEntity *fetchedEntity = [self mockEntityWithUUID:entityUUID inMoc:self.alternativeTestMOC];
         keysWithLocalModifications = fetchedEntity.keysThatHaveLocalModifications;
     }];

@@ -293,9 +293,9 @@
     XCTAssertTrue([data writeToURL:fileURL options:0 error:&error]);
     XCTAssertNil(error);
     
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-
+    
     // when
     ZMFileMetadata *fileMetadata = [[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil];
     ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileMetadata:fileMetadata];
@@ -376,7 +376,7 @@
     CGSize dimensions = CGSizeMake(1900, 800);
     XCTAssertTrue([videoData writeToURL:fileURL options:0 error:&error]);
     
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
     
     // when
@@ -422,7 +422,7 @@
     NSUInteger duration = 12333;
     XCTAssertTrue([videoData writeToURL:fileURL options:0 error:&error]);
     
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
     
     // when
