@@ -28,7 +28,7 @@ func lastCallstackFrames() -> String {
 }
 
 
-func ObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required: Bool, transform: ((String) -> T?)?) -> T? {
+func objectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required: Bool, transform: ((String) -> T?)?) -> T? {
     if let object = dictionary[key] as? T {
         return object
     }
@@ -37,84 +37,84 @@ func ObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required
             return object
         }
     }
-    if dictionary[key] != nil {
-        zmLog.error("\(dictionary[key]) is not a valid \(T.self) in \(dictionary). Callstack:\n \(lastCallstackFrames())")
+    if let object = dictionary[key], !(object is NSNull) {
+        zmLog.error("\(object) is not a valid \(T.self) in \(dictionary). Callstack:\n \(lastCallstackFrames())")
     } else if (required) {
         zmLog.error("nil values for \(key) in \(dictionary). Callstack:\n \(lastCallstackFrames())")
     }
     return nil
 }
 
-func RequiredObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
-    return ObjectWhichIsKindOfClass(dictionary: dictionary, key: key, required: true, transform: transform)
+func requiredObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
+    return objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: true, transform: transform)
 }
 
-func OptionalObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
-    return ObjectWhichIsKindOfClass(dictionary: dictionary, key: key, required: false, transform: transform)
+func optionalObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
+    return objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: false, transform: transform)
 }
 
 public extension NSDictionary {
 
     public func string(forKey key: String) -> String? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func optionalString(forKey key: String) -> String? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func number(forKey key: String) -> NSNumber? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func optionalNumber(forKey key: String) -> NSNumber? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     public func array(forKey key: String) -> [AnyObject]? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func optionalArray(forKey key: String) -> [AnyObject]? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     public func data(forKey key: String) -> Data? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func optionalData(forKey key: String) -> Data? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func dictionary(forKey key: String) -> [String: AnyObject]? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func optionalDictionary(forKey key: String) -> [String: AnyObject]? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
     
     public func uuid(forKey key: String) -> UUID? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key){UUID(uuidString:$0)}
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key){UUID(uuidString:$0)}
     }
     
     public func optionalUuid(forKey key: String) -> UUID? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key){UUID(uuidString:$0)}
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key){UUID(uuidString:$0)}
     }
     
     public func date(forKey key: String) -> Date? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key){NSDate(transport: $0) as? Date}
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key){NSDate(transport: $0) as? Date}
     }
     
     public func optionalDate(forKey key: String) -> Date? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key){NSDate(transport: $0) as? Date}
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key){NSDate(transport: $0) as? Date}
     }
     
     public func event(forKey key: String) -> ZMEventID? {
-        return RequiredObjectWhichIsKindOfClass(dictionary: self, key: key){ZMEventID(string:$0)}
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key){ZMEventID(string:$0)}
     }
     
     public func optionalEvent(forKey key: String) -> ZMEventID? {
-        return OptionalObjectWhichIsKindOfClass(dictionary: self, key: key){ZMEventID(string:$0)}
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key){ZMEventID(string:$0)}
     }
 }
 
