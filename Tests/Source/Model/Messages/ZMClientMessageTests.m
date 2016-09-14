@@ -619,7 +619,7 @@
         [self createSelfClient];
         ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         otherUser.remoteIdentifier = NSUUID.createUUID;
-        UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES];
+        UserClient *firstClient = [self createClientForUser:otherUser createSessionWithSelfUser:YES onMOC:self.syncMOC];
         
         ZMUpdateEvent *messageEvent = [self encryptedExternalMessageFixtureWithBlobFromClient:firstClient];
         NSString *base64SHA = @"kKSSlbMxXEdd+7fekxB8Qr67/mpjjboBsr2wLcW7wzE=";

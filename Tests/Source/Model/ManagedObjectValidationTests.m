@@ -57,21 +57,23 @@
 
 - (void)testThatValidationOnNonUIContextAlwaysPass
 {
-    ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
-    user.name = @"Ilya";
-    id value = user.name;
-    
-    id validator = [OCMockObject mockForClass:[ZMStringLengthValidator class]];
-    validator = [OCMockObject partialMockForObject:validator];
-    [[[validator reject] andForwardToRealObject] validateValue:[OCMArg anyObjectRef]
-                                           mimimumStringLength:2
-                                            maximumSringLength:64
-                                                         error:[OCMArg anyObjectRef]];
-
-    BOOL result = [user validateValue:&value forKey:@"name" error:NULL];
-    XCTAssertTrue(result);
-    [validator verify];
-    [validator stopMocking];
+    [self.syncMOC performGroupedBlockAndWait:^{        
+        ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
+        user.name = @"Ilya";
+        id value = user.name;
+        
+        id validator = [OCMockObject mockForClass:[ZMStringLengthValidator class]];
+        validator = [OCMockObject partialMockForObject:validator];
+        [[[validator reject] andForwardToRealObject] validateValue:[OCMArg anyObjectRef]
+                                               mimimumStringLength:2
+                                                maximumSringLength:64
+                                                             error:[OCMArg anyObjectRef]];
+        
+        BOOL result = [user validateValue:&value forKey:@"name" error:NULL];
+        XCTAssertTrue(result);
+        [validator verify];
+        [validator stopMocking];
+    }];
 }
 
 @end

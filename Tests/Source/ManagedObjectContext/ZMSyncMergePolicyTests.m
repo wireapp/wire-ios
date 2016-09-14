@@ -147,7 +147,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"A", @"B", @"C", @"D"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"X"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"X"] failureRecorder:NewFailureRecorder()];
+    }];
     
     // and when
     XCTAssert([self.uiMOC saveOrRollback]);
@@ -155,7 +157,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"X"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"X"] failureRecorder:NewFailureRecorder()];
+    }];
     
     // and when
     [self mergeMOC_SyncFirst];
@@ -163,7 +167,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
+    }];
 }
 
 - (void)testThatItMergesReorderingOfMessagesFromSyncMOCToUiMOC
@@ -183,7 +189,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"A", @"B", @"C", @"D"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A"] failureRecorder:NewFailureRecorder()];
+    }];
     
     // and when
     XCTAssert([self.uiMOC saveOrRollback]);
@@ -191,7 +199,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A"] failureRecorder:NewFailureRecorder()];
+    }];
     
     // and when
     [self mergeMOC_SyncFirst];
@@ -199,7 +209,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
+    }];
 }
 
 
@@ -221,7 +233,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"B", @"C", @"A"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D"] failureRecorder:NewFailureRecorder()];
+    }];
     
     // and when
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -231,8 +245,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"B", @"C", @"A"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
-
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
+    }];
     
     // and when
     [self mergeMOC_SyncFirst];
@@ -240,7 +255,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"B", @"C", @"A", @"D"] failureRecorder:NewFailureRecorder()];
+    }];
 }
 
 - (void)testThatItMergesConflictingMessagesFromUiMOCToSyncMOC
@@ -251,7 +268,9 @@
     [(ZMMessage *)[self.uiConversation appendMessageWithText:@"D"] setServerTimestamp:[self nextDate]];
     [self.uiConversation.mutableMessages sortUsingDescriptors:ZMMessage.defaultSortDescriptors];
 
-    (void)self.syncConversation.mutableMessages;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        (void)self.syncConversation.mutableMessages;
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // when
@@ -267,7 +286,9 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"A", @"B", @"C", @"D"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"X"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"X"] failureRecorder:NewFailureRecorder()];
+    }];
     
     // and when
     [self.syncMOC performGroupedBlock:^{
@@ -277,15 +298,18 @@
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"A", @"B", @"C", @"D"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
-    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
+    }];
     // and when
     [self mergeMOC_SyncFirst];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     [self checkTextInConversation:self.uiConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
-    [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self checkTextInConversation:self.syncConversation isEqual:@[@"A", @"B", @"C", @"D", @"X"] failureRecorder:NewFailureRecorder()];
+    }];
 }
 
 - (void)checkTextInConversation:(ZMConversation *)conversation isEqual:(NSArray *)texts failureRecorder:(ZMTFailureRecorder *)fr;

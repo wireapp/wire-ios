@@ -70,7 +70,9 @@
     selfConversation.remoteIdentifier = selfUserID;
     selfConversation.conversationType = ZMConversationTypeSelf;
     [self.uiMOC saveOrRollback];
-    [self.syncMOC refreshObject:[ZMUser selfUserInContext:self.syncMOC] mergeChanges:NO];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC refreshObject:[ZMUser selfUserInContext:self.syncMOC] mergeChanges:NO];
+    }];
 }
 
 - (void)createCoreDataStack;
@@ -96,10 +98,17 @@
     NSError *error;
     XCTAssertTrue([self.uiMOC save:&error], @"Save failed: %@", error);
     
-    NSManagedObject *mo2 = (id) [self.syncMOC existingObjectWithID:mo1.objectID error:&error];
-    XCTAssertNotNil(mo2, @"Failed to load into other context: %@", error);
+    __block NSManagedObject *mo2 = nil;
+    __block id valueFromMo2 = nil;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        NSError *errorOnBlock;
+
+        mo2 = (id) [self.syncMOC existingObjectWithID:mo1.objectID error:&errorOnBlock];
+        XCTAssertNotNil(mo2, @"Failed to load into other context: %@", errorOnBlock);
+        valueFromMo2 = [mo2 valueForKey:key];
+    }];
     
-    XCTAssertEqualObjects([mo2 valueForKey:key], [mo1 valueForKey:key]);
+    XCTAssertEqualObjects(valueFromMo2, [mo1 valueForKey:key]);
 }
 
 
