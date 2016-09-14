@@ -148,16 +148,21 @@ NSString * const ReactionsKey = @"reactions";
     
     NSError *error;
     XCTAssertTrue([self.uiMOC save:&error], @"Save failed: %@", error);
+    __block NSMutableSet *loadedUserIDs = nil;
     
-    ZMSystemMessage *message2 = (id) [self.syncMOC existingObjectWithID:message.objectID error:&error];
-    XCTAssertNotNil(message2, @"Failed to load into other context: %@", error);
-    NSSet *loadedUsers = message2.users;
-    XCTAssertNotNil(loadedUsers);
-    
-    NSMutableSet *loadedUserIDs = [NSMutableSet set];
-    for(ZMUser * u in loadedUsers) {
-        [loadedUserIDs addObject:u.objectID];
-    }
+    [self.syncMOC performGroupedBlockAndWait:^{
+        NSError *errorOnSync;
+
+        ZMSystemMessage *message2 = (id) [self.syncMOC existingObjectWithID:message.objectID error:&errorOnSync];
+        XCTAssertNotNil(message2, @"Failed to load into other context: %@", errorOnSync);
+        NSSet *loadedUsers = message2.users;
+        XCTAssertNotNil(loadedUsers);
+        
+        loadedUserIDs = [NSMutableSet set];
+        for(ZMUser * u in loadedUsers) {
+            [loadedUserIDs addObject:u.objectID];
+        }
+    }];
     
     XCTAssertEqualObjects(userObjectIDs, loadedUserIDs);
 }
@@ -398,13 +403,15 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqual(message.sender, user);
     
     XCTAssertTrue([self.uiMOC save:&error], @"Save failed: %@", error);
-    
-    ZMMessage *message2 = (id) [self.syncMOC existingObjectWithID:message.objectID error:&error];
-    XCTAssertNotNil(message2, @"Failed to load into other context: %@", error);
-    ZMUser *user2 = message2.sender;
-    XCTAssertNotNil(user2);
-    
-    XCTAssertEqualObjects(user2.objectID, user.objectID);
+    [self.syncMOC performGroupedBlockAndWait:^{
+        NSError *errorOnSync;
+
+        ZMMessage *message2 = (id) [self.syncMOC existingObjectWithID:message.objectID error:&errorOnSync];
+        XCTAssertNotNil(message2, @"Failed to load into other context: %@", errorOnSync);
+        ZMUser *user2 = message2.sender;
+        XCTAssertNotNil(user2);
+        XCTAssertEqualObjects(user2.objectID, user.objectID);
+    }];
 }
 
 - (void)testThatItDoesNotUseTemporaryIDsForSender;
@@ -1091,8 +1098,8 @@ NSString * const ReactionsKey = @"reactions";
         
         ZMSystemMessage *message = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
         message.users = [NSSet setWithObjects:user1, user2, nil];
+        [self.syncMOC saveOrRollback];
     }];
-    [self.syncMOC saveOrRollback];
     
     // when
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
@@ -1121,8 +1128,8 @@ NSString * const ReactionsKey = @"reactions";
         // load a message from the second context and check that the objectIDs for users are as expected
         ZMSystemMessage *message = [self createConversationNameChangeSystemMessageInConversation:conversation inManagedObjectContext:self.syncMOC];
         XCTAssertNotNil(message);
+        [self.syncMOC saveOrRollback];
     }];
-    [self.syncMOC saveOrRollback];
     
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -1134,10 +1141,10 @@ NSString * const ReactionsKey = @"reactions";
         XCTAssertEqualObjects(conversation.displayName, conversation.userDefinedName);
         
         // load a message from the second context and check that the objectIDs for users are as expected
-       ZMSystemMessage *message = [self createConversationNameChangeSystemMessageInConversation:conversation inManagedObjectContext:self.syncMOC];
+        ZMSystemMessage *message = [self createConversationNameChangeSystemMessageInConversation:conversation inManagedObjectContext:self.syncMOC];
         XCTAssertNotNil(message);
+        [self.syncMOC saveOrRollback];
     }];
-    [self.syncMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
@@ -1168,8 +1175,8 @@ NSString * const ReactionsKey = @"reactions";
         // load a message from the second context and check that the objectIDs for users are as expected
         ZMSystemMessage *message = [self createConversationConnectRequestSystemMessageInConversation:conversation inManagedObjectContext:self.syncMOC];
         XCTAssertNotNil(message);
+        [self.syncMOC saveOrRollback];
     }];
-    [self.syncMOC saveOrRollback];
     
     WaitForAllGroupsToBeEmpty(0.5);
     

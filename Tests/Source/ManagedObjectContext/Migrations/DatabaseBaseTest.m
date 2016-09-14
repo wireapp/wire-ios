@@ -42,6 +42,7 @@
 {
     [super setUp];
     [self cleanUp];
+    
     [NSManagedObjectContext setUseInMemoryStore:NO];
     self.fm = [NSFileManager defaultManager];
     self.cachesDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSCachesDirectory];
@@ -73,8 +74,23 @@
     if([self.fm fileExistsAtPath:testSharedContainerPath]) {
         [self.fm removeItemAtPath:testSharedContainerPath error:nil];
     }
-    
+ 
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+    
+    [self performIgnoringZMLogError:^{
+        NSError *error = nil;
+        for (NSString *path in [self.fm contentsOfDirectoryAtPath:self.sharedContainerDirectoryURL.path error:&error]) {
+            [self.fm removeItemAtPath:[self.sharedContainerDirectoryURL.path stringByAppendingPathComponent:path] error:&error];
+            if (error) {
+                ZMLogError(@"Error cleaning up %@ in %@: %@", path, self.sharedContainerDirectoryURL, error);
+                error = nil;
+            }
+        }
+        
+        if (error) {
+            ZMLogError(@"Error reading %@: %@", self.sharedContainerDirectoryURL, error);
+        }
+    }];
 }
 
 #pragma mark - Helper
@@ -163,6 +179,16 @@
                                     completionHandler:nil];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
+}
+
+- (void)useApplicationSupportDirectoryAsDefault
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSError *error = nil;
+    NSURL * const directory = [fm URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
+    Require(error == nil);
+    self.sharedContainerDirectoryURL = directory;
+    [NSManagedObjectContext setDatabaseDirectoryURL:self.sharedContainerDirectoryURL];
 }
 
 @end

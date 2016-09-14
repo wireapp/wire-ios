@@ -30,8 +30,8 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait { 
             let otherUser = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
             otherUser.remoteIdentifier = NSUUID.createUUID()
-            let firstClient = self.createClientForUser(otherUser, createSessionWithSelfUser: true)
-            let secondClient = self.createClientForUser(otherUser, createSessionWithSelfUser: true)
+            let firstClient = self.createClientForUser(otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            let secondClient = self.createClientForUser(otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let selfClients = ZMUser.selfUserInContext(self.syncMOC).clients
             let selfClient = ZMUser.selfUserInContext(self.syncMOC).selfClient()
             let notSelfClients = selfClients.filter { $0 != selfClient }
@@ -81,7 +81,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             
             //given
-            let message = self.conversation.appendOTRMessageWithText(self.name, nonce: NSUUID.createUUID())
+            let message = self.syncConversation.appendOTRMessageWithText(self.name, nonce: NSUUID.createUUID())
             
             //when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
@@ -104,11 +104,11 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             // given
 
-            self.conversation.lastReadServerTimeStamp = NSDate()
-            self.conversation.remoteIdentifier = NSUUID()
-            let message = ZMConversation.appendSelfConversationWithLastReadOfConversation(self.conversation)
+            self.syncConversation.lastReadServerTimeStamp = NSDate()
+            self.syncConversation.remoteIdentifier = NSUUID()
+            let message = ZMConversation.appendSelfConversationWithLastReadOfConversation(self.syncConversation)
             
-            self.expectedRecipients = [self.selfUser.remoteIdentifier!.transportString(): [self.selfClient2.remoteIdentifier]]
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier]]
             
             // when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
@@ -130,11 +130,11 @@ extension ClientMessageTests_OTR {
     func testThatItCreatesPayloadForZMClearedMessages() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            self.conversation.clearedTimeStamp = NSDate()
-            self.conversation.remoteIdentifier = NSUUID()
-            let message = ZMConversation.appendSelfConversationWithClearedOfConversation(self.conversation)
+            self.syncConversation.clearedTimeStamp = NSDate()
+            self.syncConversation.remoteIdentifier = NSUUID()
+            let message = ZMConversation.appendSelfConversationWithClearedOfConversation(self.syncConversation)
             
-            self.expectedRecipients = [self.selfUser.remoteIdentifier!.transportString(): [self.selfClient2.remoteIdentifier]]
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier]]
             
             // when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
@@ -157,7 +157,7 @@ extension ClientMessageTests_OTR {
         
         syncMOC.performGroupedBlockAndWait {
             // given
-            let message = self.conversation.appendOTRMessageWithText(self.name, nonce: NSUUID.createUUID())
+            let message = self.syncConversation.appendOTRMessageWithText(self.name, nonce: NSUUID.createUUID())
             
             //when
             // when
@@ -185,9 +185,9 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             
             //given
-            let senderID = self.user1.clients.first!.remoteIdentifier
-            let textMessage = self.conversation.appendOTRMessageWithText(self.stringLargeEnoughToRequireExternal, nonce: NSUUID.createUUID())
-            textMessage.sender = self.user1
+            let senderID = self.syncUser1.clients.first!.remoteIdentifier
+            let textMessage = self.syncConversation.appendOTRMessageWithText(self.stringLargeEnoughToRequireExternal, nonce: NSUUID.createUUID())
+            textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
             let confirmationMessage = textMessage.confirmReception()
             
@@ -200,7 +200,7 @@ extension ClientMessageTests_OTR {
             //then
             switch payloadAndStrategy.strategy {
             case .IgnoreAllMissingClientsNotFromUser(let user):
-                XCTAssertEqual(user, self.user1)
+                XCTAssertEqual(user, self.syncUser1)
             default:
                 XCTFail()
             }
@@ -213,7 +213,7 @@ extension ClientMessageTests_OTR {
                 let payloadClients = recipients.flatMap { user -> [String] in
                     return (user.clients as? [ZMClientEntry])?.map({ String(format: "%llx", $0.client.client) }) ?? []
                 }.flatMap { $0 }
-                XCTAssertEqual(payloadClients.sort(), self.user1.clients.map { $0.remoteIdentifier }.sort())
+                XCTAssertEqual(payloadClients.sort(), self.syncUser1.clients.map { $0.remoteIdentifier }.sort())
             } else {
                 XCTFail("Metadata does not contain recipients")
             }

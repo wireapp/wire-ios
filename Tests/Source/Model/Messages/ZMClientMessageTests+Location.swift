@@ -25,7 +25,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
  
     func testThatItReturnsLocationMessageDataWhenPresent() {
         // given
-        let (longitude, latitude): (Float, Float) = (9.041169, 48.53775)
+        let (latitude, longitude): (Float, Float) = (48.53775, 9.041169)
         let (name, zoom) = ("Tuebingen, Deutschland", Int32(3))
         let message = ZMGenericMessage.genericMessage(
             withLocation: .location(
@@ -37,7 +37,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
         )
         
         // when
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         clientMessage.addData(message.data())
         
         // then
@@ -51,7 +51,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
     
     func testThatItDoesNotReturnLocationMessageDataWhenNotPresent() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(syncMOC)
+        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
         
         // then
         XCTAssertNil(clientMessage.locationMessageData)

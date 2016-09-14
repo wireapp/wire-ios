@@ -121,11 +121,10 @@
     self.clearedConversation.isArchived = YES;
 
     [self.uiMOC saveOrRollback];
-    [self.syncMOC mergeCallStateChanges:[self.uiMOC.zm_callState createCopyAndResetHasChanges]];
-    
-    
-    
+    ZMCallState *callStateFromUIMOC = [self.uiMOC.zm_callState createCopyAndResetHasChanges];
     [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC mergeCallStateChanges:callStateFromUIMOC];
+
         ZMConversation *oneToOneConv = (id)[self.syncMOC objectWithID:self.oneToOneConversationWithActiveCall.objectID];
         
         oneToOneConv.activeFlowParticipants = [NSOrderedSet orderedSetWithObject:otherUser];

@@ -79,6 +79,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSUInteger connectionCount;
     __block NSArray *userDictionaries;
     __block ZMTextMessage *message;
+    __block NSString *messageServerTimestampTransportString;
     __block NSUInteger helloWorldMessageCount;
     __block NSUInteger userClientCount;
     
@@ -101,7 +102,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
             
             NSFetchRequest *messageFetchRequest = [ZMTextMessage sortedFetchRequestWithPredicateFormat:@"%K == %@", @"text", @"You are the best Burno"];
             message = [syncContext executeFetchRequestOrAssert:messageFetchRequest].firstObject;
-            
+            messageServerTimestampTransportString = message.serverTimestamp.transportString;
             NSFetchRequest *userFetchRequest = [ZMUser sortedFetchRequest];
             userFetchRequest.resultType = NSDictionaryResultType;
             userFetchRequest.propertiesToFetch = self.userPropertiesToFetch;
@@ -123,7 +124,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     XCTAssertEqual(helloWorldMessageCount, 1515lu);
     
     XCTAssertNotNil(message);
-    XCTAssertEqualObjects(message.serverTimestamp.transportString, @"2015-12-18T16:57:06.836Z");
+    XCTAssertEqualObjects(messageServerTimestampTransportString, @"2015-12-18T16:57:06.836Z");
     
     XCTAssertNotNil(userDictionaries);
     XCTAssertEqual(userDictionaries.count, 7lu);
@@ -360,6 +361,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
             userFetchRequest.propertiesToFetch = self.userPropertiesToFetch;
             userDictionaries = [syncContext executeFetchRequestOrAssert:userFetchRequest];
             [expectation fulfill];
+            
+            // then #1
+            
+            for (ZMAssetClientMessage *message in assetClientMessages) {
+                XCTAssertEqual(message.uploadState, ZMAssetUploadStateDone);
+            }
         }];
         
         XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
@@ -367,12 +374,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     
     WaitForAllGroupsToBeEmpty(15);
     
-    // then
+    // then #2
     XCTAssertEqual(assetClientMessages.count, 5lu);
-    
-    for (ZMAssetClientMessage *message in assetClientMessages) {
-        XCTAssertEqual(message.uploadState, ZMAssetUploadStateDone);
-    }
+
     
     XCTAssertEqual(conversationCount, 2lu);
     XCTAssertEqual(messageCount, 13lu);

@@ -24,7 +24,10 @@ class ConversationObserverTokenTests : ZMBaseManagedObjectTest {
     
     override func setUp() {
         super.setUp()
-        XCTAssertNotNil(self.syncMOC.globalManagedObjectContextObserver)
+        XCTAssertNotNil(self.uiMOC.globalManagedObjectContextObserver)
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertNotNil(self.syncMOC.globalManagedObjectContextObserver)
+        }
         NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
         NSNotificationCenter.defaultCenter().postNotificationName(UIApplicationDidBecomeActiveNotification, object: nil)
         XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
