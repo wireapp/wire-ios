@@ -27,3 +27,5 @@ DerivedData
 .DS_Store
 Carthage
 ZMTransport.framework.zip
+tests.xml
+xcode-summary.log
