@@ -47,13 +47,13 @@
     for (NSString *path in [self.fm contentsOfDirectoryAtPath:self.sharedContainerDirectoryURL.path error:&error]) {
         [self.fm removeItemAtPath:[self.sharedContainerDirectoryURL.path stringByAppendingPathComponent:path] error:&error];
         if (error) {
-            NSLog(@"Error cleaning up %@ in %@: %@", path, self.sharedContainerDirectoryURL, error);
+            ZMLogError(@"Error cleaning up %@ in %@: %@", path, self.sharedContainerDirectoryURL, error);
             error = nil;
         }
     }
     
     if (error) {
-        NSLog(@"Error reading %@: %@", self.sharedContainerDirectoryURL, error);
+        ZMLogError(@"Error reading %@: %@", self.sharedContainerDirectoryURL, error);
     }
     
     [NSManagedObjectContext setUseInMemoryStore:NO];
