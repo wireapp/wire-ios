@@ -113,7 +113,7 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
 + (nonnull instancetype)eventFromEventStreamPayload:(nonnull id<ZMTransportData>)payload uuid:(nullable NSUUID *)uuid;
 
 /// Creates an update event that was encrypted and it's now decrypted
-+ (nullable instancetype)decryptedUpdateEventFromEventStreamPayload:(nonnull id<ZMTransportData>)payload uuid:(nullable NSUUID *)uuid source:(ZMUpdateEventSource)source;
++ (nullable instancetype)decryptedUpdateEventFromEventStreamPayload:(nonnull id<ZMTransportData>)payload uuid:(nullable NSUUID *)uuid transient:(BOOL)transient source:(ZMUpdateEventSource)source;
 
 + (ZMUpdateEventType)updateEventTypeForEventTypeString:(nonnull NSString *)string;
 + (nullable NSString *)eventTypeStringForUpdateEventType:(ZMUpdateEventType)type;
