@@ -23,6 +23,21 @@ import Foundation
 class BaseZMClientMessageTests : BaseZMMessageTests {
     
     var syncSelfUser: ZMUser!
+    var syncUser1: ZMUser!
+    var syncUser2: ZMUser!
+    var syncUser3: ZMUser!
+    
+    var syncSelfClient1: UserClient!
+    var syncSelfClient2: UserClient!
+    var syncUser1Client1: UserClient!
+    var syncUser1Client2: UserClient!
+    var syncUser2Client1: UserClient!
+    var syncUser2Client2: UserClient!
+    var syncUser3Client1: UserClient!
+    
+    var syncConversation: ZMConversation!
+    var syncExpectedRecipients: [String: [String]]!
+
     var user1: ZMUser!
     var user2: ZMUser!
     var user3: ZMUser!
@@ -42,44 +57,79 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
     override func setUp() {
         super.setUp()
         setUpCaches()
-
-        syncSelfUser = ZMUser.selfUserInContext(self.syncMOC);
+        self.syncMOC.performGroupedBlockAndWait {
+            self.syncSelfUser = ZMUser.selfUserInContext(self.syncMOC)
+            
+            self.syncSelfClient1 = self.createSelfClientOnMOC(self.syncMOC)
+            self.syncMOC.setPersistentStoreMetadata(self.syncSelfClient1.remoteIdentifier, forKey: "PersistedClientId")
+            
+            self.syncSelfClient2 = self.createClientForUser(self.syncSelfUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            
+            self.syncUser1 = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
+            self.syncUser1Client1 = self.createClientForUser(self.syncUser1, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            self.syncUser1Client2 = self.createClientForUser(self.syncUser1, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            
+            self.syncUser2 = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
+            self.syncUser2Client1 = self.createClientForUser(self.syncUser2, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            self.syncUser2Client2 = self.createClientForUser(self.syncUser2, createSessionWithSelfUser: false, onMOC: self.syncMOC)
+            
+            self.syncUser3 = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
+            self.syncUser3Client1 = self.createClientForUser(self.syncUser3, createSessionWithSelfUser: false, onMOC: self.syncMOC)
+            
+            self.syncConversation = ZMConversation.insertGroupConversationIntoManagedObjectContext(self.syncMOC, withParticipants: [self.syncUser1, self.syncUser2, self.syncUser3])
+            self.expectedRecipients = [
+                self.syncSelfUser.remoteIdentifier!.transportString(): [
+                    self.syncSelfClient2.remoteIdentifier
+                ],
+                self.syncUser1.remoteIdentifier!.transportString(): [
+                    self.syncUser1Client1.remoteIdentifier,
+                    self.syncUser1Client2.remoteIdentifier
+                ],
+                self.syncUser2.remoteIdentifier!.transportString(): [
+                    self.syncUser2Client1.remoteIdentifier
+                ]
+            ]
+            
+            self.syncMOC.saveOrRollback()
+        }
         
-        selfClient1 = createSelfClient()
-        syncMOC.setPersistentStoreMetadata(selfClient1.remoteIdentifier, forKey: "PersistedClientId")
+        self.selfUser = try! self.uiMOC.existingObjectWithID(self.syncSelfUser.objectID) as! ZMUser
         
-        selfClient2 = createClientForUser(syncSelfUser, createSessionWithSelfUser: true)
+        self.selfClient1 = try! self.uiMOC.existingObjectWithID(self.syncSelfClient1.objectID) as! UserClient
+        self.uiMOC.setPersistentStoreMetadata(self.selfClient1.remoteIdentifier, forKey: "PersistedClientId")
         
-        user1 = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC);
-        user1Client1 = createClientForUser(user1, createSessionWithSelfUser: true)
-        user1Client2 = createClientForUser(user1, createSessionWithSelfUser: true)
+        self.selfClient2 = try! self.uiMOC.existingObjectWithID(self.syncSelfClient2.objectID) as! UserClient
         
-        user2 = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC);
-        user2Client1 = createClientForUser(user2, createSessionWithSelfUser: true)
-        user2Client2 = createClientForUser(user2, createSessionWithSelfUser: false)
+        self.user1 = try! self.uiMOC.existingObjectWithID(self.syncUser1.objectID) as! ZMUser
+        self.user1Client1 = try! self.uiMOC.existingObjectWithID(self.syncUser1Client1.objectID) as! UserClient
+        self.user1Client2 = try! self.uiMOC.existingObjectWithID(self.syncUser1Client2.objectID) as! UserClient
         
-        user3 = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC);
-        user3Client1 = createClientForUser(user3, createSessionWithSelfUser: false)
+        self.user2 = try! self.uiMOC.existingObjectWithID(self.syncUser2.objectID) as! ZMUser
+        self.user2Client1 = try! self.uiMOC.existingObjectWithID(self.syncUser2Client1.objectID) as! UserClient
+        self.user2Client2 = try! self.uiMOC.existingObjectWithID(self.syncUser2Client2.objectID) as! UserClient
         
-        conversation = ZMConversation.insertGroupConversationIntoManagedObjectContext(self.syncMOC, withParticipants: [user1, user2, user3])
+        self.user3 = try! self.uiMOC.existingObjectWithID(self.syncUser3.objectID) as! ZMUser
+        self.user3Client1 = try! self.uiMOC.existingObjectWithID(self.syncUser3Client1.objectID) as! UserClient
         
-        expectedRecipients = [
-            syncSelfUser.remoteIdentifier!.transportString(): [
-                selfClient2.remoteIdentifier
+        self.conversation = try! self.uiMOC.existingObjectWithID(self.syncConversation.objectID) as! ZMConversation
+        self.expectedRecipients = [
+            self.selfUser.remoteIdentifier!.transportString(): [
+                self.selfClient2.remoteIdentifier
             ],
-            user1.remoteIdentifier!.transportString(): [
-                user1Client1.remoteIdentifier,
-                user1Client2.remoteIdentifier
+            self.user1.remoteIdentifier!.transportString(): [
+                self.user1Client1.remoteIdentifier,
+                self.user1Client2.remoteIdentifier
             ],
-            user2.remoteIdentifier!.transportString(): [
-                user2Client1.remoteIdentifier
+            self.user2.remoteIdentifier!.transportString(): [
+                self.user2Client1.remoteIdentifier
             ]
         ]
-        
     }
     
     override func tearDown() {
-        syncMOC.setPersistentStoreMetadata(nil, forKey: "PersistedClientId")
+        syncMOC.performGroupedBlockAndWait {
+            self.syncMOC.setPersistentStoreMetadata(nil, forKey: "PersistedClientId")
+        }
         wipeCaches()
         super.tearDown()
     }

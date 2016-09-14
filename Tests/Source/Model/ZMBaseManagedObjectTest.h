@@ -96,8 +96,9 @@
 @interface ZMBaseManagedObjectTest (OTR)
 
 - (UserClient *)createSelfClient;
+- (UserClient *)createSelfClientOnMOC:(NSManagedObjectContext *)moc;
 - (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
-
+- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(NSManagedObjectContext *)moc;
 
 - (ZMClientMessage *)createClientTextMessage:(BOOL)encrypted;
 - (ZMClientMessage *)createClientTextMessage:(NSString *)text encrypted:(BOOL)encrypted;

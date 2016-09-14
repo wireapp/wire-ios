@@ -22,7 +22,6 @@
 
 @interface NSManagedObjectContext (zmessaging_Internal)
 
-+ (NSURL *)applicationSupportDirectoryStoreURL;
 + (BOOL)databaseExistsInCachesDirectory;
 + (BOOL)databaseExistsInApplicationSupportDirectory;
 + (BOOL)databaseExistsAndNotReadableDueToEncryption;

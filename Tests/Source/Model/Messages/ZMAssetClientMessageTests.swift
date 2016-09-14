@@ -34,7 +34,7 @@ class ZMAssetClientMessageTests : BaseZMClientMessageTests {
         super.tearDown()
     }
     
-    func appendImageMessage() {
+    func appendImageMessage(toConversation conversation: ZMConversation) {
         let imageData = verySmallJPEGData()
         let messageNonce = NSUUID.createUUID()
         message = conversation.appendOTRMessageWithImageData(imageData, nonce: messageNonce)
@@ -51,7 +51,7 @@ class ZMAssetClientMessageTests : BaseZMClientMessageTests {
         message.addGenericMessage(previewMessage)
     }
     
-    func appendImageMessage(format: ZMImageFormat) -> ZMAssetClientMessage {
+    func appendImageMessage(format: ZMImageFormat, toConversation conversation: ZMConversation) -> ZMAssetClientMessage {
         let otherFormat = format == ZMImageFormat.Medium ? ZMImageFormat.Preview : ZMImageFormat.Medium
         let imageData = verySmallJPEGData()
         let messageNonce = NSUUID.createUUID()
@@ -631,7 +631,7 @@ extension ZMAssetClientMessageTests {
                 nonce: nonce,
                 managedObjectContext: self.syncMOC)
             
-            self.conversation.mutableMessages.addObject(sut)
+            self.syncConversation.mutableMessages.addObject(sut)
             
             // then
             XCTAssertNotNil(sut)
@@ -667,7 +667,7 @@ extension ZMAssetClientMessageTests {
                 nonce: nonce,
                 managedObjectContext: self.syncMOC)
             
-            self.conversation.mutableMessages.addObject(sut)
+            self.syncConversation.mutableMessages.addObject(sut)
             
             // when
             let (otrKey, sha256) = (NSData.randomEncryptionKey(), NSData.zmRandomSHA256Key())
@@ -714,7 +714,7 @@ extension ZMAssetClientMessageTests {
                 nonce: nonce,
                 managedObjectContext: self.syncMOC)
             
-            self.conversation.mutableMessages.addObject(sut)
+            self.syncConversation.mutableMessages.addObject(sut)
             
             // when
             let (otrKey, sha256) = (NSData.randomEncryptionKey(), NSData.zmRandomSHA256Key())
@@ -722,7 +722,7 @@ extension ZMAssetClientMessageTests {
             
             // then
             guard let encryptedData = sut.encryptedMessagePayloadForDataType(.FullAsset) else { return XCTFail() }
-            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.user1Client1) else { return XCTFail() }
+            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.syncUser1Client1) else { return XCTFail() }
             
             XCTAssertNotNil(genericMessage)
             XCTAssertTrue(genericMessage.hasAsset())
@@ -954,7 +954,7 @@ extension ZMAssetClientMessageTests {
                 nonce: NSUUID.createUUID(),
                 managedObjectContext: self.syncMOC)
             
-            self.conversation.mutableMessages.addObject(sut)
+            self.syncConversation.mutableMessages.addObject(sut)
             sut.delivered = true
             
             XCTAssertNotNil(sut.fileMessageData)
@@ -966,7 +966,7 @@ extension ZMAssetClientMessageTests {
             
             // then the genereted encrypted message should include the Asset.Original and Asset.NotUploaded
             guard let encryptedData = sut.encryptedMessagePayloadForDataType(.Placeholder) else { return XCTFail() }
-            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.user1Client1) else { return XCTFail() }
+            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.syncUser1Client1) else { return XCTFail() }
             
             XCTAssertTrue(genericMessage.asset.hasNotUploaded())
             XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
@@ -1010,7 +1010,7 @@ extension ZMAssetClientMessageTests {
                 nonce: NSUUID.createUUID(),
                 managedObjectContext: self.syncMOC)
             
-            self.conversation.mutableMessages.addObject(sut)
+            self.syncConversation.mutableMessages.addObject(sut)
             sut.delivered = true
             sut.progress = 56
             sut.transferState = .FailedUpload
@@ -1336,13 +1336,13 @@ extension ZMAssetClientMessageTests {
     
     func testThatItStoresTheAssociatedTaskIdentifier() {
         // given
-        let sut = ZMAssetClientMessage.insertNewObjectInManagedObjectContext(self.syncMOC)
+        let sut = ZMAssetClientMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
         
         // when
         let identifier = ZMTaskIdentifier(identifier: 42, sessionIdentifier: "foo")
         sut.associatedTaskIdentifier = identifier
-        XCTAssertTrue(self.syncMOC.saveOrRollback())
-        self.syncMOC.refreshObject(sut, mergeChanges: false)
+        XCTAssertTrue(self.uiMOC.saveOrRollback())
+        self.uiMOC.refreshObject(sut, mergeChanges: false)
         
         // then
         XCTAssertEqual(sut.associatedTaskIdentifier, identifier)
@@ -1418,27 +1418,30 @@ extension ZMAssetClientMessageTests {
     }
     
     func testThatItCreatesPayloadData_Medium() {
-        
-        //given
-        let message = appendImageMessage(.Medium)
-        
-        //when
-        let payload = message.encryptedMessagePayloadForImageFormat(.Medium)?.data()
-        
-        //then
-        assertPayloadData(payload, forMessage: message, format: .Medium)
+        self.syncMOC.performGroupedBlockAndWait {
+            //given
+            let message = self.appendImageMessage(.Medium, toConversation: self.syncConversation)
+            
+            //when
+            let payload = message.encryptedMessagePayloadForImageFormat(.Medium)?.data()
+            
+            //then
+            self.assertPayloadData(payload, forMessage: message, format: .Medium)
+        }
     }
     
     func testThatItCreatesPayloadData_Preview() {
-        
-        //given
-        let message = appendImageMessage(ZMImageFormat.Preview)
-        
-        //when
-        let payload = message.encryptedMessagePayloadForImageFormat(.Preview)?.data()
-        
-        //then
-        assertPayloadData(payload, forMessage: message, format: .Preview)
+        self.syncMOC.performGroupedBlockAndWait {
+
+            //given
+            let message = self.appendImageMessage(ZMImageFormat.Preview, toConversation: self.syncConversation)
+            
+            //when
+            let payload = message.encryptedMessagePayloadForImageFormat(.Preview)?.data()
+            
+            //then
+            self.assertPayloadData(payload, forMessage: message, format: .Preview)
+        }
     }
 }
 
@@ -1447,22 +1450,24 @@ extension ZMAssetClientMessageTests {
     
     func testThatItSetsConversationLastServerTimestampWhenPostingPreview() {
         // given
-        let message = appendImageMessage(.Preview)
-        let date  = NSDate()
-        let payload : [NSObject : AnyObject] = ["deleted" : [String:String](), "missing" : [String:String](), "redundant":[String:String](), "time" : date.transportString()]
-        
-        message.uploadState = .UploadingPlaceholder
-        
-        // when
-        message.updateWithPostPayload(payload, updatedKeys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey))
-        
-        // then
-        XCTAssertEqual(message.serverTimestamp, message.conversation?.lastServerTimeStamp)
+        self.syncMOC.performGroupedBlockAndWait {
+            let message = self.appendImageMessage(.Preview, toConversation: self.syncConversation)
+            let date  = NSDate()
+            let payload : [NSObject : AnyObject] = ["deleted" : [String:String](), "missing" : [String:String](), "redundant":[String:String](), "time" : date.transportString()]
+            
+            message.uploadState = .UploadingPlaceholder
+            
+            // when
+            message.updateWithPostPayload(payload, updatedKeys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey))
+            
+            // then
+            XCTAssertEqual(message.serverTimestamp, message.conversation?.lastServerTimeStamp)
+        }
     }
     
     func testThatItDoesNotSetConversationLastServerTimestampWhenPostingMedium() {
         // given
-        let message = appendImageMessage(.Medium)
+        let message = appendImageMessage(.Medium, toConversation: self.conversation)
         let date  = NSDate()
         let payload : [NSObject : AnyObject] = ["deleted" : [String:String](), "missing" : [String:String](), "redundant":[String:String](), "time" : date.transportString()]
         message.uploadState = .UploadingFullAsset
