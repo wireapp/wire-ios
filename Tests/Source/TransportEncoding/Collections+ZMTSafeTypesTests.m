@@ -40,6 +40,13 @@
     };
 }
 
+- (void)testThatItDoesNotThrowAnErrorForNSNull
+{
+    NSDictionary *sample = @{@"null" : [NSNull null]};
+    id result = [sample optionalStringForKey:@"null"];
+    XCTAssertNil(result);
+}
+
 - (void)testThatItReadsAString {
     NSString *key = @"string";
     XCTAssertEqualObjects(self.sampleDictionary[key], [self.sampleDictionary stringForKey:key]);
