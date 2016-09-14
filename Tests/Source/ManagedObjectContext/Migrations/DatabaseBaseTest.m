@@ -43,19 +43,6 @@
     [super setUp];
     [self cleanUp];
     
-    NSError *error = nil;
-    for (NSString *path in [self.fm contentsOfDirectoryAtPath:self.sharedContainerDirectoryURL.path error:&error]) {
-        [self.fm removeItemAtPath:[self.sharedContainerDirectoryURL.path stringByAppendingPathComponent:path] error:&error];
-        if (error) {
-            ZMLogError(@"Error cleaning up %@ in %@: %@", path, self.sharedContainerDirectoryURL, error);
-            error = nil;
-        }
-    }
-    
-    if (error) {
-        ZMLogError(@"Error reading %@: %@", self.sharedContainerDirectoryURL, error);
-    }
-    
     [NSManagedObjectContext setUseInMemoryStore:NO];
     self.fm = [NSFileManager defaultManager];
     self.cachesDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSCachesDirectory];
@@ -89,6 +76,21 @@
     }
  
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+    
+    [self performIgnoringZMLogError:^{
+        NSError *error = nil;
+        for (NSString *path in [self.fm contentsOfDirectoryAtPath:self.sharedContainerDirectoryURL.path error:&error]) {
+            [self.fm removeItemAtPath:[self.sharedContainerDirectoryURL.path stringByAppendingPathComponent:path] error:&error];
+            if (error) {
+                ZMLogError(@"Error cleaning up %@ in %@: %@", path, self.sharedContainerDirectoryURL, error);
+                error = nil;
+            }
+        }
+        
+        if (error) {
+            ZMLogError(@"Error reading %@: %@", self.sharedContainerDirectoryURL, error);
+        }
+    }];
 }
 
 #pragma mark - Helper
