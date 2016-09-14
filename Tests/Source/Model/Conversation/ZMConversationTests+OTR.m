@@ -59,7 +59,6 @@
 
 - (void)testThatItIncreasesSecurityLevelIfAllClientsInConversationAreTrusted
 {
-    __block NSManagedObjectID *conversationObjectID = nil;
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
@@ -69,13 +68,9 @@
         // when
         [selfClient trustClients:[NSSet setWithObjects:[[users.firstObject clients] anyObject], [[users.lastObject clients] anyObject], nil]];
 
-        [self.syncMOC saveOrRollback];
-        conversationObjectID = conversation.objectID;
+        // then
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
     }];
-    
-    ZMConversation *uiConversation = [self.uiMOC existingObjectWithID:conversationObjectID error:nil];
-    // then
-    XCTAssertEqual(uiConversation.securityLevel, ZMConversationSecurityLevelSecure);
 }
 
 - (void)testThatItDoesNotIncreaseTheSecurityLevelIfAConversationContainsUsersWithoutAConnection
