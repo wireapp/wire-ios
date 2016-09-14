@@ -136,13 +136,33 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     NSFileManager *fm = NSFileManager.defaultManager;
     NSURL *sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:appGroupIdentifier];
-    RequireString(nil != sharedContainerURL, "Unable to create shared container url using app group identifier: %s", appGroupIdentifier.UTF8String);
+    
+    if (nil == sharedContainerURL) {
+        // Seems like the shared container is not available. This could happen for series of reasons:
+        // 1. The app is compiled with with incorrect provisioning profile (for example with 3rd parties)
+        // 2. App is running on simulator and there is no correct provisioning profile on the system
+        // 3. Bug with signing
+        //
+        // The app should allow not having a shared container in cases 1 and 2; in case 3 the app should crash
+        
+        ZMDeploymentEnvironmentType deploymentEnvironment = [[ZMDeploymentEnvironment alloc] init].environmentType;
+        if (!TARGET_IPHONE_SIMULATOR && (deploymentEnvironment == ZMDeploymentEnvironmentTypeAppStore || deploymentEnvironment == ZMDeploymentEnvironmentTypeInternal)) {
+            RequireString(nil != sharedContainerURL, "Unable to create shared container url using app group identifier: %s", appGroupIdentifier.UTF8String);
+        }
+        else {
+            sharedContainerURL = [[fm URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] firstObject];
+            ZMLogError(@"ERROR: self.databaseDirectoryURL == nil and deploymentEnvironment = %d", deploymentEnvironment);
+            ZMLogError(@"================================WARNING================================");
+            ZMLogError(@"Wire is going to use APPLICATION SUPPORT directory to host the database");
+            ZMLogError(@"================================WARNING================================");
+        }
+    }
+    
     return sharedContainerURL;
 }
 
 + (BOOL)needsToPrepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier
 {
-    
     return [NSManagedObjectContext needsToPrepareLocalStoreInDirectory:[self sharedContainerDirectoryForApplicationGroup:appGroupIdentifier]];
 }
 
@@ -173,10 +193,9 @@ ZM_EMPTY_ASSERTING_INIT()
     self.applicationGroupIdentifier = appGroupIdentifier;
 
     ZMAPNSEnvironment *apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
-
-    self.databaseDirectoryURL = [NSFileManager.defaultManager containerURLForSecurityApplicationGroupIdentifier:appGroupIdentifier];
+    
+    self.databaseDirectoryURL = [self.class sharedContainerDirectoryForApplicationGroup:appGroupIdentifier];
     RequireString(nil != self.databaseDirectoryURL, "Unable to get a container URL using group identifier: %s", appGroupIdentifier.UTF8String);
-
     NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextWithStoreDirectory:self.databaseDirectoryURL];
     NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextWithStoreDirectory:self.databaseDirectoryURL];
     syncMOC.analytics = analytics;
