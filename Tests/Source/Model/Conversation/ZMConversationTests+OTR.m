@@ -264,7 +264,7 @@
         
         // when
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
-        [self.syncMOC saveOrRollback];
+
         // then
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
         XCTAssertEqual(conversation.messages.count, 2lu);
