@@ -49,6 +49,7 @@
 		CEF709D81C1599D600AF3718 /* ZMMockManagedObjectContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CEB8FD671C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEF709D91C1599E700AF3718 /* ZMMockEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEF709DA1C1599ED00AF3718 /* ZMMockEntity2.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6B7B2D1C11ED5F00FC4C2E /* ZMMockEntity2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F97E28BE1D8AACEA00A77567 /* UUID+ZMTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F97E28BD1D8AACEA00A77567 /* UUID+ZMTesting.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,7 @@
 		CE6B7B2E1C11ED5F00FC4C2E /* ZMMockEntity2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockEntity2.m; sourceTree = "<group>"; };
 		CEB8FD671C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockManagedObjectContextFactory.h; sourceTree = "<group>"; };
 		CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockManagedObjectContextFactory.m; sourceTree = "<group>"; };
+		F97E28BD1D8AACEA00A77567 /* UUID+ZMTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UUID+ZMTesting.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +274,7 @@
 				09A217F21B78DFAF0076547A /* ZMTFailureRecorder.m */,
 				091799561B7DFBD100E60DD9 /* NSUUID+ZMTesting.h */,
 				091799571B7DFBD100E60DD9 /* NSUUID+ZMTesting.m */,
+				F97E28BD1D8AACEA00A77567 /* UUID+ZMTesting.swift */,
 				09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */,
 				09A218031B78E01A0076547A /* FakeGroupContext.swift */,
 				098CFBC01B7BA68C000B02B1 /* NSObject+ZMTesting.swift */,
@@ -468,6 +471,7 @@
 				09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */,
 				09A217F91B78DFAF0076547A /* NSData+ZMTesting.m in Sources */,
 				CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */,
+				F97E28BE1D8AACEA00A77567 /* UUID+ZMTesting.swift in Sources */,
 				098CFBC11B7BA68C000B02B1 /* NSObject+ZMTesting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
