@@ -1,0 +1,927 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>ZMEmailAddressValidator.m - Slather</title>
+<link href="slather.css" media="all" rel="stylesheet">
+</head>
+<body>
+<header><div class="row"><a href="index.html"><img src="logo.jpg" alt="Slather logo"></a></div></header><div class="row"><div id="reports">
+<h2 class="cov_title">
+<span>Coverage for "ZMEmailAddressValidator.m" : </span><span class="cov_high">91.84%</span>
+</h2>
+<h4 class="cov_subtitle">(135 of 147 relevant lines covered)</h4>
+<h4 class="cov_filepath">../wire-ios-utilities/Source/Validation/ZMEmailAddressValidator.m</h4>
+<table class="source_code">
+<tr class="never">
+<td class="num">1</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">2</td>
+<td class="src"><pre><code class="objc">// Wire</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">3</td>
+<td class="src"><pre><code class="objc">// Copyright (C) 2016 Wire Swiss GmbH</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">4</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">5</td>
+<td class="src"><pre><code class="objc">// This program is free software: you can redistribute it and/or modify</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">6</td>
+<td class="src"><pre><code class="objc">// it under the terms of the GNU General Public License as published by</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">7</td>
+<td class="src"><pre><code class="objc">// the Free Software Foundation, either version 3 of the License, or</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">8</td>
+<td class="src"><pre><code class="objc">// (at your option) any later version.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">9</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">10</td>
+<td class="src"><pre><code class="objc">// This program is distributed in the hope that it will be useful,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">11</td>
+<td class="src"><pre><code class="objc">// but WITHOUT ANY WARRANTY; without even the implied warranty of</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">12</td>
+<td class="src"><pre><code class="objc">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">13</td>
+<td class="src"><pre><code class="objc">// GNU General Public License for more details.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">14</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">15</td>
+<td class="src"><pre><code class="objc">// You should have received a copy of the GNU General Public License</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">16</td>
+<td class="src"><pre><code class="objc">// along with this program. If not, see http://www.gnu.org/licenses/.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">17</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">18</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">19</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">20</td>
+<td class="src"><pre><code class="objc">@import ZMCSystem;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">21</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">22</td>
+<td class="src"><pre><code class="objc">#import "ZMEmailAddressValidator.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">23</td>
+<td class="src"><pre><code class="objc">#import "ZMStringLengthValidator.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">24</td>
+<td class="src"><pre><code class="objc">#import "ZMPropertyValidator.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">25</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">26</td>
+<td class="src"><pre><code class="objc">@implementation ZMEmailAddressValidator</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">27</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">28</td>
+<td class="src"><pre><code class="objc">ZM_EMPTY_ASSERTING_INIT()</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">29</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">30</td>
+<td class="src"><pre><code class="objc">+ (BOOL)normalizeEmailAddress:(NSString **)ioEmailAddress</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">31</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">32</td>
+<td class="src"><pre><code class="objc">    //Things like "Meep Moop &lt;Meep.Moop@exam.ple&gt;" goes to "meep.moop@exam.ple"</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">33</td>
+<td class="src"><pre><code class="objc">    //First need to check if normalization is needed</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">34</td>
+<td class="src"><pre><code class="objc">    NSString *normalizedEmailAddress = [*ioEmailAddress lowercaseString];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">35</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">36</td>
+<td class="src"><pre><code class="objc">    //Trim whitespaces, and control characters</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">37</td>
+<td class="src"><pre><code class="objc">    NSMutableCharacterSet *charactersToTrim = [[NSCharacterSet whitespaceCharacterSet] mutableCopy];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">38</td>
+<td class="src"><pre><code class="objc">    [charactersToTrim formUnionWithCharacterSet:[NSCharacterSet controlCharacterSet]];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">39</td>
+<td class="src"><pre><code class="objc">    normalizedEmailAddress = [normalizedEmailAddress stringByTrimmingCharactersInSet:charactersToTrim];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">40</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">41</td>
+<td class="src"><pre><code class="objc">    NSScanner *bracketsScanner = [NSScanner scannerWithString:normalizedEmailAddress];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">42</td>
+<td class="src"><pre><code class="objc">    bracketsScanner.charactersToBeSkipped = [[NSCharacterSet alloc] init];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">43</td>
+<td class="src"><pre><code class="objc">    bracketsScanner.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">44</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">45</td>
+<td class="src"><pre><code class="objc">    if ([bracketsScanner scanUpToString:@"&lt;" intoString:NULL] &amp;&amp;</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">46</td>
+<td class="src"><pre><code class="objc">        [bracketsScanner scanString:@"&lt;" intoString:NULL]) {</code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="covered">
+<td class="num">47</td>
+<td class="src"><pre><code class="objc">        [bracketsScanner scanUpToString:@"&gt;" intoString:&amp;normalizedEmailAddress];</code></pre></td>
+<td class="coverage">13x</td>
+</tr>
+<tr class="covered">
+<td class="num">48</td>
+<td class="src"><pre><code class="objc">        if (![bracketsScanner scanString:@"&gt;" intoString:NULL]) {</code></pre></td>
+<td class="coverage">13x</td>
+</tr>
+<tr class="covered">
+<td class="num">49</td>
+<td class="src"><pre><code class="objc">            //if there is no &gt; than it's not valid email, we do not need to change input value</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">50</td>
+<td class="src"><pre><code class="objc">            normalizedEmailAddress = nil;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">51</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">52</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">13x</td>
+</tr>
+<tr class="covered">
+<td class="num">53</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">54</td>
+<td class="src"><pre><code class="objc">    if (normalizedEmailAddress != nil &amp;&amp; ![normalizedEmailAddress isEqualToString:(*ioEmailAddress)]) {</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">55</td>
+<td class="src"><pre><code class="objc">        *ioEmailAddress = [normalizedEmailAddress copy];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">56</td>
+<td class="src"><pre><code class="objc">        return YES;</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">57</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">58</td>
+<td class="src"><pre><code class="objc">    return NO;</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">59</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="never">
+<td class="num">60</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">61</td>
+<td class="src"><pre><code class="objc">+ (BOOL)validateValue:(inout id *)ioEmailAddress error:(out NSError **)outError</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">62</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">63</td>
+<td class="src"><pre><code class="objc">    if (*ioEmailAddress == nil) {</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="missed">
+<td class="num">64</td>
+<td class="src"><pre><code class="objc">        return YES;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">65</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">66</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">67</td>
+<td class="src"><pre><code class="objc">    if (![ZMStringLengthValidator validateValue:ioEmailAddress</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">68</td>
+<td class="src"><pre><code class="objc">                            mimimumStringLength:0</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">69</td>
+<td class="src"><pre><code class="objc">                             maximumSringLength:120</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="missed">
+<td class="num">70</td>
+<td class="src"><pre><code class="objc">                                          error:outError]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">71</td>
+<td class="src"><pre><code class="objc">        return NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">72</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">73</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">74</td>
+<td class="src"><pre><code class="objc">    dispatch_block_t setInvalid = ^(){</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">75</td>
+<td class="src"><pre><code class="objc">        if (outError != NULL) {</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">76</td>
+<td class="src"><pre><code class="objc">            NSString *description = ZMLocalizedString(@"The email address is invalid.");</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">77</td>
+<td class="src"><pre><code class="objc">            NSDictionary *userInfo = @{NSLocalizedDescriptionKey: description};</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">78</td>
+<td class="src"><pre><code class="objc">            NSError *error = [[NSError alloc] initWithDomain:ZMObjectValidationErrorDomain</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">79</td>
+<td class="src"><pre><code class="objc">                                                        code:ZMObjectValidationErrorCodeEmailAddressIsInvalid</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">80</td>
+<td class="src"><pre><code class="objc">                                                    userInfo:userInfo];</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">81</td>
+<td class="src"><pre><code class="objc">            *outError = error;</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">82</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">83</td>
+<td class="src"><pre><code class="objc">    };</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">84</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">85</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">86</td>
+<td class="src"><pre><code class="objc">    // N.B.:</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">87</td>
+<td class="src"><pre><code class="objc">    // The point here is not to be too strict, but just catch some obviously "bad" addresses.</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">88</td>
+<td class="src"><pre><code class="objc">    //</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">89</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">90</td>
+<td class="src"><pre><code class="objc">    NSString *emailAddress = [*ioEmailAddress copy];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">91</td>
+<td class="src"><pre><code class="objc">    [self normalizeEmailAddress:&amp;emailAddress];</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">92</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">93</td>
+<td class="src"><pre><code class="objc">    if (([emailAddress rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet] options:NSLiteralSearch].location != NSNotFound) ||</code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">94</td>
+<td class="src"><pre><code class="objc">        ([emailAddress rangeOfCharacterFromSet:[NSCharacterSet controlCharacterSet] options:NSLiteralSearch].location != NSNotFound))</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">95</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">96</td>
+<td class="src"><pre><code class="objc">        setInvalid();</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">97</td>
+<td class="src"><pre><code class="objc">        return NO;</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">98</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">99</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">49x</td>
+</tr>
+<tr class="covered">
+<td class="num">100</td>
+<td class="src"><pre><code class="objc">    NSScanner *emailScanner = [NSScanner scannerWithString:emailAddress];</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">101</td>
+<td class="src"><pre><code class="objc">    emailScanner.charactersToBeSkipped = [[NSCharacterSet alloc] init];</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">102</td>
+<td class="src"><pre><code class="objc">    emailScanner.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">103</td>
+<td class="src"><pre><code class="objc">    NSString *local;</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">104</td>
+<td class="src"><pre><code class="objc">    NSString *domain;</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">105</td>
+<td class="src"><pre><code class="objc">    BOOL validParts = ([emailScanner scanUpToString:@"@" intoString:&amp;local] &amp;&amp;</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">106</td>
+<td class="src"><pre><code class="objc">                       [emailScanner scanString:@"@" intoString:NULL] &amp;&amp;</code></pre></td>
+<td class="coverage">39x</td>
+</tr>
+<tr class="covered">
+<td class="num">107</td>
+<td class="src"><pre><code class="objc">                       [emailScanner scanUpToString:@"@" intoString:&amp;domain] &amp;&amp;</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">108</td>
+<td class="src"><pre><code class="objc">                       ![emailScanner scanString:@"@" intoString:NULL]);</code></pre></td>
+<td class="coverage">34x</td>
+</tr>
+<tr class="covered">
+<td class="num">109</td>
+<td class="src"><pre><code class="objc">    if (! validParts) {</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">110</td>
+<td class="src"><pre><code class="objc">        setInvalid();</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">111</td>
+<td class="src"><pre><code class="objc">        return NO;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">112</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">113</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">114</td>
+<td class="src"><pre><code class="objc">    // domain part:</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">115</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">116</td>
+<td class="src"><pre><code class="objc">        // letters, digits, hyphens and dots</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">117</td>
+<td class="src"><pre><code class="objc">        // We're allowing all Unicode letters and numbers:</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">118</td>
+<td class="src"><pre><code class="objc">        NSMutableCharacterSet *validSet = [NSMutableCharacterSet alphanumericCharacterSet];</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">119</td>
+<td class="src"><pre><code class="objc">        [validSet addCharactersInString:@"-"];</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">120</td>
+<td class="src"><pre><code class="objc">        NSCharacterSet *invalidSet = [validSet invertedSet];</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">121</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">122</td>
+<td class="src"><pre><code class="objc">        NSArray *components = [domain componentsSeparatedByString:@"."];</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">123</td>
+<td class="src"><pre><code class="objc">        if (components.count &lt; 2) {</code></pre></td>
+<td class="coverage">33x</td>
+</tr>
+<tr class="covered">
+<td class="num">124</td>
+<td class="src"><pre><code class="objc">            setInvalid();</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">125</td>
+<td class="src"><pre><code class="objc">            return NO;</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">126</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">127</td>
+<td class="src"><pre><code class="objc">        if ([components.lastObject hasSuffix:@"-"]) {</code></pre></td>
+<td class="coverage">30x</td>
+</tr>
+<tr class="covered">
+<td class="num">128</td>
+<td class="src"><pre><code class="objc">            setInvalid();</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">129</td>
+<td class="src"><pre><code class="objc">            return NO;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">130</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">131</td>
+<td class="src"><pre><code class="objc">        for (NSString *c in components) {</code></pre></td>
+<td class="coverage">70x</td>
+</tr>
+<tr class="covered">
+<td class="num">132</td>
+<td class="src"><pre><code class="objc">            if ((c.length &lt; 1) || ([c rangeOfCharacterFromSet:invalidSet options:NSLiteralSearch].location != NSNotFound))</code></pre></td>
+<td class="coverage">70x</td>
+</tr>
+<tr class="covered">
+<td class="num">133</td>
+<td class="src"><pre><code class="objc">            {</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">134</td>
+<td class="src"><pre><code class="objc">                setInvalid();</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">135</td>
+<td class="src"><pre><code class="objc">                return NO;</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">136</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">137</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">70x</td>
+</tr>
+<tr class="covered">
+<td class="num">138</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">29x</td>
+</tr>
+<tr class="covered">
+<td class="num">139</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">29x</td>
+</tr>
+<tr class="covered">
+<td class="num">140</td>
+<td class="src"><pre><code class="objc">    // local part:</code></pre></td>
+<td class="coverage">29x</td>
+</tr>
+<tr class="covered">
+<td class="num">141</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">142</td>
+<td class="src"><pre><code class="objc">        NSMutableCharacterSet *validSet = [NSMutableCharacterSet alphanumericCharacterSet];</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">143</td>
+<td class="src"><pre><code class="objc">        [validSet addCharactersInString:@"!#$%&amp;'*+-/=?^_`{|}~"];</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">144</td>
+<td class="src"><pre><code class="objc">        NSCharacterSet *invalidSet = [validSet invertedSet];</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">145</td>
+<td class="src"><pre><code class="objc">        NSMutableCharacterSet *validQuoted = [validSet mutableCopy];</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">146</td>
+<td class="src"><pre><code class="objc">        [validQuoted addCharactersInString:@"(),:;&lt;&gt;@[]"];</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">147</td>
+<td class="src"><pre><code class="objc">        NSCharacterSet *invalidQuotedSet = [validQuoted invertedSet];</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">148</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">149</td>
+<td class="src"><pre><code class="objc">        NSArray *components = [local componentsSeparatedByString:@"."];</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">150</td>
+<td class="src"><pre><code class="objc">        if (components.count &lt; 1) {</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="missed">
+<td class="num">151</td>
+<td class="src"><pre><code class="objc">            setInvalid();</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">152</td>
+<td class="src"><pre><code class="objc">            return NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">153</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">154</td>
+<td class="src"><pre><code class="objc">        for (NSString *c in components) {</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">155</td>
+<td class="src"><pre><code class="objc">            if ((c.length &lt; 1) || ([c rangeOfCharacterFromSet:invalidSet options:NSLiteralSearch].location != NSNotFound))</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">156</td>
+<td class="src"><pre><code class="objc">            {</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">157</td>
+<td class="src"><pre><code class="objc">                // Check if it's a quoted part:</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">158</td>
+<td class="src"><pre><code class="objc">                if ([c hasPrefix:@"\""] &amp;&amp; [c hasSuffix:@"\""]) {</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">159</td>
+<td class="src"><pre><code class="objc">                    // Allow this regardless of what</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">160</td>
+<td class="src"><pre><code class="objc">                    NSString *quoted = [c substringWithRange:NSMakeRange(1, c.length - 2)];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">161</td>
+<td class="src"><pre><code class="objc">                    if ((quoted.length &lt; 1) || ([quoted rangeOfCharacterFromSet:invalidQuotedSet options:NSLiteralSearch].location != NSNotFound))</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="missed">
+<td class="num">162</td>
+<td class="src"><pre><code class="objc">                    {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">163</td>
+<td class="src"><pre><code class="objc">                        setInvalid();</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">164</td>
+<td class="src"><pre><code class="objc">                        return NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">165</td>
+<td class="src"><pre><code class="objc">                    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">166</td>
+<td class="src"><pre><code class="objc">                } else {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">167</td>
+<td class="src"><pre><code class="objc">                    setInvalid();</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">168</td>
+<td class="src"><pre><code class="objc">                    return NO;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">169</td>
+<td class="src"><pre><code class="objc">                }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">170</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">171</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">40x</td>
+</tr>
+<tr class="covered">
+<td class="num">172</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">173</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="covered">
+<td class="num">174</td>
+<td class="src"><pre><code class="objc">    if (![emailAddress isEqualToString:*ioEmailAddress]) {</code></pre></td>
+<td class="coverage">21x</td>
+</tr>
+<tr class="covered">
+<td class="num">175</td>
+<td class="src"><pre><code class="objc">        *ioEmailAddress = emailAddress;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">176</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">177</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">21x</td>
+</tr>
+<tr class="covered">
+<td class="num">178</td>
+<td class="src"><pre><code class="objc">    return YES;</code></pre></td>
+<td class="coverage">21x</td>
+</tr>
+<tr class="covered">
+<td class="num">179</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">23x</td>
+</tr>
+<tr class="never">
+<td class="num">180</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">181</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+</table>
+</div></div>
+<footer><div class="row">
+<p><a href="https://github.com/SlatherOrg/slather">Fork me on Github</a></p>
+<p>&copy; 2016 Slather</p>
+</div></footer><script src="highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

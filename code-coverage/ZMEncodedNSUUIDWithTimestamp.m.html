@@ -1,0 +1,1127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>ZMEncodedNSUUIDWithTimestamp.m - Slather</title>
+<link href="slather.css" media="all" rel="stylesheet">
+</head>
+<body>
+<header><div class="row"><a href="index.html"><img src="logo.jpg" alt="Slather logo"></a></div></header><div class="row"><div id="reports">
+<h2 class="cov_title">
+<span>Coverage for "ZMEncodedNSUUIDWithTimestamp.m" : </span><span class="cov_low">62.16%</span>
+</h2>
+<h4 class="cov_subtitle">(92 of 148 relevant lines covered)</h4>
+<h4 class="cov_filepath">../wire-ios-utilities/Source/ZMEncodedNSUUIDWithTimestamp.m</h4>
+<table class="source_code">
+<tr class="never">
+<td class="num">1</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">2</td>
+<td class="src"><pre><code class="objc">// Wire</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">3</td>
+<td class="src"><pre><code class="objc">// Copyright (C) 2016 Wire Swiss GmbH</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">4</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">5</td>
+<td class="src"><pre><code class="objc">// This program is free software: you can redistribute it and/or modify</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">6</td>
+<td class="src"><pre><code class="objc">// it under the terms of the GNU General Public License as published by</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">7</td>
+<td class="src"><pre><code class="objc">// the Free Software Foundation, either version 3 of the License, or</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">8</td>
+<td class="src"><pre><code class="objc">// (at your option) any later version.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">9</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">10</td>
+<td class="src"><pre><code class="objc">// This program is distributed in the hope that it will be useful,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">11</td>
+<td class="src"><pre><code class="objc">// but WITHOUT ANY WARRANTY; without even the implied warranty of</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">12</td>
+<td class="src"><pre><code class="objc">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">13</td>
+<td class="src"><pre><code class="objc">// GNU General Public License for more details.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">14</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">15</td>
+<td class="src"><pre><code class="objc">// You should have received a copy of the GNU General Public License</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">16</td>
+<td class="src"><pre><code class="objc">// along with this program. If not, see http://www.gnu.org/licenses/.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">17</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">18</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">19</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">20</td>
+<td class="src"><pre><code class="objc">@import CoreFoundation;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">21</td>
+<td class="src"><pre><code class="objc">@import ZMCSystem;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">22</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">23</td>
+<td class="src"><pre><code class="objc">#import "ZMEncodedNSUUIDWithTimestamp.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">24</td>
+<td class="src"><pre><code class="objc">#import "NSUUID+Data.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">25</td>
+<td class="src"><pre><code class="objc">#import &lt;CommonCrypto/CommonCrypto.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">26</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">27</td>
+<td class="src"><pre><code class="objc">static const uint8_t RANDOM_DATA_SIZE = 14;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">28</td>
+<td class="src"><pre><code class="objc">static const uint8_t TIME_DATA_SIZE = 2;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">29</td>
+<td class="src"><pre><code class="objc">static const uint8_t UUID_DATA_SIZE = 16;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">30</td>
+<td class="src"><pre><code class="objc">static const uint8_t BUFFER_SIZE = RANDOM_DATA_SIZE + TIME_DATA_SIZE + UUID_DATA_SIZE;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">31</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">32</td>
+<td class="src"><pre><code class="objc">static unsigned long HOUR_IN_SEC = 60 * 60;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">33</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">34</td>
+<td class="src"><pre><code class="objc">static unsigned long ReferenceTimestamp = 1388534400; // 01 Jan 2014 00:00:00</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">35</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">36</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">37</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">38</td>
+<td class="src"><pre><code class="objc">@interface ZMEncodedNSUUIDWithTimestamp ()</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">39</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">40</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSUUID *uuid;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">41</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSDate *timestampDate;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">42</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSData *encodedData;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">43</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">44</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">45</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">46</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">47</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">48</td>
+<td class="src"><pre><code class="objc">@implementation ZMEncodedNSUUIDWithTimestamp</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">49</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">50</td>
+<td class="src"><pre><code class="objc">- (instancetype)initWithEncodedData:(NSData *)data encryptionKey:(NSData *)encryptionKey;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">51</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">52</td>
+<td class="src"><pre><code class="objc">    self = [super init];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">53</td>
+<td class="src"><pre><code class="objc">    if(self) {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">54</td>
+<td class="src"><pre><code class="objc">        self.encodedData = data;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">55</td>
+<td class="src"><pre><code class="objc">        [self decodeDataWithKey:encryptionKey];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">56</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">57</td>
+<td class="src"><pre><code class="objc">    return self;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">58</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">59</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">60</td>
+<td class="src"><pre><code class="objc">- (instancetype)initWithUUID:(NSUUID *)UUID timestampDate:(NSDate *)date encryptionKey:(NSData *)encryptionKey;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">61</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">62</td>
+<td class="src"><pre><code class="objc">    self = [super init];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">63</td>
+<td class="src"><pre><code class="objc">    if(self) {</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">64</td>
+<td class="src"><pre><code class="objc">        self.uuid = UUID;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">65</td>
+<td class="src"><pre><code class="objc">        self.timestampDate = date;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">66</td>
+<td class="src"><pre><code class="objc">        [self encodedDataWithKey:encryptionKey];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">67</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">68</td>
+<td class="src"><pre><code class="objc">    return self;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">69</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="never">
+<td class="num">70</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">71</td>
+<td class="src"><pre><code class="objc">+ (uint16_t)hoursBetweenReferenceDateAndDate:(NSDate *)date</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">72</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">73</td>
+<td class="src"><pre><code class="objc">    NSTimeInterval diff = date.timeIntervalSince1970 - ReferenceTimestamp;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">74</td>
+<td class="src"><pre><code class="objc">    return (uint16_t) floor(diff/HOUR_IN_SEC);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">75</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="never">
+<td class="num">76</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">77</td>
+<td class="src"><pre><code class="objc">+ (NSDate *)dateFromHoursSinceReferenceDate:(uint16_t)hours</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">78</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">79</td>
+<td class="src"><pre><code class="objc">    return [NSDate dateWithTimeIntervalSince1970:ReferenceTimestamp + HOUR_IN_SEC * hours];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">80</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">81</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">82</td>
+<td class="src"><pre><code class="objc">- (void)encodedDataWithKey:(NSData *)encryptionKey</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">83</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">84</td>
+<td class="src"><pre><code class="objc">    /*</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">85</td>
+<td class="src"><pre><code class="objc">     Encoding</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">86</td>
+<td class="src"><pre><code class="objc">     =========</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">87</td>
+<td class="src"><pre><code class="objc">     </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">88</td>
+<td class="src"><pre><code class="objc">     The initial data is:</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">89</td>
+<td class="src"><pre><code class="objc">     +-----------------------+--------------+--------------------------+</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">90</td>
+<td class="src"><pre><code class="objc">     | 14 bytes random data  | 2 bytes time | 16 bytes UUID            |</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">91</td>
+<td class="src"><pre><code class="objc">     +-----------------------+--------------+--------------------------+</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">92</td>
+<td class="src"><pre><code class="objc">     </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">93</td>
+<td class="src"><pre><code class="objc">     The initial data is then encoded with AES, no IV, no padding.</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">94</td>
+<td class="src"><pre><code class="objc">     </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">95</td>
+<td class="src"><pre><code class="objc">     Time is the number of hours since 01 Jan 2014 00:00 as a Big Endian unsigned int16.</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">96</td>
+<td class="src"><pre><code class="objc">     */</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">97</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">98</td>
+<td class="src"><pre><code class="objc">    RequireString((BUFFER_SIZE / kCCBlockSizeAES128 ) * kCCBlockSizeAES128 == BUFFER_SIZE, "Data to encrypt is not a multiple of the block size");</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">99</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">100</td>
+<td class="src"><pre><code class="objc">    RequireString(encryptionKey.length == kCCKeySizeAES256, "Encryption key has wrong length (%lu vs. expected %d)", (unsigned long)encryptionKey.length, kCCKeySizeAES256);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">101</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">102</td>
+<td class="src"><pre><code class="objc">    uint8_t initialData[BUFFER_SIZE];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">103</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">104</td>
+<td class="src"><pre><code class="objc">    // 14 bytes random data</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">105</td>
+<td class="src"><pre><code class="objc">    int result = SecRandomCopyBytes(kSecRandomDefault, RANDOM_DATA_SIZE, initialData);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">106</td>
+<td class="src"><pre><code class="objc">    if (result != 0) {</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="missed">
+<td class="num">107</td>
+<td class="src"><pre><code class="objc">        ZMLogError(@"ZMEncodedNSUUIDWithTimestamp cannot copy random bytes: %d", result);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">108</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">109</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">110</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">111</td>
+<td class="src"><pre><code class="objc">    // 2 bytes time</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">112</td>
+<td class="src"><pre><code class="objc">    uint16_t hours = [self.class hoursBetweenReferenceDateAndDate:self.timestampDate];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">113</td>
+<td class="src"><pre><code class="objc">    uint16_t hours_BE = CFSwapInt16HostToBig(hours);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">114</td>
+<td class="src"><pre><code class="objc">    if(!memcpy(initialData + RANDOM_DATA_SIZE, &amp;hours_BE, TIME_DATA_SIZE)) {</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="missed">
+<td class="num">115</td>
+<td class="src"><pre><code class="objc">        ZMLogError(@"ZMEncodedNSUUIDWithTimestamp setting hours fail");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">116</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">117</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">118</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">119</td>
+<td class="src"><pre><code class="objc">    // 16 bytes UUID</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">120</td>
+<td class="src"><pre><code class="objc">    if(self.uuid.data == nil || !memcpy(initialData + RANDOM_DATA_SIZE + TIME_DATA_SIZE, self.uuid.data.bytes, UUID_DATA_SIZE)) {</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="missed">
+<td class="num">121</td>
+<td class="src"><pre><code class="objc">        ZMLogError(@"ZMEncodedNSUUIDWithTimestamp setting UUID fail");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">122</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">123</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">124</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">125</td>
+<td class="src"><pre><code class="objc">    // Encrypt with AES</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">126</td>
+<td class="src"><pre><code class="objc">    uint8_t encryptedData[BUFFER_SIZE];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">127</td>
+<td class="src"><pre><code class="objc">    size_t numBytes = 0;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">128</td>
+<td class="src"><pre><code class="objc">    CCCryptorStatus status = CCCrypt(kCCEncrypt, kCCAlgorithmAES, 0, encryptionKey.bytes, encryptionKey.length, nil, initialData, BUFFER_SIZE, &amp;encryptedData, BUFFER_SIZE, &amp;numBytes);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">129</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">130</td>
+<td class="src"><pre><code class="objc">    RequireString(status == kCCSuccess, "Error in encryption: %d", status);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">131</td>
+<td class="src"><pre><code class="objc">    self.encodedData = [NSData dataWithBytes:encryptedData length:numBytes];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">132</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">133</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="never">
+<td class="num">134</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">135</td>
+<td class="src"><pre><code class="objc">- (void)decodeDataWithKey:(NSData *)encryptionKey</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">136</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">137</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">138</td>
+<td class="src"><pre><code class="objc">    if(self.encodedData.length != BUFFER_SIZE) {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="missed">
+<td class="num">139</td>
+<td class="src"><pre><code class="objc">        ZMLogWarn(@"Trying to decrypt data of invalid length");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">140</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">141</td>
+<td class="src"><pre><code class="objc">    RequireString((BUFFER_SIZE / kCCBlockSizeAES128 ) * kCCBlockSizeAES128 == BUFFER_SIZE, "Data to dencrypt is not a multiple of the block size");</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">142</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">143</td>
+<td class="src"><pre><code class="objc">    RequireString(encryptionKey.length == kCCKeySizeAES256, "Encryption key has wrong length (%lu vs. expected %d)", (unsigned long)encryptionKey.length, kCCKeySizeAES256);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">144</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">145</td>
+<td class="src"><pre><code class="objc">    // Decrypt with AES</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">146</td>
+<td class="src"><pre><code class="objc">    uint8_t decryptedData[BUFFER_SIZE];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">147</td>
+<td class="src"><pre><code class="objc">    size_t numBytes = 0;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">148</td>
+<td class="src"><pre><code class="objc">    CCCryptorStatus status = CCCrypt(kCCDecrypt, kCCAlgorithmAES, 0, encryptionKey.bytes, encryptionKey.length, nil, self.encodedData.bytes, BUFFER_SIZE, &amp;decryptedData, BUFFER_SIZE, &amp;numBytes);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">149</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">150</td>
+<td class="src"><pre><code class="objc">    if(status != kCCSuccess) {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="missed">
+<td class="num">151</td>
+<td class="src"><pre><code class="objc">        ZMLogError(@"Error in decryption: %d", status);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">152</td>
+<td class="src"><pre><code class="objc">        self.timestampDate = [NSDate distantPast];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">153</td>
+<td class="src"><pre><code class="objc">        self.uuid = nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">154</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">155</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">156</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">157</td>
+<td class="src"><pre><code class="objc">    // 14 bytes random data</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">158</td>
+<td class="src"><pre><code class="objc">    // 2 bytes time</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">159</td>
+<td class="src"><pre><code class="objc">    uint16_t hours_BE;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">160</td>
+<td class="src"><pre><code class="objc">    memcpy(&amp;hours_BE, decryptedData + RANDOM_DATA_SIZE, TIME_DATA_SIZE);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">161</td>
+<td class="src"><pre><code class="objc">    uint16_t hours = CFSwapInt16BigToHost(hours_BE);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">162</td>
+<td class="src"><pre><code class="objc">    self.timestampDate = [self.class dateFromHoursSinceReferenceDate:hours];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">163</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">164</td>
+<td class="src"><pre><code class="objc">    // 16 bytes UUID</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">165</td>
+<td class="src"><pre><code class="objc">    NSUUID *uuid = [[NSUUID alloc] initWithUUIDBytes:(const unsigned char*)decryptedData + RANDOM_DATA_SIZE + TIME_DATA_SIZE];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">166</td>
+<td class="src"><pre><code class="objc">    self.uuid = uuid;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">167</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">168</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">169</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">170</td>
+<td class="src"><pre><code class="objc">+ (NSString *)URLSafeBase64WithoutPaddingEncodeData:(NSData *)data</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">171</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">172</td>
+<td class="src"><pre><code class="objc">    NSString *base64 = [data base64EncodedStringWithOptions:0];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">173</td>
+<td class="src"><pre><code class="objc">    NSString *safeBase64 = [[base64 stringByReplacingOccurrencesOfString:@"/" withString:@"_"]</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">174</td>
+<td class="src"><pre><code class="objc">                            stringByReplacingOccurrencesOfString:@"+" withString:@"-"];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">175</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">176</td>
+<td class="src"><pre><code class="objc">    // we know that there is always a = at the end, so we can remove it</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">177</td>
+<td class="src"><pre><code class="objc">    RequireString( [safeBase64 characterAtIndex:safeBase64.length-1] == '=', "No '=' at the end of the base64 encoded string");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">178</td>
+<td class="src"><pre><code class="objc">    NSString *noPaddingSafeBase64 = [safeBase64 stringByReplacingOccurrencesOfString:@"=" withString:@""];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">179</td>
+<td class="src"><pre><code class="objc">    RequireString( ! [noPaddingSafeBase64 containsString:@"="], "More than one = in base64 encoded string");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">180</td>
+<td class="src"><pre><code class="objc">    return noPaddingSafeBase64;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">181</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">182</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">183</td>
+<td class="src"><pre><code class="objc">+ (NSData *)URLSafeBase64WithoutPaddingDecodeString:(NSString *)safeBase64WithoutPadding</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">184</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">185</td>
+<td class="src"><pre><code class="objc">    VerifyReturnNil([safeBase64WithoutPadding characterAtIndex:safeBase64WithoutPadding.length-1] != '=');</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">186</td>
+<td class="src"><pre><code class="objc">    NSString *safeBase64 = [safeBase64WithoutPadding stringByAppendingString:@"="];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">187</td>
+<td class="src"><pre><code class="objc">    NSString *base64 = [[safeBase64 stringByReplacingOccurrencesOfString:@"_" withString:@"/"]</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">188</td>
+<td class="src"><pre><code class="objc">                        stringByReplacingOccurrencesOfString:@"-" withString:@"+"];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">189</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">190</td>
+<td class="src"><pre><code class="objc">    return [[NSData alloc] initWithBase64EncodedString:base64 options:0];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">191</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">192</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">193</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">194</td>
+<td class="src"><pre><code class="objc">- (NSURL *)URLWithEncodedUUIDWithTimestampPrefixedWithString:(NSString *)prefix;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">195</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">196</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">197</td>
+<td class="src"><pre><code class="objc">    NSString *base64EncodedIndentifier = [self.class URLSafeBase64WithoutPaddingEncodeData:self.encodedData];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">198</td>
+<td class="src"><pre><code class="objc">    NSMutableCharacterSet *set = [[NSCharacterSet URLQueryAllowedCharacterSet] mutableCopy];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">199</td>
+<td class="src"><pre><code class="objc">    [set removeCharactersInString:@"/=&amp;+"];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">200</td>
+<td class="src"><pre><code class="objc">    NSString *urlEncodedIdentifier = [base64EncodedIndentifier stringByAddingPercentEncodingWithAllowedCharacters:set];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">201</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">202</td>
+<td class="src"><pre><code class="objc">    return [NSURL URLWithString:[prefix stringByAppendingString:urlEncodedIdentifier]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">203</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">204</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">205</td>
+<td class="src"><pre><code class="objc">- (instancetype)initWithSafeBase64EncodedToken:(NSString *)token withEncryptionKey:(NSData *)encryptionKey;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">206</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">207</td>
+<td class="src"><pre><code class="objc">    if(token == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">208</td>
+<td class="src"><pre><code class="objc">        return nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">209</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">210</td>
+<td class="src"><pre><code class="objc">    NSString *safeToken = [token stringByRemovingPercentEncoding];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">211</td>
+<td class="src"><pre><code class="objc">    NSData *decodedData = [self.class URLSafeBase64WithoutPaddingDecodeString:safeToken];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">212</td>
+<td class="src"><pre><code class="objc">    if(decodedData == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">213</td>
+<td class="src"><pre><code class="objc">        return nil;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">214</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">215</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">216</td>
+<td class="src"><pre><code class="objc">    return [[ZMEncodedNSUUIDWithTimestamp alloc] initWithEncodedData:decodedData encryptionKey:encryptionKey];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">217</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">218</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">219</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">220</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">221</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+</table>
+</div></div>
+<footer><div class="row">
+<p><a href="https://github.com/SlatherOrg/slather">Fork me on Github</a></p>
+<p>&copy; 2016 Slather</p>
+</div></footer><script src="highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
