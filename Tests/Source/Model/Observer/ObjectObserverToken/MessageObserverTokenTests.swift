@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -25,7 +25,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     class TestMessageObserver : NSObject, ZMMessageObserver {
         var receivedChangeInfo : [MessageChangeInfo] = []
         
-        func messageDidChange(changes: MessageChangeInfo) {
+        func messageDidChange(_ changes: MessageChangeInfo) {
             receivedChangeInfo.append(changes)
         }
     }
@@ -34,11 +34,11 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         super.setUp()
         self.setUpCaches()
 
-        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(Notification(name: Notification.Name(rawValue: "fake"), object: nil))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(message : ZMMessage, modifier: (ZMMessage) -> Void, expectedChangedField : String?, customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(_ message : ZMMessage, modifier: (ZMMessage) -> Void, expectedChangedField : String?, customAffectedKeys: AffectedKeys? = nil) {
         
         // given
         let observer = TestMessageObserver()
@@ -49,7 +49,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         // when
         modifier(message)
         self.uiMOC.saveOrRollback()
-        self.spinMainQueueWithTimeout(0.5)
+        self.spinMainQueue(withTimeout: 0.5)
         
         // then
         if expectedChangedField != nil {
@@ -76,7 +76,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
                     if key == changedField {
                         continue
                     }
-                    if let value = changes.valueForKey(key) as? NSNumber {
+                    if let value = changes.value(forKey: key) as? NSNumber {
                         XCTAssertFalse(value.boolValue, "\(key) was supposed to be false")
                     }
                     else {
@@ -90,7 +90,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
 
     func testThatItNotifiesObserverWhenTheDeliveryStateChanges() {
         // given
-        let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMMessage.insertNewObject(in: self.uiMOC)
         message.serverTimestamp = nil
         message.eventID = nil
         
@@ -103,10 +103,10 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     
     func testThatItNotifiesObserverWhenTheSenderNameChanges() {
         // given
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let sender = ZMUser.insertNewObject(in:self.uiMOC)
         sender.name = "Hans"
         
-        let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMMessage.insertNewObject(in: self.uiMOC)
         message.sender = sender
 
         // when
@@ -118,14 +118,14 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     
     func testThatItNotifiesObserverWhenTheFileTransferStateChanges() {
         // given
-        let message = ZMAssetClientMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
-        message.transferState = .Uploading
+        let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        message.transferState = .uploading
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
             modifier: {
             if let msg = $0 as? ZMAssetClientMessage {
-                msg.transferState = .Uploaded
+                msg.transferState = .uploaded
                 }
             },
             expectedChangedField: ZMAssetClientMessageTransferStateKey
@@ -134,10 +134,10 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     
     func testThatItNotifiesObserverWhenTheSenderNameChangesBecauseOfAnotherUserWithTheSameName() {
         // given
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let sender = ZMUser.insertNewObject(in:self.uiMOC)
         sender.name = "Hans A"
         
-        let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMMessage.insertNewObject(in: self.uiMOC)
         message.sender = sender
         
         self.uiMOC.saveOrRollback()
@@ -145,7 +145,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
             modifier: { _ in
-                let newUser = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+                let newUser = ZMUser.insertNewObject(in:self.uiMOC)
                 newUser.name = "Hans K"
             },
             expectedChangedField: "senderChanged"
@@ -154,25 +154,25 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     
     func testThatItNotifiesObserverWhenTheSenderAccentColorChanges() {
         // given
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        sender.accentColorValue = ZMAccentColor.BrightOrange
+        let sender = ZMUser.insertNewObject(in:self.uiMOC)
+        sender.accentColorValue = ZMAccentColor.brightOrange
         
-        let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMMessage.insertNewObject(in: self.uiMOC)
         message.sender = sender
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
-            modifier: { $0.sender!.accentColorValue = ZMAccentColor.SoftPink },
+            modifier: { $0.sender!.accentColorValue = ZMAccentColor.softPink },
             expectedChangedField: "senderChanged"
         )
     }
     
     func testThatItNotifiesObserverWhenTheSenderSmallProfileImageChanges() {
         // given
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        sender.remoteIdentifier = NSUUID.createUUID()
-        sender.mediumRemoteIdentifier = NSUUID.createUUID()
-        let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let sender = ZMUser.insertNewObject(in:self.uiMOC)
+        sender.remoteIdentifier = UUID.create()
+        sender.mediumRemoteIdentifier = UUID.create()
+        let message = ZMMessage.insertNewObject(in: self.uiMOC)
         message.sender = sender
         
         // when
@@ -184,11 +184,11 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     
     func testThatItNotifiesObserverWhenTheSenderMediumProfileImageChanges() {
         // given
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        sender.remoteIdentifier = NSUUID.createUUID()
-        let message = ZMMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let sender = ZMUser.insertNewObject(in:self.uiMOC)
+        sender.remoteIdentifier = UUID.create()
+        let message = ZMMessage.insertNewObject(in: self.uiMOC)
         message.sender = sender
-        sender.smallProfileRemoteIdentifier = NSUUID.createUUID()
+        sender.smallProfileRemoteIdentifier = UUID.create()
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
@@ -199,7 +199,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     
     func testThatItNotifiesObserverWhenTheMediumImageDataChanges() {
         // given
-        let message = ZMImageMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMImageMessage.insertNewObject(in: self.uiMOC)
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
@@ -214,8 +214,8 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges() {
         // when
         checkThatItNotifiesTheObserverOfAChange(
-            ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC),
-            modifier: { ($0 as? ZMClientMessage)?.linkPreviewState = .Downloaded },
+            ZMClientMessage.insertNewObject(in: uiMOC),
+            modifier: { ($0 as? ZMClientMessage)?.linkPreviewState = .downloaded },
             expectedChangedField: "linkPreviewChanged"
         )
     }
@@ -223,9 +223,9 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges_NewGenericMessageData() {
         // given
         
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
-        let nonce = NSUUID.createUUID()
-        clientMessage.addData(ZMGenericMessage(text: name!, nonce: nonce.transportString()).data())
+        let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
+        let nonce = UUID.create()
+        clientMessage.add(ZMGenericMessage(text: name!, nonce: nonce.transportString()!).data())
         let preview = ZMLinkPreview.linkPreview(
             withOriginalURL: "www.example.com",
             permanentURL: "www.example.com/permanent",
@@ -234,19 +234,19 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
             summary: "summary",
             imageAsset: nil
         )
-        let updateGenericMessage = ZMGenericMessage(text: name!, linkPreview: preview, nonce: nonce.transportString())
+        let updateGenericMessage = ZMGenericMessage(text: name!, linkPreview: preview, nonce: nonce.transportString()!)
         
         // when
         checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
-            modifier: { ($0 as? ZMClientMessage)?.addData(updateGenericMessage.data()) },
+            modifier: { ($0 as? ZMClientMessage)?.add(updateGenericMessage.data()) },
             expectedChangedField: "linkPreviewChanged"
         )
     }
     
     func testThatItDoesNotNotifiyObserversWhenTheSmallImageDataChanges() {
         // given
-        let message = ZMImageMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMImageMessage.insertNewObject(in: self.uiMOC)
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(message,
@@ -259,14 +259,14 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     }
     
     func testThatItNotifiesWhenAReactionIsAddedOnMessage() {
-        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMTextMessage.insertNewObject(in: self.uiMOC)
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { message in
                 if let textMessage = message as? ZMTextMessage {
-                    textMessage.addReaction("LOVE IT, HUH", forUser: ZMUser.selfUserInContext(self.uiMOC))
+                    textMessage.addReaction("LOVE IT, HUH", forUser: ZMUser.selfUser(in: self.uiMOC))
                 }
                 
             },
@@ -275,10 +275,10 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     }
     
     func testThatItNotifiesWhenAReactionIsAddedOnMessageFromADifferentUser() {
-        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(uiMOC)
-        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
+        let message = ZMTextMessage.insertNewObject(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in:uiMOC)
         otherUser.name = "Hans"
-        otherUser.remoteIdentifier = .createUUID()
+        otherUser.remoteIdentifier = .create()
         
         // when
         checkThatItNotifiesTheObserverOfAChange(
@@ -289,8 +289,8 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     }
     
     func testThatItNotifiesWhenAReactionIsUpdateForAUserOnMessage() {
-        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let selfUser = ZMUser.selfUserInContext(self.uiMOC)
+        let message = ZMTextMessage.insertNewObject(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
         message.addReaction("LOVE IT, HUH", forUser: selfUser)
         
         // when
@@ -308,12 +308,12 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     }
     
     func testThatItNotifiesWhenAReactionFromADifferentUserIsAddedOnTopOfSelfReaction() {
-        let message = ZMTextMessage.insertNewObjectInManagedObjectContext(uiMOC)
-        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
+        let message = ZMTextMessage.insertNewObject(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in:uiMOC)
         otherUser.name = "Hans"
-        otherUser.remoteIdentifier = .createUUID()
+        otherUser.remoteIdentifier = .create()
         
-        let selfUser = ZMUser.selfUserInContext(self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
         message.addReaction("👻", forUser: selfUser)
         
         // when
@@ -329,16 +329,16 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
-        let message = ZMImageMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let message = ZMImageMessage.insertNewObject(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
         let observer = TestMessageObserver()
-        let token = ZMMessageNotification.addMessageObserver(observer, forMessage: message)
-        ZMMessageNotification.removeMessageObserverForToken(token)
+        let token = ZMMessageNotification.add(observer, for: message)
+        ZMMessageNotification.removeMessageObserver(for: token)
 
         
         // when
-        message.serverTimestamp = NSDate()
+        message.serverTimestamp = Date()
         self.uiMOC.saveOrRollback()
         
         // then

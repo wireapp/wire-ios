@@ -85,7 +85,7 @@ extension ZMMessage : ObjectInSnapshot {
             MessageKey.PreviewGenericMessage.rawValue,
             MessageKey.MediumGenericMessage.rawValue,
             ZMAssetClientMessageDownloadedImageKey
-        ).isDisjointWith(changedKeysAndOldValues.keys)
+        ).isDisjoint(with: Set(changedKeysAndOldValues.keys))
     }
     
     /// Whether the file on disk changed
@@ -97,7 +97,7 @@ extension ZMMessage : ObjectInSnapshot {
         return userChangeInfo != nil
     }
     
-    private var linkPreviewDataChanged: Bool {
+    fileprivate var linkPreviewDataChanged: Bool {
         guard let genericMessage = (message as? ZMClientMessage)?.genericMessage else { return false }
         guard let oldGenericMessage = changedKeysAndOldValues[MessageKey.GenericMessage.rawValue] as? ZMGenericMessage else { return false }
         let oldLinks = oldGenericMessage.linkPreviews
@@ -118,7 +118,7 @@ extension ZMMessage : ObjectInSnapshot {
     }
     
     public var userChangeInfo : UserChangeInfo?
-    private var reactionChangeInfo : ReactionChangeInfo?
+    fileprivate var reactionChangeInfo : ReactionChangeInfo?
     
     public let message : ZMMessage
 }
@@ -129,11 +129,11 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
     typealias InnerTokenType = ObjectObserverToken<MessageChangeInfo,MessageObserverToken>
 
 
-    private let observedMessage: ZMMessage
-    private weak var observer : ZMMessageObserver?
-    private var userTokens: [UserCollectionObserverToken] = []
+    fileprivate let observedMessage: ZMMessage
+    fileprivate weak var observer : ZMMessageObserver?
+    fileprivate var userTokens: [UserCollectionObserverToken] = []
     
-    private var reactionTokens : [Reaction : ReactionObserverToken] = [:]
+    fileprivate var reactionTokens : [Reaction : ReactionObserverToken] = [:]
     
     public init(observer: ZMMessageObserver, object: ZMMessage) {
         self.observedMessage = object
@@ -173,7 +173,7 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         }
     }
     
-    private func createTokensForReactions(reactions: [Reaction]) {
+    fileprivate func createTokensForReactions(_ reactions: [Reaction]) {
         for reaction in reactions {
             if self.reactionTokens[reaction] == nil {
                 let reactionToken = ReactionObserverToken(observer: self, observedObject: reaction)
@@ -182,12 +182,12 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         }
     }
     
-    private func createTokenForUser(user: ZMUser) -> UserCollectionObserverToken {
-        let token = ZMUser.addUserObserver(self, forUsers: [user], managedObjectContext: user.managedObjectContext!)
+    fileprivate func createTokenForUser(_ user: ZMUser) -> UserCollectionObserverToken {
+        let token = ZMUser.add(self, forUsers: [user], managedObjectContext: user.managedObjectContext!)
         return token as! UserCollectionObserverToken
     }
     
-    public func userDidChange(changes: UserChangeInfo){
+    public func userDidChange(_ changes: UserChangeInfo){
         if (changes.nameChanged || changes.accentColorValueChanged || changes.imageMediumDataChanged || changes.imageSmallProfileDataChanged) {
             let changeInfo = MessageChangeInfo(object: self.observedMessage)
             changeInfo.userChangeInfo = changes
@@ -195,7 +195,7 @@ public final class MessageObserverToken: ObjectObserverTokenContainer, ZMUserObs
         }
     }
     
-    func reactionDidChange(reactionInfo: ReactionChangeInfo) {
+    func reactionDidChange(_ reactionInfo: ReactionChangeInfo) {
         let changeInfo = MessageChangeInfo(object: self.observedMessage)
         changeInfo.reactionChangeInfo = reactionInfo
         self.observer?.messageDidChange(changeInfo)
@@ -248,15 +248,15 @@ public final class ReactionChangeInfo : ObjectChangeInfo {
 }
 
 @objc protocol ReactionObserver {
-    func reactionDidChange(reactionInfo: ReactionChangeInfo)
+    func reactionDidChange(_ reactionInfo: ReactionChangeInfo)
 }
 
 
 final class ReactionObserverToken : ObjectObserverTokenContainer {
     typealias ReactionTokenType = ObjectObserverToken<ReactionChangeInfo, ReactionObserverToken>
     
-    private let observedReaction : Reaction
-    private weak var observer : ReactionObserver?
+    fileprivate let observedReaction : Reaction
+    fileprivate weak var observer : ReactionObserver?
     
     init (observer: ReactionObserver, observedObject: Reaction) {
         

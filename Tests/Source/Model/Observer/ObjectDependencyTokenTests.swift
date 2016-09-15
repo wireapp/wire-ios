@@ -23,15 +23,15 @@ class ObjectDependencyTokenTests : ZMBaseManagedObjectTest {
     
     override func setUp() {
         super.setUp()
-        NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
     func testThatItNotifiesAnObserverThatAKeyChanged() {
         
         // given
         var called = false
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         self.uiMOC.saveOrRollback()
 
         let token = ObjectDependencyToken(
@@ -56,8 +56,8 @@ class ObjectDependencyTokenTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotNotifyTheObserverThatAKeyItDoesNotTrackChanged() {
         
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)!
-        user.accentColorValue = ZMAccentColor.BrightYellow
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.accentColorValue = ZMAccentColor.brightYellow
         self.uiMOC.saveOrRollback()
         
         let token = ObjectDependencyToken(
@@ -70,7 +70,7 @@ class ObjectDependencyTokenTests : ZMBaseManagedObjectTest {
         }
         
         // when
-        user.accentColorValue = ZMAccentColor.BrightOrange
+        user.accentColorValue = ZMAccentColor.brightOrange
         self.uiMOC.saveOrRollback()
         
         self.uiMOC.globalManagedObjectContextObserver.removeChangeObserver(token, object: user)
@@ -79,8 +79,8 @@ class ObjectDependencyTokenTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotNotifyTheObserverForADifferentObject() {
         
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)!
-        let user2 = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in:self.uiMOC)
         self.uiMOC.saveOrRollback()
         
         let token = ObjectDependencyToken(

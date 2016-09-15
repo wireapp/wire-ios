@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,11 +21,11 @@ import Foundation
 
 @objc
 public enum ZMDeliveryState : UInt {
-    case Invalid = 0
-    case Pending = 1
-    case Sent = 2
-    case Delivered = 3
-    case FailedToSend = 4
+    case invalid = 0
+    case pending = 1
+    case sent = 2
+    case delivered = 3
+    case failedToSend = 4
 }
 
 @objc
@@ -43,7 +43,7 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var sender: ZMUser? { get }
     
     /// The timestamp as received by the server
-    var serverTimestamp: NSDate? { get }
+    var serverTimestamp: Date? { get }
     
     /// The conversation this message belongs to
     var conversation: ZMConversation? { get }
@@ -92,7 +92,7 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// True if the message has been deleted
     var hasBeenDeleted : Bool { get }
     
-    var updatedAt : NSDate? { get }
+    var updatedAt : Date? { get }
 }
 
 
@@ -107,13 +107,18 @@ extension ZMMessage {
     }
 }
 
+
 // MARK:- Conversation Message protocol implementation
+
 extension ZMMessage : ZMConversationMessage {
+}
+
+extension ZMMessage {
     
     @NSManaged public var isEncrypted : Bool
     @NSManaged public var isPlainText : Bool
     @NSManaged public var sender : ZMUser?
-    @NSManaged public var serverTimestamp : NSDate?
+    @NSManaged public var serverTimestamp : Date?
 
     public var textMessageData : ZMTextMessageData? {
         return nil
@@ -141,15 +146,15 @@ extension ZMMessage : ZMConversationMessage {
     
     public var deliveryState : ZMDeliveryState {
         if self.confirmations.count > 0 {
-            return .Delivered
+            return .delivered
         }
         if self.eventID != nil {
-            return .Sent
+            return .sent
         }
         if self.isExpired {
-            return .FailedToSend
+            return .failedToSend
         }
-        return .Pending
+        return .pending
     }
     
     public func requestFileDownload() {}
@@ -168,15 +173,16 @@ extension ZMMessage : ZMConversationMessage {
     
     
     public var canBeDeleted : Bool {
-        return deliveryState == .Delivered || deliveryState == .Sent || deliveryState == .FailedToSend
+        return deliveryState == .delivered || deliveryState == .sent || deliveryState == .failedToSend
     }
     
     public var hasBeenDeleted: Bool {
         return visibleInConversation == nil && hiddenInConversation != nil;
     }
     
-    public var updatedAt : NSDate? {
+    public var updatedAt : Date? {
         return nil
     }
     
 }
+

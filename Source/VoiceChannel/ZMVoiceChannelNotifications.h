@@ -37,17 +37,17 @@
 
 @interface ZMVoiceChannel (ChangeNotification)
 
-- (id<ZMVoiceChannelStateObserverOpaqueToken>)addVoiceChannelStateObserver:(id<ZMVoiceChannelStateObserver>)observer;
-- (void)removeVoiceChannelStateObserverForToken:(id<ZMVoiceChannelStateObserverOpaqueToken>)token;
+- (nullable id<ZMVoiceChannelStateObserverOpaqueToken>)addVoiceChannelStateObserver:(nonnull id<ZMVoiceChannelStateObserver>)observer;
+- (void)removeVoiceChannelStateObserverForToken:(nonnull id<ZMVoiceChannelStateObserverOpaqueToken>)token;
 
-+ (id<ZMVoiceChannelStateObserverOpaqueToken>)addGlobalVoiceChannelStateObserver:(id<ZMVoiceChannelStateObserver>)observer managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-+ (void)removeGlobalVoiceChannelStateObserverForToken:(id<ZMVoiceChannelStateObserverOpaqueToken>)token managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
++ (nullable id<ZMVoiceChannelStateObserverOpaqueToken>)addGlobalVoiceChannelStateObserver:(nonnull id<ZMVoiceChannelStateObserver>)observer managedObjectContext:(nonnull NSManagedObjectContext *)managedObjectContext;
++ (void)removeGlobalVoiceChannelStateObserverForToken:(nonnull id<ZMVoiceChannelStateObserverOpaqueToken>)token managedObjectContext:(nonnull NSManagedObjectContext *)managedObjectContext;
 
-+ (id<ZMVoiceChannelStateObserverOpaqueToken>)addGlobalVoiceChannelStateObserver:(id<ZMVoiceChannelStateObserver>)observer inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
-+ (void)removeGlobalVoiceChannelStateObserverForToken:(id<ZMVoiceChannelStateObserverOpaqueToken>)token inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
++ (nonnull id<ZMVoiceChannelStateObserverOpaqueToken>)addGlobalVoiceChannelStateObserver:(nonnull id<ZMVoiceChannelStateObserver>)observer inUserSession:(nonnull id<ZMManagedObjectContextProvider>)userSession;
++ (void)removeGlobalVoiceChannelStateObserverForToken:(nonnull id<ZMVoiceChannelStateObserverOpaqueToken>)token inUserSession:(nonnull id<ZMManagedObjectContextProvider>)userSession;
 
-- (id<ZMVoiceChannelParticipantsObserverOpaqueToken>)addCallParticipantsObserver:(id<ZMVoiceChannelParticipantsObserver>)observer;
-- (void)removeCallParticipantsObserverForToken:(id<ZMVoiceChannelParticipantsObserverOpaqueToken>)token;
+- (nonnull id<ZMVoiceChannelParticipantsObserverOpaqueToken>)addCallParticipantsObserver:(nullable id<ZMVoiceChannelParticipantsObserver>)callParticipantsObserver;
+- (void)removeCallParticipantsObserverForToken:(nonnull  id<ZMVoiceChannelParticipantsObserverOpaqueToken>)token;
 
 @end
 
@@ -56,14 +56,14 @@
 
 @interface ZMVoiceChannelParticipantVoiceGainChangedNotification : ZMNotification
 
-@property (nonatomic, readonly) ZMVoiceChannel *voiceChannel;
-@property (nonatomic, readonly) ZMUser *participant;
+@property (nonatomic, readonly, nonnull) ZMVoiceChannel *voiceChannel;
+@property (nonatomic, readonly, nonnull) ZMUser *participant;
 @property (nonatomic, readonly) double voiceGain;
 
-+ (void)addObserver:(id<ZMVoiceChannelVoiceGainObserver>)observer;
++ (void)addObserver:(nonnull id<ZMVoiceChannelVoiceGainObserver>)observer;
 /// Passing @c nil for @a voiceChannel is a no-op, i.e. does not add the observer.
-+ (void)addObserver:(id<ZMVoiceChannelVoiceGainObserver>)observer forVoiceChannel:(ZMVoiceChannel *)voiceChannel;
-+ (void)removeObserver:(id<ZMVoiceChannelVoiceGainObserver>)observer;
++ (void)addObserver:(nonnull  id<ZMVoiceChannelVoiceGainObserver>)observer forVoiceChannel:(nonnull ZMVoiceChannel *)voiceChannel;
++ (void)removeObserver:(nonnull id<ZMVoiceChannelVoiceGainObserver>)observer;
 
 @end
 
@@ -71,17 +71,17 @@
 
 @protocol ZMVoiceChannelStateObserver <NSObject>
 
-- (void)voiceChannelStateDidChange:(VoiceChannelStateChangeInfo *)info;
+- (void)voiceChannelStateDidChange:(nonnull VoiceChannelStateChangeInfo *)info;
 
 @optional
-- (void)voiceChannelJoinFailedWithError:(NSError *)error;
+- (void)voiceChannelJoinFailedWithError:(nonnull NSError *)error;
 @end
 
 
 
 @protocol ZMVoiceChannelParticipantsObserver
 
-- (void)voiceChannelParticipantsDidChange:(VoiceChannelParticipantsChangeInfo *)info;
+- (void)voiceChannelParticipantsDidChange:(nonnull VoiceChannelParticipantsChangeInfo *)info;
 
 @end
 
@@ -89,6 +89,6 @@
 
 @protocol ZMVoiceChannelVoiceGainObserver
 
-- (void)voiceChannelParticipantVoiceGainDidChange:(ZMVoiceChannelParticipantVoiceGainChangedNotification *)info;
+- (void)voiceChannelParticipantVoiceGainDidChange:(nonnull ZMVoiceChannelParticipantVoiceGainChangedNotification *)info;
 
 @end

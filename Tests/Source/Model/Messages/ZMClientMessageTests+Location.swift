@@ -33,12 +33,12 @@ class ClientMessageTests_Location: BaseZMMessageTests {
                 longitude: longitude,
                 name: name,
                 zoomLevel: zoom),
-            messageID: NSUUID.createUUID().transportString()
+            messageID: UUID.create().transportString()!
         )
         
         // when
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
-        clientMessage.addData(message.data())
+        let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
+        clientMessage.add(message.data())
         
         // then
         let locationMessageData = clientMessage.locationMessageData
@@ -51,7 +51,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
     
     func testThatItDoesNotReturnLocationMessageDataWhenNotPresent() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
+        let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
         
         // then
         XCTAssertNil(clientMessage.locationMessageData)

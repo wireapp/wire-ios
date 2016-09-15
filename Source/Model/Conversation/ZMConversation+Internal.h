@@ -42,6 +42,7 @@
 @class ZMLocationData;
 @class ZMGenericMessage;
 
+NS_ASSUME_NONNULL_BEGIN
 extern NSString *const ZMConversationConnectionKey;
 extern NSString *const ZMConversationHasUnreadMissedCallKey;
 extern NSString *const ZMConversationArchivedEventIDDataKey;
@@ -101,65 +102,65 @@ extern NSString *const ZMConversationInternalEstimatedUnreadCountKey;
 extern NSString *const ZMConversationLastUnreadKnockDateKey;
 extern NSString *const ZMConversationLastUnreadMissedCallDateKey;
 extern NSString *const ZMConversationLastReadLocalTimestampKey;
-
+NS_ASSUME_NONNULL_END
 
 @interface ZMConversation (Internal)
 
-+ (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc;
-+ (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc created:(BOOL *)created;
-+ (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc withParticipants:(NSArray *)participants;
++ (nullable instancetype)conversationWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
++ (nullable instancetype)conversationWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc created:(nullable BOOL *)created;
++ (nullable instancetype)insertGroupConversationIntoManagedObjectContext:(nonnull NSManagedObjectContext *)moc withParticipants:(nonnull NSArray *)participants;
 
-+ (NSPredicate *)predicateForConversationsIncludingArchived;
-+ (NSPredicate *)predicateForArchivedConversations;
-+ (NSPredicate *)predicateForClearedConversations;
-+ (NSPredicate *)predicateForConversationsExcludingArchivedAndInCall;
-+ (NSPredicate *)predicateForPendingConversations;
-+ (NSPredicate *)predicateForConversationsWithNonIdleVoiceChannel;
-+ (NSPredicate *)predicateForConversationWithActiveCalls;
-+ (NSPredicate *)predicateForSharableConversations;
++ (nonnull NSPredicate *)predicateForConversationsIncludingArchived;
++ (nonnull NSPredicate *)predicateForArchivedConversations;
++ (nonnull NSPredicate *)predicateForClearedConversations;
++ (nonnull NSPredicate *)predicateForConversationsExcludingArchivedAndInCall;
++ (nonnull NSPredicate *)predicateForPendingConversations;
++ (nonnull NSPredicate *)predicateForConversationsWithNonIdleVoiceChannel;
++ (nonnull NSPredicate *)predicateForConversationWithActiveCalls;
++ (nonnull NSPredicate *)predicateForSharableConversations;
 
-+ (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
-+ (ZMConversationList *)archivedConversationsInContext:(NSManagedObjectContext *)moc;
-+ (ZMConversationList *)clearedConversationsInContext:(NSManagedObjectContext *)moc;
-+ (ZMConversationList *)conversationsExcludingArchivedAndCallingInContext:(NSManagedObjectContext *)moc;
-+ (ZMConversationList *)pendingConversationsInContext:(NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)conversationsIncludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)archivedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)clearedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)conversationsExcludingArchivedAndCallingInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)pendingConversationsInContext:(nonnull NSManagedObjectContext *)moc;
 
-+ (NSPredicate *)predicateForSearchString:(NSString *)searchString;
-+ (NSPredicate *)userDefinedNamePredicateForSearchString:(NSString *)searchString;
++ (nonnull NSPredicate *)predicateForSearchString:(nonnull NSString *)searchString;
++ (nonnull NSPredicate *)userDefinedNamePredicateForSearchString:(nonnull NSString *)searchString;
 
 
 /// Returns a predicate that will match conversations which need their call state updated from the backend.
-+ (NSPredicate *)predicateForNeedingCallStateToBeUpdatedFromBackend;
++ (nonnull NSPredicate *)predicateForNeedingCallStateToBeUpdatedFromBackend;
 /// Returns a predicate that will match conversations which need their call state synced to the backend.
-+ (NSPredicate *)predicateForObjectsThatNeedCallStateToBeUpdatedUpstream;
++ (nonnull NSPredicate *)predicateForObjectsThatNeedCallStateToBeUpdatedUpstream;
 /// Returns a predicate that will match conversations which are not marked yet for being updated from the backend.
-+ (NSPredicate *)predicateForUpdatingCallStateDuringSlowSync;
++ (nonnull NSPredicate *)predicateForUpdatingCallStateDuringSlowSync;
 
-@property (readonly, nonatomic) NSMutableOrderedSet *mutableLastServerSyncedActiveParticipants;
+@property (readonly, nonatomic, nullable) NSMutableOrderedSet *mutableLastServerSyncedActiveParticipants;
 
 @property (nonatomic) BOOL internalIsArchived;
 
-@property (nonatomic) ZMEventID *lastEventID;
-@property (nonatomic) ZMEventID *lastReadEventID;
-@property (nonatomic, readonly) ZMEventID *archivedEventID;
-@property (nonatomic) ZMEventID *clearedEventID;
+@property (nonatomic, nullable) ZMEventID *lastEventID;
+@property (nonatomic, nullable) ZMEventID *lastReadEventID;
+@property (nonatomic, readonly, nullable) ZMEventID *archivedEventID;
+@property (nonatomic, nullable) ZMEventID *clearedEventID;
 
-@property (nonatomic) NSDate *lastServerTimeStamp;
-@property (nonatomic) NSDate *lastReadServerTimeStamp;
-@property (nonatomic) NSDate *clearedTimeStamp;
-@property (nonatomic) NSDate *archivedChangedTimestamp;
-@property (nonatomic) NSDate *silencedChangedTimestamp;
+@property (nonatomic, nullable) NSDate *lastServerTimeStamp;
+@property (nonatomic, nullable) NSDate *lastReadServerTimeStamp;
+@property (nonatomic, nullable) NSDate *clearedTimeStamp;
+@property (nonatomic, nullable) NSDate *archivedChangedTimestamp;
+@property (nonatomic, nullable) NSDate *silencedChangedTimestamp;
 
-@property (nonatomic) NSUUID *remoteIdentifier;
-@property (readonly, nonatomic) NSMutableOrderedSet *mutableMessages;
-@property (readonly, nonatomic) NSOrderedSet *hiddenMessages;
-@property (nonatomic) ZMConnection *connection;
+@property (nonatomic, nonnull) NSUUID *remoteIdentifier;
+@property (readonly, nonatomic, nonnull) NSMutableOrderedSet *mutableMessages;
+@property (readonly, nonatomic, nonnull) NSOrderedSet *hiddenMessages;
+@property (nonatomic, nullable) ZMConnection *connection;
 @property (readonly, nonatomic) enum ZMConnectionStatus relatedConnectionState; // This is a computed property, needed for snapshoting
-@property (nonatomic) ZMUser *creator;
-@property (nonatomic) NSDate *lastModifiedDate;
+@property (nonatomic, nonnull) ZMUser *creator;
+@property (nonatomic, nullable) NSDate *lastModifiedDate;
 @property (nonatomic) ZMConversationType conversationType;
-@property (nonatomic) ZMEventIDRangeSet *downloadedMessageIDs;
-@property (nonatomic, copy) NSString *normalizedUserDefinedName;
+@property (nonatomic, nullable) ZMEventIDRangeSet *downloadedMessageIDs;
+@property (nonatomic, copy, nullable) NSString *normalizedUserDefinedName;
 @property (nonatomic) NSTimeInterval lastReadEventIDSaveDelay;
 @property (nonatomic) BOOL callStateNeedsToBeUpdatedFromBackend;
 
@@ -169,14 +170,14 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 /// unreadTimeStamps is created on didAwakeFromFetch:
 /// updated when messages are inserted and the lastReadServerTimeStamp changes
-@property (nonatomic) NSMutableOrderedSet *unreadTimeStamps;
+@property (nonatomic, nullable) NSMutableOrderedSet *unreadTimeStamps;
 
 
 - (void)resetParticipantsBackToLastServerSync;
 
 /// sorts the messages in the conversation
 - (void)sortMessages;
-- (void)resortMessagesWithUpdatedMessage:(ZMMessage *)message;
+- (void)resortMessagesWithUpdatedMessage:(nonnull ZMMessage *)message;
 
 /**
     Appends the given message in the conversation at the proper place to keep the conversation sorted.
@@ -184,33 +185,33 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
     @param message The message that should be inserted.
     @returns The index the message was inserted at in the conversation.
 */
-- (NSUInteger)sortedAppendMessage:(ZMMessage *)message;
+- (NSUInteger)sortedAppendMessage:(nonnull ZMMessage *)message;
 
-- (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
-
-
-+ (NSUUID *)selfConversationIdentifierInContext:(NSManagedObjectContext *)context;
-+ (ZMConversation *)selfConversationInContext:(NSManagedObjectContext *)managedObjectContext;
+- (void)mergeWithExistingConversationWithRemoteID:(nonnull NSUUID *)remoteID;
 
 
-- (void)updateWithMessage:(ZMMessage *)message timeStamp:(NSDate *)timeStamp eventID:(ZMEventID *)eventID;
++ (nonnull NSUUID *)selfConversationIdentifierInContext:(nonnull NSManagedObjectContext *)context;
++ (nonnull ZMConversation *)selfConversationInContext:(nonnull NSManagedObjectContext *)managedObjectContext;
+
+
+- (void)updateWithMessage:(nonnull ZMMessage *)message timeStamp:(nonnull NSDate *)timeStamp eventID:(nullable ZMEventID *)eventID;
 
 /// This method loads messages in a window when there are NO visible messages
 - (void)startFetchingMessages;
 
-- (ZMClientMessage *)appendClientMessageWithData:(NSData *)data;
-- (ZMClientMessage *)appendOTRKnockMessageWithNonce:(NSUUID *)nonce;
-- (ZMClientMessage *)appendOTRSessionResetMessage;
-- (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce;
-- (ZMClientMessage *)appendOTRMessageWithLocationData:(ZMLocationData *)locationData nonce:(NSUUID *)nonce;
-- (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce;
-- (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce;
+- (nonnull ZMClientMessage *)appendClientMessageWithData:(nonnull NSData *)data;
+- (nonnull ZMClientMessage *)appendOTRKnockMessageWithNonce:(nonnull NSUUID *)nonce;
+- (nonnull ZMClientMessage *)appendOTRSessionResetMessage;
+- (nonnull ZMClientMessage *)appendOTRMessageWithText:(nonnull NSString *)text nonce:(nonnull NSUUID *)nonce;
+- (nonnull ZMClientMessage *)appendOTRMessageWithLocationData:(nonnull ZMLocationData *)locationData nonce:(nonnull NSUUID *)nonce;
+- (nonnull ZMAssetClientMessage *)appendOTRMessageWithImageData:(nonnull NSData *)imageData nonce:(nonnull NSUUID *)nonce;
+- (nonnull ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata nonce:(nonnull NSUUID *)nonce;
 
 /// Appends a new message to the conversation.
 /// @param genericMessage: the generic message that should be appended
 /// @param expires: wether the message should expire or tried to be send infinitively
 /// @param hidden: wether the message should be hidden in the conversation or not
-- (ZMClientMessage *)appendGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden;
+- (nonnull ZMClientMessage *)appendGenericMessage:(nonnull ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden;
 
 - (void)appendNewConversationSystemMessageIfNeeded;
 
@@ -222,13 +223,13 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 @interface ZMConversation (SelfConversation)
 
 /// Create and append to self conversation a ClientMessage that has generic message data built with the given data
-+ (ZMClientMessage *)appendSelfConversationWithGenericMessageData:(NSData *)messageData managedObjectContext:(NSManagedObjectContext *)moc;
++ (nonnull ZMClientMessage *)appendSelfConversationWithGenericMessageData:(nonnull NSData *)messageData managedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
-+ (ZMClientMessage *)appendSelfConversationWithLastReadOfConversation:(ZMConversation *)conversation;
-+ (ZMClientMessage *)appendSelfConversationWithClearedOfConversation:(ZMConversation *)conversation;
++ (nonnull ZMClientMessage *)appendSelfConversationWithLastReadOfConversation:(nonnull ZMConversation *)conversation;
++ (nonnull ZMClientMessage *)appendSelfConversationWithClearedOfConversation:(nonnull ZMConversation *)conversation;
 
-+ (void)updateConversationWithZMLastReadFromSelfConversation:(ZMLastRead *)lastRead inContext:(NSManagedObjectContext *)context;
-+ (void)updateConversationWithZMClearedFromSelfConversation:(ZMCleared *)cleared inContext:(NSManagedObjectContext *)context;
++ (void)updateConversationWithZMLastReadFromSelfConversation:(nonnull ZMLastRead *)lastRead inContext:(nonnull NSManagedObjectContext *)context;
++ (void)updateConversationWithZMClearedFromSelfConversation:(nonnull ZMCleared *)cleared inContext:(nonnull NSManagedObjectContext *)context;
 
 @end
 
@@ -236,26 +237,26 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 @interface ZMConversation (ParticipantsInternal)
 
-- (void)internalAddParticipant:(ZMUser *)participant isAuthoritative:(BOOL)isAuthoritative;
-- (void)internalRemoveParticipant:(ZMUser *)participant sender:(ZMUser *)sender;
+- (void)internalAddParticipant:(nonnull ZMUser *)participant isAuthoritative:(BOOL)isAuthoritative;
+- (void)internalRemoveParticipant:(nonnull ZMUser *)participant sender:(nonnull ZMUser *)sender;
 
 @property (nonatomic) BOOL isSelfAnActiveMember; ///< whether the self user is an active member (as opposed to a past member)
-@property (readonly, nonatomic) NSOrderedSet *otherActiveParticipants;
-@property (readonly, nonatomic) NSOrderedSet *otherInactiveParticipants;
-@property (readonly, nonatomic) NSMutableOrderedSet *mutableOtherActiveParticipants;
-@property (readonly, nonatomic) NSMutableOrderedSet *mutableOtherInactiveParticipants;
+@property (readonly, nonatomic, nonnull) NSOrderedSet *otherActiveParticipants;
+@property (readonly, nonatomic, nonnull) NSOrderedSet *otherInactiveParticipants;
+@property (readonly, nonatomic, nonnull) NSMutableOrderedSet *mutableOtherActiveParticipants;
+@property (readonly, nonatomic, nonnull) NSMutableOrderedSet *mutableOtherInactiveParticipants;
 
 /// Removes user from unsyncedInactiveParticipants
-- (void)synchronizeRemovedUser:(ZMUser *)user;
+- (void)synchronizeRemovedUser:(nonnull ZMUser *)user;
 
 /// Removes user from unsyncedActiveParticipants
-- (void)synchronizeAddedUser:(ZMUser *)user;
+- (void)synchronizeAddedUser:(nonnull ZMUser *)user;
 
 /// List of users which have been removed from the conversation locally but not one the backend
-@property (readonly, nonatomic) NSOrderedSet *unsyncedInactiveParticipants;
+@property (readonly, nonatomic, nullable) NSOrderedSet *unsyncedInactiveParticipants;
 
 /// List of users which have been added to the conversation locally but not one the backend
-@property (readonly, nonatomic) NSOrderedSet *unsyncedActiveParticipants;
+@property (readonly, nonatomic, nullable) NSOrderedSet *unsyncedActiveParticipants;
 
 @end
 
@@ -263,15 +264,15 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 @interface ZMConversation (DownloadedMessagesGaps)
 
-- (void)addEventToDownloadedEvents:(ZMEventID *)eventID timeStamp:(NSDate *)timeStamp;
-- (void)addEventRangeToDownloadedEvents:(ZMEventIDRange *)eventIDRange;
+- (void)addEventToDownloadedEvents:(nullable ZMEventID *)eventID timeStamp:(nullable NSDate *)timeStamp;
+- (void)addEventRangeToDownloadedEvents:(nullable ZMEventIDRange *)eventIDRange;
 
 
 /// Returns the last gap in messages inside the given visible window + window bleed of 50
-- (ZMEventIDRange *)lastEventIDGapForVisibleWindow:(ZMEventIDRange *)visibleWindow;
+- (nullable ZMEventIDRange *)lastEventIDGapForVisibleWindow:(nullable ZMEventIDRange *)visibleWindow;
 
 /// Returns the last gap in messages inside the entire conversation
-- (ZMEventIDRange *)lastEventIDGap;
+- (nullable ZMEventIDRange *)lastEventIDGap;
 
 
 @end
@@ -281,7 +282,7 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 @interface ZMConversation (ZMConversationMessageWindow)
 
-@property (nonatomic) ZMConversationMessageWindow *messageWindow;
+@property (nonatomic, nullable) ZMConversationMessageWindow *messageWindow;
 
 @end
 
@@ -289,7 +290,7 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 @interface NSUUID (ZMSelfConversation)
 
-- (BOOL)isSelfConversationRemoteIdentifierInContext:(NSManagedObjectContext *)moc;
+- (BOOL)isSelfConversationRemoteIdentifierInContext:(nonnull NSManagedObjectContext *)moc;
 
 @end
 
@@ -297,7 +298,7 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 
 @interface ZMConversation (Optimization)
 
-+ (void)refreshObjectsThatAreNotNeededInSyncContext:(NSManagedObjectContext *)managedObjectContext;
++ (void)refreshObjectsThatAreNotNeededInSyncContext:(nonnull NSManagedObjectContext *)managedObjectContext;
 
 @end
 

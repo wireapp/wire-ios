@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,78 +23,79 @@ import Foundation
 import zimages
 import ZMProtos
 
+
 /// Wrapper of generic message that implements ZMImageOwner
 /// It needs AssetCache to be able to retrieve image data
-@objc public class ZMGenericMessageImageOwner :NSObject, ZMImageOwner {
+@objc open class ZMGenericMessageImageOwner :NSObject, ZMImageOwner {
     
-    private let genericMessage : ZMGenericMessage
-    private let assetCache : ImageAssetCache
+    fileprivate let genericMessage : ZMGenericMessage
+    fileprivate let assetCache : ImageAssetCache
     
     public init(genericMessage: ZMGenericMessage, assetCache: ImageAssetCache) {
         self.genericMessage = genericMessage
         self.assetCache = assetCache
     }
     
-    public func setImageData(imageData: NSData!, forFormat format: ZMImageFormat, properties: ZMIImageProperties!) {
+    open func setImageData(_ imageData: Data!, for format: ZMImageFormat, properties: ZMIImageProperties!) {
         // noop
     }
     
-    private var encrypted : Bool {
-        return self.genericMessage.hasImage() && self.genericMessage.image.otrKey.length > 0
+    fileprivate var encrypted : Bool {
+        return self.genericMessage.hasImage() && self.genericMessage.image.otrKey.count > 0
     }
     
-    private var nonce : NSUUID? {
+    fileprivate var nonce : UUID? {
         if self.genericMessage.hasImage() {
-            return NSUUID.uuidWithTransportString(self.genericMessage.messageId)
+            return UUID(uuidString: self.genericMessage.messageId)
         }
         return nil;
     }
     
-    public func originalImageData() -> NSData! {
-        guard let nonce = self.nonce where self.genericMessage.hasImage() else { return nil }
-        return self.assetCache.assetData(nonce, format: .Original, encrypted: false)
+    open func originalImageData() -> Data! {
+        guard let nonce = self.nonce , self.genericMessage.hasImage() else { return nil }
+        return self.assetCache.assetData(nonce, format: .original, encrypted: false)
     }
     
-    public func isPublicForFormat(format: ZMImageFormat) -> Bool {
+    open func isPublic(for format: ZMImageFormat) -> Bool {
         return false;
     }
     
-    public func imageDataForFormat(format: ZMImageFormat) -> NSData! {
-        guard let nonce = self.nonce where
+    open func imageData(for format: ZMImageFormat) -> Data! {
+        guard let nonce = self.nonce ,
             self.genericMessage.hasImage()
                 && format == self.genericMessage.image.imageFormat()
             else { return nil }
         return self.assetCache.assetData(nonce, format: format, encrypted: self.encrypted)
     }
     
-    public func originalImageSize() -> CGSize {
+    open func originalImageSize() -> CGSize {
         if self.genericMessage.hasImage() {
             return CGSize(width: CGFloat(self.genericMessage.image.originalWidth), height: CGFloat(self.genericMessage.image.originalHeight))
         }
         return CGSize(width: 0,height: 0)
     }
     
-    public func requiredImageFormats() -> NSOrderedSet! {
+    open func requiredImageFormats() -> NSOrderedSet! {
         return NSOrderedSet()
     }
     
-    public func isInlineForFormat(format: ZMImageFormat) -> Bool {
-        return format == .Preview
+    open func isInline(for format: ZMImageFormat) -> Bool {
+        return format == .preview
     }
     
-    public func isUsingNativePushForFormat(format: ZMImageFormat) -> Bool {
-        return format == .Medium
+    open func isUsingNativePush(for format: ZMImageFormat) -> Bool {
+        return format == .medium
     }
     
-    public func processingDidFinish() {
+    open func processingDidFinish() {
         
     }
     
-    public var imageFormat : ZMImageFormat {
+    open var imageFormat : ZMImageFormat {
         if self.genericMessage.hasImage() {
             return self.genericMessage.image.imageFormat()
         }
-        return .Invalid;
+        return .invalid;
     }
 }
 

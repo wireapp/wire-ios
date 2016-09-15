@@ -28,11 +28,11 @@ import Foundation
         super.init()
     }
     
-    @objc func didReceiveNewUnreadKnockMessages(note: NewUnreadKnockMessagesChangeInfo){
+    @objc func didReceiveNewUnreadKnockMessages(_ note: NewUnreadKnockMessagesChangeInfo){
         self.unreadKnockNotes.append(note)
     }
     
-    @objc func didReceiveNewUnreadMessages(note: NewUnreadMessagesChangeInfo) {
+    @objc func didReceiveNewUnreadMessages(_ note: NewUnreadMessagesChangeInfo) {
         self.unreadMessageNotes.append(note)
     }
     
@@ -72,16 +72,16 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
             self.syncNewKnocksToken = ZMMessageNotification.addNewKnocksObserver(self.syncTestObserver, managedObjectContext: self.syncMOC)
         }
         
-        NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
     override func tearDown() {
-        ZMMessageNotification.removeNewKnocksObserverForToken(self.newKnocksToken!, managedObjectContext: self.uiMOC)
-        ZMMessageNotification.removeNewMessagesObserverForToken(self.newMessageToken!, managedObjectContext: self.uiMOC)
-        self.syncMOC.performGroupedBlockAndWait { 
-            ZMMessageNotification.removeNewKnocksObserverForToken(self.syncNewKnocksToken!, managedObjectContext: self.syncMOC)
-            ZMMessageNotification.removeNewMessagesObserverForToken(self.syncNewMessageToken!, managedObjectContext: self.syncMOC)
+        ZMMessageNotification.removeNewKnocksObserver(for: self.newKnocksToken!, managedObjectContext: self.uiMOC)
+        ZMMessageNotification.removeNewMessagesObserver(for: self.newMessageToken!, managedObjectContext: self.uiMOC)
+        self.syncMOC.performGroupedBlockAndWait {
+            ZMMessageNotification.removeNewKnocksObserver(for: self.syncNewKnocksToken!, managedObjectContext: self.syncMOC)
+            ZMMessageNotification.removeNewMessagesObserver(for: self.syncNewMessageToken!, managedObjectContext: self.syncMOC)
         }
         self.newMessageToken = nil
         self.newKnocksToken = nil
@@ -96,18 +96,18 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
         
         // given
         self.syncMOC.performGroupedBlockAndWait{
-            let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
-            conversation.lastReadServerTimeStamp = NSDate()
+            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.lastReadServerTimeStamp = Date()
             self.processPendingChangesAndClearNotifications()
             
             // when
-            let msg1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.syncMOC)
-            msg1.serverTimestamp = NSDate()
-            conversation.resortMessagesWithUpdatedMessage(msg1)
+            let msg1 = ZMTextMessage.insertNewObject(in: self.syncMOC)
+            msg1.serverTimestamp = Date()
+            conversation.resortMessages(withUpdatedMessage: msg1)
             
-            let msg2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.syncMOC)
-            msg2.serverTimestamp = NSDate()
-            conversation.resortMessagesWithUpdatedMessage(msg2)
+            let msg2 = ZMTextMessage.insertNewObject(in: self.syncMOC)
+            msg2.serverTimestamp = Date()
+            conversation.resortMessages(withUpdatedMessage: msg2)
             
             self.syncMOC.processPendingChanges()
             
@@ -125,12 +125,12 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotNotifyObserversWhenAMessageOlderThanTheLastReadIsInserted() {
     
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.lastReadEventID = ZMEventID(major: 10, minor: 64578)
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let msg1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         msg1.visibleInConversation = conversation
         msg1.eventID = ZMEventID(major: 9, minor: 12345)
         
@@ -144,11 +144,11 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotNotifyObserversWhenTheConversationHasNoLastRead() {
         
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let msg1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         msg1.visibleInConversation = conversation
         msg1.eventID = ZMEventID(major: 9, minor: 12345)
         
@@ -161,7 +161,7 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotNotifyObserversWhenItHasNoConversation() {
         
         // when
-        let msg1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         msg1.eventID = ZMEventID(major: 9, minor: 12345)
         
         self.uiMOC.processPendingChanges()
@@ -174,12 +174,12 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotNotifyObserversWhenTheMessageHasNoEventID() {
         
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.lastReadEventID = ZMEventID(major: 10, minor: 64578)
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let msg1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         msg1.visibleInConversation = conversation
                 
         self.uiMOC.processPendingChanges()
@@ -192,14 +192,14 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
         
         // given
         self.syncMOC.performGroupedBlockAndWait{
-            let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
-            conversation.lastReadServerTimeStamp = NSDate()
+            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.lastReadServerTimeStamp = Date()
             self.processPendingChangesAndClearNotifications()
             
             // when
-            let msg1 = ZMKnockMessage.insertNewObjectInManagedObjectContext(self.syncMOC)
-            msg1.serverTimestamp = NSDate()
-            conversation.resortMessagesWithUpdatedMessage(msg1)
+            let msg1 = ZMKnockMessage.insertNewObject(in: self.syncMOC)
+            msg1.serverTimestamp = Date()
+            conversation.resortMessages(withUpdatedMessage: msg1)
             
             self.syncMOC.processPendingChanges()
             
@@ -215,15 +215,15 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesObserversWhenANewOTRKnockMessageIsInserted() {
         
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        conversation.lastReadServerTimeStamp = NSDate()
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation.lastReadServerTimeStamp = Date()
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let genMsg = ZMGenericMessage.knockWithNonce("nonce")
-        let msg1 = conversation.appendClientMessageWithData(genMsg.data())
-        msg1.serverTimestamp = NSDate()
-        conversation.resortMessagesWithUpdatedMessage(msg1)
+        let genMsg = ZMGenericMessage.knock(withNonce: "nonce")
+        let msg1 = conversation.appendClientMessage(with: genMsg.data())
+        msg1.serverTimestamp = Date()
+        conversation.resortMessages(withUpdatedMessage: msg1)
         
         self.uiMOC.processPendingChanges()
         

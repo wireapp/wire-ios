@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,20 +23,20 @@ import Foundation
 }
 
 public protocol UserClientObserver: NSObjectProtocol {
-    func userClientDidChange(changeInfo: UserClientChangeInfo)
+    func userClientDidChange(_ changeInfo: UserClientChangeInfo)
 }
 
 // MARK: - Observing
 extension UserClient {
     
-    public func addObserver(observer: UserClientObserver) -> UserClientObserverOpaqueToken? {
+    public func addObserver(_ observer: UserClientObserver) -> UserClientObserverOpaqueToken? {
         guard let managedObjectContext = self.managedObjectContext
-            else { return .None }
+            else { return .none }
         
         return UserClientObserverToken(observer: observer, managedObjectContext: managedObjectContext, userClient: self)
     }
     
-    public static func removeObserverForUserClientToken(token: UserClientObserverOpaqueToken) {
+    public static func removeObserverForUserClientToken(_ token: UserClientObserverOpaqueToken) {
         if let token = token as? UserClientObserverToken {
             token.tearDown()
         }
@@ -57,8 +57,8 @@ extension UserClient: ObjectInSnapshot {
         return [ZMUserClientTrusted_ByKey, ZMUserClientIgnored_ByKey, ZMUserClientNeedsToNotifyUserKey, ZMUserClientFingerprintKey]
     }
 
-    public func keyPathsForValuesAffectingValueForKey(key: String) -> KeySet {
-        return KeySet(UserClient.keyPathsForValuesAffectingValueForKey(key))
+    public func keyPathsForValuesAffectingValueForKey(_ key: String) -> KeySet {
+        return KeySet(UserClient.keyPathsForValuesAffectingValue(forKey: key))
     }
 }
 
@@ -68,29 +68,29 @@ public enum UserClientChangeInfoKey: String {
     case FingerprintChanged = "fingerprintChanged"
 }
 
-@objc public class UserClientChangeInfo : ObjectChangeInfo {
+@objc open class UserClientChangeInfo : ObjectChangeInfo {
 
     public required init(object: NSObject) {
         self.userClient = object as! UserClient
         super.init(object: object)
     }
 
-    public var trustedByClientsChanged : Bool {
+    open var trustedByClientsChanged : Bool {
         return changedKeysAndOldValues.keys.contains(ZMUserClientTrusted_ByKey)
     }
-    public var ignoredByClientsChanged : Bool {
+    open var ignoredByClientsChanged : Bool {
         return changedKeysAndOldValues.keys.contains(ZMUserClientIgnored_ByKey)
     }
 
-    public var fingerprintChanged : Bool {
+    open var fingerprintChanged : Bool {
         return changedKeysAndOldValues.keys.contains(ZMUserClientNeedsToNotifyUserKey)
     }
 
-    public var needsToNotifyUserChanged : Bool {
+    open var needsToNotifyUserChanged : Bool {
         return changedKeysAndOldValues.keys.contains(ZMUserClientFingerprintKey)
     }
 
-    public let userClient: UserClient
+    open let userClient: UserClient
 }
 
 public final class UserClientObserverToken: ObjectObserverTokenContainer, UserClientObserverOpaqueToken {
@@ -98,8 +98,8 @@ public final class UserClientObserverToken: ObjectObserverTokenContainer, UserCl
     typealias InnerTokenType = ObjectObserverToken<UserClientChangeInfo, UserClientObserverToken>
     typealias Directory = ObserverTokenDirectory<UserClientChangeInfo, UserClientObserverToken, UserClient>
 
-    private weak var observer : UserClientObserver?
-    private let managedObjectContext: NSManagedObjectContext
+    fileprivate weak var observer : UserClientObserver?
+    fileprivate let managedObjectContext: NSManagedObjectContext
 
     public init(observer: UserClientObserver, managedObjectContext: NSManagedObjectContext, userClient: UserClient) {
 

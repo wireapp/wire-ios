@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -29,40 +29,40 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     override func setUp() {
         super.setUp()
         self.setUpCaches()
-        NSNotificationCenter.defaultCenter().postNotificationName("ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
-    func createMessagesWithCount(messageCount: UInt, startEventIDMajor: UInt) -> [ZMTextMessage] {
+    func createMessagesWithCount(_ messageCount: UInt, startEventIDMajor: UInt) -> [ZMTextMessage] {
         
         var messages = [ZMTextMessage]()
         
         for i in startEventIDMajor..<(messageCount + startEventIDMajor) {
-            let message = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+            let message = ZMTextMessage.insertNewObject(in: self.uiMOC)
             message.eventID = ZMEventID(major: UInt64(i), minor: 0)
             messages.append(message)
         }
         return messages
     }
 
-    func createConversationWindowWithMessages(messages: [ZMMessage], uiMoc : NSManagedObjectContext) -> ZMConversationMessageWindow {
+    func createConversationWindowWithMessages(_ messages: [ZMMessage], uiMoc : NSManagedObjectContext) -> ZMConversationMessageWindow {
         
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMoc)!
+        let conversation = ZMConversation.insertNewObject(in:uiMoc)
         for message in messages {
             message.visibleInConversation = conversation
         }
-        return conversation.conversationWindowWithSize(10)
+        return conversation.conversationWindow(withSize: 10)
     }
     
-    func createConversationWithMessages(messages: [ZMMessage], uiMOC : NSManagedObjectContext) -> ZMConversation {
+    func createConversationWithMessages(_ messages: [ZMMessage], uiMOC : NSManagedObjectContext) -> ZMConversation {
         
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)!
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
         for message in messages {
             message.visibleInConversation = conversation
         }
         let range = ZMEventIDRange(eventIDs: [messages.first!.eventID, messages.last!.eventID])
-        conversation.addEventRangeToDownloadedEvents(range)
-        conversation.updateLastEventIDIfNeededWithEventID(messages.last!.eventID)
+        conversation.addEventRange(toDownloadedEvents: range)
+        conversation.updateLastEventIDIfNeeded(with: messages.last!.eventID)
         return conversation
     }
     
@@ -80,7 +80,7 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
             self.init(block: nil)
         }
         
-        @objc func conversationWindowDidChange(note: MessageWindowChangeInfo)
+        @objc func conversationWindowDidChange(_ note: MessageWindowChangeInfo)
         {
             notifications.append(note)
             if let block = notificationBlock { block(note) }
@@ -92,35 +92,35 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         // given
         let observer = FakeObserver()
         
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         let window = self.createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         let conversation = window.conversation
-        message1.serverTimestamp = NSDate()
+        message1.serverTimestamp = Date()
         message1.eventID = self.createEventID()
-        message2.serverTimestamp = message1.serverTimestamp!.dateByAddingTimeInterval(5);
+        message2.serverTimestamp = message1.serverTimestamp!.addingTimeInterval(5);
         message2.eventID = self.createEventID()
         conversation.lastServerTimeStamp = message2.serverTimestamp
         
         self.uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let token = window.addConversationWindowObserver(observer)
 
         self.syncMOC.performGroupedBlockAndWait{
-            let syncConv = self.syncMOC.objectWithID(conversation.objectID) as! ZMConversation
+            let syncConv = self.syncMOC.object(with: conversation.objectID) as! ZMConversation
             
             // when
             syncConv.clearedTimeStamp = message1.serverTimestamp;
             self.syncMOC.saveOrRollback()
         }
-        self.uiMOC.refreshObject(conversation, mergeChanges:true)
+        self.uiMOC.refresh(conversation, mergeChanges:true)
         self.uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(observer.notifications.count, 1)
         if let note = observer.notifications.first {
-            XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 1))
+            XCTAssertEqual(note.deletedIndexes, IndexSet(integer: 1))
         }
         
         window.removeConversationWindowObserverToken(token)
@@ -129,9 +129,9 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItNotifiesForAMessageUpdate()
     {
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMImageMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMImageMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
@@ -148,7 +148,7 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         // then
         XCTAssertEqual(observer.notifications.count, 1)
         if let note = observer.notifications.first {
-            XCTAssertEqual(note.updatedIndexes, NSIndexSet(index: 0))
+            XCTAssertEqual(note.updatedIndexes, IndexSet(integer: 0))
         }
         
         window.removeConversationWindowObserverToken(token)
@@ -157,10 +157,10 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItDoesNotNotifyIfThereAreNoConversationWindowChanges()
     {
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.text = "First"
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.text = "Second"
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
@@ -181,11 +181,11 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItNotifiesIfThereAreConversationWindowChangesWithInsert()
     {
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
-        let message3 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message3 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message3.eventID = ZMEventID(string: "3.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
 
@@ -201,9 +201,9 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         // then
         if let note = observer.notifications.first {
             XCTAssertEqual(note.conversationMessageWindow, window)
-            XCTAssertEqual(note.insertedIndexes, NSIndexSet(index: 0))
-            XCTAssertEqual(note.deletedIndexes, NSIndexSet())
-            XCTAssertEqual(note.updatedIndexes, NSIndexSet())
+            XCTAssertEqual(note.insertedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(note.deletedIndexes, IndexSet())
+            XCTAssertEqual(note.updatedIndexes, IndexSet())
             XCTAssertEqual(note.movedIndexPairs.count, 0)
         }
         else {
@@ -215,9 +215,9 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItNotifiesIfThereAreConversationWindowChangesWithDeletes()
     {
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMImageMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMImageMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
@@ -226,15 +226,15 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        window.conversation.mutableMessages.removeObjectAtIndex(1)
+        window.conversation.mutableMessages.removeObject(at: 1)
         self.uiMOC.processPendingChanges()
         
         // then
         if let note = observer.notifications.first {
             XCTAssertEqual(note.conversationMessageWindow, window)
-            XCTAssertEqual(note.insertedIndexes, NSIndexSet())
-            XCTAssertEqual(note.deletedIndexes, NSIndexSet(index: 0))
-            XCTAssertEqual(note.updatedIndexes, NSIndexSet())
+            XCTAssertEqual(note.insertedIndexes, IndexSet())
+            XCTAssertEqual(note.deletedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(note.updatedIndexes, IndexSet())
             XCTAssertEqual(note.movedIndexPairs.count, 0)
         }
         else {
@@ -247,9 +247,9 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItNotifiesIfThereAreConversationWindowChangesWithMoves()
     {
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMImageMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMImageMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
@@ -258,17 +258,17 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        window.conversation.mutableMessages.removeObjectAtIndex(0)
-        window.conversation.mutableMessages.addObject(message1)
+        window.conversation.mutableMessages.removeObject(at: 0)
+        window.conversation.mutableMessages.add(message1)
         self.uiMOC.processPendingChanges()
         
         // then
         if let note = observer.notifications.first {
             XCTAssertEqual(note.conversationMessageWindow, window)
-            XCTAssertEqual(note.insertedIndexes, NSIndexSet())
-            XCTAssertEqual(note.deletedIndexes, NSIndexSet())
-            XCTAssertEqual(note.updatedIndexes, NSIndexSet())
-            XCTAssertEqual(note.movedIndexPairs, NSArray(object: ZMMovedIndex(from: 1, to: 0)))
+            XCTAssertEqual(note.insertedIndexes, IndexSet())
+            XCTAssertEqual(note.deletedIndexes, IndexSet())
+            XCTAssertEqual(note.updatedIndexes, IndexSet())
+            XCTAssertEqual(note.movedIndexPairs, [ZMMovedIndex(from: 1, to: 0)])
         }
         else {
             XCTFail("New state is nil")
@@ -279,13 +279,13 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItNotifiesAfterAWindowScrollNotification()
     {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
-        let message3 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message3 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message3.eventID = ZMEventID(string: "3.aabb")
         
         message1.visibleInConversation = conversation
@@ -294,21 +294,21 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         
         self.uiMOC.saveOrRollback()
         
-        let window = conversation.conversationWindowWithSize(2)
+        let window = conversation.conversationWindow(withSize: 2)
         
         let observer = FakeObserver()
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        window.moveUpByMessages(10)
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationMessageWindowScrolledNotificationName, object: window)
+        window.moveUp(byMessages: 10)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationMessageWindowScrolledNotificationName), object: window)
         
         // then
         if let note = observer.notifications.first {
             XCTAssertEqual(note.conversationMessageWindow, window)
-            XCTAssertEqual(note.insertedIndexes, NSIndexSet(index: 2))
-            XCTAssertEqual(note.deletedIndexes, NSIndexSet())
-            XCTAssertEqual(note.updatedIndexes, NSIndexSet())
+            XCTAssertEqual(note.insertedIndexes, IndexSet(integer: 2))
+            XCTAssertEqual(note.deletedIndexes, IndexSet())
+            XCTAssertEqual(note.updatedIndexes, IndexSet())
             XCTAssertEqual(note.movedIndexPairs.count, 0)
         }
         else {
@@ -320,11 +320,11 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
-        let message3 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message3 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message3.eventID = ZMEventID(string: "3.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
@@ -345,25 +345,27 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItNotifiesWhenReceivingStartFetchingNotification() {
         
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
 
         self.uiMOC.saveOrRollback()
         
-        let expectation = self.expectationWithDescription("received notification")
-        let observer = FakeObserver() { changeInfo in
+        let expectation = self.expectation(description: ("received notification"))
+        let block : ((MessageWindowChangeInfo) -> Void)? = { (changeInfo) in
             expectation.fulfill()
         }
+        
+        let observer = FakeObserver(block: block)
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationWillStartFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationWillStartFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
         
         // then
-        XCTAssertTrue(self.waitForCustomExpectationsWithTimeout(0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(observer.notifications.count, 1)
         
         window.removeConversationWindowObserverToken(token)
@@ -372,26 +374,28 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItDoesNotNotifyTwiceWhenReceivingStartFetchingNotification() {
         
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
-        let expectation = self.expectationWithDescription("received notification")
-        let observer = FakeObserver() { changeInfo in
+        let expectation = self.expectation(description: ("received notification"))
+        let block : ((MessageWindowChangeInfo) -> Void)? = { (changeInfo) in
             expectation.fulfill()
         }
+        
+        let observer = FakeObserver(block: block)
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationWillStartFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationWillStartFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationWillStartFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationWillStartFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
         
         // then
-        XCTAssertTrue(self.waitForCustomExpectationsWithTimeout(0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(observer.notifications.count, 1)
         
         window.removeConversationWindowObserverToken(token)
@@ -400,9 +404,9 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItDoesNotNotifyWhenReceivingDidFinishFetchingNotificationWithoutHavingPreviouslyStarted() {
         
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
@@ -412,10 +416,10 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationDidFinishFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationDidFinishFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
         
         // then
-        XCTAssertTrue(self.waitForCustomExpectationsWithTimeout(0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(observer.notifications.count, 0)
         
         window.removeConversationWindowObserverToken(token)
@@ -425,26 +429,28 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItNotifiesWhenReceivingDidFinishFetchingNotification() {
         
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
-        let expectation = self.expectationWithDescription("received notification")
-        let observer = FakeObserver() { changeInfo in
+        let expectation = self.expectation(description: ("received notification"))
+        let block : ((MessageWindowChangeInfo) -> Void)? = { (changeInfo) in
             expectation.fulfill()
         }
+        
+        let observer = FakeObserver(block: block)
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationWillStartFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationDidFinishFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationWillStartFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationDidFinishFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
         
         // then
-        XCTAssertTrue(self.waitForCustomExpectationsWithTimeout(0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(observer.notifications.count, 2)
         
         window.removeConversationWindowObserverToken(token)
@@ -453,27 +459,29 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
     func testThatItDoesNotNotifyTwiceWhenReceivingDidFinishFetchingNotification() {
         
         // given
-        let message1 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message1.eventID = ZMEventID(string: "1.aabb")
-        let message2 = ZMTextMessage.insertNewObjectInManagedObjectContext(self.uiMOC)!
+        let message2 = ZMTextMessage.insertNewObject(in: self.uiMOC)
         message2.eventID = ZMEventID(string: "2.aabb")
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
-        let expectation = self.expectationWithDescription("received notification")
-        let observer = FakeObserver() { changeInfo in
+        let expectation = self.expectation(description: ("received notification"))
+        let block : ((MessageWindowChangeInfo) -> Void)? = { (changeInfo) in
             expectation.fulfill()
         }
+        
+        let observer = FakeObserver(block: block)
         let token = window.addConversationWindowObserver(observer)
         
         // when
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationWillStartFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationDidFinishFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
-        NSNotificationCenter.defaultCenter().postNotificationName(ZMConversationDidFinishFetchingMessages, object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: ZMConversationWillStartFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationDidFinishFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationDidFinishFetchingMessages), object: nil, userInfo: [ZMNotificationConversationKey : window.conversation])
         
         // then
-        XCTAssertTrue(self.waitForCustomExpectationsWithTimeout(0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         XCTAssertEqual(observer.notifications.count, 2)
         

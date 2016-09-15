@@ -41,7 +41,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id)[conversation appendMessageWithText:oldText];
     message.sender = sender;
     [message markAsSent];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
@@ -100,7 +100,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id)[conversation appendMessageWithText:oldText];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
     [message markAsSent];
 
@@ -152,7 +152,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
     [message expire];
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateFailedToSend);
@@ -176,7 +176,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithImageData:self.verySmallJPEGData];
+    ZMMessage *message = (id) [conversation appendMessageWithImageData:self.verySmallJPEGData];
     message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
     [message markAsSent];
 
@@ -202,7 +202,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
     [message markAsSent];
 
@@ -252,7 +252,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
     [message markAsSent];
 
@@ -296,7 +296,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     message.serverTimestamp = originalDate;
     [message markAsSent];
 
@@ -387,7 +387,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     
     [message addReaction:@"👻" forUser:self.selfUser];
     [self.uiMOC saveOrRollback];
@@ -447,7 +447,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     
     ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:senderID newText:newText];
     NSUUID *newNonce = updateEvent.messageNonce;
@@ -495,7 +495,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     message.visibleInConversation = nil;
     message.hiddenInConversation = conversation;
     
@@ -523,7 +523,7 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     message.sender = sender;
     message.serverTimestamp = oldDate;
     
@@ -563,7 +563,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     // insert message locally
-    ZMMessage *message = [conversation appendMessageWithText:oldText];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
     message.sender = sender;
     message.serverTimestamp = oldDate;
     
@@ -599,7 +599,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:@"Hallo"];
+    ZMMessage *message = (id) [conversation appendMessageWithText:@"Hallo"];
 
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser.remoteIdentifier = NSUUID.createUUID;
@@ -637,7 +637,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *message = [conversation appendMessageWithText:@"Hallo"];
+    ZMMessage *message = (id) [conversation appendMessageWithText:@"Hallo"];
     
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser.remoteIdentifier = NSUUID.createUUID;

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -25,7 +25,7 @@ class SearchUserObserverTokenTests : ZMBaseManagedObjectTest {
         
         var receivedChangeInfo : [UserChangeInfo] = []
         
-        func userDidChange(changes: UserChangeInfo) {
+        func userDidChange(_ changes: UserChangeInfo) {
             receivedChangeInfo.append(changes)
         }
     }
@@ -33,18 +33,18 @@ class SearchUserObserverTokenTests : ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         self.setUpCaches()
-        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(Notification(name: Notification.Name(rawValue: "fake"), object: nil))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
     func testThatItNotifiesTheObserverOfASmallProfilePictureChange() {
         
         // given
-        let remoteID = NSUUID.createUUID()
-        let searchUser = ZMSearchUser(name: "Hans", accentColor: .BrightOrange, remoteID: remoteID, user: nil, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)
+        let remoteID = UUID.create()
+        let searchUser = ZMSearchUser(name: "Hans", accentColor: .brightOrange, remoteID: remoteID, user: nil, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)!
         
         let testObserver = TestSearchUserObserver()
-        let token = ZMUser.addUserObserver(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
+        let token = ZMUser.add(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
         
         // when
         searchUser.notifyNewSmallImageData(self.verySmallJPEGData(), managedObjectContextObserver: self.uiMOC.globalManagedObjectContextObserver)
@@ -54,22 +54,22 @@ class SearchUserObserverTokenTests : ZMBaseManagedObjectTest {
         if let note = testObserver.receivedChangeInfo.first {
             XCTAssertTrue(note.imageSmallProfileDataChanged)
         }
-        ZMUser.removeUserObserverForToken(token)
+        ZMUser.removeObserver(for: token)
     }
     
     func testThatItNotifiesTheObserverOfASmallProfilePictureChangeIfTheInternalUserUpdates() {
         
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.remoteIdentifier = NSUUID.createUUID()
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.remoteIdentifier = UUID.create()
         self.uiMOC.saveOrRollback()
-        let searchUser = ZMSearchUser(name: "Foo", accentColor: .BrightYellow, remoteID: user.remoteIdentifier, user: user, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)
+        let searchUser = ZMSearchUser(name: "Foo", accentColor: .brightYellow, remoteID: user.remoteIdentifier, user: user, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)!
         
         let testObserver = TestSearchUserObserver()
-        let token = ZMUser.addUserObserver(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
+        let token = ZMUser.add(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
         
         // when
-        user.smallProfileRemoteIdentifier = NSUUID.createUUID()
+        user.smallProfileRemoteIdentifier = UUID.create()
         user.imageSmallProfileData = self.verySmallJPEGData()
         self.uiMOC.processPendingChanges()
         
@@ -78,18 +78,18 @@ class SearchUserObserverTokenTests : ZMBaseManagedObjectTest {
         if let note = testObserver.receivedChangeInfo.first {
             XCTAssertTrue(note.imageSmallProfileDataChanged)
         }
-        ZMUser.removeUserObserverForToken(token)
+        ZMUser.removeObserver(for: token)
     }
     
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
-        let remoteID = NSUUID.createUUID()
-        let searchUser = ZMSearchUser(name: "Hans", accentColor: .BrightOrange, remoteID: remoteID, user: nil, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)
+        let remoteID = UUID.create()
+        let searchUser = ZMSearchUser(name: "Hans", accentColor: .brightOrange, remoteID: remoteID, user: nil, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)!
         
         let testObserver = TestSearchUserObserver()
-        let token = ZMUser.addUserObserver(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
-        ZMUser.removeUserObserverForToken(token)
+        let token = ZMUser.add(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
+        ZMUser.removeObserver(for: token)
         
         // when
         searchUser.notifyNewSmallImageData(self.verySmallJPEGData(), managedObjectContextObserver: self.uiMOC.globalManagedObjectContextObserver)

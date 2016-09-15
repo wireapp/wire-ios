@@ -21,31 +21,28 @@ import Foundation
 
 extension ZMMessage {
     
-    static func appendReaction(unicodeValue: String?, toMessage message: ZMConversationMessage)
+    static func appendReaction(_ unicodeValue: String?, toMessage message: ZMConversationMessage)
     {
-        guard let message = message as? ZMMessage, context = message.managedObjectContext else { return }
-        guard message.deliveryState == .Sent || message.deliveryState == .Delivered else { return }
+        guard let message = message as? ZMMessage, let context = message.managedObjectContext else { return }
+        guard message.deliveryState == ZMDeliveryState.sent || message.deliveryState == ZMDeliveryState.delivered else { return }
         
         let emoji = unicodeValue ?? ""
         
         let genericMessage = ZMGenericMessage(
             emojiString: emoji,
-            messageID: message.nonce.transportString(),
+            messageID: message.nonce.transportString()!,
             nonce: NSUUID().transportString()
         )
     
-        message.conversation?.appendGenericMessage(genericMessage, expires:false, hidden: true)
-        message.addReaction(unicodeValue, forUser: .selfUserInContext(context))
-
-    
-    
+        _ = message.conversation?.append(genericMessage, expires:false, hidden: true)
+        message.addReaction(unicodeValue, forUser: .selfUser(in: context))
     }
     
-    public static func addReaction(unicodeValue: String, toMessage message: ZMConversationMessage) {
+    public static func addReaction(_ unicodeValue: String, toMessage message: ZMConversationMessage) {
             
         // confirmation that we understand the emoji
         // the UI should never send an emoji we dont handle
-        if Reaction.transportReaction(unicodeValue) == .None{
+        if Reaction.transportReaction(from: unicodeValue) == .none{
             fatal("We can't append this reaction \(unicodeValue), this is a programmer error.")
         }
         
@@ -57,28 +54,28 @@ extension ZMMessage {
         appendReaction(nil, toMessage: message)
     }
     
-    @objc public func addReaction(unicodeValue: String?, forUser user:ZMUser)
+    @objc public func addReaction(_ unicodeValue: String?, forUser user:ZMUser)
     {
         removeReaction(forUser:user)
-        if let unicodeValue = unicodeValue where unicodeValue.characters.count > 0 {
+        if let unicodeValue = unicodeValue , unicodeValue.characters.count > 0 {
             for reaction in self.reactions {
                 if reaction.unicodeValue! == unicodeValue {
-                    reaction.mutableSetValueForKey(ZMReactionUsersValueKey).addObject(user)
+                    reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)
                     return
                 }
             }
             
             //we didn't find a reaction, need to add a new one
             let newReaction = Reaction.insertReaction(unicodeValue, users:[user], inMessage: self)
-            self.mutableSetValueForKey("reactions").addObject(newReaction)
+            self.mutableSetValue(forKey: "reactions").add(newReaction)
         }
     }
     
-    private func removeReaction(forUser user: ZMUser)
+    fileprivate func removeReaction(forUser user: ZMUser)
     {
         for reaction in self.reactions {
             if reaction.users.contains(user) {
-                reaction.mutableSetValueForKey(ZMReactionUsersValueKey).removeObject(user)
+                reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).remove(user)
                 break;
             }
         }
@@ -87,7 +84,7 @@ extension ZMMessage {
     @objc public func clearAllReactions() {
         reactions.removeAll()
         guard let moc = managedObjectContext else { return }
-        reactions.forEach(moc.deleteObject)
+        reactions.forEach(moc.delete)
     }
     
 }
