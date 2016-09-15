@@ -57,9 +57,10 @@
 + (ZMGenericMessage *)messageWithImageData:(NSData *)imageData format:(ZMImageFormat)format nonce:(NSString *)nonce;
 + (ZMGenericMessage *)messageWithConfirmation:(NSString *)messageID type:(ZMConfirmationType)type nonce:(NSString *)nonce;
 
-+ (ZMGenericMessage *)messageWithMediumImageProperties:(ZMIImageProperties *)mediumProperties
-                              processedImageProperties:(ZMIImageProperties *)processedProperties
-                                        encryptionKeys:(ZMImageAssetEncryptionKeys *)encryptionKeys
+
++ (ZMGenericMessage *)messageWithMediumImageProperties:(nullable ZMIImageProperties *)mediumProperties
+                              processedImageProperties:(nullable ZMIImageProperties *)processedProperties
+                                        encryptionKeys:(nullable ZMImageAssetEncryptionKeys *)encryptionKeys
                                                  nonce:(NSString *)nonce
                                                 format:(ZMImageFormat)format;
 
