@@ -440,7 +440,7 @@
 {
     [self performWithAllSourceTypes:^(ZMUpdateEventSource source) {
         NSUUID *identifier = NSUUID.createUUID;
-        ZMUpdateEvent *event = [ZMUpdateEvent decryptedUpdateEventFromEventStreamPayload:[self payloadFixtureWithID:identifier] uuid:identifier source:source];
+        ZMUpdateEvent *event = [ZMUpdateEvent decryptedUpdateEventFromEventStreamPayload:[self payloadFixtureWithID:identifier] uuid:identifier transient:NO source:source];
         XCTAssertEqual(event.source, source);
     }];
 }

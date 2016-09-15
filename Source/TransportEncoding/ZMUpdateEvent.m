@@ -125,9 +125,9 @@
     return [[self alloc] initWithUUID:uuid payload:[payload asDictionary] transient:NO decrypted:NO source:ZMUpdateEventSourceDownload];
 }
 
-+ (nullable instancetype)decryptedUpdateEventFromEventStreamPayload:(nonnull id<ZMTransportData>)payload uuid:(nullable NSUUID *)uuid source:(ZMUpdateEventSource)source
++ (nullable instancetype)decryptedUpdateEventFromEventStreamPayload:(nonnull id<ZMTransportData>)payload uuid:(nullable NSUUID *)uuid transient:(BOOL)transient source:(ZMUpdateEventSource)source
 {
-    return [[self alloc] initWithUUID:uuid payload:[payload asDictionary] transient:NO decrypted:YES source:source];
+    return [[self alloc] initWithUUID:uuid payload:[payload asDictionary] transient:transient decrypted:YES source:source];
 }
 
 - (void)appendDebugInformation:(nonnull NSString *)debugInformation;
