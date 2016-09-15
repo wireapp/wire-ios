@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites tests='8' failures='0'>
+  <testsuite name='ZMTestingTests' tests='2' failures='0'>
+    <testcase classname='ZMTestingTests' name='testWaitForAllGroupsToBeEmpty' time='0.004'/>
+    <testcase classname='ZMTestingTests' name='testWaitForAllGroupsToBeEmptyFail' time='1.001'/>
+  </testsuite>
+  <testsuite name='ZMTesting_iosTests.ZMTExpectationTests' tests='2' failures='0'>
+    <testcase classname='ZMTesting_iosTests.ZMTExpectationTests' name='testNotificationExpectationNotSent' time='1.003'/>
+    <testcase classname='ZMTesting_iosTests.ZMTExpectationTests' name='testNotificationExpectationSent' time='0.002'/>
+  </testsuite>
+  <testsuite name='ZMTesting_iosTests.ZMTTestBaseTests' tests='4' failures='0'>
+    <testcase classname='ZMTesting_iosTests.ZMTTestBaseTests' name='testMediumJPEG' time='0.005'/>
+    <testcase classname='ZMTesting_iosTests.ZMTTestBaseTests' name='testMediumJPEG_static' time='0.002'/>
+    <testcase classname='ZMTesting_iosTests.ZMTTestBaseTests' name='testVerySmallJPEG' time='0.001'/>
+    <testcase classname='ZMTesting_iosTests.ZMTTestBaseTests' name='testVerySmallJPEG_static' time='0.001'/>
+  </testsuite>
+</testsuites>

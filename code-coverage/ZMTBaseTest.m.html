@@ -1,0 +1,2117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>ZMTBaseTest.m - Slather</title>
+<link href="slather.css" media="all" rel="stylesheet">
+</head>
+<body>
+<header><div class="row"><a href="index.html"><img src="logo.jpg" alt="Slather logo"></a></div></header><div class="row"><div id="reports">
+<h2 class="cov_title">
+<span>Coverage for "ZMTBaseTest.m" : </span><span class="cov_low">40.00%</span>
+</h2>
+<h4 class="cov_subtitle">(122 of 305 relevant lines covered)</h4>
+<h4 class="cov_filepath">../Desktop/jenkins-agent/workspace/Utility jobs/Create a new version of framework/Source/Public/ZMTBaseTest.m</h4>
+<table class="source_code">
+<tr class="never">
+<td class="num">1</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">2</td>
+<td class="src"><pre><code class="objc">// Wire</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">3</td>
+<td class="src"><pre><code class="objc">// Copyright (C) 2016 Wire Swiss GmbH</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">4</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">5</td>
+<td class="src"><pre><code class="objc">// This program is free software: you can redistribute it and/or modify</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">6</td>
+<td class="src"><pre><code class="objc">// it under the terms of the GNU General Public License as published by</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">7</td>
+<td class="src"><pre><code class="objc">// the Free Software Foundation, either version 3 of the License, or</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">8</td>
+<td class="src"><pre><code class="objc">// (at your option) any later version.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">9</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">10</td>
+<td class="src"><pre><code class="objc">// This program is distributed in the hope that it will be useful,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">11</td>
+<td class="src"><pre><code class="objc">// but WITHOUT ANY WARRANTY; without even the implied warranty of</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">12</td>
+<td class="src"><pre><code class="objc">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">13</td>
+<td class="src"><pre><code class="objc">// GNU General Public License for more details.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">14</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">15</td>
+<td class="src"><pre><code class="objc">// You should have received a copy of the GNU General Public License</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">16</td>
+<td class="src"><pre><code class="objc">// along with this program. If not, see http://www.gnu.org/licenses/.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">17</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">18</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">19</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">20</td>
+<td class="src"><pre><code class="objc">@import ZMCSystem;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">21</td>
+<td class="src"><pre><code class="objc">@import OCMock;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">22</td>
+<td class="src"><pre><code class="objc">@import MobileCoreServices;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">23</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">24</td>
+<td class="src"><pre><code class="objc">#import "ZMTBaseTest.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">25</td>
+<td class="src"><pre><code class="objc">#import "ZMTExpectation.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">26</td>
+<td class="src"><pre><code class="objc">#import &lt;libkern/OSAtomic.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">27</td>
+<td class="src"><pre><code class="objc">#import &lt;ZMTesting/ZMTesting-Swift.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">28</td>
+<td class="src"><pre><code class="objc">#import &lt;CommonCrypto/CommonCrypto.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">29</td>
+<td class="src"><pre><code class="objc">#import "NSUUID+ZMTesting.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">30</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">31</td>
+<td class="src"><pre><code class="objc">@interface ZMTBaseTest()</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">32</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">33</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) BOOL ignoreLogErrors; ///&lt; if false, will fail on ZMLogError or ZMLogWarn</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">34</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSMutableArray *mocksToBeVerified;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">35</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSMutableArray *expectations; // Beta3Workaround</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">36</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">37</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">38</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">39</td>
+<td class="src"><pre><code class="objc">@implementation ZMTBaseTest</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">40</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">41</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">42</td>
+<td class="src"><pre><code class="objc">- (void)verifyMockLater:(id)mock;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">43</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">44</td>
+<td class="src"><pre><code class="objc">    if (self.mocksToBeVerified == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">45</td>
+<td class="src"><pre><code class="objc">        self.mocksToBeVerified = [NSMutableArray array];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">46</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">47</td>
+<td class="src"><pre><code class="objc">    XCTAssertNotNil(mock);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">48</td>
+<td class="src"><pre><code class="objc">    [self.mocksToBeVerified addObject:mock];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">49</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">50</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">51</td>
+<td class="src"><pre><code class="objc">- (void)verifyMocksNow;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">52</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">53</td>
+<td class="src"><pre><code class="objc">    for (OCMockObject *mock in self.mocksToBeVerified) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">54</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">55</td>
+<td class="src"><pre><code class="objc">        @try {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">56</td>
+<td class="src"><pre><code class="objc">            [mock verify];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">57</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">58</td>
+<td class="src"><pre><code class="objc">        @catch (NSException * e)</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">59</td>
+<td class="src"><pre><code class="objc">        {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">60</td>
+<td class="src"><pre><code class="objc">            XCTFail(@"Mock not verified: %@", e);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">61</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">62</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">63</td>
+<td class="src"><pre><code class="objc">    [self.mocksToBeVerified removeAllObjects];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">64</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">65</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">66</td>
+<td class="src"><pre><code class="objc">+ (BOOL)isDebuggingTests</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">67</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">68</td>
+<td class="src"><pre><code class="objc">    NSString *debugTestContent = [[[NSProcessInfo processInfo]environment]objectForKey:@"DEBUG_TESTS"];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">69</td>
+<td class="src"><pre><code class="objc">    return [debugTestContent boolValue];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">70</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="never">
+<td class="num">71</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">72</td>
+<td class="src"><pre><code class="objc">- (void)performIgnoringZMLogError:(void(^)(void))block;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">73</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">74</td>
+<td class="src"><pre><code class="objc">    if(!block) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">75</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">76</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">77</td>
+<td class="src"><pre><code class="objc">    self.ignoreLogErrors = YES;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">78</td>
+<td class="src"><pre><code class="objc">    block();</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">79</td>
+<td class="src"><pre><code class="objc">    self.ignoreLogErrors = NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">80</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">81</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">82</td>
+<td class="src"><pre><code class="objc">- (void)registerLogErrorHook</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">83</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">84</td>
+<td class="src"><pre><code class="objc">    self.ignoreLogErrors = NO;</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">85</td>
+<td class="src"><pre><code class="objc">    ZM_WEAK(self);</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="missed">
+<td class="num">86</td>
+<td class="src"><pre><code class="objc">    ZMLoggingDebuggingHook = ^(const char *tag __unused, char const * const filename, int linenumber, NSString *output){</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">87</td>
+<td class="src"><pre><code class="objc">        ZM_STRONG(self);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">88</td>
+<td class="src"><pre><code class="objc">        if(!self.ignoreLogErrors) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">89</td>
+<td class="src"><pre><code class="objc">            [self recordFailureWithDescription:output inFile:[NSString stringWithUTF8String:filename] atLine:(unsigned long)linenumber expected:YES];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">90</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">91</td>
+<td class="src"><pre><code class="objc">    };</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">92</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">93</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="never">
+<td class="num">94</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">95</td>
+<td class="src"><pre><code class="objc">- (void)unregisterLogErrorHook</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">96</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">97</td>
+<td class="src"><pre><code class="objc">    self.ignoreLogErrors = NO;</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">98</td>
+<td class="src"><pre><code class="objc">    ZMLoggingDebuggingHook = 0;</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">99</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">100</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="never">
+<td class="num">101</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">102</td>
+<td class="src"><pre><code class="objc">- (void)setUp</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">103</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">104</td>
+<td class="src"><pre><code class="objc">    [super setUp];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">105</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">106</td>
+<td class="src"><pre><code class="objc">    if (_dispatchGroup == nil) {</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">107</td>
+<td class="src"><pre><code class="objc">        _dispatchGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTBaseTest"];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">108</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">109</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">110</td>
+<td class="src"><pre><code class="objc">    self.expectations = nil;</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">111</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">112</td>
+<td class="src"><pre><code class="objc">    [self registerLogErrorHook];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">113</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">114</td>
+<td class="src"><pre><code class="objc">    self.fakeUIContext = [FakeGroupContext mainContext];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">115</td>
+<td class="src"><pre><code class="objc">    self.fakeSyncContext = [FakeGroupContext sycnContext];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">116</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">117</td>
+<td class="src"><pre><code class="objc">    [NSUUID reseedUUID:self.name];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">118</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="never">
+<td class="num">119</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">120</td>
+<td class="src"><pre><code class="objc">- (void)tearDown</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">121</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">122</td>
+<td class="src"><pre><code class="objc">    [self unregisterLogErrorHook];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">123</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">124</td>
+<td class="src"><pre><code class="objc">    [super tearDown];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">125</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="never">
+<td class="num">126</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">127</td>
+<td class="src"><pre><code class="objc">- (void)spinMainQueueWithTimeout:(NSTimeInterval)timeout</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">128</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">129</td>
+<td class="src"><pre><code class="objc">    NSDate *runUntil = [NSDate dateWithTimeIntervalSinceNow: timeout];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">130</td>
+<td class="src"><pre><code class="objc">    (void) [self waitUntilDate:runUntil verificationBlock:^BOOL{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">131</td>
+<td class="src"><pre><code class="objc">        return NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">132</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">133</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">134</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">135</td>
+<td class="src"><pre><code class="objc">- (BOOL)waitOnMainLoopUntilBlock:(VerificationBlock)block timeout:(NSTimeInterval)timeout;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">136</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">137</td>
+<td class="src"><pre><code class="objc">    NSDate *start = [NSDate date];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">138</td>
+<td class="src"><pre><code class="objc">    NSDate *runUntil = [NSDate dateWithTimeIntervalSinceNow: [self.class timeToUseForOriginalTime:timeout]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">139</td>
+<td class="src"><pre><code class="objc">    BOOL const result = [self waitUntilDate:runUntil verificationBlock:block];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">140</td>
+<td class="src"><pre><code class="objc">    PrintTimeoutWarning(self, timeout, -[start timeIntervalSinceNow]);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">141</td>
+<td class="src"><pre><code class="objc">    return result;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">142</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">143</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">144</td>
+<td class="src"><pre><code class="objc">- (BOOL)waitWithTimeout:(NSTimeInterval)timeout verificationBlock:(VerificationBlock)block;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">145</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">146</td>
+<td class="src"><pre><code class="objc">    return [self waitUntilDate:[NSDate dateWithTimeIntervalSinceNow:timeout] verificationBlock:block];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">147</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">148</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">149</td>
+<td class="src"><pre><code class="objc">- (BOOL)waitUntilDate:(NSDate *)runUntil verificationBlock:(VerificationBlock)block;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">150</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">151</td>
+<td class="src"><pre><code class="objc">    BOOL success = NO;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">152</td>
+<td class="src"><pre><code class="objc">    while (! success &amp;&amp; (0. &lt; [runUntil timeIntervalSinceNow])) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">153</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">154</td>
+<td class="src"><pre><code class="objc">        if (! [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">155</td>
+<td class="src"><pre><code class="objc">            [NSThread sleepForTimeInterval:0.005];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">156</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">157</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">158</td>
+<td class="src"><pre><code class="objc">        if ((block != nil) &amp;&amp; block()) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">159</td>
+<td class="src"><pre><code class="objc">            success = YES;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">160</td>
+<td class="src"><pre><code class="objc">            break;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">161</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">162</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">163</td>
+<td class="src"><pre><code class="objc">    return success;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">164</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">165</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">166</td>
+<td class="src"><pre><code class="objc">+ (NSTimeInterval)timeToUseForOriginalTime:(NSTimeInterval)originalTime</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">167</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">168</td>
+<td class="src"><pre><code class="objc">    NSTimeInterval realTime = ([self isDebuggingTests] ? 1000.0 : 5.0) * originalTime;</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">169</td>
+<td class="src"><pre><code class="objc">#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">170</td>
+<td class="src"><pre><code class="objc">    realTime *= 20;</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">171</td>
+<td class="src"><pre><code class="objc">#endif</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">172</td>
+<td class="src"><pre><code class="objc">    return realTime;</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">173</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="never">
+<td class="num">174</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">175</td>
+<td class="src"><pre><code class="objc">+ (void)performRunLoopTick;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">176</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">177</td>
+<td class="src"><pre><code class="objc">    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">178</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">179</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">180</td>
+<td class="src"><pre><code class="objc">- (XCTestExpectation *)expectationWithDescription:(NSString *)description;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">181</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">182</td>
+<td class="src"><pre><code class="objc">    ZMTExpectation *expectation = [[ZMTExpectation alloc] init];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">183</td>
+<td class="src"><pre><code class="objc">    expectation.name = description;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">184</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">185</td>
+<td class="src"><pre><code class="objc">    if (self.expectations == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">186</td>
+<td class="src"><pre><code class="objc">        self.expectations = [NSMutableArray arrayWithObject:expectation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">187</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">188</td>
+<td class="src"><pre><code class="objc">        [self.expectations addObject:expectation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">189</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">190</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">191</td>
+<td class="src"><pre><code class="objc">    return (XCTestExpectation *) expectation;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">192</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">193</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">194</td>
+<td class="src"><pre><code class="objc">- (XCTestExpectation *)expectationForNotification:(NSString *)notificationName object:(id)objectToObserve handler:(XCNotificationExpectationHandler)handlerOrNil;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">195</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">196</td>
+<td class="src"><pre><code class="objc">    ZMTNotificationExpectation *expectation = [[ZMTNotificationExpectation alloc] init];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">197</td>
+<td class="src"><pre><code class="objc">    ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:expectation selector:@selector(observe:) name:notificationName object:objectToObserve]);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">198</td>
+<td class="src"><pre><code class="objc">    expectation.handler = handlerOrNil;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">199</td>
+<td class="src"><pre><code class="objc">    expectation.name = notificationName;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">200</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">201</td>
+<td class="src"><pre><code class="objc">    if (self.expectations == nil) {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">202</td>
+<td class="src"><pre><code class="objc">        self.expectations = [NSMutableArray arrayWithObject:expectation];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="missed">
+<td class="num">203</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">204</td>
+<td class="src"><pre><code class="objc">        [self.expectations addObject:expectation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">205</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">206</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">207</td>
+<td class="src"><pre><code class="objc">    return (XCTestExpectation *) expectation;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">208</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">209</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">210</td>
+<td class="src"><pre><code class="objc">- (XCTestExpectation *)keyValueObservingExpectationForObject:(id)objectToObserve keyPath:(NSString *)keyPath expectedValue:(id)expectedValue;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">211</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">212</td>
+<td class="src"><pre><code class="objc">    RequireString(expectedValue == nil, "Not implemented");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">213</td>
+<td class="src"><pre><code class="objc">    ZMTKeyValueObservingExpectation *expectation = [[ZMTKeyValueObservingExpectation alloc] init];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">214</td>
+<td class="src"><pre><code class="objc">    expectation.object = objectToObserve;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">215</td>
+<td class="src"><pre><code class="objc">    expectation.keyPath = keyPath;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">216</td>
+<td class="src"><pre><code class="objc">    [objectToObserve addObserver:expectation forKeyPath:keyPath options:0 context:(__bridge void *) expectation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">217</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">218</td>
+<td class="src"><pre><code class="objc">    if (self.expectations == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">219</td>
+<td class="src"><pre><code class="objc">        self.expectations = [NSMutableArray arrayWithObject:expectation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">220</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">221</td>
+<td class="src"><pre><code class="objc">        [self.expectations addObject:expectation];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">222</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">223</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">224</td>
+<td class="src"><pre><code class="objc">    return (id) expectation;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">225</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">226</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">227</td>
+<td class="src"><pre><code class="objc">- (NSArray *)allDispatchGroups;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">228</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">229</td>
+<td class="src"><pre><code class="objc">    return @[self.dispatchGroup, self.fakeSyncContext.dispatchGroup, self.fakeUIContext.dispatchGroup];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">230</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">231</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">232</td>
+<td class="src"><pre><code class="objc">- (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">233</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">234</td>
+<td class="src"><pre><code class="objc">    NSArray *groups = [self.allDispatchGroups copy];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">235</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">236</td>
+<td class="src"><pre><code class="objc">    NSDate * const start = [NSDate date];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">237</td>
+<td class="src"><pre><code class="objc">    NSTimeInterval timeinterval2 = [self.class timeToUseForOriginalTime:timeout];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">238</td>
+<td class="src"><pre><code class="objc">    NSDate *end = [start dateByAddingTimeInterval:timeinterval2];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">239</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">240</td>
+<td class="src"><pre><code class="objc">    __block NSUInteger waitCount = groups.count;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">241</td>
+<td class="src"><pre><code class="objc">    for (ZMSDispatchGroup *g in groups) {</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">242</td>
+<td class="src"><pre><code class="objc">        [g notifyOnQueue:dispatch_get_main_queue() block:^{</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">243</td>
+<td class="src"><pre><code class="objc">            --waitCount;</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">244</td>
+<td class="src"><pre><code class="objc">        }];</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">245</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">246</td>
+<td class="src"><pre><code class="objc">    @try {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">247</td>
+<td class="src"><pre><code class="objc">        while ((0 &lt; waitCount) &amp;&amp; (0. &lt; [end timeIntervalSinceNow])) {</code></pre></td>
+<td class="coverage">327x</td>
+</tr>
+<tr class="covered">
+<td class="num">248</td>
+<td class="src"><pre><code class="objc">            if (! [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.002]]) {</code></pre></td>
+<td class="coverage">325x</td>
+</tr>
+<tr class="missed">
+<td class="num">249</td>
+<td class="src"><pre><code class="objc">                [NSThread sleepForTimeInterval:0.002];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">250</td>
+<td class="src"><pre><code class="objc">            }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">251</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">325x</td>
+</tr>
+<tr class="covered">
+<td class="num">252</td>
+<td class="src"><pre><code class="objc">    } @catch (NSException *exception) {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">253</td>
+<td class="src"><pre><code class="objc">        @throw exception;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">254</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">255</td>
+<td class="src"><pre><code class="objc">    PrintTimeoutWarning(self, timeout, -[start timeIntervalSinceNow]);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">256</td>
+<td class="src"><pre><code class="objc">    return (waitCount == 0);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">257</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">258</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">259</td>
+<td class="src"><pre><code class="objc">- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(XCWaitCompletionHandler)handlerOrNil;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">260</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">261</td>
+<td class="src"><pre><code class="objc">    NSTimeInterval timeInterval2 = [self.class timeToUseForOriginalTime:timeout];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">262</td>
+<td class="src"><pre><code class="objc">    NSDate * const start = [NSDate date];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">263</td>
+<td class="src"><pre><code class="objc">    NSDate * const end = [NSDate dateWithTimeIntervalSinceNow:timeInterval2];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">264</td>
+<td class="src"><pre><code class="objc">    NSArray *expectations = [self.expectations copy];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">265</td>
+<td class="src"><pre><code class="objc">    [self.expectations removeAllObjects];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">266</td>
+<td class="src"><pre><code class="objc">    for (ZMTExpectation *e in expectations) {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">267</td>
+<td class="src"><pre><code class="objc">        if (! [e waitUntil:end]) {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">268</td>
+<td class="src"><pre><code class="objc">            PrintTimeoutWarning(self, timeout, -[start timeIntervalSinceNow]);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">269</td>
+<td class="src"><pre><code class="objc">            return NO;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">270</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">271</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">272</td>
+<td class="src"><pre><code class="objc">    // reset</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">273</td>
+<td class="src"><pre><code class="objc">    if (handlerOrNil) {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="missed">
+<td class="num">274</td>
+<td class="src"><pre><code class="objc">        handlerOrNil(nil);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">275</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">276</td>
+<td class="src"><pre><code class="objc">    PrintTimeoutWarning(self, timeout, -[start timeIntervalSinceNow]);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">277</td>
+<td class="src"><pre><code class="objc">    return YES;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">278</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">279</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">280</td>
+<td class="src"><pre><code class="objc">- (BOOL)verifyAllExpectationsNow</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">281</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">282</td>
+<td class="src"><pre><code class="objc">    return [self waitForCustomExpectationsWithTimeout:0];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">283</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">284</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">285</td>
+<td class="src"><pre><code class="objc">- (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">286</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">287</td>
+<td class="src"><pre><code class="objc">    BOOL result = [self waitForCustomExpectationsWithTimeout:timeout handler:nil];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">288</td>
+<td class="src"><pre><code class="objc">    return result;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">289</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">290</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">291</td>
+<td class="src"><pre><code class="objc">+ (NSData *)verySmallJPEGData;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">292</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">293</td>
+<td class="src"><pre><code class="objc">    NSURL *imageURL = [[NSBundle bundleForClass:[ZMTBaseTest class]] URLForResource:@"tiny" withExtension:@"jpg"];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">294</td>
+<td class="src"><pre><code class="objc">    NSData *data = [NSData dataWithContentsOfURL:imageURL];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">295</td>
+<td class="src"><pre><code class="objc">    RequireString(data != nil, "tiny.jpg not found");</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">296</td>
+<td class="src"><pre><code class="objc">    return data;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">297</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">298</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">299</td>
+<td class="src"><pre><code class="objc">- (NSData *)verySmallJPEGData;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">300</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">301</td>
+<td class="src"><pre><code class="objc">    return [[self class] verySmallJPEGData];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">302</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">303</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">304</td>
+<td class="src"><pre><code class="objc">+ (NSData *)mediumJPEGData</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">305</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">306</td>
+<td class="src"><pre><code class="objc">    NSURL *imageURL = [[NSBundle bundleForClass:[ZMTBaseTest class]] URLForResource:@"medium" withExtension:@"jpg"];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">307</td>
+<td class="src"><pre><code class="objc">    NSData *data = [NSData dataWithContentsOfURL:imageURL];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">308</td>
+<td class="src"><pre><code class="objc">    RequireString(data != nil, "medium.jpg not found");</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">309</td>
+<td class="src"><pre><code class="objc">    return data;</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">310</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">311</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">312</td>
+<td class="src"><pre><code class="objc">- (NSData *)mediumJPEGData</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">313</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">314</td>
+<td class="src"><pre><code class="objc">    return [[self class] mediumJPEGData];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">315</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">316</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">317</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">318</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">319</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">320</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">321</td>
+<td class="src"><pre><code class="objc">@implementation ZMTBaseTest (Asserts)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">322</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">323</td>
+<td class="src"><pre><code class="objc">- (void)assertDictionary:(NSDictionary *)d1 isEqualToDictionary:(NSDictionary *)d2 name1:(char const *)name1 name2:(char const *)name2 failureRecorder:(ZMTFailureRecorder *)failureRecorder;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">324</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">325</td>
+<td class="src"><pre><code class="objc">    [self assertDictionary:d1 isEqualToDictionary:d2 name1:name1 name2:name2 ignoreKeys:@[] failureRecorder:failureRecorder];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">326</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">327</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">328</td>
+<td class="src"><pre><code class="objc">- (void)assertDictionary:(NSDictionary *)d1</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">329</td>
+<td class="src"><pre><code class="objc">     isEqualToDictionary:(NSDictionary *)d2</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">330</td>
+<td class="src"><pre><code class="objc">                   name1:(char const *)name1</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">331</td>
+<td class="src"><pre><code class="objc">                   name2:(char const *)name2</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">332</td>
+<td class="src"><pre><code class="objc">              ignoreKeys:(NSArray *)ignoredKeys</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">333</td>
+<td class="src"><pre><code class="objc">         failureRecorder:(ZMTFailureRecorder *)failureRecorder;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">334</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">335</td>
+<td class="src"><pre><code class="objc">    NSMutableSet *keys1 = [NSSet setWithArray:d1.allKeys].mutableCopy;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">336</td>
+<td class="src"><pre><code class="objc">    [keys1 minusSet:[NSSet setWithArray:ignoredKeys]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">337</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">338</td>
+<td class="src"><pre><code class="objc">    NSMutableSet *keys2 = [NSSet setWithArray:d2.allKeys].mutableCopy;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">339</td>
+<td class="src"><pre><code class="objc">    [keys2 minusSet:[NSSet setWithArray:ignoredKeys]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">340</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">341</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">342</td>
+<td class="src"><pre><code class="objc">    if (! [keys1 isEqualToSet:keys2]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">343</td>
+<td class="src"><pre><code class="objc">        XCTFail(@"Keys don't match for %s and %s", name1, name2);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">344</td>
+<td class="src"><pre><code class="objc">        NSMutableSet *missingKeys = [keys1 mutableCopy];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">345</td>
+<td class="src"><pre><code class="objc">        [missingKeys minusSet:keys2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">346</td>
+<td class="src"><pre><code class="objc">        if (0 &lt; missingKeys.count) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">347</td>
+<td class="src"><pre><code class="objc">            [failureRecorder recordFailure:@"%s is missing keys: '%@'",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">348</td>
+<td class="src"><pre><code class="objc">             name1, [[missingKeys allObjects] componentsJoinedByString:@"', '"]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">349</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">350</td>
+<td class="src"><pre><code class="objc">        NSMutableSet *additionalKeys = [keys2 mutableCopy];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">351</td>
+<td class="src"><pre><code class="objc">        [additionalKeys minusSet:keys1];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">352</td>
+<td class="src"><pre><code class="objc">        if (0 &lt; additionalKeys.count) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">353</td>
+<td class="src"><pre><code class="objc">            [failureRecorder recordFailure:@"%s has additional keys: '%@'",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">354</td>
+<td class="src"><pre><code class="objc">             name1, [[additionalKeys allObjects] componentsJoinedByString:@"', '"]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">355</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">356</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">357</td>
+<td class="src"><pre><code class="objc">    for (id key in keys1) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">358</td>
+<td class="src"><pre><code class="objc">        if (! [d1[key] isEqual:d2[key]]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">359</td>
+<td class="src"><pre><code class="objc">            [failureRecorder recordFailure:@"Value for '%@' in '%s' does not match '%s'. %@ == %@",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">360</td>
+<td class="src"><pre><code class="objc">             key, name1, name2, d1[key], d2[key]];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">361</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">362</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">363</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">364</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">365</td>
+<td class="src"><pre><code class="objc">- (void)assertArray:(NSArray *)a1 hasSameElementsAsArray:(NSArray *)a2 name1:(char const *)name1 name2:(char const *)name2 failureRecorder:(ZMTFailureRecorder *)failureRecorder;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">366</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">367</td>
+<td class="src"><pre><code class="objc">    if(a1 == nil &amp;&amp; a2 == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">368</td>
+<td class="src"><pre><code class="objc">        [failureRecorder recordFailure:@"Both arrays are nil: %s == %s", name1, name2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">369</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">370</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">371</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">372</td>
+<td class="src"><pre><code class="objc">    if(a1 == nil || a2 == nil) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">373</td>
+<td class="src"><pre><code class="objc">        [failureRecorder recordFailure:@"%s array is nil: %s == %s",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">374</td>
+<td class="src"><pre><code class="objc">         (a1 == nil ? name1 : name2), name1, name2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">375</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">376</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">377</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">378</td>
+<td class="src"><pre><code class="objc">    if(a1 == a2) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">379</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">380</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">381</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">382</td>
+<td class="src"><pre><code class="objc">    NSCountedSet *set1 = [[NSCountedSet alloc] initWithArray:a1];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">383</td>
+<td class="src"><pre><code class="objc">    NSCountedSet *set2 = [[NSCountedSet alloc] initWithArray:a2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">384</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">385</td>
+<td class="src"><pre><code class="objc">    for (id obj1 in set1) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">386</td>
+<td class="src"><pre><code class="objc">        NSUInteger count2 = [set2 countForObject:obj1];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">387</td>
+<td class="src"><pre><code class="objc">        if (count2 == 0) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">388</td>
+<td class="src"><pre><code class="objc">            [failureRecorder recordFailure:@"Missing element from %s is not in %s: %@",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">389</td>
+<td class="src"><pre><code class="objc">             name1, name2, obj1];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">390</td>
+<td class="src"><pre><code class="objc">        } else if (count2 != [set1 countForObject:obj1]) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">391</td>
+<td class="src"><pre><code class="objc">            [failureRecorder recordFailure:@"Count of element in %s is not equal to count in %s (%u != %u): %@",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">392</td>
+<td class="src"><pre><code class="objc">             name1, name2,</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">393</td>
+<td class="src"><pre><code class="objc">             (unsigned) [set1 countForObject:obj1], (unsigned) count2,</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">394</td>
+<td class="src"><pre><code class="objc">             obj1];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">395</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">396</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">397</td>
+<td class="src"><pre><code class="objc">    for (id obj2 in set2) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">398</td>
+<td class="src"><pre><code class="objc">        NSUInteger count1 = [set1 countForObject:obj2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">399</td>
+<td class="src"><pre><code class="objc">        if (count1 == 0) {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">400</td>
+<td class="src"><pre><code class="objc">            [failureRecorder recordFailure:@"Extra element in %s is not in %s: %@",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">401</td>
+<td class="src"><pre><code class="objc">             name2, name1, obj2];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">402</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">403</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">404</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">405</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">406</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">407</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">408</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">409</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">410</td>
+<td class="src"><pre><code class="objc">void PrintTimeoutWarning(XCTestCase *test, NSTimeInterval const maxTimeout, NSTimeInterval const actualTimeout)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">411</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">412</td>
+<td class="src"><pre><code class="objc">    if ([test.class isDebuggingTests] &amp;&amp;</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="missed">
+<td class="num">413</td>
+<td class="src"><pre><code class="objc">        ((maxTimeout * 0.9) &lt; actualTimeout))</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">414</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">415</td>
+<td class="src"><pre><code class="objc">        NSString *output = [NSString stringWithFormat:@"warning: Timeout is set to %g, actually took %g (%@)",</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">416</td>
+<td class="src"><pre><code class="objc">                            maxTimeout, actualTimeout, test.name];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">417</td>
+<td class="src"><pre><code class="objc">        fprintf(stderr, "%s\n", [output UTF8String]);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">418</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">419</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+</table>
+</div></div>
+<footer><div class="row">
+<p><a href="https://github.com/SlatherOrg/slather">Fork me on Github</a></p>
+<p>&copy; 2016 Slather</p>
+</div></footer><script src="highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
