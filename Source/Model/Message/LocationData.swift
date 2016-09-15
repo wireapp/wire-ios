@@ -17,7 +17,8 @@
 // 
 
 
-@objc(ZMLocationData) final public class LocationData: NSObject {
+@objc (ZMLocationData)
+final public class LocationData: NSObject {
 
     public let latitude, longitude: Float
     public let name: String?

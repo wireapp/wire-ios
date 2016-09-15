@@ -48,7 +48,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.lastModifiedDate = [[NSDate date] dateByAddingTimeInterval:-90000];
-    ZMMessage *msg = [conversation appendMessageWithText:@"Foo"];
+    ZMMessage *msg = (id)[conversation appendMessageWithText:@"Foo"];
     
     // then
     XCTAssertNotNil(msg.serverTimestamp);
@@ -59,12 +59,12 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMMessage *msg1 = [conversation appendMessageWithText:@"Foo"];
+    ZMMessage *msg1 = (id) [conversation appendMessageWithText:@"Foo"];
     msg1.serverTimestamp = [[NSDate date] dateByAddingTimeInterval:-90000];
     conversation.lastModifiedDate = msg1.serverTimestamp;
     
     // when
-    ZMMessage *msg2 = [conversation appendMessageWithImageData:[self verySmallJPEGData]];
+    ZMMessage *msg2 = (id)[conversation appendMessageWithImageData:[self verySmallJPEGData]];
     
     // then
     XCTAssertNotNil(msg2.serverTimestamp);
@@ -97,7 +97,7 @@
     // when
     __block ZMMessage *message;
     [self performIgnoringZMLogError:^{
-        message = [conversation appendMessageWithText:nil];
+        message = (id)[conversation appendMessageWithText:nil];
     }];
     
     // then
@@ -298,7 +298,7 @@
     
     // when
     ZMFileMetadata *fileMetadata = [[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil];
-    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileMetadata:fileMetadata];
+    ZMAssetClientMessage *fileMessage = (id)[conversation appendMessageWithFileMetadata:fileMetadata];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -381,7 +381,7 @@
     
     // when
     ZMVideoMetadata *videoMetadata = [[ZMVideoMetadata alloc] initWithFileURL:fileURL duration:duration dimensions:dimensions thumbnail:thumbnailData];
-    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileMetadata:videoMetadata];
+    ZMAssetClientMessage *fileMessage = (id)[conversation appendMessageWithFileMetadata:videoMetadata];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -427,7 +427,7 @@
     
     // when
     ZMAudioMetadata *audioMetadata = [[ZMAudioMetadata alloc] initWithFileURL:fileURL duration:duration normalizedLoudness:@[] thumbnail:thumbnailData];
-    ZMAssetClientMessage *fileMessage = [conversation appendMessageWithFileMetadata:audioMetadata];
+    ZMAssetClientMessage *fileMessage = (id)[conversation appendMessageWithFileMetadata:audioMetadata];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

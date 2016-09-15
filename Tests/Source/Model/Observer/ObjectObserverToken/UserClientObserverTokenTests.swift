@@ -26,15 +26,15 @@ class UserClientObserverTokenTests: ZMBaseManagedObjectTest {
 
         var receivedChangeInfo : [UserClientChangeInfo] = []
 
-        func userClientDidChange(changes: UserClientChangeInfo) {
+        func userClientDidChange(_ changes: UserClientChangeInfo) {
             receivedChangeInfo.append(changes)
         }
     }
     
     override func setUp() {
         super.setUp()
-        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(Notification(name: Notification.Name(rawValue: "fake"), object: nil))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     let userInfoKeys = [
@@ -42,7 +42,7 @@ class UserClientObserverTokenTests: ZMBaseManagedObjectTest {
         UserClientChangeInfoKey.IgnoredByClientsChanged
         ].map { $0.rawValue }
 
-    func checkThatItNotifiesTheObserverOfAChange(userClient : UserClient, modifier: UserClient -> Void, expectedChangedFields: [String], customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(_ userClient : UserClient, modifier: (UserClient) -> Void, expectedChangedFields: [String], customAffectedKeys: AffectedKeys? = nil) {
 
         // given
         self.uiMOC.saveOrRollback()
@@ -71,7 +71,7 @@ class UserClientObserverTokenTests: ZMBaseManagedObjectTest {
         guard let changes = observer.receivedChangeInfo.first else { return }
         for key in userInfoKeys {
             guard !expectedChangedFields.contains(key) else { continue }
-            guard let value = changes.valueForKey(key) as? NSNumber else { return XCTFail("Can't find key or key is not boolean for '\(key)'") }
+            guard let value = changes.value(forKey: key) as? NSNumber else { return XCTFail("Can't find key or key is not boolean for '\(key)'") }
             XCTAssertFalse(value.boolValue, "\(key) was supposed to be false")
         }
         
@@ -81,8 +81,8 @@ class UserClientObserverTokenTests: ZMBaseManagedObjectTest {
 
     func testThatItNotifiesTheObserverOfTrustedByClientsChange() {
         // given
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
 
         // when
@@ -96,8 +96,8 @@ class UserClientObserverTokenTests: ZMBaseManagedObjectTest {
 
     func testThatItNotifiesTheObserverOfIgnoredByClientsChange() {
         // given
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
         otherClient.trustClient(client)
         self.uiMOC.saveOrRollback()
 
@@ -115,11 +115,11 @@ class UserClientObserverTokenTests: ZMBaseManagedObjectTest {
     
     func testThatItNotifiesTheObserverOfFingerprintChange() {
         // given
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        client.fingerprint = String.createAlphanumericalString().dataUsingEncoding(NSUTF8StringEncoding)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        client.fingerprint = String.createAlphanumerical().data(using: String.Encoding.utf8)
         self.uiMOC.saveOrRollback()
         
-        let newFingerprint = String.createAlphanumericalString().dataUsingEncoding(NSUTF8StringEncoding)
+        let newFingerprint = String.createAlphanumerical().data(using: String.Encoding.utf8)
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(client,
@@ -132,8 +132,8 @@ class UserClientObserverTokenTests: ZMBaseManagedObjectTest {
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         // given
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
         otherClient.trustClient(client)
         self.uiMOC.saveOrRollback()
 

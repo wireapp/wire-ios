@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -29,55 +29,55 @@ public enum ObjectObserverType: Int {
     
     // The order of this enum is important, because some event create additional observer to fire (reaction fires message notification), 
     // and therefore needs to happen before the message observer handler to propagate properly to the UI
-    case Invalid = 0
-    case Connection
-    case Client
-    case UserList
-    case User
-    case DisplayName
-    case SearchUser
-    case Message
-    case Conversation
-    case VoiceChannel
-    case Reaction
-    case ConversationMessageWindow
-    case ConversationList
+    case invalid = 0
+    case connection
+    case client
+    case userList
+    case user
+    case displayName
+    case searchUser
+    case message
+    case conversation
+    case voiceChannel
+    case reaction
+    case conversationMessageWindow
+    case conversationList
 
-    static func observerTypeForObject(object: NSObject) -> ObjectObserverType {
+    static func observerTypeForObject(_ object: NSObject) -> ObjectObserverType {
         
         if object is ZMConnection {
-            return .Connection
+            return .connection
         } else if object is ZMUser {
-            return .User
+            return .user
         } else if object is ZMMessage {
-            return .Message
+            return .message
         } else if object is ZMConversation {
-            return .Conversation
+            return .conversation
         } else if object is ZMSearchUser {
-            return .SearchUser
+            return .searchUser
         } else if object is ZMCDataModel.Reaction {
-            return .Reaction
+            return .reaction
         } else if object is UserClient {
-            return .Client
+            return .client
         }
-        return .Invalid
+        return .invalid
     }
     
     var shouldForwardDuringSync : Bool {
         switch self {
-        case .Invalid, .Client, .UserList, .User, .SearchUser, .Message, .Conversation, .VoiceChannel, .ConversationMessageWindow, .DisplayName, .Reaction:
+        case .invalid, .client, .userList, .user, .searchUser, .message, .conversation, .voiceChannel, .conversationMessageWindow, .displayName, .reaction:
             return false
-        case .ConversationList, .Connection:
+        case .conversationList, .connection:
             return true
         }
     }
     
     func observedObjectType() -> ObjectObserverType {
         switch self {
-        case .VoiceChannel, .ConversationMessageWindow, .ConversationList:
-            return .Conversation
-        case .UserList, .DisplayName:
-            return .User
+        case .voiceChannel, .conversationMessageWindow, .conversationList:
+            return .conversation
+        case .userList, .displayName:
+            return .user
         default:
             return self
         }
@@ -85,42 +85,42 @@ public enum ObjectObserverType: Int {
     
     func printDescription() -> String {
         switch self {
-        case Invalid:
+        case .invalid:
             return "Invalid"
-        case Connection:
+        case .connection:
             return "Connection"
-        case User:
+        case .user:
             return "User"
-        case SearchUser:
+        case .searchUser:
             return "SearchUser"
-        case Message:
+        case .message:
             return "Message"
-        case Conversation:
+        case .conversation:
             return "Conversation"
-        case .VoiceChannel:
+        case .voiceChannel:
             return "VoiceChannel"
-        case ConversationMessageWindow:
+        case .conversationMessageWindow:
             return "ConversationMessageWindow"
-        case ConversationList:
+        case .conversationList:
             return "ConversationList"
-        case Client:
+        case .client:
             return "UserClient"
-        case UserList:
+        case .userList:
             return "UserList"
-        case .DisplayName:
+        case .displayName:
             return "DisplayName"
-        case .Reaction:
+        case .reaction:
             return "Reaction"
         }
     }
 }
 
 public struct ManagedObjectChangesByObserverType {
-    private let inserted: [ObjectObserverType : [NSObject]]
-    private let deleted: [ObjectObserverType : [NSObject]]
-    private let updated: [ObjectObserverType : [NSObject]]
+    fileprivate let inserted: [ObjectObserverType : [NSObject]]
+    fileprivate let deleted: [ObjectObserverType : [NSObject]]
+    fileprivate let updated: [ObjectObserverType : [NSObject]]
     
-    static func mapByObjectObserverType(set: [NSObject]) -> [ObjectObserverType : [NSObject]] {
+    static func mapByObjectObserverType(_ set: [NSObject]) -> [ObjectObserverType : [NSObject]] {
         var mapping : [ObjectObserverType : [NSObject]] = [:]
         for obj in set {
             let observerType = ObjectObserverType.observerTypeForObject(obj)
@@ -140,7 +140,7 @@ public struct ManagedObjectChangesByObserverType {
         self.init(inserted: changes.inserted, deleted: changes.deleted, updated: changes.updated)
     }
     
-    func changesForObserverType(observerType : ObjectObserverType) -> ManagedObjectChanges {
+    func changesForObserverType(_ observerType : ObjectObserverType) -> ManagedObjectChanges {
         
         let objectType = observerType.observedObjectType()
         
@@ -174,7 +174,7 @@ public struct ManagedObjectChanges: CustomDebugStringConvertible {
         self.updated = []
     }
     
-    func changesByAppendingChanges(changes: ManagedObjectChanges) -> ManagedObjectChanges {
+    func changesByAppendingChanges(_ changes: ManagedObjectChanges) -> ManagedObjectChanges {
         let inserted = self.inserted + changes.inserted
         let deleted = self.deleted + changes.deleted
         let updated = self.updated + changes.updated
@@ -183,7 +183,7 @@ public struct ManagedObjectChanges: CustomDebugStringConvertible {
     }
     
     public var changesWithoutZombies: ManagedObjectChanges {
-        let isNoZombie: NSObject -> Bool = {
+        let isNoZombie: (NSObject) -> Bool = {
             guard let managedObject = $0 as? ZMManagedObject else { return true }
             return !managedObject.isZombieObject
         }
@@ -195,7 +195,7 @@ public struct ManagedObjectChanges: CustomDebugStringConvertible {
         )
     }
     
-    init(note: NSNotification) {
+    init(note: Notification) {
 
         var inserted, deleted: [NSObject]?
         var updatedAndRefreshed = [NSObject]()
@@ -209,11 +209,11 @@ public struct ManagedObjectChanges: CustomDebugStringConvertible {
         }
         
         if let updatedSet = note.userInfo?[NSUpdatedObjectsKey] as? Set<NSObject> {
-            updatedAndRefreshed.appendContentsOf(updatedSet)
+            updatedAndRefreshed.append(contentsOf: updatedSet)
         }
         
         if let refreshedSet = note.userInfo?[NSRefreshedObjectsKey] as? Set<NSObject> {
-            updatedAndRefreshed.appendContentsOf(refreshedSet)
+            updatedAndRefreshed.append(contentsOf: refreshedSet)
         }
         
         self.init(inserted: inserted ?? [], deleted: deleted ?? [], updated: updatedAndRefreshed)
@@ -232,13 +232,13 @@ public func +(lhs: ManagedObjectChanges, rhs: ManagedObjectChanges) -> ManagedOb
 }
 
 public protocol ObjectsDidChangeDelegate: NSObjectProtocol {
-    func objectsDidChange(changes: ManagedObjectChanges)
+    func objectsDidChange(_ changes: ManagedObjectChanges)
     func tearDown()
     var isTornDown : Bool { get }
 }
 
 public protocol DisplayNameDidChangeDelegate {
-    func displayNameMightChange(users: Set<NSObject>)
+    func displayNameMightChange(_ users: Set<NSObject>)
 }
 
 
@@ -262,38 +262,38 @@ extension NSManagedObjectContext {
 
 public final class ManagedObjectContextObserver: NSObject {
     
-    typealias ObserversCollection = [ObjectObserverType : NSHashTable]
+    typealias ObserversCollection = [ObjectObserverType : NSHashTable<AnyObject>]
     
-    private var observers : ObserversCollection = [:]
+    fileprivate var observers : ObserversCollection = [:]
     
-    private weak var managedObjectContext : NSManagedObjectContext?
+    fileprivate weak var managedObjectContext : NSManagedObjectContext?
     
-    private var globalConversationObserver : GlobalConversationObserver!
-    private var globalUserObserver : GlobalUserObserver!
+    fileprivate var globalConversationObserver : GlobalConversationObserver!
+    fileprivate var globalUserObserver : GlobalUserObserver!
     
-    private var accumulatedChanges = ManagedObjectChanges()
-    private var changedCallStateConversations = ManagedObjectChanges()
-    private var isSyncDone = false
+    fileprivate var accumulatedChanges = ManagedObjectChanges()
+    fileprivate var changedCallStateConversations = ManagedObjectChanges()
+    fileprivate var isSyncDone = false
     
     public var isTesting = false
-    public var applicationStateForTesting : UIApplicationState = .Active
+    public var applicationStateForTesting : UIApplicationState = .active
     
     public let callCenter = CTCallCenter()
 
-    private var isInForeground : Bool {
+    fileprivate var isInForeground : Bool {
         if isTesting {
-            return applicationStateForTesting == .Active
+            return applicationStateForTesting == .active
         }
-        return UIApplication.sharedApplication().applicationState == .Active
+        return UIApplication.shared.applicationState == .active
     }
     
     public var isReady : Bool {
-        if !globalConversationObserver.isReady && UIApplication.sharedApplication().applicationState != .Background {
-            addChangeObserver(self.globalUserObserver, type: .UserList)
-            addChangeObserver(self.globalUserObserver, type: .Connection)
+        if !globalConversationObserver.isReady && UIApplication.shared.applicationState != .background {
+            addChangeObserver(self.globalUserObserver, type: .userList)
+            addChangeObserver(self.globalUserObserver, type: .connection)
             
-            addChangeObserver(self.globalConversationObserver, type: .ConversationList)
-            addChangeObserver(self.globalConversationObserver, type: .Connection)
+            addChangeObserver(self.globalConversationObserver, type: .conversationList)
+            addChangeObserver(self.globalConversationObserver, type: .connection)
             
             // this last step sets isReady to true
             globalConversationObserver.prepareObservers()
@@ -305,9 +305,9 @@ public final class ManagedObjectContextObserver: NSObject {
         self.managedObjectContext = managedObjectContext
         super.init()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ManagedObjectContextObserver.managedObjectsDidChange(_:)), name: NSManagedObjectContextObjectsDidChangeNotification, object: self.managedObjectContext)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ManagedObjectContextObserver.didBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ManagedObjectContextObserver.syncCompleted(_:)), name: "ZMApplicationDidEnterEventProcessingStateNotification", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ManagedObjectContextObserver.managedObjectsDidChange(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext)
+        NotificationCenter.default.addObserver(self, selector: #selector(ManagedObjectContextObserver.didBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ManagedObjectContextObserver.syncCompleted(_:)), name: NSNotification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
     }
     
     func setup() {
@@ -326,14 +326,14 @@ public final class ManagedObjectContextObserver: NSObject {
             }
         }
         self.observers = [:]
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     deinit {
        tearDown()
     }
     
-    func didBecomeActive(note: NSNotification) {
+    func didBecomeActive(_ note: Notification) {
         self.managedObjectContext!.performGroupedBlock {
             if !self.isReady {
                 zmLog.error("Application did become active but global conversation observer is not ready to observe")
@@ -344,7 +344,7 @@ public final class ManagedObjectContextObserver: NSObject {
         }
     }
     
-    public func syncCompleted(note: NSNotification) {
+    public func syncCompleted(_ note: Notification) {
         self.managedObjectContext!.performGroupedBlock {
             if !self.isReady {
                 zmLog.error("Sync completed but global conversation observer is not ready to observe")
@@ -355,16 +355,16 @@ public final class ManagedObjectContextObserver: NSObject {
         }
     }
     
-    func changesFromDisplayNameGenerator(note: NSNotification) -> ManagedObjectChanges {
-        let updatedUsers = self.managedObjectContext!.updateDisplayNameGeneratorWithChanges(note)
+    func changesFromDisplayNameGenerator(_ note: Notification) -> ManagedObjectChanges {
+        let updatedUsers = self.managedObjectContext!.updateDisplayNameGenerator(withChanges: note) ?? Set()
         if updatedUsers.count > 0 {
-            globalUserObserver.displayNameMightChange(updatedUsers)
+            globalUserObserver.displayNameMightChange(updatedUsers as Set<NSObject>)
         }
-        let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: Array(updatedUsers))
+        let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: Array(updatedUsers) as [NSObject])
         return changes
     }
     
-    func processChanges(changes: ManagedObjectChanges) {
+    func processChanges(_ changes: ManagedObjectChanges) {
         guard isReady else { return }
 
         if isInForeground {
@@ -374,7 +374,7 @@ public final class ManagedObjectContextObserver: NSObject {
         }
     }
     
-    func managedObjectsDidChange(note: NSNotification) {
+    func managedObjectsDidChange(_ note: Notification) {
         guard isReady else { return }
 
         let changes = ManagedObjectChanges(note: note)
@@ -385,9 +385,9 @@ public final class ManagedObjectContextObserver: NSObject {
         processChanges(changes)
     }
     
-    private func propagateChangesToObservers(changes: ManagedObjectChanges) {
+    fileprivate func propagateChangesToObservers(_ changes: ManagedObjectChanges) {
         
-        let tp = ZMSTimePoint(interval: 10, label: "ManagedObjectContextObserver propagateChangesToObserver");
+        let tp = ZMSTimePoint(interval: 10, label: "ManagedObjectContextObserver propagateChangesToObserver")
         let changesByType = ManagedObjectChangesByObserverType(changes: changes)
         
         var index = 1
@@ -400,7 +400,12 @@ public final class ManagedObjectContextObserver: NSObject {
             propagateChangesForObservers(changesForObservers, observerType: observerType)
             index += 1
         }
-        tp.warnIfLongerThanInterval()
+        tp?.warnIfLongerThanInterval()
+    }
+    
+    func count(forEntityWithName entityName: String) -> Int? {
+        return try? self.managedObjectContext!.count(for: NSFetchRequest(entityName: entityName))
+
     }
     
     func printCurrentTokens() {
@@ -409,23 +414,23 @@ public final class ManagedObjectContextObserver: NSObject {
             print(">>> ObserverType: \(observerType) - token count: \(self.observers[observerType]?.count ?? 0)")
             index += 1
         }
-        let userCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "User"), error: nil)
-        let convCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "Conversation"), error: nil)
-        let clientCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "UserClient"), error: nil)
-        let connectionCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "Connection"), error: nil)
-        let messageCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "Message"), error: nil)
+        let userCount = count(forEntityWithName: ZMUser.entityName())
+        let convCount = count(forEntityWithName: ZMConversation.entityName())
+        let clientCount = count(forEntityWithName: UserClient.entityName())
+        let connectionCount = count(forEntityWithName: ZMConnection.entityName())
+        let messageCount = count(forEntityWithName: ZMMessage.entityName())
 
         print("Existing Users: \(userCount), Conversations: \(convCount), Clients: \(clientCount), Connections: \(connectionCount), MessageCount: \(messageCount)")
     }
     
-    @objc public func notifyUpdatedSearchUser(user: NSObject) {
+    @objc public func notifyUpdatedSearchUser(_ user: NSObject) {
         guard isReady else { return }
 
         let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: [user])
-        propagateChangesForObservers(changes, observerType: .SearchUser)
+        propagateChangesForObservers(changes, observerType: .searchUser)
     }
         
-    @objc public func notifyUpdatedCallState(conversations: Set<ZMConversation>, notifyDirectly: Bool) {
+    @objc public func notifyUpdatedCallState(_ conversations: Set<ZMConversation>, notifyDirectly: Bool) {
         guard isReady else { return }
 
         let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: Array(conversations))
@@ -437,13 +442,13 @@ public final class ManagedObjectContextObserver: NSObject {
         }
     }
     
-    @objc public func notifyNonCoreDataChangeInManagedObject(object: NSObject) {
+    @objc public func notifyNonCoreDataChangeInManagedObject(_ object: NSObject) {
         let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: [object])
         self.processChanges(changes)
     }
     
     
-    func propagateChangesForObservers(changes: ManagedObjectChanges, observerType: ObjectObserverType) {
+    func propagateChangesForObservers(_ changes: ManagedObjectChanges, observerType: ObjectObserverType) {
         if let observersOfType = self.observers[observerType] {
             let filteredChanges = changes.changesWithoutZombies
             for observer in observersOfType.allObjects {
@@ -457,11 +462,11 @@ public final class ManagedObjectContextObserver: NSObject {
 // MARK: - ConversationList
 extension ManagedObjectContextObserver {
     
-    public func addConversationListForAutoupdating(conversationList: ZMConversationList) {
+    public func addConversationListForAutoupdating(_ conversationList: ZMConversationList) {
         self.globalConversationObserver.addConversationList(conversationList)
     }
     
-    public func removeConversationListForAutoupdating(conversationList: ZMConversationList) {
+    public func removeConversationListForAutoupdating(_ conversationList: ZMConversationList) {
         self.globalConversationObserver.removeConversationList(conversationList)
     }
     
@@ -473,98 +478,98 @@ extension ManagedObjectContextObserver {
 extension ManagedObjectContextObserver  {
     
     /// Adds a generic observer for a given object
-    public func addChangeObserver(observer: ObjectsDidChangeDelegate, object: NSObject) {
+    public func addChangeObserver(_ observer: ObjectsDidChangeDelegate, object: NSObject) {
         let type = ObjectObserverType.observerTypeForObject(object)
         self.addChangeObserver(observer, type: type)
     }
     
     /// Adds an observer of the given type
-    public func addChangeObserver(observer: ObjectsDidChangeDelegate, type: ObjectObserverType) {
-        assert(type != .Invalid)
-        let table = self.observers[type] ?? NSHashTable.weakObjectsHashTable()
-        table.addObject(observer)
+    public func addChangeObserver(_ observer: ObjectsDidChangeDelegate, type: ObjectObserverType) {
+        assert(type != .invalid)
+        let table = self.observers[type] ?? NSHashTable.weakObjects()
+        table.add(observer)
         self.observers[type] = table
     }
     
     /// Adds a conversation list observer
-    public func addConversationListObserver(observer: ZMConversationListObserver, conversationList: ZMConversationList) -> AnyObject
+    public func addConversationListObserver(_ observer: ZMConversationListObserver, conversationList: ZMConversationList) -> AnyObject
     {
         return self.globalConversationObserver.addObserver(observer, conversationList: conversationList)
     }
     
     /// Adds a global voiceChannel observer
-    public func addGlobalVoiceChannelObserver(observer: ZMVoiceChannelStateObserver) -> AnyObject
+    public func addGlobalVoiceChannelObserver(_ observer: ZMVoiceChannelStateObserver) -> AnyObject
     {
         return self.globalConversationObserver.addGlobalVoiceChannelStateObserver(observer)
     }
     
     /// Adds a voiceChannel observer
-    public func addVoiceChannelStateObserver(observer: ZMVoiceChannelStateObserver, conversation: ZMConversation) -> AnyObject
+    public func addVoiceChannelStateObserver(_ observer: ZMVoiceChannelStateObserver, conversation: ZMConversation) -> AnyObject
     {
         return self.globalConversationObserver.addVoiceChannelStateObserver(observer, conversation: conversation)
     }
     
     /// Adds a conversation list observer
-    public func addConversationObserver(observer: ZMConversationObserver, conversation: ZMConversation) -> AnyObject
+    public func addConversationObserver(_ observer: ZMConversationObserver, conversation: ZMConversation) -> AnyObject
     {
         return self.globalConversationObserver.addConversationObserver(observer, conversation: conversation)
     }
     
     /// Adds a conversation list observer
-    public func addUserObserver(observer: ZMUserObserver, user: ZMBareUser) -> AnyObject?
+    public func addUserObserver(_ observer: ZMUserObserver, user: ZMBareUser) -> AnyObject?
     {
         return self.globalUserObserver.addUserObserver(observer, user: user)
     }
     
     /// Adds a voiceChannel participant observer
-    public func addCallParticipantsObserver(observer: ZMVoiceChannelParticipantsObserver, voiceChannel: ZMVoiceChannel) -> AnyObject
+    public func addCallParticipantsObserver(_ observer: ZMVoiceChannelParticipantsObserver, voiceChannel: ZMVoiceChannel) -> AnyObject
     {
         let token = self.globalConversationObserver.addVoiceChannelParticipantsObserver(observer, conversation: voiceChannel.conversation!)
         return token
     }
     
     /// Adds a conversation window observer
-    public func addConversationWindowObserver(observer: ZMConversationMessageWindowObserver, window: ZMConversationMessageWindow) -> MessageWindowChangeToken {
+    public func addConversationWindowObserver(_ observer: ZMConversationMessageWindowObserver, window: ZMConversationMessageWindow) -> MessageWindowChangeToken {
         let token = MessageWindowChangeToken(window: window, observer: observer)
-        self.addChangeObserver(token, type: ObjectObserverType.ConversationMessageWindow)
+        self.addChangeObserver(token, type: ObjectObserverType.conversationMessageWindow)
         return token
     }
     
     /// Adds a new unread messages observer
-    public func addNewUnreadMessagesObserver(observer: ZMNewUnreadMessagesObserver) -> NewUnreadMessagesObserverToken {
+    public func addNewUnreadMessagesObserver(_ observer: ZMNewUnreadMessagesObserver) -> NewUnreadMessagesObserverToken {
         let token = NewUnreadMessagesObserverToken(observer: observer)
-        self.addChangeObserver(token, type: .Message)
+        self.addChangeObserver(token, type: .message)
         return token
     }
     
     /// Adds a new unread knockmessages observer
-    public func addNewUnreadKnocksObserver(observer: ZMNewUnreadKnocksObserver) -> NewUnreadKnockMessagesObserverToken {
+    public func addNewUnreadKnocksObserver(_ observer: ZMNewUnreadKnocksObserver) -> NewUnreadKnockMessagesObserverToken {
         let token = NewUnreadKnockMessagesObserverToken(observer: observer)
-        self.addChangeObserver(token, type: .Message)
+        self.addChangeObserver(token, type: .message)
         return token
     }
     
     /// Adds a new unread unsent observer
-    public func addNewUnreadUnsentMessagesObserver(observer: ZMNewUnreadUnsentMessageObserver) -> NewUnreadUnsentMessageObserverToken {
+    public func addNewUnreadUnsentMessagesObserver(_ observer: ZMNewUnreadUnsentMessageObserver) -> NewUnreadUnsentMessageObserverToken {
         let token = NewUnreadUnsentMessageObserverToken(observer: observer)
-        self.addChangeObserver(token, type: .Message)
+        self.addChangeObserver(token, type: .message)
         return token
     }
     
-    public func addDisplayNameObserver(observer: DisplayNameObserver) {
+    public func addDisplayNameObserver(_ observer: DisplayNameObserver) {
         self.globalUserObserver.addDisplayNameObserver(observer)
     }
     
     /// Removes a generic observer for a given object
-    public func removeChangeObserver(observer: ObjectsDidChangeDelegate, object: NSObject){
+    public func removeChangeObserver(_ observer: ObjectsDidChangeDelegate, object: NSObject){
         let type = ObjectObserverType.observerTypeForObject(object)
         self.removeChangeObserver(observer, type: type)
     }
     
     /// Removes a generic observer for a given type
-    public func removeChangeObserver(observer: ObjectsDidChangeDelegate, type: ObjectObserverType){
+    public func removeChangeObserver(_ observer: ObjectsDidChangeDelegate, type: ObjectObserverType){
         if let observersOfType : NSHashTable = self.observers[type] {
-            observersOfType.removeObject(observer)
+            observersOfType.remove(observer)
             if !observer.isTornDown {
                 observer.tearDown()
             }
@@ -572,62 +577,62 @@ extension ManagedObjectContextObserver  {
     }
     
     /// Removes a conversation list observer
-    public func removeConversationListObserverForToken(token: AnyObject) {
+    public func removeConversationListObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? ConversationListObserverToken {
             self.globalConversationObserver.removeObserver(observerToken)
         }
     }
     
     /// Removes a conversation observer
-    public func removeConversationObserverForToken(token: AnyObject) {
+    public func removeConversationObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? ConversationObserverToken {
             self.globalConversationObserver.removeConversationObserverForToken(observerToken)
         }
     }
     
     /// Removes a conversation observer
-    public func removeUserObserverForToken(token: AnyObject) {
+    public func removeUserObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? UserObserverToken {
             self.globalUserObserver.removeUserObserverForToken(observerToken)
         }
     }
     
     /// Removes a global voiceChannel observer
-    public func removeGlobalVoiceChannelStateObserverForToken(token: AnyObject) {
+    public func removeGlobalVoiceChannelStateObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? GlobalVoiceChannelStateObserverToken {
             self.globalConversationObserver.removeGlobalVoiceChannelStateObserver(observerToken)
         }
     }
     
     /// Removes a global voiceChannel observer
-    public func removeVoiceChannelStateObserverForToken(token: AnyObject) {
+    public func removeVoiceChannelStateObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? VoiceChannelStateObserverToken {
             self.globalConversationObserver.removeVoiceChannelStateObserverForToken(observerToken)
         }
     }
     
     /// Removes a voiceChannel participant observer
-    public func removeCallParticipantsObserverForToken(token: AnyObject) {
+    public func removeCallParticipantsObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? VoiceChannelParticipantsObserverToken {
             self.globalConversationObserver.removeVoiceChannelParticipantsObserverForToken(observerToken)
         }
     }
     
     /// Removes a message window observer
-    public func removeConversationWindowObserverForToken(token: AnyObject) {
+    public func removeConversationWindowObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? MessageWindowChangeToken {
-            self.removeChangeObserver(observerToken, type: ObjectObserverType.ConversationMessageWindow)
+            self.removeChangeObserver(observerToken, type: ObjectObserverType.conversationMessageWindow)
         }
     }
     
     /// Removes a message observer
-    public func removeMessageObserver(token: AnyObject) {
+    public func removeMessageObserver(_ token: AnyObject) {
         if let token = token as? MessageToken {
-            self.removeChangeObserver(token, type: .Message)
+            self.removeChangeObserver(token, type: .message)
         }
     }
     
-    public func removeDisplayNameObserver(observer: DisplayNameObserver) {
+    public func removeDisplayNameObserver(_ observer: DisplayNameObserver) {
         self.globalUserObserver.removeDisplayNameObserver(observer)
     }
 }

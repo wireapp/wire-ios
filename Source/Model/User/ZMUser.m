@@ -956,6 +956,12 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
 - (void)setImageData:(NSData *)imageData forKey:(NSString *)key format:(ZMImageFormat)format
 {
     [self willChangeValueForKey:key];
+    
+    if (imageData == nil) {
+        [self.managedObjectContext.zm_userImageCache removeAllUserImages:self];
+        return;
+    }
+    
     if (self.isSelfUser) {
         [self setPrimitiveValue:imageData forKey:key];
         

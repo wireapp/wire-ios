@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -28,17 +28,17 @@ class UserClientTests: ZMBaseManagedObjectTest {
         self.setUpCaches()
     }
     
-    func clientWithTrustedClientCount(trustedCount: UInt, ignoredClientCount: UInt, missedClientCount: UInt) -> UserClient
+    func clientWithTrustedClientCount(_ trustedCount: UInt, ignoredClientCount: UInt, missedClientCount: UInt) -> UserClient
     {
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
         
-        func userClientSetWithClientCount(count :UInt) -> Set<UserClient>?
+        func userClientSetWithClientCount(_ count :UInt) -> Set<UserClient>?
         {
             guard count != 0 else { return nil }
             
             var clients = Set<UserClient>()
             for _ in 0..<count {
-                clients.insert(UserClient.insertNewObjectInManagedObjectContext(self.uiMOC))
+                clients.insert(UserClient.insertNewObject(in: uiMOC))
             }
             return clients
         }
@@ -55,48 +55,42 @@ class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCanInitializeClient() {
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        if let client = client {
-            XCTAssertEqual(client.type, ZMUserClientTypePermanent, "Client type should be 'permanent'")
-        }
-        else {
-            XCTAssert(false, "Client should be created")
-        }
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        XCTAssertEqual(client.type, ZMUserClientTypePermanent, "Client type should be 'permanent'")
     }
     
     func testThatItReturnsTrackedKeys() {
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        if let trackedKeys = client.keysTrackedForLocalModifications() as? [String] {
-            XCTAssertTrue(trackedKeys.contains(ZMUserClientMarkedToDeleteKey), "")
-            XCTAssertTrue(trackedKeys.contains(ZMUserClientNumberOfKeysRemainingKey), "")
-        }
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let trackedKeys = client.keysTrackedForLocalModifications()
+        XCTAssertTrue(trackedKeys.contains(ZMUserClientMarkedToDeleteKey), "")
+        XCTAssertTrue(trackedKeys.contains(ZMUserClientNumberOfKeysRemainingKey), "")
     }
     
     func testThatItSyncClientsWithNoRemoteIdentifier() {
-        let unsyncedClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let syncedClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC);
+        let unsyncedClient = UserClient.insertNewObject(in: self.uiMOC)
+        let syncedClient = UserClient.insertNewObject(in: self.uiMOC);
         syncedClient.remoteIdentifier = "synced"
         
-        XCTAssertTrue(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream().evaluateWithObject(unsyncedClient))
-        XCTAssertFalse(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream().evaluateWithObject(syncedClient))
+        XCTAssertTrue(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream().evaluate(with: unsyncedClient))
+        XCTAssertFalse(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream().evaluate(with: syncedClient))
     }
     
     func testThatClientCanBeMarkedForDeletion() {
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        client.user = ZMUser.selfUserInContext(self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        client.user = ZMUser.selfUser(in: self.uiMOC)
         
         XCTAssertFalse(client.markedToDelete)
         client.markForDeletion()
         
         XCTAssertTrue(client.markedToDelete)
-        XCTAssertTrue(client.hasLocalModificationsForKey(ZMUserClientMarkedToDeleteKey))
+        XCTAssertTrue(client.hasLocalModifications(forKey: ZMUserClientMarkedToDeleteKey))
     }
     
     func testThatItTracksCorrectKeys() {
         let expectedKeys = [ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey]
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
 
-        XCTAssertEqual(client.keysTrackedForLocalModifications() as! [String], expectedKeys)
+        XCTAssertEqual(client.keysTrackedForLocalModifications() , expectedKeys)
     }
     
     func testThatTrustingClientsRemovesThemFromIgnoredClientList() {
@@ -139,15 +133,15 @@ class UserClientTests: ZMBaseManagedObjectTest {
     func testThatItDeletesASession() {
         self.syncMOC.performGroupedBlockAndWait{
             // given
-            let selfClient = self.createSelfClientOnMOC(self.syncMOC)
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(Range(0..<2)).flatMap{$0}
+                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
             })
             
-            let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
-            otherClient.remoteIdentifier = NSUUID.createUUID().transportString()
+            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient.remoteIdentifier = UUID.create().transportString()
             
             guard let preKey = preKeys.first
                 else {
@@ -164,21 +158,20 @@ class UserClientTests: ZMBaseManagedObjectTest {
             // then
             XCTAssertFalse(otherClient.hasSessionWithSelfClient)
         }
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
     
     func testThatItDeletesASessionWhenDeletingAClient() {
         self.syncMOC.performGroupedBlockAndWait{
             // given
-            let selfClient = self.createSelfClientOnMOC(self.syncMOC)
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(Range(0..<2)).flatMap{$0}
-            })
+                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))            })
             
-            let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
-            otherClient.remoteIdentifier = NSUUID.createUUID().transportString()
+            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient.remoteIdentifier = UUID.create().transportString()
             
             guard let preKey = preKeys.first
                 else {
@@ -196,34 +189,34 @@ class UserClientTests: ZMBaseManagedObjectTest {
             XCTAssertFalse(otherClient.hasSessionWithSelfClient)
             XCTAssertTrue(otherClient.isZombieObject)
         }
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
     func testThatItUpdatesConversationSecurityLevelWhenDeletingClient() {
         
         self.syncMOC.performGroupedBlockAndWait{
             // given
-            let selfClient = self.createSelfClientOnMOC(self.syncMOC)
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             
-            let otherClient1 = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
-            otherClient1.remoteIdentifier = NSUUID.createUUID().transportString()
+            let otherClient1 = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient1.remoteIdentifier = UUID.create().transportString()
             
-            let otherUser = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
+            let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
             otherClient1.user = otherUser
-            let connection = ZMConnection.insertNewSentConnectionToUser(otherUser)
-            connection.status = .Accepted
+            let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+            connection.status = .accepted
             
-            let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
-            conversation.conversationType = .Group
-            conversation.mutableOtherActiveParticipants.addObject(otherUser)
+            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.conversationType = .group
+            conversation.mutableOtherActiveParticipants.add(otherUser)
             
             selfClient.trustClient(otherClient1)
             
-            conversation.securityLevel = ZMConversationSecurityLevel.NotSecure
+            conversation.securityLevel = ZMConversationSecurityLevel.notSecure
             XCTAssertEqual(conversation.messages.count, 1)
 
-            let otherClient2 = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
-            otherClient2.remoteIdentifier = NSUUID.createUUID().transportString()
+            let otherClient2 = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient2.remoteIdentifier = UUID.create().transportString()
             otherClient2.user = otherUser
             
             selfClient.ignoreClient(otherClient2)
@@ -233,31 +226,31 @@ class UserClientTests: ZMBaseManagedObjectTest {
             
             // then
             XCTAssertTrue(otherClient2.isZombieObject)
-            XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevel.Secure)
+            XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevel.secure)
             XCTAssertEqual(conversation.messages.count, 2)
             if let message = conversation.messages.lastObject as? ZMSystemMessage {
-                XCTAssertEqual(message.systemMessageType, ZMSystemMessageType.ConversationIsSecure)
+                XCTAssertEqual(message.systemMessageType, ZMSystemMessageType.conversationIsSecure)
                 XCTAssertEqual(message.users, Set(arrayLiteral: otherUser))
             } else {
                 XCTFail("Did not insert systemMessage")
             }
         }
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
     func testThatItRefetchesMissingFingerprintForUserWithSession() {
         // given
-        let otherClientId = NSUUID.createUUID().transportString()
+        let otherClientId = UUID.create().transportString()
         
         self.syncMOC.performGroupedBlockAndWait {
-            let selfClient = self.createSelfClientOnMOC(self.syncMOC)
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(Range(0..<2)).flatMap{$0}
+                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
             })
             
-            let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
+            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = otherClientId
             
             guard let preKey = preKeys.first
@@ -272,34 +265,36 @@ class UserClientTests: ZMBaseManagedObjectTest {
             XCTAssertNil(otherClient.fingerprint)
             otherClient.managedObjectContext?.saveOrRollback()
         }
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         self.syncMOC.performGroupedBlockAndWait {
-            let fetchRequest = NSFetchRequest(entityName: UserClient.entityName())
-            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId)
+            let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
+            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId!)
             fetchRequest.fetchLimit = 1
             // when
-            let fetchedClient = self.syncMOC.executeFetchRequestOrAssert(fetchRequest).first as? UserClient
-            
-            // then
-            XCTAssertNotNil(fetchedClient)
-            XCTAssertNotNil(fetchedClient!.fingerprint)
+            do {
+                let fetchedClient = try self.syncMOC.fetch(fetchRequest).first
+                XCTAssertNotNil(fetchedClient)
+                XCTAssertNotNil(fetchedClient!.fingerprint)
+            } catch let error{
+                XCTFail(error.localizedDescription)
+            }
         }
     }
     
     func testThatItSendsMessageWhenResettingSession() {
         self.syncMOC.performGroupedBlockAndWait{
             // given
-            let selfClient = self.createSelfClientOnMOC(self.syncMOC)
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             
-            let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
-            otherClient.remoteIdentifier = NSUUID.createUUID().transportString()
+            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient.remoteIdentifier = UUID.create().transportString()
             
-            let otherUser = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
+            let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
             otherClient.user = otherUser
             
-            let connection = ZMConnection.insertNewSentConnectionToUser(otherUser)
-            connection.status = .Accepted
+            let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+            connection.status = .accepted
             
             selfClient.trustClient(otherClient)
             
@@ -316,7 +311,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
                 XCTFail("Did not insert session reset message")
             }
         }
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 }
 
@@ -324,7 +319,7 @@ extension UserClientTests {
     func testThatItStoresFailedToEstablishSessionInformation() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            let client = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
+            let client = UserClient.insertNewObject(in: self.syncMOC)
             
             // when & then
             XCTAssertFalse(client.failedToEstablishSession)
@@ -368,8 +363,8 @@ extension UserClientTests {
         // given & when
         self.createSelfClient()
         
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC);
-        otherClient.remoteIdentifier = String.createAlphanumericalString()
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC);
+        otherClient.remoteIdentifier = String.createAlphanumerical()
         
         // then
         XCTAssertFalse(otherClient.verified)
@@ -379,8 +374,8 @@ extension UserClientTests {
         // given
         let selfClient = self.createSelfClient()
 
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC);
-        otherClient.remoteIdentifier = String.createAlphanumericalString()
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC);
+        otherClient.remoteIdentifier = String.createAlphanumerical()
         
         // when
         selfClient.trustClient(otherClient)
@@ -393,8 +388,8 @@ extension UserClientTests {
         // given
         let selfClient = createSelfClient()
         
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC);
-        otherClient.remoteIdentifier = String.createAlphanumericalString()
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC);
+        otherClient.remoteIdentifier = String.createAlphanumerical()
         
         // when
         selfClient.ignoreClient(otherClient)
@@ -413,8 +408,8 @@ extension UserClientTests {
         
         // given
         let selfClient = createSelfClient()
-        selfClient.apsVerificationKey =  NSData()
-        selfClient.apsDecryptionKey = NSData()
+        selfClient.apsVerificationKey =  Data()
+        selfClient.apsDecryptionKey = Data()
         
         XCTAssertNotNil(selfClient.apsVerificationKey)
         XCTAssertNotNil(selfClient.apsDecryptionKey)

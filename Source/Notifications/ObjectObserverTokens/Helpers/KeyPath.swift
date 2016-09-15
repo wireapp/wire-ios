@@ -29,7 +29,7 @@ public final class KeyPath : Hashable {
     
     static private var KeyPathCache : [String : KeyPath] = [:]
     
-    public class func keyPathForString(string: String) -> KeyPath {
+    public class func keyPathForString(_ string: String) -> KeyPath {
         
         if let keyPath = KeyPathCache[string] {
             return keyPath
@@ -55,10 +55,14 @@ public final class KeyPath : Hashable {
 
     public lazy var decompose : (head: KeyPath, tail: KeyPath?)? = {
         if 1 <= self.count {
-            if let i = self.rawValue.characters.indexOf(".") {
-                let head = self.rawValue[self.rawValue.startIndex..<i]
-                let tail = self.rawValue[i.successor()..<self.rawValue.endIndex]
-                return (KeyPath.keyPathForString(head), KeyPath.keyPathForString(tail))
+            if let i = self.rawValue.characters.index(of: ".") {
+                let head = self.rawValue.substring(to: i)
+                var tail : KeyPath?
+                if i != self.rawValue.characters.endIndex {
+                    let nextIndex = self.rawValue.index(after: i)
+                    tail = KeyPath.keyPathForString(self.rawValue.substring(from:nextIndex))
+                }
+                return (KeyPath.keyPathForString(head), tail)
             }
             return (self, nil)
         }

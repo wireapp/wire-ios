@@ -24,7 +24,7 @@ class ObserverTokenDirectoryTests: ZMBaseManagedObjectTest {
     class TestObserver: NSObject, ZMUserObserver {
         var changes : [UserChangeInfo] = []
         
-        func userDidChange(note: UserChangeInfo!) {
+        func userDidChange(_ note: UserChangeInfo!) {
             changes.append(note)
         }
     }
@@ -32,20 +32,20 @@ class ObserverTokenDirectoryTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         self.setUpCaches()
-        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(Notification(name: Notification.Name(rawValue: "fake"), object: nil))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     
     func testThatCreatesOnlyOneTokenForTheSameObject() {
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Hans"
         self.uiMOC.saveOrRollback()
         
         let testObserver = TestObserver()
         
-        let token1 = ZMUser.addUserObserver(testObserver, forUsers: [user], managedObjectContext:self.uiMOC)
-        let token2 = ZMUser.addUserObserver(testObserver, forUsers: [user], managedObjectContext:self.uiMOC)
+        let token1 = ZMUser.add(testObserver, forUsers: [user], managedObjectContext:self.uiMOC)
+        let token2 = ZMUser.add(testObserver, forUsers: [user], managedObjectContext:self.uiMOC)
         
         // when
         user.name = "Horst"
@@ -55,25 +55,25 @@ class ObserverTokenDirectoryTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(testObserver.changes.count, 2)
         XCTAssert(testObserver.changes.first === testObserver.changes.last)
         
-        ZMUser.removeUserObserverForToken(token1)
-        ZMUser.removeUserObserverForToken(token2)
+        ZMUser.removeObserver(for: token1)
+        ZMUser.removeObserver(for: token2)
         
     }
     
     
     func testThatCreatesTwoTokensForDifferentObjects() {
-        let user1 = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user1 = ZMUser.insertNewObject(in:self.uiMOC)
         user1.name = "Hans"
         
-        let user2 = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in:self.uiMOC)
         user2.name = "Heinrich"
         
         self.uiMOC.saveOrRollback()
         
         let testObserver = TestObserver()
         
-        let token1 = ZMUser.addUserObserver(testObserver, forUsers: [user1], managedObjectContext:self.uiMOC)
-        let token2 = ZMUser.addUserObserver(testObserver, forUsers: [user2], managedObjectContext:self.uiMOC)
+        let token1 = ZMUser.add(testObserver, forUsers: [user1], managedObjectContext:self.uiMOC)
+        let token2 = ZMUser.add(testObserver, forUsers: [user2], managedObjectContext:self.uiMOC)
         
         // when
         user1.name = "Horst"
@@ -82,7 +82,7 @@ class ObserverTokenDirectoryTests: ZMBaseManagedObjectTest {
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
         
-        ZMUser.removeUserObserverForToken(token1)
-        ZMUser.removeUserObserverForToken(token2)
+        ZMUser.removeObserver(for: token1)
+        ZMUser.removeObserver(for: token2)
     }
 }

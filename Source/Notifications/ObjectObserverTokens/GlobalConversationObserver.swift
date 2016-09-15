@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -19,7 +19,7 @@
 
 import Foundation
 import ZMCSystem
-
+import CoreData
 
 protocol ChangeNotifierToken : NSObjectProtocol {
     associatedtype Observer
@@ -27,25 +27,25 @@ protocol ChangeNotifierToken : NSObjectProtocol {
     associatedtype GlobalObserver
     
     func tearDown()
-    func notifyObserver(note: ChangeInfo)
+    func notifyObserver(_ note: ChangeInfo)
     init (observer: Observer, globalObserver: GlobalObserver)
 }
 
-class TokenCollection<T : NSObject where T : ChangeNotifierToken> {
-    var observerTokens : [NSObject : NSHashTable] = [:]
+class TokenCollection<T : NSObject> where T : ChangeNotifierToken {
+    var observerTokens : [AnyHashable : NSHashTable<AnyObject>] = [:]
     
-    func addObserver(observer: T.Observer, object: NSObject, globalObserver: T.GlobalObserver) -> T {
+    func addObserver(_ observer: T.Observer, object: AnyHashable, globalObserver: T.GlobalObserver) -> T {
         let token = T(observer: observer, globalObserver: globalObserver)
-        let tokens = observerTokens[object] ?? NSHashTable.weakObjectsHashTable()
-        tokens.addObject(token)
+        let tokens = observerTokens[object] ?? NSHashTable.weakObjects()
+        tokens.add(token)
         observerTokens[object] = tokens
         return token
     }
     
-    func objectCanBeUnobservedAfterRemovingObserverForToken(token: T) -> NSObject? {
+    func objectCanBeUnobservedAfterRemovingObserverForToken(_ token: T) -> AnyHashable? {
         for (object, tokens) in observerTokens {
-            if tokens.containsObject(token) {
-                tokens.removeObject(token)
+            if tokens.contains(token) {
+                tokens.remove(token)
                 observerTokens[object] = tokens
                 return (tokens.count == 0) ? object : nil
             }
@@ -53,34 +53,34 @@ class TokenCollection<T : NSObject where T : ChangeNotifierToken> {
         return nil
     }
     
-    func removeTokensForObject(key: NSObject) {
-        observerTokens.removeValueForKey(key)
+    func removeTokensForObject(_ key: NSObject) {
+        observerTokens.removeValue(forKey: key)
     }
     
-    subscript (key: NSObject) -> [T]? {
+    subscript (key: AnyHashable) -> [T]? {
         return observerTokens[key]?.allObjects as? [T]
     }
 }
 
 final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMGeneralConversationObserver, ZMConversationListObserver {
     
-    private var internalConversationListObserverTokens : [String :InternalConversationListObserverToken] = [:]
-    private var globalVoiceChannelObserverTokens : Set<GlobalVoiceChannelStateObserverToken> = Set()
+    fileprivate var internalConversationListObserverTokens : [String :InternalConversationListObserverToken] = [:]
+    fileprivate var globalVoiceChannelObserverTokens : Set<GlobalVoiceChannelStateObserverToken> = Set()
 
-    private var conversationTokens : [NSManagedObjectID : GeneralConversationObserverToken<GlobalConversationObserver>] = [:]
-    private var voiceChannelParticipantsTokens : [NSManagedObjectID : InternalVoiceChannelParticipantsObserverToken] = [:]
+    fileprivate var conversationTokens : [NSManagedObjectID : GeneralConversationObserverToken<GlobalConversationObserver>] = [:]
+    fileprivate var voiceChannelParticipantsTokens : [NSManagedObjectID : InternalVoiceChannelParticipantsObserverToken] = [:]
 
-    private weak var managedObjectContext : NSManagedObjectContext?
+    fileprivate weak var managedObjectContext : NSManagedObjectContext?
     
-    private var conversationLists : [UnownedObject<ZMConversationList>] = Array()
+    fileprivate var conversationLists : [UnownedObject<ZMConversationList>] = Array()
     
-    private var conversationListObserverTokens : TokenCollection<ConversationListObserverToken> =  TokenCollection()
-    private var conversationObserverTokens : TokenCollection<ConversationObserverToken> = TokenCollection()
-    private var voiceChannelStateObserverTokens : TokenCollection<VoiceChannelStateObserverToken> = TokenCollection()
-    private var voiceChannelParticipantsObserverTokens : TokenCollection<VoiceChannelParticipantsObserverToken> = TokenCollection()
+    fileprivate var conversationListObserverTokens : TokenCollection<ConversationListObserverToken> =  TokenCollection()
+    fileprivate var conversationObserverTokens : TokenCollection<ConversationObserverToken> = TokenCollection()
+    fileprivate var voiceChannelStateObserverTokens : TokenCollection<VoiceChannelStateObserverToken> = TokenCollection()
+    fileprivate var voiceChannelParticipantsObserverTokens : TokenCollection<VoiceChannelParticipantsObserverToken> = TokenCollection()
     var isSyncComplete: Bool = false
     var isTornDown : Bool = false
-    private (set) var isReady : Bool  = false
+    fileprivate (set) var isReady : Bool  = false
     
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -90,28 +90,29 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
     func prepareObservers() {
         isReady = true
 
-        let fetchRequest = NSFetchRequest(entityName:ZMConversation.entityName())
+        let fetchRequest = NSFetchRequest<ZMConversation>(entityName:ZMConversation.entityName())
         fetchRequest.includesPendingChanges = false;
-        let allConversations = (try? managedObjectContext?.executeFetchRequest(fetchRequest)) as? [ZMConversation] ?? []
-        registerTokensForConversations(allConversations)
+        if let context = managedObjectContext , let allConversations = (try? context.fetch(fetchRequest)) {
+            registerTokensForConversations(allConversations)
+        }
         
-        let observedLists = conversationListObserverTokens.observerTokens.keys
-        let lists = conversationLists.flatMap{$0.unbox}.filter{observedLists.contains($0.identifier)}
+        let observedListsIdentifiers = conversationListObserverTokens.observerTokens.keys
+        let lists = conversationLists.flatMap{$0.unbox}.filter{observedListsIdentifiers.contains($0.identifier)}
         registerTokensForConversationList(lists)
     }
     
     // adding and removing lists
-    func addConversationList(conversationList: ZMConversationList) {
+    func addConversationList(_ conversationList: ZMConversationList) {
         if !self.isObservingConversationList(conversationList) {
             self.conversationLists.append(UnownedObject(conversationList))
         }
     }
     
-    func removeConversationList(conversationList: ZMConversationList) {
+    func removeConversationList(_ conversationList: ZMConversationList) {
         self.conversationLists = self.conversationLists.filter { $0.unbox != conversationList}
     }
     
-    private func registerTokensForConversationList(lists : [ZMConversationList]) {
+    fileprivate func registerTokensForConversationList(_ lists : [ZMConversationList]) {
         guard isReady  else { return }
         for conversationList in lists {
             if internalConversationListObserverTokens[conversationList.identifier] == nil {
@@ -121,11 +122,11 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
     }
     
     // adding tokens for conversations
-    private func registerTokensForConversations(conversations: [ZMConversation]) {
+    fileprivate func registerTokensForConversations(_ conversations: [ZMConversation]) {
         guard isReady else { return }
         for conv in conversations {
-            if conv.objectID.temporaryID {
-                _ = try? conv.managedObjectContext?.obtainPermanentIDsForObjects([conv])
+            if conv.objectID.isTemporaryID {
+                _ = try? conv.managedObjectContext?.obtainPermanentIDs(for: [conv])
             }
             if self.conversationTokens[conv.objectID] == nil {
                 self.conversationTokens[conv.objectID] = GeneralConversationObserverToken<GlobalConversationObserver>(observer: self, conversation: conv)
@@ -133,13 +134,13 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         }
     }
     
-    private func removeTokensForConversations(conversations: [ZMConversation]) {
+    fileprivate func removeTokensForConversations(_ conversations: [ZMConversation]) {
         for conv in conversations {
             self.conversationTokens[conv.objectID]?.tearDown()
-            self.conversationTokens.removeValueForKey(conv.objectID)
+            self.conversationTokens.removeValue(forKey: conv.objectID)
             
             self.voiceChannelParticipantsTokens[conv.objectID]?.tearDown()
-            self.voiceChannelParticipantsTokens.removeValueForKey(conv.objectID)
+            self.voiceChannelParticipantsTokens.removeValue(forKey: conv.objectID)
             
             self.conversationObserverTokens.removeTokensForObject(conv.objectID)
             self.voiceChannelStateObserverTokens.removeTokensForObject(conv.objectID)
@@ -148,7 +149,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
     }
     
     // handling object changes
-    func objectsDidChange(changes: ManagedObjectChanges) {
+    func objectsDidChange(_ changes: ManagedObjectChanges) {
         let updatedConnections = changes.updated as? [ZMConnection] ?? []
         let insertedConnection  = changes.inserted as? [ZMConnection] ?? []
         
@@ -173,7 +174,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
     }
     
     func checkAllConversationsForChanges(){
-        let conversations = conversationObserverTokens.observerTokens.flatMap{try? self.managedObjectContext?.existingObjectWithID($0.0 as! NSManagedObjectID)}
+        let conversations = conversationObserverTokens.observerTokens.flatMap{try? self.managedObjectContext?.existingObject(with: $0.0 as! NSManagedObjectID)}
         conversations.flatMap{$0}.forEach {
             let changeInfo = GeneralConversationChangeInfo(object: $0)
             changeInfo.setAllKeys()
@@ -182,9 +183,9 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         }
     }
     
-    private func updateListAndNotifyObservers(list: ZMConversationList, inserted: [ZMConversation], deleted: [ZMConversation]){
+    fileprivate func updateListAndNotifyObservers(_ list: ZMConversationList, inserted: [ZMConversation], deleted: [ZMConversation]){
         let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0)})
-        let conversationsToRemove = Set(deleted.filter { list.containsObject($0)})
+        let conversationsToRemove = Set(deleted.filter { list.contains($0)})
         
         list.insertConversations(conversationsToInsert)
         list.removeConversations(conversationsToRemove)
@@ -194,7 +195,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         }
     }
     
-    func conversationDidChange(allChanges: GeneralConversationChangeInfo) {
+    func conversationDidChange(_ allChanges: GeneralConversationChangeInfo) {
         if let voiceChannelInfo = allChanges.voiceChannelStateChangeInfo {
             globalVoiceChannelObserverTokens.forEach{ $0.notifyObserver(voiceChannelInfo)}
             voiceChannelStateObserverTokens[allChanges.conversation.objectID]?.forEach{ $0.notifyObserver(voiceChannelInfo) }
@@ -207,21 +208,21 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         voiceChannelParticipantsTokens[allChanges.conversation.objectID]?.conversationDidChange(allChanges)
     }
     
-    func conversationInsideList(list: ZMConversationList!, didChange changeInfo: ConversationChangeInfo!) {
+    func conversation(inside list: ZMConversationList!, didChange changeInfo: ConversationChangeInfo!) {
         conversationListObserverTokens[list.identifier]?.forEach{$0.conversationInsideList(list, didChange: changeInfo)}
     }
     
-    func conversationListDidChange(changeInfo: ConversationListChangeInfo!) {
+    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo!) {
         conversationListObserverTokens[changeInfo.conversationList.identifier]?.forEach{$0.notifyObserver(changeInfo)}
     }
     
-    func notifyVoiceChannelParticipantsObserver(info: VoiceChannelParticipantsChangeInfo!) {
+    func notifyVoiceChannelParticipantsObserver(_ info: VoiceChannelParticipantsChangeInfo!) {
         voiceChannelParticipantsObserverTokens[info.conversation.objectID]?.forEach{
             $0.notifyObserver(info)
         }
     }
     
-    func processConversationChanges(changes: ConversationChangeInfo) {
+    func processConversationChanges(_ changes: ConversationChangeInfo) {
         if (!changes.nameChanged && !changes.connectionStateChanged && !changes.isArchivedChanged && !changes.isSilencedChanged && !changes.lastModifiedDateChanged && !changes.conversationListIndicatorChanged && !changes.voiceChannelStateChanged && !changes.clearedChanged && !changes.securityLevelChanged) {
             return
         }
@@ -230,7 +231,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
             if let list = conversationListWrapper.unbox {
                 let conversation = changes.object as! ZMConversation
                 
-                if list.containsObject(conversation)
+                if list.contains(conversation)
                 {
                     var didRemoveConversation = false
                     if !list.predicateMatchesConversation(conversation){
@@ -238,7 +239,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
                         didRemoveConversation = true
                     }
                     let a = changes.changedKeysAndOldValues.keys
-                    if !didRemoveConversation && list.sortingIsAffectedByConversationKeys(Set(a)) {
+                    if !didRemoveConversation && list.sortingIsAffected(byConversationKeys: Set(a)) {
                         list.resortConversation(conversation)
                     }
                     self.notifyTokensForConversationList(list, updatedConversation:conversation, changes: didRemoveConversation ? nil : changes)
@@ -252,11 +253,11 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         }
     }
     
-    private func notifyTokensForConversationList(conversationList: ZMConversationList, updatedConversation: ZMConversation?, changes:ConversationChangeInfo?) {
+    fileprivate func notifyTokensForConversationList(_ conversationList: ZMConversationList, updatedConversation: ZMConversation?, changes:ConversationChangeInfo?) {
         internalConversationListObserverTokens[conversationList.identifier]?.notifyObserver(updatedConversation, changes: changes)
     }
     
-    private func isObservingConversationList(conversationList: ZMConversationList) -> Bool {
+    fileprivate func isObservingConversationList(_ conversationList: ZMConversationList) -> Bool {
         return self.conversationLists.filter({$0.unbox === conversationList}).count > 0
     }
     
@@ -291,71 +292,71 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
 extension GlobalConversationObserver {
     
     // adding and removing list observers
-    func addObserver(observer: ZMConversationListObserver, conversationList: ZMConversationList) -> ConversationListObserverToken
+    func addObserver(_ observer: ZMConversationListObserver, conversationList: ZMConversationList) -> ConversationListObserverToken
     {
         registerTokensForConversationList([conversationList])
         let token = conversationListObserverTokens.addObserver(observer, object: conversationList.identifier, globalObserver: self)
         return token
     }
     
-    func removeObserver(token: ConversationListObserverToken) {
+    func removeObserver(_ token: ConversationListObserverToken) {
         if let conversationListID = conversationListObserverTokens.objectCanBeUnobservedAfterRemovingObserverForToken(token) as? String {
             let token = internalConversationListObserverTokens[conversationListID]
             token?.tearDown()
-            internalConversationListObserverTokens.removeValueForKey(conversationListID)
+            internalConversationListObserverTokens.removeValue(forKey: conversationListID)
         }
     }
     
     // adding and removing voiceChannel observers
-    func addGlobalVoiceChannelStateObserver(observer: ZMVoiceChannelStateObserver) -> GlobalVoiceChannelStateObserverToken
+    func addGlobalVoiceChannelStateObserver(_ observer: ZMVoiceChannelStateObserver) -> GlobalVoiceChannelStateObserverToken
     {
         let token = GlobalVoiceChannelStateObserverToken(observer: observer)
         self.globalVoiceChannelObserverTokens.insert(token)
         return token
     }
     
-    func removeGlobalVoiceChannelStateObserver(token: GlobalVoiceChannelStateObserverToken) {
+    func removeGlobalVoiceChannelStateObserver(_ token: GlobalVoiceChannelStateObserverToken) {
         self.globalVoiceChannelObserverTokens.remove(token)
     }
     
     
-    func addConversationObserver(observer: ZMConversationObserver, conversation: ZMConversation) -> ConversationObserverToken {
+    func addConversationObserver(_ observer: ZMConversationObserver, conversation: ZMConversation) -> ConversationObserverToken {
         registerTokensForConversations([conversation])
         return conversationObserverTokens.addObserver(observer, object: conversation.objectID, globalObserver: self)
     }
     
-    func removeConversationObserverForToken(token: ConversationObserverToken) {
-        conversationObserverTokens.objectCanBeUnobservedAfterRemovingObserverForToken(token)
+    func removeConversationObserverForToken(_ token: ConversationObserverToken) {
+        _ = conversationObserverTokens.objectCanBeUnobservedAfterRemovingObserverForToken(token)
     }
     
-    func addVoiceChannelStateObserver(observer: ZMVoiceChannelStateObserver, conversation: ZMConversation) -> VoiceChannelStateObserverToken {
+    func addVoiceChannelStateObserver(_ observer: ZMVoiceChannelStateObserver, conversation: ZMConversation) -> VoiceChannelStateObserverToken {
         registerTokensForConversations([conversation])
         return voiceChannelStateObserverTokens.addObserver(observer, object: conversation.objectID, globalObserver: self)
     }
     
-    func removeVoiceChannelStateObserverForToken(token: VoiceChannelStateObserverToken) {
-       voiceChannelStateObserverTokens.objectCanBeUnobservedAfterRemovingObserverForToken(token)
+    func removeVoiceChannelStateObserverForToken(_ token: VoiceChannelStateObserverToken) {
+       _ = voiceChannelStateObserverTokens.objectCanBeUnobservedAfterRemovingObserverForToken(token)
     }
     
-    func addVoiceChannelParticipantsObserver(observer: ZMVoiceChannelParticipantsObserver, conversation: ZMConversation) -> VoiceChannelParticipantsObserverToken {
+    func addVoiceChannelParticipantsObserver(_ observer: ZMVoiceChannelParticipantsObserver, conversation: ZMConversation) -> VoiceChannelParticipantsObserverToken {
         registerTokensForConversations([conversation])
         if voiceChannelParticipantsTokens[conversation.objectID] == nil {
             let internalToken = InternalVoiceChannelParticipantsObserverToken(observer: self, conversation: conversation)
             voiceChannelParticipantsTokens[conversation.objectID] = internalToken
-            managedObjectContext?.globalManagedObjectContextObserver.addChangeObserver(internalToken, type: .VoiceChannel)
+            managedObjectContext?.globalManagedObjectContextObserver.addChangeObserver(internalToken, type: .voiceChannel)
         }
         return voiceChannelParticipantsObserverTokens.addObserver(observer, object: conversation.objectID, globalObserver: self)
     }
     
-    func removeVoiceChannelParticipantsObserverForToken(token: VoiceChannelParticipantsObserverToken) {
+    func removeVoiceChannelParticipantsObserverForToken(_ token: VoiceChannelParticipantsObserverToken) {
         guard let conversation = voiceChannelParticipantsObserverTokens.objectCanBeUnobservedAfterRemovingObserverForToken(token) as? ZMConversation,
             let participantToken = voiceChannelParticipantsTokens[conversation.objectID]
         else { return }
         
         // when all observers unregistered from this conversation, we can unregister for changes as well
-        managedObjectContext?.globalManagedObjectContextObserver.removeChangeObserver(participantToken, type: .VoiceChannel)
+        managedObjectContext?.globalManagedObjectContextObserver.removeChangeObserver(participantToken, type: .voiceChannel)
         participantToken.tearDown()
-        voiceChannelParticipantsTokens.removeValueForKey(conversation.objectID)
+        voiceChannelParticipantsTokens.removeValue(forKey: conversation.objectID)
     }
 }
 

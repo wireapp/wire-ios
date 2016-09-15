@@ -32,13 +32,13 @@ public final class ObjectObserverTokenRegistry {
     
     public typealias Token = RegisteredObjectObserverToken
     
-    public func registerToken(token: Token) -> Void {
+    public func registerToken(_ token: Token) -> Void {
         registeredTokens.append(token)
     }
-    public func unregisterToken(token: Token) -> Void {
-        for idx in registeredTokens.startIndex..<registeredTokens.endIndex {
+    public func unregisterToken(_ token: Token) -> Void {
+        for idx in registeredTokens.indices {
             if registeredTokens[idx] === token {
-                registeredTokens.removeAtIndex(idx)
+                registeredTokens.remove(at: idx)
                 return
             }
         }
@@ -50,7 +50,7 @@ public final class ObjectObserverTokenRegistry {
     }
     
     /// Will apply then given function to all tokens for the given object.
-    public func applyTokensForObject<T: Token>(object: NSObject, function: (T)->Void) {
+    public func applyTokensForObject<T: Token>(_ object: NSObject, function: (T)->Void) {
         for token in self.registeredTokens {
             if let t = token as? T {
                 if t.object === object {

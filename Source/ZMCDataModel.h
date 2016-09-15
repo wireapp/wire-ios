@@ -39,6 +39,7 @@
 #import <ZMCDataModel/ZMUser.h>
 #import <ZMCDataModel/ZMUser+Internal.h>
 #import <ZMCDataModel/ZMUserDisplayNameGenerator.h>
+#import <ZMCDataModel/UserClientTypes.h>
 
 #import <ZMCDataModel/ZMSearchUser.h>
 #import <ZMCDataModel/ZMSearchUser+Internal.h>

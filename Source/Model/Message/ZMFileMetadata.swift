@@ -24,14 +24,14 @@ import ZMCSystem
 private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
 
-@objc public class ZMFileMetadata : NSObject {
+@objc open class ZMFileMetadata : NSObject {
     
-    public let fileURL : NSURL
-    public let thumbnail : NSData?
+    open let fileURL : URL
+    open let thumbnail : Data?
     
-    required public init(fileURL: NSURL, thumbnail: NSData? = nil) {
+    required public init(fileURL: URL, thumbnail: Data? = nil) {
         self.fileURL = fileURL
-        self.thumbnail = thumbnail?.length > 0 ? thumbnail : nil
+        self.thumbnail = thumbnail?.count > 0 ? thumbnail : nil
         
         super.init()
     }
@@ -47,19 +47,19 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 }
 
 
-public class ZMAudioMetadata : ZMFileMetadata {
+open class ZMAudioMetadata : ZMFileMetadata {
     
-    public let duration : NSTimeInterval
-    public let normalizedLoudness : [Float]
+    open let duration : TimeInterval
+    open let normalizedLoudness : [Float]
     
-    required public init(fileURL: NSURL, duration: NSTimeInterval, normalizedLoudness: [Float] = [], thumbnail: NSData? = nil) {
+    required public init(fileURL: URL, duration: TimeInterval, normalizedLoudness: [Float] = [], thumbnail: Data? = nil) {
         self.duration = duration
         self.normalizedLoudness = normalizedLoudness
         
         super.init(fileURL: fileURL, thumbnail: thumbnail)
     }
     
-    required public init(fileURL: NSURL, thumbnail: NSData?) {
+    required public init(fileURL: URL, thumbnail: Data?) {
         self.duration = 0
         self.normalizedLoudness = []
         
@@ -79,21 +79,21 @@ public class ZMAudioMetadata : ZMFileMetadata {
     
 }
 
-public class ZMVideoMetadata : ZMFileMetadata {
+open class ZMVideoMetadata : ZMFileMetadata {
     
-    public let duration : NSTimeInterval
-    public let dimensions : CGSize
+    open let duration : TimeInterval
+    open let dimensions : CGSize
     
-    required public init(fileURL: NSURL, duration: NSTimeInterval, dimensions: CGSize, thumbnail: NSData? = nil) {
+    required public init(fileURL: URL, duration: TimeInterval, dimensions: CGSize, thumbnail: Data? = nil) {
         self.duration = duration
         self.dimensions = dimensions
         
         super.init(fileURL: fileURL, thumbnail: thumbnail)
     }
     
-    required public init(fileURL: NSURL, thumbnail: NSData?) {
+    required public init(fileURL: URL, thumbnail: Data?) {
         self.duration = 0
-        self.dimensions = CGSizeZero
+        self.dimensions = CGSize.zero
         
         super.init(fileURL: fileURL, thumbnail: thumbnail)
     }
@@ -115,8 +115,8 @@ extension ZMFileMetadata {
     
     var mimeType : String {
         get {
-            guard let pathExtension = fileURL.pathExtension,
-                  let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
+            let pathExtension = fileURL.pathExtension as CFString
+            guard  let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
                   let MIMEType = UTTypeCopyPreferredTagWithClass (UTI, kUTTagClassMIMEType) else {
                     return "application/octet-stream"
             }
@@ -127,16 +127,16 @@ extension ZMFileMetadata {
     
     public var filename : String {
         get {
-            return  fileURL.lastPathComponent ?? "unnamed"
+            return  fileURL.lastPathComponent.isEmpty ? "unnamed" :  fileURL.lastPathComponent
         }
     }
     
     var size : UInt64 {
         get {
             do {
-                let attributes = try NSFileManager.defaultManager().attributesOfItemAtPath(fileURL.path!)
-                if let fileSize = attributes[NSFileSize] as? NSNumber {
-                    return fileSize.unsignedLongLongValue
+                let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
+                if let fileSize = attributes[FileAttributeKey.size] as? NSNumber {
+                    return fileSize.uint64Value
                 }
             } catch {
                 zmLog.error("Couldn't read file size of \(fileURL)")

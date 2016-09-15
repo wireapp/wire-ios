@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -26,54 +26,54 @@ extension ZMUser : ObjectInSnapshot {
         return ["name", "displayName", "accentColorValue", "imageMediumData", "imageSmallProfileData","emailAddress", "phoneNumber", "canBeConnected", "isConnected", "isPendingApprovalByOtherUser", "isPendingApprovalBySelfUser", "clients"]
     }
 
-    public func keyPathsForValuesAffectingValueForKey(key: String) -> KeySet {
-        return KeySet(ZMUser.keyPathsForValuesAffectingValueForKey(key))
+    public func keyPathsForValuesAffectingValueForKey(forKey key: String) -> KeySet {
+        return KeySet(ZMUser.keyPathsForValuesAffectingValue(forKey: key))
     }
 }
 
 
-@objc public class UserChangeInfo : ObjectChangeInfo {
+@objc open class UserChangeInfo : ObjectChangeInfo {
 
     public required init(object: NSObject) {
         self.user = object as! ZMBareUser
         super.init(object: object)
     }
 
-    public var nameChanged : Bool {
-        return !Set(arrayLiteral: "name", "displayName").isDisjointWith(changedKeysAndOldValues.keys)
+    open var nameChanged : Bool {
+        return !Set(arrayLiteral: "name", "displayName").isDisjoint(with: changedKeysAndOldValues.keys)
     }
     
-    public var accentColorValueChanged : Bool {
+    open var accentColorValueChanged : Bool {
         return changedKeysAndOldValues.keys.contains("accentColorValue")
     }
 
-    public var imageMediumDataChanged : Bool {
+    open var imageMediumDataChanged : Bool {
         return changedKeysAndOldValues.keys.contains("imageMediumData")
     }
 
-    public var imageSmallProfileDataChanged : Bool {
+    open var imageSmallProfileDataChanged : Bool {
         return changedKeysAndOldValues.keys.contains("imageSmallProfileData")
     }
 
-    public var profileInformationChanged : Bool {
-        return !Set(arrayLiteral: "emailAddress", "phoneNumber").isDisjointWith(changedKeysAndOldValues.keys)
+    open var profileInformationChanged : Bool {
+        return !Set(arrayLiteral: "emailAddress", "phoneNumber").isDisjoint(with: changedKeysAndOldValues.keys)
     }
 
-    public var connectionStateChanged : Bool {
-        return !Set(arrayLiteral: "isConnected", "canBeConnected", "isPendingApprovalByOtherUser", "isPendingApprovalBySelfUser").isDisjointWith(changedKeysAndOldValues.keys)
+    open var connectionStateChanged : Bool {
+        return !Set(arrayLiteral: "isConnected", "canBeConnected", "isPendingApprovalByOtherUser", "isPendingApprovalBySelfUser").isDisjoint(with: changedKeysAndOldValues.keys)
     }
 
-    public var trustLevelChanged : Bool {
+    open var trustLevelChanged : Bool {
         return userClientChangeInfo != nil
     }
 
-    public var clientsChanged : Bool {
+    open var clientsChanged : Bool {
         return changedKeysAndOldValues.keys.contains("clients")
     }
 
 
-    public let user: ZMBareUser
-    public var userClientChangeInfo : UserClientChangeInfo?
+    open let user: ZMBareUser
+    open var userClientChangeInfo : UserClientChangeInfo?
 
 }
 
@@ -90,16 +90,16 @@ ObjectInSnapshot -> ObjectObserverTokenContainer
 
 
 /// For a single user.
-class GenericUserObserverToken<T : NSObject where T: ObjectInSnapshot>: ObjectObserverTokenContainer {
+class GenericUserObserverToken<T : NSObject>: ObjectObserverTokenContainer where T: ObjectInSnapshot {
 
     typealias InnerTokenType = ObjectObserverToken<UserChangeInfo, GenericUserObserverToken<T>>
 
-    private let observedUser: T?
-    private weak var observer : ZMUserObserver?
-    private weak var managedObjectContext: NSManagedObjectContext?
-    private var clientTokens = [UserClient: UserClientObserverToken]()
+    fileprivate let observedUser: T?
+    fileprivate weak var observer : ZMUserObserver?
+    fileprivate weak var managedObjectContext: NSManagedObjectContext?
+    fileprivate var clientTokens = [UserClient: UserClientObserverToken]()
 
-    private static func objectDidChange(container: GenericUserObserverToken<T>, changeInfo: UserChangeInfo) {
+    fileprivate static func objectDidChange(_ container: GenericUserObserverToken<T>, changeInfo: UserChangeInfo) {
         container.observer?.userDidChange(changeInfo)
     }
 
@@ -143,7 +143,7 @@ class GenericUserObserverToken<T : NSObject where T: ObjectInSnapshot>: ObjectOb
         removeObserverForClientTokens()
     }
 
-    private func registerObserverForClients(clients: Set<UserClient>) {
+    fileprivate func registerObserverForClients(_ clients: Set<UserClient>) {
         guard let managedObjectContext = managedObjectContext else { return }
         
         clients.forEach {
@@ -151,25 +151,27 @@ class GenericUserObserverToken<T : NSObject where T: ObjectInSnapshot>: ObjectOb
         }
     }
 
-    private func removeObserverForClientTokens() {
+    fileprivate func removeObserverForClientTokens() {
         clientTokens.forEach { $0.1.tearDown() }
         clientTokens = [:]
     }
 
-    private func updateClientObserversIfNeeded(changeInfo: UserChangeInfo) {
-        guard let user = observedUser as? ZMUser where changeInfo.clientsChanged else { return }
+    fileprivate func updateClientObserversIfNeeded(_ changeInfo: UserChangeInfo) {
+        guard let user = observedUser as? ZMUser , changeInfo.clientsChanged else { return }
         let observedClients = Set(clientTokens.map { $0.0 })
-        let addedClients = user.clients.subtract(observedClients)
+        let clients = user.clients ?? Set()
+        
+        let addedClients = clients.subtracting(observedClients)
         registerObserverForClients(addedClients)
         
-        observedClients.subtract(user.clients).forEach {
+        observedClients.subtracting(user.clients).forEach {
             clientTokens[$0]?.tearDown()
-            clientTokens.removeValueForKey($0)
+            clientTokens.removeValue(forKey: $0)
         }
     }
     
-    func connectionDidChange(changedUsers: [ZMUser]) {
-        guard let user = object as? ZMUser where changedUsers.indexOf(user) != nil,
+    func connectionDidChange(_ changedUsers: [ZMUser]) {
+        guard let user = object as? ZMUser , changedUsers.index(of: user) != nil,
               let token = token as? InnerTokenType
         else { return }
         
@@ -179,7 +181,7 @@ class GenericUserObserverToken<T : NSObject where T: ObjectInSnapshot>: ObjectOb
 }
 
 extension GenericUserObserverToken: UserClientObserver {
-    func userClientDidChange(changeInfo: UserClientChangeInfo) {
+    func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
         guard let userChangeInfo = observedUser.map(UserChangeInfo.init)
         else { return }
         
@@ -197,7 +199,7 @@ public func ==(lhs: ObjectObserverTokenContainer, rhs: ObjectObserverTokenContai
 }
 
 
-public class UserCollectionObserverToken: NSObject, ZMUserObserver  {
+open class UserCollectionObserverToken: NSObject, ZMUserObserver  {
     var tokens : [UserObserverToken] = []
     weak var observer: ZMUserObserver?
 
@@ -211,11 +213,11 @@ public class UserCollectionObserverToken: NSObject, ZMUserObserver  {
         }
     }
 
-    public func userDidChange(note: UserChangeInfo!) {
+    open func userDidChange(_ note: UserChangeInfo!) {
         observer?.userDidChange(note)
     }
 
-    public func tearDown() {
+    open func tearDown() {
         tokens.forEach{$0.tearDown()}
     }
 }
@@ -235,7 +237,7 @@ class UserObserverToken : NSObject, ChangeNotifierToken {
         super.init()
     }
     
-    func notifyObserver(note: UserChangeInfo) {
+    func notifyObserver(_ note: UserChangeInfo) {
         observer?.userDidChange(note)
     }
     

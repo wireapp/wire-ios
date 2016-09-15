@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -24,40 +24,40 @@ private let zmLog = ZMSLog(tag: "CryptoBox")
 
 extension NSManagedObjectContext {
     
-    private static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
+    fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
     
     /// Returns the cryptobox instance associated with this managed object context
     public var zm_cryptKeyStore : UserClientKeysStore! {
         if !self.zm_isSyncContext {
             fatal("Can't initiliazie crypto box on non-sync context")
         }
-        let keyStore: AnyObject? = self.userInfo.objectForKey(NSManagedObjectContext.ZMUserClientKeysStoreKey)
+        let keyStore = self.userInfo.object(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
         if let keyStore = keyStore as? UserClientKeysStore {
             return keyStore
         }
         let newKeyStore = UserClientKeysStore()
-        self.userInfo.setObject(newKeyStore, forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
+        self.userInfo.setObject(newKeyStore, forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey as NSCopying)
         return newKeyStore
     }
     
     public func zm_tearDownCryptKeyStore() {
-        self.userInfo.removeObjectForKey(NSManagedObjectContext.ZMUserClientKeysStoreKey)
+        self.userInfo.removeObject(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
     }
 
 }
 
-public enum UserClientKeyStoreError: ErrorType {
-    case CanNotGeneratePreKeys
-    case PreKeysCountNeedsToBePositive
+public enum UserClientKeyStoreError: Error {
+    case canNotGeneratePreKeys
+    case preKeysCountNeedsToBePositive
 }
 
 @objc(UserClientKeysStore)
-public class UserClientKeysStore: NSObject {
+open class UserClientKeysStore: NSObject {
     
-    public static let MaxPreKeyID : UInt16 = UInt16.max-1;
-    static private let otrFolderPrefix = "otr"
-    public var encryptionContext : EncryptionContext
-    private var internalLastPreKey: String?
+    open static let MaxPreKeyID : UInt16 = UInt16.max-1;
+    static fileprivate let otrFolderPrefix = "otr"
+    open var encryptionContext : EncryptionContext
+    fileprivate var internalLastPreKey: String?
     
     public override init() {
         encryptionContext = UserClientKeysStore.setupContext()!
@@ -68,7 +68,7 @@ public class UserClientKeysStore: NSObject {
         do {
             if self.isPreviousOTRDirectoryPresent {
                 do {
-                    try NSFileManager.defaultManager().moveItemAtURL(self.legacyOtrDirectory, toURL: self.otrDirectoryURL)
+                    try FileManager.default.moveItem(at: self.legacyOtrDirectory, to: self.otrDirectoryURL)
                 }
                 catch let err {
                     fatal("Cannot move legacy directory: \(err)")
@@ -77,10 +77,10 @@ public class UserClientKeysStore: NSObject {
             
             let otrDirectoryURL = UserClientKeysStore.otrDirectory
             encryptionContext = EncryptionContext(path: otrDirectoryURL)
-            try otrDirectoryURL.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
+            try (otrDirectoryURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
 
-            let attributes = [NSFileProtectionKey: NSFileProtectionCompleteUntilFirstUserAuthentication]
-            try NSFileManager.defaultManager().setAttributes(attributes, ofItemAtPath: otrDirectoryURL.path!)
+            let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
+            try FileManager.default.setAttributes(attributes, ofItemAtPath: otrDirectoryURL.path)
 
             return encryptionContext
         }
@@ -91,9 +91,9 @@ public class UserClientKeysStore: NSObject {
         return nil
     }
     
-    public func deleteAndCreateNewBox() {
-        let fm = NSFileManager.defaultManager()
-        _ = try? fm.removeItemAtURL(UserClientKeysStore.otrDirectory)
+    open func deleteAndCreateNewBox() {
+        let fm = FileManager.default
+        _ = try? fm.removeItem(at: UserClientKeysStore.otrDirectory)
         internalLastPreKey = nil
         
          encryptionContext = UserClientKeysStore.setupContext()!
@@ -101,26 +101,26 @@ public class UserClientKeysStore: NSObject {
     }
     
     /// Legacy URL for cryptobox storage (transition phase)
-    static public var legacyOtrDirectory : NSURL {
-        let url = try? NSFileManager.defaultManager().URLForDirectory(NSSearchPathDirectory.LibraryDirectory, inDomain: NSSearchPathDomainMask.UserDomainMask, appropriateForURL: nil, create: false)
-        return url!.URLByAppendingPathComponent(otrFolderPrefix)
+    static open var legacyOtrDirectory : URL {
+        let url = try? FileManager.default.url(for: FileManager.SearchPathDirectory.libraryDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false)
+        return url!.appendingPathComponent(otrFolderPrefix)
     }
     
     /// URL for cryptobox storage (read-only)
-    static public var otrDirectoryURL : NSURL {
-        var url : NSURL?
-        url = try! NSFileManager.defaultManager().URLForDirectory(NSSearchPathDirectory.ApplicationSupportDirectory, inDomain: NSSearchPathDomainMask.UserDomainMask, appropriateForURL: nil, create: false)
-        url = url!.URLByAppendingPathComponent(otrFolderPrefix)
+    static open var otrDirectoryURL : URL {
+        var url : URL?
+        url = try! FileManager.default.url(for: FileManager.SearchPathDirectory.applicationSupportDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false)
+        url = url!.appendingPathComponent(otrFolderPrefix)
         
         return url!
     }
     
     /// URL for cryptobox storage
-    static public var otrDirectory : NSURL {
-        var url : NSURL?
+    static open var otrDirectory : URL {
+        var url : URL?
         do {
             url = self.otrDirectoryURL
-            try NSFileManager.defaultManager().createDirectoryAtURL(url!, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: url!, withIntermediateDirectories: true, attributes: nil)
         }
         catch let err as NSError {
             if (url == nil) {
@@ -131,24 +131,24 @@ public class UserClientKeysStore: NSObject {
     }
     
     /// Legacy URL for cryptobox storage (transition phase)
-    private static var isPreviousOTRDirectoryPresent : Bool {
-        return NSFileManager.defaultManager().fileExistsAtPath(self.legacyOtrDirectory.path!)
+    fileprivate static var isPreviousOTRDirectoryPresent : Bool {
+        return FileManager.default.fileExists(atPath: self.legacyOtrDirectory.path)
     }
     
     /// Whether we need to migrate to a new identity (legacy e2ee transition phase)
-    public static var needToMigrateIdentity : Bool {
+    open static var needToMigrateIdentity : Bool {
         return self.isPreviousOTRDirectoryPresent
     }
     
     /// Remove the old legacy identity folder
-    public static func removeOldIdentityFolder() {
-        guard let oldIdentityPath = self.legacyOtrDirectory.path
-            where NSFileManager.defaultManager().fileExistsAtPath(oldIdentityPath) else {
+    open static func removeOldIdentityFolder() {
+        let oldIdentityPath = self.legacyOtrDirectory.path
+        guard FileManager.default.fileExists(atPath: oldIdentityPath) else {
             return
         }
         
         do {
-            try NSFileManager.defaultManager().removeItemAtPath(oldIdentityPath)
+            try FileManager.default.removeItem(atPath: oldIdentityPath)
         }
         catch let err {
             // if it's still there, we failed to delete. Critical error.
@@ -158,7 +158,7 @@ public class UserClientKeysStore: NSObject {
         }
     }
 
-    public func lastPreKey() throws -> String {
+    open func lastPreKey() throws -> String {
         var error: NSError?
         if internalLastPreKey == nil {
             encryptionContext.perform({ [weak self] (sessionsDirectory) in
@@ -176,9 +176,9 @@ public class UserClientKeysStore: NSObject {
         return internalLastPreKey!
     }
     
-    public func generateMoreKeys(count: UInt16 = 1, start: UInt16 = 0) throws -> [(id: UInt16, prekey: String)] {
+    open func generateMoreKeys(_ count: UInt16 = 1, start: UInt16 = 0) throws -> [(id: UInt16, prekey: String)] {
         if count > 0 {
-            var error : ErrorType?
+            var error : Error?
             var newPreKeys : [(id: UInt16, prekey: String)] = []
             
             let range = preKeysRange(count, start: start)
@@ -186,7 +186,7 @@ public class UserClientKeysStore: NSObject {
                 do {
                     newPreKeys = try sessionsDirectory.generatePrekeys(range)
                     if newPreKeys.count == 0 {
-                        error = UserClientKeyStoreError.CanNotGeneratePreKeys
+                        error = UserClientKeyStoreError.canNotGeneratePreKeys
                     }
                 }
                 catch let anError as NSError {
@@ -198,14 +198,14 @@ public class UserClientKeysStore: NSObject {
             }
             return newPreKeys
         }
-        throw UserClientKeyStoreError.PreKeysCountNeedsToBePositive
+        throw UserClientKeyStoreError.preKeysCountNeedsToBePositive
     }
     
-    private func preKeysRange(count: UInt16, start: UInt16) -> Range<UInt16> {
+    fileprivate func preKeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
         if start >= UserClientKeysStore.MaxPreKeyID-count {
-            return Range(0..<count)
+            return CountableRange(0..<count)
         }
-        return Range(start..<(start + count))
+        return CountableRange(start..<(start + count))
     }
     
 }

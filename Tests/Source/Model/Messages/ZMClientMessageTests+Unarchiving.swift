@@ -24,16 +24,16 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
     func testThatItUnarchivesAConversationWhenItWasNotCleared(){
     
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = NSUUID.createUUID()
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = UUID.create()
         conversation.isArchived = true
         
-        let genericMessage = ZMGenericMessage(text: "bar", nonce: NSUUID.createUUID().transportString())
-        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
+        let genericMessage = ZMGenericMessage(text: "bar", nonce: UUID.create().transportString()!)
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
 
         // when
         performPretendingUiMocIsSyncMoc {
-            XCTAssertNotNil(ZMOTRMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil))
+            XCTAssertNotNil(ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil))
         }
         
         // then
@@ -43,17 +43,17 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
     func testThatItDoesNotUnarchiveASilencedConversation(){
         
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = NSUUID.createUUID()
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = UUID.create()
         conversation.isArchived = true
         conversation.isSilenced = true
 
-        let genericMessage = ZMGenericMessage(text: "bar", nonce: NSUUID.createUUID().transportString())
-        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
+        let genericMessage = ZMGenericMessage(text: "bar", nonce: UUID.create().transportString()!)
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         
         // then
@@ -63,25 +63,25 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
     func testThatItDoesNotUnarchiveAClearedConversation_TimestampForMessageIsOlder(){
         
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = NSUUID.createUUID()
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = UUID.create()
         conversation.isArchived = true
         uiMOC.saveOrRollback()
 
-        let lastMessage = conversation.appendMessageWithText("foo") as! ZMClientMessage
-        lastMessage.serverTimestamp = NSDate().dateByAddingTimeInterval(10)
+        let lastMessage = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        lastMessage.serverTimestamp = Date().addingTimeInterval(10)
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()
         
-        let genericMessage = ZMGenericMessage(text: "bar", nonce: NSUUID.createUUID().transportString())
-        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
+        let genericMessage = ZMGenericMessage(text: "bar", nonce: UUID.create().transportString()!)
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
         XCTAssertNotNil(event)
         
-        XCTAssertGreaterThan(conversation.clearedTimeStamp.timeIntervalSince1970, event.timeStamp()!.timeIntervalSince1970)
+        XCTAssertGreaterThan(conversation.clearedTimeStamp!.timeIntervalSince1970, event.timeStamp()!.timeIntervalSince1970)
         
         // when
         performPretendingUiMocIsSyncMoc { 
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         
         // then
@@ -91,24 +91,24 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
     func testThatItUnarchivesAClearedConversation_TimestampForMessageIsNewer(){
         
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = NSUUID.createUUID()
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = UUID.create()
         conversation.isArchived = true
         uiMOC.saveOrRollback()
 
-        let lastMessage = conversation.appendMessageWithText("foo") as! ZMClientMessage
-        lastMessage.serverTimestamp = NSDate().dateByAddingTimeInterval(-10)
+        let lastMessage = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        lastMessage.serverTimestamp = Date().addingTimeInterval(-10)
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()
 
-        let genericMessage = ZMGenericMessage(text: "bar", nonce: NSUUID.createUUID().transportString())
-        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
+        let genericMessage = ZMGenericMessage(text: "bar", nonce: UUID.create().transportString()!)
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
         
-        XCTAssertLessThan(conversation.clearedTimeStamp.timeIntervalSince1970, event.timeStamp()!.timeIntervalSince1970)
+        XCTAssertLessThan(conversation.clearedTimeStamp!.timeIntervalSince1970, event.timeStamp()!.timeIntervalSince1970)
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         // then
         XCTAssertFalse(conversation.isArchived)

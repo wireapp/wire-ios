@@ -25,15 +25,15 @@
 
 @interface ZMConversationListDirectory : NSObject
 
-@property (nonatomic, readonly) ZMConversationList* unarchivedAndNotCallingConversations; ///< archived and unarchived, not pending, any call state
-@property (nonatomic, readonly) ZMConversationList* conversationsIncludingArchived; ///< unarchived, not pending,
-@property (nonatomic, readonly) ZMConversationList* archivedConversations; ///< archived, not pending, not calling
-@property (nonatomic, readonly) ZMConversationList* pendingConnectionConversations; ///< pending
-@property (nonatomic, readonly) ZMConversationList* nonIdleVoiceChannelConversations; ///< calling, ringing, someone else in call for group conversations, actively talking
-@property (nonatomic, readonly) ZMConversationList* activeCallConversations; ///< actively taking. barring bugs, this will have at most one conversation.
-@property (nonatomic, readonly) ZMConversationList *clearedConversations; /// conversations with deleted messages (clearedEventId is set)
+@property (nonatomic, readonly, nonnull) ZMConversationList* unarchivedAndNotCallingConversations; ///< archived and unarchived, not pending, any call state
+@property (nonatomic, readonly, nonnull) ZMConversationList* conversationsIncludingArchived; ///< unarchived, not pending,
+@property (nonatomic, readonly, nonnull) ZMConversationList* archivedConversations; ///< archived, not pending, not calling
+@property (nonatomic, readonly, nonnull) ZMConversationList* pendingConnectionConversations; ///< pending
+@property (nonatomic, readonly, nonnull) ZMConversationList* nonIdleVoiceChannelConversations; ///< calling, ringing, someone else in call for group conversations, actively talking
+@property (nonatomic, readonly, nonnull) ZMConversationList* activeCallConversations; ///< actively taking. barring bugs, this will have at most one conversation.
+@property (nonatomic, readonly, nonnull) ZMConversationList *clearedConversations; /// conversations with deleted messages (clearedEventId is set)
 
-- (NSArray *)allConversationLists;
+- (nonnull NSArray *)allConversationLists;
 
 @end
 
@@ -41,6 +41,6 @@
 
 @interface NSManagedObjectContext (ZMConversationListDirectory)
 
-- (ZMConversationListDirectory *)conversationListDirectory;
+- (nonnull ZMConversationListDirectory *)conversationListDirectory;
 
 @end

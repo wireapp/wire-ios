@@ -23,23 +23,23 @@ import Foundation
 
 
 public enum AffectedKeys : Equatable {
-    case Some(KeySet)
-    case All
+    case some(KeySet)
+    case all
 
-    func combinedWith(other: AffectedKeys) -> AffectedKeys {
+    func combinedWith(_ other: AffectedKeys) -> AffectedKeys {
         switch (self, other) {
-        case let (.Some(k1), .Some(k2)):
-            return .Some(k1.union(k2))
+        case let (.some(k1), .some(k2)):
+            return .some(k1.union(k2))
         default:
-            return .All
+            return .all
         }
     }
     
-    func containsKey(key: KeyPath) -> Bool {
+    func containsKey(_ key: KeyPath) -> Bool {
         switch(self) {
-        case let .Some(keySet):
+        case let .some(keySet):
             return keySet.contains(key)
-        case .All:
+        case .all:
             return true
         }
     }
@@ -65,16 +65,16 @@ public struct ChangedObjectSet : Equatable {
         self.elements = [:]
     }
     
-    public init(element: ChangedObject, affectedKeys: AffectedKeys = AffectedKeys.All) {
+    public init(element: ChangedObject, affectedKeys: AffectedKeys = AffectedKeys.all) {
         self.elements = [element: affectedKeys]
     }
 
-    public init(notification: NSNotification) {
+    public init(notification: Notification) {
         var tempElements : [ChangedObject: AffectedKeys] = [:]
         for changeKey in [NSUpdatedObjectsKey, NSRefreshedObjectsKey] {
             if let objectSet = notification.userInfo?[changeKey] as! NSSet? {
                 for object in objectSet {
-                    tempElements[object as! ChangedObject] = AffectedKeys.All
+                    tempElements[object as! ChangedObject] = AffectedKeys.all
                 }
             }
         }
@@ -90,14 +90,14 @@ public struct ChangedObjectSet : Equatable {
         if let key = elements.keys.first {
             let head = ObjectWithKeys(object:key, keys: elements[key]!)
             var tail = elements
-            tail.removeValueForKey(key)
+            tail.removeValue(forKey: key)
             return ((head), ChangedObjectSet(elements: tail))
         } else {
             return nil
         }
     }
     
-    public func unionWithSet(other: ChangedObjectSet) -> ChangedObjectSet {
+    public func unionWithSet(_ other: ChangedObjectSet) -> ChangedObjectSet {
         var newElements = self.elements
         for (element, keys2) in other.elements {
             if let keys1 = newElements[element] {
@@ -127,9 +127,9 @@ public func ==(lhs: ChangedObjectSet.ObjectWithKeys, rhs: ChangedObjectSet.Objec
 
 public func ==(lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
     switch (lhs, rhs) {
-    case let (.Some(lk), .Some(rk)):
+    case let (.some(lk), .some(rk)):
         return lk == rk
-    case (.All, .All):
+    case (.all, .all):
         return true
     default:
         return false
@@ -138,14 +138,14 @@ public func ==(lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
 
 // MARK: - Generator / SequenceType
 
-extension ChangedObjectSet : SequenceType {
+extension ChangedObjectSet : Sequence {
     
-    public typealias Generator = ChangedObjectSetGenerator
-    public func generate() -> Generator {
+    public typealias Iterator = ChangedObjectSetGenerator
+    public func makeIterator() -> Iterator {
         return ChangedObjectSetGenerator(set: self)
     }
     
-    public struct ChangedObjectSetGenerator : GeneratorType {
+    public struct ChangedObjectSetGenerator : IteratorProtocol {
         public typealias Element = ChangedObjectSet.ObjectWithKeys
         
         init(set: ChangedObjectSet) {

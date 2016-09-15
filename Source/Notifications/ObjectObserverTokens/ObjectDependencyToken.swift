@@ -23,7 +23,7 @@ import ZMUtilities
 
 extension Dictionary {
     
-    func mapKeys<T: Hashable>(transform: (Key) -> T) -> [T: Value] {
+    func mapKeys<T: Hashable>(_ transform: (Key) -> T) -> [T: Value] {
         var mapping : [T : Value] = [:]
         for (key, value) in self {
             mapping[transform(key)] = value
@@ -36,21 +36,21 @@ extension Dictionary {
 public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
     
     public typealias KeysAndOldValues = [KeyPath: NSObject?]
-    public typealias DependentKeyChangeObserver = (changedKeyPaths : KeysAndOldValues ) -> Void
+    public typealias DependentKeyChangeObserver = (_ changedKeyPaths : KeysAndOldValues ) -> Void
 
-    private let keyFromParentObjectToObservedObject : KeyPath?
-    private let observedObject : NSObject
-    private var parentChangeHandler : DependentKeyChangeObserver!
-    private var internalChangeHandler : DependentKeyChangeObserver!
-    private var snapshot : ObjectSnapshot
-    private let observedKeyPathToAffectedKey : [KeyPath : KeySet]
-    private var dependencyTokens : [KeyPath : TokensWithKeyPathsToObserve]
-    private weak var managedObjectContextObserver : ManagedObjectContextObserver?
+    fileprivate let keyFromParentObjectToObservedObject : KeyPath?
+    fileprivate let observedObject : NSObject
+    fileprivate var parentChangeHandler : DependentKeyChangeObserver!
+    fileprivate var internalChangeHandler : DependentKeyChangeObserver!
+    fileprivate var snapshot : ObjectSnapshot
+    fileprivate let observedKeyPathToAffectedKey : [KeyPath : KeySet]
+    fileprivate var dependencyTokens : [KeyPath : TokensWithKeyPathsToObserve]
+    fileprivate weak var managedObjectContextObserver : ManagedObjectContextObserver?
     
-    private var accumulatedChanges = KeySet()
+    fileprivate var accumulatedChanges = KeySet()
     public var isTornDown : Bool = false
     
-    private struct TokensWithKeyPathsToObserve: CustomDebugStringConvertible {
+    fileprivate struct TokensWithKeyPathsToObserve: CustomDebugStringConvertible {
 
         var tokens : [ObjectDependencyToken]
         var keyPathsToObserve : KeySet
@@ -80,7 +80,7 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
         observedObject : NSObject,
         keysToObserve: KeySet,
         managedObjectContextObserver: ManagedObjectContextObserver?,
-        changeHandler: DependentKeyChangeObserver) {
+        changeHandler: @escaping DependentKeyChangeObserver) {
             
             self.keyFromParentObjectToObservedObject = keyFromParentObjectToObservedObject
             self.observedObject = observedObject
@@ -133,7 +133,7 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
         self.tearDown()
     }
         
-    func accumulateChangesFromDependentObjects(changedKeyPaths: KeySet) {
+    func accumulateChangesFromDependentObjects(_ changedKeyPaths: KeySet) {
         let changedAffectedKeys: KeySet = {
             var ks = KeySet()
             for kp in changedKeyPaths {
@@ -146,23 +146,23 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
         self.accumulatedChanges = self.accumulatedChanges.union(changedAffectedKeys)
     }
     
-    public func objectsDidChange(changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges) {
         if changes.updated.contains(self.observedObject) {
             self.accumulatedChanges = KeySet()
-            self.objectDidChangeKeys(.All)
+            self.objectDidChangeKeys(.all)
         }
         else if !self.accumulatedChanges.isEmpty {
             let changedKeys = self.accumulatedChanges
             self.accumulatedChanges = KeySet()
-            self.objectDidChangeKeys(.Some(changedKeys))
+            self.objectDidChangeKeys(.some(changedKeys))
         }
     }
     
-    func keysHaveChanged(keys: [String]) {
+    func keysHaveChanged(_ keys: [String]) {
         accumulatedChanges = accumulatedChanges.union(KeySet(keys))
     }
     
-    func objectDidChangeKeys(affectedKeys: AffectedKeys) {
+    func objectDidChangeKeys(_ affectedKeys: AffectedKeys) {
         if let (newSnapShot, keysAndOldValues) = self.snapshot.updatedSnapshot(self.observedObject, affectedKeys: affectedKeys) {
 
             snapshot = newSnapShot
@@ -170,22 +170,22 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
                 self.keyFromParentObjectToObservedObject.map { KeyPath.keyPathForString($0.rawValue+"."+key.rawValue) } ?? key
             }
             
-            parentChangeHandler(changedKeyPaths : changedKeys)
+            parentChangeHandler(changedKeys)
             createOrDeleteDependendTokensIfNeeded(KeySet(changedKeys.keys))
         }
     }
     
-    private func getAllDependendObjectsForKeyPath(keyPath: KeyPath) -> Set<NSObject> {
-        if let toManyRelationShip = self.observedObject.valueForKey(keyPath.rawValue) as? NSFastEnumeration {
+    fileprivate func getAllDependendObjectsForKeyPath(_ keyPath: KeyPath) -> Set<NSObject> {
+        if let toManyRelationShip = self.observedObject.value(forKey: keyPath.rawValue) as? NSFastEnumeration {
             return Set(Enumerator(toManyRelationShip).allObjects() as! [NSObject])
-        } else if let singleRelationshipNonNil = self.observedObject.valueForKey(keyPath.rawValue) as? NSObject {
+        } else if let singleRelationshipNonNil = self.observedObject.value(forKey: keyPath.rawValue) as? NSObject {
             return Set(arrayLiteral: singleRelationshipNonNil)
         } else {
             return Set()
         }
     }
     
-    func createOrDeleteDependendTokensIfNeeded(affectedKeys: KeySet) {
+    func createOrDeleteDependendTokensIfNeeded(_ affectedKeys: KeySet) {
         
         for keyPath in affectedKeys {
             
@@ -197,8 +197,8 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
                 let currentObjects = self.getAllDependendObjectsForKeyPath(keyPath)
                 
                 
-                let objectsToDelete = tokenObjects.subtract(currentObjects)
-                let objectsToInsert = currentObjects.subtract(tokenObjects)
+                let objectsToDelete = tokenObjects.subtracting(currentObjects)
+                let objectsToInsert = currentObjects.subtracting(tokenObjects)
                 
                 var purgedTokens = tokens.filter { token in
                     if objectsToDelete.contains(token.observedObject) {
@@ -207,8 +207,8 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
                     token.tearDown()
                     return false
                 }
-                purgedTokens.appendContentsOf(
-                    objectsToInsert.flatMap {[weak self] in
+                purgedTokens.append(
+                    contentsOf: objectsToInsert.flatMap {[weak self] in
                         guard let strongSelf = self
                             else {return nil}
                         
@@ -227,11 +227,11 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
         }
     }
 
-    private class func tokensForOtherObjectsThatAffectKey(
-        object: NSObject,
+    fileprivate class func tokensForOtherObjectsThatAffectKey(
+        _ object: NSObject,
         keys: KeySet,
         managedObjectContextObserver : ManagedObjectContextObserver,
-        observer: DependentKeyChangeObserver
+        observer: @escaping DependentKeyChangeObserver
     ) -> (KeyPathToAffectedKeys , [KeyPath : TokensWithKeyPathsToObserve]) {
         
         var keyNameToTokens : [KeyPath: TokensWithKeyPathsToObserve] = [:]
@@ -251,15 +251,15 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
         return (keysToPathsToObserve.affectedKeysOnObservedObjectForChangedKeysOnDependentObject, keyNameToTokens)
     }
     
-    class func tokensForObservingKey(object: NSObject,
+    class func tokensForObservingKey(_ object: NSObject,
         key: KeyPath,
         pathsToObserveInObject: KeySet,
-        observer: ObjectDependencyToken.DependentKeyChangeObserver,
+        observer: @escaping ObjectDependencyToken.DependentKeyChangeObserver,
         managedObjectContextObserver : ManagedObjectContextObserver
         ) -> [ObjectDependencyToken]
     {
         var tokens : [ObjectDependencyToken] = []
-        if let objectToObserve = object.valueForKey(key.rawValue) as? NSObject {
+        if let objectToObserve = object.value(forKey: key.rawValue) as? NSObject {
             if let fastEnumerator = objectToObserve as? NSFastEnumeration {
                 for nextObject in Enumerator(fastEnumerator) {
                     // Does not compile with Swift 1.1

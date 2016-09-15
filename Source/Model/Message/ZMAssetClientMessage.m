@@ -419,7 +419,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(NSSet *)updatedKeys
 {
-    if ([updatedKeys contains:ZMAssetClientMessageUploadedStateKey] && self.uploadState == ZMAssetUploadStateUploadingPlaceholder) {
+    if ([updatedKeys containsObject:ZMAssetClientMessageUploadedStateKey] && self.uploadState == ZMAssetUploadStateUploadingPlaceholder) {
         
         NSDate *serverTimestamp = [payload dateForKey:@"time"];
         if (serverTimestamp != nil) {

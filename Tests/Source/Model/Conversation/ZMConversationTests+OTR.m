@@ -434,7 +434,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.lastModifiedDate = [NSDate new];
-    ZMMessage *previousMessage = [conversation appendMessageWithText:@"test"];
+    ZMMessage *previousMessage = (id)[conversation appendMessageWithText:@"test"];
     
     // when
     [conversation appendContinuedUsingThisDeviceMessage];

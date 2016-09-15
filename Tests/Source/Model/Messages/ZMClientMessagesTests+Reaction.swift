@@ -1,9 +1,19 @@
 //
-//  ZMClientMessagesTests+Reaction.swift
-//  ZMCDataModel
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
 //
-//  Created by Florian Morel on 9/6/16.
-//  Copyright © 2016 Wire Swiss GmbH. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
 import ZMTesting
@@ -17,27 +27,27 @@ extension ZMClientMessageTests_Reaction {
     
     func testThatItAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
         
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = .createUUID()
-        conversation.conversationType = .OneOnOne
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.conversationType = .oneOnOne
         
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
-        sender.remoteIdentifier = .createUUID()
+        let sender = ZMUser.insertNewObject(in:uiMOC)
+        sender.remoteIdentifier = .create()
         
-        let message = conversation.appendMessageWithText("JCVD, full split please") as! ZMMessage
+        let message = conversation.appendMessage(withText: "JCVD, full split please") as! ZMMessage
         message.sender = sender
         
         uiMOC.saveOrRollback()
         
-        let genericMessage = ZMGenericMessage(emojiString: "❤️", messageID: message.nonce.transportString(), nonce: NSUUID.createUUID().transportString())
-        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
+        let genericMessage = ZMGenericMessage(emojiString: "❤️", messageID: message.nonce.transportString()!, nonce: UUID.create().transportString()!)
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         
         XCTAssertEqual(message.reactions.count, 1)
@@ -46,27 +56,27 @@ extension ZMClientMessageTests_Reaction {
     
     func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
         
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = .createUUID()
-        conversation.conversationType = .OneOnOne
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.conversationType = .oneOnOne
         
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
-        sender.remoteIdentifier = .createUUID()
+        let sender = ZMUser.insertNewObject(in:uiMOC)
+        sender.remoteIdentifier = .create()
         
-        let message = conversation.appendMessageWithText("JCVD, full split please") as! ZMMessage
+        let message = conversation.appendMessage(withText: "JCVD, full split please") as! ZMMessage
         message.sender = sender
         
         uiMOC.saveOrRollback()
         
-        let genericMessage = ZMGenericMessage(emojiString: "TROP BIEN", messageID: message.nonce.transportString(), nonce: NSUUID.createUUID().transportString())
-        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
+        let genericMessage = ZMGenericMessage(emojiString: "TROP BIEN", messageID: message.nonce.transportString()!, nonce: UUID.create().transportString()!)
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         
         XCTAssertEqual(message.reactions.count, 0)
@@ -75,28 +85,28 @@ extension ZMClientMessageTests_Reaction {
     
     func testThatItRemovesAReactionWhenReceivingUpdateEventWithValidReaction() {
         
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = .createUUID()
-        conversation.conversationType = .OneOnOne
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.conversationType = .oneOnOne
         
-        let sender = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
-        sender.remoteIdentifier = .createUUID()
+        let sender = ZMUser.insertNewObject(in:uiMOC)
+        sender.remoteIdentifier = .create()
         
-        let message = conversation.appendMessageWithText("JCVD, full split please") as! ZMMessage
+        let message = conversation.appendMessage(withText: "JCVD, full split please") as! ZMMessage
         message.sender = sender
         message.addReaction("❤️", forUser: sender)
         
         uiMOC.saveOrRollback()
         
-        let genericMessage = ZMGenericMessage(emojiString: "", messageID: message.nonce.transportString(), nonce: NSUUID.createUUID().transportString())
-        let event = createUpdateEvent(NSUUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
+        let genericMessage = ZMGenericMessage(emojiString: "", messageID: message.nonce.transportString()!, nonce: UUID.create().transportString()!)
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResultFromUpdateEvent(event, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
 
         XCTAssertEqual(message.usersReaction.count, 0)

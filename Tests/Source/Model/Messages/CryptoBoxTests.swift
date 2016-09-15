@@ -25,11 +25,12 @@ class CryptoBoxTest: OtrBaseTest {
     
     func testThatCryptoBoxFolderIsForbiddenFromBackup() {
         // when
-         UserClientKeysStore.setupContext()
+         _ = UserClientKeysStore.setupContext()
         
         // then
-        let values = try! UserClientKeysStore.otrDirectoryURL.resourceValuesForKeys([NSURLIsExcludedFromBackupKey])
-        XCTAssertNotNil(values[NSURLIsExcludedFromBackupKey])
+        guard let values = try? UserClientKeysStore.otrDirectoryURL.resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else {return XCTFail()}
+        
+        XCTAssertTrue(values.isExcludedFromBackup!)
     }
     
     func testThatCryptoBoxFolderIsMarkedForEncryption() {
@@ -42,7 +43,7 @@ class CryptoBoxTest: OtrBaseTest {
             UserClientKeysStore.setupBox()
             
             // then
-            let attrs = try! NSFileManager.defaultManager().attributesOfItemAtPath(UserClientKeysStore.otrDirectoryURL.path!)
+            let attrs = try! NSFileManager.default.attributesOfItemAtPath(UserClientKeysStore.otrDirectoryURL.path)
             let fileProtectionAttr = (attrs[NSFileProtectionKey]! as! String)
             XCTAssertEqual(fileProtectionAttr, NSFileProtectionCompleteUntilFirstUserAuthentication)
         #endif

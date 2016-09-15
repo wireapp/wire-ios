@@ -371,9 +371,9 @@
         conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -412,9 +412,9 @@
         conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -455,9 +455,9 @@
         
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -483,9 +483,9 @@
         
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -511,9 +511,9 @@
         
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -539,9 +539,9 @@
         
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -568,9 +568,9 @@
         
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -598,9 +598,9 @@
         
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
-        ZMMessage *message1 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"hello"];
         message1.eventID = self.createEventID;
-        ZMMessage *message2 = [conversation appendMessageWithText:@"hello"];
+        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"hello"];
         message2.eventID = self.createEventID;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         

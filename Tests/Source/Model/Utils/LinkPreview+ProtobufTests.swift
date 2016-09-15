@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -25,7 +25,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
 
     func testThatItCreatesAValidArticle_OldStyleProtos() {
         // given
-        let builder = ZMLinkPreview.builder()
+        let builder = ZMLinkPreview.builder()!
         builder.setUrlOffset(42)
         builder.setUrl("www.example.com/original")
         builder.setArticle(.article(
@@ -37,7 +37,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
         )
         
         // when
-        let protos = builder.build()
+        let protos = builder.build()!
         let preview = Article(protocolBuffer: protos)
         
         // then
@@ -63,7 +63,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
     
     func testThatItCreatesAValidArticle_NewStyleProtos() {
         // given
-        let builder = ZMLinkPreview.builder()
+        let builder = ZMLinkPreview.builder()!
         builder.setUrlOffset(42)
         builder.setUrl("www.example.com/original")
         builder.setTitle("title")
@@ -71,7 +71,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
         builder.setPermanentUrl("www.example.com/permanent")
         
         // when
-        let protos = builder.build()
+        let protos = builder.build()!
         let preview = Article(protocolBuffer: protos)
         
         // then
@@ -97,7 +97,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
     
     func testThatItCreatesAValidArticleWithTweet_NewStyle() {
         // given
-        let builder = ZMLinkPreview.builder()
+        let builder = ZMLinkPreview.builder()!
         builder.setUrlOffset(42)
         builder.setUrl("www.example.com/original")
         builder.setTitle("title")
@@ -105,7 +105,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
         builder.setTweet(.tweet(withAuthor: "author", username: "username"))
         
         // when
-        let protos = builder.build()
+        let protos = builder.build()!
         let preview = TwitterStatus(protocolBuffer: protos)
         
         // then

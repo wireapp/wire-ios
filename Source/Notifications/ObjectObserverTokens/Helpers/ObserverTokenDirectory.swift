@@ -22,14 +22,14 @@ import CoreData
 
 
 
-final class ObserverTokenDirectory<I: ObjectChangeInfoProtocol, T: ObjectObserverTokenContainer, O: NSObject where O: ObjectInSnapshot> : NSObject {
+final class ObserverTokenDirectory<I: ObjectChangeInfoProtocol, T: ObjectObserverTokenContainer, O: NSObject> : NSObject where O: ObjectInSnapshot {
     
     typealias TokenType = ObjectObserverToken<I, T>
     
-    private var tokens: [NSObject : TokenType] = [:]
+    fileprivate var tokens: [NSObject : TokenType] = [:]
     
     /// Returns an existing token for the given object or stores and returns the token returned by the createBlock
-    func tokenForObject(object: O, createBlock: () -> TokenType) -> TokenType {
+    func tokenForObject(_ object: O, createBlock: () -> TokenType) -> TokenType {
         if let token = existingTokenForObject(object) {
             return token
         }
@@ -39,19 +39,19 @@ final class ObserverTokenDirectory<I: ObjectChangeInfoProtocol, T: ObjectObserve
     }
     
     /// Returns an existing token for the given object or nil if there is no token in the directory
-    func existingTokenForObject(object: O) -> TokenType? {
+    func existingTokenForObject(_ object: O) -> TokenType? {
         return tokens[object]
     }
     
-    func removeTokenForObject(object: NSObject) {
-        self.tokens.removeValueForKey(object)
+    func removeTokenForObject(_ object: NSObject) {
+        self.tokens.removeValue(forKey: object)
     }
     
-	private override init() {
+	fileprivate override init() {
         super.init()
 	}
 	
-    static func directoryInManagedObjectContext(moc: NSManagedObjectContext, keyForDirectoryInUserInfo: String) -> ObserverTokenDirectory<I, T, O> {
+    static func directoryInManagedObjectContext(_ moc: NSManagedObjectContext, keyForDirectoryInUserInfo: String) -> ObserverTokenDirectory<I, T, O> {
         let completeKey = "ZMObserverTokenDirectory-\(keyForDirectoryInUserInfo)"
         if let dir = moc.userInfo[completeKey] as? ObserverTokenDirectory<I, T, O> {
             return dir
