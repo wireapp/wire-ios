@@ -1,0 +1,1762 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>ZMAccessTokenHandler.m - Slather</title>
+<link href="slather.css" media="all" rel="stylesheet">
+</head>
+<body>
+<header><div class="row"><a href="index.html"><img src="logo.jpg" alt="Slather logo"></a></div></header><div class="row"><div id="reports">
+<h2 class="cov_title">
+<span>Coverage for "ZMAccessTokenHandler.m" : </span><span class="cov_high">96.70%</span>
+</h2>
+<h4 class="cov_subtitle">(205 of 212 relevant lines covered)</h4>
+<h4 class="cov_filepath">../Desktop/jenkins-agent/workspace/Utility jobs/Create a new version of framework/Source/Authentication/ZMAccessTokenHandler.m</h4>
+<table class="source_code">
+<tr class="never">
+<td class="num">1</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">2</td>
+<td class="src"><pre><code class="objc">// Wire</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">3</td>
+<td class="src"><pre><code class="objc">// Copyright (C) 2016 Wire Swiss GmbH</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">4</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">5</td>
+<td class="src"><pre><code class="objc">// This program is free software: you can redistribute it and/or modify</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">6</td>
+<td class="src"><pre><code class="objc">// it under the terms of the GNU General Public License as published by</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">7</td>
+<td class="src"><pre><code class="objc">// the Free Software Foundation, either version 3 of the License, or</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">8</td>
+<td class="src"><pre><code class="objc">// (at your option) any later version.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">9</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">10</td>
+<td class="src"><pre><code class="objc">// This program is distributed in the hope that it will be useful,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">11</td>
+<td class="src"><pre><code class="objc">// but WITHOUT ANY WARRANTY; without even the implied warranty of</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">12</td>
+<td class="src"><pre><code class="objc">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">13</td>
+<td class="src"><pre><code class="objc">// GNU General Public License for more details.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">14</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">15</td>
+<td class="src"><pre><code class="objc">// You should have received a copy of the GNU General Public License</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">16</td>
+<td class="src"><pre><code class="objc">// along with this program. If not, see http://www.gnu.org/licenses/.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">17</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">18</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">19</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">20</td>
+<td class="src"><pre><code class="objc">@import ZMCSystem;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">21</td>
+<td class="src"><pre><code class="objc">@import ZMUtilities;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">22</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">23</td>
+<td class="src"><pre><code class="objc">#import "ZMAccessTokenHandler.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">24</td>
+<td class="src"><pre><code class="objc">#import "ZMAccessToken.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">25</td>
+<td class="src"><pre><code class="objc">#import "TransportTracing.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">26</td>
+<td class="src"><pre><code class="objc">#import "ZMTransportResponse.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">27</td>
+<td class="src"><pre><code class="objc">#import "ZMTransportData.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">28</td>
+<td class="src"><pre><code class="objc">#import "ZMTransportCodec.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">29</td>
+<td class="src"><pre><code class="objc">#import &lt;mach-o/dyld.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">30</td>
+<td class="src"><pre><code class="objc">#import "ZMPersistentCookieStorage.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">31</td>
+<td class="src"><pre><code class="objc">#import "NSError+ZMTransportSession.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">32</td>
+<td class="src"><pre><code class="objc">#import "ZMUserAgent.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">33</td>
+<td class="src"><pre><code class="objc">#import "ZMTransportRequest.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">34</td>
+<td class="src"><pre><code class="objc">#import "ZMURLSession.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">35</td>
+<td class="src"><pre><code class="objc">#import "ZMTransportRequestScheduler.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">36</td>
+<td class="src"><pre><code class="objc">#import "ZMExponentialBackoff.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">37</td>
+<td class="src"><pre><code class="objc">#import "ZMTLogging.h"</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">38</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">39</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">40</td>
+<td class="src"><pre><code class="objc">static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">41</td>
+<td class="src"><pre><code class="objc">static NSString * const ZMLastAccessTokenKey = @"ZMLastAccessToken";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">42</td>
+<td class="src"><pre><code class="objc">static NSString * const ZMLastAccessTokenTypeKey = @"ZMLastAccessTokenType";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">43</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">44</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">45</td>
+<td class="src"><pre><code class="objc">static NSTimeInterval const MininumSecondsAccessTokenNeedsToBeValid = 15;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">46</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">47</td>
+<td class="src"><pre><code class="objc">// When we're getting close to the expiry time of the access token, we'll</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">48</td>
+<td class="src"><pre><code class="objc">// renew it.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">49</td>
+<td class="src"><pre><code class="objc">static NSTimeInterval const GraceperiodToRenewAccessToken = 40;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">50</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">51</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">52</td>
+<td class="src"><pre><code class="objc">@interface ZMAccessTokenHandler ()</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">53</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">54</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) ZMAccessToken *accessToken;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">55</td>
+<td class="src"><pre><code class="objc">@property (nonatomic, copy) ZMCompletionHandlerBlock accessTokenRenewalFailureHandler;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">56</td>
+<td class="src"><pre><code class="objc">@property (nonatomic, copy) ZMAccessTokenHandlerBlock accessTokenRenewalSuccessHandler;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">57</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSURLSessionTask *currentAccessTokenTask;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">58</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">59</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">60</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSURL *baseURL;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">61</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">62</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) id&lt;ZMAccessTokenHandlerDelegate&gt; delegate;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">63</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">64</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) ZMExponentialBackoff *backoff;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">65</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) NSOperationQueue *workQueue;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">66</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) ZMSDispatchGroup *group;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">67</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">68</td>
+<td class="src"><pre><code class="objc">@property (nonatomic) id&lt;ZMKeyValueStore&gt; keyValueStore;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">69</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">70</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">71</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">72</td>
+<td class="src"><pre><code class="objc">@implementation ZMAccessTokenHandler</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">73</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">74</td>
+<td class="src"><pre><code class="objc">- (instancetype)initWithBaseURL:(NSURL *)baseURL</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">75</td>
+<td class="src"><pre><code class="objc">                  cookieStorage:(ZMPersistentCookieStorage *)cookieStorage</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">76</td>
+<td class="src"><pre><code class="objc">                       delegate:(id&lt;ZMAccessTokenHandlerDelegate&gt;)delegate</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">77</td>
+<td class="src"><pre><code class="objc">                          queue:(NSOperationQueue *)queue</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">78</td>
+<td class="src"><pre><code class="objc">                          group:(ZMSDispatchGroup *)group</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">79</td>
+<td class="src"><pre><code class="objc">                        backoff:(ZMExponentialBackoff *)backoff</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">80</td>
+<td class="src"><pre><code class="objc">                  keyValueStore:(id&lt;ZMKeyValueStore&gt;)keyValueStore;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">81</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">82</td>
+<td class="src"><pre><code class="objc">    self = [super init];</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">83</td>
+<td class="src"><pre><code class="objc">    if (self) {</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">84</td>
+<td class="src"><pre><code class="objc">        self.keyValueStore = keyValueStore;</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">85</td>
+<td class="src"><pre><code class="objc">        self.baseURL = baseURL;</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">86</td>
+<td class="src"><pre><code class="objc">        self.cookieStorage = cookieStorage;</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">87</td>
+<td class="src"><pre><code class="objc">        self.delegate = delegate;</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">88</td>
+<td class="src"><pre><code class="objc">        self.group = group;</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">89</td>
+<td class="src"><pre><code class="objc">        self.workQueue = queue;</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">90</td>
+<td class="src"><pre><code class="objc">        self.backoff = backoff ?: [[ZMExponentialBackoff alloc] initWithGroup:self.group workQueue:self.workQueue];</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">91</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">92</td>
+<td class="src"><pre><code class="objc">    return self;</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="covered">
+<td class="num">93</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">124x</td>
+</tr>
+<tr class="never">
+<td class="num">94</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">95</td>
+<td class="src"><pre><code class="objc">- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">96</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">86x</td>
+</tr>
+<tr class="covered">
+<td class="num">97</td>
+<td class="src"><pre><code class="objc">    self-&gt;_accessTokenRenewalFailureHandler = [handler copy];</code></pre></td>
+<td class="coverage">86x</td>
+</tr>
+<tr class="covered">
+<td class="num">98</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">86x</td>
+</tr>
+<tr class="never">
+<td class="num">99</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">100</td>
+<td class="src"><pre><code class="objc">- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">101</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">102</td>
+<td class="src"><pre><code class="objc">    self-&gt;_accessTokenRenewalSuccessHandler = [handler copy];</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">103</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="never">
+<td class="num">104</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">105</td>
+<td class="src"><pre><code class="objc">- (void)notifyTokenFailure:(ZMTransportResponse *)response;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">106</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">107</td>
+<td class="src"><pre><code class="objc">    if (self.accessTokenRenewalFailureHandler) {</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">108</td>
+<td class="src"><pre><code class="objc">        self.accessTokenRenewalFailureHandler(response);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">109</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">110</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="never">
+<td class="num">111</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">112</td>
+<td class="src"><pre><code class="objc">- (void)notifyTokenSuccess:(ZMAccessToken *)token</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">113</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">114</td>
+<td class="src"><pre><code class="objc">    if (self.accessTokenRenewalSuccessHandler) {</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">115</td>
+<td class="src"><pre><code class="objc">        self.accessTokenRenewalSuccessHandler(token.token, token.type);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">116</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">117</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="never">
+<td class="num">118</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">119</td>
+<td class="src"><pre><code class="objc">- (void)setAccessToken:(ZMAccessToken *)accessToken</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">120</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">98x</td>
+</tr>
+<tr class="covered">
+<td class="num">121</td>
+<td class="src"><pre><code class="objc">    [self willChangeValueForKey:@"accessToken"];</code></pre></td>
+<td class="coverage">98x</td>
+</tr>
+<tr class="covered">
+<td class="num">122</td>
+<td class="src"><pre><code class="objc">    _accessToken = accessToken;</code></pre></td>
+<td class="coverage">98x</td>
+</tr>
+<tr class="covered">
+<td class="num">123</td>
+<td class="src"><pre><code class="objc">    [self didChangeValueForKey:@"accessToken"];</code></pre></td>
+<td class="coverage">98x</td>
+</tr>
+<tr class="covered">
+<td class="num">124</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">98x</td>
+</tr>
+<tr class="covered">
+<td class="num">125</td>
+<td class="src"><pre><code class="objc">    if (_accessToken != nil) {</code></pre></td>
+<td class="coverage">98x</td>
+</tr>
+<tr class="covered">
+<td class="num">126</td>
+<td class="src"><pre><code class="objc">        [self setLastKnownAccessToken:accessToken];</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">127</td>
+<td class="src"><pre><code class="objc">        [self.delegate handlerDidReceiveAccessToken:self];</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">128</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">129</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">98x</td>
+</tr>
+<tr class="never">
+<td class="num">130</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">131</td>
+<td class="src"><pre><code class="objc">- (void)setLastKnownAccessToken:(ZMAccessToken *)accessToken</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">132</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">133</td>
+<td class="src"><pre><code class="objc">    [self.keyValueStore setValue:accessToken.token forKey:ZMLastAccessTokenKey];</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">134</td>
+<td class="src"><pre><code class="objc">    [self.keyValueStore setValue:accessToken.type forKey:ZMLastAccessTokenTypeKey];</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="covered">
+<td class="num">135</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">46x</td>
+</tr>
+<tr class="never">
+<td class="num">136</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">137</td>
+<td class="src"><pre><code class="objc">- (void)setRequestHeaderFieldsWithLastKnownAccessToken:(NSMutableURLRequest *)request</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">138</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">57x</td>
+</tr>
+<tr class="covered">
+<td class="num">139</td>
+<td class="src"><pre><code class="objc">    NSString *token = [self.keyValueStore valueForKey:ZMLastAccessTokenKey];</code></pre></td>
+<td class="coverage">57x</td>
+</tr>
+<tr class="covered">
+<td class="num">140</td>
+<td class="src"><pre><code class="objc">    NSString *type = [self.keyValueStore valueForKey:ZMLastAccessTokenTypeKey];</code></pre></td>
+<td class="coverage">57x</td>
+</tr>
+<tr class="covered">
+<td class="num">141</td>
+<td class="src"><pre><code class="objc">    if (token == nil || type == nil) {</code></pre></td>
+<td class="coverage">57x</td>
+</tr>
+<tr class="covered">
+<td class="num">142</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">29x</td>
+</tr>
+<tr class="covered">
+<td class="num">143</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">29x</td>
+</tr>
+<tr class="covered">
+<td class="num">144</td>
+<td class="src"><pre><code class="objc">    [request setValue:[NSString stringWithFormat:@"%@ %@", type, token] forHTTPHeaderField:@"Authorization"];</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="covered">
+<td class="num">145</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">28x</td>
+</tr>
+<tr class="never">
+<td class="num">146</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">147</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">148</td>
+<td class="src"><pre><code class="objc">- (void)checkIfRequest:(ZMTransportRequest *)request needsToFetchAccessTokenInURLRequest:(NSMutableURLRequest *)URLRequest;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">149</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">48x</td>
+</tr>
+<tr class="covered">
+<td class="num">150</td>
+<td class="src"><pre><code class="objc">    if (request.needsAuthentication) {</code></pre></td>
+<td class="coverage">48x</td>
+</tr>
+<tr class="covered">
+<td class="num">151</td>
+<td class="src"><pre><code class="objc">        [self setRequestHeaderFieldsWithLastKnownAccessToken:URLRequest];</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">152</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">31x</td>
+</tr>
+<tr class="covered">
+<td class="num">153</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">48x</td>
+</tr>
+<tr class="never">
+<td class="num">154</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">155</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">156</td>
+<td class="src"><pre><code class="objc">- (BOOL)canStartRequestWithAccessToken;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">157</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">158</td>
+<td class="src"><pre><code class="objc">    if (self.accessToken == nil) {</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">159</td>
+<td class="src"><pre><code class="objc">        return NO;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">160</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">161</td>
+<td class="src"><pre><code class="objc">    // If expiration is imminent, we assume it won't work:</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">162</td>
+<td class="src"><pre><code class="objc">    return (MininumSecondsAccessTokenNeedsToBeValid &lt; [self.accessToken.expirationDate timeIntervalSinceNow]);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">163</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="never">
+<td class="num">164</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">165</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">166</td>
+<td class="src"><pre><code class="objc">- (BOOL)accessTokenIsAboutToExpire;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">167</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">168</td>
+<td class="src"><pre><code class="objc">    return ([self.accessToken.expirationDate timeIntervalSinceNow] &lt; GraceperiodToRenewAccessToken);</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">169</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">170</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">171</td>
+<td class="src"><pre><code class="objc">- (BOOL)hasAccessToken;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">172</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">88x</td>
+</tr>
+<tr class="covered">
+<td class="num">173</td>
+<td class="src"><pre><code class="objc">    return self.accessToken != nil;</code></pre></td>
+<td class="coverage">88x</td>
+</tr>
+<tr class="covered">
+<td class="num">174</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">88x</td>
+</tr>
+<tr class="never">
+<td class="num">175</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">176</td>
+<td class="src"><pre><code class="objc">- (void)sendAccessTokenRequestWithURLSession:(ZMURLSession *)URLSession</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">177</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">27x</td>
+</tr>
+<tr class="covered">
+<td class="num">178</td>
+<td class="src"><pre><code class="objc">    Require(URLSession != nil);</code></pre></td>
+<td class="coverage">27x</td>
+</tr>
+<tr class="covered">
+<td class="num">179</td>
+<td class="src"><pre><code class="objc">    if (self.currentAccessTokenTask != nil) {</code></pre></td>
+<td class="coverage">27x</td>
+</tr>
+<tr class="covered">
+<td class="num">180</td>
+<td class="src"><pre><code class="objc">        ZMTraceTransportSessionAccessTokenRequest(100, (int) 0, self.currentAccessTokenTask.taskIdentifier);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">181</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">182</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">183</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">27x</td>
+</tr>
+<tr class="covered">
+<td class="num">184</td>
+<td class="src"><pre><code class="objc">    ZMLogInfo(@"Requesting access token from cookie (existing token: %p).", self.accessToken);</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">185</td>
+<td class="src"><pre><code class="objc">    if(self.cookieStorage.authenticationCookieData == nil) {</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="missed">
+<td class="num">186</td>
+<td class="src"><pre><code class="objc">        ZMLogError(@"No cookie to request access token");</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">187</td>
+<td class="src"><pre><code class="objc">        [self notifyTokenFailure:nil];</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">188</td>
+<td class="src"><pre><code class="objc">        return;</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">189</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="covered">
+<td class="num">190</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">191</td>
+<td class="src"><pre><code class="objc">    NSURL *URL = [NSURL URLWithString:@"/access" relativeToURL:self.baseURL];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">192</td>
+<td class="src"><pre><code class="objc">    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">193</td>
+<td class="src"><pre><code class="objc">    [ZMUserAgent setUserAgentOnRequest:request];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">194</td>
+<td class="src"><pre><code class="objc">    [request setHTTPMethod:@"POST"];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">195</td>
+<td class="src"><pre><code class="objc">    [request addValue:[ZMTransportCodec encodedContentType] forHTTPHeaderField:@"Content-Type"];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">196</td>
+<td class="src"><pre><code class="objc">    [request addValue:[ZMTransportCodec encodedContentType] forHTTPHeaderField:@"Accept"];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">197</td>
+<td class="src"><pre><code class="objc">    [self.cookieStorage setRequestHeaderFieldsOnRequest:request];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">198</td>
+<td class="src"><pre><code class="objc">    [self setRequestHeaderFieldsWithLastKnownAccessToken:request];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">199</td>
+<td class="src"><pre><code class="objc">    self.currentAccessTokenTask = [URLSession taskWithRequest:request bodyData:nil transportRequest:nil];</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">200</td>
+<td class="src"><pre><code class="objc">    ZMLogInfo(@"----&gt; Access token request: %@ %@ \n %@ \n %@", request.HTTPMethod, request.URL, request.allHTTPHeaderFields, request.HTTPBody);</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">201</td>
+<td class="src"><pre><code class="objc">    ZMTraceTransportSessionAccessTokenRequest(0, 0, self.currentAccessTokenTask.taskIdentifier);</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">202</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="covered">
+<td class="num">203</td>
+<td class="src"><pre><code class="objc">    [self.backoff performBlock:^{</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">204</td>
+<td class="src"><pre><code class="objc">        [self.currentAccessTokenTask resume];</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">205</td>
+<td class="src"><pre><code class="objc">    }];</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">206</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">26x</td>
+</tr>
+<tr class="never">
+<td class="num">207</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">208</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">209</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">210</td>
+<td class="src"><pre><code class="objc">- (BOOL)consumeRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">211</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="covered">
+<td class="num">212</td>
+<td class="src"><pre><code class="objc">    if (self.currentAccessTokenTask != task) {</code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="covered">
+<td class="num">213</td>
+<td class="src"><pre><code class="objc">        return NO;</code></pre></td>
+<td class="coverage">32x</td>
+</tr>
+<tr class="covered">
+<td class="num">214</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">32x</td>
+</tr>
+<tr class="covered">
+<td class="num">215</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="covered">
+<td class="num">216</td>
+<td class="src"><pre><code class="objc">    [self didCompleteAccessTokenRequestWithTask:task data:data session:session shouldRetry:shouldRetry];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">217</td>
+<td class="src"><pre><code class="objc">    return YES;</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">218</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">47x</td>
+</tr>
+<tr class="never">
+<td class="num">219</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">220</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">221</td>
+<td class="src"><pre><code class="objc">- (void)didCompleteAccessTokenRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">222</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">223</td>
+<td class="src"><pre><code class="objc">    NSUInteger const taskIdentifier = task.taskIdentifier;</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">224</td>
+<td class="src"><pre><code class="objc">    ZMLogInfo(@"&lt;---- Access token task completed: %@ // %@", task, task.error);</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">225</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">226</td>
+<td class="src"><pre><code class="objc">    NSError *transportError = [NSError transportErrorFromURLTask:task expired:NO];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">227</td>
+<td class="src"><pre><code class="objc">    ZMTransportResponse *response = [self transportResponseFromURLResponse:task.response data:data error:transportError];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">228</td>
+<td class="src"><pre><code class="objc">    ZMTraceTransportSessionAccessTokenRequest(1, (int) response.HTTPStatus, task.taskIdentifier);</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">229</td>
+<td class="src"><pre><code class="objc">    ZMTraceTransportSessionAccessTokenRequest(12, (int) transportError.code, task.taskIdentifier);</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">230</td>
+<td class="src"><pre><code class="objc">    BOOL needToResend = [self processAccessTokenResponse:response taskIdentifier:task.taskIdentifier];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">231</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">232</td>
+<td class="src"><pre><code class="objc">    // We can only re-send once we've cleared out the current</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">233</td>
+<td class="src"><pre><code class="objc">    self.currentAccessTokenTask = nil;</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">234</td>
+<td class="src"><pre><code class="objc">    if (needToResend) {</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">235</td>
+<td class="src"><pre><code class="objc">        if (shouldRetry){</code></pre></td>
+<td class="coverage">9x</td>
+</tr>
+<tr class="covered">
+<td class="num">236</td>
+<td class="src"><pre><code class="objc">            ZMTraceTransportSessionAccessTokenRequest(101, (int) response.result, taskIdentifier);</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">237</td>
+<td class="src"><pre><code class="objc">            [self sendAccessTokenRequestWithURLSession:session];</code></pre></td>
+<td class="coverage">8x</td>
+</tr>
+<tr class="covered">
+<td class="num">238</td>
+<td class="src"><pre><code class="objc">        } else {</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">239</td>
+<td class="src"><pre><code class="objc">            ZMTraceTransportSessionAccessTokenRequest(102, (int) response.result, taskIdentifier);</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">240</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">241</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">242</td>
+<td class="src"><pre><code class="objc">        ZMTraceTransportSessionAccessTokenRequest(103, (int) response.result, taskIdentifier);</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">243</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">244</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">245</td>
+<td class="src"><pre><code class="objc">    [self updateBackoffWithResponse:response];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">246</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="never">
+<td class="num">247</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">248</td>
+<td class="src"><pre><code class="objc">- (void)updateBackoffWithResponse:(ZMTransportResponse *)response;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">249</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">250</td>
+<td class="src"><pre><code class="objc">    NSInteger const statusCode = response.HTTPStatus;</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">251</td>
+<td class="src"><pre><code class="objc">    BOOL const isBackOff = ((statusCode == TooManyRequestsStatusCode) ||</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">252</td>
+<td class="src"><pre><code class="objc">                            (statusCode == EnhanceYourCalmStatusCode));</code></pre></td>
+<td class="coverage">13x</td>
+</tr>
+<tr class="covered">
+<td class="num">253</td>
+<td class="src"><pre><code class="objc">    BOOL const isInternalError = ((statusCode &gt;= 500) &amp;&amp;</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">254</td>
+<td class="src"><pre><code class="objc">                                  (statusCode &lt;= 599));</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">255</td>
+<td class="src"><pre><code class="objc">    if (isBackOff ||</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">256</td>
+<td class="src"><pre><code class="objc">        isInternalError ||</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">257</td>
+<td class="src"><pre><code class="objc">        (response.result == ZMTransportResponseStatusTemporaryError))</code></pre></td>
+<td class="coverage">10x</td>
+</tr>
+<tr class="covered">
+<td class="num">258</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">259</td>
+<td class="src"><pre><code class="objc">        // Server error or too busy -&gt; increase back-off:</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">260</td>
+<td class="src"><pre><code class="objc">        [self.backoff increaseBackoff];</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">261</td>
+<td class="src"><pre><code class="objc">    } else if (response.result == ZMTransportResponseStatusTryAgainLater) {</code></pre></td>
+<td class="coverage">10x</td>
+</tr>
+<tr class="covered">
+<td class="num">262</td>
+<td class="src"><pre><code class="objc">        // The request was cancelled (switching to background?). Don't change backoff.</code></pre></td>
+<td class="coverage">4x</td>
+</tr>
+<tr class="covered">
+<td class="num">263</td>
+<td class="src"><pre><code class="objc">    } else {</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">264</td>
+<td class="src"><pre><code class="objc">        // Permanent error or success:</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">265</td>
+<td class="src"><pre><code class="objc">        [self.backoff resetBackoff];</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">266</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">6x</td>
+</tr>
+<tr class="covered">
+<td class="num">267</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="never">
+<td class="num">268</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">269</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">270</td>
+<td class="src"><pre><code class="objc">- (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">271</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">272</td>
+<td class="src"><pre><code class="objc">    NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *) URLResponse;</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">273</td>
+<td class="src"><pre><code class="objc">    return [[ZMTransportResponse alloc] initWithHTTPURLResponse:HTTPResponse data:data error:error];</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="covered">
+<td class="num">274</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">15x</td>
+</tr>
+<tr class="never">
+<td class="num">275</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">276</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">277</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">278</td>
+<td class="src"><pre><code class="objc">- (BOOL)processAccessTokenResponse:(ZMTransportResponse *)response taskIdentifier:(NSUInteger)taskIdentifier;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">279</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">280</td>
+<td class="src"><pre><code class="objc">    ZMLogInfo(@"&lt;---- Access token response: %@", response);</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">281</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">282</td>
+<td class="src"><pre><code class="objc">    BOOL needsToReRun = YES;</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">283</td>
+<td class="src"><pre><code class="objc">    BOOL didFail = NO;</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">284</td>
+<td class="src"><pre><code class="objc">    self.accessToken = nil;</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">285</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">286</td>
+<td class="src"><pre><code class="objc">    ZMAccessToken *newToken;</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">287</td>
+<td class="src"><pre><code class="objc">    if (response.result == ZMTransportResponseStatusSuccess) {</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">288</td>
+<td class="src"><pre><code class="objc">        NSUInteger expiresIn = 0;</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">289</td>
+<td class="src"><pre><code class="objc">        if (response.payload != nil) {</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">290</td>
+<td class="src"><pre><code class="objc">            NSString *token = response.payload[@"access_token"];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">291</td>
+<td class="src"><pre><code class="objc">            NSString *type = response.payload[@"token_type"];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">292</td>
+<td class="src"><pre><code class="objc">            expiresIn = [response.payload[@"expires_in"] unsignedIntegerValue];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">293</td>
+<td class="src"><pre><code class="objc">            newToken = [[ZMAccessToken alloc] initWithToken:token type:type expiresInSeconds:expiresIn];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">294</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">295</td>
+<td class="src"><pre><code class="objc">        didFail = (newToken == nil);</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">296</td>
+<td class="src"><pre><code class="objc">        needsToReRun = NO;</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">297</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">298</td>
+<td class="src"><pre><code class="objc">        if ( ! didFail) {</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">299</td>
+<td class="src"><pre><code class="objc">            self.accessToken = newToken;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">300</td>
+<td class="src"><pre><code class="objc">            ZMLogInfo(@"New access token &lt;%@: %p&gt;", self.accessToken.class, self.accessToken);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">301</td>
+<td class="src"><pre><code class="objc">            ZMTraceTransportSessionAccessTokenRequest(3, 0, taskIdentifier);</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">302</td>
+<td class="src"><pre><code class="objc">            [self notifyTokenSuccess:newToken];</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">303</td>
+<td class="src"><pre><code class="objc">        }</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">304</td>
+<td class="src"><pre><code class="objc">        ZMTraceTransportSessionAccessTokenRequest(2, (int) expiresIn, taskIdentifier);</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">305</td>
+<td class="src"><pre><code class="objc">        </code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">306</td>
+<td class="src"><pre><code class="objc">    } else if (response.result == ZMTransportResponseStatusPermanentError &amp;&amp;</code></pre></td>
+<td class="coverage">19x</td>
+</tr>
+<tr class="covered">
+<td class="num">307</td>
+<td class="src"><pre><code class="objc">               response.HTTPStatus != EnhanceYourCalmStatusCode &amp;&amp;</code></pre></td>
+<td class="coverage">7x</td>
+</tr>
+<tr class="covered">
+<td class="num">308</td>
+<td class="src"><pre><code class="objc">               response.HTTPStatus != TooManyRequestsStatusCode)</code></pre></td>
+<td class="coverage">5x</td>
+</tr>
+<tr class="covered">
+<td class="num">309</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">310</td>
+<td class="src"><pre><code class="objc">        didFail = YES;</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">311</td>
+<td class="src"><pre><code class="objc">        ZMTraceTransportSessionAccessTokenRequest(4, 0, taskIdentifier);</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">312</td>
+<td class="src"><pre><code class="objc">        needsToReRun = NO;</code></pre></td>
+<td class="coverage">3x</td>
+</tr>
+<tr class="covered">
+<td class="num">313</td>
+<td class="src"><pre><code class="objc">    } else if ((response.result != ZMTransportResponseStatusPermanentError) &amp;&amp;</code></pre></td>
+<td class="coverage">16x</td>
+</tr>
+<tr class="covered">
+<td class="num">314</td>
+<td class="src"><pre><code class="objc">               (response.result != ZMTransportResponseStatusTryAgainLater))</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">315</td>
+<td class="src"><pre><code class="objc">    {</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">316</td>
+<td class="src"><pre><code class="objc">        ZMTraceTransportSessionAccessTokenRequest(5, 0, taskIdentifier);</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">317</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">2x</td>
+</tr>
+<tr class="covered">
+<td class="num">318</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">319</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">320</td>
+<td class="src"><pre><code class="objc">    if (didFail) {</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">321</td>
+<td class="src"><pre><code class="objc">        ZMLogInfo(@"Clearing access token and cookie");</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">322</td>
+<td class="src"><pre><code class="objc">        self.accessToken = nil;</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">323</td>
+<td class="src"><pre><code class="objc">        self.cookieStorage.authenticationCookieData = nil;</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">324</td>
+<td class="src"><pre><code class="objc">        [self notifyTokenFailure:response];</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">325</td>
+<td class="src"><pre><code class="objc">    }</code></pre></td>
+<td class="coverage">12x</td>
+</tr>
+<tr class="covered">
+<td class="num">326</td>
+<td class="src"><pre><code class="objc">    </code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">327</td>
+<td class="src"><pre><code class="objc">    //ZMTraceAuthTokenResponse(response.HTTPStatus, newToken != nil);</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">328</td>
+<td class="src"><pre><code class="objc">    return needsToReRun;</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="covered">
+<td class="num">329</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">35x</td>
+</tr>
+<tr class="never">
+<td class="num">330</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">331</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">332</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">333</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">334</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">335</td>
+<td class="src"><pre><code class="objc">@implementation ZMAccessTokenHandler (Testing)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">336</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">337</td>
+<td class="src"><pre><code class="objc">- (void)setAccessTokenForTesting:(ZMAccessToken *)accessToken;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">338</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">44x</td>
+</tr>
+<tr class="covered">
+<td class="num">339</td>
+<td class="src"><pre><code class="objc">    self.accessToken = accessToken;</code></pre></td>
+<td class="coverage">44x</td>
+</tr>
+<tr class="covered">
+<td class="num">340</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">44x</td>
+</tr>
+<tr class="never">
+<td class="num">341</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">342</td>
+<td class="src"><pre><code class="objc">- (NSString *)lastKnownAccessTokenString</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">343</td>
+<td class="src"><pre><code class="objc">{</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">344</td>
+<td class="src"><pre><code class="objc">    return [self.keyValueStore valueForKey:ZMLastAccessTokenKey];</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="covered">
+<td class="num">345</td>
+<td class="src"><pre><code class="objc">}</code></pre></td>
+<td class="coverage">1x</td>
+</tr>
+<tr class="never">
+<td class="num">346</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">347</td>
+<td class="src"><pre><code class="objc">@end</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">348</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+</table>
+</div></div>
+<footer><div class="row">
+<p><a href="https://github.com/SlatherOrg/slather">Fork me on Github</a></p>
+<p>&copy; 2016 Slather</p>
+</div></footer><script src="highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
