@@ -25,27 +25,30 @@
 @class ZMIImageProperties;
 @class ZMConversation;
 
+
 @interface ZMImageAssetEncryptionKeys: NSObject
 
 /// Key used for symmetric encryption of the asset
-@property (nonatomic, copy, readonly) NSData *otrKey;
+@property (nonatomic, copy, readonly, nonnull) NSData *otrKey;
 /// HMAC key used to compute the digest
-@property (nonatomic, copy, readonly) NSData *macKey;
+@property (nonatomic, copy, readonly, nullable) NSData *macKey;
 /// HMAC digest
-@property (nonatomic, copy, readonly) NSData *mac;
+@property (nonatomic, copy, readonly, nullable) NSData *mac;
 /// SHA-256 digest
-@property (nonatomic, copy, readonly) NSData *sha256;
+@property (nonatomic, copy, readonly, nullable) NSData *sha256;
 /// Wether it has a HMAC digest
 @property (nonatomic, readonly) BOOL hasHMACDigest;
 /// Wether it has a SHA256 digest
 @property (nonatomic, readonly) BOOL hasSHA256Digest;
 
 
-- (instancetype)initWithOtrKey:(NSData *)otrKey macKey:(NSData *)macKey mac:(NSData *)mac;
-- (instancetype)initWithOtrKey:(NSData *)otrKey sha256:(NSData *)sha256;
+- (nonnull instancetype)initWithOtrKey:(nonnull NSData *)otrKey macKey:(nonnull NSData *)macKey mac:(nonnull NSData *)mac;
+- (nonnull instancetype)initWithOtrKey:(nonnull NSData *)otrKey sha256:(nonnull NSData *)sha256;
 
 @end
 
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface ZMGenericMessage (Utils)
 
@@ -56,7 +59,6 @@
 + (ZMGenericMessage *)messageWithText:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview nonce:(NSString *)nonce;
 + (ZMGenericMessage *)messageWithImageData:(NSData *)imageData format:(ZMImageFormat)format nonce:(NSString *)nonce;
 + (ZMGenericMessage *)messageWithConfirmation:(NSString *)messageID type:(ZMConfirmationType)type nonce:(NSString *)nonce;
-
 
 + (ZMGenericMessage *)messageWithMediumImageProperties:(nullable ZMIImageProperties *)mediumProperties
                               processedImageProperties:(nullable ZMIImageProperties *)processedProperties
@@ -96,8 +98,13 @@
 
 @end
 
+NS_ASSUME_NONNULL_END
+
+
 @interface ZMImageAsset (Utils)
 
 - (ZMImageFormat)imageFormat;
 
 @end
+
+

@@ -60,7 +60,7 @@ class ProtosTests: XCTestCase {
         let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
         
         // when
-        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: nil, nonce: nonce.description, format: format)!
+        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: nil, nonce: nonce.description, format: format)
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -90,7 +90,7 @@ class ProtosTests: XCTestCase {
         let keys = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
         
         // when
-        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: keys, nonce: nonce.description, format: format)!
+        let message = ZMGenericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: keys, nonce: nonce.description, format: format)
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -115,7 +115,7 @@ class ProtosTests: XCTestCase {
         let nonce = "nonceeeee";
         
         // when
-        let message = ZMGenericMessage(imageData: data as Data, format: .medium, nonce: nonce)!
+        let message = ZMGenericMessage(imageData: data as Data, format: .medium, nonce: nonce)
         
         // then
         XCTAssertEqual(message.image.width, 0)
@@ -132,7 +132,7 @@ class ProtosTests: XCTestCase {
     
     func testThatItCanCreateKnock() {
         let nonce = NSUUID()
-        let message = ZMGenericMessage.knock(withNonce: nonce.uuidString.lowercased())!
+        let message = ZMGenericMessage.knock(withNonce: nonce.uuidString.lowercased())
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasKnock())
@@ -145,7 +145,7 @@ class ProtosTests: XCTestCase {
         let conversationID = "someID"
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = "nonce"
-        let message = ZMGenericMessage(lastRead: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)!
+        let message = ZMGenericMessage(lastRead: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasLastRead())
@@ -161,7 +161,7 @@ class ProtosTests: XCTestCase {
         let conversationID = "someID"
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = "nonce"
-        let message = ZMGenericMessage(clearedTimestamp: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)!
+        let message = ZMGenericMessage(clearedTimestamp: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasCleared())
@@ -174,7 +174,7 @@ class ProtosTests: XCTestCase {
     
     func testThatItCanCreateSessionReset() {
         let nonce = NSUUID()
-        let message = ZMGenericMessage.sessionReset(withNonce: nonce.uuidString.lowercased())!
+        let message = ZMGenericMessage.sessionReset(withNonce: nonce.uuidString.lowercased())
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasClientAction())
