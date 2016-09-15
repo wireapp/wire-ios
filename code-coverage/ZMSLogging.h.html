@@ -1,0 +1,502 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>ZMSLogging.h - Slather</title>
+<link href="slather.css" media="all" rel="stylesheet">
+</head>
+<body>
+<header><div class="row"><a href="index.html"><img src="logo.jpg" alt="Slather logo"></a></div></header><div class="row"><div id="reports">
+<h2 class="cov_title">
+<span>Coverage for "ZMSLogging.h" : </span><span class="cov_low">44.44%</span>
+</h2>
+<h4 class="cov_subtitle">(4 of 9 relevant lines covered)</h4>
+<h4 class="cov_filepath">../wire-ios-utilities/Carthage/Build/iOS/ZMCSystem.framework/Headers/ZMSLogging.h</h4>
+<table class="source_code">
+<tr class="never">
+<td class="num">1</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">2</td>
+<td class="src"><pre><code class="objc">// Wire</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">3</td>
+<td class="src"><pre><code class="objc">// Copyright (C) 2016 Wire Swiss GmbH</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">4</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">5</td>
+<td class="src"><pre><code class="objc">// This program is free software: you can redistribute it and/or modify</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">6</td>
+<td class="src"><pre><code class="objc">// it under the terms of the GNU General Public License as published by</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">7</td>
+<td class="src"><pre><code class="objc">// the Free Software Foundation, either version 3 of the License, or</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">8</td>
+<td class="src"><pre><code class="objc">// (at your option) any later version.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">9</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">10</td>
+<td class="src"><pre><code class="objc">// This program is distributed in the hope that it will be useful,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">11</td>
+<td class="src"><pre><code class="objc">// but WITHOUT ANY WARRANTY; without even the implied warranty of</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">12</td>
+<td class="src"><pre><code class="objc">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">13</td>
+<td class="src"><pre><code class="objc">// GNU General Public License for more details.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">14</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">15</td>
+<td class="src"><pre><code class="objc">// You should have received a copy of the GNU General Public License</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">16</td>
+<td class="src"><pre><code class="objc">// along with this program. If not, see http://www.gnu.org/licenses/.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">17</td>
+<td class="src"><pre><code class="objc">// </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">18</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">19</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">20</td>
+<td class="src"><pre><code class="objc">#import &lt;Foundation/Foundation.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">21</td>
+<td class="src"><pre><code class="objc">#import &lt;ZMCSystem/ZMSAsserts.h&gt;</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">22</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">23</td>
+<td class="src"><pre><code class="objc">/**</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">24</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">25</td>
+<td class="src"><pre><code class="objc"> Logging</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">26</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">27</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">28</td>
+<td class="src"><pre><code class="objc"> This is for zmessaging logging.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">29</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">30</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">31</td>
+<td class="src"><pre><code class="objc"> How to use:</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">32</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">33</td>
+<td class="src"><pre><code class="objc"> At the top of the file define the log level like so:</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">34</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">35</td>
+<td class="src"><pre><code class="objc"> @code</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">36</td>
+<td class="src"><pre><code class="objc"> static char* const ZMLogTag ZM_UNUSED = "Network";</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">37</td>
+<td class="src"><pre><code class="objc"> @endcode</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">38</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">39</td>
+<td class="src"><pre><code class="objc"> The @c ZMLogError() etc. then work just like @c NSLog() does.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">40</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">41</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">42</td>
+<td class="src"><pre><code class="objc"> You can set a (symbolic) breakpoint at ZMLogDebugger to stop automatically when a warning or error level message is logged.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">43</td>
+<td class="src"><pre><code class="objc"> </code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">44</td>
+<td class="src"><pre><code class="objc"> **/</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">45</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">46</td>
+<td class="src"><pre><code class="objc">/// This is a callback that is invoked every time there is a log error</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">47</td>
+<td class="src"><pre><code class="objc">extern void (^ZMLoggingDebuggingHook)(const char *tag, char const * const filename, int linenumber, NSString *output);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">48</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">49</td>
+<td class="src"><pre><code class="objc">#define ZMLogError(format, ...) ZMLogWithLevel(ZMLogLevelError, format, ##__VA_ARGS__)</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">50</td>
+<td class="src"><pre><code class="objc">#define ZMLogWarn(format, ...) ZMLogWithLevel(ZMLogLevelWarn, format, ##__VA_ARGS__)</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">51</td>
+<td class="src"><pre><code class="objc">#define ZMLogInfo(format, ...) ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMLogTag, format, ##__VA_ARGS__)</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">52</td>
+<td class="src"><pre><code class="objc">#define ZMLogDebug(format, ...) ZMLogWithLevelAndTag(ZMLogLevelDebug, ZMLogTag, format, ##__VA_ARGS__)</code></pre></td>
+<td class="coverage">208x</td>
+</tr>
+<tr class="never">
+<td class="num">53</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">54</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">55</td>
+<td class="src"><pre><code class="objc">#define ZMLogWithLevelAndTag(level, tag, format, ...) \</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="covered">
+<td class="num">56</td>
+<td class="src"><pre><code class="objc">    do { \</code></pre></td>
+<td class="coverage">208x</td>
+</tr>
+<tr class="covered">
+<td class="num">57</td>
+<td class="src"><pre><code class="objc">        ZMLog(tag, __FILE__, __LINE__, level, format, ##__VA_ARGS__); \</code></pre></td>
+<td class="coverage">208x</td>
+</tr>
+<tr class="covered">
+<td class="num">58</td>
+<td class="src"><pre><code class="objc">    } while (0)</code></pre></td>
+<td class="coverage">208x</td>
+</tr>
+<tr class="never">
+<td class="num">59</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">60</td>
+<td class="src"><pre><code class="objc">#define ZMLogWithLevel(level, format, ...) \</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="missed">
+<td class="num">61</td>
+<td class="src"><pre><code class="objc">    do { \</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">62</td>
+<td class="src"><pre><code class="objc">        ZMLog(0, __FILE__, __LINE__, level, format, ##__VA_ARGS__); \</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="missed">
+<td class="num">63</td>
+<td class="src"><pre><code class="objc">    } while (0)</code></pre></td>
+<td class="coverage">!</td>
+</tr>
+<tr class="never">
+<td class="num">64</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">65</td>
+<td class="src"><pre><code class="objc">typedef NS_ENUM(int8_t, ZMLogLevel_t) {</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">66</td>
+<td class="src"><pre><code class="objc">    ZMLogLevelError = 0,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">67</td>
+<td class="src"><pre><code class="objc">    ZMLogLevelWarn,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">68</td>
+<td class="src"><pre><code class="objc">    ZMLogLevelInfo,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">69</td>
+<td class="src"><pre><code class="objc">    ZMLogLevelDebug,</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">70</td>
+<td class="src"><pre><code class="objc">};</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">71</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">72</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">73</td>
+<td class="src"><pre><code class="objc">/// Use this to know if the log is at a certain level. Allows you to avoid preparing a log message with some complex operations if the log is not needed</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">74</td>
+<td class="src"><pre><code class="objc">#define ZMLogLevelIsActive(tag, level) \</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">75</td>
+<td class="src"><pre><code class="objc">	(__builtin_expect((level &lt;= ZMLogGetLevelForTag(tag)), 0))</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">76</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">77</td>
+<td class="src"><pre><code class="objc">/// Logs a message</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">78</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN void ZMLog(const char *tag, char const * const filename, int linenumber, ZMLogLevel_t logLevel, NSString *format, ...) NS_FORMAT_FUNCTION(5,6);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">79</td>
+<td class="src"><pre><code class="objc">/// Asserts</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">80</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN void ZMDebugAssertMessage(const char *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">81</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">82</td>
+<td class="src"><pre><code class="objc">#pragma mark - Turning logs on and off</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">83</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">84</td>
+<td class="src"><pre><code class="objc">/// Sets the log level for a specific tag</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">85</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN void ZMLogSetLevelForTag(ZMLogLevel_t level, const char *tag);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">86</td>
+<td class="src"><pre><code class="objc">/// Gets the log level for a specific tag</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">87</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN ZMLogLevel_t ZMLogGetLevelForTag(const char *tag);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">88</td>
+<td class="src"><pre><code class="objc">/// Returns a list of all currently registered log tags. A tag is returned only if it was ever logged, or ZMLogInitForTag was ever called.</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">89</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN NSSet* ZMLogGetAllTags(void);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">90</td>
+<td class="src"><pre><code class="objc">/// Registers a logging tag</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">91</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN void ZMLogInitForTag(const char *tag);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">92</td>
+<td class="src"><pre><code class="objc">/// Wait until all changes to the log levels have been propagated</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">93</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN void ZMLogSynchronize();</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">94</td>
+<td class="src"><pre><code class="objc">/// write a snapshot of the last 10000 system logs, takes everything it can</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">95</td>
+<td class="src"><pre><code class="objc">ZM_EXTERN void ZMLogSnapshot(NSString *filepath);</code></pre></td>
+<td class="coverage"></td>
+</tr>
+<tr class="never">
+<td class="num">96</td>
+<td class="src"><pre><code class="objc"></code></pre></td>
+<td class="coverage"></td>
+</tr>
+</table>
+</div></div>
+<footer><div class="row">
+<p><a href="https://github.com/SlatherOrg/slather">Fork me on Github</a></p>
+<p>&copy; 2016 Slather</p>
+</div></footer><script src="highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
