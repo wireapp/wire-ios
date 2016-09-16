@@ -61,7 +61,7 @@ extern NSString * const ZMURLSessionBackgroundIdentifier;
 
 @property (nonatomic, readonly) BOOL isBackgroundSession;
 
-- (NSURLSessionTask *)taskWithRequest:(NSURLRequest *)request bodyData:(nullable NSData *)bodyData transportRequest:(nullable ZMTransportRequest *)request;
+- (nullable NSURLSessionTask *)taskWithRequest:(NSURLRequest *)request bodyData:(nullable NSData *)bodyData transportRequest:(nullable ZMTransportRequest *)request;
 
 @end
 

@@ -69,7 +69,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         handler.groupQueue = groupQueue;
         handler.block = block;
     }
-    return handler;
+    return (ZMCompletionHandler * _Nonnull)handler;
 }
 
 @end;
@@ -93,7 +93,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         handler.groupQueue = groupQueue;
         handler.block = block;
     }
-    return handler;
+    return (ZMTaskCreatedHandler * _Nonnull)handler;
 }
 
 @end;
@@ -119,7 +119,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         handler.groupQueue = groupQueue;
         handler.block = block;
     }
-    return handler;
+    return (ZMTaskProgressHandler * _Nonnull)handler;
 }
 
 @end;

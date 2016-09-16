@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZMMultipartBodyItem : NSObject
 
 @property (nonatomic, readonly, copy) NSData *data;
-@property (nonatomic, readonly, copy) NSString *contentType;
+@property (nonatomic, readonly, copy, nullable) NSString *contentType;
 @property (nonatomic, readonly, copy, nullable) NSDictionary *headers;
 
 - (instancetype)initWithData:(NSData *)data contentType:(NSString *)contentType headers:(nullable NSDictionary *)headers;
