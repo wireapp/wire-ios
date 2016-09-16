@@ -19,10 +19,9 @@
 
 import Foundation
 
-
 public extension UUID {
 
-    func transportString() -> String? {
+    func transportString() -> String {
         return (self as NSUUID).transportString()
     }
 }
