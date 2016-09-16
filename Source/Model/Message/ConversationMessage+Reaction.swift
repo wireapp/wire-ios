@@ -30,7 +30,7 @@ extension ZMMessage {
         
         let genericMessage = ZMGenericMessage(
             emojiString: emoji,
-            messageID: message.nonce.transportString()!,
+            messageID: message.nonce.transportString(),
             nonce: NSUUID().transportString()
         )
     

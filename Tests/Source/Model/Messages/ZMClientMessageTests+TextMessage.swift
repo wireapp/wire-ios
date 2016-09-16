@@ -66,7 +66,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: article.protocolBuffer.update(withOtrKey: Data(), sha256: Data()), nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: article.protocolBuffer.update(withOtrKey: Data(), sha256: Data()), nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -89,7 +89,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -114,7 +114,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         preview.message = name
 
         let updated = preview.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
-        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: updated, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: updated, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -137,7 +137,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         preview.author = "Author"
         preview.message = name
-        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -160,7 +160,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         preview.author = "Author"
         preview.message = name
-        let genericMessage = ZMGenericMessage(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString()!)
+        let genericMessage = ZMGenericMessage(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString())
         clientMessage.add(genericMessage.data())
         clientMessage.nonce = nonce
         uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .original, encrypted: false, data: .secureRandomData(ofLength: 256))
@@ -188,7 +188,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         let assetKey = "123"
 
         let linkPreview = article.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()).update(withAssetKey: assetKey, assetToken: nil)
-        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: linkPreview, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: linkPreview, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -207,7 +207,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         let article = Article(originalURLString: "example.com/article/original", permamentURLString: "http://www.example.com/article/1", offset: 12)
         article.title = "title"
         article.summary = "summary"
-        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -233,7 +233,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         twitterStatus.message = name
         
         let linkPreview = twitterStatus.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()).update(withAssetKey: assetKey, assetToken: nil)
-        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: linkPreview, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: linkPreview, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -256,7 +256,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         preview.author = "Author"
         preview.message = name
-        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         
         // when
@@ -308,7 +308,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         let updated = preview.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
         let withID = updated.update(withAssetKey: "ID", assetToken: nil)
-        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: withID, nonce: nonce.transportString()!).data())
+        clientMessage.add(ZMGenericMessage(text: "Text", linkPreview: withID, nonce: nonce.transportString()).data())
         clientMessage.nonce = nonce
         try! uiMOC.obtainPermanentIDs(for: [clientMessage])
 

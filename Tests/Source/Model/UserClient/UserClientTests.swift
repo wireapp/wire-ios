@@ -269,7 +269,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
         
         self.syncMOC.performGroupedBlockAndWait {
             let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
-            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId!)
+            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId)
             fetchRequest.fetchLimit = 1
             // when
             do {
