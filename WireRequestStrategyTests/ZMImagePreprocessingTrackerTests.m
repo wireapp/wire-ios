@@ -168,7 +168,7 @@
     // when
     self.imagePreprocessingQueue.suspended = YES;
     [self.sut objectsDidChange:objects];
-    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:nil forFormat:ZMImageFormatOriginal];
+    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:NSData.data forFormat:ZMImageFormatOriginal];
     [self.sut objectsDidChange:objects];
     
     // then
@@ -189,8 +189,8 @@
     [self.sut objectsDidChange:objects];
     self.imagePreprocessingQueue.suspended = NO;
     [self.imagePreprocessingQueue waitUntilAllOperationsAreFinished];
-    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:nil forFormat:ZMImageFormatOriginal];
-    [self.imageMessage2.imageAssetStorage updateMessageWithImageData:nil forFormat:ZMImageFormatOriginal];
+    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:NSData.data forFormat:ZMImageFormatOriginal];
+    [self.imageMessage2.imageAssetStorage updateMessageWithImageData:NSData.data forFormat:ZMImageFormatOriginal];
     [self.sut objectsDidChange:objects];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.3]);
     
