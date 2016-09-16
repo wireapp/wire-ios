@@ -156,10 +156,10 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 
 @interface ZMTransportRequest (ImageUpload)
 
-+ (instancetype)postRequestWithPath:(NSString *)path imageData:(NSData *)data contentDisposition:(NSDictionary *)contentDisposition;
++ (_Null_unspecified instancetype)postRequestWithPath:(NSString *)path imageData:(NSData *)data contentDisposition:(NSDictionary *)contentDisposition;
 
-+ (instancetype)multipartRequestWithPath:(NSString *)path imageData:(NSData *)data metaData:(NSDictionary *)metaData;
-+ (instancetype)multipartRequestWithPath:(NSString *)path imageData:(NSData *)data metaData:(NSDictionary *)metaData mediaContentType:(NSString *)mediaContentType;
++ (_Null_unspecified instancetype)multipartRequestWithPath:(NSString *)path imageData:(NSData *)data metaData:(NSDictionary *)metaData;
++ (_Null_unspecified instancetype)multipartRequestWithPath:(NSString *)path imageData:(NSData *)data metaData:(NSDictionary *)metaData mediaContentType:(NSString *)mediaContentType;
 
 + (instancetype)multipartRequestWithPath:(NSString *)path
                                imageData:(NSData *)data
