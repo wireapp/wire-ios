@@ -39,7 +39,7 @@ extension ZMClientMessageTests_Reaction {
         
         uiMOC.saveOrRollback()
         
-        let genericMessage = ZMGenericMessage(emojiString: "❤️", messageID: message.nonce.transportString()!, nonce: UUID.create().transportString()!)
+        let genericMessage = ZMGenericMessage(emojiString: "❤️", messageID: message.nonce.transportString(), nonce: UUID.create().transportString())
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         
         // when
@@ -68,7 +68,7 @@ extension ZMClientMessageTests_Reaction {
         
         uiMOC.saveOrRollback()
         
-        let genericMessage = ZMGenericMessage(emojiString: "TROP BIEN", messageID: message.nonce.transportString()!, nonce: UUID.create().transportString()!)
+        let genericMessage = ZMGenericMessage(emojiString: "TROP BIEN", messageID: message.nonce.transportString(), nonce: UUID.create().transportString())
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         
         // when
@@ -98,7 +98,7 @@ extension ZMClientMessageTests_Reaction {
         
         uiMOC.saveOrRollback()
         
-        let genericMessage = ZMGenericMessage(emojiString: "", messageID: message.nonce.transportString()!, nonce: UUID.create().transportString()!)
+        let genericMessage = ZMGenericMessage(emojiString: "", messageID: message.nonce.transportString(), nonce: UUID.create().transportString())
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         
         // when

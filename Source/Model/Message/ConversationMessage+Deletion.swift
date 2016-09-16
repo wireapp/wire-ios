@@ -27,7 +27,7 @@ extension ZMConversation {
         else { return }
         
         let nonce = NSUUID()
-        let genericMessage = ZMGenericMessage(hideMessage: messageNonce.transportString()!, inConversation: convID.transportString()!, nonce: nonce.transportString()) 
+        let genericMessage = ZMGenericMessage(hideMessage: messageNonce.transportString(), inConversation: convID.transportString(), nonce: nonce.transportString()) 
         ZMConversation.appendSelfConversation(withGenericMessageData: genericMessage.data(), managedObjectContext: message.managedObjectContext!)
     }
 }
@@ -59,7 +59,7 @@ extension ZMMessage {
         guard let conversation = conversation else { return }
         
         // We insert a message of type `ZMMessageDelete` containing the nonce of the message that should be deleted
-        let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString()!, nonce: NSUUID().transportString())
+        let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         
         conversation.append(deletedMessage, expires:false, hidden: true)
         removeClearingSender(true)
@@ -75,7 +75,7 @@ extension ZMMessage {
         guard !isZombieObject, let sender = sender , sender.isSelfUser else { return nil }
         guard let conversation = conversation else { return nil }
         
-        let edited = ZMGenericMessage(editMessage: nonce.transportString()!, newText: newText, nonce: NSUUID().transportString())
+        let edited = ZMGenericMessage(editMessage: nonce.transportString(), newText: newText, nonce: NSUUID().transportString())
         
         let newMessage = conversation.appendClientMessage(with: edited.data())
         newMessage.isEncrypted = true

@@ -41,7 +41,7 @@ extension ClientMessageTests_OTR {
             let textBuilder = ZMText.builder()!
             textBuilder.setContent(self.textMessageRequiringExternalMessage(2))
             builder.setText(textBuilder.build()!)
-            builder.setMessageId(nonce.transportString()!)
+            builder.setMessageId(nonce.transportString())
             let textMessage = builder.build()!
             
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
@@ -104,7 +104,7 @@ extension ClientMessageTests_OTR {
             self.syncConversation.remoteIdentifier = UUID()
             let message = ZMConversation.appendSelfConversation(withLastReadOf: self.syncConversation)
             
-            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString()!: [self.syncSelfClient2.remoteIdentifier]]
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier]]
             
             // when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
@@ -130,7 +130,7 @@ extension ClientMessageTests_OTR {
             self.syncConversation.remoteIdentifier = UUID()
             let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation)
             
-            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString()!: [self.syncSelfClient2.remoteIdentifier]]
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier]]
             
             // when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {

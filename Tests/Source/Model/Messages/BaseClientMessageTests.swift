@@ -79,14 +79,14 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             
             self.syncConversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [self.syncUser1, self.syncUser2, self.syncUser3])
             self.expectedRecipients = [
-                self.syncSelfUser.remoteIdentifier!.transportString()!: [
+                self.syncSelfUser.remoteIdentifier!.transportString(): [
                     self.syncSelfClient2.remoteIdentifier
                 ],
-                self.syncUser1.remoteIdentifier!.transportString()!: [
+                self.syncUser1.remoteIdentifier!.transportString(): [
                     self.syncUser1Client1.remoteIdentifier,
                     self.syncUser1Client2.remoteIdentifier
                 ],
-                self.syncUser2.remoteIdentifier!.transportString()!: [
+                self.syncUser2.remoteIdentifier!.transportString(): [
                     self.syncUser2Client1.remoteIdentifier
                 ]
             ]
@@ -113,14 +113,14 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         
         self.conversation = try! self.uiMOC.existingObject(with: self.syncConversation.objectID) as! ZMConversation
         self.expectedRecipients = [
-            self.selfUser.remoteIdentifier!.transportString()!: [
+            self.selfUser.remoteIdentifier!.transportString(): [
                 self.selfClient2.remoteIdentifier
             ],
-            self.user1.remoteIdentifier!.transportString()!: [
+            self.user1.remoteIdentifier!.transportString(): [
                 self.user1Client1.remoteIdentifier,
                 self.user1Client2.remoteIdentifier
             ],
-            self.user2.remoteIdentifier!.transportString()!: [
+            self.user2.remoteIdentifier!.transportString(): [
                 self.user2Client1.remoteIdentifier
             ]
         ]
@@ -167,7 +167,7 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         ]
         switch eventSource {
         case .download:
-            return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)
+            return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
         default:
             let streamPayload = ["payload" : [payload],
                                  "id" : UUID.create().transportString()] as [String : Any]
