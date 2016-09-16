@@ -31,12 +31,12 @@ public class SharingSession {
      /// The failure reason of a `SharingSession` initialization
      /// - NeedsMigration: The database needs a migration which is only done in the main app
      /// - LoggedOut:      No user is logged in
-    enum InitializationError: ErrorType {
-        case NeedsMigration, LoggedOut
+    enum InitializationError: Error {
+        case needsMigration, loggedOut
     }
     
     /// The location of the database in the shared container
-    let sharedDatabaseDirectory: NSURL
+    let sharedDatabaseDirectory: URL
     
     /// The `NSManagedObjectContext` used to retrieve the conversations,
     /// we only use a single context in the sharing session for now
@@ -52,7 +52,7 @@ public class SharingSession {
     
     /// Whether all prerequsisties for sharing are met
     var canShare: Bool {
-        return authenticationStatus.state == .Authenticated
+        return authenticationStatus.state == .authenticated
     }
 
     /// List of non-archived conversations in which the user can write
@@ -72,13 +72,13 @@ public class SharingSession {
     /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
-    init(databaseDirectory: NSURL, authenticationStatusProvider: AuthenticationStatusProvider) throws {
+    init(databaseDirectory: URL, authenticationStatusProvider: AuthenticationStatusProvider) throws {
         sharedDatabaseDirectory = databaseDirectory
         authenticationStatus = authenticationStatusProvider
         
-        guard !NSManagedObjectContext.needsToPrepareLocalStoreInDirectory(databaseDirectory) else { throw InitializationError.NeedsMigration }
-        guard authenticationStatusProvider.state == .Authenticated else { throw InitializationError.LoggedOut }
-        managedObjectContext = NSManagedObjectContext.createUserInterfaceContextWithStoreDirectory(databaseDirectory)
+        guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory) else { throw InitializationError.needsMigration }
+        guard authenticationStatusProvider.state == .authenticated else { throw InitializationError.loggedOut }
+        managedObjectContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory)
     }
 
     /// Cancel all pending tasks.

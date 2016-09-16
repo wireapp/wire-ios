@@ -22,28 +22,28 @@ import ZMCDataModel
 
 
 extension ZMConversation: Conversation {
-    
+
     var name: String { return displayName }
     
-    var image: NSData? {
-        guard conversationType == .OneOnOne  else { return nil }
+    var image: Data? {
+        guard conversationType == .oneOnOne  else { return nil }
         return (otherActiveParticipants.firstObject as? ZMBareUser)?.imageSmallProfileData
     }
     
-    public func appendTextMessage(message: String) -> Sendable? {
-        return appendMessageWithText(message) as? Sendable
+    public func appendTextMessage(_ message: String) -> Sendable? {
+        return appendMessage(withText: message) as? Sendable
     }
     
-    public func appendImage(image: NSURL) -> Sendable? {
-        return appendMessageWithImageAtURL(image) as? Sendable
+    public func appendImage(_ url: URL) -> Sendable? {
+        return appendMessageWithImage(at: url) as? Sendable
     }
     
-    public func appendFile(metaData: ZMFileMetadata) -> Sendable? {
-        return appendMessageWithFileMetadata(metaData) as? Sendable
+    public func appendFile(_ metaData: ZMFileMetadata) -> Sendable? {
+        return appendMessage(with: metaData) as? Sendable
     }
     
-    public func appendLocation(location: LocationData) -> Sendable? {
-        return appendMessageWithLocationData(location) as? Sendable
+    public func appendLocation(_ location: LocationData) -> Sendable? {
+        return appendMessage(with: location) as? Sendable
     }
 
 }

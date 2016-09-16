@@ -32,10 +32,10 @@ public protocol Sendable {
     
     /// Adds an observer for a change in status or delivery progress
     /// - returns: the observable token
-    func registerObserverToken(observer: SendableObserver) -> SendableObserverToken
+    func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken
     
     /// Removes an observer token
-    func remove(observerToken: SendableObserverToken)
+    func remove(_ observerToken: SendableObserverToken)
     
 }
 

@@ -21,6 +21,10 @@ import XCTest
 import ZMCDataModel
 @testable import WireShareEngine
 
+class FakeAuthenticationStatus: AuthenticationStatusProvider {
+    var state: AuthenticationState = .authenticated
+}
+
 class BaseSharingSessionTests: XCTestCase {
 
     var moc: NSManagedObjectContext!
@@ -30,8 +34,8 @@ class BaseSharingSessionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let fm = NSFileManager.defaultManager()
-        let url = try! fm.URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create:true)
+        let fm = FileManager.default
+        let url = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:true)
         
         authenticationStatus = FakeAuthenticationStatus()
         sharingSession = try! SharingSession(databaseDirectory: url, authenticationStatusProvider: authenticationStatus)
