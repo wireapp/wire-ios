@@ -120,7 +120,7 @@
     return [self eventsArrayWithUUID:uuid payloadArray:payloadArray transient:transient source:source];
 }
 
-+ (instancetype)eventFromEventStreamPayload:(id<ZMTransportData>)payload uuid:(NSUUID *)uuid
++ (nullable instancetype)eventFromEventStreamPayload:(id<ZMTransportData>)payload uuid:(NSUUID *)uuid
 {
     return [[self alloc] initWithUUID:uuid payload:[payload asDictionary] transient:NO decrypted:NO source:ZMUpdateEventSourceDownload];
 }
