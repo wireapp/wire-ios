@@ -21,10 +21,11 @@ import Foundation
 
 extension ZMConversation {
     static func appendHideMessageToSelfConversation(_ message: ZMMessage) {
-        guard let messageNonce = message.nonce, let conversation = message.conversation
+        guard let messageNonce = message.nonce,
+              let conversation = message.conversation,
+              let convID = conversation.remoteIdentifier
         else { return }
         
-        let convID = conversation.remoteIdentifier
         let nonce = NSUUID()
         let genericMessage = ZMGenericMessage(hideMessage: messageNonce.transportString()!, inConversation: convID.transportString()!, nonce: nonce.transportString()) 
         ZMConversation.appendSelfConversation(withGenericMessageData: genericMessage.data(), managedObjectContext: message.managedObjectContext!)
