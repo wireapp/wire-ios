@@ -60,7 +60,7 @@ extern NSString * const ZMTransportSessionShouldKeepWebsocketOpenKey;
 /// Return type for an enqueue operation
 @interface ZMTransportEnqueueResult : NSObject
 
-+ (instancetype)resultDidHaveLessRequestsThanMax:(BOOL)didHaveLessThanMax didGenerateNonNullRequest:(BOOL) didGenerateRequest;
++ (_Null_unspecified instancetype)resultDidHaveLessRequestsThanMax:(BOOL)didHaveLessThanMax didGenerateNonNullRequest:(BOOL)didGenerateRequest;
 
 @property (nonatomic, readonly) BOOL didHaveLessRequestThanMax;
 @property (nonatomic, readonly) BOOL didGenerateNonNullRequest;

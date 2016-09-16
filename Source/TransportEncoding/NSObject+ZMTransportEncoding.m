@@ -73,15 +73,13 @@ static locale_t posixLocale()
     time_t const t = (time_t) floor([self timeIntervalSince1970]);
     (void) gmtime_r(&t, &sometime);
     size_t const c = strftime_l(buffer, sizeof(buffer), FormatString, &sometime, posixLocale());
-    if (c == 0) {
-        return nil;
-    }
+    RequireString(c != 0, "Could not create transport string from date");
+    
     double remainder = [self timeIntervalSince1970] - floor([self timeIntervalSince1970]);
     long milli = (long) fmax(fmin(round(remainder * 1000.), 999), 0);
     int const c2 = snprintf_l(buffer + c, sizeof(buffer) - c, posixLocale(), RemainderFormatString, (int) milli);
-    if (c2 == 0) {
-        return nil;
-    }
+    RequireString(c2 != 0, "Could not create transport string from date");
+
     return [NSString stringWithUTF8String:buffer];
 }
 
