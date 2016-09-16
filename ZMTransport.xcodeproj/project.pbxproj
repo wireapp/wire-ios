@@ -141,6 +141,8 @@
 		871668001BB2CD2A009C6EEA /* ZMKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 871667FF1BB2CD2A009C6EEA /* ZMKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF3A7A641D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A631D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift */; };
 		BF3A7A6B1D8C01D30034FF40 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */; };
+		BF3A7A6C1D8C04550034FF40 /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* ZMTransport.framework */; };
+		BF3A7A6D1D8C04550034FF40 /* ZMTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* ZMTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF453F1A1CC6377200403E1C /* ZMRequestCancellation.h in Headers */ = {isa = PBXBuildFile; fileRef = BF453F191CC6377200403E1C /* ZMRequestCancellation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF453F1D1CC63C4800403E1C /* ZMTaskIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BF453F1B1CC63C4800403E1C /* ZMTaskIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF453F1E1CC63C4800403E1C /* ZMTaskIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = BF453F1C1CC63C4800403E1C /* ZMTaskIdentifier.m */; };
@@ -170,6 +172,13 @@
 			remoteGlobalIDString = 3E88BCA61B1F35DF00232589;
 			remoteInfo = Transport;
 		};
+		BF3A7A6E1D8C04550034FF40 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E88BC9E1B1F35DF00232589 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E88BCA61B1F35DF00232589;
+			remoteInfo = "ZMTransport-ios";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -184,6 +193,17 @@
 				5477122B1B751FD000223568 /* ZMTesting.framework in CopyFiles */,
 				5477122C1B751FD000223568 /* ZMUtilities.framework in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF3A7A701D8C04550034FF40 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				BF3A7A6D1D8C04550034FF40 /* ZMTransport.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -375,6 +395,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF3A7A6B1D8C01D30034FF40 /* CoreImage.framework in Frameworks */,
+				BF3A7A6C1D8C04550034FF40 /* ZMTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -897,10 +918,12 @@
 				09A218631B790D330076547A /* Frameworks */,
 				87F180FE1D8698B200A6A2CB /* Install frameworks */,
 				09A218641B790D330076547A /* Resources */,
+				BF3A7A701D8C04550034FF40 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BF3A7A6F1D8C04550034FF40 /* PBXTargetDependency */,
 			);
 			name = "ZMTransport-tests-host";
 			productName = "ZMTransport-tests-host";
@@ -1157,6 +1180,11 @@
 			target = 3E88BCA61B1F35DF00232589 /* ZMTransport-ios */;
 			targetProxy = 3E88BCB41B1F35DF00232589 /* PBXContainerItemProxy */;
 		};
+		BF3A7A6F1D8C04550034FF40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E88BCA61B1F35DF00232589 /* ZMTransport-ios */;
+			targetProxy = BF3A7A6E1D8C04550034FF40 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1183,6 +1211,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120C1B751F7900223568 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1233,6 +1262,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120C1B751F7900223568 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
