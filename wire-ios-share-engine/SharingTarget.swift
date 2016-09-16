@@ -23,14 +23,14 @@ import ZMCDataModel
 public protocol SharingTarget {
     
     /// Appends a text message in the conversation
-    func appendTextMessage(message: String) -> Sendable?
+    func appendTextMessage(_ message: String) -> Sendable?
     
     /// Appends an image in the conversation
-    func appendImage(image: NSURL) -> Sendable?
+    func appendImage(_ image: URL) -> Sendable?
     
     /// Appends a file in the conversation
-    func appendFile(metaData: ZMFileMetadata) -> Sendable?
+    func appendFile(_ metaData: ZMFileMetadata) -> Sendable?
     
     /// Append a location in the conversation
-    func appendLocation(location: LocationData) -> Sendable?
+    func appendLocation(_ location: LocationData) -> Sendable?
 }

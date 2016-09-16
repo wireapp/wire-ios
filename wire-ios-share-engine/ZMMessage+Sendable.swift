@@ -29,23 +29,23 @@ private extension ZMMessage {
 
 }
 
-extension ZMMessage: Sendable {
-
-    public var deliveryProgress: Float? {
-        if reportsProgress {
-            // TODO
-        }
-        
-        return nil
-    }
-    
-    public func registerObserverToken(observer: SendableObserver) -> SendableObserverToken {
-        return addObserver(observer)
-    }
-    
-    
-    public func remove(observerToken: SendableObserverToken) {
-        removeObserver(observerToken)
-    }
-
-}
+//extension ZMMessage: Sendable {
+//
+//    public var deliveryProgress: Float? {
+//        if reportsProgress {
+//            // TODO
+//        }
+//        
+//        return nil
+//    }
+//    
+//    public func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken {
+//        return addObserver(observer)
+//    }
+//    
+//    
+//    public func remove(_ observerToken: SendableObserverToken) {
+//        removeObserver(observerToken)
+//    }
+//
+//}

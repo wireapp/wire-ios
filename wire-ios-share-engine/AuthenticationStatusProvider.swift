@@ -20,7 +20,7 @@
 import Foundation
 
 enum AuthenticationState {
-    case Authenticated, Unauthenticated
+    case authenticated, unauthenticated
 }
 
 protocol AuthenticationStatusProvider {
