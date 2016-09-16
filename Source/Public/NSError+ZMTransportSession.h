@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isTryAgainLaterError;
 
 
-+ (NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired;
++ (nullable NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired;
 
 @end
 

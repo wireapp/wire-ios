@@ -842,7 +842,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 @implementation ZMTransportEnqueueResult
 
-+ (instancetype)resultDidHaveLessRequestsThanMax:(BOOL)didHaveLessThanMax didGenerateNonNullRequest:(BOOL) didGenerateRequest;
++ (instancetype)resultDidHaveLessRequestsThanMax:(BOOL)didHaveLessThanMax didGenerateNonNullRequest:(BOOL)didGenerateRequest;
 {
     ZMTransportEnqueueResult *result = [[ZMTransportEnqueueResult alloc] init];
     if (result != nil) {
