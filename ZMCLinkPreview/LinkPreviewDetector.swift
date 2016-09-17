@@ -19,7 +19,11 @@
 
 import Foundation
 
-public final class LinkPreviewDetector : NSObject {
+@objc public protocol LinkPreviewDetectorType {
+    @objc optional func downloadLinkPreviews(inText text: String, completion: @escaping ([LinkPreview]) -> Void)
+}
+
+public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
     
     private let blacklist = PreviewBlacklist()
     private let linkDetector : NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
