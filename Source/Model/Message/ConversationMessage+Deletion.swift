@@ -20,23 +20,22 @@
 import Foundation
 
 extension ZMConversation {
-    static func appendHideMessageToSelfConversation(message: ZMMessage) {
+    static func appendHideMessageToSelfConversation(_ message: ZMMessage) {
         guard let messageNonce = message.nonce,
-            let conversation = message.conversation,
-            let convID = conversation.remoteIdentifier else {
-                return
-        }
-
+              let conversation = message.conversation,
+              let convID = conversation.remoteIdentifier
+        else { return }
+        
         let nonce = NSUUID()
-        let genericMessage = ZMGenericMessage(hideMessage: messageNonce.transportString(), inConversation: convID.transportString(), nonce: nonce.transportString())
-        ZMConversation.appendSelfConversationWithGenericMessageData(genericMessage.data().copy() as! NSData, managedObjectContext: message.managedObjectContext)
+        let genericMessage = ZMGenericMessage(hideMessage: messageNonce.transportString(), inConversation: convID.transportString(), nonce: nonce.transportString()) 
+        ZMConversation.appendSelfConversation(withGenericMessageData: genericMessage.data(), managedObjectContext: message.managedObjectContext!)
     }
 }
 
 extension ZMMessage {
     
     // NOTE: This is a free function meant to be called from Obj-C because you can't call protocol extension from it
-    public static func hideMessage(message: ZMConversationMessage) {
+    public static func hideMessage(_ message: ZMConversationMessage) {
         guard let castedMessage = message as? ZMMessage else { return }
         castedMessage.hideForSelfUser()
     }
@@ -46,48 +45,49 @@ extension ZMMessage {
         ZMConversation.appendHideMessageToSelfConversation(self)
 
         // To avoid reinserting when receiving an edit we delete the message locally
-        removeMessageClearingSender(true)
-        managedObjectContext?.deleteObject(self)
+        removeClearingSender(true)
+        managedObjectContext?.delete(self)
     }
     
-    public static func deleteForEveryone(message: ZMConversationMessage) {
+    public static func deleteForEveryone(_ message: ZMConversationMessage) {
         guard let castedMessage = message as? ZMMessage else { return }
         castedMessage.deleteForEveryone()
     }
     
     func deleteForEveryone() {
-        guard !isZombieObject, let sender = sender where sender.isSelfUser else { return }
+        guard !isZombieObject, let sender = sender , sender.isSelfUser else { return }
         guard let conversation = conversation else { return }
         
         // We insert a message of type `ZMMessageDelete` containing the nonce of the message that should be deleted
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         
-        conversation.appendGenericMessage(deletedMessage, expires:false, hidden: true)
-        removeMessageClearingSender(true)
+        conversation.append(deletedMessage, expires:false, hidden: true)
+        removeClearingSender(true)
     }
     
-    public static func edit(message: ZMConversationMessage, newText: String) -> ZMMessage? {
+    public static func edit(_ message: ZMConversationMessage, newText: String) -> ZMMessage? {
         guard let castedMessage = message as? ZMMessage else { return nil }
         return castedMessage.edit(newText)
     }
     
-    func edit(newText: String) -> ZMMessage? {
+    func edit(_ newText: String) -> ZMMessage? {
         guard isEditableMessage else { return nil }
-        guard !isZombieObject, let sender = sender where sender.isSelfUser else { return nil }
+        guard !isZombieObject, let sender = sender , sender.isSelfUser else { return nil }
         guard let conversation = conversation else { return nil }
         
         let edited = ZMGenericMessage(editMessage: nonce.transportString(), newText: newText, nonce: NSUUID().transportString())
-        let newMessage = conversation.appendClientMessageWithData(edited.data())
+        
+        let newMessage = conversation.appendClientMessage(with: edited.data())
         newMessage.isEncrypted = true
         newMessage.updatedTimestamp = newMessage.serverTimestamp
         newMessage.serverTimestamp = serverTimestamp
-        let oldIndex = conversation.messages.indexOfObject(self)
-        let newIndex = conversation.messages.indexOfObject(newMessage)
-        conversation.mutableMessages.moveObjectsAtIndexes(NSIndexSet(index:newIndex), toIndex: oldIndex)
+        let oldIndex = conversation.messages.index(of: self)
+        let newIndex = conversation.messages.index(of: newMessage)
+        conversation.mutableMessages.moveObjects(at: IndexSet(integer:newIndex), to: oldIndex)
 
         hiddenInConversation = conversation
         visibleInConversation = nil
-        newMessage.linkPreviewState = .WaitingToBeProcessed
+        newMessage.linkPreviewState = .waitingToBeProcessed
         return newMessage
     }
     
@@ -100,7 +100,7 @@ extension ZMClientMessage {
     override var isEditableMessage : Bool {
         if let genericMsg = genericMessage {
             return  genericMsg.hasEdited() ||
-                   (genericMsg.hasText() && (deliveryState == .Sent || deliveryState == .Delivered))
+                   (genericMsg.hasText() && (deliveryState == .sent || deliveryState == .delivered))
         }
         return false
     }

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -57,11 +57,11 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         self.setUpCaches()
-        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: "fake", object: nil))
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(Notification(name: Notification.Name(rawValue: "fake"), object: nil))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(user : ZMUser, modifier: ZMUser -> Void, expectedChangedField: UserInfoChangeKey, customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(_ user : ZMUser, modifier: (ZMUser) -> Void, expectedChangedField: UserInfoChangeKey, customAffectedKeys: AffectedKeys? = nil) {
 
         // given
         self.uiMOC.saveOrRollback()
@@ -83,7 +83,7 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
 
         if let changes = observer.notifications.firstObject as? UserChangeInfo {
             for key in userInfoChangeKeys where key != expectedChangedField  {
-                if let value = changes.valueForKey(key.rawValue) as? NSNumber {
+                if let value = changes.value(forKey: key.rawValue) as? NSNumber {
                     XCTAssertFalse(value.boolValue, "\(key.rawValue) was supposed to be false")
                 }
                 else {
@@ -98,7 +98,7 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesTheObserverOfANameChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "George"
         self.uiMOC.saveOrRollback()
 
@@ -112,7 +112,7 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiestheObserverOfMultipleNameChanges()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         let observer = UserChangeObserver(user: user)
         self.uiMOC.saveOrRollback()
 
@@ -140,12 +140,12 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesTheObserverOfAnAccentColorChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.accentColorValue = ZMAccentColor.StrongBlue
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.accentColorValue = ZMAccentColor.strongBlue
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-            modifier: { $0.accentColorValue = ZMAccentColor.SoftPink },
+            modifier: { $0.accentColorValue = ZMAccentColor.softPink },
             expectedChangedField: .AccentColor)
 
     }
@@ -153,108 +153,108 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesTheObserverOfAMediumProfileImageChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.remoteIdentifier = NSUUID.createUUID()
-        user.mediumRemoteIdentifier = NSUUID.createUUID()
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.remoteIdentifier = UUID.create()
+        user.mediumRemoteIdentifier = UUID.create()
         user.imageMediumData = self.verySmallJPEGData()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-            modifier: { $0.imageMediumData = NSData() },
+            modifier: { $0.imageMediumData = Data() },
             expectedChangedField: .ImageMediumData)
     }
 
     func testThatItNotifiesTheObserverOfASmallProfileImageChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.remoteIdentifier = NSUUID.createUUID()
-        user.smallProfileRemoteIdentifier = NSUUID.createUUID()
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.remoteIdentifier = UUID.create()
+        user.smallProfileRemoteIdentifier = UUID.create()
         user.imageSmallProfileData = self.verySmallJPEGData()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-            modifier: { $0.imageSmallProfileData = NSData() },
+            modifier: { $0.imageSmallProfileData = Data() },
             expectedChangedField: .ImageSmallProfileData)
     }
 
     func testThatItNotifiesTheObserverOfAnEmailChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.setEmailAddress("foo@example.com", onUser: user)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        self.setEmailAddress("foo@example.com", on: user)
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-            modifier: { self.setEmailAddress(nil, onUser: $0) },
+            modifier: { self.setEmailAddress(nil, on: $0) },
             expectedChangedField: .ProfileInfo)
     }
 
     func testThatItNotifiesTheObserverOfAPhoneNumberChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.setPhoneNumber("+99-32312423423", onUser: user)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        self.setPhoneNumber("+99-32312423423", on: user)
 
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-            modifier: { self.setPhoneNumber("+99-0000", onUser: $0) },
+            modifier: { self.setPhoneNumber("+99-0000", on: $0) },
             expectedChangedField: .ProfileInfo)
     }
 
     func testThatItNotifiesTheObserverOfAConnectionStateChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.connection = ZMConnection.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.connection!.status = ZMConnectionStatus.Pending
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        user.connection!.status = ZMConnectionStatus.pending
         self.uiMOC.saveOrRollback()
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-            modifier : { $0.connection!.status = ZMConnectionStatus.Accepted },
+            modifier : { $0.connection!.status = ZMConnectionStatus.accepted },
             expectedChangedField: .ConnectionState,
-            customAffectedKeys: AffectedKeys.All)
+            customAffectedKeys: AffectedKeys.all)
     }
 
     func testThatItNotifiesTheObserverOfACreatedIncomingConnection()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         self.uiMOC.saveOrRollback()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
             modifier : {
-                $0.connection = ZMConnection.insertNewObjectInManagedObjectContext(self.uiMOC)
-                $0.connection!.status = ZMConnectionStatus.Pending
+                $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+                $0.connection!.status = ZMConnectionStatus.pending
             },
             expectedChangedField: .ConnectionState,
-            customAffectedKeys: AffectedKeys.All)
+            customAffectedKeys: AffectedKeys.all)
     }
 
     func testThatItNotifiesTheObserverOfACreatedOutgoingConnection()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         self.uiMOC.saveOrRollback()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
             modifier : {
-                $0.connection = ZMConnection.insertNewObjectInManagedObjectContext(self.uiMOC)
-                $0.connection!.status = ZMConnectionStatus.Sent
+                $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+                $0.connection!.status = ZMConnectionStatus.sent
             },
             expectedChangedField: .ConnectionState,
-            customAffectedKeys: AffectedKeys.All)
+            customAffectedKeys: AffectedKeys.all)
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
 
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.setEmailAddress("foo@example.com", onUser: user)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        self.setEmailAddress("foo@example.com", on: user)
         self.uiMOC.saveOrRollback()
 
         let observer = UserChangeObserver(user: user)
@@ -272,16 +272,16 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesUserForClientStartsTrusting() {
 
         // given
-        let user = ZMUser.selfUserInContext(self.uiMOC)
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.mutableSetValueForKey(UserClientsKey).addObject(client)
-        otherUser.mutableSetValueForKey(UserClientsKey).addObject(otherClient)
+        let user = ZMUser.selfUser(in: self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let otherUser = ZMUser.insertNewObject(in:self.uiMOC)
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        user.mutableSetValue(forKey: UserClientsKey).add(client)
+        otherUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
 
         // when
         self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         self.checkThatItNotifiesTheObserverOfAChange(otherUser,
@@ -294,17 +294,17 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesUserForClientStartsIgnoring() {
 
         // given
-        let user = ZMUser.selfUserInContext(self.uiMOC)
-        let client = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        user.mutableSetValueForKey(UserClientsKey).addObject(client)
-        otherUser.mutableSetValueForKey(UserClientsKey).addObject(otherClient)
+        let user = ZMUser.selfUser(in: self.uiMOC)
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let otherUser = ZMUser.insertNewObject(in:self.uiMOC)
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        user.mutableSetValue(forKey: UserClientsKey).add(client)
+        otherUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
 
         // when
         client.trustClient(otherClient)
         self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         self.checkThatItNotifiesTheObserverOfAChange(otherUser,
@@ -318,17 +318,17 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItUpdatesClientObserversWhenClientIsAdded() {
 
         // given
-        let selfUser = ZMUser.selfUserInContext(self.uiMOC)
-        let selfClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        selfUser.mutableSetValueForKey(UserClientsKey).addObject(selfClient)
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfClient = UserClient.insertNewObject(in: self.uiMOC)
+        selfUser.mutableSetValue(forKey: UserClientsKey).add(selfClient)
         self.uiMOC.saveOrRollback()
         let observer = UserChangeObserver(user: selfUser)
 
         // when
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        selfUser.mutableSetValueForKey(UserClientsKey).addObject(otherClient)
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        selfUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
         self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         guard let changeInfo = observer.notifications.firstObject as? UserChangeInfo else { return XCTFail("Should receive a changeInfo for the added client") }
@@ -343,20 +343,20 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItUpdatesClientObserversWhenClientIsRemoved() {
 
         // given
-        let selfUser = ZMUser.selfUserInContext(self.uiMOC)
-        let selfClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(self.uiMOC)
-        selfUser.mutableSetValueForKey(UserClientsKey).addObject(selfClient)
-        selfUser.mutableSetValueForKey(UserClientsKey).addObject(otherClient)
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfClient = UserClient.insertNewObject(in: self.uiMOC)
+        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        selfUser.mutableSetValue(forKey: UserClientsKey).add(selfClient)
+        selfUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
         self.uiMOC.saveOrRollback()
         XCTAssertEqual(selfUser.clients.count, 2)
         
         let observer = UserChangeObserver(user: selfUser)
 
         // when
-        selfUser.mutableSetValueForKey(UserClientsKey).removeObject(otherClient)
+        selfUser.mutableSetValue(forKey: UserClientsKey).remove(otherClient)
         self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         guard let changeInfo = observer.notifications.firstObject as? UserChangeInfo else { return XCTFail("Should receive a changeInfo for the added client") }
@@ -375,39 +375,39 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         var syncMOCUser: ZMUser!
         
         syncMOC.performGroupedBlockAndWait {
-            syncMOCUser = ZMUser.insertNewObjectInManagedObjectContext(self.syncMOC)
+            syncMOCUser = ZMUser.insertNewObject(in:self.syncMOC)
             self.syncMOC.saveOrRollback()
             objectID = syncMOCUser.objectID
             XCTAssertEqual(syncMOCUser.clients.count, 0)
         }
-        spinMainQueueWithTimeout(0.5)
+        spinMainQueue(withTimeout: 0.5)
         
-        guard let object = try? uiMOC.existingObjectWithID(objectID), uiMOCUser = object as? ZMUser else {
+        guard let object = try? uiMOC.existingObject(with: objectID), let uiMOCUser = object as? ZMUser else {
             return XCTFail("Unable to get user with objectID in uiMOC")
         }
         
         let observer = UserChangeObserver(user: uiMOCUser)
         
         // we register for notifications to merge the two contexts
-        let notificationCenterToken = NSNotificationCenter.defaultCenter().addObserverForName(
-            NSManagedObjectContextDidSaveNotification,
+        let notificationCenterToken = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name.NSManagedObjectContextDidSave,
             object: syncMOC,
-            queue: .mainQueue()) { note in
+            queue: .main) { note in
                 
-            self.uiMOC.mergeChangesFromContextDidSaveNotification(note)
+            self.uiMOC.mergeChanges(fromContextDidSave: note)
             self.uiMOC.saveOrRollback()
         }
         
         // when adding a new client on the syncMOC
         syncMOC.performGroupedBlockAndWait {
-            let client = UserClient.insertNewObjectInManagedObjectContext(self.syncMOC)
-            syncMOCUser.mutableSetValueForKey(self.UserClientsKey).addObject(client)
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            syncMOCUser.mutableSetValue(forKey: self.UserClientsKey).add(client)
             self.syncMOC.saveOrRollback()
-            XCTAssertTrue(syncMOCUser.fault)
+            XCTAssertTrue(syncMOCUser.isFault)
         }
         
-        spinMainQueueWithTimeout(0.5)
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        spinMainQueue(withTimeout: 0.5)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then we should receive a changeInfo with clientsChanged on the uiMOC
         let changeInfo = observer.notifications.firstObject as? UserChangeInfo
@@ -416,31 +416,31 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(uiMOCUser.clients.count, 1)
         
         observer.tearDown()
-        NSNotificationCenter.defaultCenter().removeObserver(notificationCenterToken)
+        NotificationCenter.default.removeObserver(notificationCenterToken)
     }
 
     func testThatItUpdatesClientObserversWhenClientsAreFaultedAndNewClientIsAddedSameContext() {
         
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
+        let user = ZMUser.insertNewObject(in:uiMOC)
         XCTAssertEqual(user.clients.count, 0)
-        XCTAssertFalse(user.clients.first?.user?.fault == .Some(true))
+        XCTAssertFalse(user.clients.first?.user?.isFault == .some(true))
 
         uiMOC.saveOrRollback()
-        uiMOC.refreshObject(user, mergeChanges: true)
-        XCTAssertTrue(user.fault)
+        uiMOC.refresh(user, mergeChanges: true)
+        XCTAssertTrue(user.isFault)
         let observer = UserChangeObserver(user: user)
 
         // when
-        let client = UserClient.insertNewObjectInManagedObjectContext(uiMOC)
-        user.mutableSetValueForKey(UserClientsKey).addObject(client)
+        let client = UserClient.insertNewObject(in: uiMOC)
+        user.mutableSetValue(forKey: UserClientsKey).add(client)
 
         uiMOC.saveOrRollback()
-        uiMOC.refreshObject(user, mergeChanges: true)
-        uiMOC.refreshObject(client, mergeChanges: true)
+        uiMOC.refresh(user, mergeChanges: true)
+        uiMOC.refresh(client, mergeChanges: true)
         
-        XCTAssertTrue(user.fault)
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(user.isFault)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         let changeInfo = observer.notifications.firstObject as? UserChangeInfo
@@ -453,20 +453,20 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesTrustChangeForClientsAddedAfterSubscribing() {
 
         // given
-        let selfUser = ZMUser.selfUserInContext(uiMOC)
-        let selfClient = UserClient.insertNewObjectInManagedObjectContext(uiMOC)
-        selfUser.mutableSetValueForKey(UserClientsKey).addObject(selfClient)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = UserClient.insertNewObject(in: uiMOC)
+        selfUser.mutableSetValue(forKey: UserClientsKey).add(selfClient)
         
-        let observedUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
-        let otherClient = UserClient.insertNewObjectInManagedObjectContext(uiMOC)
+        let observedUser = ZMUser.insertNewObject(in:uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
         uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let observer : UserChangeObserver = UserChangeObserver(user: observedUser)
 
         // when
-        observedUser.mutableSetValueForKey(UserClientsKey).addObject(otherClient)
+        observedUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
         uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         //then
         XCTAssertEqual(observer.notifications.count, 1)
@@ -477,7 +477,7 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         // when
         selfClient.trustClient(otherClient)
         uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         let userChangeInfos = observer.notifications.asArray() as! [UserChangeInfo]

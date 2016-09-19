@@ -21,24 +21,24 @@ import CoreData
 
 
 @objc public enum MessageConfirmationType : Int16 {
-    case Delivered, Read
+    case delivered, read
     
-    static func convert(zmConfirmationType: ZMConfirmationType) -> MessageConfirmationType {
+    static func convert(_ zmConfirmationType: ZMConfirmationType) -> MessageConfirmationType {
         switch zmConfirmationType {
         case .DELIVERED:
-            return .Delivered
+            return .delivered
         case .READ:
-            return .Read
+            return .read
         }
     }
 }
 
 @objc(ZMMessageConfirmation)
-public class ZMMessageConfirmation: NSManagedObject {
+open class ZMMessageConfirmation: NSManagedObject {
 
-    @NSManaged public var type: MessageConfirmationType
-    @NSManaged public var message: ZMMessage
-    @NSManaged public var user: ZMUser
+    @NSManaged open var type: MessageConfirmationType
+    @NSManaged open var message: ZMMessage
+    @NSManaged open var user: ZMUser
 
     static var entityName: String {
         return "MessageConfirmation"
@@ -46,18 +46,18 @@ public class ZMMessageConfirmation: NSManagedObject {
     
     /// Creates a ZMMessageConfirmation object that holds a reference to a message that was confirmed and the user who confirmed it.
     /// It can have 2 types: Delivered and Read depending on the genericMessage confirmation type
-    static public func createOrUpdateMessageConfirmation(genericMessage: ZMGenericMessage, conversation: ZMConversation, sender: ZMUser) -> ZMMessageConfirmation? {
+    static open func createOrUpdateMessageConfirmation(_ genericMessage: ZMGenericMessage, conversation: ZMConversation, sender: ZMUser) -> ZMMessageConfirmation? {
         
         guard genericMessage.hasConfirmation(),
             let moc = conversation.managedObjectContext,
-            let messageUUID = NSUUID(UUIDString: genericMessage.confirmation.messageId),
-            let message = ZMMessage.fetchMessageWithNonce(messageUUID, forConversation: conversation, inManagedObjectContext: moc),
-            let originalSender = message.sender where originalSender.isSelfUser
+            let messageUUID = UUID(uuidString: genericMessage.confirmation.messageId),
+            let message = ZMMessage.fetch(withNonce: messageUUID, for: conversation, in: moc),
+            let originalSender = message.sender , originalSender.isSelfUser
         else { return nil }
         
         var confirmation = message.confirmations.filter{$0.user == sender}.first
         if confirmation == nil {
-            confirmation = NSEntityDescription.insertNewObjectForEntityForName(ZMMessageConfirmation.entityName, inManagedObjectContext: moc) as? ZMMessageConfirmation
+            confirmation = NSEntityDescription.insertNewObject(forEntityName: ZMMessageConfirmation.entityName, into: moc) as? ZMMessageConfirmation
         }
         confirmation?.user = sender
         confirmation?.message = message

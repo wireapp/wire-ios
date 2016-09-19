@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -27,23 +27,23 @@ private let MEGABYTE = UInt(1 * 1000 * 1000)
 extension ZMUser {
     
     /// The identifier to use for the large profile image
-    private var largeImageCacheKey : String? {
-        if let mediumImageRemoteId = self.mediumRemoteIdentifier,
-            let userRemoteId = self.remoteIdentifier
+    fileprivate var largeImageCacheKey : String? {
+        if let mediumImageRemoteId = self.mediumRemoteIdentifier?.transportString(),
+            let userRemoteId = self.remoteIdentifier?.transportString()
         {
-            return (userRemoteId.transportString())! + "-" + mediumImageRemoteId.transportString()
+            return (userRemoteId + "-" + mediumImageRemoteId)
         }
-        return .None
+        return .none
     }
     
     /// The identifier to use for the small profile image
-    private var smallImageCacheKey : String? {
+    fileprivate var smallImageCacheKey : String? {
         if let smallImageRemoteId = self.smallProfileRemoteIdentifier?.transportString(),
             let userRemoteId = self.remoteIdentifier?.transportString()
         {
             return userRemoteId + "-" + smallImageRemoteId
         }
-        return .None
+        return .none
     }
 }
 
@@ -65,13 +65,13 @@ extension NSManagedObjectContext
 }
 
 // MARK: Cache
-@objc public class UserImageLocalCache : NSObject {
+@objc open class UserImageLocalCache : NSObject {
     
     /// Cache for large user profile image
-    private let largeUserImageCache : PINCache
+    fileprivate let largeUserImageCache : PINCache
     
     /// Cache for small user profile image
-    private let smallUserImageCache : PINCache
+    fileprivate let smallUserImageCache : PINCache
     
     public override init() {
         largeUserImageCache = PINCache(name: "largeUserImages")
@@ -84,35 +84,45 @@ extension NSManagedObjectContext
         super.init()
     }
     
+    /// Removes all images for user
+    open func removeAllUserImages(_ user: ZMUser) {
+        if let largeId = user.largeImageCacheKey {
+            self.largeUserImageCache.removeObject(forKey: largeId)
+        }
+        if let smallId = user.smallImageCacheKey {
+            self.smallUserImageCache.removeObject(forKey: smallId)
+        }
+    }
+    
     /// Large image for user
-    public func largeUserImage(user: ZMUser) -> NSData? {
+    open func largeUserImage(_ user: ZMUser) -> Data? {
         if let largeId = user.largeImageCacheKey
         {
-            return self.largeUserImageCache.objectForKey(largeId) as? NSData
+            return self.largeUserImageCache.object(forKey: largeId) as? Data
         }
-        return .None
+        return .none
     }
     
     /// Sets the large user image for a user
-    public func setLargeUserImage(user: ZMUser, imageData: NSData) {
+    open func setLargeUserImage(_ user: ZMUser, imageData: Data) {
         if let largeId = user.largeImageCacheKey {
-            self.largeUserImageCache.setObject(imageData, forKey: largeId)
+            self.largeUserImageCache.setObject(imageData as NSCoding, forKey: largeId)
         }
     }
     
     /// Small image for user
-    public func smallUserImage(user: ZMUser) -> NSData? {
+    open func smallUserImage(_ user: ZMUser) -> Data? {
         if let smallId = user.smallImageCacheKey
         {
-            return self.smallUserImageCache.objectForKey(smallId) as? NSData
+            return self.smallUserImageCache.object(forKey: smallId) as? Data
         }
-        return .None
+        return .none
     }
     
     /// Sets the small user image for a user
-    public func setSmallUserImage(user: ZMUser, imageData: NSData) {
+    open func setSmallUserImage(_ user: ZMUser, imageData: Data) {
         if let smallId = user.smallImageCacheKey {
-            self.smallUserImageCache.setObject(imageData, forKey: smallId)
+            self.smallUserImageCache.setObject(imageData as NSCoding, forKey: smallId)
         }
     }
 }

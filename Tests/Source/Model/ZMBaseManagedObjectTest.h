@@ -46,20 +46,20 @@
 /// Waits for queues and managed object contexts to finish work and verifies mocks
 - (void)cleanUpAndVerify;
 
-- (ZMEventID *)createEventID;
-+ (ZMEventID *)createEventID;
+- (nonnull ZMEventID *)createEventID;
++ (nonnull ZMEventID *)createEventID;
 
-@property (nonatomic, readonly) ZMTestSession *testSession;
-@property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
-@property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
-@property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
+@property (nonatomic, readonly, nonnull) ZMTestSession *testSession;
+@property (nonatomic, readonly, nonnull) NSManagedObjectContext *uiMOC;
+@property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
+@property (nonatomic, readonly, nonnull) NSManagedObjectContext *searchMOC;
 
 
 /// reset ui and sync contexts
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistantStore;
 
 /// perform operations pretending that the uiMOC is a syncMOC
-- (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;
+- (void)performPretendingUiMocIsSyncMoc:(nonnull void(^)(void))block;
 
 @end
 
@@ -67,7 +67,7 @@
 
 @interface ZMBaseManagedObjectTest (DisplayNameGenerator)
 
-- (void)updateDisplayNameGeneratorWithUsers:(NSArray *)users;
+- (void)updateDisplayNameGeneratorWithUsers:(nonnull NSArray *)users;
 
 @end
 
@@ -75,8 +75,8 @@
 
 @interface ZMBaseManagedObjectTest (UserTesting)
 
-- (void)setEmailAddress:(NSString *)emailAddress onUser:(ZMUser *)user;
-- (void)setPhoneNumber:(NSString *)phoneNumber onUser:(ZMUser *)user;
+- (void)setEmailAddress:(nullable NSString *)emailAddress onUser:(nonnull ZMUser *)user;
+- (void)setPhoneNumber:(nullable NSString *)phoneNumber onUser:(nonnull ZMUser *)user;
 
 @end
 
@@ -95,28 +95,29 @@
 
 @interface ZMBaseManagedObjectTest (OTR)
 
-- (UserClient *)createSelfClient;
-- (UserClient *)createSelfClientOnMOC:(NSManagedObjectContext *)moc;
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(NSManagedObjectContext *)moc;
+- (nonnull UserClient *)createSelfClient;
+- (nonnull UserClient *)createSelfClientOnMOC:(nonnull NSManagedObjectContext *)moc;
 
-- (ZMClientMessage *)createClientTextMessage:(BOOL)encrypted;
-- (ZMClientMessage *)createClientTextMessage:(NSString *)text encrypted:(BOOL)encrypted;
-- (ZMAssetClientMessage *)createImageMessageWithImageData:(NSData *)imageData
+- (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
+- (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(nonnull NSManagedObjectContext *)moc;
+
+- (nonnull ZMClientMessage *)createClientTextMessage:(BOOL)encrypted;
+- (nonnull ZMClientMessage *)createClientTextMessage:(nonnull NSString *)text encrypted:(BOOL)encrypted;
+- (nonnull ZMAssetClientMessage *)createImageMessageWithImageData:(nonnull NSData *)imageData
                                                    format:(ZMImageFormat)format
                                                 processed:(BOOL)processed
                                                    stored:(BOOL)stored
                                                 encrypted:(BOOL)encrypted
-                                                      moc:(NSManagedObjectContext *)moc;
+                                                      moc:(nonnull NSManagedObjectContext *)moc;
 
 @end
 
 
 @interface ZMBaseManagedObjectTest (SwiftBridgeConversation)
 
-- (void)simulateUnreadCount:(NSUInteger)unreadCount forConversation:(ZMConversation *)conversation;
-- (void)simulateUnreadMissedCallInConversation:(ZMConversation *)conversation;
-- (void)simulateUnreadMissedKnockInConversation:(ZMConversation *)conversation;
+- (void)simulateUnreadCount:(NSUInteger)unreadCount forConversation:(nonnull ZMConversation *)conversation;
+- (void)simulateUnreadMissedCallInConversation:(nonnull ZMConversation *)conversation;
+- (void)simulateUnreadMissedKnockInConversation:(nonnull ZMConversation *)conversation;
 
 @end
 

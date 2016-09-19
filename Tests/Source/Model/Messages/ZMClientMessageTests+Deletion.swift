@@ -26,8 +26,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatItDeletesAMessage() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        guard let sut = conversation.appendMessageWithText(name!) as? ZMMessage else { return XCTFail() }
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        guard let sut = conversation.appendMessage(withText: name!) as? ZMMessage else { return XCTFail() }
         
         // when
         performPretendingUiMocIsSyncMoc { 
@@ -35,7 +35,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
@@ -44,15 +44,15 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAnAssetMessage_Image() {
         // given
         setUpCaches()
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        guard let sut = conversation.appendOTRMessageWithImageData(mediumJPEGData(), nonce: .createUUID()) else { return XCTFail() }
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let sut = conversation.appendOTRMessage(withImageData: mediumJPEGData(), nonce: .create())
         
-        let cache = uiMOC.zm_imageAssetCache
-        cache.storeAssetData(sut.nonce, format: .Preview, encrypted: false, data: verySmallJPEGData())
-        cache.storeAssetData(sut.nonce, format: .Medium, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut.nonce, format: .Original, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut.nonce, format: .Preview, encrypted: true, data: verySmallJPEGData())
-        cache.storeAssetData(sut.nonce, format: .Medium, encrypted: true, data: mediumJPEGData())
+        let cache = uiMOC.zm_imageAssetCache!
+        cache.storeAssetData(sut.nonce, format: .preview, encrypted: false, data: verySmallJPEGData())
+        cache.storeAssetData(sut.nonce, format: .medium, encrypted: false, data: mediumJPEGData())
+        cache.storeAssetData(sut.nonce, format: .original, encrypted: false, data: mediumJPEGData())
+        cache.storeAssetData(sut.nonce, format: .preview, encrypted: true, data: verySmallJPEGData())
+        cache.storeAssetData(sut.nonce, format: .medium, encrypted: true, data: mediumJPEGData())
         
         // when
         performPretendingUiMocIsSyncMoc {
@@ -60,7 +60,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         assertDeletedContent(ofMessage: sut, inConversation: conversation)
@@ -70,24 +70,24 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAnAssetMessage_File() {
         // given
         setUpCaches()
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        let data = "Hello World".dataUsingEncoding(NSUTF8StringEncoding)!
-        let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
-        let url = NSURL(fileURLWithPath: documents).URLByAppendingPathComponent("file.dat")
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let data = "Hello World".data(using: String.Encoding.utf8)!
+        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let url = URL(fileURLWithPath: documents).appendingPathComponent("file.dat")
 
-        defer { try! NSFileManager.defaultManager().removeItemAtURL(url) }
+        defer { try! FileManager.default.removeItem(at: url) }
 
-        data.writeToURL(url, atomically: true)
+        try? data.write(to: url, options: [.atomic])
         let fileMetaData = ZMFileMetadata(fileURL: url, thumbnail: verySmallJPEGData())
-        guard let sut = conversation.appendOTRMessageWithFileMetadata(fileMetaData, nonce: .createUUID()) else { return XCTFail() }
+        let sut = conversation.appendOTRMessage(with: fileMetaData, nonce: .create())
 
-        let cache = uiMOC.zm_imageAssetCache
+        let cache = uiMOC.zm_imageAssetCache!
         let fileCache = uiMOC.zm_fileAssetCache
         
-        cache.storeAssetData(sut.nonce, format: .Original, encrypted: true, data: verySmallJPEGData())
+        cache.storeAssetData(sut.nonce, format: .original, encrypted: true, data: verySmallJPEGData())
         fileCache.storeAssetData(sut.nonce, fileName: "file.dat", encrypted: true, data: mediumJPEGData())
         
-        XCTAssertNotNil(cache.assetData(sut.nonce, format: .Original, encrypted: false))
+        XCTAssertNotNil(cache.assetData(sut.nonce, format: .original, encrypted: false))
         XCTAssertNotNil(fileCache.assetData(sut.nonce, fileName: "file.dat", encrypted: false))
         
         // when
@@ -96,7 +96,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         assertDeletedContent(ofMessage: sut, inConversation: conversation, fileName: "file.dat")
@@ -105,11 +105,11 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatItDeletesAPreEndtoEndPlainTextMessage() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        let sut = ZMTextMessage.insertNewObjectInManagedObjectContext(uiMOC) // Pre e2ee plain text message
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let sut = ZMTextMessage.insertNewObject(in: uiMOC) // Pre e2ee plain text message
         
         sut.visibleInConversation = conversation
-        sut.nonce = .createUUID()
+        sut.nonce = .create()
         sut.sender = selfUser
 
         // when
@@ -118,7 +118,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         }
 
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertTrue(sut.hasBeenDeleted)
@@ -132,11 +132,11 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatItDeletesAPreEndtoEndKnockMessage() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        let sut = ZMKnockMessage.insertNewObjectInManagedObjectContext(uiMOC) // Pre e2ee knock message
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let sut = ZMKnockMessage.insertNewObject(in: uiMOC) // Pre e2ee knock message
         
         sut.visibleInConversation = conversation
-        sut.nonce = .createUUID()
+        sut.nonce = .create()
         sut.sender = selfUser
         
         // when
@@ -145,7 +145,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertTrue(sut.hasBeenDeleted)
@@ -158,17 +158,17 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAPreEndToEndImageMessage() {
         // given
         setUpCaches()
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        let sut = ZMImageMessage.insertNewObjectInManagedObjectContext(uiMOC) // Pre e2ee image message
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let sut = ZMImageMessage.insertNewObject(in: uiMOC) // Pre e2ee image message
         
         sut.visibleInConversation = conversation
-        sut.nonce = .createUUID()
+        sut.nonce = .create()
         sut.sender = selfUser
         
-        let cache = uiMOC.zm_imageAssetCache
-        cache.storeAssetData(sut.nonce, format: .Preview, encrypted: false, data: verySmallJPEGData())
-        cache.storeAssetData(sut.nonce, format: .Medium, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut.nonce, format: .Original, encrypted: false, data: mediumJPEGData())
+        let cache = uiMOC.zm_imageAssetCache!
+        cache.storeAssetData(sut.nonce, format: .preview, encrypted: false, data: verySmallJPEGData())
+        cache.storeAssetData(sut.nonce, format: .medium, encrypted: false, data: mediumJPEGData())
+        cache.storeAssetData(sut.nonce, format: .original, encrypted: false, data: mediumJPEGData())
         
         // when
         performPretendingUiMocIsSyncMoc {
@@ -176,7 +176,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertTrue(sut.hasBeenDeleted)
@@ -187,17 +187,17 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         XCTAssertNil(sut.sender)
         XCTAssertNil(sut.senderClientID)
         
-        XCTAssertNil(cache.assetData(sut.nonce, format: .Original, encrypted: false))
-        XCTAssertNil(cache.assetData(sut.nonce, format: .Medium, encrypted: false))
-        XCTAssertNil(cache.assetData(sut.nonce, format: .Preview, encrypted: false))
+        XCTAssertNil(cache.assetData(sut.nonce, format: .original, encrypted: false))
+        XCTAssertNil(cache.assetData(sut.nonce, format: .medium, encrypted: false))
+        XCTAssertNil(cache.assetData(sut.nonce, format: .preview, encrypted: false))
         wipeCaches()
     }
     
     func testThatAMessageSentByAnotherUserCanotBeDeleted() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
-        guard let sut = conversation.appendMessageWithText(name!) as? ZMMessage else { return XCTFail() }
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let otherUser = ZMUser.insertNewObject(in:uiMOC)
+        guard let sut = conversation.appendMessage(withText: name!) as? ZMMessage else { return XCTFail() }
         sut.sender = otherUser
         
         // when
@@ -205,7 +205,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
             sut.deleteForEveryone()
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertFalse(sut.hasBeenDeleted)
@@ -215,12 +215,12 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatTheInsertedDeleteMessageDoesNotHaveAnExpirationDate() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        let nonce = NSUUID.createUUID()
-        let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let nonce = UUID.create()
+        let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: UUID().transportString())
         
         // when
-        let sut = conversation.appendGenericMessage(deletedMessage, expires: false, hidden: true)
+        let sut = conversation.append(deletedMessage, expires: false, hidden: true)
         
         // then
         XCTAssertNil(sut.expirationDate)
@@ -236,32 +236,32 @@ extension ZMClientMessageTests_Deletion {
     
     func testThatItDoesNotInsertASystemMessageIfTheMessageDoesNotExist() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.lastModifiedDate = NSDate(timeIntervalSince1970: 123456789)
-        conversation.remoteIdentifier = .createUUID()
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.lastModifiedDate = Date(timeIntervalSince1970: 123456789)
+        conversation.remoteIdentifier = .create()
         
         // when
-        let updateEvent = createMessageDeletedUpdateEvent(.createUUID(), conversationID: conversation.remoteIdentifier, senderID: selfUser.remoteIdentifier!)
+        let updateEvent = createMessageDeletedUpdateEvent(.create(), conversationID: conversation.remoteIdentifier!, senderID: selfUser.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         XCTAssertEqual(conversation.messages.count, 0)
     }
     
     func testThatItDoesNotInsertASystemMessageWhenAMessageIsDeletedForEveryoneLocally() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        guard let sut = conversation.appendMessageWithText(name!) else { return XCTFail() }
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        guard let sut = conversation.appendMessage(withText: name!) else { return XCTFail() }
         
         // when
         performPretendingUiMocIsSyncMoc {
             ZMMessage.deleteForEveryone(sut)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(conversation.messages.count, 0)
@@ -274,42 +274,42 @@ extension ZMClientMessageTests_Deletion {
 
     func testThatAMessageCanNotBeDeletedByAUserThatDidNotInitiallySentIt() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.lastModifiedDate = NSDate(timeIntervalSince1970: 123456789)
-        conversation.remoteIdentifier = .createUUID()
-        guard let sut = conversation.appendMessageWithText(name!) as? ZMMessage else { return XCTFail() }
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.lastModifiedDate = Date(timeIntervalSince1970: 123456789)
+        conversation.remoteIdentifier = .create()
+        guard let sut = conversation.appendMessage(withText: name!) as? ZMMessage else { return XCTFail() }
 
         // when
-        let updateEvent = createMessageDeletedUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier)
+        let updateEvent = createMessageDeletedUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc { 
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(conversation.messages.count, 1)
-        if let systemMessage = conversation.messages.lastObject as? ZMSystemMessage where systemMessage.systemMessageType == .MessageDeletedForEveryone {
+        if let systemMessage = conversation.messages.lastObject as? ZMSystemMessage , systemMessage.systemMessageType == .messageDeletedForEveryone {
             return XCTFail()
         }
     }
     
     func testThatAMessageCanBeDeletedByTheUserThatDidInitiallySentIt() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = .createUUID()
-        guard let sut = conversation.appendMessageWithText(name!) as? ZMMessage else { return XCTFail() }
-        let lastModified = NSDate(timeIntervalSince1970: 1234567890)
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        guard let sut = conversation.appendMessage(withText: name!) as? ZMMessage else { return XCTFail() }
+        let lastModified = Date(timeIntervalSince1970: 1234567890)
         conversation.lastModifiedDate = lastModified
 
         // when
-        let updateEvent = createMessageDeletedUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier, senderID: sut.sender!.remoteIdentifier!)
+        let updateEvent = createMessageDeletedUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier!, senderID: sut.sender!.remoteIdentifier!)
 
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
@@ -321,28 +321,28 @@ extension ZMClientMessageTests_Deletion {
     
     func testThatAMessageSentByAnotherUserCanBeDeletedAndASystemMessageIsInserted() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = .createUUID()
-        let otherUser = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
-        otherUser.remoteIdentifier = .createUUID()
-        let message = ZMClientMessage.insertNewObjectInManagedObjectContext(uiMOC)
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        let otherUser = ZMUser.insertNewObject(in:uiMOC)
+        otherUser.remoteIdentifier = .create()
+        let message = ZMClientMessage.insertNewObject(in: uiMOC)
         message.sender = otherUser
         message.visibleInConversation = conversation
-        message.nonce = .createUUID()
-        let timestamp = NSDate(timeIntervalSince1970: 123456789)
+        message.nonce = .create()
+        let timestamp = Date(timeIntervalSince1970: 123456789)
         message.serverTimestamp = timestamp
         
-        let lastModified = NSDate(timeIntervalSince1970: 1234567890)
+        let lastModified = Date(timeIntervalSince1970: 1234567890)
         conversation.lastModifiedDate = lastModified
 
         // when
-        let updateEvent = createMessageDeletedUpdateEvent(message.nonce, conversationID: conversation.remoteIdentifier, senderID: otherUser.remoteIdentifier!)
+        let updateEvent = createMessageDeletedUpdateEvent(message.nonce, conversationID: conversation.remoteIdentifier!, senderID: otherUser.remoteIdentifier!)
         
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         assertDeletedContent(ofMessage: message, inConversation: conversation)
@@ -351,7 +351,7 @@ extension ZMClientMessageTests_Deletion {
         // A deletion should not update the lastModified date
         XCTAssertEqual(conversation.lastModifiedDate, lastModified)
         
-        guard let systemMessage = conversation.messages.lastObject as? ZMSystemMessage where systemMessage.systemMessageType == .MessageDeletedForEveryone else {
+        guard let systemMessage = conversation.messages.lastObject as? ZMSystemMessage , systemMessage.systemMessageType == .messageDeletedForEveryone else {
             return XCTFail()
         }
         
@@ -362,32 +362,32 @@ extension ZMClientMessageTests_Deletion {
     
     func testThatItDoesNotInsertAMessageWithTheSameNonceOfAMessageThatHasAlreadyBeenDeleted() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-        conversation.remoteIdentifier = .createUUID()
-        guard let sut = conversation.appendMessageWithText(name!) as? ZMMessage else { return XCTFail() }
-        let lastModified = NSDate(timeIntervalSince1970: 1234567890)
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        guard let sut = conversation.appendMessage(withText: name!) as? ZMMessage else { return XCTFail() }
+        let lastModified = Date(timeIntervalSince1970: 1234567890)
         conversation.lastModifiedDate = lastModified
-        let nonce = sut.nonce
+        let nonce = sut.nonce!
         
         // when
-        let updateEvent = createMessageDeletedUpdateEvent(nonce, conversationID: conversation.remoteIdentifier, senderID: sut.sender!.remoteIdentifier!)
+        let updateEvent = createMessageDeletedUpdateEvent(nonce, conversationID: conversation.remoteIdentifier!, senderID: sut.sender!.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(updateEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
 
         //when
         let genericMessage = ZMGenericMessage(text: name!, nonce: nonce.transportString())
-        let nextEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier, genericMessage: genericMessage)
+        let nextEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResultFromUpdateEvent(nextEvent, inManagedObjectContext: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.messageUpdateResult(from: nextEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmptyWithTimeout(0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
@@ -404,8 +404,8 @@ extension ZMClientMessageTests_Deletion {
 
 extension ZMClientMessageTests_Deletion {
 
-    func createMessageDeletedUpdateEvent(nonce: NSUUID, conversationID: NSUUID, senderID: NSUUID = .createUUID()) -> ZMUpdateEvent {
-        let genericMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID.createUUID().transportString())
+    func createMessageDeletedUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = .create()) -> ZMUpdateEvent {
+        let genericMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: UUID.create().transportString())
         return createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: senderID)
     }
     
@@ -428,12 +428,12 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertEqual(assetMessage.mimeType, "", line: line)
             XCTAssertNil(assetMessage.genericAssetMessage, line: line)
 
-            let cache = uiMOC.zm_imageAssetCache
-            XCTAssertNil(cache.assetData(message.nonce, format: .Original, encrypted: false))
-            XCTAssertNil(cache.assetData(message.nonce, format: .Medium, encrypted: false))
-            XCTAssertNil(cache.assetData(message.nonce, format: .Preview, encrypted: false))
-            XCTAssertNil(cache.assetData(message.nonce, format: .Medium, encrypted: true))
-            XCTAssertNil(cache.assetData(message.nonce, format: .Preview, encrypted: true))
+            let cache = uiMOC.zm_imageAssetCache!
+            XCTAssertNil(cache.assetData(message.nonce, format: .original, encrypted: false))
+            XCTAssertNil(cache.assetData(message.nonce, format: .medium, encrypted: false))
+            XCTAssertNil(cache.assetData(message.nonce, format: .preview, encrypted: false))
+            XCTAssertNil(cache.assetData(message.nonce, format: .medium, encrypted: true))
+            XCTAssertNil(cache.assetData(message.nonce, format: .preview, encrypted: true))
 
             guard let fileName = fileName else { return }
             let fileCache = uiMOC.zm_fileAssetCache

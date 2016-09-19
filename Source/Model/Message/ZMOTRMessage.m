@@ -161,7 +161,7 @@ NSString * const DeliveredKey = @"delivered";
     if (message.hasReaction) {
         
         // if we don't understand the reaction received, discard it
-        if (message.reaction.emoji.length > 0 && [Reaction transportReaction:message.reaction.emoji] == TransportReactionNone) {
+        if (message.reaction.emoji.length > 0 && [Reaction transportReactionFrom:message.reaction.emoji] == TransportReactionNone) {
             return nil;
         }
         

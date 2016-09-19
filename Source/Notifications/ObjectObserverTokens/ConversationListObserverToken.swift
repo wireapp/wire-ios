@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,12 +22,8 @@ import ZMCSystem
 
 extension ZMConversationList {
     
-    func toOrderedSet() -> OrderedSet<NSObject> {
-        var array : [ZMConversation] = []
-        for conv in self {
-            array.append(conv as! ZMConversation)
-        }
-        return OrderedSet<NSObject>(array: array)
+    func toOrderedSet() -> NSOrderedSet {
+        return NSOrderedSet(array: self.map{$0})
     }
     
 }
@@ -45,21 +41,21 @@ extension ZMConversationList {
 
 class InternalConversationListObserverToken: NSObject {
     
-    private var state : SetSnapshot
+    fileprivate var state : SetSnapshot
     weak var conversationList : ZMConversationList?
-    private weak var observer : ZMConversationListObserver?
+    fileprivate weak var observer : ZMConversationListObserver?
     
     init(conversationList: ZMConversationList, observer: ZMConversationListObserver?) {
         self.conversationList = conversationList
         self.observer = observer
-        self.state = SetSnapshot(set: conversationList.toOrderedSet(), moveType: .UICollectionView)
+        self.state = SetSnapshot(set: conversationList.toOrderedSet(), moveType: .uiCollectionView)
         super.init()
     }
     
-    func notifyObserver(changedConversation: ZMConversation?, changes: ConversationChangeInfo?) {
+    func notifyObserver(_ changedConversation: ZMConversation?, changes: ConversationChangeInfo?) {
         guard let conversationList = self.conversationList else {tearDown(); return}
         
-        let changedSet : OrderedSet<NSObject> = changedConversation == nil ? OrderedSet() : OrderedSet(object: changedConversation!)
+        let changedSet : NSOrderedSet = (changedConversation == nil) ? NSOrderedSet() : NSOrderedSet(object: changedConversation!)
         let newSet = conversationList.toOrderedSet()
         
         if let newStateUpdate = self.state.updatedState(changedSet, observedObject: conversationList, newSet: newSet) {
@@ -68,12 +64,12 @@ class InternalConversationListObserverToken: NSObject {
             self.observer?.conversationListDidChange(conversationListChangeInfo)
         }
         if let changes = changes {
-            self.observer?.conversationInsideList?(conversationList, didChange: changes)
+            self.observer?.conversation?(inside: conversationList, didChange: changes)
         }
     }
 
     func tearDown() {
-        state = SetSnapshot(set: OrderedSet(), moveType: .None)
+        state = SetSnapshot(set: NSOrderedSet(), moveType: .none)
         conversationList = nil
     }
 }
@@ -83,20 +79,20 @@ class ConversationListObserverToken: NSObject, ChangeNotifierToken {
     typealias GlobalObserver = GlobalConversationObserver
     typealias ChangeInfo = ConversationListChangeInfo
     
-    private weak var observer : ZMConversationListObserver?
-    private weak var globalObserver : GlobalConversationObserver?
+    fileprivate weak var observer : ZMConversationListObserver?
+    fileprivate weak var globalObserver : GlobalConversationObserver?
 
     required init(observer: Observer, globalObserver: GlobalObserver) {
         self.observer = observer
         self.globalObserver = globalObserver
     }
 
-    func notifyObserver(note: ChangeInfo) {
+    func notifyObserver(_ note: ChangeInfo) {
         observer?.conversationListDidChange(note)
     }
     
-    func conversationInsideList(conversationList: ZMConversationList, didChange change: ConversationChangeInfo) {
-        observer?.conversationInsideList?(conversationList, didChange: change)
+    func conversationInsideList(_ conversationList: ZMConversationList, didChange change: ConversationChangeInfo) {
+        observer?.conversation?(inside: conversationList, didChange: change)
     }
     
     func tearDown() {

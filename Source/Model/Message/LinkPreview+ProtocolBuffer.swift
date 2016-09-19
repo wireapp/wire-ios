@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -27,7 +27,7 @@ extension LinkPreview {
     }
     
     public var protocolBuffer: ZMLinkPreview {
-        let linkPreviewBuilder = ZMLinkPreview.builder()
+        let linkPreviewBuilder = ZMLinkPreview.builder()!
         linkPreviewBuilder.setUrl(originalURLString)
         linkPreviewBuilder.setPermanentUrl(permanentURL?.absoluteString ?? originalURLString)
         linkPreviewBuilder.setUrlOffset(Int32(characterOffsetInText))

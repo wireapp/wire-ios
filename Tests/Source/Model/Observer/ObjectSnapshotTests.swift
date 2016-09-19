@@ -57,15 +57,15 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItReturnsNoNewSnapshotIfThereIsNoChange()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Fabio"
-        user.accentColorValue = ZMAccentColor.BrightOrange
+        user.accentColorValue = ZMAccentColor.brightOrange
         let observedKeys = KeySet(["name", "accentColorValue"])
         
         let sut = ObjectSnapshot(object: user, keys: observedKeys)
         
         // when
-        let result : (ObjectSnapshot, ObjectSnapshot.KeysAndOldValues)? = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.Some(KeySet(["name","accentColorValue"])))
+        let result : (ObjectSnapshot, ObjectSnapshot.KeysAndOldValues)? = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.some(KeySet(["name","accentColorValue"])))
         
         // then
         XCTAssertTrue(result == nil)
@@ -75,19 +75,19 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItReturnsANewSnapshotAndKeysOnceIfThereIsAChangeInTheOnlyKeyObserved()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Fabio"
-        user.accentColorValue = ZMAccentColor.BrightOrange
+        user.accentColorValue = ZMAccentColor.brightOrange
         let observedKeys = KeySet(["name", "accentColorValue"])
         
         let sut = ObjectSnapshot(object: user, keys: observedKeys)
         
         // when
         user.name = "Fritz"
-        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.Some(observedKeys)) {
+        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.some(observedKeys)) {
             let allKeys = Array(keysAndOldValues.keys)
             XCTAssertEqual(allKeys, [KeyPath.keyPathForString("name")])
-            AssertKeyPathDictionaryHasOptionalValue(keysAndOldValues, key: KeyPath.keyPathForString("name"), expected: "Fabio")
+            AssertKeyPathDictionaryHasOptionalValue(keysAndOldValues, key: KeyPath.keyPathForString("name"), expected: "Fabio" as NSObject)
 
             // once?
             let newSnapshot = ObjectSnapshot(object: user, keys: observedKeys)
@@ -101,7 +101,7 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItReturnsANewSnapshotAndKeysOnceIfANilObjectBecameNotNil()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = nil
         let observedKeys = KeySet(["name", "accentColorValue"])
         
@@ -109,7 +109,7 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
         
         // when
         user.name = "Fritz"
-        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.Some(observedKeys)) {
+        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.some(observedKeys)) {
             let allKeys = Array(keysAndOldValues.keys)
             XCTAssertEqual(allKeys, [KeyPath.keyPathForString("name")])
             AssertKeyPathDictionaryHasOptionalNilValue(keysAndOldValues, key: KeyPath.keyPathForString("name"))
@@ -125,7 +125,7 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItReturnsANewSnapshotAndKeysOnceIfANonNilObjectBecameNil()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Jacques"
         self.uiMOC.saveOrRollback()
         let observedKeys = KeySet(["name", "accentColorValue"])
@@ -134,10 +134,10 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
         
         // when
         user.name = nil
-        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.Some(observedKeys)) {
+        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.some(observedKeys)) {
             let allKeys = Array(keysAndOldValues.keys)
             XCTAssertEqual(allKeys, [KeyPath.keyPathForString("name")])
-            AssertKeyPathDictionaryHasOptionalValue(keysAndOldValues, key: KeyPath.keyPathForString("name"), expected: "Jacques")
+            AssertKeyPathDictionaryHasOptionalValue(keysAndOldValues, key: KeyPath.keyPathForString("name"), expected: "Jacques" as NSObject)
 
             // once?
             let newSnapshot = ObjectSnapshot(object: user, keys: observedKeys)
@@ -151,16 +151,16 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItDoesNotReturnsANewSnapshotIfThereIsAChangeInAKeyThatIsNotObserved()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Fabio"
-        user.accentColorValue = ZMAccentColor.BrightOrange
+        user.accentColorValue = ZMAccentColor.brightOrange
         let observedKeys = KeySet(key: "name")
         
         let sut = ObjectSnapshot(object: user, keys: observedKeys)
         
         // when
-        user.accentColorValue = ZMAccentColor.StrongBlue
-        let result : (ObjectSnapshot, ObjectSnapshot.KeysAndOldValues)? = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.All)
+        user.accentColorValue = ZMAccentColor.strongBlue
+        let result : (ObjectSnapshot, ObjectSnapshot.KeysAndOldValues)? = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.all)
         
         // then
         XCTAssertTrue(result == nil)
@@ -169,16 +169,16 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItDoesNotReturnANewSnapshotIfThereIsAChangeInAnObservedKeyThatIsNotPassedToTheUpdate()
     {
         // given
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Fabio"
-        user.accentColorValue = ZMAccentColor.BrightOrange
+        user.accentColorValue = ZMAccentColor.brightOrange
         let observedKeys = KeySet(["name", "accentColorValue"])
         
         let sut = ObjectSnapshot(object: user, keys: observedKeys)
         
         // when
-        user.accentColorValue = ZMAccentColor.StrongBlue
-        let result : (ObjectSnapshot, ObjectSnapshot.KeysAndOldValues)? = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.Some(KeySet(key: "name")))
+        user.accentColorValue = ZMAccentColor.strongBlue
+        let result : (ObjectSnapshot, ObjectSnapshot.KeysAndOldValues)? = sut.updatedSnapshot(user, affectedKeys: AffectedKeys.some(KeySet(key: "name")))
         
         // then
         XCTAssertTrue(result == nil)
@@ -187,15 +187,15 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItReturnsANewSnapshotAndKeysOnceIfThereIsANewObjectInARelationship()
     {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         let observedKeys = KeySet(key: "messages")
         
         let sut = ObjectSnapshot(object:conversation, keys:observedKeys)
         
         // when
-        conversation.appendMessageWithText("foo");
+        conversation.appendMessage(withText: "foo");
         
-        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(conversation, affectedKeys: AffectedKeys.Some(observedKeys)) {
+        if let (snapshot, keysAndOldValues) = sut.updatedSnapshot(conversation, affectedKeys: AffectedKeys.some(observedKeys)) {
             let allKeys = Array(keysAndOldValues.keys)
             XCTAssertEqual(allKeys, [KeyPath.keyPathForString("messages")])
             AssertKeyPathDictionaryHasOptionalValue(keysAndOldValues, key: KeyPath.keyPathForString("messages"), expected: NSOrderedSet())
@@ -213,22 +213,22 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     func testThatItDoesNotReturnANewSnapshotIfThereIsAChangedObjectInARelationship()
     {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        conversation.mutableOtherActiveParticipants.addObject(user)
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        conversation.mutableOtherActiveParticipants.add(user)
         let observedKeys = KeySet(["mutableOtherActiveParticipants"])
         
         let sut = ObjectSnapshot(object:conversation, keys:observedKeys)
         
         // when
-        user.accentColorValue = ZMAccentColor.SoftPink
-        let result = sut.updatedSnapshot(conversation, affectedKeys: AffectedKeys.Some(observedKeys))
+        user.accentColorValue = ZMAccentColor.softPink
+        let result = sut.updatedSnapshot(conversation, affectedKeys: AffectedKeys.some(observedKeys))
         
         // then
         XCTAssertTrue(result == nil)
     }
     
-    func checkThatItReturnsANewSnapshotIfThereIsANewObject<T : NSObject>(key: String, mutator: (T) -> Void) -> Bool
+    func checkThatItReturnsANewSnapshotIfThereIsANewObject<T : NSObject>(_ key: String, mutator: (T) -> Void) -> Bool
     {
         // given
         let foo = Foo()
@@ -236,8 +236,8 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
         let sut = ObjectSnapshot(object:foo, keys:observedKeys)
         
         // when
-        mutator(foo.valueForKey(key) as! T)
-        if let (newSnapshot, keysAndOldValues) = sut.updatedSnapshot(foo, affectedKeys: AffectedKeys.All) {
+        mutator(foo.value(forKey: key) as! T)
+        if let (newSnapshot, keysAndOldValues) = sut.updatedSnapshot(foo, affectedKeys: AffectedKeys.all) {
             
             let expectedSnapshot = ObjectSnapshot(object: foo, keys: observedKeys)
             let a = (expectedSnapshot == newSnapshot)
@@ -254,12 +254,12 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
     {
         XCTAssertTrue(checkThatItReturnsANewSnapshotIfThereIsANewObject("array",
             mutator: {
-                (array : NSMutableArray) in array.addObject("Bar")
+                (array : NSMutableArray) in array.add("Bar")
         }))
 
         XCTAssertTrue(checkThatItReturnsANewSnapshotIfThereIsANewObject("set",
             mutator: {
-                (set : NSMutableSet) in set.addObject("Bar")
+                (set : NSMutableSet) in set.add("Bar")
         }))
         XCTAssertTrue(checkThatItReturnsANewSnapshotIfThereIsANewObject("dict",
             mutator: {
@@ -267,15 +267,15 @@ class ObjectSnapshotTests : ZMBaseManagedObjectTest
         }))
         XCTAssertTrue(checkThatItReturnsANewSnapshotIfThereIsANewObject("orderedSet",
             mutator: {
-                (orderedSet : NSMutableOrderedSet) in orderedSet.addObject("Bar")
+                (orderedSet : NSMutableOrderedSet) in orderedSet.add("Bar")
         }))
         XCTAssertTrue(checkThatItReturnsANewSnapshotIfThereIsANewObject("data",
             mutator: {
-                (data : NSMutableData) in data.appendData(NSData(bytes: "gffd", length: 4))
+                (data : NSMutableData) in data.append(Data(bytes: [1,2,3,4]))
         }))
         XCTAssertTrue(checkThatItReturnsANewSnapshotIfThereIsANewObject("string",
             mutator: {
-                (string : NSMutableString) in string.appendString("bla")
+                (string : NSMutableString) in string.append("bla")
         }))
     }
 }

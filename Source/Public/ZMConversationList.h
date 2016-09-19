@@ -23,22 +23,22 @@
 /// Use @c ZMConversationListChangeNotification to get notified about changes.
 @interface ZMConversationList : NSArray
 
-@property (nonatomic, readonly) NSString *identifier;
+@property (nonatomic, readonly, nonnull) NSString *identifier;
 
 @end
 
 
 @interface ZMConversationList (UserSession)
 
-+ (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ZMManagedObjectContextProvider>)session;
-+ (ZMConversationList *)conversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
-+ (ZMConversationList *)archivedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)conversationsIncludingArchivedInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)conversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)archivedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 
-+ (ZMConversationList *)nonIdleVoiceChannelConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
-+ (ZMConversationList *)activeCallConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)nonIdleVoiceChannelConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)activeCallConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 
-+ (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
-+ (ZMConversationList *)clearedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)pendingConnectionConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)clearedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 
 @end
 

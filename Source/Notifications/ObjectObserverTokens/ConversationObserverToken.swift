@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,7 +20,7 @@
 import Foundation
 
 public protocol ZMGeneralConversationObserver {
-    func conversationDidChange(note: GeneralConversationChangeInfo)
+    func conversationDidChange(_ note: GeneralConversationChangeInfo)
     func tearDown()
 }
 
@@ -28,7 +28,7 @@ extension ZMConversation : ObjectInSnapshot {
     
     public var observableKeys : [String] {
         var keys = ["messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "activeFlowParticipants", "callParticipants", "isSilenced", "securityLevel", "otherActiveVideoCallParticipants", "displayName", "estimatedUnreadCount", "clearedTimeStamp"]
-        if self.conversationType == .Group {
+        if self.conversationType == .group {
             keys.append("otherActiveParticipants")
             keys.append("isSelfAnActiveMember")
             return keys
@@ -37,15 +37,15 @@ extension ZMConversation : ObjectInSnapshot {
         return keys
     }
     
-    public func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {
-        return ZMConversation.keyPathsForValuesAffectingValueForKey(key) 
+    public func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
+        return ZMConversation.keyPathsForValuesAffectingValue(forKey: key) 
     }
 }
 
 
 
 
-public class GeneralConversationChangeInfo : ObjectChangeInfo {
+open class GeneralConversationChangeInfo : ObjectChangeInfo {
     
     var conversation : ZMConversation { return self.object as! ZMConversation }
     
@@ -53,17 +53,17 @@ public class GeneralConversationChangeInfo : ObjectChangeInfo {
     internal var internalConversationChangeInfo : ConversationChangeInfo?
     internal var internalVoiceChannelStateChangeInfo : VoiceChannelStateChangeInfo?
     var callParticipantsChanged : Bool {
-        return !keysForCallParticipantsChangeInfo.isDisjointWith(changedKeysAndOldValues.keys)
+        return !keysForCallParticipantsChangeInfo.isDisjoint(with: changedKeysAndOldValues.keys)
     }
     var videoParticipantsChanged : Bool {
         return changedKeysAndOldValues.keys.contains("otherActiveVideoCallParticipants")
     }
     
-    private var keysForConversationChangeInfo : Set<String> {
+    fileprivate var keysForConversationChangeInfo : Set<String> {
         return Set(arrayLiteral: "messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "isSilenced", "otherActiveParticipants", "isSelfAnActiveMember", "displayName", "attributedDisplayName", "relatedConnectionState", "estimatedUnreadCount", "clearedTimeStamp", "securityLevel")
     }
     
-    private var keysForCallParticipantsChangeInfo : Set <String> {
+    fileprivate var keysForCallParticipantsChangeInfo : Set <String> {
         return Set(arrayLiteral: "activeFlowParticipants", "callParticipants", "otherActiveVideoCallParticipants")
     }
     
@@ -74,14 +74,14 @@ public class GeneralConversationChangeInfo : ObjectChangeInfo {
         var dict : Dictionary<String, NSObject?> = [:]
         
         for key in keys {
-            dict[key] = ""
+            dict[key] = "" as NSObject?
         }
         
         changedKeysAndOldValues = dict
     }
 
     var conversationChangeInfo : ConversationChangeInfo? {
-        if internalConversationChangeInfo == nil && !keysForConversationChangeInfo.isDisjointWith(changedKeysAndOldValues.keys) {
+        if internalConversationChangeInfo == nil && !keysForConversationChangeInfo.isDisjoint(with: changedKeysAndOldValues.keys) {
             internalConversationChangeInfo = ConversationChangeInfo(object: object)
             internalConversationChangeInfo!.changedKeysAndOldValues = changedKeysAndOldValues
         }
@@ -96,8 +96,8 @@ public class GeneralConversationChangeInfo : ObjectChangeInfo {
         return internalVoiceChannelStateChangeInfo
     }
     
-    override public var description : String { return self.debugDescription }
-    override public var debugDescription : String {
+    override open var description : String { return self.debugDescription }
+    override open var debugDescription : String {
         return "changedKeys and old values: \(changedKeysAndOldValues), "
     }
 }
@@ -111,12 +111,12 @@ public class GeneralConversationChangeInfo : ObjectChangeInfo {
 
 /// This class is an internal class and should not be used to create tokens directly.
 /// If you want to register a conversation observer use the GlobalConversationObserver
-class GeneralConversationObserverToken<T: NSObject where T : ZMGeneralConversationObserver> : ObjectObserverTokenContainer, DisplayNameObserver  {
+class GeneralConversationObserverToken<T: NSObject> : ObjectObserverTokenContainer, DisplayNameObserver where T : ZMGeneralConversationObserver  {
     
     typealias InnerTokenType = ObjectObserverToken<GeneralConversationChangeInfo, GeneralConversationObserverToken>
     
     var isTornDown : Bool = false
-    private weak var observer : T?
+    fileprivate weak var observer : T?
     var conversation : ZMConversation? {
         return self.object as? ZMConversation
     }    
@@ -155,17 +155,17 @@ class GeneralConversationObserverToken<T: NSObject where T : ZMGeneralConversati
         conversation?.managedObjectContext?.globalManagedObjectContextObserver.removeDisplayNameObserver(self)
     }
     
-    func displayNameMightChange(users: Set<NSObject>) {
+    func displayNameMightChange(_ users: Set<NSObject>) {
         guard users.count > 0,
             let conversation = conversation
-            where (conversation.userDefinedName == nil || conversation.userDefinedName!.isEmpty || conversation.conversationType != .Group) && conversation.activeParticipants.intersectsSet(users)
+            , (conversation.userDefinedName == nil || conversation.userDefinedName!.isEmpty || conversation.conversationType != .group) && conversation.activeParticipants.intersectsSet(users)
             else { return }
 
         (self.token as? InnerTokenType)?.keysHaveChanged(["displayName"])
     }
     
-    func connectionDidChange(changedConversations: [ZMConversation]) {
-        guard let conversation = conversation where conversation.conversationType != .Group && changedConversations.indexOf(conversation) != nil,
+    func connectionDidChange(_ changedConversations: [ZMConversation]) {
+        guard let conversation = conversation , conversation.conversationType != .group && changedConversations.index(of: conversation) != nil,
             let token = token as? InnerTokenType
             else { return }
         
@@ -188,7 +188,7 @@ class GeneralConversationObserverToken<T: NSObject where T : ZMGeneralConversati
     }
 
     public var participantsChanged : Bool {
-        return !Set(arrayLiteral: "otherActiveParticipants", "isSelfAnActiveMember").isDisjointWith(changedKeysAndOldValues.keys)
+        return !Set(arrayLiteral: "otherActiveParticipants", "isSelfAnActiveMember").isDisjoint(with: changedKeysAndOldValues.keys)
     }
 
     public var nameChanged : Bool {
@@ -264,32 +264,32 @@ extension ConversationChangeInfo {
     /// It will search past non-security related system messages, as someone
     /// might have added a participant or renamed the conversation (causing a
     /// system message to be inserted)
-    private var recentNewClientsSystemMessageWithExpiredMessages : ZMSystemMessage? {
-        if(!self.securityLevelChanged || self.conversation.securityLevel != .SecureWithIgnored) {
-            return .None;
+    fileprivate var recentNewClientsSystemMessageWithExpiredMessages : ZMSystemMessage? {
+        if(!self.securityLevelChanged || self.conversation.securityLevel != .secureWithIgnored) {
+            return .none;
         }
-        var foundSystemMessage : ZMSystemMessage? = .None
+        var foundSystemMessage : ZMSystemMessage? = .none
         var foundExpiredMessage = false
-        self.conversation.messages.enumerateObjectsWithOptions(NSEnumerationOptions.Reverse) { (msg, _, stop) -> Void in
+        self.conversation.messages.enumerateObjects(options: NSEnumerationOptions.reverse) { (msg, _, stop) -> Void in
             if let systemMessage = msg as? ZMSystemMessage {
-                if systemMessage.systemMessageType == .NewClient {
+                if systemMessage.systemMessageType == .newClient {
                     foundSystemMessage = systemMessage
                 }
-                if systemMessage.systemMessageType == .NewClient ||
-                    systemMessage.systemMessageType == .IgnoredClient ||
-                    systemMessage.systemMessageType == .ConversationIsSecure {
-                        stop.memory = true
+                if systemMessage.systemMessageType == .newClient ||
+                    systemMessage.systemMessageType == .ignoredClient ||
+                    systemMessage.systemMessageType == .conversationIsSecure {
+                        stop.pointee = true
                 }
-            } else if let sentMessage = msg as? ZMMessage where sentMessage.isExpired {
+            } else if let sentMessage = msg as? ZMMessage , sentMessage.isExpired {
                 foundExpiredMessage = true
             }
         }
-        return foundExpiredMessage ? foundSystemMessage : .None
+        return foundExpiredMessage ? foundSystemMessage : .none
     }
     
     /// True if the conversation was just degraded
     public var didDegradeSecurityLevelBecauseOfMissingClients : Bool {
-        return self.recentNewClientsSystemMessageWithExpiredMessages != .None
+        return self.recentNewClientsSystemMessageWithExpiredMessages != .none
     }
     
     /// Users that caused the conversation to degrade
@@ -308,8 +308,8 @@ extension ConversationChangeInfo {
     typealias ChangeInfo = ConversationChangeInfo
     typealias GlobalObserver = GlobalConversationObserver
     
-    private weak var observer : ZMConversationObserver?
-    private weak var globalObserver: GlobalConversationObserver?
+    fileprivate weak var observer : ZMConversationObserver?
+    fileprivate weak var globalObserver: GlobalConversationObserver?
     
     init(observer: Observer, globalObserver: GlobalConversationObserver) {
         self.observer = observer
@@ -317,7 +317,7 @@ extension ConversationChangeInfo {
         super.init()
     }
     
-    func notifyObserver(change: ConversationChangeInfo) {
+    func notifyObserver(_ change: ConversationChangeInfo) {
         observer?.conversationDidChange(change)
     }
     public func tearDown() {

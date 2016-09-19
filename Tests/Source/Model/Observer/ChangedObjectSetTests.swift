@@ -60,7 +60,7 @@ class ChangedObjectSetTests: ZMBaseManagedObjectTest {
         if let (head, tail) = sut.decompose() {
             // then
             XCTAssertEqual(head.object, a)
-            XCTAssertEqual(head.keys , AffectedKeys.All)
+            XCTAssertEqual(head.keys , AffectedKeys.all)
             XCTAssertEqual(tail, ChangedObjectSet())
         } else {
             XCTFail("decompose() returned nil")
@@ -71,14 +71,14 @@ class ChangedObjectSetTests: ZMBaseManagedObjectTest {
         // given
         let a = NSObject()
         let b = NSObject()
-        let setA = ChangedObjectSet(element: a, affectedKeys: .Some(KeySet(key: "foo")))
-        let setB = ChangedObjectSet(element: b, affectedKeys: .Some(KeySet(key: "bar")))
+        let setA = ChangedObjectSet(element: a, affectedKeys: .some(KeySet(key: "foo")))
+        let setB = ChangedObjectSet(element: b, affectedKeys: .some(KeySet(key: "bar")))
         
         let sut = setA.unionWithSet(setB)
         
         // when
-        let owkA = ChangedObjectSet.ObjectWithKeys(object: a, keys:.Some(KeySet(key: "foo")))
-        let owkB = ChangedObjectSet.ObjectWithKeys(object: b, keys:.Some(KeySet(key: "bar")))
+        let owkA = ChangedObjectSet.ObjectWithKeys(object: a, keys:.some(KeySet(key: "foo")))
+        let owkB = ChangedObjectSet.ObjectWithKeys(object: b, keys:.some(KeySet(key: "bar")))
 
         if let (head, tail) = sut.decompose() {
             // then
@@ -97,8 +97,8 @@ class ChangedObjectSetTests: ZMBaseManagedObjectTest {
     func testThatItCanUnionTheSameObjectWithMultipleKeys() {
         // given
         let a = NSObject()
-        let setA = ChangedObjectSet(element: a, affectedKeys: .Some(KeySet(key: "foo")))
-        let setB = ChangedObjectSet(element: a, affectedKeys: .Some(KeySet(key: "bar")))
+        let setA = ChangedObjectSet(element: a, affectedKeys: .some(KeySet(key: "foo")))
+        let setB = ChangedObjectSet(element: a, affectedKeys: .some(KeySet(key: "bar")))
         
         let sut = setA.unionWithSet(setB)
 
@@ -106,7 +106,7 @@ class ChangedObjectSetTests: ZMBaseManagedObjectTest {
         if let (head, tail) = sut.decompose() {
             // then
             XCTAssertEqual(head.object, a)
-            XCTAssertEqual(head.keys, AffectedKeys.Some(KeySet(["bar", "foo"])))
+            XCTAssertEqual(head.keys, AffectedKeys.some(KeySet(["bar", "foo"])))
             XCTAssertEqual(tail, ChangedObjectSet())
         } else {
             XCTFail("decompose() returned nil")
@@ -121,7 +121,7 @@ class ChangedObjectSetTests: ZMBaseManagedObjectTest {
         let c = NSObject()
         let d = NSObject()
         let userInfo = [NSUpdatedObjectsKey: NSSet(objects: a, b), NSRefreshedObjectsKey: NSSet(objects: c, d)]
-        let note = NSNotification(name: NSManagedObjectContextObjectsDidChangeNotification, object: fakeMOC, userInfo: userInfo)
+        let note = Notification(name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: fakeMOC, userInfo: userInfo)
         
         // when
         let sut = ChangedObjectSet(notification: note)
@@ -129,8 +129,8 @@ class ChangedObjectSetTests: ZMBaseManagedObjectTest {
         
         // then
         for owk in sut {
-            allObjects.addObject(owk.object)
-            XCTAssertEqual(owk.keys, AffectedKeys.All)
+            allObjects.add(owk.object)
+            XCTAssertEqual(owk.keys, AffectedKeys.all)
         }
         XCTAssertEqual(allObjects, NSSet(objects: a, b, c, d))
     }

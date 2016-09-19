@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,7 +23,7 @@
 public extension ZMGenericMessage {
     
     public static func genericMessage(withExternal external: ZMExternal, messageID: String) -> ZMGenericMessage {
-        let builder = ZMGenericMessage.builder()
+        let builder = ZMGenericMessage.builder()!
         builder.setExternal(external)
         builder.setMessageId(messageID)
         return builder.build()
@@ -38,7 +38,7 @@ public extension ZMGenericMessage {
     // MARK: ZMLocationMessageData
     
     public static func genericMessage(withLocation location: ZMLocation, messageID: String) -> ZMGenericMessage {
-        let builder = ZMGenericMessage.builder()
+        let builder = ZMGenericMessage.builder()!
         builder.setLocation(location)
         builder.setMessageId(messageID)
         return builder.build()
@@ -47,7 +47,7 @@ public extension ZMGenericMessage {
     // MARK: ZMAssetClientMessage
     
     public static func genericMessage(withAsset asset: ZMAsset, messageID: String) -> ZMGenericMessage {
-        let builder = ZMGenericMessage.builder()
+        let builder = ZMGenericMessage.builder()!
         builder.setAsset(asset)
         builder.setMessageId(messageID)
         return builder.build()
@@ -66,7 +66,7 @@ public extension ZMGenericMessage {
         return ZMGenericMessage.genericMessage(withAsset: fileMetadata.asset, messageID: messageID)
     }
     
-    public static func genericMessage(withUploadedOTRKey otrKey: NSData, sha256: NSData, messageID: String) -> ZMGenericMessage {
+    public static func genericMessage(withUploadedOTRKey otrKey: Data, sha256: Data, messageID: String) -> ZMGenericMessage {
         return ZMGenericMessage.genericMessage(withAsset: .asset(withUploadedOTRKey: otrKey, sha256: sha256), messageID: messageID)
     }
     
@@ -92,7 +92,7 @@ extension ZMGenericMessage {
 public extension ZMLocation {
 
     public static func location(withLatitude latitude: Float, longitude: Float, name: String? = nil, zoomLevel: Int32? = nil) -> ZMLocation {
-        let builder = ZMLocation.builder()
+        let builder = ZMLocation.builder()!
         builder.setLatitude(latitude)
         builder.setLongitude(longitude)
         if let name = name {
@@ -107,8 +107,8 @@ public extension ZMLocation {
 
 public extension ZMExternal {
     
-    public static func external(withOTRKey otrKey: NSData, sha256: NSData) -> ZMExternal {
-        let builder = ZMExternal.builder()
+    public static func external(withOTRKey otrKey: Data, sha256: Data) -> ZMExternal {
+        let builder = ZMExternal.builder()!
         builder.setOtrKey(otrKey)
         builder.setSha256(sha256)
         return builder.build()
@@ -123,7 +123,7 @@ public extension ZMExternal {
 public extension ZMAsset {
     
     public static func asset(withOriginal original: ZMAssetOriginal? = nil, preview: ZMAssetPreview? = nil) -> ZMAsset {
-        let builder = ZMAsset.builder()
+        let builder = ZMAsset.builder()!
         if let original = original {
             builder.setOriginal(original)
         }
@@ -133,14 +133,14 @@ public extension ZMAsset {
         return builder.build()
     }
     
-    public static func asset(withUploadedOTRKey otrKey: NSData, sha256: NSData) -> ZMAsset {
-        let builder = ZMAsset.builder()
+    public static func asset(withUploadedOTRKey otrKey: Data, sha256: Data) -> ZMAsset {
+        let builder = ZMAsset.builder()!
         builder.setUploaded(.remoteData(withOTRKey: otrKey, sha256: sha256))
         return builder.build()
     }
     
     public static func asset(withNotUploaded notUploaded: ZMAssetNotUploaded) -> ZMAsset {
-        let builder = ZMAsset.builder()
+        let builder = ZMAsset.builder()!
         builder.setNotUploaded(notUploaded)
         return builder.build()
     }
@@ -154,7 +154,7 @@ public extension ZMAssetOriginal {
     }
     
     public static func original(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: ZMAssetImageMetaData?) -> ZMAssetOriginal {
-        let builder = ZMAssetOriginal.builder()
+        let builder = ZMAssetOriginal.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
         if let name = name {
@@ -167,31 +167,31 @@ public extension ZMAssetOriginal {
     }
     
     public static func original(withSize size: UInt64, mimeType: String, name: String, videoDurationInMillis: UInt, videoDimensions: CGSize) -> ZMAssetOriginal {
-        let builder = ZMAssetOriginal.builder()
+        let builder = ZMAssetOriginal.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
         builder.setName(name)
         
-        let videoBuilder = ZMAssetVideoMetaData.builder()
+        let videoBuilder = ZMAssetVideoMetaData.builder()!
         videoBuilder.setDurationInMillis(UInt64(videoDurationInMillis))
         videoBuilder.setWidth(Int32(videoDimensions.width))
         videoBuilder.setHeight(Int32(videoDimensions.height))
-        builder.setVideoBuilder(videoBuilder)
+        builder.setVideo(videoBuilder)
         
         return builder.build()
     }
     
     public static func original(withSize size: UInt64, mimeType: String, name: String, audioDurationInMillis: UInt, normalizedLoudness: [Float]) -> ZMAssetOriginal {
-        let builder = ZMAssetOriginal.builder()
+        let builder = ZMAssetOriginal.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
         builder.setName(name)
         
         let loudnessArray = normalizedLoudness.map { UInt8(roundf($0*255)) }
-        let audioBuilder = ZMAssetAudioMetaData.builder()
+        let audioBuilder = ZMAssetAudioMetaData.builder()!
         audioBuilder.setDurationInMillis(UInt64(audioDurationInMillis))
-        audioBuilder.setNormalizedLoudness(NSData(bytes: loudnessArray, length: loudnessArray.count))
-        builder.setAudioBuilder(audioBuilder)
+        audioBuilder.setNormalizedLoudness(NSData(bytes: loudnessArray, length: loudnessArray.count) as Data!)
+        builder.setAudio(audioBuilder)
         
         return builder.build()
     }
@@ -200,13 +200,13 @@ public extension ZMAssetOriginal {
     public var normalizedLoudnessLevels : [Float] {
         
         guard self.audio.hasNormalizedLoudness() else { return [] }
-        guard self.audio.normalizedLoudness.length > 0 else { return [] }
+        guard self.audio.normalizedLoudness.count > 0 else { return [] }
         
-        let data = self.audio.normalizedLoudness
-        let offsets = 0..<data.length
+        guard let data = self.audio.normalizedLoudness else {return []}
+        let offsets = 0..<data.count
         return offsets.map { offset -> UInt8 in
             var number : UInt8 = 0
-            data.getBytes(&number, range: NSRange(location: 0 + offset, length: sizeof(UInt8.self)))
+            data.copyBytes(to: &number, from: (0 + offset)..<(MemoryLayout<UInt8>.size+offset))
             return number
             }
             .map { Float(Float($0)/255.0) }
@@ -216,7 +216,7 @@ public extension ZMAssetOriginal {
 public extension ZMAssetPreview {
     
     public static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData, imageMetaData: ZMAssetImageMetaData) -> ZMAssetPreview {
-        let builder = ZMAssetPreview.builder()
+        let builder = ZMAssetPreview.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
         builder.setRemote(remoteData)
@@ -228,7 +228,7 @@ public extension ZMAssetPreview {
 
 public extension ZMAssetImageMetaData {
     public static func imageMetaData(withWidth width: Int32, height: Int32) -> ZMAssetImageMetaData {
-        let builder = ZMAssetImageMetaData.builder()
+        let builder = ZMAssetImageMetaData.builder()!
         builder.setWidth(width)
         builder.setHeight(height)
         return builder.build()
@@ -237,8 +237,8 @@ public extension ZMAssetImageMetaData {
 
 public extension ZMAssetRemoteData {
     
-    public static func remoteData(withOTRKey otrKey: NSData, sha256: NSData, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
-        let builder = ZMAssetRemoteData.builder()
+    public static func remoteData(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
+        let builder = ZMAssetRemoteData.builder()!
         builder.setOtrKey(otrKey)
         builder.setSha256(sha256)
         if let identifier = assetId {
@@ -253,8 +253,8 @@ public extension ZMAssetRemoteData {
 
 public extension ZMClientEntry {
     
-    public static func entry(withClient client: UserClient, data: NSData) -> ZMClientEntry {
-        let builder = ZMClientEntry.builder()
+    public static func entry(withClient client: UserClient, data: Data) -> ZMClientEntry {
+        let builder = ZMClientEntry.builder()!
         builder.setClient(client.clientId)
         builder.setText(data)
         return builder.build()
@@ -265,7 +265,7 @@ public extension ZMClientEntry {
 public extension ZMUserEntry {
     
     public static func entry(withUser user: ZMUser, clientEntries: [ZMClientEntry]) -> ZMUserEntry {
-        let builder = ZMUserEntry.builder()
+        let builder = ZMUserEntry.builder()!
         builder.setUser(user.userId())
         builder.setClientsArray(clientEntries)
         return builder.build()
@@ -275,8 +275,8 @@ public extension ZMUserEntry {
 
 public extension ZMNewOtrMessage {
     
-    public static func message(withSender sender: UserClient, nativePush: Bool, recipients: [ZMUserEntry], blob: NSData? = nil) -> ZMNewOtrMessage {
-        let builder = ZMNewOtrMessage.builder()
+    public static func message(withSender sender: UserClient, nativePush: Bool, recipients: [ZMUserEntry], blob: Data? = nil) -> ZMNewOtrMessage {
+        let builder = ZMNewOtrMessage.builder()!
         builder.setNativePush(nativePush)
         builder.setSender(sender.clientId)
         builder.setRecipientsArray(recipients)
@@ -291,7 +291,7 @@ public extension ZMNewOtrMessage {
 public extension ZMOtrAssetMeta {
     
     public static func otrAssetMeta(withSender sender: UserClient, nativePush: Bool, inline: Bool, recipients: [ZMUserEntry]) -> ZMOtrAssetMeta {
-        let builder = ZMOtrAssetMeta.builder()
+        let builder = ZMOtrAssetMeta.builder()!
         builder.setNativePush(nativePush)
         builder.setIsInline(inline)
         builder.setSender(sender.clientId)
@@ -305,7 +305,7 @@ public extension ZMOtrAssetMeta {
 public extension ZMArticle {
 
     public static func article(withPermanentURL permanentURL: String, title: String?, summary: String?, imageAsset: ZMAsset?) -> ZMArticle {
-        let articleBuilder = ZMArticle.builder()
+        let articleBuilder = ZMArticle.builder()!
         articleBuilder.setPermanentUrl(permanentURL)
         if let title = title {
             articleBuilder.setTitle(title)
@@ -332,8 +332,8 @@ public extension ZMLinkPreview {
         return linkPreview(withOriginalURL: originalURL, permanentURL: permanentURL, offset: offset, title: title, summary: summary, imageAsset: imageAsset, article: article, tweet: tweet)
     }
     
-    private static func linkPreview(withOriginalURL originalURL: String, permanentURL: String, offset: Int32, title: String?, summary: String?, imageAsset: ZMAsset?, article: ZMArticle?, tweet: ZMTweet?) -> ZMLinkPreview {
-        let linkPreviewBuilder = ZMLinkPreview.builder()
+    fileprivate static func linkPreview(withOriginalURL originalURL: String, permanentURL: String, offset: Int32, title: String?, summary: String?, imageAsset: ZMAsset?, article: ZMArticle?, tweet: ZMTweet?) -> ZMLinkPreview {
+        let linkPreviewBuilder = ZMLinkPreview.builder()!
         linkPreviewBuilder.setUrl(originalURL)
         linkPreviewBuilder.setPermanentUrl(permanentURL)
         linkPreviewBuilder.setUrlOffset(offset)
@@ -357,64 +357,64 @@ public extension ZMLinkPreview {
         return linkPreviewBuilder.build()
     }
 
-    func update(withOtrKey otrKey: NSData, sha256: NSData) -> ZMLinkPreview {
+    func update(withOtrKey otrKey: Data, sha256: Data) -> ZMLinkPreview {
         return update(withOtrKey: otrKey, sha256: sha256, original: nil)
     }
     
-    func update(withOtrKey otrKey: NSData, sha256: NSData, original: ZMAssetOriginal?) -> ZMLinkPreview {
-        let linkPreviewbuilder = toBuilder()
+    func update(withOtrKey otrKey: Data, sha256: Data, original: ZMAssetOriginal?) -> ZMLinkPreview {
+        let linkPreviewbuilder = toBuilder()!
         
         if hasArticle() {
-            let articleBuilder = article.toBuilder()
-            let assetBuilder = article.image.toBuilder()
-            assetBuilder.setUploadedBuilder(remoteBuilder(withOTRKey: otrKey, sha256: sha256))
+            let articleBuilder = article.toBuilder()!
+            let assetBuilder = article.image.toBuilder()!
+            assetBuilder.setUploaded(remoteBuilder(withOTRKey: otrKey, sha256: sha256))
             if let original = original {
                 assetBuilder.setOriginal(original)
             }
-            articleBuilder.setImageBuilder(assetBuilder)
-            linkPreviewbuilder.setArticleBuilder(articleBuilder)
+            articleBuilder.setImage(assetBuilder)
+            linkPreviewbuilder.setArticle(articleBuilder)
         }
         
-        let newAssetBuilder = image.toBuilder()
-        newAssetBuilder.setUploadedBuilder(remoteBuilder(withOTRKey: otrKey, sha256: sha256))
+        let newAssetBuilder = image.toBuilder()!
+        newAssetBuilder.setUploaded(remoteBuilder(withOTRKey: otrKey, sha256: sha256))
         if let original = original {
             newAssetBuilder.setOriginal(original)
         }
-        linkPreviewbuilder.setImageBuilder(newAssetBuilder)
+        linkPreviewbuilder.setImage(newAssetBuilder)
         
         return linkPreviewbuilder.build()
     }
     
     func update(withAssetKey assetKey: String, assetToken: String?) -> ZMLinkPreview {
         
-        let linkPreviewbuilder = toBuilder()
+        let linkPreviewbuilder = toBuilder()!
         
         if hasArticle() {
             let articleRemoteBuilder = article.image.uploaded.builder(withAssetID: assetKey, token: assetToken)
-            let articleBuilder = article.toBuilder()
-            let assetBuilder = article.image.toBuilder()
-            assetBuilder.setUploadedBuilder(articleRemoteBuilder)
-            articleBuilder.setImageBuilder(assetBuilder)
-            linkPreviewbuilder.setArticleBuilder(articleBuilder)
+            let articleBuilder = article.toBuilder()!
+            let assetBuilder = article.image.toBuilder()!
+            assetBuilder.setUploaded(articleRemoteBuilder)
+            articleBuilder.setImage(assetBuilder)
+            linkPreviewbuilder.setArticle(articleBuilder)
         }
         
         let newAssetRemoteBuilder = image.uploaded.builder(withAssetID: assetKey, token: assetToken)
-        let newImageBuilder = image.toBuilder()
-        newImageBuilder.setUploadedBuilder(newAssetRemoteBuilder)
-        linkPreviewbuilder.setImageBuilder(newImageBuilder)
+        let newImageBuilder = image.toBuilder()!
+        newImageBuilder.setUploaded(newAssetRemoteBuilder)
+        linkPreviewbuilder.setImage(newImageBuilder)
         
         return linkPreviewbuilder.build()
     }
     
-    private func remoteBuilder(withOTRKey otrKey: NSData, sha256: NSData) -> ZMAssetRemoteDataBuilder {
-        let remoteDataBuilder = ZMAssetRemoteData.builder()
+    fileprivate func remoteBuilder(withOTRKey otrKey: Data, sha256: Data) -> ZMAssetRemoteDataBuilder {
+        let remoteDataBuilder = ZMAssetRemoteData.builder()!
         remoteDataBuilder.setOtrKey(otrKey)
         remoteDataBuilder.setSha256(sha256)
         return remoteDataBuilder
     }
     
-    private func uploadedBuilder(withAssetKey key: String, token: String?) -> ZMAssetRemoteDataBuilder {
-        let remoteDataBuilder = ZMAssetRemoteData.builder()
+    fileprivate func uploadedBuilder(withAssetKey key: String, token: String?) -> ZMAssetRemoteDataBuilder {
+        let remoteDataBuilder = ZMAssetRemoteData.builder()!
         remoteDataBuilder.setAssetId(key)
         if let token = token {
             remoteDataBuilder.setAssetToken(token)
@@ -426,7 +426,7 @@ public extension ZMLinkPreview {
 
 extension ZMAssetRemoteData {
     func builder(withAssetID assetID: String, token: String?) -> ZMAssetRemoteDataBuilder {
-        let builder = toBuilder()
+        let builder = toBuilder()!
         builder.setAssetId(assetID)
         if let token = token {
             builder.setAssetToken(token)
@@ -437,7 +437,7 @@ extension ZMAssetRemoteData {
 
 public extension ZMTweet {
     public static func tweet(withAuthor author: String?, username: String?) -> ZMTweet {
-        let builder = ZMTweet.builder()
+        let builder = ZMTweet.builder()!
         if let author = author {
             builder.setAuthor(author)
         }

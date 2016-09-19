@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -44,8 +44,8 @@ extension NSManagedObjectContext
 private struct FileCache : Cache {
     
     /// URL of the cache
-    static let cacheFolderURL : NSURL = {
-        guard let cacheURL = NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first else {
+    static let cacheFolderURL : URL = {
+        guard let cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             fatal("Can't create caches directory")
         }
         return cacheURL
@@ -55,25 +55,25 @@ private struct FileCache : Cache {
         
         // create and set attributes
         do {
-            try NSFileManager.defaultManager().createDirectoryAtURL(self.dynamicType.cacheFolderURL, withIntermediateDirectories:true, attributes:[NSFileProtectionKey:NSFileProtectionCompleteUntilFirstUserAuthentication])
+            try FileManager.default.createDirectory(at: type(of: self).cacheFolderURL, withIntermediateDirectories:true, attributes:[FileAttributeKey.protectionKey.rawValue:FileProtectionType.completeUntilFirstUserAuthentication])
         }
         catch {
-            fatal("Can't create cache directory: \(self.dynamicType.cacheFolderURL)")
+            fatal("Can't create cache directory: \(type(of: self).cacheFolderURL)")
         }
         
         do {
-            try self.dynamicType.cacheFolderURL.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
+            try (type(of: self).cacheFolderURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
         }
         catch {
-            fatal("Can not exclude cache directory from backup: \(self.dynamicType.cacheFolderURL)")
+            fatal("Can not exclude cache directory from backup: \(type(of: self).cacheFolderURL)")
         }
     }
     
-    func assetData(key: String) -> NSData? {
+    func assetData(_ key: String) -> Data? {
         let url = URLForKey(key)
-        let data: NSData?
+        let data: Data?
         do {
-            data = try NSData(contentsOfURL: url, options: .DataReadingMappedIfSafe)
+            data = try Data(contentsOf: url, options: .mappedIfSafe)
         }
         catch let error as NSError {
             if error.code != NSFileReadNoSuchFileError {
@@ -84,70 +84,67 @@ private struct FileCache : Cache {
         return data
     }
     
-    func storeAssetData(data: NSData, key: String) {
+    func storeAssetData(_ data: Data, key: String) {
         let url = URLForKey(key)
-        NSFileManager.defaultManager().createFileAtPath(url.path!, contents: data, attributes: [NSFileProtectionKey : NSFileProtectionCompleteUntilFirstUserAuthentication])
+        FileManager.default.createFile(atPath: url.path, contents: data, attributes: [FileAttributeKey.protectionKey.rawValue : FileProtectionType.completeUntilFirstUserAuthentication])
         do {
-            try url.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
+            try (url as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
         } catch {
-            _ = try? NSFileManager.defaultManager().removeItemAtURL(url)
+            _ = try? FileManager.default.removeItem(at: url)
             fatal("Failed to exclude file from backup \(url) \(error)")
         }
     }
     
-    func storeAssetFromURL(url: NSURL, key: String) {
+    func storeAssetFromURL(_ url: URL, key: String) {
         guard url.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(url)") }
         let finalURL = URLForKey(key)
         do {
-            try NSFileManager.defaultManager().copyItemAtURL(url, toURL: finalURL)
-            try NSFileManager.defaultManager().setAttributes([NSFileProtectionKey : NSFileProtectionCompleteUntilFirstUserAuthentication], ofItemAtPath: finalURL.path!)
-            try finalURL.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
+            try FileManager.default.copyItem(at: url, to: finalURL)
+            try FileManager.default.setAttributes([FileAttributeKey.protectionKey : FileProtectionType.completeUntilFirstUserAuthentication], ofItemAtPath: finalURL.path)
+            try (finalURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
         } catch {
-            _ = try? NSFileManager.defaultManager().removeItemAtURL(finalURL)
+            _ = try? FileManager.default.removeItem(at: finalURL)
             fatal("Failed to copy from \(url) to \(finalURL), \(error)")
         }
         
     }
     
-    func deleteAssetData(key: String) {
+    func deleteAssetData(_ key: String) {
         let url = URLForKey(key)
         do {
-            try NSFileManager.defaultManager().removeItemAtURL(url)
+            try FileManager.default.removeItem(at: url)
         }
         catch let error as NSError {
             if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
-                zmLog.error("Can't delete file \(url.pathComponents!.last!): \(error)")
+                zmLog.error("Can't delete file \(url.pathComponents.last!): \(error)")
             }
         }
     }
     
-    func assetURL(key: String) -> NSURL? {
+    func assetURL(_ key: String) -> URL? {
         let url = URLForKey(key)
-        let ptr : NSErrorPointer = nil
-        if url.checkResourceIsReachableAndReturnError(ptr) {
-            return url
-        }
-        return nil
+        let isReachable = (try? url.checkResourceIsReachable()) ?? false
+        return isReachable ? url : nil
     }
     
-    func hasDataForKey(key: String) -> Bool {
+    func hasDataForKey(_ key: String) -> Bool {
         return assetURL(key) != nil
     }
     
     /// Returns the expected URL of a cache entry
-    private func URLForKey(key: String) -> NSURL {
+    fileprivate func URLForKey(_ key: String) -> URL {
         guard key != "." && key != ".." else { fatal("Can't use \(key) as cache key") }
         var safeKey = key
         for c in ":\\/%\"".characters { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
-            safeKey = safeKey.stringByReplacingOccurrencesOfString("\(c)", withString: "_")
+            safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")
         }
-        return self.dynamicType.cacheFolderURL.URLByAppendingPathComponent(safeKey)
+        return type(of: self).cacheFolderURL.appendingPathComponent(safeKey)
     }
 
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
     static func wipeCaches() {
-        _ = try? NSFileManager.defaultManager().removeItemAtURL(self.cacheFolderURL)
+        _ = try? FileManager.default.removeItem(at: self.cacheFolderURL)
     }
 }
 
@@ -157,7 +154,7 @@ private struct FileCache : Cache {
 /// Any thread can read objects that are never deleted without any problem.
 /// Objects purged from the cache folder by the OS are not a problem as the
 /// OS will terminate the app before purging the cache.
-public class FileAssetCache : NSObject {
+open class FileAssetCache : NSObject {
     
     let cache : Cache
     
@@ -168,49 +165,49 @@ public class FileAssetCache : NSObject {
     }
     
     /// Returns the asset data for a given message. This will probably cause I/O
-    public func assetData(messageID: NSUUID, fileName: String, encrypted: Bool) -> NSData? {
-        return self.cache.assetData(self.dynamicType.cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+    open func assetData(_ messageID: UUID, fileName: String, encrypted: Bool) -> Data? {
+        return self.cache.assetData(type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
     }
     
     /// Returns the asset URL for a given message
-    public func accessAssetURL(messageID: NSUUID, fileName: String) -> NSURL? {
-        return self.cache.assetURL(self.dynamicType.cacheKeyForAsset(messageID, fileName: fileName))
+    open func accessAssetURL(_ messageID: UUID, fileName: String) -> URL? {
+        return self.cache.assetURL(type(of: self).cacheKeyForAsset(messageID, fileName: fileName))
     }
     
     /// Returns the asset URL for a given message
-    public func accessRequestURL(messageID: NSUUID) -> NSURL? {
-        return cache.assetURL(self.dynamicType.cacheKeyForAsset(messageID, fileName: "", request: true))
+    open func accessRequestURL(_ messageID: UUID) -> URL? {
+        return cache.assetURL(type(of: self).cacheKeyForAsset(messageID, fileName: "", request: true))
     }
     
-    public func hasDataOnDisk(messageID: NSUUID, fileName: String, encrypted: Bool) -> Bool {
-        return cache.hasDataForKey(self.dynamicType.cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+    open func hasDataOnDisk(_ messageID: UUID, fileName: String, encrypted: Bool) -> Bool {
+        return cache.hasDataForKey(type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
     }
     
     /// Sets the asset data for a given message. This will cause I/O
-    public func storeAssetData(messageID: NSUUID, fileName: String, encrypted: Bool, data: NSData) {
-        self.cache.storeAssetData(data, key: self.dynamicType.cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+    open func storeAssetData(_ messageID: UUID, fileName: String, encrypted: Bool, data: Data) {
+        self.cache.storeAssetData(data, key: type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
     }
     
     /// Sets the request data for a given message and returns the asset url. This will cause I/O
-    public func storeRequestData(messageID: NSUUID, data: NSData) -> NSURL? {
-        let key = self.dynamicType.cacheKeyForAsset(messageID, fileName: "", request: true)
+    open func storeRequestData(_ messageID: UUID, data: Data) -> URL? {
+        let key = type(of: self).cacheKeyForAsset(messageID, fileName: "", request: true)
         cache.storeAssetData(data, key: key)
         return accessRequestURL(messageID)
     }
     
     /// Deletes the request data for a given message. This will cause I/O
-    public func deleteRequestData(messageID: NSUUID) {
-        let key = self.dynamicType.cacheKeyForAsset(messageID, fileName: "", request: true)
+    open func deleteRequestData(_ messageID: UUID) {
+        let key = type(of: self).cacheKeyForAsset(messageID, fileName: "", request: true)
         cache.deleteAssetData(key)
     }
     
     /// Deletes the data for a given message. This will cause I/O
-    public func deleteAssetData(messageID: NSUUID, fileName: String, encrypted: Bool) {
-        self.cache.deleteAssetData(self.dynamicType.cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+    open func deleteAssetData(_ messageID: UUID, fileName: String, encrypted: Bool) {
+        self.cache.deleteAssetData(type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
     }
     
     /// Returns the cache key for an asset
-    static func cacheKeyForAsset(messageID: NSUUID, fileName: String, encrypted: Bool = false, request: Bool = false) -> String {
+    static func cacheKeyForAsset(_ messageID: UUID, fileName: String, encrypted: Bool = false, request: Bool = false) -> String {
         precondition(!(request && encrypted))
         
         if (encrypted) {

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -27,35 +27,33 @@ class UserClientKeysStoreTests: OtrBaseTest {
     var sut: UserClientKeysStore!
     
     static func cleanOTRFolder() {
-        let fm = NSFileManager.defaultManager()
-        for path in [UserClientKeysStore.legacyOtrDirectory.path!, UserClientKeysStore.otrDirectory.path!] {
-            _ = try? fm.removeItemAtPath(path)
+        let fm = FileManager.default
+        for path in [UserClientKeysStore.legacyOtrDirectory.path, UserClientKeysStore.otrDirectory.path] {
+            _ = try? fm.removeItem(atPath: path)
         }
     }
     
     override func setUp() {
         super.setUp()
-        self.dynamicType.cleanOTRFolder()
+        type(of: self).cleanOTRFolder()
         sut = UserClientKeysStore()
     }
     
     override func tearDown() {
         sut = nil
-        self.dynamicType.cleanOTRFolder()
+        type(of: self).cleanOTRFolder()
         super.tearDown()
     }
     
     func testThatTheOTRFolderHasBackupDisabled() {
         
         // given
-        let otrURL = UserClientKeysStore.otrDirectory
+        let otrURL = UserClientKeysStore.otrDirectory as URL
         
         // then
-        var rsrc: AnyObject?
-        try! otrURL.getResourceValue(&rsrc, forKey: NSURLIsExcludedFromBackupKey)
-        let number = rsrc as! NSNumber
-        XCTAssertTrue(number == true)
+        guard let values = try? otrURL.resourceValues(forKeys: Set(arrayLiteral: URLResourceKey.isExcludedFromBackupKey)) else {return XCTFail()}
         
+        XCTAssertTrue(values.isExcludedFromBackup!)
     }
     
     func testThatItCanGenerateMoreKeys() {
@@ -122,15 +120,15 @@ class UserClientKeysStoreTests: OtrBaseTest {
         
     }
     
-    private static func createFakeOTRFolder() {
-        try! NSFileManager.defaultManager().createDirectoryAtPath(UserClientKeysStore.legacyOtrDirectory.path!, withIntermediateDirectories: true, attributes: [:])
+    fileprivate static func createFakeOTRFolder() {
+        try! FileManager.default.createDirectory(atPath: UserClientKeysStore.legacyOtrDirectory.path, withIntermediateDirectories: true, attributes: [:])
     }
     
     func testThatTheNonEmptyLegacyOTRFolderIsDetected() {
         
         // given
-        self.dynamicType.createFakeOTRFolder()
-        "foo".dataUsingEncoding(NSUTF8StringEncoding)!.writeToURL(UserClientKeysStore.legacyOtrDirectory.URLByAppendingPathComponent("dummy.txt"), atomically: true)
+        type(of: self).createFakeOTRFolder()
+        try! "foo".data(using: String.Encoding.utf8)!.write(to: UserClientKeysStore.legacyOtrDirectory.appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
         
         // then
         XCTAssertTrue(UserClientKeysStore.needToMigrateIdentity)
@@ -139,7 +137,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func testThatANonEmptyLegacyOTRFolderIsDeleted() {
         
         // given
-        self.dynamicType.createFakeOTRFolder()
+        type(of: self).createFakeOTRFolder()
         XCTAssertTrue(UserClientKeysStore.needToMigrateIdentity)
         
         // when
@@ -161,7 +159,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func testThatTheEmptyLegacyOTRFolderIsDetected() {
         
         // given
-        self.dynamicType.createFakeOTRFolder()
+        type(of: self).createFakeOTRFolder()
         
         // then
         XCTAssertTrue(UserClientKeysStore.needToMigrateIdentity)
@@ -170,17 +168,17 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func testThatItMovesTheLegacyCryptobox() {
         
         // given
-        self.dynamicType.cleanOTRFolder()
+        type(of: self).cleanOTRFolder()
 
-        self.dynamicType.createFakeOTRFolder()
-        "foo".dataUsingEncoding(NSUTF8StringEncoding)!.writeToURL(UserClientKeysStore.legacyOtrDirectory.URLByAppendingPathComponent("dummy.txt"), atomically: true)
+        type(of: self).createFakeOTRFolder()
+        try! "foo".data(using: String.Encoding.utf8)!.write(to: UserClientKeysStore.legacyOtrDirectory.appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
 
         // when
         let _ = UserClientKeysStore()
         
         // then
-        let fooData = NSData(contentsOfURL: UserClientKeysStore.otrDirectory.URLByAppendingPathComponent("dummy.txt"))!
-        let fooString = String(data: fooData, encoding: NSUTF8StringEncoding)!
+        let fooData = try! Data(contentsOf: UserClientKeysStore.otrDirectory.appendingPathComponent("dummy.txt"))
+        let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
         XCTAssertEqual(fooString, "foo")
         XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity)
     }
@@ -195,7 +193,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func testThatTheOTRFolderHasTheRightPath() {
         
         // given
-        let otrURL = try! NSFileManager.defaultManager().URLForDirectory(NSSearchPathDirectory.ApplicationSupportDirectory, inDomain: NSSearchPathDomainMask.UserDomainMask, appropriateForURL: nil, create: false).URLByAppendingPathComponent("otr")
+        let otrURL = try! FileManager.default.url(for: FileManager.SearchPathDirectory.applicationSupportDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("otr")
         
         // then
         XCTAssertEqual(UserClientKeysStore.otrDirectory, otrURL)
