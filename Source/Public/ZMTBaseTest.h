@@ -81,10 +81,10 @@ typedef BOOL(^VerificationBlock)(void);
 
 @interface ZMTBaseTest (Asserts)
 
-- (void)assertDictionary:(nonnull NSDictionary *)d1 isEqualToDictionary:(nonnull NSDictionary *)d2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 failureRecorder:(nonnull ZMTFailureRecorder *)failureRecorder;
-- (void)assertDictionary:(nonnull NSDictionary *)d1 isEqualToDictionary:(nonnull NSDictionary *)d2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 ignoreKeys:(nonnull NSArray *)ignoredKeys failureRecorder:(nonnull ZMTFailureRecorder *)failureRecorder;
+- (void)assertDictionary:(nonnull NSDictionary *)d1 isEqualToDictionary:(nonnull NSDictionary *)d2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 failureRecorder:(nullable ZMTFailureRecorder *)failureRecorder;
+- (void)assertDictionary:(nonnull NSDictionary *)d1 isEqualToDictionary:(nonnull NSDictionary *)d2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 ignoreKeys:(nonnull NSArray *)ignoredKeys failureRecorder:(nullable ZMTFailureRecorder *)failureRecorder;
 
-- (void)assertArray:(nonnull NSArray *)a1 hasSameElementsAsArray:(nonnull NSArray *)a2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 failureRecorder:(nonnull ZMTFailureRecorder *)failureRecorder;
+- (void)assertArray:(nonnull NSArray *)a1 hasSameElementsAsArray:(nonnull NSArray *)a2 name1:(nonnull char const *)name1 name2:(nonnull char const *)name2 failureRecorder:(nullable ZMTFailureRecorder *)failureRecorder;
 
 @end
 
