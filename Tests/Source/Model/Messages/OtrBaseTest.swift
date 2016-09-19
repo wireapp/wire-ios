@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -25,6 +25,6 @@ class OtrBaseTest: XCTestCase {
         super.setUp()
         
         //clean stored cryptobox files
-        let _ = try? NSFileManager.defaultManager().removeItemAtURL(UserClientKeysStore.otrDirectory)
+        let _ = try? FileManager.default.removeItem(at: UserClientKeysStore.otrDirectory)
     }
 }

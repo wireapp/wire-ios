@@ -24,46 +24,45 @@ public let ZMReactionUsersValueKey      = "users"
 
 
 @objc public enum TransportReaction : UInt32 {
-    case None  = 0
-    case Heart = 1
+    case none  = 0
+    case heart = 1
 }
 
 
-@objc(Reaction)
-public class Reaction : ZMManagedObject {
+open class Reaction : ZMManagedObject {
     
     @NSManaged var unicodeValue : String?
     @NSManaged var message      : ZMMessage?
     @NSManaged var users        : Set<ZMUser>
     
     
-    public static func insertReaction(unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage) -> Reaction
-    {
-        let reaction = self.insertNewObjectInManagedObjectContext(message.managedObjectContext)
+    open static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage) -> Reaction {
+        let reaction = insertNewObject(in: message.managedObjectContext!)
         reaction.message = message
         reaction.unicodeValue = unicodeValue
-        reaction.mutableSetValueForKey(ZMReactionUsersValueKey).addObjectsFromArray(users)
+        reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).addObjects(from: users)
         return reaction
     }
     
     
-    public override func keysTrackedForLocalModifications() -> [AnyObject]! {
+    open override func keysTrackedForLocalModifications() -> [String] {
         return [ZMReactionUsersValueKey]
     }
-    public override static func entityName() -> String! {
+    
+    open override static func entityName() -> String {
         return "Reaction"
     }
     
-    public override static func sortKey() -> String! {
+    open override static func sortKey() -> String? {
         return ZMReactionUnicodeValueKey
     }
     
-    @objc public static func transportReaction(fromUnicode: String) -> TransportReaction {
-        switch fromUnicode {
+    @objc public static func transportReaction(from unicode: String) -> TransportReaction {
+        switch unicode {
         case "❤️":
-            return .Heart
+            return .heart
         default:
-            return .None
+            return .none
         }
 
     }

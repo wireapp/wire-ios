@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,19 +21,19 @@ import Foundation
 
 public protocol DisplayNameObserver : NSObjectProtocol {
     var conversation : ZMConversation? { get }
-    func displayNameMightChange(users: Set<NSObject>)
+    func displayNameMightChange(_ users: Set<NSObject>)
     func tearDown()
 }
 
 final class GlobalUserObserver : NSObject, ObjectsDidChangeDelegate, ZMUserObserver {
     
-    private var userTokens : [ZMUser : GenericUserObserverToken<ZMUser>] = [:]
-    private var searchUserTokens : [NSObject : GenericUserObserverToken<ZMSearchUser>] = [:]
-    private var userObserverTokens : TokenCollection<UserObserverToken> = TokenCollection()
-    private var displayNameObservers : [DisplayNameObserver] = []
+    fileprivate var userTokens : [ZMUser : GenericUserObserverToken<ZMUser>] = [:]
+    fileprivate var searchUserTokens : [NSObject : GenericUserObserverToken<ZMSearchUser>] = [:]
+    fileprivate var userObserverTokens : TokenCollection<UserObserverToken> = TokenCollection()
+    fileprivate var displayNameObservers : [DisplayNameObserver] = []
     
-    private weak var managedObjectContext : NSManagedObjectContext?
-    private var needsToRecalculateNames : Bool = false
+    fileprivate weak var managedObjectContext : NSManagedObjectContext?
+    fileprivate var needsToRecalculateNames : Bool = false
     var isTornDown : Bool = false
     
     init(managedObjectContext: NSManagedObjectContext) {
@@ -41,18 +41,18 @@ final class GlobalUserObserver : NSObject, ObjectsDidChangeDelegate, ZMUserObser
         super.init()
     }
     
-    private func removeTokensForUsers(users: [ZMUser]) {
+    fileprivate func removeTokensForUsers(_ users: [ZMUser]) {
         for user in users {
             self.userTokens[user]?.tearDown()
-            self.userTokens.removeValueForKey(user)
+            self.userTokens.removeValue(forKey: user)
             self.userObserverTokens.removeTokensForObject(user)
         }
     }
     
     // handling object changes
-    func objectsDidChange(changes: ManagedObjectChanges) {
-        if let updated = changes.updated as? [ZMConnection] where updated.count > 0 ,
-           let inserted = changes.inserted as? [ZMConnection] where inserted.count > 0
+    func objectsDidChange(_ changes: ManagedObjectChanges) {
+        if let updated = changes.updated as? [ZMConnection] , updated.count > 0 ,
+           let inserted = changes.inserted as? [ZMConnection] , inserted.count > 0
         {
             let users = (inserted + updated).flatMap{$0.to}
             userTokens.values.forEach{$0.connectionDidChange(users)}
@@ -62,11 +62,11 @@ final class GlobalUserObserver : NSObject, ObjectsDidChangeDelegate, ZMUserObser
         self.removeTokensForUsers(changes.deleted as? [ZMUser] ?? [])
     }
     
-    func displayNameMightChange(users: Set<NSObject>) {
+    func displayNameMightChange(_ users: Set<NSObject>) {
         displayNameObservers.forEach{$0.displayNameMightChange(users)}
     }
     
-    func userDidChange(note: UserChangeInfo!) {
+    func userDidChange(_ note: UserChangeInfo!) {
         if let user =  note.user as? NSObject {
             userObserverTokens[user]?.forEach{ $0.notifyObserver(note) }
         }
@@ -89,7 +89,7 @@ final class GlobalUserObserver : NSObject, ObjectsDidChangeDelegate, ZMUserObser
 
 extension GlobalUserObserver {
     
-    func addUserObserver(observer: ZMUserObserver, user: ZMBareUser) -> UserObserverToken? {
+    func addUserObserver(_ observer: ZMUserObserver, user: ZMBareUser) -> UserObserverToken? {
         guard let managedObjectContext = managedObjectContext else { return nil }
         
         switch (user) {
@@ -108,23 +108,23 @@ extension GlobalUserObserver {
         }
     }
     
-    func addDisplayNameObserver(observer: DisplayNameObserver) {
+    func addDisplayNameObserver(_ observer: DisplayNameObserver) {
         displayNameObservers.append(observer)
     }
 
-    func removeUserObserverForToken(token: UserObserverToken) {
+    func removeUserObserverForToken(_ token: UserObserverToken) {
         let user = userObserverTokens.objectCanBeUnobservedAfterRemovingObserverForToken(token)
         if let user = user as? ZMUser {
             (userTokens[user])?.tearDown()
-            userTokens.removeValueForKey(user)
+            userTokens.removeValue(forKey: user)
         }
         if let user = user as? ZMSearchUser {
             (searchUserTokens[user])?.tearDown()
-            searchUserTokens.removeValueForKey(user)
+            searchUserTokens.removeValue(forKey: user)
         }
     }
     
-    func removeDisplayNameObserver(observer: DisplayNameObserver) {
+    func removeDisplayNameObserver(_ observer: DisplayNameObserver) {
         displayNameObservers = displayNameObservers.filter{
             if let lObj = $0.conversation, let rObj = observer.conversation {
                 return lObj != rObj

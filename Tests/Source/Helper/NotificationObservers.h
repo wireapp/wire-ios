@@ -19,14 +19,14 @@
 
 #import "ZMNotifications+Internal.h"
 
-typedef void(^ObserverCallback)(NSObject *note);
+typedef void(^ObserverCallback)( NSObject * _Nonnull  note);
 
 
 
 @interface ChangeObserver : NSObject
 
-@property (nonatomic, readonly) NSMutableArray *notifications;
-@property (nonatomic, copy) ObserverCallback notificationCallback;
+@property (nonatomic, readonly, nonnull) NSMutableArray *notifications;
+@property (nonatomic, copy, nullable) ObserverCallback notificationCallback;
 @property (nonatomic) BOOL tornDown;
 
 - (void)clearNotifications;
@@ -37,35 +37,35 @@ typedef void(^ObserverCallback)(NSObject *note);
 
 
 @interface ConversationChangeObserver : ChangeObserver <ZMConversationObserver>
-- (instancetype)initWithConversation:(ZMConversation *)conversation;
+- (nonnull instancetype)initWithConversation:(nonnull ZMConversation *)conversation;
 
 @end
 
 
 
 @interface ConversationListChangeObserver : ChangeObserver <ZMConversationListObserver>
-- (instancetype)initWithConversationList:(ZMConversationList *)conversationList;
+- (nonnull instancetype)initWithConversationList:(nonnull ZMConversationList *)conversationList;
 
 @end
 
 
 
 @interface UserChangeObserver : ChangeObserver <ZMUserObserver>
-- (instancetype)initWithUser:(ZMUser *)user;
+- (nonnull instancetype)initWithUser:(nonnull ZMUser *)user;
 
 @end
 
 
 
 @interface MessageChangeObserver : ChangeObserver <ZMMessageObserver>
-- (instancetype)initWithMessage:(ZMMessage *)message;
+- (nonnull instancetype)initWithMessage:(nonnull ZMMessage *)message;
 
 @end
 
 
 
 @interface MessageWindowChangeObserver : ChangeObserver <ZMConversationMessageWindowObserver>
-- (instancetype)initWithMessageWindow:(ZMConversationMessageWindow *)window;
+- (nonnull instancetype)initWithMessageWindow:(nonnull ZMConversationMessageWindow *)window;
 
 @end
 

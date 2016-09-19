@@ -87,27 +87,27 @@ class ManagedObjectChangesTests: ZMBaseManagedObjectTest {
 
 extension ManagedObjectChangesTests {
     
-    func createZombies(count: Int) -> [ZMManagedObject] {
+    func createZombies(_ count: Int) -> [ZMManagedObject] {
         
         var objects = [ZMManagedObject]()
         for _ in 1...count {
-            let obj = ZMUser.insertNewObjectInManagedObjectContext(uiMOC)
-            obj.remoteIdentifier = NSUUID.createUUID()
+            let obj = ZMUser.insertNewObject(in: uiMOC)
+            obj.remoteIdentifier = UUID.create()
             objects.append(obj)
         }
         
-        objects.forEach(uiMOC.deleteObject)
+        objects.forEach(uiMOC.delete)
         XCTAssertEqual(objects.count, count)
         ZMAssertAllTrue(objects) { $0.isZombieObject }
         return objects
     }
     
-    func createManagedObjects(count: Int) -> [ZMManagedObject] {
+    func createManagedObjects(_ count: Int) -> [ZMManagedObject] {
         
         var objects = [ZMManagedObject]()
         for _ in 1...count {
-            let obj = ZMConversation.insertNewObjectInManagedObjectContext(uiMOC)
-            obj.remoteIdentifier = NSUUID.createUUID()
+            let obj = ZMConversation.insertNewObject(in: uiMOC)
+            obj.remoteIdentifier = UUID.create()
             objects.append(obj)
         }
         
@@ -119,12 +119,12 @@ extension ManagedObjectChangesTests {
 
 // MARK: - Custom Assertions
 
-func ZMAssertAllTrue<E where E: SequenceType>(sequence: E, @noescape _ predicate: (E.Generator.Element) -> Bool) {
+func ZMAssertAllTrue<E>(_ sequence: E, _ predicate: @escaping (E.Iterator.Element) -> Bool) where E: Sequence {
     sequence.forEach {
         XCTAssertTrue(predicate($0))
     }
 }
 
-func ZMAssertAllFalse<E where E: SequenceType>(sequence: E, @noescape _ predicate: (E.Generator.Element) -> Bool) {
+func ZMAssertAllFalse<E>(_ sequence: E, _ predicate: @escaping (E.Iterator.Element) -> Bool) where E: Sequence {
     ZMAssertAllTrue(sequence) { !predicate($0) }
 }

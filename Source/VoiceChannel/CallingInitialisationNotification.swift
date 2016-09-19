@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,13 +23,13 @@ let ZMVoiceChannelVideoCallErrorDomain = "ZMVoiceChannelVideoCallErrorDomain"
 
 @objc
 public enum ZMVoiceChannelErrorCode : UInt {
-    case OngoingGSMCall
-    case SwitchToAudioNotAllowed
-    case SwitchToVideoNotAllowed
-    case NoFlowManager
-    case NoMedia
-    case VideoCallingNotSupported
-    case VideoNotActive
+    case ongoingGSMCall
+    case switchToAudioNotAllowed
+    case switchToVideoNotAllowed
+    case noFlowManager
+    case noMedia
+    case videoCallingNotSupported
+    case videoNotActive
 }
 
 
@@ -40,27 +40,27 @@ private class CallingInitialisationObserverTokenImpl : CallingInitialisationObse
     }
 }
 
-public class ZMVoiceChannelError: NSError {
+open class ZMVoiceChannelError: NSError {
     
     init(errorCode: ZMVoiceChannelErrorCode) {
         super.init(domain: ZMVoiceChannelVideoCallErrorDomain, code: Int(errorCode.rawValue), userInfo: ZMVoiceChannelError.userInfoForErrorCode(errorCode))
     }
     
-    static func userInfoForErrorCode(errorCode: ZMVoiceChannelErrorCode) -> [String: String] {
+    static func userInfoForErrorCode(_ errorCode: ZMVoiceChannelErrorCode) -> [String: String] {
         switch errorCode {
-        case .OngoingGSMCall:
+        case .ongoingGSMCall:
             return [NSLocalizedDescriptionKey: "Cannot get flow manager"]
-        case .SwitchToAudioNotAllowed:
+        case .switchToAudioNotAllowed:
             return [NSLocalizedDescriptionKey: "Swtich to audio is not allowed"]
-        case .SwitchToVideoNotAllowed:
+        case .switchToVideoNotAllowed:
             return [NSLocalizedDescriptionKey: "Switch to video is not allowed"]
-        case .NoFlowManager:
+        case .noFlowManager:
             return [NSLocalizedDescriptionKey: "Cannot get flow manager"]
-        case .NoMedia:
+        case .noMedia:
             return [NSLocalizedDescriptionKey: "Too early: media is not established yet"]
-        case .VideoCallingNotSupported:
+        case .videoCallingNotSupported:
             return [NSLocalizedDescriptionKey: "Video cannot be sent to this conversation"]
-        case .VideoNotActive:
+        case .videoNotActive:
             return [NSLocalizedDescriptionKey: "Video is not currently active"]
         }
     }
@@ -69,70 +69,68 @@ public class ZMVoiceChannelError: NSError {
         fatal("init(coder:) has not been implemented")
     }
     
-    public static func noFlowManagerError() -> ZMVoiceChannelError {
-        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.NoFlowManager)
+    open static func noFlowManagerError() -> ZMVoiceChannelError {
+        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.noFlowManager)
     }
     
-    public static func noMediaError() -> ZMVoiceChannelError {
-        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.NoMedia)
+    open static func noMediaError() -> ZMVoiceChannelError {
+        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.noMedia)
     }
     
-    public static func videoCallNotSupportedError() -> ZMVoiceChannelError {
-        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.VideoCallingNotSupported)
+    open static func videoCallNotSupportedError() -> ZMVoiceChannelError {
+        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.videoCallingNotSupported)
     }
     
-    public static func switchToVideoNotAllowedError() -> ZMVoiceChannelError {
-        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.SwitchToVideoNotAllowed)
+    open static func switchToVideoNotAllowedError() -> ZMVoiceChannelError {
+        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.switchToVideoNotAllowed)
     }
     
-    public static func switchToAudioNotAllowedError() -> ZMVoiceChannelError {
-        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.SwitchToAudioNotAllowed)
+    open static func switchToAudioNotAllowedError() -> ZMVoiceChannelError {
+        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.switchToAudioNotAllowed)
     }
     
-    public static func ongoingGSMCallError() -> ZMVoiceChannelError {
-        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.OngoingGSMCall)
+    open static func ongoingGSMCallError() -> ZMVoiceChannelError {
+        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.ongoingGSMCall)
     }
     
-    public static func videoNotActiveError() -> ZMVoiceChannelError {
-        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.VideoNotActive)
+    open static func videoNotActiveError() -> ZMVoiceChannelError {
+        return ZMVoiceChannelError(errorCode: ZMVoiceChannelErrorCode.videoNotActive)
     }
 }
 
 
-public let CallingInitialisationNotificationName = "CallingInitialisationNotification"
 
-@objc
-public class CallingInitialisationNotification : ZMNotification {
+
+public class CallingInitialisationNotification : NSObject  {
     
-    public var error : NSError!
-    internal var errorCode : ZMVoiceChannelErrorCode!
+    public let error : NSError
+    internal let errorCode : ZMVoiceChannelErrorCode
     
-    init() {
-        super.init(name: CallingInitialisationNotificationName, object: nil)
+    public static let Name = "CallingInitialisationNotification"
+    
+    init(error: NSError, errorCode: ZMVoiceChannelErrorCode) {
+        self.error = error
+        self.errorCode = errorCode
     }
     
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    public static func notifyCallingFailedWithErrorCode(_ errorCode: ZMVoiceChannelErrorCode) {
+        let note = CallingInitialisationNotification(error: ZMVoiceChannelError(errorCode: errorCode), errorCode:errorCode)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: self.Name), object:note)
     }
     
-    public static func notifyCallingFailedWithErrorCode(errorCode: ZMVoiceChannelErrorCode) {
-        let note = CallingInitialisationNotification()
-        note.error = ZMVoiceChannelError.init(errorCode: errorCode)
-        note.errorCode = errorCode
-        NSNotificationCenter.defaultCenter().postNotification(note)
-    }
-    
-    @objc public static func addObserverWithBlock(block: (CallingInitialisationNotification) -> Void) -> CallingInitialisationObserverToken {
-        let internalToken = NSNotificationCenter.defaultCenter().addObserverForName(CallingInitialisationNotificationName, object: nil, queue: NSOperationQueue.currentQueue()) { (note: NSNotification) in
-            block(note as! CallingInitialisationNotification)
+    @objc public static func addObserverWithBlock(_ block: @escaping (CallingInitialisationNotification) -> Void) -> CallingInitialisationObserverToken {
+        let internalToken = NotificationCenter.default.addObserver(forName: Notification.Name(rawValue: self.Name), object: nil, queue: OperationQueue.current) { (note: Notification) in
+            if let object = note.object as? CallingInitialisationNotification {
+                block(object)
+            }
         }
         
         return (CallingInitialisationObserverTokenImpl(observerToken: internalToken)) as CallingInitialisationObserverToken
     }
     
-    public static func removeObserver(observer: CallingInitialisationObserverToken) {
+    public static func removeObserver(_ observer: CallingInitialisationObserverToken) {
         let internalObserver = observer as! CallingInitialisationObserverTokenImpl
-        NSNotificationCenter.defaultCenter().removeObserver(internalObserver.observerToken, name: CallingInitialisationNotificationName, object: nil)
+        NotificationCenter.default.removeObserver(internalObserver.observerToken, name: NSNotification.Name(rawValue: self.Name), object: nil)
     }
     
 

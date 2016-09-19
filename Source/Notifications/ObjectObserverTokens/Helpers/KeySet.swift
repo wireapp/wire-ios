@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,10 +21,10 @@ import Foundation
 import ZMUtilities
 
 
-public struct KeySet : SequenceType {
+public struct KeySet : Sequence {
     public typealias Key = KeyPath
-    public typealias Generator = Set<KeyPath>.Generator
-    private let backing: Set<KeyPath>
+    public typealias Iterator = Set<KeyPath>.Iterator
+    fileprivate let backing: Set<KeyPath>
     
     public init() {
         backing = Set()
@@ -43,6 +43,10 @@ public struct KeySet : SequenceType {
     }
     public init (_ set : Set<Key>) {
         backing = set
+    }
+    
+    public init (_ keys : Set<String>) {
+        self.init(Array(keys))
     }
     
     public init(_ a : [String]) {
@@ -64,17 +68,17 @@ public struct KeySet : SequenceType {
     public init(arrayLiteral elements: String...) {
         self.init(elements)
     }
-    init<S : SequenceType where S.Generator.Element == Key>(_ seq: S) {
+    init<S : Sequence>(_ seq: S) where S.Iterator.Element == Key {
         backing = Set<Key>(seq)
     }
-    public func contains(i : KeyPath) -> Bool {
+    public func contains(_ i : KeyPath) -> Bool {
         return backing.contains(i)
     }
-    public func contains(i : String) -> Bool {
+    public func contains(_ i : String) -> Bool {
         return backing.contains(KeyPath.keyPathForString(i))
     }
-    public func generate() -> Set<KeyPath>.Generator {
-        return backing.generate()
+    public func makeIterator() -> Set<KeyPath>.Iterator {
+        return backing.makeIterator()
     }
     
     public var count : Int {
@@ -94,16 +98,16 @@ public func ==(lhs: KeySet, rhs: KeySet) -> Bool {
 
 
 extension KeySet {
-    func union(set: KeySet) -> KeySet {
+    func union(_ set: KeySet) -> KeySet {
         return KeySet(backing.union(set.backing))
     }
-    func subtract(set: KeySet) -> KeySet {
-        return KeySet(backing.subtract(set.backing))
+    func subtract(_ set: KeySet) -> KeySet {
+        return KeySet(backing.subtracting(set.backing))
     }
     public var isEmpty: Bool {
         return backing.isEmpty
     }
-    func filter(match: (KeyPath) -> Bool) -> KeySet {
+    func filter(_ match: (KeyPath) -> Bool) -> KeySet {
         return KeySet(backing.filter {match($0)})
     }
 }
@@ -111,10 +115,10 @@ extension KeySet {
 extension KeySet : CustomDebugStringConvertible {
     public var description: String {
         let a = Array<KeyPath>(backing)
-        let ss = a.map { $0.rawValue }.sort() {
+        let ss = a.map { $0.rawValue }.sorted() {
             (lhs, rhs) in lhs < rhs
         }
-        return "KeySet {" + ss.joinWithSeparator(" ") + "}"
+        return "KeySet {" + ss.joined(separator: " ") + "}"
     }
     public var debugDescription: String {
         return description

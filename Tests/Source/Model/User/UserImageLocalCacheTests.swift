@@ -27,10 +27,10 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
     
     override func setUp() {
         super.setUp()
-        testUser = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
-        testUser.remoteIdentifier = NSUUID.createUUID()
-        testUser.mediumRemoteIdentifier = NSUUID.createUUID()
-        testUser.smallProfileRemoteIdentifier = NSUUID.createUUID()
+        testUser = ZMUser.insertNewObject(in:self.uiMOC)
+        testUser.remoteIdentifier = UUID.create()
+        testUser.mediumRemoteIdentifier = UUID.create()
+        testUser.smallProfileRemoteIdentifier = UUID.create()
         
         sut = UserImageLocalCache()
     }
@@ -44,8 +44,8 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
     func testThatItSetsSmallAndLargeUserImage() {
         
         // given
-        let largeData = "LARGE".dataUsingEncoding(NSUTF8StringEncoding)!
-        let smallData = "SMALL".dataUsingEncoding(NSUTF8StringEncoding)!
+        let largeData = "LARGE".data(using: String.Encoding.utf8)!
+        let smallData = "SMALL".data(using: String.Encoding.utf8)!
         
         // when
         sut.setLargeUserImage(testUser, imageData: largeData)
@@ -61,8 +61,8 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
     func testThatItPersistsSmallAndLargeUserImage() {
         
         // given
-        let largeData = "LARGE".dataUsingEncoding(NSUTF8StringEncoding)!
-        let smallData = "SMALL".dataUsingEncoding(NSUTF8StringEncoding)!
+        let largeData = "LARGE".data(using: String.Encoding.utf8)!
+        let smallData = "SMALL".data(using: String.Encoding.utf8)!
         
         // when
         sut.setLargeUserImage(testUser, imageData: largeData)

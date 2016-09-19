@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -28,11 +28,11 @@ class ProtobufUtilitiesTests: XCTestCase {
         let sut = ZMAssetOriginal.original(withSize: 200, mimeType: "audio/m4a", name: "foo.m4a", audioDurationInMillis: 1000, normalizedLoudness: loudness)
 
         // when
-        let extractedLoudness = sut.audio.normalizedLoudness
+        guard let extractedLoudness = sut.audio.normalizedLoudness else {return XCTFail()}
         
         // then
         XCTAssertTrue(sut.audio.hasNormalizedLoudness())
-        XCTAssertEqual(extractedLoudness.length, loudness.count)
+        XCTAssertEqual(extractedLoudness.count, loudness.count)
         XCTAssertEqual(loudness.map { Float(UInt8(roundf($0*255)))/255.0 } , sut.normalizedLoudnessLevels)
     }
     
@@ -48,7 +48,7 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItCreatesALinkPreviewWithTheDeprecatedArticleInside() {
         // given
         let (title, summary, url, permanentURL) = ("title", "summary", "www.example.com/original", "www.example.com/permanent")
-        let image = ZMAsset.asset(withUploadedOTRKey: .secureRandomDataOfLength(16), sha256: .secureRandomDataOfLength(16))
+        let image = ZMAsset.asset(withUploadedOTRKey: Data.secureRandomData(ofLength: 16), sha256: Data.secureRandomData(ofLength: 16))
 
         let preview = ZMLinkPreview.linkPreview(
             withOriginalURL: url,
@@ -78,13 +78,17 @@ class ProtobufUtilitiesTests: XCTestCase {
         XCTAssertFalse(preview.article.image.hasUploaded())
         
         // when
-        let (otrKey, sha256) = (NSData.randomEncryptionKey(), NSData.zmRandomSHA256Key())
+        let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let metadata: ZMAssetImageMetaData = .imageMetaData(withWidth: 42, height: 12)
         let original: ZMAssetOriginal = .original(withSize: 256, mimeType: "image/jpeg", name: nil, imageMetaData: metadata)
         let updated = preview.update(withOtrKey: otrKey, sha256: sha256, original: original)
         
         // then
         [updated.article.image, updated.image].forEach { asset in
+            guard let asset = asset else {
+                XCTFail()
+                return
+            }
             XCTAssertTrue(asset.hasUploaded())
             XCTAssertEqual(asset.uploaded.otrKey, otrKey)
             XCTAssertEqual(asset.uploaded.sha256, sha256)
@@ -108,6 +112,10 @@ class ProtobufUtilitiesTests: XCTestCase {
         
         // then
         [updated.article.image, updated.image].forEach { asset in
+            guard let asset = asset else {
+                XCTFail()
+                return
+            }
             XCTAssertTrue(asset.uploaded.hasAssetId())
             XCTAssertEqual(asset.uploaded.assetId, assetKey)
             XCTAssertEqual(asset.uploaded.assetToken, token)

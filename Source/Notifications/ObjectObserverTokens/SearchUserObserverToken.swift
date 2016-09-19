@@ -26,8 +26,8 @@ extension ZMSearchUser : ObjectInSnapshot {
         return ["imageMediumData", "imageSmallProfileData", "isConnected", "user", "isPendingApprovalByOtherUser"]
     }
     
-    public func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {
-        return ZMSearchUser.keyPathsForValuesAffectingValueForKey(key) 
+    public func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
+        return ZMSearchUser.keyPathsForValuesAffectingValue(forKey: key) 
     }
 }
 

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,9 +23,9 @@ extension String {
 
     func upperCasePreservingCamelCase() -> String {
         var aString = self
-        let capitalfirstLetter = String(aString[aString.startIndex]).capitalizedString
-        let range = aString.startIndex..<aString.startIndex.advancedBy(1)
-        aString.replaceRange(range, with: capitalfirstLetter)
+        let capitalfirstLetter = String(aString[aString.startIndex]).capitalized
+        let range = aString.startIndex..<aString.characters.index(aString.startIndex, offsetBy: 1)
+        aString.replaceSubrange(range, with: capitalfirstLetter)
         return aString
     }
 }
@@ -34,22 +34,22 @@ extension String {
 public protocol ObjectChangeInfoProtocol : NSObjectProtocol {
     
     init(object: NSObject)
-    func setValue(value: AnyObject?, forKey key: String)
-    func valueForKey(key: String) -> AnyObject?
+    func setValue(_ value: Any?, forKey key: String)
+    func value(forKey key: String) -> Any?
     var changedKeysAndOldValues : [String : NSObject?] {get set}
 
 }
 
-public class ObjectChangeInfo : NSObject, ObjectChangeInfoProtocol {
+open class ObjectChangeInfo : NSObject, ObjectChangeInfoProtocol {
     
     let object : NSObject
     
     public required init(object: NSObject) {
         self.object = object
     }
-    public var changedKeysAndOldValues : [String : NSObject?] = [:]
+    open var changedKeysAndOldValues : [String : NSObject?] = [:]
     
-    public func previousValueForKey(key: String) -> NSObject? {
+    open func previousValueForKey(_ key: String) -> NSObject? {
         return changedKeysAndOldValues[key] ?? nil
     }
 }
@@ -57,17 +57,17 @@ public class ObjectChangeInfo : NSObject, ObjectChangeInfoProtocol {
 /// This is used to wrap UI observers
 ///
 /// The token is read-only, but reset when tearDown() is called.
-@objc public class ObjectObserverTokenContainer : NSObject {
+@objc open class ObjectObserverTokenContainer : NSObject {
 
-    private(set) var token : AnyObject?
-    private(set) var object : ObjectInSnapshot?
+    fileprivate(set) var token : AnyObject?
+    fileprivate(set) var object : ObjectInSnapshot?
 
     public init(object: ObjectInSnapshot, token: AnyObject) {
         self.token = token
         self.object = object
     }
     
-    public func tearDown() {
+    open func tearDown() {
         self.token = nil
     }
 }
@@ -79,29 +79,29 @@ final class ObjectObserverToken<T : ObjectChangeInfoProtocol, B: ObjectObserverT
     typealias ObserverCallback = (B, T) -> Void
     
     /// List of keys for which we want to store a previous value
-    private let token : ObjectDependencyToken?
-    private let observedObject : NSObject
-    private var parentChangeHandler : ObserverCallback!
-    private var tokenContainers: NSHashTable = NSHashTable.weakObjectsHashTable()
-    private var isTornDown : Bool = false
+    fileprivate let token : ObjectDependencyToken?
+    fileprivate let observedObject : NSObject
+    fileprivate var parentChangeHandler : ObserverCallback!
+    fileprivate var tokenContainers: NSHashTable<ObjectObserverTokenContainer> = NSHashTable.weakObjects()
+    fileprivate var isTornDown : Bool = false
 
     
     static func token(
-        observedObject: NSObject,
+        _ observedObject: NSObject,
         observableKeys: [String],
         managedObjectContextObserver: ManagedObjectContextObserver,
-        changeHandler: ObserverCallback)
+        changeHandler: @escaping ObserverCallback)
         -> ObjectObserverToken<T, B>
     {
         return ObjectObserverToken(observedObject: observedObject, observableKeys:observableKeys, managedObjectContextObserver: managedObjectContextObserver, changeHandler: changeHandler)
             
     }
     
-    private init(
+    fileprivate init(
         observedObject: NSObject,
         observableKeys : [String],
         managedObjectContextObserver: ManagedObjectContextObserver,
-        changeHandler: ObserverCallback
+        changeHandler: @escaping ObserverCallback
         )
     {
         self.parentChangeHandler = changeHandler
@@ -124,7 +124,7 @@ final class ObjectObserverToken<T : ObjectChangeInfoProtocol, B: ObjectObserverT
         }
     }
 
-    func keysDidChange(affectedKeys: [KeyPath:NSObject?]) {
+    func keysDidChange(_ affectedKeys: [KeyPath:NSObject?]) {
         let objectChangeInfo = T(object: self.observedObject)
         affectedKeys.forEach { objectChangeInfo.changedKeysAndOldValues[$0.0.rawValue] = $0.1 }
         
@@ -132,17 +132,17 @@ final class ObjectObserverToken<T : ObjectChangeInfoProtocol, B: ObjectObserverT
     }
     
     // Sends the given changeInfo to all registered observers for this object
-    func notifyObservers(changeInfo: T) {
+    func notifyObservers(_ changeInfo: T) {
         for container in tokenContainers.allObjects {
             self.parentChangeHandler(container as! B, changeInfo)
         }
     }
     
-    func addContainer(container: B) {
-        tokenContainers.addObject(container)
+    func addContainer(_ container: B) {
+        tokenContainers.add(container)
     }
-    func removeContainer(container: B) {
-        tokenContainers.removeObject(container)
+    func removeContainer(_ container: B) {
+        tokenContainers.remove(container)
         if self.hasNoContainers {
             self.tearDown()
         }
@@ -152,7 +152,7 @@ final class ObjectObserverToken<T : ObjectChangeInfoProtocol, B: ObjectObserverT
 		return tokenContainers.count == 0
 	}
     
-    func keysHaveChanged(keys: [String]) {
+    func keysHaveChanged(_ keys: [String]) {
         self.token?.keysHaveChanged(keys)
     }
     

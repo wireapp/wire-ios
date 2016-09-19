@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -42,14 +42,14 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
 
 @objc public final class NewUnreadMessagesObserverToken: NSObject, MessageToken {
 
-    private weak var observer : ZMNewUnreadMessagesObserver?
+    fileprivate weak var observer : ZMNewUnreadMessagesObserver?
     public var isTornDown : Bool = false
 
     public init(observer: ZMNewUnreadMessagesObserver) {
         self.observer = observer
     }
     
-    public func objectsDidChange(changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges) {
         let inserted = (changes.inserted as! [ZMMessage]).filter {$0.isUnreadMessage && $0.knockMessageData == nil }
         if !inserted.isEmpty {
             let changeInfo = NewUnreadMessagesChangeInfo(messages: inserted)
@@ -85,14 +85,14 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
 
 @objc public final class NewUnreadKnockMessagesObserverToken: NSObject, MessageToken {
     
-    private weak var observer : ZMNewUnreadKnocksObserver?
+    fileprivate weak var observer : ZMNewUnreadKnocksObserver?
     public var isTornDown : Bool = false
 
     public init(observer: ZMNewUnreadKnocksObserver) {
         self.observer = observer
     }
     
-    private func filterUnreadKnocks(set: [ZMMessage]) -> [ZMConversationMessage] {
+    fileprivate func filterUnreadKnocks(_ set: [ZMMessage]) -> [ZMConversationMessage] {
         var unreadMessages : Set<ZMMessage> = Set()
         
         for i in set {
@@ -103,11 +103,11 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
         return Array(unreadMessages)
     }
     
-    public func objectsDidChange(changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges) {
         let insertedKnockMessages = filterUnreadKnocks(changes.inserted as! [ZMMessage]) + filterUnreadKnocks(changes.updated as! [ZMMessage])
         
         if !insertedKnockMessages.isEmpty {
-            let changeInfo = NewUnreadKnockMessagesChangeInfo(object: insertedKnockMessages)
+            let changeInfo = NewUnreadKnockMessagesChangeInfo(object: insertedKnockMessages as NSObject)
             self.observer?.didReceiveNewUnreadKnockMessages(changeInfo)
         }
     }
@@ -139,23 +139,23 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
 
 @objc public final class NewUnreadUnsentMessageObserverToken: NSObject, MessageToken {
     
-    private weak var observer : ZMNewUnreadUnsentMessageObserver?
+    fileprivate weak var observer : ZMNewUnreadUnsentMessageObserver?
     public var isTornDown : Bool = false
 
     public init(observer: ZMNewUnreadUnsentMessageObserver) {
         self.observer = observer
     }
     
-    private func filterUnsentMessage(set: [ZMMessage]) -> [ZMMessage] {
-        let unreadMessages = set.filter {$0.deliveryState == .FailedToSend}
+    fileprivate func filterUnsentMessage(_ set: [ZMMessage]) -> [ZMMessage] {
+        let unreadMessages = set.filter {$0.deliveryState == .failedToSend}
         return unreadMessages
     }
     
-    public func objectsDidChange(changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges) {
         let unreadUnsentMessages = filterUnsentMessage(changes.updated as! [ZMMessage])
         
         if !unreadUnsentMessages.isEmpty {
-            let changeInfo = NewUnreadUnsentMessageChangeInfo(object: unreadUnsentMessages)
+            let changeInfo = NewUnreadUnsentMessageChangeInfo(object: unreadUnsentMessages as NSObject)
             self.observer?.didReceiveNewUnreadUnsentMessages(changeInfo)
         }
     }

@@ -23,7 +23,7 @@ import PINCache
 extension PINCache
 {
     // configures
-    public func configureLimits(bytes: UInt) {
+    public func configureLimits(_ bytes: UInt) {
         self.diskCache.byteLimit = bytes;
         self.memoryCache.ageLimit  = 60 * 60; // if we didn't use it in 1 hour, it can go from memory
     }
@@ -42,7 +42,10 @@ extension PINDiskCache
         let secureBlock : (PINDiskCache) -> Void = { cache in
             // exclude from backup
             do {
-                try cache.cacheURL.setResourceValue(true, forKey: NSURLIsExcludedFromBackupKey)
+                var url = cache.cacheURL
+                var values = URLResourceValues()
+                values.isExcludedFromBackup = true
+                try url.setResourceValues(values)
             } catch {
                 fatal("Could not exclude \(cache.cacheURL) from backup")
             }
@@ -52,7 +55,7 @@ extension PINDiskCache
         self.didRemoveAllObjectsBlock = secureBlock
         
         // just do it once initially
-        self.synchronouslyLockFileAccessWhileExecutingBlock(secureBlock)
+        self.synchronouslyLockFileAccessWhileExecuting(secureBlock)
     }
 }
 

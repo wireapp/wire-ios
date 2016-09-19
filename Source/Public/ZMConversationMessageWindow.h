@@ -25,8 +25,8 @@
 @interface ZMConversationMessageWindow : NSObject
 
 @property (nonatomic, readonly) NSUInteger size;
-@property (nonatomic, readonly) ZMConversation* conversation;
-@property (nonatomic, readonly) NSOrderedSet *messages;
+@property (nonatomic, readonly, nonnull) ZMConversation* conversation;
+@property (nonatomic, readonly, nonnull) NSOrderedSet *messages;
 
 - (void)moveDownByMessages:(NSUInteger)amountOfMessages;
 - (void)moveUpByMessages:(NSUInteger)amountOfMessages;
@@ -38,6 +38,6 @@
 
 @interface ZMConversation (ConversationWindow)
 
-- (ZMConversationMessageWindow *)conversationWindowWithSize:(NSUInteger)size;
+- (nonnull ZMConversationMessageWindow *)conversationWindowWithSize:(NSUInteger)size;
 
 @end

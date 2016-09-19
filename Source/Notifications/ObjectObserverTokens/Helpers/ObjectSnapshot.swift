@@ -30,7 +30,7 @@ public protocol ObjectInSnapshot : NSObjectProtocol {
     var observableKeys : [String] { get }
 
     // Needed because NSObjectProtocol != NSObject
-    func valueForKey(key: String) -> AnyObject?
+    func value(forKey key: String) -> Any?
 }
 
 protocol ValueToCopy : NSCopying {}
@@ -46,11 +46,11 @@ public struct ObjectSnapshot : Equatable, CustomDebugStringConvertible
     
     typealias KeysFromTheSameObjectThatAffectKey = [KeyPath : KeySet]
 
-    private let snapshotValues : KeysAndValues
+    fileprivate let snapshotValues : KeysAndValues
     
-    private let snapshotKeys : KeySet
+    fileprivate let snapshotKeys : KeySet
     
-    private let keyToAffectedKeys : KeysFromTheSameObjectThatAffectKey // userDefinedName -> displayName, otherActiveParticipants -> displayName, ...
+    fileprivate let keyToAffectedKeys : KeysFromTheSameObjectThatAffectKey // userDefinedName -> displayName, otherActiveParticipants -> displayName, ...
     
     public init(object: NSObject, keys: KeySet) {
         
@@ -59,21 +59,20 @@ public struct ObjectSnapshot : Equatable, CustomDebugStringConvertible
         self.keyToAffectedKeys = ObjectSnapshot.extractKeysAffectingValuesForKeysToSnapshot(object, snapshotKeys: keys)
         
         for key in keys {
-            let value: AnyObject? = object.valueForKey(key.rawValue)
-            if let nonNilValue: AnyObject = value {
+            let value = object.value(forKey: key.rawValue)
+            if let nonNilValue = value {
                 switch (nonNilValue) {
                     
                 case let set as Set<NSObject>:
-                    snapshotValues[key] = Set(Array(set)) // This is to materialize potential faults
+                    snapshotValues[key] = Set(Array(set)) as NSObject? // This is to materialize potential faults
                     
                 case let set as NSOrderedSet:
                     snapshotValues[key] = NSOrderedSet(array: set.array) // This is to materialize potential faults
                     
                 case let set as [NSObject]:
-                    snapshotValues[key] = set.map { $0 } // This is to materialize potential faults
-                
-                case let set as NSCopying:
-                    if let copy = set.copyWithZone(nil) as? NSObject {
+                    snapshotValues[key] = set.map { $0 } as NSObject? // This is to materialize potential faults
+                case let set as NSObject where set is NSCopying:
+                    if let copy = (set as! NSCopying).copy(with: nil) as? NSObject {
                         snapshotValues[key] = copy
                     } else {
                         fatal("Can't copy snapshot value for key \(key)")
@@ -88,7 +87,7 @@ public struct ObjectSnapshot : Equatable, CustomDebugStringConvertible
         self.snapshotValues = snapshotValues
     }
     
-    private static func extractKeysAffectingValuesForKeysToSnapshot(object: NSObject, snapshotKeys: KeySet) -> KeysFromTheSameObjectThatAffectKey
+    fileprivate static func extractKeysAffectingValuesForKeysToSnapshot(_ object: NSObject, snapshotKeys: KeySet) -> KeysFromTheSameObjectThatAffectKey
     {
         var mappedKeys: [KeyPath : KeySet] = [:]
         for affectedKey in snapshotKeys {
@@ -108,17 +107,17 @@ public struct ObjectSnapshot : Equatable, CustomDebugStringConvertible
         return mappedKeys
     }
     
-    public func updatedSnapshot(object: NSObject, affectedKeys: AffectedKeys) -> (ObjectSnapshot, KeysAndOldValues)? {
+    public func updatedSnapshot(_ object: NSObject, affectedKeys: AffectedKeys) -> (ObjectSnapshot, KeysAndOldValues)? {
         let keysArray = Array<KeyPath>(self.keyToAffectedKeys.keys)
         let keysThatChangedBecauseAffectedKeysChanged = keysArray.filter { affectedKeys.containsKey($0) }
                                                                  .map { self.keyToAffectedKeys[$0]! }
-                                                                 .reduce(KeySet(), combine: {$0.union($1)})
+                                                                 .reduce(KeySet(), {$0.union($1)})
         
 
         let keysToCheck = self.snapshotKeys.filter { affectedKeys.containsKey($0) }.union(keysThatChangedBecauseAffectedKeysChanged)
         let keysThatChanged : KeySet = keysToCheck.filter { key in
             
-            let currentValue = object.valueForKey(key.rawValue) as? NSObject
+            let currentValue = object.value(forKey: key.rawValue) as? NSObject
             if let oldValue = self.snapshotValues[key] {
                 // old value was not nil
                 return currentValue != oldValue
@@ -144,17 +143,17 @@ public struct ObjectSnapshot : Equatable, CustomDebugStringConvertible
         return nil
     }
     
-    static private var cacheForKeysFromTheSameObjectThatAffectKeyOfObject : [ AnyClassTuple<KeyPath> : KeySet ] = [:]
+    static fileprivate var cacheForKeysFromTheSameObjectThatAffectKeyOfObject : [ AnyClassTuple<KeyPath> : KeySet ] = [:]
     
-    static func keysFromTheSameObjectThatAffectKeyOfObject(object: NSObject, key: KeyPath) -> KeySet {
+    static func keysFromTheSameObjectThatAffectKeyOfObject(_ object: NSObject, key: KeyPath) -> KeySet {
         
-        let tuple = AnyClassTuple(classOfObject: object.dynamicType, secondElement: key)
+        let tuple = AnyClassTuple(classOfObject: type(of: object), secondElement: key)
         if let keySet = cacheForKeysFromTheSameObjectThatAffectKeyOfObject[tuple] {
             return keySet
         }
         else {
             
-            let keyPathsForValue = KeySet(object.dynamicType.keyPathsForValuesAffectingValueForKey(key.rawValue))
+            let keyPathsForValue : KeySet = KeySet((type(of: object).keyPathsForValuesAffectingValue(forKey: key.rawValue)))
             let keyPathsFiltered: [KeyPath] = {
                 var filtered: [KeyPath] = []
                 for keypath in keyPathsForValue {

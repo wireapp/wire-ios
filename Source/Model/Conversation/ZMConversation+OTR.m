@@ -366,9 +366,8 @@
     }
     
     if (message.systemMessageType == ZMSystemMessageTypePotentialGap) {
-        id <ZMSystemMessageData> previousSystemMessage = message.systemMessageData;
-        systemMessage.users = previousSystemMessage.users.copy;
-        [self.managedObjectContext deleteObject:previousSystemMessage];
+        systemMessage.users = message.users.copy;
+        [self.managedObjectContext deleteObject:message];
     }
 }
 

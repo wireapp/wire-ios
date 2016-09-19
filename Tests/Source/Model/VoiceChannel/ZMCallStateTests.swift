@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,9 +22,9 @@ import CoreData
 
 class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     
-    func checkThatItSetsHasChanges(file: StaticString = #file, line: UInt = #line, block: ZMConversationCallState -> ()) {
+    func checkThatItSetsHasChanges(_ file: StaticString = #file, line: UInt = #line, block: (ZMConversationCallState) -> ()) {
         // given
-        let sut = ZMConversationCallState(contextType: .Main)
+        let sut = ZMConversationCallState(contextType: .main)
         XCTAssertFalse(sut.hasChanges, file: file, line: line)
         
         // when
@@ -61,7 +61,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
         }
         checkThatItSetsHasChanges {
             // when
-            let user = ZMUser.insertNewObjectInManagedObjectContext(self.uiMOC)
+            let user = ZMUser.insertNewObject(in: uiMOC)
 
             $0.activeFlowParticipants = NSOrderedSet(object: user)
         }
@@ -92,7 +92,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingIsCallDeviceActiveSetsHasLocalModificationsForCallDeviceActive() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Main)
+        let sut = ZMConversationCallState(contextType: .main)
         XCTAssertFalse(sut.hasLocalModificationsForCallDeviceActive)
         
         // when
@@ -105,7 +105,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingTimedOutSetsHasLocalModificationsForTimedOut_Main() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Main)
+        let sut = ZMConversationCallState(contextType: .main)
         XCTAssertFalse(sut.hasLocalModificationsForTimedOut)
         
         // when
@@ -118,7 +118,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingTimedOutSetsHasLocalModificationsForTimedOut_Sync() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Sync)
+        let sut = ZMConversationCallState(contextType: .sync)
         XCTAssertFalse(sut.hasLocalModificationsForTimedOut)
         
         // when
@@ -131,7 +131,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingIsCallDeviceActiveDoesNotSetHasLocalModificationsForCallDeviceActiveOnTheSyncContext() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Sync)
+        let sut = ZMConversationCallState(contextType: .sync)
         XCTAssertFalse(sut.hasLocalModificationsForCallDeviceActive)
         
         // when
@@ -144,7 +144,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingIsIgnoringCallSetsHasLocalModificationsForIsIgnoringCall() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Main)
+        let sut = ZMConversationCallState(contextType: .main)
         XCTAssertFalse(sut.hasLocalModificationsForIgnoringCall)
         
         // when
@@ -157,7 +157,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingIsIgnoringCallDoesNotSetHasLocalModificationsForIsIgnoringCallOnTheSyncContext() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Sync)
+        let sut = ZMConversationCallState(contextType: .sync)
         XCTAssertFalse(sut.hasLocalModificationsForIgnoringCall)
         
         // when
@@ -170,7 +170,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingIsOutgoingCallSetsHasLocalModificationsForIsOutgoingCall() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Main)
+        let sut = ZMConversationCallState(contextType: .main)
         XCTAssertFalse(sut.hasLocalModificationsForIsOutgoingCall)
         
         // when
@@ -183,7 +183,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingIsOutgoingCallSetsHasLocalModificationsForIsOutgoingCallOnTheSyncContext() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Sync)
+        let sut = ZMConversationCallState(contextType: .sync)
         XCTAssertFalse(sut.hasLocalModificationsForIsOutgoingCall)
         
         // when
@@ -196,7 +196,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingActiveFlowParticipantsSetsHasLocalModificationsForActiveParticipants() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Main)
+        let sut = ZMConversationCallState(contextType: .main)
         XCTAssertFalse(sut.hasLocalModificationsForActiveParticipants)
         
         // when
@@ -209,7 +209,7 @@ class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     func testThatSettingActiveFlowParticipantsSetsHasLocalModificationsForActiveParticipantsOnTheSyncContext() {
         
         // given
-        let sut = ZMConversationCallState(contextType: .Sync)
+        let sut = ZMConversationCallState(contextType: .sync)
         XCTAssertFalse(sut.hasLocalModificationsForActiveParticipants)
         
         // when
@@ -226,10 +226,10 @@ class ZMCallStateTests : ZMBaseManagedObjectTest {
     
     func testThatItReturnsTheSameStateForTheSameConversation() {
         // given
-        let sut = ZMCallState(contextType: .Main)
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let conversationB = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let sut = ZMCallState(contextType: .main)
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        let conversationB = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         
         // when
         let a1 = sut.stateForConversation(conversationA)
@@ -247,9 +247,9 @@ class ZMCallStateTests : ZMBaseManagedObjectTest {
 
     func testThatItHasChanges() {
         // given
-        let sut = ZMCallState(contextType: .Main)
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let sut = ZMCallState(contextType: .main)
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         XCTAssertFalse(sut.hasChanges)
         
         // when
@@ -261,9 +261,9 @@ class ZMCallStateTests : ZMBaseManagedObjectTest {
     
     func testThatItCopiesStatesChangesAndResetsHasChanges() {
         // given
-        let sut = ZMCallState(contextType: .Main)
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let sut = ZMCallState(contextType: .main)
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         sut.stateForConversation(conversationA).isFlowActive = true
         XCTAssertTrue(sut.hasChanges)
         
@@ -277,9 +277,9 @@ class ZMCallStateTests : ZMBaseManagedObjectTest {
     
     func testThatItCopiesLocalModificationsChangesAndResetsLocalModifications() {
         // given
-        let sut = ZMCallState(contextType: .Main)
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let sut = ZMCallState(contextType: .main)
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         sut.stateForConversation(conversationA).isCallDeviceActive = true
         XCTAssertTrue(sut.stateForConversation(conversationA).hasLocalModificationsForCallDeviceActive)
         
@@ -295,9 +295,9 @@ class ZMCallStateTests : ZMBaseManagedObjectTest {
     
     func testThatItReturnsNilWhenCreatingACopyWithoutChanges() {
         // given
-        let sut = ZMCallState(contextType: .Main)
-        _ = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let sut = ZMCallState(contextType: .main)
+        _ = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         XCTAssertFalse(sut.hasChanges)
         
         // when
@@ -310,9 +310,9 @@ class ZMCallStateTests : ZMBaseManagedObjectTest {
 
     func testThatChangingTheOriginalDoesNotAffectTheCopy() {
         // given
-        let sut = ZMCallState(contextType: .Main)
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let sut = ZMCallState(contextType: .main)
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         sut.stateForConversation(conversationA).isFlowActive = true
         XCTAssertTrue(sut.hasChanges)
         
@@ -333,8 +333,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItMergesCallDeviceIsActiveFromMainToSyncWhenItHasLocalModifications_true() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         syncSut.isCallDeviceActive = false // strictly not needed
         mainSut.isCallDeviceActive = true
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -352,8 +352,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItMergesCallDeviceIsActiveFromMainToSyncWhenItHasLocalModifications_false() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         syncSut.isCallDeviceActive = true
         mainSut.isCallDeviceActive = false
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -371,8 +371,8 @@ extension ZMConversationCallStateTests {
 
     func testThatItDoesNotMergeCallDeviceIsActiveFromMainToSyncWhenItHasNoLocalModifications_true() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isCallDeviceActive = true
         performIgnoringZMLogError {
             mainSut.resetHasLocalModificationsForCallDeviceActive()
@@ -393,8 +393,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItDoesNotMergeCallDeviceIsActiveFromMainToSyncWhenItHasNoLocalModifications_false() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isCallDeviceActive = false
         performIgnoringZMLogError {
             mainSut.resetHasLocalModificationsForCallDeviceActive()
@@ -415,8 +415,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItDoesNotMergeAnythingElseFromMainToSync_true() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isFlowActive = false
         syncSut.isFlowActive = true
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -433,8 +433,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItDoesNotMergeAnythingElseFromMainToSync_false() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isFlowActive = true
         syncSut.isFlowActive = false
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -451,8 +451,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItMergesIsVideoCallFromMainToSync_true() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isVideoCall = true
         syncSut.isVideoCall = false
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -468,8 +468,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItMergesIsVideoCallFromMainToSync_false() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isVideoCall = false
         syncSut.isVideoCall = true
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -485,8 +485,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItMergesIsOutgoingCallFromMainToSyncWhenItHasLocalModifications() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isOutgoingCall = true
         syncSut.isOutgoingCall = false
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -503,8 +503,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItMergesIsOutgoingCallFromSyncToMainWhenItHasLocalModifications() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        var syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        var syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isOutgoingCall = false
         syncSut.isOutgoingCall = true
         syncSut = syncSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -522,8 +522,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItMergesCallDeviceIsActiveFromSyncToMainWhenItHasNoLocalModifications() {
         // given
-        var mainSut = ZMConversationCallState(contextType: .Main)
-        let syncSut = ZMConversationCallState(contextType: .Sync)
+        var mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isCallDeviceActive = false
         performIgnoringZMLogError {
             mainSut.resetHasLocalModificationsForCallDeviceActive()
@@ -544,8 +544,8 @@ extension ZMConversationCallStateTests {
 
     func testThatItDoesNotMergeCallDeviceIsActiveFromSyncToMainWhenItHasLocalModifications() {
         // given
-        var mainSut = ZMConversationCallState(contextType: .Main)
-        let syncSut = ZMConversationCallState(contextType: .Sync)
+        var mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isCallDeviceActive = false
         syncSut.isCallDeviceActive = true
         mainSut = mainSut.createCopy() // Create a copy to reset 'hasChanges'
@@ -563,8 +563,8 @@ extension ZMConversationCallStateTests {
 
     func testThatItDoesNotMerge_HasLocalModifications_FromSyncToMain_true() {
         // given
-        var mainSut = ZMConversationCallState(contextType: .Main)
-        let syncSut = ZMConversationCallState(contextType: .Sync)
+        var mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isCallDeviceActive = false
         syncSut.mergeChangesFromState(mainSut)
         performIgnoringZMLogError {
@@ -588,8 +588,8 @@ extension ZMConversationCallStateTests {
     
     func testThatItDoesNotMerge_HasLocalModifications_FromSyncToMain_false() {
         // given
-        var mainSut = ZMConversationCallState(contextType: .Main)
-        let syncSut = ZMConversationCallState(contextType: .Sync)
+        var mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isCallDeviceActive = true
         syncSut.mergeChangesFromState(mainSut)
         performIgnoringZMLogError {
@@ -614,8 +614,8 @@ extension ZMConversationCallStateTests {
 // TODO: Enable and verify isVideoCall flag merging
     func DISABLED_testThatItMergesEverythingElseFromSyncToMain() {
         // given
-        var mainSut = ZMConversationCallState(contextType: .Main)
-        let syncSut = ZMConversationCallState(contextType: .Sync)
+        var mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isFlowActive = true
         syncSut.isFlowActive = false
         mainSut.isOutgoingCall = true
@@ -639,8 +639,8 @@ extension ZMConversationCallStateTests {
     
     func testThatMergingDoesNotClearTheHasChangesFlag() {
         // given
-        let mainSut = ZMConversationCallState(contextType: .Main)
-        let syncSut = ZMConversationCallState(contextType: .Sync)
+        let mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
         mainSut.isCallDeviceActive = true
         syncSut.isFlowActive = true
         
@@ -658,8 +658,8 @@ extension ZMCallStateTests {
     
     func testThatItReturnsAnEmptySetWhenReturningANilCallStateOnCreateCopy() {
         // given
-        let syncSut = ZMCallState(contextType: .Sync)
-        let mainSut = ZMCallState(contextType: .Main)
+        let syncSut = ZMCallState(contextType: .sync)
+        let mainSut = ZMCallState(contextType: .main)
         
         XCTAssertFalse(syncSut.hasChanges)
         
@@ -675,18 +675,18 @@ extension ZMCallStateTests {
     
     func testThatItMergesAllConversations_MainToSync() {
         // given
-        let mainSut = ZMCallState(contextType: .Main)
-        let syncSut = ZMCallState(contextType: .Sync)
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let conversationB = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let mainSut = ZMCallState(contextType: .main)
+        let syncSut = ZMCallState(contextType: .sync)
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        let conversationB = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         
         mainSut.stateForConversation(conversationA).isCallDeviceActive = false
         mainSut.stateForConversation(conversationB).isCallDeviceActive = true
         
         // when
         if let c = mainSut.createCopyAndResetHasChanges() {
-            syncSut.mergeChangesFromState(c)
+            _ = syncSut.mergeChangesFromState(c)
         }
 
         // then
@@ -705,12 +705,12 @@ extension ZMCallStateTests {
     
     func testThatItReturnsAllConversationIDsThatChanged() {
         // given
-        let mainSut = ZMCallState(contextType: .Main)
-        let syncSut = ZMCallState(contextType: .Sync)
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let conversationB = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
-        self.syncMOC.performGroupedBlockAndWait {
+        let mainSut = ZMCallState(contextType: .main)
+        let syncSut = ZMCallState(contextType: .sync)
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        let conversationB = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
+        syncMOC.performGroupedBlockAndWait {
             self.syncMOC.saveOrRollback()
         }
         
@@ -734,17 +734,17 @@ extension ZMCallStateTests {
     
     func testThatItReturnsAllConversationsThatAreChanged() {
         // given
-        let mainSut = self.uiMOC.zm_callState
+        let mainSut = uiMOC.zm_callState
         
-        let conversationA = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        let conversationB = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let conversationA = ZMConversation.insertNewObject(in: uiMOC)
+        let conversationB = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
         
         mainSut.stateForConversation(conversationA).isCallDeviceActive = false
         mainSut.stateForConversation(conversationB).isCallDeviceActive = true
         
-        XCTAssertTrue(self.uiMOC.zm_callState.hasChanges)
-        XCTAssertTrue(self.uiMOC.zm_callState.hasChanges)
+        XCTAssertTrue(uiMOC.zm_callState.hasChanges)
+        XCTAssertTrue(uiMOC.zm_callState.hasChanges)
 
         // when
         var changedConversations: Set<ZMConversation>!
@@ -761,22 +761,22 @@ extension ZMCallStateTests {
     
     func testThatWhenMergingIsIgnoringCall_No_FromMainIntoSyncItDoesNotSetHasLocalmodifcations() {
         // given
-        let conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.uiMOC)
-        conversation.conversationType = .OneOnOne
-        self.uiMOC.saveOrRollback()
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        uiMOC.saveOrRollback()
 
         // when
         conversation.isIgnoringCall = true
         let callState1 = self.uiMOC.zm_callState.createCopyAndResetHasChanges()
         self.syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.mergeCallStateChanges(callState1)
+            _ = self.syncMOC.mergeCallStateChanges(callState1)
         }
         XCTAssertFalse(conversation.hasLocalModificationsForIsIgnoringCall)
 
         // then
         var syncConversation: ZMConversation!
         self.syncMOC.performGroupedBlockAndWait {
-            syncConversation = self.syncMOC.objectWithID(conversation.objectID) as? ZMConversation
+            syncConversation = self.syncMOC.object(with: conversation.objectID) as? ZMConversation
             XCTAssertNotNil(syncConversation)
             if let syncConversation = syncConversation {
                 XCTAssertTrue(syncConversation.isIgnoringCall)
@@ -790,7 +790,7 @@ extension ZMCallStateTests {
         conversation.isIgnoringCall = false
         let callState2 = self.uiMOC.zm_callState.createCopyAndResetHasChanges()
         self.syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.mergeCallStateChanges(callState2)
+            _ = self.syncMOC.mergeCallStateChanges(callState2)
         }
         XCTAssertFalse(conversation.hasLocalModificationsForIsIgnoringCall)
 
@@ -808,9 +808,9 @@ extension ZMCallStateTests {
     func testThatWhenMergingIsIgnoringCallFromSyncIntoMainItDoesNotSetHasLocalmodifcations() {
         // given
         var conversation : ZMConversation!
-        self.syncMOC.performGroupedBlockAndWait{
-            conversation = ZMConversation.insertNewObjectInManagedObjectContext(self.syncMOC)
-            conversation.conversationType = .OneOnOne
+        syncMOC.performGroupedBlockAndWait{
+            conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
             self.syncMOC.saveOrRollback()
             
             // when
@@ -821,7 +821,7 @@ extension ZMCallStateTests {
         self.syncMOC.performGroupedBlockAndWait { 
             callState1 = self.syncMOC.zm_callState.createCopyAndResetHasChanges()
         }
-        self.uiMOC.mergeCallStateChanges(callState1)
+        _ = self.uiMOC.mergeCallStateChanges(callState1)
         
         // then
         self.syncMOC.performGroupedBlockAndWait {
@@ -829,7 +829,7 @@ extension ZMCallStateTests {
             XCTAssertFalse(conversation.hasLocalModificationsForIsIgnoringCall)
         }
         
-        let uiConversation = self.uiMOC.objectWithID(conversation.objectID) as? ZMConversation
+        let uiConversation = uiMOC.object(with: conversation.objectID) as? ZMConversation
         XCTAssertNotNil(uiConversation)
         if let uiConversation = uiConversation {
             XCTAssertTrue(uiConversation.isIgnoringCall)
@@ -845,7 +845,7 @@ extension ZMCallStateTests {
             conversation.isIgnoringCall = false
             callState2 = self.syncMOC.zm_callState.createCopyAndResetHasChanges()
         }
-        self.uiMOC.mergeCallStateChanges(callState2)
+        _ = self.uiMOC.mergeCallStateChanges(callState2)
         
         // then
         self.syncMOC.performGroupedBlockAndWait{

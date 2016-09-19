@@ -24,48 +24,48 @@
 
 @class ZMEventID;
 
-typedef void(^ObjectsEnumerationBlock)(ZMManagedObject *, BOOL *stop);
-extern NSString * const ZMManagedObjectLocallyModifiedDataFieldsKey;
+typedef void(^ObjectsEnumerationBlock)(ZMManagedObject * _Nonnull, BOOL * _Nonnull stop);
+extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
 
 
 
 @interface ZMManagedObject (Internal)
 
-+ (NSString *)entityName; ///< subclasses must implement this
-+ (NSString *)sortKey; ///< subclasses must implement this or @c +defaultSortDescriptors
-+ (NSString *)remoteIdentifierDataKey; ///< subclasses must implement this
++ (nonnull NSString *)entityName; ///< subclasses must implement this
++ (nullable NSString *)sortKey; ///< subclasses must implement this or @c +defaultSortDescriptors
++ (nullable NSString *)remoteIdentifierDataKey; ///< subclasses must implement this
 + (BOOL)hasLocallyModifiedDataFields;
 
-+ (instancetype)insertNewObjectInManagedObjectContext:(NSManagedObjectContext *)moc;
++ (nonnull instancetype)insertNewObjectInManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 /// Whether this object has all data from the backend
 @property (nonatomic) BOOL needsToBeUpdatedFromBackend;
 
 /// Handles conversion from and to ZMEventID and NSData in CoreData
-- (ZMEventID *)transientEventIDForKey:(NSString *)key;
-- (void)setTransientEventID:(ZMEventID *)newEventID forKey:(NSString *)key;
+- (nullable ZMEventID *)transientEventIDForKey:(nonnull NSString *)key;
+- (void)setTransientEventID:(nonnull ZMEventID *)newEventID forKey:(nonnull NSString *)key;
 
 /// Handles conversion from and to NSUUID and NSData in CoreData
-- (NSUUID *)transientUUIDForKey:(NSString *)key;
-- (void)setTransientUUID:(NSUUID *)newUUID forKey:(NSString *)key;
+- (nullable NSUUID *)transientUUIDForKey:(nonnull NSString *)key;
+- (void)setTransientUUID:(nonnull NSUUID *)newUUID forKey:(nonnull NSString *)key;
 
 /// Handles conversion from and to CGSize and NSData in CoreData
-- (CGSize)transientCGSizeForKey:(NSString *)key;
-- (void)setTransientCGSize:(CGSize)size forKey:(NSString *)key;
+- (CGSize)transientCGSizeForKey:(nonnull NSString *)key;
+- (void)setTransientCGSize:(CGSize)size forKey:(nonnull NSString *)key;
 
 /// Defaults to a single sort descriptor based on @c sortKey
-+ (NSArray *)defaultSortDescriptors;
++ (nonnull NSArray <NSSortDescriptor *> *)defaultSortDescriptors;
 /// The order in which objects are updated to / from the backend. ZMSyncOperationSet uses this.
-+ (NSArray *)sortDescriptorsForUpdating;
-+ (NSPredicate *)predicateForFilteringResults;
-+ (NSFetchRequest *)sortedFetchRequest;
-+ (NSFetchRequest *)sortedFetchRequestWithPredicate:(NSPredicate *)predicate;
-+ (NSFetchRequest *)sortedFetchRequestWithPredicateFormat:(NSString *)format, ...;
++ (nullable NSArray <NSSortDescriptor *> *)sortDescriptorsForUpdating;
++ (nullable NSPredicate *)predicateForFilteringResults;
++ (nullable NSFetchRequest *)sortedFetchRequest;
++ (nullable NSFetchRequest *)sortedFetchRequestWithPredicate:(nonnull NSPredicate *)predicate;
++ (nullable NSFetchRequest *)sortedFetchRequestWithPredicateFormat:(nonnull NSString *)format, ...;
 
-+ (void)enumerateObjectsInContext:(NSManagedObjectContext *)moc withBlock:(ObjectsEnumerationBlock)block;
++ (void)enumerateObjectsInContext:(nonnull NSManagedObjectContext *)moc withBlock:(nonnull ObjectsEnumerationBlock)block;
 
-+ (instancetype)fetchObjectWithRemoteIdentifier:(NSUUID *)uuid inManagedObjectContext:(NSManagedObjectContext *)moc;
-+ (NSOrderedSet *)fetchObjectsWithRemoteIdentifiers:(NSOrderedSet <NSUUID *> *)uuids inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (nullable instancetype)fetchObjectWithRemoteIdentifier:(nonnull NSUUID *)uuid inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
++ (nullable NSOrderedSet *)fetchObjectsWithRemoteIdentifiers:(nonnull NSOrderedSet <NSUUID *> *)uuids inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 @end
 
@@ -77,37 +77,37 @@ extern NSString * const ZMManagedObjectLocallyModifiedDataFieldsKey;
 @interface ZMManagedObject (PersistentChangeTracking)
 
 /// The keys that are not to be tracked. Subclasses can / should override this.
-@property (nonatomic, readonly) NSSet *ignoredKeys;
+@property (nonatomic, readonly, nullable) NSSet *ignoredKeys;
 
 /// Returns a predicate that will match objects which need additional data from the backend.
-+ (NSPredicate *)predicateForNeedingToBeUpdatedFromBackend;
++ (nullable NSPredicate *)predicateForNeedingToBeUpdatedFromBackend;
 
 /// Returns a predicate that will match objects that have local modifications that need to be pushed to the backend
-+ (NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream;
++ (nullable NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream;
 
 /// Returns a predicate that will match objects that we need to create on the backend
 /// For most classes this will be "remoteIdentifier_data == nil"
-+ (NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream;
++ (nullable NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream;
 
 /// Returns the key (attributes) that have been locally modified (by the UI).
-@property (nonatomic, readonly) NSSet *keysThatHaveLocalModifications;
+@property (nonatomic, readonly, nonnull) NSSet *keysThatHaveLocalModifications;
 
 /// Similar to keysThatHaveLocalModifications but allows passing in a snapshot as a dictionary.
 /// Used for merging.
-- (BOOL)hasLocalModificationsForKey:(NSString *)key withModifiedFlag:(NSNumber *)n;
+- (BOOL)hasLocalModificationsForKey:(nonnull NSString *)key withModifiedFlag:(nullable NSNumber *)n;
 
 /// Removes the given @c keys from the set of keys that have been modified by the UI
-- (void)resetLocallyModifiedKeys:(NSSet *)keys;
+- (void)resetLocallyModifiedKeys:(nonnull NSSet *)keys;
 
 /// Adds the given @c keys to the set of keys that have been modified by the UI
-- (void)setLocallyModifiedKeys:(NSSet *)keys;
+- (void)setLocallyModifiedKeys:(nonnull NSSet *)keys;
 
 /// Returns @C YES if the receiver has local modifications for any of the given @c keys
-- (BOOL)hasLocalModificationsForKeys:(NSSet *)keys;
-- (BOOL)hasLocalModificationsForKey:(NSString *)key;
+- (BOOL)hasLocalModificationsForKeys:(nonnull NSSet *)keys;
+- (BOOL)hasLocalModificationsForKey:(nonnull NSString *)key;
 
 
-- (NSArray *)keysTrackedForLocalModifications ZM_REQUIRES_SUPER;
+- (nonnull NSArray <NSString *> *)keysTrackedForLocalModifications ZM_REQUIRES_SUPER;
 - (void)updateKeysThatHaveLocalModifications ZM_REQUIRES_SUPER;
 
 @end

@@ -23,10 +23,10 @@ import ZMProtos
 extension UserClient {
     
     var hexRemoteIdentifier: UInt64 {
-        let pointer = UnsafeMutablePointer<UInt64>.alloc(1)
-        defer { pointer.dealloc(1) }
-        NSScanner(string: self.remoteIdentifier).scanHexLongLong(pointer)
-        return UInt64(pointer.memory)
+        let pointer = UnsafeMutablePointer<UInt64>.allocate(capacity: 1)
+        defer { pointer.deallocate(capacity: 1) }
+        Scanner(string: self.remoteIdentifier).scanHexInt64(pointer)
+        return UInt64(pointer.pointee)
     }
     
     public var clientId: ZMClientId {
