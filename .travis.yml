@@ -14,7 +14,7 @@ install:
 
 script:
   - set -o pipefail
-  - xcodebuild clean build test -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | tee >build.log >(xcpretty)
+  - xcodebuild clean build test -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO | tee >build.log >(xcpretty)
   - bundle exec danger
 
 after_failure:
