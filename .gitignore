@@ -27,3 +27,9 @@ DerivedData
 .DS_Store
 Carthage
 ZMTesting.framework.zip
+
+## Test Output
+xcode-*.log
+tests.xml
+cobertura.xml
+code-coverage/*
