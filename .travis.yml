@@ -1,0 +1,21 @@
+env:
+  global:
+    - secure: cORYxNy6R7CRbM78FRn1TnM8rP1bxPejW8YW84LitJv9yjZeox21kROn3U4w0zbUsk0k4RDz0Oi2L/kwhvo9PR637mxO866W+RGFea/IMLYVc1tAHEtl4VlFbITBTZxv95s8EcjiAv5cc3Q3Tn5Xd/2NtAnd3/DQ5xLBw0Dvj/CDMiALviZOnAzFO72cz1rJTCdDbftt2HeEZP6rJADnYtxgo06H3e7g3HUCkjwdtinxUAKIg1nxurpRd2i03PXC3NsLudiBxwkALxjhEeixBpQWQnsLEqZgQT00EcwILGMyl6M9ArHS5V1+nwv8tK+Ql1KokEDkOIhLyUVkxSWfQwF4MnLF8g2qwGEPaNz6cClQxIh9DBMUj2+ddPk261XOhfUd42olr8eDegvJ3ZLcLH14tftUXRU5G6i78GZEM7cxRXd+5BjQpuV76rgqK01lelRhM6fr+4wWpkLOb9PpjPFge+9hkSpLotsABoyoE54ueb7df+T1V6usbSPXnDvIK8K8K+561tRAJA6FkSCr38h2/DV9Jji5wZTiy+eyrMmGfl7LMreeYt+ty7RJoGlD+0M3dMlaFMItstIx1UJ+HNNPl8/txwZURQiqg0EkGPeW4kHNjSmvX+vMzVVXM9xLjmzQb9nl83nnF9YoWs9qVOtFrJxC3e3mhwlGK0WaMi4=
+    - secure: H89K3hIUCfYYgllcOWLDA4gXE4cxmfRAcCnA1OON+m/PxIb/u2sE2LJG2xsaue9UOuek3rM4pXSPnnVCr61v8TdqWxuLloE5B9BLUIvGHVJ99jdYR3Td53qFCC1EHIIExX2td9My9dRzDm/OG9DaBPnb7+04hv5JamMmKoZV3TzXeZutrDqcpcwCBnoRJngYqUbUVl7iRiLYyMurb8/fICXg1+xYmXtoQiaMj1BjQJWLys0u951bELvCDqEpa1z6oUPPPdx0iAXxSSm/MWGCrPzcjK8JszcAgMhKAzNGUq32ljPtJ2RIURx0X0DUx6Hh1FLAD4LEJEwdOGQbML/RbxbMGngSDdV6xQUOrOAr4S0azQIEj6loOCq4M6ZhXICnb5hCw65jNvQhfQVvjpi/MxpaJfnHKn6/F2ZL6xcglgRcNxKU9vgErsgAKZFldJE5VxqHW7L2PIUCcLHMRM8MzCj5VRbxSfKzJUJ3ybMl+tP7ae6yJ3Lv18VseLyl//crYvAL11NQNBr7McRKDjKUmK8NsdM7sYYlz0pOsjea3eFjTgsuQipZiqAZhz8UfOebCQpWIAN5+fuoEdCxvfzhlSxgds9bR0kcN9GhK4QqKdK1adadQnc8K1heEkl/5xoSyspBs+0EJ49mX2qBNHClJDGyZt+VqwbKaoHu0OGoYWQ=
+
+language: objective-c
+osx_image: xcode8
+
+install:
+  - open -b com.apple.iphonesimulator
+  - bundle install
+  - carthage bootstrap --platform iOS
+  - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
+
+script:
+  - set -o pipefail
+  - xcodebuild clean build test -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO | tee >build.log >(xcpretty)
+  - bundle exec danger
+
+after_failure:
+  - tail -n 500 build.log
