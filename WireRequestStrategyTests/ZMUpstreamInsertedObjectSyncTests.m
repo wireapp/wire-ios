@@ -383,7 +383,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     NSError *networkError = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportResponseStatusExpired userInfo:nil];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPstatus:0 transportSessionError:networkError];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:networkError];
     
     // expect
     [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
@@ -406,7 +406,7 @@ static NSString *foo = @"foo";
                                       @"baz": @[@"quux"]
                                       };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *expectedRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -430,7 +430,7 @@ static NSString *foo = @"foo";
     
     NSDictionary *responsePayload = @{@"foo": @"bar",
                                       @"baz": @[@"quux"]};
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *expectedRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -455,7 +455,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     NSError *timeoutError = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPstatus:0 transportSessionError:timeoutError];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:timeoutError];
     
     // expect
     ZMUpstreamRequest *upstreamRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -482,7 +482,7 @@ static NSString *foo = @"foo";
                                       @"error": @"An expected error occured",
                                       };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:500 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:500 transportSessionError:nil];
     
     // expect
     [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
@@ -511,7 +511,7 @@ static NSString *foo = @"foo";
                                       @"error": @"An expected error occured",
                                       };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:400 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:400 transportSessionError:nil];
 
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -534,7 +534,7 @@ static NSString *foo = @"foo";
                                       @"error": @"An expected error occured",
                                       };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:400 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:400 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -562,7 +562,7 @@ static NSString *foo = @"foo";
                                       @"error": @"An expected error occured",
                                       };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:400 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:400 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -590,7 +590,7 @@ static NSString *foo = @"foo";
                                       @"error": @"An expected error occured",
                                       };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:400 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:400 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -620,7 +620,7 @@ static NSString *foo = @"foo";
                                       @"error": @"An expected error occured",
                                       };
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:400 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:400 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -682,7 +682,7 @@ static NSString *foo = @"foo";
     
     NSDictionary *responsePayload = @{@"foo": @"bar",
                                       @"baz": @[@"quux"]};
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *expectedRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -717,7 +717,7 @@ static NSString *foo = @"foo";
     
     NSDictionary *responsePayload = @{@"foo": @"bar",
                                       @"baz": @[@"quux"]};
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     
     // expect
     ZMUpstreamRequest *expectedRequest1 = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
@@ -819,7 +819,7 @@ static NSString *foo = @"foo";
     NSDictionary *responsePayload = @{@"error": @"An expected error occured"};
     
     NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeTryAgainLater userInfo:nil];
-    ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithPayload:responsePayload HTTPstatus:200 transportSessionError:error];
+    ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:error];
     
     // expect
     [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
@@ -843,7 +843,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil];
-    ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithPayload:nil HTTPstatus:0 transportSessionError:error];
+    ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:error];
     
     // expect
     [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
