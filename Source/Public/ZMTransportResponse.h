@@ -67,7 +67,7 @@ typedef NS_ENUM(uint8_t, ZMTransportResponseStatus) {
 
 - (nullable NSString *)payloadLabel;
 
-@property (nonatomic) NSDate *startOfUploadTimestamp;
+@property (nonatomic, nullable) NSDate *startOfUploadTimestamp;
 @end
 
 
