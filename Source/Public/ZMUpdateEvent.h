@@ -86,7 +86,7 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
 @property (nonatomic, readonly, copy, nonnull) NSDictionary *payload;
 @property (nonatomic, readonly) ZMUpdateEventType type;
 @property (nonatomic, readonly) ZMUpdateEventSource source;
-@property (nonatomic, readonly, copy, nonnull) NSUUID *uuid;
+@property (nonatomic, readonly, copy, nullable) NSUUID *uuid;
 
 /// True if the event will not appear in the notification stream
 @property (nonatomic, readonly) BOOL isTransient;
