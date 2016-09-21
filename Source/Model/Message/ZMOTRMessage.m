@@ -22,6 +22,7 @@
 #import "ZMConversation+Internal.h"
 #import "ZMConversation+Transport.h"
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import "ZMGenericMessageData.h"
 
 
 @import ZMTransport;
@@ -87,6 +88,13 @@ NSString * const DeliveredKey = @"delivered";
     else {
         return [super deliveryState];
     }
+}
+
+- (NSString *)dataSetDebugInformation
+{
+    return [[self.dataSet mapWithBlock:^NSString *(ZMGenericMessageData *msg) {
+        return [NSString stringWithFormat:@"<%@>: %@", NSStringFromClass(ZMGenericMessageData.class), msg.genericMessage];
+    }].array componentsJoinedByString:@"\n"];
 }
 
 - (void)markAsSent

@@ -265,17 +265,16 @@ extension ZMConversation {
         callState.activeVideoCallParticipants = participants.copy() as! NSOrderedSet
     }
 
-    public var otherActiveVideoCallParticipants: NSOrderedSet {
+    public var otherActiveVideoCallParticipants: Set<ZMUser> {
         get {
             if callState.isFlowActive {
-                let participants = callState.activeVideoCallParticipants.map{self.managedObjectContext?.object(with: $0 as! NSManagedObjectID)}
-                return NSOrderedSet(array: participants) 
+                return Set(callState.activeVideoCallParticipants.flatMap { self.managedObjectContext?.object(with: $0 as! NSManagedObjectID) as? ZMUser })
             }
-            return NSOrderedSet()
+            return Set()
         }
         set {
-            let objectIDs = newValue.map{($0 as!ZMUser).objectID} ?? NSOrderedSet()
-            callState.activeVideoCallParticipants = objectIDs
+            let objectIDs = newValue.map{ $0.objectID }
+            callState.activeVideoCallParticipants = NSOrderedSet(array: objectIDs)
         }
     }
 }
