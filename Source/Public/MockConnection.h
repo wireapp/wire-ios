@@ -35,21 +35,21 @@ typedef NS_ENUM(int16_t, ZMTConnectionStatus) {
 
 @interface MockConnection : NSManagedObject
 
-@property (nonatomic) NSString *status;
-@property (nonatomic) MockConversation *conversation;
-@property (nonatomic) MockUser *to;
-@property (nonatomic) MockUser *from;
-@property (nonatomic) NSDate *lastUpdate;
-@property (nonatomic) NSString *message;
+@property (nonatomic, nonnull) NSString *status;
+@property (nonatomic, nullable) MockConversation *conversation;
+@property (nonatomic, nonnull) MockUser *to;
+@property (nonatomic, nonnull) MockUser *from;
+@property (nonatomic, nullable) NSDate *lastUpdate;
+@property (nonatomic, nullable) NSString *message;
 
-+ (NSString *)stringFromStatus:(ZMTConnectionStatus)status;
-+ (ZMTConnectionStatus)statusFromString:(NSString *)string;
++ (nonnull NSString *)stringFromStatus:(ZMTConnectionStatus)status;
++ (ZMTConnectionStatus)statusFromString:(nonnull NSString *)string;
 
-- (id<ZMTransportData>)transportData;
+- (nonnull id<ZMTransportData>)transportData;
 
 - (void)accept;
-+ (NSFetchRequest *)sortedFetchRequest;
++ (nonnull NSFetchRequest *)sortedFetchRequest;
 
-+ (MockConnection *)connectionInMOC:(NSManagedObjectContext *)moc from:(MockUser *)from to:(MockUser *)to message:(NSString *)message;
++ (nonnull MockConnection *)connectionInMOC:(nonnull NSManagedObjectContext *)moc from:(nonnull MockUser *)from to:(nonnull MockUser *)to message:(nullable NSString *)message;
 
 @end

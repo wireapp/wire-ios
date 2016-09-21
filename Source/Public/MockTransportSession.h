@@ -31,12 +31,13 @@
 @class MockFlowManager;
 @protocol MockTransportSessionObjectCreation;
 
+NS_ASSUME_NONNULL_BEGIN
 
-typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportRequest *request);
+typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTransportRequest * _Nonnull request);
 
 @interface MockTransportSession : NSObject <ZMRequestCancellation>
 
-- (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)group NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDispatchGroup:(nullable ZMSDispatchGroup *)group NS_DESIGNATED_INITIALIZER;
 
 /// This will simply return @c self, but typecast to the expected type. For convenience.
 - (ZMTransportSession *)mockedTransportSession;
@@ -52,7 +53,7 @@ typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportReques
 
 @property (nonatomic, readonly) MockUser* selfUser;
 @property (nonatomic, readonly) BOOL isPushChannelActive;
-@property (nonatomic, copy) ZMCustomResponseGeneratorBlock responseGeneratorBlock;
+@property (nonatomic, copy, nullable) ZMCustomResponseGeneratorBlock responseGeneratorBlock;
 @property (nonatomic, readonly) NSArray *pushTokens;
 @property (nonatomic) BOOL disableEnqueueRequests;
 
@@ -70,7 +71,7 @@ typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportReques
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;
 
 /// A list on transport requests received by client
-- (NSArray *)receivedRequests;
+- (NSArray<ZMTransportRequest *> *)receivedRequests;
 /// Resets the list of received requests
 - (void)resetReceivedRequests;
 
@@ -111,17 +112,17 @@ typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportReques
 - (MockConversation *)insertSelfConversationWithSelfUser:(MockUser *)selfUser;
 - (MockConversation *)insertOneOnOneConversationWithSelfUser:(MockUser *)selfUser otherUser:(MockUser *)otherUser;
 - (MockConversation *)insertGroupConversationWithSelfUser:(MockUser *)selfUser otherUsers:(NSArray *)otherUsers;
-- (MockConversation *)insertConversationWithSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
+- (MockConversation *)insertConversationWithSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 - (MockConversation *)insertConversationWithCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 
 - (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(NSString *)mail;
 - (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name phone:(NSString *)phone;
-- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(NSString *)mail phone:(NSString *)phone;
+- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(nullable NSString *)mail phone:(nullable NSString *)phone;
 
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
 
-- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler;
-- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
+- (void)setAccessTokenRenewalFailureHandler:(nullable ZMCompletionHandlerBlock)handler;
+- (void)setAccessTokenRenewalSuccessHandler:(nullable ZMAccessTokenHandlerBlock)handler;
 
 - (void)simulatePushChannelClosed;
 - (void)simulatePushChannelOpened;
@@ -137,7 +138,7 @@ typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportReques
 /// remove all stored /notification
 - (void)clearNotifications;
 
-- (MockConnection *)createConnectionRequestFromUser:(MockUser*)fromUser toUser:(MockUser*)toUser message:(NSString *)message;
+- (MockConnection *)createConnectionRequestFromUser:(MockUser*)fromUser toUser:(MockUser*)toUser message:(nullable NSString *)message;
 
 - (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type;
 - (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type preKeys:(NSArray *)preKeys lastPreKey:(NSString *)lastPreKey;
@@ -183,4 +184,6 @@ typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportReques
 @property (nonatomic, readonly) NSString *invalidInvitationCode;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

@@ -23,15 +23,15 @@
 
 @interface MockPushEvent : NSObject
 
-@property (nonatomic, readonly, copy) id<ZMTransportData> payload;
-@property (nonatomic, readonly) NSUUID *uuid;
-@property (nonatomic, readonly) NSDate *timestamp;
-@property (nonatomic, readonly) MockUser *fromUser;
+@property (nonatomic, readonly, copy, nonnull) id<ZMTransportData> payload;
+@property (nonatomic, readonly, nonnull) NSUUID *uuid;
+@property (nonatomic, readonly, nonnull) NSDate *timestamp;
+@property (nonatomic, readonly, nonnull) MockUser *fromUser;
 @property (nonatomic, readonly) BOOL isTransient;
 
-+(instancetype)eventWithPayload:(id<ZMTransportData>)payload uuid:(NSUUID *)uuid fromUser:(MockUser *)user isTransient:(BOOL)isTransient;
-- (id<ZMTransportData>)transportData;
-- (id<ZMTransportData>)transportDataForConversationEvent;
++(nonnull instancetype)eventWithPayload:(nonnull id<ZMTransportData>)payload uuid:(nonnull NSUUID *)uuid fromUser:(nonnull MockUser *)user isTransient:(BOOL)isTransient;
+- (nonnull id<ZMTransportData>)transportData;
+- (nonnull id<ZMTransportData>)transportDataForConversationEvent;
 
 @end
 

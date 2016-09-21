@@ -58,7 +58,7 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
             identifier = $0
             })
         
-        sut.responseGeneratorBlock = { (_ : ZMTransportRequest?) -> ZMTransportResponse! in
+        sut.responseGeneratorBlock = { (_ : ZMTransportRequest?) -> ZMTransportResponse in
             return ResponseGenerator.ResponseNotCompleted
         }
         
