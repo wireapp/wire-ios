@@ -88,7 +88,7 @@ class IntegrationTests: XCTestCase {
     }
     
     func testThatItParsesSampleDataPolygon() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: "Polygon", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Polygon", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.polygonData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }

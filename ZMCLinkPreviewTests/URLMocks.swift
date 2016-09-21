@@ -41,15 +41,15 @@ class MockURLSessionDataTask: URLSessionDataTaskType {
 class MockURLSession: URLSessionType {
     
     var dataTaskWithURLCallCount = 0
-    var dataTaskWithURLParameters = [URL]()
+    var dataTaskWithURLParameters = [URLRequest]()
     var dataTaskWithURLClosureCallCount = 0
     var dataTaskWithURLClosureCompletions = [DataTaskCompletion]()
     var mockDataTask: MockURLSessionDataTask? = nil
     var dataTaskGenerator: ((URL, DataTaskCompletion) -> URLSessionDataTaskType)? = nil
     
-    func dataTaskWithURL(_ url: URL) -> URLSessionDataTaskType {
+    func dataTask(with request: URLRequest) -> URLSessionDataTaskType {
         dataTaskWithURLCallCount += 1
-        dataTaskWithURLParameters.append(url)
+        dataTaskWithURLParameters.append(request)
         return mockDataTask!
     }
     
