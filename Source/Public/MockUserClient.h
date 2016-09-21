@@ -26,20 +26,20 @@
 
 @interface MockUserClient : NSManagedObject
 
-@property (nonatomic) MockUser *user;
-@property (nonatomic) NSString *identifier;
+@property (nonatomic, nonnull) MockUser *user;
+@property (nonatomic, nonnull) NSString *identifier;
 
 /// Device label
-@property (nonatomic) NSString *label;
+@property (nonatomic, nonnull) NSString *label;
 
 /// Device type
-@property (nonatomic) NSString *type;
+@property (nonatomic, nonnull) NSString *type;
 
 /// IP address of registration
-@property (nonatomic) NSString *address;
+@property (nonatomic, nonnull) NSString *address;
 
 /// Device class
-@property (nonatomic) NSString *deviceClass;
+@property (nonatomic, nullable) NSString *deviceClass;
 
 /// Registration location latitude
 @property (nonatomic) double locationLatitude;
@@ -48,32 +48,32 @@
 @property (nonatomic) double locationLongitude;
 
 /// Device model
-@property (nonatomic) NSString *model;
+@property (nonatomic, nullable) NSString *model;
 
 /// Registration time
-@property (nonatomic) NSDate *time;
+@property (nonatomic, nonnull) NSDate *time;
 
-@property (nonatomic) NSSet *prekeys;
-@property (nonatomic) MockPreKey *lastPrekey;
+@property (nonatomic, nonnull) NSSet *prekeys;
+@property (nonatomic, nonnull) MockPreKey *lastPrekey;
 
-@property (nonatomic) NSString *mackey;
-@property (nonatomic) NSString *enckey;
+@property (nonatomic, nonnull) NSString *mackey;
+@property (nonatomic, nonnull) NSString *enckey;
 
 /// Returns a fetch request to fetch MockUserClients with the given predicate
-+ (NSFetchRequest *)fetchRequestWithPredicate:(NSPredicate *)predicate;
++ (nonnull NSFetchRequest *)fetchRequestWithPredicate:(nullable NSPredicate *)predicate;
 
-+ (instancetype)insertClientWithPayload:(NSDictionary *)paylod contenxt:(NSManagedObjectContext *)context;
-+ (instancetype)insertClientWithLabel:(NSString *)label type:(NSString *)type atLocation:(NSURL *)location inContext:(NSManagedObjectContext *)moc;
-- (id<ZMTransportData>)transportData;
++ (nullable instancetype)insertClientWithPayload:(nonnull NSDictionary *)paylod contenxt:(nonnull NSManagedObjectContext *)context;
++ (nullable instancetype)insertClientWithLabel:(nonnull NSString *)label type:(nonnull NSString *)type atLocation:(nonnull NSURL *)location inContext:(nonnull NSManagedObjectContext *)moc;
+- (nonnull id<ZMTransportData>)transportData;
 
-+ (NSData *)encryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
-+ (NSData *)sessionMessageDataForEncryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data;
-- (BOOL)establishConnectionWithClient:(MockUserClient *)client2;
++ (nonnull NSData *)encryptedDataFromClient:(nonnull MockUserClient *)fromClient toClient:(nonnull MockUserClient *)toClient data:(nonnull NSData *)data;
++ (nonnull NSData *)sessionMessageDataForEncryptedDataFromClient:(nonnull MockUserClient *)fromClient toClient:(nonnull  MockUserClient *)toClient data:(nonnull  NSData *)data;
+- (BOOL)establishConnectionWithClient:(nonnull MockUserClient *)client2;
 
 @end
 
 @interface NSString(RandomString)
 
-+ (NSString *)createAlphanumericalString;
++ (nonnull NSString *)createAlphanumericalString;
 
 @end

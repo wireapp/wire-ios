@@ -840,8 +840,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     NSSet *deletedObjects = self.managedObjectContext.deletedObjects;
     
     [self managedObjectContextPropagateChangesWithInsertedObjects:insertedObjects updatedObjects:updatedObjects deletedObjects:deletedObjects shouldSendEventsToSelfUser:shouldSendEventsToSelfUser];
-    
+
     BOOL result = [self.managedObjectContext save:&error];
+    (void)result;
     NSAssert(result, @"Failed to save: %@", error);
 }
 
