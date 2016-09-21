@@ -104,7 +104,7 @@ extension ClientMessageTests_OTR {
             self.syncConversation.remoteIdentifier = UUID()
             let message = ZMConversation.appendSelfConversation(withLastReadOf: self.syncConversation)
             
-            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier]]
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
             // when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
@@ -130,7 +130,7 @@ extension ClientMessageTests_OTR {
             self.syncConversation.remoteIdentifier = UUID()
             let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation)
             
-            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier]]
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
             // when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
@@ -207,7 +207,7 @@ extension ClientMessageTests_OTR {
                 let payloadClients = recipients.flatMap { user -> [String] in
                     return (user.clients as? [ZMClientEntry])?.map({ String(format: "%llx", $0.client.client) }) ?? []
                 }.flatMap { $0 }
-                XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier }.sorted())
+                XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
             } else {
                 XCTFail("Metadata does not contain recipients")
             }

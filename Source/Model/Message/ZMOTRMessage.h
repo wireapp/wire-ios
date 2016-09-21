@@ -29,6 +29,7 @@ extern NSString * const DeliveredKey;
 @property (nonatomic) BOOL delivered;
 @property (nonatomic) NSOrderedSet *dataSet;
 @property (nonatomic, readonly) NSSet *missingRecipients;
+@property (nonatomic, readonly) NSString *dataSetDebugInformation;
 
 - (void)missesRecipient:(UserClient *)recipient;
 - (void)missesRecipients:(NSSet<UserClient *> *)recipients;

@@ -957,10 +957,6 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
 {
     [self willChangeValueForKey:key];
     
-    if (imageData == nil) {
-        [self.managedObjectContext.zm_userImageCache removeAllUserImages:self];
-        return;
-    }
     
     if (self.isSelfUser) {
         [self setPrimitiveValue:imageData forKey:key];
@@ -970,21 +966,28 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
         }
     }
     else {
+        if (nil == imageData) {
+            [self.managedObjectContext.zm_userImageCache removeAllUserImages:self];
+            return;
+        }
+        
         switch (format) {
             case ZMImageFormatMedium: {
-                [self.managedObjectContext.zm_userImageCache setLargeUserImage:self imageData:imageData]; // user image cache is thead safe
+                [self.managedObjectContext.zm_userImageCache setLargeUserImage:self imageData:imageData]; // user image cache is thread safe
                 break;
                 
             }
             case ZMImageFormatProfile: {
-                [self.managedObjectContext.zm_userImageCache setSmallUserImage:self imageData:imageData]; // user image cache is thead safe
+                [self.managedObjectContext.zm_userImageCache setSmallUserImage:self imageData:imageData]; // user image cache is thread safe
                 break;
             }
             default:
                 RequireString(NO, "Unexpected image format '%lu' set in user", (unsigned long)format);
                 break;
         }
+        
     }
+
     [self didChangeValueForKey:key];
     [self.managedObjectContext saveOrRollback];
 }
