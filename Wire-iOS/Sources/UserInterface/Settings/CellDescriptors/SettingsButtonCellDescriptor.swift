@@ -45,7 +45,18 @@ class SettingsInfoCellDescriptor: SettingsCellDescriptorType {
     }
     
     func select(value: SettingsPropertyValue?) {
-
+        guard let previewGenerator = self.previewGenerator else {
+            return
+        }
+        
+        let preview = previewGenerator(self)
+        
+        switch preview {
+        case .Text(let previewString):
+            let pasteBoard = UIPasteboard.generalPasteboard()
+            pasteBoard.string = previewString
+        default: break
+        }
     }
 }
 
@@ -98,12 +109,8 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
     
     func featureCell(cell: SettingsCellType) {
         cell.titleText = self.title
-        if self.isDestructive {
-            cell.titleColor = UIColor.redColor()
-        }
-        else {
-            cell.titleColor = UIColor.whiteColor()
-        }
+
+        cell.titleColor = UIColor.whiteColor()
     }
     
     func select(value: SettingsPropertyValue?) {
