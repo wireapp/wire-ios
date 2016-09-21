@@ -79,7 +79,7 @@ typedef NS_ENUM(int16_t, ZMAssetUploadState) {
 @property (nonatomic) BOOL delivered;
 
 /// MIME type of the file being transfered (implied from file extension)
-@property (nonatomic, readonly) NSString * _Nonnull mimeType;
+@property (nonatomic, readonly) NSString * _Nullable mimeType;
 
 /// Original file size
 @property (nonatomic, readonly) unsigned long long size;
