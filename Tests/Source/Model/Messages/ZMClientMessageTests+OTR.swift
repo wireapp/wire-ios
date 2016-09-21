@@ -102,15 +102,12 @@ extension ClientMessageTests_OTR {
             // given
             self.syncConversation.lastReadServerTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
-            let message = ZMConversation.appendSelfConversation(withLastReadOf: self.syncConversation)
+            guard let message = ZMConversation.appendSelfConversation(withLastReadOf: self.syncConversation) else { return XCTFail() }
             
             self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
             // when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
-                XCTFail()
-                return
-            }
+            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
             
             // then
             self.assertMessageMetadata(payloadAndStrategy.data)
@@ -128,15 +125,12 @@ extension ClientMessageTests_OTR {
             // given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
-            let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation)
+            guard let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
             
             self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
             // when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
-                XCTFail()
-                return
-            }
+            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
             
             // then
             self.assertMessageMetadata(payloadAndStrategy.data)
