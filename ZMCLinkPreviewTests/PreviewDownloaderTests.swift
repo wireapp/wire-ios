@@ -47,7 +47,7 @@ class PreviewDownloaderTests: XCTestCase {
 
         // then
         XCTAssertEqual(mockSession.dataTaskWithURLCallCount, 1)
-        XCTAssertEqual(mockSession.dataTaskWithURLParameters.first, url)
+        XCTAssertEqual(mockSession.dataTaskWithURLParameters.first?.url, url)
         XCTAssertEqual(mockDataTask.resumeCallCount, 1)
         XCTAssertNotNil(sut.completionByURL[url])
     }
@@ -171,15 +171,20 @@ class PreviewDownloaderTests: XCTestCase {
     
     func testThatItOverridesTheContentTypeOfTheURLSessionUsedForParsing() {
         // given
-        sut = PreviewDownloader(resultsQueue: .main)
+        let completion: PreviewDownloader.DownloadCompletion = { _ in }
         
         // when
-        let sessionConfiguration = (sut.session as! URLSession).configuration
-        let agent = sessionConfiguration.httpAdditionalHeaders?["User-Agent"] as? String
+        sut.requestOpenGraphData(fromURL: url, completion: completion)
         
         // then
         let expected = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+        XCTAssertEqual(mockSession.dataTaskWithURLCallCount, 1)
+        let request = mockSession.dataTaskWithURLParameters.first
+        let agent = request?.allHTTPHeaderFields?["User-Agent"]
+
         XCTAssertEqual(agent, expected)
+        XCTAssertEqual(mockDataTask.resumeCallCount, 1)
+        XCTAssertNotNil(sut.completionByURL[url])
     }
     
     func testThatItCallsTheCompletionHandlerAndCancelsTheRequestIfTheContentTypeOfTheResponseIfNotHTML() {

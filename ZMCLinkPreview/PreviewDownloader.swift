@@ -45,16 +45,19 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         self.parsingQueue = parsingQueue ?? OperationQueue()
         self.parsingQueue.name = String(describing: type(of: self)) + "Queue"
         super.init()
-        let configuration = URLSessionConfiguration.default
+        let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 20
-        configuration.httpAdditionalHeaders = [HeaderKey.userAgent.rawValue: userAgent] // Override the user agent to not get served mobile pages
+        configuration.httpShouldSetCookies = false
         session = urlSession ?? Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: parsingQueue)
     }
     
     func requestOpenGraphData(fromURL url: URL, completion: @escaping DownloadCompletion) {
         completionByURL[url] = completion
-        session.dataTaskWithURL(url).resume()
+        var request = URLRequest(url: url)
+        // Override the user agent to not get served mobile pages
+        request.allHTTPHeaderFields = [HeaderKey.userAgent.rawValue: userAgent]
+        session.dataTask(with: request).resume()
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
