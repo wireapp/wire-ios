@@ -63,20 +63,20 @@ typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
 
 @interface MockEvent : NSManagedObject
 
-@property (nonatomic) MockUser *from;
-@property (nonatomic) NSString *identifier;
-@property (nonatomic) NSDate *time;
-@property (nonatomic) NSString *type;
+@property (nonatomic, nullable) MockUser *from;
+@property (nonatomic, nonnull) NSString *identifier;
+@property (nonatomic, nullable) NSDate *time;
+@property (nonatomic, nonnull) NSString *type;
 @property (nonatomic, readonly) ZMTUpdateEventType eventType;
-@property (nonatomic) id data;
-@property (nonatomic) MockConversation *conversation;
+@property (nonatomic, nullable) id data;
+@property (nonatomic, nullable) MockConversation *conversation;
 
-- (id<ZMTransportData>)transportData;
+- (nonnull id<ZMTransportData>)transportData;
 
-+ (NSString *)stringFromType:(ZMTUpdateEventType)status;
-+ (ZMTUpdateEventType)typeFromString:(NSString *)string;
++ (nullable NSString *)stringFromType:(ZMTUpdateEventType)status;
++ (ZMTUpdateEventType)typeFromString:(nonnull NSString *)string;
 
 // Event considered persistent on the backend should receive an identifier
-+ (NSArray *)persistentEvents;
++ (nonnull NSArray *)persistentEvents;
 
 @end

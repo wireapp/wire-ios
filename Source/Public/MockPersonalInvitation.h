@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)invitationInMOC:(NSManagedObjectContext *)MOC fromUser:(MockUser *)user toInviteeWithName:(NSString *)name email:(nullable NSString *)email phoneNumber:(nullable NSString *)phone;
 
 + (NSFetchRequest *)sortedFetchRequest;
-+ (NSFetchRequest *)sortedFetchRequestWithPredicate:(NSPredicate *)predicate;
++ (NSFetchRequest *)sortedFetchRequestWithPredicate:(nullable NSPredicate *)predicate;
 
 - (id<ZMTransportData>)transportData;
 

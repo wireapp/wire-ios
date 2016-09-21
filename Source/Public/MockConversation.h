@@ -36,88 +36,88 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 
 @interface MockConversation : NSManagedObject
 
-@property (nonatomic) NSString *archived;
-@property (nonatomic) NSString *otrArchivedRef;
-@property (nonatomic) NSString *otrMutedRef;
+@property (nonatomic, nullable) NSString *archived;
+@property (nonatomic, nullable) NSString *otrArchivedRef;
+@property (nonatomic, nullable) NSString *otrMutedRef;
 @property (nonatomic) BOOL otrArchived;
 @property (nonatomic) BOOL otrMuted;
 
-@property (nonatomic) NSString *clearedEventID;
-@property (nonatomic) MockUser *creator;
-@property (nonatomic) NSString *identifier;
-@property (nonatomic) NSString *selfIdentifier;
-@property (nonatomic) NSString *lastEvent;
-@property (nonatomic) NSDate *lastEventTime;
-@property (nonatomic) NSString *lastRead;
+@property (nonatomic, nullable) NSString *clearedEventID;
+@property (nonatomic, nullable) MockUser *creator;
+@property (nonatomic, nonnull) NSString *identifier;
+@property (nonatomic, nonnull) NSString *selfIdentifier;
+@property (nonatomic, nullable) NSString *lastEvent;
+@property (nonatomic, nullable) NSDate *lastEventTime;
+@property (nonatomic, nullable) NSString *lastRead;
 @property (nonatomic) BOOL muted;
-@property (nonatomic) NSDate *mutedTime;
-@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, nullable) NSDate *mutedTime;
+@property (nonatomic, readonly, nullable) NSString *name;
 @property (nonatomic) int16_t status;
-@property (nonatomic) NSString *statusRef;
-@property (nonatomic) NSDate *statusTime;
+@property (nonatomic, nullable) NSString *statusRef;
+@property (nonatomic, nullable) NSDate *statusTime;
 @property (nonatomic) ZMTConversationType type;
 @property (nonatomic) BOOL callWasDropped;
 /// participants that are not self
-@property (nonatomic, readonly) NSOrderedSet *activeUsers;
+@property (nonatomic, readonly, nonnull) NSOrderedSet *activeUsers;
 /// participants that are not self
-@property (nonatomic, readonly) NSSet *inactiveUsers;
-@property (nonatomic, readonly) NSOrderedSet *callParticipants;
-@property (nonatomic) NSSet *usersIgnoringCall;
+@property (nonatomic, readonly, nonnull) NSSet *inactiveUsers;
+@property (nonatomic, readonly, nonnull) NSOrderedSet *callParticipants;
+@property (nonatomic, nonnull) NSSet *usersIgnoringCall;
 
-@property (nonatomic, readonly) NSOrderedSet *events;
+@property (nonatomic, readonly, nonnull) NSOrderedSet *events;
 @property (nonatomic) BOOL isVideoCall;
 
-- (id<ZMTransportData>)transportData;
+- (nonnull id<ZMTransportData>)transportData;
 
-+ (NSFetchRequest *)sortedFetchRequest;
-+ (NSFetchRequest *)sortedFetchRequestWithPredicate:(NSPredicate *)predicate;
++ (nonnull NSFetchRequest *)sortedFetchRequest;
++ (nonnull NSFetchRequest *)sortedFetchRequestWithPredicate:(nonnull NSPredicate *)predicate;
 
-+ (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
-+ (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
++ (nonnull instancetype)insertConversationIntoContext:(nonnull NSManagedObjectContext *)moc withSelfUser:(nonnull MockUser *)selfUser creator:(nonnull MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)type;
++ (nonnull instancetype)insertConversationIntoContext:(nonnull NSManagedObjectContext *)moc creator:(nonnull MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)type;
 
 
-+ (instancetype)conversationInMoc:(NSManagedObjectContext *)moc withCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
++ (nonnull instancetype)conversationInMoc:(nonnull NSManagedObjectContext *)moc withCreator:(nonnull MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)type;
 
-- (MockEvent *)insertClientMessageFromUser:(MockUser *)fromUser data:(NSData *)data;
+- (nonnull MockEvent *)insertClientMessageFromUser:(nonnull MockUser *)fromUser data:(nonnull NSData *)data;
 
 /// Encrypts and inserts a OTR message using the gerneric message data sent from the given client to the given client
-- (MockEvent *)encryptAndInsertDataFromClient:(MockUserClient *)fromClient
-                                     toClient:(MockUserClient *)toClient
-                                         data:(NSData *)data;
+- (nonnull MockEvent *)encryptAndInsertDataFromClient:(nonnull MockUserClient *)fromClient
+                                             toClient:(nonnull MockUserClient *)toClient
+                                                 data:(nonnull NSData *)data;
 
-- (MockEvent *)insertOTRMessageFromClient:(MockUserClient *)fromClient
-                                 toClient:(MockUserClient *)toClient
-                                     data:(NSData *)data;
+- (nonnull MockEvent *)insertOTRMessageFromClient:(nonnull MockUserClient *)fromClient
+                                         toClient:(nonnull MockUserClient *)toClient
+                                             data:(nonnull NSData *)data;
 
-- (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient
-                               toClient:(MockUserClient *)toClient
-                               metaData:(NSData *)metaData
-                              imageData:(NSData *)imageData
-                                assetId:(NSUUID *)assetId
-                               isInline:(BOOL)isInline;
+- (nonnull MockEvent *)insertOTRAssetFromClient:(nonnull MockUserClient *)fromClient
+                                       toClient:(nonnull MockUserClient *)toClient
+                                       metaData:(nonnull NSData *)metaData
+                                      imageData:(nullable NSData *)imageData
+                                        assetId:(nonnull NSUUID *)assetId
+                                       isInline:(BOOL)isInline;
 
-- (MockEvent *)insertKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce;
-- (MockEvent *)insertHotKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce ref:(NSString *)eventID;
-- (MockEvent *)insertTypingEventFromUser:(MockUser *)fromUser isTyping:(BOOL)isTyping;
-- (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
-- (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
-- (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
+- (nonnull MockEvent *)insertKnockFromUser:(nonnull MockUser *)fromUser nonce:(nonnull NSUUID *)nonce;
+- (nonnull MockEvent *)insertHotKnockFromUser:(nonnull MockUser *)fromUser nonce:(nonnull NSUUID *)nonce ref:(nonnull NSString *)eventID;
+- (nonnull MockEvent *)insertTypingEventFromUser:(nonnull MockUser *)fromUser isTyping:(BOOL)isTyping;
+- (nonnull MockEvent *)remotelyArchiveFromUser:(nonnull MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
+- (nonnull MockEvent *)remotelyClearHistoryFromUser:(nonnull MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
+- (nonnull MockEvent *)remotelyDeleteFromUser:(nonnull MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
 
-- (void)insertImageEventsFromUser:(MockUser *)fromUser;
-- (void)insertPreviewImageEventFromUser:(MockUser *)fromUser correlationID:(NSUUID *)correlationID none:(NSUUID *)nonce;
-- (void)insertMediumImageEventFromUser:(MockUser *)fromUser correlationID:(NSUUID *)correlationID none:(NSUUID *)nonce;
+- (void)insertImageEventsFromUser:(nonnull MockUser *)fromUser;
+- (void)insertPreviewImageEventFromUser:(nonnull MockUser *)fromUser correlationID:(nonnull NSUUID *)correlationID none:(nonnull NSUUID *)nonce;
+- (void)insertMediumImageEventFromUser:(nonnull MockUser *)fromUser correlationID:(nonnull NSUUID *)correlationID none:(nonnull NSUUID *)nonce;
 
 - (void)dropCall;
-- (MockEvent *)addUsersByUser:(MockUser *)byUser addedUsers:(NSArray *)addedUsers;
-- (MockEvent *)removeUsersByUser:(MockUser *)byUser removedUser:(MockUser *)removedUser;
-- (MockEvent *)changeNameByUser:(MockUser *)user name:(NSString *)name;
-- (MockEvent *)insertAssetUploadEventForUser:(MockUser *)user data:(NSData *)data disposition:(NSDictionary *)disposition dataTypeAsMIME:(NSString *)dataTypeAsMIME assetID:(NSString *)assetID;
-- (MockEvent *)connectRequestByUser:(MockUser *)byUser toUser:(MockUser *)user message:(NSString *)message;
-- (MockEvent *)callEndedEventFromUser:(MockUser *)user selfUser:(MockUser *)selfUser;
+- (nullable MockEvent *)addUsersByUser:(nonnull MockUser *)byUser addedUsers:(nonnull NSArray *)addedUsers;
+- (nonnull MockEvent *)removeUsersByUser:(nonnull MockUser *)byUser removedUser:(nonnull MockUser *)removedUser;
+- (nonnull MockEvent *)changeNameByUser:(nonnull MockUser *)user name:(nullable NSString *)name;
+- (nonnull MockEvent *)insertAssetUploadEventForUser:(nonnull MockUser *)user data:(nonnull NSData *)data disposition:(nonnull NSDictionary *)disposition dataTypeAsMIME:(nonnull NSString *)dataTypeAsMIME assetID:(nonnull NSString *)assetID;
+- (nonnull MockEvent *)connectRequestByUser:(nonnull MockUser *)byUser toUser:(nonnull MockUser *)user message:(nullable NSString *)message;
+- (nonnull MockEvent *)callEndedEventFromUser:(nonnull MockUser *)user selfUser:(nonnull MockUser *)selfUser;
 
-- (void)ignoreCallByUser:(MockUser *)user;
-- (void)addUserToCall:(MockUser *)user;
-- (void)addUserToVideoCall:(MockUser *)user;
-- (void)removeUserFromCall:(MockUser *)user;
+- (void)ignoreCallByUser:(nonnull MockUser *)user;
+- (void)addUserToCall:(nonnull MockUser *)user;
+- (void)addUserToVideoCall:(nonnull MockUser *)user;
+- (void)removeUserFromCall:(nonnull MockUser *)user;
 
 @end

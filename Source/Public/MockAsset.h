@@ -23,13 +23,13 @@
 
 @interface MockAsset : NSManagedObject
 
-@property (nonatomic, retain) NSString  * identifier;
-@property (nonatomic, retain) NSData    * data;
-@property (nonatomic, retain) NSString  * contentType;
-@property (nonatomic, retain) NSString  * conversation;
-@property (nonatomic, retain) NSString  * token;
+@property (nonatomic, retain, nonnull) NSString  * identifier;
+@property (nonatomic, retain, nonnull) NSData    * data;
+@property (nonatomic, retain, nonnull) NSString  * contentType;
+@property (nonatomic, retain, nonnull) NSString  * conversation;
+@property (nonatomic, retain, nonnull) NSString  * token;
 
-+ (MockAsset *)assetInContext:(NSManagedObjectContext *)moc forID:(NSString *)identifier;
-+ (instancetype)insertIntoManagedObjectContext:(NSManagedObjectContext *)moc;
++ (nullable MockAsset *)assetInContext:(nonnull NSManagedObjectContext *)moc forID:(nonnull NSString *)identifier;
++ (nonnull instancetype)insertIntoManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 @end

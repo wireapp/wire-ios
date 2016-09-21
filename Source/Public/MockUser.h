@@ -28,41 +28,41 @@
 @class MockPreKey;
 @class MockConversation;
 
-extern NSString *const ZMSearchUserMutualFriendsKey;
-extern NSString *const ZMSearchUserTotalMutualFriendsKey;
+extern NSString * _Nonnull const ZMSearchUserMutualFriendsKey;
+extern NSString * _Nonnull const ZMSearchUserTotalMutualFriendsKey;
 
 
 @interface MockUser : NSManagedObject
 
-@property (nonatomic) NSString *email;
-@property (nonatomic) NSString *password;
-@property (nonatomic) NSString *phone;
+@property (nonatomic, nullable) NSString *email;
+@property (nonatomic, nullable) NSString *password;
+@property (nonatomic, nullable) NSString *phone;
 @property (nonatomic) int16_t accentID;
-@property (nonatomic) NSString *name;
-@property (nonatomic) NSString *identifier;
-@property (nonatomic) NSString *trackingIdentifier;
-@property (nonatomic) NSOrderedSet *pictures;
+@property (nonatomic, nullable) NSString *name;
+@property (nonatomic, nonnull) NSString *identifier;
+@property (nonatomic, nullable) NSString *trackingIdentifier;
+@property (nonatomic, nonnull) NSOrderedSet *pictures;
 @property (nonatomic) BOOL isEmailValidated;
 @property (nonatomic) BOOL isSendingVideo;
-@property (nonatomic) MockConversation *ignoredCallConversation;
+@property (nonatomic, nullable) MockConversation *ignoredCallConversation;
 
-@property (nonatomic) NSOrderedSet *connectionsFrom;
-@property (nonatomic) NSOrderedSet *connectionsTo;
-@property (nonatomic) NSOrderedSet *activeCallConversations;
+@property (nonatomic, nonnull) NSOrderedSet *connectionsFrom;
+@property (nonatomic, nonnull) NSOrderedSet *connectionsTo;
+@property (nonatomic, nonnull) NSOrderedSet *activeCallConversations;
 
-@property (nonatomic) NSMutableSet *clients;
+@property (nonatomic, nonnull) NSMutableSet *clients;
 
-@property (nonatomic) NSOrderedSet *invitations;
+@property (nonatomic, nonnull) NSOrderedSet *invitations;
 
-- (id<ZMTransportData>)transportData;
-- (id<ZMTransportData>)transportDataWhenNotConnected;
+- (nonnull id<ZMTransportData>)transportData;
+- (nonnull id<ZMTransportData>)transportDataWhenNotConnected;
 
-+ (NSFetchRequest *)sortedFetchRequest;
-+ (NSFetchRequest *)sortedFetchRequestWithPredicate:(NSPredicate *)predicate;
-- (NSString *)mediumImageIdentifier;
-- (NSString *)smallProfileImageIdentifier;
-- (MockPicture *)smallProfileImage;
-- (MockPicture *)mediumImage;
++ (nonnull NSFetchRequest *)sortedFetchRequest;
++ (nonnull NSFetchRequest *)sortedFetchRequestWithPredicate:(nonnull NSPredicate *)predicate;
+- (nullable NSString *)mediumImageIdentifier;
+- (nullable NSString *)smallProfileImageIdentifier;
+- (nullable MockPicture *)smallProfileImage;
+- (nullable MockPicture *)mediumImage;
 
 
 @end

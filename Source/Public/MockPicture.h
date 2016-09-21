@@ -24,14 +24,14 @@
 
 @interface MockPicture : NSManagedObject
 
-- (void)setAsSmallProfileFromImageData:(NSData *)imageData forUser:(MockUser *)user;
-- (void)setAsMediumWithSmallProfile:(MockPicture *)previewforUser forUser:(MockUser *)user imageData:(NSData *)imageData;
+- (void)setAsSmallProfileFromImageData:(nullable NSData *)imageData forUser:(nonnull MockUser *)user;
+- (void)setAsMediumWithSmallProfile:(nonnull MockPicture *)previewforUser forUser:(nonnull MockUser *)user imageData:(nullable NSData *)imageData;
 
 @property (nonatomic) int16_t contentLength;
-@property (nonatomic) NSString *contentType;
-@property (nonatomic) NSString *identifier;
-@property (nonatomic) NSDictionary *info;
+@property (nonatomic, nonnull) NSString *contentType;
+@property (nonatomic, nonnull) NSString *identifier;
+@property (nonatomic, nonnull) NSDictionary *info;
 
-@property (nonatomic, readonly) id<ZMTransportData> transportData;
+@property (nonatomic, readonly, nonnull) id<ZMTransportData> transportData;
 
 @end
