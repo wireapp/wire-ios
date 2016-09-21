@@ -1311,7 +1311,7 @@ extension ZMAssetClientMessageTests {
         var message : ZMGenericMessage?
         self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
             do {
-                let decryptedData = try sessionsDirectory.decrypt(entry.text, senderClientId: client.remoteIdentifier)
+                let decryptedData = try sessionsDirectory.decrypt(entry.text, senderClientId: client.remoteIdentifier!)
                 message = ZMGenericMessage.builder()!.merge(from: decryptedData).build()! as? ZMGenericMessage
             } catch {
                 XCTFail("Failed to decrypt generic message: \(error)")

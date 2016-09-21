@@ -62,7 +62,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var label: String?
     @NSManaged public var markedToDelete: Bool
     @NSManaged public var preKeysRangeMax: Int64
-    @NSManaged public var remoteIdentifier: String!
+    @NSManaged public var remoteIdentifier: String?
     @NSManaged public var user: ZMUser?
     @NSManaged public var missingClients: Set<UserClient>?
     @NSManaged fileprivate var missedByClient: UserClient?
@@ -183,8 +183,8 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
         var hasSession = false
         selfClient.keysStore.encryptionContext.perform { [weak self](sessionsDirectory) in
-            guard let strongSelf = self else {return}
-            hasSession = sessionsDirectory.hasSessionForID(strongSelf.remoteIdentifier)
+            guard let strongSelf = self, let remoteIdentifier = strongSelf.remoteIdentifier else {return}
+            hasSession = sessionsDirectory.hasSessionForID(remoteIdentifier)
         }
         return hasSession
     }
@@ -192,8 +192,10 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
     public func resetSession() {
+        guard let remoteIdentifier = self.remoteIdentifier else { return }
+        
         // Delete should happen on sync context since the cryptobox could be accessed only from there
-        UserClient.deleteSession(forClientWithRemoteIdentifier: self.remoteIdentifier, managedObjectContext: (self.managedObjectContext?.zm_sync)!)
+        UserClient.deleteSession(forClientWithRemoteIdentifier: remoteIdentifier, managedObjectContext: (self.managedObjectContext?.zm_sync)!)
         
         self.fingerprint = .none
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
@@ -306,12 +308,13 @@ public extension UserClient {
         if selfClient.remoteIdentifier == self.remoteIdentifier {
             guard let syncMOC = self.managedObjectContext?.zm_sync,
                 let obj = try? syncMOC.existingObject(with: selfClient.objectID),
-                let syncClient = obj as? UserClient
+                let syncClient = obj as? UserClient,
+                let syncClientRemoteIdentifier = syncClient.remoteIdentifier
                 else { return }
             
             syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
                 syncClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                    syncClient.fingerprint = sessionsDirectory.fingerprintForClient(syncClient.remoteIdentifier)
+                    syncClient.fingerprint = sessionsDirectory.fingerprintForClient(syncClientRemoteIdentifier)
                     if syncClient.fingerprint == nil {
                         zmLog.error("Cannot fetch local fingerprint for client \(syncClient)")
                     } else {
@@ -390,14 +393,14 @@ public extension UserClient {
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
     func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
-        guard isSelfClient() else { return false }
+        guard isSelfClient(), let clientRemoteIdentifier = client.remoteIdentifier else { return false }
         
         var didEstablishSession = false
         keysStore.encryptionContext.perform { (sessionsDirectory) in
-            sessionsDirectory.delete(client.remoteIdentifier)
+            sessionsDirectory.delete(clientRemoteIdentifier)
             do {
-                try sessionsDirectory.createClientSession(client.remoteIdentifier, base64PreKeyString: preKey)
-                client.fingerprint = sessionsDirectory.fingerprintForClient(client.remoteIdentifier)
+                try sessionsDirectory.createClientSession(clientRemoteIdentifier, base64PreKeyString: preKey)
+                client.fingerprint = sessionsDirectory.fingerprintForClient(clientRemoteIdentifier)
                 didEstablishSession = true
             } catch {
                 zmLog.error("Cannot create session for prekey \(preKey)")
@@ -410,8 +413,8 @@ public extension UserClient {
     fileprivate func fetchFingerprint() -> Data? {
         var fingerprint : Data?
         keysStore.encryptionContext.perform { [weak self] (sessionsDirectory) in
-            guard let strongSelf = self else { return }
-            fingerprint = sessionsDirectory.fingerprintForClient(strongSelf.remoteIdentifier)
+            guard let strongSelf = self, let remoteIdentifier = strongSelf.remoteIdentifier else { return }
+            fingerprint = sessionsDirectory.fingerprintForClient(remoteIdentifier)
         }
         return fingerprint
     }

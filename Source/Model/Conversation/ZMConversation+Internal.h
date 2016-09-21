@@ -194,7 +194,7 @@ NS_ASSUME_NONNULL_END
 + (nonnull ZMConversation *)selfConversationInContext:(nonnull NSManagedObjectContext *)managedObjectContext;
 
 
-- (void)updateWithMessage:(nonnull ZMMessage *)message timeStamp:(nonnull NSDate *)timeStamp eventID:(nullable ZMEventID *)eventID;
+- (void)updateWithMessage:(nonnull ZMMessage *)message timeStamp:(nullable NSDate *)timeStamp eventID:(nullable ZMEventID *)eventID;
 
 /// This method loads messages in a window when there are NO visible messages
 - (void)startFetchingMessages;
@@ -223,10 +223,10 @@ NS_ASSUME_NONNULL_END
 @interface ZMConversation (SelfConversation)
 
 /// Create and append to self conversation a ClientMessage that has generic message data built with the given data
-+ (nonnull ZMClientMessage *)appendSelfConversationWithGenericMessageData:(nonnull NSData *)messageData managedObjectContext:(nonnull NSManagedObjectContext *)moc;
++ (nullable ZMClientMessage *)appendSelfConversationWithGenericMessageData:(nonnull NSData *)messageData managedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
-+ (nonnull ZMClientMessage *)appendSelfConversationWithLastReadOfConversation:(nonnull ZMConversation *)conversation;
-+ (nonnull ZMClientMessage *)appendSelfConversationWithClearedOfConversation:(nonnull ZMConversation *)conversation;
++ (nullable ZMClientMessage *)appendSelfConversationWithLastReadOfConversation:(nonnull ZMConversation *)conversation;
++ (nullable ZMClientMessage *)appendSelfConversationWithClearedOfConversation:(nonnull ZMConversation *)conversation;
 
 + (void)updateConversationWithZMLastReadFromSelfConversation:(nonnull ZMLastRead *)lastRead inContext:(nonnull NSManagedObjectContext *)context;
 + (void)updateConversationWithZMClearedFromSelfConversation:(nonnull ZMCleared *)cleared inContext:(nonnull NSManagedObjectContext *)context;
