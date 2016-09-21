@@ -24,17 +24,17 @@
 
 @interface MockPreKey : NSManagedObject
 
-@property (nonatomic) MockUserClient *client;
-@property (nonatomic) MockUserClient *lastPrekeyOfClient;
+@property (nonatomic, nonnull) MockUserClient *client;
+@property (nonatomic, nullable) MockUserClient *lastPrekeyOfClient;
 
 @property (nonatomic) NSInteger identifier;
-@property (nonatomic) NSString *value;
+@property (nonatomic, nonnull) NSString *value;
 
-+ (instancetype)insertNewKeyWithPayload:(NSDictionary *)payload context:(NSManagedObjectContext *)context;;
++ (nullable instancetype)insertNewKeyWithPayload:(nonnull NSDictionary *)payload context:(nonnull NSManagedObjectContext *)context;;
 
-+ (NSSet *)insertNewKeysWithPayload:(NSArray *)payload context:(NSManagedObjectContext *)context;;
++ (nonnull NSSet<MockPreKey *> *)insertNewKeysWithPayload:(nonnull NSArray *)payload context:(nonnull NSManagedObjectContext *)context;;
 
-+ (NSArray <MockPreKey *> *)insertMockPrekeysFromPrekeys:(NSArray <NSString *> *)prekeys forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
-+ (MockPreKey *)insertNewKeyWithPrekey:(NSString *)prekey forClient:(MockUserClient *)client inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (nonnull NSArray <MockPreKey *> *)insertMockPrekeysFromPrekeys:(nonnull NSArray <NSString *> *)prekeys forClient:(nonnull MockUserClient *)client inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull MockPreKey *)insertNewKeyWithPrekey:(nonnull NSString *)prekey forClient:(nonnull MockUserClient *)client inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 @end

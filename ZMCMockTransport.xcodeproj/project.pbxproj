@@ -92,6 +92,7 @@
 		CE99C4A41D39183F0001D297 /* MockTransportSessionAssetsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */; };
 		CED2BC921CECC63400E285B3 /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CED2BC911CECC63400E285B3 /* Cryptobox.framework */; };
 		CED2BC951CEE0C1300E285B3 /* Cryptobox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CED2BC911CECC63400E285B3 /* Cryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F97E28D11D8FE31700A77567 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F97E28D01D8FE31700A77567 /* Cartfile.resolved */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -230,6 +231,7 @@
 		CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAssetsTests.m; sourceTree = "<group>"; };
 		CED2BC911CECC63400E285B3 /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cryptobox.framework; path = Carthage/Build/iOS/Cryptobox.framework; sourceTree = "<group>"; };
 		CED2BC941CEDFCAE00E285B3 /* MockUserClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockUserClient+Internal.h"; sourceTree = "<group>"; };
+		F97E28D01D8FE31700A77567 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -334,6 +336,7 @@
 		54C902291B7532DD007162A8 = {
 			isa = PBXGroup;
 			children = (
+				F97E28D01D8FE31700A77567 /* Cartfile.resolved */,
 				0928E1FA1B975CCE0057232E /* Cartfile */,
 				0928E1FB1B975CFE0057232E /* Cartfile.private */,
 				54C902351B7532DD007162A8 /* Source */,
@@ -590,6 +593,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				54664D351CBEB9FA00527CDA /* medium.jpg in Resources */,
+				F97E28D11D8FE31700A77567 /* Cartfile.resolved in Resources */,
 				54664D361CBEB9FA00527CDA /* tiny.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
