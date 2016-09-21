@@ -419,14 +419,14 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertNil(message.senderClientID, line: line)
         
         if let assetMessage = message as? ZMAssetClientMessage {
+            XCTAssertNil(assetMessage.mimeType, line: line)
             XCTAssertNil(assetMessage.assetId, line: line)
             XCTAssertNil(assetMessage.associatedTaskIdentifier, line: line)
             XCTAssertNil(assetMessage.fileMessageData, line: line)
             XCTAssertNil(assetMessage.filename, line: line)
             XCTAssertNil(assetMessage.imageMessageData, line: line)
-            XCTAssertEqual(assetMessage.size, 0, line: line)
-            XCTAssertEqual(assetMessage.mimeType, "", line: line)
             XCTAssertNil(assetMessage.genericAssetMessage, line: line)
+            XCTAssertEqual(assetMessage.size, 0, line: line)
 
             let cache = uiMOC.zm_imageAssetCache!
             XCTAssertNil(cache.assetData(message.nonce, format: .original, encrypted: false))

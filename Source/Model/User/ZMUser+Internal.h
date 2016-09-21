@@ -66,7 +66,7 @@
                            connectionStatusInArray:(nonnull NSArray<NSNumber *> *)connectionStatusArray;
 
 
-+ (ZMAccentColor)accentColorFromPayloadValue:(nonnull NSNumber *)payloadValue;
++ (ZMAccentColor)accentColorFromPayloadValue:(nullable NSNumber *)payloadValue;
 
 @end
 

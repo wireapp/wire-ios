@@ -153,7 +153,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
             
             // when
-            UserClient.deleteSession(forClientWithRemoteIdentifier:otherClient.remoteIdentifier, managedObjectContext:self.syncMOC)
+            UserClient.deleteSession(forClientWithRemoteIdentifier:otherClient.remoteIdentifier!, managedObjectContext:self.syncMOC)
             
             // then
             XCTAssertFalse(otherClient.hasSessionWithSelfClient)
@@ -259,7 +259,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
                     return }
             
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                try! sessionsDirectory.createClientSession(otherClient.remoteIdentifier, base64PreKeyString: preKey.prekey)
+                try! sessionsDirectory.createClientSession(otherClient.remoteIdentifier!, base64PreKeyString: preKey.prekey)
             })
             
             XCTAssertNil(otherClient.fingerprint)

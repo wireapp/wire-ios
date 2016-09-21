@@ -47,14 +47,14 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
 
 /// Handles conversion from and to NSUUID and NSData in CoreData
 - (nullable NSUUID *)transientUUIDForKey:(nonnull NSString *)key;
-- (void)setTransientUUID:(nonnull NSUUID *)newUUID forKey:(nonnull NSString *)key;
+- (void)setTransientUUID:(nullable NSUUID *)newUUID forKey:(nonnull NSString *)key;
 
 /// Handles conversion from and to CGSize and NSData in CoreData
 - (CGSize)transientCGSizeForKey:(nonnull NSString *)key;
 - (void)setTransientCGSize:(CGSize)size forKey:(nonnull NSString *)key;
 
 /// Defaults to a single sort descriptor based on @c sortKey
-+ (nonnull NSArray <NSSortDescriptor *> *)defaultSortDescriptors;
++ (nullable NSArray <NSSortDescriptor *> *)defaultSortDescriptors;
 /// The order in which objects are updated to / from the backend. ZMSyncOperationSet uses this.
 + (nullable NSArray <NSSortDescriptor *> *)sortDescriptorsForUpdating;
 + (nullable NSPredicate *)predicateForFilteringResults;
