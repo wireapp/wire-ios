@@ -47,7 +47,7 @@
     id mockApplication = [OCMockObject niceMockForClass:UIApplication.class];
     [[[[mockApplication stub] andReturn:mockApplication] classMethod] sharedApplication];
     
-    ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"JCVD" groupQueue:mockGroupQueue];
+    ZMBackgroundActivity *activity = [ZMBackgroundActivity beginBackgroundActivityWithName:@"JCVD" groupQueue:mockGroupQueue application:[UIApplication sharedApplication]];
     
     // expect
     [[mockGroupQueue expect] performGroupedBlock:OCMOCK_ANY];

@@ -24,8 +24,10 @@
 #import <ZMTransport/ZMBackgroundable.h>
 #import <ZMTransport/ZMRequestCancellation.h>
 
+
 NS_ASSUME_NONNULL_BEGIN
 
+@class UIApplication;
 @class ZMAccessToken;
 @class ZMTransportRequest;
 @class ZMPersistentCookieStorage;
@@ -78,7 +80,7 @@ extern NSString * const ZMTransportSessionShouldKeepWebsocketOpenKey;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) NSString *clientID;
 
-- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue;
+- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue application:(UIApplication *)application;
 
 - (void)tearDown;
 
