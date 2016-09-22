@@ -116,7 +116,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithBaseURL:nil websocketURL:nil keyValueStore:nil mainGroupQueue:nil];
+    return [self initWithBaseURL:nil websocketURL:nil keyValueStore:nil mainGroupQueue:nil application:nil];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -170,7 +170,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue;
+- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue application:(UIApplication *)application
 {
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:@"ZMTransportSession"];
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"ZMTransportSession init"];
@@ -195,7 +195,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                                   baseURL:baseURL
                              websocketURL:websocketURL
                             keyValueStore:keyValueStore
-                           mainGroupQueue:mainGroupQueue];
+                           mainGroupQueue:mainGroupQueue
+                              application:application];
 }
 
 - (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
@@ -206,7 +207,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
                            keyValueStore:(id<ZMKeyValueStore>)keyValueStore
-                          mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue;
+                          mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+                             application:(UIApplication *)application
 {
     return [self initWithURLSessionSwitch:URLSessionSwitch
                          requestScheduler:requestScheduler
@@ -217,7 +219,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                              websocketURL:websocketURL
                          pushChannelClass:nil
                             keyValueStore:keyValueStore
-                           mainGroupQueue:mainGroupQueue];
+                           mainGroupQueue:mainGroupQueue
+                              application:application];
 }
 
 
@@ -230,13 +233,15 @@ static NSInteger const DefaultMaximumRequests = 6;
                             websocketURL:(NSURL *)websocketURL
                         pushChannelClass:(Class)pushChannelClass
                            keyValueStore:(id<ZMKeyValueStore>)keyValueStore
-                          mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue;
+                          mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+                             application:(UIApplication *)application
 {
     self = [super init];
     if (self) {
         self.baseURL = baseURL;
         self.websocketURL = websocketURL;
         [[BackgroundActivityFactory sharedInstance] setMainGroupQueue:mainGroupQueue];
+        [[BackgroundActivityFactory sharedInstance] setApplication:application];
         
         self.workQueue = queue;
         _workGroup = group;

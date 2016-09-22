@@ -455,7 +455,8 @@ static __weak FakeReachability *currentReachability;
                 websocketURL:self.webSocketURL
                 pushChannelClass:FakePushChannel.class
                 keyValueStore:[[FakeKeyValueStore alloc] init]
-                mainGroupQueue:[[FakeGroupQueue alloc] init]];
+                mainGroupQueue:[[FakeGroupQueue alloc] init]
+                application:[UIApplication sharedApplication]];
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
         id strongSelf = weakSelf;
@@ -578,7 +579,8 @@ static __weak FakeReachability *currentReachability;
                 websocketURL:url2
                 pushChannelClass:nil
                 keyValueStore:[[FakeKeyValueStore alloc] init]
-                mainGroupQueue:[[FakeGroupQueue alloc] init]];
+                mainGroupQueue:[[FakeGroupQueue alloc] init]
+                application:[UIApplication sharedApplication]];
     
     self.sut.accessToken = self.validAccessToken;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
@@ -795,7 +797,8 @@ static __weak FakeReachability *currentReachability;
                                websocketURL:url
                                pushChannelClass:nil
                                keyValueStore:[[FakeKeyValueStore alloc] init]
-                               mainGroupQueue:[[FakeGroupQueue alloc] init]];
+                               mainGroupQueue:[[FakeGroupQueue alloc] init]
+                               application:[UIApplication sharedApplication]];
     
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};
@@ -834,7 +837,8 @@ static __weak FakeReachability *currentReachability;
                                websocketURL:url
                                pushChannelClass:nil
                                keyValueStore:[[FakeKeyValueStore alloc] init]
-                               mainGroupQueue:nil];
+                               mainGroupQueue:nil
+                               application:[UIApplication sharedApplication]];
     
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};

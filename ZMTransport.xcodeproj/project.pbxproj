@@ -1328,6 +1328,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1346,6 +1347,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
