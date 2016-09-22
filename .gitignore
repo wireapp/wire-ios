@@ -30,10 +30,12 @@ xcuserdata
 
 # Carthage
 #
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
+Carthage
+Carthage/Checkouts
 Carthage/Build
 WireMessageStrategy.zip
+WireMessageStrategy.framework.zip
+
 
 *.swp
 build/include
