@@ -57,8 +57,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotPropagateChangesWhenAppIsInTheBackground() {
         
         // given
-        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
-        
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         self.uiMOC.saveOrRollback()
@@ -68,7 +66,7 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         
         // when
         // app goes into the background
-        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .background
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = false
 
         conversation.userDefinedName = "Hans"
         self.uiMOC.saveOrRollback()
@@ -81,8 +79,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
     func testThatItNotifiesAllObserversWhenTheAppGoesBackInTheForeground() {
         
         // given
-        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
-
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Hans"
 
@@ -98,7 +94,7 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         let userToken = ZMUser.add(observer, forUsers: [user], managedObjectContext: self.uiMOC)
         
         // when
-        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .background
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = false
 
         user.name = "Horst"
         self.uiMOC.saveOrRollback()
@@ -108,8 +104,7 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(observer.userNotes.count, 0)
         
         // and when
-        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .active
-        NotificationCenter.default.post(name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = true
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -212,8 +207,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
     func testThatItAddsTheGlobalConversationObserverToItsObserversWhenEnteringTheForeground()  {
     
         // given
-        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
-        
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         self.uiMOC.saveOrRollback()
@@ -222,7 +215,7 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         let conversationToken = conversation.add(observer)
         
         // when
-        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .background
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = false
         conversation.userDefinedName = "New name"
         self.uiMOC.saveOrRollback()
         
@@ -230,7 +223,7 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(observer.conversationNotes.count, 0)
         
         // when
-        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .active
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = true
         conversation.userDefinedName = "Newer name"
         self.uiMOC.saveOrRollback()
         
@@ -244,8 +237,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
     func testThatItAddsTheGlobalUserObserverToItsObserversWhenEnteringTheForeground()  {
         
         // given
-        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
-        
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.name = "Hans"
         
@@ -253,7 +244,7 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         let userToken = ZMUser.add(observer, forUsers: [user], managedObjectContext: self.uiMOC)
         
         // when
-        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .background
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = false
         user.name = "New name"
         self.uiMOC.saveOrRollback()
         
@@ -261,7 +252,7 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(observer.userNotes.count, 0)
         
         // when
-        self.uiMOC.globalManagedObjectContextObserver.applicationStateForTesting = .active
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = true
         user.name = "Newer name"
         self.uiMOC.saveOrRollback()
         
@@ -274,8 +265,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
     func testThatItPropagatesChangesOfComputedProperties_Images() {
         
         // given
-        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
-        
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         let imageMessage = conversation.appendOTRMessage(withImageData: self.verySmallJPEGData(), nonce: UUID.create())
         self.uiMOC.zm_imageAssetCache.deleteAssetData(imageMessage.nonce, format: .original, encrypted: false)
@@ -305,7 +294,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
     func testThatItPropagatesChangesOfComputedProperties_Files() {
         
         // given
-        self.uiMOC.globalManagedObjectContextObserver.isTesting = true
         let filename = "video.mp4"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let documentsURL = URL(fileURLWithPath: documents)

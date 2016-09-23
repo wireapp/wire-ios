@@ -36,6 +36,7 @@
 
 static NSString *const ZMCallEndedNotificationName = @"ZMCallEndedNotification";
 static NSString *const ZMInvitationStatusChangedNotificationName = @"ZMInvitationStatusChangedNotification";
+NSString *const ZMDatabaseCorruptionNotificationName = @"ZMDatabaseCorruptionNotification";
 
 
 @interface ZMNotification ()
