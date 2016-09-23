@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -65,25 +65,25 @@ class ClientTableViewCell: UITableViewCell {
                 
                 self.updateLabel()
                 
-                if let activationDate = userClient.activationDate where userClient.activationLocationLatitude != 0 && userClient.activationLocationLongitude != 0 {
+                if let activationDate = userClient.activationDate , userClient.activationLocationLatitude != 0 && userClient.activationLocationLongitude != 0 {
 
                     let localClient = self.userClient
-                    CLGeocoder().reverseGeocodeLocation(userClient.activationLocation, completionHandler: { (placemarks: [CLPlacemark]?, error: NSError?) -> Void in
+                    CLGeocoder().reverseGeocodeLocation(userClient.activationLocation, completionHandler: { (placemarks: [CLPlacemark]?, error: Error?) -> Void in
 
                         if let placemark = placemarks?.first,
-                            let addressCountry = placemark.addressDictionary?[kABPersonAddressCountryCodeKey],
-                            let addressCity = placemark.addressDictionary?[kABPersonAddressCityKey] where
+                            let addressCountry = placemark.addressDictionary?[kABPersonAddressCountryCodeKey as String] as? String,
+                            let addressCity = placemark.addressDictionary?[kABPersonAddressCityKey as String] ,
                             localClient == self.userClient &&
-                            error == .None {
+                            error == nil {
                                 
-                            self.activationLabel.text = "\(NSLocalizedString("registration.devices.activated_in", comment: "")) \(addressCity), \(addressCountry.uppercaseString) — \(activationDate.wr_formattedDate())"
+                            self.activationLabel.text = "\(NSLocalizedString("registration.devices.activated_in", comment: "")) \(addressCity), \(addressCountry.uppercased()) — \((activationDate as NSDate).wr_formattedDate())"
                         }
                     })
                     
-                    self.activationLabel.text = activationDate.wr_formattedDate()
+                    self.activationLabel.text = (activationDate as NSDate).wr_formattedDate()
                 }
                 else if let activationDate = userClient.activationDate {
-                    self.activationLabel.text = activationDate.wr_formattedDate()
+                    self.activationLabel.text = (activationDate as NSDate).wr_formattedDate()
                 }
                 else {
                     self.activationLabel.text = ""
@@ -98,15 +98,15 @@ class ClientTableViewCell: UITableViewCell {
     var wr_editable: Bool
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        self.nameLabel = UILabel(frame: CGRectZero)
+        self.nameLabel = UILabel(frame: CGRect.zero)
         self.nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.labelLabel = UILabel(frame: CGRectZero)
+        self.labelLabel = UILabel(frame: CGRect.zero)
         self.labelLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.activationLabel = UILabel(frame: CGRectZero)
+        self.activationLabel = UILabel(frame: CGRect.zero)
         self.activationLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.fingerprintLabel = UILabel(frame: CGRectZero)
+        self.fingerprintLabel = UILabel(frame: CGRect.zero)
         self.fingerprintLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.verifiedLabel = UILabel(frame: CGRectZero)
+        self.verifiedLabel = UILabel(frame: CGRect.zero)
         self.verifiedLabel.translatesAutoresizingMaskIntoConstraints = false
         
         self.wr_editable = true
@@ -146,8 +146,8 @@ class ClientTableViewCell: UITableViewCell {
             verifiedLabel.bottom == contentView.bottom - 16
         }
         
-        CASStyler.defaultStyler().styleItem(self)
-        self.backgroundColor = UIColor.clearColor()
+        CASStyler.default().styleItem(self)
+        self.backgroundColor = UIColor.clear
         self.backgroundView = UIView()
         self.selectedBackgroundView = UIView()
     }
@@ -156,7 +156,7 @@ class ClientTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func setEditing(editing: Bool, animated: Bool) {
+    override func setEditing(_ editing: Bool, animated: Bool) {
         if self.wr_editable {
             super.setEditing(editing, animated: animated)
         }
@@ -164,7 +164,7 @@ class ClientTableViewCell: UITableViewCell {
     
     func updateVerifiedLabel() {
         if let userClient = self.userClient
-            where self.showVerified {
+            , self.showVerified {
             if userClient.verified {
                 self.verifiedLabel.text = NSLocalizedString("device.verified", comment: "");
             }
@@ -182,11 +182,11 @@ class ClientTableViewCell: UITableViewCell {
         if let fingerprintLabelBoldMonoFont = self.fingerprintLabelBoldFont?.monospacedFont(),
             let fingerprintLabelMonoFont = self.fingerprintLabelFont?.monospacedFont(),
             let userClient = self.userClient
-            where userClient.remoteIdentifier != nil {
+            , userClient.remoteIdentifier != nil {
                 
                 self.fingerprintLabel.attributedText =  userClient.attributedRemoteIdentifier(
-                    [NSFontAttributeName: fingerprintLabelMonoFont, NSForegroundColorAttributeName: UIColor.whiteColor()],
-                    boldAttributes: [NSFontAttributeName: fingerprintLabelBoldMonoFont, NSForegroundColorAttributeName: UIColor.whiteColor()],
+                    [NSFontAttributeName: fingerprintLabelMonoFont, NSForegroundColorAttributeName: UIColor.white],
+                    boldAttributes: [NSFontAttributeName: fingerprintLabelBoldMonoFont, NSForegroundColorAttributeName: UIColor.white],
                     uppercase: true
                 )
         }
@@ -194,7 +194,7 @@ class ClientTableViewCell: UITableViewCell {
     
     func updateLabel() {
         if let userClientLabel = self.userClient?.label
-            where self.showLabel {
+            , self.showLabel {
             self.labelLabel.text = userClientLabel
         }
         else {

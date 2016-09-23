@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,8 +20,8 @@
 import Foundation
 
 class ConversationVerifiedCell: IconSystemCell {
-    override func configureForMessage(message: ZMConversationMessage!, layoutProperties: ConversationCellLayoutProperties!) {
-        super.configureForMessage(message, layoutProperties: layoutProperties)
+    override func configure(for message: ZMConversationMessage!, layoutProperties: ConversationCellLayoutProperties!) {
+        super.configure(for: message, layoutProperties: layoutProperties)
         
         self.leftIconView.image = WireStyleKit.imageOfShieldverified()
         
@@ -31,11 +31,10 @@ class ConversationVerifiedCell: IconSystemCell {
     func updateLabel() {
         if let systemMessageData = message.systemMessageData,
             let labelFont = self.labelFont,
-            let labelTextColor = self.labelTextColor
-
-            where systemMessageData.systemMessageType == ZMSystemMessageType.ConversationIsSecure {
+            let labelTextColor = self.labelTextColor,
+            systemMessageData.systemMessageType == ZMSystemMessageType.conversationIsSecure {
                 
-                self.labelView.attributedText = (NSLocalizedString("content.system.is_verified", comment: "").uppercaseString && [NSFontAttributeName: labelFont, NSForegroundColorAttributeName: labelTextColor])
+                self.labelView.attributedText = (NSLocalizedString("content.system.is_verified", comment: "").uppercased() && [NSFontAttributeName: labelFont, NSForegroundColorAttributeName: labelTextColor])
                 self.labelView.accessibilityLabel = self.labelView.attributedText.string
         }
     }

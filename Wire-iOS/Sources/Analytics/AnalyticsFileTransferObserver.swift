@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -26,18 +26,18 @@ import zmessaging
     override init() {
         super.init()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AnalyticsFileTransferObserver.uploadFinishedNotification(_:)), name: FileUploadRequestStrategyNotification.uploadFinishedNotificationName, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AnalyticsFileTransferObserver.uploadFailedNotification(_:)), name: FileUploadRequestStrategyNotification.uploadFailedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AnalyticsFileTransferObserver.uploadFinishedNotification(_:)), name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFinishedNotificationName), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AnalyticsFileTransferObserver.uploadFailedNotification(_:)), name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFailedNotificationName), object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AnalyticsFileTransferObserver.downloadFinishedNotification(_:)), name: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AnalyticsFileTransferObserver.downloadFailedNotification(_:)), name: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AnalyticsFileTransferObserver.downloadFinishedNotification(_:)), name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AnalyticsFileTransferObserver.downloadFailedNotification(_:)), name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName), object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func uploadFinishedNotification(notification: NSNotification?) {
+    func uploadFinishedNotification(_ notification: Notification?) {
         guard let message = notification?.object as? ZMConversationMessage,
               let startTime = notification?.userInfo?[FileUploadRequestStrategyNotification.requestStartTimestampKey] as? NSDate,
               let fileMessageData = message.fileMessageData else {
@@ -45,20 +45,20 @@ import zmessaging
                 return
         }
         
-        self.analyticsTracker.tagSucceededFileUploadWithSize(fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension, duration: fabs(startTime.timeIntervalSinceNow))
+        self.analyticsTracker.tagSucceededFileUpload(withSize: fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension, duration: fabs(startTime.timeIntervalSinceNow))
     }
     
-    func uploadFailedNotification(notification: NSNotification?) {
+    func uploadFailedNotification(_ notification: Notification?) {
         guard let message = notification?.object as? ZMConversationMessage,
               let fileMessageData = message.fileMessageData else {
                 assert(true)
                 return
         }
         
-        self.analyticsTracker.tagFailedFileUploadWithSize(fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension)
+        self.analyticsTracker.tagFailedFileUpload(withSize: fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension)
     }
     
-    func downloadFinishedNotification(notification: NSNotification?) {
+    func downloadFinishedNotification(_ notification: Notification?) {
         guard let message = notification?.object as? ZMConversationMessage,
             let startTime = notification?.userInfo?[AssetDownloadRequestStrategyNotification.downloadStartTimestampKey] as? NSDate,
             let fileMessageData = message.fileMessageData else {
@@ -66,17 +66,17 @@ import zmessaging
                 return
         }
         
-        self.analyticsTracker.tagSuccededFileDownloadWithSize(fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension, duration: fabs(startTime.timeIntervalSinceNow))
+        self.analyticsTracker.tagSuccededFileDownload(withSize: fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension, duration: fabs(startTime.timeIntervalSinceNow))
     }
     
-    func downloadFailedNotification(notification: NSNotification?) {
+    func downloadFailedNotification(_ notification: Notification?) {
         guard let message = notification?.object as? ZMConversationMessage,
             let fileMessageData = message.fileMessageData else {
                 assert(true)
                 return
         }
         
-        self.analyticsTracker.tagFailedFileDownloadWithSize(fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension)
+        self.analyticsTracker.tagFailedFileDownload(withSize: fileMessageData.size, fileExtension: (fileMessageData.filename as NSString).pathExtension)
     }
     
 }

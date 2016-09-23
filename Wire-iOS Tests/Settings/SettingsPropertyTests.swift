@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,11 +22,11 @@ import XCTest
 
 @objc class MockZMEditableUser: NSObject, ZMEditableUser {
     var name: String! = ""
-    var accentColorValue: ZMAccentColor = .Undefined
+    var accentColorValue: ZMAccentColor = .undefined
     var emailAddress: String! = ""
     var phoneNumber: String! = ""
     
-    var originalProfileImageData: NSData!
+    var originalProfileImageData: Data!
     
     func deleteProfileImage() {
         // no-op
@@ -34,11 +34,11 @@ import XCTest
 }
 
 class MockZMUserSession: ZMUserSessionInterface {
-    func performChanges(block: dispatch_block_t) {
+    func performChanges(_ block: @escaping () -> Swift.Void) {
         block()
     }
     
-    func enqueueChanges(block: dispatch_block_t) {
+    func enqueueChanges(_ block: @escaping () -> Swift.Void) {
         block()
     }
     
@@ -46,9 +46,9 @@ class MockZMUserSession: ZMUserSessionInterface {
 }
 
 class ZMMockAVSMediaManager: AVSMediaManagerInterface {
-    var intensityLevel : AVSIntensityLevel = .None
+    var intensityLevel : AVSIntensityLevel = .none
     
-    func playMediaByName(name: String!) { }
+    func playMediaByName(_ name: String!) { }
 }
 
 class ZMMockAnalytics: AnalyticsInterface {
@@ -57,9 +57,9 @@ class ZMMockAnalytics: AnalyticsInterface {
 
 
 class SettingsPropertyTests: XCTestCase {
-    let userDefaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    let userDefaults: UserDefaults = UserDefaults.standard
     
-    func saveAndCheck<T: AnyObject where T: Equatable>( property: SettingsProperty, value : T) -> Bool {
+    func saveAndCheck<T: Any>( _ property: SettingsProperty, value: T) -> Bool where T: Equatable {
         var property = property
         property << value
         if let readValue : T = property.propertyValue.value() as? T {
@@ -76,7 +76,7 @@ class SettingsPropertyTests: XCTestCase {
         // given
         let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.DarkMode, userDefaultsKey: UserDefaultColorScheme, userDefaults: self.userDefaults)
         // when & then
-        XCTAssertTrue(self.saveAndCheck(property, value: true))
+        XCTAssertTrue(self.saveAndCheck(property, value: "dark"))
     }
     
     func testThatBoolUserDefaultsSettingSave() {

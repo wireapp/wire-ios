@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,10 +21,10 @@ import Foundation
 import TTTAttributedLabel
 
 class ConversationNewDeviceCell: IconSystemCell {
-    static private let userClientLink: NSURL = NSURL(string: "settings://user-client")!
+    static fileprivate let userClientLink: URL = URL(string: "settings://user-client")!
     
-    override func configureForMessage(message: ZMConversationMessage!, layoutProperties: ConversationCellLayoutProperties!) {
-        super.configureForMessage(message, layoutProperties: layoutProperties)
+    override func configure(for message: ZMConversationMessage!, layoutProperties: ConversationCellLayoutProperties!) {
+        super.configure(for: message, layoutProperties: layoutProperties)
         
         self.leftIconView.image = WireStyleKit.imageOfShieldnotverified()
         
@@ -36,10 +36,10 @@ class ConversationNewDeviceCell: IconSystemCell {
         let startedUsingAttributes : [String: AnyObject]
         let linkAttributes : [String: AnyObject]
         
-        init(boldFont: UIFont, normalFont: UIFont, textColor: UIColor, link: NSURL) {
+        init(boldFont: UIFont, normalFont: UIFont, textColor: UIColor, link: URL) {
             senderAttributes = [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: textColor]
             startedUsingAttributes = [NSFontAttributeName: normalFont, NSForegroundColorAttributeName: textColor]
-            linkAttributes = [NSFontAttributeName: normalFont, NSLinkAttributeName: link]
+            linkAttributes = [NSFontAttributeName: normalFont, NSLinkAttributeName: link as AnyObject]
         }
     }
     
@@ -49,19 +49,19 @@ class ConversationNewDeviceCell: IconSystemCell {
             let labelFont = self.labelFont,
             let labelBoldFont = self.labelBoldFont,
             let labelTextColor = self.labelTextColor
-            where systemMessageData.users.count > 0 && (systemMessageData.systemMessageType == .NewClient || systemMessageData.systemMessageType == .UsingNewDevice)
+            , systemMessageData.users.count > 0 && (systemMessageData.systemMessageType == .newClient || systemMessageData.systemMessageType == .usingNewDevice)
             else { return }
         
-        let textAttributes = TextAttributes(boldFont: labelBoldFont, normalFont: labelFont, textColor: labelTextColor, link: self.dynamicType.userClientLink)
+        let textAttributes = TextAttributes(boldFont: labelBoldFont, normalFont: labelFont, textColor: labelTextColor, link: type(of: self).userClientLink)
         
-        let users = systemMessageData.users.sort({ (a: ZMUser, b: ZMUser) -> Bool in
-            a.displayName.compare(b.displayName) == NSComparisonResult.OrderedAscending
+        let users = systemMessageData.users.sorted(by: { (a: ZMUser, b: ZMUser) -> Bool in
+            a.displayName.compare(b.displayName) == ComparisonResult.orderedAscending
         })
         
-        if let user = users.first where user.isSelfUser && systemMessageData.systemMessageType == .UsingNewDevice {
+        if let user = users.first , user.isSelfUser && systemMessageData.systemMessageType == .usingNewDevice {
             configureForNewCurrentDeviceOfSelfUser(user, attributes: textAttributes)
         }
-        else if users.count == 1, let user = users.first where user.isSelfUser {
+        else if users.count == 1, let user = users.first , user.isSelfUser {
             configureForNewClientOfSelfUser(user, clients: clients, attributes: textAttributes)
         } else {
             configureForOtherUsers(users, clients: clients, attributes: textAttributes)
@@ -72,60 +72,60 @@ class ConversationNewDeviceCell: IconSystemCell {
     }
     
     
-    func configureForNewClientOfSelfUser(selfUser: ZMUser, clients: [UserClientType], attributes: TextAttributes){
-        let isSelfClient = clients.first?.isEqual(ZMUserSession.sharedSession().selfUserClient()) ?? false
+    func configureForNewClientOfSelfUser(_ selfUser: ZMUser, clients: [UserClientType], attributes: TextAttributes){
+        let isSelfClient = clients.first?.isEqual(ZMUserSession.shared().selfUserClient()) ?? false
         
-        let senderName = NSLocalizedString("content.system.you_started", comment: "").uppercaseString && attributes.senderAttributes
-        let startedUsingString = NSLocalizedString("content.system.started_using", comment: "").uppercaseString && attributes.startedUsingAttributes
-        let userClientString = NSLocalizedString("content.system.new_device", comment: "").uppercaseString && attributes.linkAttributes
-        
-        self.labelView.attributedText = senderName + " " + startedUsingString + " " + userClientString
-        self.leftIconView.hidden = isSelfClient
-    }
-    
-    func configureForNewCurrentDeviceOfSelfUser(selfUser: ZMUser, attributes: TextAttributes){
-        let senderName = NSLocalizedString("content.system.you_started", comment: "").uppercaseString && attributes.senderAttributes
-        let startedUsingString = NSLocalizedString("content.system.started_using", comment: "").uppercaseString && attributes.startedUsingAttributes
-        let userClientString = NSLocalizedString("content.system.this_device", comment: "").uppercaseString && attributes.linkAttributes
+        let senderName = NSLocalizedString("content.system.you_started", comment: "").uppercased() && attributes.senderAttributes
+        let startedUsingString = NSLocalizedString("content.system.started_using", comment: "").uppercased() && attributes.startedUsingAttributes
+        let userClientString = NSLocalizedString("content.system.new_device", comment: "").uppercased() && attributes.linkAttributes
         
         self.labelView.attributedText = senderName + " " + startedUsingString + " " + userClientString
-        self.leftIconView.hidden = true
+        self.leftIconView.isHidden = isSelfClient
     }
     
-    func configureForOtherUsers(users: [ZMUser], clients: [UserClientType], attributes: TextAttributes) {
+    func configureForNewCurrentDeviceOfSelfUser(_ selfUser: ZMUser, attributes: TextAttributes){
+        let senderName = NSLocalizedString("content.system.you_started", comment: "").uppercased() && attributes.senderAttributes
+        let startedUsingString = NSLocalizedString("content.system.started_using", comment: "").uppercased() && attributes.startedUsingAttributes
+        let userClientString = NSLocalizedString("content.system.this_device", comment: "").uppercased() && attributes.linkAttributes
+        
+        self.labelView.attributedText = senderName + " " + startedUsingString + " " + userClientString
+        self.leftIconView.isHidden = true
+    }
+    
+    func configureForOtherUsers(_ users: [ZMUser], clients: [UserClientType], attributes: TextAttributes) {
         let displayNamesOfOthers = users.filter {!$0.isSelfUser }.flatMap {$0.displayName as String}
         guard displayNamesOfOthers.count > 0 else { return }
         
         let firstTwoNames = displayNamesOfOthers.prefix(2)
-        let senderNames = firstTwoNames.joinWithSeparator(", ").uppercaseString
+        let senderNames = firstTwoNames.joined(separator: ", ").uppercased()
         let additionalSenderCount = max(displayNamesOfOthers.count - 1, 1)
     
         // %@ %#@d_number_of_others@ started using %#@d_new_devices@
-        let senderNamesString = NSString(format: NSLocalizedString("content.system.people_started_using", comment: ""),
+        let senderNamesString = NSString(format: NSLocalizedString("content.system.people_started_using", comment: "") as NSString,
                                          senderNames,
                                          additionalSenderCount,
-                                         clients.count).uppercaseString as String
+                                         clients.count).uppercased as String
         
-        let userClientString = NSString(format: NSLocalizedString("content.system.new_devices", comment: ""), clients.count).uppercaseString as String
+        let userClientString = NSString(format: NSLocalizedString("content.system.new_devices", comment: "") as NSString, clients.count).uppercased as String
         
         var attributedSenderNames = NSAttributedString(string: senderNamesString, attributes: attributes.startedUsingAttributes)
         attributedSenderNames = attributedSenderNames.setAttributes(attributes.senderAttributes, toSubstring: senderNames)
         attributedSenderNames = attributedSenderNames.setAttributes(attributes.linkAttributes, toSubstring: userClientString)
         
         self.labelView.attributedText = attributedSenderNames
-        self.leftIconView.hidden = false
+        self.leftIconView.isHidden = false
     }
     
     
     // MARK: - TTTAttributedLabelDelegate
     
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL URL: NSURL!) {
-        if URL.isEqual(self.dynamicType.userClientLink) {
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWithURL URL: Foundation.URL!) {
+        if URL == type(of: self).userClientLink {
             if let systemMessageData = message.systemMessageData,
-                let user = systemMessageData.users.first where systemMessageData.users.count == 1 {
-                    ZClientViewController.sharedZClientViewController().openClientListScreenForUser(user)
+                let user = systemMessageData.users.first , systemMessageData.users.count == 1 {
+                    ZClientViewController.shared().openClientListScreen(for: user)
             } else if let conversation = message.conversation {
-                ZClientViewController.sharedZClientViewController().openDetailScreenForConversation(conversation)
+                ZClientViewController.shared().openDetailScreen(for: conversation)
             }
         }
     }

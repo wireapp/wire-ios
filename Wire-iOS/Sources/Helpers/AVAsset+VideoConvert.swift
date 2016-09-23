@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,27 +22,34 @@ import CocoaLumberjackSwift
 
 extension AVAsset {
 
-    public static func wr_convertAudioToUploadFormat(inPath: String, outPath: String, completion: ((success: Bool) -> ())? = .None) {
-        let alteredAsset = AVAsset(URL: NSURL(fileURLWithPath: inPath))
+    public static func wr_convertAudioToUploadFormat(_ inPath: String, outPath: String, completion: ((_ success: Bool) -> ())? = .none) {
 
-        let exportSession = AVAssetExportSession(asset: alteredAsset, presetName: AVAssetExportPresetAppleM4A)!
+        let fileURL = URL(fileURLWithPath: inPath)
+        let alteredAsset = AVAsset(url: fileURL)
+        let session = AVAssetExportSession(asset: alteredAsset, presetName: AVAssetExportPresetAppleM4A)
         
-        let encodedEffectAudioURL = NSURL(fileURLWithPath: outPath)
+        guard let exportSession = session else {
+            DDLogError("Failed to create export session with asset \(alteredAsset)")
+            completion?(false)
+            return
+        }
+    
+        let encodedEffectAudioURL = URL(fileURLWithPath: outPath)
         
-        exportSession.outputURL = encodedEffectAudioURL
+        exportSession.outputURL = encodedEffectAudioURL as URL
         exportSession.outputFileType = AVFileTypeAppleM4A
         
-        exportSession.exportAsynchronouslyWithCompletionHandler { [unowned exportSession] in
+        exportSession.exportAsynchronously { [unowned exportSession] in
             switch exportSession.status {
-            case .Failed:
+            case .failed:
                 DDLogError("Cannot transcode \(inPath) to \(outPath): \(exportSession.error)")
-                dispatch_async(dispatch_get_main_queue(), {
-                    completion?(success: false)
-                })
+                DispatchQueue.main.async {
+                    completion?(false)
+                }
             default:
-                dispatch_async(dispatch_get_main_queue(), {
-                    completion?(success: true)
-                })
+                DispatchQueue.main.async {
+                    completion?(true)
+                }
                 break
             }
             
