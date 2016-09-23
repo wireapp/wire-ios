@@ -28,6 +28,7 @@
 #import "ZMSyncMergePolicy.h"
 #import "ZMConversation+Internal.h"
 #import "ZMUserDisplayNameGenerator.h"
+#import "ZMNotifications.h"
 
 #import "ZMConversation+Internal.h"
 #import <objc/runtime.h>
@@ -539,10 +540,10 @@ static dispatch_once_t clearStoreOnceToken;
         // Something really wrong
         // Try to remove the store and create from scratch
         if(backupCorruptedDatabase) {
-            NSString *errorString = [NSString stringWithFormat:@"Error in opening database: %@", error];
             dispatch_async(dispatch_get_main_queue(), ^{
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Database corruption" message:errorString delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-                [alert show];
+                [[NSNotificationCenter defaultCenter] postNotificationName:ZMDatabaseCorruptionNotificationName
+                                                                    object:nil
+                                                                  userInfo:@{ NSUnderlyingErrorKey: error }];
             });
         }
         ZMLogError(@"Failed to open database. Corrupted database? Error: %@", error);

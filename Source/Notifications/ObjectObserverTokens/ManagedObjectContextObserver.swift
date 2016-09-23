@@ -275,20 +275,20 @@ public final class ManagedObjectContextObserver: NSObject {
     fileprivate var changedCallStateConversations = ManagedObjectChanges()
     fileprivate var isSyncDone = false
     
-    public var isTesting = false
-    public var applicationStateForTesting : UIApplicationState = .active
-    
     public let callCenter = CTCallCenter()
-
-    fileprivate var isInForeground : Bool {
-        if isTesting {
-            return applicationStateForTesting == .active
+    
+    
+    public var propagateChanges = false {
+        didSet {
+            if propagateChanges {
+                propagateAccumulatedChanges()
+            }
         }
-        return UIApplication.shared.applicationState == .active
+        
     }
     
     public var isReady : Bool {
-        if !globalConversationObserver.isReady && UIApplication.shared.applicationState != .background {
+        if !globalConversationObserver.isReady && propagateChanges {
             addChangeObserver(self.globalUserObserver, type: .userList)
             addChangeObserver(self.globalUserObserver, type: .connection)
             
@@ -306,7 +306,6 @@ public final class ManagedObjectContextObserver: NSObject {
         super.init()
         
         NotificationCenter.default.addObserver(self, selector: #selector(ManagedObjectContextObserver.managedObjectsDidChange(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext)
-        NotificationCenter.default.addObserver(self, selector: #selector(ManagedObjectContextObserver.didBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ManagedObjectContextObserver.syncCompleted(_:)), name: NSNotification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
     }
     
@@ -333,17 +332,6 @@ public final class ManagedObjectContextObserver: NSObject {
        tearDown()
     }
     
-    func didBecomeActive(_ note: Notification) {
-        self.managedObjectContext!.performGroupedBlock {
-            if !self.isReady {
-                zmLog.error("Application did become active but global conversation observer is not ready to observe")
-            }
-            let changes = self.accumulatedChanges
-            self.accumulatedChanges = ManagedObjectChanges()
-            self.propagateChangesToObservers(changes)
-        }
-    }
-    
     public func syncCompleted(_ note: Notification) {
         self.managedObjectContext!.performGroupedBlock {
             if !self.isReady {
@@ -367,7 +355,7 @@ public final class ManagedObjectContextObserver: NSObject {
     func processChanges(_ changes: ManagedObjectChanges) {
         guard isReady else { return }
 
-        if isInForeground {
+        if propagateChanges {
             propagateChangesToObservers(changes)
         } else {
             accumulatedChanges = accumulatedChanges + changes
@@ -383,6 +371,17 @@ public final class ManagedObjectContextObserver: NSObject {
         
         changedCallStateConversations = ManagedObjectChanges()
         processChanges(changes)
+    }
+    
+    fileprivate func propagateAccumulatedChanges() {
+        self.managedObjectContext!.performGroupedBlock {
+            if !self.isReady {
+                zmLog.error("Application want to propagate changes but global conversation observer is not ready to observe")
+            }
+            let changes = self.accumulatedChanges
+            self.accumulatedChanges = ManagedObjectChanges()
+            self.propagateChangesToObservers(changes)
+        }
     }
     
     fileprivate func propagateChangesToObservers(_ changes: ManagedObjectChanges) {

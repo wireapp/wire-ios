@@ -45,6 +45,9 @@
 @class NewUnreadUnsentMessageChangeInfo;
 
 
+extern NSString * const ZMDatabaseCorruptionNotificationName;
+
+
 @protocol ZMMessageObserver <NSObject>
 - (void)messageDidChange:(MessageChangeInfo *)changeInfo;
 @end

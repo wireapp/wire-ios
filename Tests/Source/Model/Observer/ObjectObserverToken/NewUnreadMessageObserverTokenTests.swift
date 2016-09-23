@@ -68,6 +68,7 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
         
         self.syncTestObserver = UnreadMessageTestObserver()
         self.syncMOC.performGroupedBlockAndWait {
+            self.syncMOC.globalManagedObjectContextObserver.propagateChanges = true
             self.syncNewMessageToken = ZMMessageNotification.addNewMessagesObserver(self.syncTestObserver, managedObjectContext: self.syncMOC)
             self.syncNewKnocksToken = ZMMessageNotification.addNewKnocksObserver(self.syncTestObserver, managedObjectContext: self.syncMOC)
         }
