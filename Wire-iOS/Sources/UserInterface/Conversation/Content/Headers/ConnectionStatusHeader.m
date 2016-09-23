@@ -89,9 +89,9 @@
     NSString *connectionStatusText = nil;
     
     if (! self.user.isConnected) {
-        connectionStatusText = [[NSString stringWithFormat:NSLocalizedString(@"content.system.connecting_to", nil), self.user.name] uppercaseStringWithCurrentLocale];
+        connectionStatusText = [[NSString stringWithFormat:NSLocalizedString(@"content.system.connecting_to", nil), self.user.name] uppercasedWithCurrentLocale];
     } else {
-        connectionStatusText = [[NSString stringWithFormat:NSLocalizedString(@"content.system.connected_to", nil), self.user.name] uppercaseStringWithCurrentLocale];
+        connectionStatusText = [[NSString stringWithFormat:NSLocalizedString(@"content.system.connected_to", nil), self.user.name] uppercasedWithCurrentLocale];
     }
     
     self.statusLabel.text = connectionStatusText;

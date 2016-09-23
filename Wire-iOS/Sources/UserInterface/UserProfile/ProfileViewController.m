@@ -214,7 +214,7 @@ typedef NS_ENUM(NSUInteger, ProfileViewControllerTabBarIndex) {
     }
     
     if ((user.isConnected || user.isPendingApprovalBySelfUser || user.isSelfUser || user.isBlocked) && user.emailAddress.length != 0) {
-        headerView.subtitleLabel.attributedText = [self attributedStringForSubtitle:[user.emailAddress uppercaseStringWithCurrentLocale]];
+        headerView.subtitleLabel.attributedText = [self attributedStringForSubtitle:[user.emailAddress uppercasedWithCurrentLocale]];
     }
     
     [self.view addSubview:headerView];
@@ -328,7 +328,7 @@ typedef NS_ENUM(NSUInteger, ProfileViewControllerTabBarIndex) {
 
 - (NSString *)suggestedBackButtonTitleForProfileViewController:(id)controller
 {
-    return [self.bareUser.displayName uppercaseStringWithCurrentLocale];
+    return [self.bareUser.displayName uppercasedWithCurrentLocale];
 }
 
 @end

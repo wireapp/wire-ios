@@ -270,13 +270,13 @@ static const CGFloat SketchBrushWidthThin = 6;
     self.hintLabel = [UILabel newAutoLayoutView];
     self.hintLabel.textAlignment = NSTextAlignmentCenter;
     self.hintLabel.numberOfLines = 0;
-    self.hintLabel.text = [NSLocalizedString(@"sketchpad.initial_hint", "") uppercaseStringWithCurrentLocale];
+    self.hintLabel.text = [NSLocalizedString(@"sketchpad.initial_hint", "") uppercasedWithCurrentLocale];
     [self.view addSubview:self.hintLabel];
 }
 
 - (void)setSketchTitle:(NSString *)sketchTitle
 {
-    _sketchTitle = [sketchTitle uppercaseStringWithCurrentLocale];
+    _sketchTitle = [sketchTitle uppercasedWithCurrentLocale];
     
     self.topView.titleLabel.text = _sketchTitle;
     [self.topView.titleLabel sizeToFit];

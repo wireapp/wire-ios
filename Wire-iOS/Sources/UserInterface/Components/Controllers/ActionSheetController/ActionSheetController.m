@@ -157,7 +157,7 @@
 {
     [super viewDidLoad];
     
-    self.actionSheetContainerView.titleLabel.text = [self.title uppercaseStringWithCurrentLocale];
+    self.actionSheetContainerView.titleLabel.text = [self.title uppercasedWithCurrentLocale];
     self.actionSheetContainerView.sheetView = self.sheetView;
 
     if (self.dismissStyle == ActionSheetControllerDismissStyleBackground) {

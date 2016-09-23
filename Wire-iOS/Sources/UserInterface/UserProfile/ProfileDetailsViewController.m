@@ -236,7 +236,7 @@ typedef NS_ENUM(NSUInteger, ProfileUserAction) {
         
         [userActionsfooterView setIconTypeForLeftButton:[self iconTypeForUserAction:[self leftButtonAction]]];
         [userActionsfooterView setIconTypeForRightButton:[self iconTypeForUserAction:[self rightButtonAction]]];
-        [userActionsfooterView.leftButton setTitle:[[self buttonTextForUserAction:[self leftButtonAction]] uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+        [userActionsfooterView.leftButton setTitle:[[self buttonTextForUserAction:[self leftButtonAction]] uppercasedWithCurrentLocale] forState:UIControlStateNormal];
         
         [userActionsfooterView.leftButton addTarget:self action:@selector(performLeftButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         [userActionsfooterView.rightButton addTarget:self action:@selector(performRightButtonAction:) forControlEvents:UIControlEventTouchUpInside];

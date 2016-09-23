@@ -152,7 +152,7 @@
     self.skipButton.titleLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"];
     [self.skipButton setTitleColor:[UIColor colorWithMagicIdentifier:@"style.color.static_foreground.normal"] forState:UIControlStateNormal];
     [self.skipButton setTitleColor:[[UIColor colorWithMagicIdentifier:@"style.color.static_foreground.normal"] colorWithAlphaComponent:0.2] forState:UIControlStateHighlighted];
-    [self.skipButton setTitle:[NSLocalizedString(@"registration.add_phone_number.skip_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.skipButton setTitle:[NSLocalizedString(@"registration.add_phone_number.skip_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     [self.skipButton addTarget:self action:@selector(skip:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.view addSubview:self.skipButton];

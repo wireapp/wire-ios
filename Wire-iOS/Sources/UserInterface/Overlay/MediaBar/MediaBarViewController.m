@@ -91,7 +91,7 @@
 
 - (void)updateTitleLabel
 {
-    self.mediaBarView.titleLabel.text = [self.mediaPlaybackManager.activeMediaPlayer.title uppercaseStringWithCurrentLocale];
+    self.mediaBarView.titleLabel.text = [self.mediaPlaybackManager.activeMediaPlayer.title uppercasedWithCurrentLocale];
 }
 
 - (void)updatePlayPauseButton
@@ -134,7 +134,7 @@
 - (void)mediaTitleChanged:(NSDictionary *)change
 {
     if (self.mediaPlaybackManager.activeMediaPlayer) {
-        self.mediaBarView.titleLabel.text = [self.mediaPlaybackManager.activeMediaPlayer.title uppercaseStringWithCurrentLocale];
+        self.mediaBarView.titleLabel.text = [self.mediaPlaybackManager.activeMediaPlayer.title uppercasedWithCurrentLocale];
     }
 }
 

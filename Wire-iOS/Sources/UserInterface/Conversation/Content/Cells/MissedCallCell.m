@@ -119,9 +119,9 @@
     
     NSString *subtitleText = nil;
     if (message.sender.isSelfUser) {
-        subtitleText = [NSLocalizedString(@"content.system.you_wanted_to_talk", nil) uppercaseStringWithCurrentLocale];
+        subtitleText = [NSLocalizedString(@"content.system.you_wanted_to_talk", nil) uppercasedWithCurrentLocale];
     } else {
-        subtitleText = [[NSString stringWithFormat:NSLocalizedString(@"content.system.other_wanted_to_talk", ), message.sender.displayName] uppercaseStringWithCurrentLocale];
+        subtitleText = [[NSString stringWithFormat:NSLocalizedString(@"content.system.other_wanted_to_talk", ), message.sender.displayName] uppercasedWithCurrentLocale];
     }
     
     self.subtitleLabel.attributedText = [[NSAttributedString alloc] initWithString:subtitleText attributes:@{ NSParagraphStyleAttributeName: self.subtitleParagraphStyle }];

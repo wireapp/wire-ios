@@ -45,13 +45,13 @@
     if (self) {
         self.acceptButton = [Button buttonWithStyleClass:@"dialogue-button-full"];
         self.acceptButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.acceptButton setTitle:[NSLocalizedString(@"image_confirmer.confirm", @"") uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+        [self.acceptButton setTitle:[NSLocalizedString(@"image_confirmer.confirm", @"") uppercasedWithCurrentLocale] forState:UIControlStateNormal];
         self.acceptButton.backgroundColor = UIColor.accentColor;
         [self addSubview:self.acceptButton];
         
         self.rejectButton = [Button buttonWithStyleClass:@"dialogue-button-empty"];
         self.rejectButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.rejectButton setTitle:[NSLocalizedString(@"image_confirmer.cancel", @"") uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+        [self.rejectButton setTitle:[NSLocalizedString(@"image_confirmer.cancel", @"") uppercasedWithCurrentLocale] forState:UIControlStateNormal];
         [self addSubview:self.rejectButton];
         
         self.interitemView = [[UIView alloc] initForAutoLayout];

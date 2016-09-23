@@ -169,7 +169,7 @@
     self.forgotPasswordButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.forgotPasswordButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.forgotPasswordButton setTitleColor:[[UIColor whiteColor] colorWithAlphaComponent:0.4] forState:UIControlStateHighlighted];
-    [self.forgotPasswordButton setTitle:[NSLocalizedString(@"signin.forgot_password", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.forgotPasswordButton setTitle:[NSLocalizedString(@"signin.forgot_password", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     self.forgotPasswordButton.titleLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"];
     [self.forgotPasswordButton addTarget:self action:@selector(resetPassword:) forControlEvents:UIControlEventTouchUpInside];
     

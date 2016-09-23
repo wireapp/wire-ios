@@ -345,7 +345,7 @@ static NSTimeInterval const ParticipantsHeaderViewEditHintDismissTimeout = 10.0f
 
 - (void)setSubtitle:(NSString *)subtitle
 {
-    self.subtitleLabel.text = [subtitle uppercaseStringWithCurrentLocale];
+    self.subtitleLabel.text = [subtitle uppercasedWithCurrentLocale];
 }
 
 - (void)setTitleAccessibilityIdentifier:(NSString *)identifier

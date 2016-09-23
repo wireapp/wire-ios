@@ -108,7 +108,7 @@
 {
     if (_searchTerm != searchTerm) {
         _searchTerm = [searchTerm copy];
-        self.previewTitle = [_searchTerm uppercaseStringWithCurrentLocale];
+        self.previewTitle = [_searchTerm uppercasedWithCurrentLocale];
     }
 }
 
@@ -146,7 +146,7 @@
     
     NSString *errorKey = @"giphy.error.no_more_results";
     
-    errorLabel.text = [NSLocalizedString(errorKey, "") uppercaseStringWithCurrentLocale];
+    errorLabel.text = [NSLocalizedString(errorKey, "") uppercasedWithCurrentLocale];
     errorLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_bold"];
     errorLabel.textColor = [UIColor whiteColor];
     
