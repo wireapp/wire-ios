@@ -19,14 +19,28 @@
 
 import Foundation
 
-extension NSString {
+public extension NSString {
     func containsURL() -> Bool {
         do {
-            let urlDetector = try NSDataDetector(types: NSTextCheckingType.Link.rawValue)
-            let matches = urlDetector.matchesInString(self as String, options: [], range: NSMakeRange(0, self.length))
+            let urlDetector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+            let matches = urlDetector.matches(in: self as String, options: [], range: NSMakeRange(0, self.length))
             return matches.count > 0
         } catch _ as NSError {
             return false
         }
+    }
+
+    // MARK: - URL Formatting
+
+    func removingPrefixWWW() -> String {
+        return replacingOccurrences(of: "www.", with: "", options: .anchored, range: NSMakeRange(0, self.length))
+    }
+
+    func removingTrailingForwardSlash() -> String {
+        return replacingOccurrences(of: "/", with: "", options: [.anchored, .backwards], range: NSMakeRange(0, self.length))
+    }
+
+    func removingURLScheme(_ scheme: String) -> String {
+        return replacingOccurrences(of: scheme + "://", with: "", options: .anchored, range: NSMakeRange(0, self.length))
     }
 }

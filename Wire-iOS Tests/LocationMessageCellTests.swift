@@ -23,11 +23,11 @@ import MapKit
 
 class LocationMessageCellTests: ZMSnapshotTestCase {
 
-    typealias CellConfiguration = MockMessage -> Void
+    typealias CellConfiguration = (MockMessage) -> Void
     
     override func setUp() {
         super.setUp()
-        accentColor = .VividRed
+        accentColor = .vividRed
     }
 
     func testThatItRendersLocationCellWithAddressCorrect() {
@@ -44,16 +44,16 @@ class LocationMessageCellTests: ZMSnapshotTestCase {
 
     // MARK: - Helper
 
-    func cellWithConfig(config: CellConfiguration? = nil) -> LocationMessageCell {
+    func cellWithConfig(_ config: CellConfiguration? = nil) -> LocationMessageCell {
         let fileMessage = MockMessageFactory.locationMessage()
-        fileMessage.backingLocationMessageData?.latitude = 9.041169
-        fileMessage.backingLocationMessageData?.longitude = 48.53775
-        fileMessage.backingLocationMessageData?.name = "Berlin, Germany"
+        fileMessage?.backingLocationMessageData?.latitude = 9.041169
+        fileMessage?.backingLocationMessageData?.longitude = 48.53775
+        fileMessage?.backingLocationMessageData?.name = "Berlin, Germany"
         
-        config?(fileMessage)
+        config?(fileMessage!)
         
-        let cell = LocationMessageCell(style: .Default, reuseIdentifier: String(LocationMessageCell.self))
-        cell.backgroundColor = .whiteColor()
+        let cell = LocationMessageCell(style: .default, reuseIdentifier: String(describing: LocationMessageCell.self))
+        cell.backgroundColor = UIColor.white
         let layoutProperties = ConversationCellLayoutProperties()
         layoutProperties.showSender = true
         layoutProperties.showBurstTimestamp = false
@@ -61,16 +61,16 @@ class LocationMessageCellTests: ZMSnapshotTestCase {
         
         cell.prepareForReuse()
         cell.layer.speed = 0 // freeze animations for deterministic tests
-        cell.bounds = CGRectMake(0.0, 0.0, 320.0, 9999)
-        cell.contentView.bounds = CGRectMake(0.0, 0.0, 320, 9999)
-        cell.layoutMargins = UIEdgeInsetsMake(0, CGFloat(WAZUIMagic.floatForIdentifier("content.left_margin")),
-                                              0, CGFloat(WAZUIMagic.floatForIdentifier("content.right_margin")))
+        cell.bounds = CGRect(x: 0.0, y: 0.0, width: 320.0, height: 9999)
+        cell.contentView.bounds = CGRect(x: 0.0, y: 0.0, width: 320, height: 9999)
+        cell.layoutMargins = UIEdgeInsetsMake(0, CGFloat(WAZUIMagic.float(forIdentifier: "content.left_margin")),
+                                              0, CGFloat(WAZUIMagic.float(forIdentifier: "content.right_margin")))
         
-        cell.configureForMessage(fileMessage, layoutProperties: layoutProperties)
+        cell.configure(for: fileMessage, layoutProperties: layoutProperties)
         cell.layoutIfNeeded()
         
-        let size = cell.systemLayoutSizeFittingSize(CGSizeMake(320.0, 0.0) , withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel)
-        cell.bounds = CGRectMake(0.0, 0.0, size.width, size.height)
+        let size = cell.systemLayoutSizeFitting(CGSize(width: 320.0, height: 0.0) , withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel)
+        cell.bounds = CGRect(x: 0.0, y: 0.0, width: size.width, height: size.height)
         cell.layoutIfNeeded()
         return cell
     }

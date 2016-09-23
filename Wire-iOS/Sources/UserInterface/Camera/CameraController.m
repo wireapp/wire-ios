@@ -65,8 +65,14 @@ NSString * const CameraSettingExposureTargetBias = @"exposureTargetBias";
 
 @implementation CameraController
 
-- (instancetype)init
-{
+- (instancetype)init {
+    return [self initCameraController];
+}
+
+- (nullable instancetype)initCameraController {
+#if TARGET_OS_SIMULATOR
+    return nil;
+#else
     self = [super init];
     
     if (self) {
@@ -79,6 +85,7 @@ NSString * const CameraSettingExposureTargetBias = @"exposureTargetBias";
     }
     
     return self;
+#endif
 }
 
 - (void)dealloc
@@ -524,7 +531,7 @@ NSString * const CameraSettingExposureTargetBias = @"exposureTargetBias";
 
 #pragma mark - Capture Photo
 
-- (void)captureStillImageWithCompletionHandler:(void (^)(NSData *imageData, NSDictionary *metaData, NSError *error))completionHandler
+- (void)captureStillImageWithCompletionHandler:(void (^)(NSData * _Nullable imageData, NSDictionary * _Nullable metaData, NSError * _Nullable error))completionHandler;
 {
     dispatch_async(self.sessionQueue, ^{
         AVCaptureConnection *connection = [self.stillCameraOutput connectionWithMediaType:AVMediaTypeVideo];

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -43,24 +43,37 @@ extension NSData {
         }
         
         if uppercase {
-           fingerprintString = fingerprintString.uppercaseString
+           fingerprintString = fingerprintString.uppercased()
         }
         
-        let attributedRemoteIdentifier = fingerprintString.fingerprintStringWithAttributes(attributes, boldAttributes: boldAttributes)
+        let attributedRemoteIdentifier = fingerprintString.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10
-        return attributedRemoteIdentifier && [NSParagraphStyleAttributeName: paragraphStyle]
+        return attributedRemoteIdentifier! && [NSParagraphStyleAttributeName: paragraphStyle]
     }
     
     public func mapBytes<T: Any, E: Any>(callback: (E) -> (T)) -> [T] {
-        assert(self.length % sizeof(E) == 0, "Data size is uneven to enumerated element size")
+        assert(self.length % MemoryLayout<E>.size == 0, "Data size is uneven to enumerated element size")
         var result: [T] = []
-        let stepCount = self.length / sizeof(E)
-        let buffer = UnsafeBufferPointer<E>(start:UnsafePointer<E>(self.bytes), count: stepCount)
+        let stepCount = self.length / MemoryLayout<E>.size
+        
+        let array = (self as Data).withUnsafeBytes {
+            [E](UnsafeBufferPointer(start: $0, count: self.length))
+        }
         for i in 0..<stepCount {
-            result.append(callback(buffer[i]))
+            result.append(callback(array[i]))
         }
         return result
+    }
+}
+
+extension Data {
+    public func attributedFingerprint(attributes: [String : AnyObject], boldAttributes: [String : AnyObject], uppercase: Bool = false) -> NSAttributedString? {
+        return (self as NSData).attributedFingerprint(attributes: attributes, boldAttributes: boldAttributes, uppercase: uppercase);
+    }
+    
+    public func mapBytes<T: Any, E: Any>(callback: (E) -> (T)) -> [T] {
+        return (self as NSData).mapBytes(callback: callback)
     }
 }
