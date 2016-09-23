@@ -3,5 +3,5 @@ github "wireapp/wire-ios-images" ~> 5.0
 github "wireapp/wire-ios-protos" ~> 7.0
 github "wireapp/libPhoneNumber-iOS" "0.8.12"
 github "wireapp/PINCache" ~> 2.3
-github "wireapp/wire-ios-transport" ~> 11.0
+github "wireapp/wire-ios-transport" ~> 12.0
 github "wireapp/wire-ios-link-preview" ~> 4.0
