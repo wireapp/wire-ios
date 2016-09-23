@@ -135,7 +135,7 @@ const NSTimeInterval PhoneVerificationResendInterval = 30.0f;
     self.resendButton.titleLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"];
     [self.resendButton setTitleColor:[UIColor wr_colorFromColorScheme:ColorSchemeColorTextForeground variant:ColorSchemeVariantDark] forState:UIControlStateNormal];
     [self.resendButton setTitleColor:[UIColor wr_colorFromColorScheme:ColorSchemeColorTextDimmed variant:ColorSchemeVariantDark] forState:UIControlStateHighlighted];
-    [self.resendButton setTitle:[NSLocalizedString(@"registration.verify_phone_number.resend", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.resendButton setTitle:[NSLocalizedString(@"registration.verify_phone_number.resend", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
 
     [self.resendButton addTarget:self action:@selector(requestCode:) forControlEvents:UIControlEventTouchUpInside];
     

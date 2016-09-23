@@ -123,7 +123,7 @@
 
 - (NSString *)senderText
 {
-    NSString *nameString = [[self.message.sender displayName] uppercaseStringWithCurrentLocale];
+    NSString *nameString = [[self.message.sender displayName] uppercasedWithCurrentLocale];
 
     if (self.message.conversation.participantsCount == 2) { // 1 to 1 conversation
         return nameString;
@@ -132,7 +132,7 @@
         return [NSString stringWithFormat:NSLocalizedString(@"notifications.this_conversation", @""), nameString];
     }
     else {
-        return [NSString stringWithFormat:NSLocalizedString(@"notifications.in_conversation", @""), nameString, [self.message.conversation.displayName uppercaseStringWithCurrentLocale]];
+        return [NSString stringWithFormat:NSLocalizedString(@"notifications.in_conversation", @""), nameString, [self.message.conversation.displayName uppercasedWithCurrentLocale]];
     }
 }
 

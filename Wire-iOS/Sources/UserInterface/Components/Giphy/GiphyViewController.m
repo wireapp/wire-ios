@@ -121,7 +121,7 @@
     
     self.navBarController.view.opaque = YES;
     
-    [self.navBarController setCentralTitle:[self.searchTerm uppercaseStringWithCurrentLocale] subTitle:[self.conversation.displayName uppercaseStringWithCurrentLocale]];
+    [self.navBarController setCentralTitle:[self.searchTerm uppercasedWithCurrentLocale] subTitle:[self.conversation.displayName uppercasedWithCurrentLocale]];
 }
 
 - (void)createNagivationController

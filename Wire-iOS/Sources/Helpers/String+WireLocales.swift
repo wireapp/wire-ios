@@ -11,12 +11,12 @@ import Foundation
 
 extension NSString {
     
-    var uppercaseStringWithCurrentLocale: String? {
-        return uppercaseStringWithLocale(NSLocale.currentLocale())
+    var uppercasedWithCurrentLocale: String? {
+        return uppercased(with: NSLocale.current)
     }
     
-    var lowercaseStringWithCurrentLocale: String? {
-        return lowercaseStringWithLocale(NSLocale.currentLocale())
+    var lowercasedWithCurrentLocale: String? {
+        return lowercased(with: NSLocale.current)
     }
     
     private var slashCommandMatcher: NSRegularExpression? {
@@ -28,7 +28,7 @@ extension NSString {
     
     var matchesSlashCommand: Bool {
         let range = NSMakeRange(0, length)
-        return slashCommandMatcher?.matchesInString(self as String, options: [], range: range).count > 0
+        return slashCommandMatcher?.matches(in: self as String, options: [], range: range).count > 0
     }
     
     var args: [String]? {
@@ -36,7 +36,7 @@ extension NSString {
             return []
         }
         
-        let slashlessString = stringByReplacingCharactersInRange(NSMakeRange(0, 1), withString: "")
-        return slashlessString.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+        let slashlessString = replacingCharacters(in: NSMakeRange(0, 1), with: "")
+        return slashlessString.components(separatedBy: CharacterSet.whitespaces)
     }
 }

@@ -123,7 +123,7 @@
 
 - (void)titleChanged:(NSDictionary *)change
 {
-    self.browserBarView.titleLabel.text = [self.webView.title uppercaseStringWithCurrentLocale];
+    self.browserBarView.titleLabel.text = [self.webView.title uppercasedWithCurrentLocale];
 }
 
 @end

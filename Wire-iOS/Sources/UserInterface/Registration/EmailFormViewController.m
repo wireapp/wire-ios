@@ -284,7 +284,7 @@
     }
     else if (error) {
         NSString *key = [self localizationKeyForError:error prefix:@"name"];
-        self.guidanceLabel.text = [NSLocalizedString(key, nil) uppercaseStringWithCurrentLocale];
+        self.guidanceLabel.text = [NSLocalizedString(key, nil) uppercasedWithCurrentLocale];
     }
     
     return valid;
@@ -302,7 +302,7 @@
     }
     else if (error) {
         NSString *key = [self localizationKeyForError:error prefix:@"password"];
-        self.guidanceLabel.text = [NSLocalizedString(key, nil) uppercaseStringWithCurrentLocale];
+        self.guidanceLabel.text = [NSLocalizedString(key, nil) uppercasedWithCurrentLocale];
         self.passwordField.rightAccessoryView = RegistrationTextFieldRightAccessoryViewNone;
     }
     

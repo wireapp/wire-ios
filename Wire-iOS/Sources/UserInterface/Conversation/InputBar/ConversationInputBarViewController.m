@@ -652,7 +652,7 @@
 {
     ConfirmAssetViewController *confirmImageViewController = [[ConfirmAssetViewController alloc] init];
     confirmImageViewController.image = image;
-    confirmImageViewController.previewTitle = [self.conversation.displayName uppercaseStringWithCurrentLocale];
+    confirmImageViewController.previewTitle = [self.conversation.displayName uppercasedWithCurrentLocale];
     
     @weakify(self);
     

@@ -147,7 +147,7 @@
             textString = [NSString stringWithFormat:@"%@\n%@", guidance.title, guidance.explanation];
             NSRange titleRange = [textString rangeOfString:guidance.title];
             NSRange explanationRange = [textString rangeOfString:guidance.explanation];
-            attributedTitle = [[NSMutableAttributedString alloc] initWithString:[textString uppercaseStringWithCurrentLocale]];
+            attributedTitle = [[NSMutableAttributedString alloc] initWithString:[textString uppercasedWithCurrentLocale]];
 
             [attributedTitle addAttribute:NSForegroundColorAttributeName value:titleColor range:titleRange];
             [attributedTitle addAttribute:NSForegroundColorAttributeName value:explanationColor range:explanationRange];

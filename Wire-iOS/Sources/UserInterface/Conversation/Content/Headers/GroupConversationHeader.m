@@ -125,7 +125,7 @@
 
 - (NSAttributedString *)attributedMessage
 {
-    NSString *title = [NSLocalizedString(@"conversation.invite_more_people.title", nil) uppercaseStringWithCurrentLocale];
+    NSString *title = [NSLocalizedString(@"conversation.invite_more_people.title", nil) uppercasedWithCurrentLocale];
     NSString *description = NSLocalizedString(@"conversation.invite_more_people.description", nil);
     
     NSString *message =[@[title, description] componentsJoinedByString:@"\u2029"];

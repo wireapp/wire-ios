@@ -105,7 +105,7 @@ static NSString * const reuseIdentifier = @"MentionsCell";
     ZMUser *user = [self.mentionedUsers allObjects][indexPath.row];
     cell.userImageView.user = user;
     
-    cell.nameLabel.text = self.mentionedUsers.count == 1 ? [user.displayName uppercaseStringWithCurrentLocale] : nil;
+    cell.nameLabel.text = self.mentionedUsers.count == 1 ? [user.displayName uppercasedWithCurrentLocale] : nil;
     
     return cell;
 }

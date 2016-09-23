@@ -207,8 +207,8 @@
 - (void)updateViews
 {
     [self.audioHeaderView.providerButton setImage:self.providerImage forState:UIControlStateNormal];
-    self.audioHeaderView.artistLabel.text = [self.audioTrack.author uppercaseStringWithCurrentLocale];
-    self.audioHeaderView.trackTitleLabel.text = [self.audioTrack.title uppercaseStringWithCurrentLocale];
+    self.audioHeaderView.artistLabel.text = [self.audioTrack.author uppercasedWithCurrentLocale];
+    self.audioHeaderView.trackTitleLabel.text = [self.audioTrack.title uppercasedWithCurrentLocale];
     
     self.artworkObserver = [KeyValueObserver observeObject:self.audioTrack
                                                    keyPath:NSStringFromSelector(@selector(artwork))

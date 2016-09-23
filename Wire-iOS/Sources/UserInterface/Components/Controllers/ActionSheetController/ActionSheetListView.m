@@ -77,7 +77,7 @@
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.translatesAutoresizingMaskIntoConstraints = NO;
     button.accessibilityIdentifier = action.accessibilityIdentifier;
-    [button setTitle:[action.title uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [button setTitle:[action.title uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     [button addTarget:action action:@selector(performAction:) forControlEvents:UIControlEventTouchUpInside];
     
     return button;

@@ -305,7 +305,7 @@ static UIColor *fontColor, *warningBackgroundColor;
     
     if (! self.statusBarIsExpanded) {
         self.statusBarIsExpanded = YES;
-        self.statusLabel.text = [[self titleForConnectivity] uppercaseStringWithCurrentLocale];
+        self.statusLabel.text = [[self titleForConnectivity] uppercasedWithCurrentLocale];
         self.statusLabel.alpha = 0;
         self.animatedContainer.alpha = 0;
         self.animatedContainer.backgroundColor = warningBackgroundColor;
