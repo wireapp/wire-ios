@@ -26,8 +26,9 @@
 CODE_SIGN_IDENTITY = iPhone Distribution: Wire Swiss GmbH (EDF3JCE8BC)
 CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Distribution: Wire Swiss GmbH (EDF3JCE8BC)
 
-PROVISIONING_PROFILE_APP = 3df3141a-6ce4-48fd-b84e-a15eadaa0666  //ZClient App Store iOS with APNS
-PROVISIONING_PROFILE_SHARE_EXT = 76547409-ab85-461a-b329-15910fcae9aa
+DEVELOPMENT_TEAM = EDF3JCE8BC
+PROVISIONING_PROFILE_SPECIFIER_APP = iOS Store Distribution com.wearezeta.zclient.ios
+PROVISIONING_PROFILE_SPECIFIER_SHARE_EXT = iOS Store Share Extension
 
 CODE_SIGN_ENTITLEMENTS_APP = Wire-iOS/Entitlements-Prod.entitlements
 CODE_SIGN_ENTITLEMENTS_SHARE_EXT = Wire-Sharing-Extension-iOS/Wire-Sharing-Extension-iOS.entitlements
