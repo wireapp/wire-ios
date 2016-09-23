@@ -27,6 +27,7 @@ class ConversationObserverTokenTests : ZMBaseManagedObjectTest {
         XCTAssertNotNil(self.uiMOC.globalManagedObjectContextObserver)
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssertNotNil(self.syncMOC.globalManagedObjectContextObserver)
+            self.syncMOC.globalManagedObjectContextObserver.propagateChanges = true
         }
         NotificationCenter.default.post(name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)

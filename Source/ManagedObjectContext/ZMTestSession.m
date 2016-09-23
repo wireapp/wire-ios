@@ -159,6 +159,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     
     // NOTE this produces logs if self.useInMemoryStore = NO
     self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreDirectory:self.databaseDirectory];
+    self.uiMOC.globalManagedObjectContextObserver.propagateChanges = YES;
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.testName;
     
