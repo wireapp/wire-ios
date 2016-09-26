@@ -20,5 +20,5 @@
 // Swift
 //
 
-EMBEDDED_CONTENT_CONTAINS_SWIFT = YES
+EMBEDDED_CONTENT_CONTAINS_SWIFT = NO
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks
