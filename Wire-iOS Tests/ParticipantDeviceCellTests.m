@@ -21,6 +21,7 @@
 #import "ZMSnapshotTestCase.h"
 #import <PureLayout/PureLayout.h>
 #import "ParticipantDeviceCell.h"
+#import "Wire_iOS_Tests-Swift.h"
 
 
 @interface ParticipantDeviceCellTests : ZMSnapshotTestCase
@@ -44,7 +45,7 @@
     UserClient *client = [UserClient fetchUserClientWithRemoteId:@"102030405060708090" forUser:self.user createIfNeeded:YES];
     client.deviceClass = @"tablet";
     [self.sut configureForClient:client];
-    ZMVerifyViewInAllIPhoneWidths(self.sut);
+    ZMVerifyView([self.sut wrapInTableView]);
 }
 
 - (void)testThatItRendersTheCellUnverifiedTruncatedIdentifier
@@ -52,7 +53,7 @@
     UserClient *client = [UserClient fetchUserClientWithRemoteId:@"807060504030201" forUser:self.user createIfNeeded:YES];
     client.deviceClass = @"desktop";
     [self.sut configureForClient:client];
-    ZMVerifyViewInAllIPhoneWidths(self.sut);
+    ZMVerifyView([self.sut wrapInTableView]);
 }
 
 - (void)testThatItRendersTheCellUnverifiedTruncatedIdentifierMultipleCharactersMissing
@@ -60,7 +61,7 @@
     UserClient *client = [UserClient fetchUserClientWithRemoteId:@"7060504030201" forUser:self.user createIfNeeded:YES];
     client.deviceClass = @"desktop";
     [self.sut configureForClient:client];
-    ZMVerifyViewInAllIPhoneWidths(self.sut);
+    ZMVerifyView([self.sut wrapInTableView]);
 }
 
 - (void)testThatItRendersTheCellVerifiedWithLabel
@@ -69,7 +70,7 @@
     client.deviceClass = @"phone";
     [self trustClient:client];
     [self.sut configureForClient:client];
-    ZMVerifyViewInAllIPhoneWidths(self.sut);
+    ZMVerifyView([self.sut wrapInTableView]);
 }
 
 #pragma mark - Helper
@@ -81,6 +82,8 @@
     [self.uiMOC setPersistentStoreMetadata:@"selfClientID" forKey:ZMPersistedClientIdKey];
     selfClient.user = [ZMUser selfUserInContext:self.uiMOC];
     [selfClient trustClient:client];
+    
+    
 }
 
 @end

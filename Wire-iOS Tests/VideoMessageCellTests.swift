@@ -22,7 +22,7 @@ import XCTest
 
 class VideoMessageCellTests: ZMSnapshotTestCase {
     
-    func cellWithConfig(_ config: ((MockMessage) -> ())?) -> VideoMessageCell {
+    func wrappedCellWithConfig(_ config: ((MockMessage) -> ())?) -> UITableView {
         
         let fileMessage = MockMessageFactory.fileTransferMessage()
         fileMessage?.backingFileMessageData.mimeType = "video/mp4"
@@ -49,12 +49,8 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
                                               0, CGFloat(WAZUIMagic.float(forIdentifier: "content.right_margin")))
         
         cell.configure(for: fileMessage, layoutProperties: layoutProperties)
-        cell.layoutIfNeeded()
-        
-        let size = cell.systemLayoutSizeFitting(CGSize(width: 320.0, height: 0.0) , withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel)
-        cell.bounds = CGRect(x: 0.0, y: 0.0, width: size.width, height: size.height)
-        cell.layoutIfNeeded()
-        return cell
+ 
+        return cell.wrapInTableView()
     }
     
     override func setUp() {
@@ -65,7 +61,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK : Uploaded (File not downloaded)
     
     func testUploadedCell_fromThisDevice() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .uploaded
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
         })
@@ -73,26 +69,26 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     }
     
     func testUploadedCell_fromOtherUser() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .uploaded
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
     
     func testUploadedCell_fromOtherUser_withoutPreview() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.backingFileMessageData.previewData = nil
             $0.fileMessageData?.transferState = .uploaded
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
     
     func testUploadedCell_fromThisDevice_bigFileSize() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .uploaded
             $0.fileMessageData?.size = 1024 * 1024 * 25
             $0.backingFileMessageData.fileURL = .none
@@ -104,7 +100,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK : Uploading
     
     func testUploadingCell_fromThisDevice() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .uploading
             $0.fileMessageData?.progress = 0.75
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
@@ -113,20 +109,20 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     }
     
     func testUploadingCell_fromOtherUser_withoutPreview() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .uploading
             $0.backingFileMessageData.previewData = nil
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
     
     func testUploadingCell_fromOtherUser() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .uploading
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
@@ -134,7 +130,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK : Downloading
     
     func testDownloadingCell_fromThisDevice() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .downloading
             $0.fileMessageData?.progress = 0.75
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
@@ -143,11 +139,11 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     }
     
     func testDownloadingCell_fromOtherUser() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .downloading
             $0.backingFileMessageData.fileURL = .none
             $0.fileMessageData?.progress = 0.75
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
@@ -155,7 +151,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK : Downloaded
     
     func testDownloadedCell_fromThisDevice() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .downloaded
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
         })
@@ -163,10 +159,10 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     }
     
     func testDownloadedCell_fromOtherUser() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .downloaded
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
@@ -174,7 +170,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK : Download Failed
     
     func testFailedDownloadCell_fromThisDevice() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .failedDownload
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
         })
@@ -182,10 +178,10 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     }
     
     func testFailedDownloadCell_fromOtherUser() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .failedDownload
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
@@ -193,7 +189,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK : Upload Failed
     
     func testFailedUploadCell_fromThisDevice() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .failedUpload
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
         })
@@ -201,10 +197,10 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     }
     
     func testFailedUploadCell_fromOtherUser() {
-        let cell = self.cellWithConfig({
+        let cell = self.wrappedCellWithConfig({
             $0.fileMessageData?.transferState = .failedUpload
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         })
         verify(view: cell)
     }
@@ -212,7 +208,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK : Upload Cancelled
     
     func testCancelledUploadCell_fromThisDevice() {
-        let cell = cellWithConfig {
+        let cell = wrappedCellWithConfig {
             $0.fileMessageData?.transferState = .cancelledUpload
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
         }
@@ -221,10 +217,10 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     }
     
     func testCancelledUploadCell_fromOtherUser() {
-        let cell = cellWithConfig {
+        let cell = wrappedCellWithConfig {
             $0.fileMessageData?.transferState = .cancelledUpload
             $0.backingFileMessageData.fileURL = .none
-            $0.sender = (MockUser.mockUsers()[0] as! ZMUser)
+            $0.sender = MockUser.mockUsers().first!
         }
         
         verify(view: cell)
@@ -233,7 +229,7 @@ class VideoMessageCellTests: ZMSnapshotTestCase {
     // MARK: No Duration
     
     func testDownloadedCell_fromThisDevice_NoDuration() {
-        verify(view: cellWithConfig {
+        verify(view: wrappedCellWithConfig {
             $0.fileMessageData?.transferState = .downloaded
             $0.backingFileMessageData.fileURL = Bundle.main.bundleURL
             $0.backingFileMessageData?.durationMilliseconds = 0
