@@ -30,6 +30,8 @@ cache:
 install:
   - xcrun simctl erase all
   - open -b com.apple.iphonesimulator
+  - carthage version
+  - brew upgrade carthage
   - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
   - ./setup.sh
 
