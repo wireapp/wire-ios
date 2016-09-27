@@ -22,29 +22,29 @@ import Foundation
 // MARK: Message observing 
 
 private enum MessageKey: String {
-    case DeliveryState = "deliveryState"
-    case MediumData = "mediumData"
-    case MediumRemoteIdentifier = "mediumRemoteIdentifier"
-    case PreviewGenericMessage = "previewGenericMessage"
-    case MediumGenericMessage = "mediumGenericMessage"
-    case LinkPreviewState = "linkPreviewState"
-    case GenericMessage = "genericMessage"
-    case Reactions = "reactions"
+    case deliveryState = "deliveryState"
+    case mediumData = "mediumData"
+    case mediumRemoteIdentifier = "mediumRemoteIdentifier"
+    case previewGenericMessage = "previewGenericMessage"
+    case mediumGenericMessage = "mediumGenericMessage"
+    case linkPreviewState = "linkPreviewState"
+    case genericMessage = "genericMessage"
+    case reactions = "reactions"
 }
 
 extension ZMMessage : ObjectInSnapshot {
     
     public var observableKeys : [String] {
-        var keys = [MessageKey.DeliveryState.rawValue]
+        var keys = [MessageKey.deliveryState.rawValue]
         
         if self is ZMImageMessage {
-            keys.append(MessageKey.MediumData.rawValue)
-            keys.append(MessageKey.MediumRemoteIdentifier.rawValue)
+            keys.append(MessageKey.mediumData.rawValue)
+            keys.append(MessageKey.mediumRemoteIdentifier.rawValue)
         }
         if self is ZMAssetClientMessage {
             keys.append(ZMAssetClientMessageTransferStateKey)
-            keys.append(MessageKey.PreviewGenericMessage.rawValue)
-            keys.append(MessageKey.MediumGenericMessage.rawValue)
+            keys.append(MessageKey.previewGenericMessage.rawValue)
+            keys.append(MessageKey.mediumGenericMessage.rawValue)
             keys.append(ZMAssetClientMessageDownloadedImageKey)
             keys.append(ZMAssetClientMessageDownloadedFileKey)
             keys.append(ZMAssetClientMessageProgressKey)
@@ -52,12 +52,12 @@ extension ZMMessage : ObjectInSnapshot {
 
         if self is ZMClientMessage {
             keys.append(ZMAssetClientMessageDownloadedImageKey)
-            keys.append(MessageKey.LinkPreviewState.rawValue)
-            keys.append(MessageKey.GenericMessage.rawValue)
+            keys.append(MessageKey.linkPreviewState.rawValue)
+            keys.append(MessageKey.genericMessage.rawValue)
         }
         
         if !(self is ZMSystemMessage) {
-            keys.append(MessageKey.Reactions.rawValue)
+            keys.append(MessageKey.reactions.rawValue)
         }
 
         return keys
@@ -71,19 +71,19 @@ extension ZMMessage : ObjectInSnapshot {
         super.init(object: object)
     }
     public var deliveryStateChanged : Bool {
-        return changedKeysAndOldValues.keys.contains(MessageKey.DeliveryState.rawValue)
+        return changedKeysAndOldValues.keys.contains(MessageKey.deliveryState.rawValue)
     }
     
     public var reactionsChanged : Bool {
-        return changedKeysAndOldValues.keys.contains(MessageKey.Reactions.rawValue) || reactionChangeInfo != nil
+        return changedKeysAndOldValues.keys.contains(MessageKey.reactions.rawValue) || reactionChangeInfo != nil
     }
 
     /// Whether the image data on disk changed
     public var imageChanged : Bool {
-        return !Set(arrayLiteral: MessageKey.MediumData.rawValue,
-            MessageKey.MediumRemoteIdentifier.rawValue,
-            MessageKey.PreviewGenericMessage.rawValue,
-            MessageKey.MediumGenericMessage.rawValue,
+        return !Set(arrayLiteral: MessageKey.mediumData.rawValue,
+            MessageKey.mediumRemoteIdentifier.rawValue,
+            MessageKey.previewGenericMessage.rawValue,
+            MessageKey.mediumGenericMessage.rawValue,
             ZMAssetClientMessageDownloadedImageKey
         ).isDisjoint(with: Set(changedKeysAndOldValues.keys))
     }
@@ -99,7 +99,7 @@ extension ZMMessage : ObjectInSnapshot {
     
     fileprivate var linkPreviewDataChanged: Bool {
         guard let genericMessage = (message as? ZMClientMessage)?.genericMessage else { return false }
-        guard let oldGenericMessage = changedKeysAndOldValues[MessageKey.GenericMessage.rawValue] as? ZMGenericMessage else { return false }
+        guard let oldGenericMessage = changedKeysAndOldValues[MessageKey.genericMessage.rawValue] as? ZMGenericMessage else { return false }
         let oldLinks = oldGenericMessage.linkPreviews
         let newLinks = genericMessage.linkPreviews
         
@@ -107,7 +107,7 @@ extension ZMMessage : ObjectInSnapshot {
     }
     
     public var linkPreviewChanged: Bool {
-        return changedKeysAndOldValues.keys.contains(MessageKey.LinkPreviewState.rawValue) || linkPreviewDataChanged
+        return changedKeysAndOldValues.keys.contains(MessageKey.linkPreviewState.rawValue) || linkPreviewDataChanged
     }
 
     public var senderChanged : Bool {
