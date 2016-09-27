@@ -458,7 +458,10 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     else if (linkPreview.hasImage) {
         return linkPreview.image.uploaded.assetId;
     }
-    
+    else if (nil != self.imageData) {
+        return self.nonce.UUIDString;
+    }
+
     return nil;
 }
 
