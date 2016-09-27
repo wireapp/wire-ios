@@ -1,4 +1,4 @@
 framework=WireMessageStrategy
 organization=wireapp
 repository=wire-ios-message-strategy
-release-name-format={ADJECTIVE} {ANIMAL} really love eating {FOOD_INGREDIENT}
+release-name-format={ANIMAL}s really love eating {FOOD_INGREDIENT}
