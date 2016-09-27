@@ -138,6 +138,8 @@
 		F963E93C1D95951000098AD3 /* MissingClientsMapTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsMapTests.swift; sourceTree = "<group>"; };
 		F963E93D1D95951000098AD3 /* MissingClientsRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F963E9481D9A651C00098AD3 /* RequestStrategyTestBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestStrategyTestBase.swift; sourceTree = "<group>"; };
+		F963E9521D9A771A00098AD3 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		F963E9541D9A775B00098AD3 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		F9F056B31D93D22000FA1AAD /* WireMessageStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireMessageStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9F056BC1D93D22000FA1AAD /* WireMessageStrategyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireMessageStrategyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9F056CF1D93D25D00FA1AAD /* WireMessageStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireMessageStrategy.h; sourceTree = "<group>"; };
@@ -399,6 +401,8 @@
 		F9F0571C1D93D4DE00FA1AAD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F963E9541D9A775B00098AD3 /* libz.tbd */,
+				F963E9521D9A771A00098AD3 /* libc++.tbd */,
 				F9F057BF1D94284F00FA1AAD /* ZMCMockTransport.framework */,
 				F9F057831D94167100FA1AAD /* ZMTesting.framework */,
 				F9F057841D94167100FA1AAD /* OCMock.framework */,
@@ -784,16 +788,18 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -802,6 +808,7 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -809,7 +816,9 @@
 					"$(inherited)",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -839,16 +848,18 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -856,9 +867,12 @@
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -895,7 +909,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireMessageStrategy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -925,7 +939,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireMessageStrategy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -951,7 +965,7 @@
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireMessageStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Bridging-Header.h";
@@ -979,7 +993,7 @@
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireMessageStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Bridging-Header.h";
@@ -991,7 +1005,7 @@
 		F9F0577A1D94141C00FA1AAD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				DEVELOPMENT_TEAM = W5KEQBF9B5;
@@ -1014,7 +1028,7 @@
 		F9F0577B1D94141C00FA1AAD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				DEVELOPMENT_TEAM = W5KEQBF9B5;

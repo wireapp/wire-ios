@@ -111,14 +111,17 @@
         case ZMUpdateEventConversationClientMessageAdd:
         case ZMUpdateEventConversationOtrMessageAdd:
         case ZMUpdateEventConversationOtrAssetAdd:
+        {
             updateResult = [ZMOTRMessage messageUpdateResultFromUpdateEvent:event
                                                      inManagedObjectContext:self.managedObjectContext
                                                              prefetchResult:prefetchResult];
-            if ([self.apnsConfirmationStatus.class sendDeliveryReceipts]) {
+            
+            id<DeliveryConfirmationDelegate> strongStatus = self.apnsConfirmationStatus;
+            if ([strongStatus.class sendDeliveryReceipts]) {
                 if (updateResult.needsConfirmation) {
                     ZMClientMessage *confirmation = [updateResult.message confirmReception];
                     if (event.source == ZMUpdateEventSourcePushNotification) {
-                        [self.apnsConfirmationStatus needsToConfirmMessage:confirmation.nonce];
+                        [strongStatus needsToConfirmMessage:confirmation.nonce];
                     }
                 }
             }
@@ -132,6 +135,7 @@
                 [self.localNotificationDispatcher processMessage:(ZMOTRMessage *)updateResult.message];
             }
             break;
+        }
         default:
             return nil;
     }
