@@ -33,17 +33,6 @@
 		F9F056F41D93D3FF00FA1AAD /* ZMMessageTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F056E81D93D3FF00FA1AAD /* ZMMessageTranscoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9F056F51D93D3FF00FA1AAD /* ZMMessageTranscoder.m in Sources */ = {isa = PBXBuildFile; fileRef = F9F056E91D93D3FF00FA1AAD /* ZMMessageTranscoder.m */; };
 		F9F0571E1D93D4DE00FA1AAD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F0571D1D93D4DE00FA1AAD /* Foundation.framework */; };
-		F9F0572C1D93D50200FA1AAD /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057201D93D50200FA1AAD /* ZMCDataModel.framework */; };
-		F9F0572D1D93D50200FA1AAD /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057211D93D50200FA1AAD /* ZMTransport.framework */; };
-		F9F0572E1D93D50200FA1AAD /* ZMCLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057221D93D50200FA1AAD /* ZMCLinkPreview.framework */; };
-		F9F0572F1D93D50200FA1AAD /* ZMProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057231D93D50200FA1AAD /* ZMProtos.framework */; };
-		F9F057301D93D50200FA1AAD /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057241D93D50200FA1AAD /* Ono.framework */; };
-		F9F057311D93D50200FA1AAD /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057251D93D50200FA1AAD /* Cryptobox.framework */; };
-		F9F057321D93D50200FA1AAD /* zimages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057261D93D50200FA1AAD /* zimages.framework */; };
-		F9F057331D93D50200FA1AAD /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057271D93D50200FA1AAD /* ZMCSystem.framework */; };
-		F9F057341D93D50200FA1AAD /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057281D93D50200FA1AAD /* PINCache.framework */; };
-		F9F057351D93D50200FA1AAD /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057291D93D50200FA1AAD /* ProtocolBuffers.framework */; };
-		F9F057361D93D50200FA1AAD /* libPhoneNumber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F0572A1D93D50200FA1AAD /* libPhoneNumber.framework */; };
 		F9F0573A1D93DA9800FA1AAD /* CBCryptoBox+UpdateEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F057381D93DA9800FA1AAD /* CBCryptoBox+UpdateEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9F0573B1D93DA9800FA1AAD /* CBCryptoBox+UpdateEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = F9F057391D93DA9800FA1AAD /* CBCryptoBox+UpdateEvents.m */; };
 		F9F0573D1D93DC8100FA1AAD /* ZMMessage+Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F0573C1D93DC8100FA1AAD /* ZMMessage+Dependency.swift */; };
@@ -68,7 +57,6 @@
 		F9F057AF1D941B7E00FA1AAD /* NSManagedObjectContext+TestHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F9F057AE1D941B7E00FA1AAD /* NSManagedObjectContext+TestHelpers.m */; };
 		F9F057BD1D94229E00FA1AAD /* ZMProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057231D93D50200FA1AAD /* ZMProtos.framework */; };
 		F9F057BE1D9422D200FA1AAD /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057291D93D50200FA1AAD /* ProtocolBuffers.framework */; };
-		F9F057C01D94284F00FA1AAD /* ZMCMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F057BF1D94284F00FA1AAD /* ZMCMockTransport.framework */; };
 		F9F057C71D94292500FA1AAD /* 1900x1500.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9F057C11D94292500FA1AAD /* 1900x1500.jpg */; };
 		F9F057C81D94292500FA1AAD /* animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = F9F057C21D94292500FA1AAD /* animated.gif */; };
 		F9F057C91D94292500FA1AAD /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9F057C31D94292500FA1AAD /* medium.jpg */; };
@@ -238,18 +226,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F9F057C01D94284F00FA1AAD /* ZMCMockTransport.framework in Frameworks */,
-				F9F0572C1D93D50200FA1AAD /* ZMCDataModel.framework in Frameworks */,
-				F9F0572D1D93D50200FA1AAD /* ZMTransport.framework in Frameworks */,
-				F9F0572E1D93D50200FA1AAD /* ZMCLinkPreview.framework in Frameworks */,
-				F9F0572F1D93D50200FA1AAD /* ZMProtos.framework in Frameworks */,
-				F9F057301D93D50200FA1AAD /* Ono.framework in Frameworks */,
-				F9F057311D93D50200FA1AAD /* Cryptobox.framework in Frameworks */,
-				F9F057321D93D50200FA1AAD /* zimages.framework in Frameworks */,
-				F9F057331D93D50200FA1AAD /* ZMCSystem.framework in Frameworks */,
-				F9F057341D93D50200FA1AAD /* PINCache.framework in Frameworks */,
-				F9F057351D93D50200FA1AAD /* ProtocolBuffers.framework in Frameworks */,
-				F9F057361D93D50200FA1AAD /* libPhoneNumber.framework in Frameworks */,
 				F9F0571E1D93D4DE00FA1AAD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
