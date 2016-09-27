@@ -49,3 +49,4 @@ FOUNDATION_EXPORT const unsigned char WireRequestStrategyVersionString[];
 #import <WireRequestStrategy/ZMChangeTrackerBootstrap+Testing.h>
 #import <WireRequestStrategy/ZMImagePreprocessingTracker.h>
 #import <WireRequestStrategy/ZMImagePreprocessingTracker+Testing.h>
+#import <WireRequestStrategy/ZMAssetRequestFactory.h>

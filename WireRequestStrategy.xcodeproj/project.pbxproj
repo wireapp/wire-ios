@@ -109,6 +109,10 @@
 		BF7D9BFB1D8C355100949267 /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 166901FE1D7082B8000FE4AF /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF7D9BFC1D8C355100949267 /* ZMTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 166901FF1D7082B8000FE4AF /* ZMTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF7D9BFD1D8C355100949267 /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 166902001D7082B8000FE4AF /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F963E8DC1D955D4600098AD3 /* AssetRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */; };
+		F963E8DD1D955D4600098AD3 /* ZMAssetRequestFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F963E8DE1D955D4600098AD3 /* ZMAssetRequestFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */; };
+		F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8E01D955D5500098AD3 /* SharedProtocols.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -255,6 +259,10 @@
 		BF6651311D8C2ED50074F367 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
 		BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		BF6651331D8C2ED50074F367 /* libPhoneNumber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumber.framework; path = Carthage/Build/iOS/libPhoneNumber.framework; sourceTree = "<group>"; };
+		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
+		F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssetRequestFactory.h; sourceTree = "<group>"; };
+		F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMAssetRequestFactory.m; sourceTree = "<group>"; };
+		F963E8E01D955D5500098AD3 /* SharedProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedProtocols.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,6 +339,8 @@
 		1669016C1D707509000FE4AF /* WireRequestStrategy */ = {
 			isa = PBXGroup;
 			children = (
+				F963E8DF1D955D5500098AD3 /* StatusProtocols */,
+				F963E8D81D955D4600098AD3 /* Helper */,
 				166901F71D7081D1000FE4AF /* ImagePreprocessing */,
 				166901A71D7081C7000FE4AF /* RequestStrategy.swift */,
 				1621D21F1D75A71E007108C2 /* RequestAvailableNotification.swift */,
@@ -480,6 +490,24 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F963E8D81D955D4600098AD3 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */,
+				F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */,
+				F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		F963E8DF1D955D5500098AD3 /* StatusProtocols */ = {
+			isa = PBXGroup;
+			children = (
+				F963E8E01D955D5500098AD3 /* SharedProtocols.swift */,
+			);
+			path = StatusProtocols;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -504,6 +532,7 @@
 				166901D31D7081C7000FE4AF /* ZMDownstreamObjectSync.h in Headers */,
 				1669016E1D707509000FE4AF /* WireRequestStrategy.h in Headers */,
 				166901D11D7081C7000FE4AF /* ZMDependentObjects.h in Headers */,
+				F963E8DD1D955D4600098AD3 /* ZMAssetRequestFactory.h in Headers */,
 				166901D81D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h in Headers */,
 				1621D2301D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h in Headers */,
 				166901DA1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h in Headers */,
@@ -624,6 +653,7 @@
 				166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */,
 				166901EE1D7081C7000FE4AF /* ZMUpstreamAssetSync.m in Sources */,
 				166901CF1D7081C7000FE4AF /* RequestStrategy.swift in Sources */,
+				F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */,
 				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
 				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
 				166901FD1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m in Sources */,
@@ -632,7 +662,9 @@
 				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
+				F963E8DE1D955D4600098AD3 /* ZMAssetRequestFactory.m in Sources */,
 				1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */,
+				F963E8DC1D955D4600098AD3 /* AssetRequestFactory.swift in Sources */,
 				166901E61D7081C7000FE4AF /* ZMSyncOperationSet.m in Sources */,
 				166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */,
 				166901D21D7081C7000FE4AF /* ZMDependentObjects.m in Sources */,
