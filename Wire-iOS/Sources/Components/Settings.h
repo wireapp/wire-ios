@@ -71,7 +71,6 @@ extern NSString * const UserDefaultDisableAnalytics;
 @property (nonatomic) BOOL enableExtras;
 @property (nonatomic) BOOL chatHeadsDisabled;
 @property (nonatomic) BOOL contactTipWasDisplayed;
-@property (nonatomic, getter=isGroupCallsEnabled) BOOL groupCallsEnabled;
 @property (nonatomic) BOOL likeTutorialCompleted;
 @property (nonatomic) BOOL enableMarkdown;
 @property (nonatomic) BOOL shouldRegisterForVoIPNotificationsOnly;
