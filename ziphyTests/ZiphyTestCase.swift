@@ -33,10 +33,6 @@ class GiphyRequester : ZiphyURLRequester {
     }
     
     func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> URLSessionDataTask {
-        
-        
-        //        if let originalURL:URL = request.url {
-        
         var urlString = request.url!.absoluteString
         urlString = urlString+"&api_key=\(self.apiKey)"
         
@@ -45,14 +41,6 @@ class GiphyRequester : ZiphyURLRequester {
         let task = self.searchSession.dataTask(with: newURL!, completionHandler: completionHandler)
         task.resume()
         return task
-//        }
-//        else {
-//            completionHandler(nil, nil,NSError(domain: "requester.error",
-//                code: 1,
-//                userInfo:[NSLocalizedDescriptionKey:"Request"]))
-//        }
-        
-//        return nil
     }
 }
 
