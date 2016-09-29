@@ -23,58 +23,101 @@ import Foundation
 
 @objc public class ZiphySearchResultsController : NSObject {
     
-    
-    open var ziphyClient:ZiphyClient?
-    open let searchTerm:String
-    
-    open var results:[Ziph]? {
+    public var ziphyClient : ZiphyClient?
+    public var results : [Ziph] {
+        let ziphs = self.paginationController?.ziphs ?? []
         
-        return self.paginationController.ziphs
+        return ziphs.filter({
+            guard let size = $0.ziphyImages[ZiphyClient.fromZiphyImageTypeToString(.downsized)]?.size else { return false }
+            return size < maxImageSize
+        })
     }
 
-    open var resultsLastFetch:Int {
+    public var resultsLastFetch:Int {
     
-        return self.paginationController.ziphsThisFetch
+        return self.paginationController?.ziphsThisFetch ?? 0
     }
     
-    open var totalPagesFetched:Int {
+    public var totalPagesFetched:Int {
     
-        return self.paginationController.totalPagesFetched
+        return self.paginationController?.totalPagesFetched ?? 0
     }
     
-    fileprivate let paginationController:ZiphyPaginationController
+    fileprivate var paginationController: ZiphyPaginationController?
     fileprivate (set) open var pageSize:Int
+    fileprivate (set) open var maxImageSize:Int
+    fileprivate let imageCache = NSCache<NSString, NSData>()
+    fileprivate let callbackQueue : DispatchQueue
     
     
-    public init(searchTerm:String,
-        pageSize:Int,
-        callBackQueue:DispatchQueue = DispatchQueue.main) {
+    public init(pageSize:Int, maxImageSize: Int = 1024 * 1024 * 3, callbackQueue:DispatchQueue = DispatchQueue.main) {
+        
+        self.callbackQueue = callbackQueue
+        self.pageSize = pageSize
+        self.maxImageSize = maxImageSize
+        self.imageCache.totalCostLimit = 1024 * 1024 * 10 // 10MB
+        
+        super.init()
+    }
+    
+    public func search(withSearchTerm searchTerm: String, _ completion:@escaping SuccessOrErrorCallback) -> CancelableTask? {
+        
+        self.paginationController = ZiphyPaginationController(callBackQueue:callbackQueue)
+        self.paginationController?.fetchBlock = { [weak self] (offset) in
             
-            self.searchTerm = searchTerm
-            self.pageSize = pageSize
-            self.paginationController = ZiphyPaginationController(callBackQueue:callBackQueue)
-            
-            super.init()
-            
-            self.paginationController.fetchBlock = { [weak self](offSet) in
+            if let strongSelf = self {
                 
-                if let strongSelf = self {
-                    
-                    strongSelf.ziphyClient?.search(callBackQueue,
-                        term: strongSelf.searchTerm,
-                        resultsLimit: strongSelf.pageSize,
-                        offset: offSet) { [weak self](success, ziphs, error) -> () in
-                            if let strongSelf = self {
-                                strongSelf.paginationController.updatePagination(success, ziphs: ziphs, error: error)
-                            }
+                return strongSelf.ziphyClient?.search(strongSelf.callbackQueue, term: searchTerm, resultsLimit: strongSelf.pageSize, offset: offset) { [weak self] (success, ziphs, error) -> () in
+                    if let strongSelf = self {
+                        strongSelf.paginationController?.updatePagination(success, ziphs: ziphs, error: error)
                     }
                 }
             }
+            
+            return nil
+        }
+
+        return fetchMoreResults(completion)
     }
     
-    open func fetchSearchResults(_ completion:@escaping SuccessOrErrorCallback) {
+    public func trending(_ completion:@escaping SuccessOrErrorCallback) -> CancelableTask? {
+        self.paginationController = ZiphyPaginationController(callBackQueue:callbackQueue)
+        self.paginationController?.fetchBlock = { [weak self] (offset) in
+            
+            if let strongSelf = self {
+                
+                return strongSelf.ziphyClient?.trending(strongSelf.callbackQueue, resultsLimit: strongSelf.pageSize, offset: offset) { [weak self] (success, ziphs, error) in
+                    if let strongSelf = self {
+                        strongSelf.paginationController?.updatePagination(success, ziphs: ziphs, error: error)
+                    }
+                }
+            }
+            
+            return nil
+        }
         
-        self.paginationController.completionBlock = completion
-        self.paginationController.fetchNewPage()
+        return fetchMoreResults(completion)
+    }
+    
+    public func fetchMoreResults(_ completion:@escaping SuccessOrErrorCallback) -> CancelableTask? {
+        self.paginationController?.completionBlock = completion
+        return self.paginationController?.fetchNewPage()
+    }
+    
+    public func fetchImageData(forZiph ziph: Ziph, imageType: ZiphyImageType, completion: @escaping (_ imageData: Data?, _ imageRepresentation: ZiphyImageRep?, _ error: Error?) -> Void) {
+        let representation = ziph.ziphyImages[ZiphyClient.fromZiphyImageTypeToString(imageType)]!
+
+        if let imageData = self.imageCache.object(forKey: representation.url as NSString) {
+            completion(imageData as Data, representation, nil)
+        }
+        
+        self.ziphyClient?.fetchImage(DispatchQueue.main, ziph: ziph, imageType: imageType, onCompletion: { [weak self] (success, imageRepresentation, ziph, imageData, error) in
+            if error == nil, let imageData = imageData, let imageRepresentation = imageRepresentation {
+                self?.imageCache.setObject(imageData as NSData, forKey: imageRepresentation.url as NSString)
+                completion(imageData, imageRepresentation, nil)
+            } else {
+                completion(nil, nil, error)
+            }
+        })
     }
 }

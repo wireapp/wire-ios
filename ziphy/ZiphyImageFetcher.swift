@@ -103,7 +103,7 @@ public typealias SingleZiphCallBack = (_ imageData:Data?, _ ziph:Ziph?,  _ error
             
             self.offset = justZiphs.count
             
-            self.ziphyClient.search(callBackQueue,
+            _ = self.ziphyClient.search(callBackQueue,
                 term: self.term,
                 resultsLimit: self.resultsLimit,
                 offset:self.offset) { (success, ziphs, error) in

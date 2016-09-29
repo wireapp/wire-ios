@@ -32,24 +32,27 @@ class GiphyRequester : ZiphyURLRequester {
         self.searchSession = URLSession(configuration: URLSessionConfiguration.default)
     }
     
-    @objc func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) {
+    func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> URLSessionDataTask {
         
-        if let originalURL:URL = request.url {
-            
-            var urlString = originalURL.absoluteString
-            urlString = urlString+"&api_key=\(self.apiKey)"
-            
-            let newURL = URL(string: urlString)
-            
-            let task = self.searchSession.dataTask(with: newURL!, completionHandler: completionHandler)
-            task.resume()
-        }
-        else {
-            completionHandler(nil, nil,NSError(domain: "requester.error",
-                code: 1,
-                userInfo:[NSLocalizedDescriptionKey:"Request"]))
-        }
         
+        //        if let originalURL:URL = request.url {
+        
+        var urlString = request.url!.absoluteString
+        urlString = urlString+"&api_key=\(self.apiKey)"
+        
+        let newURL = URL(string: urlString)
+        
+        let task = self.searchSession.dataTask(with: newURL!, completionHandler: completionHandler)
+        task.resume()
+        return task
+//        }
+//        else {
+//            completionHandler(nil, nil,NSError(domain: "requester.error",
+//                code: 1,
+//                userInfo:[NSLocalizedDescriptionKey:"Request"]))
+//        }
+        
+//        return nil
     }
 }
 
