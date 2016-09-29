@@ -23,6 +23,12 @@ import Classy
 import WireExtensionComponents
 
 
+extension Settings {
+    var returnKeyType: UIReturnKeyType {
+        return disableSendButton ? .send : .default
+    }
+}
+
 public enum InputBarState: Equatable {
     case writing
     case editing(originalText: String)
@@ -153,13 +159,17 @@ private struct InputBarConstants {
         textView.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsetsMake(17, 0, 17, 4)
         textView.placeholderTextContainerInset = UIEdgeInsetsMake(21, 10, 21, 0)
-        textView.keyboardType = .default;
-        textView.returnKeyType = .send;
-        textView.keyboardAppearance = ColorScheme.default().keyboardAppearance;
+        textView.keyboardType = .default
+        textView.keyboardAppearance = ColorScheme.default().keyboardAppearance
         textView.placeholderTextTransform = .upper
-        
+        updateReturnKey()
+
         contentSizeObserver = KeyValueObserver.observe(textView, keyPath: "contentSize", target: self, selector: #selector(textViewContentSizeDidChange))
         updateBackgroundColor()
+    }
+    
+    public func updateReturnKey() {
+        textView.returnKeyType = Settings.shared().returnKeyType
     }
     
     fileprivate func createConstraints() {
@@ -319,7 +329,6 @@ private struct InputBarConstants {
 
     // MARK: – Editing View State
 
-    
     open func setInputBarText(_ text: String) {
         textView.text = text
         textView.setContentOffset(.zero, animated: false)
