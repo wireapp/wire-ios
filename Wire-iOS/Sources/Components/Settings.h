@@ -65,6 +65,8 @@ extern NSString * const UserDefaultDisableUI;
 extern NSString * const UserDefaultDisableHockey;
 extern NSString * const UserDefaultDisableAnalytics;
 
+extern NSString * const UserDefaultSendButtonDisabled;
+
 /// Model object for locally stored (not in SE or AVS) user app settings
 @interface Settings : NSObject
 
@@ -74,6 +76,7 @@ extern NSString * const UserDefaultDisableAnalytics;
 @property (nonatomic) BOOL likeTutorialCompleted;
 @property (nonatomic) BOOL enableMarkdown;
 @property (nonatomic) BOOL shouldRegisterForVoIPNotificationsOnly;
+@property (nonatomic) BOOL disableSendButton;
 
 @property (nonatomic, readonly) BOOL skipFirstTimeUseChecks;
 @property (nonatomic) NSDate *lastPushAlertDate;
