@@ -19,21 +19,18 @@
 
 import Foundation
 
-
-
 private let apiVersionPath = "/v1"
 private let gifsEndpoint = "/gifs"
 private let searchEndpoint = gifsEndpoint + "/search"
 private let randomEndpoint = gifsEndpoint + "/random"
+private let trendingEndpoint = gifsEndpoint + "/trending"
 private let requestScheme = "https"
-
-
 
 public typealias ZiphsCallBack = (_ success:Bool, _ ziphs:[Ziph], _ error:Error?) -> ()
 public typealias ZiphByIdCallBack = (_ success:Bool, _ ziphId:String, _ error:Error?)->()
 public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _ ziph:Ziph, _ data:Data?, _ error:Error?) -> ()
 
-@objc public class ZiphyClient : NSObject {
+@objc public final class ZiphyClient : NSObject {
     
     
     open static var logLevel:ZiphyLogLevel = ZiphyLogLevel.error
@@ -52,16 +49,24 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
             apiVersionPath:apiVersionPath,
             searchEndpoint:searchEndpoint,
             randomEndpoint:randomEndpoint,
+            trendingEndpoint:trendingEndpoint,
             gifsEndpoint:gifsEndpoint)
     }
     
-    open func search(_ callBackQueue:DispatchQueue = DispatchQueue.main,
-        term:String,
-        resultsLimit:Int = 25,
-        offset:Int = 0,
-        onCompletion:@escaping ZiphsCallBack) {
+    public func trending(_ callBackQueue:DispatchQueue = DispatchQueue.main, resultsLimit:Int = 25, offset:Int, onCompletion: @escaping ZiphsCallBack) -> CancelableTask? {
+        
+        let eitherRequest = self.requestGenerator.trendingRequestWithParameters(resultsLimit: resultsLimit, offset: offset)
+        return  performZiphListRequest(eitherRequest: eitherRequest, onCompletion: onCompletion, callBackQueue: callBackQueue)
+    }
+    
+    public func search(_ callBackQueue:DispatchQueue = DispatchQueue.main, term:String, resultsLimit:Int = 25, offset:Int = 0, onCompletion: @escaping ZiphsCallBack) -> CancelableTask? {
         
         let eitherRequest = self.requestGenerator.searchRequestWithParameters(term, resultsLimit:resultsLimit, offset:offset)
+        return performZiphListRequest(eitherRequest: eitherRequest, onCompletion: onCompletion, callBackQueue: callBackQueue)
+    }
+    
+    func performZiphListRequest(eitherRequest: Either<Error, URLRequest>, onCompletion: @escaping ZiphsCallBack, callBackQueue : DispatchQueue) -> CancelableTask? {
+        var searchTask : CancelableTask? = nil
         
         eitherRequest.leftMap { error in
             
@@ -72,9 +77,9 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         
         eitherRequest.rightMap { urlRequest in
             
-            self.performDataTask(urlRequest, requester:self.requester).then { (data, _, nError) in
+            searchTask = self.performDataTask(urlRequest, requester:self.requester).then { (data, _, nError) in
                 
-                let eitherPaginationData = self.checkDataForPagination(data, resultsLimit:resultsLimit, offset:offset)
+                let eitherPaginationData = self.checkDataForPagination(data)
                 
                 return eitherPaginationData.left
                 
@@ -88,7 +93,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
                             onCompletion(true, ziphs, nil)
                         }
                         
-                    }.left
+                        }.left
                     
                 }.fail { error in
                     
@@ -97,9 +102,11 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
                     }
             }
         }
+        
+        return searchTask
     }
     
-    open func randomGif(_ callBackQueue:DispatchQueue = DispatchQueue.main,
+    public func randomGif(_ callBackQueue:DispatchQueue = DispatchQueue.main,
         onCompletion:@escaping ZiphByIdCallBack) {
         
         let eitherRequest = self.requestGenerator.randomRequests()
@@ -132,7 +139,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         }
     }
     
-    open func gifsById(_ callBackQueue:DispatchQueue = DispatchQueue.main,
+    public func gifsById(_ callBackQueue:DispatchQueue = DispatchQueue.main,
         ids:[String],
         onCompletion:@escaping ZiphsCallBack) {
         
@@ -168,7 +175,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         
     }
     
-    open func fetchImage(_ callBackQueue:DispatchQueue = DispatchQueue.main,
+    public func fetchImage(_ callBackQueue:DispatchQueue = DispatchQueue.main,
         ziph:Ziph,
         imageType:ZiphyImageType,
         onCompletion:@escaping ZiphyImageCallBack) {
@@ -217,7 +224,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         
         let promise = URLRequestPromise()
         
-        requester.doRequest(request){ (data, response, nError) -> Void in
+        promise.dataTask = requester.doRequest(request) { (data, response, nError) -> Void in
             
             if let error = nError {
                 promise.reject(error)
@@ -229,7 +236,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         return promise
     }
     
-    fileprivate func checkDataForPagination(_ data:Data!, resultsLimit:Int, offset:Int)->Either<Error, AnyObject> {
+    fileprivate func checkDataForPagination(_ data:Data!)->Either<Error, AnyObject> {
         
         if data == nil {
             

@@ -61,9 +61,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
             expectation.fulfill()
             
             if (success) {
-                
-                let _ = paginationController?.ziphs?.first
-                XCTAssertTrue((paginationController?.ziphs?.count)! > 0 , "Paged fetched but no ziphs")
+                XCTAssertTrue(paginationController!.ziphs.count > 0 , "Paged fetched but no ziphs")
             }
             else {
                 
@@ -74,7 +72,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         self.paginationController.fetchBlock = self.fetchBlockForSearch(paginationController, searchTerm: "cat", resultsLimit: 25)
         self.paginationController.completionBlock = completionBlock
         
-        self.paginationController.fetchNewPage()
+        _ = self.paginationController.fetchNewPage()
         
         waitForExpectations(timeout: 10, handler:nil)
     }
@@ -87,11 +85,11 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         self.paginationController.completionBlock = { [weak self](success, error) in
             
             if (success && (self?.paginationController.totalPagesFetched)! < 3) {
-                self?.paginationController.fetchNewPage()
+                _ = self?.paginationController.fetchNewPage()
             }
             else if (success && self?.paginationController.totalPagesFetched == 3) {
                 expectation.fulfill()
-                XCTAssertTrue(self?.paginationController.ziphs?.count == 25*3, "Did not fetch enough gifs")
+                XCTAssertTrue(self?.paginationController.ziphs.count == 25*3, "Did not fetch enough gifs")
             }
             else {
                 expectation.fulfill()
@@ -99,7 +97,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
             }
         }
         
-        self.paginationController.fetchNewPage()
+        _ = self.paginationController.fetchNewPage()
         
         waitForExpectations(timeout: 10, handler:nil)
     }
@@ -112,7 +110,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         self.paginationController.completionBlock = { [weak self](success, error) in
             
             if (success) {
-                self?.paginationController.fetchNewPage()
+                _ = self?.paginationController.fetchNewPage()
             }
             else if (!success) {
                 expectation.fulfill()
@@ -123,7 +121,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
             }
         }
         
-        self.paginationController.fetchNewPage()
+        _ = self.paginationController.fetchNewPage()
         
         waitForExpectations(timeout: 10, handler:nil)
     

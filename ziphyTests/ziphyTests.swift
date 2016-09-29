@@ -46,7 +46,7 @@ class ziphyTests: ZiphyTestCase {
         
         let expectation = self.expectation(description: "did return some results")
         
-        self.ziphyClient.search(term:"cat", resultsLimit: 10, offset: 0) { (success, gifs, error) -> () in
+        _ = self.ziphyClient.search(term:"cat", resultsLimit: 10, offset: 0) { (success, gifs, error) -> () in
             
             XCTAssert(success)
             expectation.fulfill()
@@ -57,11 +57,29 @@ class ziphyTests: ZiphyTestCase {
         }
     }
     
+    func testThatTrendingReturnsResults() {
+        
+        //Set up
+        
+        
+        let expectation = self.expectation(description: "did return some results")
+        
+        _ = self.ziphyClient.trending(resultsLimit: 10, offset: 0) { (success, gifs, error) -> () in
+            XCTAssert(success)
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 20) { (error) in
+            
+        }
+    }
+    
+    
     func testThatFunkyCharsWork() {
         
         let expectation = self.expectation(description: "did return some results")
         
-        self.ziphyClient.search(term:"cat\"=\"#%/<>?@\\^`{|}&:#[]@$'+;", resultsLimit: 10, offset: 0) { (success, gifs, error) -> () in
+        _ = self.ziphyClient.search(term:"cat\"=\"#%/<>?@\\^`{|}&:#[]@$'+;", resultsLimit: 10, offset: 0) { (success, gifs, error) -> () in
             
             XCTAssert(success)
             expectation.fulfill()
