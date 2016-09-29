@@ -27,6 +27,7 @@ struct ZiphyRequestGenerator {
     let apiVersionPath:String
     let searchEndpoint:String
     let randomEndpoint:String
+    let trendingEndpoint:String
     let gifsEndpoint:String
     
     fileprivate func requestWithParameters(_ endPoint:String, query:String? = nil) -> Either<Error, URLRequest> {
@@ -53,6 +54,10 @@ struct ZiphyRequestGenerator {
                 code: ZiphyError.malformedURL.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:invalidURL + " is not a valid URL"]))
         }
+    }
+    
+    func trendingRequestWithParameters(resultsLimit:Int, offset:Int) -> Either<Error, URLRequest> {
+        return self.requestWithParameters(self.trendingEndpoint, query: "limit=\(resultsLimit)&offset=\(offset)")
     }
     
     func searchRequestWithParameters(_ term:String, resultsLimit:Int, offset:Int) -> Either<Error, URLRequest> {

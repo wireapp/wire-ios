@@ -19,15 +19,12 @@
 
 import Foundation
 
-
-
 private let apiVersionPath = "/v1"
 private let gifsEndpoint = "/gifs"
 private let searchEndpoint = gifsEndpoint + "/search"
 private let randomEndpoint = gifsEndpoint + "/random"
+private let trendingEndpoint = gifsEndpoint + "/trending"
 private let requestScheme = "https"
-
-
 
 public typealias ZiphsCallBack = (_ success:Bool, _ ziphs:[Ziph], _ error:Error?) -> ()
 public typealias ZiphByIdCallBack = (_ success:Bool, _ ziphId:String, _ error:Error?)->()
@@ -52,16 +49,24 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
             apiVersionPath:apiVersionPath,
             searchEndpoint:searchEndpoint,
             randomEndpoint:randomEndpoint,
+            trendingEndpoint:trendingEndpoint,
             gifsEndpoint:gifsEndpoint)
     }
     
-    open func search(_ callBackQueue:DispatchQueue = DispatchQueue.main,
-        term:String,
-        resultsLimit:Int = 25,
-        offset:Int = 0,
-        onCompletion:@escaping ZiphsCallBack) {
+    open func trending(_ callBackQueue:DispatchQueue = DispatchQueue.main, resultsLimit:Int = 25, offset:Int, onCompletion: @escaping ZiphsCallBack) -> CancelableTask? {
+        
+        let eitherRequest = self.requestGenerator.trendingRequestWithParameters(resultsLimit: resultsLimit, offset: offset)
+        return  performZiphListRequest(eitherRequest: eitherRequest, onCompletion: onCompletion, callBackQueue: callBackQueue)
+    }
+    
+    open func search(_ callBackQueue:DispatchQueue = DispatchQueue.main, term:String, resultsLimit:Int = 25, offset:Int = 0, onCompletion: @escaping ZiphsCallBack) -> CancelableTask? {
         
         let eitherRequest = self.requestGenerator.searchRequestWithParameters(term, resultsLimit:resultsLimit, offset:offset)
+        return performZiphListRequest(eitherRequest: eitherRequest, onCompletion: onCompletion, callBackQueue: callBackQueue)
+    }
+    
+    func performZiphListRequest(eitherRequest: Either<Error, URLRequest>, onCompletion: @escaping ZiphsCallBack, callBackQueue : DispatchQueue) -> CancelableTask? {
+        var searchTask : CancelableTask? = nil
         
         eitherRequest.leftMap { error in
             
@@ -72,9 +77,9 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         
         eitherRequest.rightMap { urlRequest in
             
-            self.performDataTask(urlRequest, requester:self.requester).then { (data, _, nError) in
+            searchTask = self.performDataTask(urlRequest, requester:self.requester).then { (data, _, nError) in
                 
-                let eitherPaginationData = self.checkDataForPagination(data, resultsLimit:resultsLimit, offset:offset)
+                let eitherPaginationData = self.checkDataForPagination(data)
                 
                 return eitherPaginationData.left
                 
@@ -88,7 +93,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
                             onCompletion(true, ziphs, nil)
                         }
                         
-                    }.left
+                        }.left
                     
                 }.fail { error in
                     
@@ -97,6 +102,8 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
                     }
             }
         }
+        
+        return searchTask
     }
     
     open func randomGif(_ callBackQueue:DispatchQueue = DispatchQueue.main,
@@ -217,7 +224,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         
         let promise = URLRequestPromise()
         
-        requester.doRequest(request){ (data, response, nError) -> Void in
+        promise.dataTask = requester.doRequest(request) { (data, response, nError) -> Void in
             
             if let error = nError {
                 promise.reject(error)
@@ -229,7 +236,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         return promise
     }
     
-    fileprivate func checkDataForPagination(_ data:Data!, resultsLimit:Int, offset:Int)->Either<Error, AnyObject> {
+    fileprivate func checkDataForPagination(_ data:Data!)->Either<Error, AnyObject> {
         
         if data == nil {
             
