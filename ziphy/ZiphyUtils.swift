@@ -99,11 +99,19 @@ enum Either<L, R> {
 
 typealias URLRequestCallBack = (_ data:Data?, _ response:URLResponse?, _ error:Error?)->Error?
 
-class URLRequestPromise {
+
+public protocol CancelableTask {
+    
+    func cancel()
+    
+}
+
+class URLRequestPromise : CancelableTask {
     
     var pending: [URLRequestCallBack] = []
     var onFailure: (_ error: Error) -> () = { error in return }
     var failure: Error? = nil
+    var dataTask: URLSessionDataTask?
     
     @discardableResult func resolve() -> URLRequestCallBack {
         
@@ -148,16 +156,22 @@ class URLRequestPromise {
         self.pending.append(what)
         return self
     }
+    
+    func cancel() {
+        self.dataTask?.cancel()
+    }
 }
 
 @objc public protocol ZiphyURLRequester {
     
-    func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void))
+    func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> URLSessionDataTask
 }
 
 extension URLSession : ZiphyURLRequester {
-    public func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) {
-        self.dataTask(with: request, completionHandler: completionHandler).resume()
+    public func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> URLSessionDataTask {
+        let task = self.dataTask(with: request, completionHandler: completionHandler)
+        task.resume()
+        return task
     }
 }
 
