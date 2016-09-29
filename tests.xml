@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites tests='16' failures='0'>
+  <testsuite name='ziphyTests.ZiphyPaginationControllerTests' tests='3' failures='0'>
+    <testcase classname='ziphyTests.ZiphyPaginationControllerTests' name='testThatFechingEndsIfNoMorePages' time='0.485'/>
+    <testcase classname='ziphyTests.ZiphyPaginationControllerTests' name='testThatFistPageIsFetched' time='0.169'/>
+    <testcase classname='ziphyTests.ZiphyPaginationControllerTests' name='testThatSeveralPagesAreFetched' time='0.315'/>
+  </testsuite>
+  <testsuite name='ziphyTests.ziphyTests' tests='13' failures='0'>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatAnImageIsFetched' time='0.591'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatARandomGifIdIsReturned' time='0.194'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatARandomGifIsFetched' time='2.019'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatAResultSetSmallerThanTheResultLimitDoesNotTriggerAdditionalPagination' time='0.607'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatFunkyCharsWork' time='0.102'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatGifsByIdReturnsAnArray' time='0.064'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatNoImageIsFecthedIfSearchReturnsNoResults' time='0.063'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatNoImageIsFetchedWhenSizeLimitIsZero' time='0.176'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatPaginationWorks' time='1.318'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatRecursiveCalls' time='5.910'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatSeachReturnsResults' time='0.077'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatSearchTemsWithSpacesReturnResults' time='0.535'/>
+    <testcase classname='ziphyTests.ziphyTests' name='testThatTrendingReturnsResults' time='0.070'/>
+  </testsuite>
+</testsuites>
