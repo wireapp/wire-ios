@@ -303,21 +303,7 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
 {
     self.eventID = [ZMEventID latestOfEventID:self.eventID and:eventID];
     [self updateTimestamp:serverTimestamp isUpdatingExistingMessage:isUpdate];
-    
-    /**
-     * Florian, the 07.06.16
-     * In some cases, the conversation relationship assignement crashes for the reason that both object are coming from a different context.
-     * I think this is a bug on Apple's side as the sender assignement also has caused a crash for the same reason (https://rink.hockeyapp.net/manage/apps/42908/app_versions/558/crash_reasons/123911635?order=asc&sort_by=date&type=crashes#crash_data)
-     *
-     * There is no way that the user and self (the message) are in different context as we EXPLICITLY fetch(or create) it from the self.managedObjectContext
-     *
-     * And after a thourough digging in the code, the conversation ALSO can't come from a different context, as both prefetched batches and fetch creation is done on SyncMOC (same for message).
-     
-     * I try to fetch the conversation from the self context as an attempt workaround.
-     *
-     * This issue was only reported on iOS 9.3.2.
-     */
-    
+
     if (self.managedObjectContext != conversation.managedObjectContext) {
         conversation = [ZMConversation conversationWithRemoteID:conversation.remoteIdentifier createIfNeeded:NO inContext:self.managedObjectContext];
     }
