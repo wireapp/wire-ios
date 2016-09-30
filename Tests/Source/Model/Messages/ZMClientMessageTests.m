@@ -605,6 +605,54 @@
     
 }
 
+- (void)testThatItReturnsNilIfTheClientMessageIsZombie
+{
+    // given
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    ZMClientMessage *existingMessage = (ZMClientMessage *)[conversation appendMessageWithText:@"Initial"];
+    existingMessage.nonce = nonce;
+    existingMessage.visibleInConversation = conversation;
+    
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    NSData *contentData = message.data;
+    
+    NSString *data = [contentData base64EncodedStringWithOptions:0];
+    
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddClientMessage data:data];
+    
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    XCTAssertNotNil(event);
+    
+    ZMFetchRequestBatch *prefetch = [[ZMFetchRequestBatch alloc] init];
+    [prefetch addNoncesToPrefetchMessages:[NSSet setWithObject:existingMessage.nonce]];
+    ZMFetchRequestBatchResult *prefetchResult = [prefetch executeInManagedObjectContext:self.uiMOC];
+    
+    XCTAssertEqual([prefetchResult.messagesByNonce[existingMessage.nonce] count], 1u);
+    XCTAssertEqual([prefetchResult.messagesByNonce[existingMessage.nonce] anyObject], existingMessage);
+    XCTAssertFalse(existingMessage.isZombieObject);
+    
+    // when
+    [self.uiMOC deleteObject:existingMessage];
+    [self.uiMOC saveOrRollback];
+    
+    // then
+    XCTAssertTrue(existingMessage.isZombieObject);
+    
+    // when
+    __block ZMClientMessage *sut;
+    [self performPretendingUiMocIsSyncMoc:^{
+        [self performIgnoringZMLogError:^{
+            sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:prefetchResult].message;
+        }];
+    }];
+    
+    // then
+    XCTAssertNil(sut);
+    
+}
 
 @end
 
