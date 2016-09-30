@@ -108,10 +108,15 @@ public protocol CancelableTask {
 
 class URLRequestPromise : CancelableTask {
     
+    let requester: ZiphyURLRequester
     var pending: [URLRequestCallBack] = []
     var onFailure: (_ error: Error) -> () = { error in return }
     var failure: Error? = nil
-    var dataTask: URLSessionDataTask?
+    var requestIdentifier: ZiphyRequestIdentifier?
+    
+    init(requester: ZiphyURLRequester) {
+        self.requester = requester
+    }
     
     @discardableResult func resolve() -> URLRequestCallBack {
         
@@ -158,20 +163,31 @@ class URLRequestPromise : CancelableTask {
     }
     
     func cancel() {
-        self.dataTask?.cancel()
+        if let requestIdentifier = requestIdentifier {
+            self.requester.cancelRequest(withRequestIdentifier: requestIdentifier)
+        }
     }
 }
 
+public typealias ZiphyRequestIdentifier = AnyObject
+
 @objc public protocol ZiphyURLRequester {
     
-    func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> URLSessionDataTask
+    func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier
+    func cancelRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier)
 }
 
 extension URLSession : ZiphyURLRequester {
-    public func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> URLSessionDataTask {
+    public func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
         let task = self.dataTask(with: request, completionHandler: completionHandler)
         task.resume()
         return task
+    }
+    
+    public func cancelRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier) {
+        if let task = requestIdentifier as? URLSessionDataTask {
+            task.cancel()
+        }
     }
 }
 

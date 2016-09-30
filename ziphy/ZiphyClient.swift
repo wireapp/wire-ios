@@ -222,9 +222,9 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
     
     fileprivate func performDataTask(_ request:URLRequest, requester:ZiphyURLRequester) -> URLRequestPromise {
         
-        let promise = URLRequestPromise()
+        let promise = URLRequestPromise(requester: requester)
         
-        promise.dataTask = requester.doRequest(request) { (data, response, nError) -> Void in
+        let requestIdentifier = requester.doRequest(request) { (data, response, nError) -> Void in
             
             if let error = nError {
                 promise.reject(error)
@@ -232,6 +232,8 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
             
             promise.resolve()(data, response, nError)
         }
+        
+        promise.requestIdentifier = requestIdentifier
         
         return promise
     }
