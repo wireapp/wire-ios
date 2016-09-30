@@ -34,7 +34,7 @@ public final class ClientMessageRequestFactory: NSObject {
     }
     
     public func upstreamRequestForAssetMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-            return upstreamRequestForEncryptedImageMessage(format, message: message, forConversationWithId: conversationId);
+        return upstreamRequestForEncryptedImageMessage(format, message: message, forConversationWithId: conversationId);
     }
     
     fileprivate func upstreamRequestForEncryptedClientMessage(_ message: ZMClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
