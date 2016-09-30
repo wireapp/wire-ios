@@ -96,11 +96,11 @@ extension ZMGenericMessage {
         var recipientUsers : [ZMUser] = []
         let replyOnlyToSender = self.hasConfirmation()
         if replyOnlyToSender {
+            // Reply is only supported on 1-to-1 conversations
+            assert(conversation.conversationType == .oneOnOne)
+            
             // In case of confirmation messages, we want to send the confirmation only to the clients of the sender of the original message, not to everyone in the conversation
-            let messageID = UUID(uuidString: self.confirmation.messageId)
-            if let message = ZMMessage.fetch(withNonce: messageID, for: conversation, in: conversation.managedObjectContext) {
-                recipientUsers = [message.sender].flatMap { $0 }
-            }
+            recipientUsers = conversation.otherActiveParticipants.array as! [ZMUser]
         } else {
             recipientUsers = conversation.activeParticipants.array as! [ZMUser]
         }

@@ -210,6 +210,11 @@ NSString * const DeliveredKey = @"delivered";
                                                       forConversation:conversation
                                                inManagedObjectContext:moc
                                                        prefetchResult:prefetchResult];
+    
+    if (clientMessage.isZombieObject) {
+        return nil;
+    }
+    
     BOOL isNewMessage = NO;
     if (clientMessage == nil) {
         clientMessage = [messageClass insertNewObjectInManagedObjectContext:moc];
