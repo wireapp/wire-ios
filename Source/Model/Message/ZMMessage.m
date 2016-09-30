@@ -379,6 +379,9 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
     NSUUID *messageID = [NSUUID uuidWithTransportString:deletedMessage.messageId];
     ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
 
+    // We need to cascade delete the pending delivery confirmation messages for the message being deleted
+    [message removePendingDeliveryReceipts];
+    
     // Only the sender of the original message can delete it
     if (![senderID isEqual:message.sender.remoteIdentifier]) {
         return;
@@ -392,6 +395,28 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
     }
 
     [message removeMessageClearingSender:YES];
+}
+
+- (void)removePendingDeliveryReceipts
+{
+    // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the backend
+    NSFetchRequest *requestForInsertedMessages = [ZMClientMessage sortedFetchRequestWithPredicate:[ZMClientMessage predicateForObjectsThatNeedToBeInsertedUpstream]];
+    NSArray *possibleMatches = [self.managedObjectContext executeFetchRequestOrAssert:requestForInsertedMessages];
+    
+    NSArray *confirmationReceipts = [possibleMatches filterWithBlock:^BOOL(ZMClientMessage *candidateConfirmationReceipt) {
+        if (candidateConfirmationReceipt.genericMessage.hasConfirmation &&
+            candidateConfirmationReceipt.genericMessage.confirmation.hasMessageId &&
+            [candidateConfirmationReceipt.genericMessage.confirmation.messageId isEqual:self.nonce.transportString]) {
+            return YES;
+        }
+        return NO;
+    }];
+    
+    NSAssert(confirmationReceipts.count <= 1, @"More than one confirmation receipt");
+    
+    for (ZMClientMessage *confirmationReceipt in confirmationReceipts) {
+        [self.managedObjectContext deleteObject:confirmationReceipt];
+    }
 }
 
 + (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
