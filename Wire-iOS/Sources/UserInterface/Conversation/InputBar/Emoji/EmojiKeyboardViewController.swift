@@ -91,19 +91,20 @@ protocol EmojiKeyboardViewControllerDelegate: class {
             self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
         }
     }
-
-    func backspaceTapped() {
-        delegate?.emojiKeyboardViewControllerDeleteTapped(self)
-    }
     
 }
 
 extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
 
-    func sectionViewController(_ viewController: EmojiSectionViewController, didSelect type: EmojiSectionType) {
-        guard let section = emojiDataSource.sectionIndex(for: type) else { return }
-        let indexPath = IndexPath(item: 0, section: section)
-        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+    func sectionViewController(_ viewController: EmojiSectionViewController, performAction action: EmojiSectionViewController.Action) {
+        switch action {
+        case .select(let type):
+            guard let section = emojiDataSource.sectionIndex(for: type) else { return }
+            let indexPath = IndexPath(item: 0, section: section)
+            collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+        case .delete:
+            delegate?.emojiKeyboardViewControllerDeleteTapped(self)
+        }
     }
 
 }
@@ -118,8 +119,8 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
         guard let result = emojiDataSource.register(used: emoji) else { return }
         collectionView.performBatchUpdates({ 
             switch result {
-            case .Insert(let section): collectionView.insertSections(IndexSet(integer: section))
-            case .Reload(let section): collectionView.reloadSections(IndexSet(integer: section))
+            case .insert(let section): collectionView.insertSections(IndexSet(integer: section))
+            case .reload(let section): collectionView.reloadSections(IndexSet(integer: section))
             }
         }, completion: { _ in
             self.updateSectionSelection()
