@@ -241,10 +241,10 @@ NS_ASSUME_NONNULL_END
 - (void)internalRemoveParticipant:(nonnull ZMUser *)participant sender:(nonnull ZMUser *)sender;
 
 @property (nonatomic) BOOL isSelfAnActiveMember; ///< whether the self user is an active member (as opposed to a past member)
-@property (readonly, nonatomic, nonnull) NSOrderedSet *otherActiveParticipants;
-@property (readonly, nonatomic, nonnull) NSOrderedSet *otherInactiveParticipants;
-@property (readonly, nonatomic, nonnull) NSMutableOrderedSet *mutableOtherActiveParticipants;
-@property (readonly, nonatomic, nonnull) NSMutableOrderedSet *mutableOtherInactiveParticipants;
+@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *otherActiveParticipants;
+@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *otherInactiveParticipants;
+@property (readonly, nonatomic, nonnull) NSMutableOrderedSet<ZMUser *> *mutableOtherActiveParticipants;
+@property (readonly, nonatomic, nonnull) NSMutableOrderedSet<ZMUser *> *mutableOtherInactiveParticipants;
 
 /// Removes user from unsyncedInactiveParticipants
 - (void)synchronizeRemovedUser:(nonnull ZMUser *)user;
@@ -253,10 +253,10 @@ NS_ASSUME_NONNULL_END
 - (void)synchronizeAddedUser:(nonnull ZMUser *)user;
 
 /// List of users which have been removed from the conversation locally but not one the backend
-@property (readonly, nonatomic, nullable) NSOrderedSet *unsyncedInactiveParticipants;
+@property (readonly, nonatomic, nullable) NSOrderedSet<ZMUser *> *unsyncedInactiveParticipants;
 
 /// List of users which have been added to the conversation locally but not one the backend
-@property (readonly, nonatomic, nullable) NSOrderedSet *unsyncedActiveParticipants;
+@property (readonly, nonatomic, nullable) NSOrderedSet<ZMUser *> *unsyncedActiveParticipants;
 
 @end
 

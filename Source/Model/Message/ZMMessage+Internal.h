@@ -217,6 +217,8 @@ extern NSString * const ZMMessageConfirmationKey;
 
 - (void)updateWithUpdateEvent:(ZMUpdateEvent *)updateEvent forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
+- (void)removePendingDeliveryReceipts;
+
 - (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID eventID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
 /// Returns whether the data represents animated GIF

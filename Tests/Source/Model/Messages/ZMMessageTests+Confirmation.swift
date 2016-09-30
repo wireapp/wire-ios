@@ -125,6 +125,38 @@ extension ZMMessageTests_Confirmation {
         XCTAssertNil(confirmation.managedObjectContext) // this will detect if it was deleted
     }
     
+    func testThatItDeletesConfirmationsPendingForDeletedMessages() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.conversationType = .oneOnOne
+        
+        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        conversation.lastModifiedDate = lastModified
+        
+        let remoteUser = ZMUser.insertNewObject(in: self.uiMOC)
+        remoteUser.remoteIdentifier = .create()
+        
+        // when
+        let sut = insertMessage(conversation, fromSender: remoteUser)
+        let _ = sut.message?.confirmReception()
+        // then
+        XCTAssertTrue(sut.needsConfirmation)
+        guard let hiddenMessage = conversation.hiddenMessages.lastObject as? ZMClientMessage else {
+            XCTFail("Did not insert confirmation message.")
+            return
+        }
+        
+        XCTAssertTrue(hiddenMessage.genericMessage!.hasConfirmation())
+        // when
+        
+        sut.message!.removePendingDeliveryReceipts()
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(conversation.hiddenMessages.count, 0)
+    }
+
 }
 
 // MARK: - Receiving confirmation remotely
