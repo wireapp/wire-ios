@@ -53,16 +53,25 @@ extension ClientMessageRequestFactoryTests {
     func testThatItCreatesRequestToPostOTRConfirmationMessage() {
         //given
         createSelfClient()
-        let message = createClientTextMessage(true)
+        
         let user = ZMUser.insertNewObject(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
+        
         let client = UserClient.insertNewObject(in: self.syncMOC)
         client.remoteIdentifier = UUID.create().transportString()
         client.user = user
-        message.sender = user
+        
         let conversationId = UUID.create()
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationId
+        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        conversation.remoteIdentifier = conversationId
+        conversation.conversationType = .oneOnOne
+        conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
+        conversation.connection?.to = user
+        
+        let message = createClientTextMessage(true)
+        message.sender = user
+        message.visibleInConversation = conversation
+
         let confirmationMessage = message.confirmReception()
         
         //when
