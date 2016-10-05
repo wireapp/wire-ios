@@ -52,7 +52,7 @@ open class ZMMessageConfirmation: NSManagedObject {
             let moc = conversation.managedObjectContext,
             let messageUUID = UUID(uuidString: genericMessage.confirmation.messageId),
             let message = ZMMessage.fetch(withNonce: messageUUID, for: conversation, in: moc),
-            let originalSender = message.sender , originalSender.isSelfUser
+            let originalSender = message.sender, originalSender.isSelfUser
         else { return nil }
         
         var confirmation = message.confirmations.filter{$0.user == sender}.first
