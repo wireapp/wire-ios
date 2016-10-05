@@ -496,6 +496,18 @@
     XCTAssertEqualObjects(nameComp3.fullName, name3);
 }
 
+- (void)testThatArabicGodNameWithThreeComponentsAreAbbreviatedCorrectly
+{
+    // given
+    NSString *name1 = @"عبد العزيز عبد الله";
+    
+    // when
+    ZMPersonName *nameComp1 = [ZMPersonName personWithName:name1];
+    
+    // then
+    XCTAssertEqualObjects(nameComp1.abbreviatedName, @"عبد العزيز ا");
+}
+
 - (void)testThatItReturnsFirstLettersOFFirstAndLastComponentForArabicInitials
 {
     // given
