@@ -204,25 +204,26 @@ typedef NS_ENUM(NSUInteger, ZMPersonNameOrder) {
     if (self.components.count <2) return nil;
     
     NSUInteger startIndex;
-    NSUInteger endIndex;
+    NSUInteger length;
     
     switch (self.nameOrder) {
         case ZMPersonNameOrderGivenNameLast:
             startIndex = 0;
-            endIndex = self.components.count-2;
+            length = self.components.count-2;
             break;
             
         case ZMPersonNameOrderGivenNameFirst:
             startIndex = 1;
-            endIndex = self.components.count-1;
+            length = self.components.count-1;
             break;
             
         case ZMPersonNameOrderArabicGivenNameFirst:
             startIndex = 1;
-            endIndex = self.components.count-1;
+            length = self.components.count-1;
             if ([self.components[1] zmIsGodName]) {
                 if (self.components.count > 2) {
                     startIndex++;
+                    length--;
                 }
                 else {
                     return nil;
@@ -231,7 +232,7 @@ typedef NS_ENUM(NSUInteger, ZMPersonNameOrder) {
             break;
     }
 
-    return [self.components subarrayWithRange:NSMakeRange(startIndex, endIndex)];
+    return [self.components subarrayWithRange:NSMakeRange(startIndex, length)];
 }
 
 
