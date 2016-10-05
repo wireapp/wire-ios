@@ -2271,8 +2271,9 @@
 				ORGANIZATIONNAME = "Zeta Project Gmbh";
 				TargetAttributes = {
 					3E186087191A56F6000FE027 = {
+						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0800;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -2800,7 +2801,7 @@
 				CODE_SIGN_ENTITLEMENTS = "zmessaging Test Host.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = W5KEQBF9B5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2832,7 +2833,7 @@
 				CODE_SIGN_ENTITLEMENTS = "zmessaging Test Host.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = W5KEQBF9B5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
