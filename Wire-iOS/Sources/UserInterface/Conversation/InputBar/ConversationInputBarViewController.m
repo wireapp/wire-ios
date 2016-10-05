@@ -55,6 +55,7 @@
 #import "UIView+WR_ExtendedBlockAnimations.h"
 #import "UIView+Borders.h"
 #import "ImageMessageCell.h"
+#import "WAZUIMagic.h"
 
 
 @interface ConversationInputBarViewController (Commands)
@@ -343,8 +344,10 @@
     self.sendButton.cas_styleClass = @"send-button";
 
     [self.inputBar.rightAccessoryView addSubview:self.sendButton];
-    [self.sendButton autoSetDimensionsToSize:CGSizeMake(28, 28)];
-    [self.sendButton autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsMake(14, 0, 0, 0) excludingEdge:ALEdgeBottom];
+    CGFloat edgeLength = 28;
+    [self.sendButton autoSetDimensionsToSize:CGSizeMake(edgeLength, edgeLength)];
+    CGFloat rightInset = ([WAZUIMagic cgFloatForIdentifier:@"content.left_margin"] - edgeLength) / 2;
+    [self.sendButton autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsMake(14, 0, 0, rightInset) excludingEdge:ALEdgeBottom];
 }
 
 - (void)createVerifiedView
@@ -405,9 +408,11 @@
 
 - (void)updateRightAccessoryView
 {
-    const NSUInteger textLength = self.inputBar.textView.text.length;
+    NSString *trimmed = [self.inputBar.textView.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    const NSUInteger textLength = trimmed.length;
     BOOL hideSendButton = Settings.sharedSettings.disableSendButton && self.mode != ConversationInputBarViewControllerModeEmojiInput;
-    self.sendButton.hidden = textLength == 0 || hideSendButton;
+    BOOL editing = nil != self.editingMessage;
+    self.sendButton.hidden = textLength == 0 || hideSendButton || editing;
 
     self.verifiedShieldButton.hidden = self.conversation.securityLevel != ZMConversationSecurityLevelSecure || textLength > 0;
 }
@@ -446,7 +451,7 @@
 
 - (void)onSingleTap:(UITapGestureRecognizer *)recognier
 {
-    if (recognier.state == UIGestureRecognizerStateRecognized) {
+    if (recognier.state == UIGestureRecognizerStateRecognized && self.mode != ConversationInputBarViewControllerModeEmojiInput) {
         self.mode = ConversationInputBarViewControllerModeTextInput;
     }
 }
@@ -533,7 +538,7 @@
 - (void)clearTextInputAssistentItemIfNeeded
 {
     if (nil != [UITextInputAssistantItem class]) {
-        UITextInputAssistantItem* item = self.inputBar.textView.inputAssistantItem;
+        UITextInputAssistantItem *item = self.inputBar.textView.inputAssistantItem;
         item.leadingBarButtonGroups = @[];
         item.trailingBarButtonGroups = @[];
     }
