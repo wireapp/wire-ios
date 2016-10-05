@@ -473,10 +473,10 @@
 "self.settings.sound_menu.sounds.wire_message" = "Wire Message";
 "self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
-// Send Button
-"self.settings.send_button.title" = "Use return key to send messages";
-"self.settings.send_button.header" = "Send Button";
-"self.settings.send_button.footer" = "If turned on, messages will be send when tapping the return key instead of the dedicated send button";
+// By popular demand
+"self.settings.popular_demand.title" = "By popular demand";
+"self.settings.popular_demand.send_button.title" = "Send Button";
+"self.settings.popular_demand.send_button.footer" = "Disable to send via the return key";
 
 // Sound alerts (TO BE UPDPATED)
 "self.settings.sound_menu.title" = "Sound alerts";
@@ -511,6 +511,7 @@
 "self.settings.advanced.reset_push_token.subtitle" = "If you experience problems with push notifications, Wire Support may ask you to reset this token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Push token has been reset";
 "self.settings.advanced.reset_push_token_alert.message" = "Notifications will be restored in a few seconds.";
+"self.settings.advanced.version_technical_details.title" = "Version Technical Details";
 
 // Technical Report
 "self.settings.technical_report_section.title" = "Technical Report";
