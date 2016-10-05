@@ -107,7 +107,9 @@ extension ZMGenericMessage {
         }
         
         let recipients = self.recipientsWithEncryptedData(selfClient, recipients: recipientUsers, sessionDirectory: sessionDirectory)
-        let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: true, recipients: recipients, blob: externalData)
+
+        let nativePush = !hasConfirmation() // We do not want to send pushes for delivery receipts
+        let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: nativePush, recipients: recipients, blob: externalData)
         
         let strategy : MissingClientsStrategy =
             replyOnlyToSender ?
