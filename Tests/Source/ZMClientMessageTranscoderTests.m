@@ -1072,13 +1072,22 @@
     [self checkThatItCallsConfirmationStatus:NO whenReceivingAnEventThroughSource:ZMUpdateEventSourceDownload];
 }
 
+- (ZMConversation *)setupConversation
+{
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.conversationType = ZMTConversationTypeOneOnOne;
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.connection.to.remoteIdentifier = [NSUUID createUUID];
+    return conversation;
+}
+
 - (void)testThatItCallsConfirmationStatusWhenConfirmationMessageIsSentSuccessfully
 {
     // given
     [self createSelfClient];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.conversationType = ZMTConversationTypeOneOnOne;
-    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMConversation *conversation = [self setupConversation];
     
     ZMMessage *message = (id)[conversation appendMessageWithText:@"text"];
     ZMClientMessage *confirmationMessage = [(id)message confirmReception];
@@ -1098,9 +1107,7 @@
 {
     // given
     [self createSelfClient];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.conversationType = ZMTConversationTypeOneOnOne;
-    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMConversation *conversation = [self setupConversation];
     
     ZMMessage *message = (id)[conversation appendMessageWithText:@"text"];
     ZMClientMessage *confirmationMessage = [(id)message confirmReception];
