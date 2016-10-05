@@ -208,9 +208,9 @@ NS_ASSUME_NONNULL_END
 - (nonnull ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata nonce:(nonnull NSUUID *)nonce;
 
 /// Appends a new message to the conversation.
-/// @param genericMessage: the generic message that should be appended
-/// @param expires: wether the message should expire or tried to be send infinitively
-/// @param hidden: wether the message should be hidden in the conversation or not
+/// @param genericMessage the generic message that should be appended
+/// @param expires wether the message should expire or tried to be send infinitively
+/// @param hidden wether the message should be hidden in the conversation or not
 - (nonnull ZMClientMessage *)appendGenericMessage:(nonnull ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden;
 
 - (void)appendNewConversationSystemMessageIfNeeded;

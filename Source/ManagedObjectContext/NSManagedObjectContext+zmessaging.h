@@ -41,7 +41,7 @@
 /// Creates persistent store coordinator and migrates store if needed
 /// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
 ///         synchronously when @c +needsToPrepareLocalStore is YES)
-/// @param backupCorruptedDatabase: if true, will copy a corrupted database to another folder for later investigation
+/// @param backupCorruptedDatabase if true, will copy a corrupted database to another folder for later investigation
 /// @param completionHandler callback to be executed on completion (nullable)
 + (void)prepareLocalStoreSync:(BOOL)sync
                   inDirectory:(NSURL *)directory

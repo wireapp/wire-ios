@@ -176,7 +176,20 @@ extension ClientMessageTests_OTR {
             
             //given
             let senderID = self.syncUser1.clients.first!.remoteIdentifier
-            let textMessage = self.syncConversation.appendOTRMessage(withText: self.stringLargeEnoughToRequireExternal, nonce: UUID.create())
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+            
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.to = self.syncUser1
+            connection.status = .accepted
+            conversation.connection = connection
+            conversation.mutableOtherActiveParticipants.add(self.syncUser1)
+            
+            self.syncMOC.saveOrRollback()
+                        
+            let textMessage = conversation.appendOTRMessage(withText: self.stringLargeEnoughToRequireExternal, nonce: UUID.create())
+            
             textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
             let confirmationMessage = textMessage.confirmReception()
