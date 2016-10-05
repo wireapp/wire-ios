@@ -347,7 +347,7 @@
     CGFloat edgeLength = 28;
     [self.sendButton autoSetDimensionsToSize:CGSizeMake(edgeLength, edgeLength)];
     CGFloat rightInset = ([WAZUIMagic cgFloatForIdentifier:@"content.left_margin"] - edgeLength) / 2;
-    [self.sendButton autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsMake(14, 0, 0, rightInset) excludingEdge:ALEdgeBottom];
+    [self.sendButton autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsMake(14, 0, 0, rightInset - 16) excludingEdge:ALEdgeBottom];
 }
 
 - (void)createVerifiedView
