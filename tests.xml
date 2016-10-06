@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites tests='57' failures='0'>
+  <testsuite name='NSDataZMMessageDigestTests' tests='2' failures='0'>
+    <testcase classname='NSDataZMMessageDigestTests' name='testThatItCalculatesMD5' time='0.004'/>
+    <testcase classname='NSDataZMMessageDigestTests' name='testThatItCalculatesMD5FromEmptyData' time='0.001'/>
+  </testsuite>
+  <testsuite name='ZMImageDownsampleOperationTests' tests='44' failures='0'>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testMediumDownsamplePerformance' time='15.169'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotChangeAnImageWithOrientation_1' time='0.026'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotChangeAPreviewImageWithOrientation_1' time='0.005'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotCompressAnImageFurtherIfOriginalFormatCompressionIsGoodEnough' time='0.365'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotGenerateAPreviewRepresentationFromInvalidImage' time='0.001'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotGeneratesAMediumRepresentationFromInvalidImage' time='0.001'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotGeneratesAMediumRepresentationWhenCanceled' time='0.001'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotGeneratesAPreviewRepresentationFromInvalidImage' time='0.001'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotGeneratesAPreviewRepresentationWhenCanceled' time='0.002'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItDoesNotGeneratesASmallProfileRepresentationFromInvalidImage' time='0.001'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItGeneratesAMediumRepresentation' time='0.013'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItGeneratesAPreviewRepresentation' time='0.072'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItGeneratesASmallProfileRepresentationALandscapeImage' time='0.104'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItGeneratesASmallProfileRepresentationFromAPortraitImage' time='0.063'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItGeneratesASmallProfileRepresentationFromATinyImage' time='0.005'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItRecompressesAnImageThatHasSmallPixelDimensionsButFileSizeThatIsTooBigToJPEG' time='0.150'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItRecompressesAPreviewImageThatHasSmallPixelDimensionsButFileSizeThatIsTooBigToJPEG' time='0.018'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAnImageWithOrientation_2' time='0.034'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAnImageWithOrientation_3' time='0.034'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAnImageWithOrientation_4' time='0.047'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAnImageWithOrientation_5' time='0.036'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAnImageWithOrientation_6' time='0.037'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAnImageWithOrientation_7' time='0.035'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAnImageWithOrientation_8' time='0.035'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAPreviewImageWithOrientation_2' time='0.014'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAPreviewImageWithOrientation_3' time='0.013'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAPreviewImageWithOrientation_4' time='0.013'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAPreviewImageWithOrientation_5' time='0.014'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAPreviewImageWithOrientation_6' time='0.014'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAPreviewImageWithOrientation_7' time='0.014'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReorientatesAPreviewImageWithOrientation_8' time='0.014'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItReturnsTheOriginalImageDataForAGIFThatsFailyLarge' time='0.003'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItScalesTheImage' time='0.863'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItScalesThePreviewImage' time='0.078'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAndScalesDownAnImageThatHasTooLargePixelDimensionsAndIsRotated' time='1.822'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAndScalesDownAPreviewImageThatHasTooLargePixelDimensionsAndIsRotated' time='1.319'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAnImage' time='0.031'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAnImageThatIsIsSmallEnoughWhenRecompressedAsJPEG' time='0.397'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAnImageThatIsRotatedAndHasSmallPixelDimensionsButTooBigFileSize' time='0.207'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAPreviewImage' time='0.005'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAPreviewImageThatIsIsSmallEnoughWhenRecompressedAsJPEG' time='0.114'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUnrotatesAPreviewImageThatIsRotatedAndHasSmallPixelDimensionsButTooBigFileSize' time='0.054'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUsesTheOriginalDataWhenTheImageIsSufficientlySmallAndNotRotated' time='0.029'/>
+    <testcase classname='ZMImageDownsampleOperationTests' name='testThatItUsesTheOriginalDataWhenThePreviewImageIsSufficientlySmallAndNotRotated' time='0.004'/>
+  </testsuite>
+  <testsuite name='ZMImageLoadOperationTests' tests='3' failures='0'>
+    <testcase classname='ZMImageLoadOperationTests' name='testThatItDoesNotCrashOnInvalidData' time='0.017'/>
+    <testcase classname='ZMImageLoadOperationTests' name='testThatItDoesNotLoadWhenCancelled' time='0.016'/>
+    <testcase classname='ZMImageLoadOperationTests' name='testThatItLoadsJPEGData' time='0.017'/>
+  </testsuite>
+  <testsuite name='ZMImagePreprocessorTests' tests='8' failures='0'>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItCanCalculateTheSizeOfAnImage' time='0.004'/>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItCanCalculateTheSizeOfAnImageFromData' time='0.002'/>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItReturnsTheRotatedSizeForImagesWithATIFFOrientation' time='0.003'/>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItReturnsTheRotatedSizeForImagesWithTIFFOrientation5' time='0.001'/>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItReturnsTheRotatedSizeForImagesWithTIFFOrientation7' time='0.001'/>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItReturnsZeroSizeIfDataIsNotAnImage' time='0.001'/>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItReturnsZeroSizeIfFileDoesNotExist' time='0.001'/>
+    <testcase classname='ZMImagePreprocessorTests' name='testThatItReturnsZeroSizeIfFileIsNotAnImage' time='0.004'/>
+  </testsuite>
+</testsuites>
