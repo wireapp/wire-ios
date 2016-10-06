@@ -57,9 +57,7 @@ extension ClientMessageRequestFactoryTests {
         let user = ZMUser.insertNewObject(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
         
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        client.remoteIdentifier = UUID.create().transportString()
-        client.user = user
+        self.createClient(for: user, createSessionWithSelfUser: true)
         
         let conversationId = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -72,15 +70,15 @@ extension ClientMessageRequestFactoryTests {
         message.sender = user
         message.visibleInConversation = conversation
 
-        let confirmationMessage = message.confirmReception()
+        let confirmationMessage = message.confirmReception()!
         
         //when
-        let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage!, forConversationWithId: conversationId)
+        let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, forConversationWithId: conversationId)
         
         //then
         XCTAssertEqual(request?.method, ZMTransportRequestMethod.methodPOST)
         XCTAssertEqual(request?.path, "/conversations/\(conversationId.transportString())/otr/messages?report_missing=\(user.remoteIdentifier!.transportString())")
-        XCTAssertEqual(message.encryptedMessagePayloadData()?.data, request?.binaryData)
+        XCTAssertNotNil(request?.binaryData)
     }
 }
 
