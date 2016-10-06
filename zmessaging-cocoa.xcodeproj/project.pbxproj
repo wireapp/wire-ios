@@ -2271,9 +2271,8 @@
 				ORGANIZATIONNAME = "Zeta Project Gmbh";
 				TargetAttributes = {
 					3E186087191A56F6000FE027 = {
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0800;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -2284,8 +2283,8 @@
 						};
 					};
 					3E1860C2191A649D000FE027 = {
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Manual;
 						TestTargetID = 3E186087191A56F6000FE027;
 					};
 					549815921A43232400A7CE2E = {
@@ -2801,7 +2800,7 @@
 				CODE_SIGN_ENTITLEMENTS = "zmessaging Test Host.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = W5KEQBF9B5;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2833,7 +2832,7 @@
 				CODE_SIGN_ENTITLEMENTS = "zmessaging Test Host.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = W5KEQBF9B5;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2863,6 +2862,7 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/zmessaging Test Host.app/zmessaging Test Host";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -2899,6 +2899,7 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/zmessaging Test Host.app/zmessaging Test Host";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
