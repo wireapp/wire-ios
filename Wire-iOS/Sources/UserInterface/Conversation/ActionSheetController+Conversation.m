@@ -27,7 +27,7 @@
 #import "UIImage+ZetaIconsNeue.h"
 #import "UIColor+WR_ColorScheme.h"
 #import "UIFont+MagicAccess.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 #import "ZClientViewController.h"
 
 @import ZMUtilities;
@@ -236,7 +236,7 @@
     
     if (conversation.conversationType == ZMConversationTypeGroup && [conversation.activeParticipants containsObject:[ZMUser selfUser]]) {
         [actionSheetController addCheckmarkButtonWithConfigurationHandler:^(CheckBoxButton *checkBoxButton) {
-            [checkBoxButton setTitle:[NSLocalizedString(@"meta.menu.delete_content.leave_as_well_message", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+            [checkBoxButton setTitle:[NSLocalizedString(@"meta.menu.delete_content.leave_as_well_message", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
         }];
     }
     
@@ -265,7 +265,7 @@
 
     NSString *alsoDeleteTitle = NSLocalizedString(@"meta.leave_conversation.delete_content_as_well_message", @"");
     [actionSheetController addCheckmarkButtonWithConfigurationHandler:^(CheckBoxButton *checkBoxButton) {
-        [checkBoxButton setTitle:alsoDeleteTitle.uppercaseStringWithCurrentLocale forState:UIControlStateNormal];
+        [checkBoxButton setTitle:alsoDeleteTitle.uppercasedWithCurrentLocale forState:UIControlStateNormal];
     }];
     
     [actionSheetController addAction:[SheetAction actionWithTitle:NSLocalizedString(@"meta.leave_conversation_button_cancel", nil) iconType:ZetaIconTypeBell style:SheetActionStyleCancel handler:^(SheetAction *action) {

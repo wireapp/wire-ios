@@ -32,7 +32,7 @@
 #import "UIFont+MagicAccess.h"
 #import "zmessaging+iOS.h"
 #import "GuidanceLabel.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 
 
@@ -209,7 +209,7 @@
     }
     else if (error) {
         NSString *key = [self localizationKeyForError:error prefix:@"password"];
-        self.guidanceLabel.text = [NSLocalizedString(key, nil) uppercaseStringWithCurrentLocale];
+        self.guidanceLabel.text = [NSLocalizedString(key, nil) uppercasedWithCurrentLocale];
         self.passwordField.rightAccessoryView = RegistrationTextFieldRightAccessoryViewNone;
     }
     

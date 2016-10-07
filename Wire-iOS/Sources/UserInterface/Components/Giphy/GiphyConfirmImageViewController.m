@@ -34,7 +34,7 @@
 #import "UIImage+ZetaIconsNeue.h"
 #import "UIViewController+Orientation.h"
 #import "GiphySearchResultsController.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "zmessaging+iOS.h"
 #import "ZMUserSession+Additions.h"
@@ -259,14 +259,14 @@ static const CGFloat BottomMarginInset = 24;
     self.acceptImageButton = [Button buttonWithStyleClass:@"dialogue-button-full"];
     self.acceptImageButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.acceptImageButton addTarget:self action:@selector(acceptImage:) forControlEvents:UIControlEventTouchUpInside];
-    [self.acceptImageButton setTitle:[NSLocalizedString(@"giphy.confirm", @"") uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.acceptImageButton setTitle:[NSLocalizedString(@"giphy.confirm", @"") uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     self.acceptImageButton.accessibilityIdentifier = @"acceptButton";
     [self.confirmButtonsContainer addSubview:self.acceptImageButton];
     
     self.rejectImageButton = [Button buttonWithStyleClass:@"dialogue-button-empty"];
     self.rejectImageButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.rejectImageButton addTarget:self action:@selector(rejectImage:) forControlEvents:UIControlEventTouchUpInside];
-    [self.rejectImageButton setTitle:[NSLocalizedString(@"giphy.try_another", @"") uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.rejectImageButton setTitle:[NSLocalizedString(@"giphy.try_another", @"") uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     self.rejectImageButton.accessibilityIdentifier = @"rejectButton";
     [self.confirmButtonsContainer addSubview:self.rejectImageButton];
 }
@@ -295,7 +295,7 @@ static const CGFloat BottomMarginInset = 24;
     
     NSString *errorKey = self.didSearchMoreThanOnce ? @"giphy.error.no_more_results" : @"giphy.error.no_result";
     
-    errorLabel.text = [NSLocalizedString(errorKey, "") uppercaseStringWithCurrentLocale];
+    errorLabel.text = [NSLocalizedString(errorKey, "") uppercasedWithCurrentLocale];
     errorLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_bold"];
     errorLabel.textColor = [UIColor whiteColor];
     

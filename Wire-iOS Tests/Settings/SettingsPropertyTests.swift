@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,25 +20,28 @@
 import XCTest
 @testable import Wire
 
-@objc class MockZMEditableUser: NSObject, ZMEditableUser {
+@objc class MockZMEditableUser: NSObject, ZMEditableUser, ValidatorType {
     var name: String! = ""
-    var accentColorValue: ZMAccentColor = .Undefined
+    var accentColorValue: ZMAccentColor = .undefined
     var emailAddress: String! = ""
     var phoneNumber: String! = ""
     
-    var originalProfileImageData: NSData!
+    var originalProfileImageData: Data!
     
     func deleteProfileImage() {
         // no-op
     }
+    
+    static func validateName(_ ioName: AutoreleasingUnsafeMutablePointer<NSString?>!) throws {
+    }
 }
 
 class MockZMUserSession: ZMUserSessionInterface {
-    func performChanges(block: dispatch_block_t) {
+    func performChanges(_ block: @escaping () -> Swift.Void) {
         block()
     }
     
-    func enqueueChanges(block: dispatch_block_t) {
+    func enqueueChanges(_ block: @escaping () -> Swift.Void) {
         block()
     }
     
@@ -46,23 +49,26 @@ class MockZMUserSession: ZMUserSessionInterface {
 }
 
 class ZMMockAVSMediaManager: AVSMediaManagerInterface {
-    var intensityLevel : AVSIntensityLevel = .None
+    var intensityLevel : AVSIntensityLevel = .none
     
-    func playMediaByName(name: String!) { }
+    func playMediaByName(_ name: String!) { }
 }
 
 class ZMMockAnalytics: AnalyticsInterface {
     var isOptedOut: Bool = false
 }
 
+class ZMMockCrashlogManager: CrashlogManager {
+    var isCrashManagerDisabled: Bool = false
+}
 
 class SettingsPropertyTests: XCTestCase {
-    let userDefaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    let userDefaults: UserDefaults = UserDefaults.standard
     
-    func saveAndCheck<T: AnyObject where T: Equatable>( property: SettingsProperty, value : T) -> Bool {
+    func saveAndCheck<T: Any>( _ property: SettingsProperty, value: T) throws -> Bool where T: Equatable {
         var property = property
-        property << value
-        if let readValue : T = property.propertyValue.value() as? T {
+        try property << value
+        if let readValue : T = property.rawValue() as? T {
             return value == readValue
         }
         else {
@@ -74,16 +80,16 @@ class SettingsPropertyTests: XCTestCase {
     
     func testThatIntegerUserDefaultsSettingSave() {
         // given
-        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.ColorScheme, userDefaultsKey: UserDefaultColorScheme, userDefaults: self.userDefaults)
+        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.DarkMode, userDefaultsKey: UserDefaultColorScheme, userDefaults: self.userDefaults)
         // when & then
-        XCTAssertTrue(self.saveAndCheck(property, value: "light"))
+        try! XCTAssertTrue(self.saveAndCheck(property, value: "light"))
     }
     
     func testThatBoolUserDefaultsSettingSave() {
         // given
         let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.ChatHeadsDisabled, userDefaultsKey: UserDefaultChatHeadsDisabled, userDefaults: self.userDefaults)
         // when & then
-        XCTAssertTrue(self.saveAndCheck(property, value: true))
+        try! XCTAssertTrue(self.saveAndCheck(property, value: true))
     }
     
     
@@ -95,11 +101,11 @@ class SettingsPropertyTests: XCTestCase {
         let mediaManager = ZMMockAVSMediaManager()
         let analytics = ZMMockAnalytics()
         
-        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession : userSession, selfUser: selfUser)
+        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
         
         let property = factory.property(SettingsPropertyName.ProfileName)
         // when & then
-        XCTAssertTrue(self.saveAndCheck(property, value: "Test"))
+        try! XCTAssertTrue(self.saveAndCheck(property, value: "Test"))
     }
     
     func testThatSoundLevelPropertySetsValue() {
@@ -109,11 +115,11 @@ class SettingsPropertyTests: XCTestCase {
         let mediaManager = ZMMockAVSMediaManager()
         let analytics = ZMMockAnalytics()
 
-        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession : userSession, selfUser: selfUser)
+        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
         
         let property = factory.property(SettingsPropertyName.SoundAlerts)
         // when & then
-        XCTAssertTrue(self.saveAndCheck(property, value: 1))
+        try! XCTAssertTrue(self.saveAndCheck(property, value: 1))
     }
     
     func testThatAnalyticsPropertySetsValue() {
@@ -122,12 +128,13 @@ class SettingsPropertyTests: XCTestCase {
         let userSession = MockZMUserSession()
         let mediaManager = ZMMockAVSMediaManager()
         let analytics = ZMMockAnalytics()
-
-        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession : userSession, selfUser: selfUser)
+        let crashlogManager = ZMMockCrashlogManager()
+        
+        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser, crashlogManager: crashlogManager)
         
         let property = factory.property(SettingsPropertyName.AnalyticsOptOut)
         // when & then
-        XCTAssertTrue(self.saveAndCheck(property, value: true))
+        try! XCTAssertTrue(self.saveAndCheck(property, value: true))
     }
     
     func testThatIntegerBlockSettingSave() {
@@ -141,7 +148,7 @@ class SettingsPropertyTests: XCTestCase {
 
         let property = factory.property(SettingsPropertyName.SoundAlerts)
         // when & then
-        XCTAssertTrue(self.saveAndCheck(property, value: 1))
+        try! XCTAssertTrue(self.saveAndCheck(property, value: 1))
     }
     
 }

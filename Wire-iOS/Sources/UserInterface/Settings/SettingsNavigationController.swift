@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,14 +20,24 @@
 import Foundation
 
 @objc class SettingsNavigationController: UINavigationController {
-    let rootGroup: protocol<SettingsControllerGeneratorType, SettingsInternalGroupCellDescriptorType>
+
+    let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
+    static let dismissNotificationName = "SettingsNavigationControllerDismissNotificationName"
+    
     let settingsPropertyFactory: SettingsPropertyFactory
+    @objc var dismissAction: ((SettingsNavigationController) -> ())? = .none
+    
+    fileprivate let pushTransition = PushTransition()
+    fileprivate let popTransition = PopTransition()
+    fileprivate var dismissGestureRecognizer: UIScreenEdgePanGestureRecognizer!
+    
     static func settingsNavigationController() -> SettingsNavigationController {
-        let settingsPropertyFactory = SettingsPropertyFactory(userDefaults: NSUserDefaults.standardUserDefaults(),
+        let settingsPropertyFactory = SettingsPropertyFactory(userDefaults: UserDefaults.standard,
             analytics: Analytics.shared(),
             mediaManager: AVSProvider.shared.mediaManager,
-            userSession: ZMUserSession.sharedSession(),
-            selfUser: ZMUser.selfUser())
+            userSession: ZMUserSession.shared(),
+            selfUser: ZMUser.selfUser(),
+            crashlogManager: BITHockeyManager.shared())
         
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory)
         
@@ -35,25 +45,38 @@ import Foundation
         return settingsNavigationController
     }
     
-    required init(rootGroup: protocol<SettingsControllerGeneratorType, SettingsInternalGroupCellDescriptorType>, settingsPropertyFactory: SettingsPropertyFactory) {
+    required init(rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType, settingsPropertyFactory: SettingsPropertyFactory) {
         self.rootGroup = rootGroup
         self.settingsPropertyFactory = settingsPropertyFactory
         super.init(nibName: nil, bundle: nil)
+        self.delegate = self
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SettingsNavigationController.soundIntensityChanged(_:)), name: SettingsPropertyName.SoundAlerts.changeNotificationName, object: nil)
+        self.transitioningDelegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(SettingsNavigationController.soundIntensityChanged(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.SoundAlerts.changeNotificationName), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SettingsNavigationController.dismissNotification(_:)), name: NSNotification.Name(rawValue: type(of: self).dismissNotificationName), object: nil)
     }
     
-    func openControllerForCellWithIdentifier(identifier: String) -> UIViewController? {
-        var resultViewController: UIViewController? = .None
+    @discardableResult func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
+        var resultViewController: UIViewController? = .none
         // Let's assume for the moment that menu is only 2 levels deep
         self.rootGroup.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) -> () in
-            if let topCellGroupDescriptor = topCellDescriptor as? protocol<SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType> {
+            
+            if let cellIdentifier = topCellDescriptor.identifier,
+                let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
+                let viewController = cellGroupDescriptor.generateViewController(),
+                cellIdentifier == identifier
+            {
+                self.pushViewController(viewController, animated: false)
+                resultViewController = viewController
+            }
+            
+            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
                 topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) -> () in
                     if let cellIdentifier = cellDescriptor.identifier,
                         let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
                         let topViewController = topCellGroupDescriptor.generateViewController(),
-                        let viewController = cellGroupDescriptor.generateViewController()
-                        where cellIdentifier == identifier
+                        let viewController = cellGroupDescriptor.generateViewController(),
+                        cellIdentifier == identifier
                     {
                         self.pushViewController(topViewController, animated: false)
                         self.pushViewController(viewController, animated: false)
@@ -61,6 +84,7 @@ import Foundation
                     }
                 })
             }
+            
         })
         return resultViewController
     }
@@ -69,40 +93,147 @@ import Foundation
         fatalError()
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError()
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func soundIntensityChanged(notification: NSNotification) {
+    func soundIntensityChanged(_ notification: Notification) {
         let soundProperty = self.settingsPropertyFactory.property(.SoundAlerts)
         
-        if let intensivityLevel = soundProperty.propertyValue.value() as? AVSIntensityLevel {
+        if let intensivityLevel = soundProperty.rawValue() as? AVSIntensityLevel {
             switch(intensivityLevel) {
-            case .Full:
+            case .full:
                 Analytics.shared()?.tagSoundIntensityPreference(SoundIntensityTypeAlways)
-            case .Some:
+            case .some:
                 Analytics.shared()?.tagSoundIntensityPreference(SoundIntensityTypeFirstOnly)
-            case .None:
+            case .none:
                 Analytics.shared()?.tagSoundIntensityPreference(SoundIntensityTypeNever)
             }
         }
     }
     
+    func dismissNotification(_ notification: NSNotification) {
+        self.dismissAction?(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.view.backgroundColor = UIColor.clear
+        self.interactivePopGestureRecognizer?.isEnabled = false
+        
         if let rootViewController = self.rootGroup.generateViewController() {
             Analytics.shared()?.tagScreen("SETTINGS")
-            
             self.pushViewController(rootViewController, animated: false)
+            if let settingsTableController = rootViewController as? SettingsTableViewController {
+                settingsTableController.dismissAction = { [unowned self] _ in
+                    self.dismissAction?(self)
+                }
+            }
+        }
+        
+        self.navigationBar.setBackgroundImage(UIImage(), for:.default)
+        self.navigationBar.shadowImage = UIImage()
+        self.navigationBar.isTranslucent = true
+        self.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont(magicIdentifier: "style.text.normal.font_spec").allCaps()]
+        
+        let navButtonAppearance = UIBarButtonItem.wr_appearanceWhenContained(in: UINavigationBar.self)
+                
+        navButtonAppearance?.setTitleTextAttributes([NSFontAttributeName : UIFont(magicIdentifier: "style.text.normal.font_spec").allCaps()], for: UIControlState.normal)
+        
+        self.dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(SettingsNavigationController.onEdgeSwipe(gestureRecognizer:)))
+        self.dismissGestureRecognizer.edges = [.left]
+        self.dismissGestureRecognizer.delegate = self
+        self.view.addGestureRecognizer(self.dismissGestureRecognizer)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.presentNewLoginAlertControllerIfNeeded()
+    }
+    
+    func onEdgeSwipe(gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        if gestureRecognizer.state == .recognized {
+            self.popViewController(animated: true)
         }
     }
     
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return [.Portrait]
+    fileprivate func presentNewLoginAlertControllerIfNeeded() {
+        let clientsRequiringUserAttention = ZMUser.selfUser().clientsRequiringUserAttention
+        
+        if (clientsRequiringUserAttention?.count)! > 0 {
+            self.presentNewLoginAlertController(clientsRequiringUserAttention!)
+        }
+    }
+    
+    fileprivate func presentNewLoginAlertController(_ clients: Set<UserClient>) {
+        let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
+        
+        let actionManageDevices = UIAlertAction(title: "self.new_device_alert.manage_devices".localized, style:.default) { _ in
+            self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
+        }
+        
+        newLoginAlertController?.addAction(actionManageDevices)
+        
+        let actionTrustDevices = UIAlertAction(title:"self.new_device_alert.trust_devices".localized, style:.default, handler:.none)
+        
+        newLoginAlertController?.addAction(actionTrustDevices)
+        
+        self.present(newLoginAlertController!, animated:true, completion:.none)
+        
+        ZMUserSession.shared().enqueueChanges {
+            clients.forEach {
+                $0.needsToNotifyUser = false
+            }
+        }
+    }
+    
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        return [.portrait]
+    }
+
+}
+
+extension SettingsNavigationController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController,
+         animationControllerFor operation: UINavigationControllerOperation,
+                         from fromVC: UIViewController,
+                             to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        switch operation {
+        case .push:
+            return self.pushTransition
+        case .pop:
+            return self.popTransition
+        default:
+            fatalError()
+        }
+    }
+}
+
+extension SettingsNavigationController: UIViewControllerTransitioningDelegate {
+    
+    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        let transition = SwizzleTransition()
+        transition.direction = .vertical
+        return transition
+    }
+    
+    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        let transition = SwizzleTransition()
+        transition.direction = .vertical
+        return transition
+    }
+}
+
+extension SettingsNavigationController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }

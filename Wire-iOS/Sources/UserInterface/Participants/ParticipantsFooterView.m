@@ -22,7 +22,7 @@
 
 #import "WAZUIMagicIOS.h"
 #import <PureLayout/PureLayout.h>
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 @import WireExtensionComponents;
 
 
@@ -133,7 +133,7 @@
 
 - (void)setTitleForLeftButton:(NSString *)title
 {
-    [self.leftButton setTitle:title.uppercaseStringWithCurrentLocale forState:UIControlStateNormal];
+    [self.leftButton setTitle:title.uppercasedWithCurrentLocale forState:UIControlStateNormal];
 }
 
 - (void)setIconType:(ZetaIconType)iconType forButton:(IconButton *)button

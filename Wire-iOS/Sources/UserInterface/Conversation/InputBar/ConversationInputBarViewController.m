@@ -17,9 +17,9 @@
 // 
 
 
-#import <AVFoundation/AVAudioSession.h>
 #import <PureLayout.h>
 @import MobileCoreServices;
+@import AVFoundation;
 
 #import "ConversationInputBarViewController.h"
 #import "ConversationInputBarViewController+Private.h"
@@ -39,7 +39,7 @@
 #import "Analytics+iOS.h"
 #import "AnalyticsTracker+Sketchpad.h"
 #import "AnalyticsTracker+FileTransfer.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 
 #import "ZMUserSession+Additions.h"
@@ -52,12 +52,9 @@
 #import "ConversationInputBarSendController.h"
 #import "FLAnimatedImage.h"
 #import "MediaAsset.h"
-#import "Wire-Swift.h"
 #import "UIView+WR_ExtendedBlockAnimations.h"
 #import "UIView+Borders.h"
 #import "ImageMessageCell.h"
-
-#import "Wire-Swift.h"
 
 
 @interface ConversationInputBarViewController (Commands)
@@ -655,7 +652,7 @@
 {
     ConfirmAssetViewController *confirmImageViewController = [[ConfirmAssetViewController alloc] init];
     confirmImageViewController.image = image;
-    confirmImageViewController.previewTitle = [self.conversation.displayName uppercaseStringWithCurrentLocale];
+    confirmImageViewController.previewTitle = [self.conversation.displayName uppercasedWithCurrentLocale];
     
     @weakify(self);
     

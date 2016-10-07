@@ -26,7 +26,7 @@
 #import "UIView+Borders.h"
 #import "UIView+MTAnimation.h"
 #import "MentionsCollectionView.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import <PureLayout/PureLayout.h>
 
@@ -105,7 +105,7 @@ static NSString * const reuseIdentifier = @"MentionsCell";
     ZMUser *user = [self.mentionedUsers allObjects][indexPath.row];
     cell.userImageView.user = user;
     
-    cell.nameLabel.text = self.mentionedUsers.count == 1 ? [user.displayName uppercaseStringWithCurrentLocale] : nil;
+    cell.nameLabel.text = self.mentionedUsers.count == 1 ? [user.displayName uppercasedWithCurrentLocale] : nil;
     
     return cell;
 }

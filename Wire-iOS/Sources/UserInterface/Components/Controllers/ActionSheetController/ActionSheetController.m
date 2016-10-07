@@ -22,7 +22,6 @@
 @import Classy;
 @import WireExtensionComponents;
 #import "Wire-Swift.h"
-#import "NSString+Wire.h"
 
 
 #import "ActionSheetController.h"
@@ -158,7 +157,7 @@
 {
     [super viewDidLoad];
     
-    self.actionSheetContainerView.titleLabel.text = [self.title uppercaseStringWithCurrentLocale];
+    self.actionSheetContainerView.titleLabel.text = [self.title uppercasedWithCurrentLocale];
     self.actionSheetContainerView.sheetView = self.sheetView;
 
     if (self.dismissStyle == ActionSheetControllerDismissStyleBackground) {

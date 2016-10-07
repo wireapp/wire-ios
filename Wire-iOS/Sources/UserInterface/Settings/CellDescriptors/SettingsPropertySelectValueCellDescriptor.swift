@@ -18,6 +18,7 @@
 
 
 import Foundation
+import CocoaLumberjackSwift
 
 class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCell.Type = SettingsValueCell.self
@@ -27,29 +28,36 @@ class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescriptorT
     
     typealias SelectActionType = (SettingsPropertySelectValueCellDescriptor) -> ()
     let selectAction: SelectActionType?
+    let backgroundColor: UIColor?
     var visible: Bool = true
+
     weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty
     
-    init(settingsProperty: SettingsProperty, value: SettingsPropertyValue, title: String, identifier: String? = .None, selectAction: SelectActionType? = .None) {
+    init(settingsProperty: SettingsProperty, value: SettingsPropertyValue, title: String, identifier: String? = .none, selectAction: SelectActionType? = .none, backgroundColor: UIColor? = .none) {
         self.settingsProperty = settingsProperty
         self.value = value
         self.title = title
         self.identifier = identifier
         self.selectAction = selectAction
+        self.backgroundColor = backgroundColor
     }
     
-    func featureCell(cell: SettingsCellType) {
+    func featureCell(_ cell: SettingsCellType) {
         cell.titleText = self.title
-        
+        cell.cellColor = self.backgroundColor
         if let valueCell = cell as? SettingsValueCell {
-            valueCell.accessoryType = self.settingsProperty.propertyValue == self.value ? .Checkmark : .None
+            valueCell.accessoryType = self.settingsProperty.value() == self.value ? .checkmark : .none
         }
     }
     
-    func select(value: SettingsPropertyValue?) {
-        
-        self.settingsProperty << self.value
+    func select(_ value: SettingsPropertyValue?) {
+        do {
+            try self.settingsProperty << self.value
+        }
+        catch (let e) {
+            DDLogError("Cannot set property: \(e)")
+        }
         if let selectAction = self.selectAction {
             selectAction(self)
         }

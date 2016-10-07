@@ -23,7 +23,7 @@
 #import "WAZUIMagic.h"
 #import "UIFont+MagicAccess.h"
 #import "UIColor+MagicAccess.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "UIView+Borders.h"
 
@@ -73,7 +73,7 @@ NSString *const PeoplePickerHeaderReuseIdentifier = @"PeoplePickerHeaderReuseIde
 - (void)setTitle:(NSString *)title
 {
     _title = [title copy];
-    self.titleField.text = [_title uppercaseStringWithCurrentLocale];
+    self.titleField.text = [_title uppercasedWithCurrentLocale];
 }
 
 @end

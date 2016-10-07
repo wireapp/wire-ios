@@ -1,20 +1,20 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
 import UIKit
@@ -57,56 +57,54 @@ class ClientTableViewCell: UITableViewCell {
     
     var userClient: UserClient? {
         didSet {
-            if let userClient = self.userClient {
-                if let userClientModel = userClient.model {
-                        
-                    nameLabel.text = userClientModel
-                }
-                
-                self.updateLabel()
-                
-                if let activationDate = userClient.activationDate where userClient.activationLocationLatitude != 0 && userClient.activationLocationLongitude != 0 {
-
-                    let localClient = self.userClient
-                    CLGeocoder().reverseGeocodeLocation(userClient.activationLocation, completionHandler: { (placemarks: [CLPlacemark]?, error: NSError?) -> Void in
-
-                        if let placemark = placemarks?.first,
-                            let addressCountry = placemark.addressDictionary?[kABPersonAddressCountryCodeKey],
-                            let addressCity = placemark.addressDictionary?[kABPersonAddressCityKey] where
-                            localClient == self.userClient &&
-                            error == .None {
-                                
-                            self.activationLabel.text = "\(NSLocalizedString("registration.devices.activated_in", comment: "")) \(addressCity), \(addressCountry.uppercaseString) — \(activationDate.wr_formattedDate())"
-                        }
-                    })
-                    
-                    self.activationLabel.text = activationDate.wr_formattedDate()
-                }
-                else if let activationDate = userClient.activationDate {
-                    self.activationLabel.text = activationDate.wr_formattedDate()
-                }
-                else {
-                    self.activationLabel.text = ""
-                }
-                
-                self.updateFingerprint()
-                self.updateVerifiedLabel()
+            guard let userClient = self.userClient else { return }
+            if let userClientModel = userClient.model {
+                nameLabel.text = userClientModel
             }
+            
+            self.updateLabel()
+            
+            if let activationDate = userClient.activationDate, userClient.activationLocationLatitude != 0 && userClient.activationLocationLongitude != 0 {
+                
+                let localClient = self.userClient
+                CLGeocoder().reverseGeocodeLocation(userClient.activationLocation, completionHandler: { (placemarks: [CLPlacemark]?, error: Error?) -> Void in
+                    
+                    if let placemark = placemarks?.first,
+                        let addressCountry = placemark.addressDictionary?[kABPersonAddressCountryCodeKey as String] as? String,
+                        let addressCity = placemark.addressDictionary?[kABPersonAddressCityKey as String],
+                        localClient == self.userClient &&
+                            error == nil {
+                        
+                        self.activationLabel.text = "\("registration.devices.activated_in".localized) \(addressCity), \(addressCountry.uppercased()) — \(activationDate.wr_formattedDate())"
+                    }
+                })
+                
+                self.activationLabel.text = activationDate.wr_formattedDate()
+            }
+            else if let activationDate = userClient.activationDate {
+                self.activationLabel.text = activationDate.wr_formattedDate()
+            }
+            else {
+                self.activationLabel.text = ""
+            }
+            
+            self.updateFingerprint()
+            self.updateVerifiedLabel()
         }
     }
     
     var wr_editable: Bool
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        self.nameLabel = UILabel(frame: CGRectZero)
+        self.nameLabel = UILabel(frame: CGRect.zero)
         self.nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.labelLabel = UILabel(frame: CGRectZero)
+        self.labelLabel = UILabel(frame: CGRect.zero)
         self.labelLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.activationLabel = UILabel(frame: CGRectZero)
+        self.activationLabel = UILabel(frame: CGRect.zero)
         self.activationLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.fingerprintLabel = UILabel(frame: CGRectZero)
+        self.fingerprintLabel = UILabel(frame: CGRect.zero)
         self.fingerprintLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.verifiedLabel = UILabel(frame: CGRectZero)
+        self.verifiedLabel = UILabel(frame: CGRect.zero)
         self.verifiedLabel.translatesAutoresizingMaskIntoConstraints = false
         
         self.wr_editable = true
@@ -146,14 +144,17 @@ class ClientTableViewCell: UITableViewCell {
             verifiedLabel.bottom == contentView.bottom - 16
         }
         
-        CASStyler.defaultStyler().styleItem(self)
+        CASStyler.default().styleItem(self)
+        self.backgroundColor = UIColor.clear
+        self.backgroundView = UIView()
+        self.selectedBackgroundView = UIView()
     }
 
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func setEditing(editing: Bool, animated: Bool) {
+    override func setEditing(_ editing: Bool, animated: Bool) {
         if self.wr_editable {
             super.setEditing(editing, animated: animated)
         }
@@ -161,15 +162,14 @@ class ClientTableViewCell: UITableViewCell {
     
     func updateVerifiedLabel() {
         if let userClient = self.userClient
-            where self.showVerified {
+            , self.showVerified {
             if userClient.verified {
                 self.verifiedLabel.text = NSLocalizedString("device.verified", comment: "");
-                self.verifiedLabel.textColor = UIColor.blackColor()
             }
             else {
                 self.verifiedLabel.text = NSLocalizedString("device.not_verified", comment: "");
-                self.verifiedLabel.textColor = UIColor.grayColor()
             }
+            self.verifiedLabel.textColor = UIColor(white: 1, alpha: 0.4)
         }
         else {
             self.verifiedLabel.text = ""
@@ -179,20 +179,18 @@ class ClientTableViewCell: UITableViewCell {
     func updateFingerprint() {
         if let fingerprintLabelBoldMonoFont = self.fingerprintLabelBoldFont?.monospacedFont(),
             let fingerprintLabelMonoFont = self.fingerprintLabelFont?.monospacedFont(),
-            let userClient = self.userClient
-            where userClient.remoteIdentifier != nil {
+            let userClient = self.userClient, userClient.remoteIdentifier != nil {
                 
                 self.fingerprintLabel.attributedText =  userClient.attributedRemoteIdentifier(
-                    [NSFontAttributeName: fingerprintLabelMonoFont],
-                    boldAttributes: [NSFontAttributeName: fingerprintLabelBoldMonoFont],
+                    [NSFontAttributeName: fingerprintLabelMonoFont, NSForegroundColorAttributeName: UIColor.white],
+                    boldAttributes: [NSFontAttributeName: fingerprintLabelBoldMonoFont, NSForegroundColorAttributeName: UIColor.white],
                     uppercase: true
                 )
         }
     }
     
     func updateLabel() {
-        if let userClientLabel = self.userClient?.label
-            where self.showLabel {
+        if let userClientLabel = self.userClient?.label, self.showLabel {
             self.labelLabel.text = userClientLabel
         }
         else {

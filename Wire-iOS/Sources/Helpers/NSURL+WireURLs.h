@@ -19,7 +19,7 @@
 
 #import <Foundation/Foundation.h>
 
-
+NS_ASSUME_NONNULL_BEGIN
 
 @interface NSURL (WireURLs)
 
@@ -39,6 +39,8 @@
 
 + (instancetype)wr_supportURL;
 
++ (instancetype)wr_askSupportURL;
+
 + (instancetype)wr_reportAbuseURL;
 
 + (instancetype)wr_cannotDecryptHelpURL;
@@ -46,3 +48,5 @@
 + (instancetype)wr_cannotDecryptNewRemoteIDHelpURL;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -26,7 +26,6 @@
 #import "UIImage+ZetaIconsNeue.h"
 #import "SketchBottomView.h"
 #import "SketchTopView.h"
-#import "ColorPickerController+AccentColors.h"
 #import "UIColor+WAZExtensions.h"
 #import <PureLayout/PureLayout.h>
 #import <SmoothLineView/SmoothLineView.h>
@@ -39,12 +38,11 @@
 #import <CoreMotion/CoreMotion.h>
 #import "UIViewController+Orientation.h"
 #import "SketchColorPickerController.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "DeviceOrientationObserver.h"
 #import "WRFunctions.h"
 #import "UIImage+Transform.h"
-#import "Wire-Swift.h"
 
 
 static const CGFloat SketchBrushWidthThin = 6;
@@ -272,13 +270,13 @@ static const CGFloat SketchBrushWidthThin = 6;
     self.hintLabel = [UILabel newAutoLayoutView];
     self.hintLabel.textAlignment = NSTextAlignmentCenter;
     self.hintLabel.numberOfLines = 0;
-    self.hintLabel.text = [NSLocalizedString(@"sketchpad.initial_hint", "") uppercaseStringWithCurrentLocale];
+    self.hintLabel.text = [NSLocalizedString(@"sketchpad.initial_hint", "") uppercasedWithCurrentLocale];
     [self.view addSubview:self.hintLabel];
 }
 
 - (void)setSketchTitle:(NSString *)sketchTitle
 {
-    _sketchTitle = [sketchTitle uppercaseStringWithCurrentLocale];
+    _sketchTitle = [sketchTitle uppercasedWithCurrentLocale];
     
     self.topView.titleLabel.text = _sketchTitle;
     [self.topView.titleLabel sizeToFit];

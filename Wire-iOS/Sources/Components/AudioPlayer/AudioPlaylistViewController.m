@@ -36,7 +36,7 @@
 #import "SoundcloudService.h"
 #import "LinkAttachment.h"
 #import "WAZUIMagicIOS.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 
 static NSString * const AudioPlaylistCellReuseIdentifier = @"AudioPlaylistCellReuseIdentifier";
@@ -317,8 +317,8 @@ static const CGFloat SeparatorLineOverflow = 4;
 
 - (void)updateHeaderView
 {
-    self.audioHeaderView.artistLabel.text = [self.audioPlaylist.author uppercaseStringWithCurrentLocale];
-    self.audioHeaderView.trackTitleLabel.text = [self.audioPlaylist.title uppercaseStringWithCurrentLocale];
+    self.audioHeaderView.artistLabel.text = [self.audioPlaylist.author uppercasedWithCurrentLocale];
+    self.audioHeaderView.trackTitleLabel.text = [self.audioPlaylist.title uppercasedWithCurrentLocale];
 }
 
 - (void)updateTracksSeparatorLine
@@ -474,7 +474,7 @@ static const CGFloat SeparatorLineOverflow = 4;
             cell.titleLabel.text = NSLocalizedString(@"content.player.unable_to_play", @"");
         }
         else {
-            cell.titleLabel.text = [audioTrack.title uppercaseStringWithCurrentLocale];
+            cell.titleLabel.text = [audioTrack.title uppercasedWithCurrentLocale];
         }
         cell.durationLabel.text = [[NSDateComponentsFormatter new] stringFromTimeInterval:audioTrack.duration];
         

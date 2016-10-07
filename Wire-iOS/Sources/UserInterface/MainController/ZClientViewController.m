@@ -35,7 +35,6 @@
 #import "ParticipantsViewController.h"
 #import "ConversationListViewController.h"
 #import "ConversationViewController.h"
-#import "ProfileSelfViewController.h"
 #import "ConnectRequestsViewController.h"
 #import "SoundEventListener.h"
 #import "ProximityMonitorManager.h"
@@ -279,35 +278,6 @@
     [self.splitViewController setLeftViewControllerRevealed:YES animated:YES completion:completion];
 }
 
-- (ProfileSelfViewController* )openSelfProfileAnimated:(BOOL)animated
-{
-    return [self openSelfProfileAnimated:animated completion:nil];
-}
-
-- (ProfileSelfViewController *)openSelfProfileAnimated:(BOOL)animated completion:(void(^)(ProfileSelfViewController *))completion
-{
-    ProfileSelfViewController *selfProfileViewController = [[ProfileSelfViewController alloc] init];
-    selfProfileViewController.analyticsTracker = [AnalyticsTracker analyticsTrackerWithContext:AnalyticsContextProfile];
-    selfProfileViewController.backgroundViewController = self.backgroundViewController;
-    
-    [self.splitViewController setLeftViewControllerRevealed:YES animated:animated completion:nil];
-
-    [self.splitViewController setLeftViewController:selfProfileViewController animated:animated expanded:YES completion:^() {
-        if (completion) {
-            completion(selfProfileViewController);
-        }
-    }];
-    return selfProfileViewController;
-}
-
-- (void)dismissSelfProfileAnimated:(BOOL)animated
-{
-    if ([self.splitViewController.leftViewController isKindOfClass:ProfileSelfViewController.class]) {
-        [(ProfileSelfViewController *)self.splitViewController.leftViewController prepareForDismissal];
-    }
-    [self.splitViewController setLeftViewController:self.conversationListViewController animated:YES expanded:NO completion:nil];
-}
-
 - (void)transitionToListAnimated:(BOOL)animated completion:(dispatch_block_t)completion
 {
     if (self.splitViewController.rightViewController.presentedViewController != nil) {
@@ -395,7 +365,8 @@
 {
     if (client.user.isSelfUser) {
         SettingsClientViewController *userClientViewController = [[SettingsClientViewController alloc] initWithUserClient:client credentials:nil];
-        UINavigationController *navWrapperController = [[UINavigationController alloc] initWithRootViewController:userClientViewController];
+        UINavigationController *navWrapperController = [[SettingsStyleNavigationController alloc] initWithRootViewController:userClientViewController];
+
         navWrapperController.modalPresentationStyle = UIModalPresentationFormSheet;
         [self presentViewController:navWrapperController animated:YES completion:nil];
     }
@@ -419,7 +390,9 @@
 {
     if (user.isSelfUser) {
         ClientListViewController *clientListViewController = [[ClientListViewController alloc] initWithClientsList:user.clients.allObjects credentials:nil detailedView:YES];
-        UINavigationController *navWrapperController = [[UINavigationController alloc] initWithRootViewController:clientListViewController];
+        clientListViewController.view.backgroundColor = [UIColor blackColor];
+        clientListViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissClientListController:)];
+        UINavigationController *navWrapperController = [[SettingsStyleNavigationController alloc] initWithRootViewController:clientListViewController];
         navWrapperController.modalPresentationStyle = UIModalPresentationFormSheet;
         [self presentViewController:navWrapperController animated:YES completion:nil];
         
@@ -436,6 +409,10 @@
 
 }
 
+- (void)dismissClientListController:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 #pragma mark - Animated conversation switch
 
@@ -596,11 +573,6 @@
             else {
                 [self selectListItemWhenNoPreviousItemSelected];
             }
-            break;
-        }
-        case SettingsLastScreenSelfProfile: {
-            [self openSelfProfileAnimated:NO];
-            stateRestored = YES;
             break;
         }
         case SettingsLastScreenConversation: {

@@ -23,9 +23,9 @@ import zmessaging
 public extension ReactionType {
     var analyticsTypeString : String {
         switch self {
-        case .Undefined:    return "undefined"
-        case .Like:         return "like"
-        case .Unlike:       return "unlike"
+        case .undefined:    return "undefined"
+        case .like:         return "like"
+        case .unlike:       return "unlike"
         }
     }
 }
@@ -33,17 +33,17 @@ public extension ReactionType {
 public extension InteractionMethod {
     var analyticsTypeString : String {
         switch self {
-        case .Undefined:    return "undefined"
-        case .Button:       return "button"
-        case .Menu:         return "menu"
-        case .DoubleTap:    return "double-tap"
+        case .undefined:    return "undefined"
+        case .button:       return "button"
+        case .menu:         return "menu"
+        case .doubleTap:    return "double-tap"
         }
     }
 }
 
 public extension Analytics {
 
-    public func tagReactedOnMessage(message: ZMConversationMessage, reactionType:ReactionType, method: InteractionMethod) {
+    public func tagReactedOnMessage(_ message: ZMConversationMessage, reactionType:ReactionType, method: InteractionMethod) {
         guard let conversation = message.conversation,
               let sender = message.sender,
               let lastMessage = (conversation.messages.lastObject as? ZMMessage),

@@ -26,8 +26,8 @@ class ImageMessageCellTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotBackgroundColor = .whiteColor()
-        sut = ImageMessageCell(style: .Default, reuseIdentifier: name!)
+        snapshotBackgroundColor = UIColor.white
+        sut = ImageMessageCell(style: .default, reuseIdentifier: name!)
     }
 
     func testThatItRendersImageMessagePlaceholderWhenNoImageIsSet() {
@@ -43,34 +43,34 @@ class ImageMessageCellTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersImageMessageWhenImageIsSet() {
-        let image = imageInTestBundleNamed("unsplash_matterhorn.jpg")
-        let cell = sut.prepareForSnapshot(image.size, image: image)
-        verify(view: cell)
+        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let wrap = sut.prepareForSnapshot(image.size, image: image)
+        verify(view: wrap)
     }
 
     func testThatItRendersImageMessageWhenImageIsSet_SmallImage() {
-        let image = imageInTestBundleNamed("unsplash_small.jpg")
-        let cell = sut.prepareForSnapshot(image.size, image: image)
-        verify(view: cell)
+        let image = self.image(inTestBundleNamed: "unsplash_small.jpg")
+        let wrap = sut.prepareForSnapshot(image.size, image: image)
+        verify(view: wrap)
     }
 
     func testThatItRendersImageMessageWithResendButton() {
-        let image = imageInTestBundleNamed("unsplash_matterhorn.jpg")
-        let cell = sut.prepareForSnapshot(image.size, image: image, failedToSend: true)
-        verify(view: cell)
+        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let wrap = sut.prepareForSnapshot(image.size, image: image, failedToSend: true)
+        verify(view: wrap)
     }
     
     func testThatItRendersImageMessageWithResendButton_SmallImage() {
-        let image = imageInTestBundleNamed("unsplash_small.jpg")
-        let cell = sut.prepareForSnapshot(image.size, image: image, failedToSend: true)
-        verify(view: cell)
+        let image = self.image(inTestBundleNamed: "unsplash_small.jpg")
+        let wrap = sut.prepareForSnapshot(image.size, image: image, failedToSend: true)
+        verify(view: wrap)
     }
 
 }
 
 private extension ImageMessageCell {
 
-    func prepareForSnapshot(imageSize: CGSize, image: UIImage? = nil, failedToSend: Bool = false) -> ImageMessageCell {
+    func prepareForSnapshot(_ imageSize: CGSize, image: UIImage? = nil, failedToSend: Bool = false) -> UITableView {
         let layoutProperties = ConversationCellLayoutProperties()
         layoutProperties.showSender = true
         layoutProperties.showBurstTimestamp = false
@@ -78,30 +78,21 @@ private extension ImageMessageCell {
         layoutProperties.alwaysShowDeliveryState = failedToSend
         
         let message = MockMessageFactory.imageMessage()
-        message.deliveryState = failedToSend ? .FailedToSend : .Delivered
-        let imageMessageData = message.imageMessageData as! MockImageMessageData
+        message?.deliveryState = failedToSend ? .failedToSend : .delivered
+        let imageMessageData = message?.imageMessageData as! MockImageMessageData
         imageMessageData.mockOriginalSize = imageSize
 
         prepareForReuse()
-        configureForMessage(message, layoutProperties: layoutProperties)
+        configure(for: message, layoutProperties: layoutProperties)
         layoutIfNeeded()
         
         if let image = image {
             setImage(image)
         }
 
-        let size = systemLayoutSizeFittingSize(
-            CGSize(width: 320, height: 0),
-            withHorizontalFittingPriority: UILayoutPriorityRequired,
-            verticalFittingPriority: UILayoutPriorityFittingSizeLevel
-        )
-
-        bounds = CGRectMake(0.0, 0.0, size.width, size.height)
         layer.speed = 0
 
-        setNeedsLayout()
-        layoutIfNeeded()
-        return self
+        return self.wrapInTableView()
     }
 
 }

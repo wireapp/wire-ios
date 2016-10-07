@@ -32,33 +32,33 @@ extension ConversationContentViewController {
         let alert = UIAlertController.alertControllerForMessageDeletion(showDelete) { [weak self] action in
             
             // Tracking needs to be called before performing the action, since the content of the message is cleared
-            if case .Delete(let type) = action {
+            if case .delete(let type) = action {
                 self?.trackDelete(message, deletionType:type)
 
-                ZMUserSession.sharedSession().enqueueChanges {
+                ZMUserSession.shared().enqueueChanges {
                     switch type {
-                    case .Local:
+                    case .local:
                         ZMMessage.hideMessage(message)
-                    case .Everywhere:
+                    case .everywhere:
                         ZMMessage.deleteForEveryone(message)
                     }
                 }
             }
 
             completion?()
-            self?.dismissViewControllerAnimated(true, completion: nil)
+            self?.dismiss(animated: true, completion: nil)
         }
 
         if let presentationController = alert.popoverPresentationController,
-            cell = cellForMessage(message) as? ConversationCell {
+            let cell = cell(for: message) as? ConversationCell {
             presentationController.sourceView = cell.selectionView
             presentationController.sourceRect = cell.selectionRect
         }
-        presentViewController(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
     
-    private func trackDelete(message: ZMConversationMessage, deletionType: AlertAction.DeletionType) {
-        let conversationType: ConversationType = (conversation.conversationType == .Group) ? .Group : .OneToOne
+    fileprivate func trackDelete(_ message: ZMConversationMessage, deletionType: AlertAction.DeletionType) {
+        let conversationType: ConversationType = (conversation.conversationType == .group) ? .group : .oneToOne
         let messageType = Message.messageType(message)
         let timeElapsed = message.serverTimestamp?.timeIntervalSinceNow ?? 0
         Analytics.shared()?.tagDeletedMessage(messageType, messageDeletionType: deletionType.analyticsType, conversationType:conversationType, timeElapsed: 0 - timeElapsed)
@@ -68,38 +68,38 @@ extension ConversationContentViewController {
 
 private enum AlertAction {
     enum DeletionType {
-        case Local
-        case Everywhere
+        case local
+        case everywhere
         
         var analyticsType: MessageDeletionType {
             switch self {
-            case .Local: return .Local
-            case .Everywhere: return .Everywhere
+            case .local: return .local
+            case .everywhere: return .everywhere
             }
         }
     }
     
-    case Delete(DeletionType), Cancel
+    case delete(DeletionType), cancel
 }
 
 private extension UIAlertController {
 
-    static func alertControllerForMessageDeletion(showDelete: Bool, selectedAction: AlertAction -> Void) -> UIAlertController {
+    static func alertControllerForMessageDeletion(_ showDelete: Bool, selectedAction: @escaping (AlertAction) -> Void) -> UIAlertController {
         let alertTitle = "message.delete_dialog.message".localized
-        let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .ActionSheet)
+        let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
 
         let hideTitle = "message.delete_dialog.action.hide".localized
-        let hideAction = UIAlertAction(title: hideTitle, style: .Default, handler: { _ in selectedAction(.Delete(.Local)) })
+        let hideAction = UIAlertAction(title: hideTitle, style: .default, handler: { _ in selectedAction(.delete(.local)) })
         alert.addAction(hideAction)
 
         if showDelete {
             let deleteTitle = "message.delete_dialog.action.delete".localized
-            let deleteForEveryoneAction = UIAlertAction(title: deleteTitle, style: .Default, handler: { _ in selectedAction(.Delete(.Everywhere)) })
+            let deleteForEveryoneAction = UIAlertAction(title: deleteTitle, style: .default, handler: { _ in selectedAction(.delete(.everywhere)) })
             alert.addAction(deleteForEveryoneAction)
         }
 
         let cancelTitle = "message.delete_dialog.action.cancel".localized
-        let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in selectedAction(.Cancel)})
+        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: { _ in selectedAction(.cancel)})
         alert.addAction(cancelAction)
 
         return alert

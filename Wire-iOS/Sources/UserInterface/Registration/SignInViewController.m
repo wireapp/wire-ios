@@ -30,7 +30,7 @@
 #import "NavigationController.h"
 #import "UIResponder+FirstResponder.h"
 #import "zmessaging+iOS.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "AnalyticsTracker+Navigation.h"
 
@@ -82,7 +82,7 @@
     [self.emailSignInButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     self.emailSignInButton.circular = YES;
     [self.emailSignInButton addTarget:self action:@selector(signInByEmail:) forControlEvents:UIControlEventTouchUpInside];
-    [self.emailSignInButton setTitle:NSLocalizedString(@"registration.signin.email_button.title", nil).uppercaseStringWithCurrentLocale forState:UIControlStateNormal];
+    [self.emailSignInButton setTitle:NSLocalizedString(@"registration.signin.email_button.title", nil).uppercasedWithCurrentLocale forState:UIControlStateNormal];
     [self.buttonContainer addSubview:self.emailSignInButton];
     
     self.phoneSignInButton = [[Button alloc] initForAutoLayout];
@@ -92,7 +92,7 @@
     [self.phoneSignInButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     self.phoneSignInButton.circular = YES;
     [self.phoneSignInButton addTarget:self action:@selector(signInByPhone:) forControlEvents:UIControlEventTouchUpInside];
-    [self.phoneSignInButton setTitle:NSLocalizedString(@"registration.signin.phone_button.title", nil).uppercaseStringWithCurrentLocale forState:UIControlStateNormal];
+    [self.phoneSignInButton setTitle:NSLocalizedString(@"registration.signin.phone_button.title", nil).uppercasedWithCurrentLocale forState:UIControlStateNormal];
     [self.buttonContainer addSubview:self.phoneSignInButton];
     
     [self setupEmailSignInViewController];
