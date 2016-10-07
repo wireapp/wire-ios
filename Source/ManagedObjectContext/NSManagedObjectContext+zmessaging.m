@@ -56,7 +56,7 @@ static NSString * const MetadataKey = @"ZMMetadataKey";
 static NSString * const FailedToEstablishSessionStoreKey = @"FailedToEstablishSessionStoreKey";
 
 
-static dispatch_queue_t singletonContextIsolation(void);
+static dispatch_queue_t UIContextCreationQueue(void);
 static NSManagedObjectContext *SharedUserInterfaceContext = nil;
 static id applicationProtectedDataDidBecomeAvailableObserver = nil;
 
@@ -100,12 +100,10 @@ static BOOL storeIsReady = NO;
     [self setDatabaseDirectoryURL:directory];
 
     dispatch_block_t finally = ^() {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            storeIsReady = YES;
-            if (nil != completionHandler) {
-                completionHandler();
-            }
-        });
+        storeIsReady = YES;
+        if (nil != completionHandler) {
+            completionHandler();
+        }
     };
     
     //just try to create psc, contexts will be created later when user session is initialized
@@ -151,7 +149,7 @@ static BOOL storeIsReady = NO;
    backingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
             completionHandler:(void(^)())completionHandler;
 {
-    (sync ? dispatch_sync : dispatch_async)(singletonContextIsolation(), ^{
+    (sync ? dispatch_sync : dispatch_async)(UIContextCreationQueue(), ^{
         [self prepareLocalStoreInternalBackingUpCorruptedDatabase:backupCorruptedDatabase inDirectory:directory completionHandler:completionHandler];
     });
 }
@@ -176,27 +174,23 @@ static BOOL storeIsReady = NO;
 
 + (instancetype)createUserInterfaceContextWithStoreDirectory:(NSURL *)storeDirectory;
 {
-    __block NSManagedObjectContext *result = nil;
-    dispatch_sync(singletonContextIsolation(), ^{
-        result = SharedUserInterfaceContext;
-        if (result == nil) {
-            NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
-            RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
-            
-            result = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-            [result markAsUIContext];
-            [result configureWithPersistentStoreCoordinator:psc];
-            result.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSRollbackMergePolicyType];
-            SharedUserInterfaceContext = result;
-            (void)result.globalManagedObjectContextObserver;
-        }
-    });
-    return result;
+    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
+    RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
+    
+    SharedUserInterfaceContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+    [SharedUserInterfaceContext markAsUIContext];
+    [SharedUserInterfaceContext configureWithPersistentStoreCoordinator:psc];
+    [SharedUserInterfaceContext initialiseSessionAndSelfUser];
+    
+    SharedUserInterfaceContext.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSRollbackMergePolicyType];
+    (void)SharedUserInterfaceContext.globalManagedObjectContextObserver;
+    
+    return SharedUserInterfaceContext;
 }
 
 + (void)resetUserInterfaceContext
 {
-    dispatch_sync(singletonContextIsolation(), ^{
+    dispatch_sync(UIContextCreationQueue(), ^{
         SharedUserInterfaceContext = nil;
     });
 }
@@ -210,6 +204,7 @@ static BOOL storeIsReady = NO;
     [moc performBlockAndWait:^{
         [moc markAsSyncContext];
         [moc configureWithPersistentStoreCoordinator:psc];
+        [moc setupLocalCachedSessionAndSelfUser];
         moc.undoManager = nil;
         moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSMergeByPropertyObjectTrumpMergePolicyType];
     }];
@@ -226,6 +221,7 @@ static BOOL storeIsReady = NO;
     [moc performBlockAndWait:^{        
         [moc markAsSearchContext];
         [moc configureWithPersistentStoreCoordinator:psc];
+        [moc setupLocalCachedSessionAndSelfUser];
         moc.undoManager = nil;
         moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSRollbackMergePolicyType];
     }];
@@ -237,7 +233,6 @@ static BOOL storeIsReady = NO;
     RequireString(self.zm_isSyncContext || self.zm_isUserInterfaceContext || self.zm_isSearchContext, "Context is not marked, yet");
     [self createDispatchGroups];
     self.persistentStoreCoordinator = psc;
-    [self ensureSingletonsExist];
 }
 
 - (BOOL)zm_isSyncContext;
@@ -992,14 +987,17 @@ static dispatch_once_t clearStoreOnceToken;
     }];
 }
 
-- (void)ensureSingletonsExist;
+- (void)initialiseSessionAndSelfUser;
 {
-    static OSSpinLock lock = OS_SPINLOCK_INIT;
-    [self performGroupedBlock:^{
-        OSSpinLockLock(&lock);
-        [ZMUser selfUserInContext:self];
-        OSSpinLockUnlock(&lock);
-    }];
+    [ZMUser selfUserInContext:self];
+}
+
+// This function setup the user info on the context, the session and self user must be initialised before end.
+- (void)setupLocalCachedSessionAndSelfUser;
+{
+    ZMSession *session = (ZMSession *)[self executeFetchRequestOrAssert:[ZMSession sortedFetchRequest]].firstObject;
+    self.userInfo[SessionObjectIDKey] = session.objectID;
+    [ZMUser boxSelfUser:session.selfUser inContextUserInfo:self];
 }
 
 - (NSMutableDictionary *)metadataInfo;
@@ -1084,7 +1082,7 @@ static dispatch_once_t clearStoreOnceToken;
 @end
 
 
-static dispatch_queue_t singletonContextIsolation(void)
+static dispatch_queue_t UIContextCreationQueue(void)
 {
     static dispatch_queue_t queue;
     static dispatch_once_t onceToken;
