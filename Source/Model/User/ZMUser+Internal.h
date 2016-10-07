@@ -26,6 +26,7 @@
 @class ZMConnection;
 
 
+extern NSString * __nonnull const SessionObjectIDKey;
 
 @interface ZMUser (Internal)
 
@@ -68,11 +69,13 @@
 
 + (ZMAccentColor)accentColorFromPayloadValue:(nullable NSNumber *)payloadValue;
 
+
 @end
 
 @interface ZMUser (SelfUser)
 
 + (nonnull instancetype)selfUserInContext:(nonnull NSManagedObjectContext *)moc;
++ (void)boxSelfUser:(ZMUser * __nonnull)selfUser inContextUserInfo:(NSManagedObjectContext * __nonnull)moc;
 
 @end
 

@@ -306,7 +306,7 @@
 - (void)appendStartedUsingThisDeviceMessage
 {
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    UserClient *selfClient = [ZMUser selfUserInContext:self.managedObjectContext].selfClient;
+    UserClient *selfClient = selfUser.selfClient;
     if (selfClient != nil) {
         NSUInteger index;
         [self appendSystemMessageOfType:ZMSystemMessageTypeUsingNewDevice
