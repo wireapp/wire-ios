@@ -64,8 +64,10 @@ extern NSString * const ZMUserSessionResetPushTokensNotificationName;
 + (BOOL)needsToPrepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier;
 
 /**
- Should be called <b>before</b> using ZMUserSession when applications is started if +needsToPrepareLocalStore returns YES. It will intialize persistent store and perform migration (if needed) on background thread.
- When it's done it will call completionHandler block on main thread. UI is supposed to present some kind of spinner until block is invoked.
+ Should be called <b>before</b> using ZMUserSession when applications is started if +needsToPrepareLocalStore returns YES. 
+    It will intialize persistent store and perform migration (if needed) on background thread.
+    When it's done it will call completionHandler on an arbitrary thread. It is the responsability of the caller to switch to the desired thread.
+    The local store is not ready to be used (and the ZMUserSession is not ready to be initialized) until the completionHandler has been called.
  */
 + (void)prepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier completion:(void (^)())completionHandler;
 
