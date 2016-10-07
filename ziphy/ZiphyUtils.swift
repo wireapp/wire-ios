@@ -169,13 +169,15 @@ class URLRequestPromise : CancelableTask {
     }
 }
 
-public typealias ZiphyRequestIdentifier = AnyObject
+@objc public protocol ZiphyRequestIdentifier { }
 
 @objc public protocol ZiphyURLRequester {
     
     func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier
     func cancelRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier)
 }
+
+extension URLSessionDataTask : ZiphyRequestIdentifier { }
 
 extension URLSession : ZiphyURLRequester {
     public func doRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
