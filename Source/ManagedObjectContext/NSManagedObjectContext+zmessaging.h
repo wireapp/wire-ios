@@ -29,8 +29,6 @@
 
 + (NSManagedObjectModel *)loadManagedObjectModel;
 
-- (void)ensureSingletonsExist;
-
 - (id)persistentStoreMetadataForKey:(NSString *)key;
 /// @b Important:  Setting the metadata for a store does not change the information on disk until the store is actually saved.
 - (void)setPersistentStoreMetadata:(id)metaData forKey:(NSString *)key;
@@ -42,7 +40,8 @@
 /// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
 ///         synchronously when @c +needsToPrepareLocalStore is YES)
 /// @param backupCorruptedDatabase if true, will copy a corrupted database to another folder for later investigation
-/// @param completionHandler callback to be executed on completion (nullable)
+/// @param completionHandler callback to be executed on completion (nullable), will be invoked on an arbitrary queue, it's the
+///     caller responsibility to ensure this is switched back to the correct queue
 + (void)prepareLocalStoreSync:(BOOL)sync
                   inDirectory:(NSURL *)directory
    backingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase

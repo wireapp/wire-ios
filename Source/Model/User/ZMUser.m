@@ -37,12 +37,15 @@
 #import "ZMAddressBookContact.h"
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
 
+
+NSString *const SessionObjectIDKey = @"ZMSessionManagedObjectID";
+
 static NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 static NSString *const AccentKey = @"accentColorValue";
 static NSString *const SelfUserObjectIDAsStringKey = @"SelfUserObjectID";
 static NSString *const SelfUserObjectIDKey = @"ZMSelfUserManagedObjectID";
-static NSString *const SessionObjectIDKey = @"ZMSessionManagedObjectID";
+
 static NSString *const SessionObjectIDAsStringKey = @"SessionObjectID";
 static NSString *const SelfUserKey = @"ZMSelfUser";
 static NSString *const NormalizedNameKey = @"normalizedName";
@@ -728,7 +731,7 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
     }
     
     if (selfUser == nil) {
-        //creat user and store it's id in metadata by session key
+        //create user and store it's id in metadata by session key
         selfUser = [self createSessionIfNeededInContext:moc withSelfUser:nil];
     }
     //5. box user and store box in user info by user key

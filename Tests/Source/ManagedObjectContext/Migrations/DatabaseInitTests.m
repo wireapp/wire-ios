@@ -100,13 +100,17 @@
     
     // when
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.sharedContainerDirectoryURL backingUpCorruptedDatabase:NO completionHandler:^{
         completionCalled = YES;
+        dispatch_semaphore_signal(sem);
     }];
     XCTAssertFalse(completionCalled);
     
     // then
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationProtectedDataDidBecomeAvailable object:nil];
+    
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
     
     XCTAssertTrue(completionCalled);
@@ -127,8 +131,10 @@
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     
     // when
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.sharedContainerDirectoryURL backingUpCorruptedDatabase:NO completionHandler:^{
         completionCalledTimes++;
+        dispatch_semaphore_signal(sem);
     }];
     XCTAssertEqual(completionCalledTimes, 0);
     
@@ -136,6 +142,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationProtectedDataDidBecomeAvailable object:nil];
     XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
     
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     XCTAssertEqual(completionCalledTimes, 1);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationProtectedDataDidBecomeAvailable object:nil];
