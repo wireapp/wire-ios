@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -25,8 +25,7 @@ extension ZMConversationMessage {
     public func videoCanBeSavedToCameraRoll() -> Bool {
         if let fileMessageData = self.fileMessageData,
             let fileURL = fileMessageData.fileURL,
-            let filePath = fileURL.path
-            where UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(filePath) && fileMessageData.isVideo() {
+            UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(fileURL.path) && fileMessageData.isVideo() {
             return true
         }
         else {
@@ -36,55 +35,55 @@ extension ZMConversationMessage {
 }
 
 /// Displays the video message with different states
-@objc public class VideoMessageCell: ConversationCell {
-    private let previewImageView = UIImageView()
-    private let progressView = CircularProgressView()
-    private let playButton = IconButton()
-    private let bottomGradientView = GradientView()
-    private let timeLabel = UILabel()
-    private let loadingView = ThreeDotsLoadingView()
-    private var topMargin : NSLayoutConstraint?
+open class VideoMessageCell: ConversationCell {
+    fileprivate let previewImageView = UIImageView()
+    fileprivate let progressView = CircularProgressView()
+    fileprivate let playButton = IconButton()
+    fileprivate let bottomGradientView = GradientView()
+    fileprivate let timeLabel = UILabel()
+    fileprivate let loadingView = ThreeDotsLoadingView()
+    fileprivate var topMargin : NSLayoutConstraint?
     
-    private let normalColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-    private let failureColor = UIColor.redColor().colorWithAlphaComponent(0.24)
-    private var allViews : [UIView] = []
+    fileprivate let normalColor = UIColor.black.withAlphaComponent(0.4)
+    fileprivate let failureColor = UIColor.red.withAlphaComponent(0.24)
+    fileprivate var allViews : [UIView] = []
     
     public required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         self.previewImageView.translatesAutoresizingMaskIntoConstraints = false
-        self.previewImageView.contentMode = .ScaleAspectFill
+        self.previewImageView.contentMode = .scaleAspectFill
         self.previewImageView.clipsToBounds = true
-        self.previewImageView.backgroundColor = UIColor.wr_colorFromColorScheme(ColorSchemeColorPlaceholderBackground)
+        self.previewImageView.backgroundColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorPlaceholderBackground)
         
         self.playButton.translatesAutoresizingMaskIntoConstraints = false
-        self.playButton.addTarget(self, action: #selector(VideoMessageCell.onActionButtonPressed(_:)), forControlEvents: .TouchUpInside)
+        self.playButton.addTarget(self, action: #selector(VideoMessageCell.onActionButtonPressed(_:)), for: .touchUpInside)
         self.playButton.accessibilityLabel = "VideoActionButton"
         self.playButton.layer.masksToBounds = true
         
         self.progressView.translatesAutoresizingMaskIntoConstraints = false
-        self.progressView.userInteractionEnabled = false
+        self.progressView.isUserInteractionEnabled = false
         self.progressView.accessibilityLabel = "VideoProgressView"
         self.progressView.deterministic = true
         
         self.bottomGradientView.translatesAutoresizingMaskIntoConstraints = false
-        self.bottomGradientView.gradientLayer.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().colorWithAlphaComponent(0.4).CGColor]
+        self.bottomGradientView.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.4).cgColor]
         
         self.timeLabel.translatesAutoresizingMaskIntoConstraints = false
         self.timeLabel.numberOfLines = 1
         self.timeLabel.accessibilityLabel = "VideoActionTimeLabel"
         
         self.loadingView.translatesAutoresizingMaskIntoConstraints = false
-        self.loadingView.hidden = true
+        self.loadingView.isHidden = true
         
         self.allViews = [previewImageView, playButton, bottomGradientView, progressView, timeLabel, loadingView]
         self.allViews.forEach(messageContentView.addSubview)
         
-        CASStyler.defaultStyler().styleItem(self)
+        CASStyler.default().styleItem(self)
         
         self.createConstraints()
         var currentElements = self.accessibilityElements ?? []
-        currentElements.appendContentsOf([previewImageView, playButton, timeLabel, progressView, likeButton, messageToolboxView])
+        currentElements.append(contentsOf: [previewImageView, playButton, timeLabel, progressView, likeButton, messageToolboxView])
         self.accessibilityElements = currentElements
     }
     
@@ -92,7 +91,7 @@ extension ZMConversationMessage {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func createConstraints() {
+    open func createConstraints() {
         constrain(self.messageContentView, self.previewImageView, self.progressView, self.playButton, self.bottomGradientView) { messageContentView, previewImageView, progressView, playButton, bottomGradientView in
             messageContentView.width == messageContentView.height * (4.0 / 3.0)
             topMargin = (previewImageView.edges == messageContentView.edges).first
@@ -115,8 +114,8 @@ extension ZMConversationMessage {
         }
     }
     
-    public override func updateForMessage(changeInfo: MessageChangeInfo!) -> Bool {
-        let needsLayout = super.updateForMessage(changeInfo)
+    open override func update(forMessage changeInfo: MessageChangeInfo!) -> Bool {
+        let needsLayout = super.update(forMessage: changeInfo)
         
         if let fileMessageData = self.message.fileMessageData {
             self.configureForVideoMessage(fileMessageData, initialConfiguration: false)
@@ -125,18 +124,18 @@ extension ZMConversationMessage {
         return needsLayout
     }
     
-    override public func configureForMessage(message: ZMConversationMessage!, layoutProperties: ConversationCellLayoutProperties!) {
-        super.configureForMessage(message, layoutProperties: layoutProperties)
+    override open func configure(for message: ZMConversationMessage!, layoutProperties: ConversationCellLayoutProperties!) {
+        super.configure(for: message, layoutProperties: layoutProperties)
         
         if Message.isVideoMessage(message), let fileMessageData = message.fileMessageData {
             self.configureForVideoMessage(fileMessageData, initialConfiguration: true)
         }
         else {
-            fatalError("Wrong message type: \(message.dynamicType): \(message)")
+            fatalError("Wrong message type: \(type(of: message)): \(message)")
         }
     }
     
-    private func configureForVideoMessage(fileMessageData: ZMFileMessageData, initialConfiguration: Bool) {
+    fileprivate func configureForVideoMessage(_ fileMessageData: ZMFileMessageData, initialConfiguration: Bool) {
         guard let fileMessageData = message.fileMessageData else {
             return
         }
@@ -148,45 +147,45 @@ extension ZMConversationMessage {
         topMargin?.constant = layoutProperties.showSender ? 12 : 0
     }
 
-    private func configureVisibleViews(forfileMessageData fileMessageData: ZMFileMessageData, initialConfiguration: Bool) {
+    fileprivate func configureVisibleViews(forfileMessageData fileMessageData: ZMFileMessageData, initialConfiguration: Bool) {
         guard let state = FileMessageCellState.fromConversationMessage(message) else { return }
         
         var visibleViews : [UIView] = [previewImageView]
         
         
-        if (state == .Unavailable) {
+        if (state == .unavailable) {
             visibleViews = [previewImageView, loadingView]
             self.previewImageView.image = nil
         } else {
             updateTimeLabel(withFileMessageData: fileMessageData)
             
             if let previewData = fileMessageData.previewData {
-                visibleViews.appendContentsOf([previewImageView, bottomGradientView, timeLabel, playButton])
+                visibleViews.append(contentsOf: [previewImageView, bottomGradientView, timeLabel, playButton])
                 self.previewImageView.image = UIImage(data: previewData)
-                self.timeLabel.textColor = UIColor.wr_colorFromColorScheme(ColorSchemeColorTextForeground, variant: .Dark)
+                self.timeLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorTextForeground, variant: .dark)
             } else {
-                visibleViews.appendContentsOf([previewImageView, timeLabel, playButton])
+                visibleViews.append(contentsOf: [previewImageView, timeLabel, playButton])
                 self.previewImageView.image = nil
-                self.timeLabel.textColor = UIColor.wr_colorFromColorScheme(ColorSchemeColorTextForeground)
+                self.timeLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorTextForeground)
             }
         }
         
-        if state == .Uploading || state == .Downloading {
+        if state == .uploading || state == .downloading {
             self.progressView.setProgress(fileMessageData.progress, animated: !initialConfiguration)
             visibleViews.append(progressView)
         }
         
         if let viewsState = state.viewsStateForVideo() {
-            self.playButton.setIcon(viewsState.playButtonIcon, withSize: .ActionButton, forState: .Normal)
+            self.playButton.setIcon(viewsState.playButtonIcon, with: .actionButton, for: .normal)
             self.playButton.backgroundColor = viewsState.playButtonBackgroundColor
         }
         
-        self.updateVisibleViews(self.allViews, visibleViews: visibleViews, animated: !self.loadingView.hidden)
+        self.updateVisibleViews(self.allViews, visibleViews: visibleViews, animated: !self.loadingView.isHidden)
     }
     
-    private func updateTimeLabel(withFileMessageData fileMessageData: ZMFileMessageData) {
+    fileprivate func updateTimeLabel(withFileMessageData fileMessageData: ZMFileMessageData) {
         let duration = Int(roundf(Float(fileMessageData.durationMilliseconds) / 1000.0))
-        var timeLabelText = NSByteCountFormatter.stringFromByteCount(Int64(fileMessageData.size), countStyle: .Binary)
+        var timeLabelText = ByteCountFormatter.string(fromByteCount: Int64(fileMessageData.size), countStyle: .binary)
         
         if duration != 0 {
             let (seconds, minutes) = (duration % 60, duration / 60)
@@ -198,57 +197,57 @@ extension ZMConversationMessage {
         self.timeLabel.accessibilityValue = self.timeLabel.text
     }
     
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         self.playButton.layer.cornerRadius = self.playButton.bounds.size.width / 2.0
     }
     
     // MARK: - Actions
 
-    public func onActionButtonPressed(sender: UIButton) {
+    open func onActionButtonPressed(_ sender: UIButton) {
         guard let fileMessageData = self.message.fileMessageData else { return }
         
         switch(fileMessageData.transferState) {
-        case .Downloading:
+        case .downloading:
             self.progressView.setProgress(0, animated: false)
-            self.delegate?.conversationCell?(self, didSelectAction: .Cancel)
-        case .Uploading:
-            if .None != fileMessageData.fileURL {
-                self.delegate?.conversationCell?(self, didSelectAction: .Cancel)
+            self.delegate?.conversationCell?(self, didSelect: .cancel)
+        case .uploading:
+            if .none != fileMessageData.fileURL {
+                self.delegate?.conversationCell?(self, didSelect: .cancel)
             }
-        case .CancelledUpload, .FailedUpload:
-            self.delegate?.conversationCell?(self, didSelectAction: .Resend)
-        case .Uploaded, .Downloaded, .FailedDownload:
-            self.delegate?.conversationCell?(self, didSelectAction: .Present)
+        case .cancelledUpload, .failedUpload:
+            self.delegate?.conversationCell?(self, didSelect: .resend)
+        case .uploaded, .downloaded, .failedDownload:
+            self.delegate?.conversationCell?(self, didSelect: .present)
         }
     }
 
     // MARK: - Selection
     
-    public override var selectionView: UIView! {
+    open override var selectionView: UIView! {
         return previewImageView
     }
     
-    public override var selectionRect: CGRect {
+    open override var selectionRect: CGRect {
         return previewImageView.bounds
     }
     
     // MARK: - Menu
     
-    public func setSelectedByMenu(selected: Bool, animated: Bool) {
+    open func setSelectedByMenu(_ selected: Bool, animated: Bool) {
         
         let animation = {
             self.messageContentView.alpha = selected ? ConversationCellSelectedOpacity : 1.0;
         }
         
         if (animated) {
-            UIView.animateWithDuration(ConversationCellSelectionAnimationDuration, animations: animation)
+            UIView.animate(withDuration: ConversationCellSelectionAnimationDuration, animations: animation)
         } else {
             animation()
         }
     }
     
-    override public func menuConfigurationProperties() -> MenuConfigurationProperties! {
+    override open func menuConfigurationProperties() -> MenuConfigurationProperties! {
         let properties = MenuConfigurationProperties()
         properties.targetRect = selectionRect
         properties.targetView = selectionView
@@ -264,7 +263,7 @@ extension ZMConversationMessage {
         return properties
     }
 
-    override public func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         if action == #selector(wr_saveVideo) {
             if self.message.videoCanBeSavedToCameraRoll() {
                 return true
@@ -273,18 +272,17 @@ extension ZMConversationMessage {
         return super.canPerformAction(action, withSender: sender)
     }
     
-    public func wr_saveVideo() {
+    open func wr_saveVideo() {
         if let fileMessageData = self.message.fileMessageData,
             let fileURL = fileMessageData.fileURL,
-            let filePath = fileURL.path
-            where self.message.videoCanBeSavedToCameraRoll() {
+            self.message.videoCanBeSavedToCameraRoll() {
             
             let selector = "video:didFinishSavingWithError:contextInfo:"
-            UISaveVideoAtPathToSavedPhotosAlbum(filePath, self, Selector(selector), nil)
+            UISaveVideoAtPathToSavedPhotosAlbum(fileURL.path, self, Selector(selector), nil)
         }
     }
     
-    func video(videoPath: NSString, didFinishSavingWithError error: NSError?, contextInfo info: AnyObject) {
+    func video(_ videoPath: NSString, didFinishSavingWithError error: NSError?, contextInfo info: AnyObject) {
         if let error = error {
             DDLogError("Cannot save video: \(error)")
         }

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,12 +22,12 @@ import Cartography
 
 final class WaveFormView: UIView {
 
-    private let visualizationView = SCSiriWaveformView()
-    private let leftGradient = GradientView()
-    private let rightGradient = GradientView()
+    fileprivate let visualizationView = SCSiriWaveformView()
+    fileprivate let leftGradient = GradientView()
+    fileprivate let rightGradient = GradientView()
     
-    private var leftGradientWidthConstraint: NSLayoutConstraint?
-    private var rightGradientWidthConstraint: NSLayoutConstraint?
+    fileprivate var leftGradientWidthConstraint: NSLayoutConstraint?
+    fileprivate var rightGradientWidthConstraint: NSLayoutConstraint?
     
     var gradientWidth: CGFloat = 25 {
         didSet {
@@ -39,8 +39,8 @@ final class WaveFormView: UIView {
     var gradientColor: UIColor? /* Set by Classy */ {
         didSet {
             guard let color = gradientColor else { return }
-            let clearGradientColor = color.colorWithAlphaComponent(0)
-            let leftColors = [color, clearGradientColor].map { $0.CGColor }
+            let clearGradientColor = color.withAlphaComponent(0)
+            let leftColors = [color, clearGradientColor].map { $0.cgColor }
             leftGradient.gradientLayer.colors = leftColors
             rightGradient.gradientLayer.colors = leftColors
         }
@@ -51,39 +51,39 @@ final class WaveFormView: UIView {
     }
     
     init() {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         configureViews()
         createConstraints()
-        CASStyler.defaultStyler().styleItem(self)
+        CASStyler.default().styleItem(self)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateWithLevel(level: CGFloat) {
-        visualizationView.updateWithLevel(level)
+    func updateWithLevel(_ level: CGFloat) {
+        visualizationView.update(withLevel: level)
     }
     
-    private func configureViews() {
+    fileprivate func configureViews() {
         [visualizationView, leftGradient, rightGradient].forEach(addSubview)
         
         visualizationView.primaryWaveLineWidth = 1
         visualizationView.secondaryWaveLineWidth = 0.5
         visualizationView.numberOfWaves = 4
-        visualizationView.waveColor = .accentColor()
-        visualizationView.backgroundColor = .clearColor()
+        visualizationView.waveColor = .accent()
+        visualizationView.backgroundColor = UIColor.clear
         visualizationView.phaseShift = -0.3
         visualizationView.frequency = 1.7
         visualizationView.density = 10
-        visualizationView.updateWithLevel(0) // Make sure we don't show any waveform
+        visualizationView.update(withLevel: 0) // Make sure we don't show any waveform
         
         let (midLeft, midRight) = (CGPoint(x: 0, y: 0.5), CGPoint(x: 1, y: 0.5))
         leftGradient.setStartPoint(midLeft, endPoint: midRight, locations: [0, 1])
         rightGradient.setStartPoint(midRight, endPoint: midLeft, locations: [0, 1])
     }
     
-    private func createConstraints() {
+    fileprivate func createConstraints() {
         constrain(self, visualizationView, leftGradient, rightGradient) { view, visualizationView, leftGradient, rightGradient in
             visualizationView.edges == view.edges
             align(top: view, leftGradient, rightGradient)

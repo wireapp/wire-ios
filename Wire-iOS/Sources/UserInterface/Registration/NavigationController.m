@@ -28,7 +28,7 @@
 #import "UIColor+WAZExtensions.h"
 #import "UIResponder+FirstResponder.h"
 #import "WireStyleKit.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 
 @interface NavigationController ()
@@ -229,7 +229,7 @@
     dispatch_block_t updateBlock = ^{
         BOOL shouldHideBackButton = self.viewControllers.count <= 1 || ! self.backButtonEnabled;
         self.backButton.alpha = shouldHideBackButton ? 0 : 1;
-        [self.backButton setTitle:title.uppercaseStringWithCurrentLocale forState:UIControlStateNormal];
+        [self.backButton setTitle:title.uppercasedWithCurrentLocale forState:UIControlStateNormal];
     };
     
     if (animated && self.transitionCoordinator) {

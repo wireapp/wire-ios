@@ -23,8 +23,8 @@ import Cartography
 
 @objc class ConversationPreviewViewController: UIViewController {
 
-    private(set) var conversation: ZMConversation
-    private var contentViewController: ConversationContentViewController
+    fileprivate(set) var conversation: ZMConversation
+    fileprivate var contentViewController: ConversationContentViewController
 
     init(conversation: ZMConversation) {
         self.conversation = conversation
@@ -45,7 +45,7 @@ import Cartography
     func createViews() {
         addChildViewController(contentViewController)
         view.addSubview(contentViewController.view)
-        contentViewController.didMoveToParentViewController(self)
+        contentViewController.didMove(toParentViewController: self)
         view.backgroundColor = contentViewController.tableView.backgroundColor
     }
 

@@ -55,12 +55,17 @@
 
 + (instancetype)wr_passwordResetURL
 {
-    return [self URLWithString:@"https://wire.com/forgot/"];
+    return [self URLWithString:@"https://account.wire.com/forgot/"];
 }
 
 + (instancetype)wr_supportURL
 {
     return [self URLWithString:@"https://support.wire.com"];
+}
+
++ (instancetype)wr_askSupportURL
+{
+    return [self URLWithString:@"https://support.wire.com/hc/requests/new"];
 }
 
 + (instancetype)wr_reportAbuseURL

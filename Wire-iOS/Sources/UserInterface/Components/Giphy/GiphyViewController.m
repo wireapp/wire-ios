@@ -29,7 +29,7 @@
 #import "GiphySearchResultsController.h"
 
 #import <PureLayout/PureLayout.h>
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 @interface GiphyViewController () <UINavigationControllerDelegate>
 
@@ -121,7 +121,7 @@
     
     self.navBarController.view.opaque = YES;
     
-    [self.navBarController setCentralTitle:[self.searchTerm uppercaseStringWithCurrentLocale] subTitle:[self.conversation.displayName uppercaseStringWithCurrentLocale]];
+    [self.navBarController setCentralTitle:[self.searchTerm uppercasedWithCurrentLocale] subTitle:[self.conversation.displayName uppercasedWithCurrentLocale]];
 }
 
 - (void)createNagivationController

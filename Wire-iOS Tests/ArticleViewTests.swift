@@ -27,7 +27,7 @@ class ArticleViewTests: ZMSnapshotTestCase {
     
     override func setUp() {
         super.setUp()
-        accentColor = .VividRed
+        accentColor = .vividRed
     }
     
     /// MARK - Fixture
@@ -39,7 +39,6 @@ class ArticleViewTests: ZMSnapshotTestCase {
         
         let textMessageData = MockTextMessageData()
         textMessageData.linkPreview = article
-        
         return textMessageData
     }
     
@@ -50,7 +49,8 @@ class ArticleViewTests: ZMSnapshotTestCase {
         
         let textMessageData = MockTextMessageData()
         textMessageData.linkPreview = article
-        textMessageData.imageData = UIImageJPEGRepresentation(imageInTestBundleNamed("unsplash_matterhorn.jpg"), 0.9)
+        textMessageData.imageDataIdentifier = "image-id"
+        textMessageData.imageData = UIImageJPEGRepresentation(image(inTestBundleNamed: "unsplash_matterhorn.jpg"), 0.9)
         textMessageData.hasImageData = true
         
         return textMessageData
@@ -64,7 +64,8 @@ class ArticleViewTests: ZMSnapshotTestCase {
         
         let textMessageData = MockTextMessageData()
         textMessageData.linkPreview = article
-        textMessageData.imageData = UIImageJPEGRepresentation(imageInTestBundleNamed("unsplash_matterhorn.jpg"), 0.9)
+        textMessageData.imageDataIdentifier = "image-id"
+        textMessageData.imageData = UIImageJPEGRepresentation(image(inTestBundleNamed: "unsplash_matterhorn.jpg"), 0.9)
         textMessageData.hasImageData = true
         
         return textMessageData
@@ -113,7 +114,7 @@ class ArticleViewTests: ZMSnapshotTestCase {
         sut.layer.beginTime = 0
         sut.translatesAutoresizingMaskIntoConstraints = false
         let textMessageData = articleWithPicture()
-        textMessageData.imageData = .None
+        textMessageData.imageData = .none
         sut.configure(withTextMessageData: textMessageData)
         sut.layoutIfNeeded()
         

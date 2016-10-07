@@ -25,7 +25,7 @@
 #import "UIColor+WAZExtensions.h"
 #import "WAZUIMagicIOS.h"
 #import "Button.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 
 
@@ -68,7 +68,7 @@
         self.openSettingsButton = [Button buttonWithStyleClass:@"dialogue-button-full"];
         self.openSettingsButton.translatesAutoresizingMaskIntoConstraints = NO;
         self.openSettingsButton.backgroundColor = UIColor.accentColor;
-        [self.openSettingsButton setTitle:[NSLocalizedString(@"camera_access.denied.open_settings", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+        [self.openSettingsButton setTitle:[NSLocalizedString(@"camera_access.denied.open_settings", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
         [self.openSettingsButton addTarget:self action:@selector(launchAppSettings:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.openSettingsButton];
         

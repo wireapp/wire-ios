@@ -26,7 +26,7 @@
 #import "CameraFocusRing.h"
 #import "CameraExposureSlider.h"
 #import "UIFont+MagicAccess.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "WAZUIMagicIOS.h"
 
@@ -135,7 +135,7 @@ static float normalizeValue(float value, float min, float max) {
     [self.view addSubview:self.focusExposureLockLabelContainer];
     
     self.focusExposureLockLabel = [[UILabel alloc] initForAutoLayout];
-    self.focusExposureLockLabel.text = [NSLocalizedString(@"camera_controls.aeaf_lock", nil) uppercaseStringWithCurrentLocale];
+    self.focusExposureLockLabel.text = [NSLocalizedString(@"camera_controls.aeaf_lock", nil) uppercasedWithCurrentLocale];
     self.focusExposureLockLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_bold"];
     self.focusExposureLockLabel.textColor = [UIColor blackColor];
     [self.focusExposureLockLabelContainer addSubview:self.focusExposureLockLabel];

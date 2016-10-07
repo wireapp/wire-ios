@@ -7,7 +7,7 @@ env:
     - secure: pL3dEy5WBFJ272FSjnI3XZbwsI1F37aWrnPK7gboSfNGi+Hju+YOM6pCaJte7vmGAVrm8MpLYeAElRbYWbSF7N/mgvUC7L+BcT147RH8KfXQq+eKzgqGl06uA1x1uhEcYiPVdq46ZYWaVhPOIOVxlvT5BCIDfBsOmiy2HuAOto6SD3PR3yQYqp0G+iXflXp3IjAfSP4oJtPy6T8F928//sdrinFq/62YKwmJqhG7pd7Uc8qjUikZ+cfs88anuw0Z5ueLgp3eUAEatPUVprwRIm928Qn5N+7AJRtWb5zts0S/TEn+wHmCihkb3JlTe1qovr749SABUGWyh9ztI0KfM903VBacG6FrEBwv91limyA/giSW1TLh6IGTQml1IDYqZcjsPkJf6/pJHBD4b/quNnCnyG4OlxvW/w9I9HmiNMCb9eekNrNqZoZfgIX/Pqd75cf986C8brnqf20uACTiOsCma1AazM76GRBrxMCTON51BFd4TCI3ecgAPGpnArP0W9z2as73Z2WNt2iFEebqXhghLcdPqLn9ibZMOIX5AOI9yacPVM216T5HLkpqUbMa94mrqGvL0ghXva6Iqj9GgL6++uDWoVJMuH4xHLr9Udx1dFiyCUqBB68wsw14VV+M67/vX1OmxmEAIaRUcxJjVWMDUPF6hSlYy0FNJt9+RUo=
 
 language: objective-c
-osx_image: xcode7.3
+osx_image: xcode8
 
 notifications:
   email:
@@ -30,12 +30,14 @@ cache:
 install:
   - xcrun simctl erase all
   - open -b com.apple.iphonesimulator
+  - carthage version
+  - brew upgrade carthage
   - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
   - ./setup.sh
 
 script:
   - set -o pipefail
-  - xcodebuild build test -workspace Wire-iOS.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 6s,OS=9.3' | bundle exec second_curtain | tee >build.log >(xcpretty -s)
+  - xcodebuild build test -workspace Wire-iOS.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 6s,OS=10.0' | bundle exec second_curtain | tee >build.log >(xcpretty -s)
   - bundle exec danger
 
 after_failure:

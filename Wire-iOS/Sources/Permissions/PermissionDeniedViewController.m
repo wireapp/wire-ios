@@ -25,7 +25,7 @@
 #import "UIColor+WAZExtensions.h"
 #import "Analytics+iOS.h"
 #import "WebLinkTextView.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 #import "Button.h"
 
 #import "AnalyticsTracker+Navigation.h"
@@ -61,9 +61,9 @@
     [attributedText addAttributes:@{ NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.large.font_spec_medium"] } range:[text rangeOfString:title]];
     vc.heroLabel.attributedText = attributedText;
     
-    [vc.settingsButton setTitle:[NSLocalizedString(@"registration.address_book_access_denied.settings_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [vc.settingsButton setTitle:[NSLocalizedString(@"registration.address_book_access_denied.settings_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
 
-    [vc.laterButton setTitle:[NSLocalizedString(@"registration.address_book_access_denied.maybe_later_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [vc.laterButton setTitle:[NSLocalizedString(@"registration.address_book_access_denied.maybe_later_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     
     return vc;
 }
@@ -85,9 +85,9 @@
     [attributedText addAttributes:@{ NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.large.font_spec_medium"] } range:[text rangeOfString:title]];
     vc.heroLabel.attributedText = attributedText;
     
-    [vc.settingsButton setTitle:[NSLocalizedString(@"registration.push_access_denied.settings_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [vc.settingsButton setTitle:[NSLocalizedString(@"registration.push_access_denied.settings_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     
-    [vc.laterButton setTitle:[NSLocalizedString(@"registration.push_access_denied.maybe_later_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [vc.laterButton setTitle:[NSLocalizedString(@"registration.push_access_denied.maybe_later_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     
     return vc;
 }

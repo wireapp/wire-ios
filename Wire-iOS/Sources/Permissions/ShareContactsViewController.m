@@ -23,7 +23,6 @@
 #import "WAZUIMagicIOS.h"
 #import "UIColor+WAZExtensions.h"
 #import "AnalyticsTracker+Permissions.h"
-#import "NSString+Wire.h"
 #import "Wire-Swift.h"
 
 
@@ -106,7 +105,7 @@
 - (void)createShareContactsButton
 {
     self.shareContactsButton = [Button buttonWithStyle:self.monochromeStyle ? ButtonStyleFullMonochrome : ButtonStyleFull];
-    [self.shareContactsButton setTitle:[NSLocalizedString(@"registration.share_contacts.find_friends_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.shareContactsButton setTitle:[NSLocalizedString(@"registration.share_contacts.find_friends_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     [self.shareContactsButton addTarget:self action:@selector(shareContacts:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.shareContactsContainerView addSubview:self.shareContactsButton];
@@ -118,7 +117,7 @@
     self.notNowButton.titleLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"];
     [self.notNowButton setTitleColor:[UIColor colorWithMagicIdentifier:@"style.color.static_foreground.faded"] forState:UIControlStateNormal];
     [self.notNowButton setTitleColor:[[UIColor colorWithMagicIdentifier:@"style.color.static_foreground.faded"] colorWithAlphaComponent:0.2] forState:UIControlStateHighlighted];
-    [self.notNowButton setTitle:[NSLocalizedString(@"registration.share_contacts.skip_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.notNowButton setTitle:[NSLocalizedString(@"registration.share_contacts.skip_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     [self.notNowButton addTarget:self action:@selector(shareContactsLater:) forControlEvents:UIControlEventTouchUpInside];
     self.notNowButton.hidden = self.notNowButtonHidden;
     

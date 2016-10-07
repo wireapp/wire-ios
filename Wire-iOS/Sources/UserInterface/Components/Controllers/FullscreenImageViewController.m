@@ -42,7 +42,6 @@
 #import "UIFont+MagicAccess.h"
 #import "UIView+MTAnimation.h"
 #import "UIColor+WR_ColorScheme.h"
-#import "NSString+Wire.h"
 #import "NSDate+Format.h"
 
 #import "Constants.h"
@@ -303,7 +302,7 @@
 
 - (NSAttributedString *)attributedNameStringForDisplayName:(NSString *)displayName
 {
-    NSString *text = [displayName uppercaseStringWithCurrentLocale];
+    NSString *text = [displayName uppercasedWithCurrentLocale];
     NSDictionary *attributes = @{
                                  NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_bold"],
                                  NSForegroundColorAttributeName : [UIColor wr_colorFromColorScheme:ColorSchemeColorTextForeground],

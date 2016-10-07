@@ -23,7 +23,6 @@
 #import "StartUIViewController.h"
 #import "zmessaging+iOS.h"
 #import "CameraViewController.h"
-#import "NSString+Wire.h"
 #import "ZClientViewController.h"
 
 #import "Wire-Swift.h"
@@ -98,7 +97,7 @@
             if (users.count == 1) {
                 ZMUser *user = users.anyObject;
                 
-                cameraViewController.previewTitle = [user.displayName uppercaseStringWithCurrentLocale];
+                cameraViewController.previewTitle = [user.displayName uppercasedWithCurrentLocale];
             }
             
             [self presentViewController:cameraViewController animated:YES completion:nil];

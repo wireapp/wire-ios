@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -20,8 +20,8 @@
 import Foundation
 
 @objc protocol ArchivedListViewModelDelegate: class {
-    func archivedListViewModel(model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, usingBlock: dispatch_block_t)
-    func archivedListViewModel(model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo)
+    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, usingBlock: @escaping ()->())
+    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo)
 }
 
 @objc final class ArchivedListViewModel: NSObject {
@@ -29,16 +29,16 @@ import Foundation
     weak var delegate: ArchivedListViewModelDelegate?
     var archivedConversationListObserverToken: ZMConversationListObserverOpaqueToken?
     var archivedConversations = [ZMConversation]()
-    let sessionCache = SessionObjectCache.sharedCache()
+    let sessionCache = SessionObjectCache.shared()
     
     override init() {
         super.init()
-        archivedConversationListObserverToken = sessionCache.archivedConversations.addConversationListObserver(self)
-        archivedConversations = sessionCache.archivedConversations.asArray() as! [ZMConversation]
+        archivedConversationListObserverToken = sessionCache?.archivedConversations.add(self)
+        archivedConversations = sessionCache?.archivedConversations.asArray() as! [ZMConversation]
     }
     
     deinit {
-        sessionCache.archivedConversations.removeConversationListObserverForToken(archivedConversationListObserverToken)
+        sessionCache?.archivedConversations.removeObserver(for: archivedConversationListObserverToken)
     }
     
     var count: Int {
@@ -53,14 +53,14 @@ import Foundation
 
 
 extension ArchivedListViewModel: ZMConversationListObserver {
-    func conversationListDidChange(changeInfo: ConversationListChangeInfo!) {
-        guard changeInfo.conversationList == sessionCache.archivedConversations else { return }
+    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo!) {
+        guard changeInfo.conversationList == sessionCache?.archivedConversations else { return }
         delegate?.archivedListViewModel(self, didUpdateArchivedConversationsWithChange: changeInfo) { [weak self] in
-            self?.archivedConversations = self?.sessionCache.archivedConversations.asArray() as! [ZMConversation]
+            self?.archivedConversations = self?.sessionCache?.archivedConversations.asArray() as! [ZMConversation]
         }
     }
     
-    func conversationInsideList(list: ZMConversationList!, didChange changeInfo: ConversationChangeInfo!) {
+    func conversation(inside list: ZMConversationList!, didChange changeInfo: ConversationChangeInfo!) {
         delegate?.archivedListViewModel(self, didUpdateConversationWithChange: changeInfo)
     }
 }

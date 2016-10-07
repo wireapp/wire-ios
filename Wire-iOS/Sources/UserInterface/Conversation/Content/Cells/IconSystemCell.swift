@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -25,7 +25,7 @@ import TTTAttributedLabel
 // <Icon> Lorem ipsum system message ----
 //        by user A, B, C
 
-public class IconSystemCell: ConversationCell, TTTAttributedLabelDelegate {
+open class IconSystemCell: ConversationCell, TTTAttributedLabelDelegate {
     var leftIconView: UIImageView!
     var leftIconContainer: UIView!
     var labelView: TTTAttributedLabel!
@@ -40,17 +40,17 @@ public class IconSystemCell: ConversationCell, TTTAttributedLabelDelegate {
     public required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         self.initialIconConstraintsCreated = false
         
-        self.leftIconView = UIImageView(frame: CGRectZero)
-        self.leftIconView.contentMode = .Center
+        self.leftIconView = UIImageView(frame: CGRect.zero)
+        self.leftIconView.contentMode = .center
         
-        self.labelView = TTTAttributedLabel(frame: CGRectZero)
+        self.labelView = TTTAttributedLabel(frame: CGRect.zero)
         self.labelView.extendsLinkTouchArea = true
         self.labelView.numberOfLines = 0
-        self.labelView.linkAttributes = [NSUnderlineStyleAttributeName: NSUnderlineStyle.StyleNone.rawValue,
+        self.labelView.linkAttributes = [NSUnderlineStyleAttributeName: NSUnderlineStyle.styleNone.rawValue,
                                         NSForegroundColorAttributeName: ZMUser.selfUser().accentColor]
         
-        self.lineView = UIView(frame: CGRectZero)
-        self.leftIconContainer = UIView(frame: CGRectZero)
+        self.lineView = UIView(frame: CGRect.zero)
+        self.leftIconContainer = UIView(frame: CGRect.zero)
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -60,14 +60,14 @@ public class IconSystemCell: ConversationCell, TTTAttributedLabelDelegate {
         self.messageContentView.addSubview(self.labelView)
         self.contentView.addSubview(self.lineView)
         
-        CASStyler.defaultStyler().styleItem(self)
+        CASStyler.default().styleItem(self)
     }
 
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func updateConstraints() {
+    open override func updateConstraints() {
         if !self.initialIconConstraintsCreated {
             
             let inset: CGFloat = 16
@@ -99,7 +99,9 @@ public class IconSystemCell: ConversationCell, TTTAttributedLabelDelegate {
         super.updateConstraints()
     }
     
-    public override func canBecomeFirstResponder() -> Bool {
-        return false
+    open override var canResignFirstResponder: Bool {
+        get {
+            return false
+        }
     }
 }

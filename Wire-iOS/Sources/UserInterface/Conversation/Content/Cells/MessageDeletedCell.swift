@@ -29,7 +29,7 @@ class MessageDeletedCell: ConversationCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        CASStyler.defaultStyler().styleItem(self)
+        CASStyler.default().styleItem(self)
         setupViews()
         createConstraints()
     }
@@ -40,7 +40,7 @@ class MessageDeletedCell: ConversationCell {
     
     func setupViews() {
         trashImageView.image = trashColor.map {
-            UIImage(forIcon: .Trash, iconSize: .MessageStatus, color: $0)
+            UIImage(for: .trash, iconSize: .messageStatus, color: $0)
         }
         contentView.addSubview(trashImageView)
     }

@@ -27,7 +27,6 @@
 
 #import "RegistrationFormController.h"
 #import "ShareContactsViewController.h"
-#import "NSString+Wire.h"
 #import "Wire-Swift.h"
 
 @interface ShareContactsStepViewController () <FormStepDelegate>
@@ -57,7 +56,7 @@
     self.notNowButton.titleLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"];
     [self.notNowButton setTitleColor:[UIColor colorWithMagicIdentifier:@"style.color.static_foreground.faded"] forState:UIControlStateNormal];
     [self.notNowButton setTitleColor:[[UIColor colorWithMagicIdentifier:@"style.color.static_foreground.faded"] colorWithAlphaComponent:0.2] forState:UIControlStateHighlighted];
-    [self.notNowButton setTitle:[NSLocalizedString(@"registration.share_contacts.skip_button.title", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.notNowButton setTitle:[NSLocalizedString(@"registration.share_contacts.skip_button.title", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     [self.notNowButton addTarget:self action:@selector(shareContactsLater:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.shareContactsViewControllerContainer.view addSubview:self.notNowButton];

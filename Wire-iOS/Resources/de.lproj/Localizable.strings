@@ -392,6 +392,8 @@
 
 "self.settings" = "Einstellungen";
 "self.help_center" = "Hilfe";
+"self.help_center.support_website" = "Wire-Support-Webseite";
+"self.help_center.contact_support" = "Kontaktiere den Support";
 "self.about" = "Über Wire";
 "self.sign_out" = "Ausloggen";
 "self.report_abuse" = "Missbrauch melden";
@@ -403,8 +405,8 @@
 "about.tos.title" = "Nutzungsbedingungen";
 "about.privacy.title" = "Datenschutzrichtlinie";
 "about.license.title" = "Lizenzen";
-"about.website.title" = "wire.com";
-"about.copyright.title" = "© %d Wire Swiss GmbH";
+"about.website.title" = "Wire-Webseite";
+"about.copyright.title" = "© Wire Swiss GmbH";
 
 // Self new devices
 "self.new_device_alert.title" = "Du hast %@ zu deinem Account hinzugefügt";
@@ -419,13 +421,13 @@
 // Settings - Account details
 "self.settings.account_section" = "Benutzerkonto";
 
-"self.settings.account_details_group.title" = "Kontodetails";
+"self.settings.account_details_group.title" = "Info";
 
 "self.settings.account_section.name.title" = "Name";
 "self.settings.account_section.email.title" = "E-Mail";
 "self.settings.account_section.phone.title" = "Telefon";
 
-"self.settings.account_details_group.footer" = "Alle Informationen werden verschlüsselt, damit sind sie für uns nicht lesbar. Jedoch können dich andere Nutzer dadurch finden.";
+"self.settings.account_details_group.footer" = "Du kannst über diese Informationen von anderen gefunden werden. Sie sind verschlüsselt und für niemanden sichtbar.";
 
 "self.settings.account_details.remove_device.title" = "Gerät entfernen";
 "self.settings.account_details.key_fingerprint.title" = "Schlüssel-Fingerabdruck";
@@ -433,13 +435,20 @@
 "self.settings.account_details.remove_device.password" = "Passwort";
 "self.settings.account_details.remove_device.password.error" = "Falsches Passwort";
 
-"self.settings.device_details.fingerprint.subtitle" = "Wire gibt jedem Gerät einen einzigartigen Fingerabdruck. Vergleiche die Fingerabdrücke zur Verifizierung deiner Geräte und Unterhaltungen.";
+"self.settings.account_appearance_group.title" = "Erscheinungsbild";
+"self.settings.account_picture_group.picture" = "Bild";
+"self.settings.account_picture_group.color" = "Farbe";
+
+"self.settings.account_picture_group.theme" = "Dunkler Hintergrund";
+
+"self.settings.device_details.fingerprint.subtitle" = "Wire gibt jedem Gerät einen einzigartigen Fingerabdruck. Vergleiche diese und verifiziere deine Geräte und Unterhaltungen.";
 "self.settings.device_details.reset_session.subtitle" = "Falls die Fingerabdrücke nicht übereinstimmen, setze die Session zurück um sicherzustellen, dass die richtigen Fingerabdrücke auf allen Geräten angezeigt werden.";
-"self.settings.device_details.remove_device.subtitle" = "Du wirst automatisch von dem Gerät abgemeldet.";
+"self.settings.device_details.remove_device.subtitle" = "Entferne das Gerät, wenn du es nicht mehr nutzt. Der Nachrichtenverlauf wird gelöscht werden und du wirst abgemeldet.";
 "self.settings.device_details.reset_session.success" = "Die Session wurde zurückgesetzt";
 
+"self.settings.account_details.actions.title" = "Aktionen";
+
 "self.settings.account_details.delete_account.title" = "Benutzerkonto löschen";
-"self.settings.account_details.delete_account.footer" = "Die Anwendung zurückgesetzt und alle Unterhaltungen, deren Inhalte als auch deine Verbindungen gelöscht.";
 
 "self.settings.account_details.delete_account.alert.title" = "Benutzerkonto löschen";
 "self.settings.account_details.delete_account.alert.message" = "In Kürze erhältst du eine Nachricht per E-Mail oder SMS. Folge dem Link darin, um dein Konto zu löschen.";
@@ -464,7 +473,10 @@
 "self.settings.sound_menu.sounds.wire_message" = "Wire Nachricht";
 "self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
-"self.settings.sound_menu.group.title" = "Benachrichtigungen & Töne";
+// Send Button
+"self.settings.send_button.title" = "Nutze die return taste um Nachrichten zu senden";
+"self.settings.send_button.header" = "Senden Taste";
+"self.settings.send_button.footer" = "Wenn aktiviert, werden Nachrichten bei Betätigung der Return Taste anstellt der Senden Taste gesendet";
 
 // Sound alerts (TO BE UPDPATED)
 "self.settings.sound_menu.title" = "Benachrichtigungen";
@@ -477,14 +489,13 @@
 "self.settings.apns_logging.title" = "APNS Protokollierung";
 
 // Privacy (visibility) options
-"self.settings.privacy_menu.title" = "Datenschutz & Sicherheit";
+"self.settings.options_menu.title" = "Optionen";
 
 "self.settings.privacy_contacts_section.title" = "Kontakte";
 "self.settings.privacy_contacts_menu.settings_button.title" = "Öffne Kontakteinstellungen";
 "self.settings.privacy_contacts_menu.description_disabled.title" = "Wir verwenden deine Kontaktdaten, um Kontakte für dich zu erstellen. Wir anonymisieren alle Informationen und geben sie nicht weiter.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Geräte";
-"self.settings.privacy_analytics_menu.devices_button.title" = "Geräte verwalten";
 
 "self.settings.privacy_analytics_section.title" = "Nutzungs- und Fehlerberichte";
 "self.settings.privacy_analytics_menu.description.title" = "Durch das Senden anonymisierter Informationen hilfst du uns, Wire zu verbessern.";
@@ -510,11 +521,6 @@
 
 // Password reset
 "self.settings.password_reset_menu.title" = "Passwort zurücksetzen";
-
-// Tips
-"self.settings.tip.change_picture" = "Tippen, um das Bild zu ändern";
-"self.settings.tip.change_color" = "Bewegen, um die Farbe zu ändern";
-
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status

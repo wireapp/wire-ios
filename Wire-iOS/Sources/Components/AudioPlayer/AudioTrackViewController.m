@@ -26,7 +26,7 @@
 #import "AudioTrackPlayer.h"
 #import "SoundcloudAudioTrack.h"
 
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 #import "zmessaging+iOS.h"
 #import "LinkAttachmentCache.h"
 #import "LinkAttachment.h"
@@ -207,8 +207,8 @@
 - (void)updateViews
 {
     [self.audioHeaderView.providerButton setImage:self.providerImage forState:UIControlStateNormal];
-    self.audioHeaderView.artistLabel.text = [self.audioTrack.author uppercaseStringWithCurrentLocale];
-    self.audioHeaderView.trackTitleLabel.text = [self.audioTrack.title uppercaseStringWithCurrentLocale];
+    self.audioHeaderView.artistLabel.text = [self.audioTrack.author uppercasedWithCurrentLocale];
+    self.audioHeaderView.trackTitleLabel.text = [self.audioTrack.title uppercasedWithCurrentLocale];
     
     self.artworkObserver = [KeyValueObserver observeObject:self.audioTrack
                                                    keyPath:NSStringFromSelector(@selector(artwork))

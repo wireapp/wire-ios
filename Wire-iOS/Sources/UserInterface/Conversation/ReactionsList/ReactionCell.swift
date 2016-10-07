@@ -54,7 +54,7 @@ import Classy
             userNameLabel.right <= contentView.right - 24
         }
         
-        CASStyler.defaultStyler().styleItem(self)
+        CASStyler.default().styleItem(self)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -63,7 +63,7 @@ import Classy
     
     public override func prepareForReuse() {
         super.prepareForReuse()
-        self.user = .None
+        self.user = .none
     }
     
     static var reuseIdentifier: String {
@@ -71,6 +71,6 @@ import Classy
     }
     
     override public var reuseIdentifier: String? {
-        return self.dynamicType.reuseIdentifier
+        return type(of: self).reuseIdentifier
     }
 }

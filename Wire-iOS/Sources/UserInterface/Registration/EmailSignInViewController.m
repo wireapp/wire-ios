@@ -22,8 +22,6 @@
 #import <PureLayout/PureLayout.h>
 #import <WireExtensionComponents/WireExtensionComponents.h>
 
-#import "Wire-Swift.h"
-
 #import "zmessaging+iOS.h"
 @import OnePasswordExtension;
 #import "RegistrationTextField.h"
@@ -40,7 +38,7 @@
 #import "Constants.h"
 #import "NSURL+WireLocale.h"
 #import "NSURL+WireURLS.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "AnalyticsTracker+Registration.h"
 #import "Analytics+iOS.h"
@@ -171,7 +169,7 @@
     self.forgotPasswordButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.forgotPasswordButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.forgotPasswordButton setTitleColor:[[UIColor whiteColor] colorWithAlphaComponent:0.4] forState:UIControlStateHighlighted];
-    [self.forgotPasswordButton setTitle:[NSLocalizedString(@"signin.forgot_password", nil) uppercaseStringWithCurrentLocale] forState:UIControlStateNormal];
+    [self.forgotPasswordButton setTitle:[NSLocalizedString(@"signin.forgot_password", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     self.forgotPasswordButton.titleLabel.font = [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"];
     [self.forgotPasswordButton addTarget:self action:@selector(resetPassword:) forControlEvents:UIControlEventTouchUpInside];
     

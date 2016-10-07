@@ -23,7 +23,7 @@
 
 #import "VoiceUserImageView.h"
 #import "WAZUIMagicIOS.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "CAMediaTimingFunction+AdditionalEquations.h"
 
@@ -110,7 +110,7 @@
     if (! [self.userImage.user isEqual:user]) {        
         self.userImage.user = user;
     }
-    self.nameLabel.text = [user.displayName uppercaseStringWithCurrentLocale];
+    self.nameLabel.text = [user.displayName uppercasedWithCurrentLocale];
     
     if (participantState.connectionState == ZMVoiceChannelConnectionStateConnecting) {
         self.userImage.state = VoiceUserImageViewStateConnecting;

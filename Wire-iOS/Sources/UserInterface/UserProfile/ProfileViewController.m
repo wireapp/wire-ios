@@ -31,7 +31,7 @@
 #import "Constants.h"
 #import "UIColor+WAZExtensions.h"
 #import "UIColor+WR_ColorScheme.h"
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 #import "AddContactsViewController.h"
 #import "ContactsDataSource.h"
@@ -39,8 +39,6 @@
 #import "ProfileNavigationControllerDelegate.h"
 #import "ProfileDevicesViewController.h"
 #import "ProfileDetailsViewController.h"
-
-#import "Wire-Swift.h"
 
 
 typedef NS_ENUM(NSUInteger, ProfileViewControllerTabBarIndex) {
@@ -216,7 +214,7 @@ typedef NS_ENUM(NSUInteger, ProfileViewControllerTabBarIndex) {
     }
     
     if ((user.isConnected || user.isPendingApprovalBySelfUser || user.isSelfUser || user.isBlocked) && user.emailAddress.length != 0) {
-        headerView.subtitleLabel.attributedText = [self attributedStringForSubtitle:[user.emailAddress uppercaseStringWithCurrentLocale]];
+        headerView.subtitleLabel.attributedText = [self attributedStringForSubtitle:[user.emailAddress uppercasedWithCurrentLocale]];
     }
     
     [self.view addSubview:headerView];
@@ -330,7 +328,7 @@ typedef NS_ENUM(NSUInteger, ProfileViewControllerTabBarIndex) {
 
 - (NSString *)suggestedBackButtonTitleForProfileViewController:(id)controller
 {
-    return [self.bareUser.displayName uppercaseStringWithCurrentLocale];
+    return [self.bareUser.displayName uppercasedWithCurrentLocale];
 }
 
 @end

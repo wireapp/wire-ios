@@ -32,7 +32,6 @@
 #import "WAZUIMagicIOS.h"
 #import "zmessaging+iOS.h"
 #import "UIColor+WAZExtensions.h"
-#import "NSString+Wire.h"
 #import "NSAttributedString+Wire.h"
 #import "Constants.h"
 #import "Analytics+iOS.h"
@@ -276,7 +275,7 @@ static NSString *NotNilString(NSString *string) {
     self.centerStatusLabel.accessibilityIdentifier = @"CenterStatusLabel";
     self.centerStatusLabel.textAlignment = NSTextAlignmentCenter;
     self.centerStatusLabel.numberOfLines = 2;
-    self.centerStatusLabel.text = [NSLocalizedString(@"voice.status.video_not_available", nil) uppercaseStringWithCurrentLocale];
+    self.centerStatusLabel.text = [NSLocalizedString(@"voice.status.video_not_available", nil) uppercasedWithCurrentLocale];
     [self.contentContainer addSubview:self.centerStatusLabel];
     
     self.cameraPreviewView = [[CameraPreviewView alloc] initWithWidth:CameraPreviewContainerSize];
@@ -422,7 +421,7 @@ static NSString *NotNilString(NSString *string) {
 {
     DDLogVoice(@"Low bandwidth: %d -> %d", _lowBandwidth, lowBandwidth);
     _lowBandwidth = lowBandwidth;
-    self.centerStatusLabel.text = [NSLocalizedString(_lowBandwidth ? @"voice.status.low_connection" : @"voice.status.video_not_available", nil) uppercaseStringWithCurrentLocale];
+    self.centerStatusLabel.text = [NSLocalizedString(_lowBandwidth ? @"voice.status.low_connection" : @"voice.status.video_not_available", nil) uppercasedWithCurrentLocale];
 }
 
 - (void)setHidesSpeakerButton:(BOOL)hidesSpeakerButton
@@ -694,11 +693,11 @@ static NSString *NotNilString(NSString *string) {
         case VoiceChannelOverlayStateIncomingCall: {
             if (self.callingConversation.conversationType == ZMConversationTypeOneOnOne) {
                 NSString *statusText = NSLocalizedString(@"voice.status.one_to_one.incoming", nil);
-                statusText = [statusText lowercaseStringWithCurrentLocale];
+                statusText = [statusText lowercasedWithCurrentLocale];
                 return [self labelTextWithFormat:statusText name:conversationName];
             } else {
                 NSString *statusText = NSLocalizedString(@"voice.status.group_call.incoming", nil);
-                statusText = [statusText lowercaseStringWithCurrentLocale];
+                statusText = [statusText lowercasedWithCurrentLocale];
                 return [self labelTextWithFormat:statusText name:conversationName];
             }
             break;
@@ -706,14 +705,14 @@ static NSString *NotNilString(NSString *string) {
             
         case VoiceChannelOverlayStateOutgoingCall: {
             NSString *statusText = NSLocalizedString(@"voice.status.one_to_one.outgoing", nil);
-            statusText = [statusText lowercaseStringWithCurrentLocale];
+            statusText = [statusText lowercasedWithCurrentLocale];
             return [self labelTextWithFormat:statusText name:conversationName];
             break;
         }
             
         case VoiceChannelOverlayStateJoiningCall: {
             NSString *statusText = NSLocalizedString(@"voice.status.joining", nil);
-            statusText = [statusText lowercaseStringWithCurrentLocale];
+            statusText = [statusText lowercasedWithCurrentLocale];
             return [self labelTextWithFormat:statusText name:conversationName];
             break;
         }

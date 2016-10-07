@@ -25,7 +25,7 @@
 #import "BrowserViewController.h"
 #import "BrowserBarView.h"
 @import WireExtensionComponents;
-#import "NSString+Wire.h"
+#import "Wire-Swift.h"
 
 
 
@@ -123,7 +123,7 @@
 
 - (void)titleChanged:(NSDictionary *)change
 {
-    self.browserBarView.titleLabel.text = [self.webView.title uppercaseStringWithCurrentLocale];
+    self.browserBarView.titleLabel.text = [self.webView.title uppercasedWithCurrentLocale];
 }
 
 @end
