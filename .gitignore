@@ -41,3 +41,9 @@ ios-base/
 # Carthage/Checkouts
 
 Carthage/Build
+
+# Test artefacts
+xcode-*.log
+tests.xml
+code-coverage/*
+cobertura.xml
