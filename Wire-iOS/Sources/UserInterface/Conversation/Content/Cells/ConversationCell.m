@@ -194,6 +194,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.messageToolboxView.translatesAutoresizingMaskIntoConstraints = NO;
     self.messageToolboxView.isAccessibilityElement = YES;
     self.messageToolboxView.accessibilityIdentifier = @"MessageToolbox";
+    self.messageToolboxView.accessibilityLabel = @"MessageToolbox";
     [self.contentView addSubview:self.messageToolboxView];
     
     [self createLikeButton];
@@ -202,6 +203,12 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     self.doubleTapGestureRecognizer.numberOfTapsRequired = 2;
     self.doubleTapGestureRecognizer.delaysTouchesBegan = YES;
     [self.contentView addGestureRecognizer:self.doubleTapGestureRecognizer];
+    
+    self.contentView.isAccessibilityElement = YES;
+    
+    NSMutableArray *accessibilityElements = [NSMutableArray arrayWithArray:self.accessibilityElements];
+    [accessibilityElements addObjectsFromArray:@[self.messageContentView, self.authorLabel, self.authorImageView, self.unreadDotView, self.messageToolboxView, self.likeButton]];
+    self.contentView.accessibilityElements = accessibilityElements;
 }
 
 - (void)prepareForReuse
