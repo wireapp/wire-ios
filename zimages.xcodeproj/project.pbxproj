@@ -43,6 +43,21 @@
 		5471F8331B73E76D00460C35 /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5471F82B1B73E74300460C35 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5471F8341B73E81A00460C35 /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5471F82B1B73E74300460C35 /* ZMUtilities.framework */; };
 		5471F8351B73E81C00460C35 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5471F82A1B73E74300460C35 /* ZMCSystem.framework */; };
+		870253E41DAB7AA00095D272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E31DAB7AA00095D272 /* main.m */; };
+		870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E61DAB7AA00095D272 /* AppDelegate.m */; };
+		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
+		870253ED1DAB7AA00095D272 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870253EB1DAB7AA00095D272 /* Main.storyboard */; };
+		870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 870253EE1DAB7AA00095D272 /* Assets.xcassets */; };
+		870253F21DAB7AA00095D272 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870253F01DAB7AA00095D272 /* LaunchScreen.storyboard */; };
+		870253F91DAB7B190095D272 /* zimages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* zimages.framework */; };
+		870253FA1DAB7B250095D272 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5471F82A1B73E74300460C35 /* ZMCSystem.framework */; };
+		870253FB1DAB7B250095D272 /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5471F82B1B73E74300460C35 /* ZMUtilities.framework */; };
+		870253FC1DAB7B250095D272 /* ZMTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09F186411B69077B007A3DA6 /* ZMTesting.framework */; };
+		870253FD1DAB7B250095D272 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD6FF1B67FBDB00E007A8 /* OCMock.framework */; };
+		870253FF1DAB7B5B0095D272 /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5471F82A1B73E74300460C35 /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		870254001DAB7B5E0095D272 /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5471F82B1B73E74300460C35 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		870254011DAB7B5E0095D272 /* ZMTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09F186411B69077B007A3DA6 /* ZMTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		870254021DAB7B5E0095D272 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 096AD6FF1B67FBDB00E007A8 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF2EAE3D1D475F05000C21D8 /* unsplash_medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BF2EAE3B1D475F01000C21D8 /* unsplash_medium.jpg */; };
 		BF2EAF201D47669B000C21D8 /* unsplash_medium_exif_2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BF2EAF1F1D47669B000C21D8 /* unsplash_medium_exif_2.jpg */; };
 		BF2EAF231D4768F5000C21D8 /* unsplash_medium_exif_3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BF2EAF211D4768F5000C21D8 /* unsplash_medium_exif_3.jpg */; };
@@ -85,6 +100,13 @@
 			remoteGlobalIDString = 0969600B1B663E7B006DF53B;
 			remoteInfo = "zimages-ios";
 		};
+		870253F71DAB7AA40095D272 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 09DD1EA91B5D41E0005EBCC4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 870253DF1DAB7A9F0095D272;
+			remoteInfo = "zimages-iosTestHost";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -98,6 +120,19 @@
 				09F186441B6907A1007A3DA6 /* ZMTesting.framework in CopyFiles */,
 				5471F8331B73E76D00460C35 /* ZMUtilities.framework in CopyFiles */,
 				5471F8321B73E76A00460C35 /* ZMCSystem.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		870253FE1DAB7B4E0095D272 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				870253FF1DAB7B5B0095D272 /* ZMCSystem.framework in CopyFiles */,
+				870254001DAB7B5E0095D272 /* ZMUtilities.framework in CopyFiles */,
+				870254011DAB7B5E0095D272 /* ZMTesting.framework in CopyFiles */,
+				870254021DAB7B5E0095D272 /* OCMock.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +195,16 @@
 		5471F8271B73E6E000460C35 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5471F82A1B73E74300460C35 /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		5471F82B1B73E74300460C35 /* ZMUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMUtilities.framework; path = Carthage/Build/iOS/ZMUtilities.framework; sourceTree = "<group>"; };
+		870253E01DAB7A9F0095D272 /* zimages-iosTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "zimages-iosTestHost.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		870253E31DAB7AA00095D272 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		870253E51DAB7AA00095D272 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		870253E61DAB7AA00095D272 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		870253E81DAB7AA00095D272 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		870253E91DAB7AA00095D272 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		870253EC1DAB7AA00095D272 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		870253EE1DAB7AA00095D272 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		870253F11DAB7AA00095D272 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		870253F31DAB7AA00095D272 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF2EAE3B1D475F01000C21D8 /* unsplash_medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unsplash_medium.jpg; path = Ressources/unsplash_medium.jpg; sourceTree = "<group>"; };
 		BF2EAF1F1D47669B000C21D8 /* unsplash_medium_exif_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unsplash_medium_exif_2.jpg; path = Ressources/unsplash_medium_exif_2.jpg; sourceTree = "<group>"; };
 		BF2EAF211D4768F5000C21D8 /* unsplash_medium_exif_3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unsplash_medium_exif_3.jpg; path = Ressources/unsplash_medium_exif_3.jpg; sourceTree = "<group>"; };
@@ -212,6 +257,18 @@
 				5471F8341B73E81A00460C35 /* ZMUtilities.framework in Frameworks */,
 				5471F8351B73E81C00460C35 /* ZMCSystem.framework in Frameworks */,
 				09F186421B690799007A3DA6 /* ZMTesting.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		870253DD1DAB7A9F0095D272 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				870253F91DAB7B190095D272 /* zimages.framework in Frameworks */,
+				870253FA1DAB7B250095D272 /* ZMCSystem.framework in Frameworks */,
+				870253FB1DAB7B250095D272 /* ZMUtilities.framework in Frameworks */,
+				870253FC1DAB7B250095D272 /* ZMTesting.framework in Frameworks */,
+				870253FD1DAB7B250095D272 /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +374,7 @@
 				098CB1281B5FAD5A00712DF9 /* Sources */,
 				098CB1611B5FAD6300712DF9 /* Resources */,
 				098CB1651B5FAD6900712DF9 /* Tests */,
+				870253E11DAB7AA00095D272 /* zimages-iosTestHost */,
 				098CB1191B5FA6E100712DF9 /* Frameworks */,
 				09DD1EB31B5D41E1005EBCC4 /* Products */,
 			);
@@ -327,6 +385,7 @@
 			children = (
 				0969600C1B663E7B006DF53B /* zimages.framework */,
 				096960161B663E7C006DF53B /* zimages-iosTests.xctest */,
+				870253E01DAB7A9F0095D272 /* zimages-iosTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -351,6 +410,30 @@
 				5471F8271B73E6E000460C35 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+		870253E11DAB7AA00095D272 /* zimages-iosTestHost */ = {
+			isa = PBXGroup;
+			children = (
+				870253E51DAB7AA00095D272 /* AppDelegate.h */,
+				870253E61DAB7AA00095D272 /* AppDelegate.m */,
+				870253E81DAB7AA00095D272 /* ViewController.h */,
+				870253E91DAB7AA00095D272 /* ViewController.m */,
+				870253EB1DAB7AA00095D272 /* Main.storyboard */,
+				870253EE1DAB7AA00095D272 /* Assets.xcassets */,
+				870253F01DAB7AA00095D272 /* LaunchScreen.storyboard */,
+				870253F31DAB7AA00095D272 /* Info.plist */,
+				870253E21DAB7AA00095D272 /* Supporting Files */,
+			);
+			path = "zimages-iosTestHost";
+			sourceTree = "<group>";
+		};
+		870253E21DAB7AA00095D272 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				870253E31DAB7AA00095D272 /* main.m */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		BF2EAE3E1D475F0A000C21D8 /* Ressources */ = {
@@ -446,11 +529,30 @@
 			);
 			dependencies = (
 				096960191B663E7C006DF53B /* PBXTargetDependency */,
+				870253F81DAB7AA40095D272 /* PBXTargetDependency */,
 			);
 			name = "zimages-iosTests";
 			productName = "zimages-iosTests";
 			productReference = 096960161B663E7C006DF53B /* zimages-iosTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		870253DF1DAB7A9F0095D272 /* zimages-iosTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 870253F41DAB7AA00095D272 /* Build configuration list for PBXNativeTarget "zimages-iosTestHost" */;
+			buildPhases = (
+				870253DC1DAB7A9F0095D272 /* Sources */,
+				870253DD1DAB7A9F0095D272 /* Frameworks */,
+				870253DE1DAB7A9F0095D272 /* Resources */,
+				870253FE1DAB7B4E0095D272 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "zimages-iosTestHost";
+			productName = "zimages-iosTestHost";
+			productReference = 870253E01DAB7A9F0095D272 /* zimages-iosTestHost.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -471,6 +573,11 @@
 						CreatedOnToolsVersion = 6.4;
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Manual;
+						TestTargetID = 870253DF1DAB7A9F0095D272;
+					};
+					870253DF1DAB7A9F0095D272 = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -480,6 +587,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 09DD1EA81B5D41E0005EBCC4;
 			productRefGroup = 09DD1EB31B5D41E1005EBCC4 /* Products */;
@@ -488,6 +596,7 @@
 			targets = (
 				0969600B1B663E7B006DF53B /* zimages-ios */,
 				096960151B663E7C006DF53B /* zimages-iosTests */,
+				870253DF1DAB7A9F0095D272 /* zimages-iosTestHost */,
 			);
 		};
 /* End PBXProject section */
@@ -539,6 +648,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		870253DE1DAB7A9F0095D272 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				870253F21DAB7AA00095D272 /* LaunchScreen.storyboard in Resources */,
+				870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */,
+				870253ED1DAB7AA00095D272 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -572,6 +691,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		870253DC1DAB7A9F0095D272 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				870253EA1DAB7AA00095D272 /* ViewController.m in Sources */,
+				870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */,
+				870253E41DAB7AA00095D272 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -580,14 +709,37 @@
 			target = 0969600B1B663E7B006DF53B /* zimages-ios */;
 			targetProxy = 096960181B663E7C006DF53B /* PBXContainerItemProxy */;
 		};
+		870253F81DAB7AA40095D272 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 870253DF1DAB7A9F0095D272 /* zimages-iosTestHost */;
+			targetProxy = 870253F71DAB7AA40095D272 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		870253EB1DAB7AA00095D272 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				870253EC1DAB7AA00095D272 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		870253F01DAB7AA00095D272 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				870253F11DAB7AA00095D272 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		096960201B663E7C006DF53B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758481B70C23B00AD5A78 /* zimages-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -610,7 +762,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758481B70C23B00AD5A78 /* zimages-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -662,6 +813,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/zimages-iosTestHost.app/zimages-iosTestHost";
 			};
 			name = Debug;
 		};
@@ -694,6 +846,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/zimages-iosTestHost.app/zimages-iosTestHost";
 			};
 			name = Release;
 		};
@@ -801,6 +954,54 @@
 			};
 			name = Release;
 		};
+		870253F51DAB7AA00095D272 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				INFOPLIST_FILE = "zimages-iosTestHost/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.gerasymenko.zimages-iosTestHost";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		870253F61DAB7AA00095D272 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				INFOPLIST_FILE = "zimages-iosTestHost/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.gerasymenko.zimages-iosTestHost";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -830,6 +1031,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		870253F41DAB7AA00095D272 /* Build configuration list for PBXNativeTarget "zimages-iosTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				870253F51DAB7AA00095D272 /* Debug */,
+				870253F61DAB7AA00095D272 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
