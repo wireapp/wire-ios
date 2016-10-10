@@ -289,7 +289,7 @@
     self.gifButton.accessibilityIdentifier = @"gifButton";
     [self.gifButton setIcon:ZetaIconTypeGif withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
     
-    self.inputBar = [[InputBar alloc] initWithButtons:@[self.photoButton, self.videoButton, self.sketchButton, self.locationButton, self.audioButton, self.pingButton, self.uploadFileButton, self.gifButton]];
+    self.inputBar = [[InputBar alloc] initWithButtons:@[self.photoButton, self.videoButton, self.sketchButton, self.gifButton, self.audioButton, self.pingButton, self.uploadFileButton, self.locationButton]];
     self.inputBar.translatesAutoresizingMaskIntoConstraints = NO;
     self.inputBar.textView.delegate = self;
     
@@ -329,9 +329,9 @@
 {
     self.sendButton = [IconButton iconButtonDefault];
     self.sendButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.sendButton setIcon:ZetaIconTypeSend withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
+    [self.sendButton setIcon:ZetaIconTypeSend withSize:ZetaIconSizeTiny forState:UIControlStateNormal renderingMode:UIImageRenderingModeAlwaysTemplate];
     self.sendButton.accessibilityIdentifier = @"sendButton";
-    self.sendButton.cas_styleClass = @"send-button";
+    self.sendButton.adjustsImageWhenHighlighted = NO;
 
     [self.inputBar.rightAccessoryView addSubview:self.sendButton];
     CGFloat edgeLength = 28;
@@ -999,7 +999,18 @@
     [[Analytics shared] tagMediaSentPictureSourceOtherInConversation:self.conversation source:ConversationMediaPictureSourceGiphy];
     [self clearInputBar];
     [self dismissViewControllerAnimated:YES completion:nil];
-    [self.sendController sendMessageWithImageData:imageData completion:nil];
+    
+    
+    
+    NSString *messageText = nil;
+    
+    if ([searchTerm isEqualToString:@""]) {
+        messageText = [NSString stringWithFormat:NSLocalizedString(@"giphy.conversation.random_message", nil), searchTerm];
+    } else {
+        messageText = [NSString stringWithFormat:NSLocalizedString(@"giphy.conversation.message", nil), searchTerm];
+    }
+    
+    [self.sendController sendTextMessage:messageText withImageData:imageData];
 }
 
 @end
