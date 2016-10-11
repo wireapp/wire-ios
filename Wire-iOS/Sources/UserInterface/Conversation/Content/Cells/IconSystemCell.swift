@@ -64,7 +64,9 @@ open class IconSystemCell: ConversationCell, TTTAttributedLabelDelegate {
         self.messageContentView.addSubview(self.labelView)
         self.contentView.addSubview(self.lineView)
         
-        self.accessibilityElements = [self.labelView, self.leftIconView]
+        var accessibilityElements = self.accessibilityElements ?? []
+        accessibilityElements.append(contentsOf: [self.labelView, self.leftIconView])
+        self.accessibilityElements = accessibilityElements
         
         CASStyler.default().styleItem(self)
     }
