@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CECDDFCA1DAD1E5B0088DA85 /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CECDDFC51DAD1E440088DA85 /* ZMCDataModel.framework */; };
 		F963E90B1D956FC100098AD3 /* ZMMessageExpirationTimerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F963E9091D956EE700098AD3 /* ZMMessageExpirationTimerTests.m */; };
 		F963E9221D95885700098AD3 /* AssetDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E91F1D95885700098AD3 /* AssetDownloadRequestStrategy.swift */; };
 		F963E9231D95885700098AD3 /* ImageDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E9201D95885700098AD3 /* ImageDownloadRequestStrategy.swift */; };
@@ -80,6 +81,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CECDDFC41DAD1E440088DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CECDDFBE1DAD1E440088DA85 /* ZMCDataModel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F9C9A4FC1CAD5DF10039E10C;
+			remoteInfo = ZMCDataModel;
+		};
+		CECDDFC61DAD1E440088DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CECDDFBE1DAD1E440088DA85 /* ZMCDataModel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F9C9A5061CAD5DF10039E10C;
+			remoteInfo = ZMCDataModelTests;
+		};
+		CECDDFC81DAD1E440088DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CECDDFBE1DAD1E440088DA85 /* ZMCDataModel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F9C9A7F31CAED9510039E10C;
+			remoteInfo = ZMDataModelTestHost;
+		};
 		F9F056BE1D93D22000FA1AAD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F9F056AA1D93D22000FA1AAD /* Project object */;
@@ -113,6 +135,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CECDDFBE1DAD1E440088DA85 /* ZMCDataModel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZMCDataModel.xcodeproj; path = "../wire-ios-data-model/ZMCDataModel.xcodeproj"; sourceTree = "<group>"; };
 		F963E9091D956EE700098AD3 /* ZMMessageExpirationTimerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMessageExpirationTimerTests.m; sourceTree = "<group>"; };
 		F963E91F1D95885700098AD3 /* AssetDownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetDownloadRequestStrategy.swift; sourceTree = "<group>"; };
 		F963E9201D95885700098AD3 /* ImageDownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloadRequestStrategy.swift; sourceTree = "<group>"; };
@@ -227,6 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9F0571E1D93D4DE00FA1AAD /* Foundation.framework in Frameworks */,
+				CECDDFCA1DAD1E5B0088DA85 /* ZMCDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,9 +279,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CECDDFBF1DAD1E440088DA85 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CECDDFC51DAD1E440088DA85 /* ZMCDataModel.framework */,
+				CECDDFC71DAD1E440088DA85 /* ZMCDataModelTests.xctest */,
+				CECDDFC91DAD1E440088DA85 /* ZMDataModelTestHost.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F9F056A91D93D22000FA1AAD = {
 			isa = PBXGroup;
 			children = (
+				CECDDFBE1DAD1E440088DA85 /* ZMCDataModel.xcodeproj */,
 				F9F056D31D93D25D00FA1AAD /* Cartfile.resolved */,
 				F9F056D41D93D25D00FA1AAD /* Cartfile */,
 				F9F0575F1D9412C300FA1AAD /* Cartfile.private */,
@@ -597,6 +632,12 @@
 			mainGroup = F9F056A91D93D22000FA1AAD;
 			productRefGroup = F9F056B41D93D22000FA1AAD /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CECDDFBF1DAD1E440088DA85 /* Products */;
+					ProjectRef = CECDDFBE1DAD1E440088DA85 /* ZMCDataModel.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F9F056B21D93D22000FA1AAD /* WireMessageStrategy */,
@@ -605,6 +646,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CECDDFC51DAD1E440088DA85 /* ZMCDataModel.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ZMCDataModel.framework;
+			remoteRef = CECDDFC41DAD1E440088DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CECDDFC71DAD1E440088DA85 /* ZMCDataModelTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ZMCDataModelTests.xctest;
+			remoteRef = CECDDFC61DAD1E440088DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CECDDFC91DAD1E440088DA85 /* ZMDataModelTestHost.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ZMDataModelTestHost.app;
+			remoteRef = CECDDFC81DAD1E440088DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F9F056B11D93D22000FA1AAD /* Resources */ = {

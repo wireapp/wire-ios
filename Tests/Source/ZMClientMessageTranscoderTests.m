@@ -1122,6 +1122,74 @@
     XCTAssertTrue(confirmationMessage.isZombieObject);
 }
 
+- (void)testThatItDoesSyncAConfirmationMessageIfSenderUserIsNotSpecifiedButIsInferedWithConntection;
+{
+    [self createSelfClient];
+    ZMConversation *conversation = [self setupConversation];
+    
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"text" nonce:NSUUID.createUUID.transportString];
+    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+    [message addData:genericMessage.data];    
+    [conversation sortedAppendMessage:message];
+    
+    ZMClientMessage *confirmationMessage = [(id)message confirmReception];
+    
+    // when
+    XCTAssertTrue([self.sut shouldCreateRequestToSyncObject:confirmationMessage forKeys:[NSSet set] withSync:self]);
+}
+
+- (void)testThatItDoesSyncAConfirmationMessageIfSenderUserIsSpecified;
+{
+    [self createSelfClient];
+    ZMConversation *conversation = [self setupConversation];
+    
+    ZMMessage *message = (id)[conversation appendMessageWithText:@"text"];
+    ZMClientMessage *confirmationMessage = [(id)message confirmReception];
+    
+    // when
+    XCTAssertTrue([self.sut shouldCreateRequestToSyncObject:confirmationMessage forKeys:[NSSet set] withSync:self]);
+}
+
+- (void)testThatItDoesSyncAConfirmationMessageIfSenderUserAndConnectIsNotSpecifiedButIsWithConversation;
+{
+    [self createSelfClient];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.conversationType = ZMTConversationTypeOneOnOne;
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    [conversation.mutableOtherActiveParticipants addObject:[ZMUser insertNewObjectInManagedObjectContext:self.syncMOC]];
+    
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"text" nonce:NSUUID.createUUID.transportString];
+    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+    [message addData:genericMessage.data];
+    [conversation sortedAppendMessage:message];
+    
+    ZMClientMessage *confirmationMessage = [(id)message confirmReception];
+    
+    // when
+    XCTAssertTrue([self.sut shouldCreateRequestToSyncObject:confirmationMessage forKeys:[NSSet set] withSync:self]);
+}
+
+
+- (void)testThatItDoesNotSyncAConfirmationMessageIfCannotInferUser;
+{
+    [self createSelfClient];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.conversationType = ZMTConversationTypeOneOnOne;
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"text" nonce:NSUUID.createUUID.transportString];
+    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+    [message addData:genericMessage.data];
+    [conversation sortedAppendMessage:message];
+    
+    ZMClientMessage *confirmationMessage = [(id)message confirmReception];
+    
+    // when
+    XCTAssertFalse([self.sut shouldCreateRequestToSyncObject:confirmationMessage forKeys:[NSSet set] withSync:self]);
+}
+
+
+
 @end
 
 
