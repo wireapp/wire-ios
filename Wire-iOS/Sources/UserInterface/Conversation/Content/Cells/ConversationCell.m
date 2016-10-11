@@ -152,6 +152,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     
     self.messageContentView = [[UIView alloc] init];
     self.messageContentView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.messageContentView.accessibilityElementsHidden = NO;
     [self.contentView addSubview:self.messageContentView];
     
     
@@ -208,7 +209,7 @@ const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
     
     NSMutableArray *accessibilityElements = [NSMutableArray arrayWithArray:self.accessibilityElements];
     [accessibilityElements addObjectsFromArray:@[self.messageContentView, self.authorLabel, self.authorImageView, self.unreadDotView, self.messageToolboxView, self.likeButton]];
-    self.contentView.accessibilityElements = accessibilityElements;
+    self.accessibilityElements = accessibilityElements;
 }
 
 - (void)prepareForReuse
