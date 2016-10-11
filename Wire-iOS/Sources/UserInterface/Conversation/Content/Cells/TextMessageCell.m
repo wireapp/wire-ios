@@ -105,6 +105,8 @@
     self.messageTextView.textContainerInset = UIEdgeInsetsZero;
     self.messageTextView.textContainer.lineFragmentPadding = 0;
     self.messageTextView.userInteractionEnabled = YES;
+    self.messageTextView.accessibilityIdentifier = @"Message";
+    self.messageTextView.accessibilityElementsHidden = NO;
 
     self.linkAttachmentContainer = [[UIView alloc] init];
     self.linkAttachmentContainer.translatesAutoresizingMaskIntoConstraints = NO;
@@ -119,6 +121,10 @@
     
     UILongPressGestureRecognizer *attachmentLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleAttachmentLongPress:)];
     [self.linkAttachmentContainer addGestureRecognizer:attachmentLongPressRecognizer];
+    
+    NSMutableArray *accessibilityElements = [NSMutableArray arrayWithArray:self.accessibilityElements];
+    [accessibilityElements addObjectsFromArray:@[self.messageTextView]];
+    self.accessibilityElements = accessibilityElements;
 }
 
 - (void)createConstraints
