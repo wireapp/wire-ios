@@ -1686,8 +1686,8 @@
 				TargetAttributes = {
 					F9C9A4FB1CAD5DF10039E10C = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Manual;
 					};
 					F9C9A5051CAD5DF10039E10C = {
 						CreatedOnToolsVersion = 7.2;
@@ -2106,6 +2106,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 4;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2133,6 +2134,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 4;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
