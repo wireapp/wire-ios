@@ -221,6 +221,84 @@ extension ClientMessageTests_OTR {
         }
     }
     
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasSender() {
+        syncMOC.performGroupedBlockAndWait {
+            //given
+            let senderID = self.syncUser1.clients.first!.remoteIdentifier
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+            
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.to = self.syncUser1
+            connection.status = .accepted
+            conversation.connection = connection
+            conversation.mutableOtherActiveParticipants.add(self.syncUser1)
+            
+            self.syncMOC.saveOrRollback()
+            
+            let textMessage = conversation.appendOTRMessage(withText: self.stringLargeEnoughToRequireExternal, nonce: UUID.create())
+            
+            textMessage.sender = self.syncUser1
+            textMessage.senderClientID = senderID
+            let confirmationMessage = textMessage.confirmReception()
+            
+            //when
+            guard let _ = confirmationMessage?.encryptedMessagePayloadData()
+                else { return XCTFail()}
+        }
+    }
+
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderButInferSenderWithConnection() {
+        syncMOC.performGroupedBlockAndWait {
+            //given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+            
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.to = self.syncUser1
+            connection.status = .accepted
+            conversation.connection = connection
+            
+            let genericMessage = ZMGenericMessage(text: "yo", nonce: UUID().transportString())
+            let clientmessage = ZMClientMessage.insertNewObject(in: self.syncMOC)
+            clientmessage.add(genericMessage.data())
+            clientmessage.visibleInConversation = conversation
+            
+            self.syncMOC.saveOrRollback()
+            
+            let confirmationMessage = clientmessage.confirmReception()
+            print(confirmationMessage)
+            //when
+            guard let _ = confirmationMessage?.encryptedMessagePayloadData()
+                else { return XCTFail()}
+        }
+    }
+
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderAndConnectionButInferSenderOtherActiveParticipants() {
+        syncMOC.performGroupedBlockAndWait {
+            //given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+            conversation.mutableOtherActiveParticipants.add(self.syncUser1)
+            
+            let genericMessage = ZMGenericMessage(text: "yo", nonce: UUID().transportString())
+            let clientmessage = ZMClientMessage.insertNewObject(in: self.syncMOC)
+            clientmessage.add(genericMessage.data())
+            clientmessage.visibleInConversation = conversation
+            
+            self.syncMOC.saveOrRollback()
+            
+            let confirmationMessage = clientmessage.confirmReception()
+            print(confirmationMessage)
+            //when
+            guard let _ = confirmationMessage?.encryptedMessagePayloadData()
+                else { return XCTFail()}
+        }
+    }
+
 }
 
 // MARK: - Helper
