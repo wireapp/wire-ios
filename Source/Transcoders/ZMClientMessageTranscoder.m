@@ -102,7 +102,7 @@
 {
     if ([managedObject isKindOfClass:[ZMClientMessage class]]) {
         ZMClientMessage *message = (ZMClientMessage *)managedObject;
-        if (message.genericMessage.hasConfirmation && message.conversation.conversationType == ZMConversationTypeOneOnOne) {
+        if (message.genericMessage.hasConfirmation) {
             NSUUID *messageNonce = [NSUUID uuidWithTransportString:message.genericMessage.confirmation.messageId];
             ZMClientMessage *sentMessage = (ZMClientMessage *)[ZMMessage fetchMessageWithNonce:messageNonce forConversation:message.conversation inManagedObjectContext:message.managedObjectContext];
             return (sentMessage.sender != nil) || (message.conversation.connectedUser != nil) || (message.conversation.otherActiveParticipants.count > 0);
