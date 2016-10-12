@@ -1298,13 +1298,6 @@
 			path = Calling;
 			sourceTree = "<group>";
 		};
-		3ECC351C1AD437000089FD4B /* Modules */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Modules;
-			sourceTree = "<group>";
-		};
 		3EFFDE481A13B01B00E80E22 /* Push Token */ = {
 			isa = PBXGroup;
 			children = (
@@ -1323,7 +1316,6 @@
 				09CC4AB81B7CB8BF00201C63 /* Cartfile.private */,
 				3E18605F191A4F6A000FE027 /* README.md */,
 				5423B98C191A49CD0044347D /* Source */,
-				3ECC351C1AD437000089FD4B /* Modules */,
 				3E18605E191A4F4F000FE027 /* Resources */,
 				5423B997191A4A1B0044347D /* Tests */,
 				540029B61918CA8500578793 /* Frameworks */,
