@@ -30,8 +30,22 @@ extension Settings {
 }
 
 public enum InputBarState: Equatable {
-    case writing
+    case writing(ephemeral: Bool)
     case editing(originalText: String)
+
+    var isWriting: Bool {
+        switch self {
+        case .writing(ephemeral: _): return true
+        default: return false
+        }
+    }
+
+    var isEditing: Bool {
+        switch self {
+        case .editing(originalText: _): return true
+        default: return false
+        }
+    }
 }
 
 public func ==(lhs: InputBarState, rhs: InputBarState) -> Bool {
@@ -48,20 +62,23 @@ private struct InputBarConstants {
     let contentRightMargin = WAZUIMagic.cgFloat(forIdentifier: "content.right_margin")
 }
 
-@objc open class InputBar: UIView {
+@objc public final class InputBar: UIView {
     
-    open let textView: NextResponderTextView = NextResponderTextView()
-    open let leftAccessoryView  = UIView()
-    open let rightAccessoryView = UIView()
+    public let textView: NextResponderTextView = NextResponderTextView()
+    public let leftAccessoryView  = UIView()
+    public let rightAccessoryView = UIView()
     
     // Contains and clips the buttonInnerContainer
-    open let buttonContainer = UIView()
+    public let buttonContainer = UIView()
     
-    open let editingView = InputBarEditView()
-    open let buttonsView: InputBarButtonsView
+    public let editingView = InputBarEditView()
+    public let buttonsView: InputBarButtonsView
     
-    open var editingBackgroundColor: UIColor?
-    open var barBackgroundColor: UIColor?
+    public var editingBackgroundColor: UIColor?
+    public var barBackgroundColor: UIColor?
+    public var writingSeparatorColor: UIColor?
+    public var ephemeralColor: UIColor?
+    public var placeholderColor: UIColor?
 
     fileprivate var contentSizeObserver: NSObject? = nil
     fileprivate var rowTopInsetConstraint: NSLayoutConstraint? = nil
@@ -75,11 +92,10 @@ private struct InputBarConstants {
     fileprivate let notificationCenter = NotificationCenter.default
     
     var isEditing: Bool {
-        if case .editing(_) = inputBarState { return true }
-        return false
+        return inputBarState.isEditing
     }
     
-    var inputBarState: InputBarState = .writing {
+    var inputBarState: InputBarState = .writing(ephemeral: false) {
         didSet {
             updateInputBar(withState: inputBarState)
         }
@@ -149,27 +165,23 @@ private struct InputBarConstants {
     }
     
     fileprivate func setupViews() {
-        fakeCursor.backgroundColor = UIColor.accent()
-        
-        buttonRowSeparator.cas_styleClass = "separator"
         inputBarSeparator.cas_styleClass = "separator"
         
         textView.accessibilityIdentifier = "inputField"
-        textView.placeholder = "conversation.input_bar.placeholder".localized
+        updatePlaceholder()
         textView.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsetsMake(17, 0, 17, 4)
         textView.placeholderTextContainerInset = UIEdgeInsetsMake(21, 10, 21, 0)
         textView.keyboardType = .default
         textView.keyboardAppearance = ColorScheme.default().keyboardAppearance
         textView.placeholderTextTransform = .upper
+        textView.tintAdjustmentMode = .automatic
+
         updateReturnKey()
 
         contentSizeObserver = KeyValueObserver.observe(textView, keyPath: "contentSize", target: self, selector: #selector(textViewContentSizeDidChange))
-        updateBackgroundColor()
-    }
-    
-    public func updateReturnKey() {
-        textView.returnKeyType = Settings.shared().returnKeyType
+        updateInputBar(withState: inputBarState, animated: false)
+        updateColors()
     }
     
     fileprivate func createConstraints() {
@@ -252,6 +264,27 @@ private struct InputBarConstants {
             fakeCursor.layer.add(animation, forKey: "blinkAnimation")
         }
     }
+
+    public func updateReturnKey() {
+        textView.returnKeyType = Settings.shared().returnKeyType
+    }
+
+    func updatePlaceholder() {
+        textView.placeholder = placeholderText(for: inputBarState)
+        textView.setNeedsLayout()
+        textView.layoutIfNeeded()
+    }
+
+    func placeholderText(for state: InputBarState) -> String? {
+        switch inputBarState {
+        case .writing(ephemeral: let ephemeral):
+            if ephemeral {
+                return "conversation.input_bar.placeholder_ephemeral".localized
+            }
+            return "conversation.input_bar.placeholder".localized
+        case .editing: return nil
+        }
+    }
     
     fileprivate func updateTopSeparator() {
         inputBarSeparator.isHidden = !textIsOverflowing && !separatorEnabled
@@ -286,12 +319,14 @@ private struct InputBarConstants {
 
     func updateInputBar(withState state: InputBarState, animated: Bool = true) {
         updateEditViewState()
-        rowTopInsetConstraint?.constant = state == .writing ? -constants.buttonsBarHeight : 0
+        updatePlaceholder()
+        rowTopInsetConstraint?.constant = state.isWriting ? -constants.buttonsBarHeight : 0
 
         let textViewChanges = {
             switch state {
             case .writing:
                 self.textView.text = nil
+
             case .editing(let text):
                 self.setInputBarText(text)
             }
@@ -300,30 +335,49 @@ private struct InputBarConstants {
         let completion: (Bool) -> Void = { _ in
             if case .editing(_) = state {
                 self.textView.becomeFirstResponder()
+                self.updateColors()
             }
         }
         
         if animated {
             UIView.wr_animate(easing: RBBEasingFunctionEaseInOutExpo, duration: 0.3, animations: layoutIfNeeded)
             UIView.transition(with: self.textView, duration: 0.1, options: [], animations: textViewChanges) { _ in
-                UIView.animate(withDuration: 0.2, delay: 0.1, options:  .curveEaseInOut, animations: self.updateBackgroundColor, completion: completion)
+                UIView.animate(withDuration: 0.2, delay: 0.1, options:  .curveEaseInOut, animations: self.updateColors, completion: completion)
             }
         } else {
             layoutIfNeeded()
             textViewChanges()
-            updateBackgroundColor()
+            updateColors()
             completion(true)
         }
     }
 
-    fileprivate func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
-        guard let writingColor = barBackgroundColor, let editingColor = editingBackgroundColor else { return nil }
-        let mixed = writingColor.mix(editingColor, amount: 0.16)
-        return state == .writing ? writingColor : mixed
+    public func updateEphemeralState() {
+        guard inputBarState.isWriting else { return }
+        updateColors()
+        updatePlaceholder()
     }
 
-    fileprivate func updateBackgroundColor() {
+    fileprivate func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
+        guard let writingColor = barBackgroundColor, let editingColor = editingBackgroundColor else { return nil }
+        return state.isWriting ? writingColor : writingColor.mix(editingColor, amount: 0.16)
+    }
+
+    fileprivate func updateColors() {
         backgroundColor = backgroundColor(forInputBarState: inputBarState)
+
+        if case .writing(let ephemeral) = inputBarState {
+            showEphemeralColors(ephemeral)
+        } else {
+            showEphemeralColors(false)
+        }
+    }
+
+    private func showEphemeralColors(_ show: Bool) {
+        buttonRowSeparator.backgroundColor = show ? ephemeralColor : writingSeparatorColor
+        textView.placeholderTextColor = show ? ephemeralColor : placeholderColor
+        fakeCursor.backgroundColor = show ? ephemeralColor : .accent()
+        textView.tintColor = show ? ephemeralColor : .accent()
     }
 
     // MARK: – Editing View State
@@ -336,7 +390,7 @@ private struct InputBarConstants {
     }
 
     open func undo() {
-        guard inputBarState != .writing else { return }
+        guard inputBarState.isEditing else { return }
         guard let undoManager = textView.undoManager , undoManager.canUndo else { return }
         undoManager.undo()
         updateEditViewState()
