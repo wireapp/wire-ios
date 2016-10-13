@@ -67,7 +67,6 @@ class ImageMessageCellTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersImageMessageObfuscated() {
-        recordMode = true
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let wrap = sut.prepareForSnapshot(image.size, image: image, obfuscated: true)
         verify(view: wrap)
