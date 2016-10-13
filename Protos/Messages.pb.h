@@ -1,21 +1,20 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 #import <ProtocolBuffers/ProtocolBuffers.h>
 
@@ -87,6 +86,8 @@
 @class ZMClearedBuilder;
 @class ZMConfirmation;
 @class ZMConfirmationBuilder;
+@class ZMEphemeral;
+@class ZMEphemeralBuilder;
 @class ZMExternal;
 @class ZMExternalBuilder;
 @class ZMGenericMessage;
@@ -163,6 +164,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define GenericMessage_edited @"edited"
 #define GenericMessage_confirmation @"confirmation"
 #define GenericMessage_reaction @"reaction"
+#define GenericMessage_ephemeral @"ephemeral"
 @interface ZMGenericMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasMessageId_:1;
@@ -180,6 +182,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasEdited_:1;
   BOOL hasConfirmation_:1;
   BOOL hasReaction_:1;
+  BOOL hasEphemeral_:1;
   BOOL hasClientAction_:1;
   NSString* messageId;
   ZMText* text;
@@ -196,6 +199,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   ZMMessageEdit* edited;
   ZMConfirmation* confirmation;
   ZMReaction* reaction;
+  ZMEphemeral* ephemeral;
   ZMClientAction clientAction;
 }
 - (BOOL) hasMessageId;
@@ -214,6 +218,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hasEdited;
 - (BOOL) hasConfirmation;
 - (BOOL) hasReaction;
+- (BOOL) hasEphemeral;
 @property (readonly, strong) NSString* messageId;
 @property (readonly, strong) ZMText* text;
 @property (readonly, strong) ZMImageAsset* image;
@@ -230,6 +235,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @property (readonly, strong) ZMMessageEdit* edited;
 @property (readonly, strong) ZMConfirmation* confirmation;
 @property (readonly, strong) ZMReaction* reaction;
+@property (readonly, strong) ZMEphemeral* ephemeral;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -373,6 +379,123 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMGenericMessageBuilder*) setReactionBuilder:(ZMReactionBuilder*) builderForValue;
 - (ZMGenericMessageBuilder*) mergeReaction:(ZMReaction*) value;
 - (ZMGenericMessageBuilder*) clearReaction;
+
+- (BOOL) hasEphemeral;
+- (ZMEphemeral*) ephemeral;
+- (ZMGenericMessageBuilder*) setEphemeral:(ZMEphemeral*) value;
+- (ZMGenericMessageBuilder*) setEphemeralBuilder:(ZMEphemeralBuilder*) builderForValue;
+- (ZMGenericMessageBuilder*) mergeEphemeral:(ZMEphemeral*) value;
+- (ZMGenericMessageBuilder*) clearEphemeral;
+@end
+
+#define Ephemeral_expire_after_millis @"expireAfterMillis"
+#define Ephemeral_text @"text"
+#define Ephemeral_image @"image"
+#define Ephemeral_knock @"knock"
+#define Ephemeral_asset @"asset"
+#define Ephemeral_location @"location"
+@interface ZMEphemeral : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasExpireAfterMillis_:1;
+  BOOL hasText_:1;
+  BOOL hasImage_:1;
+  BOOL hasKnock_:1;
+  BOOL hasAsset_:1;
+  BOOL hasLocation_:1;
+  SInt64 expireAfterMillis;
+  ZMText* text;
+  ZMImageAsset* image;
+  ZMKnock* knock;
+  ZMAsset* asset;
+  ZMLocation* location;
+}
+- (BOOL) hasExpireAfterMillis;
+- (BOOL) hasText;
+- (BOOL) hasImage;
+- (BOOL) hasKnock;
+- (BOOL) hasAsset;
+- (BOOL) hasLocation;
+@property (readonly) SInt64 expireAfterMillis;
+@property (readonly, strong) ZMText* text;
+@property (readonly, strong) ZMImageAsset* image;
+@property (readonly, strong) ZMKnock* knock;
+@property (readonly, strong) ZMAsset* asset;
+@property (readonly, strong) ZMLocation* location;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMEphemeralBuilder*) builder;
++ (ZMEphemeralBuilder*) builder;
++ (ZMEphemeralBuilder*) builderWithPrototype:(ZMEphemeral*) prototype;
+- (ZMEphemeralBuilder*) toBuilder;
+
++ (ZMEphemeral*) parseFromData:(NSData*) data;
++ (ZMEphemeral*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMEphemeral*) parseFromInputStream:(NSInputStream*) input;
++ (ZMEphemeral*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMEphemeral*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMEphemeral*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMEphemeralBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMEphemeral* resultEphemeral;
+}
+
+- (ZMEphemeral*) defaultInstance;
+
+- (ZMEphemeralBuilder*) clear;
+- (ZMEphemeralBuilder*) clone;
+
+- (ZMEphemeral*) build;
+- (ZMEphemeral*) buildPartial;
+
+- (ZMEphemeralBuilder*) mergeFrom:(ZMEphemeral*) other;
+- (ZMEphemeralBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMEphemeralBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasExpireAfterMillis;
+- (SInt64) expireAfterMillis;
+- (ZMEphemeralBuilder*) setExpireAfterMillis:(SInt64) value;
+- (ZMEphemeralBuilder*) clearExpireAfterMillis;
+
+- (BOOL) hasText;
+- (ZMText*) text;
+- (ZMEphemeralBuilder*) setText:(ZMText*) value;
+- (ZMEphemeralBuilder*) setTextBuilder:(ZMTextBuilder*) builderForValue;
+- (ZMEphemeralBuilder*) mergeText:(ZMText*) value;
+- (ZMEphemeralBuilder*) clearText;
+
+- (BOOL) hasImage;
+- (ZMImageAsset*) image;
+- (ZMEphemeralBuilder*) setImage:(ZMImageAsset*) value;
+- (ZMEphemeralBuilder*) setImageBuilder:(ZMImageAssetBuilder*) builderForValue;
+- (ZMEphemeralBuilder*) mergeImage:(ZMImageAsset*) value;
+- (ZMEphemeralBuilder*) clearImage;
+
+- (BOOL) hasKnock;
+- (ZMKnock*) knock;
+- (ZMEphemeralBuilder*) setKnock:(ZMKnock*) value;
+- (ZMEphemeralBuilder*) setKnockBuilder:(ZMKnockBuilder*) builderForValue;
+- (ZMEphemeralBuilder*) mergeKnock:(ZMKnock*) value;
+- (ZMEphemeralBuilder*) clearKnock;
+
+- (BOOL) hasAsset;
+- (ZMAsset*) asset;
+- (ZMEphemeralBuilder*) setAsset:(ZMAsset*) value;
+- (ZMEphemeralBuilder*) setAssetBuilder:(ZMAssetBuilder*) builderForValue;
+- (ZMEphemeralBuilder*) mergeAsset:(ZMAsset*) value;
+- (ZMEphemeralBuilder*) clearAsset;
+
+- (BOOL) hasLocation;
+- (ZMLocation*) location;
+- (ZMEphemeralBuilder*) setLocation:(ZMLocation*) value;
+- (ZMEphemeralBuilder*) setLocationBuilder:(ZMLocationBuilder*) builderForValue;
+- (ZMEphemeralBuilder*) mergeLocation:(ZMLocation*) value;
+- (ZMEphemeralBuilder*) clearLocation;
 @end
 
 #define Text_content @"content"
@@ -387,8 +510,8 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 }
 - (BOOL) hasContent;
 @property (readonly, strong) NSString* content;
-@property (readonly, strong) NSArray * mention;
-@property (readonly, strong) NSArray * linkPreview;
+@property (readonly, strong) NSArray<ZMMention*> * mention;
+@property (readonly, strong) NSArray<ZMLinkPreview*> * linkPreview;
 - (ZMMention*)mentionAtIndex:(NSUInteger)index;
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index;
 
@@ -432,16 +555,16 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMTextBuilder*) setContent:(NSString*) value;
 - (ZMTextBuilder*) clearContent;
 
-- (NSMutableArray *)mention;
+- (NSMutableArray<ZMMention*> *)mention;
 - (ZMMention*)mentionAtIndex:(NSUInteger)index;
 - (ZMTextBuilder *)addMention:(ZMMention*)value;
-- (ZMTextBuilder *)setMentionArray:(NSArray *)array;
+- (ZMTextBuilder *)setMentionArray:(NSArray<ZMMention*> *)array;
 - (ZMTextBuilder *)clearMention;
 
-- (NSMutableArray *)linkPreview;
+- (NSMutableArray<ZMLinkPreview*> *)linkPreview;
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index;
 - (ZMTextBuilder *)addLinkPreview:(ZMLinkPreview*)value;
-- (ZMTextBuilder *)setLinkPreviewArray:(NSArray *)array;
+- (ZMTextBuilder *)setLinkPreviewArray:(NSArray<ZMLinkPreview*> *)array;
 - (ZMTextBuilder *)clearLinkPreview;
 @end
 

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		090838041B872DBF00629095 /* ZMProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = 090838031B872DBF00629095 /* ZMProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0908380A1B872DBF00629095 /* ZMProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* ZMProtos.framework */; };
-		090838111B872DC000629095 /* ProtosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090838101B872DC000629095 /* ProtosTests.swift */; };
 		097A22961B8B1A6700D02243 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */; };
 		097A22981B8B1AE000D02243 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		099223A41BED06C300668091 /* Otr.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 099223A21BED06C300668091 /* Otr.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -19,12 +18,8 @@
 		09BCDB641BC696490020DCC7 /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09BCDB621BC696460020DCC7 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		09BCDB651BC6964C0020DCC7 /* zimages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09BCDB5A1BC6722F0020DCC7 /* zimages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		09BCDB6E1BCBE08D0020DCC7 /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */; };
-		09E393CC1BAC413300F3EA1B /* ZMGenericMessage+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393CA1BAC413300F3EA1B /* ZMGenericMessage+Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09E393CD1BAC413300F3EA1B /* ZMGenericMessage+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393CB1BAC413300F3EA1B /* ZMGenericMessage+Utils.m */; };
 		09E393D01BAC458900F3EA1B /* Messages.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393CE1BAC458900F3EA1B /* Messages.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393D11BAC458900F3EA1B /* Messages.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393CF1BAC458900F3EA1B /* Messages.pb.m */; };
-		F9A40C0D1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A40C0B1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.h */; };
-		F9A40C0E1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A40C0C1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,7 +54,6 @@
 		090838031B872DBF00629095 /* ZMProtos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMProtos.h; sourceTree = "<group>"; };
 		090838091B872DBF00629095 /* ZMProtosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZMProtosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0908380F1B872DC000629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		090838101B872DC000629095 /* ProtosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ProtosTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = text; name = messages.proto; path = "Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
 		097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		099223A01BECF63800668091 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
@@ -88,13 +82,9 @@
 		09BCDB611BC696460020DCC7 /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		09BCDB621BC696460020DCC7 /* ZMUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMUtilities.framework; path = Carthage/Build/iOS/ZMUtilities.framework; sourceTree = "<group>"; };
 		09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
-		09E393CA1BAC413300F3EA1B /* ZMGenericMessage+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMGenericMessage+Utils.h"; sourceTree = "<group>"; };
-		09E393CB1BAC413300F3EA1B /* ZMGenericMessage+Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMGenericMessage+Utils.m"; sourceTree = "<group>"; };
 		09E393CE1BAC458900F3EA1B /* Messages.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Messages.pb.h; sourceTree = "<group>"; };
 		09E393CF1BAC458900F3EA1B /* Messages.pb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Messages.pb.m; sourceTree = "<group>"; };
 		874B5DAB1CEDBA790010474C /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
-		F9A40C0B1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMGenericMessage+PropertyUtils.h"; sourceTree = "<group>"; };
-		F9A40C0C1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMGenericMessage+PropertyUtils.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,10 +141,6 @@
 				09E393CF1BAC458900F3EA1B /* Messages.pb.m */,
 				099223A21BED06C300668091 /* Otr.pb.h */,
 				099223A31BED06C300668091 /* Otr.pb.m */,
-				09E393CA1BAC413300F3EA1B /* ZMGenericMessage+Utils.h */,
-				09E393CB1BAC413300F3EA1B /* ZMGenericMessage+Utils.m */,
-				F9A40C0B1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.h */,
-				F9A40C0C1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.m */,
 				090838011B872DBF00629095 /* Supporting Files */,
 			);
 			path = Protos;
@@ -172,7 +158,6 @@
 			isa = PBXGroup;
 			children = (
 				09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */,
-				090838101B872DC000629095 /* ProtosTests.swift */,
 				0908380E1B872DBF00629095 /* Supporting Files */,
 				09B70B331B874177002667A6 /* ProtosTests-Bridging-Header.h */,
 			);
@@ -247,8 +232,6 @@
 				09E393D01BAC458900F3EA1B /* Messages.pb.h in Headers */,
 				090838041B872DBF00629095 /* ZMProtos.h in Headers */,
 				099223A41BED06C300668091 /* Otr.pb.h in Headers */,
-				09E393CC1BAC413300F3EA1B /* ZMGenericMessage+Utils.h in Headers */,
-				F9A40C0D1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,9 +338,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				099223A51BED06C300668091 /* Otr.pb.m in Sources */,
-				F9A40C0E1BCFE7EA007C2679 /* ZMGenericMessage+PropertyUtils.m in Sources */,
 				09E393D11BAC458900F3EA1B /* Messages.pb.m in Sources */,
-				09E393CD1BAC413300F3EA1B /* ZMGenericMessage+Utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,7 +346,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				090838111B872DC000629095 /* ProtosTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

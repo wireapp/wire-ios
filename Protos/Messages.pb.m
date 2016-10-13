@@ -1,20 +1,20 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
 #import "Messages.pb.h"
@@ -72,6 +72,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property (strong) ZMMessageEdit* edited;
 @property (strong) ZMConfirmation* confirmation;
 @property (strong) ZMReaction* reaction;
+@property (strong) ZMEphemeral* ephemeral;
 @end
 
 @implementation ZMGenericMessage
@@ -188,6 +189,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasReaction_ = !!_value_;
 }
 @synthesize reaction;
+- (BOOL) hasEphemeral {
+  return !!hasEphemeral_;
+}
+- (void) setHasEphemeral:(BOOL) _value_ {
+  hasEphemeral_ = !!_value_;
+}
+@synthesize ephemeral;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -206,6 +214,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.edited = [ZMMessageEdit defaultInstance];
     self.confirmation = [ZMConfirmation defaultInstance];
     self.reaction = [ZMReaction defaultInstance];
+    self.ephemeral = [ZMEphemeral defaultInstance];
   }
   return self;
 }
@@ -295,6 +304,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasEphemeral) {
+    if (!self.ephemeral.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -345,6 +359,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasReaction) {
     [output writeMessage:17 value:self.reaction];
+  }
+  if (self.hasEphemeral) {
+    [output writeMessage:18 value:self.ephemeral];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -402,6 +419,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasReaction) {
     size_ += computeMessageSize(17, self.reaction);
+  }
+  if (self.hasEphemeral) {
+    size_ += computeMessageSize(18, self.ephemeral);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -528,6 +548,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasEphemeral) {
+    [output appendFormat:@"%@%@ {\n", indent, @"ephemeral"];
+    [self.ephemeral writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -607,6 +633,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.reaction storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"reaction"];
   }
+  if (self.hasEphemeral) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.ephemeral storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"ephemeral"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -650,6 +681,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasConfirmation || [self.confirmation isEqual:otherMessage.confirmation]) &&
       self.hasReaction == otherMessage.hasReaction &&
       (!self.hasReaction || [self.reaction isEqual:otherMessage.reaction]) &&
+      self.hasEphemeral == otherMessage.hasEphemeral &&
+      (!self.hasEphemeral || [self.ephemeral isEqual:otherMessage.ephemeral]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -701,6 +734,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasReaction) {
     hashCode = hashCode * 31 + [self.reaction hash];
+  }
+  if (self.hasEphemeral) {
+    hashCode = hashCode * 31 + [self.ephemeral hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -792,6 +828,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasReaction) {
     [self mergeReaction:other.reaction];
+  }
+  if (other.hasEphemeral) {
+    [self mergeEphemeral:other.ephemeral];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -951,6 +990,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setReaction:[subBuilder buildPartial]];
+        break;
+      }
+      case 146: {
+        ZMEphemeralBuilder* subBuilder = [ZMEphemeral builder];
+        if (self.hasEphemeral) {
+          [subBuilder mergeFrom:self.ephemeral];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setEphemeral:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1408,12 +1456,641 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   resultGenericMessage.reaction = [ZMReaction defaultInstance];
   return self;
 }
+- (BOOL) hasEphemeral {
+  return resultGenericMessage.hasEphemeral;
+}
+- (ZMEphemeral*) ephemeral {
+  return resultGenericMessage.ephemeral;
+}
+- (ZMGenericMessageBuilder*) setEphemeral:(ZMEphemeral*) value {
+  resultGenericMessage.hasEphemeral = YES;
+  resultGenericMessage.ephemeral = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setEphemeralBuilder:(ZMEphemeralBuilder*) builderForValue {
+  return [self setEphemeral:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeEphemeral:(ZMEphemeral*) value {
+  if (resultGenericMessage.hasEphemeral &&
+      resultGenericMessage.ephemeral != [ZMEphemeral defaultInstance]) {
+    resultGenericMessage.ephemeral =
+      [[[ZMEphemeral builderWithPrototype:resultGenericMessage.ephemeral] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.ephemeral = value;
+  }
+  resultGenericMessage.hasEphemeral = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearEphemeral {
+  resultGenericMessage.hasEphemeral = NO;
+  resultGenericMessage.ephemeral = [ZMEphemeral defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMEphemeral ()
+@property SInt64 expireAfterMillis;
+@property (strong) ZMText* text;
+@property (strong) ZMImageAsset* image;
+@property (strong) ZMKnock* knock;
+@property (strong) ZMAsset* asset;
+@property (strong) ZMLocation* location;
+@end
+
+@implementation ZMEphemeral
+
+- (BOOL) hasExpireAfterMillis {
+  return !!hasExpireAfterMillis_;
+}
+- (void) setHasExpireAfterMillis:(BOOL) _value_ {
+  hasExpireAfterMillis_ = !!_value_;
+}
+@synthesize expireAfterMillis;
+- (BOOL) hasText {
+  return !!hasText_;
+}
+- (void) setHasText:(BOOL) _value_ {
+  hasText_ = !!_value_;
+}
+@synthesize text;
+- (BOOL) hasImage {
+  return !!hasImage_;
+}
+- (void) setHasImage:(BOOL) _value_ {
+  hasImage_ = !!_value_;
+}
+@synthesize image;
+- (BOOL) hasKnock {
+  return !!hasKnock_;
+}
+- (void) setHasKnock:(BOOL) _value_ {
+  hasKnock_ = !!_value_;
+}
+@synthesize knock;
+- (BOOL) hasAsset {
+  return !!hasAsset_;
+}
+- (void) setHasAsset:(BOOL) _value_ {
+  hasAsset_ = !!_value_;
+}
+@synthesize asset;
+- (BOOL) hasLocation {
+  return !!hasLocation_;
+}
+- (void) setHasLocation:(BOOL) _value_ {
+  hasLocation_ = !!_value_;
+}
+@synthesize location;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.expireAfterMillis = 0L;
+    self.text = [ZMText defaultInstance];
+    self.image = [ZMImageAsset defaultInstance];
+    self.knock = [ZMKnock defaultInstance];
+    self.asset = [ZMAsset defaultInstance];
+    self.location = [ZMLocation defaultInstance];
+  }
+  return self;
+}
+static ZMEphemeral* defaultZMEphemeralInstance = nil;
++ (void) initialize {
+  if (self == [ZMEphemeral class]) {
+    defaultZMEphemeralInstance = [[ZMEphemeral alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMEphemeralInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMEphemeralInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasExpireAfterMillis) {
+    return NO;
+  }
+  if (self.hasText) {
+    if (!self.text.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasImage) {
+    if (!self.image.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasKnock) {
+    if (!self.knock.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasAsset) {
+    if (!self.asset.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasLocation) {
+    if (!self.location.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasExpireAfterMillis) {
+    [output writeInt64:1 value:self.expireAfterMillis];
+  }
+  if (self.hasText) {
+    [output writeMessage:2 value:self.text];
+  }
+  if (self.hasImage) {
+    [output writeMessage:3 value:self.image];
+  }
+  if (self.hasKnock) {
+    [output writeMessage:4 value:self.knock];
+  }
+  if (self.hasAsset) {
+    [output writeMessage:5 value:self.asset];
+  }
+  if (self.hasLocation) {
+    [output writeMessage:6 value:self.location];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasExpireAfterMillis) {
+    size_ += computeInt64Size(1, self.expireAfterMillis);
+  }
+  if (self.hasText) {
+    size_ += computeMessageSize(2, self.text);
+  }
+  if (self.hasImage) {
+    size_ += computeMessageSize(3, self.image);
+  }
+  if (self.hasKnock) {
+    size_ += computeMessageSize(4, self.knock);
+  }
+  if (self.hasAsset) {
+    size_ += computeMessageSize(5, self.asset);
+  }
+  if (self.hasLocation) {
+    size_ += computeMessageSize(6, self.location);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMEphemeral*) parseFromData:(NSData*) data {
+  return (ZMEphemeral*)[[[ZMEphemeral builder] mergeFromData:data] build];
+}
++ (ZMEphemeral*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMEphemeral*)[[[ZMEphemeral builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMEphemeral*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMEphemeral*)[[[ZMEphemeral builder] mergeFromInputStream:input] build];
+}
++ (ZMEphemeral*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMEphemeral*)[[[ZMEphemeral builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMEphemeral*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMEphemeral*)[[[ZMEphemeral builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMEphemeral*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMEphemeral*)[[[ZMEphemeral builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMEphemeralBuilder*) builder {
+  return [[ZMEphemeralBuilder alloc] init];
+}
++ (ZMEphemeralBuilder*) builderWithPrototype:(ZMEphemeral*) prototype {
+  return [[ZMEphemeral builder] mergeFrom:prototype];
+}
+- (ZMEphemeralBuilder*) builder {
+  return [ZMEphemeral builder];
+}
+- (ZMEphemeralBuilder*) toBuilder {
+  return [ZMEphemeral builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasExpireAfterMillis) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"expireAfterMillis", [NSNumber numberWithLongLong:self.expireAfterMillis]];
+  }
+  if (self.hasText) {
+    [output appendFormat:@"%@%@ {\n", indent, @"text"];
+    [self.text writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasImage) {
+    [output appendFormat:@"%@%@ {\n", indent, @"image"];
+    [self.image writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasKnock) {
+    [output appendFormat:@"%@%@ {\n", indent, @"knock"];
+    [self.knock writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasAsset) {
+    [output appendFormat:@"%@%@ {\n", indent, @"asset"];
+    [self.asset writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasLocation) {
+    [output appendFormat:@"%@%@ {\n", indent, @"location"];
+    [self.location writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasExpireAfterMillis) {
+    [dictionary setObject: [NSNumber numberWithLongLong:self.expireAfterMillis] forKey: @"expireAfterMillis"];
+  }
+  if (self.hasText) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.text storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"text"];
+  }
+  if (self.hasImage) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.image storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"image"];
+  }
+  if (self.hasKnock) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.knock storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"knock"];
+  }
+  if (self.hasAsset) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.asset storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"asset"];
+  }
+  if (self.hasLocation) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.location storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"location"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMEphemeral class]]) {
+    return NO;
+  }
+  ZMEphemeral *otherMessage = other;
+  return
+      self.hasExpireAfterMillis == otherMessage.hasExpireAfterMillis &&
+      (!self.hasExpireAfterMillis || self.expireAfterMillis == otherMessage.expireAfterMillis) &&
+      self.hasText == otherMessage.hasText &&
+      (!self.hasText || [self.text isEqual:otherMessage.text]) &&
+      self.hasImage == otherMessage.hasImage &&
+      (!self.hasImage || [self.image isEqual:otherMessage.image]) &&
+      self.hasKnock == otherMessage.hasKnock &&
+      (!self.hasKnock || [self.knock isEqual:otherMessage.knock]) &&
+      self.hasAsset == otherMessage.hasAsset &&
+      (!self.hasAsset || [self.asset isEqual:otherMessage.asset]) &&
+      self.hasLocation == otherMessage.hasLocation &&
+      (!self.hasLocation || [self.location isEqual:otherMessage.location]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasExpireAfterMillis) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithLongLong:self.expireAfterMillis] hash];
+  }
+  if (self.hasText) {
+    hashCode = hashCode * 31 + [self.text hash];
+  }
+  if (self.hasImage) {
+    hashCode = hashCode * 31 + [self.image hash];
+  }
+  if (self.hasKnock) {
+    hashCode = hashCode * 31 + [self.knock hash];
+  }
+  if (self.hasAsset) {
+    hashCode = hashCode * 31 + [self.asset hash];
+  }
+  if (self.hasLocation) {
+    hashCode = hashCode * 31 + [self.location hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMEphemeralBuilder()
+@property (strong) ZMEphemeral* resultEphemeral;
+@end
+
+@implementation ZMEphemeralBuilder
+@synthesize resultEphemeral;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultEphemeral = [[ZMEphemeral alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultEphemeral;
+}
+- (ZMEphemeralBuilder*) clear {
+  self.resultEphemeral = [[ZMEphemeral alloc] init];
+  return self;
+}
+- (ZMEphemeralBuilder*) clone {
+  return [ZMEphemeral builderWithPrototype:resultEphemeral];
+}
+- (ZMEphemeral*) defaultInstance {
+  return [ZMEphemeral defaultInstance];
+}
+- (ZMEphemeral*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMEphemeral*) buildPartial {
+  ZMEphemeral* returnMe = resultEphemeral;
+  self.resultEphemeral = nil;
+  return returnMe;
+}
+- (ZMEphemeralBuilder*) mergeFrom:(ZMEphemeral*) other {
+  if (other == [ZMEphemeral defaultInstance]) {
+    return self;
+  }
+  if (other.hasExpireAfterMillis) {
+    [self setExpireAfterMillis:other.expireAfterMillis];
+  }
+  if (other.hasText) {
+    [self mergeText:other.text];
+  }
+  if (other.hasImage) {
+    [self mergeImage:other.image];
+  }
+  if (other.hasKnock) {
+    [self mergeKnock:other.knock];
+  }
+  if (other.hasAsset) {
+    [self mergeAsset:other.asset];
+  }
+  if (other.hasLocation) {
+    [self mergeLocation:other.location];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMEphemeralBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMEphemeralBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 8: {
+        [self setExpireAfterMillis:[input readInt64]];
+        break;
+      }
+      case 18: {
+        ZMTextBuilder* subBuilder = [ZMText builder];
+        if (self.hasText) {
+          [subBuilder mergeFrom:self.text];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setText:[subBuilder buildPartial]];
+        break;
+      }
+      case 26: {
+        ZMImageAssetBuilder* subBuilder = [ZMImageAsset builder];
+        if (self.hasImage) {
+          [subBuilder mergeFrom:self.image];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setImage:[subBuilder buildPartial]];
+        break;
+      }
+      case 34: {
+        ZMKnockBuilder* subBuilder = [ZMKnock builder];
+        if (self.hasKnock) {
+          [subBuilder mergeFrom:self.knock];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setKnock:[subBuilder buildPartial]];
+        break;
+      }
+      case 42: {
+        ZMAssetBuilder* subBuilder = [ZMAsset builder];
+        if (self.hasAsset) {
+          [subBuilder mergeFrom:self.asset];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setAsset:[subBuilder buildPartial]];
+        break;
+      }
+      case 50: {
+        ZMLocationBuilder* subBuilder = [ZMLocation builder];
+        if (self.hasLocation) {
+          [subBuilder mergeFrom:self.location];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setLocation:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasExpireAfterMillis {
+  return resultEphemeral.hasExpireAfterMillis;
+}
+- (SInt64) expireAfterMillis {
+  return resultEphemeral.expireAfterMillis;
+}
+- (ZMEphemeralBuilder*) setExpireAfterMillis:(SInt64) value {
+  resultEphemeral.hasExpireAfterMillis = YES;
+  resultEphemeral.expireAfterMillis = value;
+  return self;
+}
+- (ZMEphemeralBuilder*) clearExpireAfterMillis {
+  resultEphemeral.hasExpireAfterMillis = NO;
+  resultEphemeral.expireAfterMillis = 0L;
+  return self;
+}
+- (BOOL) hasText {
+  return resultEphemeral.hasText;
+}
+- (ZMText*) text {
+  return resultEphemeral.text;
+}
+- (ZMEphemeralBuilder*) setText:(ZMText*) value {
+  resultEphemeral.hasText = YES;
+  resultEphemeral.text = value;
+  return self;
+}
+- (ZMEphemeralBuilder*) setTextBuilder:(ZMTextBuilder*) builderForValue {
+  return [self setText:[builderForValue build]];
+}
+- (ZMEphemeralBuilder*) mergeText:(ZMText*) value {
+  if (resultEphemeral.hasText &&
+      resultEphemeral.text != [ZMText defaultInstance]) {
+    resultEphemeral.text =
+      [[[ZMText builderWithPrototype:resultEphemeral.text] mergeFrom:value] buildPartial];
+  } else {
+    resultEphemeral.text = value;
+  }
+  resultEphemeral.hasText = YES;
+  return self;
+}
+- (ZMEphemeralBuilder*) clearText {
+  resultEphemeral.hasText = NO;
+  resultEphemeral.text = [ZMText defaultInstance];
+  return self;
+}
+- (BOOL) hasImage {
+  return resultEphemeral.hasImage;
+}
+- (ZMImageAsset*) image {
+  return resultEphemeral.image;
+}
+- (ZMEphemeralBuilder*) setImage:(ZMImageAsset*) value {
+  resultEphemeral.hasImage = YES;
+  resultEphemeral.image = value;
+  return self;
+}
+- (ZMEphemeralBuilder*) setImageBuilder:(ZMImageAssetBuilder*) builderForValue {
+  return [self setImage:[builderForValue build]];
+}
+- (ZMEphemeralBuilder*) mergeImage:(ZMImageAsset*) value {
+  if (resultEphemeral.hasImage &&
+      resultEphemeral.image != [ZMImageAsset defaultInstance]) {
+    resultEphemeral.image =
+      [[[ZMImageAsset builderWithPrototype:resultEphemeral.image] mergeFrom:value] buildPartial];
+  } else {
+    resultEphemeral.image = value;
+  }
+  resultEphemeral.hasImage = YES;
+  return self;
+}
+- (ZMEphemeralBuilder*) clearImage {
+  resultEphemeral.hasImage = NO;
+  resultEphemeral.image = [ZMImageAsset defaultInstance];
+  return self;
+}
+- (BOOL) hasKnock {
+  return resultEphemeral.hasKnock;
+}
+- (ZMKnock*) knock {
+  return resultEphemeral.knock;
+}
+- (ZMEphemeralBuilder*) setKnock:(ZMKnock*) value {
+  resultEphemeral.hasKnock = YES;
+  resultEphemeral.knock = value;
+  return self;
+}
+- (ZMEphemeralBuilder*) setKnockBuilder:(ZMKnockBuilder*) builderForValue {
+  return [self setKnock:[builderForValue build]];
+}
+- (ZMEphemeralBuilder*) mergeKnock:(ZMKnock*) value {
+  if (resultEphemeral.hasKnock &&
+      resultEphemeral.knock != [ZMKnock defaultInstance]) {
+    resultEphemeral.knock =
+      [[[ZMKnock builderWithPrototype:resultEphemeral.knock] mergeFrom:value] buildPartial];
+  } else {
+    resultEphemeral.knock = value;
+  }
+  resultEphemeral.hasKnock = YES;
+  return self;
+}
+- (ZMEphemeralBuilder*) clearKnock {
+  resultEphemeral.hasKnock = NO;
+  resultEphemeral.knock = [ZMKnock defaultInstance];
+  return self;
+}
+- (BOOL) hasAsset {
+  return resultEphemeral.hasAsset;
+}
+- (ZMAsset*) asset {
+  return resultEphemeral.asset;
+}
+- (ZMEphemeralBuilder*) setAsset:(ZMAsset*) value {
+  resultEphemeral.hasAsset = YES;
+  resultEphemeral.asset = value;
+  return self;
+}
+- (ZMEphemeralBuilder*) setAssetBuilder:(ZMAssetBuilder*) builderForValue {
+  return [self setAsset:[builderForValue build]];
+}
+- (ZMEphemeralBuilder*) mergeAsset:(ZMAsset*) value {
+  if (resultEphemeral.hasAsset &&
+      resultEphemeral.asset != [ZMAsset defaultInstance]) {
+    resultEphemeral.asset =
+      [[[ZMAsset builderWithPrototype:resultEphemeral.asset] mergeFrom:value] buildPartial];
+  } else {
+    resultEphemeral.asset = value;
+  }
+  resultEphemeral.hasAsset = YES;
+  return self;
+}
+- (ZMEphemeralBuilder*) clearAsset {
+  resultEphemeral.hasAsset = NO;
+  resultEphemeral.asset = [ZMAsset defaultInstance];
+  return self;
+}
+- (BOOL) hasLocation {
+  return resultEphemeral.hasLocation;
+}
+- (ZMLocation*) location {
+  return resultEphemeral.location;
+}
+- (ZMEphemeralBuilder*) setLocation:(ZMLocation*) value {
+  resultEphemeral.hasLocation = YES;
+  resultEphemeral.location = value;
+  return self;
+}
+- (ZMEphemeralBuilder*) setLocationBuilder:(ZMLocationBuilder*) builderForValue {
+  return [self setLocation:[builderForValue build]];
+}
+- (ZMEphemeralBuilder*) mergeLocation:(ZMLocation*) value {
+  if (resultEphemeral.hasLocation &&
+      resultEphemeral.location != [ZMLocation defaultInstance]) {
+    resultEphemeral.location =
+      [[[ZMLocation builderWithPrototype:resultEphemeral.location] mergeFrom:value] buildPartial];
+  } else {
+    resultEphemeral.location = value;
+  }
+  resultEphemeral.hasLocation = YES;
+  return self;
+}
+- (ZMEphemeralBuilder*) clearLocation {
+  resultEphemeral.hasLocation = NO;
+  resultEphemeral.location = [ZMLocation defaultInstance];
+  return self;
+}
 @end
 
 @interface ZMText ()
 @property (strong) NSString* content;
-@property (strong) NSMutableArray * mentionArray;
-@property (strong) NSMutableArray * linkPreviewArray;
+@property (strong) NSMutableArray<ZMMention*> * mentionArray;
+@property (strong) NSMutableArray<ZMLinkPreview*> * linkPreviewArray;
 @end
 
 @implementation ZMText
@@ -1447,13 +2124,13 @@ static ZMText* defaultZMTextInstance = nil;
 - (instancetype) defaultInstance {
   return defaultZMTextInstance;
 }
-- (NSArray *)mention {
+- (NSArray<ZMMention*> *)mention {
   return mentionArray;
 }
 - (ZMMention*)mentionAtIndex:(NSUInteger)index {
   return [mentionArray objectAtIndex:index];
 }
-- (NSArray *)linkPreview {
+- (NSArray<ZMLinkPreview*> *)linkPreview {
   return linkPreviewArray;
 }
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index {
@@ -1719,7 +2396,7 @@ static ZMText* defaultZMTextInstance = nil;
   resultText.content = @"";
   return self;
 }
-- (NSMutableArray *)mention {
+- (NSMutableArray<ZMMention*> *)mention {
   return resultText.mentionArray;
 }
 - (ZMMention*)mentionAtIndex:(NSUInteger)index {
@@ -1732,7 +2409,7 @@ static ZMText* defaultZMTextInstance = nil;
   [resultText.mentionArray addObject:value];
   return self;
 }
-- (ZMTextBuilder *)setMentionArray:(NSArray *)array {
+- (ZMTextBuilder *)setMentionArray:(NSArray<ZMMention*> *)array {
   resultText.mentionArray = [[NSMutableArray alloc]initWithArray:array];
   return self;
 }
@@ -1740,7 +2417,7 @@ static ZMText* defaultZMTextInstance = nil;
   resultText.mentionArray = nil;
   return self;
 }
-- (NSMutableArray *)linkPreview {
+- (NSMutableArray<ZMLinkPreview*> *)linkPreview {
   return resultText.linkPreviewArray;
 }
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index {
@@ -1753,7 +2430,7 @@ static ZMText* defaultZMTextInstance = nil;
   [resultText.linkPreviewArray addObject:value];
   return self;
 }
-- (ZMTextBuilder *)setLinkPreviewArray:(NSArray *)array {
+- (ZMTextBuilder *)setLinkPreviewArray:(NSArray<ZMLinkPreview*> *)array {
   resultText.linkPreviewArray = [[NSMutableArray alloc]initWithArray:array];
   return self;
 }
