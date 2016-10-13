@@ -29,5 +29,4 @@ FOUNDATION_EXPORT const unsigned char ProtosVersionString[];
 
 #import <ZMProtos/Messages.pb.h>
 #import <ZMProtos/Otr.pb.h>
-#import <ZMProtos/ZMGenericMessage+Utils.h>
 
