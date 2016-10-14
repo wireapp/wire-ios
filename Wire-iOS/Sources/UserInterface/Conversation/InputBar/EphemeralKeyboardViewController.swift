@@ -22,6 +22,8 @@ import Cartography
 
 
 protocol EphemeralKeyboardViewControllerDelegate: class {
+    func ephemeralKeyboardWantsToBeDismissed(_ keyboard: EphemeralKeyboardViewController)
+
     func ephemeralKeyboard(
         _ keyboard: EphemeralKeyboardViewController,
         didSelectMessageTimeout timeout: ZMConversationMessageDestructionTimeout
@@ -51,9 +53,7 @@ extension ZMConversationMessageDestructionTimeout {
             .none,
             .fiveSeconds,
             .fifteenSeconds,
-            .oneMinute,
-            .fiveMinutes,
-            .fifteenMinutes
+            .oneMinute
         ]
     }
 
@@ -68,6 +68,7 @@ extension ZMConversationMessageDestructionTimeout {
     }
 
 }
+
 
 
 @objc public final class EphemeralKeyboardViewController: UIViewController {
@@ -105,7 +106,6 @@ extension ZMConversationMessageDestructionTimeout {
 
         guard let index = timeouts.index(of: conversation.destructionTimeout) else { return }
         picker.selectRow(index, inComponent: 0, animated: false)
-
     }
 
     private func setupViews() {
@@ -115,10 +115,15 @@ extension ZMConversationMessageDestructionTimeout {
         picker.tintColor = .red
         picker.showsSelectionIndicator = true
         picker.selectorColor = separatorColor
+        picker.didTapViewClosure = dismissKeyboardIfNeeded
 
         titleLabel.textAlignment = .center
         titleLabel.text = "input.ephemeral.title".localized.uppercased()
         [titleLabel, picker].forEach(view.addSubview)
+    }
+
+    func dismissKeyboardIfNeeded() {
+        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
     }
 
     private func createConstraints() {
@@ -140,15 +145,63 @@ extension ZMConversationMessageDestructionTimeout {
 /// This class is a workaround to make the selector color
 /// of a `UIPickerView` changeable. It relies on the height of the selector
 /// views, which means that the behaviour could break in future iOS updates.
-class PickerView: UIPickerView {
+class PickerView: UIPickerView, UIGestureRecognizerDelegate {
 
     var selectorColor: UIColor? = nil
+    var tapRecognizer: UIGestureRecognizer! = nil
+    var didTapViewClosure: (() -> Void)? = nil
+
+    init() {
+        super.init(frame: .zero)
+        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        tapRecognizer.delegate = self
+        addGestureRecognizer(tapRecognizer)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         for subview in subviews where subview.bounds.height <= 1.0 {
             subview.backgroundColor = selectorColor
         }
+    }
+
+    @objc func didTapView(sender: UIGestureRecognizer) {
+        guard recognizerInSelectedRow(sender) else { return }
+        didTapViewClosure?()
+    }
+
+    /// Used to determine if the recognizers touches are in the area
+    /// of the selected row of the `UIPickerView`, this is done by asking the
+    /// delegate for the rowHeight and using it to caculate the rect 
+    /// of the center (selected) row.
+    private func recognizerInSelectedRow(_ recognizer: UIGestureRecognizer) -> Bool {
+        guard selectedRow(inComponent: 0) != -1 else { return false }
+        guard let height = delegate?.pickerView?(self, rowHeightForComponent: 0) else { return false }
+        let rect = bounds.insetBy(dx: 0, dy: bounds.midY - height / 2)
+        let location = recognizer.location(in: self)
+        return rect.contains(location)
+    }
+
+    // MARK: - UIGestureRecognizerDelegate
+
+    // We want the tapgesture recognizer to fire when the selected row is tapped,
+    // but need to make sure the scrolling behaviour and taps outside the selected row still
+    // get propagated (other wise the scroll-to behaviour would break when tapping on another row) etc.
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return gestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
 }
