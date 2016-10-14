@@ -64,7 +64,7 @@ extension ZMConversationMessageDestructionTimeout {
     }
 
     var shortDisplayString: String? {
-        if isSeconds { return String(rawValue) }
+        if isSeconds { return String(Int(rawValue)) }
         if isMinutes { return String(Int(rawValue / 60)) }
         return nil
     }
