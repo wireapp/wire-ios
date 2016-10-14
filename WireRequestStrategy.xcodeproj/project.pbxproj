@@ -113,6 +113,9 @@
 		F963E8DD1D955D4600098AD3 /* ZMAssetRequestFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F963E8DE1D955D4600098AD3 /* ZMAssetRequestFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */; };
 		F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8E01D955D5500098AD3 /* SharedProtocols.swift */; };
+		F9E9FB401DA4FFDB00B5B2C5 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = F9E9FB3D1DA4FFDB00B5B2C5 /* Cartfile */; };
+		F9E9FB411DA4FFDB00B5B2C5 /* Cartfile.private in Resources */ = {isa = PBXBuildFile; fileRef = F9E9FB3E1DA4FFDB00B5B2C5 /* Cartfile.private */; };
+		F9E9FB421DA4FFDB00B5B2C5 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F9E9FB3F1DA4FFDB00B5B2C5 /* Cartfile.resolved */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,6 +266,9 @@
 		F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssetRequestFactory.h; sourceTree = "<group>"; };
 		F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMAssetRequestFactory.m; sourceTree = "<group>"; };
 		F963E8E01D955D5500098AD3 /* SharedProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedProtocols.swift; sourceTree = "<group>"; };
+		F9E9FB3D1DA4FFDB00B5B2C5 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		F9E9FB3E1DA4FFDB00B5B2C5 /* Cartfile.private */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		F9E9FB3F1DA4FFDB00B5B2C5 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +325,9 @@
 		166901601D707509000FE4AF = {
 			isa = PBXGroup;
 			children = (
+				F9E9FB3D1DA4FFDB00B5B2C5 /* Cartfile */,
+				F9E9FB3E1DA4FFDB00B5B2C5 /* Cartfile.private */,
+				F9E9FB3F1DA4FFDB00B5B2C5 /* Cartfile.resolved */,
 				1669016C1D707509000FE4AF /* WireRequestStrategy */,
 				166901781D707509000FE4AF /* WireRequestStrategyTests */,
 				1669016B1D707509000FE4AF /* Products */,
@@ -630,6 +639,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9E9FB401DA4FFDB00B5B2C5 /* Cartfile in Resources */,
+				F9E9FB421DA4FFDB00B5B2C5 /* Cartfile.resolved in Resources */,
+				F9E9FB411DA4FFDB00B5B2C5 /* Cartfile.private in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
