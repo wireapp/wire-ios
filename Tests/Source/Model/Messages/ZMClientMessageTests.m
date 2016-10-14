@@ -24,6 +24,8 @@
 #import "ZMClientMessage.h"
 #import "ZMAssetClientMessage.h"
 #import "NSString+RandomString.h"
+#import "ZMCDataModelTests-Swift.h"
+#import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 @import CoreGraphics;
 @import ZMCLinkPreview;
@@ -202,7 +204,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
     NSData *contentData = message.data;
     
     NSString *data = [contentData base64EncodedStringWithOptions:0];
@@ -239,7 +241,7 @@
     
     NSString *senderClientID = [NSString createAlphanumericalString];
     NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
     NSData *contentData = message.data;
     
     NSDictionary *data = @{ @"sender": senderClientID, @"text" : [contentData base64EncodedStringWithOptions:0] };
@@ -278,7 +280,7 @@
     existingMessage.nonce = nonce;
     existingMessage.visibleInConversation = conversation;
     
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
     NSData *contentData = message.data;
     
     NSString *data = [contentData base64EncodedStringWithOptions:0];
@@ -308,7 +310,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     
@@ -339,7 +341,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage knockWithNonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     
@@ -374,7 +376,7 @@
     existingMessage.visibleInConversation = conversation;
     existingMessage.senderClientID = senderClientID;
     
-    NSDictionary *data = @{ @"sender": senderClientID, @"text" : [ZMGenericMessage knockWithNonce:nonce.transportString].data.base64String };
+    NSDictionary *data = @{ @"sender": senderClientID, @"text" : [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:nil].data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data];
     
     ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
@@ -424,7 +426,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     
@@ -458,12 +460,12 @@
     UserClient *selfClient = [self createSelfClient];
     
     ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     
-    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:modifiedText nonce:nonce.transportString];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:modifiedText nonce:nonce.transportString expiresAfter:nil];
     NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
     
@@ -495,13 +497,13 @@
     NSString *unknownSender = [NSString createAlphanumericalString];
     
     ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     existingMessage.senderClientID = selfClient.remoteIdentifier;
     
-    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:modifiedText nonce:nonce.transportString];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:modifiedText nonce:nonce.transportString expiresAfter:nil];
     NSDictionary *data = @{ @"sender" : unknownSender, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
     
@@ -531,7 +533,7 @@
     existingMessage.visibleInConversation = conversation;
     XCTAssertFalse(existingMessage.isEncrypted);
     
-    ZMGenericMessage *message = [ZMGenericMessage messageWithImageData:[self verySmallJPEGData] format:ZMImageFormatMedium nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage genericMessageWithImageData:[self verySmallJPEGData] format:ZMImageFormatMedium nonce:nonce.transportString expiresAfter:nil];
     NSData *contentData = message.data;
     NSDictionary *data = @{@"info": [contentData base64EncodedStringWithOptions:0]};
     
@@ -561,7 +563,7 @@
     existingMessage.visibleInConversation = conversation;
     XCTAssertFalse(existingMessage.isEncrypted);
     
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
     NSData *contentData = message.data;
     
     NSString *data = [contentData base64EncodedStringWithOptions:0];
@@ -616,7 +618,7 @@
     existingMessage.nonce = nonce;
     existingMessage.visibleInConversation = conversation;
     
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
     NSData *contentData = message.data;
     
     NSString *data = [contentData base64EncodedStringWithOptions:0];
@@ -685,45 +687,6 @@
     }];
 }
 
-#pragma mark - Helper
-
-- (NSString *)textMessageRequiringExternalMessageWithNumberOfClients:(NSUInteger)count
-{
-    NSMutableString *text = @"Long Text".mutableCopy;
-    while ([text dataUsingEncoding:NSUTF8StringEncoding].length < ZMClientMessageByteSizeExternalThreshold / count) {
-        [text appendString:text];
-    }
-    return text;
-}
-
-- (ZMUpdateEvent *)encryptedExternalMessageFixtureWithBlobFromClient:(UserClient *)fromClient
-{
-    NSError *error;
-    NSURL *encryptedMessageURL = [self fileURLForResource:@"EncryptedBase64EncondedExternalMessageTestFixture" extension:@"txt"];
-    NSString *encryptedMessageFixtureString = [[NSString alloc] initWithContentsOfURL:encryptedMessageURL encoding:NSUTF8StringEncoding error:&error];
-    XCTAssertNil(error);
-    
-    NSDictionary *payload = @{
-                              @"conversation": NSUUID.createUUID.transportString,
-                              @"data": @"CiQzMzRmN2Y3Yi1hNDk5LTQ1MTMtOTJhOC1hZTg4MDI0OTQ0ZTlCRAog4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7wSIJCkkpWzMVxHXfu33pMQfEK+u/5qY426AbK9sC3Fu8Mx",
-                              @"external": encryptedMessageFixtureString,
-                              @"from": fromClient.remoteIdentifier,
-                              @"time": NSDate.date.transportString,
-                              @"type": @"conversation.otr-message-add"
-                              };
-    
-    return [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:NSUUID.createUUID];
-}
-
-- (NSString *)expectedExternalMessageText
-{
-    NSError *error;
-    NSURL *messageFixtureURL = [self fileURLForResource:@"ExternalMessageTextFixture" extension:@"txt"];
-    NSString *messageFixtureString = [[NSString alloc] initWithContentsOfURL:messageFixtureURL encoding:NSUTF8StringEncoding error:&error];
-    XCTAssertNil(error);
-
-    return messageFixtureString;
-}
 
 @end
 

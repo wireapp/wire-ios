@@ -30,12 +30,13 @@ private enum MessageKey: String {
     case linkPreviewState = "linkPreviewState"
     case genericMessage = "genericMessage"
     case reactions = "reactions"
+    case isObfuscated = "isObfuscated"
 }
 
 extension ZMMessage : ObjectInSnapshot {
     
     public var observableKeys : [String] {
-        var keys = [MessageKey.deliveryState.rawValue]
+        var keys = [MessageKey.deliveryState.rawValue, MessageKey.isObfuscated.rawValue]
         
         if self is ZMImageMessage {
             keys.append(MessageKey.mediumData.rawValue)
@@ -115,6 +116,10 @@ extension ZMMessage : ObjectInSnapshot {
             return true
         }
         return false
+    }
+    
+    public var isObfuscatedChanged : Bool {
+        return changedKeysAndOldValues.keys.contains(MessageKey.isObfuscated.rawValue)
     }
     
     public var userChangeInfo : UserChangeInfo?

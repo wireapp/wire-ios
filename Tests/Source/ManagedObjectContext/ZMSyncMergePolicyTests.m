@@ -138,7 +138,7 @@
     // when
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMClientMessage *m = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
-        [m addData:[ZMGenericMessage messageWithText:@"X" nonce:[NSUUID createUUID].transportString].data];
+        [m addData:[ZMGenericMessage messageWithText:@"X" nonce:[NSUUID createUUID].transportString expiresAfter:nil].data];
         m.serverTimestamp = [self nextDate];
         [self.syncConversation.mutableMessages addObject:m];
         XCTAssert([self.syncMOC saveOrRollback]);
@@ -277,7 +277,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         
         ZMClientMessage *m = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
-        [m addData:[ZMGenericMessage messageWithText:@"X" nonce:[NSUUID createUUID].transportString].data];
+        [m addData:[ZMGenericMessage messageWithText:@"X" nonce:[NSUUID createUUID].transportString expiresAfter:nil].data];
         m.serverTimestamp = [self nextDate];
         [self.syncConversation.mutableMessages addObject:m];
     }];

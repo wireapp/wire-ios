@@ -94,21 +94,21 @@ extension ZMGenericMessage {
                             sessionDirectory: EncryptionSessionsDirectory) -> (message: ZMNewOtrMessage, strategy: MissingClientsStrategy) {
         
         var recipientUsers : [ZMUser] = []
-        let replyOnlyToSender = self.hasConfirmation()
-        if replyOnlyToSender {
+        let sendOnlyToOtherUser = ( self.hasConfirmation() || self.hasEphemeral() )
+        if sendOnlyToOtherUser {
             
             // In case of confirmation messages, we want to send the confirmation only to the clients of the sender of the original message, 
             // not to the other clients of the selfUser
             
             var sender : ZMUser? = nil
-            if self.confirmation.messageId != nil {
+            if self.hasConfirmation(), self.confirmation.messageId != nil {
              
                 if let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.messageId), for:conversation, in:conversation.managedObjectContext){
                     sender = message.sender
                 }
             }
             
-            if conversation.connectedUser != nil || sender != nil || conversation.otherActiveParticipants.firstObject != nil{
+            if conversation.connectedUser != nil || sender != nil || conversation.otherActiveParticipants.firstObject != nil {
                 let recipient = { () -> ZMUser? in 
                     if sender != nil { return sender }
                     if conversation.connectedUser != nil { return conversation.connectedUser }
@@ -119,7 +119,8 @@ extension ZMGenericMessage {
                 if let recipient = recipient {
                     recipientUsers = [recipient]
                 } else {
-                    fatal("confirmation need a recipient\n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType), connection: \(conversation.connection), original message: \(self.confirmation.messageId)")
+                    let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.messageId)" : ""
+                    fatal("confirmation need a recipient\n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType), connection: \(conversation.connection)\(confirmationInfo)")
                 }
             }
         } else {
@@ -132,7 +133,7 @@ extension ZMGenericMessage {
         let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: nativePush, recipients: recipients, blob: externalData)
         
         let strategy : MissingClientsStrategy =
-            replyOnlyToSender ?
+            sendOnlyToOtherUser ?
                 .ignoreAllMissingClientsNotFromUser(user: recipientUsers.first!)
                 : .doNotIgnoreAnyMissingClient
         return (message: message, strategy: strategy)

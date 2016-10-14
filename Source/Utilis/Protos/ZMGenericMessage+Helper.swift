@@ -14,80 +14,231 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
-/// Convenience functions to simplify the creation of
-/// the protobuf objects without using the provided builder
+extension ZMGenericMessageBuilder {
+
+    func setGeneratedMessage(message: PBGeneratedMessage) {
+        switch message {
+        case let location as ZMLocation:
+            setLocation(location)
+        case let asset as ZMAsset:
+            setAsset(asset)
+        case let image as ZMImageAsset:
+            setImage(image)
+        case let knock as ZMKnock:
+            setKnock(knock)
+        case let text as ZMText:
+            setText(text)
+        case let external as ZMExternal:
+            setExternal(external)
+        case let lastRead as ZMLastRead:
+            setLastRead(lastRead)
+        case let reaction as ZMReaction:
+            setReaction(reaction)
+        case let hide as ZMMessageHide:
+            setHidden(hide)
+        case let edit as ZMMessageEdit:
+            setEdited(edit)
+        case let delete as ZMMessageDelete:
+            setDeleted(delete)
+        case let confirmation as ZMConfirmation:
+            setConfirmation(confirmation)
+        case let cleared as ZMCleared:
+            setCleared(cleared)
+        default:
+            preconditionFailure("Message type is not mapped yet. Add it to this enum.")
+        }
+    }
+}
 
 public extension ZMGenericMessage {
     
-    public static func genericMessage(withExternal external: ZMExternal, messageID: String) -> ZMGenericMessage {
+    @objc public static func genericMessage(pbMessage: PBGeneratedMessage, messageID: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
         let builder = ZMGenericMessage.builder()!
-        builder.setExternal(external)
         builder.setMessageId(messageID)
+        if let timeout = timeout, timeout.compare(0) == .orderedDescending  {
+            builder.setEphemeral(ZMEphemeral.ephemeral(pbMessage: pbMessage, expiresAfter: timeout))
+        } else {
+            builder.setGeneratedMessage(message: pbMessage)
+        }
         return builder.build()
     }
-    
+}
+
+public extension ZMGenericMessage {
+
+    public static func genericMessage(external: ZMExternal, messageID: String) -> ZMGenericMessage {
+        return genericMessage(pbMessage: external, messageID: messageID)
+    }
     
     public static func genericMessage(withKeyWithChecksum keys: ZMEncryptionKeyWithChecksum, messageID: String) -> ZMGenericMessage {
         let external = ZMExternal.external(withKeyWithChecksum: keys)
-        return ZMGenericMessage.genericMessage(withExternal: external, messageID: messageID)
+        return ZMGenericMessage.genericMessage(external: external, messageID: messageID)
     }
     
     // MARK: ZMLocationMessageData
     
-    public static func genericMessage(withLocation location: ZMLocation, messageID: String) -> ZMGenericMessage {
-        let builder = ZMGenericMessage.builder()!
-        builder.setLocation(location)
-        builder.setMessageId(messageID)
-        return builder.build()
+    public static func genericMessage(location: ZMLocation, messageID: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        return genericMessage(pbMessage: location, messageID: messageID, expiresAfter: timeout)
+
     }
     
     // MARK: ZMAssetClientMessage
     
-    public static func genericMessage(withAsset asset: ZMAsset, messageID: String) -> ZMGenericMessage {
-        let builder = ZMGenericMessage.builder()!
-        builder.setAsset(asset)
-        builder.setMessageId(messageID)
-        return builder.build()
+    public static func genericMessage(asset: ZMAsset, messageID: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        return genericMessage(pbMessage: asset, messageID: messageID, expiresAfter: timeout)
     }
     
     public static func genericMessage(withAssetSize size: UInt64,
                                                     mimeType: String,
                                                     name: String,
-                                                    messageID: String) -> ZMGenericMessage {
+                                                    messageID: String,
+                                       expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
         
         let asset = ZMAsset.asset(withOriginal: .original(withSize: size, mimeType: mimeType, name: name))
-        return ZMGenericMessage.genericMessage(withAsset: asset, messageID: messageID)
+        return ZMGenericMessage.genericMessage(asset: asset, messageID: messageID, expiresAfter: timeout)
     }
     
-    public static func genericMessage(withFileMetadata fileMetadata: ZMFileMetadata, messageID: String) -> ZMGenericMessage {
-        return ZMGenericMessage.genericMessage(withAsset: fileMetadata.asset, messageID: messageID)
+    public static func genericMessage(fileMetadata: ZMFileMetadata, messageID: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        return ZMGenericMessage.genericMessage(asset: fileMetadata.asset, messageID: messageID, expiresAfter: timeout)
     }
     
-    public static func genericMessage(withUploadedOTRKey otrKey: Data, sha256: Data, messageID: String) -> ZMGenericMessage {
-        return ZMGenericMessage.genericMessage(withAsset: .asset(withUploadedOTRKey: otrKey, sha256: sha256), messageID: messageID)
+    public static func genericMessage(withUploadedOTRKey otrKey: Data, sha256: Data, messageID: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        return ZMGenericMessage.genericMessage(asset: .asset(withUploadedOTRKey: otrKey, sha256: sha256), messageID: messageID, expiresAfter: timeout)
     }
     
-    public static func genericMessage(withNotUploaded notUploaded: ZMAssetNotUploaded, messageID: String) -> ZMGenericMessage {
-        return ZMGenericMessage.genericMessage(withAsset: .asset(withNotUploaded: notUploaded), messageID: messageID)
+    public static func genericMessage(notUploaded: ZMAssetNotUploaded, messageID: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        return ZMGenericMessage.genericMessage(asset: .asset(withNotUploaded: notUploaded), messageID: messageID, expiresAfter: timeout)
     }
     
+    public static func genericMessage(imageData: Data, format:ZMImageFormat, nonce: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        let asset = ZMImageAsset(data: imageData, format: format)!
+        return genericMessage(pbMessage: asset, messageID: nonce, expiresAfter: timeout)
+    }
+    
+    public static func genericMessage(mediumImageProperties: ZMIImageProperties?, processedImageProperties:ZMIImageProperties?, encryptionKeys: ZMImageAssetEncryptionKeys?, nonce: String, format:ZMImageFormat, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        let asset = ZMImageAsset(mediumProperties: mediumImageProperties, processedProperties: processedImageProperties, encryptionKeys: encryptionKeys, format: format)
+        return genericMessage(pbMessage: asset, messageID: nonce, expiresAfter: timeout)
+    }
+    
+    // MARK: Text
+
+    public static func message(text: String, nonce: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        return message(text:text, linkPreview:nil, nonce:nonce, expiresAfter: timeout)
+    }
+    
+    public static func message(text: String, linkPreview: ZMLinkPreview?, nonce: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        let zmtext = ZMText(message:text, linkPreview:linkPreview)!
+        return genericMessage(pbMessage: zmtext, messageID: nonce, expiresAfter: timeout)
+    }
+    
+    // MARK: Knock
+
+    public static func knock(nonce: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        let knockBuilder = ZMKnock.builder()!
+        knockBuilder.setHotKnock(false)
+        return genericMessage(pbMessage: knockBuilder.build(), messageID: nonce, expiresAfter: timeout)
+    }
 }
 
-// Accessor helpers for linkpreviews
 extension ZMGenericMessage {
+    
+    // Accessor helpers for linkpreviews
     public var linkPreviews: [ZMLinkPreview] {
         if hasText(), let previews = text.linkPreview {
-            return previews.flatMap { $0 as? ZMLinkPreview }
-        } else if hasEdited(), let previews = edited.text.linkPreview {
-            return previews.flatMap { $0 as? ZMLinkPreview }
+            return previews.flatMap { $0 }
         }
-
+        if hasEdited(), let previews = edited.text.linkPreview {
+            return previews.flatMap { $0 }
+        }
+        if hasEphemeral() && ephemeral.hasText(), let previews = ephemeral.text.linkPreview {
+            return previews.flatMap { $0 }
+        }
         return []
     }
+    
+    // Accessor helpers for ephemeral images
+    public var imageAssetData : ZMImageAsset? {
+        if hasImage() {
+            return image
+        }
+        if hasEphemeral() && ephemeral.hasImage() {
+            return ephemeral.image
+        }
+        return nil
+    }
+
+    public var locationData : ZMLocation? {
+        if hasLocation() {
+            return location
+        }
+        if hasEphemeral() && ephemeral.hasLocation() {
+            return ephemeral.location
+        }
+        return nil
+    }
+    
+    public var assetData : ZMAsset? {
+        if hasAsset() {
+            return asset
+        }
+        if hasEphemeral() && ephemeral.hasAsset() {
+            return ephemeral.asset
+        }
+        return nil
+    }
+    
+    public var knockData : ZMKnock? {
+        if hasKnock() {
+            return knock
+        }
+        if hasEphemeral() && ephemeral.hasKnock() {
+            return ephemeral.knock
+        }
+        return nil
+    }
+    
+    public var textData : ZMText? {
+        if hasText() {
+            return text
+        }
+        if hasEdited() && edited.hasText() {
+            return edited.text
+        }
+        if hasEphemeral() && ephemeral.hasText() {
+            return ephemeral.text
+        }
+        return nil
+    }
 }
+
+
+public extension ZMEphemeral {
+    
+    @objc public static func ephemeral(pbMessage: PBGeneratedMessage, expiresAfter timeout: NSNumber) -> ZMEphemeral? {
+        let ephBuilder = ZMEphemeral.builder()!
+        switch pbMessage {
+        case let location as ZMLocation:
+            ephBuilder.setLocation(location)
+        case let asset as ZMAsset:
+            ephBuilder.setAsset(asset)
+        case let image as ZMImageAsset:
+            ephBuilder.setImage(image)
+        case let knock as ZMKnock:
+            ephBuilder.setKnock(knock)
+        case let text as ZMText:
+            ephBuilder.setText(text)
+        default:
+            return nil
+        }
+        let doubleTimeout = timeout.doubleValue
+        ephBuilder.setExpireAfterMillis(Int64(doubleTimeout*1000))
+        return ephBuilder.build()
+    }
+}
+
 
 public extension ZMLocation {
 
@@ -118,137 +269,6 @@ public extension ZMExternal {
         return ZMExternal.external(withOTRKey: keys.aesKey, sha256: keys.sha256)
     }
     
-}
-
-public extension ZMAsset {
-    
-    public static func asset(withOriginal original: ZMAssetOriginal? = nil, preview: ZMAssetPreview? = nil) -> ZMAsset {
-        let builder = ZMAsset.builder()!
-        if let original = original {
-            builder.setOriginal(original)
-        }
-        if let preview = preview {
-            builder.setPreview(preview)
-        }
-        return builder.build()
-    }
-    
-    public static func asset(withUploadedOTRKey otrKey: Data, sha256: Data) -> ZMAsset {
-        let builder = ZMAsset.builder()!
-        builder.setUploaded(.remoteData(withOTRKey: otrKey, sha256: sha256))
-        return builder.build()
-    }
-    
-    public static func asset(withNotUploaded notUploaded: ZMAssetNotUploaded) -> ZMAsset {
-        let builder = ZMAsset.builder()!
-        builder.setNotUploaded(notUploaded)
-        return builder.build()
-    }
-    
-}
-
-public extension ZMAssetOriginal {
-    
-    public static func original(withSize size: UInt64, mimeType: String, name: String?) -> ZMAssetOriginal {
-        return original(withSize: size, mimeType: mimeType, name: name, imageMetaData: nil)
-    }
-    
-    public static func original(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: ZMAssetImageMetaData?) -> ZMAssetOriginal {
-        let builder = ZMAssetOriginal.builder()!
-        builder.setSize(size)
-        builder.setMimeType(mimeType)
-        if let name = name {
-            builder.setName(name)
-        }
-        if let imageMeta = imageMetaData {
-            builder.setImage(imageMeta)
-        }
-        return builder.build()
-    }
-    
-    public static func original(withSize size: UInt64, mimeType: String, name: String, videoDurationInMillis: UInt, videoDimensions: CGSize) -> ZMAssetOriginal {
-        let builder = ZMAssetOriginal.builder()!
-        builder.setSize(size)
-        builder.setMimeType(mimeType)
-        builder.setName(name)
-        
-        let videoBuilder = ZMAssetVideoMetaData.builder()!
-        videoBuilder.setDurationInMillis(UInt64(videoDurationInMillis))
-        videoBuilder.setWidth(Int32(videoDimensions.width))
-        videoBuilder.setHeight(Int32(videoDimensions.height))
-        builder.setVideo(videoBuilder)
-        
-        return builder.build()
-    }
-    
-    public static func original(withSize size: UInt64, mimeType: String, name: String, audioDurationInMillis: UInt, normalizedLoudness: [Float]) -> ZMAssetOriginal {
-        let builder = ZMAssetOriginal.builder()!
-        builder.setSize(size)
-        builder.setMimeType(mimeType)
-        builder.setName(name)
-        
-        let loudnessArray = normalizedLoudness.map { UInt8(roundf($0*255)) }
-        let audioBuilder = ZMAssetAudioMetaData.builder()!
-        audioBuilder.setDurationInMillis(UInt64(audioDurationInMillis))
-        audioBuilder.setNormalizedLoudness(NSData(bytes: loudnessArray, length: loudnessArray.count) as Data!)
-        builder.setAudio(audioBuilder)
-        
-        return builder.build()
-    }
-    
-    /// Returns the normalized loudness as floats between 0 and 1
-    public var normalizedLoudnessLevels : [Float] {
-        
-        guard self.audio.hasNormalizedLoudness() else { return [] }
-        guard self.audio.normalizedLoudness.count > 0 else { return [] }
-        
-        guard let data = self.audio.normalizedLoudness else {return []}
-        let offsets = 0..<data.count
-        return offsets.map { offset -> UInt8 in
-            var number : UInt8 = 0
-            data.copyBytes(to: &number, from: (0 + offset)..<(MemoryLayout<UInt8>.size+offset))
-            return number
-            }
-            .map { Float(Float($0)/255.0) }
-    }
-}
-
-public extension ZMAssetPreview {
-    
-    public static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData, imageMetaData: ZMAssetImageMetaData) -> ZMAssetPreview {
-        let builder = ZMAssetPreview.builder()!
-        builder.setSize(size)
-        builder.setMimeType(mimeType)
-        builder.setRemote(remoteData)
-        builder.setImage(imageMetaData)
-        return builder.build()
-    }
-
-}
-
-public extension ZMAssetImageMetaData {
-    public static func imageMetaData(withWidth width: Int32, height: Int32) -> ZMAssetImageMetaData {
-        let builder = ZMAssetImageMetaData.builder()!
-        builder.setWidth(width)
-        builder.setHeight(height)
-        return builder.build()
-    }
-}
-
-public extension ZMAssetRemoteData {
-    
-    public static func remoteData(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
-        let builder = ZMAssetRemoteData.builder()!
-        builder.setOtrKey(otrKey)
-        builder.setSha256(sha256)
-        if let identifier = assetId {
-            builder.setAssetId(identifier)
-        }
-        if let token = assetToken {
-            builder.setAssetToken(token)
-        }
-        return builder.build()
-    }
 }
 
 public extension ZMClientEntry {
@@ -424,16 +444,6 @@ public extension ZMLinkPreview {
     
 }
 
-extension ZMAssetRemoteData {
-    func builder(withAssetID assetID: String, token: String?) -> ZMAssetRemoteDataBuilder {
-        let builder = toBuilder()!
-        builder.setAssetId(assetID)
-        if let token = token {
-            builder.setAssetToken(token)
-        }
-        return builder
-    }
-}
 
 public extension ZMTweet {
     public static func tweet(withAuthor author: String?, username: String?) -> ZMTweet {
@@ -448,8 +458,4 @@ public extension ZMTweet {
     }
 }
 
-// MARK: - Equatable
 
-func ==(lhs: ZMAssetPreview, rhs: ZMAssetPreview) -> Bool {
-    return lhs.data() == rhs.data()
-}

@@ -361,7 +361,7 @@
 
 - (ZMUpdateEvent *)createTextAddedEventWithNonce:(NSUUID *)nonce conversationID:(NSUUID*)conversationID senderID:(NSUUID *)senderID
 {
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"Yeah!" nonce:nonce.transportString];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"Yeah!" nonce:nonce.transportString expiresAfter:nil];
     
     NSDictionary *payload = @{
                               @"id": [NSUUID createUUID].transportString,
