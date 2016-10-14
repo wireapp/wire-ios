@@ -453,7 +453,7 @@ class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
     
     func messageThatMissesRecipient(_ missingRecipient: UserClient) -> ZMClientMessage {
         let message = ZMClientMessage.insertNewObject(in: self.syncMOC)
-        let data = ZMGenericMessage(text: self.name!, nonce: UUID.create().transportString()).data()!
+        let data = ZMGenericMessage.message(text: self.name!, nonce: UUID.create().transportString()).data()!
         message.add(data)
         message.missesRecipient(missingRecipient)
         XCTAssertEqual(message.missingRecipients.count, 1)

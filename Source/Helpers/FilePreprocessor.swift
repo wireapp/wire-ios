@@ -102,7 +102,7 @@ extension ZMAssetClientMessage {
     
     /// Adds Uploaded generic message
     fileprivate func addUploadedGenericMessage(_ keys: ZMImageAssetEncryptionKeys) {
-        let msg = ZMGenericMessage.genericMessage(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!, messageID: self.nonce.transportString())
+        let msg = ZMGenericMessage.genericMessage(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!, messageID: self.nonce.transportString(), expiresAfter: NSNumber(value: self.deletionTimeout))
         self.add(msg)
     }
 }

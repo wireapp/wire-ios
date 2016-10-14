@@ -31,7 +31,7 @@ public final class ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStra
     {
         self.clientRegistrationStatus = clientRegistrationStatus
         let fetchPredicate = NSPredicate(format: "delivered == NO")
-        let needsProcessingPredicate = NSPredicate(format: "(mediumGenericMessage.image.width == 0 || previewGenericMessage.image.width == 0) && delivered == NO")
+        let needsProcessingPredicate = NSPredicate(format: "(mediumGenericMessage.imageAssetData.width == 0 || previewGenericMessage.imageAssetData.width == 0) && delivered == NO")
         self.imagePreprocessor = ZMImagePreprocessingTracker(managedObjectContext: managedObjectContext,
                                                              imageProcessingQueue: OperationQueue(),
                                                              fetch: fetchPredicate,
@@ -45,8 +45,8 @@ public final class ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStra
             guard let message = object as? ZMAssetClientMessage else { return false }
             return message.imageMessageData != nil &&
                 (message.uploadState == .uploadingPlaceholder || message.uploadState == .uploadingFullAsset) &&
-                message.imageAssetStorage?.mediumGenericMessage?.image.width != 0 &&
-                message.imageAssetStorage?.previewGenericMessage?.image.width != 0
+                message.imageAssetStorage?.mediumGenericMessage?.imageAssetData?.width != 0 &&
+                message.imageAssetStorage?.previewGenericMessage?.imageAssetData?.width != 0
         }
         
         upstreamSync = ZMUpstreamModifiedObjectSync(transcoder: self,
@@ -208,7 +208,7 @@ extension ImageUploadRequestStrategy : ZMUpstreamTranscoder {
     }
     
     func scheduleImageProcessing(forMessage message: ZMAssetClientMessage, format : ZMImageFormat) {
-        let genericMessage = ZMGenericMessage(mediumImageProperties: nil, processedImageProperties: nil, encryptionKeys: nil, nonce: message.nonce.transportString(), format: format)
+        let genericMessage = ZMGenericMessage.genericMessage(mediumImageProperties: nil, processedImageProperties: nil, encryptionKeys: nil, nonce: message.nonce.transportString(), format: format, expiresAfter: NSNumber(value: message.deletionTimeout))
         message.add(genericMessage)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }

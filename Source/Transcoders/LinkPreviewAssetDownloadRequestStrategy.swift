@@ -32,8 +32,8 @@ import WireRequestStrategy
         super.init(managedObjectContext: managedObjectContext)
         
         let downloadFilter = NSPredicate { object, _ in
-            guard let message = object as? ZMClientMessage, let genericMessage = message.genericMessage , genericMessage.hasText() else { return false }
-            guard let preview = genericMessage.text.linkPreview?.first as? ZMLinkPreview, let remote: ZMAssetRemoteData = preview.remote  else { return false }
+            guard let message = object as? ZMClientMessage, let genericMessage = message.genericMessage, genericMessage.textData != nil else { return false }
+            guard let preview = genericMessage.linkPreviews.first, let remote: ZMAssetRemoteData = preview.remote  else { return false }
             guard nil == managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false) else { return false }
             return remote.hasAssetId()
         }
@@ -80,7 +80,7 @@ import WireRequestStrategy
         guard response.result == .success else { return }
         let cache = managedObjectContext.zm_imageAssetCache
         
-        let linkPreview = message.genericMessage?.text.linkPreview.first as? ZMLinkPreview
+        let linkPreview = message.genericMessage?.linkPreviews.first
         guard let remote = linkPreview?.remote, let data = response.rawData else { return }
         cache?.storeAssetData(message.nonce, format: .medium, encrypted: true, data: data)
 
@@ -116,7 +116,7 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
     
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         guard let message = object as? ZMClientMessage else { fatal("Unable to generate request for \(object)") }
-        guard let linkPreview = message.genericMessage?.text.linkPreview.first as? ZMLinkPreview else { return nil }
+        guard let linkPreview = message.genericMessage?.linkPreviews.first else { return nil }
         guard let remoteData = linkPreview.remote else { return nil }
 
         // Protobuf initializes the token to an empty string when set to nil

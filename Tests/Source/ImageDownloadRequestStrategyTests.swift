@@ -44,19 +44,21 @@ class ImageDownloadRequestStrategyTests: MessagingTest {
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData!.count), mimeType: "image/jpeg")
         let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
         
-        message.add(ZMGenericMessage(
+        message.add(ZMGenericMessage.genericMessage(
             mediumImageProperties: properties,
             processedImageProperties: properties,
             encryptionKeys: keys,
             nonce: message.nonce.transportString(),
-            format: .medium))
+            format: .medium,
+            expiresAfter:nil))
         
-        message.add(ZMGenericMessage(
+        message.add(ZMGenericMessage.genericMessage(
             mediumImageProperties: properties,
             processedImageProperties: properties,
             encryptionKeys: keys,
             nonce: message.nonce.transportString(),
-            format: .preview))
+            format: .preview,
+            expiresAfter:nil))
     
         message.resetLocallyModifiedKeys(Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey))
         message.assetId = assetId
