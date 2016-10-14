@@ -93,6 +93,26 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var hasBeenDeleted : Bool { get }
     
     var updatedAt : Date? { get }
+    
+    /// Starts the "self destruction" timer if all conditions are met
+    /// It checks internally if the message is ephemeral, if sender is the other user and if there is already an existing timer
+    /// Returns YES if a timer was started by the message call
+    func startSelfDestructionIfNeeded() -> Bool
+    
+    /// Returns true if the message is ephemeral
+    var isEphemeral : Bool { get }
+    
+    /// If the message is ephemeral, it returns a fixed timeout
+    /// Otherwise it returns -1
+    /// Override this method in subclasses if needed
+    var deletionTimeout : TimeInterval { get }
+
+    /// Returns true if the message is an ephemeral message that was sent by the selfUser and the obfuscation timer already fired
+    /// At this point the genericMessage content is already cleared. You should receive a notification that the content was cleared
+    var isObfuscated : Bool { get }
+
+    /// Returns the date when a ephemeral message will be destructed or `nil` if th message is not ephemeral
+    var destructionDate: Date? { get }
 }
 
 
@@ -183,6 +203,20 @@ extension ZMMessage {
     public var updatedAt : Date? {
         return nil
     }
+ 
+    public func startSelfDestructionIfNeeded() -> Bool {
+        if !isZombieObject && isEphemeral, let sender = sender, !sender.isSelfUser {
+            return startDestructionIfNeeded()
+        }
+        return false
+    }
     
+    public var isEphemeral : Bool {
+        return false
+    }
+    
+    public var deletionTimeout : TimeInterval {
+        return -1
+    }
 }
 

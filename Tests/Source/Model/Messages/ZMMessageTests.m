@@ -2223,7 +2223,7 @@ NSString * const ReactionsKey = @"reactions";
     
     NSString *senderClientID = [NSString createAlphanumericalString];
     NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *knockMessage = [ZMGenericMessage knockWithNonce:nonce.transportString];
+    ZMGenericMessage *knockMessage = [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:nil];
 
     NSDictionary *data = @{ @"sender" : senderClientID, @"text" : knockMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate dateWithTimeIntervalSinceReferenceDate:450000000]];
@@ -2317,7 +2317,7 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatAClientMessageHasKnockMessageData
 {
     // given
-    ZMGenericMessage *knock = [ZMGenericMessage knockWithNonce:[NSUUID createUUID].transportString];
+    ZMGenericMessage *knock = [ZMGenericMessage knockWithNonce:[NSUUID createUUID].transportString expiresAfter:nil];
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     [message addData:knock.data];
     
@@ -2643,3 +2643,48 @@ NSString * const ReactionsKey = @"reactions";
 }
 
 @end
+
+
+@implementation BaseZMMessageTests (Ephemeral)
+
+- (NSString *)textMessageRequiringExternalMessageWithNumberOfClients:(NSUInteger)count
+{
+    NSMutableString *text = @"Long Text".mutableCopy;
+    while ([text dataUsingEncoding:NSUTF8StringEncoding].length < ZMClientMessageByteSizeExternalThreshold / count) {
+        [text appendString:text];
+    }
+    return text;
+}
+
+- (ZMUpdateEvent *)encryptedExternalMessageFixtureWithBlobFromClient:(UserClient *)fromClient
+{
+    NSError *error;
+    NSURL *encryptedMessageURL = [self fileURLForResource:@"EncryptedBase64EncondedExternalMessageTestFixture" extension:@"txt"];
+    NSString *encryptedMessageFixtureString = [[NSString alloc] initWithContentsOfURL:encryptedMessageURL encoding:NSUTF8StringEncoding error:&error];
+    XCTAssertNil(error);
+    
+    NSDictionary *payload = @{
+                              @"conversation": NSUUID.createUUID.transportString,
+                              @"data": @"CiQzMzRmN2Y3Yi1hNDk5LTQ1MTMtOTJhOC1hZTg4MDI0OTQ0ZTlCRAog4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7wSIJCkkpWzMVxHXfu33pMQfEK+u/5qY426AbK9sC3Fu8Mx",
+                              @"external": encryptedMessageFixtureString,
+                              @"from": fromClient.remoteIdentifier,
+                              @"time": NSDate.date.transportString,
+                              @"type": @"conversation.otr-message-add"
+                              };
+    
+    return [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:NSUUID.createUUID];
+}
+
+- (NSString *)expectedExternalMessageText
+{
+    NSError *error;
+    NSURL *messageFixtureURL = [self fileURLForResource:@"ExternalMessageTextFixture" extension:@"txt"];
+    NSString *messageFixtureString = [[NSString alloc] initWithContentsOfURL:messageFixtureURL encoding:NSUTF8StringEncoding error:&error];
+    XCTAssertNil(error);
+    
+    return messageFixtureString;
+}
+
+@end
+
+

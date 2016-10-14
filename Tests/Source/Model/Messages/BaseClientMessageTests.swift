@@ -78,6 +78,8 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             self.syncUser3Client1 = self.createClient(for: self.syncUser3, createSessionWithSelfUser: false, onMOC: self.syncMOC)
             
             self.syncConversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [self.syncUser1, self.syncUser2, self.syncUser3])
+            self.syncConversation.remoteIdentifier = UUID.create()
+            
             self.expectedRecipients = [
                 self.syncSelfUser.remoteIdentifier!.transportString(): [
                     self.syncSelfClient2.remoteIdentifier!
@@ -146,9 +148,9 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
                 XCTFail("Unexpected otr client in recipients", file: file, line: line)
                 return
             }
-            let clientIds = (recipientEntry.clients as! [ZMClientEntry]).map { String(format: "%llx", $0.client.client) }.sorted()
+            let clientIds = (recipientEntry.clients).map { String(format: "%llx", $0.client.client) }.sorted()
             XCTAssertEqual(clientIds, expectedClientsIds, file: file, line: line)
-            let hasTexts = (recipientEntry.clients as! [ZMClientEntry]).map { $0.hasText() }
+            let hasTexts = (recipientEntry.clients).map { $0.hasText() }
             XCTAssertFalse(hasTexts.contains(false), file: file, line: line)
             
         }
@@ -177,5 +179,8 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             return event
         }
     }
-
+    
 }
+
+
+

@@ -21,7 +21,8 @@
 #import "ZMClientMessage.h"
 #import "ZMAssetClientMessage.h"
 #import "ZMGenericMessage+External.h"
-
+#import "ZMGenericMessage+Utils.h"
+#import "ZMCDataModel/ZMCDataModel-Swift.h"
 
 @implementation ZMGenericMessage (UpdateEvent)
 
@@ -83,7 +84,7 @@
 
 + (Class)entityClassForGenericMessage:(ZMGenericMessage *)genericMessage
 {
-    if (genericMessage.hasImage || genericMessage.hasAsset) {
+    if (genericMessage.imageAssetData != nil || genericMessage.assetData != nil) {
         return ZMAssetClientMessage.class;
     }
     

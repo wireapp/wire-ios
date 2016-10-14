@@ -160,11 +160,13 @@ extern NSString * const ZMMessageConfirmationKey;
 @property (nonatomic) NSString *senderClientID;
 @property (nonatomic) ZMEventID *eventID;
 @property (nonatomic) NSUUID *nonce;
-
+@property (nonatomic, readonly) NSDate *destructionDate;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic, readonly) NSDate *expirationDate;
+@property (nonatomic, readonly) BOOL isObfuscated;
+
 @property (nonatomic) NSSet <Reaction *> *reactions;
 @property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> *confirmations;
 
@@ -272,6 +274,29 @@ extern NSString * const ZMMessageServerTimestampKey;
 + (BOOL)doesEventTypeGenerateSystemMessage:(ZMUpdateEventType)type;
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent inManagedObjectContext:(NSManagedObjectContext *)moc;
 + (NSPredicate *)predicateForSystemMessagesInsertedLocally;
+
+@end
+
+
+
+
+@interface ZMMessage (Ephemeral)
+
+
+/// Sets the destruction date to the current date plus the timeout
+/// After this date the message "self-destructs", e.g. gets deleted from all sender & receiver devices or obfuscated if the sender is the selfUser
+- (BOOL)startDestructionIfNeeded;
+
+/// Obfuscates the message which means, it deletes the genericMessage content
+- (void)obfuscate;
+
+/// Inserts a delete message for the ephemeral and sets the destruction timeout to nil
+- (void)deleteEphemeral;
+
+
+/// When we restart, we might still have messages that had a timer, but whose timer did not fire before killing the app
+/// To delete those messages immediately use this method on startup (e.g. in the init of the ZMClientMessageTranscoder) to fetch and delete those messages
++ (void)deleteOldEphemeralMessages:(NSManagedObjectContext *)context;
 
 @end
 
