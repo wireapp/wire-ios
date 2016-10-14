@@ -391,7 +391,8 @@ extension ClientMessageRequestFactoryTests {
         let message = ZMAssetClientMessage(
             fileMetadata: metadata,
             nonce: nonce,
-            managedObjectContext: self.syncMOC
+            managedObjectContext: self.syncMOC,
+            expiresAfter:0.0
         )
         
         XCTAssertNotNil(data)

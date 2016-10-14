@@ -36,7 +36,7 @@
     UserClient *selfClient = [self createSelfClient];
     
     // create encrypted message
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:[NSUUID createUUID].transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:[NSUUID createUUID].transportString expiresAfter:nil];
     NSData *encryptedData = [self encryptedMessage:message recipient:selfClient];
     
     NSDictionary *payload = @{
@@ -79,11 +79,12 @@
                                                                                       ];
     NSUUID *messageNonce = [NSUUID createUUID];
     
-    ZMGenericMessage *message = [ZMGenericMessage messageWithMediumImageProperties:properties
+    ZMGenericMessage *message = [ZMGenericMessage genericMessageWithMediumImageProperties:properties
                                                           processedImageProperties:properties
                                                                     encryptionKeys:keys
                                                                              nonce:messageNonce.transportString
-                                                                            format:ZMImageFormatMedium];
+                                                                            format:ZMImageFormatMedium
+                                                                      expiresAfter:nil];
     
     NSData *encryptedData = [self encryptedMessage:message recipient:selfClient];
     
@@ -123,7 +124,7 @@
     
     //create encrypted message
     NSUUID *messageNonce = [NSUUID createUUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"text" nonce:messageNonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"text" nonce:messageNonce.transportString expiresAfter:nil];
     
     NSDictionary *payload = @{
                               @"recipient": selfClient.remoteIdentifier,
@@ -164,7 +165,7 @@
     UserClient *selfClient = self.createSelfClient;
     
     // create symmetrically encrypted text message and encrypt external message holding the keys using cryptobox
-    ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:NSUUID.createUUID.transportString];
+    ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:NSUUID.createUUID.transportString expiresAfter:nil];
     ZMExternalEncryptedDataWithKeys *dataWithKeys = [ZMGenericMessage encryptedDataWithKeysFromMessage:textMessage];
     
     ZMGenericMessage *externalMessage = [ZMGenericMessage genericMessageWithKeyWithChecksum:dataWithKeys.keys messageID:NSUUID.createUUID.transportString];

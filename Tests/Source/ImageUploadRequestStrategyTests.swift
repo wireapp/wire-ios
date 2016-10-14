@@ -38,10 +38,12 @@ class ImageUploadRequestStrategyTests: MessagingTest {
     
     /// MARK - Helpers
     
-    func createImageMessage() -> ZMAssetClientMessage {
+    func createImageMessage(isEphemeral: Bool = false) -> ZMAssetClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
-        
+        if isEphemeral {
+            conversation.messageDestructionTimeout = 10;
+        }
         let message = conversation.appendOTRMessage(withImageData: verySmallJPEGData(), nonce: UUID.create())
         syncMOC.saveOrRollback()
         
@@ -107,7 +109,7 @@ class ImageUploadRequestStrategyTests: MessagingTest {
             let message = self.createImageMessage()
             let properties = ZMIImageProperties(size: CGSize(width: 100, height: 100), length: UInt(100), mimeType: "")
             
-            message.add(ZMGenericMessage(
+            message.add(ZMGenericMessage.genericMessage(
                 mediumImageProperties: properties,
                 processedImageProperties: properties,
                 encryptionKeys: nil,
@@ -270,4 +272,58 @@ class ImageUploadRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
     
+}
+
+
+// MARK: - Ephemeral
+extension ImageUploadRequestStrategyTests {
+    
+    func testThatItAddsEphemeralMessages(){
+        syncMOC.performGroupedBlock {
+            // given
+            let message = self.createImageMessage(isEphemeral: true)
+            XCTAssertTrue(message.isEphemeral)
+            self.prepare(message, forUploadingFormat: .medium)
+            
+            for changeTracker in self.sut.contextChangeTrackers {
+                changeTracker.objectsDidChange(Set(arrayLiteral: message))
+            }
+            
+            // when
+            let request = self.sut.nextRequest()
+
+            // then
+            XCTAssertNotNil(request)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    
+    }
+    
+    func testThatItPreprocessesEphemeralImageMessages(){
+        syncMOC.performGroupedBlock {
+            // given
+            let message = self.createImageMessage(isEphemeral: true)
+            XCTAssertTrue(message.isEphemeral)
+            
+            self.prepare(message, forUploadingFormat: .medium)
+            
+            for changeTracker in self.sut.contextChangeTrackers {
+                changeTracker.objectsDidChange(Set(arrayLiteral: message))
+            }
+            
+            // when
+            message.managedObjectContext?.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
+            XCTAssertFalse(self.sut.shouldCreateRequest(toSyncObject:message, forKeys:Set(arrayLiteral: "uploadState"), withSync: NSObject()))
+
+            let properties = ZMIImageProperties(size: message.imageAssetStorage!.originalImageSize(), length: 1000, mimeType: "image/jpg")
+            message.imageAssetStorage?.setImageData(message.imageAssetStorage?.originalImageData(), for:.medium, properties: properties)
+            
+            // then
+            XCTAssertTrue(self.sut.shouldCreateRequest(toSyncObject:message, forKeys:Set(arrayLiteral: "uploadState"), withSync: NSObject()))
+            XCTAssertTrue(message.isEphemeral)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+    }
+
 }

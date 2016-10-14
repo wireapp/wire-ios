@@ -61,9 +61,12 @@ class FileUploadRequestStrategyTests: MessagingTest {
     }
     
     /// Creates a message that should generate request
-    func createMessage(_ name: String, uploadState: ZMAssetUploadState = .uploadingPlaceholder, inConversation: ZMConversation? = nil, thumbnail: Data? = nil, url: URL = testDataURL) -> ZMAssetClientMessage {
+    func createMessage(_ name: String, uploadState: ZMAssetUploadState = .uploadingPlaceholder, inConversation: ZMConversation? = nil, thumbnail: Data? = nil, url: URL = testDataURL, isEphemeral: Bool = false) -> ZMAssetClientMessage {
         let conversation = inConversation ?? ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.remoteIdentifier = UUID.create()
+        if isEphemeral {
+            conversation.messageDestructionTimeout = 10
+        }
         // This is a video metadata since it's the only file type which supports thumbnails at the moment.
         let msg = conversation.appendMessage(with: ZMVideoMetadata(fileURL: url, thumbnail: thumbnail)) as! ZMAssetClientMessage
         msg.uploadState = uploadState
@@ -909,11 +912,11 @@ extension FileUploadRequestStrategyTests {
     func decryptedMessage(fromRequestData data: Data, forClient client: UserClient) -> ZMGenericMessage? {
         let otrMessage = ZMNewOtrMessage.builder().merge(from: data).build() as? ZMNewOtrMessage
         XCTAssertNotNil(otrMessage, "Unable to generate OTR message")
-        let clientEntries = otrMessage?.recipients.flatMap { $0 as? ZMUserEntry }.flatMap { $0.clients }.joined()
+        let clientEntries = otrMessage?.recipients.flatMap { $0.clients }.joined()
         XCTAssertEqual(clientEntries?.count, 1)
         
         let encryptionContext = syncMOC.zm_cryptKeyStore.encryptionContext
-        guard let entry = clientEntries?.first as? ZMClientEntry else { XCTFail("Unable to get client entry"); return nil }
+        guard let entry = clientEntries?.first else { XCTFail("Unable to get client entry"); return nil }
         
         var message : ZMGenericMessage?
         encryptionContext.perform { sessionsDirectory in
@@ -1121,5 +1124,25 @@ extension FileUploadRequestStrategyTests {
         XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .preview, encrypted: true))
         
         XCTAssertNotNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false))
+    }
+}
+
+
+// MARK: - Ephemeral
+extension FileUploadRequestStrategyTests {
+
+    func testThatItPreprocessesEphemeralMessages() {
+        
+        // given
+        let msg = createMessage("foo", isEphemeral: true)
+        XCTAssertFalse(msg.isReadyToUploadFile)
+        
+        // when
+        sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set(arrayLiteral: msg)) }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then after processing it should set 'needsToUploadPreview' to true
+        XCTAssertTrue(msg.isReadyToUploadFile)
+        XCTAssertNotNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: "foo", encrypted:true))
     }
 }
