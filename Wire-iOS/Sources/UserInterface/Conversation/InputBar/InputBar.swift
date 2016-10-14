@@ -63,7 +63,10 @@ private struct InputBarConstants {
 }
 
 @objc public final class InputBar: UIView {
-    
+
+    private let inputBarVerticalInset : CGFloat = 34
+
+
     public let textView: NextResponderTextView = NextResponderTextView()
     public let leftAccessoryView  = UIView()
     public let rightAccessoryView = UIView()
@@ -107,25 +110,25 @@ private struct InputBarConstants {
         }
     }
     
-    open var separatorEnabled = false {
+    public var separatorEnabled = false {
         didSet {
             updateTopSeparator()
         }
     }
     
-    open var invisibleInputAccessoryView : InvisibleInputAccessoryView? = nil  {
+    public var invisibleInputAccessoryView : InvisibleInputAccessoryView? = nil  {
         didSet {
             textView.inputAccessoryView = invisibleInputAccessoryView
         }
     }
     
-    override open var bounds: CGRect {
+    override public var bounds: CGRect {
         didSet {
             invisibleInputAccessoryView?.intrinsicContentSize = CGSize(width: UIViewNoIntrinsicMetric, height: bounds.height)
         }
     }
         
-    override open func didMoveToWindow() {
+    override public func didMoveToWindow() {
         super.didMoveToWindow()
         startCursorBlinkAnimation()
     }
@@ -170,7 +173,7 @@ private struct InputBarConstants {
         textView.accessibilityIdentifier = "inputField"
         updatePlaceholder()
         textView.lineFragmentPadding = 0
-        textView.textContainerInset = UIEdgeInsetsMake(17, 0, 17, 4)
+        textView.textContainerInset = UIEdgeInsetsMake(inputBarVerticalInset / 2, 0, inputBarVerticalInset / 2, 4)
         textView.placeholderTextContainerInset = UIEdgeInsetsMake(21, 10, 21, 0)
         textView.keyboardType = .default
         textView.keyboardAppearance = ColorScheme.default().keyboardAppearance
@@ -295,7 +298,11 @@ private struct InputBarConstants {
     }
     
     func textViewContentSizeDidChange(_ sender: AnyObject) {
-        textIsOverflowing = textView.contentSize.height > textView.bounds.size.height
+        guard let textViewFont = textView.font
+            else { return }
+        
+        let lineCount = floor((textView.contentSize.height - inputBarVerticalInset) / textViewFont.lineHeight)
+        textIsOverflowing = lineCount > 1 // we show separator when the text is 2+ lines
     }
 
     // MARK: - Disable interactions on the lower part to not to interfere with the keyboard
