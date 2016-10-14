@@ -76,10 +76,10 @@
     return NO;
 }
 
-- (ZMConversationMessageDestructionTimeout)destructionTimeout
-{
-    return ZMConversationMessageDestructionTimeoutFifteenSeconds;
-}
+//- (ZMConversationMessageDestructionTimeout)destructionTimeout
+//{
+//    return ZMConversationMessageDestructionTimeoutFifteenSeconds;
+//}
 
 
 @end
