@@ -74,6 +74,9 @@ NSString * const ZMMessageHiddenInConversationKey = @"hiddenInConversation";
 NSString * const ZMMessageSenderClientIDKey = @"senderClientID";
 NSString * const ZMMessageReactionKey = @"reactions";
 NSString * const ZMMessageConfirmationKey = @"confirmations";
+NSString * const ZMMessageDestructionDateKey = @"destructionDate";
+NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
+
 
 @interface ZMMessage ()
 
@@ -97,6 +100,8 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
 
 @property (nonatomic) BOOL isExpired;
 @property (nonatomic) NSDate *expirationDate;
+@property (nonatomic) NSDate *destructionDate;
+@property (nonatomic) BOOL isObfuscated;
 
 @end
 
@@ -114,9 +119,11 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
 @dynamic missingRecipients;
 @dynamic isExpired;
 @dynamic expirationDate;
+@dynamic destructionDate;
 @dynamic senderClientID;
 @dynamic reactions;
 @dynamic confirmations;
+@dynamic isObfuscated;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
@@ -383,14 +390,14 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
     [message removePendingDeliveryReceipts];
     
     // Only the sender of the original message can delete it
-    if (![senderID isEqual:message.sender.remoteIdentifier]) {
+    if (![senderID isEqual:message.sender.remoteIdentifier] && !message.isEphemeral) {
         return;
     }
 
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
 
     // Only clients other than self should see the system message
-    if (nil != message && ![senderID isEqual:selfUser.remoteIdentifier]) {
+    if (nil != message && ![senderID isEqual:selfUser.remoteIdentifier] && !message.isEphemeral) {
         [conversation appendDeletedForEveryoneSystemMessageWithTimestamp:message.serverTimestamp sender:message.sender];
     }
 
@@ -689,7 +696,9 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
                              ZMMessageNeedsUpdatingUsersKey,
                              ZMMessageSenderClientIDKey,
                              ZMMessageConfirmationKey,
-                             ZMMessageReactionKey
+                             ZMMessageReactionKey,
+                             ZMMessageDestructionDateKey,
+                             ZMMessageIsObfuscatedKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -1058,6 +1067,95 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
 - (BOOL)shouldGenerateUnreadCount;
 {
     return self.systemMessageType == ZMSystemMessageTypeMissedCall;
+}
+
+
+@end
+
+
+
+
+@implementation ZMMessage (Ephemeral)
+
+
+- (BOOL)startDestructionIfNeeded
+{
+    if (self.destructionDate != nil || !self.isEphemeral) {
+        return NO;
+    }
+    BOOL isSelfUser = self.sender.isSelfUser;
+    if (isSelfUser && self.managedObjectContext.zm_isSyncContext) {
+        self.destructionDate = [NSDate dateWithTimeIntervalSinceNow:self.deletionTimeout];
+        ZMMessageDestructionTimer *timer = self.managedObjectContext.zm_messageObfuscationTimer;
+        [timer startObfuscationTimerWithMessage:self timeout:self.deletionTimeout];
+        return YES;
+    }
+    else if (!isSelfUser && self.managedObjectContext.zm_isUserInterfaceContext){
+        ZMMessageDestructionTimer *timer = self.managedObjectContext.zm_messageDeletionTimer;
+        NSTimeInterval matchedTimeInterval = [timer startDeletionTimerWithMessage:self timeout:self.deletionTimeout];
+        self.destructionDate = [NSDate dateWithTimeIntervalSinceNow:matchedTimeInterval];
+        return YES;
+    }
+    return NO;
+}
+
+- (void)obfuscate;
+{
+    self.isObfuscated = true;
+    self.destructionDate = nil;
+}
+
+- (void)deleteEphemeral;
+{
+    [ZMMessage deleteForEveryone:self];
+    self.destructionDate = nil;
+    self.isObfuscated = NO;
+}
+
++ (NSFetchRequest *)fetchRequestForEphemeralMessagesThatNeedToBeDeleted
+{
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:self.entityName];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K != nil AND %K != nil AND %K == FALSE",
+                              ZMMessageDestructionDateKey,          // If it has a destructionDate, the timer did not fire in time
+                              ZMMessageSenderKey,                   // As soon as the message is deleted, we would delete the sender
+                              ZMMessageIsObfuscatedKey];            // If the message is obfuscated, we don't need to obfuscate it again
+    return fetchRequest;
+}
+
++ (void)deleteOldEphemeralMessages:(NSManagedObjectContext *)context
+{
+    NSFetchRequest *request = [self fetchRequestForEphemeralMessagesThatNeedToBeDeleted];
+    NSArray *messages = [context executeFetchRequestOrAssert:request];
+    for (ZMMessage *message in messages) {
+        if (message.sender.isSelfUser) {
+            // message needs to be obfuscated
+            [message obfuscate];
+        } else {
+            NSTimeInterval timeToDeletion = [message.destructionDate timeIntervalSinceNow];
+            if (timeToDeletion > 0) {
+                // The timer has not run out yet, we want to start a timer with the remaining time
+                [message restartDeletionTimer:timeToDeletion];
+            } else {
+                // The timer has run out, we want to delete the message
+                [message deleteEphemeral];
+            }
+        }
+    }
+}
+
+- (void)restartDeletionTimer:(NSTimeInterval)remainingTime
+{
+    NSManagedObjectContext *uiContext = self.managedObjectContext;
+    if (!uiContext.zm_isUserInterfaceContext) {
+        uiContext = self.managedObjectContext.zm_userInterfaceContext;
+    }
+    [uiContext performGroupedBlock:^{
+        NSError *error;
+        ZMMessage *message = [uiContext existingObjectWithID:self.objectID error:&error];
+        if (error == nil && message != nil) {
+            [uiContext.zm_messageDeletionTimer startDeletionTimerWithMessage:message timeout:remainingTime];
+        }
+    }];
 }
 
 

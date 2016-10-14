@@ -41,18 +41,18 @@ import ZMProtos
     }
     
     fileprivate var encrypted : Bool {
-        return self.genericMessage.hasImage() && self.genericMessage.image.otrKey.count > 0
+        return self.genericMessage.imageAssetData != nil && self.genericMessage.imageAssetData?.otrKey.count > 0
     }
     
     fileprivate var nonce : UUID? {
-        if self.genericMessage.hasImage() {
+        if self.genericMessage.imageAssetData != nil {
             return UUID(uuidString: self.genericMessage.messageId)
         }
         return nil;
     }
     
     open func originalImageData() -> Data! {
-        guard let nonce = self.nonce , self.genericMessage.hasImage() else { return nil }
+        guard let nonce = self.nonce , self.genericMessage.imageAssetData != nil else { return nil }
         return self.assetCache.assetData(nonce, format: .original, encrypted: false)
     }
     
@@ -62,15 +62,14 @@ import ZMProtos
     
     open func imageData(for format: ZMImageFormat) -> Data! {
         guard let nonce = self.nonce ,
-            self.genericMessage.hasImage()
-                && format == self.genericMessage.image.imageFormat()
-            else { return nil }
+              let image = self.genericMessage.imageAssetData, format == image.imageFormat()
+        else { return nil }
         return self.assetCache.assetData(nonce, format: format, encrypted: self.encrypted)
     }
     
     open func originalImageSize() -> CGSize {
-        if self.genericMessage.hasImage() {
-            return CGSize(width: CGFloat(self.genericMessage.image.originalWidth), height: CGFloat(self.genericMessage.image.originalHeight))
+        if let imageAsset = self.genericMessage.imageAssetData {
+            return CGSize(width: CGFloat(imageAsset.originalWidth), height: CGFloat(imageAsset.originalHeight))
         }
         return CGSize(width: 0,height: 0)
     }
@@ -92,10 +91,7 @@ import ZMProtos
     }
     
     open var imageFormat : ZMImageFormat {
-        if self.genericMessage.hasImage() {
-            return self.genericMessage.image.imageFormat()
-        }
-        return .invalid;
+        return self.genericMessage.imageAssetData?.imageFormat() ?? .invalid
     }
 }
 

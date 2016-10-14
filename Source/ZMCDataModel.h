@@ -88,3 +88,8 @@
 #import <ZMCDataModel/ZMAddressBookContact.h>
 #import <ZMCDataModel/ZMTestSession.h>
 
+#import <ZMCDataModel/ZMGenericMessage+Utils.h>
+#import <ZMCDataModel/ZMGenericMessage+PropertyUtils.h>
+#import <ZMCDataModel/ZMMessageTimer.h>
+
+

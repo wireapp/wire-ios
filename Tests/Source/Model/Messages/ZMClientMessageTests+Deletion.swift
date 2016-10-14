@@ -381,7 +381,7 @@ extension ZMClientMessageTests_Deletion {
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
 
         //when
-        let genericMessage = ZMGenericMessage(text: name!, nonce: nonce.transportString())
+        let genericMessage = ZMGenericMessage.message(text: name!, nonce: nonce.transportString())
         let nextEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.messageUpdateResult(from: nextEvent, in: self.uiMOC, prefetchResult: nil)

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -59,8 +59,8 @@ extension ClientMessageTests_OTR {
             else { return XCTFail() }
             
             XCTAssertEqual(createdMessage.hasBlob(), true)
-            let clientIds = (createdMessage.recipients as! [ZMUserEntry]).flatMap { userEntry -> [ZMClientId] in
-                return (userEntry.clients as! [ZMClientEntry]).map { clientEntry -> ZMClientId in
+            let clientIds = createdMessage.recipients.flatMap { userEntry -> [ZMClientId] in
+                return (userEntry.clients).map { clientEntry -> ZMClientId in
                     return clientEntry.client
                 }
             }
@@ -210,9 +210,9 @@ extension ClientMessageTests_OTR {
                 return
             }
             
-            if let recipients = messageMetadata.recipients as? [ZMUserEntry] {
+            if let recipients = messageMetadata.recipients {
                 let payloadClients = recipients.flatMap { user -> [String] in
-                    return (user.clients as? [ZMClientEntry])?.map({ String(format: "%llx", $0.client.client) }) ?? []
+                    return user.clients?.map({ String(format: "%llx", $0.client.client) }) ?? []
                 }.flatMap { $0 }
                 XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
             } else {
@@ -261,7 +261,7 @@ extension ClientMessageTests_OTR {
             connection.status = .accepted
             conversation.connection = connection
             
-            let genericMessage = ZMGenericMessage(text: "yo", nonce: UUID().transportString())
+            let genericMessage = ZMGenericMessage.message(text: "yo", nonce: UUID().transportString())
             let clientmessage = ZMClientMessage.insertNewObject(in: self.syncMOC)
             clientmessage.add(genericMessage.data())
             clientmessage.visibleInConversation = conversation
@@ -284,7 +284,7 @@ extension ClientMessageTests_OTR {
             conversation.remoteIdentifier = UUID.create()
             conversation.mutableOtherActiveParticipants.add(self.syncUser1)
             
-            let genericMessage = ZMGenericMessage(text: "yo", nonce: UUID().transportString())
+            let genericMessage = ZMGenericMessage.message(text: "yo", nonce: UUID().transportString())
             let clientmessage = ZMClientMessage.insertNewObject(in: self.syncMOC)
             clientmessage.add(genericMessage.data())
             clientmessage.visibleInConversation = conversation
@@ -324,7 +324,7 @@ extension ClientMessageTests_OTR {
         } else {
             XCTFail("Metadata does not contain sender", file: file, line: line)
         }
-        if let recipients = messageMetadata.recipients as? [ZMUserEntry] {
+        if let recipients = messageMetadata.recipients  {
             self.assertRecipients(recipients, file: file, line: line)
         } else {
             XCTFail("Metadata does not contain recipients", file: file, line: line)
