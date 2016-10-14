@@ -53,7 +53,7 @@ public final class ClientMessageRequestFactory: NSObject {
     fileprivate func upstreamRequestForEncryptedImageMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
 
         let genericMessage = format == .medium ? message.imageAssetStorage!.mediumGenericMessage : message.imageAssetStorage!.previewGenericMessage
-        let format = ImageFormatFromString(genericMessage!.image.tag)
+        let format = ImageFormatFromString(genericMessage!.imageAssetData!.tag)
         let isInline = message.imageAssetStorage!.isInline(for: format)
         let hasAssetId = message.assetId != nil
         

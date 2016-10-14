@@ -146,9 +146,9 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
         guard let message = managedObject as? ZMClientMessage else { return false }
         guard let payload = response.payload?.asDictionary(), let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload: \(response.payload)") }
         
-        if let linkPreview = message.genericMessage?.text.linkPreview.first as? ZMLinkPreview {
+        if let linkPreview = message.genericMessage?.linkPreviews.first, !message.isObfuscated {
             let updatedPreview = linkPreview.update(withAssetKey: assetKey, assetToken: payload["token"] as? String)
-            let genericMessage = ZMGenericMessage(text: (message.textMessageData?.messageText)!, linkPreview: updatedPreview, nonce: message.nonce.transportString())
+            let genericMessage = ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: updatedPreview, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
             message.add(genericMessage.data())
             message.linkPreviewState = .uploaded
         } else {

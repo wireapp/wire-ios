@@ -40,7 +40,7 @@ import ZMTransport
         super.init()
         registerForCancellationNotification()
         
-        let downstreamPredicate = NSPredicate(format: "transferState == %d AND assetId_data != nil", ZMFileTransferState.downloading.rawValue)
+        let downstreamPredicate = NSPredicate(format: "transferState == %d AND assetId_data != nil && visibleInConversation != nil", ZMFileTransferState.downloading.rawValue)
         
         self.assetDownstreamObjectSync = ZMDownstreamObjectSync(
             transcoder: self,
@@ -79,7 +79,13 @@ import ZMTransport
     
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
         if response.result == .success {
-            guard let fileMessageData = assetClientMessage.fileMessageData, let asset = assetClientMessage.genericAssetMessage?.asset else { return }
+            guard let fileMessageData = assetClientMessage.fileMessageData, let asset = assetClientMessage.genericAssetMessage?.assetData else { return }
+            guard assetClientMessage.visibleInConversation != nil else {
+                // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished, 
+                // we don't want to update the message
+                return
+            }
+            
             // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
             let fileCache = self.managedObjectContext.zm_fileAssetCache
             fileCache.storeAssetData(assetClientMessage.nonce, fileName: fileMessageData.filename, encrypted: true, data: response.rawData!)

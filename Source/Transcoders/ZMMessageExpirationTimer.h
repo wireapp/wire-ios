@@ -19,16 +19,14 @@
 
 @import Foundation;
 @import WireRequestStrategy;
+@import ZMCDataModel;
 
 @class ZMMessage;
 @class ZMLocalNotificationDispatcher;
 @protocol ZMPushMessageHandler;
 
 /// Keeps track of messages and sets them to expired when their time has come
-@interface ZMMessageExpirationTimer : NSObject <ZMContextChangeTracker>
-
-@property (nonatomic, readonly) BOOL hasMessageTimersRunning;
-@property (nonatomic, readonly) NSUInteger runningTimersCount;
+@interface ZMMessageExpirationTimer : ZMMessageTimer <ZMContextChangeTracker>
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                                   entityName:(NSString *)entityName
@@ -38,9 +36,5 @@
                                   entityName:(NSString *)entityName
                  localNotificationDispatcher:(id<ZMPushMessageHandler>)notificationDispatcher
                                       filter:(NSPredicate *)filter;
-
-- (void)stopTimerForMessage:(ZMMessage *)message;
-
-- (void)tearDown;
 
 @end

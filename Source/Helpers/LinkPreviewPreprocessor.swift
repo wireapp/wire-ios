@@ -77,8 +77,8 @@ import ZMCDataModel
     func didProcessMessage(_ message: ZMClientMessage, linkPreviews: [LinkPreview]) {
         objectsBeingProcessed.remove(message)
         
-        if let preview = linkPreviews.first, let messsageText = message.textMessageData?.messageText {
-            let updatedMessage = ZMGenericMessage(text: messsageText, linkPreview: preview.protocolBuffer, nonce: message.nonce.transportString())
+        if let preview = linkPreviews.first, let messsageText = message.textMessageData?.messageText, !message.isObfuscated {
+            let updatedMessage = ZMGenericMessage.message(text: messsageText, linkPreview: preview.protocolBuffer, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
             message.add(updatedMessage.data())
             
             if let imageData = preview.imageData.first {
