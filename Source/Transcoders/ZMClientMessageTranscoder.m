@@ -53,8 +53,15 @@
         self.requestsFactory = [ClientMessageRequestFactory new];
         self.clientRegistrationStatus = clientRegistrationStatus;
         self.apnsConfirmationStatus = apnsConfirmationStatus;
+        [self deleteEphemeralMessagesIfNeeded];
     }
     return self;
+}
+
+- (void)deleteEphemeralMessagesIfNeeded
+{
+    [ZMMessage deleteOldEphemeralMessages:self.managedObjectContext];
+    [self.managedObjectContext saveOrRollback];
 }
 
 - (ZMTransportRequest *)requestForInsertingObject:(ZMClientMessage *)message

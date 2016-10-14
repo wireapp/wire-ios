@@ -24,14 +24,12 @@
 #import "ZMMessageExpirationTimer.h"
 #import "ZMPushMessageHandler.h"
 
-@interface ZMMessageExpirationTimer () <ZMTimerClient>
+@interface ZMMessageExpirationTimer ()
 
-@property (nonatomic) NSMapTable *objectToTimerMap;
-@property (nonatomic) BOOL tearDownCalled;
-@property (nonatomic) NSManagedObjectContext *moc;
 @property (nonatomic) id<ZMPushMessageHandler> localNotificationsDispatcher;
 @property (nonatomic) NSString *entityName;
 @property (nonatomic) NSPredicate *filter;
+
 @end
 
 
@@ -52,31 +50,20 @@ ZM_EMPTY_ASSERTING_INIT()
                  localNotificationDispatcher:(id<ZMPushMessageHandler>)notificationDispatcher
                                       filter:(NSPredicate *)filter
 {
-    self = [super init];
+    self = [super initWithManagedObjectContext:moc];
     if (self) {
+        ZM_WEAK(self);
+        self.timerCompletionBlock = ^(ZMMessage *message, NSDictionary * __unused userInfo) {
+            ZM_STRONG(self);
+            [self timerFiredForMessage:message];
+        };
         self.localNotificationsDispatcher = notificationDispatcher;
-        self.objectToTimerMap = [NSMapTable strongToStrongObjectsMapTable];
-        self.moc = moc;
         self.entityName = entityName;
         self.filter = filter;
     }
     return self;
 }
 
-- (void)dealloc
-{
-    NSAssert(self.tearDownCalled == YES, @"Teardown was not called");
-}
-
-- (BOOL)hasMessageTimersRunning
-{
-    return self.objectToTimerMap.count > 0;
-}
-
-- (NSUInteger)runningTimersCount
-{
-    return [self.objectToTimerMap count];
-}
 
 - (NSFetchRequest *)fetchRequestForTrackedObjects
 {
@@ -131,66 +118,24 @@ ZM_EMPTY_ASSERTING_INIT()
             [message expire];
             [message.managedObjectContext enqueueDelayedSave];
         }
-        else if ( ![self isTimerRunningForMessage:message] ) {
-            ZMTimer *timer = [ZMTimer timerWithTarget:self];
-            timer.userInfo = @{ @"message": message };
-            [self.objectToTimerMap setObject:timer forKey:message];
-            
-            [timer fireAtDate:message.expirationDate];
+        else  {
+            [super startTimerForMessageIfNeeded:message fireDate:message.expirationDate userInfo:@{}];
         }
     }
 }
 
-- (BOOL)isTimerRunningForMessage:(ZMMessage *)message {
-    return [self.objectToTimerMap objectForKey:message] != nil;
-}
-
-- (void)timerDidFire:(ZMTimer *)timer
+- (void)timerFiredForMessage:(ZMMessage *)message
 {
-    ZMMessage *message = timer.userInfo[@"message"];
-    
-    RequireString(self.moc != nil, "MOC is nil");
-    [self.moc performGroupedBlock:^{
-        [self removeTimerForMessage:message];
-        
-        if (message == nil || message.isZombieObject) {
-            return;
-        }
-        
-        if (message.deliveryState != ZMDeliveryStateDelivered && message.deliveryState != ZMDeliveryStateSent) {
-            [message expire];
-            [message.managedObjectContext enqueueDelayedSave];
-            [self.localNotificationsDispatcher didFailToSentMessage:message];
-            [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
-        }
-    }];
-}
-
-
-- (void)stopTimerForMessage:(ZMMessage *)message;
-{
-    ZMTimer *timer = [self.objectToTimerMap objectForKey:message];
-    if(timer == nil) {
+    if (message.deliveryState == ZMDeliveryStateDelivered ||
+        message.deliveryState == ZMDeliveryStateSent)
+    {
         return;
     }
     
-    [timer cancel];
-    [self removeTimerForMessage:message];
-}
-
-
-- (void)removeTimerForMessage:(ZMMessage *)message {
-    [self.objectToTimerMap removeObjectForKey:message];
-}
-
-
-- (void)tearDown;
-{
-    for (ZMTimer *timer in self.objectToTimerMap.objectEnumerator) {
-        [timer cancel];
-    }
-    
-    self.tearDownCalled = YES;
+    [message expire];
+    [message.managedObjectContext enqueueDelayedSave];
+    [self.localNotificationsDispatcher didFailToSentMessage:message];
+    [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
 }
 
 @end

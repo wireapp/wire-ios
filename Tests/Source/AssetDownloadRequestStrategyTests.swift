@@ -379,3 +379,66 @@ extension AssetDownloadRequestStrategyTests {
     }
     
 }
+
+// MARK : - Ephemeral
+extension AssetDownloadRequestStrategyTests {
+
+    func testThatItDoesNotProcessTheResponseIfTheMessageHasBeenDeletedInTheMeantime() {
+        // given
+        let plainTextData = Data.secureRandomData(length: 500)
+        let key = Data.randomEncryptionKey()
+        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        let sha = encryptedData.zmSHA256Digest()
+        
+        
+        let message = self.createFileTransferMessage(self.conversation)
+        
+        let dataBuilder = ZMAssetRemoteDataBuilder()
+        dataBuilder.setSha256(sha)
+        dataBuilder.setOtrKey(key)
+        
+        let assetBuilder = ZMAssetBuilder()
+        assetBuilder.setUploaded(dataBuilder.build())
+        
+        let genericAssetMessageBuilder = ZMGenericMessageBuilder()
+        genericAssetMessageBuilder.merge(from: message.genericAssetMessage)
+        genericAssetMessageBuilder.setAsset(assetBuilder.build())
+        
+        message.add(genericAssetMessageBuilder.build())
+        
+        let request : ZMTransportRequest? = self.sut.nextRequest()
+        let response = ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: .none, headers: [:])
+        
+        // when
+        message.visibleInConversation = nil
+        message.hiddenInConversation = conversation
+        
+        request?.complete(with: response)
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        XCTAssertNotEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.downloaded.rawValue)
+    }
+    
+    
+    func testThatItDoesNotAddAHiddenMessage(){
+        // given
+        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        message.assetId = UUID.create()
+        message.fileMessageData?.transferState = .downloading
+        message.visibleInConversation = nil
+        message.hiddenInConversation = conversation
+        self.syncMOC.saveOrRollback()
+        
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // when
+        self.sut.contextChangeTrackers.forEach { tracker in
+            tracker.objectsDidChange(Set(arrayLiteral: message))
+        }
+        
+        // then
+        XCTAssertNil(sut.nextRequest())
+    }
+
+}

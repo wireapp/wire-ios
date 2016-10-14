@@ -53,10 +53,10 @@ private let reponseHeaderAssetIdKey = "Location"
         
         let thumbnailProcessingPredicate = NSPredicate { (obj, _) -> Bool in
             guard let message = obj as? ZMAssetClientMessage,
-                let fileMessageData = message.fileMessageData
+                let fileMessageData = message.fileMessageData,
+                let assetData = message.genericAssetMessage?.assetData
             else { return false }
-            
-            return !message.genericAssetMessage!.asset.hasPreview() && fileMessageData.previewData != nil
+            return !assetData.hasPreview() && fileMessageData.previewData != nil
         }
         let thumbnailFetchPredicate = NSPredicate(format: "delivered == NO")
         
@@ -402,7 +402,7 @@ extension ZMAssetClientMessage {
         return self.fileMessageData != nil
             && [.uploading, .failedUpload, .cancelledUpload].contains(transferState)
             && self.uploadState != .done
-            && (self.genericAssetMessage?.asset.uploaded.otrKey.count ?? 0) > 0
-            && (!self.hasDownloadedImage || (self.genericAssetMessage?.asset.preview.image.width ?? 0) > 0)
+            && (self.genericAssetMessage?.assetData?.uploaded.otrKey.count ?? 0) > 0
+            && (!self.hasDownloadedImage || (self.genericAssetMessage?.assetData?.preview.image.width ?? 0) > 0)
     }
 }
