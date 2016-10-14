@@ -113,12 +113,14 @@ typedef NS_ENUM(int16_t, ZMAssetUploadState) {
 /// Creates a new @c ZMAssetClientMessage with an attached @c imageAssetStorage
 + (instancetype _Nonnull)assetClientMessageWithOriginalImageData:(NSData * _Nonnull)imageData
                                                            nonce:(NSUUID * _Nonnull)nonce
-                                            managedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
+                                            managedObjectContext:(NSManagedObjectContext * _Nonnull)moc
+                                                    expiresAfter:(NSTimeInterval)timeout;
 
 /// Inserts a new @c ZMAssetClientMessage in the @c moc and updates it with the given file metadata
 + (nonnull instancetype)assetClientMessageWithFileMetadata:(nonnull ZMFileMetadata *)metadata
                                                      nonce:(nonnull NSUUID *)nonce
-                                      managedObjectContext:(nonnull NSManagedObjectContext *)moc;
+                                      managedObjectContext:(nonnull NSManagedObjectContext *)moc
+                                              expiresAfter:(NSTimeInterval)timeout;
 
 /// Adds a (protobuf) data entry to the list of generic message data
 - (void)addGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage;

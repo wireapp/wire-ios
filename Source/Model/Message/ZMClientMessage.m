@@ -154,7 +154,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (void)setGenericMessage:(ZMGenericMessage *)genericMessage
 {
-    if ([genericMessage knownMessage] && !genericMessage.hasImage) {
+    if ([genericMessage knownMessage] && genericMessage.imageAssetData == nil) {
         _genericMessage = genericMessage;
     }
 }
@@ -182,7 +182,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     NSArray <ZMGenericMessage *> *filteredMessages = [[self.dataSet.array mapWithBlock:^ZMGenericMessage *(ZMGenericMessageData *data) {
         return data.genericMessage;
     }] filterWithBlock:^BOOL(ZMGenericMessage *message) {
-        return [message knownMessage] && !message.hasImage;
+        return [message knownMessage] && message.imageAssetData == nil;
     }];
 
     if (0 == filteredMessages.count) {
@@ -207,11 +207,16 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     [self addData:message.data];
 }
 
-- (void)removeMessageClearingSender:(BOOL)clearingSender
+- (void)deleteContent
 {
     _genericMessage = nil;
     self.dataSet = [NSOrderedSet orderedSet];
     self.genericMessage = nil;
+}
+
+- (void)removeMessageClearingSender:(BOOL)clearingSender
+{
+    [self deleteContent];
     [super removeMessageClearingSender:clearingSender];
 }
 
@@ -243,7 +248,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (id<ZMTextMessageData>)textMessageData
 {
-    if (self.genericMessage.hasText || self.genericMessage.hasEdited) {
+    if (self.genericMessage.textData != nil) {
         return self;
     }
     return nil;
@@ -256,7 +261,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (id<ZMKnockMessageData>)knockMessageData
 {
-    if (self.genericMessage.hasKnock) {
+    if (self.genericMessage.knockData != nil) {
         return self;
     }
     return nil;
@@ -269,7 +274,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (id<ZMLocationMessageData>)locationMessageData
 {
-    if (self.genericMessage.hasLocation) {
+    if (self.genericMessage.locationData != nil) {
         return self;
     }
     return nil;
@@ -278,7 +283,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys
 {
     // we don't want to update the conversation if the message is a confirmation message
-    if (self.genericMessage.hasConfirmation || self.genericMessage.hasReaction) {
+    if (self.genericMessage.hasConfirmation || self.genericMessage.hasReaction || self.genericMessage.hasDeleted)
+    {
         return;
     }
     if (self.genericMessage.hasEdited) {
@@ -312,10 +318,24 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (void)markAsSent
 {
     [super markAsSent];
-    
     if (self.linkPreviewState == ZMLinkPreviewStateUploaded) {
         self.linkPreviewState = ZMLinkPreviewStateDone;
     }
+    [self setObfuscationTimerIfNeeded];
+}
+
+- (void)setObfuscationTimerIfNeeded
+{
+    if (!self.isEphemeral) {
+        return;
+    }
+    if (self.genericMessage.textData != nil && self.genericMessage.linkPreviews.count > 0 &&
+        self.linkPreviewState != ZMLinkPreviewStateDone)
+    {
+        // If we have link previews and they are not sent yet, we wait until they are sent
+        return;
+    }
+    [self startDestructionIfNeeded];
 }
 
 - (BOOL)hasDownloadedImage
@@ -340,30 +360,22 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (float)latitude
 {
-    return self.genericMessage.location.latitude;
+    return self.genericMessage.locationData.latitude;
 }
 
 - (float)longitude
 {
-    return self.genericMessage.location.longitude;
+    return self.genericMessage.locationData.longitude;
 }
 
 - (NSString *)name
 {
-    if (self.genericMessage.location.hasName) {
-        return self.genericMessage.location.name;
-    }
-    
-    return nil;
+    return self.genericMessage.locationData.name;
 }
 
 - (int32_t)zoomLevel
 {
-    if (self.genericMessage.location.hasZoom) {
-        return self.genericMessage.location.zoom;
-    }
-    
-    return 0;
+    return self.genericMessage.locationData.zoom ?: 0;
 }
 
 @end
@@ -373,10 +385,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (NSString *)messageText
 {
-    if (self.genericMessage.hasEdited) {
-        return self.genericMessage.edited.text.content;
-    }
-    return self.genericMessage.text.content;
+    return self.genericMessage.textData.content;
 }
 
 - (BOOL)isEdited
@@ -489,10 +498,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     ZMLinkPreview *updatedPreview = [linkPreview updateWithOtrKey:keys.otrKey sha256:keys.sha256 original:original];
     
-    if (self.genericMessage.hasText) {
+    if (self.genericMessage.hasText ||
+        (self.genericMessage.hasEphemeral && self.genericMessage.ephemeral.hasText))
+    {
         [self addData:[ZMGenericMessage messageWithText:self.textMessageData.messageText
-                                            linkPreview:updatedPreview
-                                                  nonce:self.nonce.transportString].data];
+                                                   linkPreview:updatedPreview
+                                                         nonce:self.nonce.transportString
+                                                   expiresAfter:@(self.deletionTimeout)].data];
     } else if (self.genericMessage.hasEdited) {
         [self addData:[ZMGenericMessage messageWithEditMessage:self.genericMessage.edited.replacingMessageId
                                                        newText:self.textMessageData.messageText
@@ -557,3 +569,39 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 }
 
 @end
+
+
+
+
+@implementation ZMClientMessage (Ephemeral)
+
+- (BOOL)isEphemeral
+{
+    return self.destructionDate != nil || self.genericMessage.hasEphemeral || self.isObfuscated;
+}
+
+- (NSTimeInterval)deletionTimeout
+{
+    if (self.isEphemeral) {
+        return self.genericMessage.ephemeral.expireAfterMillis/1000;
+    }
+    return -1;
+}
+
+- (void)obfuscate;
+{
+    [super obfuscate];
+    if (self.genericMessage.knockData == nil) {
+        ZMGenericMessage *obfuscatedMessage = [self.genericMessage obfuscatedMessage];
+        [self deleteContent];
+        if (obfuscatedMessage != nil) {
+            [self mergeWithExistingData:obfuscatedMessage.data];
+            [self setGenericMessage:self.genericMessageFromDataSet];
+        }
+    }
+}
+
+@end
+
+
+
