@@ -15,13 +15,13 @@
                 <key>zero</key>
                 <string></string>
                 <key>one</key>
-                <string>пристрій</string>
+                <string>un dispositivo</string>
                 <key>few</key>
-                <string>%lu пристрої</string>
+                <string>%lu dispositivi</string>
                 <key>many</key>
-                <string>%lu пристроїв</string>
+                <string>%lu dispositivi</string>
                 <key>other</key>
-                <string>%lu пристроїв</string>
+                <string>%lu dispositivi</string>
             </dict>
         </dict>
 		<key>participants.people.count</key>
@@ -35,21 +35,21 @@
 				<key>NSStringFormatValueTypeKey</key>
 				<string>lu</string>
 				<key>zero</key>
-				<string>Немає учасників</string>
+				<string>Nessuna persona</string>
 				<key>one</key>
-				<string>Один учасник</string>
+				<string>Una persona</string>
 				<key>few</key>
-				<string>%lu учасника</string>
+				<string>%lu persone</string>
 				<key>many</key>
-				<string>%lu учасників</string>
+				<string>%lu persone</string>
 				<key>other</key>
-				<string>%lu учасників</string>
+				<string>%lu persone</string>
 			</dict>
 		</dict>
         <key>content.system.missing_messages.subtitle_added</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
-            <string>%@ %#@lu_number_of_users@ було додано</string>
+            <string>%@ %#@lu_number_of_users@ sono state aggiunte</string>
             <key>lu_number_of_users</key>
             <dict>
                 <key>NSStringFormatSpecTypeKey</key>
@@ -59,15 +59,15 @@
                 <key>zero</key>
                 <string></string>
                 <key>one</key>
-                <string> </string>
+                <string>ha</string>
                 <key>other</key>
-                <string>додано</string>
+                <string>hai</string>
             </dict>
         </dict>
         <key>content.system.missing_messages.subtitle_removed</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
-            <string>%@ %#@lu_number_of_users@ було видалено</string>
+            <string>%@ %#@lu_number_of_users@ sono state rimosse</string>
             <key>lu_number_of_users</key>
             <dict>
                 <key>NSStringFormatSpecTypeKey</key>
@@ -77,15 +77,15 @@
                 <key>zero</key>
                 <string></string>
                 <key>one</key>
-                <string> </string>
+                <string>ha</string>
                 <key>other</key>
-                <string> </string>
+                <string>hai</string>
             </dict>
         </dict>
 		<key>list.connect_request.people_waiting</key>
 		<dict>
 			<key>NSStringLocalizedFormatKey</key>
-			<string>%#@d_number_of_people@ очікує</string>
+			<string>%#@d_number_of_people@ in attesa</string>
 			<key>d_number_of_people</key>
 			<dict>
 				<key>NSStringFormatSpecTypeKey</key>
@@ -95,13 +95,13 @@
 				<key>zero</key>
 				<string></string>
 				<key>one</key>
-				<string>Одна людина</string>
+				<string>Una persona</string>
 				<key>few</key>
-				<string>%d людей</string>
+				<string>%d persone</string>
 				<key>many</key>
-				<string>%d людей</string>
+				<string>%d persone</string>
 				<key>other</key>
-				<string>%d людей</string>
+				<string>%d persone</string>
 			</dict>
 		</dict>
 		<key>content.system.participants_n_others</key>
@@ -117,19 +117,19 @@
 				<key>zero</key>
 				<string/>
 				<key>one</key>
-				<string>та ще один(-а)</string>
+				<string>ed un altro</string>
 				<key>few</key>
-				<string>та ще %d інші</string>
+				<string>e %d altri</string>
 				<key>many</key>
-				<string>та ще %d інших</string>
+				<string>e %d altri</string>
 				<key>other</key>
-				<string>та ще %d інших</string>
+				<string>e %d altri</string>
 			</dict>
 		</dict>
 		<key>peoplepicker.suggested.knows_more</key>
 		<dict>
 			<key>NSStringLocalizedFormatKey</key>
-			<string>Знайомий(-а) з %@ та %#@d_number_of_others@</string>
+			<string>Conosce %@ e %#@d_number_of_others@</string>
 			<key>d_number_of_others</key>
 			<dict>
 				<key>NSStringFormatSpecTypeKey</key>
@@ -137,17 +137,17 @@
 				<key>NSStringFormatValueTypeKey</key>
 				<string>d</string>
 				<key>few</key>
-				<string>%d іншими</string>
+				<string>%d altri</string>
 				<key>many</key>
-				<string>%d іншими</string>
+				<string>%d altri</string>
 				<key>other</key>
-				<string>%d іншими</string>
+				<string>%d altri</string>
 			</dict>
 		</dict>
         <key>content.system.people_started_using</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
-            <string>%@ %#@d_number_of_others@ почав(-ли) використовувати %#@d_new_devices@</string>
+            <string>%@ %#@d_number_of_others@ hanno iniziato ad utilizzare %#@d_new_devices@</string>
             <key>d_number_of_others</key>
             <dict>
                 <key>NSStringFormatSpecTypeKey</key>
@@ -157,7 +157,7 @@
                 <key>one</key>
                 <string></string>
                 <key>other</key>
-                <string>та ще %d інших</string>
+                <string>e %d altri</string>
             </dict>
             <key>d_new_devices</key>
             <dict>
@@ -166,9 +166,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string>
                 <key>one</key>
-                <string>новий пристрій</string>
+                <string>un nuovo dispositivo</string>
                 <key>other</key>
-                <string>нові пристрої</string>
+                <string>nuovi dispositivi</string>
             </dict>
         </dict>
         <key>content.system.new_devices</key>
@@ -182,9 +182,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string>
                 <key>one</key>
-                <string>новий пристрій</string>
+                <string>un nuovo dispositivo</string>
                 <key>other</key>
-                <string>нові пристрої</string>
+                <string>nuovi dispositivi</string>
             </dict>
         </dict>
 	</dict>
