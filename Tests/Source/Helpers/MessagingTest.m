@@ -426,10 +426,11 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     return message;
 }
 
-- (ZMAssetClientMessage *)createImageMessageWithImageData:(NSData *)imageData format:(ZMImageFormat)format processed:(BOOL)processed stored:(BOOL)stored encrypted:(BOOL)encrypted moc:(NSManagedObjectContext *)moc
+
+- (ZMAssetClientMessage *)createImageMessageWithImageData:(NSData *)imageData format:(ZMImageFormat)format processed:(BOOL)processed stored:(BOOL)stored encrypted:(BOOL)encrypted ephemeral:(BOOL)ephemeral moc:(NSManagedObjectContext *)moc
 {
     NSUUID *nonce = [NSUUID createUUID];
-    ZMAssetClientMessage *imageMessage = [ZMAssetClientMessage assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:moc expiresAfter:0.0];
+    ZMAssetClientMessage *imageMessage = [ZMAssetClientMessage assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:moc expiresAfter:ephemeral ? 10 : 0];
     imageMessage.isEncrypted = encrypted;
     
     if(processed) {
@@ -445,7 +446,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
                                                                   mac:[NSData zmRandomSHA256Key]];
         }
         
-        ZMGenericMessage *message = [ZMGenericMessage genericMessageWithMediumImageProperties:properties processedImageProperties:properties encryptionKeys:keys nonce:nonce.transportString format:format expiresAfter:nil];
+        ZMGenericMessage *message = [ZMGenericMessage genericMessageWithMediumImageProperties:properties processedImageProperties:properties encryptionKeys:keys nonce:nonce.transportString format:format expiresAfter:ephemeral ? @10 : nil];
         [imageMessage addGenericMessage:message];
         
         ImageAssetCache *directory = self.uiMOC.zm_imageAssetCache;
@@ -460,6 +461,11 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         }
     }
     return imageMessage;
+}
+
+- (ZMAssetClientMessage *)createImageMessageWithImageData:(NSData *)imageData format:(ZMImageFormat)format processed:(BOOL)processed stored:(BOOL)stored encrypted:(BOOL)encrypted moc:(NSManagedObjectContext *)moc
+{
+    return [self createImageMessageWithImageData:imageData format:format processed:processed stored:stored encrypted:encrypted ephemeral:NO moc:moc];
 }
 
 @end
