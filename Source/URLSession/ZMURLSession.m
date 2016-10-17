@@ -35,33 +35,6 @@
 static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 
 
-static inline void ZMTraceTransportSessionTaskCreated(NSURLSessionTask *task, ZMTransportRequest *transportRequest) {
-    if (SYNCENGINE_TRANSPORT_SESSION_TASK_TRANSCODER_ENABLED()) {
-        //int transcoder = (int) transportRequest.tracingTranscoder;
-        NOT_USED(transportRequest);
-        int transcoder = 0;
-        SYNCENGINE_TRANSPORT_SESSION_TASK_TRANSCODER((intptr_t) task.taskIdentifier, transcoder);
-    }
-    if (SYNCENGINE_TRANSPORT_SESSION_TASK_ENABLED()) {
-        NSURLRequest *request = task.originalRequest;
-        NSString *mimeType = request.allHTTPHeaderFields[@"Content-Type"];
-        /// d = 0: created task
-        SYNCENGINE_TRANSPORT_SESSION_TASK(0, (intptr_t) task.taskIdentifier, request.HTTPMethod.UTF8String, request.URL.path.UTF8String, 0, 0, NULL, mimeType.UTF8String);
-    }
-}
-static inline void ZMTraceTransportSessionTaskResponse(NSURLSessionTask *task) {
-    if (SYNCENGINE_TRANSPORT_SESSION_TASK_ENABLED()) {
-        NSUInteger taskID = task.taskIdentifier;
-        NSURLRequest *request = task.originalRequest;
-        NSHTTPURLResponse *response = (id) task.response;
-        NSError *error = task.error;
-        NSString *requestID = response.allHeaderFields[@"Request-Id"];
-        /// d = 1: did complete
-        SYNCENGINE_TRANSPORT_SESSION_TASK(1, (intptr_t) taskID, request.HTTPMethod.UTF8String, request.URL.path.UTF8String, (int) error.code, (int) response.statusCode, requestID.UTF8String, response.MIMEType.UTF8String);
-    }
-}
-
-
 static NSUInteger const ZMTransportDecreasedProgressCancellationLeeway = 1024 * 2;
 NSString * const ZMURLSessionBackgroundIdentifier = @"com.wire.zmessaging";
 
@@ -369,7 +342,6 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
 {
     NOT_USED(URLSession);
     ZMLogDebug(@"-- <%@ %p> %@ -> %@ %@, error: %@", self.class, self, NSStringFromSelector(_cmd), task.originalRequest.URL, task.response, error);
-    ZMTraceTransportSessionTaskResponse(task);
     
     Check(URLSession == self.backingSession);
     NSObject<ZMURLSessionDelegate> *delegate = (id) self.delegate;
@@ -513,7 +485,6 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
     }
     
     [transportRequest callTaskCreationHandlersWithIdentifier:task.taskIdentifier sessionIdentifier:self.identifier];
-    ZMTraceTransportSessionTaskCreated(task, transportRequest);
     return task;
 }
 
