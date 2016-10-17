@@ -23,6 +23,12 @@ import Classy
 import WireExtensionComponents
 
 
+extension Settings {
+    var returnKeyType: UIReturnKeyType {
+        return disableSendButton ? .send : .default
+    }
+}
+
 public enum InputBarState: Equatable {
     case writing
     case editing(originalText: String)
@@ -38,8 +44,8 @@ public func ==(lhs: InputBarState, rhs: InputBarState) -> Bool {
 
 private struct InputBarConstants {
     let buttonsBarHeight: CGFloat = 56
-    let contentLeftMargin = CGFloat(WAZUIMagic.float(forIdentifier: "content.left_margin"))
-    let contentRightMargin = CGFloat(WAZUIMagic.float(forIdentifier: "content.right_margin"))
+    let contentLeftMargin = WAZUIMagic.cgFloat(forIdentifier: "content.left_margin")
+    let contentRightMargin = WAZUIMagic.cgFloat(forIdentifier: "content.right_margin")
 }
 
 @objc open class InputBar: UIView {
@@ -153,13 +159,17 @@ private struct InputBarConstants {
         textView.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsetsMake(17, 0, 17, 4)
         textView.placeholderTextContainerInset = UIEdgeInsetsMake(21, 10, 21, 0)
-        textView.keyboardType = .default;
-        textView.returnKeyType = .send;
-        textView.keyboardAppearance = ColorScheme.default().keyboardAppearance;
+        textView.keyboardType = .default
+        textView.keyboardAppearance = ColorScheme.default().keyboardAppearance
         textView.placeholderTextTransform = .upper
-        
+        updateReturnKey()
+
         contentSizeObserver = KeyValueObserver.observe(textView, keyPath: "contentSize", target: self, selector: #selector(textViewContentSizeDidChange))
         updateBackgroundColor()
+    }
+    
+    public func updateReturnKey() {
+        textView.returnKeyType = Settings.shared().returnKeyType
     }
     
     fileprivate func createConstraints() {
@@ -169,7 +179,7 @@ private struct InputBarConstants {
             leftAccessoryView.top == leftAccessoryView.superview!.top
             leftAccessoryView.bottom == buttonContainer.top
             leftAccessoryView.width == constants.contentLeftMargin
-            
+
             rightAccessoryView.trailing == rightAccessoryView.superview!.trailing - 16
             rightAccessoryView.top == rightAccessoryView.superview!.top
             rightAccessoryView.width == 0 ~ LayoutPriority(750)
@@ -198,7 +208,6 @@ private struct InputBarConstants {
             buttonsView.leading == buttonInnerContainer.leading
             buttonsView.trailing <= buttonInnerContainer.trailing
             buttonsView.bottom == buttonInnerContainer.bottom
-            buttonsView.width == 414 ~ LayoutPriority(750)
         }
         
         constrain(buttonContainer, buttonInnerContainer)  { container, innerContainer in
@@ -319,7 +328,6 @@ private struct InputBarConstants {
 
     // MARK: – Editing View State
 
-    
     open func setInputBarText(_ text: String) {
         textView.text = text
         textView.setContentOffset(.zero, animated: false)

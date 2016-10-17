@@ -72,16 +72,17 @@ class SettingsPropertyFactory {
     var crashlogManager: CrashlogManager?
     
     static let userDefaultsPropertiesToKeys: [SettingsPropertyName: String] = [
-        SettingsPropertyName.Markdown                   : UserDefaultMarkdown,
-        SettingsPropertyName.ChatHeadsDisabled          : UserDefaultChatHeadsDisabled,
-        SettingsPropertyName.PreferredFlashMode         : UserDefaultPreferredCameraFlashMode,
-        SettingsPropertyName.MessageSoundName           : UserDefaultMessageSoundName,
-        SettingsPropertyName.CallSoundName              : UserDefaultCallSoundName,
-        SettingsPropertyName.PingSoundName              : UserDefaultPingSoundName,
-        SettingsPropertyName.DisableUI                  : UserDefaultDisableUI,
-        SettingsPropertyName.DisableAVS                 : UserDefaultDisableAVS,
-        SettingsPropertyName.DisableHockey              : UserDefaultDisableHockey,
-        SettingsPropertyName.DisableAnalytics           : UserDefaultDisableAnalytics,
+        SettingsPropertyName.markdown                   : UserDefaultMarkdown,
+        SettingsPropertyName.chatHeadsDisabled          : UserDefaultChatHeadsDisabled,
+        SettingsPropertyName.preferredFlashMode         : UserDefaultPreferredCameraFlashMode,
+        SettingsPropertyName.messageSoundName           : UserDefaultMessageSoundName,
+        SettingsPropertyName.callSoundName              : UserDefaultCallSoundName,
+        SettingsPropertyName.pingSoundName              : UserDefaultPingSoundName,
+        SettingsPropertyName.disableUI                  : UserDefaultDisableUI,
+        SettingsPropertyName.disableAVS                 : UserDefaultDisableAVS,
+        SettingsPropertyName.disableHockey              : UserDefaultDisableHockey,
+        SettingsPropertyName.disableAnalytics           : UserDefaultDisableAnalytics,
+        SettingsPropertyName.disableSendButton          : UserDefaultSendButtonDisabled
     ]
     
     init(userDefaults: UserDefaults, analytics: AnalyticsInterface?, mediaManager: AVSMediaManagerInterface?, userSession: ZMUserSessionInterface, selfUser: SettingsSelfUser, crashlogManager: CrashlogManager? = .none) {
@@ -97,7 +98,7 @@ class SettingsPropertyFactory {
         
         switch(propertyName) {
             // Profile
-        case .ProfileName:
+        case .profileName:
             let getAction : GetAction = { [unowned self] (property: SettingsBlockProperty) -> SettingsPropertyValue in
                 return SettingsPropertyValue.string(value: self.selfUser.name)
             }
@@ -117,7 +118,7 @@ class SettingsPropertyFactory {
             
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction , setAction: setAction)
 
-        case .AccentColor:
+        case .accentColor:
             let getAction : GetAction = { [unowned self] (property: SettingsBlockProperty) -> SettingsPropertyValue in
                 return SettingsPropertyValue.number(value: Int(self.selfUser.accentColorValue.rawValue))
             }
@@ -133,7 +134,7 @@ class SettingsPropertyFactory {
             }
             
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction , setAction: setAction)
-        case .DarkMode:
+        case .darkMode:
             let getAction : GetAction = { [unowned self] (property: SettingsBlockProperty) -> SettingsPropertyValue in
                 return SettingsPropertyValue.bool(value: self.userDefaults.string(forKey: UserDefaultColorScheme) == "dark")
             }
@@ -149,7 +150,7 @@ class SettingsPropertyFactory {
             }
             
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction , setAction: setAction)
-        case .SoundAlerts:
+        case .soundAlerts:
             let getAction : GetAction = { [unowned self] (property: SettingsBlockProperty) -> SettingsPropertyValue in
                 if let mediaManager = self.mediaManager {
                     return SettingsPropertyValue.number(value: Int(mediaManager.intensityLevel.rawValue))
@@ -174,7 +175,7 @@ class SettingsPropertyFactory {
             }
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
             
-        case .AnalyticsOptOut:
+        case .analyticsOptOut:
             let getAction : GetAction = { [unowned self] (property: SettingsBlockProperty) -> SettingsPropertyValue in
                 if let analytics = self.analytics {
                     return SettingsPropertyValue.number(value: Int(analytics.isOptedOut ? 1 : 0))
@@ -200,7 +201,7 @@ class SettingsPropertyFactory {
             }
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
             
-        case .NotificationContentVisible:
+        case .notificationContentVisible:
             let getAction : GetAction = { [unowned self] (property: SettingsBlockProperty) -> SettingsPropertyValue in
                 return .bool(value: self.userSession.isNotificationContentHidden)
             }
@@ -218,6 +219,20 @@ class SettingsPropertyFactory {
             }
             
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
+
+        case .disableSendButton:
+            return SettingsBlockProperty(
+                propertyName: .disableSendButton,
+                getAction: { _ in return .bool(value: Settings.shared().disableSendButton) },
+                setAction: { _, value in
+                    switch value {
+                    case .bool(value: let disabled):
+                        Settings.shared().disableSendButton = disabled
+                        Analytics.shared()?.tagSendButtonDisabled(disabled)
+                    default:
+                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+                    }
+            })
             
         default:
             if let userDefaultsKey = type(of: self).userDefaultsPropertiesToKeys[propertyName] {

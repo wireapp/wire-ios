@@ -80,14 +80,14 @@ class SettingsPropertyTests: XCTestCase {
     
     func testThatIntegerUserDefaultsSettingSave() {
         // given
-        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.DarkMode, userDefaultsKey: UserDefaultColorScheme, userDefaults: self.userDefaults)
+        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.darkMode, userDefaultsKey: UserDefaultColorScheme, userDefaults: self.userDefaults)
         // when & then
         try! XCTAssertTrue(self.saveAndCheck(property, value: "light"))
     }
     
     func testThatBoolUserDefaultsSettingSave() {
         // given
-        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.ChatHeadsDisabled, userDefaultsKey: UserDefaultChatHeadsDisabled, userDefaults: self.userDefaults)
+        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.chatHeadsDisabled, userDefaultsKey: UserDefaultChatHeadsDisabled, userDefaults: self.userDefaults)
         // when & then
         try! XCTAssertTrue(self.saveAndCheck(property, value: true))
     }
@@ -103,7 +103,7 @@ class SettingsPropertyTests: XCTestCase {
         
         let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
         
-        let property = factory.property(SettingsPropertyName.ProfileName)
+        let property = factory.property(SettingsPropertyName.profileName)
         // when & then
         try! XCTAssertTrue(self.saveAndCheck(property, value: "Test"))
     }
@@ -117,7 +117,7 @@ class SettingsPropertyTests: XCTestCase {
 
         let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
         
-        let property = factory.property(SettingsPropertyName.SoundAlerts)
+        let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
         try! XCTAssertTrue(self.saveAndCheck(property, value: 1))
     }
@@ -132,7 +132,7 @@ class SettingsPropertyTests: XCTestCase {
         
         let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser, crashlogManager: crashlogManager)
         
-        let property = factory.property(SettingsPropertyName.AnalyticsOptOut)
+        let property = factory.property(SettingsPropertyName.analyticsOptOut)
         // when & then
         try! XCTAssertTrue(self.saveAndCheck(property, value: true))
     }
@@ -146,7 +146,7 @@ class SettingsPropertyTests: XCTestCase {
 
         let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, analytics: analytics, mediaManager: mediaManager, userSession : userSession, selfUser: selfUser)
 
-        let property = factory.property(SettingsPropertyName.SoundAlerts)
+        let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
         try! XCTAssertTrue(self.saveAndCheck(property, value: 1))
     }
