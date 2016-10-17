@@ -21,8 +21,8 @@ import Foundation
 /// Records the URLs of REST requests sent over the network
 @objc protocol RequestRecorder : NSObjectProtocol {
     
-    /// Records the URL of a REST request
-    func recordRequest(path: String, date: Date?)
+    /// Records a REST request
+    func recordRequest(path: String, contentHash: Int, date: Date?)
     
 }
 
@@ -31,7 +31,7 @@ import Foundation
 @objc public class RequestLoopDetection : NSObject {
     
     /// List of requests
-    fileprivate var recordedRequests : [DatePath] = []
+    fileprivate var recordedRequests : [IdentifierDate] = []
     
     /// After this time, requests are purged from the list
     static let decayTimer : TimeInterval = 60*5 // 10 minutes
@@ -61,13 +61,14 @@ extension RequestLoopDetection : RequestRecorder{
         self.recordedRequests = []
     }
     
-    public func recordRequest(path: String, date: Date?) {
+    public func recordRequest(path: String, contentHash: Int, date: Date?) {
         purgeOldRequests()
         if self.recordedRequests.count == type(of: self).historyLimit {
             self.recordedRequests.remove(at: 0) // note, this would be more efficient with linked list
         }
-        self.insertRequest(path: path, date: date ?? Date())
-        triggerIfTooMany(path: path)
+        let identifier = IdentifierDate(path: path, contentHash: contentHash, date: date ?? Date())
+        self.insert(identifier: identifier)
+        triggerIfTooMany(identifier: identifier)
     }
     
     /// Removes requests that are too old from the recorded requests
@@ -86,41 +87,46 @@ extension RequestLoopDetection : RequestRecorder{
     /// Insert request in the right date order in the array.
     /// - note: Complexity: O(n). Could be made O(log(n)) with
     /// binary search
-    private func insertRequest(path: String, date: Date) {
-        if date.timeIntervalSinceNow < -type(of: self).decayTimer {
+    private func insert(identifier: IdentifierDate) {
+        if identifier.date.timeIntervalSinceNow < -type(of: self).decayTimer {
             return // not even adding, this is too old
         }
-        
-        let datePath = DatePath(path: path, date: date)
         
         // I assume most (if not all) request are inserted in ascending order, so I will
         // search backwards
         var insertionIndex = 0
         for i in (0..<self.recordedRequests.count).lazy.reversed() {
-            if self.recordedRequests[i].date < date {
+            if self.recordedRequests[i].date < identifier.date {
                 insertionIndex = i+1
                 break
             }
         }
-        self.recordedRequests.insert(datePath, at: insertionIndex)
+        self.recordedRequests.insert(identifier, at: insertionIndex)
     }
     
-    /// Check if there are too many occurrences of a given URL
-    private func triggerIfTooMany(path: String) {
+    /// Check if there are too many occurrences of a given identifier
+    private func triggerIfTooMany(identifier: IdentifierDate) {
         if self.recordedRequests
-            .filter({ $0.path == path })
+            .filter({ $0.identifier == identifier.identifier })
             .count >= type(of: self).repetitionTriggerThreshold {
             // this could be slightly faster as we don't need to count, just stop after we found N
             // (maybe there are N+1000 entries and we don't need to go through the additional 1000)
-            self.triggerCallback(path)
-            self.recordedRequests = self.recordedRequests.filter { $0.path != path }
+            self.triggerCallback(identifier.path)
+            self.recordedRequests = self.recordedRequests.filter { $0.identifier != identifier.identifier }
         }
     }
 }
 
 
-fileprivate struct DatePath {
-    let path : String
+fileprivate struct IdentifierDate {
+    let identifier : String
     let date : Date
+    let path : String
+    
+    init(path: String, contentHash: Int, date: Date) {
+        self.identifier = "\(path)[\(contentHash)]"
+        self.date = date
+        self.path = path
+    }
 }
 

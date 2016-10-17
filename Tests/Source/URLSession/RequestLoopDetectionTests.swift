@@ -27,6 +27,7 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         var triggered = false
         let path = "foo.com"
+        let hash = 13
         
         let sut = RequestLoopDetection() {
             XCTAssertEqual(path, $0)
@@ -35,7 +36,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
-            sut.recordRequest(path: path, date: nil)
+            sut.recordRequest(path: path, contentHash: hash, date: nil)
         }
         
         // then
@@ -46,6 +47,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // given
         let path = "foo.com"
+        let hash = 13
         var startDate = Date(timeIntervalSince1970: 100)
         
         let sut = RequestLoopDetection() { _ in
@@ -54,7 +56,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
-            sut.recordRequest(path: path, date: startDate)
+            sut.recordRequest(path: path, contentHash: hash, date: startDate)
             startDate.addTimeInterval(10*60)
         }
     }
@@ -63,6 +65,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // given
         let path = "foo.com"
+        let hash = 12
         var startDate = Date()
         
         let sut = RequestLoopDetection() { _ in
@@ -71,12 +74,26 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
-            sut.recordRequest(path: path, date: startDate)
+            sut.recordRequest(path: path, contentHash: hash, date: startDate)
             startDate.addTimeInterval(-4*60)
         }
     }
     
-    func testThatItDoesNotDetectsALoopWithManyDifferentRequest() {
+    func testThatItDoesNotDetectsALoopIfPathIsNotSame() {
+        
+        // given
+        let hash = 14
+        let sut = RequestLoopDetection() { _ in
+            XCTFail()
+        }
+        
+        // when
+        (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach {
+            sut.recordRequest(path: "foo.com/\($0)", contentHash: hash, date: nil)
+        }
+    }
+    
+    func testThatItDoesNotDetectsALoopIfHashIsNotSame() {
         
         // given
         let sut = RequestLoopDetection() { _ in
@@ -85,7 +102,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach {
-            sut.recordRequest(path: "foo.com/\($0)", date: nil)
+            sut.recordRequest(path: "foo.com", contentHash: $0, date: nil)
         }
     }
     
@@ -94,6 +111,7 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         let path = "foo.com"
         var triggerCount = 0
+        let hash = 14
         
         let sut = RequestLoopDetection() {
             triggerCount += 1
@@ -102,7 +120,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold*3).forEach { _ in
-            sut.recordRequest(path: path, date: nil)
+            sut.recordRequest(path: path, contentHash: hash, date: nil)
         }
         
         // then
@@ -114,6 +132,8 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         var paths = ["foo.com", "bar.de", "baz.org"]
         var triggeredURLs : [String] = []
+        let hash = 14
+
         
         let sut = RequestLoopDetection() {
             triggeredURLs.append($0)
@@ -122,11 +142,32 @@ class RequestLoopDetectionTests : XCTestCase {
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold*4).forEach {
             let path = paths[$0 % paths.count] // this will insert them in interleaved order
-            sut.recordRequest(path: path, date: nil)
+            sut.recordRequest(path: path, contentHash: hash, date: nil)
          }
         
         // then
         XCTAssertEqual(triggeredURLs, paths)
+    }
+    
+    func testThatItDetectsMultipleLoopsFromDifferentHashes() {
+        
+        // given
+        let path = "foo.com"
+        var triggered = 0
+        
+        
+        let sut = RequestLoopDetection() {
+            XCTAssertEqual($0, path)
+            triggered += 1
+        }
+        
+        // when
+        (0..<RequestLoopDetection.repetitionTriggerThreshold*4).forEach {
+            sut.recordRequest(path: path, contentHash: $0 % 3, date: nil)
+        }
+        
+        // then
+        XCTAssertEqual(triggered, 3)
     }
     
     func testThatItDoesNotStoreMoreThan2000URLs() {
@@ -134,17 +175,19 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         let path = "MyURL.com"
         var triggered = false
+        let hash = 14
+
         
         let sut = RequestLoopDetection() { _ in
             triggered = true
         }
         
         // when
-        sut.recordRequest(path: path, date: nil)
+        sut.recordRequest(path: path, contentHash: hash, date: nil)
         (0..<2500).forEach {
-            sut.recordRequest(path: "url\($0).com", date: nil)
+            sut.recordRequest(path: "url.com", contentHash: $0, date: nil)
         }
-        sut.recordRequest(path: path, date: nil)
+        sut.recordRequest(path: path, contentHash: hash, date: nil)
         
         // then
         XCTAssertFalse(triggered)
