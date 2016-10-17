@@ -69,6 +69,14 @@ NS_ASSUME_NONNULL_BEGIN
                                                 encrypted:(BOOL)encrypted
                                                       moc:(NSManagedObjectContext *)moc;
 
+- (ZMAssetClientMessage *)createImageMessageWithImageData:(NSData *)imageData
+                                                   format:(ZMImageFormat)format
+                                                processed:(BOOL)processed
+                                                   stored:(BOOL)stored
+                                                encrypted:(BOOL)encrypted
+                                                ephemeral:(BOOL)ephemeral
+                                                      moc:(NSManagedObjectContext *)moc;
+
 @end
 
 

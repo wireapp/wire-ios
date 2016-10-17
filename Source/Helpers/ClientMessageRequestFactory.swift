@@ -38,12 +38,12 @@ public final class ClientMessageRequestFactory: NSObject {
     }
     
     fileprivate func upstreamRequestForEncryptedClientMessage(_ message: ZMClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        let path = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
+        let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
         guard let dataAndMissingClientStrategy = message.encryptedMessagePayloadData() else {
             return nil
         }
-        let pathWithStrategy = self.pathWithMissingClientStrategy(path, strategy: dataAndMissingClientStrategy.strategy)
-        let request = ZMTransportRequest(path: pathWithStrategy, method: .methodPOST, binaryData: dataAndMissingClientStrategy.data, type: protobufContentType, contentDisposition: nil)
+        let path = originalPath.pathWithMissingClientStrategy(strategy: dataAndMissingClientStrategy.strategy)
+        let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: dataAndMissingClientStrategy.data, type: protobufContentType, contentDisposition: nil)
         var debugInfo = "\(message.genericMessage)"
         if let genericMessage = message.genericMessage , genericMessage.hasExternal() { debugInfo = "External message: " + debugInfo }
         request.appendDebugInformation(debugInfo)
@@ -72,8 +72,9 @@ public final class ClientMessageRequestFactory: NSObject {
     // request for first upload and reupload inline images
     fileprivate func upstreamRequestForInsertedEncryptedImageMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
         if let imageData = message.imageAssetStorage!.imageData(for: format, encrypted: true) {
-            let path = "/" +  ["conversations", conversationId.transportString(), "otr", "assets"].joined(separator: "/")
-            let metaData = message.encryptedMessagePayloadForImageFormat(format)!
+            let (metaData, strategy) = message.encryptedMessagePayloadForImageFormat(format)!
+            let originalPath = "/" +  ["conversations", conversationId.transportString(), "otr", "assets"].joined(separator: "/")
+            let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
             let request = ZMTransportRequest.multipartRequest(withPath: path, imageData: imageData, metaData: metaData.data(), metaDataContentType: protobufContentType, mediaContentType: octetStreamContentType)
             request.appendDebugInformation("\(message.imageAssetStorage!.genericMessage(for: format))")
             request.appendDebugInformation("\(metaData)")
@@ -85,8 +86,11 @@ public final class ClientMessageRequestFactory: NSObject {
     
     // request to reupload image (not inline)
     fileprivate func upstreamRequestForUpdatedEncryptedImageMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", message.assetId!.transportString()].joined(separator: "/")
-        let metaData = message.encryptedMessagePayloadForImageFormat(format)!
+        let (metaData, strategy) = message.encryptedMessagePayloadForImageFormat(format)!
+        
+        let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "assets", message.assetId!.transportString()].joined(separator: "/")
+        let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
+        
         let request = ZMTransportRequest(path: path, method: ZMTransportRequestMethod.methodPOST, binaryData: metaData.data(), type: protobufContentType, contentDisposition: nil)
         request.appendDebugInformation("\(message.imageAssetStorage!.genericMessage(for: format))")
         request.appendDebugInformation("\(metaData)")
@@ -100,23 +104,26 @@ public final class ClientMessageRequestFactory: NSObject {
         request.forceToBackgroundSession()
         return request
     }
-    
-    fileprivate func pathWithMissingClientStrategy(_ originalPath: String, strategy: MissingClientsStrategy) -> String {
-        switch strategy {
-        case .doNotIgnoreAnyMissingClient:
-            return originalPath
-        case .ignoreAllMissingClients:
-            return originalPath + "?ignore_missing"
-        case .ignoreAllMissingClientsNotFromUser(let user):
-            return originalPath + "?report_missing=\(user.remoteIdentifier?.transportString() ?? "")"
-        }
-    }
-    
 }
 
 // MARK: - Testing Helper
 extension ZMClientMessage {
     public var encryptedMessagePayloadDataOnly : Data? {
         return self.encryptedMessagePayloadData()?.data
+    }
+}
+
+
+extension String {
+
+    func pathWithMissingClientStrategy(strategy: MissingClientsStrategy) -> String {
+        switch strategy {
+        case .doNotIgnoreAnyMissingClient:
+            return self
+        case .ignoreAllMissingClients:
+            return self + "?ignore_missing"
+        case .ignoreAllMissingClientsNotFromUser(let user):
+            return self + "?report_missing=\(user.remoteIdentifier?.transportString() ?? "")"
+        }
     }
 }

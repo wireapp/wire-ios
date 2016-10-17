@@ -47,7 +47,7 @@ extension ClientMessageRequestFactoryTests {
     }
 }
 
-
+// MARK: - Confirmation Messages
 extension ClientMessageRequestFactoryTests {
     
     func testThatItCreatesRequestToPostOTRConfirmationMessage() {
@@ -384,7 +384,7 @@ extension ClientMessageRequestFactoryTests {
         return documentsURL.appendingPathComponent("file.dat")
     }
     
-    func createAssetFileMessage(_ withUploaded: Bool = true, encryptedDataOnDisk: Bool = true) -> (ZMAssetClientMessage, Data, UUID) {
+    func createAssetFileMessage(_ withUploaded: Bool = true, encryptedDataOnDisk: Bool = true, isEphemeral: Bool = false) -> (ZMAssetClientMessage, Data, UUID) {
         let data = createTestFile(testURL)
         let nonce = UUID.create()
         let metadata = ZMFileMetadata(fileURL: testURL)
@@ -392,7 +392,7 @@ extension ClientMessageRequestFactoryTests {
             fileMetadata: metadata,
             nonce: nonce,
             managedObjectContext: self.syncMOC,
-            expiresAfter:0.0
+            expiresAfter: isEphemeral ? 10 : 0
         )
         
         XCTAssertNotNil(data)
@@ -401,7 +401,7 @@ extension ClientMessageRequestFactoryTests {
         if withUploaded {
             let otrKey = Data.randomEncryptionKey()
             let sha256 = Data.randomEncryptionKey()
-            let uploadedMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: nonce.transportString())
+            let uploadedMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: nonce.transportString(), expiresAfter: isEphemeral ? NSNumber(value: 10) : nil)
             XCTAssertNotNil(uploadedMessage)
             message.add(uploadedMessage)
         }
@@ -456,3 +456,80 @@ extension ClientMessageRequestFactoryTests {
 
     }
 }
+
+// MARK: Ephemeral Messages 
+extension ClientMessageRequestFactoryTests {
+
+    func setupConversation(id: UUID) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        conversation.remoteIdentifier = id
+        conversation.connection = ZMConnection.insertNewObject(in: syncMOC)
+        conversation.connection?.to = ZMUser.insertNewObject(in: syncMOC)
+        conversation.connection?.to.remoteIdentifier = UUID()
+        conversation.conversationType = .oneOnOne
+        return conversation
+    }
+    
+    
+    func testThatItCreatesRequestToPostEphemeralTextMessage() {
+        //given
+        createSelfClient()
+        let conversationId = UUID.create()
+        let conversation = setupConversation(id: conversationId)
+        conversation.messageDestructionTimeout = 10
+        
+        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        
+        //when
+        let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: conversationId)
+        
+        //then
+        XCTAssertEqual(request?.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request?.path, "/conversations/\(conversationId.transportString())/otr/messages?report_missing=\(conversation.connectedUser!.remoteIdentifier!.transportString())")
+        XCTAssertEqual(message.encryptedMessagePayloadDataOnly, request?.binaryData)
+    }
+    
+    func testThatItCreatesRequestToUploadAnEphemeralFileMessage_FileData() {
+        // given
+        createSelfClient()
+        let conversationID = UUID.create()
+        let conversation = setupConversation(id: conversationID)
+        
+        let (message, _, _) = createAssetFileMessage(true, isEphemeral: true)
+        message.visibleInConversation = conversation
+        
+        // when
+        let sut = ClientMessageRequestFactory()
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        
+        // then
+        guard let request = uploadRequest else { return XCTFail() }
+        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets?report_missing=\(conversation.connectedUser!.remoteIdentifier!.transportString())")
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+    }
+    
+
+    func testThatItCreatesRequestToPostEphemeralImageMessage() {
+        createSelfClient()
+        for _ in [ZMImageFormat.medium, ZMImageFormat.preview] {
+            //given
+            let imageData = self.verySmallJPEGData()
+            let format = ZMImageFormat.medium
+            let conversationId = UUID.create()
+            let conversation = setupConversation(id: conversationId)
+
+            let message = self.createImageMessage(withImageData: imageData, format: format, processed: true, stored: false, encrypted: true, ephemeral: true, moc: self.syncMOC)
+            message.visibleInConversation = conversation
+            
+            //when
+            let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message, forConversationWithId: conversationId)
+            
+            //then
+            let expectedPath = "/conversations/\(conversationId.transportString())/otr/assets?report_missing=\(conversation.connectedUser!.remoteIdentifier!.transportString())"
+            
+            assertRequest(request, forImageMessage: message, conversationId: conversationId, encrypted: true, expectedPath: expectedPath, expectedPayload: nil, format: format)
+            XCTAssertEqual(request?.multipartBodyItems()?.count, 2)
+        }
+    }
+}
+
