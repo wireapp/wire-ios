@@ -79,7 +79,7 @@ class ImageUploadRequestStrategyTests: MessagingTest {
             
             let metadataItem = request?.multipartBodyItems()?.first as! ZMMultipartBodyItem
             let messageFromSync = self.sut.managedObjectContext.object(with: message.objectID) as! ZMAssetClientMessage
-            let messageDataFromSync = messageFromSync.encryptedMessagePayloadForImageFormat(format)?.data()
+            let messageDataFromSync = messageFromSync.encryptedMessagePayloadForImageFormat(format)?.otrMessageData.data()
             
             XCTAssertEqual(metadataItem.data, messageDataFromSync)
         }
@@ -278,10 +278,20 @@ class ImageUploadRequestStrategyTests: MessagingTest {
 // MARK: - Ephemeral
 extension ImageUploadRequestStrategyTests {
     
+    
+    func setupConversation(for message: ZMMessage) {
+        message.conversation?.conversationType = .oneOnOne
+        message.conversation?.connection = ZMConnection.insertNewObject(in: self.syncMOC)
+        message.conversation?.connection?.to = ZMUser.insertNewObject(in: self.syncMOC)
+        message.conversation?.connection?.to.remoteIdentifier = UUID()
+    }
+    
     func testThatItAddsEphemeralMessages(){
         syncMOC.performGroupedBlock {
             // given
             let message = self.createImageMessage(isEphemeral: true)
+            self.setupConversation(for: message)
+            
             XCTAssertTrue(message.isEphemeral)
             self.prepare(message, forUploadingFormat: .medium)
             
@@ -303,6 +313,7 @@ extension ImageUploadRequestStrategyTests {
         syncMOC.performGroupedBlock {
             // given
             let message = self.createImageMessage(isEphemeral: true)
+            self.setupConversation(for: message)
             XCTAssertTrue(message.isEphemeral)
             
             self.prepare(message, forUploadingFormat: .medium)

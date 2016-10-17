@@ -66,8 +66,11 @@ extension ClientMessageRequestFactory {
     
     /// Returns the request to upload the Asset.Original message
     func upstreamRequestForInsertedEcryptedPlaceholderFileMessage(_ message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        let path = "/conversations/\(conversationId.transportString())/otr/messages"
-        guard let assetOriginalData = message.encryptedMessagePayloadForDataType(.placeholder) , nil != message.filename else { return nil }
+        guard let (assetOriginalData, strategy) = message.encryptedMessagePayloadForDataType(.placeholder) , nil != message.filename else { return nil }
+        
+        let originalPath = "/conversations/\(conversationId.transportString())/otr/messages"
+        let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
+        
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: assetOriginalData, type: protobufContentType, contentDisposition: nil)
         request.appendDebugInformation("Inserting file upload placeholder (Original)\n\(message.dataSetDebugInformation)")
         request.forceToBackgroundSession()
@@ -79,29 +82,38 @@ extension ClientMessageRequestFactory {
     func upstreamRequestForInsertedEcryptedFullAssetFileMessage(_ message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
         guard let moc = message.managedObjectContext else { return nil }
         guard message.imageMessageData == nil else { return nil }
-        let path = "/conversations/\(conversationId.transportString())/otr/assets"
-        guard let assetUploadedData = message.encryptedMessagePayloadForDataType(.fullAsset), let filename = message.filename else { return nil }
-        guard let fileData = moc.zm_fileAssetCache.assetData(message.nonce, fileName: filename, encrypted: true) else { return nil }
-        let multipartData = dataForMultipartFileUploadRequest(assetUploadedData, fileData: fileData)
-        
-        guard let uploadURL = moc.zm_fileAssetCache.storeRequestData(message.nonce, data: multipartData) else {
+        guard let (assetUploadedData, strategy) = message.encryptedMessagePayloadForDataType(.fullAsset) else { return nil }
+
+        guard let uploadURL = uploadURL(for: message, inManagedObjectContext: moc, with: assetUploadedData) else {
             zmLog.debug("Failed to write multipart file upload request to file")
             return nil
         }
+        let originalPath = "/conversations/\(conversationId.transportString())/otr/assets"
+        let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
         
         let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: "multipart/mixed")
         request.appendDebugInformation("Inserting file upload metadata (Asset.Uploaded) with binary file data\n\(message.dataSetDebugInformation)")
         return request
     }
     
+    fileprivate func uploadURL(for message: ZMAssetClientMessage, inManagedObjectContext moc: NSManagedObjectContext, with assetUploadedData: Data) -> URL? {
+        guard let filename = message.filename else { return nil }
+        guard let fileData = moc.zm_fileAssetCache.assetData(message.nonce, fileName: filename, encrypted: true) else { return nil }
+        let multipartData = dataForMultipartFileUploadRequest(assetUploadedData, fileData: fileData)
+        return moc.zm_fileAssetCache.storeRequestData(message.nonce, data: multipartData)
+    }
+    
     /// Returns the multipart request to upload the thumbnail payload which includes the file data
     func upstreamRequestForInsertedEcryptedThumbnailFileMessage(_ message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
         guard let moc = message.managedObjectContext else { return nil }
         guard message.fileMessageData != nil else { return nil }
-        let path = "/conversations/\(conversationId.transportString())/otr/assets"
-        guard let thumbnailMetaData = message.encryptedMessagePayloadForDataType(.thumbnail) else { return nil }
+        
+        guard let (thumbnailMetaData, strategy) = message.encryptedMessagePayloadForDataType(.thumbnail) else { return nil }
         guard let thumbnailData = moc.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true) else { return nil }
         
+        let originalPath = "/conversations/\(conversationId.transportString())/otr/assets"
+        let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
+
         let request = ZMTransportRequest.multipartRequest(
             withPath: path,
             imageData: thumbnailData,
@@ -109,7 +121,6 @@ extension ClientMessageRequestFactory {
             metaDataContentType: protobufContentType,
             mediaContentType: octetStreamContentType
         )
-        
         request.appendDebugInformation("Inserting file upload thumbnail (Asset.Preview) with binary file data\n\(message.dataSetDebugInformation)")
         return request
     }
@@ -117,12 +128,16 @@ extension ClientMessageRequestFactory {
     // MARK: Updating
     
     func upstreamRequestForUpdatedEcryptedFullAssetFileMessage(_ message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        let path = "/conversations/\(conversationId.transportString())/otr/assets/\(message.assetId!.transportString())"
-        guard let assetUploadedData = message.encryptedMessagePayloadForDataType(.fullAsset) else { return nil }
+        guard let (assetUploadedData, strategy) = message.encryptedMessagePayloadForDataType(.fullAsset) else { return nil }
+        
+        let originalPath = "/conversations/\(conversationId.transportString())/otr/assets/\(message.assetId!.transportString())"
+        let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
+
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: assetUploadedData, type: protobufContentType, contentDisposition: nil)
         request.appendDebugInformation("Updating file upload metadata (Asset.Uploaded)\n\(message.dataSetDebugInformation)")
         request.appendDebugInformation("\(assetUploadedData)")
         request.forceToBackgroundSession()
+        
         return request
     }
     
