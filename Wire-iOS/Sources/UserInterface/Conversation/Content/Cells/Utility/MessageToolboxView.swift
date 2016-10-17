@@ -66,6 +66,9 @@ extension ZMConversationMessage {
     override init(frame: CGRect) {
         
         super.init(frame: frame)
+        self.isAccessibilityElement = true
+        self.accessibilityElementsHidden = false
+        
         CASStyler.default().styleItem(self)
         
         setupViews()
@@ -87,6 +90,8 @@ extension ZMConversationMessage {
         statusLabel.extendsLinkTouchArea = true
         statusLabel.isUserInteractionEnabled = true
         statusLabel.verticalAlignment = .center
+        statusLabel.isAccessibilityElement = true
+        statusLabel.accessibilityLabel = "DeliveryStatus"
         statusLabel.lineBreakMode = NSLineBreakMode.byTruncatingMiddle
         statusLabel.linkAttributes = [NSUnderlineStyleAttributeName: NSUnderlineStyle.styleSingle.rawValue,
                                       NSForegroundColorAttributeName: UIColor(for: .vividRed)]
@@ -233,7 +238,7 @@ extension ZMConversationMessage {
         
         let changeBlock = {
             self.statusLabel.attributedText = attributedText
-            self.statusLabel.accessibilityLabel = self.statusLabel.attributedText.string
+            self.accessibilityValue = self.statusLabel.attributedText.string
         }
         
         if animated {
@@ -252,9 +257,7 @@ extension ZMConversationMessage {
             case .pending:
                 deliveryStateString = "content.system.pending_message_timestamp".localized
             case .delivered:
-                // Code disabled until the majority would send the delivery receipts
-                // deliveryStateString = "content.system.message_delivered_timestamp".localized
-                fallthrough
+                deliveryStateString = "content.system.message_delivered_timestamp".localized
             case .sent:
                 deliveryStateString = "content.system.message_sent_timestamp".localized
             case .failedToSend:
@@ -291,7 +294,7 @@ extension ZMConversationMessage {
         
         let changeBlock =  {
             self.statusLabel.attributedText = attributedText
-            self.statusLabel.accessibilityLabel = self.statusLabel.attributedText.string
+            self.accessibilityValue = self.statusLabel.attributedText.string
             self.statusLabel.addLinks()
         }
         
@@ -314,7 +317,7 @@ extension ZMConversationMessage {
         
         let changeBlock =  {
             self.statusLabel.attributedText = attributedText
-            self.statusLabel.accessibilityLabel = self.statusLabel.attributedText.string
+            self.accessibilityValue = self.statusLabel.attributedText.string
         }
         
         if animated {

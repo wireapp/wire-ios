@@ -146,6 +146,7 @@ IconButton.resend-button {
     backgroundImageColor[state:selected]: $color-icon-background-selected;
 }
 
+
 IconButton.gif-button {
     iconColor: $color-icon-normal;
     iconColor[state:selected]: $color-icon-selected;
@@ -154,6 +155,25 @@ IconButton.gif-button {
     borderColor[state:normal]: $color-separator;
     circular: true;
     borderWidth: 0.8;
+}
+
+IconButton.emoji-category {
+    iconColor: $color-text-dimmed-dark;
+    iconColor[state:selected]: $color-text-foreground-dark;
+    iconColor[state:highlighted]: $color-icon-highlighted-dark;
+    backgroundImageColor[state:selected]: clear;
+    borderColor[state:normal]: clear;
+    circular: false;
+    borderWidth: 0.0;
+}
+
+IconButton.emoji-backspace {
+    iconColor: $color-text-foreground-dark;
+    iconColor[state:highlighted]: $color-icon-highlighted-dark;
+    backgroundImageColor[state:selected]: clear;
+    borderColor[state:normal]: clear;
+    circular: false;
+    borderWidth: 0.0;
 }
 
 VoiceChannelParticipantCell {
@@ -862,11 +882,35 @@ InputBarEditView: {
     }
 }
 
+IconButton.send-button {
+    circular: true;
+    borderWidth: 0.0;
+    iconColor[state: highlighted]: $color-background-light;
+    iconColor[state: normal]: $color-background-light;
+    backgroundImageColor[state:highlighted]: $color-accent-current-darken;
+    backgroundImageColor[state:normal]: $color-accent-current;
+}
+
 ConversationInputBarViewController {
     audioRecorderTooltip: @{
         font: $font-small;
         textColor: $color-text-dimmed;
         backgroundColor: $color-text-background;
+    }
+}
+
+TypingIndicatorView {
+    container: @{
+        backgroundColor: $color-background
+    }
+    
+    expandingLine: @{
+        backgroundColor: $color-background
+    }
+    
+    nameLabel: @{
+        font: $font-small-light;
+        textColor: $color-text-placeholder;
     }
 }
 
@@ -945,43 +989,20 @@ CameraViewController {
 
 /* Giphy */
 
-GiphyConfirmImageViewController {
-    view: @{
-        backgroundColor: $color-background;
-    }
-    imagePreviewView: @{
-        backgroundColor: $color-background;
-    }
-}
-
-GiphyViewController {
+GiphyConfirmationViewController {
     view: @{
         backgroundColor: $color-background;
     }
 }
 
-GiphyNavigationBar {
-    backgroundColor: $color-background;
-    centerButton: @{
-        titleColor: $color-text-foreground;
-    }
-}
-
-GiphyConfirmImageViewController {
-    imagePreviewView: @{
-        backgroundColor: $color-background;
-    }
-    confirmButtonsContainer: @{
-        backgroundColor: $color-background;
-    }
-    rejectImageButton: @{
-        titleColor: $color-accent-current;
-    }
-}
-
-GiphyCollectionViewController {
+GiphySearchViewController {
     collectionView: @{
         backgroundColor: $color-background;
+    }
+    
+    noResultsLabel: @{
+        font: $font-small-light;
+        textColor: $color-text-placeholder;
     }
 }
 
