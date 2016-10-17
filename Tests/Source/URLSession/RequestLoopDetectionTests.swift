@@ -27,7 +27,7 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         var triggered = false
         let path = "foo.com"
-        let hash = 13
+        let hash : UInt = 13
         
         let sut = RequestLoopDetection() {
             XCTAssertEqual(path, $0)
@@ -47,7 +47,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // given
         let path = "foo.com"
-        let hash = 13
+        let hash : UInt = 13
         var startDate = Date(timeIntervalSince1970: 100)
         
         let sut = RequestLoopDetection() { _ in
@@ -65,7 +65,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // given
         let path = "foo.com"
-        let hash = 12
+        let hash : UInt = 12
         var startDate = Date()
         
         let sut = RequestLoopDetection() { _ in
@@ -82,7 +82,7 @@ class RequestLoopDetectionTests : XCTestCase {
     func testThatItDoesNotDetectsALoopIfPathIsNotSame() {
         
         // given
-        let hash = 14
+        let hash : UInt = 14
         let sut = RequestLoopDetection() { _ in
             XCTFail()
         }
@@ -102,7 +102,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach {
-            sut.recordRequest(path: "foo.com", contentHash: $0, date: nil)
+            sut.recordRequest(path: "foo.com", contentHash: UInt($0), date: nil)
         }
     }
     
@@ -111,7 +111,7 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         let path = "foo.com"
         var triggerCount = 0
-        let hash = 14
+        let hash : UInt = 14
         
         let sut = RequestLoopDetection() {
             triggerCount += 1
@@ -132,7 +132,7 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         var paths = ["foo.com", "bar.de", "baz.org"]
         var triggeredURLs : [String] = []
-        let hash = 14
+        let hash : UInt = 14
 
         
         let sut = RequestLoopDetection() {
@@ -163,7 +163,7 @@ class RequestLoopDetectionTests : XCTestCase {
         
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold*4).forEach {
-            sut.recordRequest(path: path, contentHash: $0 % 3, date: nil)
+            sut.recordRequest(path: path, contentHash: UInt($0 % 3), date: nil)
         }
         
         // then
@@ -175,7 +175,7 @@ class RequestLoopDetectionTests : XCTestCase {
         // given
         let path = "MyURL.com"
         var triggered = false
-        let hash = 14
+        let hash : UInt = 14
 
         
         let sut = RequestLoopDetection() { _ in

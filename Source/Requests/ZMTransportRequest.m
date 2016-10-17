@@ -145,6 +145,8 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 @property (nonatomic) ZMTransportAccept acceptedResponseMediaTypes; ///< C.f. RFC 7231 section 5.3.2 <http://tools.ietf.org/html/rfc7231#section-5.3.2>
 @property (nonatomic) NSDate *timeoutDate;
 @property (nonatomic) NSMutableArray<NSString *>* debugInformation;
+/// Hash of the content debug information. This is used to identify the content of the request (e.g. detect repeated requests with the same content)
+@property (nonatomic) NSUInteger contentDebugInformationHash;
 @property (nonatomic) BOOL shouldCompress;
 @property (nonatomic) NSURL *fileUploadURL;
 @property (nonatomic) NSDate *startOfUploadTimestamp;
@@ -181,6 +183,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         self.acceptedResponseMediaTypes = ZMTransportAcceptTransportData;
         self.shouldCompress = shouldCompress;
         self.debugInformation = [NSMutableArray array];
+        self.contentDebugInformationHash = 0;
     }
     return self;
 }
@@ -827,9 +830,10 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     [self.debugInformation addObject:[NSString stringWithFormat:@"Sync state: <%@> %p", NSStringFromClass(state.class), state]];
 }
 
-- (void)appendDebugInformation:(NSString *)debugInformation
+- (void)addContentDebugInformation:(NSString *)debugInformation
 {
     [self.debugInformation addObject:debugInformation];
+    self.contentDebugInformationHash ^= debugInformation.hash;
 }
 
 - (void)markStartOfUploadTimestamp {

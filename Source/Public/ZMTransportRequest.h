@@ -178,10 +178,12 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @interface ZMTransportRequest (Debugging)
 
 @property (nonatomic, readonly, nullable) NSDate *startOfUploadTimestamp;
+@property (nonatomic, readonly) NSUInteger contentDebugInformationHash;
 
 - (void)setDebugInformationTranscoder:(NSObject *)transcoder;
 - (void)setDebugInformationState:(ZMSyncState *)state;
-- (void)appendDebugInformation:(NSString *)debugInformation;
+- (void)addContentDebugInformation:(NSString *)debugInformation;
+
 /// Marks the start of the upload time point
 - (void)markStartOfUploadTimestamp;
 

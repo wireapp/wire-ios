@@ -96,6 +96,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic, weak) id<ZMNetworkStateDelegate> weakNetworkStateDelegate;
 @property (nonatomic) NSMutableDictionary <NSString *, dispatch_block_t> *completionHandlerBySessionID;
 
+@property (nonatomic) id<RequestRecorder> requestLoopDetection;
 
 - (void)signUpForNotifications;
 
@@ -269,6 +270,13 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.pushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler userAgentString:[ZMUserAgent userAgentValue] URL:self.websocketURL];
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL cookieStorage:self.cookieStorage delegate:self queue:queue group:group backoff:nil keyValueStore:keyValueStore];
         [self signUpForNotifications];
+        ZM_WEAK(self);
+        self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
+            ZM_STRONG(self);
+            if(self.requestLoopDetectionCallback != nil) {
+                self.requestLoopDetectionCallback(path);
+            }
+        }];
     }
     return self;
 }
@@ -425,6 +433,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     [request markStartOfUploadTimestamp];
     [task resume];
+    [self.requestLoopDetection recordRequestWithPath:request.path contentHash:request.contentDebugInformationHash date:nil];
 }
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;

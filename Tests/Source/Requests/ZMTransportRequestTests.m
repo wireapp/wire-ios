@@ -972,8 +972,8 @@
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil];
     
     // when
-    [request appendDebugInformation:info1];
-    [request appendDebugInformation:info2];
+    [request addContentDebugInformation:info1];
+    [request addContentDebugInformation:info2];
     
     // then
     NSString *description = request.description;
