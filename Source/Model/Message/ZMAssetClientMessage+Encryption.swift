@@ -20,63 +20,72 @@ import Foundation
 
 extension ZMAssetClientMessage {
     
+    fileprivate func validSelfClient() -> UserClient? {
+        guard let managedObjectContext = self.managedObjectContext,
+              let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(), selfClient.remoteIdentifier != nil
+        else { return nil }
+        
+        return selfClient
+    }
+    
     /// Returns the binary data of the encrypted `Asset.Uploaded` protobuf message or `nil`
     /// in case the receiver does not contain a `Asset.Uploaded` generic message.
     /// Also returns `nil` for messages representing an image
-    public func encryptedMessagePayloadForDataType(_ dataType: ZMAssetClientMessageDataType) -> Data? {
+    public func encryptedMessagePayloadForDataType(_ dataType: ZMAssetClientMessageDataType) -> (data: Data, strategy: MissingClientsStrategy)? {
         
-        guard let managedObjectContext = self.managedObjectContext,
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() ,
-            selfClient.remoteIdentifier != nil && imageAssetStorage != nil
-            else {
-                return nil
-        }
-        guard let conversation = self.conversation else { return nil }
-        guard let genericMessage = self.genericMessage(for: dataType) else { return nil }
+        guard imageAssetStorage != nil else { return nil }
+        guard let selfClient = validSelfClient() else {return nil}
+        guard let genericMessage = genericMessage(for: dataType) else { return nil }
+        guard let (recipients, strategy) = userEntriesAndStrategy(for: genericMessage, selfClient: selfClient) else { return nil }
         
-        var recipients : [ZMUserEntry] = []
-        selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
-            recipients = genericMessage.recipientsWithEncryptedData(selfClient, recipients: conversation.activeParticipants.array as! [ZMUser], sessionDirectory: sessionsDirectory)
-        }
-        
+        var data : Data?
         if dataType == .fullAsset || dataType == .thumbnail {
-            return ZMOtrAssetMeta.otrAssetMeta(withSender: selfClient, nativePush: true, inline: false, recipients: recipients).data()
+            data = ZMOtrAssetMeta.otrAssetMeta(withSender: selfClient, nativePush: true, inline: false, recipients: recipients).data()
         } else if dataType == .placeholder {
-            return ZMNewOtrMessage.message(withSender: selfClient, nativePush: true, recipients: recipients, blob: nil).data()
+            data = ZMNewOtrMessage.message(withSender: selfClient, nativePush: true, recipients: recipients, blob: nil).data()
         }
         
+        if let data = data {
+            return (data, strategy)
+        }
         return nil
     }
     
     /// Returns the OTR asset meta for the image format
-    public func encryptedMessagePayloadForImageFormat(_ imageFormat: ZMImageFormat) -> ZMOtrAssetMeta? {
+    public func encryptedMessagePayloadForImageFormat(_ imageFormat: ZMImageFormat) -> (otrMessageData: ZMOtrAssetMeta, strategy: MissingClientsStrategy)? {
         
-        guard let managedObjectContext = self.managedObjectContext,
-            let imageAssetStorage = self.imageAssetStorage,
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() ,
-            selfClient.remoteIdentifier != nil
-        else {
-            return nil
-        }
-        
-        guard let conversation = self.conversation else { return nil }
+        guard let imageAssetStorage = imageAssetStorage else { return nil }
+        guard let selfClient = validSelfClient() else {return nil}
+        guard let genericMessage = imageAssetStorage.genericMessage(for: imageFormat) else { return nil }
+        guard let (recipients, strategy) = userEntriesAndStrategy(for: genericMessage, selfClient: selfClient) else { return nil }
         
         let builder = ZMOtrAssetMeta.builder()!
         builder.setIsInline(imageAssetStorage.isInline(for: imageFormat))
         builder.setNativePush(imageAssetStorage.isUsingNativePush(for: imageFormat))
         builder.setSender(selfClient.clientId)
+        builder.setRecipientsArray(recipients)
         
-        guard let genericMessage = imageAssetStorage.genericMessage(for: imageFormat) else {
-            return nil
+        if let otrMessageData = builder.build() {
+            return (otrMessageData, strategy)
         }
-        
+        return nil
+    }
+    
+    fileprivate func userEntriesAndStrategy(for genericMessage: ZMGenericMessage, selfClient: UserClient) ->
+        (userEnries: [ZMUserEntry], strategy: MissingClientsStrategy)? {
+        guard let conversation = self.conversation else { return nil }
+            
+        let sendOnlyToOtherUser = genericMessage.hasEphemeral()
+        let recipientUsers = genericMessage.recipientUsersforMessage(in: conversation, sendOnlyToOtherUser: sendOnlyToOtherUser)
+
         var recipients : [ZMUserEntry] = []
         selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
-            recipients = genericMessage.recipientsWithEncryptedData(selfClient, recipients: conversation.activeParticipants.array as! [ZMUser], sessionDirectory: sessionsDirectory)
+            recipients = genericMessage.recipientsWithEncryptedData(selfClient, recipients: recipientUsers, sessionDirectory: sessionsDirectory)
         }
+        let strategy : MissingClientsStrategy = sendOnlyToOtherUser ? .ignoreAllMissingClientsNotFromUser(user: recipientUsers.first!)
+                                                                    : .doNotIgnoreAnyMissingClient
         
-        builder.setRecipientsArray(recipients)
-        return builder.build()
+        return (recipients, strategy)
     }
 }
 
