@@ -15,13 +15,13 @@
                 <key>zero</key>
                 <string></string>
                 <key>one</key>
-                <string>пристрій</string>
+                <string>bir cihaz</string>
                 <key>few</key>
-                <string>%lu пристрої</string>
+                <string>%lu cihaz</string>
                 <key>many</key>
-                <string>%lu пристроїв</string>
+                <string>%lu cihaz</string>
                 <key>other</key>
-                <string>%lu пристроїв</string>
+                <string>%lu cihaz</string>
             </dict>
         </dict>
 		<key>participants.people.count</key>
@@ -35,21 +35,21 @@
 				<key>NSStringFormatValueTypeKey</key>
 				<string>lu</string>
 				<key>zero</key>
-				<string>Немає учасників</string>
+				<string>Hiç kimse</string>
 				<key>one</key>
-				<string>Один учасник</string>
+				<string>Bir kişi</string>
 				<key>few</key>
-				<string>%lu учасника</string>
+				<string>%lu kişi</string>
 				<key>many</key>
-				<string>%lu учасників</string>
+				<string>%lu kişi</string>
 				<key>other</key>
-				<string>%lu учасників</string>
+				<string>%lu kişi</string>
 			</dict>
 		</dict>
         <key>content.system.missing_messages.subtitle_added</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
-            <string>%@ %#@lu_number_of_users@ було додано</string>
+            <string>%@ %#@lu_number_of_users@ kişi eklendi</string>
             <key>lu_number_of_users</key>
             <dict>
                 <key>NSStringFormatSpecTypeKey</key>
@@ -61,13 +61,13 @@
                 <key>one</key>
                 <string> </string>
                 <key>other</key>
-                <string>додано</string>
+                <string> </string>
             </dict>
         </dict>
         <key>content.system.missing_messages.subtitle_removed</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
-            <string>%@ %#@lu_number_of_users@ було видалено</string>
+            <string>%@ %#@lu_number_of_users@ kişi silindi</string>
             <key>lu_number_of_users</key>
             <dict>
                 <key>NSStringFormatSpecTypeKey</key>
@@ -85,7 +85,7 @@
 		<key>list.connect_request.people_waiting</key>
 		<dict>
 			<key>NSStringLocalizedFormatKey</key>
-			<string>%#@d_number_of_people@ очікує</string>
+			<string>%#@d_number_of_people@ bekliyor</string>
 			<key>d_number_of_people</key>
 			<dict>
 				<key>NSStringFormatSpecTypeKey</key>
@@ -95,13 +95,13 @@
 				<key>zero</key>
 				<string></string>
 				<key>one</key>
-				<string>Одна людина</string>
+				<string>Bir kişi</string>
 				<key>few</key>
-				<string>%d людей</string>
+				<string>%d kişi</string>
 				<key>many</key>
-				<string>%d людей</string>
+				<string>%d kişi</string>
 				<key>other</key>
-				<string>%d людей</string>
+				<string>%d kişi</string>
 			</dict>
 		</dict>
 		<key>content.system.participants_n_others</key>
@@ -117,19 +117,19 @@
 				<key>zero</key>
 				<string/>
 				<key>one</key>
-				<string>та ще один(-а)</string>
+				<string>ve bir kişi daha</string>
 				<key>few</key>
-				<string>та ще %d інші</string>
+				<string>ve %d kişiyi</string>
 				<key>many</key>
-				<string>та ще %d інших</string>
+				<string>ve %d kişi daha</string>
 				<key>other</key>
-				<string>та ще %d інших</string>
+				<string>ve %d kişi daha</string>
 			</dict>
 		</dict>
 		<key>peoplepicker.suggested.knows_more</key>
 		<dict>
 			<key>NSStringLocalizedFormatKey</key>
-			<string>Знайомий(-а) з %@ та %#@d_number_of_others@</string>
+			<string>%@ ve %#@d_number_of_others@ daha tanıyor</string>
 			<key>d_number_of_others</key>
 			<dict>
 				<key>NSStringFormatSpecTypeKey</key>
@@ -137,17 +137,17 @@
 				<key>NSStringFormatValueTypeKey</key>
 				<string>d</string>
 				<key>few</key>
-				<string>%d іншими</string>
+				<string>%d diğerleri</string>
 				<key>many</key>
-				<string>%d іншими</string>
+				<string>%d diğerleri</string>
 				<key>other</key>
-				<string>%d іншими</string>
+				<string>%d diğerleri</string>
 			</dict>
 		</dict>
         <key>content.system.people_started_using</key>
         <dict>
             <key>NSStringLocalizedFormatKey</key>
-            <string>%@ %#@d_number_of_others@ почав(-ли) використовувати %#@d_new_devices@</string>
+            <string>%@ %#@d_number_of_others@ kişi %#@d_new_devices@ kullanmaya başladı</string>
             <key>d_number_of_others</key>
             <dict>
                 <key>NSStringFormatSpecTypeKey</key>
@@ -157,7 +157,7 @@
                 <key>one</key>
                 <string></string>
                 <key>other</key>
-                <string>та ще %d інших</string>
+                <string>ve %d kişi daha</string>
             </dict>
             <key>d_new_devices</key>
             <dict>
@@ -166,9 +166,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string>
                 <key>one</key>
-                <string>новий пристрій</string>
+                <string>yeni bir cihaz</string>
                 <key>other</key>
-                <string>нові пристрої</string>
+                <string>yeni cihazlar</string>
             </dict>
         </dict>
         <key>content.system.new_devices</key>
@@ -182,9 +182,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string>
                 <key>one</key>
-                <string>новий пристрій</string>
+                <string>yeni bir cihaz</string>
                 <key>other</key>
-                <string>нові пристрої</string>
+                <string>yeni cihazlar</string>
             </dict>
         </dict>
 	</dict>
