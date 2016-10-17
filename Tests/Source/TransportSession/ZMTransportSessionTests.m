@@ -2656,3 +2656,60 @@ static __weak FakeReachability *currentReachability;
 }
 
 @end
+
+@implementation ZMTransportSessionTests (RequestLoop)
+
+- (void)testThatItTriggersRequestLoopCallbackWhenReceivingTooManyRequests {
+    
+    // given
+    __block BOOL callbackReceived = NO;
+    NSString *expectedPath = @"foobar?x=y";
+    ZM_WEAK(self);
+    self.sut.requestLoopDetectionCallback = ^(NSString *receivedPath){
+        ZM_STRONG(self);
+        callbackReceived = YES;
+        XCTAssertEqualObjects(receivedPath, expectedPath);
+    };
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:expectedPath];
+    
+    // when
+    for(int i = 0; i < 30; ++i) {
+        [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *_request ZM_UNUSED, NSData *data ZM_UNUSED) {
+            return nil;
+        }];
+        [self.sut sendSchedulerItem:request];
+    }
+    
+    // then
+    XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+    XCTAssertTrue(callbackReceived);
+    
+}
+
+- (void)testThatItDoesNotTriggersRequestLoopCallbackWhenReceivingARequest {
+    
+    // given
+    __block BOOL callbackReceived = NO;
+    NSString *expectedPath = @"foobar?x=y";
+    ZM_WEAK(self);
+    self.sut.requestLoopDetectionCallback = ^(NSString *receivedPath){
+        ZM_STRONG(self);
+        callbackReceived = YES;
+        XCTAssertEqualObjects(receivedPath, expectedPath);
+    };
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:expectedPath];
+    
+    // when
+    for(int i = 0; i < 2; ++i) {
+        [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *_request ZM_UNUSED, NSData *data ZM_UNUSED) {
+            return nil;
+        }];
+        [self.sut sendSchedulerItem:request];
+    }
+    
+    // then
+    XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+    XCTAssertFalse(callbackReceived);
+}
+
+@end

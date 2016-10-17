@@ -69,8 +69,6 @@ extern NSString * const ZMTransportSessionShouldKeepWebsocketOpenKey;
 
 @end
 
-
-
 @interface ZMTransportSession : NSObject <ZMBackgroundable>
 
 @property (nonatomic, readonly, nullable) ZMAccessToken *accessToken;
@@ -79,8 +77,13 @@ extern NSString * const ZMTransportSessionShouldKeepWebsocketOpenKey;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) NSString *clientID;
+@property (nonatomic, copy) void (^requestLoopDetectionCallback)(NSString*);
 
-- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue application:(UIApplication *)application;
+- (instancetype)initWithBaseURL:(NSURL *)baseURL
+                   websocketURL:(NSURL *)websocketURL
+                  keyValueStore:(id<ZMKeyValueStore>)keyValueStore
+                 mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+                    application:(UIApplication *)application;
 
 - (void)tearDown;
 

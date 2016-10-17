@@ -22,7 +22,7 @@ import Foundation
 @objc protocol RequestRecorder : NSObjectProtocol {
     
     /// Records a REST request
-    func recordRequest(path: String, contentHash: Int, date: Date?)
+    func recordRequest(path: String, contentHash: UInt, date: Date?)
     
 }
 
@@ -61,7 +61,7 @@ extension RequestLoopDetection : RequestRecorder{
         self.recordedRequests = []
     }
     
-    public func recordRequest(path: String, contentHash: Int, date: Date?) {
+    public func recordRequest(path: String, contentHash: UInt, date: Date?) {
         purgeOldRequests()
         if self.recordedRequests.count == type(of: self).historyLimit {
             self.recordedRequests.remove(at: 0) // note, this would be more efficient with linked list
@@ -123,7 +123,7 @@ fileprivate struct IdentifierDate {
     let date : Date
     let path : String
     
-    init(path: String, contentHash: Int, date: Date) {
+    init(path: String, contentHash: UInt, date: Date) {
         self.identifier = "\(path)[\(contentHash)]"
         self.date = date
         self.path = path
