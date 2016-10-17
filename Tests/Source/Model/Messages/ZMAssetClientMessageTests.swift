@@ -70,8 +70,8 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
         
         let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
         
-        let imageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce.transportString(), format: format)
-        let emptyImageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: nil, processedImageProperties: nil, encryptionKeys: nil, nonce: messageNonce.transportString(), format: otherFormat)
+        let imageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce.transportString(), format: format, expiresAfter: NSNumber(value: message.deletionTimeout))
+        let emptyImageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: nil, processedImageProperties: nil, encryptionKeys: nil, nonce: messageNonce.transportString(), format: otherFormat, expiresAfter: NSNumber(value: message.deletionTimeout))
         message.add(imageMessage)
         message.add(emptyImageMessage)
         
@@ -655,145 +655,7 @@ extension ZMAssetClientMessageTests {
             self.syncMOC.setPersistentStoreMetadata(nil, forKey: "PersistedClientId")
         }
     }
-    
-    func testThatItReturnsTheEncryptedPayloadDataForThePlaceholderMessage() {
-        self.syncMOC.performAndWait {
-            
-            // given
-            let nonce = UUID.create()
-            let mimeType = "text/plain"
-            let filename = "document.txt"
-            let url = self.testURLWithFilename(filename)
-            let data = self.createTestFile(url)
-            defer { self.removeTestFile(url) }
-            let fileMetadata = ZMFileMetadata(fileURL: url)
-            
-            // when
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
-                nonce: nonce,
-                managedObjectContext: self.syncMOC,
-                expiresAfter: 0
-            )
-            
-            self.syncConversation.mutableMessages.add(sut)
-            
-            // then
-            XCTAssertNotNil(sut)
-            XCTAssertTrue(sut.genericAssetMessage!.asset.hasOriginal())
-            
-            guard let encryptedData = sut.encryptedMessagePayloadForDataType(.placeholder) else { return XCTFail() }
-            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.user1Client1) else { return XCTFail() }
-            
-            XCTAssertNotNil(genericMessage)
-            XCTAssertTrue(genericMessage.hasAsset())
-            XCTAssertTrue(genericMessage.asset.hasOriginal())
-            
-            let original = genericMessage.asset.original!
-            XCTAssertEqual(original.name, filename)
-            XCTAssertEqual(original.mimeType, mimeType)
-            XCTAssertEqual(original.size, UInt64(data.count))
-        }
-    }
-    
-    func testThatItReturnsTheEncryptedMetaDataForTheFileDataMessage() {
-        self.syncMOC.performAndWait {
-            // given
-            let nonce = UUID.create()
-            let mimeType = "text/plain"
-            let filename = "document.txt"
-            let url = self.testURLWithFilename(filename)
-            let data = self.createTestFile(url)
-            defer { self.removeTestFile(url) }
-            let fileMetadata = ZMFileMetadata(fileURL: url)
-            
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
-                nonce: nonce,
-                managedObjectContext: self.syncMOC,
-                expiresAfter: 0
-            )
-            
-            self.syncConversation.mutableMessages.add(sut)
-            
-            // when
-            let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-            sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce.transportString()))
-            
-            // then
-            guard let encryptedData = sut.encryptedMessagePayloadForDataType(.fullAsset) else { return XCTFail() }
-            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.user1Client1) else { return XCTFail() }
-            
-            XCTAssertNotNil(genericMessage)
-            XCTAssertTrue(genericMessage.hasAsset())
-            
-            XCTAssertTrue(genericMessage.asset.hasUploaded())
-            let uploaded = genericMessage.asset.uploaded!
-            XCTAssertEqual(uploaded.otrKey, otrKey)
-            XCTAssertEqual(uploaded.sha256, sha256)
-            
-            XCTAssertTrue(genericMessage.asset.hasOriginal())
-            let original = genericMessage.asset.original!
-            XCTAssertEqual(original.name, filename)
-            XCTAssertEqual(original.mimeType, mimeType)
-            XCTAssertEqual(original.size, UInt64(data.count))
-            
-            XCTAssertFalse(original.hasVideo())
-        }
-    }
-    
-    func testThatItReturnsTheEncryptedMetaDataForAVideoDataMessage() {
-        self.syncMOC.performAndWait {
-            
-            // given
-            let nonce = UUID.create()
-            let mimeType = "video/mp4"
-            let duration : TimeInterval = 15000
-            let dimensions = CGSize(width: 1024, height: 768)
-            let name = "cats.mp4"
-            let url = self.testURLWithFilename(name)
-            let data = self.createTestFile(url)
-            let size = data.count
-            defer { self.removeTestFile(url) }
-            let videoMetadata = ZMVideoMetadata(fileURL: url, duration: duration, dimensions: dimensions)
-            let sut = ZMAssetClientMessage(
-                fileMetadata: videoMetadata,
-                nonce: nonce,
-                managedObjectContext: self.syncMOC,
-                expiresAfter: 0
-            )
-            
-            self.syncConversation.mutableMessages.add(sut)
-            
-            // when
-            let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-            sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce.transportString()))
-            
-            // then
-            guard let encryptedData = sut.encryptedMessagePayloadForDataType(.fullAsset) else { return XCTFail() }
-            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.syncUser1Client1) else { return XCTFail() }
-            
-            XCTAssertNotNil(genericMessage)
-            XCTAssertTrue(genericMessage.hasAsset())
-            
-            XCTAssertTrue(genericMessage.asset.hasUploaded())
-            let uploaded = genericMessage.asset.uploaded!
-            XCTAssertEqual(uploaded.otrKey, otrKey)
-            XCTAssertEqual(uploaded.sha256, sha256)
-            
-            XCTAssertTrue(genericMessage.asset.hasOriginal())
-            let original = genericMessage.asset.original!
-            XCTAssertEqual(original.name, name)
-            XCTAssertEqual(original.mimeType, mimeType)
-            XCTAssertEqual(original.size, UInt64(size))
-            
-            XCTAssertTrue(original.hasVideo())
-            let video = original.video!
-            XCTAssertEqual(video.durationInMillis, UInt64(duration * 1000))
-            XCTAssertEqual(video.width, Int32(dimensions.width))
-            XCTAssertEqual(video.height, Int32(dimensions.height))
-        }
-    }
+
     
     func testThatItSetsTheCorrectStateWhen_RequestFileDownload_IsBeingCalled() {
         // given
@@ -991,39 +853,7 @@ extension ZMAssetClientMessageTests {
             XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
         }
     }
-    
-    func testThatItItReturnsTheEncryptedGenericMessageDataIncludingThe_NotUploaded_WhenItIsPresent() {
-        self.syncMOC.performAndWait {
-            // given
-            let fileMetadata = self.addFile()
-            
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
-                nonce: UUID.create(),
-                managedObjectContext: self.syncMOC,
-                expiresAfter: 0
-            )
-            
-            self.syncConversation.mutableMessages.add(sut)
-            sut.delivered = true
-            
-            XCTAssertNotNil(sut.fileMessageData)
-            XCTAssertTrue(self.syncMOC.saveOrRollback())
-            
-            // when we cancel the transfer
-            sut.fileMessageData?.cancelTransfer()
-            XCTAssertEqual(sut.transferState, ZMFileTransferState.cancelledUpload)
-            
-            // then the genereted encrypted message should include the Asset.original and Asset.NotUploaded
-            guard let encryptedData = sut.encryptedMessagePayloadForDataType(.placeholder) else { return XCTFail() }
-            guard let genericMessage = self.decryptedMessageData(encryptedData, forClient: self.syncUser1Client1) else { return XCTFail() }
-            
-            XCTAssertTrue(genericMessage.asset.hasNotUploaded())
-            XCTAssertEqual(genericMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
-            XCTAssertTrue(genericMessage.asset.hasOriginal())
-        }
-    }
-    
+        
     func testThatItPostsANotificationWhenTheDownloadOfTheMessageIsCancelled() {
         self.syncMOC.performAndWait {
             
@@ -1328,27 +1158,6 @@ extension ZMAssetClientMessageTests {
 // MARK: Helpers
 extension ZMAssetClientMessageTests {
     
-
-    
-    func decryptedMessageData(_ data: Data, forClient client: UserClient) -> ZMGenericMessage? {
-        let otrMessage = ZMNewOtrMessage.builder()!.merge(from: data).build()! as? ZMNewOtrMessage
-        XCTAssertNotNil(otrMessage, "Unable to generate OTR message")
-        let clientEntries = otrMessage?.recipients.flatMap { $0 }.flatMap { $0.clients }.joined()
-
-        guard let entry = clientEntries?.first else { XCTFail("Unable to get client entry"); return nil }
-        
-        var message : ZMGenericMessage?
-        self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
-            do {
-                let decryptedData = try sessionsDirectory.decrypt(entry.text, senderClientId: client.remoteIdentifier!)
-                message = ZMGenericMessage.builder()!.merge(from: decryptedData).build()! as? ZMGenericMessage
-            } catch {
-                XCTFail("Failed to decrypt generic message: \(error)")
-            }
-        }
-        return message
-    }
-    
     func createOtherClientAndConversation() -> (UserClient, ZMConversation) {
         let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
         otherUser.remoteIdentifier = .create()
@@ -1430,52 +1239,7 @@ extension ZMAssetClientMessageTests {
     }
 }
 
-// MARK: - Payload generation
-extension ZMAssetClientMessageTests {
-    
-    func assertPayloadData(_ payload: Data!, forMessage message: ZMAssetClientMessage, format: ZMImageFormat) {
-        
-        let imageMessageStorage = message.imageAssetStorage!
-        let assetMetadata = ZMOtrAssetMetaBuilder().merge(from: payload).build()! as? ZMOtrAssetMeta
-        
-        AssertOptionalNotNil(assetMetadata) { assetMetadata in
-            XCTAssertEqual(assetMetadata.isInline(), imageMessageStorage.isInline(for:format))
-            XCTAssertEqual(assetMetadata.nativePush(), imageMessageStorage.isUsingNativePush(for: format))
-            
-            XCTAssertEqual(assetMetadata.sender.client, self.selfClient1.clientId.client)
 
-            self.assertRecipients(assetMetadata.recipients)
-        }
-    }
-    
-    func testThatItCreatesPayloadData_Medium() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            //given
-            let message = self.appendImageMessage(.medium, to: self.syncConversation)
-            
-            //when
-            let payload = message.encryptedMessagePayloadForImageFormat(.medium)?.data()
-            
-            //then
-            self.assertPayloadData(payload, forMessage: message, format: .medium)
-        }
-    }
-    
-    func testThatItCreatesPayloadData_Preview() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            //given
-            let message = self.appendImageMessage(ZMImageFormat.preview, to: self.syncConversation)
-            
-            //when
-            let payload = message.encryptedMessagePayloadForImageFormat(.preview)?.data()
-            
-            //then
-            self.assertPayloadData(payload, forMessage: message, format: .preview)
-        }
-    }
-}
 
 // MARK: - Post event
 extension ZMAssetClientMessageTests {

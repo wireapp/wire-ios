@@ -78,6 +78,7 @@
 		F93A302F1D6F2633005CCB1D /* ZMMessageTests+Confirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93A302E1D6F2633005CCB1D /* ZMMessageTests+Confirmation.swift */; };
 		F94A208D1CB51AC90059632A /* ZMSyncMergePolicyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F94A208C1CB51AC90059632A /* ZMSyncMergePolicyTests.m */; };
 		F94A208F1CB51AF50059632A /* ManagedObjectValidationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F94A208E1CB51AF50059632A /* ManagedObjectValidationTests.m */; };
+		F94BD2671DB4EFF200DA0A0E /* ZMAssetClientMessageTest+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94BD2661DB4EFF200DA0A0E /* ZMAssetClientMessageTest+Encryption.swift */; };
 		F963E96D1D9ADD5A00098AD3 /* ZMGenericMessage+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E9681D9ADD5A00098AD3 /* ZMGenericMessage+Helper.swift */; };
 		F963E96E1D9ADD5A00098AD3 /* ZMGenericMessage+PropertyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = F963E9691D9ADD5A00098AD3 /* ZMGenericMessage+PropertyUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F963E96F1D9ADD5A00098AD3 /* ZMGenericMessage+PropertyUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F963E96A1D9ADD5A00098AD3 /* ZMGenericMessage+PropertyUtils.m */; };
@@ -444,6 +445,7 @@
 		F93A302E1D6F2633005CCB1D /* ZMMessageTests+Confirmation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessageTests+Confirmation.swift"; sourceTree = "<group>"; };
 		F94A208C1CB51AC90059632A /* ZMSyncMergePolicyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMSyncMergePolicyTests.m; path = Tests/Source/ManagedObjectContext/ZMSyncMergePolicyTests.m; sourceTree = SOURCE_ROOT; };
 		F94A208E1CB51AF50059632A /* ManagedObjectValidationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ManagedObjectValidationTests.m; path = Tests/Source/Model/ManagedObjectValidationTests.m; sourceTree = SOURCE_ROOT; };
+		F94BD2661DB4EFF200DA0A0E /* ZMAssetClientMessageTest+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMAssetClientMessageTest+Encryption.swift"; sourceTree = "<group>"; };
 		F963E95C1D9AB80B00098AD3 /* zmessaging2.18.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.18.0.xcdatamodel; sourceTree = "<group>"; };
 		F963E9681D9ADD5A00098AD3 /* ZMGenericMessage+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMGenericMessage+Helper.swift"; sourceTree = "<group>"; };
 		F963E9691D9ADD5A00098AD3 /* ZMGenericMessage+PropertyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMGenericMessage+PropertyUtils.h"; sourceTree = "<group>"; };
@@ -1291,6 +1293,7 @@
 				F9331C501CB3BC6800139ECC /* CryptoBoxTests.swift */,
 				F9B71FFF1CB2C4FC001DB03F /* ZMGenericMessage_ExternalTests.m */,
 				F9B71F5D1CB2BC85001DB03F /* ZMAssetClientMessageTests.swift */,
+				F94BD2661DB4EFF200DA0A0E /* ZMAssetClientMessageTest+Encryption.swift */,
 				F9B71F5E1CB2BC85001DB03F /* ZMClientMessageTests.m */,
 				F9331C591CB3BECB00139ECC /* ZMClientMessageTests+OTR.swift */,
 				F96470091D5B5E9D00A81A92 /* ZMClientMessageTests+Editing.m */,
@@ -2046,6 +2049,7 @@
 				16746B081D2EAF8E00831771 /* ZMClientMessageTests+ZMImageOwner.swift in Sources */,
 				F9B71F9A1CB2BF0E001DB03F /* ZMUserTests.m in Sources */,
 				F9331C581CB3BE5300139ECC /* ZMConversationTests+OTR.m in Sources */,
+				F94BD2671DB4EFF200DA0A0E /* ZMAssetClientMessageTest+Encryption.swift in Sources */,
 				F9B71FA91CB2BF37001DB03F /* ZMConversationTests.m in Sources */,
 				F9B71FF01CB2C4C6001DB03F /* MessageWindowChangeTokenTests.swift in Sources */,
 				F963E9931D9E9D1800098AD3 /* ZMAssetClientMessageTests+Ephemeral.swift in Sources */,
