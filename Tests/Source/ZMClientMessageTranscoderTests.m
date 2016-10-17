@@ -1265,7 +1265,7 @@
     [self setupSUT];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
     
-    [self spinMainQueueWithTimeout:1.0];
+    [self spinMainQueueWithTimeout:1.5];
     
     // then
     [self.uiMOC refreshAllObjects];
