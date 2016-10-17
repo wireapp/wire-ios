@@ -26,7 +26,7 @@ import Cryptobox
 /// us that some user clients that were supposed to be there are missing (e.g.
 /// another user added a new client that we don't yet know about). The various
 /// strategies give a hint to the backend of how we want to handle missing clients.
-public enum MissingClientsStrategy {
+public enum MissingClientsStrategy : Equatable {
     
     /// Fail the request if there is any missing client
     case doNotIgnoreAnyMissingClient
@@ -36,6 +36,20 @@ public enum MissingClientsStrategy {
     /// Do not fail the request, no matter which clients are missing
     case ignoreAllMissingClients
 }
+
+public func ==(lhs: MissingClientsStrategy, rhs: MissingClientsStrategy) -> Bool {
+    switch (lhs, rhs) {
+    case (.doNotIgnoreAnyMissingClient, .doNotIgnoreAnyMissingClient):
+        return true
+    case (.ignoreAllMissingClients, .ignoreAllMissingClients):
+        return true
+    case (.ignoreAllMissingClientsNotFromUser(let leftUser), .ignoreAllMissingClientsNotFromUser(let rightUser)):
+        return leftUser == rightUser
+    default:
+        return false
+    }
+}
+
 
 extension ZMClientMessage {
     
@@ -87,35 +101,26 @@ extension ZMGenericMessage {
         return messageDataAndStrategy
     }
     
-    /// Returns a message with recipients and a strategy to handle missing clients
-    fileprivate func otrMessage(_ selfClient: UserClient,
-                            conversation: ZMConversation,
-                            externalData: Data?,
-                            sessionDirectory: EncryptionSessionsDirectory) -> (message: ZMNewOtrMessage, strategy: MissingClientsStrategy) {
+    
+    func recipientUsersforMessage(in conversation: ZMConversation, sendOnlyToOtherUser: Bool) -> [ZMUser] {
         
         var recipientUsers : [ZMUser] = []
-        let sendOnlyToOtherUser = ( self.hasConfirmation() || self.hasEphemeral() )
         if sendOnlyToOtherUser {
-            
-            // In case of confirmation messages, we want to send the confirmation only to the clients of the sender of the original message, 
-            // not to the other clients of the selfUser
-            
             var sender : ZMUser? = nil
             if self.hasConfirmation(), self.confirmation.messageId != nil {
-             
                 if let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.messageId), for:conversation, in:conversation.managedObjectContext){
                     sender = message.sender
                 }
             }
             
             if conversation.connectedUser != nil || sender != nil || conversation.otherActiveParticipants.firstObject != nil {
-                let recipient = { () -> ZMUser? in 
+                let recipient = { () -> ZMUser? in
                     if sender != nil { return sender }
                     if conversation.connectedUser != nil { return conversation.connectedUser }
                     if conversation.otherActiveParticipants.count > 0 { return conversation.otherActiveParticipants.firstObject! as? ZMUser }
                     return nil
                 }()
-    
+                
                 if let recipient = recipient {
                     recipientUsers = [recipient]
                 } else {
@@ -126,16 +131,26 @@ extension ZMGenericMessage {
         } else {
             recipientUsers = conversation.activeParticipants.array as! [ZMUser]
         }
+        return recipientUsers
+    }
+    
+    
+    /// Returns a message with recipients and a strategy to handle missing clients
+    fileprivate func otrMessage(_ selfClient: UserClient,
+                            conversation: ZMConversation,
+                            externalData: Data?,
+                            sessionDirectory: EncryptionSessionsDirectory) -> (message: ZMNewOtrMessage, strategy: MissingClientsStrategy) {
         
+        let sendOnlyToOtherUser = ( self.hasConfirmation() || self.hasEphemeral() )
+        let recipientUsers = recipientUsersforMessage(in: conversation, sendOnlyToOtherUser: sendOnlyToOtherUser)
         let recipients = self.recipientsWithEncryptedData(selfClient, recipients: recipientUsers, sessionDirectory: sessionDirectory)
 
         let nativePush = !hasConfirmation() // We do not want to send pushes for delivery receipts
         let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: nativePush, recipients: recipients, blob: externalData)
         
-        let strategy : MissingClientsStrategy =
-            sendOnlyToOtherUser ?
-                .ignoreAllMissingClientsNotFromUser(user: recipientUsers.first!)
-                : .doNotIgnoreAnyMissingClient
+        let strategy : MissingClientsStrategy = sendOnlyToOtherUser ? .ignoreAllMissingClientsNotFromUser(user: recipientUsers.first!)
+                                                                    : .doNotIgnoreAnyMissingClient
+        
         return (message: message, strategy: strategy)
     }
     
