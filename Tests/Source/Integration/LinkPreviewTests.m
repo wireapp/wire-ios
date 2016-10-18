@@ -60,10 +60,10 @@
     
     FHAssertNotNil(failureRecorder, message.genericMessage);
     FHAssertNotNil(failureRecorder, message.genericMessage);
-    FHAssertNotNil(failureRecorder, message.genericMessage.text);
-    FHAssertTrue(failureRecorder, message.genericMessage.text.linkPreview.count > 0);
+    FHAssertNotNil(failureRecorder, message.genericMessage.textData);
+    FHAssertTrue(failureRecorder, message.genericMessage.textData.linkPreview.count > 0);
     
-    ZMLinkPreview *preview = [message.genericMessage.text.linkPreview firstObject];
+    ZMLinkPreview *preview = [message.genericMessage.textData.linkPreview firstObject];
     FHAssertEqualObjects(failureRecorder, preview.title, expectedLinkPreview.title);
     FHAssertEqualObjects(failureRecorder, preview.summary, expectedLinkPreview.summary);
     
@@ -210,7 +210,7 @@
     NSString *urlText = ZMTestURLArticleWithoutPictureString;
     __block NSData *encryptedData = nil;
     
-    ZMGenericMessage *linkPreviewMessage = [ZMGenericMessage messageWithText:urlText nonce:messageNonce.transportString];
+    ZMGenericMessage *linkPreviewMessage = [ZMGenericMessage messageWithText:urlText nonce:messageNonce.transportString expiresAfter:nil];
     [self.mockTransportSession performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
         encryptedData = [MockUserClient encryptedDataFromClient:senderClient toClient:selfClient data:linkPreviewMessage.data];
         [mockConversation insertOTRMessageFromClient:senderClient toClient:selfClient data:encryptedData];
@@ -226,7 +226,7 @@
     
     //when
     ZMLinkPreview *remoteLinkPreview = [self.mockLinkPreviewDetector linkPreviewFromURLString:urlText includeAsset:NO includingTweet:NO];
-    linkPreviewMessage = [ZMGenericMessage messageWithText:urlText linkPreview:remoteLinkPreview nonce:messageNonce.transportString];
+    linkPreviewMessage = [ZMGenericMessage messageWithText:urlText linkPreview:remoteLinkPreview nonce:messageNonce.transportString expiresAfter:nil];
     
     [self.mockTransportSession performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
         encryptedData = [MockUserClient encryptedDataFromClient:senderClient toClient:selfClient data:linkPreviewMessage.data];
@@ -256,7 +256,7 @@
     NSString *urlText = ZMTestURLArticleWithoutPictureString;
     __block NSData *encryptedData = nil;
     
-    ZMGenericMessage *linkPreviewMessage = [ZMGenericMessage messageWithText:urlText nonce:messageNonce.transportString];
+    ZMGenericMessage *linkPreviewMessage = [ZMGenericMessage messageWithText:urlText nonce:messageNonce.transportString expiresAfter:nil];
     [self.mockTransportSession performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
         encryptedData = [MockUserClient encryptedDataFromClient:senderClient toClient:selfClient data:linkPreviewMessage.data];
         [mockConversation insertOTRMessageFromClient:senderClient toClient:selfClient data:encryptedData];
@@ -282,7 +282,7 @@
     
     //when
     ZMLinkPreview *remoteLinkPreview = [builder build];
-    linkPreviewMessage = [ZMGenericMessage messageWithText:urlText linkPreview:remoteLinkPreview nonce:messageNonce.transportString];
+    linkPreviewMessage = [ZMGenericMessage messageWithText:urlText linkPreview:remoteLinkPreview nonce:messageNonce.transportString expiresAfter:nil];
     
     [self.mockTransportSession performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
         encryptedData = [MockUserClient encryptedDataFromClient:senderClient toClient:selfClient data:linkPreviewMessage.data];
@@ -327,7 +327,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     
-    ZMGenericMessage *linkPreviewMessage = [ZMGenericMessage messageWithText:urlText nonce:messageNonce.transportString];
+    ZMGenericMessage *linkPreviewMessage = [ZMGenericMessage messageWithText:urlText nonce:messageNonce.transportString expiresAfter:nil];
     [self.mockTransportSession performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
         encryptedData = [MockUserClient encryptedDataFromClient:senderClient toClient:selfClient data:linkPreviewMessage.data];
         [mockConversation insertOTRMessageFromClient:senderClient toClient:selfClient data:encryptedData];
@@ -343,7 +343,7 @@
     
     //when
     ZMLinkPreview *remoteLinkPreview = [self.mockLinkPreviewDetector linkPreviewFromURLString:urlText asset:imageAssetData tweet:nil];
-    linkPreviewMessage = [ZMGenericMessage messageWithText:urlText linkPreview:remoteLinkPreview nonce:messageNonce.transportString];
+    linkPreviewMessage = [ZMGenericMessage messageWithText:urlText linkPreview:remoteLinkPreview nonce:messageNonce.transportString expiresAfter:nil];
     
     [self.mockTransportSession performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
         encryptedData = [MockUserClient encryptedDataFromClient:senderClient toClient:selfClient data:linkPreviewMessage.data];
@@ -357,6 +357,40 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     [self checkForValidLinkPreviewInMessage:message expectedLinkPreview:remoteLinkPreview failureRecorder:NewFailureRecorder()];
+}
+
+@end
+
+
+@implementation LinkPreviewTests (Ephemeral)
+
+- (void)testThatItInsertCorrectLinkPreviewMessage_ArticleWithoutImage_ForEphemeral;
+{
+    // need to check mock transport if we have the image
+    
+    self.registeredOnThisDevice = YES;
+    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    
+    NSString *text = ZMTestURLArticleWithoutPictureString;
+    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
+    conversation.messageDestructionTimeout = 10;
+    
+    ZMLinkPreview *expectedLinkPreview = [self.mockLinkPreviewDetector linkPreviewFromURLString:text includeAsset:NO includingTweet:NO];
+    
+    [self.userSession performChanges:^{
+        [conversation appendMessageWithText:text];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    XCTAssertEqual(conversation.messages.count, 2lu); //text message, then link preview message
+    
+    __block ZMClientMessage *message = conversation.messages.lastObject;
+    XCTAssertTrue(message.isEphemeral);
+    [self checkForValidLinkPreviewInMessage:message expectedLinkPreview:expectedLinkPreview failureRecorder:NewFailureRecorder()];
+    
+    [self.syncMOC performBlockAndWait:^{
+        [self.syncMOC zm_teardownMessageObfuscationTimer];
+    }];
 }
 
 @end

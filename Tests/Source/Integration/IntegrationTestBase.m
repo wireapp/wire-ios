@@ -17,7 +17,6 @@
 // 
 
 
-@import ZMProtos;
 @import CoreTelephony;
 @import ZMCDataModel;
 @import WireMessageStrategy;
@@ -122,6 +121,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     [self.uiMOC.globalManagedObjectContextObserver tearDown];
     [self.syncMOC.globalManagedObjectContextObserver tearDown];
     [self.syncMOC zm_tearDownCryptKeyStore];
+    
     [self.conversationChangeObserver tearDown];
     [self.userChangeObserver tearDown];
     [self.messageChangeObserver tearDown];
