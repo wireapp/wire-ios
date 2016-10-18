@@ -46,7 +46,7 @@ public final class ClientMessageRequestFactory: NSObject {
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: dataAndMissingClientStrategy.data, type: protobufContentType, contentDisposition: nil)
         var debugInfo = "\(message.genericMessage)"
         if let genericMessage = message.genericMessage , genericMessage.hasExternal() { debugInfo = "External message: " + debugInfo }
-        request.appendDebugInformation(debugInfo)
+        request.addContentDebugInformation(debugInfo)
         return request
     }
 
@@ -76,8 +76,8 @@ public final class ClientMessageRequestFactory: NSObject {
             let originalPath = "/" +  ["conversations", conversationId.transportString(), "otr", "assets"].joined(separator: "/")
             let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
             let request = ZMTransportRequest.multipartRequest(withPath: path, imageData: imageData, metaData: metaData.data(), metaDataContentType: protobufContentType, mediaContentType: octetStreamContentType)
-            request.appendDebugInformation("\(message.imageAssetStorage!.genericMessage(for: format))")
-            request.appendDebugInformation("\(metaData)")
+            request.addContentDebugInformation("\(message.imageAssetStorage!.genericMessage(for: format))")
+            request.addContentDebugInformation("\(metaData)")
             request.forceToBackgroundSession()
             return request
         }
@@ -92,8 +92,8 @@ public final class ClientMessageRequestFactory: NSObject {
         let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
         
         let request = ZMTransportRequest(path: path, method: ZMTransportRequestMethod.methodPOST, binaryData: metaData.data(), type: protobufContentType, contentDisposition: nil)
-        request.appendDebugInformation("\(message.imageAssetStorage!.genericMessage(for: format))")
-        request.appendDebugInformation("\(metaData)")
+        request.addContentDebugInformation("\(message.imageAssetStorage!.genericMessage(for: format))")
+        request.addContentDebugInformation("\(metaData)")
         request.forceToBackgroundSession()
         return request
     }
