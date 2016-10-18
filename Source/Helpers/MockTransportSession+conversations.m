@@ -21,6 +21,7 @@
 @import ZMUtilities;
 @import CoreData;
 @import ZMProtos;
+@import ZMCDataModel;
 
 #import "MockTransportSession+internal.h"
 #import "MockTransportSession.h"
