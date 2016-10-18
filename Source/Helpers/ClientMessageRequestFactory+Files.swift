@@ -72,7 +72,7 @@ extension ClientMessageRequestFactory {
         let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
         
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: assetOriginalData, type: protobufContentType, contentDisposition: nil)
-        request.appendDebugInformation("Inserting file upload placeholder (Original)\n\(message.dataSetDebugInformation)")
+        request.addContentDebugInformation("Inserting file upload placeholder (Original)\n\(message.dataSetDebugInformation)")
         request.forceToBackgroundSession()
         
         return request
@@ -92,7 +92,7 @@ extension ClientMessageRequestFactory {
         let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
         
         let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: "multipart/mixed")
-        request.appendDebugInformation("Inserting file upload metadata (Asset.Uploaded) with binary file data\n\(message.dataSetDebugInformation)")
+        request.addContentDebugInformation("Inserting file upload metadata (Asset.Uploaded) with binary file data\n\(message.dataSetDebugInformation)")
         return request
     }
     
@@ -121,7 +121,7 @@ extension ClientMessageRequestFactory {
             metaDataContentType: protobufContentType,
             mediaContentType: octetStreamContentType
         )
-        request.appendDebugInformation("Inserting file upload thumbnail (Asset.Preview) with binary file data\n\(message.dataSetDebugInformation)")
+        request.addContentDebugInformation("Inserting file upload thumbnail (Asset.Preview) with binary file data\n\(message.dataSetDebugInformation)")
         return request
     }
     
@@ -134,8 +134,8 @@ extension ClientMessageRequestFactory {
         let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
 
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: assetUploadedData, type: protobufContentType, contentDisposition: nil)
-        request.appendDebugInformation("Updating file upload metadata (Asset.Uploaded)\n\(message.dataSetDebugInformation)")
-        request.appendDebugInformation("\(assetUploadedData)")
+        request.addContentDebugInformation("Updating file upload metadata (Asset.Uploaded)\n\(message.dataSetDebugInformation)")
+        request.addContentDebugInformation("\(assetUploadedData)")
         request.forceToBackgroundSession()
         
         return request
@@ -148,7 +148,7 @@ extension ClientMessageRequestFactory {
         let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
         
         let request = ZMTransportRequest(getFromPath: path)
-        request.appendDebugInformation("Downloading file (Asset)\n\(message.dataSetDebugInformation)")
+        request.addContentDebugInformation("Downloading file (Asset)\n\(message.dataSetDebugInformation)")
         request.forceToBackgroundSession()
         return request
     }
