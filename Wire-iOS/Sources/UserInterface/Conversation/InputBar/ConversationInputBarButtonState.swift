@@ -19,7 +19,7 @@
 import Foundation
 
 
-private let disableEphemeralSending = false
+private let disableEphemeralSending = true
 
 
 public final class ConversationInputBarButtonState: NSObject {
