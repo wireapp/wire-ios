@@ -29,6 +29,14 @@
 		545AFFBD1CB6950B0054B665 /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 545AFFB91CB695040054B665 /* tiny.jpg */; };
 		54664D351CBEB9FA00527CDA /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54664D331CBEB9FA00527CDA /* medium.jpg */; };
 		54664D361CBEB9FA00527CDA /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54664D341CBEB9FA00527CDA /* tiny.jpg */; };
+		549D89521DB6108100F4F417 /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D89511DB6108100F4F417 /* ZMCDataModel.framework */; };
+		549D89531DB6129500F4F417 /* ZMCDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 549D89511DB6108100F4F417 /* ZMCDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		549D89551DB612B500F4F417 /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D89541DB612B500F4F417 /* PINCache.framework */; };
+		549D89561DB612BB00F4F417 /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 549D89541DB612B500F4F417 /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		549D89581DB612CC00F4F417 /* ZMCLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D89571DB612CC00F4F417 /* ZMCLinkPreview.framework */; };
+		549D89591DB612D300F4F417 /* ZMCLinkPreview.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 549D89571DB612CC00F4F417 /* ZMCLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		549D895B1DB612E800F4F417 /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D895A1DB612E800F4F417 /* Ono.framework */; };
+		549D895C1DB612EF00F4F417 /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 549D895A1DB612E800F4F417 /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54AE5A711B78FA43002757E9 /* MockTransportSession+assets.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A4D1B78FA43002757E9 /* MockTransportSession+assets.h */; };
 		54AE5A721B78FA43002757E9 /* MockTransportSession+assets.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A4E1B78FA43002757E9 /* MockTransportSession+assets.m */; };
 		54AE5A731B78FA43002757E9 /* MockTransportSession+connections.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A4F1B78FA43002757E9 /* MockTransportSession+connections.h */; };
@@ -112,6 +120,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				549D895C1DB612EF00F4F417 /* Ono.framework in CopyFiles */,
+				549D89591DB612D300F4F417 /* ZMCLinkPreview.framework in CopyFiles */,
+				549D89561DB612BB00F4F417 /* PINCache.framework in CopyFiles */,
+				549D89531DB6129500F4F417 /* ZMCDataModel.framework in CopyFiles */,
 				CED2BC951CEE0C1300E285B3 /* Cryptobox.framework in CopyFiles */,
 				54CE5E741B753570007F3065 /* ocmock.framework in CopyFiles */,
 				54CE5E751B753570007F3065 /* ZMCSystem.framework in CopyFiles */,
@@ -149,6 +161,10 @@
 		545AFFB91CB695040054B665 /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tiny.jpg; sourceTree = "<group>"; };
 		54664D331CBEB9FA00527CDA /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
 		54664D341CBEB9FA00527CDA /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tiny.jpg; sourceTree = "<group>"; };
+		549D89511DB6108100F4F417 /* ZMCDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCDataModel.framework; path = Carthage/Build/iOS/ZMCDataModel.framework; sourceTree = "<group>"; };
+		549D89541DB612B500F4F417 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
+		549D89571DB612CC00F4F417 /* ZMCLinkPreview.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCLinkPreview.framework; path = Carthage/Build/iOS/ZMCLinkPreview.framework; sourceTree = "<group>"; };
+		549D895A1DB612E800F4F417 /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
 		54AE5A4D1B78FA43002757E9 /* MockTransportSession+assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+assets.h"; sourceTree = "<group>"; };
 		54AE5A4E1B78FA43002757E9 /* MockTransportSession+assets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+assets.m"; sourceTree = "<group>"; };
 		54AE5A4F1B78FA43002757E9 /* MockTransportSession+connections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+connections.h"; sourceTree = "<group>"; };
@@ -244,6 +260,10 @@
 				54CE5E701B7534C4007F3065 /* ZMUtilities.framework in Frameworks */,
 				54CE5E6E1B7534C4007F3065 /* ZMCSystem.framework in Frameworks */,
 				09CA4E1F1B9739FB0060548D /* ZMTransport.framework in Frameworks */,
+				549D89551DB612B500F4F417 /* PINCache.framework in Frameworks */,
+				549D89581DB612CC00F4F417 /* ZMCLinkPreview.framework in Frameworks */,
+				549D89521DB6108100F4F417 /* ZMCDataModel.framework in Frameworks */,
+				549D895B1DB612E800F4F417 /* Ono.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,6 +481,10 @@
 		54C902651B753419007162A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				549D895A1DB612E800F4F417 /* Ono.framework */,
+				549D89571DB612CC00F4F417 /* ZMCLinkPreview.framework */,
+				549D89541DB612B500F4F417 /* PINCache.framework */,
+				549D89511DB6108100F4F417 /* ZMCDataModel.framework */,
 				CED2BC911CECC63400E285B3 /* Cryptobox.framework */,
 				09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */,
 				09E393C41BAC3F7B00F3EA1B /* ZMProtos.framework */,
