@@ -18,6 +18,7 @@
 
 
 import Foundation
+import ZMCSystem
 
 class _CBox : PointerWrapper {}
 
@@ -88,12 +89,13 @@ public final class EncryptionContext : NSObject {
         self.path = path
         super.init()
         if result != CBOX_SUCCESS {
-            fatalError("Failed to open cryptobox: ERROR \(result.rawValue)")
+            fatal("Failed to open cryptobox: ERROR \(result.rawValue)")
         }
         self.fileDescriptor = open(self.path.path, 0)
         if self.fileDescriptor <= 0 {
-            fatalError("Can't obtain FD for folder \(self.path)")
+            fatal("Can't obtain FD for folder \(self.path)")
         }
+        zmLog.debug("Opened cryptobox at path: \(path)")
     }
     
     deinit {
@@ -103,6 +105,8 @@ public final class EncryptionContext : NSObject {
         close(self.fileDescriptor)
         // close cbox
         cbox_close(implementation.ptr)
+        zmLog.debug("Closed cryptobox at path: \(path)")
+
     }
     
 }
@@ -133,14 +137,17 @@ extension EncryptionContext {
     
     fileprivate func acquireDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
-            fatalError("Failed to lock \(self.path)")
+            fatal("Failed to lock \(self.path)")
         }
+        zmLog.debug("Acquired lock for cryptobox at path: \(self.path)")
+
     }
     
     fileprivate func releaseDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_UN) != 0 {
-            fatalError("Failed to unlock \(self.path)")
+            fatal("Failed to unlock \(self.path)")
         }
+        zmLog.debug("Released lock for cryptobox at path: \(self.path)")
     }
 }
 
