@@ -11,6 +11,9 @@
 		0928E2611BA0785F0057232E /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 		0928E36D1BA0908F0057232E /* Cryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* Cryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393C31BAC2E5600F3EA1B /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* Cryptobox.framework */; };
+		54060B7B1DB7719000AEA9BB /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; };
+		54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54060B7C1DB771B400AEA9BB /* Logs.swift */; };
+		54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5421C5F81D2C152C00048251 /* NSData+CBox.swift */; };
 		5471A6501D23D8E70092A9A9 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = F50302F11B8CFA230053E406 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5471A6591D24215B0092A9A9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6581D24215B0092A9A9 /* main.m */; };
@@ -51,6 +54,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		54060B7E1DB7760C00AEA9BB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5471A6721D24221B0092A9A9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -84,6 +97,8 @@
 		0928E3811BA17E300057232E /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		0928E3821BA17E300057232E /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		0928E3831BA17E300057232E /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
+		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
 		5471A6551D24215B0092A9A9 /* test-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5471A6581D24215B0092A9A9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -170,6 +185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54060B7B1DB7719000AEA9BB /* ZMCSystem.framework in Frameworks */,
 				0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */,
 				0928E2611BA0785F0057232E /* libsodium.a in Frameworks */,
 			);
@@ -235,6 +251,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		54060B791DB7714A00AEA9BB /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
 		5471A6561D24215B0092A9A9 /* test-host */ = {
 			isa = PBXGroup;
 			children = (
@@ -268,6 +292,7 @@
 				BA7EF96D1B7109B600204A8E /* CryptoboxTests */,
 				5471A6561D24215B0092A9A9 /* test-host */,
 				BA7EF95F1B7109B600204A8E /* Products */,
+				54060B791DB7714A00AEA9BB /* Framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -289,6 +314,7 @@
 				5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */,
 				5421C5F81D2C152C00048251 /* NSData+CBox.swift */,
 				5471A6731D242D740092A9A9 /* PointerWrapper.swift */,
+				54060B7C1DB771B400AEA9BB /* Logs.swift */,
 				54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */,
 				0928E36F1BA090A00057232E /* Supporting Files */,
 			);
@@ -449,6 +475,7 @@
 				5471A6521D24215B0092A9A9 /* Frameworks */,
 				5471A6531D24215B0092A9A9 /* Resources */,
 				5471A6721D24221B0092A9A9 /* Embed Frameworks */,
+				54060B7E1DB7760C00AEA9BB /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -592,6 +619,7 @@
 				54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */,
 				5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */,
 				54C69DDA1D216A6B0060FBEC /* EncryptionContext.swift in Sources */,
+				54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */,
 				5471A6781D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
