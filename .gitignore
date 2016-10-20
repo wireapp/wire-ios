@@ -29,3 +29,6 @@ Carthage
 ZMUtilities.framework.zip
 tests.xml
 xcode-summary.log
+code-coverage/*
+cobertura.xml
+
