@@ -44,8 +44,6 @@
 #import "ZMURLSessionSwitch.h"
 #import "Fakes.h"
 
-#import "XCTestCase+Images.h"
-
 /// the JSON Content-Type header
 static NSString *JSONContentType = @"application/json";
 

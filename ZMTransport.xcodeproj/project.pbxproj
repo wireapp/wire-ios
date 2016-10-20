@@ -28,7 +28,6 @@
 		09A218971B79EA780076547A /* ZMBackendEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A218961B79EA780076547A /* ZMBackendEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09A218A11B79F1050076547A /* ZMBackendEnvironmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A2189E1B79F0FB0076547A /* ZMBackendEnvironmentTests.m */; };
 		09CC4AC11B7CE44900201C63 /* ZMTaskIdentifierMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 09CC4AC01B7CE44900201C63 /* ZMTaskIdentifierMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09F0280E1B72311D00BADDB6 /* XCTestCase+Images.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F0280D1B72311D00BADDB6 /* XCTestCase+Images.m */; };
 		09F028C61B7252FC00BADDB6 /* Lorem Ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = 09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */; };
 		3E88BCB31B1F35DF00232589 /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* ZMTransport.framework */; };
 		542434AC1BEA5C2500D33ACB /* Hack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542434AB1BEA5C2500D33ACB /* Hack.swift */; };
@@ -241,8 +240,6 @@
 		09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ZMTransport-ios.xcconfig"; sourceTree = "<group>"; };
 		09F027D91B721EBE00BADDB6 /* ZMTransport-osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ZMTransport-osx.xcconfig"; sourceTree = "<group>"; };
 		09F027DA1B721EBE00BADDB6 /* ZMTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ZMTransport.xcconfig; sourceTree = "<group>"; };
-		09F0280C1B72311D00BADDB6 /* XCTestCase+Images.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+Images.h"; sourceTree = "<group>"; };
-		09F0280D1B72311D00BADDB6 /* XCTestCase+Images.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+Images.m"; sourceTree = "<group>"; };
 		09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Lorem Ipsum.txt"; sourceTree = "<group>"; };
 		3E88BCA71B1F35DF00232589 /* ZMTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZMTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BCB21B1F35DF00232589 /* ZMTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ZMTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -556,8 +553,6 @@
 				546E89D41B33015000DD1042 /* TransportEncoding */,
 				546E89D71B33015000DD1042 /* TransportSession */,
 				546E89DA1B33015000DD1042 /* URLSession */,
-				09F0280C1B72311D00BADDB6 /* XCTestCase+Images.h */,
-				09F0280D1B72311D00BADDB6 /* XCTestCase+Images.m */,
 				542434AB1BEA5C2500D33ACB /* Hack.swift */,
 				542434AA1BEA5C2400D33ACB /* ZMTransport-ios-tests-Bridging-Header.h */,
 				54EA3E6B1BEA65B80071592B /* Fakes.h */,
@@ -1168,7 +1163,6 @@
 				546E89E51B33015000DD1042 /* ZMTemporaryFileListForBackgroundRequestTests.m in Sources */,
 				546E89F31B33015000DD1042 /* ZMWebSocketTests.m in Sources */,
 				54B3BD391B7A2DCE004B8183 /* ZMEventIDTests.m in Sources */,
-				09F0280E1B72311D00BADDB6 /* XCTestCase+Images.m in Sources */,
 				546E89ED1B33015000DD1042 /* ZMPushChannelConnectionTests.m in Sources */,
 				091799901B7E32FF00E60DD9 /* ZMEventIDSetTests.m in Sources */,
 			);
@@ -1373,6 +1367,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120C1B751F7900223568 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEVELOPMENT_TEAM = "";
@@ -1395,6 +1390,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120C1B751F7900223568 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEVELOPMENT_TEAM = "";

@@ -19,9 +19,7 @@
 
 
 @import ZMTesting;
-
-
-#import <XCTest/XCTest.h>
+@import OCMock;
 #import "ZMTaskIdentifier.h"
 
 
