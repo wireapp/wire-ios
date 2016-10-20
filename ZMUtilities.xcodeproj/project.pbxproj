@@ -701,7 +701,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0800;
 				TargetAttributes = {
 					09F028CD1B78BE2700BADDB6 = {
 						CreatedOnToolsVersion = 6.4;
@@ -905,9 +905,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546E84FC1B73DCA300532F17 /* ios-test-host.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "ZMUtilities-tests-host/ZMUtilities-tests-host.entitlements";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "ZMUtilities-tests-host/Info.plist";
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -921,9 +921,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546E84FC1B73DCA300532F17 /* ios-test-host.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "ZMUtilities-tests-host/ZMUtilities-tests-host.entitlements";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "ZMUtilities-tests-host/Info.plist";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -937,8 +937,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546E85021B73DCA300532F17 /* project-debug.xcconfig */;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
@@ -949,9 +952,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546E85031B73DCA300532F17 /* project.xcconfig */;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
@@ -959,9 +966,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C1B0F91B31A1E400CB8CF3 /* ZMUtilities-ios.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 29;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SWIFT_VERSION = 3.0;
@@ -972,9 +980,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C1B0F91B31A1E400CB8CF3 /* ZMUtilities-ios.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 29;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SWIFT_VERSION = 3.0;
@@ -985,7 +994,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546E84FD1B73DCA300532F17 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				GCC_PREFIX_HEADER = "Tests/Source/ZMUtilities-Tests.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1000,7 +1009,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546E84FD1B73DCA300532F17 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				GCC_PREFIX_HEADER = "Tests/Source/ZMUtilities-Tests.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
