@@ -21,8 +21,6 @@
 @import XCTest;
 @import ZMTesting;
 
-#import "XCTestCase+Images.h"
-
 @interface ZMTransportResponseTests : ZMTBaseTest
 @end
 

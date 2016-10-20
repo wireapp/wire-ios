@@ -31,7 +31,6 @@
 
 #import "ZMTransportRequest+Internal.h"
 #import "ZMTransportRequest+AssetGet.h"
-#import "XCTestCase+Images.h"
 
 
 @interface ZMTransportRequestTests : ZMTBaseTest
