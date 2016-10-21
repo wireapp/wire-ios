@@ -68,11 +68,9 @@
     
     [conversation1.mutableOtherActiveParticipants addObject:user1];
     [conversation1.mutableOtherActiveParticipants addObject:user3];
-    [conversation1.mutableOtherInactiveParticipants addObject:user2];
     
     [conversation2.mutableOtherActiveParticipants addObject:user2];
     [conversation2.mutableOtherActiveParticipants addObject:user3];
-    [conversation2.mutableOtherInactiveParticipants addObject:user1];
     
     // Check that the inverse have been set:
     [self.uiMOC processPendingChanges];
@@ -92,18 +90,13 @@
     
     id s1 = [NSOrderedSet orderedSetWithArray:@[user1, user3]];
     XCTAssertEqualObjects(conversation1.otherActiveParticipants, s1);
-    XCTAssertEqualObjects(conversation1.otherInactiveParticipants, [NSOrderedSet orderedSetWithObject:user2]);
     id s2 = [NSOrderedSet orderedSetWithArray:@[user2, user3]];
     XCTAssertEqualObjects(conversation2.otherActiveParticipants, s2);
-    XCTAssertEqualObjects(conversation2.otherInactiveParticipants, [NSOrderedSet orderedSetWithObject:user1]);
     
     XCTAssertEqualObjects([user1 valueForKey:@"activeConversations"], [NSOrderedSet orderedSetWithObject:conversation1]);
-    XCTAssertEqualObjects([user1 valueForKey:@"inactiveConversations"], [NSOrderedSet orderedSetWithObject:conversation2]);
     XCTAssertEqualObjects([user2 valueForKey:@"activeConversations"], [NSOrderedSet orderedSetWithObject:conversation2]);
-    XCTAssertEqualObjects([user2 valueForKey:@"inactiveConversations"], [NSOrderedSet orderedSetWithObject:conversation1]);
     id ac = [NSOrderedSet orderedSetWithArray:@[conversation1, conversation2]];
     XCTAssertEqualObjects([user3 valueForKey:@"activeConversations"], ac);
-    XCTAssertEqualObjects([user3 valueForKey:@"inactiveConversations"], [NSOrderedSet new]);
 
     __block NSError *error = nil;
     XCTAssertTrue([self.uiMOC save:&error], @"Save failed: %@", error);

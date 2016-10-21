@@ -37,41 +37,41 @@
 
 @protocol UserClientType;
 
-extern NSString * const ZMMessageEventIDDataKey;
-extern NSString * const ZMMessageIsEncryptedKey;
-extern NSString * const ZMMessageIsPlainTextKey;
-extern NSString * const ZMMessageIsExpiredKey;
-extern NSString * const ZMMessageMissingRecipientsKey;
-extern NSString * const ZMMessageImageTypeKey;
-extern NSString * const ZMMessageIsAnimatedGifKey;
-extern NSString * const ZMMessageMediumRemoteIdentifierDataKey;
-extern NSString * const ZMMessageMediumRemoteIdentifierKey;
-extern NSString * const ZMMessageOriginalDataProcessedKey;
-extern NSString * const ZMMessageOriginalSizeDataKey;
-extern NSString * const ZMMessageOriginalSizeKey;
-extern NSString * const ZMMessageConversationKey;
-extern NSString * const ZMMessageEventIDKey;
-extern NSString * const ZMMessageExpirationDateKey;
-extern NSString * const ZMMessageNameKey;
-extern NSString * const ZMMessageNeedsToBeUpdatedFromBackendKey;
-extern NSString * const ZMMessageNonceDataKey;
-extern NSString * const ZMMessageSenderKey;
-extern NSString * const ZMMessageSystemMessageTypeKey;
-extern NSString * const ZMMessageTextKey;
-extern NSString * const ZMMessageUserIDsKey;
-extern NSString * const ZMMessageUsersKey;
-extern NSString * const ZMMessageClientsKey;
-extern NSString * const ZMMessageHiddenInConversationKey;
-extern NSString * const ZMMessageConfirmationKey;
+extern NSString * _Nonnull const ZMMessageEventIDDataKey;
+extern NSString * _Nonnull const ZMMessageIsEncryptedKey;
+extern NSString * _Nonnull const ZMMessageIsPlainTextKey;
+extern NSString * _Nonnull const ZMMessageIsExpiredKey;
+extern NSString * _Nonnull const ZMMessageMissingRecipientsKey;
+extern NSString * _Nonnull const ZMMessageImageTypeKey;
+extern NSString * _Nonnull const ZMMessageIsAnimatedGifKey;
+extern NSString * _Nonnull const ZMMessageMediumRemoteIdentifierDataKey;
+extern NSString * _Nonnull const ZMMessageMediumRemoteIdentifierKey;
+extern NSString * _Nonnull const ZMMessageOriginalDataProcessedKey;
+extern NSString * _Nonnull const ZMMessageOriginalSizeDataKey;
+extern NSString * _Nonnull const ZMMessageOriginalSizeKey;
+extern NSString * _Nonnull const ZMMessageConversationKey;
+extern NSString * _Nonnull const ZMMessageEventIDKey;
+extern NSString * _Nonnull const ZMMessageExpirationDateKey;
+extern NSString * _Nonnull const ZMMessageNameKey;
+extern NSString * _Nonnull const ZMMessageNeedsToBeUpdatedFromBackendKey;
+extern NSString * _Nonnull const ZMMessageNonceDataKey;
+extern NSString * _Nonnull const ZMMessageSenderKey;
+extern NSString * _Nonnull const ZMMessageSystemMessageTypeKey;
+extern NSString * _Nonnull const ZMMessageTextKey;
+extern NSString * _Nonnull const ZMMessageUserIDsKey;
+extern NSString * _Nonnull const ZMMessageUsersKey;
+extern NSString * _Nonnull const ZMMessageClientsKey;
+extern NSString * _Nonnull const ZMMessageHiddenInConversationKey;
+extern NSString * _Nonnull const ZMMessageConfirmationKey;
 
 @interface ZMMessage : ZMManagedObject
 
 
 // Use these for sorting:
-+ (NSArray *)defaultSortDescriptors;
-- (NSComparisonResult)compare:(ZMMessage *)other;
-- (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload;
-- (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys;
++ (NSArray * _Nonnull)defaultSortDescriptors;
+- (NSComparisonResult)compare:(ZMMessage * _Nonnull)other;
+- (NSUUID * _Nullable)nonceFromPostPayload:(NSDictionary * _Nonnull)payload;
+- (void)updateWithPostPayload:(NSDictionary * _Nonnull)payload updatedKeys:(__unused NSSet * _Nullable)updatedKeys;
 - (void)resend;
 - (BOOL)shouldGenerateUnreadCount;
 
@@ -80,24 +80,30 @@ extern NSString * const ZMMessageConfirmationKey;
 - (void)removeMessageClearingSender:(BOOL)clearingSender;
 
 /// Removes the message only for clients of the selfUser
-+ (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage
-                                      fromUser:(ZMUser *)user
-                        inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide * _Nonnull)hiddenMessage
+                                      fromUser:(ZMUser * _Nonnull)user
+                        inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 /// Removes the message for all participants of the message's conversation
 /// Clients that don't belong to the selfUser will see a system message indicating the deletion
-+ (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage
-                                 inConversation:(ZMConversation *)conversation
-                                       senderID:(NSUUID *)senderID
-                         inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete * _Nonnull)deletedMessage
+                                 inConversation:(ZMConversation * _Nonnull)conversation
+                                       senderID:(NSUUID * _Nonnull)senderID
+                         inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 
-+ (void)addReaction:(ZMReaction *)reaction senderID:(NSUUID *)senderID conversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (void)addReaction:(ZMReaction * _Nonnull)reaction
+           senderID:(NSUUID * _Nonnull)senderID
+       conversation:(ZMConversation * _Nonnull)conversation
+inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 /// Clears the content of a message for a ZMEditMessage
 /// Returns NO when the message was not found
 /// or if the sender of the ZMEditMessage is not the same as the sender of the original message
-+ (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (ZMMessage * _Nullable)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage * _Nonnull)genericEditMessage
+                                                 inConversation:(ZMConversation * _Nonnull)conversation
+                                                       senderID:(NSUUID * _Nonnull)senderID
+                                         inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 
 @end
@@ -106,7 +112,7 @@ extern NSString * const ZMMessageConfirmationKey;
 
 @interface ZMTextMessage : ZMMessage <ZMTextMessageData>
 
-@property (nonatomic, readonly, copy) NSString *text;
+@property (nonatomic, readonly, copy) NSString * _Nullable text;
 
 @end
 
@@ -116,14 +122,14 @@ extern NSString * const ZMMessageConfirmationKey;
 
 @property (nonatomic, readonly) BOOL mediumDataLoaded;
 @property (nonatomic, readonly) BOOL originalDataProcessed;
-@property (nonatomic, readonly) NSData *mediumData; ///< N.B.: Will go away from public header
-@property (nonatomic, readonly) NSData *imageData; ///< This will either returns the mediumData or the original image data. Usefull only for newly inserted messages.
-@property (nonatomic, readonly) NSString *imageDataIdentifier; /// This can be used as a cache key for @c -imageData
+@property (nonatomic, readonly) NSData * _Nullable mediumData; ///< N.B.: Will go away from public header
+@property (nonatomic, readonly) NSData * _Nullable imageData; ///< This will either returns the mediumData or the original image data. Usefull only for newly inserted messages.
+@property (nonatomic, readonly) NSString * _Nullable imageDataIdentifier; /// This can be used as a cache key for @c -imageData
 
-@property (nonatomic, readonly) NSData *previewData;
-@property (nonatomic, readonly) NSString *imagePreviewDataIdentifier; /// This can be used as a cache key for @c -previewData
+@property (nonatomic, readonly) NSData * _Nullable previewData;
+@property (nonatomic, readonly) NSString * _Nullable imagePreviewDataIdentifier; /// This can be used as a cache key for @c -previewData
 @property (nonatomic, readonly) BOOL isAnimatedGIF; // If it is GIF and has more than 1 frame
-@property (nonatomic, readonly) NSString *imageType; // UTI e.g. kUTTypeGIF
+@property (nonatomic, readonly) NSString * _Nullable imageType; // UTI e.g. kUTTypeGIF
 
 @property (nonatomic, readonly) CGSize originalSize;
 
@@ -140,15 +146,15 @@ extern NSString * const ZMMessageConfirmationKey;
 @interface ZMSystemMessage : ZMMessage <ZMSystemMessageData>
 
 @property (nonatomic) ZMSystemMessageType systemMessageType;
-@property (nonatomic) NSSet<ZMUser *> *users;
-@property (nonatomic) NSSet <id<UserClientType>>*clients;
-@property (nonatomic) NSSet<ZMUser *> *addedUsers; // Only filled for ZMSystemMessageTypePotentialGap
-@property (nonatomic) NSSet<ZMUser *> *removedUsers; // Only filled for ZMSystemMessageTypePotentialGap
-@property (nonatomic, copy) NSString *text;
+@property (nonatomic) NSSet<ZMUser *> * _Nonnull users;
+@property (nonatomic) NSSet <id<UserClientType>>* _Nonnull clients;
+@property (nonatomic) NSSet<ZMUser *> * _Nonnull addedUsers; // Only filled for ZMSystemMessageTypePotentialGap
+@property (nonatomic) NSSet<ZMUser *> * _Nonnull removedUsers; // Only filled for ZMSystemMessageTypePotentialGap
+@property (nonatomic, copy) NSString * _Nullable text;
 @property (nonatomic) BOOL needsUpdatingUsers;
 
-+ (ZMSystemMessage *)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation *)conversation;
-+ (ZMSystemMessage *)fetchStartedUsingOnThisDeviceMessageForConversation:(ZMConversation *)conversation;
++ (ZMSystemMessage * _Nullable)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation * _Nonnull)conversation;
++ (ZMSystemMessage * _Nullable)fetchStartedUsingOnThisDeviceMessageForConversation:(ZMConversation * _Nonnull)conversation;
 - (void)updateNeedsUpdatingUsersIfNeeded;
 
 @end
@@ -157,18 +163,18 @@ extern NSString * const ZMMessageConfirmationKey;
 
 @interface ZMMessage ()
 
-@property (nonatomic) NSString *senderClientID;
-@property (nonatomic) ZMEventID *eventID;
-@property (nonatomic) NSUUID *nonce;
-@property (nonatomic, readonly) NSDate *destructionDate;
+@property (nonatomic) NSString * _Nullable senderClientID;
+@property (nonatomic) ZMEventID * _Nullable eventID;
+@property (nonatomic) NSUUID * _Null_unspecified nonce;
+@property (nonatomic, readonly) NSDate * _Nullable destructionDate;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
 @property (nonatomic, readonly) BOOL isExpired;
-@property (nonatomic, readonly) NSDate *expirationDate;
+@property (nonatomic, readonly) NSDate * _Nullable expirationDate;
 @property (nonatomic, readonly) BOOL isObfuscated;
 
-@property (nonatomic) NSSet <Reaction *> *reactions;
-@property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> *confirmations;
+@property (nonatomic) NSSet <Reaction *> * _Nonnull reactions;
+@property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> * _Nonnull confirmations;
 
 - (void)setExpirationDate;
 - (void)removeExpirationDate;
@@ -179,55 +185,55 @@ extern NSString * const ZMMessageConfirmationKey;
 
 
 /// Inserts and returns a ZMConfirmation message into the conversation that is sent back to the sender
-- (ZMClientMessage *)confirmReception;
+- (ZMClientMessage * __nullable)confirmReception;
 
 
-+ (instancetype)fetchMessageWithNonce:(NSUUID *)nonce
-                      forConversation:(ZMConversation *)conversation
-               inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (instancetype _Nullable)fetchMessageWithNonce:(NSUUID * _Nullable)nonce
+                      forConversation:(ZMConversation * _Nonnull)conversation
+               inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
-+ (instancetype)fetchMessageWithNonce:(NSUUID *)nonce
-                      forConversation:(ZMConversation *)conversation
-               inManagedObjectContext:(NSManagedObjectContext *)moc
-                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
++ (instancetype _Nullable)fetchMessageWithNonce:(NSUUID * _Nonnull)nonce
+                      forConversation:(ZMConversation * _Nonnull)conversation
+               inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc
+                       prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
-- (NSString *)shortDebugDescription;
+- (NSString * _Nonnull)shortDebugDescription;
 
-- (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(NSSet *)updatedKeys;
+- (void)updateWithPostPayload:(NSDictionary * _Nonnull)payload updatedKeys:(NSSet * _Nonnull)updatedKeys;
 + (BOOL)doesEventTypeGenerateMessage:(ZMUpdateEventType)type;
 
 /// Returns a predicate that matches messages that might expire if they are not sent in time
-+ (NSPredicate *)predicateForMessagesThatWillExpire;
++ (NSPredicate * _Nonnull)predicateForMessagesThatWillExpire;
 
 /// Adds the event ID of the update event to the list of downloaded event IDs in the conversation
-+ (void)addEventToDownloadedEvents:(ZMUpdateEvent *)event inConversation:(ZMConversation *)conversation;
++ (void)addEventToDownloadedEvents:(ZMUpdateEvent * _Nonnull)event inConversation:(ZMConversation * _Nonnull)conversation;
 
 + (void)setDefaultExpirationTime:(NSTimeInterval)defaultExpiration;
 + (NSTimeInterval)defaultExpirationTime;
 + (void)resetDefaultExpirationTime;
 
-+ (ZMConversation *)conversationForUpdateEvent:(ZMUpdateEvent *)event inContext:(NSManagedObjectContext *)moc prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
++ (ZMConversation * _Nullable)conversationForUpdateEvent:(ZMUpdateEvent * _Nonnull)event inContext:(NSManagedObjectContext * _Nonnull)moc prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
 /// Returns the message represented in this update event
 /// @param prefetchResult Contains a mapping from message nonce to message and `remoteIdentifier` to `ZMConversation`,
 /// which should be used to avoid premature fetchRequests. If the class needs messages or conversations to be prefetched
 /// and passed into this method it should conform to `ZMObjectStrategy` and return them in
 /// `-messageNoncesToPrefetchToProcessEvents:` or `-conversationRemoteIdentifiersToPrefetchToProcessEvents`
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                              inManagedObjectContext:(NSManagedObjectContext *)moc
-                                      prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
++ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent
+                              inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc
+                                      prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
-- (void)updateWithUpdateEvent:(ZMUpdateEvent *)updateEvent forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
+- (void)updateWithUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent forConversation:(ZMConversation * _Nonnull)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
 - (void)removePendingDeliveryReceipts;
 
-- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID eventID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
+- (void)updateWithTimestamp:(NSDate * _Nonnull)serverTimestamp senderUUID:(NSUUID * _Nonnull)senderUUID eventID:(ZMEventID * _Nullable)eventID forConversation:(ZMConversation * _Nonnull)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
 /// Returns whether the data represents animated GIF
-+ (BOOL)isDataAnimatedGIF:(NSData *)data;
++ (BOOL)isDataAnimatedGIF:(NSData * _Nonnull)data;
 
 /// Predicate to select messages that are part of a conversation
-+ (NSPredicate *)predicateForMessageInConversation:(ZMConversation *)conversation withNonces:(NSSet <NSUUID *>*)nonces;
++ (NSPredicate * _Nonnull)predicateForMessageInConversation:(ZMConversation * _Nonnull)conversation withNonces:(NSSet <NSUUID *>*  _Nonnull)nonces;
 
 @end
 
@@ -235,29 +241,29 @@ extern NSString * const ZMMessageConfirmationKey;
 
 @interface ZMTextMessage (Internal)
 
-@property (nonatomic, copy) NSString *text;
+@property (nonatomic, copy) NSString * _Nullable text;
 
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                               decodedGenericMessage:(ZMGenericMessage *)genericMessage
-                              inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent
+                               decodedGenericMessage:(ZMGenericMessage * _Nonnull)genericMessage
+                              inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 @end
 
 
 
-extern NSString * const ZMImageMessagePreviewNeedsToBeUploadedKey;
-extern NSString * const ZMImageMessageMediumNeedsToBeUploadedKey;
-extern NSString * const ZMMessageServerTimestampKey;
+extern NSString *  _Nonnull const ZMImageMessagePreviewNeedsToBeUploadedKey;
+extern NSString *  _Nonnull const ZMImageMessageMediumNeedsToBeUploadedKey;
+extern NSString *  _Nonnull const ZMMessageServerTimestampKey;
 
 @interface ZMImageMessage (Internal) <ZMImageOwner>
 
 @property (nonatomic) BOOL mediumDataLoaded;
 @property (nonatomic) BOOL originalDataProcessed;
-@property (nonatomic) NSUUID *mediumRemoteIdentifier;
-@property (nonatomic) NSData *mediumData;
-@property (nonatomic) NSData *previewData;
+@property (nonatomic) NSUUID * _Nullable mediumRemoteIdentifier;
+@property (nonatomic) NSData * _Nullable mediumData;
+@property (nonatomic) NSData * _Nullable  previewData;
 @property (nonatomic) CGSize originalSize;
-@property (nonatomic) NSData *originalImageData;
+@property (nonatomic) NSData * _Nullable originalImageData;
 
 
 @end
@@ -272,8 +278,8 @@ extern NSString * const ZMMessageServerTimestampKey;
 @interface ZMSystemMessage (Internal)
 
 + (BOOL)doesEventTypeGenerateSystemMessage:(ZMUpdateEventType)type;
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent inManagedObjectContext:(NSManagedObjectContext *)moc;
-+ (NSPredicate *)predicateForSystemMessagesInsertedLocally;
++ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
++ (NSPredicate * _Nonnull)predicateForSystemMessagesInsertedLocally;
 
 @end
 
@@ -296,7 +302,7 @@ extern NSString * const ZMMessageServerTimestampKey;
 
 /// When we restart, we might still have messages that had a timer, but whose timer did not fire before killing the app
 /// To delete those messages immediately use this method on startup (e.g. in the init of the ZMClientMessageTranscoder) to fetch and delete those messages
-+ (void)deleteOldEphemeralMessages:(NSManagedObjectContext *)context;
++ (void)deleteOldEphemeralMessages:(NSManagedObjectContext * _Nonnull)context;
 
 @end
 

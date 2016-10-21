@@ -364,7 +364,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
     
 
-    func testThatItRestartsTheTimerWhenTimerHadStartedAndDestructionDateIsInFuture(){
+    func testThatItRestartsTheTimerWhenTimerHadStartedAndDestructionDateIsInFuture() {
         // given
         let message = insertEphemeralMessage()
         
@@ -386,7 +386,7 @@ extension ZMClientMessageTests_Ephemeral {
         XCTAssertTrue(deletionTimer.isTimerRunning(for: message))
     }
 
-    func testThatItDeletesMessagesFromOtherUserWhenTimerHadStartedAndDestructionDateIsInPast(){
+    func testThatItDeletesMessagesFromOtherUserWhenTimerHadStartedAndDestructionDateIsInPast() {
         // given
         let message = insertEphemeralMessage()
         
@@ -411,7 +411,40 @@ extension ZMClientMessageTests_Ephemeral {
         XCTAssertNil(message.sender)
         XCTAssertEqual(message.hiddenInConversation, conversation)
     }
-    
+
+    func testThatItObfuscatesMessagesSentFromSelfWhenTimerHadStartedAndDestructionDateIsInPast() {
+        // given
+        var message: ZMClientMessage!
+
+        syncMOC.performGroupedBlock { 
+            self.syncConversation.messageDestructionTimeout = 0.5
+            message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            message.markAsSent()
+            XCTAssertNotNil(message.destructionDate)
+        }
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Stop app (timer stops)
+        deletionTimer.stop(for: message)
+
+        // wait for destruction date to be passed
+        spinMainQueue(withTimeout: 1.0)
+
+            // restart app
+        ZMMessage.deleteOldEphemeralMessages(uiMOC)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        syncMOC.performGroupedBlock { 
+            XCTAssertTrue(message.isObfuscated)
+            XCTAssertNotNil(message.sender)
+            XCTAssertNil(message.hiddenInConversation)
+            XCTAssertEqual(message.visibleInConversation, self.syncConversation)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
     func testThatItDoesNotDeleteMessagesFromOtherUserWhenTimerHad_Not_Started(){
         // given
         let message = insertEphemeralMessage()
@@ -447,11 +480,11 @@ extension ZMClientMessageTests_Ephemeral {
         return isObfuscated;
     }
     
-    func testThatItObfuscatesTheMessageWhenTheTimerWasStarted(){
-        XCTAssertTrue(obfuscatedMessagesByTheSelfUser(timerHadStarted: true))
+    func testThatItDoesNotObfuscateTheMessageWhenTheTimerWasStartedAndIsSentBySelf() {
+        XCTAssertFalse(obfuscatedMessagesByTheSelfUser(timerHadStarted: true))
     }
     
-    func testThatItDoesNotObfuscateTheMessageWhenTheTimerWas_Not_Started(){
+    func testThatItDoesNotObfuscateTheMessageWhenTheTimerWas_Not_Started() {
         XCTAssertFalse(obfuscatedMessagesByTheSelfUser(timerHadStarted: false))
     }
     

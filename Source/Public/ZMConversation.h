@@ -68,15 +68,11 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 
 @property (nonatomic, copy, nullable) NSString *userDefinedName;
 @property (nonatomic, readonly, nonnull) NSString *displayName;
-@property (nonatomic, readonly, nonnull) NSAttributedString *attributedDisplayName; ///< Uses @c ZMIsDimmedKey for parts that should be dimmed.
 
 @property (readonly, nonatomic) ZMConversationType conversationType;
 @property (readonly, nonatomic, nonnull) NSDate *lastModifiedDate;
 @property (readonly, nonatomic, nonnull) NSOrderedSet *messages;
 @property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *activeParticipants;
-@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *inactiveParticipants;
-// The union of inactive and active participants.
-@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *allParticipants;
 @property (readonly, nonatomic, nonnull) ZMUser *creator;
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;

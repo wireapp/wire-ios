@@ -531,7 +531,7 @@ extension UserClient {
             if !conversation.isReadOnly {
                 let clientsInConversation = clients.filter({ (client) -> Bool in
                     guard let user = client.user else { return false }
-                    return conversation.allParticipants.contains(user)
+                    return conversation.activeParticipants.contains(user)
                 })
                 securityChangeType.changeSecurityLevel(conversation, clients: Set(clientsInConversation), causedBy: causedBy)
             }
