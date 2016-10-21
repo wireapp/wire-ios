@@ -1126,17 +1126,18 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 {
     NSFetchRequest *request = [self fetchRequestForEphemeralMessagesThatNeedToBeDeleted];
     NSArray *messages = [context executeFetchRequestOrAssert:request];
+
     for (ZMMessage *message in messages) {
-        if (message.sender.isSelfUser) {
-            // message needs to be obfuscated
-            [message obfuscate];
+        NSTimeInterval timeToDeletion = [message.destructionDate timeIntervalSinceNow];
+        if (timeToDeletion > 0) {
+            // The timer has not run out yet, we want to start a timer with the remaining time
+            [message restartDeletionTimer:timeToDeletion];
         } else {
-            NSTimeInterval timeToDeletion = [message.destructionDate timeIntervalSinceNow];
-            if (timeToDeletion > 0) {
-                // The timer has not run out yet, we want to start a timer with the remaining time
-                [message restartDeletionTimer:timeToDeletion];
+            // The timer has run out, we want to delete the message or obfuscate if we are the sender
+            if (message.sender.isSelfUser) {
+                // message needs to be obfuscated
+                [message obfuscate];
             } else {
-                // The timer has run out, we want to delete the message
                 [message deleteEphemeral];
             }
         }
