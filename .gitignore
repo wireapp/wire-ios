@@ -64,3 +64,13 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
+
+## Test Output
+xcode-analyze.log
+xcode-build.log
+xcode-summary.log
+xcode-test.log
+tests.xml
+cobertura.xml
+code-coverage/*
+build.log
