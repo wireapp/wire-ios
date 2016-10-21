@@ -128,7 +128,6 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
             [self internalAddParticipant:user isAuthoritative:YES];
         }
         else {
-            [self.mutableOtherInactiveParticipants addObject:user];
             [self.mutableOtherActiveParticipants removeObject:user];
             [self.mutableLastServerSyncedActiveParticipants removeObject:user];
         }

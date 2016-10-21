@@ -112,7 +112,7 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(uiMOC.saveOrRollback())
         
-        guard let confirmation = message.confirmations?.first else {
+        guard let confirmation = message.confirmations.first else {
             XCTFail()
             return
         }

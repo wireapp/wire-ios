@@ -108,7 +108,7 @@ extension ZMGenericMessage {
         if sendOnlyToOtherUser {
             var sender : ZMUser? = nil
             if self.hasConfirmation(), self.confirmation.messageId != nil {
-                if let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.messageId), for:conversation, in:conversation.managedObjectContext){
+                if let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.messageId), for:conversation, in:conversation.managedObjectContext!){
                     sender = message.sender
                 }
             }
