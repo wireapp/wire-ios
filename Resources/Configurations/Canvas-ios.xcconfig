@@ -1,0 +1,2 @@
+#include "Canvas.xcconfig"
+#include "wire-ios-xcconfig/ios.xcconfig"
