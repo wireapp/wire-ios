@@ -70,7 +70,7 @@
 - (void)sendMessage:(ZMSASLMessage *)message;
 {
     asl_object_t msg = NULL;
-    int level = MAX(ASL_LEVEL_NOTICE, (int) message.level); // if it's not at least ASL_LEVEL_NOTICE it won't show up in console
+    int level = MIN(ASL_LEVEL_NOTICE, (int) message.level); // if it's not at least ASL_LEVEL_NOTICE it won't show up in console
     asl_log(_backingClient, msg, level, "%s", message.messageText.UTF8String);
 }
 
