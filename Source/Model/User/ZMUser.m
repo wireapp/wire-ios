@@ -58,7 +58,6 @@ static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
 static NSString *const ConnectionKey = @"connection";
 static NSString *const EmailAddressKey = @"emailAddress";
 static NSString *const PhoneNumberKey = @"phoneNumber";
-static NSString *const InactiveConversationsKey = @"inactiveConversations";
 static NSString *const LastServerSyncedActiveConversationsKey = @"lastServerSyncedActiveConversations";
 static NSString *const LocalMediumRemoteIdentifierDataKey = @"localMediumRemoteIdentifier_data";
 static NSString *const LocalMediumRemoteIdentifierKey = @"localMediumRemoteIdentifier";
@@ -358,7 +357,6 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
 @implementation ZMUser (Internal)
 
 @dynamic activeConversations;
-@dynamic inactiveConversations;
 @dynamic normalizedName;
 @dynamic connection;
 @dynamic showingUserAdded;
@@ -387,7 +385,6 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
                                            ActiveCallConversationsKey,
                                            ConnectionKey,
                                            ConversationsCreatedKey,
-                                           InactiveConversationsKey,
                                            LastServerSyncedActiveConversationsKey,
                                            LocalMediumRemoteIdentifierDataKey,
                                            LocalSmallProfileRemoteIdentifierDataKey,

@@ -60,7 +60,7 @@ open class GeneralConversationChangeInfo : ObjectChangeInfo {
     }
     
     fileprivate var keysForConversationChangeInfo : Set<String> {
-        return Set(arrayLiteral: "messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "isSilenced", "otherActiveParticipants", "isSelfAnActiveMember", "displayName", "attributedDisplayName", "relatedConnectionState", "estimatedUnreadCount", "clearedTimeStamp", "securityLevel")
+        return Set(arrayLiteral: "messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "isSilenced", "otherActiveParticipants", "isSelfAnActiveMember", "displayName", "relatedConnectionState", "estimatedUnreadCount", "clearedTimeStamp", "securityLevel")
     }
     
     fileprivate var keysForCallParticipantsChangeInfo : Set <String> {
