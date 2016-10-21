@@ -46,11 +46,6 @@
 
 @implementation ZMConversation (Additions)
 
-- (NSUInteger)participantsCount
-{
-    return self.activeParticipants.count + self.inactiveParticipants.count;
-}
-
 - (ZMConversation *)addParticipants:(NSSet *)participants
 {
     if (! participants || participants.count == 0) {

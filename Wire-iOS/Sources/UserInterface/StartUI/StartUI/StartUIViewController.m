@@ -664,7 +664,7 @@ static NSUInteger const StartUIInitiallyShowsKeyboardConversationThreshold = 10;
             [self presentProfileViewControllerForUser:user atIndexPath:indexPath];
         }
         else {
-            if (conversation.participantsCount != 2) { // double tap condition
+            if (conversation.conversationType == ZMConversationTypeGroup) { // double tap condition
                 if ([self.delegate respondsToSelector:@selector(startUI:didSelectConversation:)]) {
                     [self.delegate startUI:self didSelectConversation:modelObject];
                 }
