@@ -147,9 +147,6 @@
 
     // then
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
-    XCTAssertEqual(conversation.inactiveParticipants.count, 0u);
-    XCTAssertNotNil(conversation.inactiveParticipants);
-
 }
 
 
@@ -169,8 +166,6 @@
     
     // then
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
-    XCTAssertEqual(conversation.inactiveParticipants.count, 0u);
-    XCTAssertNotNil(conversation.inactiveParticipants);
 }
 
 
@@ -182,8 +177,6 @@
     
     // then
     XCTAssertEqual(conversation.activeParticipants.count, 1u);
-    XCTAssertEqual(conversation.inactiveParticipants.count, 0u);
-    XCTAssertNotNil(conversation.inactiveParticipants);
 }
 
 
@@ -435,7 +428,6 @@
     XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSet]));
     
     XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user1, user2, nil]));
-    XCTAssertEqualObjects(conversation.otherInactiveParticipants, ([NSMutableOrderedSet orderedSetWithObject:user3]));
     
     XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedActiveParticipantsKey]);
     XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedInactiveParticipantsKey]);
@@ -522,7 +514,6 @@
     XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSet]));
     
     XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user1, user2, user3, nil]));
-    XCTAssertEqualObjects(conversation.otherInactiveParticipants, ([NSMutableOrderedSet orderedSet]));
     
     
     XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedActiveParticipantsKey]);
@@ -543,9 +534,7 @@
     
     // then
     NSOrderedSet *expectedActiveParticipants = [NSOrderedSet orderedSetWithObjects:user1, user2, nil];
-    NSOrderedSet *expectedInactiveParticipants = [NSOrderedSet orderedSet];
     XCTAssertEqualObjects(expectedActiveParticipants, conversation.otherActiveParticipants);
-    XCTAssertEqualObjects(expectedInactiveParticipants, conversation.otherInactiveParticipants);
 }
 
 - (void)testThatItCanRemoveTheSelfUser
@@ -755,9 +744,7 @@
     
     // then
     NSOrderedSet *expectedActiveParticipants = [NSOrderedSet orderedSetWithObjects:user1, user3, nil];
-    NSOrderedSet *expectedInactiveParticipants = [NSOrderedSet orderedSetWithObjects:user2,  nil];
     XCTAssertEqualObjects(expectedActiveParticipants, conversation.otherActiveParticipants);
-    XCTAssertEqualObjects(expectedInactiveParticipants, conversation.otherInactiveParticipants);
 }
 
 - (void)testThatItDoesNothingForUnknownParticipants
@@ -779,38 +766,8 @@
     
     // then
     NSOrderedSet *expectedActiveParticipants = [NSOrderedSet orderedSetWithObjects:user1, user2, user3, nil];
-    NSOrderedSet *expectedInactiveParticipants = [NSOrderedSet orderedSet];
     XCTAssertEqualObjects(expectedActiveParticipants, conversation.otherActiveParticipants);
-    XCTAssertEqualObjects(expectedInactiveParticipants, conversation.otherInactiveParticipants);
 }
-
-- (void)testThatItRemovesAParticipantFromInactiveParticipantsWhenAddingAgain
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *user1 = [self createUser];
-    ZMUser *user2 = [self createUser];
-    ZMUser *user3 = [self createUser];
-    
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
-    [conversation addParticipant:user3];
-    
-    [conversation removeParticipant:user2];
-    [conversation removeParticipant:user3];
-    
-    
-    // when
-    [conversation addParticipant:user2];
-    
-    // then
-    NSOrderedSet *expectedActiveParticipants = [NSOrderedSet orderedSetWithObjects:user1, user2, nil];
-    NSOrderedSet *expectedInactiveParticipants = [NSOrderedSet orderedSetWithObjects:user3, nil];
-    XCTAssertEqualObjects(expectedActiveParticipants, conversation.otherActiveParticipants);
-    XCTAssertEqualObjects(expectedInactiveParticipants, conversation.otherInactiveParticipants);
-}
-
 
 - (void)testThatWhenRemovingAParticipantItIsAddedToTheListOfUnsyncedInactiveParticipants
 {
@@ -968,39 +925,6 @@
     XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedInactiveParticipantsKey]);
 }
 
-
-- (void)testThatAllParticipantsReturnsTheUnionOfActiveParticipantsAndInactiveParticipans
-{
-    // given
-    ZMUser *unusedUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    conversation.creator = unusedUser;
-    [conversation.mutableOtherActiveParticipants
-     addObjectsFromArray:@[
-                           [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC],
-                           [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC],
-                           [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC]
-                           ]
-     ];
-    [conversation.mutableOtherInactiveParticipants addObjectsFromArray: @[
-                                                                     [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC]
-                                                                     ]
-     ];
-    [self.uiMOC saveOrRollback];
-    
-    NSMutableSet *expected = [NSMutableSet set];
-    [expected addObjectsFromArray:[conversation.otherInactiveParticipants array]];
-    [expected addObjectsFromArray:[conversation.otherActiveParticipants array]];
-    [expected addObject:[ZMUser selfUserInContext:self.uiMOC]];
-    
-    // when
-    NSOrderedSet *allParticipants = conversation.allParticipants;
-    
-    // then
-    XCTAssertEqualObjects([allParticipants set], expected);
-}
-
 - (void)testThatItCanSet_unsyncedInactiveParticipants_withoutThrowingAnException
 {
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -1116,40 +1040,6 @@
     
     // then
     XCTAssertFalse([conversation.otherActiveParticipants containsObject:selfUser]);
-}
-
-
-- (void)testThatInctiveParticipantsContainsSelf
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    
-    // when
-    conversation.isSelfAnActiveMember = NO;
-    
-    // then
-    XCTAssertTrue([conversation.inactiveParticipants containsObject:selfUser]);
-    
-    // when
-    conversation.isSelfAnActiveMember = YES;
-    
-    // then
-    XCTAssertFalse([conversation.inactiveParticipants containsObject:selfUser]);
-}
-
-- (void)testThatOtherInactiveParticipantsDoesNotContainSelf
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    
-    // when
-    conversation.isSelfAnActiveMember = NO;
-    
-    // then
-    XCTAssertFalse([conversation.otherInactiveParticipants containsObject:selfUser]);
 }
 
 

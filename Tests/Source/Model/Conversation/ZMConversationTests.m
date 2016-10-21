@@ -1544,66 +1544,6 @@
 }
 
 
-- (void)testThatTheAttributedDisplayNameBasedOnUserNamesIncludesInactive
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user4 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.name = @"User 1bar";
-    user2.name = @"User 2bar";
-    user3.name = @"User 3bar";
-    user4.name = @"User 4bar";
-    [conversation.mutableOtherActiveParticipants addObjectsFromArray:@[user1, user2]];
-    [conversation.mutableOtherInactiveParticipants addObjectsFromArray:@[user3, user4]];
-    [self.uiMOC saveOrRollback];
-    NSString *expected = @"User 1, User 2, User 3, User 4";
-    
-    // when
-    conversation.userDefinedName = nil;
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2, user3, user4]];
-    
-    // then
-    XCTAssertEqualObjects(conversation.attributedDisplayName.string, expected);
-}
-
-- (void)testThatItSetsZMIsDimmedAttributeOnInactiveUsers
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.userDefinedName = nil;
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user4 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.name = @"User 1";
-    user2.name = @"User 2";
-    user3.name = @"User 3";
-    user4.name = @"User 4";
-    [conversation.mutableOtherActiveParticipants addObjectsFromArray:@[user1, user2]];
-    [conversation.mutableOtherInactiveParticipants addObjectsFromArray:@[user3, user4]];
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2, user3, user4]];
-    
-    // expected
-    NSString *expected = @"User 1, User 2, User 3, User 4";
-    NSRange attributedRange = [expected rangeOfString:@"User 3, User 4"];
-    NSRange normalRange = [expected rangeOfString:@"User 1, User 2, "];
-    
-    // when
-    NSAttributedString *displayName = conversation.attributedDisplayName;
-    
-    //then
-    NSDictionary *attributesActive = [displayName attributesAtIndex:0 effectiveRange:&normalRange];
-    NSDictionary *attributesInactive = [displayName attributesAtIndex:attributedRange.location effectiveRange:&attributedRange];
-
-    XCTAssertFalse([attributesActive[ZMIsDimmedKey] boolValue]);
-    XCTAssertTrue([attributesInactive[ZMIsDimmedKey] boolValue]);
-}
-
 - (void)testThatTheDisplayNameIsTheOtherUser;
 {
     // given
@@ -1630,30 +1570,6 @@
     
     // then
     XCTAssertEqualObjects(conversation.displayName, @"…");
-}
-
-- (void)testThatTheDisplayNameOnlyContainsTheActiveUsers;
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    conversation.userDefinedName = nil;
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user4 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.name = @"User 1foo";
-    user2.name = @"User 2foo";
-    user3.name = @"User 3foo";
-    user4.name = @"User 4foo";
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2, user3, user4]];
-    
-    // when
-    [conversation.mutableOtherActiveParticipants addObjectsFromArray:@[user1, user2]];
-    [conversation.mutableOtherInactiveParticipants addObjectsFromArray:@[user3, user4]];
-    
-    // then
-    XCTAssertEqualObjects(conversation.displayName, @"User 1, User 2");
 }
 
 - (void)testThatTheDisplayNameIsTheOtherUsersNameForAConnectionRequest;
@@ -2205,68 +2121,6 @@
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
-
-
-- (void)testThatItRecalculatesInactiveParticipantsWhenIsSelfActiveUserKeyChanges
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    conversation.isSelfAnActiveMember = YES;
-    
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
-    
-    XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherInactiveParticipants.count, 0u);
-    XCTAssertEqual(conversation.inactiveParticipants.count, 0u);
-    
-    // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"inactiveParticipants" expectedValue:nil];
-    
-    // when
-    conversation.isSelfAnActiveMember = NO;
-    
-    // then
-    XCTAssertFalse(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherInactiveParticipants.count, 0u);
-    XCTAssertEqual(conversation.inactiveParticipants.count, 1u);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-}
-
-- (void)testThatItRecalculatesInactiveParticipantsWhenOtherActiveParticipantsChanges
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    conversation.isSelfAnActiveMember = YES;
-    
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
-    
-    XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherInactiveParticipants.count, 0u);
-    XCTAssertEqual(conversation.inactiveParticipants.count, 0u);
-    
-    // expect
-    [self keyValueObservingExpectationForObject:conversation keyPath:@"inactiveParticipants" expectedValue:nil];
-    
-    // when
-    [conversation removeParticipant:user1];
-    
-    // then
-    XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherInactiveParticipants.count, 1u);
-    XCTAssertEqual(conversation.inactiveParticipants.count, 1u);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-}
-
 
 - (void)testThatItResetsModificationsToActiveParticipants
 {

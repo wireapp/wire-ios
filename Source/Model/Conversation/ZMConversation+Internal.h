@@ -243,9 +243,7 @@ NS_ASSUME_NONNULL_END
 
 @property (nonatomic) BOOL isSelfAnActiveMember; ///< whether the self user is an active member (as opposed to a past member)
 @property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *otherActiveParticipants;
-@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *otherInactiveParticipants;
 @property (readonly, nonatomic, nonnull) NSMutableOrderedSet<ZMUser *> *mutableOtherActiveParticipants;
-@property (readonly, nonatomic, nonnull) NSMutableOrderedSet<ZMUser *> *mutableOtherInactiveParticipants;
 
 /// Removes user from unsyncedInactiveParticipants
 - (void)synchronizeRemovedUser:(nonnull ZMUser *)user;

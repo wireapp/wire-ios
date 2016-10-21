@@ -174,9 +174,7 @@
         
         ZMUser *user3 = [ZMUser userWithRemoteID:user3UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user3);
-        
-        XCTAssertEqualObjects(conversation.otherInactiveParticipants, ([NSOrderedSet orderedSetWithObjects:user3, nil]) );
-        
+                
         XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
         XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
         

@@ -34,7 +34,6 @@ extern NSString * __nonnull const SessionObjectIDKey;
 @property (nullable, nonatomic) ZMConnection *connection;
 
 @property (nonnull, nonatomic) NSOrderedSet *activeConversations;
-@property (nonnull, nonatomic) NSOrderedSet *inactiveConversations;
 
 @property (nonnull, nonatomic) NSOrderedSet *showingUserAdded;
 @property (nonnull, nonatomic) NSOrderedSet *showingUserRemoved;
