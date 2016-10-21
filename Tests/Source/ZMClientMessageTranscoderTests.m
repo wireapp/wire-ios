@@ -1181,7 +1181,6 @@
     XCTAssertTrue([self.sut shouldCreateRequestToSyncObject:confirmationMessage forKeys:[NSSet set] withSync:self]);
 }
 
-
 - (void)testThatItDoesNotSyncAConfirmationMessageIfCannotInferUser;
 {
     [self createSelfClient];
@@ -1200,14 +1199,13 @@
     XCTAssertFalse([self.sut shouldCreateRequestToSyncObject:confirmationMessage forKeys:[NSSet set] withSync:self]);
 }
 
-
-
 @end
+
 
 
 @implementation ZMClientMessageTranscoderTests (Ephemeral)
 
-- (void)testThatItObfuscatesEphemeralMessagesOnStart_SenderSelfUser
+- (void)testThatItDoesNotObfuscatesEphemeralMessagesOnStart_SenderSelfUser_TimeNotPassed
 {
     // given
     ZMConversation *conversation = [self setupOneOnOneConversation];
@@ -1228,7 +1226,7 @@
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
 
     // then
-    XCTAssertTrue(message.isObfuscated);
+    XCTAssertFalse(message.isObfuscated);
     
     // teardown
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -1236,6 +1234,46 @@
     }];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
     
+    [self.uiMOC performGroupedBlockAndWait:^{
+        [self.uiMOC zm_teardownMessageDeletionTimer];
+    }];
+    XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
+}
+
+- (void)testThatItObfuscatesEphemeralMessagesOnStart_SenderSelfUser_TimePassed
+{
+    // given
+    ZMConversation *conversation = [self setupOneOnOneConversation];
+    conversation.messageDestructionTimeout = 1;
+    ZMMessage *message = (id)[conversation appendMessageWithText:@"foo"];
+    [message markAsSent];
+    XCTAssertTrue(message.isEphemeral);
+    XCTAssertFalse(message.isObfuscated);
+    XCTAssertNotNil(message.sender);
+    XCTAssertNotNil(message.destructionDate);
+    [self.syncMOC saveOrRollback];
+
+    // when
+    [self.sut tearDown];
+    XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
+
+    [self setupSUT];
+    XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
+
+    [self spinMainQueueWithTimeout:1.5];
+
+    // then
+    [self.uiMOC refreshAllObjects];
+    XCTAssertTrue(message.isObfuscated);
+    XCTAssertNotEqual(message.hiddenInConversation, conversation);
+    XCTAssertEqual(message.visibleInConversation, conversation);
+
+    // teardown
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC zm_teardownMessageObfuscationTimer];
+    }];
+    XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
+
     [self.uiMOC performGroupedBlockAndWait:^{
         [self.uiMOC zm_teardownMessageDeletionTimer];
     }];
