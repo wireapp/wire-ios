@@ -27,6 +27,8 @@
 		5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6731D242D740092A9A9 /* PointerWrapper.swift */; };
 		5471A6781D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */; };
 		54A1573F1D23C00500EB3B4F /* EncryptionContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */; };
+		54B224811DBE89FD00FDB35E /* EncryptionSession+Debugging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B224801DBE89FD00FDB35E /* EncryptionSession+Debugging.swift */; };
+		54B224831DBE92E200FDB35E /* EncryptionDebugTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B224821DBE92E200FDB35E /* EncryptionDebugTests.swift */; };
 		54B949921D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */; };
 		54B949941D2541350041CC55 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B949931D2541350041CC55 /* TestHelper.swift */; };
 		54C69DDA1D216A6B0060FBEC /* EncryptionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */; };
@@ -114,6 +116,8 @@
 		5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EncryptionSessionsDirectory.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		54A1573D1D23C00500EB3B4F /* CryptoboxTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CryptoboxTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContextTests.swift; sourceTree = "<group>"; };
+		54B224801DBE89FD00FDB35E /* EncryptionSession+Debugging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EncryptionSession+Debugging.swift"; sourceTree = "<group>"; };
+		54B224821DBE92E200FDB35E /* EncryptionDebugTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionDebugTests.swift; sourceTree = "<group>"; };
 		54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EncryptionSessionsDirectoryTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		54B949931D2541350041CC55 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContext.swift; sourceTree = "<group>"; };
@@ -312,6 +316,7 @@
 				0928E36C1BA0908F0057232E /* Cryptobox.h */,
 				54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */,
 				5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */,
+				54B224801DBE89FD00FDB35E /* EncryptionSession+Debugging.swift */,
 				5421C5F81D2C152C00048251 /* NSData+CBox.swift */,
 				5471A6731D242D740092A9A9 /* PointerWrapper.swift */,
 				54060B7C1DB771B400AEA9BB /* Logs.swift */,
@@ -326,6 +331,7 @@
 			children = (
 				BA7EF96E1B7109B600204A8E /* Supporting Files */,
 				54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */,
+				54B224821DBE92E200FDB35E /* EncryptionDebugTests.swift */,
 				54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */,
 				BF7F0DCA1D782D1C0007FD1A /* ObjCInteroperabilityMatcher.h */,
 				BF7F0DCB1D782D1C0007FD1A /* ObjCInteroperabilityMatcher.m */,
@@ -618,6 +624,7 @@
 				5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */,
 				54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */,
 				5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */,
+				54B224811DBE89FD00FDB35E /* EncryptionSession+Debugging.swift in Sources */,
 				54C69DDA1D216A6B0060FBEC /* EncryptionContext.swift in Sources */,
 				54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */,
 				5471A6781D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift in Sources */,
@@ -642,6 +649,7 @@
 				54A1573F1D23C00500EB3B4F /* EncryptionContextTests.swift in Sources */,
 				BF7F0DCC1D782D1C0007FD1A /* ObjCInteroperabilityMatcher.m in Sources */,
 				54B949941D2541350041CC55 /* TestHelper.swift in Sources */,
+				54B224831DBE92E200FDB35E /* EncryptionDebugTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

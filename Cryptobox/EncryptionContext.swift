@@ -70,7 +70,7 @@ public final class EncryptionContext : NSObject {
     let implementation = _CBox()
     
     /// File directory with the implementation files
-    fileprivate let path : URL
+    let path : URL
     
     /// The latest created and still open session directory
     /// will be set to `nil` after calling `doneUsingSessions`
@@ -141,7 +141,6 @@ extension EncryptionContext {
             fatal("Failed to lock \(self.path)")
         }
         zmLog.debug("Acquired lock for cryptobox at path: \(self.path)")
-
     }
     
     fileprivate func releaseDirectoryLock() {
