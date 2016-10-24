@@ -135,15 +135,16 @@ extension EncryptionSessionsDirectory {
                                           &cbsession.ptr)
         }
         zmLog.debug("Create session from prekey \(base64PreKeyString) for client: \(clientId)")
-
         
         guard result == CBOX_SUCCESS else {
             throw CryptoboxError(rawValue: result.rawValue)!
         }
         let session = EncryptionSession(id: clientId,
                                         session: cbsession,
-                                        requiresSave: true)
+                                        requiresSave: true,
+                                        cryptoboxPath: self.generatingContext!.path)
         self.pendingSessionsCache[clientId] = session
+        session.dumpSessionContent()
     }
     
     /// Creates a session to a client using a prekey message from that client
@@ -163,7 +164,7 @@ extension EncryptionSessionsDirectory {
                                            &cbsession.ptr,
                                            &plainTextBacking)
         }
-        zmLog.debug("Create session from prekey message for client: \(clientId)")
+        zmLog.debug("Create session for client \(clientId) from prekey message: \(prekeyMessage.base64Dump)")
         
         guard result == CBOX_SUCCESS else {
             throw CryptoboxError(rawValue: result.rawValue)!
@@ -171,8 +172,10 @@ extension EncryptionSessionsDirectory {
         let plainText = Data.moveFromCBoxVector(plainTextBacking)!
         let session = EncryptionSession(id: clientId,
                                         session: cbsession,
-                                        requiresSave: true)
+                                        requiresSave: true,
+                                        cryptoboxPath: self.generatingContext!.path)
         self.pendingSessionsCache[clientId] = session
+        session.dumpSessionContent()
         return plainText
     }
     
@@ -286,9 +289,11 @@ extension EncryptionSessionsDirectory {
         case CBOX_SUCCESS:
             let session = EncryptionSession(id: clientId,
                                             session: cbsession,
-                                            requiresSave: false)
+                                            requiresSave: false,
+                                            cryptoboxPath: self.generatingContext!.path)
             self.pendingSessionsCache[clientId] = session
             zmLog.debug("Loaded session for client \(clientId)")
+            session.dumpSessionContent()
             return session
         default:
             fatalError("Error in loading from cbox: \(result)")
@@ -340,7 +345,7 @@ extension EncryptionSessionsDirectory {
 /// other easy way to enforce (other than asserting) that we don't use a session to encrypt/decrypt
 /// after it has been closed, and there is no easy way to ensure that sessions are always closed.
 /// By hiding the implementation inside this file, only code in this file has the chance to screw up!
-private class EncryptionSession {
+class EncryptionSession {
     
     /// Whether this session has changes that require saving
     var hasChanges : Bool
@@ -354,17 +359,22 @@ private class EncryptionSession {
     /// The fingerpint of the client
     let remoteFingerprint: Data
     
+    /// Path of the containing cryptobox (used for debugging)
+    let cryptoboxPath : URL
+    
     /// Creates a session from a C-level session pointer
     /// - parameter id: id of the client
     /// - parameter requiresSave: if true, mark this session as having pending changes to save
     init(id: String,
          session: _CBoxSession,
-         requiresSave: Bool
+         requiresSave: Bool,
+         cryptoboxPath: URL
         ) {
         self.id = id
         self.implementation = session
         self.remoteFingerprint = session.remoteFingerprint
         self.hasChanges = requiresSave
+        self.cryptoboxPath = cryptoboxPath
     }
     
     /// Closes the session in CBox
@@ -380,6 +390,7 @@ private class EncryptionSession {
             let result = cbox_session_save(cryptobox.ptr, self.implementation.ptr)
             switch(result) {
             case CBOX_SUCCESS:
+                self.dumpSessionContent()
                 return
             default:
                 fatal("Can't save session: error \(result)")
@@ -430,7 +441,7 @@ extension EncryptionSession {
     fileprivate func decrypt(_ cypher: Data) throws -> Data {
         var vectorBacking : OpaquePointer? = nil
 
-        zmLog.debug("Decrypting with session \(self.id)")
+        zmLog.debug("Decrypting with session \(self.id): \(cypher.base64Dump)")
         let result = cypher.withUnsafeBytes { (cypherPointer: UnsafePointer<UInt8>) -> CBoxResult in
             cbox_decrypt(self.implementation.ptr,
                          cypherPointer,
@@ -462,7 +473,9 @@ extension EncryptionSession {
             throw CryptoboxError(rawValue: result.rawValue)!
         }
         self.hasChanges = true
-        return Data.moveFromCBoxVector(vectorBacking)!
+        let data = Data.moveFromCBoxVector(vectorBacking)!
+        zmLog.debug("Encrypted with session \(self.id) to cypher text:\(data.base64Dump)")
+        return data
     }
 }
 
