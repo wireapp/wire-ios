@@ -456,7 +456,12 @@
 
 - (void)testThatItDoesNotSetAnySourcesToPushWhenTheThresholdUUIDIsSetToNil
 {
-    NSArray <ZMUpdateEvent *> *events = [ZMUpdateEvent eventsArrayFromPushChannelData:self.payloadFixture pushStartingAt:nil];
+    // when
+    NSArray <ZMUpdateEvent *> *events = [ZMUpdateEvent eventsArrayFromPushChannelData:self.pushChannelDataFixture pushStartingAt:nil];
+
+    // then
+    XCTAssertEqual(events.count, 1lu);
+
     for (ZMUpdateEvent *event in events) {
         XCTAssertEqual(event.source, ZMUpdateEventSourceWebSocket);
     }
