@@ -79,7 +79,8 @@ public final class EncryptionContext : NSObject {
     /// Folder file descriptor
     fileprivate var fileDescriptor : CInt!
     
-    
+    /// Keeps track of how many times we enter a `perform` block,
+    /// to allow re-entry
     fileprivate var performCount : UInt = 0
     
     /// Opens cryptobox from a given folder
