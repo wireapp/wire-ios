@@ -454,6 +454,40 @@
     }
 }
 
+- (void)testThatItDoesNotSetAnySourcesToPushWhenTheThresholdUUIDIsSetToNil
+{
+    NSArray <ZMUpdateEvent *> *events = [ZMUpdateEvent eventsArrayFromPushChannelData:self.payloadFixture pushStartingAt:nil];
+    for (ZMUpdateEvent *event in events) {
+        XCTAssertEqual(event.source, ZMUpdateEventSourceWebSocket);
+    }
+}
+
+- (void)testThatItSetsTheSourceToPushForUUIDsEqualOrGreaterThanTheThresholdUUID
+{
+    // Given
+    NSUUID *threshold = [NSUUID uuidWithTransportString:@"864fa306-99d1-11e6-bfff-22000a79a0f0"];
+    NSUUID *older = [NSUUID uuidWithTransportString:@"6f83dad4-99d1-11e6-bfff-22000a79a0f0"];
+    NSUUID *greater = [NSUUID uuidWithTransportString:@"937dc35a-99d1-11e6-bfff-22000a79a0f0"];
+    XCTAssertEqual([threshold compareWithType1UUID:older], NSOrderedDescending);
+    XCTAssertEqual([threshold compareWithType1UUID:greater], NSOrderedAscending);
+
+    NSArray <NSUUID *> *identifiers = @[older, threshold, greater];
+    for (NSUUID *identifier in identifiers) {
+        XCTAssertTrue(identifier.isType1UUID);
+    }
+
+    id <ZMTransportData> payload = [identifiers mapWithBlock:^id<ZMTransportData>(NSUUID *uuid){
+        return [self payloadFixtureWithID:uuid];
+    }];
+
+    // When
+    NSArray <ZMUpdateEvent *> *events = [ZMUpdateEvent eventsArrayFromPushChannelData:payload pushStartingAt:threshold];
+    for (ZMUpdateEvent *event in events) {
+        // Then
+        XCTAssertEqual(event.source, [event.uuid isEqual:older] ? ZMUpdateEventSourceWebSocket : ZMUpdateEventSourcePushNotification);
+    }
+}
+
 #pragma mark - Helper
 
 - (id <ZMTransportData>)payloadFixture
@@ -478,8 +512,13 @@
 
 - (id <ZMTransportData>)pushChannelDataFixture
 {
+    return [self pushChannelDataFixtureWithId:nil];
+}
+
+- (id <ZMTransportData>)pushChannelDataFixtureWithId:(NSUUID *)identifier
+{
     return @{
-             @"id" : @"0d30d26f-3b5e-4b7b-8f9a-efa2e5f9ca7a",
+             @"id" : identifier ?: @"0d30d26f-3b5e-4b7b-8f9a-efa2e5f9ca7a",
              @"payload" : @[
                      @{
                          @"type" : @"user.update",
