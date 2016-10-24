@@ -10,15 +10,16 @@ notifications:
   email:
     on_success: never
     on_failure: always
-
-install:
-  - bundle install
-  - carthage bootstrap --platform iOS
-
+    
 branches:
   only:
     - develop
     - master
+
+install:
+  - bundle install
+  - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
+  - carthage bootstrap --platform iOS
 
 script:
   - set -o pipefail
