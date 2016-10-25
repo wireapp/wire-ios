@@ -454,6 +454,53 @@
     }
 }
 
+- (void)testThatItDoesNotSetAnySourcesToPushWhenTheThresholdUUIDIsSetToNil
+{
+    // when
+    NSArray <ZMUpdateEvent *> *events = [ZMUpdateEvent eventsArrayFromPushChannelData:self.pushChannelDataFixture pushStartingAt:nil];
+
+    // then
+    XCTAssertEqual(events.count, 1lu);
+
+    for (ZMUpdateEvent *event in events) {
+        XCTAssertEqual(event.source, ZMUpdateEventSourceWebSocket);
+    }
+}
+
+- (void)testThatItSetsTheSourceToPushForUUIDsEqualOrGreaterThanTheThresholdUUID
+{
+    // Given
+    NSUUID *threshold = [NSUUID uuidWithTransportString:@"864FA306-99D1-11E6-Bfff-22000A79A0F0"];
+    NSUUID *older = [NSUUID uuidWithTransportString:@"6f83DAd4-99D1-11E6-BFFF-22000A79A0f0"];
+    NSUUID *newer = [NSUUID uuidWithTransportString:@"937DC35A-99D1-11E6-BFFF-22000A79A0F0"];
+
+    XCTAssertEqual([threshold compareWithType1UUID:older], NSOrderedDescending);
+    XCTAssertEqual([threshold compareWithType1UUID:newer], NSOrderedAscending);
+
+    NSArray <NSUUID *> *identifiers = @[older, threshold, newer];
+    for (NSUUID *identifier in identifiers) {
+        XCTAssertTrue(identifier.isType1UUID);
+    }
+
+    // When
+    NSArray <ZMUpdateEvent *> *oldestEvents = [ZMUpdateEvent eventsArrayFromPushChannelData:[self pushChannelDataFixtureWithId:older] pushStartingAt:threshold];
+    NSArray <ZMUpdateEvent *> *currentEvents = [ZMUpdateEvent eventsArrayFromPushChannelData:[self pushChannelDataFixtureWithId:threshold] pushStartingAt:threshold];
+    NSArray <ZMUpdateEvent *> *newerEvents = [ZMUpdateEvent eventsArrayFromPushChannelData:[self pushChannelDataFixtureWithId:newer] pushStartingAt:threshold];
+
+    // Then
+    XCTAssertNotNil(oldestEvents);
+    XCTAssertNotNil(currentEvents);
+    XCTAssertNotNil(newerEvents);
+
+    XCTAssertEqual(oldestEvents.count, 1lu);
+    XCTAssertEqual(currentEvents.count, 1lu);
+    XCTAssertEqual(newerEvents.count, 1lu);
+
+    XCTAssertEqual(oldestEvents.firstObject.source, ZMUpdateEventSourceWebSocket);
+    XCTAssertEqual(currentEvents.firstObject.source, ZMUpdateEventSourcePushNotification);
+    XCTAssertEqual(newerEvents.firstObject.source, ZMUpdateEventSourcePushNotification);
+}
+
 #pragma mark - Helper
 
 - (id <ZMTransportData>)payloadFixture
@@ -478,8 +525,13 @@
 
 - (id <ZMTransportData>)pushChannelDataFixture
 {
+    return [self pushChannelDataFixtureWithId:nil];
+}
+
+- (id <ZMTransportData>)pushChannelDataFixtureWithId:(NSUUID *)identifier
+{
     return @{
-             @"id" : @"0d30d26f-3b5e-4b7b-8f9a-efa2e5f9ca7a",
+             @"id" : identifier.transportString ?: @"0d30d26f-3b5e-4b7b-8f9a-efa2e5f9ca7a",
              @"payload" : @[
                      @{
                          @"type" : @"user.update",
