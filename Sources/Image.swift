@@ -18,12 +18,13 @@
 
 import Foundation
 
-class Image : Draggable {
+class Image : Editable {
     
     let image : UIImage
     var scale : CGFloat
     var rotation: CGFloat
     var position: CGPoint
+    var selected: Bool
     
     var size: CGSize {
         get {
@@ -42,12 +43,25 @@ class Image : Draggable {
         self.scale = 1
         self.rotation = 0
         self.position = position
+        self.selected = false
     }
     
     func draw(context : CGContext) {
         context.saveGState()
         context.concatenate(transform)
         image.draw(at: CGPoint.zero)
+        context.restoreGState()
+        
+        if selected {
+            drawSelection(context: context)
+        }
+    }
+    
+    func drawSelection(context : CGContext) {
+        context.saveGState()
+        context.setStrokeColor(UIColor.red.withAlphaComponent(0.7).cgColor)
+        context.setLineDash(phase: 0, lengths: [10, 4])
+        context.stroke(bounds)
         context.restoreGState()
     }
     
