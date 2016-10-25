@@ -107,6 +107,11 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
 @property (nonatomic, readonly, nullable) NSString *debugInformation;
 
 + (nullable NSArray<ZMUpdateEvent *> *)eventsArrayFromPushChannelData:(nonnull id<ZMTransportData>)transportData;
+
+/// Returns an array of @c ZMUpdateEvent from the given push channel data, the source will be set to @c
+/// ZMUpdateEventSourceWebSocket, if a non-nil @c NSUUID is given for the @c pushStartingAt parameter, all
+/// events earlier or equal to this uuid will have a source of @c ZMUpdateEventSourcePushNotification
++ (nullable NSArray *)eventsArrayFromPushChannelData:(nonnull id<ZMTransportData>)transportData pushStartingAt:(nullable NSUUID *)threshold;
 + (nullable NSArray<ZMUpdateEvent *> *)eventsArrayFromTransportData:(nonnull id<ZMTransportData>)transportData source:(ZMUpdateEventSource)source;
 
 /// Creates an update event

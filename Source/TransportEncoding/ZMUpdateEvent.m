@@ -23,6 +23,9 @@
 #import "NSString+UUID.h"
 #import <ZMTransport/ZMTransport-Swift.h>
 
+@import ZMUtilities;
+
+
 @interface NSDictionary (HashExtension)
 
 - (NSUInteger)zm_hash;
@@ -77,7 +80,7 @@
     return self;
 }
 
-+ (NSArray *)eventsArrayWithUUID:(NSUUID *)uuid payloadArray:(NSArray *)payloadArray transient:(BOOL)transient source:(ZMUpdateEventSource)source
++ (NSArray *)eventsArrayWithUUID:(NSUUID *)uuid payloadArray:(NSArray *)payloadArray transient:(BOOL)transient source:(ZMUpdateEventSource)source pushStartingAt:(NSUUID *)sourceThreshold
 {
     if (payloadArray == nil) {
         ZMLogError(@"Push event payload is invalid");
@@ -86,7 +89,12 @@
     
     NSMutableArray *events = [NSMutableArray array];
     for(NSDictionary *payload in [payloadArray asDictionaries]) {
-        ZMUpdateEvent *event = [[self alloc] initWithUUID:uuid payload:payload transient:transient decrypted:NO source:source];
+        ZMUpdateEventSource actualSource = source;
+
+        if (nil != sourceThreshold && [sourceThreshold compareWithType1UUID:uuid] != NSOrderedDescending) {
+            actualSource = ZMUpdateEventSourcePushNotification;
+        }
+        ZMUpdateEvent *event = [[self alloc] initWithUUID:uuid payload:payload transient:transient decrypted:NO source:actualSource];
         if (event != nil) {
             [events addObject:event];
         }
@@ -100,7 +108,17 @@
     return [self eventsArrayFromTransportData:transportData source:ZMUpdateEventSourceWebSocket];
 }
 
++ (NSArray *)eventsArrayFromPushChannelData:(id<ZMTransportData>)transportData pushStartingAt:(NSUUID *)threshold
+{
+    return [self eventsArrayFromTransportData:transportData source:ZMUpdateEventSourceWebSocket pushStartingAt:threshold];
+}
+
 + (NSArray *)eventsArrayFromTransportData:(id<ZMTransportData>)transportData source:(ZMUpdateEventSource)source
+{
+    return [self eventsArrayFromTransportData:transportData source:source pushStartingAt:nil];
+}
+
++ (NSArray *)eventsArrayFromTransportData:(id<ZMTransportData>)transportData source:(ZMUpdateEventSource)source pushStartingAt:(NSUUID *)threshold
 {
     NSDictionary *dictionary = [transportData asDictionary];
     
@@ -117,7 +135,7 @@
         return nil;
     }
     
-    return [self eventsArrayWithUUID:uuid payloadArray:payloadArray transient:transient source:source];
+    return [self eventsArrayWithUUID:uuid payloadArray:payloadArray transient:transient source:source pushStartingAt:threshold];
 }
 
 + (nullable instancetype)eventFromEventStreamPayload:(id<ZMTransportData>)payload uuid:(NSUUID *)uuid
