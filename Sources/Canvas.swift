@@ -234,7 +234,7 @@ public class Canvas: UIView {
             
             if let referenceObject = referenceObject {
 
-                let drawBounds = self.drawBounds.integral
+                let drawBounds = self.drawBounds
                 let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
                 let renderSize = drawBounds.size.applying(CGAffineTransform(scaleX: renderScale, y: renderScale))
                 
