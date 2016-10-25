@@ -34,15 +34,15 @@ import Foundation
     fileprivate var recordedRequests : [IdentifierDate] = []
     
     /// After this time, requests are purged from the list
-    static let decayTimer : TimeInterval = 60*5 // 10 minutes
+    static let decayTimer : TimeInterval = 60 // 1 minute
     
     /// Repeatition warning trigger threshold
     /// If a request is repeated more than this number of times,
     /// it will trigger a warning
-    static let repetitionTriggerThreshold = 20
+    static let repetitionTriggerThreshold = 10
     
     /// Hard limit of URLs to keep in the history
-    static let historyLimit = 2000
+    static let historyLimit = 60
     
     /// Trigger that will be invoked when a loop is detected
     /// The URL passed is the URL that created the loop
