@@ -91,7 +91,8 @@
     for(NSDictionary *payload in [payloadArray asDictionaries]) {
         ZMUpdateEventSource actualSource = source;
 
-        if (nil != sourceThreshold && [sourceThreshold compareWithType1UUID:uuid] != NSOrderedDescending) {
+        BOOL type1 = sourceThreshold.isType1UUID && uuid.isType1UUID;
+        if (type1 && nil != sourceThreshold && [sourceThreshold compareWithType1UUID:uuid] != NSOrderedDescending) {
             actualSource = ZMUpdateEventSourcePushNotification;
         }
         ZMUpdateEvent *event = [[self alloc] initWithUUID:uuid payload:payload transient:transient decrypted:NO source:actualSource];
