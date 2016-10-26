@@ -49,7 +49,7 @@ import Foundation
     }
     
     /// Wait for all log operations to be completed
-    public func sync() {
+    public static func sync() {
         logQueue.sync {
             // no op
         }
