@@ -52,9 +52,6 @@ typedef NS_ENUM(int8_t, ZMLogLevel_t) {
  
  **/
 
-/// This is a callback that is invoked every time there is a log error
-extern void (^ZMLoggingDebuggingHook)(const char *tag, char const * const filename, int linenumber, NSString *output);
-
 #define ZMLogError(format, ...) ZMLogWithLevel(ZMLogLevelError, format, ##__VA_ARGS__)
 #define ZMLogWarn(format, ...) ZMLogWithLevel(ZMLogLevelWarn, format, ##__VA_ARGS__)
 #define ZMLogInfo(format, ...) ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMLogTag, format, ##__VA_ARGS__)
