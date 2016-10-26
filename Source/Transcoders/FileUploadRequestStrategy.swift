@@ -138,8 +138,8 @@ private let reponseHeaderAssetIdKey = "Location"
     
     public func updateInsertedObject(_ managedObject: ZMManagedObject,request upstreamRequest: ZMUpstreamRequest,response: ZMTransportResponse)
     {
-        guard let message = managedObject as? ZMAssetClientMessage else { return }
-        message.update(withPostPayload: response.payload?.asDictionary(), updatedKeys: Set())
+        guard let message = managedObject as? ZMAssetClientMessage, let payload = response.payload?.asDictionary() else { return }
+        message.update(withPostPayload: payload, updatedKeys: Set())
         if let delegate = self.clientRegistrationStatus {
             _ = message.parseUploadResponse(response, clientDeletionDelegate: delegate)
         }
