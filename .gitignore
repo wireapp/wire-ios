@@ -33,3 +33,4 @@ xcode-*.log
 tests.xml
 cobertura.xml
 code-coverage/*
+xcode-summary.log

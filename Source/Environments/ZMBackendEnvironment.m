@@ -23,7 +23,7 @@
 #import "ZMBackendEnvironment+Testing.h"
 #import "ZMTLogging.h"
 
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 NSString * const ZMBackendEnvironmentTypeKey = @"ZMBackendEnvironmentType";
 
