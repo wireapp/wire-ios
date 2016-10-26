@@ -36,6 +36,7 @@ protocol Renderable : class {
 protocol Editable : Renderable {
     
     var selected : Bool { get set }
+    var selectable : Bool { get }
     var transform : CGAffineTransform { get }
     var size : CGSize  { get }
     var scale : CGFloat { get set }
@@ -57,10 +58,18 @@ struct Orientation {
     }
 }
 
+public protocol CanvasDelegate {
+    
+    func canvasDidChange(_ canvas : Canvas)
+    
+}
+
 public class Canvas: UIView {
     
     fileprivate let minimumScale : CGFloat = 0.5
     fileprivate let maximumScale : CGFloat = 3.0
+    
+    public var delegate : CanvasDelegate? = nil
     
     /// Defines the apperance of the brush strokes when drawing
     public var brush = Brush(size: 2, color: .black)
@@ -68,7 +77,9 @@ public class Canvas: UIView {
     /// Active mode of the canvas. See `EditingMode` for possible values.
     public var mode : EditingMode = .draw {
         didSet {
+            selection = nil
             gestureRecognizers?.forEach({ $0.isEnabled = mode == .edit })
+            setNeedsDisplay()
         }
     }
     
@@ -80,8 +91,10 @@ public class Canvas: UIView {
                 let retinaImage = UIImage(cgImage: cgImage, scale: 2, orientation: referenceImage.imageOrientation)
                 let image = Image(image: retinaImage, at: CGPoint.zero)
                 image.sizeToFit(inRect: bounds)
+                image.selectable = false
                 scene = [image]
                 referenceObject = image
+                delegate?.canvasDidChange(self)
                 setNeedsDisplay()
             }
         }
@@ -89,7 +102,7 @@ public class Canvas: UIView {
     
     /// hasChanges is true if the canvas has changes which can be un done. See undo()
     public var hasChanges : Bool {
-        return scene.count > 0
+        return sceneExcludingReferenceObject.count > 0
     }
     
     private var scene : [Renderable] = []
@@ -97,6 +110,10 @@ public class Canvas: UIView {
     private var stroke : Stroke?
     private var referenceObject : Image?
     private var flattenIndex : Int = 0
+    
+    fileprivate var sceneExcludingReferenceObject : [Renderable] {
+        return scene.filter({ $0 !== referenceObject })
+    }
     
     fileprivate var selection : Editable? {
         didSet {
@@ -144,16 +161,18 @@ public class Canvas: UIView {
         scene.append(image)
         selection = image
         setNeedsDisplay()
+        delegate?.canvasDidChange(self)
     }
     
     func insert(brush: Brush, at position: CGPoint) -> Stroke {
         let stroke = Stroke(at: position, brush: brush)
         scene.append(stroke)
+        delegate?.canvasDidChange(self)
         return stroke
     }
     
     public func undo() {
-        guard !scene.isEmpty else { return }
+        guard !sceneExcludingReferenceObject.isEmpty else { return }
         
         if flattenIndex == scene.count {
             bufferImage = nil
@@ -162,6 +181,7 @@ public class Canvas: UIView {
         
         scene.removeLast()
         setNeedsDisplay()
+        delegate?.canvasDidChange(self)
     }
     
     @discardableResult fileprivate func selectObject(at position: CGPoint) -> Editable? {
@@ -188,7 +208,7 @@ public class Canvas: UIView {
     
     private func pickObject(at position: CGPoint) -> Editable? {
         let editables = scene.flatMap({ $0 as? Editable })
-        return editables.reversed().first(where: { $0.bounds.contains(position) })
+        return editables.reversed().first(where: { $0.selectable && $0.bounds.contains(position) })
     }
     
     private func flatten() {
