@@ -28,7 +28,7 @@
 
 NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited = NSIntegerMax;
 /// C.f. <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes>
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 
 
 

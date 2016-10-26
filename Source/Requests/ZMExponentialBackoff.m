@@ -22,7 +22,7 @@
 
 @import ZMCSystem;
 
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 
 
 

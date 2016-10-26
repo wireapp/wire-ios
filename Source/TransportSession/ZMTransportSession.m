@@ -45,7 +45,7 @@
 #import "ZMTaskIdentifier.h"
 
 
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 
 NSString * const ZMTransportSessionReachabilityChangedNotificationName = @"ZMTransportSessionReachabilityChanged";

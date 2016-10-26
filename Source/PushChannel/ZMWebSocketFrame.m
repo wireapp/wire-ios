@@ -21,7 +21,7 @@
 #import "ZMDataBuffer.h"
 #import "ZMTLogging.h"
 
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL_LOW_LEVEL;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL_LOW_LEVEL;
 
 NSString * const ZMWebSocketFrameErrorDomain = @"ZMWebSocketFrame";
 

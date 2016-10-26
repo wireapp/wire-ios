@@ -28,7 +28,7 @@
 #import "ZMTLogging.h"
 
 
-static char* const ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
+static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 
 

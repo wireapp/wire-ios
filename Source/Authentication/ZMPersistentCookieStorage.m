@@ -27,7 +27,7 @@
 #import "ZMKeychain.h"
 
 static NSString * const AccountName = @"User";
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 static BOOL KeychainDisabled = NO;
 static NSMutableDictionary *NonPersistedPassword;
 static NSHTTPCookieAcceptPolicy cookiesPolicy = NSHTTPCookieAcceptPolicyAlways;

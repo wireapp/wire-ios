@@ -24,7 +24,7 @@
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 
 @interface ZMReachability ()

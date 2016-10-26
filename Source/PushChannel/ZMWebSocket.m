@@ -29,7 +29,7 @@
 #import "ZMTLogging.h"
 
 
-static char* const ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
+static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 @interface ZMWebSocket ()
 {
