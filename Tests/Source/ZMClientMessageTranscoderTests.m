@@ -402,6 +402,7 @@
         ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"foo" nonce:[NSUUID createUUID].transportString expiresAfter:nil];
         
         ZMClientMessage *message = [conversation appendClientMessageWithData:genericMessage.data];
+        message.isEncrypted = YES;
         XCTAssertTrue([self.syncMOC saveOrRollback]);
         
         // when

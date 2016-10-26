@@ -58,7 +58,7 @@
     [super setUp];
     self.mockLocalNotificationDispatcher = [[FakeLocalNotificationDispatcher alloc] init];
     
-    self.sut = [[ZMMessageExpirationTimer alloc] initWithManagedObjectContext:self.uiMOC entityName:[ZMTextMessage entityName] localNotificationDispatcher:self.mockLocalNotificationDispatcher];
+    self.sut = [[ZMMessageExpirationTimer alloc] initWithManagedObjectContext:self.uiMOC entityName:[ZMClientMessage entityName] localNotificationDispatcher:self.mockLocalNotificationDispatcher];
 }
 
 - (void)tearDown
@@ -69,15 +69,16 @@
     [super tearDown];
 }
 
-- (ZMTextMessage *)setupTextMessageWithExpirationTime:(NSTimeInterval)expirationTime
+- (ZMClientMessage *)setupMessageWithExpirationTime:(NSTimeInterval)expirationTime
 {
-    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    message.isEncrypted = YES;
     [ZMMessage setDefaultExpirationTime:expirationTime];
-    [textMessage setExpirationDate];
-    XCTAssertFalse(textMessage.isExpired);
+    [message setExpirationDate];
+    XCTAssertFalse(message.isExpired);
     XCTAssert([self.uiMOC saveOrRollback]);
     [ZMMessage resetDefaultExpirationTime];
-    return textMessage;
+    return message;
 }
 
 
@@ -102,7 +103,7 @@
 - (void)testThatItExpiresAMessageImmediately
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:-2];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:-2];
     
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
@@ -114,7 +115,7 @@
 - (void)testThatItExpiresAMessageWhenItsTimeRunsOut
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.1];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.1];
 
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
@@ -128,7 +129,7 @@
 - (void)testThatItNotifiesTheLocalNotificaitonDispatcherWhenItsTimeRunsOut
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.2];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.2];
     
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
@@ -141,11 +142,11 @@
 }
 #endif
 
-- (void)testThatItDoesNotExpireAMessageWhenTheEventIDIsSet
+- (void)testThatItDoesNotExpireAMessageWhenDeliveredIsSetToTrue
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.2];
-    textMessage.eventID = [ZMEventID eventIDWithMajor:1 minor:1];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.2];
+    textMessage.delivered = YES;
      
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
@@ -156,11 +157,12 @@
     XCTAssertFalse(textMessage.isExpired);
 }
 
-- (void)testThatItExpiresAMessageWhenTheEventIDIsNotSet
+- (void)testThatItExpiresAMessageWhenDeliveredIsNotTrue
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.1];
-
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.1];
+    textMessage.delivered = NO;
+    
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
     
@@ -175,7 +177,7 @@
 - (void)testThatItDoesNotExpireAMessageForWhichTheTimerWasStopped
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.2];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.2];
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
     
     // when
@@ -193,7 +195,7 @@
 - (void)testThatItDoesNotExpireAMessageThatHasNoExpirationDate
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0];
     [textMessage removeExpirationDate];
     
     // when
@@ -211,7 +213,7 @@
 - (void)testThatItStartsTimerForStoredMessagesOnFirstRequest
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.2];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.2];
 
     // when
     [ZMChangeTrackerBootstrap bootStrapChangeTrackers:@[self.sut] onContext:self.uiMOC];
@@ -230,7 +232,7 @@
 - (void)testThatItDoesNotHaveMessageTimersRunningWhenThereIsNoMessageBecauseTheyAreExpired
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:-2];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:-2];
     
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
@@ -244,7 +246,7 @@
 - (void)testThatItDoesNotHaveMessageTimersRunningAfterAMessageExpires
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.01];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.01];
     
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
@@ -261,7 +263,7 @@
 - (void)testThatItHasMessageTimersRunningWhenThereIsAMessage
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.7];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.7];
     
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:textMessage]];
@@ -290,8 +292,8 @@
 - (void)testThatItAddsObjectsThatNeedProcessing
 {
     // given
-    ZMTextMessage *textMessage = [self setupTextMessageWithExpirationTime:0.4];
-    ZMTextMessage *anotherTextMessage = [self setupTextMessageWithExpirationTime:0.4];
+    ZMClientMessage *textMessage = [self setupMessageWithExpirationTime:0.4];
+    ZMClientMessage *anotherTextMessage = [self setupMessageWithExpirationTime:0.4];
     
     // this message should be ignored
     ZMKnockMessage *knockMessage = [ZMKnockMessage insertNewObjectInManagedObjectContext:self.uiMOC];
