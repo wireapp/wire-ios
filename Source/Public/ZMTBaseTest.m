@@ -77,6 +77,7 @@
     }
     self.ignoreLogErrors = YES;
     block();
+    [ZMSLog sync];
     self.ignoreLogErrors = NO;
 }
 
