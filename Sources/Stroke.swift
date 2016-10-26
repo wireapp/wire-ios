@@ -109,7 +109,7 @@ class Stroke : Renderable {
         return path
     }
     
-    func smooth(point: CGPoint, factor: CGFloat = 0.5) -> CGPoint {
+    func smooth(point: CGPoint, factor: CGFloat = 0.35) -> CGPoint {
         let previous = points.last!
         return CGPoint(x: previous.x * (1 - factor) + point.x * factor,
                        y: previous.y * (1 - factor) + point.y * factor)
