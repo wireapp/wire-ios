@@ -20,8 +20,6 @@
 import Foundation
 import Cryptobox
 
-private let zmLog = ZMSLog(tag: "CryptoBox")
-
 extension NSManagedObjectContext {
     
     fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
