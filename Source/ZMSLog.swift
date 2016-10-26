@@ -47,6 +47,13 @@ import Foundation
         self.tag = tag
         ZMSLog.register(tag: tag)
     }
+    
+    /// Wait for all log operations to be completed
+    public func sync() {
+        logQueue.sync {
+            // no op
+        }
+    }
 }
 
 // MARK: - Emit logs
