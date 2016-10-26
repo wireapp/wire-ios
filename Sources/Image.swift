@@ -25,6 +25,7 @@ class Image : Editable {
     var rotation: CGFloat
     var position: CGPoint
     var selected: Bool
+    var selectable = true
     
     var size: CGSize {
         get {
