@@ -33,6 +33,7 @@
 @property (nonatomic) BOOL ignoreLogErrors; ///< if false, will fail on ZMLogError or ZMLogWarn
 @property (nonatomic) NSMutableArray *mocksToBeVerified;
 @property (nonatomic) NSMutableArray *expectations; // Beta3Workaround
+@property (nonatomic) LogHookToken *logHookToken;
 
 @end
 
@@ -83,20 +84,20 @@
 {
     self.ignoreLogErrors = NO;
     ZM_WEAK(self);
-    ZMLoggingDebuggingHook = ^(const char *tag __unused, char const * const filename, int linenumber, NSString *output){
+    self.logHookToken = [ZMSLog addHookWithLogHook:^(ZMLogLevel_t level, NSString * _Nullable tag, NSString * _Nonnull message) {
         ZM_STRONG(self);
-        if(!self.ignoreLogErrors) {
-            [self recordFailureWithDescription:output inFile:[NSString stringWithUTF8String:filename] atLine:(unsigned long)linenumber expected:YES];
+        if(!self.ignoreLogErrors && level <= ZMLogLevelWarn) {
+            XCTFail(@"Unexpected log error: [%@] %@", tag, message);
         }
-    };
-    
+    }];
 }
 
 - (void)unregisterLogErrorHook
 {
     self.ignoreLogErrors = NO;
-    ZMLoggingDebuggingHook = 0;
-    
+    if (self.logHookToken != nil) {
+        [ZMSLog removeLogHookWithToken:_logHookToken];
+    }
 }
 
 - (void)setUp
