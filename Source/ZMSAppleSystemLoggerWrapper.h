@@ -18,42 +18,16 @@
 
 
 #import <Foundation/Foundation.h>
+#import "ZMSLogging.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-
-/// Log levels
-typedef NS_ENUM(int, ZMASLLevel) {
-    ZMASLLevelEmergency = 0,
-    ZMASLLevelAlert = 1,
-    ZMASLLevelCritical = 2,
-    ZMASLLevelError = 3,
-    ZMASLLevelWarning = 4,
-    ZMASLLevelNotice = 5,
-    ZMASLLevelInfo = 6,
-    ZMASLLevelDebug = 7,
-};
-
-
-
-/// Simple wrapper around asl_object_t with ASL_TYPE_MSG
-@interface ZMSASLMessage : NSObject
-
-@property (nonatomic, copy, readonly) NSString *messageText;
-@property (nonatomic, readonly) ZMASLLevel level;
-
-- (instancetype)initWithMessage:(NSString *)message level:(ZMASLLevel)level;
-
-@end
-
-
 
 /// Simple wrapper around asl_object_t with ASL_TYPE_CLIENT
 @interface ZMSASLClient : NSObject
 
 - (instancetype)initWithIdentifier:(NSString *)identifier facility:(nullable NSString *)facility;
 
-- (void)sendMessage:(ZMSASLMessage *)message;
+- (void)sendMessage:(NSString *)message level:(ZMLogLevel_t)level;
 
 @end
 

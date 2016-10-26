@@ -20,31 +20,7 @@
 #import "ZMSAppleSystemLoggerWrapper.h"
 #import "ZMSLogging.h"
 #import <asl.h>
-
-
-@interface ZMSASLMessage ()
-
-@property (nonatomic, copy) NSString *messageText;
-@property (nonatomic) ZMASLLevel level;
-
-@end
-
-
-
-@implementation ZMSASLMessage
-
-- (instancetype)initWithMessage:(NSString * __nonnull)message level:(ZMASLLevel)level
-{
-    self = [super init];
-    if (self) {
-        self.messageText = message;
-        self.level = level;
-    }
-    return self;
-}
-
-@end
-
+#import "ZMCSystem/ZMCSystem-swift.h"
 
 
 @implementation ZMSASLClient
@@ -67,11 +43,26 @@
     return self;
 }
 
-- (void)sendMessage:(ZMSASLMessage *)message;
+- (void)sendMessage:(NSString *)message level:(ZMLogLevel_t)level;
 {
     asl_object_t msg = NULL;
-    int level = MIN(ASL_LEVEL_NOTICE, (int) message.level); // if it's not at least ASL_LEVEL_NOTICE it won't show up in console
-    asl_log(_backingClient, msg, level, "%s", message.messageText.UTF8String);
+    int aslLevel = 0;
+    switch(level) {
+        case ZMLogLevelError:
+            aslLevel = ASL_LEVEL_ERR;
+            break;
+        case ZMLogLevelWarn:
+            aslLevel = ASL_LEVEL_WARNING;
+            break;
+        case ZMLogLevelInfo:
+            aslLevel = ASL_LEVEL_INFO;
+            break;
+        case ZMLogLevelDebug:
+            aslLevel = ASL_LEVEL_DEBUG;
+            break;
+    }
+    aslLevel = MIN(ASL_LEVEL_NOTICE, (int) aslLevel); // if it's not at least ASL_LEVEL_NOTICE it won't show up in console
+    asl_log(self->_backingClient, msg, aslLevel, "%s", message.UTF8String);
 }
 
 - (void)dealloc

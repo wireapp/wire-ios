@@ -18,5 +18,4 @@
 
 
 #import <ZMCSystem/ZMCSystem.h>
-#import "ZMCSystemTestHelper.h"
 
