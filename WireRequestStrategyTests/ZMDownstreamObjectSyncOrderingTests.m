@@ -57,9 +57,7 @@
     
     // message 2 is never than message 1
     self.imageMessage1 = [ZMImageMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
-    self.imageMessage1.eventID = [ZMEventID eventIDWithMajor:12 minor:12];
     self.imageMessage2 = [ZMImageMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
-    self.imageMessage2.eventID = [ZMEventID eventIDWithMajor:45 minor:45];
     self.imageMessage2.serverTimestamp = [self.imageMessage1.serverTimestamp dateByAddingTimeInterval:0.1];
 }
 
