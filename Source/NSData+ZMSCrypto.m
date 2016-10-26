@@ -21,7 +21,7 @@
 #import "NSData+ZMSCrypto.h"
 #import <CommonCrypto/CommonCrypto.h>
 
-static char* const ZMLogTag ZM_UNUSED = "Encryption";
+static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
 
 
 @implementation NSData (ZMMessageDigest)
