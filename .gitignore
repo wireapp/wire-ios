@@ -27,3 +27,7 @@ DerivedData
 .DS_Store
 Carthage
 zimages.framework.zip
+xcode-*.log
+tests.xml
+code-coverage/*
+cobertura.xml
