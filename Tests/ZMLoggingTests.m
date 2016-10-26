@@ -17,6 +17,22 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+#import <XCTest/XCTest.h>
+#import <ZMCSystem/ZMCSystem.h>
 
-extern void resetLogLevels(void);
+static NSString* ZMLogTag = @"Testing";
+
+@interface ZMLoggingTests : XCTestCase
+@end
+
+@implementation ZMLoggingTests
+
+- (void)testThatLogMacrosCompile    
+{
+    ZMLogError(@"Test");
+    ZMLogWarn(@"Test");
+    ZMLogInfo(@"Test");
+    ZMLogDebug(@"Test");
+}
+
+@end

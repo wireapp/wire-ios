@@ -20,6 +20,15 @@
 #import <Foundation/Foundation.h>
 #import <ZMCSystem/ZMSAsserts.h>
 
+/// Log levels
+typedef NS_ENUM(int8_t, ZMLogLevel_t) {
+    ZMLogLevelError = 0,
+    ZMLogLevelWarn,
+    ZMLogLevelInfo,
+    ZMLogLevelDebug,
+};
+
+
 /**
  
  Logging
@@ -33,7 +42,7 @@
  At the top of the file define the log level like so:
  
  @code
- static char* const ZMLogTag ZM_UNUSED = "Network";
+ static NSString* ZMLogTag ZM_UNUSED = "Network";
  @endcode
  
  The @c ZMLogError() etc. then work just like @c NSLog() does.
@@ -62,35 +71,13 @@ extern void (^ZMLoggingDebuggingHook)(const char *tag, char const * const filena
         ZMLog(0, __FILE__, __LINE__, level, format, ##__VA_ARGS__); \
     } while (0)
 
-typedef NS_ENUM(int8_t, ZMLogLevel_t) {
-    ZMLogLevelError = 0,
-    ZMLogLevelWarn,
-    ZMLogLevelInfo,
-    ZMLogLevelDebug,
-};
 
 
 /// Use this to know if the log is at a certain level. Allows you to avoid preparing a log message with some complex operations if the log is not needed
 #define ZMLogLevelIsActive(tag, level) \
 	(__builtin_expect((level <= ZMLogGetLevelForTag(tag)), 0))
 
+/// Logs an assert
+ZM_EXTERN void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
 /// Logs a message
-ZM_EXTERN void ZMLog(const char *tag, char const * const filename, int linenumber, ZMLogLevel_t logLevel, NSString *format, ...) NS_FORMAT_FUNCTION(5,6);
-/// Asserts
-ZM_EXTERN void ZMDebugAssertMessage(const char *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
-
-#pragma mark - Turning logs on and off
-
-/// Sets the log level for a specific tag
-ZM_EXTERN void ZMLogSetLevelForTag(ZMLogLevel_t level, const char *tag);
-/// Gets the log level for a specific tag
-ZM_EXTERN ZMLogLevel_t ZMLogGetLevelForTag(const char *tag);
-/// Returns a list of all currently registered log tags. A tag is returned only if it was ever logged, or ZMLogInitForTag was ever called.
-ZM_EXTERN NSSet* ZMLogGetAllTags(void);
-/// Registers a logging tag
-ZM_EXTERN void ZMLogInitForTag(const char *tag);
-/// Wait until all changes to the log levels have been propagated
-ZM_EXTERN void ZMLogSynchronize();
-/// write a snapshot of the last 10000 system logs, takes everything it can
-ZM_EXTERN void ZMLogSnapshot(NSString *filepath);
-
+ZM_EXTERN void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLevel_t logLevel, NSString *format, ...) NS_FORMAT_FUNCTION(5,6);

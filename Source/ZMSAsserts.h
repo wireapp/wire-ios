@@ -61,7 +61,7 @@
 #   define Require(assertion) \
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage( "Require", #assertion, __FILE__, __LINE__, nil); \
+			ZMDebugAssertMessage(@"Assert", #assertion, __FILE__, __LINE__, nil); \
 			ZMCrash(#assertion, __FILE__, __LINE__); \
 		} \
 	} while (0)
@@ -69,7 +69,7 @@
 #   define RequireString(assertion, frmt, ...) \
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage( "RequireString", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+			ZMDebugAssertMessage(@"Assert", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 			ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 		} \
 	} while (0)
@@ -102,7 +102,7 @@
 #define VerifyAction(assertion, action) \
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage("VerifyAction", #assertion, __FILE__, __LINE__, nil); \
+			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
 			ZMTraceErrorMessage(#assertion); \
 			action; \
 		} \
@@ -120,7 +120,7 @@
 #define VerifyString(assertion, frmt, ...) \
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage( "VerifyString", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 			ZMTraceErrorMessage(#assertion); \
 			ZMTraceErrorMessage(frmt, ##__VA_ARGS__); \
 		} \
@@ -130,7 +130,7 @@
 #define VerifyActionString(assertion, action, frmt, ...) \
     do { \
         if ( __builtin_expect(!(assertion), 0) ) { \
-            ZMDebugAssertMessage( "VerifyActionString", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
             action; \
         } \
     } while (0)
@@ -138,7 +138,7 @@
 #define VerifyStringReturnNil(assertion, frmt, ...) \
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage( "VerifyStringReturnNil", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 			return nil; \
 		} \
 	} while (0)
@@ -150,7 +150,7 @@
 # define Check(assertion) \
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage( "Check", #assertion, __FILE__, __LINE__, nil); \
+			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
 		} \
 	} while (0)
 #endif
@@ -167,7 +167,7 @@
 # define CheckString(assertion, frmt, ...) \
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage( "CheckString", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 		} \
 	} while (0)
 #endif
