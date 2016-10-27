@@ -61,16 +61,16 @@ import Foundation
 // MARK: - Emit logs
 extension ZMSLog {
     
-    public func error(_ message: String, file: String = #file, line: UInt = #line) {
+    public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.error, message: message, tag: self.tag, file: file, line:line)
     }
-    public func warn(_ message: String, file: String = #file, line: UInt = #line) {
+    public func warn(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.warn, message: message, tag: self.tag, file: file, line:line)
     }
-    public func info(_ message: String, file: String = #file, line: UInt = #line) {
+    public func info(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.info, message: message, tag: self.tag, file: file, line:line)
     }
-    public func debug(_ message: String, file: String = #file, line: UInt = #line) {
+    public func debug(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.debug, message: message, tag: self.tag, file: file, line:line)
     }
 }
@@ -168,15 +168,16 @@ extension ZMSLog {
 extension ZMSLog {
     
     /// Log only if this log level is enabled for the tag, or no tag is set
-    static func logWithLevel(_ level: ZMLogLevel_t, message: String, tag: String?, file: String = #file, line: UInt = #line) {
+    static func logWithLevel(_ level: ZMLogLevel_t, message:  @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
+        let concreteMessage = message()
         logQueue.async {
             if let tag = tag {
                 self.register(tag: tag)
             }
         
             if tag == nil || level.rawValue <= ZMSLog.getLevelNoLock(tag: tag!).rawValue {
-                sharedASLClient.sendMessage("\(file):\(line) \(tag ?? "") \(message)", level: level)
-                self.notifyHooks(level: level, tag: tag, message: message)
+                sharedASLClient.sendMessage("\(file):\(line) \(tag ?? "") \(concreteMessage)", level: level)
+                self.notifyHooks(level: level, tag: tag, message: concreteMessage)
             }
         }
     }
