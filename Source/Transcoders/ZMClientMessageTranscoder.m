@@ -79,7 +79,8 @@
     [(id)message parseUploadResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
     
     // if it's reaction
-    if ([message isKindOfClass:[ZMClientMessage class]]){
+    if ([message isKindOfClass:[ZMClientMessage class]] && !message.isZombieObject) {
+        
         ZMClientMessage *clientMessage = (id)message;
         if (clientMessage.genericMessage.hasReaction) {
             [message.managedObjectContext deleteObject:clientMessage];
