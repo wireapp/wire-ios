@@ -30,7 +30,7 @@
 
 #import "CBCryptoBox+UpdateEvents.h"
 
-static char* const ZMLogTag ZM_UNUSED = "MessageTranscoder";
+static NSString * ZMLogTag ZM_UNUSED = @"MessageTranscoder";
 
 typedef NS_ENUM(int8_t, ZMAssetTag) {
     ZMAssetTagInvalid,
@@ -185,6 +185,9 @@ typedef NS_ENUM(int8_t, ZMAssetTag) {
 - (void)updateMessage:(ZMMessage *)message fromResponse:(ZMTransportResponse *)response updatedKeys:(NSSet *)updatedKeys;
 {
     [self.messageExpirationTimer stopTimerForMessage:message];
+    if (message.isZombieObject) {
+        return;
+    }
     [message removeExpirationDate];
     [message markAsSent];
     [message updateWithPostPayload:response.payload.asDictionary updatedKeys:updatedKeys];
