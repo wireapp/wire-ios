@@ -268,12 +268,12 @@ static NSString * const IdleString = @"idle";
 - (BOOL)updateConversation:(MockConversation *)conversation isArchivedFromPutSelfConversationPayload:(NSDictionary *)payload
 {
     if ([payload.allKeys containsObject:@"archived"]) {
-        ZMEventID *archivedEvent = [payload optionalEventForKey:@"archived"];
-        if (archivedEvent != nil) {
-            conversation.archived = archivedEvent.transportString;
+        if([payload[@"archived"] isEqualToString:@"false"]) {
+            conversation.archived = nil;
         } else {
-            if ([payload[@"archived"] isEqual:@"false"]) {
-                conversation.archived = nil;
+            ZMEventID *archivedEvent = [payload optionalEventForKey:@"archived"];
+            if (archivedEvent != nil) {
+                conversation.archived = archivedEvent.transportString;
             } else {
                 ZMLogError(@"Invalid data for \"archived\": \"%@\"", payload[@"archived"]);
             }
