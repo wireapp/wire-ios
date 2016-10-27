@@ -352,8 +352,9 @@ class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
         let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: payload)
         
         //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
-        
+        self.performIgnoringZMLogError {
+            let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        }
         //then
         XCTAssertFalse(message.isExpired)
         XCTAssertTrue(otherClient.failedToEstablishSession)
@@ -368,7 +369,9 @@ class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
         let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: payload)
         
         //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        self.performIgnoringZMLogError {
+            let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        }
         
         //then
         XCTAssertEqual(message.missingRecipients.count, 0)
