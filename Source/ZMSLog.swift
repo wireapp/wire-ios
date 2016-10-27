@@ -170,7 +170,7 @@ extension ZMSLog {
         if tag == nil || level.rawValue <= ZMSLog.getLevel(tag: tag!).rawValue {
             let concreteMessage = message()
             logQueue.async {
-                sharedASLClient.sendMessage("\(file):\(line) \(tag) \(concreteMessage)", level: level)
+                sharedASLClient.sendMessage("\(file):\(line) \(tag ?? "") \(concreteMessage)", level: level)
                 self.notifyHooks(level: level, tag: tag, message: concreteMessage)
             }
         }
