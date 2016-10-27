@@ -68,11 +68,18 @@ class Stroke : Renderable {
     }
     
     func draw(context : CGContext) {
-        context.setStrokeColor(brush.color.cgColor)
-        let path = interpolateBeizerPath(points: points)
-        path.lineWidth = CGFloat(brush.size)
-        path.lineCapStyle = .round
-        path.stroke()
+        if points.count == 1, let point = points.first {
+            context.setFillColor(brush.color.cgColor)
+            let origin = CGPoint(x: point.x - CGFloat(brush.size / 2), y: point.y - CGFloat(brush.size / 2))
+            context.addEllipse(in: CGRect(origin: origin, size: CGSize(width: Double(brush.size), height: Double(brush.size))))
+            context.fillPath()
+        } else {
+            context.setStrokeColor(brush.color.cgColor)
+            let path = interpolateBeizerPath(points: points)
+            path.lineWidth = CGFloat(brush.size)
+            path.lineCapStyle = .round
+            path.stroke()
+        }
     }
     
     func distance(to point: CGPoint) -> Double {
