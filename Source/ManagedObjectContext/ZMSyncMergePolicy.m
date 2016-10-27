@@ -25,9 +25,9 @@
 #import <libkern/OSAtomic.h>
 
 
-#define ZMTAG_CORE_DATA "Core Data"
+#define ZMTAG_CORE_DATA @"Core Data"
 
-static char* const ZMLogTag ZM_UNUSED = ZMTAG_CORE_DATA;
+static NSString * ZMLogTag ZM_UNUSED = ZMTAG_CORE_DATA;
 static NSString * const MessageKeyForDebugging = @"eventID";
 
 
@@ -50,12 +50,6 @@ static NSString * const MessageKeyForDebugging = @"eventID";
 - (BOOL)resolveConflicts:(NSArray *)list
                    error:(NSError **)outError
 {
-    if (ZMLogLevelIsActive(ZMTAG_CORE_DATA, ZMLogLevelDebug)) {
-        static int32_t counter;
-        int32_t const c = OSAtomicIncrement32Barrier(&counter);
-        ZMLogDebug(@"Resolving conflicts (%d)", c);
-    }
- 
     self.objectToValueDictionaryMap = [NSMapTable strongToStrongObjectsMapTable];
     
     [self prepareMergeWithConflicts:list];
@@ -79,21 +73,6 @@ static NSString * const MessageKeyForDebugging = @"eventID";
     [list enumerateObjectsUsingBlock:^(NSMergeConflict *conflict, NSUInteger idx, BOOL *stop) {
         NOT_USED(stop);
         NOT_USED(idx);
-
-        if (ZMLogLevelIsActive(ZMTAG_CORE_DATA, ZMLogLevelDebug)) {
-            ZMLogDebug(@"  context '%@'", conflict.sourceObject.managedObjectContext.userInfo);
-            ZMLogDebug(@"  source object %@ (%p): %@", conflict.sourceObject.class, conflict.sourceObject, conflict.sourceObject.objectID.URIRepresentation);
-            ZMLogDebug(@"  old version %u -> new version %u", (unsigned) conflict.oldVersionNumber, (unsigned) conflict.newVersionNumber);
-            if (conflict.objectSnapshot != nil) {
-                ZMLogDebug(@"  objectSnapshot %@", conflict.objectSnapshot);
-            }
-            if (conflict.cachedSnapshot != nil) {
-                ZMLogDebug(@"  cachedSnapshot %@", conflict.cachedSnapshot);
-            }
-            if (conflict.persistedSnapshot != nil) {
-                ZMLogDebug(@"  persistedSnapshot %@", conflict.persistedSnapshot);
-            }
-        }
         
         ZMConversation *conversation = (id) conflict.sourceObject;
         if (! [conversation isKindOfClass:ZMConversation.class]) {
@@ -105,11 +84,6 @@ static NSString * const MessageKeyForDebugging = @"eventID";
             NSString *key = ZMConversationMessagesKey;
             NSOrderedSet *commitedMessages = [conversation committedValuesForKeys:@[key]][key];
             ZMLogDebug(@"  commited value for 'messages': %@", [[commitedMessages.array valueForKey:MessageKeyForDebugging] componentsJoinedByString:@"; "]);
-            
-            if (ZMLogLevelIsActive(ZMTAG_CORE_DATA, ZMLogLevelDebug) && ! [conversation hasFaultForRelationshipNamed:key]) {
-                NSOrderedSet *messages = [conversation valueForKey:key];
-                ZMLogDebug(@"  current value for 'messages': %@", [[messages.array valueForKey:MessageKeyForDebugging] componentsJoinedByString:@"; "]);
-            }
             
             NSOrderedSet *changedMessages = [conversation changedValues][key];
             if (changedMessages != nil) {
@@ -165,15 +139,6 @@ static NSString * const MessageKeyForDebugging = @"eventID";
             if ([trackedKeys indexOfObject:key] != NSNotFound) {
                 [conversation setLocallyModifiedKeys:[NSSet setWithObject:key]];
             }
-            
-            if (ZMLogLevelIsActive(ZMTAG_CORE_DATA, ZMLogLevelDebug)) {
-                if ([key isEqualToString:ZMConversationMessagesKey]) {
-                    ZMLogDebug(@"  final messages: %@", [[conversation.messages.array valueForKey:MessageKeyForDebugging] componentsJoinedByString:@"; "]);
-                } else {
-                    ZMLogDebug(@"  final value for %@: %@", key, value);
-                }
-            }
-
         }];
     }
     self.objectToValueDictionaryMap = nil;
