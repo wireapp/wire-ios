@@ -153,9 +153,7 @@ static NSString * const ExcludeVersionsKey = @"exclude";
         [application registerObserverForDidBecomeActive:self selector:@selector(didBecomeActive:)];
         [application registerObserverForWillResignActive:self selector:@selector(willResignActive:)];
         
-        [self startTimerIfNeeded];
-        
-        [ZMSLog setWithLevel:ZMLogLevelInfo tag:ZMLogTag];
+        [self startTimerIfNeeded];        
     }
     return self;
 }
