@@ -53,7 +53,7 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
     #define LogNetwork(x, ...) NSLog(x, ##__VA_ARGS__)
 #endif
 
-static char* const ZMLogTag ZM_UNUSED = "MockTransportRequests";
+static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7REFVR2hCk6r9AtUXtUX1YpC3NFdrA-KjztS6AgxgrnZSgcyFIHrULCw==.1403273423.a.39562cc3-717d-4395-979c-5387ae17f5c3.6885777252650447174";
 
