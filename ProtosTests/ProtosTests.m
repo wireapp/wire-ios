@@ -15,8 +15,7 @@
 @implementation ProtosTests
 
 - (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+    // We need at least one test or the build machine will be unhappy
 }
 
 @end

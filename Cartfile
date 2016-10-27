@@ -1,2 +1,2 @@
 github "wireapp/protobuf-objc" ~> 1.9
-github "wireapp/wire-ios-images" ~> 5.0
+github "wireapp/wire-ios-images" ~> 6.0
