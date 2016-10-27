@@ -400,7 +400,7 @@ ZM_EMPTY_ASSERTING_INIT()
         return;
     }
     
-    if (ZMLogLevelIsActive(ZMTAG_CORE_DATA, ZMLogLevelDebug)) {
+    if([ZMSLog getLevelWithTag:ZMTAG_CORE_DATA] == ZMLogLevelDebug) {
         [self logDidSaveNotification:note];
     }
     
