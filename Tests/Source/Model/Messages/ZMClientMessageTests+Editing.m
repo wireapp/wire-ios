@@ -346,7 +346,6 @@
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithEditMessage:oldNonce.transportString newText:newText nonce:newNonce.transportString];
     
     NSDictionary *payload = @{
-                   @"id": [NSUUID createUUID].transportString,
                    @"conversation": conversationID.transportString,
                    @"from": senderID.transportString,
                    @"time": [NSDate date].transportString,
@@ -364,7 +363,6 @@
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"Yeah!" nonce:nonce.transportString expiresAfter:nil];
     
     NSDictionary *payload = @{
-                              @"id": [NSUUID createUUID].transportString,
                               @"conversation": conversationID.transportString,
                               @"from": senderID.transportString,
                               @"time": [NSDate date].transportString,

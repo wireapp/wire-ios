@@ -60,7 +60,7 @@ static dispatch_queue_t UIContextCreationQueue(void);
 static NSManagedObjectContext *SharedUserInterfaceContext = nil;
 static id applicationProtectedDataDidBecomeAvailableObserver = nil;
 
-static char* const ZMLogTag ZM_UNUSED = "NSManagedObjectContext";
+static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 //
 // For testing, we want to use an NSInMemoryStoreType (it's faster).
 // The only way for multiple contexts to share the same NSInMemoryStoreType is to share
