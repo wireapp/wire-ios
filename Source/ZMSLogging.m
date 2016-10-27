@@ -27,9 +27,7 @@ void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLeve
     NSString *output = [[NSString alloc] initWithFormat:format arguments:args];
     va_end(args);
     
-    [ZMSLog logWithLevel:logLevel message:^NSString * _Nonnull{
-        return output;
-    } tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber];
+    [ZMSLog logWithLevel:logLevel message:output tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber];
 }
 
 void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const * const format, ...)
@@ -43,8 +41,6 @@ void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char cons
     va_end(ap);
     
     NSString *output = [NSString stringWithFormat:@"Assertion (%s) failed. %s", assertion, message ?: ""];
-    [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull{
-        return output;
-    } tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber];
+    [ZMSLog logWithLevel:ZMLogLevelError message:output tag:tag file:[NSString stringWithUTF8String:filename] line:(NSUInteger)linenumber];
 }
 

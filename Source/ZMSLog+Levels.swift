@@ -26,6 +26,7 @@ private var logTagToLevel : [String : ZMLogLevel_t] = [:]
 extension ZMSLog {
     
     /// Sets the minimum logging level for the tag
+    /// - note: switches to the log queue
     public static func set(level: ZMLogLevel_t, tag: String) {
         logQueue.sync {
             logTagToLevel[tag] = level
@@ -33,22 +34,26 @@ extension ZMSLog {
     }
     
     /// Gets the minimum logging level for the tag
+    /// - note: switches to the log queue
     public static func getLevel(tag: String) -> ZMLogLevel_t {
         var level = ZMLogLevel_t.warn
         logQueue.sync {
-            if let currentLevel = logTagToLevel[tag] {
-                level = currentLevel
-            }
+            level = getLevelNoLock(tag: tag)
         }
         return level
     }
     
+    /// Gets the minimum logging level for the tag
+    /// - note: Does not switch to the log queue
+    static func getLevelNoLock(tag: String) -> ZMLogLevel_t {
+        return logTagToLevel[tag] ?? .warn
+    }
+    
     /// Registers a tag for logging
-    public static func register(tag: String) {
-        logQueue.sync {
-            if logTagToLevel[tag] == nil {
-                logTagToLevel[tag] = ZMLogLevel_t.warn
-            }
+    /// - note: Does not switch to the log queue
+    static func register(tag: String) {
+        if logTagToLevel[tag] == nil {
+            logTagToLevel[tag] = ZMLogLevel_t.warn
         }
     }
     
