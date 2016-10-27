@@ -301,6 +301,8 @@ public class Canvas: UIView {
     // MARK - Touch handling
     
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        
         guard mode == .draw else { return }
         
         if let location = touches.first?.location(in: self) {
@@ -311,6 +313,8 @@ public class Canvas: UIView {
     }
     
     override public func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        
         guard mode == .draw else { return }
         
         if let location = touches.first?.location(in: self), let stroke = stroke {
@@ -319,6 +323,8 @@ public class Canvas: UIView {
     }
     
     override public func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        
         guard mode == .draw else { return }
         
         stroke?.end()
