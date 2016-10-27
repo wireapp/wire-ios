@@ -24,13 +24,13 @@ private let enabledLogsKey = "WireEnabledZMLogTags"
 extension Settings {
     
     func set(logTag: String, enabled: Bool) {
-        ZMLogSetLevelForTag(enabled ? .debug : .warn, (logTag as NSString).utf8String!)
+        ZMSLog.set(level: enabled ? .debug : .warn, tag: logTag)
         saveEnabledLogs()
     }
     
     private func saveEnabledLogs() {
-        let enabledLogs = ZMLogGetAllTags().filter { str in
-            let level = ZMLogGetLevelForTag(str as! String)
+        let enabledLogs = ZMSLog.allTags.filter { tag in
+            let level = ZMSLog.getLevel(tag: tag)
             return level == .debug || level == .info
         } as NSArray
         
@@ -39,12 +39,12 @@ extension Settings {
     
     @objc public func loadEnabledLogs() {
         
-        guard let tagsToEnable = UserDefaults.shared().value(forKey: enabledLogsKey) as? Array<NSString> else {
+        guard let tagsToEnable = UserDefaults.shared().value(forKey: enabledLogsKey) as? Array<String> else {
             return
         }
         
         tagsToEnable.forEach { (tag) in
-            ZMLogSetLevelForTag(.debug, tag.utf8String!)
+            ZMSLog.set(level: .debug, tag: tag)
         }
     }
 }

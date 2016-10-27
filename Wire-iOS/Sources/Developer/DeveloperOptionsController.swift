@@ -39,7 +39,7 @@ extension DeveloperOptionsController {
         self.view = UIView()
         self.edgesForExtendedLayout = UIRectEdge()
         self.view.backgroundColor = .clear
-        self.allTags = Array(ZMLogGetAllTags()!.map { $0 as! String})
+        self.allTags = Array(ZMSLog.allTags.map { $0 })
         
         self.tableView = UITableView()
         self.tableView.dataSource = self
@@ -78,7 +78,7 @@ extension DeveloperOptionsController : UITableViewDataSource {
         
         let `switch` = UISwitch()
         `switch`.translatesAutoresizingMaskIntoConstraints = false
-        `switch`.isOn = ZMLogGetLevelForTag(logText) == .debug
+        `switch`.isOn = ZMSLog.getLevel(tag: logText) == .debug
         `switch`.tag = indexPath.row
         `switch`.addTarget(self, action: #selector(DeveloperOptionsController.switchLogDidChange(sender:)), for: .valueChanged)
         cell.contentView.addSubview(`switch`)
