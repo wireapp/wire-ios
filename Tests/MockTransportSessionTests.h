@@ -50,10 +50,6 @@
 @property (nonatomic) NSUInteger pushChannelDidOpenCount;
 @property (nonatomic) NSUInteger pushChannelDidCloseCount;
 
-- (ZMEventID *)createEventID;
-+ (ZMEventID *)createEventID;
-+ (NSInteger)randomSignedIntWithMax:(NSInteger)max;
-
 @end
 
 
