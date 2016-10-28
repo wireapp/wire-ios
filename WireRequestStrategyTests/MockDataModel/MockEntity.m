@@ -24,7 +24,7 @@
 @dynamic field, field2, field3;
 @dynamic testUUID;
 @dynamic mockEntities;
-@dynamic modifiedDataFields;
+@dynamic modifiedKeys;
 
 +(NSString *)sortKey {
     return @"field";
