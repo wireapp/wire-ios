@@ -117,7 +117,7 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
     return @"Session";
 }
 
-+ (BOOL)hasLocallyModifiedDataFields
++ (BOOL)isTrackingLocalModifications
 {
     return NO;
 }
@@ -362,13 +362,13 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
 @dynamic showingUserAdded;
 @dynamic showingUserRemoved;
 
-- (NSArray *)keysTrackedForLocalModifications
+- (NSSet *)keysTrackedForLocalModifications
 {
     if(self.isSelfUser) {
         return [super keysTrackedForLocalModifications];
     }
     else {
-        return @[];
+        return [NSSet set];
     }
 }
 

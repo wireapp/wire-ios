@@ -23,7 +23,7 @@
 #import "ZMManagedObject.h"
 
 typedef void(^ObjectsEnumerationBlock)(ZMManagedObject * _Nonnull, BOOL * _Nonnull stop);
-extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
+extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedKeysKey;
 
 
 
@@ -32,12 +32,17 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
 + (nonnull NSString *)entityName; ///< subclasses must implement this
 + (nullable NSString *)sortKey; ///< subclasses must implement this or @c +defaultSortDescriptors
 + (nullable NSString *)remoteIdentifierDataKey; ///< subclasses must implement this
-+ (BOOL)hasLocallyModifiedDataFields;
 
 + (nonnull instancetype)insertNewObjectInManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 /// Whether this object has all data from the backend
 @property (nonatomic) BOOL needsToBeUpdatedFromBackend;
+
+/// Returns YES if the object is tracking local modifications. If NO, it does not support modifiedKeys property
++ (BOOL)isTrackingLocalModifications;
+
+/// Keys that have been modified since the last save and not been synced and reset
+@property (nonatomic, nullable) NSSet *modifiedKeys;
 
 /// Handles conversion from and to NSUUID and NSData in CoreData
 - (nullable NSUUID *)transientUUIDForKey:(nonnull NSString *)key;
@@ -86,10 +91,6 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
 /// Returns the key (attributes) that have been locally modified (by the UI).
 @property (nonatomic, readonly, nonnull) NSSet *keysThatHaveLocalModifications;
 
-/// Similar to keysThatHaveLocalModifications but allows passing in a snapshot as a dictionary.
-/// Used for merging.
-- (BOOL)hasLocalModificationsForKey:(nonnull NSString *)key withModifiedFlag:(nullable NSNumber *)n;
-
 /// Removes the given @c keys from the set of keys that have been modified by the UI
 - (void)resetLocallyModifiedKeys:(nonnull NSSet *)keys;
 
@@ -101,7 +102,7 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
 - (BOOL)hasLocalModificationsForKey:(nonnull NSString *)key;
 
 
-- (nonnull NSArray <NSString *> *)keysTrackedForLocalModifications ZM_REQUIRES_SUPER;
+- (nonnull NSSet <NSString *> *)keysTrackedForLocalModifications ZM_REQUIRES_SUPER;
 - (void)updateKeysThatHaveLocalModifications ZM_REQUIRES_SUPER;
 
 @end

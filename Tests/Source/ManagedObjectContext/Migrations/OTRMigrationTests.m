@@ -327,7 +327,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     
     XCTAssertNotNil(userDictionaries);
     XCTAssertEqual(userDictionaries.count, 3lu);
-    XCTAssertEqualObjects(userDictionaries, [self userDictionaryFixture_2_45_modifiedDataFields:4]);
+    XCTAssertEqualObjects(userDictionaries, [self userDictionaryFixture_2_45]);
 }
 
 - (void)testThatItPerformsMigrationFrom_2_5_ToCurrentModelVersion {
@@ -390,7 +390,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     XCTAssertNotNil(userDictionaries);
     XCTAssertEqual(userDictionaries.count, 3lu);
     
-    XCTAssertEqualObjects(userDictionaries, [self userDictionaryFixture_2_45_modifiedDataFields:0]);
+    XCTAssertEqualObjects(userDictionaries, [self userDictionaryFixture_2_45]);
 }
 
 - (void)testThatItPerformsMigrationFrom_2_6_ToCurrentModelVersion {
@@ -586,7 +586,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     return @[
              @"accentColorValue",
              @"emailAddress",
-             @"modifiedDataFields",
+             @"modifiedKeys",
              @"name",
              @"normalizedEmailAddress",
              @"normalizedName"
@@ -676,7 +676,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @1,
                  @"emailAddress": @"hello@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"awesome test user",
                  @"normalizedEmailAddress": @"hello@example.com",
                  @"normalizedName": @"awesome test user",
@@ -684,27 +683,23 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @1,
                  @"emailAddress": @"censored@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"Bruno",
                  @"normalizedEmailAddress": @"censored@example.com",
                  @"normalizedName": @"bruno"
                  },
              @{
                  @"accentColorValue": @6,
-                 @"modifiedDataFields": @0,
                  @"name": @"Florian",
                  @"normalizedName": @"florian"
                  },
              @{
                  @"accentColorValue": @4,
-                 @"modifiedDataFields": @0,
                  @"name": @"Heinzelmann",
                  @"normalizedName": @"heinzelmann"
                  },
              @{
                  @"accentColorValue": @3,
                  @"emailAddress": @"migrationtest@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"MIGRATION TEST",
                  @"normalizedEmailAddress": @"migrationtest@example.com",
                  @"normalizedName": @"migration test"
@@ -712,14 +707,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @3,
                  @"emailAddress": @"welcome+23@example.com",
-                 @"modifiedDataFields": @0,
                  @"name" : @"Otto the Bot",
                  @"normalizedEmailAddress": @"welcome+23@example.com",
                  @"normalizedName": @"otto the bot",
                  },
              @{
                  @"accentColorValue": @6,
-                 @"modifiedDataFields": @0,
                  @"name": @"Pierre-Joris",
                  @"normalizedName": @"pierrejoris"
                  }
@@ -732,7 +725,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue" : @(1),
                  @"emailAddress" : @"email@example.com",
-                 @"modifiedDataFields" : @(0),
                  @"name" : @"Bruno",
                  @"normalizedEmailAddress" : @"email@example.com",
                  @"normalizedName" : @"bruno",
@@ -740,7 +732,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue" : @(6),
                  @"emailAddress" : @"secret@example.com",
-                 @"modifiedDataFields" : @(0),
                  @"name" : @"Florian",
                  @"normalizedEmailAddress" : @"secret@example.com",
                  @"normalizedName" : @"florian",
@@ -748,7 +739,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue" : @(4),
                  @"emailAddress" : @"hidden@example.com",
-                 @"modifiedDataFields" : @(0),
                  @"name" : @"Heinzelmann",
                  @"normalizedEmailAddress" : @"hidden@example.com",
                  @"normalizedName" : @"heinzelmann",
@@ -756,7 +746,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue" : @(1),
                  @"emailAddress" : @"censored@example.com",
-                 @"modifiedDataFields" : @(0),
                  @"name" : @"It is me",
                  @"normalizedEmailAddress" : @"censored@example.com",
                  @"normalizedName" : @"it is me",
@@ -764,21 +753,18 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue" : @(3),
                  @"emailAddress" : @"welcome+23@example.com",
-                 @"modifiedDataFields" : @(0),
                  @"name" : @"Otto the Bot",
                  @"normalizedEmailAddress" : @"welcome+23@example.com",
                  @"normalizedName" : @"otto the bot",
                  },
              @{
                  @"accentColorValue" : @(3),
-                 @"modifiedDataFields" : @(0),
                  @"name" : @"Pierre-Joris",
                  @"normalizedName" : @"pierrejoris",
                  },
              @{
                  @"accentColorValue" : @(3),
                  @"emailAddress" : @"secret2@example.com",
-                 @"modifiedDataFields" : @(0),
                  @"name" : @"Test User",
                  @"normalizedEmailAddress" : @"secret2@example.com",
                  @"normalizedName" : @"test user",
@@ -792,7 +778,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @1,
                  @"emailAddress": @"user1@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"user1",
                  @"normalizedEmailAddress": @"user1@example.com",
                  @"normalizedName": @"user1"
@@ -800,7 +785,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @6,
                  @"emailAddress": @"user2@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"user2",
                  @"normalizedEmailAddress": @"user2@example.com",
                  @"normalizedName": @"user2"
@@ -808,7 +792,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @1,
                  @"emailAddress": @"user3@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"user3",
                  @"normalizedEmailAddress": @"user3@example.com",
                  @"normalizedName": @"user3",
@@ -822,21 +805,18 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @1,
                  @"emailAddress": @"user1@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"Example User 1",
                  @"normalizedEmailAddress": @"user1@example.com",
                  @"normalizedName": @"example user 1"
                  },
              @{
                  @"accentColorValue": @6,
-                 @"modifiedDataFields": @0,
                  @"name": @"Example User 2",
                  @"normalizedName": @"example user 2"
                  },
              @{
                  @"accentColorValue": @3,
                  @"emailAddress": @"user3@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"Example User 3",
                  @"normalizedEmailAddress": @"user3@example.com",
                  @"normalizedName": @"example user 3",
@@ -844,27 +824,24 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              ];
 }
 
-- (NSArray <NSDictionary *>*)userDictionaryFixture_2_45_modifiedDataFields:(NSInteger)modifiedFields
+- (NSArray <NSDictionary *>*)userDictionaryFixture_2_45
 {
     return @[
              @{
                  @"accentColorValue": @4,
                  @"emailAddress": @"user1@example.com",
-                 @"modifiedDataFields": @(modifiedFields),
                  @"name": @"User 1",
                  @"normalizedEmailAddress": @"user1@example.com",
                  @"normalizedName": @"user 1"
                  },
              @{
                  @"accentColorValue": @6,
-                 @"modifiedDataFields": @0,
                  @"name": @"User 2",
                  @"normalizedName": @"user 2"
                  },
              @{
                  @"accentColorValue": @1,
                  @"emailAddress": @"user3@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"User 3",
                  @"normalizedEmailAddress": @"user3@example.com",
                  @"normalizedName": @"user 3",
@@ -877,14 +854,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     return @[
              @{
                  @"accentColorValue": @3,
-                 @"modifiedDataFields": @0,
                  @"name": @"Andreas",
                  @"normalizedName": @"Andreas"
                  },
              @{
                  @"accentColorValue": @3,
                  @"emailAddress": @"574@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"Chad",
                  @"normalizedEmailAddress": @"574@example.com",
                  @"normalizedName": @"Chad"
@@ -892,7 +867,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @5,
                  @"emailAddress": @"183@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"Daniel",
                  @"normalizedEmailAddress": @"183@example.com",
                  @"normalizedName": @"Daniel",
@@ -905,14 +879,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     return @[
              @{
                  @"accentColorValue": @3,
-                 @"modifiedDataFields": @0,
                  @"name": @"Andreas",
                  @"normalizedName": @"Andreas"
                  },
              @{
                  @"accentColorValue": @3,
                  @"emailAddress": @"574@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"Chad",
                  @"normalizedEmailAddress": @"574@example.com",
                  @"normalizedName": @"Chad"
@@ -920,7 +892,6 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
              @{
                  @"accentColorValue": @5,
                  @"emailAddress": @"183@example.com",
-                 @"modifiedDataFields": @0,
                  @"name": @"Daniel",
                  @"normalizedEmailAddress": @"183@example.com",
                  @"normalizedName": @"Daniel",

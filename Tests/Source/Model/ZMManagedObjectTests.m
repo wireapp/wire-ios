@@ -627,4 +627,48 @@
     XCTAssertNil([ZMManagedObject existingObjectWithNonpersistedObjectIdentifer:@"Zfoo" inUserSession:mockUserSession]);
 }
 
+- (void)testPerformanceRetrievingLocallyModifiedKeys;
+{
+    // measured with NSSet implementation: average: 0.000, relative standard deviation: 33.239%, values: [0.000581, 0.000390, 0.000353, 0.000351, 0.000269, 0.000238, 0.000249, 0.000239, 0.000239, 0.000237], 
+    // 10.000 - average: 3.526, relative standard deviation: 2.786%, values: [3.688881, 3.650577, 3.654529, 3.465883, 3.424065, 3.553015, 3.493663, 3.406812, 3.472713, 3.454525],
+    
+    // measured with NSString implementation average: 0.000, relative standard deviation: 34.962%, values: [0.000638, 0.000414, 0.000386, 0.000380, 0.000258, 0.000259, 0.000257, 0.000258, 0.000257, 0.000257],
+    // 10.000 - average: 3.845, relative standard deviation: 2.959%, values: [4.125333, 3.853140, 3.849008, 3.760596, 3.764041, 3.744273, 3.805642, 3.825166, 3.751391, 3.972608],
+    
+    MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
+    entity.field = 3;
+    entity.field3 = @"barfoo";
+    [self.testMOC saveOrRollback];
+
+    NSSet *modifiedKeys = [entity keysThatHaveLocalModifications];
+    XCTAssertTrue([modifiedKeys containsObject:@"field"]);
+    XCTAssertTrue([modifiedKeys containsObject:@"field3"]);
+    
+    [self.testMOC saveOrRollback];
+    [self.testMOC refreshAllObjects];
+    XCTAssertTrue(entity.isFault);
+
+    __block int count = 1;
+    [self measureMetrics:@[XCTPerformanceMetric_WallClockTime] automaticallyStartMeasuring:NO forBlock:^{
+        // given
+        entity.field2 = (count % 2 == 0) ? @"foo" : @"bar";
+        count++;
+        
+        // when
+        [self startMeasuring];
+        [self.testMOC saveOrRollback];
+        NSSet *locallyModifiedKeys = [entity keysThatHaveLocalModifications];
+        [self stopMeasuring];
+        
+        // then
+        XCTAssertTrue([locallyModifiedKeys containsObject:@"field2"]);
+        
+        // reset
+        [entity resetLocallyModifiedKeys:[NSSet setWithObject:@"field2"]];
+        [self.testMOC saveOrRollback];
+        [self.testMOC refreshAllObjects];
+        XCTAssertTrue(entity.isFault);
+    }];
+}
+
 @end

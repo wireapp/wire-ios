@@ -77,9 +77,9 @@
 
 - (void)testThatItHasLocallyModifiedDataFields
 {
-    XCTAssertTrue([ZMConnection hasLocallyModifiedDataFields]);
+    XCTAssertTrue([ZMConnection isTrackingLocalModifications]);
     NSEntityDescription *entity = self.uiMOC.persistentStoreCoordinator.managedObjectModel.entitiesByName[ZMConnection.entityName];
-    XCTAssertNotNil(entity.attributesByName[@"modifiedDataFields"]);
+    XCTAssertNotNil(entity.attributesByName[@"modifiedKeys"]);
 }
 
 - (void)testStatusFromString
@@ -984,7 +984,7 @@
     ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];
     
     // then
-    XCTAssertEqualObjects(connection.keysTrackedForLocalModifications, @[@"status"]);
+    XCTAssertEqualObjects(connection.keysTrackedForLocalModifications, [NSSet setWithObject:@"status"]);
 }
 
 - (NSDictionary *)validPayloadForConnectionWithStatus:(NSString *)status
