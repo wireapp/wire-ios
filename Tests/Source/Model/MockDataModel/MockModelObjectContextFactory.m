@@ -95,17 +95,17 @@
     [needsToBeUpdatedFromBackendAttribute setAttributeType:NSBooleanAttributeType];
     [needsToBeUpdatedFromBackendAttribute setOptional:YES];
 
-    NSAttributeDescription *modifiedDataFieldsAttribute = [[NSAttributeDescription alloc] init];
-    [modifiedDataFieldsAttribute setName:@"modifiedDataFields"];
-    [modifiedDataFieldsAttribute setAttributeType:NSInteger64AttributeType];
-    [modifiedDataFieldsAttribute setOptional:YES];
+    NSAttributeDescription *modifiedKeysAttribute = [[NSAttributeDescription alloc] init];
+    [modifiedKeysAttribute setName:@"modifiedKeys"];
+    [modifiedKeysAttribute setAttributeType:NSTransformableAttributeType];
+    [modifiedKeysAttribute setOptional:YES];
 
 
     NSEntityDescription *mockEntity2 = [[NSEntityDescription alloc] init];
     [mockEntity2 setName:@"MockEntity2"];
     [mockEntity2 setManagedObjectClassName:NSStringFromClass([MockEntity2 class])];
 
-    [mockEntity2 setProperties:@[fieldAttribute, modifiedDataFieldsAttribute, needsToBeUpdatedFromBackendAttribute, testUUIDAttribute, testUUIDDataAttribute]];
+    [mockEntity2 setProperties:@[fieldAttribute, modifiedKeysAttribute, needsToBeUpdatedFromBackendAttribute, testUUIDAttribute, testUUIDDataAttribute]];
     return mockEntity2;
 }
 
@@ -166,13 +166,13 @@
     [needsToBeUpdatedFromBackendAttribute setOptional:YES];
 
 
-    NSAttributeDescription *modifiedDataFieldsAttribute = [[NSAttributeDescription alloc] init];
-    [modifiedDataFieldsAttribute setName:@"modifiedDataFields"];
-    [modifiedDataFieldsAttribute setAttributeType:NSInteger64AttributeType];
-    [modifiedDataFieldsAttribute setOptional:YES];
+    NSAttributeDescription *modifiedKeysAttribute = [[NSAttributeDescription alloc] init];
+    [modifiedKeysAttribute setName:@"modifiedKeys"];
+    [modifiedKeysAttribute setAttributeType:NSTransformableAttributeType];
+    [modifiedKeysAttribute setOptional:YES];
 
     [mockEntity setProperties:@[fieldAttribute, field2Attribute, field3Attribute, testUUIDAttribute,
-        testUUIDDataAttribute, needsToBeUpdatedFromBackendAttribute, modifiedDataFieldsAttribute, mockEntityRelationship, remoteIdentifierAttribute, remoteIdentifierDataAttribute]];
+        testUUIDDataAttribute, needsToBeUpdatedFromBackendAttribute, modifiedKeysAttribute, mockEntityRelationship, remoteIdentifierAttribute, remoteIdentifierDataAttribute]];
     return mockEntity;
 }
 

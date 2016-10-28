@@ -65,9 +65,9 @@ NSString * const ReactionsKey = @"reactions";
 
 - (void)testThatItHasLocallyModifiedDataFields
 {
-    XCTAssertTrue([ZMImageMessage hasLocallyModifiedDataFields]);
+    XCTAssertTrue([ZMImageMessage isTrackingLocalModifications]);
     NSEntityDescription *entity = self.uiMOC.persistentStoreCoordinator.managedObjectModel.entitiesByName[ZMImageMessage.entityName];
-    XCTAssertNotNil(entity.attributesByName[@"modifiedDataFields"]);
+    XCTAssertNotNil(entity.attributesByName[@"modifiedKeys"]);
 }
 
 - (void)testThatWeCanSetAttributesOnTextMessage
@@ -376,7 +376,7 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForTextMessages
 {
     //given
-    NSArray *expected = @[IsExpiredKey];
+    NSSet *expected = [NSSet setWithObject:IsExpiredKey];
 
     // when
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -388,7 +388,7 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForSystemMessages
 {
     //given
-    NSArray *expected = @[IsExpiredKey];
+    NSSet *expected = [NSSet setWithObject:IsExpiredKey];
     
     // when
     ZMSystemMessage *message = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -401,7 +401,7 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForImageMessages
 {
     // given
-    NSArray *expected = @[IsExpiredKey];
+    NSSet *expected = [NSSet setWithObject:IsExpiredKey];
     
     // when
     ZMImageMessage *message = [ZMImageMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -416,8 +416,8 @@ NSString * const ReactionsKey = @"reactions";
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    NSArray *keysThatShouldBeTracked = @[@"dataSet", @"linkPreviewState"];
-    AssertArraysContainsSameObjects(message.keysTrackedForLocalModifications, keysThatShouldBeTracked);
+    NSSet *keysThatShouldBeTracked = [NSSet setWithArray:@[@"dataSet", @"linkPreviewState"]];
+    XCTAssertEqualObjects(message.keysTrackedForLocalModifications, keysThatShouldBeTracked);
 }
 
 - (void)testThat_doesEventGenerateMessage_returnsTrueForAllKnownTypes

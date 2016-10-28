@@ -78,9 +78,9 @@ static NSString *const ValidEmail = @"foo77@example.com";
 
 - (void)testThatItHasLocallyModifiedDataFields
 {
-    XCTAssertTrue([ZMUser hasLocallyModifiedDataFields]);
+    XCTAssertTrue([ZMUser isTrackingLocalModifications]);
     NSEntityDescription *entity = self.uiMOC.persistentStoreCoordinator.managedObjectModel.entitiesByName[ZMUser.entityName];
-    XCTAssertNotNil(entity.attributesByName[@"modifiedDataFields"]);
+    XCTAssertNotNil(entity.attributesByName[@"modifiedKeys"]);
 }
 
 - (void)testThatWeCanSetAttributesOnUser
@@ -908,7 +908,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertNotNil(user);
     
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:user.keysTrackedForLocalModifications], expected);
+    XCTAssertEqualObjects(user.keysTrackedForLocalModifications, expected);
 }
 
 
@@ -1387,7 +1387,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     connection.to = user;
     connection.message = @"Some old text";
     [self.uiMOC saveOrRollback];
-    [connection setValue:@0 forKey:@"modifiedDataFields"]; // Simulate no local changes
+    [connection setValue:[NSSet set] forKey:@"modifiedKeys"]; // Simulate no local changes
     
     // when
     [user connectWithMessageText:@"Foo, bar, baz!" completionHandler:nil];
@@ -1459,7 +1459,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     connection.status = status;
     connection.message = @"Some old text";
     [self.uiMOC saveOrRollback];
-    [connection setValue:@0 forKey:@"modifiedDataFields"]; // Simulate no local changes
+    [connection setValue:[NSSet set] forKey:@"modifiedKeys"]; // Simulate no local changes
     return connection;
 }
 

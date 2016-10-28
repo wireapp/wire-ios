@@ -132,12 +132,12 @@ static NSString * const MessageKeyForDebugging = @"nonce";
 - (void)finalizeMerge;
 {
     for (ZMConversation *conversation in self.objectToValueDictionaryMap.keyEnumerator) {
-        NSArray * const trackedKeys = conversation.keysTrackedForLocalModifications;
+        NSSet * const trackedKeys = conversation.keysTrackedForLocalModifications;
         NSDictionary *d = [self.objectToValueDictionaryMap objectForKey:conversation];
         [d enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSObject *value, BOOL *stop) {
             NOT_USED(stop);
             [conversation setValue:value forKey:key];
-            if ([trackedKeys indexOfObject:key] != NSNotFound) {
+            if ([trackedKeys containsObject:key]) {
                 [conversation setLocallyModifiedKeys:[NSSet setWithObject:key]];
             }
         }];
