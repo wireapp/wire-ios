@@ -605,7 +605,6 @@
               @"recipient": NSUUID.createUUID.transportString
           },
           @"from": NSUUID.createUUID.transportString,
-          @"id": self.createEventID.transportString,
           @"type": @"conversation.connect-request"
           };
         

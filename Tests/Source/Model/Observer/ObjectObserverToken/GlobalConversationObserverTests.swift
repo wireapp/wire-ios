@@ -522,8 +522,6 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         // given
         let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        conversation.lastEventID = self.createEventID()
-        conversation.lastReadEventID = conversation.lastEventID
         
         let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
         

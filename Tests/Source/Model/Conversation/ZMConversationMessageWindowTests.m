@@ -78,22 +78,20 @@
             message = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
             ((ZMSystemMessage* )message).systemMessageType = systemMessageType;
         } else {
-            message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+            message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
         }
-        [self addMessage:message withEventMajor:(uint64_t)i toConversation:conversation];
+        [self addMessage:message toConversation:conversation];
     }
     
     return conversation;
 }
 
-- (void)addMessage:(ZMMessage *)message withEventMajor:(uint64_t)major toConversation:(ZMConversation *)conversation
+- (void)addMessage:(ZMMessage *)message toConversation:(ZMConversation *)conversation
 {
     NSDate *timeStamp = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
-    message.eventID = [ZMEventID eventIDWithMajor:major minor:554236];
     message.serverTimestamp = timeStamp;
+    [message markAsSent];
     [conversation.mutableMessages addObject:message];
-    [conversation addEventToDownloadedEvents:message.eventID timeStamp:message.serverTimestamp];
-    conversation.lastEventID = message.eventID;
     conversation.lastServerTimeStamp = message.serverTimestamp;
 }
 
@@ -102,7 +100,7 @@
 {
     ZMSystemMessage *message = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     ((ZMSystemMessage* )message).systemMessageType = systemMessageType;
-    [self addMessage:message withEventMajor:conversation.lastEventID.major+1 toConversation:conversation];
+    [self addMessage:message toConversation:conversation];
     return message;
 }
 
@@ -133,11 +131,8 @@
     ZMConversation *conversation = [self createConversationWithMessages:conversationSize];
     if(lastReadIndex != NSNotFound) {
         ZMMessage *lastRead = conversation.messages[lastReadIndex];
-        conversation.lastReadEventID = lastRead.eventID;
         conversation.lastReadServerTimeStamp = lastRead.serverTimestamp;
     }
-    
-    /* Here I'm using the fact that all eventIDs are sequential - I know it's true because I just created them myself */
     NSOrderedSet *expectedMessages = [[self messagesUntilEndOfConversation:conversation fromIndex:minExpectedMessage] reversedOrderedSet];
     
     // when
@@ -216,12 +211,12 @@
     [self checkExpectedMessagesWithLastReadIndex:LAST_READ conversationSize:CONVERSATION_SIZE windowSize:WINDOW_SIZE minExpectedMessageIndexInWindow:MIN_EXPECTED_MESSAGE move:MOVE failureRecorder:NewFailureRecorder()];
 }
 
-- (void)testThatAConversationWindowIsEmptyIfThereIsALastReadEventIDButNoMessages
+- (void)testThatAConversationWindowIsEmptyIfThereIsALastReadServerTimestampButNoMessages
 {
     // given
     const NSUInteger WINDOW_SIZE = 5;
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventID = [ZMEventID eventIDWithMajor:8 minor:214235];
+    conversation.lastReadServerTimeStamp = [NSDate date];
     
     // when
     ZMConversationMessageWindow *window = [conversation conversationWindowWithSize:WINDOW_SIZE];
@@ -319,7 +314,6 @@
     // given
     ZMConversation *conversation = [self createConversationWithMessages:15];
     ZMMessage *lastReadMessage = conversation.messages[7];
-    conversation.lastReadEventID = lastReadMessage.eventID;
     conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:5];
     ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -339,7 +333,7 @@
     // given
     ZMConversation *conversation = [self createConversationWithMessages:5];
     ZMMessage *lastReadMessage = conversation.messages[1];
-    conversation.lastReadEventID = lastReadMessage.eventID;
+    conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:10];
     ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
     XCTAssertEqualObjects(sut.messages.reversedOrderedSet, conversation.messages);
@@ -357,7 +351,6 @@
     // given
     ZMConversation *conversation = [self createConversationWithMessages:15];
     ZMMessage *lastReadMessage = conversation.messages[7];
-    conversation.lastReadEventID = lastReadMessage.eventID;
     conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:5];
     ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -376,13 +369,15 @@
     // given
     ZMConversation *conversation = [self createConversationWithMessages:3];
     ZMMessage *lastReadMessage = conversation.messages.lastObject;
-    conversation.lastReadEventID = lastReadMessage.eventID;
+    conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
+
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:30];
-    ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    conversation.clearedEventID = lastReadMessage.eventID;
+    ZMClientMessage *newMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    newMessage.isEncrypted = YES;
     [conversation.mutableMessages addObject:newMessage];
+
+    // when
+    [conversation clearMessageHistory];
     [sut recalculateMessages];
     
     // then

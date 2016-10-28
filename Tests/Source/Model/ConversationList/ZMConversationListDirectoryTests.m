@@ -50,8 +50,6 @@
 - (ZMConversation *)createConversation
 {
     ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conv.lastEventID = [self createEventID];
-    conv.lastReadEventID = conv.lastEventID;
     conv.lastServerTimeStamp = [NSDate date];
     conv.lastReadServerTimeStamp = conv.lastServerTimeStamp;
     conv.remoteIdentifier = [NSUUID createUUID];
@@ -116,7 +114,6 @@
     self.clearedConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     self.clearedConversation.connection.status = ZMConnectionStatusAccepted;
     self.clearedConversation.userDefinedName = @"clearedConversation";
-    self.clearedConversation.clearedEventID = self.clearedConversation.lastEventID;
     self.clearedConversation.clearedTimeStamp = self.clearedConversation.lastServerTimeStamp;
     self.clearedConversation.isArchived = YES;
 
@@ -242,40 +239,8 @@
     XCTAssertEqualObjects([NSSet setWithArray:list], exepected);
 }
 
-- (void)testThatItReturnsClearedConversationsWhenNoClearedTimeStampButOnlyClearedEventIDIsSet
+- (void)testThatItNotReturnsClearedConversationsIn_ConversationsIncludingArchived
 {
-    // given
-    self.clearedConversation.clearedTimeStamp = nil;
-    [self.uiMOC saveOrRollback];
-    
-    // when
-    ZMConversationList *list = [self.uiMOC.conversationListDirectory clearedConversations];
-    NSSet *exepected = [NSSet setWithArray:@[self.clearedConversation]];
-    
-    // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], exepected);
-}
-
-- (void)testThatItReturnsClearedConversationsWhenNoClearedEventIDButOnlyClearedTimeStampIsSet
-{
-    // given
-    self.clearedConversation.clearedEventID = nil;
-    [self.uiMOC saveOrRollback];
-    
-    // when
-    ZMConversationList *list = [self.uiMOC.conversationListDirectory clearedConversations];
-    NSSet *exepected = [NSSet setWithArray:@[self.clearedConversation]];
-    
-    // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], exepected);
-}
-
-- (void)testThatItNotReturnsClearedConversationsWhenNoClearedTimeStampButOnlyClearedEventIDIsSet
-{
-    // given
-    self.clearedConversation.clearedTimeStamp = nil;
-    [self.uiMOC saveOrRollback];
-    
     // when
     ZMConversationList *list = [self.uiMOC.conversationListDirectory conversationsIncludingArchived];
     NSSet *exepected = [NSSet setWithArray:@[self.clearedConversation]];
@@ -284,23 +249,5 @@
     // cleared conversations should not be included in conversationsIncludingArchived
     XCTAssertFalse([[NSSet setWithArray:list] intersectsSet:exepected]);
 }
-
-- (void)testThatItNotReturnsClearedConversationsWhenNoClearedEventIDButOnlyClearedTimeStampIsSet
-{
-    // given
-    self.clearedConversation.clearedEventID = nil;
-    [self.uiMOC saveOrRollback];
-    
-    // when
-    ZMConversationList *list = [self.uiMOC.conversationListDirectory conversationsIncludingArchived];
-    NSSet *exepected = [NSSet setWithArray:@[self.clearedConversation]];
-    
-    // then
-    // cleared conversations should not be included in conversationsIncludingArchived
-    XCTAssertFalse([[NSSet setWithArray:list] intersectsSet:exepected]);
-}
-
-
-
 
 @end

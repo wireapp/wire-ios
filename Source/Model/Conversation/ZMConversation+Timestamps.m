@@ -112,46 +112,4 @@
     return (newTime != nil) || sameTime;
 }
 
-
-- (ZMEventID *)updateEventID:(ZMEventID *)eventIDToUpdate ifNeededWithEventID:(ZMEventID *)newEventID
-{
-    if (newEventID != nil &&
-        (eventIDToUpdate == nil || [eventIDToUpdate compare:newEventID] == NSOrderedAscending)) {
-        return newEventID;
-    }
-    return nil;
-}
-
-- (BOOL)updateLastReadEventIDIfNeededWithEventID:(ZMEventID *)eventID
-{
-    ZMEventID *newID = [self updateEventID:self.lastReadEventID ifNeededWithEventID:eventID];
-    if (newID != nil) {
-        self.lastReadEventID = newID;
-    }
-    return (newID != nil);
-}
-
-- (BOOL)updateLastEventIDIfNeededWithEventID:(ZMEventID *)eventID
-{
-    ZMEventID *newID =  [self updateEventID:self.lastEventID ifNeededWithEventID:eventID];
-    if (newID != nil) {
-        self.lastEventID = newID;
-    }
-    return (newID != nil);
-}
-
-
-- (BOOL)updateClearedEventIDIfNeededWithEventID:(ZMEventID *)eventID andSync:(BOOL)shouldSync
-{
-    ZMEventID *newID =  [self updateEventID:self.clearedEventID ifNeededWithEventID:eventID];
-    if (newID != nil) {
-        self.clearedEventID = newID;
-        if (shouldSync && self.managedObjectContext.zm_isSyncContext) {
-            [self setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationClearedEventIDDataKey]];
-        }
-    }
-    return (newID != nil);
-}
-
-
 @end
