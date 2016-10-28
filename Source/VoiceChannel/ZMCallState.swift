@@ -632,14 +632,13 @@ open class ZMConversationCallState : NSObject {
     }
     
     open override var description : String {
-        let participantIDs = activeFlowParticipants.array.map{($0 as! ZMUser).objectID}
         return "CallState \(SwiftDebugging.address(self)) for contextType: \(contextType.description) \n" +
         " --> isCallDeviceActive: \(isCallDeviceActive) \n" +
         " --> hasLocalModificationsForCallDeviceActive: \(hasLocalModificationsForCallDeviceActive) \n" +
         " --> isIgnoringCall: \(isIgnoringCall) \n" +
         " --> hasLocalModificationsForIgnoringCall: \(hasLocalModificationsForIgnoringCall) \n" +
         " --> isFlowActive: \(isFlowActive) \n" +
-        " --> activeFlowParticipants: \(participantIDs) \n" +
+        " --> activeFlowParticipants: \(activeFlowParticipants) \n" +
         " --> isOutgoingCall: \(isOutgoingCall) \n" +
         " --> hasLocalModificationsForActiveParticipants: \(hasLocalModificationsForActiveParticipants) \n" +
         " --> hasChanges: \(hasChanges) \n" +
