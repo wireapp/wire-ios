@@ -27,9 +27,9 @@
 NSString * const ZMDataPropertySuffix = @"_data";
 
 static NSString * const NeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
-NSString * const ZMManagedObjectLocallyModifiedDataFieldsKey = @"modifiedDataFields";
 static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
-
+NSString * const ZMManagedObjectLocallyModifiedKeysKey = @"modifiedKeys";
+static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 
 @interface ZMManagedObject ()
@@ -103,21 +103,15 @@ static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
 
 - (void)setKeysThatHaveLocalModifications:(NSSet *)keys;
 {
-    if (! [[self class] hasLocallyModifiedDataFields]) {
+    if (! [[self class] isTrackingLocalModifications]) {
         return;
     }
-    
-    // The stored value is a bitfield. C.f. the -keysThatAreMissingDataFromBackend method.
-    __block int64_t bits = 0;
-    [self.keysTrackedForLocalModifications enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
-        NOT_USED(stop);
-        if ([keys containsObject:key]) {
-            bits |= 1ll << (int) idx;
-        }
-    }];
-    if (! [[self valueForKey:ZMManagedObjectLocallyModifiedDataFieldsKey] isEqualToValue:@(bits)]) {
-        [self setValue:@(bits) forKey:ZMManagedObjectLocallyModifiedDataFieldsKey];
+    NSMutableSet *changedTrackedKeys = [keys mutableCopy];
+    [changedTrackedKeys intersectSet:self.keysTrackedForLocalModifications];
+    if ([self.modifiedKeys isEqualToSet:changedTrackedKeys]){
+        return;
     }
+    self.modifiedKeys = (keys.count == 0) ? nil : [changedTrackedKeys copy];
 }
 
 - (NSString *)objectIDURLString
@@ -139,8 +133,9 @@ static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
 @implementation ZMManagedObject (Internal)
 
 @dynamic needsToBeUpdatedFromBackend;
+@dynamic modifiedKeys;
 
-+ (BOOL)hasLocallyModifiedDataFields;
++ (BOOL)isTrackingLocalModifications
 {
     return YES;
 }
@@ -393,8 +388,8 @@ static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
 
 + (NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream;
 {
-    return [NSPredicate predicateWithFormat:@"%K != 0 && %K != NULL",
-            ZMManagedObjectLocallyModifiedDataFieldsKey, ZMManagedObjectLocallyModifiedDataFieldsKey];
+    return [NSPredicate predicateWithFormat:@"%K != NULL",
+            ZMManagedObjectLocallyModifiedKeysKey];
 }
 
 + (NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream;
@@ -405,7 +400,7 @@ static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
 - (NSSet *)ignoredKeys;
 {
     NSString * const KeysIgnoredForTrackingModifications[] = {
-        ZMManagedObjectLocallyModifiedDataFieldsKey,
+        ZMManagedObjectLocallyModifiedKeysKey,
         NeedsToBeUpdatedFromBackendKey,
         RemoteIdentifierDataKey,
     };
@@ -414,70 +409,52 @@ static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
     return ignoredKeys;
 }
 
+
 - (NSSet *)keysThatHaveLocalModifications;
 {
-    if (! [[self class] hasLocallyModifiedDataFields]) {
+    if (! [[self class] isTrackingLocalModifications]) {
         return [NSSet set];
     }
-    
-    NSNumber *n = [self valueForKey:ZMManagedObjectLocallyModifiedDataFieldsKey];
-    return [self keysThatHaveLocalModificationsForLocallyModifiedFlag:n];
-}
-
-- (BOOL)hasLocalModificationsForKey:(NSString *)key withModifiedFlag:(NSNumber *)n;
-{
-    return [[self keysThatHaveLocalModificationsForLocallyModifiedFlag:n] containsObject:key];
-}
-
-- (NSSet *)keysThatHaveLocalModificationsForLocallyModifiedFlag:(NSNumber *)n;
-{
-    // The stored value is a bitfield. We use the fact that the allKeysTrackedAsMissing
-    // keys are always sorted alphabetically.
-    NSMutableSet *keys = [NSMutableSet set];
-    int64_t const bits = [n integerValue];
-    [self.keysTrackedForLocalModifications enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
-        NOT_USED(stop);
-        if (bits & (1ll << (int) idx)) {
-            [keys addObject:key];
-        }
-    }];
-    return keys;
+    return self.modifiedKeys ?: [NSSet set];
 }
 
 - (void)resetLocallyModifiedKeys:(NSSet *)keys;
 {
     NSMutableSet *newKeys = [self.keysThatHaveLocalModifications mutableCopy];
     [newKeys minusSet:keys];
-    [self setKeysThatHaveLocalModifications:newKeys];
+    self.modifiedKeys = (newKeys.count == 0) ? nil : [newKeys copy];
 }
 
 - (void)setLocallyModifiedKeys:(NSSet *)keys;
 {
     VerifyReturn(keys != nil);
-    RequireString([keys isSubsetOfSet:[NSSet setWithArray:self.keysTrackedForLocalModifications]],
+    RequireString([keys isSubsetOfSet:self.keysTrackedForLocalModifications],
                   "Trying to set keys that are not being tracked: %s",
                   [keys.allObjects componentsJoinedByString:@", "].UTF8String);
     
-    NSMutableSet *newKeys = [self.keysThatHaveLocalModifications mutableCopy];
-    for (NSString *key in keys) {
-        [newKeys addObject:key];
-    }
-    [self setKeysThatHaveLocalModifications:newKeys];
+    NSSet *newKeys = [self.keysThatHaveLocalModifications setByAddingObjectsFromSet:keys];
+    self.modifiedKeys = (newKeys.count == 0) ? nil : newKeys;
 }
 
 - (BOOL)hasLocalModificationsForKeys:(NSSet *)keys;
 {
+    if (self.modifiedKeys == nil) {
+        return NO;
+    }
     return [self.keysThatHaveLocalModifications intersectsSet:keys];
 }
 
 - (BOOL)hasLocalModificationsForKey:(NSString *)key;
 {
+    if (self.modifiedKeys == nil) {
+        return NO;
+    }
     return [self.keysThatHaveLocalModifications containsObject:key];
 }
 
-- (NSArray *)keysTrackedForLocalModifications;
+- (NSSet *)keysTrackedForLocalModifications;
 {
-    NSMutableArray *keys = [NSMutableArray array];
+    NSMutableSet *keys = [NSMutableSet set];
     NSSet *ignoredKeys = self.ignoredKeys;
     
     [self.entity.attributesByName enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSAttributeDescription *attribute, BOOL *stop) {
@@ -494,11 +471,9 @@ static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
             [keys addObject:key];
         }
     }];
-    
-    return [keys sortedArrayUsingSelector:NSSelectorFromString(@"compare:")];
+    return keys;
 }
 
-static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 - (NSArray *)keysForCachedValues;
 {
@@ -536,8 +511,31 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     }
 }
 
+- (void)awakeFromFetch
+{
+    [super awakeFromFetch];
+    [self removeObsoleteKeys];
+}
+
+/// Removes keys that were previously tracked but are not tracked anymore from the modifiedKeys
+- (void)removeObsoleteKeys
+{
+    if (![self.class isTrackingLocalModifications]) {
+        return;
+    }
+    if (self.modifiedKeys == nil || [self.modifiedKeys isSubsetOfSet:self.keysTrackedForLocalModifications]) {
+        return;
+    }
+    NSMutableSet *remainingKeys = [self.modifiedKeys mutableCopy];
+    [remainingKeys intersectSet:self.keysTrackedForLocalModifications];
+    self.modifiedKeys = (remainingKeys.count == 0) ? nil : remainingKeys;
+}
+
 - (void)updateKeysThatHaveLocalModifications;
 {
+    if (![self.class isTrackingLocalModifications]) {
+        return;
+    }
     NSSet *oldKeys = self.keysThatHaveLocalModifications;
     NSMutableSet *newKeys = [oldKeys mutableCopy];
     [newKeys addObjectsFromArray:self.filteredChangedValues.allKeys ?: @[]];
@@ -618,7 +616,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
             if (! [filter evaluateWithObject:key]) {
                 return;
             }
-            if ([key isEqualToString:ZMManagedObjectLocallyModifiedDataFieldsKey]) {
+            if ([key isEqualToString:ZMManagedObjectLocallyModifiedKeysKey]) {
                 NSArray *keys = [self.keysThatHaveLocalModifications.allObjects sortedArrayUsingComparator:stringCompare];
                 values[key] = (keys.count == 0) ? @"0" : [keys componentsJoinedByString:@" | "];
             } else {

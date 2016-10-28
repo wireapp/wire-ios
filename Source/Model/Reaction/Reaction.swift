@@ -45,7 +45,7 @@ open class Reaction : ZMManagedObject {
     }
     
     
-    open override func keysTrackedForLocalModifications() -> [String] {
+    open override func keysTrackedForLocalModifications() -> Set<String> {
         return [ZMReactionUsersValueKey]
     }
     

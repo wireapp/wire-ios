@@ -31,11 +31,11 @@
     return @"field";
 }
 
-+(NSString *)entityName {
++ (NSString *)entityName {
     return @"MockEntity";
 }
 
-+(NSString *)remoteIdentifierDataKey {
++ (NSString *)remoteIdentifierDataKey {
     return @"testUUID_data";
 }
 

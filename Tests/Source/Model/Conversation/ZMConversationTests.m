@@ -186,9 +186,9 @@
 
 - (void)testThatItHasLocallyModifiedDataFields
 {
-    XCTAssertTrue([ZMConversation hasLocallyModifiedDataFields]);
+    XCTAssertTrue([ZMConversation isTrackingLocalModifications]);
     NSEntityDescription *entity = self.uiMOC.persistentStoreCoordinator.managedObjectModel.entitiesByName[ZMConversation.entityName];
-    XCTAssertNotNil(entity.attributesByName[@"modifiedDataFields"]);
+    XCTAssertNotNil(entity.attributesByName[@"modifiedKeys"]);
 }
 
 - (void)testThatWeCanSetAttributesOnConversation
@@ -220,7 +220,7 @@
 - (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeys
 {
     // given
-    NSArray *expected = @[
+    NSSet *expected = [NSSet setWithArray:@[
                           ZMConversationUserDefinedNameKey,
                           ZMConversationUnsyncedInactiveParticipantsKey,
                           ZMConversationUnsyncedActiveParticipantsKey,
@@ -232,13 +232,13 @@
                           ZMConversationIsIgnoringCallKey,
                           ZMConversationSilencedChangedTimeStampKey,
                           ZMConversationArchivedChangedTimeStampKey,
-                          ];
+                          ]];
     
     // when
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
 
     // then
-    AssertArraysContainsSameObjects(conversation.keysTrackedForLocalModifications, expected);
+    XCTAssertEqualObjects(conversation.keysTrackedForLocalModifications, expected);
 }
 
 - (void)testThatItAddsCallDeviceIsActiveToLocallyModifiedKeysIfHasLocalModificationsForCallDeviceIsActiveIsSet
