@@ -7,13 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		091799811B7E31FC00E60DD9 /* ZMEventIDRangeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 091799801B7E31FC00E60DD9 /* ZMEventIDRangeSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		091799871B7E323700E60DD9 /* EventBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 091799821B7E323700E60DD9 /* EventBlock.h */; };
-		091799881B7E323700E60DD9 /* EventBlock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 091799831B7E323700E60DD9 /* EventBlock.mm */; };
-		091799891B7E323700E60DD9 /* EventUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 091799841B7E323700E60DD9 /* EventUID.h */; };
-		0917998A1B7E323700E60DD9 /* EventUID.mm in Sources */ = {isa = PBXBuildFile; fileRef = 091799851B7E323700E60DD9 /* EventUID.mm */; };
-		0917998B1B7E323700E60DD9 /* ZMEventIDRangeSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 091799861B7E323700E60DD9 /* ZMEventIDRangeSet.mm */; };
-		091799901B7E32FF00E60DD9 /* ZMEventIDSetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0917998D1B7E32FF00E60DD9 /* ZMEventIDSetTests.m */; };
 		0928E2051BA023A30057232E /* NSData_MultipartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0928E2041BA023A30057232E /* NSData_MultipartTests.m */; };
 		095840201B9591F1004555F9 /* NSData+Multipart.m in Sources */ = {isa = PBXBuildFile; fileRef = 0958401E1B9591F1004555F9 /* NSData+Multipart.m */; };
 		095840221B959200004555F9 /* NSData+Multipart.h in Headers */ = {isa = PBXBuildFile; fileRef = 095840211B959200004555F9 /* NSData+Multipart.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,9 +75,6 @@
 		5499FFDA1B31C66D00835C8B /* ZMWebSocketFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 5499FF7C1B31C66C00835C8B /* ZMWebSocketFrame.m */; };
 		5499FFDC1B31C66D00835C8B /* ZMWebSocketHandshake.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF7D1B31C66C00835C8B /* ZMWebSocketHandshake.h */; };
 		5499FFDE1B31C66D00835C8B /* ZMWebSocketHandshake.m in Sources */ = {isa = PBXBuildFile; fileRef = 5499FF7E1B31C66C00835C8B /* ZMWebSocketHandshake.m */; };
-		54B3BD351B7A2D37004B8183 /* ZMEventID.m in Sources */ = {isa = PBXBuildFile; fileRef = 54B3BD341B7A2D37004B8183 /* ZMEventID.m */; };
-		54B3BD371B7A2D69004B8183 /* ZMEventID.h in Headers */ = {isa = PBXBuildFile; fileRef = 54B3BD361B7A2D69004B8183 /* ZMEventID.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54B3BD391B7A2DCE004B8183 /* ZMEventIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54B3BD381B7A2DCE004B8183 /* ZMEventIDTests.m */; };
 		54CA154D1B32F2C1008D3787 /* ZMAccessToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA14FE1B32F2C1008D3787 /* ZMAccessToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA154F1B32F2C1008D3787 /* ZMAccessToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA14FF1B32F2C1008D3787 /* ZMAccessToken.m */; };
 		54CA15511B32F2C1008D3787 /* ZMAccessTokenHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15001B32F2C1008D3787 /* ZMAccessTokenHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -210,15 +200,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		091799801B7E31FC00E60DD9 /* ZMEventIDRangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMEventIDRangeSet.h; sourceTree = "<group>"; };
-		091799821B7E323700E60DD9 /* EventBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventBlock.h; sourceTree = "<group>"; };
-		091799831B7E323700E60DD9 /* EventBlock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventBlock.mm; sourceTree = "<group>"; };
-		091799841B7E323700E60DD9 /* EventUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventUID.h; sourceTree = "<group>"; };
-		091799851B7E323700E60DD9 /* EventUID.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventUID.mm; sourceTree = "<group>"; };
-		091799861B7E323700E60DD9 /* ZMEventIDRangeSet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZMEventIDRangeSet.mm; sourceTree = "<group>"; };
-		0917998C1B7E32FF00E60DD9 /* ZMEventBlockTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZMEventBlockTest.mm; sourceTree = "<group>"; };
-		0917998D1B7E32FF00E60DD9 /* ZMEventIDSetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMEventIDSetTests.m; sourceTree = "<group>"; };
-		0917998E1B7E32FF00E60DD9 /* ZMEventUIDTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZMEventUIDTests.mm; sourceTree = "<group>"; };
 		0928E2041BA023A30057232E /* NSData_MultipartTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSData_MultipartTests.m; sourceTree = "<group>"; };
 		0958401E1B9591F1004555F9 /* NSData+Multipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Multipart.m"; sourceTree = "<group>"; };
 		095840211B959200004555F9 /* NSData+Multipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Multipart.h"; sourceTree = "<group>"; };
@@ -311,9 +292,6 @@
 		5499FF7C1B31C66C00835C8B /* ZMWebSocketFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMWebSocketFrame.m; sourceTree = "<group>"; };
 		5499FF7D1B31C66C00835C8B /* ZMWebSocketHandshake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMWebSocketHandshake.h; sourceTree = "<group>"; };
 		5499FF7E1B31C66C00835C8B /* ZMWebSocketHandshake.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMWebSocketHandshake.m; sourceTree = "<group>"; };
-		54B3BD341B7A2D37004B8183 /* ZMEventID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMEventID.m; sourceTree = "<group>"; };
-		54B3BD361B7A2D69004B8183 /* ZMEventID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMEventID.h; sourceTree = "<group>"; };
-		54B3BD381B7A2DCE004B8183 /* ZMEventIDTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMEventIDTests.m; sourceTree = "<group>"; };
 		54BD49FA1D41FE0B006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		54BD49FB1D41FE0B006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		54BD49FC1D41FE0B006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
@@ -621,10 +599,6 @@
 				546E89D51B33015000DD1042 /* NSObject_ZMTransportEncodingTests.m */,
 				546E89D61B33015000DD1042 /* ZMTransportCodecTests.m */,
 				5451EFA21B7A1458002F503B /* Collections+ZMTSafeTypesTests.m */,
-				54B3BD381B7A2DCE004B8183 /* ZMEventIDTests.m */,
-				0917998C1B7E32FF00E60DD9 /* ZMEventBlockTest.mm */,
-				0917998D1B7E32FF00E60DD9 /* ZMEventIDSetTests.m */,
-				0917998E1B7E32FF00E60DD9 /* ZMEventUIDTests.mm */,
 				0928E2041BA023A30057232E /* NSData_MultipartTests.m */,
 			);
 			path = TransportEncoding;
@@ -753,8 +727,6 @@
 				F9C9A7821CAE9BDF0039E10C /* ZMUpdateEvent.h */,
 				54CA15DE1B32F791008D3787 /* ZMTransport.h */,
 				5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */,
-				54B3BD361B7A2D69004B8183 /* ZMEventID.h */,
-				091799801B7E31FC00E60DD9 /* ZMEventIDRangeSet.h */,
 				5451EF9D1B7A1359002F503B /* Collections+ZMTSafeTypes.h */,
 				F91EAAC71D8860380010ACBE /* Collections+ZMSafeTypes.swift */,
 				54CA150E1B32F2C1008D3787 /* NSError+ZMTransportSession.h */,
@@ -803,12 +775,6 @@
 			isa = PBXGroup;
 			children = (
 				F9C9A77B1CAE9A240039E10C /* ZMUpdateEvent.m */,
-				54B3BD341B7A2D37004B8183 /* ZMEventID.m */,
-				091799821B7E323700E60DD9 /* EventBlock.h */,
-				091799831B7E323700E60DD9 /* EventBlock.mm */,
-				091799841B7E323700E60DD9 /* EventUID.h */,
-				091799851B7E323700E60DD9 /* EventUID.mm */,
-				091799861B7E323700E60DD9 /* ZMEventIDRangeSet.mm */,
 				5451EF9F1B7A138B002F503B /* Collections+ZMTSafeTypes.m */,
 				54CA153C1B32F2C1008D3787 /* NSObject+ZMTransportEncoding.m */,
 				54CA153D1B32F2C1008D3787 /* NSString+UUID.m */,
@@ -858,17 +824,13 @@
 				F9C9A7831CAE9BDF0039E10C /* ZMUpdateEvent.h in Headers */,
 				5499FFDC1B31C66D00835C8B /* ZMWebSocketHandshake.h in Headers */,
 				5499FFD41B31C66D00835C8B /* ZMWebSocket.h in Headers */,
-				091799891B7E323700E60DD9 /* EventUID.h in Headers */,
 				BF453F1A1CC6377200403E1C /* ZMRequestCancellation.h in Headers */,
 				54CA15851B32F2C1008D3787 /* ZMURLSessionSwitch.h in Headers */,
 				54CA15711B32F2C1008D3787 /* ZMPersistentCookieStorage.h in Headers */,
 				54CA15771B32F2C1008D3787 /* ZMTransportCodec.h in Headers */,
 				54CA15731B32F2C1008D3787 /* ZMReachability.h in Headers */,
-				54B3BD371B7A2D69004B8183 /* ZMEventID.h in Headers */,
 				5499FFC81B31C66D00835C8B /* ZMPushChannelConnection.h in Headers */,
 				54CA154D1B32F2C1008D3787 /* ZMAccessToken.h in Headers */,
-				091799811B7E31FC00E60DD9 /* ZMEventIDRangeSet.h in Headers */,
-				091799871B7E323700E60DD9 /* EventBlock.h in Headers */,
 				5499FFCC1B31C66D00835C8B /* ZMStreamPairThread.h in Headers */,
 				5499FFC21B31C66D00835C8B /* ZMNetworkSocket.h in Headers */,
 				54CA15CD1B32F2C1008D3787 /* ZMTransportSessionErrorCode.h in Headers */,
@@ -1081,7 +1043,6 @@
 			files = (
 				54CA15BB1B32F2C1008D3787 /* ZMUserAgent.m in Sources */,
 				5499FFD21B31C66D00835C8B /* ZMTransportPushChannel.m in Sources */,
-				0917998A1B7E323700E60DD9 /* EventUID.mm in Sources */,
 				54CA15BF1B32F2C1008D3787 /* NSString+UUID.m in Sources */,
 				54CA15CF1B32F2C1008D3787 /* ZMReachability.m in Sources */,
 				54CA15571B32F2C1008D3787 /* ZMBackgroundActivity.m in Sources */,
@@ -1092,9 +1053,7 @@
 				871667FE1BB2CD1E009C6EEA /* ZMKeychain.m in Sources */,
 				09A218951B79EA5E0076547A /* ZMBackendEnvironment.m in Sources */,
 				5499FFD61B31C66D00835C8B /* ZMWebSocket.m in Sources */,
-				091799881B7E323700E60DD9 /* EventBlock.mm in Sources */,
 				5499FFCA1B31C66D00835C8B /* ZMPushChannelConnection.m in Sources */,
-				54B3BD351B7A2D37004B8183 /* ZMEventID.m in Sources */,
 				54CA15BD1B32F2C1008D3787 /* NSObject+ZMTransportEncoding.m in Sources */,
 				54CA15AD1B32F2C1008D3787 /* ZMExponentialBackoff.m in Sources */,
 				54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */,
@@ -1110,7 +1069,6 @@
 				54CA15C11B32F2C1008D3787 /* ZMTransportCodec.m in Sources */,
 				54CA15B71B32F2C1008D3787 /* ZMTransportRequest.m in Sources */,
 				54CA15C71B32F2C1008D3787 /* ZMTransportRequestScheduler.m in Sources */,
-				0917998B1B7E323700E60DD9 /* ZMEventIDRangeSet.mm in Sources */,
 				54CA15591B32F2C1008D3787 /* ZMSessionCancelTimer.m in Sources */,
 				BF3A7A641D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift in Sources */,
 				BF453F1E1CC63C4800403E1C /* ZMTaskIdentifier.m in Sources */,
@@ -1162,9 +1120,7 @@
 				546E89FB1B33015000DD1042 /* ZMTransportResponseTests.m in Sources */,
 				546E89E51B33015000DD1042 /* ZMTemporaryFileListForBackgroundRequestTests.m in Sources */,
 				546E89F31B33015000DD1042 /* ZMWebSocketTests.m in Sources */,
-				54B3BD391B7A2DCE004B8183 /* ZMEventIDTests.m in Sources */,
 				546E89ED1B33015000DD1042 /* ZMPushChannelConnectionTests.m in Sources */,
-				091799901B7E32FF00E60DD9 /* ZMEventIDSetTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -108,14 +108,6 @@ public extension NSDictionary {
     public func optionalDate(forKey key: String) -> Date? {
         return optionalObjectWhichIsKindOfClass(dictionary: self, key: key){NSDate(transport: $0) as? Date}
     }
-    
-    public func event(forKey key: String) -> ZMEventID? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key){ZMEventID(string:$0)}
-    }
-    
-    public func optionalEvent(forKey key: String) -> ZMEventID? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key){ZMEventID(string:$0)}
-    }
 }
 
 
