@@ -55,7 +55,6 @@ NSString * const ZMMessageMediumDataLoadedKey = @"mediumDataLoaded";
 NSString * const ZMMessageOriginalSizeDataKey = @"originalSize_data";
 NSString * const ZMMessageOriginalSizeKey = @"originalSize";
 NSString * const ZMMessageConversationKey = @"visibleInConversation";
-NSString * const ZMMessageEventIDKey = @"eventID";
 NSString * const ZMMessageExpirationDateKey = @"expirationDate";
 NSString * const ZMMessageNameKey = @"name";
 NSString * const ZMMessageNeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
@@ -86,7 +85,7 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 // it will affect updating serverTimestamp and messages sorting
 - (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
-- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID eventID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
+- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
 - (void)updateTimestamp:(NSDate *)timestamp isUpdatingExistingMessage:(BOOL)isUpdate;
 
@@ -264,21 +263,6 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     [self setTransientUUID:nonce forKey:@"nonce"];
 }
 
-- (ZMEventID *)eventID;
-{
-    return [self transientEventIDForKey:ZMMessageEventIDKey];
-}
-
-- (void)setEventID:(ZMEventID *)eventID;
-{
-    [self setTransientEventID:eventID forKey:ZMMessageEventIDKey];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingEventID;
-{
-    return [NSSet setWithObject:ZMMessageEventIDDataKey];
-}
-
 + (NSArray *)defaultSortDescriptors;
 {
     static NSArray *sd;
@@ -303,12 +287,11 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 
 - (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 {
-    [self updateWithTimestamp:event.timeStamp senderUUID:event.senderUUID eventID:event.eventID forConversation:conversation isUpdatingExistingMessage:isUpdate];
+    [self updateWithTimestamp:event.timeStamp senderUUID:event.senderUUID forConversation:conversation isUpdatingExistingMessage:isUpdate];
 }
 
-- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID eventID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
+- (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 {
-    self.eventID = [ZMEventID latestOfEventID:self.eventID and:eventID];
     [self updateTimestamp:serverTimestamp isUpdatingExistingMessage:isUpdate];
 
     if (self.managedObjectContext != conversation.managedObjectContext) {
@@ -322,7 +305,7 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
         // if the message was sent by the selfUser we don't want to send a lastRead event, since we consider this message to be already read
         [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:self.serverTimestamp andSync:NO];
     }
-    [conversation updateWithMessage:self timeStamp:serverTimestamp eventID:eventID];
+    [conversation updateWithMessage:self timeStamp:serverTimestamp];
 }
 
 + (ZMConversation *)conversationForUpdateEvent:(ZMUpdateEvent *)event inContext:(NSManagedObjectContext *)moc prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
@@ -497,18 +480,6 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     if (updatedTimestamp) {
         [self.conversation resortMessagesWithUpdatedMessage:self];
     }
-    
-    ZMEventID *eventID = [payload optionalEventForKey:@"id"];
-    if (eventID != nil) {
-        [self.conversation addEventToDownloadedEvents:eventID timeStamp:timestamp];
-        if ((self.eventID == nil) ||
-            ([eventID compare:self.eventID] == NSOrderedAscending))
-        {
-            self.eventID = eventID;
-        }
-        [self.conversation updateLastReadEventIDIfNeededWithEventID:eventID];
-        [self.conversation updateLastEventIDIfNeededWithEventID:eventID];
-    }
 }
 
 - (NSString *)shortDebugDescription;
@@ -518,11 +489,10 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     formatter.numberStyle = NSNumberFormatterDecimalStyle;
     formatter.usesGroupingSeparator = YES;
     
-    return [NSString stringWithFormat:@"<%@: %p> id: %@, conversation: %@, event: %@, nonce: %@, sender: %@, server timestamp: %@",
+    return [NSString stringWithFormat:@"<%@: %p> id: %@, conversation: %@, nonce: %@, sender: %@, server timestamp: %@",
             self.class, self,
             self.objectID.URIRepresentation.lastPathComponent,
             self.conversation.objectID.URIRepresentation.lastPathComponent,
-            self.eventID.transportString,
             [self.nonce.UUIDString.lowercaseString substringToIndex:4],
             self.sender.objectID.URIRepresentation.lastPathComponent,
             [formatter stringFromNumber:@(self.serverTimestamp.timeIntervalSinceNow)]
@@ -628,17 +598,6 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     return nil;
 }
 
-+ (void)addEventToDownloadedEvents:(ZMUpdateEvent *)event inConversation:(ZMConversation *)conversation
-{
-    ZMEventID *eventID = event.eventID;
-    NSDate *timeStamp = event.timeStamp;
-
-    if (eventID != nil) {
-        [conversation addEventToDownloadedEvents:eventID timeStamp:timeStamp];
-        conversation.lastEventID = conversation.lastEventID != nil ? [ZMEventID latestOfEventID:eventID and:conversation.lastEventID] : eventID;
-    }
-}
-
 + (NSPredicate *)predicateForMessageInConversation:(ZMConversation *)conversation withNonces:(NSSet<NSUUID *> *)nonces;
 {
     NSPredicate *conversationPredicate = [NSPredicate predicateWithFormat:@"%K == %@ OR %K == %@", ZMMessageConversationKey, conversation.objectID, ZMMessageHiddenInConversationKey, conversation.objectID];
@@ -657,9 +616,7 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 
 + (NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream;
 {
-    return [NSPredicate predicateWithFormat:@"%K == NULL && %K == 0",
-            ZMMessageEventIDDataKey,
-            ZMMessageIsExpiredKey];
+    return [NSPredicate predicateWithValue:NO];
 }
 
 - (NSSet *)ignoredKeys;
@@ -746,10 +703,6 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
         preExistingClientMessage.isPlainText = YES;
         return nil;
     }
-    if (![conversation shouldAddEvent:updateEvent]) {
-        [ZMMessage addEventToDownloadedEvents:updateEvent inConversation:conversation];
-        return nil;
-    }
     
     ZMTextMessage *message = [ZMTextMessage fetchMessageWithNonce:nonce
                                                   forConversation:conversation
@@ -762,7 +715,7 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     message.isPlainText = YES;
     message.isEncrypted = NO;
     message.nonce = nonce;
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:(message.eventID != nil)];
+    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:NO];
     message.text = text;
     
     return message;
@@ -804,6 +757,11 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     [super removeMessageClearingSender:clearingSender];
 }
 
+- (ZMDeliveryState)deliveryState
+{
+    return ZMDeliveryStateDelivered;
+}
+
 @end
 
 
@@ -819,41 +777,11 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     return @"KnockMessage";
 }
 
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                              inManagedObjectContext:(NSManagedObjectContext *)moc
-                                      prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
++ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent __unused *)updateEvent
+                              inManagedObjectContext:(NSManagedObjectContext __unused *)moc
+                                      prefetchResult:(ZMFetchRequestBatchResult __unused *)prefetchResult
 {
-    if (updateEvent.type != ZMUpdateEventConversationKnock) {
-        return nil;
-    }
-    
-    NSDictionary *eventData = [updateEvent.payload dictionaryForKey:@"data"];
-    NSUUID *nonce = [eventData uuidForKey:@"nonce"];
-    VerifyReturnNil(nonce != nil);
-    
-    ZMConversation *conversation = [self conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
-    VerifyReturnNil(conversation != nil);
-    if (![conversation shouldAddEvent:updateEvent]) {
-        [ZMMessage addEventToDownloadedEvents:updateEvent inConversation:conversation];
-        return nil;
-    }
-    
-    ZMClientMessage *preExistingClientMessage = [ZMClientMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:moc];
-    if(preExistingClientMessage != nil) {
-        preExistingClientMessage.isPlainText = YES;
-        return nil;
-    }
-    
-    ZMKnockMessage *message = [ZMKnockMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:moc];
-    if(message == nil) {
-        message = [ZMKnockMessage insertNewObjectInManagedObjectContext:moc];
-    }
-    
-    message.nonce = nonce;
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:(message.eventID != nil)];
-    message.isEncrypted = NO;
-    message.isPlainText = YES;
-    return message;
+    return nil;
 }
 
 - (id<ZMKnockMessageData>)knockMessageData
@@ -908,11 +836,6 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
         return nil;
     }
     
-    if (![conversation shouldAddEvent:updateEvent]){
-        [ZMMessage addEventToDownloadedEvents:updateEvent inConversation:conversation];
-        return nil;
-    }
-    
     if (type == ZMSystemMessageTypeMissedCall)
     {
         NSString *reason = [[updateEvent.payload dictionaryForKey:@"data"] optionalStringForKey:@"reason"];
@@ -927,18 +850,12 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
         ZMUser *user = [ZMUser userWithRemoteID:[NSUUID uuidWithTransportString:userId] createIfNeeded:YES inContext:moc];
         [usersSet addObject:user];
     }
-
-    ZMEventID *eventID = updateEvent.eventID;
-    VerifyReturnNil(eventID != nil);
     
-    ZMSystemMessage *message = [ZMSystemMessage fetchMessageWithID:eventID forConversation:conversation];
-    if(message == nil) {
-        message = [ZMSystemMessage insertNewObjectInManagedObjectContext:moc];
-    }
+    ZMSystemMessage *message = [ZMSystemMessage insertNewObjectInManagedObjectContext:moc];
     message.systemMessageType = type;
     message.visibleInConversation = conversation;
     
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:(message.eventID != nil)];
+    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:NO];
     
     if (![usersSet isEqual:[NSSet setWithObject:message.sender]]) {
         [usersSet removeObject:message.sender];
@@ -970,25 +887,12 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     return [NSDictionary dictionary];
 }
 
-+ (ZMSystemMessage *)fetchMessageWithID:(ZMEventID *)eventID forConversation:(ZMConversation *)conversation
-{
-    NSPredicate *conversationPredicate = [NSPredicate predicateWithFormat:@"%K == %@ OR %K == %@", ZMMessageConversationKey, conversation, ZMMessageHiddenInConversationKey, conversation];
-    NSPredicate *eventIDPredicate = [NSPredicate predicateWithFormat:@"eventID_data == %@", eventID.encodeToData];
-    NSCompoundPredicate *compound = [NSCompoundPredicate andPredicateWithSubpredicates:@[conversationPredicate, eventIDPredicate]];
-    
-    NSArray *result = [conversation.managedObjectContext executeFetchRequestOrAssert:[ZMSystemMessage sortedFetchRequestWithPredicate:compound]];
-    if(result.count) {
-        return result[0];
-    }
-    return nil;
-}
-
 + (ZMSystemMessage *)fetchStartedUsingOnThisDeviceMessageForConversation:(ZMConversation *)conversation
 {
     NSPredicate *conversationPredicate = [NSPredicate predicateWithFormat:@"%K == %@ OR %K == %@", ZMMessageConversationKey, conversation, ZMMessageHiddenInConversationKey, conversation];
-    NSPredicate *eventIDPredicate = [NSPredicate predicateWithFormat:@"%K == %d", ZMMessageSystemMessageTypeKey, ZMSystemMessageTypeNewClient];
+    NSPredicate *newClientPredicate = [NSPredicate predicateWithFormat:@"%K == %d", ZMMessageSystemMessageTypeKey, ZMSystemMessageTypeNewClient];
     NSPredicate *containsSelfClient = [NSPredicate predicateWithFormat:@"ANY %K == %@", ZMMessageSystemMessageClientsKey, [ZMUser selfUserInContext:conversation.managedObjectContext].selfClient];
-    NSCompoundPredicate *compound = [NSCompoundPredicate andPredicateWithSubpredicates:@[conversationPredicate, eventIDPredicate, containsSelfClient]];
+    NSCompoundPredicate *compound = [NSCompoundPredicate andPredicateWithSubpredicates:@[conversationPredicate, newClientPredicate, containsSelfClient]];
     
     NSArray *result = [conversation.managedObjectContext executeFetchRequestOrAssert:[ZMSystemMessage sortedFetchRequestWithPredicate:compound]];
     if(result.count) {
@@ -1017,7 +921,32 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 
 + (NSPredicate *)predicateForSystemMessagesInsertedLocally
 {
-    return [NSPredicate predicateWithFormat:@"class == %@ AND %K == NULL", [ZMSystemMessage class], ZMMessageEventIDDataKey];
+    return [NSPredicate predicateWithBlock:^BOOL(ZMSystemMessage *msg, id ZM_UNUSED bindings) {
+        if (![msg isKindOfClass:[ZMSystemMessage class]]){
+            return NO;
+        }
+        switch (msg.systemMessageType) {
+            case ZMSystemMessageTypeNewClient:
+            case ZMSystemMessageTypePotentialGap:
+            case ZMSystemMessageTypeIgnoredClient:
+            case ZMSystemMessageTypeUsingNewDevice:
+            case ZMSystemMessageTypeDecryptionFailed:
+            case ZMSystemMessageTypeReactivatedDevice:
+            case ZMSystemMessageTypeConversationIsSecure:
+            case ZMSystemMessageTypeMessageDeletedForEveryone:
+            case ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged:
+                return YES;
+            case ZMSystemMessageTypeInvalid:
+            case ZMSystemMessageTypeConversationNameChanged:
+            case ZMSystemMessageTypeConnectionRequest:
+            case ZMSystemMessageTypeConnectionUpdate:
+            case ZMSystemMessageTypeNewConversation:
+            case ZMSystemMessageTypeParticipantsAdded:
+            case ZMSystemMessageTypeParticipantsRemoved:
+            case ZMSystemMessageTypeMissedCall:
+                return NO;
+        }
+    }];
 }
 
 - (void)updateNeedsUpdatingUsersIfNeeded

@@ -62,7 +62,6 @@
             return !olderEvent && !olderClearTimestamp;
         }
             
-            // these events have no eventID
         case ZMUpdateEventConversationClientMessageAdd:
         case ZMUpdateEventConversationOtrMessageAdd:
         case ZMUpdateEventConversationOtrAssetAdd:
@@ -93,12 +92,6 @@
         default:
             return NO;
     }
-}
-
-
-- (ZMEventID *)eventID
-{
-    return [self.payload optionalEventForKey:@"id"];
 }
 
 - (NSDate *)timeStamp

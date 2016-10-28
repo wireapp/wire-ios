@@ -168,9 +168,6 @@ extension ZMMessage {
         if self.confirmations.count > 0 {
             return .delivered
         }
-        if self.eventID != nil {
-            return .sent
-        }
         if self.isExpired {
             return .failedToSend
         }

@@ -102,11 +102,11 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
             self.processPendingChangesAndClearNotifications()
             
             // when
-            let msg1 = ZMTextMessage.insertNewObject(in: self.syncMOC)
+            let msg1 = ZMClientMessage.insertNewObject(in: self.syncMOC)
             msg1.serverTimestamp = Date()
             conversation.resortMessages(withUpdatedMessage: msg1)
             
-            let msg2 = ZMTextMessage.insertNewObject(in: self.syncMOC)
+            let msg2 = ZMClientMessage.insertNewObject(in: self.syncMOC)
             msg2.serverTimestamp = Date()
             conversation.resortMessages(withUpdatedMessage: msg2)
             
@@ -127,14 +127,14 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
     
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.lastReadEventID = ZMEventID(major: 10, minor: 64578)
+        conversation.lastReadServerTimeStamp = Date().addingTimeInterval(30)
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
+        let msg1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
         msg1.visibleInConversation = conversation
-        msg1.eventID = ZMEventID(major: 9, minor: 12345)
-        
+        msg1.serverTimestamp = Date()
+
         self.uiMOC.processPendingChanges()
         
         // then
@@ -149,10 +149,10 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
+        let msg1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
         msg1.visibleInConversation = conversation
-        msg1.eventID = ZMEventID(major: 9, minor: 12345)
-        
+        msg1.serverTimestamp = Date()
+
         self.uiMOC.processPendingChanges()
         
         // then
@@ -162,27 +162,9 @@ class NewUnreadMessageObserverTokenTests : ZMBaseManagedObjectTest {
     func testThatItDoesNotNotifyObserversWhenItHasNoConversation() {
         
         // when
-        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
-        msg1.eventID = ZMEventID(major: 9, minor: 12345)
+        let msg1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        msg1.serverTimestamp = Date()
         
-        self.uiMOC.processPendingChanges()
-        
-        // then
-        XCTAssertEqual(self.testObserver!.unreadMessageNotes.count, 0)
-    }
-
-    
-    func testThatItDoesNotNotifyObserversWhenTheMessageHasNoEventID() {
-        
-        // given
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.lastReadEventID = ZMEventID(major: 10, minor: 64578)
-        self.processPendingChangesAndClearNotifications()
-        
-        // when
-        let msg1 = ZMTextMessage.insertNewObject(in: self.uiMOC)
-        msg1.visibleInConversation = conversation
-                
         self.uiMOC.processPendingChanges()
         
         // then

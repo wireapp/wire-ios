@@ -22,8 +22,6 @@
 
 #import "ZMManagedObject.h"
 
-@class ZMEventID;
-
 typedef void(^ObjectsEnumerationBlock)(ZMManagedObject * _Nonnull, BOOL * _Nonnull stop);
 extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
 
@@ -40,10 +38,6 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedDataFieldsKey;
 
 /// Whether this object has all data from the backend
 @property (nonatomic) BOOL needsToBeUpdatedFromBackend;
-
-/// Handles conversion from and to ZMEventID and NSData in CoreData
-- (nullable ZMEventID *)transientEventIDForKey:(nonnull NSString *)key;
-- (void)setTransientEventID:(nonnull ZMEventID *)newEventID forKey:(nonnull NSString *)key;
 
 /// Handles conversion from and to NSUUID and NSData in CoreData
 - (nullable NSUUID *)transientUUIDForKey:(nonnull NSString *)key;

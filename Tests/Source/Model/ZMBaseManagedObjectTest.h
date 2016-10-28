@@ -24,7 +24,6 @@
 #import "ZMUser.h"
 
 
-@class ZMEventID;
 @class NSManagedObjectContext;
 @class ZMManagedObject;
 @class ZMUser;
@@ -46,8 +45,6 @@
 /// Waits for queues and managed object contexts to finish work and verifies mocks
 - (void)cleanUpAndVerify;
 
-- (nonnull ZMEventID *)createEventID;
-+ (nonnull ZMEventID *)createEventID;
 
 @property (nonatomic, readonly, nonnull) ZMTestSession *testSession;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *uiMOC;

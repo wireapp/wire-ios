@@ -44,8 +44,8 @@
                   callStateNeedsToBeUpdatedFromBackend:(BOOL)callStateNeedsToBeUpdatedFromBackend;
 - (NSDate *)timeStampForSortAppendMessageToConversation:(ZMConversation *)conversation;
 
-- (ZMMessage *)insertDownloadedMessageAfterMessage:(ZMMessage *)previous intoConversation:(ZMConversation *)conversation;
-- (ZMMessage *)insertDownloadedMessageForEventID:(ZMEventID *)eventID intoConversation:(ZMConversation *)conversation;
+- (ZMMessage *)insertDownloadedMessageAfterMessageIntoConversation:(ZMConversation *)conversation;
+- (ZMMessage *)insertDownloadedMessageIntoConversation:(ZMConversation *)conversation;
 
 @end
 
@@ -141,31 +141,24 @@
 }
 
 
-- (ZMMessage *)insertDownloadedMessageForEventID:(ZMEventID *)eventID intoConversation:(ZMConversation *)conversation
+- (ZMMessage *)insertDownloadedMessageIntoConversation:(ZMConversation *)conversation
 {
     NSDate *newTime = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
     
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    message.eventID = eventID;
     message.serverTimestamp = newTime;
     conversation.lastServerTimeStamp = message.serverTimestamp;
-    conversation.lastEventID = message.eventID;
-    [conversation addEventToDownloadedEvents:message.eventID timeStamp:message.serverTimestamp];
     [conversation.mutableMessages addObject:message];
     return message;
 }
 
-- (ZMMessage *)insertDownloadedMessageAfterMessage:(ZMMessage *)previous intoConversation:(ZMConversation *)conversation
+- (ZMMessage *)insertDownloadedMessageAfterMessageIntoConversation:(ZMConversation *)conversation
 {
     NSDate *newTime = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
     
-    ZMEventID *eventID = [ZMEventID eventIDWithMajor:previous.eventID.major + 1 minor:previous.eventID.minor];
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    message.eventID = eventID;
     message.serverTimestamp = newTime;
     conversation.lastServerTimeStamp = message.serverTimestamp;
-    conversation.lastEventID = message.eventID;
-    [conversation addEventToDownloadedEvents:message.eventID timeStamp:message.serverTimestamp];
     [conversation.mutableMessages addObject:message];
     return message;
 }
@@ -205,8 +198,6 @@
     [self checkConversationAttributeForKey:@"normalizedUserDefinedName" value:@"Foo"];
     [self checkConversationAttributeForKey:@"conversationType" value:@(1)];
     [self checkConversationAttributeForKey:@"lastModifiedDate" value:[NSDate dateWithTimeIntervalSince1970:123456]];
-    [self checkConversationAttributeForKey:@"lastEventID" value:[self createEventID]];
-    [self checkConversationAttributeForKey:@"lastReadEventID" value:[self createEventID] ];
     [self checkConversationAttributeForKey:@"remoteIdentifier" value:[NSUUID createUUID]];
     [self checkConversationAttributeForKey:ZMConversationIsSilencedKey value:@YES];
     [self checkConversationAttributeForKey:ZMConversationIsSilencedKey value:@NO];
@@ -216,7 +207,6 @@
     [self checkConversationAttributeForKey:ZMConversationIsSelfAnActiveMemberKey value:@NO];
     [self checkConversationAttributeForKey:@"needsToBeUpdatedFromBackend" value:@YES];
     [self checkConversationAttributeForKey:@"needsToBeUpdatedFromBackend" value:@NO];
-    [self checkConversationAttributeForKey:ZMConversationArchivedEventIDKey value:[self createEventID]];
     [self checkConversationAttributeForKey:ZMConversationLastReadServerTimeStampKey value:[NSDate date]];
     [self checkConversationAttributeForKey:ZMConversationLastServerTimeStampKey value:[NSDate date]];
 
@@ -235,17 +225,14 @@
                           ZMConversationUnsyncedInactiveParticipantsKey,
                           ZMConversationUnsyncedActiveParticipantsKey,
                           ZMConversationIsSelfAnActiveMemberKey,
-                          ZMConversationArchivedEventIDDataKey,
                           ZMConversationCallDeviceIsActiveKey,
-                          ZMConversationClearedEventIDDataKey,
                           ZMConversationLastReadServerTimeStampKey,
                           ZMConversationClearedTimeStampKey,
                           ZMConversationIsSendingVideoKey,
                           ZMConversationIsIgnoringCallKey,
                           ZMConversationSilencedChangedTimeStampKey,
-                          ZMConversationArchivedChangedTimeStampKey
+                          ZMConversationArchivedChangedTimeStampKey,
                           ];
-    
     
     // when
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -459,7 +446,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeConnection;
     conversation.remoteIdentifier = NSUUID.createUUID;
-    [conversation setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationArchivedEventIDDataKey]];
+    [conversation setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationArchivedChangedTimeStampKey]];
     
     NSPredicate *predicate = [ZMConversation predicateForObjectsThatNeedToBeUpdatedUpstream];
     
@@ -485,9 +472,7 @@
             message.text = text;
             message.visibleInConversation = conversation;
             message.sender = creator;
-            uint64_t poorRandom1 = (13 + i * 98947) % 93179;
             uint64_t poorRandom2 = (13 + i * 98953) % 93179;
-            message.eventID = [ZMEventID eventIDWithMajor:i+1 minor:poorRandom1];
             message.serverTimestamp = [NSDate dateWithTimeIntervalSinceReferenceDate:poorRandom2*100];
         }
         
@@ -525,9 +510,7 @@
             message.text = text;
             message.visibleInConversation = conversation;
             message.sender = creator;
-            uint64_t poorRandom1 = (13 + i * 98947) % 93179;
             uint64_t poorRandom2 = (13 + i * 98953) % 93179;
-            message.eventID = [ZMEventID eventIDWithMajor:i+1 minor:poorRandom1];
             message.serverTimestamp = [NSDate dateWithTimeIntervalSinceReferenceDate:poorRandom2*100];
         }
         
@@ -631,137 +614,6 @@
     AssertDateIsRecent(conversation.lastModifiedDate);
 }
 
-- (void)testThatItAddsToDownloadedEventIDs
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMEventID *eventID1 = [ZMEventID eventIDWithMajor:10 minor:954532];
-    ZMEventID *eventID2 = [ZMEventID eventIDWithMajor:345 minor:2314345];
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:eventID1]);
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:eventID2]);
-    
-    // when
-    [conversation addEventToDownloadedEvents:eventID1 timeStamp:nil];
-    
-    // then
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:eventID1]);
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:eventID2]);
-    
-    // when
-    [conversation addEventToDownloadedEvents:eventID2 timeStamp:nil];
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:eventID1]);
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:eventID2]);
-}
-
-- (void)testThatWhenAddingADownloadedLastReadEventItSetsTheLastReadTimeStamp
-{
-    // given
-    NSDate *lastReadDate = [NSDate date];
-    ZMEventID *lastReadEventID = self.createEventID;
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventID = lastReadEventID;
-    
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:lastReadEventID]);
-    XCTAssertNil(conversation.lastReadServerTimeStamp);
-    
-    // when
-    [self performIgnoringZMLogError:^{
-        [conversation addEventToDownloadedEvents:lastReadEventID timeStamp:lastReadDate];
-    }];
-    
-    // then
-    XCTAssertNotNil(conversation.lastReadServerTimeStamp);
-    XCTAssertEqualObjects(lastReadDate, conversation.lastReadServerTimeStamp);
-}
-
-
-- (void)testThatWhenAddingADownloadedClearedEventItSetsTheClearedTimeStamp
-{
-    // given
-    NSDate *clearedDate = [NSDate date];
-    ZMEventID *clearedEventID = self.createEventID;
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.clearedEventID = clearedEventID;
-    [conversation setDownloadedMessageIDs:[[ZMEventIDRangeSet alloc] init]];
-    
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:clearedEventID]);
-    XCTAssertNil(conversation.clearedTimeStamp);
-    
-    // when
-    [conversation addEventToDownloadedEvents:clearedEventID timeStamp:clearedDate];
-    
-    // then
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:clearedEventID]);
-    XCTAssertNotNil(conversation.clearedTimeStamp);
-    XCTAssertEqualObjects(clearedDate, conversation.clearedTimeStamp);
-}
-
-- (void)testThatWhenAddingAnEventFollowingTheClearedEventItSetsTheClearedTimeStampIfNil
-{
-    // given
-    ZMEventID *clearedEventID = self.createEventID;
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.clearedEventID = clearedEventID;
-    [conversation setDownloadedMessageIDs:[[ZMEventIDRangeSet alloc] init]];
-    
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:clearedEventID]);
-    XCTAssertNil(conversation.clearedTimeStamp);
-    ZMEventID *eventID = [ZMEventID eventIDWithMajor:clearedEventID.major+1 minor:8];
-    NSDate *eventDate = [NSDate date];
-
-    // when
-    [conversation addEventToDownloadedEvents:eventID timeStamp:eventDate];
-    
-    // then
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:eventID]);
-    XCTAssertNotNil(conversation.clearedTimeStamp);
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, [eventDate dateByAddingTimeInterval:-1]);
-}
-
-- (void)testThatWhenAddingAnEventFollowingTheClearedEventItDoesNotSetTheClearedTimeStampIfNotNil
-{
-    // given
-    NSDate *clearedDate = [NSDate date];
-    ZMEventID *clearedEventID = self.createEventID;
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.clearedEventID = clearedEventID;
-    conversation.clearedTimeStamp = clearedDate;
-    [conversation setDownloadedMessageIDs:[[ZMEventIDRangeSet alloc] init]];
-    
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:clearedEventID]);
-    XCTAssertNotNil(conversation.clearedTimeStamp);
-    
-    ZMEventID *eventID = [ZMEventID eventIDWithMajor:clearedEventID.major+1 minor:8];
-    NSDate *eventDate = [clearedDate dateByAddingTimeInterval:10];
-    
-    // when
-    [conversation addEventToDownloadedEvents:eventID timeStamp:eventDate];
-    
-    // then
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:eventID]);
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedDate);
-}
-
-- (void)testThatItAddsRangeToDownloadedEventIDs
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMEventID *eventID1 = [ZMEventID eventIDWithMajor:10 minor:954532];
-    ZMEventID *middleEventID = [ZMEventID eventIDWithMajor:100 minor:346366];
-    ZMEventID *eventID2 = [ZMEventID eventIDWithMajor:345 minor:2314345];
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:eventID1]);
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:eventID2]);
-    XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:middleEventID]);
-    
-    // when
-    [conversation addEventRangeToDownloadedEvents:[[ZMEventIDRange alloc] initWithEventIDs:@[eventID1, eventID2]]];
-    
-    // then
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:eventID1]);
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:eventID2]);
-    XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:middleEventID]);
-}
-
 
 - (void)testThatItCreatesAMessageWithLongText
 {
@@ -838,49 +690,6 @@
     XCTAssertLessThan(fabs([message.expirationDate timeIntervalSinceDate:expectedDate]), 1);
 }
 
-- (void)testThatItDeletesCachedValueForLastEventIDAfterAwakingFromSnapshotEvents
-{
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastEventID = [self createEventID];
-    
-    [conversation willAccessValueForKey:@"lastEventID"];
-    ZMEventID *cachedID = [conversation primitiveValueForKey:@"lastEventID"];
-    [conversation didAccessValueForKey:@"lastEventID"];
-    
-    XCTAssertEqualObjects(cachedID, conversation.lastEventID);
-    
-    // when
-    
-    [conversation awakeFromSnapshotEvents:NSSnapshotEventUndoUpdate];
-    
-    [conversation willAccessValueForKey:@"lastEventID"];
-    ZMEventID *cachedIDAfterDeleting = [conversation primitiveValueForKey:@"lastEventID"];
-    [conversation didAccessValueForKey:@"lastEventID"];
-
-    XCTAssertNil(cachedIDAfterDeleting);
-}
-
-- (void)testThatItDeletesCachedValueForLastReadEventIDAfterAwakingFromSnapshotEvents
-{
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventID = [self createEventID];
-    
-    [conversation willAccessValueForKey:@"lastReadEventID"];
-    ZMEventID *cachedID = [conversation primitiveValueForKey:@"lastReadEventID"];
-    [conversation didAccessValueForKey:@"lastReadEventID"];
-    
-    XCTAssertEqualObjects(cachedID, conversation.lastReadEventID);
-    
-    // when
-    
-    [conversation awakeFromSnapshotEvents:NSSnapshotEventUndoUpdate];
-    
-    [conversation willAccessValueForKey:@"lastReadEventID"];
-    ZMEventID *cachedIDAfterDeleting = [conversation primitiveValueForKey:@"lastReadEventID"];
-    [conversation didAccessValueForKey:@"lastReadEventID"];
-    
-    XCTAssertNil(cachedIDAfterDeleting);
-}
 
 
 - (void)testThatItDeletesCachedValueForRemoteIDAfterAwakingFromSnapshotEvents
@@ -889,17 +698,17 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     [conversation willAccessValueForKey:@"remoteIdentifier"];
-    ZMEventID *cachedID = [conversation primitiveValueForKey:@"remoteIdentifier"];
+    NSUUID *cachedRemoteID = [conversation primitiveValueForKey:@"remoteIdentifier"];
     [conversation didAccessValueForKey:@"remoteIdentifier"];
     
-    XCTAssertEqualObjects(cachedID, conversation.remoteIdentifier);
+    XCTAssertEqualObjects(cachedRemoteID, conversation.remoteIdentifier);
     
     // when
     
     [conversation awakeFromSnapshotEvents:NSSnapshotEventUndoUpdate];
     
     [conversation willAccessValueForKey:@"remoteIdentifier"];
-    ZMEventID *cachedIDAfterDeleting = [conversation primitiveValueForKey:@"remoteIdentifier"];
+    NSUUID *cachedIDAfterDeleting = [conversation primitiveValueForKey:@"remoteIdentifier"];
     [conversation didAccessValueForKey:@"remoteIdentifier"];
     
     XCTAssertNil(cachedIDAfterDeleting);
@@ -1065,7 +874,7 @@
     
     NSDate *serverDate = [firstMessage.serverTimestamp dateByAddingTimeInterval:0.2];
     // when
-    [firstMessage updateWithPostPayload:@{@"time": serverDate, @"id": [ZMEventID eventIDWithMajor:1 minor:1].transportString, @"data": @{@"nonce": firstMessage.nonce}, @"type": @"conversation.message-add"} updatedKeys:[NSSet set]];
+    [firstMessage updateWithPostPayload:@{@"time": serverDate, @"data": @{@"nonce": firstMessage.nonce}, @"type": @"conversation.message-add"} updatedKeys:[NSSet set]];
     
     // then
     XCTAssertEqualObjects(conversation.lastModifiedDate, serverDate);
@@ -1085,7 +894,7 @@
     
     NSDate *serverDate = [firstMessage.serverTimestamp dateByAddingTimeInterval:-0.2];
     // when
-    [firstMessage updateWithPostPayload:@{@"time": serverDate, @"id": [ZMEventID eventIDWithMajor:1 minor:1].transportString, @"data": @{@"nonce": firstMessage.nonce}, @"type": @"conversation.message-add"} updatedKeys:[NSSet set]];
+    [firstMessage updateWithPostPayload:@{@"time": serverDate, @"data": @{@"nonce": firstMessage.nonce}, @"type": @"conversation.message-add"} updatedKeys:[NSSet set]];
     
     // then
     XCTAssertEqualObjects(conversation.lastModifiedDate, postingDate);
@@ -1757,12 +1566,11 @@
     }];
 }
 
-- (ZMMessage *)insertMessageForEventID:(ZMEventID *)eventID intoConversation:(ZMConversation *)conversation
+- (ZMMessage *)insertMessageIntoConversation:(ZMConversation *)conversation
 {
     ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    message.eventID = eventID;
-    message.serverTimestamp = [NSDate date];
-    message.text = [NSString stringWithFormat:@"Text %@", eventID];
+    message.serverTimestamp = [[NSDate date] dateByAddingTimeInterval:2];
+    message.text = [NSString stringWithFormat:@"Text %@", message.serverTimestamp];
     [conversation.mutableMessages addObject:message];
     return message;
 }
@@ -1773,12 +1581,10 @@
     conversation.conversationType = ZMConversationTypeGroup;
     
     for (size_t i = 1; i < 5000; ++i) {
-        ZMEventID *eventID = [ZMEventID eventIDWithMajor:i minor:self.createEventID.minor];
-        [self insertMessageForEventID:eventID intoConversation:conversation];
+        [self insertMessageIntoConversation:conversation];
     }
     
     ZMMessage *lastMessage = conversation.messages.lastObject;
-    conversation.lastEventID = lastMessage.eventID;
     conversation.lastServerTimeStamp = lastMessage.serverTimestamp;
     return conversation;
 }
@@ -1856,10 +1662,10 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventIDSaveDelay = 0.1;
-    ZMMessage *message = [self insertDownloadedMessageForEventID:[self createEventID] intoConversation:conversation];
+    conversation.lastReadTimestampSaveDelay = 0.1;
+    ZMMessage *message = [self insertDownloadedMessageIntoConversation:conversation];
     for (int i = 0; i < 10; ++i) {
-        message = [self insertDownloadedMessageAfterMessage:message intoConversation:conversation];
+        message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     }
     
     // when
@@ -1875,10 +1681,10 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventIDSaveDelay = 2.0;
-    ZMMessage *message = [self insertDownloadedMessageForEventID:[self createEventID] intoConversation:conversation];
+    conversation.lastReadTimestampSaveDelay = 2.0;
+    ZMMessage *message = [self insertDownloadedMessageIntoConversation:conversation];
     for (int i = 0; i < 10; ++i) {
-        message = [self insertDownloadedMessageAfterMessage:message intoConversation:conversation];
+        message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     }
     
     // when
@@ -1893,11 +1699,11 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventIDSaveDelay = 0.1;
+    conversation.lastReadTimestampSaveDelay = 0.1;
     
-    ZMMessage *message = [self insertDownloadedMessageForEventID:[self createEventID] intoConversation:conversation];
+    ZMMessage *message = [self insertDownloadedMessageIntoConversation:conversation];
     for (int i = 0; i < 10; ++i) {
-        message = [self insertDownloadedMessageAfterMessage:message intoConversation:conversation];
+        message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     }
     
     NSDate *originalLastReadTimeStamp = ((ZMMessage *)conversation.messages[9]).serverTimestamp;
@@ -1915,11 +1721,11 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventIDSaveDelay = 0.1;
+    conversation.lastReadTimestampSaveDelay = 0.1;
     
-    ZMMessage *message = [self insertDownloadedMessageForEventID:[self createEventID] intoConversation:conversation];
+    ZMMessage *message = [self insertDownloadedMessageIntoConversation:conversation];
     for (int i = 0; i < 10; ++i) {
-        message = [self insertDownloadedMessageAfterMessage:message intoConversation:conversation];
+        message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     }
     
     NSDate *originalLastReadTimeStamp = ((ZMMessage *)conversation.messages[9]).serverTimestamp;
@@ -1948,11 +1754,11 @@
     
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastReadEventIDSaveDelay = 0.1;
+    conversation.lastReadTimestampSaveDelay = 0.1;
     
-    ZMMessage *message = [self insertDownloadedMessageForEventID:[self createEventID] intoConversation:conversation];
+    ZMMessage *message = [self insertDownloadedMessageIntoConversation:conversation];
     for (int i = 0; i < 3; ++i) {
-        message = [self insertDownloadedMessageAfterMessage:message intoConversation:conversation];
+        message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     }
     NSDate *serverTimeStamp = message.serverTimestamp;
     for (int i = 0; i < 2; ++i) {
@@ -2326,9 +2132,7 @@
     
     NSArray *users = @[user0, user1, selfUser];
     ZMConversation *conversation = [self insertConversationWithParticipants:users callParticipants:users callStateNeedsToBeUpdatedFromBackend:NO];
-    ZMEventID *clearedEventID = self.createEventID;
-    ZMMessage *message = (id)[conversation appendMessageWithText:@"0"];
-    message.eventID = clearedEventID;
+    [conversation appendMessageWithText:@"0"];
     
     ZMConversationList *activeList = [ZMConversationList conversationsInUserSession:self.mockUserSessionWithUIMOC];
     ZMConversationList *archivedList = [ZMConversationList archivedConversationsInUserSession:self.mockUserSessionWithUIMOC];
@@ -2338,7 +2142,6 @@
     [conversation internalRemoveParticipant:selfUser sender:user0];
     
     // then
-    XCTAssertNil(conversation.clearedEventID);
     XCTAssertTrue([activeList predicateMatchesConversation:conversation]);
     XCTAssertFalse([archivedList predicateMatchesConversation:conversation]);
     XCTAssertFalse([clearedList predicateMatchesConversation:conversation]);
@@ -2349,15 +2152,12 @@
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
-        ZMEventID *clearedEventID = [self createEventID];
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        conversation.lastEventID = clearedEventID;
         
         ZMMessage *message1 = (id)[conversation appendMessageWithText:@"B"];
         [message1 expire];
         
-        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"A"];
-        message2.eventID = clearedEventID;
+        [conversation appendMessageWithText:@"A"];
         
         ZMMessage *message3 = (id)[conversation appendMessageWithText:@"B"];
         [message3 expire];
@@ -2480,11 +2280,9 @@
     ZMConversation *conversation = [self insertConversationWithParticipants:users callParticipants:users callStateNeedsToBeUpdatedFromBackend:NO];
     
     ZMMessage *message1 = (id)[conversation appendMessageWithText:@"1"];
-    message1.eventID = self.createEventID;
     message1.serverTimestamp = [NSDate date];
     
     ZMMessage *message2 = (id)[conversation appendMessageWithText:@"2"];
-    message2.eventID = self.createEventID;
     message2.serverTimestamp = [NSDate date];
     
     // when
@@ -2493,7 +2291,6 @@
     
     // then
     XCTAssertFalse(conversation.isArchived);
-    XCTAssertNil(conversation.clearedEventID);
     XCTAssertNil(conversation.clearedTimeStamp);
 
     ZMConversationMessageWindow *window = [conversation conversationWindowWithSize:2];
@@ -2513,71 +2310,6 @@
     
     // then
     XCTAssertTrue(conversation.isArchived);
-}
-
-- (void)testThatClearingMessageHistorySetsLastReadToLastEventID
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMMessage *message1 = (id)[conversation appendMessageWithText:@"B"];
-    message1.eventID = self.createEventID;
-    conversation.lastEventID = message1.eventID;
-    
-    XCTAssertNil(conversation.lastReadEventID);
-    
-    // when
-    [conversation clearMessageHistory];
-    [self.uiMOC saveOrRollback];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqualObjects(conversation.lastReadEventID, conversation.lastEventID);
-}
-
-- (void)testThatClearingMessageHistorySetsClearedEventID
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMMessage *message1 = (id)[conversation appendMessageWithText:@"A"];
-    message1.eventID = self.createEventID;
-    
-    conversation.lastEventID = message1.eventID;
-    conversation.lastServerTimeStamp = message1.serverTimestamp;
-    
-    // when
-    [conversation clearMessageHistory];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    ZMConversationMessageWindow *window = [conversation conversationWindowWithSize:2];
-    XCTAssertEqual(window.messages.count, 0u);
-    
-    XCTAssertEqual(conversation.clearedEventID, conversation.lastEventID);
-}
-
-- (void)testThatClearingMessageHistoryAddsAllPreviousEventsToDownloadedEvents
-{
-    // given
-    
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMMessage *message1 = (id)[conversation appendMessageWithText:@"A"];
-    message1.eventID = [ZMEventID eventIDWithMajor:100 minor:0];
-    
-    conversation.lastEventID = message1.eventID;
-    conversation.lastServerTimeStamp = message1.serverTimestamp;
-    
-    for (uint64_t i = 1; i <= 100; i++) {
-        XCTAssertFalse([conversation.downloadedMessageIDs containsEvent:[ZMEventID eventIDWithMajor:i minor:0]]);
-    }
-    
-    // when
-    [conversation clearMessageHistory];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    for (uint64_t i = 1; i <= 100; i++) {
-        XCTAssertTrue([conversation.downloadedMessageIDs containsEvent:[ZMEventID eventIDWithMajor:i minor:0]]);
-    }
 }
 
 @end
@@ -2638,20 +2370,16 @@
 - (void)testThat_UnarchiveConversationFromEvent_DoesNotUnarchive_AConversation_WhenItIsSilenced
 {
     // given
-    ZMEventID* oldEventID = [ZMEventID eventIDWithMajor:3 minor:30];
-    ZMEventID* newEventID = [ZMEventID eventIDWithMajor:10 minor:30];
-    
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-    conversation.lastEventID = oldEventID;
+    conversation.lastServerTimeStamp = [NSDate date];
     conversation.isArchived = YES;
     conversation.isSilenced = YES;
     
     NSDictionary *payload = @{@"conversation" : conversation.remoteIdentifier.transportString,
-                              @"time" : @"2014-06-18T12:36:51.755Z",
+                              @"time" : [conversation.lastServerTimeStamp dateByAddingTimeInterval:5].transportString,
                               @"data" : @{},
                               @"from" : @"f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
-                              @"id" : newEventID.transportString,
                               @"type": @"conversation.message-add"
                               };
     ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload  uuid:nil];
@@ -3465,8 +3193,6 @@
     XCTAssertTrue([sut evaluateWithObject:conversation]);
 }
 
-//TODO: test all other predicates
-
 - (void)testThatItFetchesSharableConversations
 {
     //given
@@ -3557,7 +3283,6 @@
                                   @"time" : newLastRead.transportString,
                                   @"data" : @{},
                                   @"from" : @"f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
@@ -3595,7 +3320,6 @@
                                   @"time" : newLastRead.transportString,
                                   @"data" : data,
                                   @"from" : selfUserID.transportString,
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.client-message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
@@ -3632,7 +3356,6 @@
                                   @"time" : [NSDate date].transportString,
                                   @"data" : data,
                                   @"from" : selfUserID.transportString,
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.client-message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
@@ -3678,7 +3401,6 @@
                                   @"time" : [NSDate date].transportString,
                                   @"data" : data,
                                   @"from" : selfUserID.transportString,
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.client-message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
@@ -3731,7 +3453,6 @@
                                   @"time" : [NSDate date].transportString,
                                   @"data" : data,
                                   @"from" : selfUserID.transportString,
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.client-message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
@@ -3768,7 +3489,6 @@
                                   @"time" : [NSDate date].transportString,
                                   @"data" : data,
                                   @"from" : selfUserID.transportString,
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.client-message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
@@ -3805,7 +3525,6 @@
                                   @"time" : [NSDate date].transportString,
                                   @"data" : data,
                                   @"from" : [NSUUID createUUID].transportString,
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.client-message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
@@ -3842,7 +3561,6 @@
                                   @"time" : [NSDate date].transportString,
                                   @"data" : data,
                                   @"from" : selfUserID.transportString,
-                                  @"id" : self.createEventID.transportString,
                                   @"type": @"conversation.client-message-add"
                                   };
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];

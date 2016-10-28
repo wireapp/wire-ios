@@ -434,7 +434,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
         }
         [self.conversation updateLastReadServerTimeStampIfNeededWithTimeStamp:serverTimestamp andSync:NO];
         [self.conversation resortMessagesWithUpdatedMessage:self];
-        [self.conversation updateWithMessage:self timeStamp:serverTimestamp eventID:self.eventID];
+        [self.conversation updateWithMessage:self timeStamp:serverTimestamp];
     }
     
     if ([updatedKeys containsObject:ZMAssetClientMessageUploadedStateKey]) {
