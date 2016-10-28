@@ -36,7 +36,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 @property (nonatomic) NSString *groupIdentifier;
 @property (nonatomic) NSURL *databaseDirectory;
 
-@property (nonatomic) NSTimeInterval originalConversationLastReadEventIDTimerValue; // this will speed up the tests A LOT
+@property (nonatomic) NSTimeInterval originalConversationLastReadTimestampTimerValue; // this will speed up the tests A LOT
 @property (nonatomic) MockTransportSession *mockTransportSession;
 
 @end
@@ -77,8 +77,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     NSFileManager *fm = NSFileManager.defaultManager;
     self.groupIdentifier = [@"group." stringByAppendingString:[NSBundle bundleForClass:self.class].bundleIdentifier];
     self.databaseDirectory = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
-    self.originalConversationLastReadEventIDTimerValue = ZMConversationDefaultLastReadEventIDSaveDelay;
-    ZMConversationDefaultLastReadEventIDSaveDelay = 0.02;
+    self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
+    ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
     
     NSString *testName = NSStringFromSelector(self.invocation.selector);
     NSString *methodName = [NSString stringWithFormat:@"setup%@%@", [testName substringToIndex:1].capitalizedString, [testName substringFromIndex:1]];
@@ -115,7 +115,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)tearDown;
 {
-    ZMConversationDefaultLastReadEventIDSaveDelay = self.originalConversationLastReadEventIDTimerValue;
+    ZMConversationDefaultLastReadTimestampSaveDelay = self.originalConversationLastReadTimestampTimerValue;
     [self resetState];
     [MessagingTest deleteAllFilesInCache];
     [super tearDown];
