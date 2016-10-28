@@ -124,7 +124,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         return "UserClient"
     }
 
-    public override func keysTrackedForLocalModifications() -> [String] {
+    public override func keysTrackedForLocalModifications() -> Set<String> {
         return [ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey]
     }
     

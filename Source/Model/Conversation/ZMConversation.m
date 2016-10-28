@@ -891,9 +891,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
 }
 
-- (NSArray *)keysTrackedForLocalModifications {
-    NSArray *superKeys = [super keysTrackedForLocalModifications];
-    NSMutableArray *trackedKeys = [superKeys mutableCopy];
+- (NSSet *)keysTrackedForLocalModifications {
+    NSSet *superKeys = [super keysTrackedForLocalModifications];
+    NSMutableSet *trackedKeys = [superKeys mutableCopy];
     [trackedKeys addObject:ZMConversationUnsyncedInactiveParticipantsKey];
     [trackedKeys addObject:ZMConversationUnsyncedActiveParticipantsKey];
     [trackedKeys addObject:ZMConversationCallDeviceIsActiveKey];
@@ -1766,3 +1766,5 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 }
 
 @end
+
+
