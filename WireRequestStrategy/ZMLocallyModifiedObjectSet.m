@@ -119,7 +119,7 @@
         return;
     }
     
-    NSSet *trackedKeys = self.trackAllKeys ? [NSSet setWithArray:object.keysTrackedForLocalModifications] : self.trackedKeys;
+    NSSet *trackedKeys = self.trackAllKeys ? object.keysTrackedForLocalModifications : self.trackedKeys;
     ZMLocallyModifiedObjectSyncStatus *modifiedStatus = [[ZMLocallyModifiedObjectSyncStatus alloc] initWithObject:object trackedKeys:trackedKeys];
     
     if (modifiedStatus != nil) {

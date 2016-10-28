@@ -424,7 +424,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     NSSet *transcoderKeys = [NSSet setWithObject:@"field"];
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -450,7 +450,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -479,7 +479,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -508,7 +508,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -534,7 +534,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -566,7 +566,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -598,7 +598,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -628,7 +628,7 @@ static NSString *foo = @"foo";
 {
     // given
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:entity forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
     
@@ -719,7 +719,7 @@ static NSString *foo = @"foo";
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
     MockEntity2 *entity2 = [MockEntity2 insertNewObjectInManagedObjectContext:self.testMOC];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
@@ -753,7 +753,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     MockEntity *entity = [self mockEntityWithModifiedValue];
-    NSSet *keysToSync = [NSSet setWithArray:entity.keysTrackedForLocalModifications];
+    NSSet *keysToSync = entity.keysTrackedForLocalModifications;
     id token = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
