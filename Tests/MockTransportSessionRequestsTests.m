@@ -181,6 +181,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    [self.sut clearNotifications];
+    WaitForAllGroupsToBeEmpty(0.5);
+
     NSString *messageText = @"Fofooof";
     NSUUID *nonce = [NSUUID createUUID];
     
@@ -215,7 +218,7 @@
         // when
         self.sut.doNotRespondToRequests = NO;
         
-        NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, @"events?start=1.0&size=300"]];
+        NSString *path = @"/notifications";
         ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
         
         // then
@@ -225,7 +228,7 @@
         }
         XCTAssertEqual(response.HTTPStatus, 200);
         XCTAssertNil(response.transportSessionError);
-        NSArray *events = [[response.payload asDictionary] arrayForKey:@"events"];
+        NSArray *events = [[response.payload asDictionary] arrayForKey:@"notifications"];
         XCTAssertNotNil(events);
         XCTAssertLessThanOrEqual(events.count, 1u);
     }

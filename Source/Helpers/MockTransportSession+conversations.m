@@ -58,11 +58,6 @@ static NSString * const IdleString = @"idle";
     {
         return [self processConversationsGetConversationRequest:sessionRequest];
     }
-    // GET /conversations/<id>/events?start=1.aabb&size=300
-    else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] hasPrefix:@"events"])
-    {
-        return [self processGetConversationEventsWithRequest:sessionRequest];
-    }
     // POST /conversations
     else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 0))
     {
@@ -264,54 +259,6 @@ static NSString * const IdleString = @"idle";
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
-// returns YES if the payload contains "archived" information
-- (BOOL)updateConversation:(MockConversation *)conversation isArchivedFromPutSelfConversationPayload:(NSDictionary *)payload
-{
-    if ([payload.allKeys containsObject:@"archived"]) {
-        if([payload[@"archived"] isEqualToString:@"false"]) {
-            conversation.archived = nil;
-        } else {
-            ZMEventID *archivedEvent = [payload optionalEventForKey:@"archived"];
-            if (archivedEvent != nil) {
-                conversation.archived = archivedEvent.transportString;
-            } else {
-                ZMLogError(@"Invalid data for \"archived\": \"%@\"", payload[@"archived"]);
-            }
-        }
-        return YES;
-    }
-    return NO;
-}
-
-
-// returns YES if the payload contains "cleared" information
-- (BOOL)updateConversation:(MockConversation *)conversation clearedEventIDFromPutSelfConversationPayload:(NSDictionary *)payload
-{
-    if ([payload.allKeys containsObject:@"cleared"]) {
-        ZMEventID *clearedEvent = [payload optionalEventForKey:@"cleared"];
-        if (clearedEvent != nil) {
-            conversation.clearedEventID = clearedEvent.transportString;
-        } else {
-            ZMLogError(@"Invalid data for \"cleared\": \"%@\"", payload[@"cleared"]);
-        }
-        return YES;
-    }
-    return NO;
-}
-
-// returns YES if the payload contains "muted" information
-- (BOOL)updateConversation:(MockConversation *)conversation isMutedFromPutSelfConversationPayload:(NSDictionary *)payload
-{
-    NSNumber *muted = [payload optionalNumberForKey:@"muted"];
-    if([muted isEqual:@0]) {
-        conversation.muted = NO;
-    }
-    else if([muted isEqual:@1]) {
-        conversation.muted = YES;
-    }
-
-    return muted != nil;
-}
 
 // returns YES if the payload contains "muted" information
 - (BOOL)updateConversation:(MockConversation *)conversation isOTRMutedFromPutSelfConversationPayload:(NSDictionary *)payload
@@ -339,17 +286,6 @@ static NSString * const IdleString = @"idle";
     return archivedRef != nil;
 }
 
-// returns YES if the payload contains "last_read" information
-- (BOOL)updateConversation:(MockConversation *)conversation lastReadFromPutSelfConversationPayload:(NSDictionary *)payload
-{
-    ZMEventID *lastRead = [payload optionalEventForKey:@"last_read"];
-    if(lastRead != nil) {
-        conversation.lastRead = lastRead.transportString;
-    }
-    
-    return lastRead != nil;
-}
-
 // PUT /conversations/<id>/self
 - (ZMTransportResponse *)processPutConversationSelfWithRequest:(TestTransportSessionRequest *)sessionRequest;
 {
@@ -360,15 +296,10 @@ static NSString * const IdleString = @"idle";
     
     NSDictionary *payload = [sessionRequest.payload asDictionary];
     
-    BOOL hadArchived = [self updateConversation:conversation isArchivedFromPutSelfConversationPayload:payload];
-    BOOL hadMuted = [self updateConversation:conversation isMutedFromPutSelfConversationPayload:payload];
     BOOL hadOTRMuted = [self updateConversation:conversation isOTRMutedFromPutSelfConversationPayload:payload];
     BOOL hadOTRArchived = [self updateConversation:conversation isOTRArchivedFromPutSelfConversationPayload:payload];
 
-    BOOL hadLastRead = [self updateConversation:conversation lastReadFromPutSelfConversationPayload:payload];
-    BOOL hadCleared = [self updateConversation:conversation clearedEventIDFromPutSelfConversationPayload:payload];
-
-    if( ! hadMuted && ! hadArchived && ! hadLastRead && !hadCleared && !hadOTRArchived && !hadOTRMuted) {
+    if( !hadOTRArchived && !hadOTRMuted) {
         return [ZMTransportResponse responseWithPayload:@{@"error":@"no useful payload"} HTTPStatus:400 transportSessionError:nil];
     }
     
@@ -490,61 +421,6 @@ static NSString * const IdleString = @"idle";
     
     MockEvent *event = [conversation addUsersByUser:self.selfUser addedUsers:addedUsers];
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
-}
-
-// GET /conversations/<id>/events
-- (ZMTransportResponse *)processGetConversationEventsWithRequest:(TestTransportSessionRequest *)sessionRequest
-{
-    MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
-    NSAssert([sessionRequest.pathComponents[1] hasPrefix:@"events"], @"wrong path");
-    
-    NSDictionary *parameters = sessionRequest.query;
-    
-    // limit on the number of messages
-    NSInteger limit = 0;
-    if(parameters[@"limit"] != nil) {
-        limit = [parameters[@"limit"] integerValue];
-    }
-    else {
-        limit = (NSInteger) conversation.events.count;
-    }
-    
-    // beginning and ending message
-    ZMEventID *startEventID = nil;
-    ZMEventID *endEventID = nil;
-    if(parameters[@"start"] != nil) {
-        startEventID = [ZMEventID eventIDWithString:parameters[@"start"]];
-        if(startEventID == nil) {
-            return [ZMTransportResponse responseWithPayload:@{@"message":@"invalid format for start event", @"value":parameters[@"start"]} HTTPStatus:400 transportSessionError:nil];
-        }
-    }
-    if(parameters[@"end"] != nil) {
-        endEventID = [ZMEventID eventIDWithString:parameters[@"end"]];
-        if(endEventID == nil) {
-            return [ZMTransportResponse responseWithPayload:@{@"message":@"invalid format for end event", @"value":parameters[@"end"]} HTTPStatus:400 transportSessionError:nil];
-        }
-    }
-    
-    // filter
-    NSMutableArray *eventsData = [NSMutableArray array];
-    NSInteger count = 0;
-    for(MockEvent *event in conversation.events.array) {
-        if(count > limit) {
-            break;
-        }
-        ZMEventID *eventID = [ZMEventID eventIDWithString:event.identifier];
-        if(startEventID != nil && [startEventID compare:eventID] == NSOrderedDescending) {
-            continue;
-        }
-        if(endEventID != nil && [endEventID compare:eventID] == NSOrderedAscending) {
-            continue;
-        }
-        [eventsData addObject:event.transportData];
-        ++count;
-    }
-    
-    NSDictionary *payload = @{@"events": eventsData};
-    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
 }
 
 - (MockConversation *)conversationByIdentifier:(NSString *)identifier

@@ -197,21 +197,15 @@
     
     XCTAssertEqual(response.HTTPStatus, 201);
     XCTAssertNil(response.transportSessionError);
-    
     XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
     NSDictionary *responsePayload = [response.payload asDictionary];
-    
-    NSDictionary *messageRoundtripPayload = responsePayload;
     XCTAssertEqualObjects(responsePayload[@"conversation"], oneOnOneConversationID);
     XCTAssertEqualObjects(responsePayload[@"from"], selfUserID);
     XCTAssertEqualObjects(responsePayload[@"type"], expectedEventType);
     XCTAssertNotNil([responsePayload dateForKey:@"time"]);
     AssertDateIsRecent([responsePayload dateForKey:@"time"]);
-    if ([[MockEvent persistentEvents] containsObject:@([MockEvent typeFromString:expectedEventType])]) {
-        XCTAssertNotNil([responsePayload eventForKey:@"id"]);
-    }
     
-    path = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, @"events?start=1.0&size=300"]];
+    path = @"/notifications";
     ZMTransportResponse *eventsResponse = [self responseForPayload:nil path:path method:ZMMethodGET];
     
     // then
@@ -222,10 +216,16 @@
     
     XCTAssertEqual(eventsResponse.HTTPStatus, 200);
     XCTAssertNil(eventsResponse.transportSessionError);
-    NSArray *events = [[eventsResponse.payload asDictionary] arrayForKey:@"events"];
+    NSArray *events = [[eventsResponse.payload asDictionary] arrayForKey:@"notifications"];
     XCTAssertNotNil(events);
     XCTAssertGreaterThanOrEqual(events.count, 1u);
-    XCTAssertEqualObjects(events.lastObject, messageRoundtripPayload);
+    
+    NSDictionary *messageRoundtripPayload = [[[events lastObject] optionalArrayForKey:@"payload"] firstObject];
+    XCTAssertEqualObjects(messageRoundtripPayload[@"conversation"], oneOnOneConversationID);
+    XCTAssertEqualObjects(messageRoundtripPayload[@"from"], selfUserID);
+    XCTAssertEqualObjects(messageRoundtripPayload[@"type"], expectedEventType);
+    XCTAssertNotNil([messageRoundtripPayload dateForKey:@"time"]);
+    XCTAssertEqualObjects([responsePayload dateForKey:@"time"], [messageRoundtripPayload dateForKey:@"time"]);
     
     return response;
 }
@@ -1469,7 +1469,6 @@
         XCTAssertEqual(addedEvents.count, 1U);
         MockEvent *previewEvent = addedEvents.firstObject;
         XCTAssertEqualObjects(previewEvent.from, self.sut.selfUser);
-        XCTAssertNotNil([ZMEventID eventIDWithString:previewEvent.identifier], @"%@", previewEvent.identifier);
         XCTAssertEqualObjects(previewEvent.type, @"conversation.asset-add");
         XCTAssertEqual(previewEvent.conversation, conversation);
         if (isInline) {
@@ -1799,223 +1798,6 @@
     }];
 }
 
-
-- (void)testThatWeCanInsertKnockMessagesInAConversation
-{
-    NSUUID *nonce = [NSUUID createUUID];
-    NSDictionary *expectedPayload = @{@"nonce":nonce.transportString};
-    
-    [self checkThatWeCanAddKnockWithExpectedPayload:expectedPayload block:^MockEvent *(MockConversation *conversation, MockUser *selfUser) {
-        return [conversation insertKnockFromUser:selfUser nonce:nonce];
-    }];
-}
-
-
-- (void)testThatWeCanInsertHotKnockMessagesInAConversation
-{
-    NSUUID *nonce = [NSUUID createUUID];
-    NSString *oldKnockRef = [self createEventID].transportString;
-    
-    NSDictionary *expectedPayload = @{@"nonce":nonce.transportString, @"ref": oldKnockRef };
-    
-    [self checkThatWeCanAddKnockWithExpectedPayload:expectedPayload block:^MockEvent *(MockConversation *conversation, MockUser *selfUser) {
-        return [conversation insertHotKnockFromUser:selfUser nonce:nonce ref:oldKnockRef];
-        
-    }];
-}
-
-
-- (void)checkThatWeCanAddKnockWithExpectedPayload:(NSDictionary *)expectedPayload block:(MockEvent *(^)(MockConversation *, MockUser *))block {
-    // given
-    __block MockUser *selfUser;
-    
-    __block MockConversation *conversation;
-    __block MockEvent *event;
-    
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        selfUser = [session insertSelfUserWithName:@"Me Myself"];
-        MockUser *otherUser = [session insertUserWithName:@"other"];
-        
-        conversation = [session insertOneOnOneConversationWithSelfUser:selfUser otherUser:otherUser];
-        
-        // when
-        event = block(conversation, selfUser);
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    
-    // then
-    [self.sut.managedObjectContext performBlockAndWait:^{
-        XCTAssertNotNil(event);
-        XCTAssertNotNil(event.identifier);
-        XCTAssertEqualObjects(event.from, selfUser);
-        XCTAssertEqualObjects(event.conversation, conversation);
-        XCTAssertEqualObjects(conversation.lastEvent, event.identifier);
-        XCTAssertEqualObjects(conversation.lastEventTime, event.time);
-        XCTAssertEqualObjects(event.data, expectedPayload);
-    }];
-    
-}
-
-
-- (void)testThatItAddsAKnockMessage
-{
-    // given
-    __block MockUser *selfUser;
-    __block MockUser *user1;
-    
-    __block MockConversation *oneOnOneConversation;
-    __block NSString *selfUserID;
-    __block NSString *oneOnOneConversationID;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        selfUser = [session insertSelfUserWithName:@"Me Myself"];
-        selfUser.identifier = [[NSUUID createUUID] transportString];
-        selfUserID = selfUser.identifier;
-        user1 = [session insertUserWithName:@"Foo"];
-        
-        oneOnOneConversation = [session insertOneOnOneConversationWithSelfUser:selfUser otherUser:user1];
-        oneOnOneConversationID = oneOnOneConversation.identifier;
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    NSDictionary *messageRoundtripPayload;
-    // (1)
-    {
-        // when
-        NSDictionary *payload = @{
-                                  @"nonce" : nonce.transportString
-                                  };
-        
-        NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, @"knock"]];
-        
-        ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
-        
-        // then
-        XCTAssertNotNil(response);
-        if (!response) {
-            return;
-        }
-        XCTAssertEqual(response.HTTPStatus, 201);
-        XCTAssertNil(response.transportSessionError);
-        
-        XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
-        NSDictionary *responsePayload = [response.payload asDictionary];
-        
-        messageRoundtripPayload = responsePayload;
-        XCTAssertEqualObjects(responsePayload[@"conversation"], oneOnOneConversationID);
-        XCTAssertEqualObjects(responsePayload[@"from"], selfUserID);
-        XCTAssertEqualObjects(responsePayload[@"type"], @"conversation.knock");
-        XCTAssertNotNil([responsePayload dateForKey:@"time"]);
-        AssertDateIsRecent([responsePayload dateForKey:@"time"]);
-        XCTAssertNotNil([responsePayload eventForKey:@"id"]);
-        
-        NSDictionary *data = [responsePayload dictionaryForKey:@"data"];
-        XCTAssertNotNil(data);
-        XCTAssertEqualObjects([data uuidForKey:@"nonce"], nonce);
-    }
-    
-    // (2)
-    {
-        // when
-        NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, @"events?start=1.0&size=300"]];
-        ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
-        
-        // then
-        XCTAssertNotNil(response);
-        if (!response) {
-            return;
-        }
-        XCTAssertEqual(response.HTTPStatus, 200);
-        XCTAssertNil(response.transportSessionError);
-        NSArray *events = [[response.payload asDictionary] arrayForKey:@"events"];
-        XCTAssertNotNil(events);
-        XCTAssertGreaterThanOrEqual(events.count, 1u);
-        XCTAssertEqualObjects(events.lastObject, messageRoundtripPayload);
-    }
-}
-
-
-
-
-- (void)testThatItAddsAHotKnockMessage
-{
-    // given
-    __block MockUser *selfUser;
-    __block MockUser *user1;
-    
-    __block MockConversation *oneOnOneConversation;
-    __block NSString *selfUserID;
-    __block NSString *oneOnOneConversationID;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        selfUser = [session insertSelfUserWithName:@"Me Myself"];
-        selfUser.identifier = [[NSUUID createUUID] transportString];
-        selfUserID = selfUser.identifier;
-        user1 = [session insertUserWithName:@"Foo"];
-        
-        oneOnOneConversation = [session insertOneOnOneConversationWithSelfUser:selfUser otherUser:user1];
-        oneOnOneConversationID = oneOnOneConversation.identifier;
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    NSDictionary *messageRoundtripPayload;
-    // (1)
-    {
-        // when
-        NSDictionary *payload = @{
-                                  @"nonce" : nonce.transportString
-                                  };
-        
-        NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, @"hot-knock"]];
-        
-        ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
-        
-        // then
-        XCTAssertNotNil(response);
-        if (!response) {
-            return;
-        }
-        XCTAssertEqual(response.HTTPStatus, 201);
-        XCTAssertNil(response.transportSessionError);
-        
-        XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
-        NSDictionary *responsePayload = [response.payload asDictionary];
-        
-        messageRoundtripPayload = responsePayload;
-        XCTAssertEqualObjects(responsePayload[@"conversation"], oneOnOneConversationID);
-        XCTAssertEqualObjects(responsePayload[@"from"], selfUserID);
-        XCTAssertEqualObjects(responsePayload[@"type"], @"conversation.hot-knock");
-        XCTAssertNotNil([responsePayload dateForKey:@"time"]);
-        AssertDateIsRecent([responsePayload dateForKey:@"time"]);
-        XCTAssertNotNil([responsePayload eventForKey:@"id"]);
-        
-        NSDictionary *data = [responsePayload dictionaryForKey:@"data"];
-        XCTAssertNotNil(data);
-        XCTAssertEqualObjects([data uuidForKey:@"nonce"], nonce);
-    }
-    
-    // (2)
-    {
-        // when
-        NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, @"events?start=1.0&size=300"]];
-        ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
-        
-        // then
-        XCTAssertNotNil(response);
-        if (!response) {
-            return;
-        }
-        XCTAssertEqual(response.HTTPStatus, 200);
-        XCTAssertNil(response.transportSessionError);
-        NSArray *events = [[response.payload asDictionary] arrayForKey:@"events"];
-        XCTAssertNotNil(events);
-        XCTAssertGreaterThanOrEqual(events.count, 1u);
-        XCTAssertEqualObjects(events.lastObject, messageRoundtripPayload);
-    }
-}
-
-
 - (void)testThatItReturnsAllConversationIDs
 {
     // given
@@ -2120,10 +1902,10 @@
         conversationID = conversation.identifier;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    ZMEventID *archivedEvent = [ZMEventID eventIDWithMajor:2 minor:2445];
     
-    
-    NSDictionary *payload = @{ @"archived":  archivedEvent.transportString };
+    NSDate *archivedTime = [[NSDate date] dateByAddingTimeInterval:-50];
+    NSDictionary *payload = @{ @"otr_archived_ref":  archivedTime.transportString,
+                               @"otr_archived" : @1 };
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
@@ -2135,7 +1917,8 @@
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
         XCTAssertEqualObjects(response.payload, nil);
-        XCTAssertEqualObjects(conversation.archived, archivedEvent.transportString);
+        XCTAssertEqualObjects(conversation.otrArchivedRef, archivedTime.transportString);
+        XCTAssertTrue(conversation.otrArchived);
     }];
     
 }
@@ -2153,8 +1936,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    
-    NSDictionary *payload = @{ @"archived":  @"false" };
+    NSDate *archivedTime = [[NSDate date] dateByAddingTimeInterval:-50];
+    NSDictionary *payload = @{ @"otr_archived_ref":  archivedTime.transportString,
+                               @"otr_archived" : @0 };
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
@@ -2166,7 +1950,8 @@
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
         XCTAssertEqualObjects(response.payload, nil);
-        XCTAssertNil(conversation.archived);
+        XCTAssertFalse(conversation.otrArchived);
+        XCTAssertEqualObjects(conversation.otrArchivedRef, archivedTime.transportString);
     }];
     
 }
@@ -2183,7 +1968,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    NSDictionary *payload = @{ @"muted":  @1 };
+    NSDate *mutedTime = [[NSDate date] dateByAddingTimeInterval:-50];
+    NSDictionary *payload = @{ @"otr_muted_ref":  mutedTime.transportString,
+                               @"otr_muted" : @1 };
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
@@ -2195,7 +1982,8 @@
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
         XCTAssertEqualObjects(response.payload, nil);
-        XCTAssertTrue(conversation.muted);
+        XCTAssertTrue(conversation.otrMuted);
+        XCTAssertEqualObjects(conversation.otrMutedRef, mutedTime.transportString);
     }];
     
 }
@@ -2213,7 +2001,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    NSDictionary *payload = @{ @"muted":  @0 };
+    NSDate *mutedTime = [[NSDate date] dateByAddingTimeInterval:-50];
+    NSDictionary *payload = @{ @"otr_muted_ref":  mutedTime.transportString,
+                               @"otr_muted" : @0 };
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
@@ -2225,7 +2015,8 @@
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
         XCTAssertEqualObjects(response.payload, nil);
-        XCTAssertFalse(conversation.muted);
+        XCTAssertFalse(conversation.otrMuted);
+        XCTAssertEqualObjects(conversation.otrMutedRef, mutedTime.transportString);
     }];
     
 }
