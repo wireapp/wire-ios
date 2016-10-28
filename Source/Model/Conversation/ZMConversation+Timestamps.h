@@ -27,10 +27,6 @@
 - (BOOL)updateLastModifiedDateIfNeeded:(NSDate *)date;
 - (BOOL)updateClearedServerTimeStampIfNeeded:(NSDate *)date andSync:(BOOL)shouldSync;
 
-- (BOOL)updateLastReadEventIDIfNeededWithEventID:(ZMEventID *)eventID;
-- (BOOL)updateLastEventIDIfNeededWithEventID:(ZMEventID *)eventID;
-- (BOOL)updateClearedEventIDIfNeededWithEventID:(ZMEventID *)eventID andSync:(BOOL)shouldSync;
-
 - (BOOL)updateArchivedChangedTimeStampIfNeeded:(NSDate *)date andSync:(BOOL)shouldSync;
 - (BOOL)updateSilencedChangedTimeStampIfNeeded:(NSDate *)date andSync:(BOOL)shouldSync;
 

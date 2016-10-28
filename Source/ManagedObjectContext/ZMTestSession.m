@@ -37,7 +37,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 @property (nonatomic) NSURL *databaseDirectory;
 
 
-@property (nonatomic) NSTimeInterval originalConversationLastReadEventIDTimerValue; // this will speed up the tests A LOT
+@property (nonatomic) NSTimeInterval originalConversationLastReadTimestampTimerValue; // this will speed up the tests A LOT
 
 @end
 
@@ -73,8 +73,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (void)prepareForTestNamed:(NSString *)testName
 {
     self.testName = testName;
-    self.originalConversationLastReadEventIDTimerValue = ZMConversationDefaultLastReadEventIDSaveDelay;
-    ZMConversationDefaultLastReadEventIDSaveDelay = 0.02;
+    self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
+    ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
     
     NSFileManager *fm = NSFileManager.defaultManager;
     self.databaseDirectory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
@@ -93,7 +93,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (void)tearDown;
 {
     [self wipeCaches];
-    ZMConversationDefaultLastReadEventIDSaveDelay = self.originalConversationLastReadEventIDTimerValue;
+    ZMConversationDefaultLastReadTimestampSaveDelay = self.originalConversationLastReadTimestampTimerValue;
     [self resetState];
 }
 

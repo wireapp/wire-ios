@@ -170,62 +170,11 @@
 @dynamic originalDataProcessed;
 
 
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                              inManagedObjectContext:(NSManagedObjectContext *)moc
-                                      prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
++ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent __unused *)updateEvent
+                              inManagedObjectContext:(NSManagedObjectContext __unused *)moc
+                                      prefetchResult:(ZMFetchRequestBatchResult __unused *)prefetchResult
 {
-    NSDictionary *eventData = [updateEvent.payload dictionaryForKey:@"data"];
-    NSDictionary *infoData = [eventData dictionaryForKey:@"info"];
-    NSUUID *correlationID = [infoData uuidForKey:@"correlation_id"];
-    NSString *tag = [infoData stringForKey:@"tag"];
-    
-    BOOL isPreview = [tag isEqualToString:@"preview"];
-    if(!isPreview && ![tag isEqualToString:@"medium"]) {
-        return nil;
-    }
-    
-    VerifyReturnNil(correlationID != nil);
-    
-    ZMConversation *conversation = [self conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
-    VerifyReturnNil(conversation != nil);
-    
-    ZMAssetClientMessage *preExistingClientMessage = [ZMAssetClientMessage fetchMessageWithNonce:correlationID forConversation:conversation inManagedObjectContext:moc prefetchResult:prefetchResult];
-    
-    if(preExistingClientMessage != nil) {
-        preExistingClientMessage.isPlainText = YES;
-        return nil;
-    }
-    if (![conversation shouldAddEvent:updateEvent]) {
-        [ZMMessage addEventToDownloadedEvents:updateEvent inConversation:conversation];
-        return nil;
-    }
-    
-    ZMImageMessage *message = [ZMImageMessage fetchMessageWithNonce:correlationID
-                                                    forConversation:conversation
-                                             inManagedObjectContext:moc
-                                                     prefetchResult:prefetchResult];
-    if(message == nil) {
-        message = [ZMImageMessage insertNewObjectInManagedObjectContext:moc];
-    }
-    
-    message.nonce = correlationID;
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:(message.eventID != nil)];
-    
-    if (isPreview) {
-        NSString *encodedString = [eventData stringForKey:@"data"];
-        if (encodedString != nil) {
-            message.previewData = [[NSData alloc] initWithBase64EncodedString:encodedString options:0];
-        }
-    } else {
-        message.mediumRemoteIdentifier = [eventData uuidForKey:@"id"];
-    }
-    
-    message.originalSize = CGSizeMake([infoData numberForKey:@"original_width"].floatValue, [infoData numberForKey:@"original_height"].floatValue);
-    message.isEncrypted = NO;
-    message.isPlainText = YES;
-    message.originalDataProcessed = YES;
-    
-    return message;
+    return nil;
 }
 
 - (BOOL)isInlineForFormat:(ZMImageFormat)format

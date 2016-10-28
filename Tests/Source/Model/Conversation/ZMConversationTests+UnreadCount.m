@@ -215,7 +215,7 @@
 
 @implementation ZMConversationTests (HasUnreadMissedCall)
 
-- (void)testThatItSetsHasUnreadMissedCallToNoWhenLastReadEqualsLastEventID
+- (void)testThatItSetsHasUnreadMissedCallToNoWhenLastReadEqualsLastServerTime
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -306,7 +306,7 @@
 
 @implementation ZMConversationTests (HasUnreadKnock)
 
-- (void)testThatItSetsHasUnreadKnockToNoWhenLastReadEqualsLastEventID
+- (void)testThatItSetsHasUnreadKnockToNoWhenLastReadEqualsLastTimestamp
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -372,14 +372,13 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMMessage *message1 = (id)[conversation appendMessageWithText:@"haha"];
-    message1.eventID = self.createEventID;
     ZMMessage *message2 = (id)[conversation appendMessageWithText:@"haha"];
     [message2 expire];
     
     XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorExpiredMessage);
     [self.uiMOC saveOrRollback];
     
-    conversation.lastEventID = message1.eventID;
+    conversation.lastServerTimeStamp = message1.serverTimestamp;
     
     // when
     [conversation setVisibleWindowFromMessage:message1 toMessage:message2];
@@ -394,16 +393,14 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMMessage *message1 = (id)[conversation appendMessageWithText:@"haha"];
-    message1.eventID = self.createEventID;
     ZMMessage *message2 = (id)[conversation appendMessageWithText:@"haha"];
     [message2 expire];
     ZMMessage *message3 = (id)[conversation appendMessageWithText:@"haha"];
-    message3.eventID = [ZMEventID eventIDWithMajor:message1.eventID.major + 2 minor:self.createEventID.minor];
     
     XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorExpiredMessage);
     [self.uiMOC saveOrRollback];
     
-    conversation.lastEventID = message3.eventID;
+    conversation.lastServerTimeStamp = message3.serverTimestamp;
     
     // when
     [conversation setVisibleWindowFromMessage:message1 toMessage:message2];

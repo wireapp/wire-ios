@@ -142,7 +142,8 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-    
+    conversation.isArchived = YES;
+
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = NSUUID.createUUID;
     
@@ -163,35 +164,16 @@
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.remoteIdentifier = NSUUID.createUUID;
-    
+    conversation1.isArchived = YES;
+
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation2.remoteIdentifier = NSUUID.createUUID;
-    
+    conversation2.isArchived = NO;
+
     ZMUpdateEvent *event = [self eventWithType:@"conversation.message-add" conversation:conversation1 payloadData:@{}];
     
     // when
     BOOL canUnarchive = [event canUnarchiveConversation:conversation2];
-    
-    // then
-    XCTAssertFalse(canUnarchive);
-}
-
-- (void)testThatItReturns_NO_ForMissingEventID
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = NSUUID.createUUID;
-    
-    NSDictionary *payload = @{@"conversation" : conversation.remoteIdentifier.transportString,
-                              @"time" : @"2014-06-18T12:36:51.755Z",
-                              @"data" : @{},
-                              @"from" : @"f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
-                              @"type": @"conversation.message-add"
-                              };
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-
-    // when
-    BOOL canUnarchive = [event canUnarchiveConversation:conversation];
     
     // then
     XCTAssertFalse(canUnarchive);
@@ -218,7 +200,6 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-    conversation.lastEventID = [ZMEventID eventIDWithString:@"7.800122000a68ee1d"];
     conversation.isArchived = NO;
     
     // when
@@ -234,7 +215,6 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-    conversation.lastEventID = [ZMEventID eventIDWithString:@"7.800122000a68ee1d"];
     conversation.isArchived = YES;
     conversation.isSilenced = YES;
     
@@ -251,7 +231,6 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-    conversation.lastEventID = [ZMEventID eventIDWithString:@"7.800122000a68ee1d"];
     conversation.isArchived = YES;
     conversation.isSilenced = YES;
     
