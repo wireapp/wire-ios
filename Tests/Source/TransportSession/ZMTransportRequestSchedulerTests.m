@@ -727,7 +727,7 @@
     NSDate *high = [NSDate dateWithTimeIntervalSinceNow:1.3 * interval];
     
     // then
-    [self spinMainQueueWithTimeout:interval * 0.5];
+    [self spinMainQueueWithTimeout:interval * 0.1];
     XCTAssertNotEqual(self.sut.schedulerState, ZMTransportRequestSchedulerStateNormal);
     XCTAssertTrue([self waitUntilDate:high verificationBlock:^BOOL{
         return (self.sut.schedulerState == ZMTransportRequestSchedulerStateNormal);
@@ -1060,7 +1060,7 @@
         // then
         
         // backoffAdjustement * randrom adjustment * interval
-        [self spinMainQueueWithTimeout: 0.5 * 0.5 * interval];
+        [self spinMainQueueWithTimeout: 0.5 * 0.1 * interval];
         XCTAssertNotEqual(self.sut.schedulerState, ZMTransportRequestSchedulerStateRateLimitedRetrying, @"Iteration: %d", i);
         XCTAssertTrue([self waitUntilDate:high verificationBlock:^BOOL{
             return (self.sut.schedulerState == ZMTransportRequestSchedulerStateRateLimitedRetrying);
