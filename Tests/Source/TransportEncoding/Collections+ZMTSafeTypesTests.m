@@ -121,16 +121,6 @@
     XCTAssertEqualObjects(@[], [arrayNone asDictionaries]);
 }
 
-- (void)testThatItReadsAnEventID {
-    NSString *key = @"event";
-    XCTAssertEqualObjects([ZMEventID eventIDWithString:self.sampleDictionary[key]], [self.sampleDictionary eventForKey:key]);
-    XCTAssertEqualObjects([ZMEventID eventIDWithString:self.sampleDictionary[key]], [self.sampleDictionary optionalEventForKey:key]);
-    XCTAssertNil([self.sampleDictionary eventForKey:@"baz"]);
-    XCTAssertNil([self.sampleDictionary optionalEventForKey:@"baz"]);
-    XCTAssertNil([self.sampleDictionary eventForKey:@"string"]);
-    XCTAssertNil([self.sampleDictionary optionalEventForKey:@"string"]);
-}
-
 
 - (void)testStringFromKeyPositive
 {

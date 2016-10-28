@@ -19,7 +19,6 @@
 
 @import ZMUtilities;
 #import "Collections+ZMTSafeTypes.h"
-#import "ZMEventID.h"
 #import "NSObject+ZMTransportEncoding.h"
 
 
