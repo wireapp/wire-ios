@@ -48,3 +48,4 @@ tests.xml
 cobertura.xml
 code-coverage/*
 build.log
+WireRequestStrategy.framework.zip
