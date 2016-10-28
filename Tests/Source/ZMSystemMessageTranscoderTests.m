@@ -97,7 +97,7 @@
         
         [self.syncMOC saveOrRollback];
         
-        NSDate *newDate = [NSDate date];
+        NSDate *newDate = [conversation.lastReadServerTimeStamp dateByAddingTimeInterval:20];
         
         NSDictionary *payload = @{
                                   @"conversation" : conversation.remoteIdentifier.transportString,
@@ -105,7 +105,6 @@
                                   @"from" : @"08316f5e-3c0a-4847-a235-2b4d93f291a4",
                                   @"time" : newDate.transportString,
                                   @"type" : @"conversation.voice-channel-deactivate",
-                                  @"id" : [ZMEventID eventIDWithMajor:1 minor:1].transportString
                                   };
         
         ZMUpdateEvent *updateEvent = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
