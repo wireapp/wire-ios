@@ -190,7 +190,6 @@ NSString * const DeliveredKey = @"delivered";
     }
     
     if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction) {
-        [conversation addEventToDownloadedEvents:updateEvent.eventID timeStamp:updateEvent.timeStamp];
         return nil;
     }
     
@@ -232,7 +231,7 @@ NSString * const DeliveredKey = @"delivered";
     if (clearedMessage == nil) {
         [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:clientMessage.delivered];
     } else if ([clientMessage isKindOfClass:[ZMClientMessage class]]) {
-        [clientMessage updateWithTimestamp:clearedMessage.serverTimestamp senderUUID:clearedMessage.sender.remoteIdentifier eventID:nil forConversation:conversation isUpdatingExistingMessage:NO];
+        [clientMessage updateWithTimestamp:clearedMessage.serverTimestamp senderUUID:clearedMessage.sender.remoteIdentifier forConversation:conversation isUpdatingExistingMessage:NO];
         [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
     }
     

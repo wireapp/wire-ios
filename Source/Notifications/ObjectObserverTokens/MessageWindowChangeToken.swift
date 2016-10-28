@@ -65,10 +65,7 @@ import Foundation
         self.conversationToken = window.conversation.add(self) as? ConversationObserverToken
         self.registerObserversForMessages(window.messages)
         
-        
         NotificationCenter.default.addObserver(self, selector: #selector(MessageWindowChangeToken.windowDidScroll(_:)), name: NSNotification.Name(rawValue: ZMConversationMessageWindowScrolledNotificationName), object: self.conversationWindow)
-        NotificationCenter.default.addObserver(self, selector: #selector(MessageWindowChangeToken.messagesWillStartFetching(_:)), name: NSNotification.Name(rawValue: ZMConversationWillStartFetchingMessages), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(MessageWindowChangeToken.messagesDidStopFetching(_:)), name: NSNotification.Name(rawValue: ZMConversationDidFinishFetchingMessages), object: nil)
 
     }
     
@@ -84,51 +81,12 @@ import Foundation
     }
     
     deinit {
-        
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: ZMConversationDidFinishFetchingMessages), object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: ZMConversationWillStartFetchingMessages), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: ZMConversationMessageWindowScrolledNotificationName), object: self.conversationWindow)
         self.tearDown()
     }
     
     public func windowDidScroll(_ note: Notification) {
         self.computeChanges()
-    }
-    
-    func notifyMessageFetchingState(_ state: Bool, toObserver observer: ZMConversationMessageWindowObserver) {
-        let changeInfo = MessageWindowChangeInfo(windowWithMissingMessagesChanged: self.conversationWindow, isFetching: state)
-        self.conversationWindow.conversation.managedObjectContext?.performGroupedBlock({ () -> Void in
-            observer.conversationWindowDidChange(changeInfo)
-        })
-
-    }
-    
-    public func messagesWillStartFetching(_ note: Notification) {
-        guard let userInfo = (note as NSNotification).userInfo,
-                  let conversationWatched = userInfo[ZMNotificationConversationKey] as? ZMConversation
-            , conversationWatched.objectID == self.conversationWindow.conversation.objectID else {
-                return
-        }
-        if (!self.currentlyFetchingMessages) {
-            self.currentlyFetchingMessages = true
-            if let observer = self.observer {
-                self.notifyMessageFetchingState(self.currentlyFetchingMessages, toObserver: observer)
-            }
-        }
-    }
-    
-    public func messagesDidStopFetching(_ note: Notification) {
-        guard let userInfo = (note as NSNotification).userInfo,
-            let conversationWatched = userInfo[ZMNotificationConversationKey] as? ZMConversation ,
-            conversationWatched.objectID == self.conversationWindow.conversation.objectID
-            else { return }
-        
-        if (self.currentlyFetchingMessages) {
-            self.currentlyFetchingMessages = false
-            if let observer = self.observer {
-                self.notifyMessageFetchingState(self.currentlyFetchingMessages, toObserver: observer)
-            }
-        }
     }
     
     public func objectsDidChange(_ changes: ManagedObjectChanges) {

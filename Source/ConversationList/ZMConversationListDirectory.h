@@ -31,7 +31,7 @@
 @property (nonatomic, readonly, nonnull) ZMConversationList* pendingConnectionConversations; ///< pending
 @property (nonatomic, readonly, nonnull) ZMConversationList* nonIdleVoiceChannelConversations; ///< calling, ringing, someone else in call for group conversations, actively talking
 @property (nonatomic, readonly, nonnull) ZMConversationList* activeCallConversations; ///< actively taking. barring bugs, this will have at most one conversation.
-@property (nonatomic, readonly, nonnull) ZMConversationList *clearedConversations; /// conversations with deleted messages (clearedEventId is set)
+@property (nonatomic, readonly, nonnull) ZMConversationList *clearedConversations; /// conversations with deleted messages (clearedTimestamp is set)
 
 - (nonnull NSArray *)allConversationLists;
 

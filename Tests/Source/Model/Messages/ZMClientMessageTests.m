@@ -222,7 +222,6 @@
     
     // then
     XCTAssertNotNil(sut);
-    XCTAssertEqualObjects(sut.eventID, [ZMEventID eventIDWithString:payload[@"id"]]);
     XCTAssertEqualObjects(sut.conversation, conversation);
     XCTAssertEqualObjects(sut.sender.remoteIdentifier.transportString, payload[@"from"]);
     XCTAssertEqualObjects(sut.serverTimestamp.transportString, payload[@"time"]);

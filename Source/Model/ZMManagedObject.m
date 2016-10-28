@@ -167,30 +167,6 @@ static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
     return [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:moc];
 }
 
-- (ZMEventID *)transientEventIDForKey:(NSString *)key;
-{
-    [self willAccessValueForKey:key];
-    ZMEventID *eventID = [self primitiveValueForKey:key];
-    [self didAccessValueForKey:key];
-    if (eventID == nil) {
-        NSData *eventIDData = [self valueForKey:[key stringByAppendingString:ZMDataPropertySuffix]];
-        if (eventIDData != nil) {
-            eventID = [ZMEventID decodeFromData:eventIDData];
-            [self setPrimitiveValue:eventID forKey:key];
-        }
-    }
-    return eventID;
-}
-
-- (void)setTransientEventID:(ZMEventID *)newEventID forKey:(NSString *)key;
-{
-    NSString *dataKey = [key stringByAppendingString:ZMDataPropertySuffix];
-    [self willChangeValueForKey:key];
-    [self setPrimitiveValue:newEventID forKey:key];
-    [self setValue:[newEventID encodeToData] forKey:dataKey];
-    [self didChangeValueForKey:key];
-}
-
 - (NSUUID *)transientUUIDForKey:(NSString *)key;
 {
     [self willAccessValueForKey:key];

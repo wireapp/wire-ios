@@ -490,10 +490,8 @@
     c1.conversationType = ZMConversationTypeOneOnOne;
     c1.lastModifiedDate = [NSDate date];
     ZMMessage *message = (id)[c1 appendMessageWithText:@"message"];
-    message.eventID = self.createEventID;
     message.serverTimestamp = [NSDate date];
     
-    c1.lastEventID = message.eventID;
     c1.lastServerTimeStamp = message.serverTimestamp;
     
     ZMConversationList *activeList = [ZMConversation conversationsExcludingArchivedAndCallingInContext:self.uiMOC];
@@ -527,10 +525,8 @@
     c1.conversationType = ZMConversationTypeOneOnOne;
     c1.lastModifiedDate = [NSDate date];
     ZMMessage *message = (id)[c1 appendMessageWithText:@"message"];
-    message.eventID = self.createEventID;
     message.serverTimestamp = [NSDate date];
     
-    c1.lastEventID = message.eventID;
     c1.lastServerTimeStamp = message.serverTimestamp;
     
     [c1 clearMessageHistory];

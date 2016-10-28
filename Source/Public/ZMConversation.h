@@ -140,12 +140,6 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 
 @interface ZMConversation (History)
 
-/// Returns YES if the history has been cleared at least once.
-@property (nonatomic, readonly) BOOL hasClearedMessageHistory;
-
-/// Returns YES if all uncleared messages have been downloaded.
-@property (nonatomic, readonly) BOOL hasDownloadedMessageHistory;
-
 /// This will reset the message history to the last message in the conversation.
 - (void)clearMessageHistory;
 

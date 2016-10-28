@@ -87,19 +87,6 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
         }
         token.tearDown()
     }
-
-    func testThatItNotifiesObserverWhenTheDeliveryStateChanges() {
-        // given
-        let message = ZMMessage.insertNewObject(in: self.uiMOC)
-        message.serverTimestamp = nil
-        message.eventID = nil
-        
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(message,
-            modifier: { $0.eventID = self.createEventID()},
-            expectedChangedField: "deliveryStateChanged"
-        )
-    }
     
     func testThatItNotifiesObserverWhenTheSenderNameChanges() {
         // given

@@ -26,8 +26,6 @@
 
 - (BOOL)canUnarchiveConversation:(nonnull ZMConversation *)conversation;
 
-
-- (nullable ZMEventID *)eventID;
 /// May be nil (e.g. for call state events)
 - (nullable NSDate *)timeStamp;
 - (nullable NSUUID *)senderUUID;
