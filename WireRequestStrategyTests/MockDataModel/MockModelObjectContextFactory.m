@@ -96,8 +96,8 @@
     [needsToBeUpdatedFromBackendAttribute setOptional:YES];
 
     NSAttributeDescription *modifiedDataFieldsAttribute = [[NSAttributeDescription alloc] init];
-    [modifiedDataFieldsAttribute setName:@"modifiedDataFields"];
-    [modifiedDataFieldsAttribute setAttributeType:NSInteger64AttributeType];
+    [modifiedDataFieldsAttribute setName:@"modifiedKeys"];
+    [modifiedDataFieldsAttribute setAttributeType:NSTransformableAttributeType];
     [modifiedDataFieldsAttribute setOptional:YES];
 
 
@@ -167,8 +167,8 @@
 
 
     NSAttributeDescription *modifiedDataFieldsAttribute = [[NSAttributeDescription alloc] init];
-    [modifiedDataFieldsAttribute setName:@"modifiedDataFields"];
-    [modifiedDataFieldsAttribute setAttributeType:NSInteger64AttributeType];
+    [modifiedDataFieldsAttribute setName:@"modifiedKeys"];
+    [modifiedDataFieldsAttribute setAttributeType:NSTransformableAttributeType];
     [modifiedDataFieldsAttribute setOptional:YES];
 
     [mockEntity setProperties:@[fieldAttribute, field2Attribute, field3Attribute, testUUIDAttribute,

@@ -22,7 +22,7 @@
 @interface MockEntity : ZMManagedObject
 
 @property (nonatomic) NSUUID *remoteIdentifier;
-@property (nonatomic) int64_t modifiedDataFields;
+@property (nonatomic) NSSet *modifiedKeys;
 
 @property (nonatomic) NSUUID *testUUID;
 @property (nonatomic) int16_t field;
