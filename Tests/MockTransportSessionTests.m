@@ -103,36 +103,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 @end
 
-static const int32_t Mersenne1 = 524287;
-static const int32_t Mersenne2 = 131071;
-static const int32_t Mersenne3 = 8191;
-
 
 @implementation MockTransportSessionTests
-
-static int32_t eventIdCounter;
-
-- (ZMEventID *)createEventID
-{
-    return [self.class createEventID];
-}
-
-+ (ZMEventID *)createEventID
-{
-    int32_t major = OSAtomicIncrement32(&eventIdCounter) + 1;
-    major += 1;
-    int32_t minor = ((Mersenne1 * OSAtomicIncrement32(&eventIdCounter)) % Mersenne2) + Mersenne3;
-    return [ZMEventID eventIDWithMajor:(uint64_t)major
-                                 minor:(uint64_t)minor];
-}
-
-
-+ (NSInteger)randomSignedIntWithMax:(NSInteger)max;
-{
-    int32_t c = OSAtomicIncrement32(&eventIdCounter);
-    return (((int)c * Mersenne3) + Mersenne2) % (max+1);
-}
-
 
 -(void)pushChannelDidOpen:(ZMPushChannelConnection * __unused)channel withResponse:(NSHTTPURLResponse *__unused)response;
 {
