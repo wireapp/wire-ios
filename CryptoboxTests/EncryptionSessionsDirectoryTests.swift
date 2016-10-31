@@ -44,99 +44,6 @@ class EncryptionSessionsDirectoryTests : XCTestCase {
     
 }
 
-// MARK: - Helpers
-extension EncryptionSessionsDirectoryTests {
-
-    /// Recreate the statuses, reloading from disk. This also forces a save of the previous
-    /// statuses, if any.
-    func recreateStatuses(only: Person? = nil) {
-        if only == nil || only == .Alice {
-            self.statusAlice = EncryptionSessionsDirectory(generatingContext: contextAlice)
-            self.statusAlice.debug_disableContextValidityCheck = true
-        }
-        if only == nil || only == .Bob {
-            self.statusBob = EncryptionSessionsDirectory(generatingContext: contextBob)
-            self.statusBob.debug_disableContextValidityCheck = true
-        }
-    }
-    
-    /// Sends a prekey message from Alice to Bob, decrypts it on Bob's side, and save both
-    func establishSessionBetweenAliceAndBob() {
-        let prekey = try! statusBob.generatePrekey(2)
-        try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: prekey)
-        let prekeyMessage = try! statusAlice.encrypt("foo".data(using: String.Encoding.utf8)!, recipientClientId: Person.Bob.clientId)
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
-        
-        /// This will force commit
-        self.recreateStatuses()
-    }
-
-
-    enum Person {
-        case Alice
-        case Bob
-        
-        var clientId : String {
-            switch(self) {
-            case .Alice:
-                return "a11c30"
-            case .Bob:
-                return "b0b0b0b"
-            }
-        }
-        
-        var other : Person {
-            switch(self) {
-            case .Alice:
-                return .Bob
-            case .Bob:
-                return .Alice
-            }
-        }
-    }
-    
-    /// Checks if a person already decrypted a message
-    /// Reverts the session after performing the check
-    /// Will only work after after calling `establishSessionBetweenAliceAndBob`
-    func checkIfPersonAlreadyDecryptedMessage(_ person: Person, message: Data) -> Bool {
-        let clientId = person.clientId
-        let status = person == .Alice ? statusAlice : statusBob
-        guard let _ = try? status?.decrypt(message, senderClientId: clientId) else {
-            return true
-        }
-        status?.discardCache()
-        return false
-    }
-    
-    /// Checks if a message can be encrypted and successfully decrypted
-    /// by the other person
-    /// - note: it does commit the session cache
-    @discardableResult func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache : Bool = true, data: Data? = nil) -> Bool {
-        let clientId1 = from.clientId
-        let clientId2 = from.other.clientId
-        
-        let status1 = from == .Alice ? statusAlice : statusBob
-        let status2 = from == .Alice ? statusBob : statusAlice
-        
-        defer {
-            self.recreateStatuses(only: from)
-            if saveReceiverCache {
-                self.recreateStatuses(only: from.other)
-            }
-        }
-        
-        let plainText = data ?? "निर्वाण".data(using: String.Encoding.utf8)!
-        do {
-            let cypherText = try status1?.encrypt(plainText, recipientClientId: clientId2)
-            let decoded = try status2?.decrypt(cypherText!, senderClientId: clientId1)
-            return decoded == plainText
-        } catch {
-            return false
-        }
-    }
-}
-
-
 // MARK: - Session creation and encoding/decoding
 extension EncryptionSessionsDirectoryTests {
     func testThatItCanDecodeAfterInitializingWithAValidKey() {
@@ -146,15 +53,15 @@ extension EncryptionSessionsDirectoryTests {
         
         // WHEN
         do {
-            try statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(2))
+            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(2))
         } catch {
             XCTFail()
             return
         }
         
         // THEN
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.identifier, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
     }
     
@@ -164,7 +71,7 @@ extension EncryptionSessionsDirectoryTests {
         let plainText = "foo".data(using: String.Encoding.utf8)!
         let prekey = try! statusBob.generatePrekey(34)
         do {
-            try statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: prekey)
+            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
         } catch {
             XCTFail()
             return
@@ -172,15 +79,15 @@ extension EncryptionSessionsDirectoryTests {
         
         // WHEN
         do {
-            try statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: prekey)
+            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
         } catch {
             XCTFail()
             return
         }
         
         // THEN
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.identifier, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
         
     }
@@ -191,7 +98,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // WHEN
         do {
-            _ = try statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: "aabb")
+            _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: "aabb")
             XCTFail("should have failed to use prekey")
         }
         catch let err as CryptoboxError {
@@ -207,7 +114,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // WHEN
         do {
-            _ = try statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: hardcodedPrekey)
+            _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: hardcodedPrekey)
         }
         catch {
             XCTFail()
@@ -307,8 +214,8 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         let aliceLocalFingerprint = statusAlice.localFingerprint
         let bobLocalFingerprint = statusBob.localFingerprint
-        let aliceRemoteFingerprint = statusBob.fingerprintForClient(Person.Alice.clientId)
-        let bobRemoteFingerprint = statusAlice.fingerprintForClient(Person.Bob.clientId)
+        let aliceRemoteFingerprint = statusBob.fingerprintForClient(Person.Alice.identifier)
+        let bobRemoteFingerprint = statusAlice.fingerprintForClient(Person.Bob.identifier)
         XCTAssertEqual(aliceLocalFingerprint, aliceRemoteFingerprint)
         XCTAssertEqual(bobLocalFingerprint, bobRemoteFingerprint)
         XCTAssertNotNil(aliceLocalFingerprint)
@@ -333,10 +240,10 @@ extension EncryptionSessionsDirectoryTests {
         establishSessionBetweenAliceAndBob()
         
         // WHEN
-        statusAlice.delete(Person.Bob.clientId)
+        statusAlice.delete(Person.Bob.identifier)
         
         // THEN
-        let cypherText = try? statusAlice.encrypt("foo".data(using: String.Encoding.utf8)!, recipientClientId: Person.Bob.clientId)
+        let cypherText = try? statusAlice.encrypt("foo".data(using: String.Encoding.utf8)!, recipientIdentifier: Person.Bob.identifier)
         XCTAssertNil(cypherText)
     }
     
@@ -360,12 +267,12 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         
         // WHEN
-        try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(1))
+        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
         
         // THEN
         let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
         statusAliceCopy.debug_disableContextValidityCheck = true
-        let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, recipientClientId: Person.Bob.clientId)
+        let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, recipientIdentifier: Person.Bob.identifier)
         XCTAssertNil(cypher)
     }
 
@@ -373,7 +280,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(1))
+        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
         
         // WHEN
         statusAlice = nil
@@ -381,15 +288,15 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
         statusAliceCopy.debug_disableContextValidityCheck = true
-        let prekeyMessage = try! statusAliceCopy.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
+        let prekeyMessage = try! statusAliceCopy.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.identifier, prekeyMessage: prekeyMessage)
         XCTAssertEqual(plainText, decoded)
     }
     
     func testThatNewlyCreatedSessionsAreNotSavedWhenDiscarding() {
         
         // GIVEN
-        try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(1))
+        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
         
         // WHEN
         statusAlice.discardCache()
@@ -398,7 +305,7 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
         statusAliceCopy.debug_disableContextValidityCheck = true
-        let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, recipientClientId: Person.Bob.clientId)
+        let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, recipientIdentifier: Person.Bob.identifier)
         XCTAssertNil(cypher)
     }
     
@@ -406,28 +313,28 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(1))
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
+        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.identifier, prekeyMessage: prekeyMessage)
         self.recreateStatuses() // force save
         
         // WHEN
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        _ = try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+        let cypherText = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        _ = try! statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
         statusBob.discardCache()
         statusBob = nil
         
         // THEN
         let statusBobCopy = EncryptionSessionsDirectory(generatingContext: contextBob)
         statusBobCopy.debug_disableContextValidityCheck = true
-        let decoded = try! statusBobCopy.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+        let decoded = try! statusBobCopy.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
         XCTAssertEqual(decoded, plainText)
     }
     
     func testThatItCanNotDecodeAfterDiscardingCache() {
         
         // GIVEN
-        try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(34))
+        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(34))
         
         // WHEN
         statusAlice.discardCache()
@@ -454,12 +361,12 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        _ = try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+        let cypherText = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        _ = try! statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
         
         // WHEN
         do {
-            _ = try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+            _ = try statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
             XCTFail("Should have failed")
             return
         } catch let err as CryptoboxError where err == .duplicateMessage {
@@ -474,20 +381,19 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        _ = try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+        let cypherText = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        _ = try! statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
         
         // WHEN
         do {
-            _ = try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+            _ = try statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
             XCTFail("Should have failed")
             return
         } catch {
             let matcher = ObjCInteroperabilityMatcher()
             let correctObjCError = matcher.returnsCorrectErrorCodeDecryptingCypher(
                 cypherText,
-                senderClientId:
-                Person.Alice.clientId,
+                senderIdentifier: Person.Alice.identifier,
                 expectedError: .duplicateMessage,
                 sessionDirectory: statusBob
             )
@@ -501,15 +407,15 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        _ = try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+        let cypherText = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        _ = try! statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
         
         // WHEN
         statusBob.discardCache()
         
         // THEN
         do {
-            _ = try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+            _ = try statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
         } catch {
             XCTFail("Should decrypt")
         }
@@ -520,15 +426,15 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        let cypherText = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        _ = try! statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+        let cypherText = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        _ = try! statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
         
         // WHEN
         self.recreateStatuses() // force save
         
         // THEN
         do {
-            _ = try statusBob.decrypt(cypherText, senderClientId: Person.Alice.clientId)
+            _ = try statusBob.decrypt(cypherText, senderIdentifier: Person.Alice.identifier)
             XCTFail("Should have failed")
             return
         } catch let err as CryptoboxError where err == .duplicateMessage {
@@ -542,14 +448,14 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        try! statusAlice.createClientSession(Person.Bob.clientId, base64PreKeyString: statusBob.generatePrekey(34))
+        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(34))
         
         // WHEN
         self.recreateStatuses() // force save
         
         // THEN
-        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientClientId: Person.Bob.clientId)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.clientId, prekeyMessage: prekeyMessage)
+        let prekeyMessage = try! statusAlice.encrypt(plainText, recipientIdentifier: Person.Bob.identifier)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.identifier, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
     }
     
@@ -565,5 +471,185 @@ extension EncryptionSessionsDirectoryTests {
         XCTAssertTrue(checkThatAMessageCanBeSent(.Alice))
         XCTAssertTrue(checkThatAMessageCanBeSent(.Alice))
         XCTAssertTrue(checkThatAMessageCanBeSent(.Alice))
+    }
+}
+
+
+// MARK: - Session migration tests
+extension EncryptionSessionsDirectoryTests {
+    
+    func testThatItCanMigrateASessionAndReceive() {
+        
+        // GIVEN
+        let oldIdentifier = "aabbccdd"
+        bobIdentifierOverride = oldIdentifier
+        
+        establishSessionBetweenAliceAndBob()
+        checkThatAMessageCanBeSent(.Alice)
+        checkThatAMessageCanBeSent(.Bob)
+        
+        // WHEN
+        bobIdentifierOverride = nil
+        statusAlice.migrateSession(fromIdentifier: oldIdentifier, toIdentifier: Person.Bob.identifier)
+        
+        
+        // THEN
+        XCTAssertTrue(checkThatAMessageCanBeSent(.Bob))
+    }
+    
+    func testThatItCanMigrateASessionAndSend() {
+        
+        // GIVEN
+        let oldIdentifier = "aabbccdd"
+        bobIdentifierOverride = oldIdentifier
+        
+        establishSessionBetweenAliceAndBob()
+        checkThatAMessageCanBeSent(.Alice)
+        checkThatAMessageCanBeSent(.Bob)
+        
+        // WHEN
+        bobIdentifierOverride = nil
+        statusAlice.migrateSession(fromIdentifier: oldIdentifier, toIdentifier: Person.Bob.identifier)
+        
+        
+        // THEN
+        XCTAssertTrue(checkThatAMessageCanBeSent(.Bob))
+    }
+    
+    func testThatItWontMigrateIfNewSessionAlreadyExists() {
+        
+        // GIVEN
+        let oldIdentifier = "aabbccdd"
+        
+        establishSessionBetweenAliceAndBob()
+        checkThatAMessageCanBeSent(.Alice)
+        checkThatAMessageCanBeSent(.Bob)
+        
+        bobIdentifierOverride = oldIdentifier
+        establishSessionFromAliceToBob()
+        
+        // WHEN
+        bobIdentifierOverride = nil
+        statusAlice.migrateSession(fromIdentifier: oldIdentifier, toIdentifier: Person.Bob.identifier)
+        
+        // THEN
+        XCTAssertTrue(checkThatAMessageCanBeSent(.Bob))
+    }
+    
+    func testThatItWontMigrateIfOldSessionDoesNotExists() {
+        
+        // GIVEN
+        let oldIdentifier = "aabbccdd"
+        
+        establishSessionBetweenAliceAndBob()
+        checkThatAMessageCanBeSent(.Alice)
+        checkThatAMessageCanBeSent(.Bob)
+        
+        // WHEN
+        statusAlice.migrateSession(fromIdentifier: oldIdentifier, toIdentifier: Person.Bob.identifier)
+        
+        // THEN
+        XCTAssertTrue(checkThatAMessageCanBeSent(.Bob))
+    }
+}
+
+// MARK: - Helpers
+
+/// Custom session identifier for Bob
+private var bobIdentifierOverride : String? = nil
+
+extension EncryptionSessionsDirectoryTests {
+    
+    /// Recreate the statuses, reloading from disk. This also forces a save of the previous
+    /// statuses, if any.
+    func recreateStatuses(only: Person? = nil) {
+        if only == nil || only == .Alice {
+            self.statusAlice = EncryptionSessionsDirectory(generatingContext: contextAlice)
+            self.statusAlice.debug_disableContextValidityCheck = true
+        }
+        if only == nil || only == .Bob {
+            self.statusBob = EncryptionSessionsDirectory(generatingContext: contextBob)
+            self.statusBob.debug_disableContextValidityCheck = true
+        }
+    }
+    
+    /// Sends a prekey message from Alice to Bob, decrypts it on Bob's side, and save both
+    func establishSessionBetweenAliceAndBob() {
+        self.establishSessionFromAliceToBob()
+        let prekeyMessage = try! statusAlice.encrypt("foo".data(using: String.Encoding.utf8)!, recipientIdentifier: Person.Bob.identifier)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        
+        /// This will force commit
+        self.recreateStatuses()
+    }
+    
+    /// Creates a client session from Alice to Bob
+    func establishSessionFromAliceToBob() {
+        let prekey = try! statusBob.generatePrekey(2)
+        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
+    }
+    
+    
+    enum Person {
+        case Alice
+        case Bob
+        
+        var identifier : String {
+            switch(self) {
+            case .Alice:
+                return "234ab2e4c45-a11c30"
+            case .Bob:
+                return bobIdentifierOverride ?? "a34affe3366-b0b0b0b"
+            }
+        }
+        
+        var other : Person {
+            switch(self) {
+            case .Alice:
+                return .Bob
+            case .Bob:
+                return .Alice
+            }
+        }
+    }
+    
+    /// Checks if a person already decrypted a message
+    /// Reverts the session after performing the check
+    /// Will only work after after calling `establishSessionBetweenAliceAndBob`
+    func checkIfPersonAlreadyDecryptedMessage(_ person: Person, message: Data) -> Bool {
+        let clientId = person.identifier
+        let status = person == .Alice ? statusAlice : statusBob
+        guard let _ = try? status?.decrypt(message, senderIdentifier: clientId) else {
+            return true
+        }
+        status?.discardCache()
+        return false
+    }
+    
+    /// Checks if a message can be encrypted and successfully decrypted
+    /// by the other person
+    /// - note: it does commit the session cache
+    @discardableResult func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache : Bool = true) -> Bool {
+        let senderId = from.identifier
+        let receiverId = from.other.identifier
+
+        let status1 = from == .Alice ? statusAlice : statusBob
+        let status2 = from == .Alice ? statusBob : statusAlice
+        
+        defer {
+            self.recreateStatuses(only: from)
+            if saveReceiverCache {
+                self.recreateStatuses(only: from.other)
+            }
+        }
+        
+        let plainText = "निर्वाण".data(using: String.Encoding.utf8)!
+        do {
+            let cypherText = try status1?.encrypt(plainText, recipientIdentifier: receiverId)
+            let decoded = try status2?.decrypt(cypherText!, senderIdentifier: senderId)
+            return decoded == plainText
+        } catch {
+            return false
+        }
     }
 }

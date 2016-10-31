@@ -25,8 +25,7 @@ extension EncryptionSession {
     /// To be used for debugging purposes.
     func dumpSessionContent(function: String = #function) {
         zmLog.ifDebug {
-            let path = self.cryptoboxPath.appendingPathComponent("sessions").appendingPathComponent(self.id)
-            guard let data = try? Data(contentsOf: path) else {
+            guard let data = try? Data(contentsOf: self.path) else {
                 zmLog.debug("Failed to dump content of session \(self.id)")
                 return
             }
