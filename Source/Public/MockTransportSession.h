@@ -29,6 +29,8 @@
 #import "MockPersonalInvitation.h"
 
 @class MockFlowManager;
+@class MockPushEvent;
+
 @protocol MockTransportSessionObjectCreation;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -83,6 +85,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 - (void)completePreviouslySuspendendRequest:(ZMTransportRequest *)request;
 
+- (void)registerPushEvent:(MockPushEvent *)mockPushEvent;
 - (void)logoutSelfUser;
 
 @end

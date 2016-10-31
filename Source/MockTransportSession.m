@@ -164,6 +164,11 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     
 }
 
+- (void)registerPushEvent:(MockPushEvent *)mockPushEvent
+{
+    [self.generatedPushEvents addObject:mockPushEvent];
+}
+
 - (void)addPushToken:(NSDictionary *)pushToken;
 {
     [(NSMutableArray *) self.pushTokens addObject:pushToken];
@@ -1268,6 +1273,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                       @"type" : @"conversation.create",
                                       @"data" : conversation.transportData,
                                       @"conversation" : conversation.identifier,
+                                      @"time": NSDate.date.transportString
                                       };
             
             [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:conversation.creator isTransient:NO]];
@@ -1438,7 +1444,6 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 - (void)firePushEvents:(NSArray<MockPushEvent *>*)events
 {
     events = [events sortedArrayUsingComparator:^NSComparisonResult(MockPushEvent *event1, MockPushEvent *event2) {
-        
         return [event1.timestamp compare:event2.timestamp];
     }];
     
