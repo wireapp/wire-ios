@@ -441,7 +441,9 @@ extension EncryptionSession {
     fileprivate func decrypt(_ cypher: Data) throws -> Data {
         var vectorBacking : OpaquePointer? = nil
 
-        zmLog.debug("Decrypting with session \(self.id): \(cypher.base64Dump)")
+        zmLog.ifDebug {
+            zmLog.debug("Decrypting with session \(self.id): \(cypher.base64Dump)")
+        }
         let result = cypher.withUnsafeBytes { (cypherPointer: UnsafePointer<UInt8>) -> CBoxResult in
             cbox_decrypt(self.implementation.ptr,
                          cypherPointer,
@@ -474,7 +476,9 @@ extension EncryptionSession {
         }
         self.hasChanges = true
         let data = Data.moveFromCBoxVector(vectorBacking)!
-        zmLog.debug("Encrypted with session \(self.id) to cypher text:\(data.base64Dump)")
+        zmLog.ifDebug {
+            zmLog.debug("Encrypted with session \(self.id) to cypher text:\(data.base64Dump)")
+        }
         return data
     }
 }

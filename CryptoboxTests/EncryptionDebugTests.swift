@@ -44,4 +44,21 @@ class EncryptionDebugTests : XCTestCase {
         let joined = dump.components(separatedBy: "\n").joined(separator: "")
         XCTAssertEqual(joined, "--START--\(data.base64EncodedString())--END--")
     }
+    
+    func testThatItDumpBase64_long() {
+        
+        // GIVEN
+        var seed = "12345678"
+        (0..<15).forEach { _ in
+            seed += seed
+        }
+        let data = seed.data(using: .utf8)!
+        
+        // WHEN
+        let dump = data.base64Dump
+        
+        // THEN
+        let joined = dump.components(separatedBy: "\n").joined(separator: "")
+        XCTAssertEqual(joined, "--START--\(data.base64EncodedString())--END--")
+    }
 }
