@@ -49,14 +49,15 @@ extension String {
     
     /// Splits a string in array of strings each with a length not exceding the given size
     func split(bySize size: Int) -> [String] {
-        var original = self
-        var finalArray : [String] = []
-        while !original.isEmpty {
-            let chunkLength = min(size, original.characters.count)
-            let chunkIndex = original.index(original.startIndex, offsetBy: chunkLength)
-            finalArray.append(original.substring(to: chunkIndex))
-            original = original.substring(from: chunkIndex)
+        var charsLeft = self.characters.count
+        let chunks = Int(ceil(Double(charsLeft) / Double(size)))
+        var stringIndex = self.startIndex
+        return (0..<chunks).map { _ in
+            let endIndex = self.index(stringIndex, offsetBy: min(size, charsLeft))
+            let range = stringIndex..<endIndex
+            charsLeft -= size
+            stringIndex = endIndex
+            return self.substring(with: range)
         }
-        return finalArray
     }
 }
