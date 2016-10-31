@@ -111,7 +111,7 @@ extension EncryptionSessionsDirectoryTests {
     /// Checks if a message can be encrypted and successfully decrypted
     /// by the other person
     /// - note: it does commit the session cache
-    @discardableResult func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache : Bool = true) -> Bool {
+    @discardableResult func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache : Bool = true, data: Data? = nil) -> Bool {
         let clientId1 = from.clientId
         let clientId2 = from.other.clientId
         
@@ -125,7 +125,7 @@ extension EncryptionSessionsDirectoryTests {
             }
         }
         
-        let plainText = "निर्वाण".data(using: String.Encoding.utf8)!
+        let plainText = data ?? "निर्वाण".data(using: String.Encoding.utf8)!
         do {
             let cypherText = try status1?.encrypt(plainText, recipientClientId: clientId2)
             let decoded = try status2?.decrypt(cypherText!, senderClientId: clientId1)
