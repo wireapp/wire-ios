@@ -49,6 +49,8 @@
 		1658D2051D3E742A00249609 /* ping_from_them.caf in Resources */ = {isa = PBXBuildFile; fileRef = 87A4DAA21D34FF0400105D44 /* ping_from_them.caf */; };
 		1658D2061D3E742A00249609 /* ringing_from_them_long.caf in Resources */ = {isa = PBXBuildFile; fileRef = 87A4DAA31D34FF0400105D44 /* ringing_from_them_long.caf */; };
 		165B47ED1BF23D6C00C46EFE /* PhoneInvitationStepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 165B47EC1BF23D6C00C46EFE /* PhoneInvitationStepViewController.m */; };
+		165EA0B81DB67B94008ECC60 /* CanvasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165EA0B71DB67B94008ECC60 /* CanvasViewController.swift */; };
+		166390D41DC34CAB00D7BF1C /* ImageToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166390D31DC34CAB00D7BF1C /* ImageToolbarView.swift */; };
 		1670AFE81B2095B1002BF0AE /* VoiceChannelCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1670AFE71B2095B1002BF0AE /* VoiceChannelCollectionViewLayout.m */; };
 		16719A101D99647D00AA6B63 /* GiphySearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16719A0F1D99647D00AA6B63 /* GiphySearchViewController.swift */; };
 		16719A1D1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16719A1C1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift */; };
@@ -91,6 +93,8 @@
 		16BCF4311A0A457900A2D3D6 /* GuidanceLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BCF4301A0A457900A2D3D6 /* GuidanceLabel.m */; };
 		16BEBC3D1D006A6B006FFD3E /* ThreeDotsLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BEBC3C1D006A6B006FFD3E /* ThreeDotsLoadingView.swift */; };
 		16BEBC3F1D006FB6006FFD3E /* ThreeDotsLoadingViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BEBC3E1D006FB6006FFD3E /* ThreeDotsLoadingViewTests.swift */; };
+		16CB8A2F1DBA39C400B5BC47 /* SketchToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A2E1DBA39C400B5BC47 /* SketchToolbar.swift */; };
+		16CB8DB91DC0F777000C5F47 /* DefaultNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8DB81DC0F777000C5F47 /* DefaultNavigationBar.swift */; };
 		16D316581BC28ED90050B835 /* ZMConversation+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = 16D316571BC28ED90050B835 /* ZMConversation+Actions.m */; };
 		16D3631C1AAB63DB00471F5F /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 16D3631B1AAB63DB00471F5F /* CameraViewController.m */; };
 		16D3632F1AB05BBE00471F5F /* CameraTopToolsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 16D3632E1AB05BBE00471F5F /* CameraTopToolsViewController.m */; };
@@ -695,7 +699,6 @@
 		BADA351F1B431E5000396F2C /* NSURLWireLocaleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BADA351E1B431E5000396F2C /* NSURLWireLocaleTests.m */; };
 		BAED82B91B307AEE004D027F /* ZMUserSession+RequestProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = BAED82B81B307AEE004D027F /* ZMUserSession+RequestProxy.m */; };
 		BAEF10FA1B8C8849005BFA48 /* AnimatedListMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = BAEF10F91B8C8849005BFA48 /* AnimatedListMenuView.m */; };
-		BAFE919E1B5E92E000E08D2A /* SketchTopView.m in Sources */ = {isa = PBXBuildFile; fileRef = BAFE919D1B5E92E000E08D2A /* SketchTopView.m */; };
 		BD979D2C1D8F3AF700E8E3CB /* SettingsTechnicalReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD979D2B1D8F3AF700E8E3CB /* SettingsTechnicalReportViewController.swift */; };
 		BD979D2E1D8F41E700E8E3CB /* String+WireLocales.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD979D2D1D8F41E700E8E3CB /* String+WireLocales.swift */; };
 		BF02CDC31D79A98000C87D38 /* SavableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02CDC21D79A98000C87D38 /* SavableImage.swift */; };
@@ -809,9 +812,6 @@
 		DBE6F98E1B1DE51C00B7DD32 /* ziphy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBE6F98D1B1DE51C00B7DD32 /* ziphy.framework */; };
 		DBF597581A3600FC00269B7F /* icon-no-appstore.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DBF597571A3600FC00269B7F /* icon-no-appstore.xcassets */; };
 		DBF7235F1B5566B80036F4C5 /* a_lot_of_people.json in Resources */ = {isa = PBXBuildFile; fileRef = DBF7235E1B5566B80036F4C5 /* a_lot_of_people.json */; };
-		F517A3BE1B31340700073990 /* SmoothLineView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F517A3BD1B31340700073990 /* SmoothLineView.framework */; };
-		F5EAB12B1B120665008DB66A /* SketchBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EAB12A1B120665008DB66A /* SketchBottomView.m */; };
-		F5F52F721B11D7050053F1C8 /* SketchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F52F711B11D7050053F1C8 /* SketchViewController.m */; };
 		F93D58431D7D9184003AE972 /* Analytics+ConversationEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93D58421D7D9184003AE972 /* Analytics+ConversationEvents.swift */; };
 		F93D58451D7DA865003AE972 /* ZMConversation+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93D58441D7DA865003AE972 /* ZMConversation+Analytics.swift */; };
 		F93D58471D7DA876003AE972 /* ZMMessage+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93D58461D7DA876003AE972 /* ZMMessage+Analytics.swift */; };
@@ -934,6 +934,8 @@
 		1651F9BF1D36789C00A9FAE8 /* Message+FormattingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Message+FormattingTests.swift"; sourceTree = "<group>"; };
 		165B47EB1BF23D6C00C46EFE /* PhoneInvitationStepViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneInvitationStepViewController.h; sourceTree = "<group>"; };
 		165B47EC1BF23D6C00C46EFE /* PhoneInvitationStepViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneInvitationStepViewController.m; sourceTree = "<group>"; };
+		165EA0B71DB67B94008ECC60 /* CanvasViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasViewController.swift; sourceTree = "<group>"; };
+		166390D31DC34CAB00D7BF1C /* ImageToolbarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageToolbarView.swift; sourceTree = "<group>"; };
 		1670AFE61B2095B1002BF0AE /* VoiceChannelCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceChannelCollectionViewLayout.h; sourceTree = "<group>"; };
 		1670AFE71B2095B1002BF0AE /* VoiceChannelCollectionViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceChannelCollectionViewLayout.m; sourceTree = "<group>"; };
 		16719A0F1D99647D00AA6B63 /* GiphySearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GiphySearchViewController.swift; sourceTree = "<group>"; };
@@ -998,6 +1000,8 @@
 		16BCF4301A0A457900A2D3D6 /* GuidanceLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuidanceLabel.m; sourceTree = "<group>"; };
 		16BEBC3C1D006A6B006FFD3E /* ThreeDotsLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreeDotsLoadingView.swift; sourceTree = "<group>"; };
 		16BEBC3E1D006FB6006FFD3E /* ThreeDotsLoadingViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreeDotsLoadingViewTests.swift; sourceTree = "<group>"; };
+		16CB8A2E1DBA39C400B5BC47 /* SketchToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SketchToolbar.swift; sourceTree = "<group>"; };
+		16CB8DB81DC0F777000C5F47 /* DefaultNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNavigationBar.swift; sourceTree = "<group>"; };
 		16D316561BC28ED90050B835 /* ZMConversation+Actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMConversation+Actions.h"; sourceTree = "<group>"; };
 		16D316571BC28ED90050B835 /* ZMConversation+Actions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMConversation+Actions.m"; sourceTree = "<group>"; };
 		16D3631A1AAB63DB00471F5F /* CameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraViewController.h; sourceTree = "<group>"; };
@@ -2002,8 +2006,6 @@
 		BAED82B81B307AEE004D027F /* ZMUserSession+RequestProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMUserSession+RequestProxy.m"; sourceTree = "<group>"; };
 		BAEF10F81B8C8849005BFA48 /* AnimatedListMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedListMenuView.h; sourceTree = "<group>"; };
 		BAEF10F91B8C8849005BFA48 /* AnimatedListMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnimatedListMenuView.m; sourceTree = "<group>"; };
-		BAFE919C1B5E92E000E08D2A /* SketchTopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SketchTopView.h; path = Sketchpad/SketchTopView.h; sourceTree = "<group>"; };
-		BAFE919D1B5E92E000E08D2A /* SketchTopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SketchTopView.m; path = Sketchpad/SketchTopView.m; sourceTree = "<group>"; };
 		BD979D2B1D8F3AF700E8E3CB /* SettingsTechnicalReportViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTechnicalReportViewController.swift; sourceTree = "<group>"; };
 		BD979D2D1D8F41E700E8E3CB /* String+WireLocales.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+WireLocales.swift"; sourceTree = "<group>"; };
 		BF02CDC21D79A98000C87D38 /* SavableImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavableImage.swift; sourceTree = "<group>"; };
@@ -2149,11 +2151,6 @@
 		EA28157E1A0BA2C5001D6124 /* ConversationViewController+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ConversationViewController+Private.h"; sourceTree = "<group>"; };
 		EA7BBD361993890900DB5E50 /* NSLayoutConstraint+Magic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSLayoutConstraint+Magic.h"; path = "Wire-iOS/Sources/Helpers/NSLayoutConstraint+Magic.h"; sourceTree = SOURCE_ROOT; };
 		EA7BBD371993890900DB5E50 /* NSLayoutConstraint+Magic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSLayoutConstraint+Magic.m"; path = "Wire-iOS/Sources/Helpers/NSLayoutConstraint+Magic.m"; sourceTree = SOURCE_ROOT; };
-		F517A3BD1B31340700073990 /* SmoothLineView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SmoothLineView.framework; path = Carthage/Build/iOS/SmoothLineView.framework; sourceTree = "<group>"; };
-		F5EAB1291B120665008DB66A /* SketchBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SketchBottomView.h; path = Sketchpad/SketchBottomView.h; sourceTree = "<group>"; };
-		F5EAB12A1B120665008DB66A /* SketchBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SketchBottomView.m; path = Sketchpad/SketchBottomView.m; sourceTree = "<group>"; };
-		F5F52F701B11D7050053F1C8 /* SketchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SketchViewController.h; path = Sketchpad/SketchViewController.h; sourceTree = "<group>"; };
-		F5F52F711B11D7050053F1C8 /* SketchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SketchViewController.m; path = Sketchpad/SketchViewController.m; sourceTree = "<group>"; };
 		F93D58421D7D9184003AE972 /* Analytics+ConversationEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+ConversationEvents.swift"; sourceTree = "<group>"; };
 		F93D58441D7DA865003AE972 /* ZMConversation+Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Analytics.swift"; sourceTree = "<group>"; };
 		F93D58461D7DA876003AE972 /* ZMMessage+Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Analytics.swift"; sourceTree = "<group>"; };
@@ -2197,7 +2194,6 @@
 				DBE6F98E1B1DE51C00B7DD32 /* ziphy.framework in Frameworks */,
 				BA9EAFAB1AD8121800279A40 /* AdSupport.framework in Frameworks */,
 				5407B8C31A643CCE009090C6 /* UIKit.framework in Frameworks */,
-				F517A3BE1B31340700073990 /* SmoothLineView.framework in Frameworks */,
 				87FEE0D01D76D65700265A9C /* VIMNetworkingFramework.framework in Frameworks */,
 				BAA432301B39BB8E00F1CD2A /* MarkdownParser.framework in Frameworks */,
 				1E7222A41B8335EA004180EC /* CocoaLumberjack.framework in Frameworks */,
@@ -2708,7 +2704,6 @@
 				1EC719F71B67B59A00700A14 /* Classy.framework */,
 				1EC71A271B6A1B9200700A14 /* zimages.framework */,
 				BAA4322F1B39BB8E00F1CD2A /* MarkdownParser.framework */,
-				F517A3BD1B31340700073990 /* SmoothLineView.framework */,
 				DBE6F98D1B1DE51C00B7DD32 /* ziphy.framework */,
 				BA9EAFAA1AD8121800279A40 /* AdSupport.framework */,
 				5407B8C21A643CCE009090C6 /* UIKit.framework */,
@@ -2953,6 +2948,7 @@
 				871BC1341D34F8F800DF0793 /* BottomOverlayViewController.m */,
 				871BC1351D34F8F800DF0793 /* BrowserBarView.h */,
 				871BC1361D34F8F800DF0793 /* BrowserBarView.m */,
+				16CB8DB81DC0F777000C5F47 /* DefaultNavigationBar.swift */,
 				871BC1371D34F8F800DF0793 /* BrowserViewController.h */,
 				871BC1381D34F8F800DF0793 /* BrowserViewController.m */,
 				871BC1391D34F8F800DF0793 /* CameraAccessMessageViewController.h */,
@@ -3105,6 +3101,7 @@
 				BFA25DC01D9976B60086DEBD /* LinkInteractionTextView.swift */,
 				871BC1DA1D34F8F800DF0793 /* UpsideDownTableView.h */,
 				871BC1DB1D34F8F800DF0793 /* UpsideDownTableView.m */,
+				166390D31DC34CAB00D7BF1C /* ImageToolbarView.swift */,
 				871BC1DC1D34F8F800DF0793 /* UserImageView */,
 				871BC1E91D34F8F800DF0793 /* WebLinkTextView.h */,
 				871BC1EA1D34F8F800DF0793 /* WebLinkTextView.m */,
@@ -4609,18 +4606,14 @@
 		F5F52F6F1B11D6DB0053F1C8 /* Sketchpad */ = {
 			isa = PBXGroup;
 			children = (
-				F5F52F701B11D7050053F1C8 /* SketchViewController.h */,
-				F5F52F711B11D7050053F1C8 /* SketchViewController.m */,
-				F5EAB1291B120665008DB66A /* SketchBottomView.h */,
-				F5EAB12A1B120665008DB66A /* SketchBottomView.m */,
 				BA8DC27A1B5FF5CF00103262 /* SketchColorPickerController.h */,
 				BA8DC27B1B5FF5CF00103262 /* SketchColorPickerController.m */,
-				BAFE919C1B5E92E000E08D2A /* SketchTopView.h */,
-				BAFE919D1B5E92E000E08D2A /* SketchTopView.m */,
 				BAA1F7E21B610D89002402B6 /* SketchColorCollectionViewCell.h */,
 				BAA1F7E31B610D89002402B6 /* SketchColorCollectionViewCell.m */,
 				BAD4D0641B613D4E008585A5 /* ColorKnobView.h */,
 				BAD4D0651B613D4E008585A5 /* ColorKnobView.m */,
+				165EA0B71DB67B94008ECC60 /* CanvasViewController.swift */,
+				16CB8A2E1DBA39C400B5BC47 /* SketchToolbar.swift */,
 			);
 			name = Sketchpad;
 			sourceTree = "<group>";
@@ -5105,7 +5098,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/ziphy.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SmoothLineView.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/MarkdownParser.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Classy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework",
@@ -5133,6 +5125,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/AFNetworking.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireMessageStrategy.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Canvas.framework",
 			);
 			name = "Copy Frameworks and DSYMs";
 			outputPaths = (
@@ -5284,6 +5277,7 @@
 				BF1A81281C9848DB00A96CAA /* ConversationRootViewController.swift in Sources */,
 				8794505D1D9145E6008F23DE /* OverflowSeparatorView.swift in Sources */,
 				8F3C945519D1CC5600288AFE /* VoiceChannelOverlayController.m in Sources */,
+				165EA0B81DB67B94008ECC60 /* CanvasViewController.swift in Sources */,
 				168634E51ADD7C5A00EDC7D9 /* ProfilePictureStepViewController.m in Sources */,
 				BF381FDF1D4F922F00075672 /* AnalyticsTracker+AddressBookPermissions.swift in Sources */,
 				871BC2881D34F8F800DF0793 /* UIImage+Dotted.swift in Sources */,
@@ -5423,6 +5417,7 @@
 				871BC2511D34F8F800DF0793 /* MediaPreviewData.m in Sources */,
 				DB7FEC921B8729AD00BA72DE /* ConversationInputBarSendController.m in Sources */,
 				8744D5BE1C41D6C2000F8F93 /* SettingsClientViewController.swift in Sources */,
+				16CB8A2F1DBA39C400B5BC47 /* SketchToolbar.swift in Sources */,
 				871BC0181D34F56300DF0793 /* AnalyticsOptEvent.m in Sources */,
 				873C5FEA1C10426A00D5132A /* ClientUnregisterInvitationViewController.swift in Sources */,
 				871BC24B1D34F8F800DF0793 /* UIView+WAZUIMagicExtensions.m in Sources */,
@@ -5564,7 +5559,6 @@
 				873313111D2137350082B8F7 /* AVAsset+VideoConvert.swift in Sources */,
 				87555C851A85021C00A43E2E /* ChatHeadView.m in Sources */,
 				871BC2271D34F8F800DF0793 /* CameraAccessMessageViewController.m in Sources */,
-				F5F52F721B11D7050053F1C8 /* SketchViewController.m in Sources */,
 				87722C541ADFEDFA00842F18 /* EmailVerificationStepViewController.m in Sources */,
 				871BC3601D34F94200DF0793 /* SettingsPropertyFactory.swift in Sources */,
 				871BC05A1D34F60700DF0793 /* NSDictionary+SimpleTypeAccess.m in Sources */,
@@ -5693,8 +5687,8 @@
 				16A2C6721AA8AA6500DC2905 /* CameraControlsViewController.m in Sources */,
 				871BC25A1D34F8F800DF0793 /* ZoomTransition.m in Sources */,
 				160DECDD1AB333A3000FB575 /* CameraFocusRing.m in Sources */,
+				16CB8DB91DC0F777000C5F47 /* DefaultNavigationBar.swift in Sources */,
 				8708158A1BF4EADE00D321BC /* SettingsNavigationController.swift in Sources */,
-				F5EAB12B1B120665008DB66A /* SketchBottomView.m in Sources */,
 				CED176471D0074610005234F /* ConversationParticipantsCell.swift in Sources */,
 				16BEBC3D1D006A6B006FFD3E /* ThreeDotsLoadingView.swift in Sources */,
 				874B5DAE1CEDEB990010474C /* ZMConversationMessage+AudioMessage.swift in Sources */,
@@ -5748,7 +5742,6 @@
 				BF606D6F1CAA8A78002BAC94 /* ConversationListBottomBar.swift in Sources */,
 				871BC2901D34F8F800DF0793 /* UIView+PopoverBorder.m in Sources */,
 				16E4E81A1BF215CB002D7409 /* InvitationFlowViewController.m in Sources */,
-				BAFE919E1B5E92E000E08D2A /* SketchTopView.m in Sources */,
 				163BB60D1BEA976C00606381 /* BarController.m in Sources */,
 				872334391CD2450500CF8B11 /* FilePreviewGenerator.swift in Sources */,
 				16E311D81A6024F400FF2C9E /* ImageMessageCell.m in Sources */,
@@ -5756,6 +5749,7 @@
 				871BC00B1D34F56300DF0793 /* Analytics+CallEvents.m in Sources */,
 				871BC3591D34F94200DF0793 /* AudioTrackView.m in Sources */,
 				87DCF4E11D34EA4500BB420F /* PeoplePickerEmptyResultsActionView.m in Sources */,
+				166390D41DC34CAB00D7BF1C /* ImageToolbarView.swift in Sources */,
 				871BC0011D34F56300DF0793 /* AnalyticsConversationVerifiedObserver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
