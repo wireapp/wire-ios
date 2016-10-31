@@ -203,7 +203,7 @@ static NSString * const IdleString = @"idle";
     data[@"type"] = self.transportConversationType;
     data[@"last_event_time"] = self.lastEventTime ? [self.lastEventTime transportString] : [NSNull null];
     data[@"last_event"] = self.lastEvent ?: [NSNull null];
-    
+
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;
     members[@"self"] = [self selfInfoDictionary];
