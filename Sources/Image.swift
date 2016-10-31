@@ -49,23 +49,14 @@ class Image : Editable {
     
     func draw(context : CGContext) {
         context.saveGState()
+        if selected {
+            context.setShadow(offset: CGSize(width: 10, height: 10), blur: 10)
+        }
         context.concatenate(transform)
         image.draw(at: CGPoint.zero)
         context.restoreGState()
+    }
         
-        if selected {
-            drawSelection(context: context)
-        }
-    }
-    
-    func drawSelection(context : CGContext) {
-        context.saveGState()
-        context.setStrokeColor(UIColor.red.withAlphaComponent(0.7).cgColor)
-        context.setLineDash(phase: 0, lengths: [10, 4])
-        context.stroke(bounds)
-        context.restoreGState()
-    }
-    
     var transform : CGAffineTransform {
         get {
             let center = CGPoint(x: size.width / 2, y: size.height / 2)
