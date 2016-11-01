@@ -25,7 +25,6 @@
 
 @class ZMConnection;
 
-
 extern NSString * __nonnull const SessionObjectIDKey;
 
 @interface ZMUser (Internal)
@@ -50,6 +49,8 @@ extern NSString * __nonnull const SessionObjectIDKey;
 - (void)updateWithTransportData:(nonnull NSDictionary *)transportData authoritative:(BOOL)authoritative;
 
 + (nullable instancetype)userWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
++ (nullable instancetype)userWithEmailAddress:(nonnull NSString *)emailAddress inContext:(nonnull NSManagedObjectContext *)context;
++ (nullable instancetype)userWithPhoneNumber:(nonnull NSString *)phoneNumber inContext:(nonnull NSManagedObjectContext *)context;
 
 + (nonnull NSOrderedSet <ZMUser *> *)usersWithRemoteIDs:(nonnull NSOrderedSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
