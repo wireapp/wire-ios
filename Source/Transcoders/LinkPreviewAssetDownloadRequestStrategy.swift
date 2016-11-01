@@ -140,9 +140,9 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
 
 extension ZMLinkPreview {
     var remote: ZMAssetRemoteData? {
-        if let image = article.image , image.hasUploaded() {
+        if let image = article.image, image.hasUploaded() {
             return image.uploaded
-        } else if let image = image , hasImage() {
+        } else if let image = image, hasImage() {
             return image.uploaded
         }
         
