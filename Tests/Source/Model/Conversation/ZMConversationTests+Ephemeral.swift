@@ -61,16 +61,15 @@ class ZMConversationMessageDestructionTimeoutTests : XCTestCase {
 
 class ZMConversationTests_Ephemeral : BaseZMMessageTests {
 
-    func testThatItDoesNotAllowSettingTimeoutsOnGroupConversations(){
+    func testThatItAllowsSettingTimeoutsOnGroupConversations(){
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .group
         
         // when
         conversation.updateMessageDestructionTimeout(timeout: .fiveSeconds)
         
         // then
-        XCTAssertEqual(conversation.messageDestructionTimeout, 0)
+        XCTAssertEqual(conversation.messageDestructionTimeout, 5)
     }
 
     

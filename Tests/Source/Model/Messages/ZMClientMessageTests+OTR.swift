@@ -97,6 +97,65 @@ extension ClientMessageTests_OTR {
         }
     }
     
+    func testThatItCreatesPayloadDataForEphemeralTextMessage_Group() {
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            //given
+            self.syncConversation.messageDestructionTimeout = 10
+            let message = self.syncConversation.appendOTRMessage(withText: self.name!, nonce: UUID.create())
+            XCTAssertTrue(message.isEphemeral)
+            
+            //when
+            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
+            
+            //then
+            switch payloadAndStrategy.strategy {
+            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+                XCTAssertEqual(users, self.syncConversation.otherActiveParticipants.set as! Set<ZMUser>)
+            default:
+                XCTFail()
+            }
+        }
+    }
+    
+    func testThatItCreatesPayloadDataForDeletionOfEphemeralTextMessage_Group() {
+        
+        var syncMessage: ZMClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            //given
+            self.syncConversation.messageDestructionTimeout = 10
+            syncMessage = self.syncConversation.appendOTRMessage(withText: self.name!, nonce: UUID.create())
+            syncMessage.sender = self.syncUser1
+            XCTAssertTrue(syncMessage.isEphemeral)
+            self.syncMOC.saveOrRollback()
+        }
+        
+        let uiMessage = self.uiMOC.object(with: syncMessage.objectID) as! ZMMessage
+        uiMessage.startDestructionIfNeeded()
+        XCTAssertNotNil(uiMessage.destructionDate)
+        self.uiMOC.zm_teardownMessageDeletionTimer()
+        self.uiMOC.saveOrRollback()
+
+        self.syncMOC.performGroupedBlockAndWait {
+            self.syncMOC.refresh(syncMessage, mergeChanges: true)
+            XCTAssertNotNil(syncMessage.destructionDate)
+
+            let sut = syncMessage.deleteForEveryone()
+
+            // when
+            guard let payloadAndStrategy = sut?.encryptedMessagePayloadData() else { return XCTFail() }
+            
+            //then
+            switch payloadAndStrategy.strategy {
+            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser, self.syncUser1))
+            default:
+                XCTFail()
+            }
+        }
+    }
+    
+    
     func testThatItCreatesPayloadForZMLastReadMessages() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
@@ -200,8 +259,8 @@ extension ClientMessageTests_OTR {
             
             //then
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUser(let user):
-                XCTAssertEqual(user, self.syncUser1)
+            case .ignoreAllMissingClientsNotFromUsers(let users):
+                XCTAssertEqual(users, Set(arrayLiteral: self.syncUser1))
             default:
                 XCTFail()
             }

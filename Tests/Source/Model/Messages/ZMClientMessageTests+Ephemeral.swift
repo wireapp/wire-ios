@@ -317,6 +317,7 @@ extension ZMClientMessageTests_Ephemeral {
         // given
         let timeout : TimeInterval = 0.1
         conversation.messageDestructionTimeout = timeout
+        conversation.conversationType = .oneOnOne
         let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
         message.sender = ZMUser.insertNewObject(in: uiMOC)
         message.sender?.remoteIdentifier = UUID.create()
@@ -335,7 +336,7 @@ extension ZMClientMessageTests_Ephemeral {
         else {return XCTFail()}
 
         XCTAssertNotEqual(deleteMessage, message)
-        XCTAssertNil(message.sender)
+        XCTAssertNotNil(message.sender)
         XCTAssertNil(message.genericMessage)
         XCTAssertNil(message.destructionDate)
     }
@@ -388,6 +389,7 @@ extension ZMClientMessageTests_Ephemeral {
 
     func testThatItDeletesMessagesFromOtherUserWhenTimerHadStartedAndDestructionDateIsInPast() {
         // given
+        conversation.conversationType = .oneOnOne
         let message = insertEphemeralMessage()
         
         // when
@@ -408,7 +410,7 @@ extension ZMClientMessageTests_Ephemeral {
         
         // then
         XCTAssertTrue(hasDeleteMessage(for: message))
-        XCTAssertNil(message.sender)
+        XCTAssertNotNil(message.sender)
         XCTAssertEqual(message.hiddenInConversation, conversation)
     }
 
