@@ -19,6 +19,7 @@
 import UIKit
 import Canvas
 import Cartography
+import CocoaLumberjackSwift
 
 @objc protocol CanvasViewControllerDelegate : NSObjectProtocol {
     func canvasViewController(_ canvasViewController : CanvasViewController,  didExportImage image: UIImage)
@@ -73,9 +74,6 @@ class CanvasViewController: UIViewController, UINavigationControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
-        
-        canvas.backgroundColor = .white
         canvas.delegate = self
         
         emojiKeyboardViewController.delegate = self
@@ -105,8 +103,11 @@ class CanvasViewController: UIViewController, UINavigationControllerDelegate {
         let closeImage = UIImage(for: .X, iconSize: .tiny, color: .black)
         
         let closeButtonItem = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(CanvasViewController.close))
+        closeButtonItem.accessibilityIdentifier = "closeButton"
+        
         let undoButtonItem = UIBarButtonItem(image: undoImage, style: .plain, target: canvas, action: #selector(Canvas.undo))
         undoButtonItem.isEnabled = false
+        undoButtonItem.accessibilityIdentifier = "undoButton"
         
         navigationItem.leftBarButtonItem = undoButtonItem
         navigationItem.rightBarButtonItem = closeButtonItem
@@ -120,18 +121,22 @@ class CanvasViewController: UIViewController, UINavigationControllerDelegate {
         sendButton.isEnabled = false
         sendButton.cas_styleClass = "send-button"
         sendButton.hitAreaPadding = hitAreaPadding
+        sendButton.accessibilityIdentifier = "sendButton"
         
         drawButton.setIcon(.brush, with: .tiny, for: .normal)
         drawButton.addTarget(self, action: #selector(selectDrawTool), for: .touchUpInside)
         drawButton.hitAreaPadding = hitAreaPadding
+        drawButton.accessibilityIdentifier = "drawButton"
         
         photoButton.setIcon(.photo, with: .tiny, for: .normal)
         photoButton.addTarget(self, action: #selector(pickImage), for: .touchUpInside)
         photoButton.hitAreaPadding = hitAreaPadding
+        photoButton.accessibilityIdentifier = "photoButton"
         
         emojiButton.setIcon(.emoji, with: .tiny, for: .normal)
         emojiButton.addTarget(self, action: #selector(openEmojiKeyboard), for: .touchUpInside)
         emojiButton.hitAreaPadding = hitAreaPadding
+        emojiButton.accessibilityIdentifier = "emojiButton"
     }
     
     func configureColorPicker() {
@@ -331,15 +336,8 @@ extension CanvasViewController : EmojiKeyboardViewControllerDelegate {
     func emojiKeyboardViewController(_ viewController: EmojiKeyboardViewController, didSelectEmoji emoji: String) {
         
         let attributes = [NSFontAttributeName: UIFont.systemFont(ofSize: 72)]
-        let attributedEmoji = NSAttributedString(string: emoji, attributes: attributes)
-        let size = attributedEmoji.size()
-        let rect = CGRect(origin: CGPoint.zero, size: size)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0);
-        attributedEmoji.draw(in: rect)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
         
-        if let image = image?.imageWithAlphaTrimmed {
+        if let image = emoji.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
             canvas.insert(image: image, at: canvas.center)
         }
                 
@@ -364,7 +362,7 @@ extension CanvasViewController : UIImagePickerControllerDelegate {
             }
             picker.dismiss(animated: true, completion: nil)
         }) { (error) in
-            print("error: ", error)
+            DDLogError("error: \(error)")
         }
     }
     
