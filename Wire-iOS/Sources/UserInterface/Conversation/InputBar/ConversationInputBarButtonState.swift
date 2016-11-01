@@ -29,11 +29,11 @@ public final class ConversationInputBarButtonState: NSObject {
     }
 
     public var hourglassButtonHidden: Bool {
-        return hasText || conversationType != .oneOnOne || editing || ephemeral || disableEphemeralSending
+        return hasText || editing || ephemeral || disableEphemeralSending
     }
 
     public var ephemeralIndicatorButtonHidden: Bool {
-        return hasText || conversationType != .oneOnOne || editing || !ephemeral || disableEphemeralSending
+        return hasText || editing || !ephemeral || disableEphemeralSending
     }
 
     private var hasText: Bool {
@@ -47,14 +47,12 @@ public final class ConversationInputBarButtonState: NSObject {
     private var textLength: Int = 0
     private var editing: Bool = false
     private var destructionTimeout: TimeInterval = 0
-    private var conversationType: ZMConversationType = .oneOnOne
     private var mode: ConversationInputBarViewControllerMode = .textInput
 
-    public func update(textLength: Int, editing: Bool, destructionTimeout: TimeInterval, conversationType: ZMConversationType, mode: ConversationInputBarViewControllerMode) {
+    public func update(textLength: Int, editing: Bool, destructionTimeout: TimeInterval, mode: ConversationInputBarViewControllerMode) {
         self.textLength = textLength
         self.editing = editing
         self.destructionTimeout = destructionTimeout
-        self.conversationType = conversationType
         self.mode = mode
     }
 
