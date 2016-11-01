@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ObjCInteroperabilityMatcher : NSObject
 
 - (BOOL)returnsCorrectErrorCodeDecryptingCypher:(NSData *)cypher
-                                 senderClientId:(NSString *)senderClientId
+                               senderIdentifier:(NSString *)senderIdentifier
                                   expectedError:(CryptoboxError)error
                                sessionDirectory:(EncryptionSessionsDirectory *)sessionDirectory;
 
