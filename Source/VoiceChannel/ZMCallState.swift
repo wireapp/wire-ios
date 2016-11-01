@@ -97,7 +97,7 @@ extension NSManagedObjectContext {
 
 extension ZMConversation {
     
-    fileprivate var callState: ZMConversationCallState {
+    internal var callState: ZMConversationCallState {
         return managedObjectContext!.zm_callState.stateForConversation(self)
     }
     
