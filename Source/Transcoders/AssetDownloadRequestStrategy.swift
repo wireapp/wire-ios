@@ -40,13 +40,25 @@ import ZMTransport
         super.init()
         registerForCancellationNotification()
         
-        let downstreamPredicate = NSPredicate(format: "transferState == %d AND assetId_data != nil && visibleInConversation != nil", ZMFileTransferState.downloading.rawValue)
+        let downstreamPredicate = NSPredicate(format: "transferState == %d AND visibleInConversation != nil", ZMFileTransferState.downloading.rawValue)
+
+        let filter = NSPredicate { object, _ in
+            guard let message = object as? ZMAssetClientMessage else { return false }
+            guard message.fileMessageData != nil else { return false }
+            if message.assetId != nil {
+                return true
+            }
+
+            // V3
+            guard let asset = message.genericAssetMessage?.assetData else { return false }
+            return asset.hasUploaded() && asset.uploaded.hasAssetId()
+        }
         
         self.assetDownstreamObjectSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),
             predicateForObjectsToDownload: downstreamPredicate,
-            filter: NSPredicate(format: "fileMessageData != nil"),
+            filter: filter,
             managedObjectContext: managedObjectContext
         )
     }
@@ -127,9 +139,7 @@ import ZMTransport
     // MARK: - ZMContextChangeTrackerSource
     
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        get {
             return [self.assetDownstreamObjectSync]
-        }
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -149,12 +159,23 @@ import ZMTransport
                 assetClientMessage.progress = progress
                 self.managedObjectContext.enqueueDelayedSave()
             }
-            
-            if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage) {
+
+            let addingHandlers: (ZMTransportRequest) -> ZMTransportRequest = { request in
                 request.add(taskCreationHandler)
                 request.add(completionHandler)
                 request.add(progressHandler)
                 return request
+            }
+
+            // If we have an asset ID in the protobuf then this message has been sent using the v3 endpoint
+            // and we need to create a request to get it from there (including a token if there is one)
+            if let asset = assetClientMessage.genericAssetMessage?.assetData, asset.uploaded.hasAssetId() {
+                let token = asset.uploaded.hasAssetToken() ? asset.uploaded.assetToken : nil
+                if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: asset.uploaded.assetId, token: token) {
+                    return addingHandlers(request)
+                }
+            } else if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage) {
+                return addingHandlers(request)
             }
         }
         
