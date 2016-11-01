@@ -164,11 +164,11 @@ class EncryptionContextTests: XCTestCase {
             try! context1.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
             
             mainContext.perform { context2 in
-                _ = try! context2.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, recipientClientId: hardcodedClientId)
+                _ = try! context2.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, recipientIdentifier: hardcodedClientId)
                 
             }
             
-            _ = try! context1.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, recipientClientId: hardcodedClientId)
+            _ = try! context1.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, recipientIdentifier: hardcodedClientId)
         }
         
         // THEN 

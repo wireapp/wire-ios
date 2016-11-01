@@ -21,12 +21,12 @@
 @implementation ObjCInteroperabilityMatcher
 
 - (BOOL)returnsCorrectErrorCodeDecryptingCypher:(NSData *)cypher
-                                 senderClientId:(NSString *)senderClientId
+                               senderIdentifier:(NSString *)senderIdentifier
                                   expectedError:(CryptoboxError)error
                                sessionDirectory:(EncryptionSessionsDirectory *)sessionDirectory
 {
     NSError *actualError;
-    [sessionDirectory decrypt:cypher senderClientId:senderClientId error:&actualError];
+    [sessionDirectory decrypt:cypher senderIdentifier:senderIdentifier error:&actualError];
 
     return actualError.code == error;
 }
