@@ -254,7 +254,7 @@ public class Canvas: UIView {
             
             if let referenceObject = referenceObject {
 
-                let drawBounds = self.drawBounds
+                let drawBounds = self.bounds.intersection(self.drawBounds)
                 let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
                 let renderSize = drawBounds.size.applying(CGAffineTransform(scaleX: renderScale * scaleFactor, y: renderScale * scaleFactor))
                 let renderBounds = CGRect(origin: CGPoint.zero, size: renderSize).integral.applying(CGAffineTransform(scaleX: 1 / scaleFactor, y: 1 / scaleFactor))
@@ -276,7 +276,7 @@ public class Canvas: UIView {
                 image =  UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
             } else {
-                let drawBounds = self.drawBounds.integral
+                let drawBounds = self.bounds.intersection(self.drawBounds).integral
  
                 UIGraphicsBeginImageContextWithOptions(drawBounds.size, true, scaleFactor)
                 
