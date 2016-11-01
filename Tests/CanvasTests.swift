@@ -17,30 +17,47 @@
 //
 
 import XCTest
+import FBSnapshotTestCase
 @testable import Canvas
 
-class CanvasTests: XCTestCase {
+class CanvasTests: FBSnapshotTestCase {
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testTrimmedImage_isClippedToViewport() {
+        // given
+        let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: 375, height: 667))
+        let canvas = Canvas(frame: frame)
+        let image = UIImage(testImageNamed: "unsplash_small.jpg")!
+        
+        // when placing image half way outside the viewport
+        canvas.insert(image: image, at: CGPoint(x: -image.size.width / 2, y: frame.midY))
+        
+        // then it should be clipped by the viewport
+        let imageView = UIImageView(image: canvas.trimmedImage)
+        FBSnapshotVerifyView(imageView)
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testTrimmedImage_isClippedToViewport_withReferenceImage() {
+        // given
+        let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: 375, height: 667))
+        let canvas = Canvas(frame: frame)
+        
+        canvas.referenceImage = UIImage(testImageNamed: "unsplash_matterhorn.jpg")!
+        let image = UIImage(testImageNamed: "unsplash_small.jpg")!
+        
+        // when placing image half way outside the viewport
+        canvas.insert(image: image, at: CGPoint(x: -image.size.width / 2, y: frame.midY - image.size.height / 2))
+        
+        // then it should be clipped by the viewport
+        let imageView = UIImageView(image: canvas.trimmedImage)
+        FBSnapshotVerifyView(imageView)
     }
     
 }
