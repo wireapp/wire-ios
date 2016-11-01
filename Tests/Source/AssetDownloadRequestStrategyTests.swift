@@ -60,7 +60,7 @@ class AssetDownloadRequestStrategyTests: MessagingTest {
     fileprivate func createFileTransferMessage(_ conversation: ZMConversation) -> ZMAssetClientMessage {
         let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         message.assetId = UUID.create()
-        prepare(message: message)
+        configureForDownloading(message: message)
         return message
     }
 
@@ -88,11 +88,11 @@ class AssetDownloadRequestStrategyTests: MessagingTest {
         }
 
         message.add(uploadedWithId)
-        prepare(message: message)
+        configureForDownloading(message: message)
         return (message, assetId, token)
     }
 
-    fileprivate func prepare(message: ZMAssetClientMessage) {
+    fileprivate func configureForDownloading(message: ZMAssetClientMessage) {
         message.fileMessageData?.transferState = .downloading
         self.syncMOC.saveOrRollback()
 

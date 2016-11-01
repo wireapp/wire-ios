@@ -45,6 +45,8 @@ import ZMTransport
         let filter = NSPredicate { object, _ in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.fileMessageData != nil else { return false }
+
+            // V2
             if message.assetId != nil {
                 return true
             }
