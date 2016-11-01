@@ -287,7 +287,24 @@ extension ZMAssetClientMessageTests_Encryption {
             
             //then
             let otherUser = self.syncConversation.connectedUser!
-            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUser(user: otherUser))
+            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: Set(arrayLiteral: otherUser)))
+        }
+    }
+    
+    func testThatItReturnsCorrectStrategyForEphemeralMessages_ImageAssets_GroupConversation(){
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            //given
+            self.syncConversation.messageDestructionTimeout = 10
+            let message = self.appendImageMessage(ZMImageFormat.preview, to: self.syncConversation)
+            XCTAssertTrue(message.isEphemeral)
+            
+            //when
+            let strategy = message.encryptedMessagePayloadForImageFormat(.preview)?.strategy
+            
+            //then
+            let otherUsers = self.syncConversation.otherActiveParticipants.set as! Set<ZMUser>
+            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: otherUsers))
         }
     }
 
@@ -334,7 +351,23 @@ extension ZMAssetClientMessageTests_Encryption {
 
             //then
             let otherUser = self.syncConversation.connectedUser!
-            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUser(user: otherUser))
+            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: Set(arrayLiteral: otherUser)))
+        }
+    }
+    
+    func testThatItReturnsCorrectStrategyForEphemeralMessages_FileAssets_GroupConversation(){
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            self.syncConversation.messageDestructionTimeout = 10
+            let sut = self.insertFileMessage()
+            XCTAssertTrue(sut.isEphemeral)
+            
+            // when
+            guard let (_, strategy) = sut.encryptedMessagePayloadForDataType(.fullAsset) else { return XCTFail() }
+            
+            //then
+            let otherUsers = self.syncConversation.otherActiveParticipants.set as! Set<ZMUser>
+            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: otherUsers))
         }
     }
     

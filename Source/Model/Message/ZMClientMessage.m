@@ -283,11 +283,16 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys
 {
     // we don't want to update the conversation if the message is a confirmation message
-    if (self.genericMessage.hasConfirmation || self.genericMessage.hasReaction || self.genericMessage.hasDeleted)
+    if (self.genericMessage.hasConfirmation || self.genericMessage.hasReaction)
     {
         return;
     }
-    if (self.genericMessage.hasEdited) {
+    if (self.genericMessage.hasDeleted) {
+        NSUUID *originalID = [NSUUID uuidWithTransportString:self.genericMessage.deleted.messageId];
+        ZMMessage *original = [ZMMessage fetchMessageWithNonce:originalID forConversation:self.conversation inManagedObjectContext:self.managedObjectContext];
+        original.sender = nil;
+        original.senderClientID = nil;
+    } else if (self.genericMessage.hasEdited) {
         NSUUID *nonce = [self nonceFromPostPayload:payload];
         if (nonce != nil && ![self.nonce isEqual:nonce]) {
             ZMLogWarn(@"send message response nonce does not match");

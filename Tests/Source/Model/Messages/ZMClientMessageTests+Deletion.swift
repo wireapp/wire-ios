@@ -31,7 +31,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc { 
-            sut.deleteForEveryone()
+            let delete = sut.deleteForEveryone()
+            delete?.update(withPostPayload: [:], updatedKeys: Set())
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -56,7 +57,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            sut.deleteForEveryone()
+            let delete = sut.deleteForEveryone()
+            delete?.update(withPostPayload: [:], updatedKeys: Set())
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -92,7 +94,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            sut.deleteForEveryone()
+            let delete = sut.deleteForEveryone()
+            delete?.update(withPostPayload: [:], updatedKeys: Set())
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -114,7 +117,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
         // when
         performPretendingUiMocIsSyncMoc {
-            sut.deleteForEveryone()
+            let delete = sut.deleteForEveryone()
+            delete?.update(withPostPayload: [:], updatedKeys: Set())
         }
 
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -141,7 +145,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            sut.deleteForEveryone()
+            let delete = sut.deleteForEveryone()
+            delete?.update(withPostPayload: [:], updatedKeys: Set())
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -172,7 +177,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            sut.deleteForEveryone()
+            let delete = sut.deleteForEveryone()
+            delete?.update(withPostPayload: [:], updatedKeys: Set())
         }
         
         XCTAssertTrue(uiMOC.saveOrRollback())

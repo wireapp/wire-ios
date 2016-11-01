@@ -352,6 +352,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         let fileMetadata = self.addFile()
         let message = conversation.appendMessage(with: fileMetadata) as! ZMAssetClientMessage
+        conversation.conversationType = .oneOnOne
         message.sender = ZMUser.insertNewObject(in: uiMOC)
         message.sender?.remoteIdentifier = UUID.create()
         message.add(ZMGenericMessage.genericMessage(withUploadedOTRKey: Data(), sha256: Data(), messageID: message.nonce.transportString()))
@@ -371,7 +372,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             else {return XCTFail()}
         
         XCTAssertNotEqual(deleteMessage, message)
-        XCTAssertNil(message.sender)
+        XCTAssertNotNil(message.sender)
         XCTAssertNil(message.genericAssetMessage)
         XCTAssertEqual(message.dataSet.count, 0)
         XCTAssertNil(message.destructionDate)
