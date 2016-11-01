@@ -1,2 +1,2 @@
 # wire-ios-canvas
-Canvas is component for painting and composing pictures
+Canvas is a component for painting and composing pictures
