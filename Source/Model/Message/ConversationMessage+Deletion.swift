@@ -50,19 +50,20 @@ extension ZMMessage {
         managedObjectContext?.delete(self)
     }
     
-    public static func deleteForEveryone(_ message: ZMConversationMessage) {
-        guard let castedMessage = message as? ZMMessage else { return }
-        castedMessage.deleteForEveryone()
+    @discardableResult public static func deleteForEveryone(_ message: ZMConversationMessage) -> ZMClientMessage? {
+        guard let castedMessage = message as? ZMMessage else { return nil }
+        return castedMessage.deleteForEveryone()
     }
     
-    func deleteForEveryone() {
-        guard !isZombieObject, let sender = sender , (sender.isSelfUser || isEphemeral) else { return }
-        guard let conversation = conversation else { return }
+    @discardableResult func deleteForEveryone() -> ZMClientMessage? {
+        guard !isZombieObject, let sender = sender , (sender.isSelfUser || isEphemeral) else { return nil }
+        guard let conversation = conversation else { return nil}
         
         // We insert a message of type `ZMMessageDelete` containing the nonce of the message that should be deleted
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
-        conversation.append(deletedMessage, expires:false, hidden: true)
-        removeClearingSender(true)
+        let delete = conversation.append(deletedMessage, expires:false, hidden: true)
+        removeClearingSender(false)
+        return delete
     }
     
     public static func edit(_ message: ZMConversationMessage, newText: String) -> ZMMessage? {

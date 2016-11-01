@@ -75,16 +75,11 @@ extension ZMAssetClientMessage {
         (userEnries: [ZMUserEntry], strategy: MissingClientsStrategy)? {
         guard let conversation = self.conversation else { return nil }
             
-        let sendOnlyToOtherUser = genericMessage.hasEphemeral()
-        let recipientUsers = genericMessage.recipientUsersforMessage(in: conversation, sendOnlyToOtherUser: sendOnlyToOtherUser)
-
+        let (recipientUsers, strategy) = genericMessage.recipientUsersforMessage(in: conversation, selfUser: selfClient.user!)
         var recipients : [ZMUserEntry] = []
         selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
             recipients = genericMessage.recipientsWithEncryptedData(selfClient, recipients: recipientUsers, sessionDirectory: sessionsDirectory)
         }
-        let strategy : MissingClientsStrategy = sendOnlyToOtherUser ? .ignoreAllMissingClientsNotFromUser(user: recipientUsers.first!)
-                                                                    : .doNotIgnoreAnyMissingClient
-        
         return (recipients, strategy)
     }
 }

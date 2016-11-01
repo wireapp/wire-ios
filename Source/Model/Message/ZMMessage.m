@@ -1036,8 +1036,10 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 
 - (void)deleteEphemeral;
 {
+    if (self.conversation.conversationType != ZMConversationTypeGroup) {
+        self.destructionDate = nil;
+    }
     [ZMMessage deleteForEveryone:self];
-    self.destructionDate = nil;
     self.isObfuscated = NO;
 }
 
