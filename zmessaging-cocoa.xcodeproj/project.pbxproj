@@ -893,7 +893,6 @@
 		BF8367301C52651900364B37 /* store125.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = store125.wiredatabase; sourceTree = "<group>"; };
 		BF838F031C6A4885001C5BF7 /* ZMCookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMCookie.h; sourceTree = "<group>"; };
 		BF838F041C6A4885001C5BF7 /* ZMCookie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMCookie.m; sourceTree = "<group>"; };
-		BF88998E1DC7877500187CBD /* ZMCMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZMCMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF8899911DC7882F00187CBD /* ZMTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTransport.framework; path = "../wire-ios-transport/build/Debug-iphoneos/ZMTransport.framework"; sourceTree = "<group>"; };
 		BFB524CD1C7722EC006BCE23 /* BackgroundAPNSPingBackStatusTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundAPNSPingBackStatusTests.swift; sourceTree = "<group>"; };
 		BFC747B91CE0975D00F74333 /* zimages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = zimages.framework; path = "../zmc-images/build/Debug-iphoneos/zimages.framework"; sourceTree = "<group>"; };
@@ -1289,7 +1288,6 @@
 		540029AA1918CA8500578793 = {
 			isa = PBXGroup;
 			children = (
-				BF88998E1DC7877500187CBD /* ZMCMockTransport.framework */,
 				09284B6A1B8272C300EEE10E /* zmessaging Test Host.entitlements */,
 				09CC4AB71B7CB8B700201C63 /* Cartfile */,
 				5477CDF01BFE0D2700A36F7A /* Cartfile.resolved */,
