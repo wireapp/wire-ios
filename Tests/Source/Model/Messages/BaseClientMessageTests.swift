@@ -64,18 +64,18 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             self.syncSelfClient1 = self.createSelfClient(onMOC: self.syncMOC)
             self.syncMOC.setPersistentStoreMetadata(self.syncSelfClient1.remoteIdentifier, forKey: "PersistedClientId")
             
-            self.syncSelfClient2 = self.createClient(for: self.syncSelfUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            self.syncSelfClient2 = self.createClient(user: self.syncSelfUser, createSessionWithSelfUser: true, managedObjectContext: self.syncMOC)
             
             self.syncUser1 = ZMUser.insertNewObject(in: self.syncMOC)
-            self.syncUser1Client1 = self.createClient(for: self.syncUser1, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            self.syncUser1Client2 = self.createClient(for: self.syncUser1, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            self.syncUser1Client1 = self.createClient(user: self.syncUser1, createSessionWithSelfUser: true, managedObjectContext: self.syncMOC)
+            self.syncUser1Client2 = self.createClient(user: self.syncUser1, createSessionWithSelfUser: true, managedObjectContext: self.syncMOC)
             
             self.syncUser2 = ZMUser.insertNewObject(in: self.syncMOC)
-            self.syncUser2Client1 = self.createClient(for: self.syncUser2, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            self.syncUser2Client2 = self.createClient(for: self.syncUser2, createSessionWithSelfUser: false, onMOC: self.syncMOC)
+            self.syncUser2Client1 = self.createClient(user: self.syncUser2, createSessionWithSelfUser: true, managedObjectContext: self.syncMOC)
+            self.syncUser2Client2 = self.createClient(user: self.syncUser2, createSessionWithSelfUser: false, managedObjectContext: self.syncMOC)
             
             self.syncUser3 = ZMUser.insertNewObject(in: self.syncMOC)
-            self.syncUser3Client1 = self.createClient(for: self.syncUser3, createSessionWithSelfUser: false, onMOC: self.syncMOC)
+            self.syncUser3Client1 = self.createClient(user: self.syncUser3, createSessionWithSelfUser: false, managedObjectContext: self.syncMOC)
             
             self.syncConversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [self.syncUser1, self.syncUser2, self.syncUser3])
             self.syncConversation.remoteIdentifier = UUID.create()
