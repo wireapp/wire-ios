@@ -339,7 +339,7 @@ extension CanvasViewController : EmojiKeyboardViewControllerDelegate {
         let attributes = [NSFontAttributeName: UIFont.systemFont(ofSize: 72)]
         
         if let image = emoji.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
-            canvas.insert(image: image, at: canvas.center)
+            canvas.insert(image: image, at: CGPoint(x: canvas.center.x - image.size.width / 2, y: canvas.center.y - image.size.height / 2))
         }
                 
         hideEmojiKeyboard(animated: true)
