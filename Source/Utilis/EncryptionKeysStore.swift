@@ -20,45 +20,27 @@
 import Foundation
 import Cryptobox
 
-extension NSManagedObjectContext {
-    
-    fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
-    
-    /// Returns the cryptobox instance associated with this managed object context
-    public var zm_cryptKeyStore : UserClientKeysStore! {
-        if !self.zm_isSyncContext {
-            fatal("Can't initiliazie crypto box on non-sync context")
-        }
-        let keyStore = self.userInfo.object(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
-        if let keyStore = keyStore as? UserClientKeysStore {
-            return keyStore
-        }
-        let newKeyStore = UserClientKeysStore()
-        self.userInfo.setObject(newKeyStore, forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey as NSCopying)
-        return newKeyStore
-    }
-    
-    public func zm_tearDownCryptKeyStore() {
-        self.userInfo.removeObject(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
-    }
-
-}
 
 public enum UserClientKeyStoreError: Error {
     case canNotGeneratePreKeys
     case preKeysCountNeedsToBePositive
 }
 
-@objc(UserClientKeysStore)
-open class UserClientKeysStore: NSObject {
+public class EncryptionKeysStore {
     
-    open static let MaxPreKeyID : UInt16 = UInt16.max-1;
+    // Max prekey ID that can be generated
+    public static let MaxPreKeyID : UInt16 = UInt16.max-1;
+    
+    // folder name for key store
     static fileprivate let otrFolderPrefix = "otr"
-    open var encryptionContext : EncryptionContext
-    fileprivate var internalLastPreKey: String?
     
-    public override init() {
-        encryptionContext = UserClientKeysStore.setupContext()!
+    private(set) public var encryptionContext : EncryptionContext
+    
+    fileprivate weak var managedObjectContext : NSManagedObjectContext?
+    
+    public init(managedObjectContext: NSManagedObjectContext) {
+        self.managedObjectContext = managedObjectContext
+        encryptionContext = EncryptionKeysStore.setupContext()!
     }
     
     static func setupContext() -> EncryptionContext? {
@@ -73,7 +55,7 @@ open class UserClientKeysStore: NSObject {
                 }
             }
             
-            let otrDirectoryURL = UserClientKeysStore.otrDirectory
+            let otrDirectoryURL = EncryptionKeysStore.otrDirectory
             encryptionContext = EncryptionContext(path: otrDirectoryURL)
             try (otrDirectoryURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
 
@@ -89,23 +71,28 @@ open class UserClientKeysStore: NSObject {
         return nil
     }
     
-    open func deleteAndCreateNewBox() {
+    public func deleteAndCreateNewBox() {
         let fm = FileManager.default
-        _ = try? fm.removeItem(at: UserClientKeysStore.otrDirectory)
-        internalLastPreKey = nil
+        _ = try? fm.removeItem(at: EncryptionKeysStore.otrDirectory)
+        self.managedObjectContext?.lastGeneratedPrekey = nil
         
-         encryptionContext = UserClientKeysStore.setupContext()!
+         encryptionContext = EncryptionKeysStore.setupContext()!
         
     }
     
+}
+
+// MARK: - Directory management 
+extension EncryptionKeysStore {
+
     /// Legacy URL for cryptobox storage (transition phase)
-    static open var legacyOtrDirectory : URL {
+    static public var legacyOtrDirectory : URL {
         let url = try? FileManager.default.url(for: FileManager.SearchPathDirectory.libraryDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false)
         return url!.appendingPathComponent(otrFolderPrefix)
     }
     
     /// URL for cryptobox storage (read-only)
-    static open var otrDirectoryURL : URL {
+    static public var otrDirectoryURL : URL {
         var url : URL?
         url = try! FileManager.default.url(for: FileManager.SearchPathDirectory.applicationSupportDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false)
         url = url!.appendingPathComponent(otrFolderPrefix)
@@ -114,7 +101,7 @@ open class UserClientKeysStore: NSObject {
     }
     
     /// URL for cryptobox storage
-    static open var otrDirectory : URL {
+    static public var otrDirectory : URL {
         var url : URL?
         do {
             url = self.otrDirectoryURL
@@ -134,12 +121,12 @@ open class UserClientKeysStore: NSObject {
     }
     
     /// Whether we need to migrate to a new identity (legacy e2ee transition phase)
-    open static var needToMigrateIdentity : Bool {
+    public static var needToMigrateIdentity : Bool {
         return self.isPreviousOTRDirectoryPresent
     }
     
     /// Remove the old legacy identity folder
-    open static func removeOldIdentityFolder() {
+    public static func removeOldIdentityFolder() {
         let oldIdentityPath = self.legacyOtrDirectory.path
         guard FileManager.default.fileExists(atPath: oldIdentityPath) else {
             return
@@ -155,14 +142,18 @@ open class UserClientKeysStore: NSObject {
             }
         }
     }
+}
 
-    open func lastPreKey() throws -> String {
+// MARK: - Prekey generation
+extension EncryptionKeysStore : KeyStore {
+    
+    public func lastPreKey() throws -> String {
         var error: NSError?
-        if internalLastPreKey == nil {
+        if self.managedObjectContext?.lastGeneratedPrekey == nil {
             encryptionContext.perform({ [weak self] (sessionsDirectory) in
                 guard let strongSelf = self  else { return }
                 do {
-                    strongSelf.internalLastPreKey = try sessionsDirectory.generateLastPrekey()
+                    strongSelf.managedObjectContext?.lastGeneratedPrekey = try sessionsDirectory.generateLastPrekey()
                 } catch let anError as NSError {
                     error = anError
                 }
@@ -171,10 +162,12 @@ open class UserClientKeysStore: NSObject {
         if let error = error {
             throw error
         }
-        return internalLastPreKey!
+        return self.managedObjectContext!.lastGeneratedPrekey!
     }
     
-    open func generateMoreKeys(_ count: UInt16 = 1, start: UInt16 = 0) throws -> [(id: UInt16, prekey: String)] {
+    /// Generates prekeys in a range. This should not be called more than once
+    /// for a given range, or the previously generated prekeys will be invalidated.
+    public func generatePreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
         if count > 0 {
             var error : Error?
             var newPreKeys : [(id: UInt16, prekey: String)] = []
@@ -200,10 +193,57 @@ open class UserClientKeysStore: NSObject {
     }
     
     fileprivate func preKeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
-        if start >= UserClientKeysStore.MaxPreKeyID-count {
+        if start >= EncryptionKeysStore.MaxPreKeyID-count {
             return CountableRange(0..<count)
         }
         return CountableRange(start..<(start + count))
     }
     
+}
+
+// MARK: - Context singleton
+extension NSManagedObjectContext {
+    
+    fileprivate static let encryptionKeysStoreKey = "ZMUserClientKeysStore" as NSString
+    
+    private static let lastPrekeyKey = "ZMUserClientKeyStore_LastPrekey" as NSString
+    
+    /// Returns the cryptobox instance associated with this managed object context
+    public var zm_cryptKeyStore : KeyStore! {
+        if !self.zm_isSyncContext {
+            fatal("Can't initiliazie crypto box on non-sync context")
+        }
+        let keyStore = self.userInfo.object(forKey: NSManagedObjectContext.encryptionKeysStoreKey)
+        if let keyStore = keyStore as? KeyStore {
+            return keyStore
+        }
+        let newKeyStore = EncryptionKeysStore(managedObjectContext: self)
+        self.userInfo.setObject(newKeyStore, forKey: NSManagedObjectContext.encryptionKeysStoreKey)
+        return newKeyStore
+    }
+    
+    /// this method is intended for testing. It will inject a custom key store in the context
+    public func test_injectCryptKeyStore(_ keyStore: KeyStore) {
+        self.userInfo.setObject(keyStore, forKey: NSManagedObjectContext.encryptionKeysStoreKey)
+    }
+    
+    public func zm_tearDownCryptKeyStore() {
+        self.userInfo.removeObject(forKey: NSManagedObjectContext.encryptionKeysStoreKey)
+    }
+    
+    // Last generated prekey
+    fileprivate var lastGeneratedPrekey : String? {
+        
+        get {
+            return self.userInfo.object(forKey: NSManagedObjectContext.lastPrekeyKey) as? String
+        }
+        
+        set {
+            if let value = newValue {
+                self.userInfo.setObject(value, forKey: NSManagedObjectContext.lastPrekeyKey)
+            } else {
+                self.userInfo.removeObject(forKey: NSManagedObjectContext.lastPrekeyKey)
+            }
+        }
+    }
 }

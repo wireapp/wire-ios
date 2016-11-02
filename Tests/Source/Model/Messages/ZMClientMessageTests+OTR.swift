@@ -30,8 +30,8 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait { 
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
-            let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            let firstClient = self.createClient(user: otherUser, createSessionWithSelfUser: true, managedObjectContext: self.syncMOC)
+            let secondClient = self.createClient(user: otherUser, createSessionWithSelfUser: true, managedObjectContext: self.syncMOC)
             let selfClients = ZMUser.selfUser(in: self.syncMOC).clients!
             let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
             let notSelfClients = selfClients.filter { $0 != selfClient }
