@@ -424,9 +424,50 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
     }
 }
 
++ (nullable instancetype)userWithEmailAddress:(NSString *)emailAddress inContext:(NSManagedObjectContext *)context
+{
+    RequireString(0 != emailAddress.length, "emailAddress required");
+    
+    NSFetchRequest *usersWithEmailFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
+    usersWithEmailFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", EmailAddressKey, emailAddress];
+    NSArray<ZMUser *> *users = [context executeFetchRequestOrAssert:usersWithEmailFetch];
+    
+    RequireString(users.count <= 1, "More than one user with the same email address");
+    
+    if (0 == users.count) {
+        return nil;
+    }
+    else if (1 == users.count) {
+        return users.firstObject;
+    }
+    else {
+        return nil;
+    }
+}
+
++ (nullable instancetype)userWithPhoneNumber:(NSString *)phoneNumber inContext:(NSManagedObjectContext *)context
+{
+    RequireString(0 != phoneNumber.length, "phoneNumber required");
+    
+    NSFetchRequest *usersWithPhoneFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
+    usersWithPhoneFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", PhoneNumberKey, phoneNumber];
+    NSArray<ZMUser *> *users = [context executeFetchRequestOrAssert:usersWithPhoneFetch];
+    
+    RequireString(users.count <= 1, "More than one user with the same phone number");
+    
+    if (0 == users.count) {
+        return nil;
+    }
+    else if (1 == users.count) {
+        return users.firstObject;
+    }
+    else {
+        return nil;
+    }
+}
+
 + (NSOrderedSet <ZMUser *> *)usersWithRemoteIDs:(NSOrderedSet <NSUUID *>*)UUIDs inContext:(NSManagedObjectContext *)moc;
 {
-    
     return [self fetchObjectsWithRemoteIdentifiers:UUIDs inManagedObjectContext:moc];
 }
 

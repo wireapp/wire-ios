@@ -265,8 +265,8 @@ public final class ManagedObjectContextObserver: NSObject {
     typealias ObserversCollection = [ObjectObserverType : NSHashTable<AnyObject>]
     
     fileprivate var observers : ObserversCollection = [:]
-    
-    fileprivate weak var managedObjectContext : NSManagedObjectContext?
+
+    public weak var managedObjectContext : NSManagedObjectContext?
     
     fileprivate var globalConversationObserver : GlobalConversationObserver!
     fileprivate var globalUserObserver : GlobalUserObserver!
@@ -284,7 +284,6 @@ public final class ManagedObjectContextObserver: NSObject {
                 propagateAccumulatedChanges()
             }
         }
-        
     }
     
     public var isReady : Bool {
@@ -325,6 +324,7 @@ public final class ManagedObjectContextObserver: NSObject {
             }
         }
         self.observers = [:]
+
         NotificationCenter.default.removeObserver(self)
     }
     

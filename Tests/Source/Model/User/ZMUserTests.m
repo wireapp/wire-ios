@@ -160,6 +160,68 @@ static NSString *const ValidEmail = @"foo77@example.com";
 }
 
 
+- (void)testThatItReturnsAnExistingUserByPhone
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    NSString *phoneNumber = @"+123456789";
+    user.phoneNumber = phoneNumber;
+    
+    // when
+    ZMUser *found = [ZMUser userWithPhoneNumber:phoneNumber inContext:self.uiMOC];
+    
+    // then
+    XCTAssertEqualObjects(found.phoneNumber, phoneNumber);
+    XCTAssertEqualObjects(found.objectID, user.objectID);
+}
+
+- (void)testThatItDoesNotReturnANonExistingUserByPhone
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    NSString *phoneNumber = @"+123456789";
+    user.phoneNumber = phoneNumber;
+    
+    NSString *otherPhoneNumber = @"+987654321";
+    
+    // when
+    ZMUser *found = [ZMUser userWithPhoneNumber:otherPhoneNumber inContext:self.uiMOC];
+    
+    // then
+    XCTAssertNil(found);
+}
+
+- (void)testThatItReturnsAnExistingUserByEmail
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    NSString *emailAddress = @"test@test.com";
+    user.emailAddress = emailAddress;
+    
+    // when
+    ZMUser *found = [ZMUser userWithEmailAddress:emailAddress inContext:self.uiMOC];
+    
+    // then
+    XCTAssertEqualObjects(found.emailAddress, emailAddress);
+    XCTAssertEqualObjects(found.objectID, user.objectID);
+}
+
+- (void)testThatItDoesNotReturnANonExistingUserByEmail
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    NSString *emailAddress = @"east@test.com";
+    user.emailAddress = emailAddress;
+    
+    NSString *otherEmailAddress = @"west@test.com";
+    
+    // when
+    ZMUser *found = [ZMUser userWithEmailAddress:otherEmailAddress inContext:self.uiMOC];
+    
+    // then
+    XCTAssertNil(found);
+}
+
 - (void)testThatItUpdatesBasicDataOnAnExistingUser
 {
     // given

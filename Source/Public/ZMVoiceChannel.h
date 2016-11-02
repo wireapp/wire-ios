@@ -76,6 +76,9 @@ typedef NS_ENUM(uint8_t, ZMVoiceChannelCallEndReason) {
 /// The current  Video device ID used. Nil if no video. Default to the front camera
 @property (nonatomic, copy, readonly) NSString *currentVideoDeviceID;
 
+/// The date and time of current call start
+@property (nonatomic, copy, readonly) NSDate *callStartDate;
+
 /// Returns @c nil if there's no active voice channel
 + (instancetype)activeVoiceChannelInSession:(id<ZMManagedObjectContextProvider>)session;
 
