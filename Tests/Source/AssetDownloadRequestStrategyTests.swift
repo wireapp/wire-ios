@@ -70,7 +70,7 @@ class AssetDownloadRequestStrategyTests: MessagingTest {
         sha: Data  = Data.randomEncryptionKey()
         ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
 
-        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL), version3: true) as! ZMAssetClientMessage
 
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
 
