@@ -54,7 +54,7 @@ public extension UIImage {
                 pixelData = pixelData.advanced(by: alignment)
             }
             
-            nonAlphaBounds = CGRect(x: Double(minX) / 2.0, y: Double(minY) / 2.0, width: Double(maxX - minX) / 2.0, height: Double(maxY - minY) / 2.0)
+            nonAlphaBounds = CGRect(x: CGFloat(minX) / scale, y: CGFloat(minY) / scale, width: CGFloat(maxX - minX) / scale, height: CGFloat(maxY - minY) / scale)
         }
         
         UIGraphicsEndImageContext()
