@@ -27,11 +27,12 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
         let clientEntries = otrMessage?.recipients.flatMap { $0 }.flatMap { $0.clients }.joined()
         
         guard let entry = clientEntries?.first else { XCTFail("Unable to get client entry"); return nil }
+        guard let sessionIdentifier = client.sessionIdentifier else { return nil }
         
         var message : ZMGenericMessage?
         self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
             do {
-                let decryptedData = try sessionsDirectory.decrypt(entry.text, senderClientId: client.remoteIdentifier!)
+                let decryptedData = try sessionsDirectory.decrypt(entry.text, senderIdentifier: sessionIdentifier)
                 message = ZMGenericMessage.builder()!.merge(from: decryptedData).build()! as? ZMGenericMessage
             } catch {
                 XCTFail("Failed to decrypt generic message: \(error)")
