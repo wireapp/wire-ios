@@ -52,7 +52,7 @@ import ZMTransport
             }
 
             // V3
-            guard let asset = message.genericAssetMessage?.assetData else { return false }
+            guard message.version == 3, let asset = message.genericAssetMessage?.assetData else { return false }
             return asset.hasUploaded() && asset.uploaded.hasAssetId()
         }
         
@@ -169,9 +169,7 @@ import ZMTransport
                 return request
             }
 
-            // If we have an asset ID in the protobuf then this message has been sent using the v3 endpoint
-            // and we need to create a request to get it from there (including a token if there is one)
-            if let asset = assetClientMessage.genericAssetMessage?.assetData, asset.uploaded.hasAssetId() {
+            if assetClientMessage.version == 3, let asset = assetClientMessage.genericAssetMessage?.assetData {
                 let token = asset.uploaded.hasAssetToken() ? asset.uploaded.assetToken : nil
                 if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: asset.uploaded.assetId, token: token) {
                     return addingHandlers(request)
