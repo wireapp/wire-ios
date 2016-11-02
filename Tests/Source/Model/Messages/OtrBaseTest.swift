@@ -25,6 +25,6 @@ class OtrBaseTest: XCTestCase {
         super.setUp()
         
         //clean stored cryptobox files
-        let _ = try? FileManager.default.removeItem(at: EncryptionKeysStore.otrDirectory)
+        let _ = try? FileManager.default.removeItem(at: UserClientKeysStore.otrDirectory)
     }
 }
