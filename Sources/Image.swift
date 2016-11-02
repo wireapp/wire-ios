@@ -21,11 +21,24 @@ import Foundation
 class Image : Editable {
     
     let image : UIImage
-    var scale : CGFloat
-    var rotation: CGFloat
-    var position: CGPoint
-    var selected: Bool
+    var scale : CGFloat {
+        didSet {
+            updateImageTransform()
+        }
+    }
+    var rotation : CGFloat {
+        didSet {
+            updateImageTransform()
+        }
+    }
+    var position : CGPoint {
+        didSet {
+            updateImageTransform()
+        }
+    }
+    var selected : Bool
     var selectable = true
+    var imageView = UIImageView()
     
     var size: CGSize {
         get {
@@ -39,19 +52,27 @@ class Image : Editable {
         }
     }
     
+    var selectedView: UIView {
+        return imageView
+    }
+    
     public init(image: UIImage, at position: CGPoint) {
         self.image = image
         self.scale = 1
         self.rotation = 0
         self.position = position
         self.selected = false
+        self.imageView.image = image
+        self.imageView.layer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
+        self.imageView.sizeToFit()
+        
+        updateImageTransform()
     }
     
     func draw(context : CGContext) {
+        guard !selected else { return }
+        
         context.saveGState()
-        if selected {
-            context.setShadow(offset: CGSize(width: 10, height: 10), blur: 10)
-        }
         context.concatenate(transform)
         image.draw(at: CGPoint.zero)
         context.restoreGState()
@@ -77,6 +98,10 @@ class Image : Editable {
         
         position = center
         scale = min(scaleX, scaleY)
+    }
+    
+    func updateImageTransform() {
+        imageView.transform = transform
     }
     
     

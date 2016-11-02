@@ -36,13 +36,13 @@ protocol Renderable : class {
 protocol Editable : Renderable {
     
     var selected : Bool { get set }
+    var selectedView : UIView { get }
     var selectable : Bool { get }
     var transform : CGAffineTransform { get }
     var size : CGSize  { get }
     var scale : CGFloat { get set }
     var position : CGPoint { get set }
     var rotation : CGFloat { get set }
-    
 }
 
 struct Orientation {
@@ -67,7 +67,7 @@ public protocol CanvasDelegate {
 public class Canvas: UIView {
     
     fileprivate let minimumScale : CGFloat = 0.5
-    fileprivate let maximumScale : CGFloat = 3.0
+    fileprivate let maximumScale : CGFloat = 10.0
     
     public var delegate : CanvasDelegate? = nil
     
@@ -108,6 +108,7 @@ public class Canvas: UIView {
     
     private var scene : [Renderable] = []
     private var bufferImage : UIImage?
+    private var selectionView : UIView?
     private var stroke : Stroke?
     private var referenceObject : Image?
     private var flattenIndex : Int = 0
@@ -118,10 +119,28 @@ public class Canvas: UIView {
     
     fileprivate var selection : Editable? {
         didSet {
+            guard selection !== oldValue else { return }
+            
+            selectionView?.removeFromSuperview()
+            selectionView = selection?.selectedView
+            
+            if let selectedView = selectionView {
+                addSubview(selectedView)
+            }
+            
             oldValue?.selected = false
             selection?.selected = true
+            
+            if let oldSelection = oldValue {
+                setNeedsDisplay(oldSelection.bounds)
+            }
+            
+            if let newSelection = selection {
+                setNeedsDisplay(newSelection.bounds)
+            }
         }
     }
+    
     fileprivate var initialOrienation : Orientation = Orientation.standard
     
     override public init(frame: CGRect) {
@@ -185,7 +204,10 @@ public class Canvas: UIView {
             unflatten()
         } 
         
-        scene.removeLast()
+        if selection === scene.removeLast() {
+            selection = nil
+        }
+        
         setNeedsDisplay()
         delegate?.canvasDidChange(self)
     }
@@ -194,8 +216,6 @@ public class Canvas: UIView {
         let previousSelection = selection
         
         selection = pickObject(at: position)
-        
-        setNeedsDisplay()
         
         guard let newSelection = selection, selection !== previousSelection else {
             return selection
@@ -213,7 +233,12 @@ public class Canvas: UIView {
     
     private func pickObject(at position: CGPoint) -> Editable? {
         let editables = scene.flatMap({ $0 as? Editable })
-        return editables.reversed().first(where: { $0.selectable && $0.bounds.contains(position) })
+        return editables.reversed().first(where: { editable in
+            guard editable.selectable else { return false }
+            let bounds = CGRect(origin: CGPoint.zero, size: editable.size)
+            let position = position.applying(editable.transform.inverted())
+            return bounds.contains(position)
+        })
     }
     
     private func unflatten() {
@@ -225,6 +250,11 @@ public class Canvas: UIView {
         let renderables = scene.suffix(from: flattenIndex)
         
         guard renderables.count > 0 else { return }
+        
+        selection?.selected = false
+        defer {
+            selection?.selected = true
+        }
         
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
         bufferImage?.draw(at: CGPoint.zero)
@@ -386,42 +416,34 @@ extension Canvas : UIGestureRecognizerDelegate {
             guard let selection = selection else { break }
             let translation = gestureRecognizer.translation(in: self)
             selection.position = CGPoint(x: initialOrienation.position.x + translation.x, y: initialOrienation.position.y + translation.y)
-            setNeedsDisplay()
         default:
             break
         }
-        
     }
     
     func handlePinchGesture(gestureRecognizer: UIPinchGestureRecognizer) {
-        if let selection = selection {
-            
-            switch gestureRecognizer.state {
-            case .began:
-                initialOrienation.scale = selection.scale
-            case .changed:
-                selection.scale = min(max(initialOrienation.scale * gestureRecognizer.scale, minimumScale), maximumScale)
-                setNeedsDisplay()
-            default:
-                break
-            }
-            
+        switch gestureRecognizer.state {
+        case .began:
+            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
+            initialOrienation.scale = selection.scale
+        case .changed:
+            guard let selection = selection else { break }
+            selection.scale = min(max(initialOrienation.scale * gestureRecognizer.scale, minimumScale), maximumScale)
+        default:
+            break
         }
     }
     
     func handleRotateGesture(gestureRecognizer: UIRotationGestureRecognizer) {
-        if let selection = selection {
-            
-            switch gestureRecognizer.state {
-            case .began:
-                initialOrienation.rotation = selection.rotation
-            case .changed:
-                selection.rotation = initialOrienation.rotation + gestureRecognizer.rotation
-                setNeedsDisplay()
-            default:
-                break
-            }
-            
+        switch gestureRecognizer.state {
+        case .began:
+            guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
+            initialOrienation.rotation = selection.rotation
+        case .changed:
+            guard let selection = selection else { break }
+            selection.rotation = initialOrienation.rotation + gestureRecognizer.rotation
+        default:
+            break
         }
     }
     
