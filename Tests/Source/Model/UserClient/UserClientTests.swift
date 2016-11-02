@@ -143,11 +143,6 @@ class UserClientTests: ZMBaseManagedObjectTest {
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             
-            let user = ZMUser.insertNewObject(in: self.syncMOC)
-            user.remoteIdentifier = UUID.create()
-            otherClient.user = user
-            self.syncMOC.saveOrRollback()
-            
             guard let preKey = preKeys.first
                 else {
                     XCTFail("could not generate prekeys")
@@ -158,7 +153,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
             
             // when
-            UserClient.deleteSession(client:otherClient, managedObjectContext:self.syncMOC)
+            UserClient.deleteSession(forClientWithRemoteIdentifier:otherClient.remoteIdentifier!, managedObjectContext:self.syncMOC)
             
             // then
             XCTAssertFalse(otherClient.hasSessionWithSelfClient)
@@ -177,11 +172,6 @@ class UserClientTests: ZMBaseManagedObjectTest {
             
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
-            
-            let user = ZMUser.insertNewObject(in: self.syncMOC)
-            user.remoteIdentifier = UUID.create()
-            otherClient.user = user
-            self.syncMOC.saveOrRollback()
             
             guard let preKey = preKeys.first
                 else {
@@ -263,18 +253,13 @@ class UserClientTests: ZMBaseManagedObjectTest {
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = otherClientId
             
-            let user = ZMUser.insertNewObject(in: self.syncMOC)
-            user.remoteIdentifier = UUID.create()
-            otherClient.user = user
-            self.syncMOC.saveOrRollback()
-            
             guard let preKey = preKeys.first
                 else {
                     XCTFail("could not generate prekeys")
                     return }
             
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                try! sessionsDirectory.createClientSession(otherClient.sessionIdentifier!, base64PreKeyString: preKey.prekey)
+                try! sessionsDirectory.createClientSession(otherClient.remoteIdentifier!, base64PreKeyString: preKey.prekey)
             })
             
             XCTAssertNil(otherClient.fingerprint)
@@ -306,9 +291,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             otherClient.remoteIdentifier = UUID.create().transportString()
             
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
-            self.syncMOC.saveOrRollback()
             
             let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
             connection.status = .accepted
