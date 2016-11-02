@@ -1161,7 +1161,7 @@ extension ZMAssetClientMessageTests {
     func createOtherClientAndConversation() -> (UserClient, ZMConversation) {
         let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
         otherUser.remoteIdentifier = .create()
-        let otherClient = createClient(for: otherUser, createSessionWithSelfUser: true)
+        let otherClient = createClient(user: otherUser, createSessionWithSelfUser: true, managedObjectContext: self.uiMOC)
         let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
         conversation.conversationType = .group
         conversation.addParticipant(otherUser)

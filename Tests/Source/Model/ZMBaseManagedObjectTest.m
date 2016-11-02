@@ -198,31 +198,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     return selfClient;
 }
 
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser
-{
-    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSeflUser onMOC:self.uiMOC];
-}
-
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(NSManagedObjectContext *)moc
-{
-    if(user.remoteIdentifier == nil) {
-        user.remoteIdentifier = [NSUUID createUUID];
-    }
-    UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:moc];
-    userClient.remoteIdentifier = [NSString createAlphanumericalString];
-    userClient.user = user;
-    
-    if (createSessionWithSeflUser) {
-        UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
-        [self performPretendingUiMocIsSyncMoc:^{
-            NSError *error;
-            NSString *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
-            [selfClient establishSessionWithClient:userClient usingPreKey:key];
-        }];
-    }
-    return userClient;
-}
-
 - (ZMClientMessage *)createClientTextMessage:(BOOL)encrypted
 {
     return [self createClientTextMessage:self.name encrypted:encrypted];

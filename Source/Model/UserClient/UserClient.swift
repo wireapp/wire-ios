@@ -93,7 +93,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
     
-    public var keysStore: UserClientKeysStore {
+    public var keysStore: KeyStore {
         return managedObjectContext!.zm_cryptKeyStore
     }
     
@@ -163,9 +163,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         // reset the relationship
         self.user = nil
         // reset the session
-        if let remoteIdentifier = remoteIdentifier {
-            UserClient.deleteSession(forClientWithRemoteIdentifier: remoteIdentifier, managedObjectContext: managedObjectContext!)
-        }
+        UserClient.deleteSession(client: self, managedObjectContext: managedObjectContext!)
         // delete the object
         managedObjectContext?.delete(self)
         
@@ -181,10 +179,11 @@ public class UserClient: ZMManagedObject, UserClientType {
                 zmLog.error("SelfUser has no selfClient")
                 return false
         }
+        guard let sessionIdentifier = self.sessionIdentifier else { return false }
+
         var hasSession = false
-        selfClient.keysStore.encryptionContext.perform { [weak self](sessionsDirectory) in
-            guard let strongSelf = self, let remoteIdentifier = strongSelf.remoteIdentifier else {return}
-            hasSession = sessionsDirectory.hasSessionForID(remoteIdentifier)
+        selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
+            hasSession = sessionsDirectory.hasSessionForID(sessionIdentifier)
         }
         return hasSession
     }
@@ -192,10 +191,10 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
     public func resetSession() {
-        guard let remoteIdentifier = self.remoteIdentifier else { return }
+        guard self.sessionIdentifier != nil else { return }
         
         // Delete should happen on sync context since the cryptobox could be accessed only from there
-        UserClient.deleteSession(forClientWithRemoteIdentifier: remoteIdentifier, managedObjectContext: (self.managedObjectContext?.zm_sync)!)
+        UserClient.deleteSession(client: self, managedObjectContext: (self.managedObjectContext?.zm_sync)!)
         
         self.fingerprint = .none
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
@@ -328,6 +327,24 @@ public extension UserClient {
             selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
         }
     }
+    
+    /// Session identifier to use in Cryptobox
+    var sessionIdentifier : String? {
+        guard let userId = self.user?.remoteIdentifier?.transportString(),
+            let remoteIdentifier = self.remoteIdentifier else {
+            return nil
+        }
+        return "\(userId)_\(remoteIdentifier)"
+    }
+    
+    /// Previously used session identifier to use in Cryptobox
+    /// Still kept around for migrating from old version to new version
+    var legacySessionIdentifier : String? {
+        guard let remoteIdentifier = self.remoteIdentifier else {
+            return nil
+        }
+        return remoteIdentifier
+    }
 }
 
 
@@ -380,12 +397,14 @@ public extension UserClient {
     
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
-    static func deleteSession(forClientWithRemoteIdentifier clientID: String, managedObjectContext: NSManagedObjectContext) {
-        guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() , selfClient.remoteIdentifier != clientID
+    static func deleteSession(client: UserClient, managedObjectContext: NSManagedObjectContext) {
+        guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(),
+            let sessionIdentifier = client.sessionIdentifier,
+            selfClient != client
             else { return }
         
         selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
-            sessionsDirectory.delete(clientID)
+            sessionsDirectory.delete(sessionIdentifier)
         }
     }
     
@@ -393,14 +412,14 @@ public extension UserClient {
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
     func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
-        guard isSelfClient(), let clientRemoteIdentifier = client.remoteIdentifier else { return false }
+        guard isSelfClient(), let sessionIdentifier = client.sessionIdentifier else { return false }
         
         var didEstablishSession = false
         keysStore.encryptionContext.perform { (sessionsDirectory) in
-            sessionsDirectory.delete(clientRemoteIdentifier)
+            sessionsDirectory.delete(sessionIdentifier)
             do {
-                try sessionsDirectory.createClientSession(clientRemoteIdentifier, base64PreKeyString: preKey)
-                client.fingerprint = sessionsDirectory.fingerprintForClient(clientRemoteIdentifier)
+                try sessionsDirectory.createClientSession(sessionIdentifier, base64PreKeyString: preKey)
+                client.fingerprint = sessionsDirectory.fingerprintForClient(sessionIdentifier)
                 didEstablishSession = true
             } catch {
                 zmLog.error("Cannot create session for prekey \(preKey)")
@@ -412,9 +431,10 @@ public extension UserClient {
     
     fileprivate func fetchFingerprint() -> Data? {
         var fingerprint : Data?
-        keysStore.encryptionContext.perform { [weak self] (sessionsDirectory) in
-            guard let strongSelf = self, let remoteIdentifier = strongSelf.remoteIdentifier else { return }
-            fingerprint = sessionsDirectory.fingerprintForClient(remoteIdentifier)
+        guard let sessionIdentifier = self.sessionIdentifier else { return nil }
+        
+        keysStore.encryptionContext.perform { (sessionsDirectory) in
+            fingerprint = sessionsDirectory.fingerprintForClient(sessionIdentifier)
         }
         return fingerprint
     }

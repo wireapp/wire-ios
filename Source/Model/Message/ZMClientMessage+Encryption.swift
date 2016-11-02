@@ -177,12 +177,12 @@ extension ZMGenericMessage {
         let userEntries = recipients.flatMap { user -> ZMUserEntry? in
                 let clientsEntries = user.clients.flatMap { client -> ZMClientEntry? in
                 if client != selfClient {
-                    guard let clientRemoteIdentifier = client.remoteIdentifier else { return nil }
+                    guard let sessionIdentifier = client.sessionIdentifier else { return nil }
                     
                     let corruptedClient = client.failedToEstablishSession
                     client.failedToEstablishSession = false
                     
-                    let hasSessionWithClient = sessionDirectory.hasSessionForID(clientRemoteIdentifier)
+                    let hasSessionWithClient = sessionDirectory.hasSessionForID(sessionIdentifier)
                     if !hasSessionWithClient {
                         // if the session is corrupted, will send a special payload
                         if corruptedClient {
@@ -195,7 +195,7 @@ extension ZMGenericMessage {
                         }
                     }
                     
-                    guard let encryptedData = try? sessionDirectory.encrypt(self.data(), recipientClientId: clientRemoteIdentifier) else {
+                    guard let encryptedData = try? sessionDirectory.encrypt(self.data(), recipientIdentifier: sessionIdentifier) else {
                         return nil
                     }
                     return ZMClientEntry.entry(withClient: client, data: encryptedData)
