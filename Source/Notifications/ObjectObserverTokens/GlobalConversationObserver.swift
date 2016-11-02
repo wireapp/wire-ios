@@ -275,7 +275,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         internalConversationListObserverTokens = [:]
         
         globalVoiceChannelObserverTokens.forEach{$0.tearDown()}
-        globalVoiceChannelObserverTokens =  Set()
+        globalVoiceChannelObserverTokens = Set()
         
         conversationObserverTokens = TokenCollection()
         conversationListObserverTokens = TokenCollection()
@@ -318,7 +318,6 @@ extension GlobalConversationObserver {
     func removeGlobalVoiceChannelStateObserver(_ token: GlobalVoiceChannelStateObserverToken) {
         self.globalVoiceChannelObserverTokens.remove(token)
     }
-    
     
     func addConversationObserver(_ observer: ZMConversationObserver, conversation: ZMConversation) -> ConversationObserverToken {
         registerTokensForConversations([conversation])

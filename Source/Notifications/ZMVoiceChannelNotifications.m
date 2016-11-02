@@ -75,7 +75,6 @@ static NSString * const ZMVoiceChannelParticipantVoiceGainChangedNotificationNam
 
 + (id<ZMVoiceChannelStateObserverOpaqueToken>)addGlobalVoiceChannelStateObserver:(id<ZMVoiceChannelStateObserver>)observer managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 {
-    
     return (id) [managedObjectContext.globalManagedObjectContextObserver addGlobalVoiceChannelObserver:observer];
 }
 
@@ -84,8 +83,7 @@ static NSString * const ZMVoiceChannelParticipantVoiceGainChangedNotificationNam
     [managedObjectContext.globalManagedObjectContextObserver removeGlobalVoiceChannelStateObserverForToken:token];
 }
 
-
-+ (id<ZMVoiceChannelStateObserverOpaqueToken>)addGlobalVoiceChannelStateObserver:(id<ZMVoiceChannelStateObserver>)observer inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
++ (nonnull id<ZMVoiceChannelStateObserverOpaqueToken>)addGlobalVoiceChannelStateObserver:(nonnull id<ZMVoiceChannelStateObserver>)observer inUserSession:(nonnull id<ZMManagedObjectContextProvider>)userSession;
 {
     return [self addGlobalVoiceChannelStateObserver:observer managedObjectContext:userSession.managedObjectContext];
 }
