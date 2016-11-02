@@ -104,9 +104,11 @@ import ZMTransport
             let fileCache = self.managedObjectContext.zm_fileAssetCache
             fileCache.storeAssetData(assetClientMessage.nonce, fileName: fileMessageData.filename, encrypted: true, data: response.rawData!)
 
+            let cacheKeySuffix: String = assetClientMessage.version == 3 ? asset.uploaded.assetId : fileMessageData.filename
+
             let decryptionSuccess = fileCache.decryptFileIfItMatchesDigest(
                 assetClientMessage.nonce,
-                fileName: fileMessageData.filename,
+                fileName: cacheKeySuffix,
                 encryptionKey: asset.uploaded.otrKey,
                 sha256Digest: asset.uploaded.sha256
             )
