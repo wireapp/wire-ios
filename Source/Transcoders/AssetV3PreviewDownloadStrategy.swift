@@ -36,13 +36,13 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         super.init()
 
         let downstreamPredicate = NSPredicate(
-            format: "transferState == %d AND visibleInConversation != nil",
+            format: "transferState == %d AND visibleInConversation != nil AND version == 3",
             ZMFileTransferState.downloading.rawValue
         )
 
         let filter = NSPredicate { object, _ in
             guard let message = object as? ZMAssetClientMessage, message.fileMessageData != nil else { return false }
-            guard message.version == 3, let asset = message.genericAssetMessage?.assetData else { return false }
+            guard let asset = message.genericAssetMessage?.assetData else { return false }
             return asset.preview.hasRemote() && asset.preview.remote.hasAssetId() && !message.hasDownloadedImage
         }
 
