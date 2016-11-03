@@ -19,6 +19,8 @@
 import Foundation
 import Cryptobox
 
+private var zmLog = ZMSLog(tag: "message encryption")
+
 // MARK: - Encrypted data for recipients
 
 /// Strategy for missing clients.
@@ -124,7 +126,8 @@ extension ZMGenericMessage {
             guard let message = ZMMessage.fetch(withNonce:nonce, for:conversation, in:conversation.managedObjectContext!) else { return nil }
             guard message.destructionDate != nil else { return nil }
             guard let sender = message.sender else {
-                fatal("delete for ephemeral message need a recipient\n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType)")
+                zmLog.error("sender of deleted ephemeral message \(self.deleted.messageId) is already cleared \n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType.rawValue)")
+                return Set(arrayLiteral: selfUser)
             }
             return Set(arrayLiteral: sender, selfUser)
         }
@@ -134,7 +137,7 @@ extension ZMGenericMessage {
         if self.hasConfirmation() || self.hasEphemeral() {
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
                 let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.messageId)" : ""
-                fatal("confirmation need a recipient\n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType), connection: \(conversation.connection)\(confirmationInfo)")
+                fatal("confirmation need a recipient\n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType.rawValue), connection: \(conversation.connection)\(confirmationInfo)")
             }
             recipientUsers = recipients
         }
