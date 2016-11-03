@@ -383,8 +383,28 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     if (nil != message && ![senderID isEqual:selfUser.remoteIdentifier] && !message.isEphemeral) {
         [conversation appendDeletedForEveryoneSystemMessageWithTimestamp:message.serverTimestamp sender:message.sender];
     }
-
+    // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop the deletion timer
+    if (nil != message && message.isEphemeral && ![message.sender.remoteIdentifier isEqual:selfUser.remoteIdentifier]) {
+        [self stopDeletionTimerForMessage:message];
+    }
     [message removeMessageClearingSender:YES];
+}
+
++ (void)stopDeletionTimerForMessage:(ZMMessage *)message
+{
+    NSManagedObjectContext *uiMOC = message.managedObjectContext;
+    if (!uiMOC.zm_isUserInterfaceContext) {
+        uiMOC = uiMOC.zm_userInterfaceContext;
+    }
+    NSManagedObjectID *messageID = message.objectID;
+    [uiMOC performGroupedBlock:^{
+        NSError *error;
+        ZMMessage *uiMessage =  [uiMOC existingObjectWithID:messageID error:&error];
+        if (error != nil || uiMessage == nil) {
+            return;
+        }
+        [uiMOC.zm_messageDeletionTimer stopTimerForMessage:uiMessage];
+    }];
 }
 
 - (void)removePendingDeliveryReceipts
