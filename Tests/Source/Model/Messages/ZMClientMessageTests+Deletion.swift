@@ -406,6 +406,37 @@ extension ZMClientMessageTests_Deletion {
 
 }
 
+// MARK: - Ephemeral
+extension ZMClientMessageTests_Deletion {
+
+    func testThatItStopsDeletionTimerForEphemeralMessages(){
+        // given
+        conversation.messageDestructionTimeout = 1000
+        let sut = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        sut.sender = user1
+        _ = uiMOC.zm_messageDeletionTimer.startDeletionTimer(message: sut, timeout: 1000)
+        XCTAssertTrue(uiMOC.zm_messageDeletionTimer.isTimerRunning(for: sut))
+        XCTAssertTrue(sut.isEphemeral)
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        self.syncMOC.performGroupedBlockAndWait {
+            self.syncMOC.refresh(self.syncConversation, mergeChanges: false)
+            let updateEvent = self.createMessageDeletedUpdateEvent(sut.nonce, conversationID: self.conversation.remoteIdentifier!, senderID: self.user2.remoteIdentifier!)
+            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.syncMOC, prefetchResult: nil)
+            XCTAssertTrue(self.syncMOC.saveOrRollback())
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        XCTAssertFalse(uiMOC.zm_messageDeletionTimer.isTimerRunning(for: sut))
+        
+        // teardown
+        uiMOC.zm_teardownMessageDeletionTimer()
+    }
+}
+
 // MARK: - Helper
 
 extension ZMClientMessageTests_Deletion {
