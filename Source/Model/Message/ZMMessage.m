@@ -386,8 +386,9 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop the deletion timer
     if (nil != message && message.isEphemeral && ![message.sender.remoteIdentifier isEqual:selfUser.remoteIdentifier]) {
         [self stopDeletionTimerForMessage:message];
+    } else {
+        [message removeMessageClearingSender:YES];
     }
-    [message removeMessageClearingSender:YES];
 }
 
 + (void)stopDeletionTimerForMessage:(ZMMessage *)message
@@ -404,6 +405,10 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
             return;
         }
         [uiMOC.zm_messageDeletionTimer stopTimerForMessage:uiMessage];
+        
+        [uiMOC.zm_syncContext performGroupedBlock:^{
+            [message removeMessageClearingSender:YES];
+        }];
     }];
 }
 
