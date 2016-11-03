@@ -169,7 +169,7 @@ public class Canvas: UIView {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         
         if (flattenIndex == 0 && referenceObject != nil) {
-            flatten()
+            flatten(upTo: 1)
         }
         
         if let bufferImage = bufferImage {
@@ -247,7 +247,11 @@ public class Canvas: UIView {
     }
     
     private func flatten() {
-        let renderables = scene.suffix(from: flattenIndex)
+        flatten(upTo: scene.count)
+    }
+    
+    private func flatten(upTo: Int) {
+        let renderables = scene.prefix(upTo: upTo).suffix(from: flattenIndex)
         
         guard renderables.count > 0 else { return }
         
@@ -267,7 +271,7 @@ public class Canvas: UIView {
         
         bufferImage =  UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        flattenIndex = scene.count
+        flattenIndex = upTo
     }
     
     private var drawBounds : CGRect {
