@@ -42,8 +42,8 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
         let filter = NSPredicate { object, _ in
             guard let message = object as? ZMAssetClientMessage, message.fileMessageData != nil else { return false }
-            guard let asset = message.genericAssetMessage?.assetData else { return false }
-            return asset.preview.hasRemote() && asset.preview.remote.hasAssetId() && !message.hasDownloadedImage
+            guard nil != message.genericAssetMessage?.previewAssetId else { return false }
+            return !message.hasDownloadedImage
         }
 
         downstreamSync = ZMDownstreamObjectSync(
