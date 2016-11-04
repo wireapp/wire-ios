@@ -118,6 +118,27 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         XCTAssertNil(sut.nextRequest())
     }
 
+    func testThatItGeneratesNoRequestForAV3FileMessageWithPreviewThatHasNotBeenDownloadedYet_WhenNotWhitelisted() {
+        // given
+        let (message, _, _) = createMessage(in: conversation)!
+        let (previewGenericMessage, previewMeta) = createPreview(with: message.nonce.transportString())
+
+        message.add(previewGenericMessage)
+        prepareDownload(of: message)
+
+        guard let asset = message.genericAssetMessage?.assetData else { return XCTFail() }
+        XCTAssertTrue(asset.hasPreview())
+        XCTAssertTrue(asset.preview.hasRemote())
+        XCTAssertTrue(asset.preview.remote.hasAssetId())
+        XCTAssertEqual(asset.preview.remote.assetId, previewMeta.assetId)
+        XCTAssertFalse(message.hasDownloadedImage)
+        XCTAssertEqual(message.version, 3)
+        XCTAssertNotNil(message.fileMessageData)
+
+        // then
+        XCTAssertNil(sut.nextRequest())
+    }
+
     func testThatItGeneratesARequestForAV3FileMessageWithPreviewThatHasNotBeenDownloadedYet() {
         // given
         let (message, _, _) = createMessage(in: conversation)!
@@ -136,11 +157,39 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         XCTAssertNotNil(message.fileMessageData)
 
         // when
+        message.requestImageDownload()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
 
         // then
         XCTAssertEqual(request.path, "/assets/v3/\(previewMeta.assetId)")
         XCTAssertEqual(request.method, .methodGET)
+    }
+
+    func testThatItDoesNotGenerateARequestForAV3FileMessageWithPreviewTwice() {
+        // given
+        let (message, _, _) = createMessage(in: conversation)!
+        let (previewGenericMessage, previewMeta) = createPreview(with: message.nonce.transportString())
+
+        message.add(previewGenericMessage)
+        prepareDownload(of: message)
+
+        // when
+        message.requestImageDownload()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
+        XCTAssertEqual(request.path, "/assets/v3/\(previewMeta.assetId)")
+        XCTAssertEqual(request.method, .methodGET)
+
+        // when
+        message.requestImageDownload()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertNil(sut.nextRequest())
     }
 
     func testThatItDoesNotGenerateAReuqestForAV3FileMessageWithPreviewThatAlreadyHasBeenDownloaded() {
@@ -158,6 +207,8 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
 
         message.add(previewGenericMessage)
         prepareDownload(of: message)
+        message.requestImageDownload()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(message.hasDownloadedImage)
@@ -177,6 +228,9 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         prepareDownload(of: message)
 
         // when
+        message.requestImageDownload()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
         let response = ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: nil, headers: nil)
 
