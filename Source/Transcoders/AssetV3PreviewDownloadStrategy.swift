@@ -26,7 +26,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
 @objc public final class AssetV3PreviewDownloadRequestStrategy: NSObject, RequestStrategy, ZMContextChangeTrackerSource {
 
-    fileprivate var downstreamSync: ZMDownstreamObjectSync!
+    fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
     fileprivate let managedObjectContext: NSManagedObjectContext
     fileprivate weak var authStatus: ClientRegistrationDelegate?
 
@@ -35,24 +35,44 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         self.authStatus = authStatus
         super.init()
 
-        let downstreamPredicate = NSPredicate(
-            format: "transferState == %d AND visibleInConversation != nil AND version == 3",
-            ZMFileTransferState.downloading.rawValue
-        )
-
         let filter = NSPredicate { object, _ in
-            guard let message = object as? ZMAssetClientMessage, message.fileMessageData != nil else { return false }
+            guard let message = object as? ZMAssetClientMessage, nil != message.fileMessageData else { return false }
+            guard message.version == 3, message.visibleInConversation != nil else { return false }
             guard nil != message.genericAssetMessage?.previewAssetId else { return false }
             return !message.hasDownloadedImage
         }
 
-        downstreamSync = ZMDownstreamObjectSync(
+        downstreamSync = ZMDownstreamObjectSyncWithWhitelist(
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),
-            predicateForObjectsToDownload: downstreamPredicate,
-            filter: filter,
+            predicateForObjectsToDownload: filter,
             managedObjectContext: managedObjectContext
         )
+        registerForWhitelistingNotification()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    func registerForWhitelistingNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didRequestToDownloadImage),
+            name: NSNotification.Name(rawValue: ZMAssetClientMessage.ImageDownloadNotificationName),
+            object: nil
+        )
+    }
+
+    func didRequestToDownloadImage(_ note: Notification) {
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard let `self` = self else { return }
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
+            guard let message = object as? ZMAssetClientMessage else { return }
+            self.downstreamSync.whiteListObject(message)
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
     }
 
     public func nextRequest() -> ZMTransportRequest? {

@@ -41,7 +41,7 @@ public final class ImageDownloadRequestStrategy : ZMObjectSyncStrategy, RequestS
                                                              entityName: ZMAssetClientMessage.entityName(),
                                                              predicateForObjectsToDownload: downloadPredicate,
                                                              managedObjectContext: managedObjectContext)
-        
+
         registerForWhitelistingNotification()
     }
     
