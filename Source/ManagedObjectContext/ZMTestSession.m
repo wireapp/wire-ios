@@ -162,6 +162,10 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     self.uiMOC.globalManagedObjectContextObserver.propagateChanges = YES;
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.testName;
+    [self performPretendingUiMocIsSyncMoc:^{
+        [self.uiMOC setupUserKeyStoreForDirectory:self.databaseDirectory];
+    }];
+    
     
     self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreDirectory:self.databaseDirectory];
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -178,7 +182,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self.syncMOC performGroupedBlockAndWait:^{        
         [self.syncMOC setZm_userInterfaceContext:self.uiMOC];
     }];
-    [self.uiMOC setZm_syncContext:self.syncMOC];
+    [self.uiMOC setZm_syncContext:self.syncMOC];    
 }
 
 @end
