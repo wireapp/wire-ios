@@ -86,21 +86,16 @@ import ZMTransport
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
         if response.result == .success {
-            guard let fileMessageData = assetClientMessage.fileMessageData, let asset = assetClientMessage.genericAssetMessage?.assetData else { return }
-            guard assetClientMessage.visibleInConversation != nil else {
-                // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished,
-                // we don't want to update the message
-                return
-            }
-
-            // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
+            guard let fileMessageData = assetClientMessage.fileMessageData,
+                let genericMessage = assetClientMessage.genericAssetMessage,
+                let asset = genericMessage.assetData,
+                assetClientMessage.visibleInConversation != nil else { return }
             let fileCache = self.managedObjectContext.zm_fileAssetCache
             fileCache.storeAssetData(assetClientMessage.nonce, fileName: fileMessageData.filename, encrypted: true, data: response.rawData!)
 
-
             let decryptionSuccess = fileCache.decryptFileIfItMatchesDigest(
                 assetClientMessage.nonce,
-                fileName: asset.uploaded.assetId,
+                fileName: genericMessage.v3_fileCacheKey,
                 encryptionKey: asset.uploaded.otrKey,
                 sha256Digest: asset.uploaded.sha256
             )
