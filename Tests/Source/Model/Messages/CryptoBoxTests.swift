@@ -25,7 +25,7 @@ class CryptoBoxTest: OtrBaseTest {
     
     func testThatCryptoBoxFolderIsForbiddenFromBackup() {
         // when
-         _ = UserClientKeysStore.setupContext()
+        _ = UserClientKeysStore.setupContext(in: UserClientKeysStore.otrDirectoryURL)
         
         // then
         guard let values = try? UserClientKeysStore.otrDirectoryURL.resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else {return XCTFail()}
