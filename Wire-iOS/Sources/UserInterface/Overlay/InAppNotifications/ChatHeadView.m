@@ -125,7 +125,7 @@
 {
     NSString *nameString = [[self.message.sender displayName] uppercasedWithCurrentLocale];
 
-    if (self.message.conversation.participantsCount == 2) { // 1 to 1 conversation
+    if (self.message.conversation.conversationType == ZMConversationTypeOneOnOne) { // 1 to 1 conversation
         return nameString;
     }
     else if ([self isMessageInCurrentConversation]) {

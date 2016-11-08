@@ -319,28 +319,28 @@ BrowserBarView {
 
 /* Sketch related */
 
-SketchBottomView {
-    backgroundColor: $color-background;
-    separatorView: @{
-        backgroundColor: $color-separator;
-    }
-}
-
-SketchTopView {
-    backgroundColor: $color-background;
-    separatorView: @{
-        backgroundColor: $color-separator;
+CanvasViewController {
+    
+    canvas: @{
+        backgroundColor: white
     }
     
-    UILabel {
+    hintLabel: @{
         font: $font-small;
-        textColor: $color-text-foreground;
+        textColor: $color-text-placeholder;
+        textAlignment: center;
     }
+    
 }
 
-SketchViewController UIView > UILabel {
-    font: $font-small;
-    textColor: $color-text-dimmed;
+SketchToolbar {
+    backgroundColor: $color-background;
+    
+    IconButton {
+        iconColor[state:normal]: $color-icon-normal;
+        iconColor[state:highlighted]: $color-icon-highlighted;
+        iconColor[state:selected]: $color-accent-current;
+    }
 }
 
 /* Profile */
@@ -818,6 +818,10 @@ ImageMessageCell {
     imageViewContainer: @{
         backgroundColor: $color-placeholder-background;
     }
+    
+    fullImageView: @{
+        backgroundColor: $color-background;
+    }
 
     obfuscationView: @{
         backgroundColor: $color-ephemeral;
@@ -971,6 +975,22 @@ ConfirmAssetViewController {
         titleLabel: @{
             font: $font-small;
         }
+    }
+}
+
+ImageToolbarView.on-image {
+    IconButton {
+        iconColor[state:normal]: $color-icon-normal-dark;
+        iconColor[state:highlighted]: $color-icon-highlighted-dark;
+        iconColor[state:selected]: $color-accent-current-dark;
+    }
+}
+
+ImageToolbarView.on-background {
+    IconButton {
+        iconColor[state:normal]: $color-icon-normal;
+        iconColor[state:highlighted]: $color-icon-highlighted;
+        iconColor[state:selected]: $color-accent-current;
     }
 }
 

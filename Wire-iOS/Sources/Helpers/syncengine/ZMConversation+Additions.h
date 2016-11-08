@@ -25,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZMConversation (Additions)
 
-- (NSUInteger)participantsCount;
 - (nullable id<ZMConversationMessage>)firstTextMessage;
 - (nullable id<ZMConversationMessage>)lastTextMessage;
 - (nullable id<ZMConversationMessage>)lastMessageSentByUser:(ZMUser *)user limit:(NSUInteger)limit;

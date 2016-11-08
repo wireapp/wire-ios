@@ -55,8 +55,6 @@
 #import "StopWatch.h"
 #import "UIView+MTAnimation.h"
 
-#import "SketchViewController.h"
-
 #import "Wire-Swift.h"
 
 #import "NSLayoutConstraint+Helpers.h"
@@ -161,6 +159,10 @@
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(colorSchemeControllerDidApplyChanges:) name:ColorSchemeControllerDidApplyColorSchemeChangeNotification object:nil];
+    
+    if ([DeveloperMenuState developerMenuEnabled]) { //better way of dealing with this?
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestLoopNotification:) name:ZMTransportRequestLoopNotificationName object:nil];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -535,6 +537,18 @@
         ConversationRootViewController *currentConversationViewController = [self conversationRootControllerForConversation:self.currentConversation];
         [self pushContentViewController:currentConversationViewController focusOnView:NO animated:NO completion:nil];
     }
+}
+
+#pragma mark - Network Loop notification
+
+- (void)requestLoopNotification:(NSNotification *)notification;
+{
+    NSString *path = notification.userInfo[@"path"];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Oh noes!" message:[NSString stringWithFormat:@"A request loop is going on at %@", path] preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *action = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil];
+    
+    [alert addAction:action];
+    [self.conversationRootViewController presentViewController:alert animated:YES completion:nil];
 }
 
 @end

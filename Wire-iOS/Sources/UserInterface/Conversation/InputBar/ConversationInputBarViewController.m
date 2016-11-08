@@ -30,7 +30,6 @@
 #import "ConfirmAssetViewController.h"
 #import "TextView.h"
 #import "CameraViewController.h"
-#import "SketchViewController.h"
 #import "UIView+Borders.h"
 #import "UIViewController+Errors.h"
 
@@ -39,7 +38,6 @@
 #import "AnalyticsTracker+Sketchpad.h"
 #import "AnalyticsTracker+FileTransfer.h"
 #import "Wire-Swift.h"
-
 
 #import "ZMUserSession+Additions.h"
 #import "zmessaging+iOS.h"
@@ -100,6 +98,12 @@
 
 @end
 
+@interface ConversationInputBarViewController (Sketch)
+
+- (void)sketchButtonPressed:(nullable id)sender;
+
+@end
+
 
 @interface  ConversationInputBarViewController (UIGestureRecognizerDelegate) <UIGestureRecognizerDelegate>
 
@@ -108,7 +112,6 @@
 @interface ConversationInputBarViewController (GiphySearchViewController) <GiphySearchViewControllerDelegate>
 
 @end
-
 
 
 @interface ConversationInputBarViewController ()
@@ -532,7 +535,7 @@
         return;
     }
     _mode = mode;
-
+    
     switch (mode) {
         case ConversationInputBarViewControllerModeTextInput:
             self.inputController = nil;
@@ -815,7 +818,7 @@
     
     @weakify(self);
     
-    confirmImageViewController.onConfirm = ^{
+    confirmImageViewController.onConfirm = ^(UIImage *editedImage){
         @strongify(self);
         [self dismissViewControllerAnimated:NO completion:nil];
         [self postImage:image];
@@ -886,6 +889,12 @@
 
 @end
 
+@interface ZMAssetMetaDataEncoder (Test)
+
++ (CGSize)imageSizeForImageData:(NSData *)imageData;
+
+@end
+
 @implementation ConversationInputBarViewController (Sketch)
 
 - (void)sketchButtonPressed:(id)sender
@@ -893,38 +902,12 @@
     [self.inputBar.textView resignFirstResponder];
     [Analytics.shared tagMediaAction:ConversationMediaActionSketch inConversation:self.conversation];
     
-    SketchViewController *viewController = [[SketchViewController alloc] init];
-    viewController.sketchTitle = self.conversation.displayName;
+    CanvasViewController *viewController = [[CanvasViewController alloc] init];
     viewController.delegate = self;
+    viewController.title = self.conversation.displayName.uppercaseString;
     viewController.source = ConversationMediaSketchSourceSketchButton;
     
-    ZMUser *lastSender = self.conversation.lastMessageSender;
-    [self.parentViewController presentViewController:viewController animated:YES completion:^{
-        [viewController.backgroundViewController setUser:lastSender animated:NO];
-        [self.analyticsTracker tagNavigationViewEnteredSketchpad];
-    }];
-}
-
-- (void)sketchViewControllerDidCancel:(SketchViewController *)controller
-{
-    [self.parentViewController dismissViewControllerAnimated:YES completion:^{
-        [self.analyticsTracker tagNavigationViewSkippedSketchpad];
-    }];
-}
-
-- (void)sketchViewController:(SketchViewController *)controller didSketchImage:(UIImage *)image
-{
-    @weakify(self);
-    [self hideCameraKeyboardViewController:^{
-        @strongify(self);
-        [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
-        if (image) {
-            NSData *imageData = UIImagePNGRepresentation(image);
-            [self.sendController sendMessageWithImageData:imageData completion:^{
-                   [[Analytics shared] tagMediaSentPictureSourceSketchInConversation:self.conversation sketchSource:controller.source];
-            }];
-        }
-    }];
+    [self.parentViewController presentViewController:[viewController wrapInNavigationController] animated:YES completion:nil];
 }
 
 @end

@@ -165,7 +165,7 @@
 
 // Ephemeral message
 "input.ephemeral.timeout.none" = "Off";
-"input.ephemeral.title" = "Set a timer for temporary messages";
+"input.ephemeral.title" = "Set a time for the message to disappear";
 
 // System messages
 "content.system.continued_conversation" = "Start a conversation with %@";
@@ -485,6 +485,24 @@
 "self.settings.popular_demand.send_button.title" = "Send Button";
 "self.settings.popular_demand.send_button.footer" = "Disable to send via the return key.";
 
+// Open in
+"self.settings.external_apps.header" = "Open Links In";
+
+"self.settings.link_options.twitter.title" = "Tweets";
+"self.settings.link_options.maps.title" = "Locations";
+"self.settings.link_options.browser.title" = "Browser";
+
+"open_link.twitter.option.default" = "Safari / Twitter";
+"open_link.twitter.option.tweetbot" = "Tweetbot";
+"open_link.twitter.option.twitterrific" = "Twitterrific";
+
+"open_link.maps.option.apple" = "Apple Maps";
+"open_link.maps.option.google" = "Google Maps";
+
+"open_link.browser.option.safari" = "Safari";
+"open_link.browser.option.chrome" = "Chrome";
+"open_link.browser.option.firefox" = "Firefox";
+
 // Sound alerts (TO BE UPDPATED)
 "self.settings.sound_menu.title" = "Sound Alerts";
 "self.settings.sound_menu.no_sounds.title" = "None";
@@ -688,7 +706,7 @@
 "error.invite.no_email_provider" = "Please configure your email client to be able to send the invites via email";
 "error.invite.no_messaging_provider" = "Please configure your SMS to be able to send the invites via SMS";
 
-"sketchpad.initial_hint" = "Tap color to change brush size\nPress and hold to fill an area\nShake to remove a photo";
+"sketchpad.initial_hint" = "Tap colors to change brush size";
 
 "migration.please_wait_message" = "One moment, please";
 
