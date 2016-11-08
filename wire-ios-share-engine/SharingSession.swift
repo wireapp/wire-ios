@@ -16,8 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import Foundation
 import ZMCDataModel
+import ZMTransport
+import WireMessageStrategy
+
+
+fileprivate class RequestGeneratorStore {
+
+    let requestGenerators: [ZMTransportRequestGenerator]
+
+    init(transcoders: [ZMRequestGeneratorSource], strategies: [RequestStrategy]) {
+        requestGenerators =  strategies.flatMap {
+                $0.nextRequest
+            } + transcoders.flatMap {
+                $0.requestGenerators
+            }.flatMap {
+                $0.nextRequest
+        }
+    }
+
+}
+
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of 
@@ -38,16 +59,19 @@ public class SharingSession {
     /// The location of the database in the shared container
     let sharedDatabaseDirectory: URL
     
-    /// The `NSManagedObjectContext` used to retrieve the conversations,
-    /// we only use a single context in the sharing session for now
-    let managedObjectContext: NSManagedObjectContext
+    /// The `NSManagedObjectContext` used to retrieve the conversations
+    let userInterfaceContext: NSManagedObjectContext
+
+    private let syncContext: NSManagedObjectContext
 
     /// The authentication status used to verify a user is authenticated
     private let authenticationStatus: AuthenticationStatusProvider
+
+    let transportSession: ZMTransportSession
     
     /// The `ZMConversationListDirectory` containing all conversation lists
     private var directory: ZMConversationListDirectory {
-        return managedObjectContext.conversationListDirectory()
+        return userInterfaceContext.conversationListDirectory()
     }
     
     /// Whether all prerequsisties for sharing are met
@@ -65,6 +89,9 @@ public class SharingSession {
     var writebleArchivedConversations : [Conversation] {
         return directory.archivedConversations.conversationArray
     }
+
+    private let operationLoop: RequestGeneratingOperationLoop
+    private let requestGenerators: RequestGeneratorStore
     
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -75,16 +102,46 @@ public class SharingSession {
     init(databaseDirectory: URL, authenticationStatusProvider: AuthenticationStatusProvider) throws {
         sharedDatabaseDirectory = databaseDirectory
         authenticationStatus = authenticationStatusProvider
-        
+
         guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory) else { throw InitializationError.needsMigration }
         guard authenticationStatusProvider.state == .authenticated else { throw InitializationError.loggedOut }
-        managedObjectContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory)
+        userInterfaceContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory)
+        syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory)
+
+        let environment = ZMBackendEnvironment()
+
+        transportSession = ZMTransportSession(
+            baseURL: environment.backendURL,
+            websocketURL: environment.backendWSURL,
+            keyValueStore: syncContext as! ZMKeyValueStore,
+            mainGroupQueue: userInterfaceContext,
+            application: nil
+        )
+
+        let clientMessageTranscoder = ZMClientMessageTranscoder(
+            managedObjectContext: syncContext,
+            localNotificationDispatcher: nil,
+            clientRegistrationStatus: nil,
+            apnsConfirmationStatus: nil
+        )!
+
+        let transcoders = [clientMessageTranscoder]
+
+        requestGenerators = RequestGeneratorStore(transcoders: [clientMessageTranscoder], strategies: [])
+
+        operationLoop = RequestGeneratingOperationLoop(
+            context: syncContext,
+            callBackQueue: .main,
+            requestProducers: requestGenerators.requestGenerators,
+            transportSession: transportSession
+        )
     }
 
     /// Cancel all pending tasks.
     /// Should be called when the extension is dismissed
     func cancelAllPendingTasks() {
         // TODO
+
     }
 
 }
