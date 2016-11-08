@@ -46,7 +46,7 @@ class ArticleView: UIView {
     var loadingView: ThreeDotsLoadingView?
     var linkPreview: LinkPreview?
     private let obfuscationView = ObfuscationView(icon: .link)
-    private let ephemeralColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorAccentDimmedFlat)
+    private let ephemeralColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorAccent)
     weak var delegate: ArticleViewDelegate?
     
     init(withImagePlaceholder imagePlaceholder: Bool) {
