@@ -57,7 +57,9 @@ static NSTimeInterval const SoundEventListenerIgnoreTimeForPushStart = 2.0;
 {
     self = [super init];
     if (self) {
-        self.voiceChannelStateObserverToken = [ZMVoiceChannel addGlobalVoiceChannelStateObserver:self inUserSession:[ZMUserSession sharedSession]];
+        if (![ZMUserSession useCallKit]) {
+            self.voiceChannelStateObserverToken = [ZMVoiceChannel addGlobalVoiceChannelStateObserver:self inUserSession:[ZMUserSession sharedSession]];
+        }
         self.unreadMessageObserverToken = [ZMMessageNotification addNewMessagesObserver:self inUserSession:[ZMUserSession sharedSession]];
         self.unreadKnockMessageObserverToken = [ZMMessageNotification addNewKnocksObserver:self inUserSession:[ZMUserSession sharedSession]];
         [ZMCallEndedNotification addCallEndObserver:self];
