@@ -120,6 +120,7 @@ extension SettingsCellDescriptorFactory {
         let sendButtonDescriptor = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableSendButton), inverse: true)
 
         var popularDemandDescriptors: [SettingsCellDescriptorType] = [sendButtonDescriptor]
+        
         if UIDevice.current.userInterfaceIdiom != .pad {
             let darkThemeElement = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.darkMode))
             popularDemandDescriptors.insert(darkThemeElement, at: 0)

@@ -351,10 +351,21 @@ import Foundation
             return DeveloperOptionsController()
         }
         
+        var developerCellDescriptors: [SettingsCellDescriptorType] = []
+        
         let diableAVSSetting = SettingsPropertyToggleCellDescriptor(settingsProperty: self.settingsPropertyFactory.property(.disableAVS))
+        developerCellDescriptors.append(diableAVSSetting)
         let diableUISetting = SettingsPropertyToggleCellDescriptor(settingsProperty: self.settingsPropertyFactory.property(.disableUI))
+        developerCellDescriptors.append(diableUISetting)
         let diableHockeySetting = SettingsPropertyToggleCellDescriptor(settingsProperty: self.settingsPropertyFactory.property(.disableHockey))
+        developerCellDescriptors.append(diableHockeySetting)
         let diableAnalyticsSetting = SettingsPropertyToggleCellDescriptor(settingsProperty: self.settingsPropertyFactory.property(.disableAnalytics))
+        developerCellDescriptors.append(diableAnalyticsSetting)
+        
+        if #available(iOS 10.0, *) {
+            let callKitDescriptor = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableCallKit))
+            developerCellDescriptors.append(callKitDescriptor)
+        }
         
         return SettingsGroupCellDescriptor(items: [SettingsSectionDescriptor(cellDescriptors: [devController, diableAVSSetting, diableUISetting, diableHockeySetting, diableAnalyticsSetting])], title: title, icon: .effectRobot)
     }
