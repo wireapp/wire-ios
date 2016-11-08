@@ -292,6 +292,9 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 
 - (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 {
+    if (self.isZombieObject) {
+        return;
+    }
     [self updateTimestamp:serverTimestamp isUpdatingExistingMessage:isUpdate];
 
     if (self.managedObjectContext != conversation.managedObjectContext) {
@@ -299,7 +302,12 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
     }
     
     self.visibleInConversation = conversation;
-    self.sender = [ZMUser userWithRemoteID:senderUUID createIfNeeded:YES inContext:self.managedObjectContext];
+    ZMUser *sender = [ZMUser userWithRemoteID:senderUUID createIfNeeded:YES inContext:self.managedObjectContext];
+    if (sender != nil && !sender.isZombieObject && self.managedObjectContext == sender.managedObjectContext) {
+        self.sender = sender;
+    } else {
+        ZMLogError(@"Sender is nil or from a different context than message. \n Sender is zombie %@: %@ \n Message: %@", @(sender.isZombieObject), sender, self);
+    }
     
     if (self.sender.isSelfUser) {
         // if the message was sent by the selfUser we don't want to send a lastRead event, since we consider this message to be already read
