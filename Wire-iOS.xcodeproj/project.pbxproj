@@ -49,7 +49,6 @@
 		1658D2051D3E742A00249609 /* ping_from_them.caf in Resources */ = {isa = PBXBuildFile; fileRef = 87A4DAA21D34FF0400105D44 /* ping_from_them.caf */; };
 		1658D2061D3E742A00249609 /* ringing_from_them_long.caf in Resources */ = {isa = PBXBuildFile; fileRef = 87A4DAA31D34FF0400105D44 /* ringing_from_them_long.caf */; };
 		165B47ED1BF23D6C00C46EFE /* PhoneInvitationStepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 165B47EC1BF23D6C00C46EFE /* PhoneInvitationStepViewController.m */; };
-		165EA0B81DB67B94008ECC60 /* CanvasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165EA0B71DB67B94008ECC60 /* CanvasViewController.swift */; };
 		166390D41DC34CAB00D7BF1C /* ImageToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166390D31DC34CAB00D7BF1C /* ImageToolbarView.swift */; };
 		166390D61DC8AC0C00D7BF1C /* String+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166390D51DC8AC0C00D7BF1C /* String+Image.swift */; };
 		1670AFE81B2095B1002BF0AE /* VoiceChannelCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1670AFE71B2095B1002BF0AE /* VoiceChannelCollectionViewLayout.m */; };
@@ -57,7 +56,6 @@
 		16719A1D1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16719A1C1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift */; };
 		1677FD331BBC19A400491481 /* ColorScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 1677FD311BBC19A400491481 /* ColorScheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1677FD341BBC19A400491481 /* ColorScheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 1677FD321BBC19A400491481 /* ColorScheme.m */; };
-		1677FD371BBC474000491481 /* ColorSchemeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1677FD361BBC474000491481 /* ColorSchemeController.m */; };
 		167AEA101B16031900890435 /* VoiceChannelParticipantCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 167AEA0F1B16031900890435 /* VoiceChannelParticipantCell.m */; };
 		167AEA151B1603EC00890435 /* VoiceChannelParticipantsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 167AEA141B1603EC00890435 /* VoiceChannelParticipantsController.m */; };
 		167B3B491BB36F6C003F5104 /* ConversationMessageWindowTableViewAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 167B3B481BB36F6C003F5104 /* ConversationMessageWindowTableViewAdapter.m */; };
@@ -94,7 +92,6 @@
 		16BCF4311A0A457900A2D3D6 /* GuidanceLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BCF4301A0A457900A2D3D6 /* GuidanceLabel.m */; };
 		16BEBC3D1D006A6B006FFD3E /* ThreeDotsLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BEBC3C1D006A6B006FFD3E /* ThreeDotsLoadingView.swift */; };
 		16BEBC3F1D006FB6006FFD3E /* ThreeDotsLoadingViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BEBC3E1D006FB6006FFD3E /* ThreeDotsLoadingViewTests.swift */; };
-		16CB8A2F1DBA39C400B5BC47 /* SketchToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A2E1DBA39C400B5BC47 /* SketchToolbar.swift */; };
 		16CB8DB91DC0F777000C5F47 /* DefaultNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8DB81DC0F777000C5F47 /* DefaultNavigationBar.swift */; };
 		16D316581BC28ED90050B835 /* ZMConversation+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = 16D316571BC28ED90050B835 /* ZMConversation+Actions.m */; };
 		16D3631C1AAB63DB00471F5F /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 16D3631B1AAB63DB00471F5F /* CameraViewController.m */; };
@@ -490,6 +487,9 @@
 		875F89121D6DCD2C00D8748E /* MessageToolboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 875F89111D6DCD2C00D8748E /* MessageToolboxView.swift */; };
 		875F89141D6DD6D000D8748E /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 875F89131D6DD6D000D8748E /* ReactionsView.swift */; };
 		875F89171D6F35EC00D8748E /* ReactionsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 875F89161D6F35EC00D8748E /* ReactionsListViewController.swift */; };
+		876113E01DD1DD19007F5969 /* ColorSchemeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 876113DF1DD1DD19007F5969 /* ColorSchemeController.m */; };
+		876113E21DD1DD4D007F5969 /* CanvasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876113E11DD1DD4D007F5969 /* CanvasViewController.swift */; };
+		876113E41DD1DD6B007F5969 /* SketchToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876113E31DD1DD6B007F5969 /* SketchToolbar.swift */; };
 		8762BE151D8978F70040E4A5 /* ZMAccentColor+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8762BE141D8978F70040E4A5 /* ZMAccentColor+Additions.swift */; };
 		876AE7601C159A9C00E3E743 /* NSStringFingerprintTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 876AE75F1C159A9C00E3E743 /* NSStringFingerprintTests.m */; };
 		876B94821D7D8C870063AE89 /* UIView+SlideInState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876B94811D7D8C870063AE89 /* UIView+SlideInState.swift */; };
@@ -936,7 +936,6 @@
 		1651F9BF1D36789C00A9FAE8 /* Message+FormattingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Message+FormattingTests.swift"; sourceTree = "<group>"; };
 		165B47EB1BF23D6C00C46EFE /* PhoneInvitationStepViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneInvitationStepViewController.h; sourceTree = "<group>"; };
 		165B47EC1BF23D6C00C46EFE /* PhoneInvitationStepViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneInvitationStepViewController.m; sourceTree = "<group>"; };
-		165EA0B71DB67B94008ECC60 /* CanvasViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasViewController.swift; sourceTree = "<group>"; };
 		166390D31DC34CAB00D7BF1C /* ImageToolbarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageToolbarView.swift; sourceTree = "<group>"; };
 		166390D51DC8AC0C00D7BF1C /* String+Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Image.swift"; sourceTree = "<group>"; };
 		1670AFE61B2095B1002BF0AE /* VoiceChannelCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceChannelCollectionViewLayout.h; sourceTree = "<group>"; };
@@ -945,8 +944,6 @@
 		16719A1C1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GiphyConfirmationViewController.swift; sourceTree = "<group>"; };
 		1677FD311BBC19A400491481 /* ColorScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorScheme.h; sourceTree = "<group>"; };
 		1677FD321BBC19A400491481 /* ColorScheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorScheme.m; sourceTree = "<group>"; };
-		1677FD351BBC474000491481 /* ColorSchemeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSchemeController.h; sourceTree = "<group>"; };
-		1677FD361BBC474000491481 /* ColorSchemeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ColorSchemeController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		167AEA0E1B16031900890435 /* VoiceChannelParticipantCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceChannelParticipantCell.h; sourceTree = "<group>"; };
 		167AEA0F1B16031900890435 /* VoiceChannelParticipantCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceChannelParticipantCell.m; sourceTree = "<group>"; };
 		167AEA131B1603EC00890435 /* VoiceChannelParticipantsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceChannelParticipantsController.h; sourceTree = "<group>"; };
@@ -1003,7 +1000,6 @@
 		16BCF4301A0A457900A2D3D6 /* GuidanceLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuidanceLabel.m; sourceTree = "<group>"; };
 		16BEBC3C1D006A6B006FFD3E /* ThreeDotsLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreeDotsLoadingView.swift; sourceTree = "<group>"; };
 		16BEBC3E1D006FB6006FFD3E /* ThreeDotsLoadingViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreeDotsLoadingViewTests.swift; sourceTree = "<group>"; };
-		16CB8A2E1DBA39C400B5BC47 /* SketchToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SketchToolbar.swift; sourceTree = "<group>"; };
 		16CB8DB81DC0F777000C5F47 /* DefaultNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNavigationBar.swift; sourceTree = "<group>"; };
 		16D316561BC28ED90050B835 /* ZMConversation+Actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMConversation+Actions.h"; sourceTree = "<group>"; };
 		16D316571BC28ED90050B835 /* ZMConversation+Actions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMConversation+Actions.m"; sourceTree = "<group>"; };
@@ -1619,6 +1615,10 @@
 		875F89111D6DCD2C00D8748E /* MessageToolboxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageToolboxView.swift; sourceTree = "<group>"; };
 		875F89131D6DD6D000D8748E /* ReactionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
 		875F89161D6F35EC00D8748E /* ReactionsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactionsListViewController.swift; sourceTree = "<group>"; };
+		876113DE1DD1DD19007F5969 /* ColorSchemeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSchemeController.h; sourceTree = "<group>"; };
+		876113DF1DD1DD19007F5969 /* ColorSchemeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorSchemeController.m; sourceTree = "<group>"; };
+		876113E11DD1DD4D007F5969 /* CanvasViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CanvasViewController.swift; path = Sketchpad/CanvasViewController.swift; sourceTree = "<group>"; };
+		876113E31DD1DD6B007F5969 /* SketchToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SketchToolbar.swift; path = Sketchpad/SketchToolbar.swift; sourceTree = "<group>"; };
 		8762BE141D8978F70040E4A5 /* ZMAccentColor+Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMAccentColor+Additions.swift"; sourceTree = "<group>"; };
 		876513521D66F06C00D1D77E /* wire-ios-build-assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "wire-ios-build-assets"; sourceTree = SOURCE_ROOT; };
 		876AE75F1C159A9C00E3E743 /* NSStringFingerprintTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringFingerprintTests.m; sourceTree = "<group>"; };
@@ -3935,8 +3935,6 @@
 				8FC850F4199245760008B66B /* AppDelegate+Hockey.m */,
 				8FC850F5199245760008B66B /* AppDelegate.h */,
 				8FC850F6199245760008B66B /* AppDelegate.m */,
-				1677FD351BBC474000491481 /* ColorSchemeController.h */,
-				1677FD361BBC474000491481 /* ColorSchemeController.m */,
 				8FC85293199245760008B66B /* RootViewController.h */,
 				8FC85294199245760008B66B /* RootViewController.m */,
 				8F42B5DC1993A31A00E13CBD /* Logging.h */,
@@ -4064,6 +4062,8 @@
 				1E80A3641B0DF6120049A809 /* MediaPlaybackManager.m */,
 				BA79B0A31B6284D900F23AFB /* SoundEventRulesWatchDog.h */,
 				BA79B0A41B6284D900F23AFB /* SoundEventRulesWatchDog.m */,
+				876113DE1DD1DD19007F5969 /* ColorSchemeController.h */,
+				876113DF1DD1DD19007F5969 /* ColorSchemeController.m */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -4615,14 +4615,14 @@
 		F5F52F6F1B11D6DB0053F1C8 /* Sketchpad */ = {
 			isa = PBXGroup;
 			children = (
+				876113E11DD1DD4D007F5969 /* CanvasViewController.swift */,
+				876113E31DD1DD6B007F5969 /* SketchToolbar.swift */,
 				BA8DC27A1B5FF5CF00103262 /* SketchColorPickerController.h */,
 				BA8DC27B1B5FF5CF00103262 /* SketchColorPickerController.m */,
 				BAA1F7E21B610D89002402B6 /* SketchColorCollectionViewCell.h */,
 				BAA1F7E31B610D89002402B6 /* SketchColorCollectionViewCell.m */,
 				BAD4D0641B613D4E008585A5 /* ColorKnobView.h */,
 				BAD4D0651B613D4E008585A5 /* ColorKnobView.m */,
-				165EA0B71DB67B94008ECC60 /* CanvasViewController.swift */,
-				16CB8A2E1DBA39C400B5BC47 /* SketchToolbar.swift */,
 			);
 			name = Sketchpad;
 			sourceTree = "<group>";
@@ -5287,7 +5287,6 @@
 				BF1A81281C9848DB00A96CAA /* ConversationRootViewController.swift in Sources */,
 				8794505D1D9145E6008F23DE /* OverflowSeparatorView.swift in Sources */,
 				8F3C945519D1CC5600288AFE /* VoiceChannelOverlayController.m in Sources */,
-				165EA0B81DB67B94008ECC60 /* CanvasViewController.swift in Sources */,
 				168634E51ADD7C5A00EDC7D9 /* ProfilePictureStepViewController.m in Sources */,
 				BF381FDF1D4F922F00075672 /* AnalyticsTracker+AddressBookPermissions.swift in Sources */,
 				871BC2881D34F8F800DF0793 /* UIImage+Dotted.swift in Sources */,
@@ -5427,7 +5426,6 @@
 				871BC2511D34F8F800DF0793 /* MediaPreviewData.m in Sources */,
 				DB7FEC921B8729AD00BA72DE /* ConversationInputBarSendController.m in Sources */,
 				8744D5BE1C41D6C2000F8F93 /* SettingsClientViewController.swift in Sources */,
-				16CB8A2F1DBA39C400B5BC47 /* SketchToolbar.swift in Sources */,
 				871BC0181D34F56300DF0793 /* AnalyticsOptEvent.m in Sources */,
 				873C5FEA1C10426A00D5132A /* ClientUnregisterInvitationViewController.swift in Sources */,
 				871BC24B1D34F8F800DF0793 /* UIView+WAZUIMagicExtensions.m in Sources */,
@@ -5438,6 +5436,7 @@
 				8FC85427199245770008B66B /* ZetaKeyValueValidation.m in Sources */,
 				871BC26F1D34F8F800DF0793 /* ResizingTextView.m in Sources */,
 				160E72391AEA842000F86648 /* EmailFormViewController.m in Sources */,
+				876113E41DD1DD6B007F5969 /* SketchToolbar.swift in Sources */,
 				871BC00A1D34F56300DF0793 /* TimeIntervalClusterizer.m in Sources */,
 				871BC0031D34F56300DF0793 /* AnalyticsFileTransferObserver.swift in Sources */,
 				871BC2971D34F8F800DF0793 /* UIViewController+WR_Additions.m in Sources */,
@@ -5546,6 +5545,7 @@
 				878C21A01AE4F45600CB9FC4 /* CheckmarkView.m in Sources */,
 				871067461C0DCDAF0035603B /* DeveloperMenuState.m in Sources */,
 				871BC2321D34F8F800DF0793 /* StyledTextField.m in Sources */,
+				876113E21DD1DD4D007F5969 /* CanvasViewController.swift in Sources */,
 				872A7E8C1C1981A300E4B261 /* AppController.m in Sources */,
 				BF415B271C3C354C00DF57B7 /* MissingMessagesCell.swift in Sources */,
 				1693D9681CEDB26200D1F13C /* UIApplication+Permissions.m in Sources */,
@@ -5556,7 +5556,6 @@
 				8710673E1C0DC5570035603B /* SettingsCellDescriptorFactory.swift in Sources */,
 				8F89143C1AA07FBD0056AB0C /* ListItemRightAccessoryView.m in Sources */,
 				87DE06B11D256CF50009411F /* DeviceProximityListener.swift in Sources */,
-				1677FD371BBC474000491481 /* ColorSchemeController.m in Sources */,
 				871BC26E1D34F8F800DF0793 /* PassthroughWindow.m in Sources */,
 				871BC2201D34F8F800DF0793 /* ActionSheetAlertView.m in Sources */,
 				16B2DE2E1CCFB3B0000D7C30 /* InputBar.swift in Sources */,
@@ -5724,6 +5723,7 @@
 				871BC22C1D34F8F800DF0793 /* ImagePickerConfirmationController.m in Sources */,
 				DBD990531B399B58000ACF94 /* NSString+Mentions.m in Sources */,
 				871BC2861D34F8F800DF0793 /* UIColor+WR_ColorScheme.m in Sources */,
+				876113E01DD1DD19007F5969 /* ColorSchemeController.m in Sources */,
 				DBBC190F1B5E3C5D00E84607 /* StopWatch.m in Sources */,
 				87DCF4931D34E9BA00BB420F /* ContactsViewController.m in Sources */,
 				160E723E1AEE40B600F86648 /* AddEmailStepViewController.m in Sources */,
