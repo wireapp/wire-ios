@@ -30,7 +30,7 @@ public final class ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStra
                 managedObjectContext: NSManagedObjectContext)
     {
         self.clientRegistrationStatus = clientRegistrationStatus
-        let fetchPredicate = NSPredicate(format: "delivered == NO")
+        let fetchPredicate = NSPredicate(format: "delivered == NO && version < 3")
         let needsProcessingPredicate = NSPredicate(format: "(mediumGenericMessage.imageAssetData.width == 0 || previewGenericMessage.imageAssetData.width == 0) && delivered == NO")
         self.imagePreprocessor = ZMImagePreprocessingTracker(managedObjectContext: managedObjectContext,
                                                              imageProcessingQueue: OperationQueue(),
