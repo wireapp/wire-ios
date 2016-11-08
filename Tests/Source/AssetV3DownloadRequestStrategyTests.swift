@@ -73,6 +73,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTest {
 
         message.add(uploadedWithId)
         configureForDownloading(message: message)
+        XCTAssertEqual(message.version, 3)
         return (message, assetId, token)
     }
 
@@ -87,7 +88,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItGeneratesARequestToTheV3EndpointITheProtobufContainsAnAssetID_V3() {
+    func testThatItGeneratesARequestToTheV3EndpointIfTheProtobufContainsAnAssetID_V3() {
         // Given
         guard let (message, assetId, token) = createFileMessageWithAssetId(in: createConversation()) else { return XCTFail("No message") }
 
