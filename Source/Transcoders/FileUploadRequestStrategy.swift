@@ -385,8 +385,11 @@ extension ZMAssetClientMessage {
             ZMAssetClientMessageUploadedStateKey, ZMAssetUploadState.done.rawValue,
             ZMAssetClientMessageTransferStateKey, ZMFileTransferState.uploading.rawValue
         )
+
+        let versionPredicate = NSPredicate(format: "version < 3")
+        let notUploadedOrNeedsUploadPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [needsUploadPredicate, notUploadedPredicate])
         
-        return NSCompoundPredicate(orPredicateWithSubpredicates: [needsUploadPredicate, notUploadedPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [versionPredicate, notUploadedOrNeedsUploadPredicate])
     }
     
     static var filterForFileToUpload : NSPredicate {
