@@ -40,7 +40,7 @@ public final class ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStra
         
         super.init(managedObjectContext: managedObjectContext)
         
-        let insertPredicate = NSPredicate(format: "\(ZMAssetClientMessageUploadedStateKey) != \(ZMAssetUploadState.done.rawValue)")
+        let insertPredicate = NSPredicate(format: "\(ZMAssetClientMessageUploadedStateKey) != \(ZMAssetUploadState.done.rawValue) && version < 3")
         let uploadFilter = NSPredicate { (object : Any, _) -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             return message.imageMessageData != nil &&

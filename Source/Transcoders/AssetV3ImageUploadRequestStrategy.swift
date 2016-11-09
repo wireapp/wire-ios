@@ -105,7 +105,6 @@ public final class AssetV3ImageUploadRequestStrategy: ZMObjectSyncStrategy, Requ
 
 extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
 
-
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
         return nil // no-op
     }
@@ -115,7 +114,6 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     fileprivate func update(_ message: ZMAssetClientMessage, withResponse response: ZMTransportResponse, updatedKeys keys: Set<String>) {
-        message.markAsSent()
         guard let payload = response.payload?.asDictionary() else { return }
         message.update(withPostPayload: payload, updatedKeys: keys)
 
@@ -143,8 +141,10 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         if case .uploadingFullAsset = message.uploadState,
             keysToParse.contains(ZMAssetClientMessageUploadedStateKey) {
             message.uploadState = .done
+            message.transferState = .uploaded
             message.managedObjectContext?.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
-            message.resetLocallyModifiedKeys(Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey))
+            // We need more requests to actually upload the message data (see AssetClientMessageRequestStrategy)
+            return true
         }
 
         return false
@@ -157,20 +157,19 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey), transportRequest: request)
     }
 
-//    public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
-//        guard let message = managedObject as? ZMAssetClientMessage, let imageAssetStorage = message.imageAssetStorage  else { return false }
-//
-//        // TODO: V3 image asset storage?
-//        if imageAssetStorage.shouldReprocess(for: .medium) {
-//            // before we create an upstream request we should check if we can (and should) process image data again
-//            // if we can we reschedule processing, this might cause a loop if the message can not be processed whatsoever
-//            scheduleImageProcessing(forMessage: message, format: .medium)
-//            managedObjectContext.saveOrRollback()
-//            return false
-//        }
-//
-//        return true
-//    }
+    public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
+        guard let message = managedObject as? ZMAssetClientMessage, let imageAssetStorage = message.imageAssetStorage  else { return false }
+
+        if imageAssetStorage.shouldReprocess(for: .medium) {
+            // before we create an upstream request we should check if we can (and should) process image data again
+            // if we can we reschedule processing, this might cause a loop if the message can not be processed whatsoever
+            scheduleImageProcessing(forMessage: message, format: .medium)
+            managedObjectContext.saveOrRollback()
+            return false
+        }
+
+        return true
+    }
 
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
         guard let message = managedObject as? ZMAssetClientMessage, let status = clientRegistrationStatus else { return false }
@@ -190,11 +189,16 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         return false
     }
 
-//    func scheduleImageProcessing(forMessage message: ZMAssetClientMessage, format : ZMImageFormat) {
-//        // TODO: Update to use asset.original.image?
-//        let genericMessage = ZMGenericMessage.genericMessage(mediumImageProperties: nil, processedImageProperties: nil, encryptionKeys: nil, nonce: message.nonce.transportString(), format: format, expiresAfter: NSNumber(value: message.deletionTimeout))
-//        message.add(genericMessage)
-//        RequestAvailableNotification.notifyNewRequestsAvailable(self)
-//    }
+    func scheduleImageProcessing(forMessage message: ZMAssetClientMessage, format : ZMImageFormat) {
+        let genericMessage = ZMGenericMessage.genericMessage(
+            withImageSize: .zero,
+            mimeType: "",
+            size: message.size,
+            nonce: message.nonce.transportString(),
+            expiresAfter: NSNumber(value: message.deletionTimeout)
+        )
+        message.add(genericMessage)
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
+    }
 
 }
