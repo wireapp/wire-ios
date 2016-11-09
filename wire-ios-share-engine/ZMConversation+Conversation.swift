@@ -23,9 +23,9 @@ import ZMCDataModel
 
 extension ZMConversation: Conversation {
 
-    var name: String { return displayName }
+    public var name: String { return displayName }
     
-    var image: Data? {
+    public var image: Data? {
         guard conversationType == .oneOnOne  else { return nil }
         return (otherActiveParticipants.firstObject as? ZMBareUser)?.imageSmallProfileData
     }
