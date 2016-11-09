@@ -127,7 +127,7 @@ public class SharingSession {
 
         let transcoders = [clientMessageTranscoder]
 
-        requestGenerators = RequestGeneratorStore(transcoders: [clientMessageTranscoder], strategies: [])
+        requestGenerators = RequestGeneratorStore(transcoders: transcoders, strategies: [])
 
         operationLoop = RequestGeneratingOperationLoop(
             context: syncContext,
