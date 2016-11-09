@@ -20,7 +20,7 @@ import Foundation
 import ZMCDataModel
 
 /// A conversation
-protocol Conversation : SharingTarget {
+public protocol Conversation : SharingTarget {
     
     /// User defined name for a group conversation, or standard name
     var name : String { get }

@@ -40,6 +40,11 @@ fileprivate class RequestGeneratorStore {
 }
 
 
+
+public enum SharingSessionError : Error {
+    case missingSharedContainer
+}
+
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of 
 /// the framework should create an instance as soon as possible in
@@ -75,23 +80,31 @@ public class SharingSession {
     }
     
     /// Whether all prerequsisties for sharing are met
-    var canShare: Bool {
+    public var canShare: Bool {
         return authenticationStatus.state == .authenticated
     }
 
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
-    var writeableNonArchivedConversations : [Conversation] {
+    public var writeableNonArchivedConversations : [Conversation] {
         return directory.unarchivedAndNotCallingConversations.conversationArray
     }
     
     /// List of archived conversations in which the user can write
-    var writebleArchivedConversations : [Conversation] {
+    public var writebleArchivedConversations : [Conversation] {
         return directory.archivedConversations.conversationArray
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
     private let requestGenerators: RequestGeneratorStore
+    
+    public convenience init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
+        guard let databaseDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
+            throw SharingSessionError.missingSharedContainer
+        }
+        
+        try self.init(databaseDirectory: databaseDirectory, databaseIdentifier: hostBundleIdentifier, authenticationStatusProvider: DummyAuthenticationStatus())
+    }
     
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -99,14 +112,14 @@ public class SharingSession {
     /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
-    init(databaseDirectory: URL, authenticationStatusProvider: AuthenticationStatusProvider) throws {
+    init(databaseDirectory: URL, databaseIdentifier: String, authenticationStatusProvider: AuthenticationStatusProvider) throws {
         sharedDatabaseDirectory = databaseDirectory
         authenticationStatus = authenticationStatusProvider
 
-        guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory) else { throw InitializationError.needsMigration }
+        guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory, identifier: databaseIdentifier) else { throw InitializationError.needsMigration }
         guard authenticationStatusProvider.state == .authenticated else { throw InitializationError.loggedOut }
-        userInterfaceContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory)
-        syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory)
+        userInterfaceContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory, storeIdentifier: databaseIdentifier)
+        syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory storeIdentifier: databaseIdentifier)
 
         let environment = ZMBackendEnvironment()
 
@@ -139,7 +152,7 @@ public class SharingSession {
 
     /// Cancel all pending tasks.
     /// Should be called when the extension is dismissed
-    func cancelAllPendingTasks() {
+    public func cancelAllPendingTasks() {
         // TODO
 
     }
