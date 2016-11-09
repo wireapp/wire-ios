@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		BF260C501DCA1FD9009C97D9 /* AssetV3PreviewDownloadStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF260C4F1DCA1FD9009C97D9 /* AssetV3PreviewDownloadStrategy.swift */; };
 		BF260C551DCA28C1009C97D9 /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF260C531DCA2435009C97D9 /* AssetV3PreviewDownloadRequestStrategyTests.swift */; };
+		BF420D431DD3241F003582F2 /* AssetClientMessageRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF420D421DD3241F003582F2 /* AssetClientMessageRequestStrategy.swift */; };
+		BF420D461DD35643003582F2 /* AssetClientMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF420D451DD35643003582F2 /* AssetClientMessageRequestStrategyTests.swift */; };
 		BFA94E641DCC99E000782005 /* AssetV3DownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA94E631DCC99E000782005 /* AssetV3DownloadRequestStrategy.swift */; };
 		BFA94E671DCC9CEF00782005 /* AssetV3DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA94E651DCC9C9800782005 /* AssetV3DownloadRequestStrategyTests.swift */; };
 		BFC32F8C1DD1D37F00EDD540 /* AssetV3ImageUploadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC32F8B1DD1D37F00EDD540 /* AssetV3ImageUploadRequestStrategy.swift */; };
@@ -121,6 +123,8 @@
 /* Begin PBXFileReference section */
 		BF260C4F1DCA1FD9009C97D9 /* AssetV3PreviewDownloadStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3PreviewDownloadStrategy.swift; sourceTree = "<group>"; };
 		BF260C531DCA2435009C97D9 /* AssetV3PreviewDownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3PreviewDownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
+		BF420D421DD3241F003582F2 /* AssetClientMessageRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetClientMessageRequestStrategy.swift; sourceTree = "<group>"; };
+		BF420D451DD35643003582F2 /* AssetClientMessageRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetClientMessageRequestStrategyTests.swift; sourceTree = "<group>"; };
 		BFA94E631DCC99E000782005 /* AssetV3DownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3DownloadRequestStrategy.swift; sourceTree = "<group>"; };
 		BFA94E651DCC9C9800782005 /* AssetV3DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		BFC32F8B1DD1D37F00EDD540 /* AssetV3ImageUploadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3ImageUploadRequestStrategy.swift; sourceTree = "<group>"; };
@@ -319,6 +323,7 @@
 				F963E91F1D95885700098AD3 /* AssetDownloadRequestStrategy.swift */,
 				BFA94E631DCC99E000782005 /* AssetV3DownloadRequestStrategy.swift */,
 				BFC32F8B1DD1D37F00EDD540 /* AssetV3ImageUploadRequestStrategy.swift */,
+				BF420D421DD3241F003582F2 /* AssetClientMessageRequestStrategy.swift */,
 				BF260C4F1DCA1FD9009C97D9 /* AssetV3PreviewDownloadStrategy.swift */,
 				F963E9201D95885700098AD3 /* ImageDownloadRequestStrategy.swift */,
 				F963E9211D95885700098AD3 /* LinkPreviewAssetDownloadRequestStrategy.swift */,
@@ -447,6 +452,7 @@
 				F9F057E91D954CD700FA1AAD /* FileUploadRequestStrategyTests.swift */,
 				F9F057EA1D954CD700FA1AAD /* ImageUploadRequestStrategyTests.swift */,
 				BFC32F8D1DD1E73400EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift */,
+				BF420D451DD35643003582F2 /* AssetClientMessageRequestStrategyTests.swift */,
 				F9F057EB1D954CD700FA1AAD /* LinkPreviewAssetUploadRequestStrategyTests.swift */,
 				F9F057EC1D954CD700FA1AAD /* LinkPreviewPreprocessorTests.swift */,
 				F963E92A1D95899300098AD3 /* AssetDownloadRequestStrategyTests.swift */,
@@ -710,6 +716,7 @@
 				F9F056F21D93D3FF00FA1AAD /* ZMMessageExpirationTimer.m in Sources */,
 				F9F057E41D95384200FA1AAD /* LinkPreviewPreprocessor.swift in Sources */,
 				F963E9351D958BBE00098AD3 /* MissingClientsRequestFactory.swift in Sources */,
+				BF420D431DD3241F003582F2 /* AssetClientMessageRequestStrategy.swift in Sources */,
 				BFA94E641DCC99E000782005 /* AssetV3DownloadRequestStrategy.swift in Sources */,
 				BFC32F8C1DD1D37F00EDD540 /* AssetV3ImageUploadRequestStrategy.swift in Sources */,
 				F9F056EE1D93D3FF00FA1AAD /* ZMClientMessageTranscoder+UpdateEvents.m in Sources */,
@@ -740,6 +747,7 @@
 				F963E92F1D9589D000098AD3 /* AssetDownloadRequestStrategyTests.swift in Sources */,
 				F9F057CE1D943BCA00FA1AAD /* ZMCryptoBoxUpdateEventsTests.m in Sources */,
 				F9F057EF1D954CD700FA1AAD /* FileUploadRequestStrategyTests.swift in Sources */,
+				BF420D461DD35643003582F2 /* AssetClientMessageRequestStrategyTests.swift in Sources */,
 				F9F057F61D95511500FA1AAD /* MockObjects.swift in Sources */,
 				F963E9451D95954900098AD3 /* MissingClientsRequestStrategyTests.swift in Sources */,
 				F9F057AF1D941B7E00FA1AAD /* NSManagedObjectContext+TestHelpers.m in Sources */,

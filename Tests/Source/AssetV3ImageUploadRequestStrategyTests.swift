@@ -94,63 +94,111 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
         // given
         let message = createImageFileMessage()
 
+        // then
+        assertThatItCreatesARequest(for: message)
+    }
+
+    func assertThatItCreatesARequest(for message: ZMAssetClientMessage, line: UInt = #line) {
         // when
         simulatePreprocessing(of: message)
         prepareUpload(of: message)
 
         // then
-        guard let request = sut.nextRequest() else { return XCTFail("No request created") }
-        XCTAssertEqual(request.path, "/assets/v3")
-
+        guard let request = sut.nextRequest() else { return XCTFail("No request created", line: line) }
+        XCTAssertEqual(request.path, "/assets/v3", line: line)
+        XCTAssertEqual(request.method, .methodPOST, line: line)
     }
 
     func testThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards() {
         // given
         let message = createImageFileMessage()
 
-        // when
-        XCTAssert(ZMAssetClientMessage.v3_imageProcessingFilter.evaluate(with: message))
-        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true))
-        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false))
+        // then
+        assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message)
+    }
+
+    func assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for message: ZMAssetClientMessage, line: UInt = #line) {
+        // when 
+        XCTAssert(ZMAssetClientMessage.v3_imageProcessingFilter.evaluate(with: message), line: line)
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true), line: line)
+        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false), line: line)
 
         sut.contextChangeTrackers.forEach {
             $0.objectsDidChange(Set(arrayLiteral: message))
         }
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), line: line)
 
         // then
         let original = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
         let mediumEncrypted = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true)
         let mediumPlain = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
 
-        XCTAssertNil(original)
-        XCTAssertNotNil(mediumEncrypted)
-        XCTAssertNotNil(mediumPlain)
-        guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData") }
-        XCTAssertTrue(assetData.hasUploaded())
-        XCTAssertTrue(assetData.uploaded.hasOtrKey())
-        XCTAssertTrue(assetData.uploaded.hasSha256())
+        XCTAssertNil(original, line: line)
+        XCTAssertNotNil(mediumEncrypted, line: line)
+        XCTAssertNotNil(mediumPlain, line: line)
+        guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData", line: line) }
+        XCTAssertTrue(assetData.hasUploaded(), line: line)
+        XCTAssertTrue(assetData.uploaded.hasOtrKey(), line: line)
+        XCTAssertTrue(assetData.uploaded.hasSha256(), line: line)
     }
 
     // MARK: – Request Response Parsing
 
     func testThatItUpdatesTheMessageWithTheAssetIdAndTokenFromTheResponse() {
-        XCTFail()
+        assertThatItUpdatesTheAssetIdFromTheResponse()
     }
 
-    func testThatItCleansUpCorrectlyIfTheRequestResponseIsNotSuccesfull() {
-        XCTFail()
+    func testThatItUpdatesTheMessageWithTheAssetIdFromTheResponse() {
+        assertThatItUpdatesTheAssetIdFromTheResponse(includeToken: false)
+    }
+
+    func assertThatItUpdatesTheAssetIdFromTheResponse(includeToken: Bool = true, line: UInt = #line) {
+        // given
+        let message = createImageFileMessage()
+        let (assetKey, token) = (UUID.create().transportString(), UUID.create().transportString())
+        simulatePreprocessing(of: message)
+        prepareUpload(of: message)
+        guard let request = sut.nextRequest() else { return XCTFail("No request created", line: line) }
+        XCTAssertEqual(request.path, "/assets/v3", line: line)
+
+        // when
+        var payload = ["key": assetKey]
+        if includeToken {
+            payload["token"] = token
+        }
+        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
+        request.complete(with: response)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        guard let uploaded = message.genericAssetMessage?.assetData?.uploaded else { return XCTFail("No uploaded message", line: line) }
+        XCTAssertTrue(uploaded.hasOtrKey(), line: line)
+        XCTAssertTrue(uploaded.hasSha256(), line: line)
+        XCTAssertTrue(uploaded.hasAssetId(), line: line)
+        XCTAssertEqual(uploaded.hasAssetToken(), includeToken, line: line)
+        XCTAssertEqual(uploaded.assetId, assetKey, line: line)
+        if includeToken {
+            XCTAssertEqual(uploaded.assetToken, token, line: line)
+        }
     }
 
     // MARK: – Ephemeral
 
     func testThatItGeneratesARequest_Ephemeral() {
-        XCTFail()
+        // given
+        let message = createImageFileMessage(ephemeral: true)
+
+        // then
+        assertThatItCreatesARequest(for: message)
     }
 
     func testThatItPreprocessesV3ImageMessage_Ephemeral() {
-        XCTFail()
+        // given
+        let message = createImageFileMessage(ephemeral: true)
+
+        // then
+        assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message)
     }
 
 }

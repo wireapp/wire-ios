@@ -195,15 +195,10 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
     func testThatItDoesNotGenerateAReuqestForAV3FileMessageWithPreviewThatAlreadyHasBeenDownloaded() {
         // given
         let (message, _, _) = createMessage(in: conversation)!
-        let (previewGenericMessage, previewMeta) = createPreview(with: message.nonce.transportString())
+        let (previewGenericMessage, _) = createPreview(with: message.nonce.transportString())
 
         // when
-        syncMOC.zm_fileAssetCache.storeAssetData(
-            message.nonce,
-            fileName: previewMeta.assetId,
-            encrypted: false,
-            data: Data.secureRandomData(length: 512)
-        )
+        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
 
         message.add(previewGenericMessage)
         prepareDownload(of: message)
@@ -222,7 +217,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let (message, _, _) = createMessage(in: conversation)!
-        let (previewGenericMessage, previewMeta) = createPreview(with: message.nonce.transportString(), otr: key, sha: sha)
+        let (previewGenericMessage, _) = createPreview(with: message.nonce.transportString(), otr: key, sha: sha)
 
         message.add(previewGenericMessage)
         prepareDownload(of: message)
@@ -238,8 +233,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-
-        let data = syncMOC.zm_fileAssetCache.assetData(message.nonce, fileName: previewMeta.assetId, encrypted: false)
+        let data = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
         XCTAssertEqual(data, plainTextData)
     }
 
