@@ -24,6 +24,7 @@ cache:
   bundler: true
 
 install:
+  - bundle install
   - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
 
 script:
