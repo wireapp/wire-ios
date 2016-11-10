@@ -31,4 +31,10 @@ extension NSString {
     public func isAudioMimeType() -> Bool {
         return self.zm_conforms(to: kUTTypeAudio)
     }
+
+    /// Returns whether the string represents an image mime type
+    public func isImageMimeType() -> Bool {
+        return self.zm_conforms(to: kUTTypeImage)
+    }
+
 }

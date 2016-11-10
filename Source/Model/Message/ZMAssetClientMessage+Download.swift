@@ -27,17 +27,13 @@ extension ZMAssetClientMessage {
     public static var ImageDownloadNotificationName : String {
         return "ZMAssetClientMessageImageDownloadNotification"
     }
-    
-    public override func requestImageDownload() {
-        // objects with temp ID on the UI must just have been inserted so no need to download
-        guard !self.objectID.isTemporaryID else { return }
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: type(of: self).ImageDownloadNotificationName), object: self.objectID)
-    }
+
 }
 
 extension ZMImageMessage {
     
     public override func requestImageDownload() {
+        // V2
         // objects with temp ID on the UI must just have been inserted so no need to download
         guard !self.objectID.isTemporaryID else { return }
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: ZMAssetClientMessage.ImageDownloadNotificationName), object: self.objectID)
