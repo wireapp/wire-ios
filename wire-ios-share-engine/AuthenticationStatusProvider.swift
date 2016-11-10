@@ -28,11 +28,3 @@ protocol AuthenticationStatusProvider {
     var state: AuthenticationState { get }
 
 }
-
-class DummyAuthenticationStatus : AuthenticationStatusProvider {
-    
-    var state: AuthenticationState {
-        return .authenticated
-    }
-
-}
