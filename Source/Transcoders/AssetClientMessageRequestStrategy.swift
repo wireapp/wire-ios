@@ -78,6 +78,9 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable : Any]? = nil, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
         guard let message = managedObject as? ZMAssetClientMessage else { return false }
+        message.update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: keysToParse)
+        _ = message.parseUploadResponse(response, clientDeletionDelegate: clientRegistrationStatus!)
+
         if response.result == .success {
             message.delivered = true
             message.markAsSent()
@@ -87,6 +90,11 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         return nil
+    }
+
+    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
+        guard let message = managedObject as? ZMAssetClientMessage else { return false }
+        return message.parseUploadResponse(response, clientDeletionDelegate: clientRegistrationStatus!)
     }
 
 }
