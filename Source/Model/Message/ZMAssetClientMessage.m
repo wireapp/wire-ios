@@ -27,6 +27,7 @@
 
 static NSString * const AssetIdDataKey = @"assetId_data";
 static NSString * const AssetIdKey = @"assetId";
+static NSString * const VersionKey = @"version";
 NSString * const ZMAssetClientMessageUploadedStateKey = @"uploadState";
 static NSString * const PreprocessedSizeKey = @"preprocessedSize";
 static NSString * const PreprocessedSizeDataKey = @"preprocessedSize_data";
@@ -48,7 +49,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 
 
-@interface ZMAssetClientMessage (ImageAndFileMessageData) <ZMImageMessageData, ZMFileMessageData>
+@interface ZMAssetClientMessage (ImageAndFileMessageData) <ZMFileMessageData>
 
 @end
 
@@ -61,6 +62,10 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 @property (nonatomic) CGSize preprocessedSize;
 @property (nonatomic) NSOrderedSet *dataSet;
 @property (nonatomic) ZMGenericMessage *cachedGenericAssetMessage;
+@property (nonatomic) int16_t version;
+
+@property (nonatomic, readonly) V2Asset *v2Asset;
+@property (nonatomic, readonly) V3Asset *v3Asset;
 
 @end
 
@@ -73,6 +78,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 @implementation ZMAssetClientMessage
 
+@dynamic version;
 @dynamic uploadState;
 @dynamic assetId_data;
 @dynamic delivered;
@@ -82,7 +88,9 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 @dynamic transferState;
 @dynamic progress;
 @dynamic associatedTaskIdentifier_data;
+
 @synthesize cachedGenericAssetMessage;
+
 
 + (instancetype)assetClientMessageWithOriginalImageData:(NSData *)imageData nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout;
 {
@@ -102,6 +110,11 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 + (instancetype)assetClientMessageWithFileMetadata:(ZMFileMetadata *)metadata nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout
 {
+    return [self assetClientMessageWithFileMetadata:metadata nonce:nonce managedObjectContext:moc expiresAfter:timeout version3:NO];
+}
+
++ (instancetype)assetClientMessageWithFileMetadata:(ZMFileMetadata *)metadata nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout version3:(BOOL)version3
+{
     NSError *error;
     NSData *data = [NSData dataWithContentsOfURL:metadata.fileURL options:NSDataReadingMappedIfSafe error:&error];
     
@@ -118,12 +131,21 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     message.uploadState = ZMAssetUploadStateUploadingPlaceholder;
     [message addGenericMessage:[ZMGenericMessage genericMessageWithFileMetadata:metadata messageID:nonce.transportString expiresAfter:@(timeout)]];
     message.delivered = NO;
+
+    if (version3) {
+        message.version = 3;
+    }
     
     if (metadata.thumbnail != nil) {
         [moc.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:metadata.thumbnail];
     }
     
     return message;
+}
+
+- (id <AssetProxyType>)asset
+{
+    return self.v2Asset ?: self.v3Asset;
 }
 
 - (void)awakeFromInsert
@@ -165,16 +187,24 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
                                                AssetClientMessageDataSetKey,
                                                ZMAssetClientMessageTransferStateKey,
                                                ZMAssetClientMessageProgressKey,
-                                               AssociatedTaskIdentifierDataKey
+                                               AssociatedTaskIdentifierDataKey,
+                                               VersionKey
                                                ]];
 }
 
-- (NSURL *)fileURL {
-    if(self.filename) {
-        return [self.managedObjectContext.zm_fileAssetCache accessAssetURL:self.nonce fileName:self.filename];
-    } else {
-        return nil;
-    }
+- (NSURL *)fileURL
+{
+    return self.asset.fileURL;
+}
+
+- (V2Asset *)v2Asset
+{
+    return [[V2Asset alloc] initWith:self];
+}
+
+- (V3Asset *)v3Asset
+{
+    return [[V3Asset alloc] initWith:self];
 }
 
 - (ZMGenericMessage *)genericAssetMessage
@@ -286,9 +316,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (id<ZMImageMessageData>)imageMessageData
 {
-    BOOL isImageMessage = self.mediumGenericMessage.imageAssetData != nil ||
-                          self.previewGenericMessage.imageAssetData != nil;
-    return isImageMessage ? self : nil;
+    return self.asset.imageMessageData;
 }
 
 - (id <ZMFileMessageData>)fileMessageData
@@ -315,20 +343,14 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     }
 }
 
-
 - (BOOL)hasDownloadedImage
 {
-    if(self.imageMessageData != nil || self.fileMessageData != nil) {
-        return [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:ZMImageFormatMedium encrypted:NO] != nil // processed or downloaded
-        || [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:ZMImageFormatOriginal encrypted:NO] != nil; // original
-    }
-    return false;
+    return self.asset.hasDownloadedImage;
 }
 
 - (BOOL)hasDownloadedFile
 {
-    return self.fileMessageData != nil && self.filename != nil &&
-        [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self.nonce fileName:self.filename encrypted:NO];
+    return self.asset.hasDownloadedFile;
 }
 
 - (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *)updateEvent
@@ -357,8 +379,14 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     }
     
     if (message.assetData.hasUploaded) {
-        NSDictionary *eventData = [updateEvent.payload dictionaryForKey:@"data"];
-        self.assetId = [NSUUID uuidWithTransportString:[eventData stringForKey:@"id"]];
+        BOOL isVersion_3 = message.assetData.hasUploaded && message.assetData.uploaded.hasAssetId;
+        if (isVersion_3) { // V3, we directly access the protobuf for the assetId
+            self.version = 3;
+        } else { // V2
+            NSDictionary *eventData = [updateEvent.payload dictionaryForKey:@"data"];
+            self.assetId = [NSUUID uuidWithTransportString:[eventData stringForKey:@"id"]];
+        }
+
         self.transferState = ZMFileTransferStateUploaded;
     }
     
@@ -372,15 +400,23 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
                 break;
         }
     }
-    
-    if (message.assetData.preview.hasRemote && !message.assetData.hasUploaded) {
-        NSDictionary *eventData = [updateEvent.payload dictionaryForKey:@"data"];
-        NSString *thumbnailId = [eventData stringForKey:@"id"];
-        
 
-        if (nil != thumbnailId) {
-            self.fileMessageData.thumbnailAssetID = thumbnailId;
+    // V2, we do not set the thumbnail assetId in case there is one in the protobuf, then we can access it directly for V3
+    if (message.assetData.preview.hasRemote && !message.assetData.hasUploaded) {
+        if (! message.assetData.preview.remote.hasAssetId) {
+            NSDictionary *eventData = [updateEvent.payload dictionaryForKey:@"data"];
+            NSString *thumbnailId = [eventData stringForKey:@"id"];
+
+            if (nil != thumbnailId) {
+                self.fileMessageData.thumbnailAssetID = thumbnailId;
+            }
+        } else {
+            self.version = 3;
         }
+    }
+
+    if (message.assetData.original.hasImage) {
+        self.version = 3;
     }
 }
 
@@ -442,7 +478,6 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     }
 }
 
-
 - (NSString *)filename
 {
     return self.genericAssetMessage.assetData.original.name;
@@ -450,14 +485,12 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (void)requestFileDownload
 {
-    if (self.fileMessageData != nil) {
-        if (self.hasDownloadedFile) {
-            self.transferState = ZMFileTransferStateDownloaded;
-            return;
-        }
-        
-        self.transferState = ZMFileTransferStateDownloading;
-    }
+    [self.asset requestFileDownload];
+}
+
+- (void)requestImageDownload
+{
+    [self.asset requestImageDownload];
 }
 
 - (void)setAndSyncNotUploaded:(ZMAssetNotUploaded)notUploaded
@@ -771,13 +804,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (CGSize)originalImageSize
 {
-    ZMGenericMessage *genericMessage = self.mediumGenericMessage ?: self.previewGenericMessage;
-    if(genericMessage.imageAssetData.originalWidth != 0) {
-        return CGSizeMake(genericMessage.imageAssetData.originalWidth, genericMessage.imageAssetData.originalHeight);
-    }
-    else {
-        return self.preprocessedSize;
-    }
+    return self.imageMessageData.originalSize;
 }
 
 - (NSOrderedSet *)requiredImageFormats
@@ -825,18 +852,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (NSData *)imageDataForFormat:(ZMImageFormat)format encrypted:(BOOL)encrypted
 {
-    if (format != ZMImageFormatOriginal) {
-        ZMGenericMessage *genericMessage = (format == ZMImageFormatMedium)? self.mediumGenericMessage : self.previewGenericMessage;
-        if (genericMessage.imageAssetData.size == 0) {
-            return nil;
-        }
-        
-        if (encrypted && genericMessage.imageAssetData.otrKey.length == 0) {
-            return nil;
-        }
-    }
-    
-    return [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:format encrypted:encrypted];
+    return [self.asset imageDataForFormat:format encrypted:encrypted];
 }
 
 - (ZMImageFormat)imageFormat
@@ -852,53 +868,16 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 
 
-#pragma mark - ZMImageMessageData, ZMFileMessageData
+#pragma mark - ZMFileMessageData
 
 
 
 @implementation ZMAssetClientMessage (ImageAndFileMessageData)
 
-/// Returns original data.
-- (NSData *)imageData
-{
-    NSData *medium = self.mediumData;
-    if(medium != nil) {
-        return medium;
-    }
-    NSData *original = [self imageDataForFormat:ZMImageFormatOriginal encrypted:NO];
-    return original;
-}
-
-- (NSData *)mediumData
-{
-    if (self.mediumGenericMessage.imageAssetData.width > 0) {
-        NSData *imageData = [self imageDataForFormat:ZMImageFormatMedium encrypted:NO];
-        return imageData;
-
-    }
-    return nil;
-}
 
 - (NSData *)previewData
 {
-    if (nil != self.fileMessageData && self.hasDownloadedImage) {
-        // File message preview
-        NSData *originalData =  [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce
-                                                                                 format:ZMImageFormatOriginal
-                                                                              encrypted:NO];
-        
-        NSData *mediumData = [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce
-                                                                              format:ZMImageFormatMedium
-                                                                           encrypted:NO];
-        
-        return originalData ?: mediumData;
-    }
-    else if (self.previewGenericMessage.imageAssetData.width > 0) {
-        // Image message preview
-        NSData *imageData = [self imageDataForFormat:ZMImageFormatPreview encrypted:NO];
-        return imageData;
-    }
-    return nil;
+    return self.asset.previewData;
 }
 
 - (NSString *)thumbnailAssetID {
@@ -906,6 +885,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
         return nil;
         
     }
+
     ZMGenericMessage *previewGenericMessage = [self genericMessageForDataType:ZMAssetClientMessageDataTypeThumbnail];
     if(!previewGenericMessage.assetData.preview.remote.hasAssetId) {
         return nil;
@@ -961,54 +941,9 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     [self replaceGenericMessageForThumbnailWithGenericMessage:[messageBuilder build]];
 }
 
-- (NSString *)imageDataIdentifier;
-{
-    if(self.mediumGenericMessage.imageAssetData != nil ) {
-        return [NSString stringWithFormat:@"%@-w%d-%@", self.nonce.transportString, (int)self.mediumGenericMessage.imageAssetData.width, @(self.hasDownloadedImage)];
-    }
-    if(self.previewGenericMessage.imageAssetData != nil) {
-        return [NSString stringWithFormat:@"%@-w%d-%@", self.nonce.transportString, (int)self.previewGenericMessage.imageAssetData.width, @(self.hasDownloadedImage)];
-    }
-    
-    NSUUID *assetId = self.assetId;
-    if (assetId != nil) {
-        return assetId.UUIDString;
-    }
-    NSData *originalImageData = self.imageData;
-    if (originalImageData != nil) {
-        return [NSString stringWithFormat:@"orig-%p", originalImageData];
-    }
-    return nil;
-}
-
 - (NSString *)imagePreviewDataIdentifier;
 {
-    return (self.previewData == nil) ? nil : self.nonce.UUIDString;
-}
-
-- (BOOL)isAnimatedGIF
-{
-    if(self.mediumGenericMessage.imageAssetData.mimeType == nil) {
-        return NO;
-    }
-    
-    CFStringRef MIMEType = (__bridge_retained CFStringRef)[self.mediumGenericMessage.imageAssetData.mimeType copy];
-    NSString *UTIString = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, MIMEType, NULL);
-    if(MIMEType != nil)
-    {
-        CFRelease(MIMEType);
-    }
-    return [UTIString isEqualToString:(__bridge NSString*)kUTTypeGIF];
-}
-
-- (NSString *)imageType
-{
-    return self.mediumGenericMessage.imageAssetData.mimeType ?: self.previewGenericMessage.imageAssetData.mimeType;
-}
-
-- (CGSize)originalSize
-{
-    return [self originalImageSize];
+    return self.asset.imagePreviewDataIdentifier;
 }
 
 - (void)cancelTransfer

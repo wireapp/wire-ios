@@ -69,6 +69,39 @@ public extension ZMGenericMessage {
 
 public extension ZMGenericMessage {
 
+    var v3_isImage: Bool {
+        return assetData?.original.hasImage() == true
+    }
+
+    private var v3_uploadedAssetId: String? {
+        guard assetData?.uploaded.hasAssetId() == true else { return nil }
+        return assetData?.uploaded.assetId
+    }
+
+    var v3_fileCacheKey: String {
+        if let original = assetData?.original,
+            original.hasName(),
+            let assetId = v3_uploadedAssetId,
+            let name = original.name {
+            return assetId + "_" + name
+        }
+
+        return v3_uploadedAssetId ?? ""
+    }
+
+    var previewAssetId: String? {
+        guard assetData?.preview.remote.hasAssetId() == true else { return nil }
+        return assetData?.preview.remote.assetId
+    }
+
+    var v3_imageCacheKey: String? {
+        return v3_isImage ? v3_fileCacheKey : previewAssetId
+    }
+
+}
+
+public extension ZMGenericMessage {
+
     public static func genericMessage(external: ZMExternal, messageID: String) -> ZMGenericMessage {
         return genericMessage(pbMessage: external, messageID: messageID)
     }
@@ -141,6 +174,40 @@ public extension ZMGenericMessage {
         knockBuilder.setHotKnock(false)
         return genericMessage(pbMessage: knockBuilder.build(), messageID: nonce, expiresAfter: timeout)
     }
+
+    // MARK: Updating assets with asset ID and token
+    public func updated(withAssetId assetId: String, token: String?) -> ZMGenericMessage? {
+        guard let asset = assetData, let remote = asset.uploaded, asset.hasUploaded() else { return nil }
+        let newRemote = remote.updated(withId: assetId, token: token)
+        let builder = toBuilder()!
+        if hasAsset() {
+            let assetBuilder = asset.toBuilder()
+            _ = assetBuilder?.setUploaded(newRemote)
+            builder.setAsset(assetBuilder)
+        } else if hasEphemeral() && ephemeral.hasAsset() {
+            let ephemeralBuilder = ephemeral.toBuilder()
+            let assetBuilder = ephemeral.asset.toBuilder()
+            _ = assetBuilder?.setUploaded(newRemote)
+            _ = ephemeralBuilder?.setAsset(assetBuilder)
+            builder.setEphemeral(ephemeralBuilder)
+        } else {
+            return nil
+        }
+
+        return builder.build()
+    }
+
+}
+
+extension ZMAssetRemoteData {
+
+    public func updated(withId assetId: String, token: String?) -> ZMAssetRemoteData {
+        let builder = toBuilder()!
+        builder.setAssetId(assetId)
+        builder.setAssetToken(token)
+        return builder.build()
+    }
+
 }
 
 extension ZMGenericMessage {

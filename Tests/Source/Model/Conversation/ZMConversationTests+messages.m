@@ -119,7 +119,7 @@
     // then
     XCTAssertNotNil(message);
     XCTAssertNotNil(message.nonce);
-    XCTAssertTrue(CGSizeEqualToSize(message.originalSize, CGSizeMake(1900, 1500)));
+    XCTAssertTrue(CGSizeEqualToSize(message.imageMessageData.originalSize, CGSizeMake(1900, 1500)));
     XCTAssertEqual(message.conversation, conversation);
     XCTAssertTrue([conversation.messages containsObject:message]);
     XCTAssertNotNil(message.nonce);
@@ -142,7 +142,7 @@
     // then
     XCTAssertNotNil(message);
     XCTAssertNotNil(message.nonce);
-    AssertEqualSizes(message.originalSize, CGSizeMake(1900, 1500));
+    AssertEqualSizes(message.imageMessageData.originalSize, CGSizeMake(1900, 1500));
     XCTAssertEqual(message.conversation, conversation);
     XCTAssertTrue([conversation.messages containsObject:message]);
     XCTAssertNotNil(message.nonce);
@@ -204,7 +204,7 @@
     // then
     XCTAssertNotNil(message);
     XCTAssertNotNil(message.nonce);
-    XCTAssertTrue(CGSizeEqualToSize(message.originalSize, CGSizeMake(1900, 1500)));
+    XCTAssertTrue(CGSizeEqualToSize(message.imageMessageData.originalSize, CGSizeMake(1900, 1500)));
     XCTAssertEqual(message.conversation, conversation);
     XCTAssertTrue([conversation.messages containsObject:message]);
     XCTAssertNotNil(message.nonce);
