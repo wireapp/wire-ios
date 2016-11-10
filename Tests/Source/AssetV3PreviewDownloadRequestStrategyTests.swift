@@ -222,7 +222,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let (message, _, _) = createMessage(in: conversation)!
-        let (previewGenericMessage, previewMeta) = createPreview(with: message.nonce.transportString(), otr: key, sha: sha)
+        let (previewGenericMessage, _) = createPreview(with: message.nonce.transportString(), otr: key, sha: sha)
 
         message.add(previewGenericMessage)
         prepareDownload(of: message)
@@ -239,8 +239,9 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
 
         // then
 
-        let data = syncMOC.zm_fileAssetCache.assetData(message.nonce, fileName: previewMeta.assetId, encrypted: false)
+        let data = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
         XCTAssertEqual(data, plainTextData)
+        XCTAssertEqual(message.fileMessageData!.previewData, plainTextData)
     }
 
 }
