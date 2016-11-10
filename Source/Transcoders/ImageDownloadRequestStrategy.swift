@@ -31,6 +31,7 @@ public final class ImageDownloadRequestStrategy : ZMObjectSyncStrategy, RequestS
         
         let downloadPredicate = NSPredicate { (object, _) -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
+            guard message.version < 3 else { return false }
             let missingMediumImage = message.imageMessageData != nil && !message.hasDownloadedImage && message.assetId != nil
             let missingVideoThumbnail = message.fileMessageData != nil && !message.hasDownloadedImage && message.fileMessageData?.thumbnailAssetID != nil
             return missingMediumImage || missingVideoThumbnail
@@ -40,7 +41,7 @@ public final class ImageDownloadRequestStrategy : ZMObjectSyncStrategy, RequestS
                                                              entityName: ZMAssetClientMessage.entityName(),
                                                              predicateForObjectsToDownload: downloadPredicate,
                                                              managedObjectContext: managedObjectContext)
-        
+
         registerForWhitelistingNotification()
     }
     
