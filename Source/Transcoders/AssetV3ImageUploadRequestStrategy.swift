@@ -142,7 +142,8 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             keysToParse.contains(ZMAssetClientMessageUploadedStateKey) {
             message.uploadState = .done
             message.transferState = .uploaded
-            message.managedObjectContext?.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
+            managedObjectContext.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
+            managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
             // We need more requests to actually upload the message data (see AssetClientMessageRequestStrategy)
             return true
         }
