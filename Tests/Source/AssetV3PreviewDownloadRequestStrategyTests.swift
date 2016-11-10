@@ -195,12 +195,12 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
     func testThatItDoesNotGenerateAReuqestForAV3FileMessageWithPreviewThatAlreadyHasBeenDownloaded() {
         // given
         let (message, _, _) = createMessage(in: conversation)!
-        let (previewGenericMessage, previewMeta) = createPreview(with: message.nonce.transportString())
+        let (previewGenericMessage, _) = createPreview(with: message.nonce.transportString())
 
         // when
-        syncMOC.zm_fileAssetCache.storeAssetData(
+        syncMOC.zm_imageAssetCache.storeAssetData(
             message.nonce,
-            fileName: previewMeta.assetId,
+            format: .medium,
             encrypted: false,
             data: Data.secureRandomData(length: 512)
         )
