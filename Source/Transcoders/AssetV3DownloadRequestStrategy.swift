@@ -83,19 +83,9 @@ import ZMTransport
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
         if response.result == .success {
             guard let fileMessageData = assetClientMessage.fileMessageData,
-                let genericMessage = assetClientMessage.genericAssetMessage,
-                let asset = genericMessage.assetData,
                 assetClientMessage.visibleInConversation != nil else { return }
-            let fileCache = self.managedObjectContext.zm_fileAssetCache
-            fileCache.storeAssetData(assetClientMessage.nonce, fileName: fileMessageData.filename, encrypted: true, data: response.rawData!)
 
-            let decryptionSuccess = fileCache.decryptFileIfItMatchesDigest(
-                assetClientMessage.nonce,
-                fileName: genericMessage.v3_fileCacheKey,
-                encryptionKey: asset.uploaded.otrKey,
-                sha256Digest: asset.uploaded.sha256
-            )
-
+            let decryptionSuccess = storeAndDecrypt(data: response.rawData!, for: assetClientMessage, fileMessageData: fileMessageData)
             if decryptionSuccess {
                 assetClientMessage.transferState = .downloaded
             }
@@ -123,10 +113,33 @@ import ZMTransport
         })
     }
 
+    private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage, fileMessageData: ZMFileMessageData) -> Bool {
+        guard let fileMessageData = message.fileMessageData,
+            let genericMessage = message.genericAssetMessage,
+            let asset = genericMessage.assetData else { return false }
+
+        let (otrKey, sha256) = (asset.uploaded.otrKey!, asset.uploaded.sha256!)
+
+        if asset.original.hasImage() {
+            let cache = managedObjectContext.zm_imageAssetCache!
+            cache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: data)
+            return cache.decryptFileIfItMatchesDigest(message.nonce, format: .medium, encryptionKey: otrKey, sha256Digest: sha256)
+        } else {
+            let fileCache = managedObjectContext.zm_fileAssetCache
+            fileCache.storeAssetData(message.nonce, fileName: fileMessageData.filename, encrypted: true, data: data)
+            return fileCache.decryptFileIfItMatchesDigest(
+                message.nonce,
+                fileName: genericMessage.v3_fileCacheKey,
+                encryptionKey: otrKey,
+                sha256Digest: sha256
+            )
+        }
+    }
+
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self.assetDownstreamObjectSync]
+        return [assetDownstreamObjectSync]
     }
 
     // MARK: - ZMDownstreamTranscoder
