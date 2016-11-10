@@ -23,23 +23,65 @@ import ZMTransport
 import WireMessageStrategy
 
 
-fileprivate class RequestGeneratorStore {
-
-    let requestGenerators: [ZMTransportRequestGenerator]
-
-    init(transcoders: [ZMRequestGeneratorSource], strategies: [RequestStrategy]) {
-        requestGenerators =  strategies.flatMap {
-                $0.nextRequest
-            } + transcoders.flatMap {
-                $0.requestGenerators
-            }.flatMap {
-                $0.nextRequest
-        }
+class ClientRegistrationDummy : NSObject, ClientRegistrationDelegate {
+    
+    var clientIsReadyForRequests: Bool {
+        return true
     }
-
+    
+    func didDetectCurrentClientDeletion() {
+        // nop
+    }
 }
 
 
+class PushMessageHandlerDummy : NSObject, ZMPushMessageHandler {
+    
+    func processGenericMessage(_ genericMessage: ZMGenericMessage!) {
+        // nop
+    }
+    
+    func processMessage(_ message: ZMMessage!) {
+        // nop
+    }
+    
+    func didFail(toSentMessage message: ZMMessage!) {
+        // nop
+    }
+    
+}
+
+class DeliveryConfirmationDummy : NSObject, DeliveryConfirmationDelegate {
+    
+    static var sendDeliveryReceipts: Bool {
+        return false
+    }
+    
+    var needsToSyncMessages: Bool {
+        return false
+    }
+    
+    func needsToConfirmMessage(_ messageNonce: UUID) {
+        // nop
+    }
+    
+    func didConfirmMessage(_ messageNonce: UUID) {
+        // nop
+    }
+    
+}
+
+extension NSManagedObjectContext : ZMKeyValueStore {
+    
+    open override func setValue(_ value: Any?, forKey key: String) {
+        setPersistentStoreMetadata(value, forKey: key)
+    }
+    
+    open override func value(forKey key: String) -> Any? {
+        return persistentStoreMetadata(forKey: key)
+    }
+    
+}
 
 public enum SharingSessionError : Error {
     case missingSharedContainer
@@ -96,7 +138,6 @@ public class SharingSession {
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
-    private let requestGenerators: RequestGeneratorStore
     
     public convenience init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
         guard let databaseDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
@@ -119,33 +160,33 @@ public class SharingSession {
         guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory, identifier: databaseIdentifier) else { throw InitializationError.needsMigration }
         guard authenticationStatusProvider.state == .authenticated else { throw InitializationError.loggedOut }
         userInterfaceContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory, storeIdentifier: databaseIdentifier)
-        syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory storeIdentifier: databaseIdentifier)
+        syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory, storeIdentifier: databaseIdentifier)
 
         let environment = ZMBackendEnvironment()
-
+        
         transportSession = ZMTransportSession(
             baseURL: environment.backendURL,
             websocketURL: environment.backendWSURL,
-            keyValueStore: syncContext as! ZMKeyValueStore,
+            keyValueStore: syncContext,
             mainGroupQueue: userInterfaceContext,
             application: nil
         )
 
         let clientMessageTranscoder = ZMClientMessageTranscoder(
             managedObjectContext: syncContext,
-            localNotificationDispatcher: nil,
-            clientRegistrationStatus: nil,
-            apnsConfirmationStatus: nil
+            localNotificationDispatcher: PushMessageHandlerDummy(),
+            clientRegistrationStatus: ClientRegistrationDummy(),
+            apnsConfirmationStatus: DeliveryConfirmationDummy()
         )!
 
         let transcoders = [clientMessageTranscoder]
-
-        requestGenerators = RequestGeneratorStore(transcoders: transcoders, strategies: [])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: transcoders)
 
         operationLoop = RequestGeneratingOperationLoop(
-            context: syncContext,
+            userContext: userInterfaceContext,
+            syncContext: syncContext,
             callBackQueue: .main,
-            requestProducers: requestGenerators.requestGenerators,
+            requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
     }
@@ -155,6 +196,22 @@ public class SharingSession {
     public func cancelAllPendingTasks() {
         // TODO
 
+    }
+    
+    public func enqueue(changes: @escaping () -> Void) {
+        enqueue(changes: changes, completionHandler: nil)
+    }
+    
+    public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
+        userInterfaceContext.performGroupedBlock { [weak self] in
+            changes()
+            
+            self?.userInterfaceContext.saveOrRollback()
+            
+            if let completionHandler = completionHandler {
+                completionHandler()
+            }
+        }
     }
 
 }
