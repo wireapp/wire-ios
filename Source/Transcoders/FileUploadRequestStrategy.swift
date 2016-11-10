@@ -58,7 +58,7 @@ private let reponseHeaderAssetIdKey = "Location"
             else { return false }
             return !assetData.hasPreview() && fileMessageData.previewData != nil
         }
-        let thumbnailFetchPredicate = NSPredicate(format: "delivered == NO")
+        let thumbnailFetchPredicate = NSPredicate(format: "delivered == NO && version < 3")
         
         self.thumbnailPreprocessorTracker = ZMImagePreprocessingTracker(
             managedObjectContext: managedObjectContext,
@@ -67,8 +67,9 @@ private let reponseHeaderAssetIdKey = "Location"
             needsProcessingPredicate: thumbnailProcessingPredicate,
             entityClass: ZMAssetClientMessage.self
         )
-        
-        self.filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext)
+
+        let versionPredicate = NSPredicate(format: "version < 3")
+        self.filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, versionPredicate: versionPredicate)
         self.clientRegistrationStatus = clientRegistrationStatus
         self.requestFactory = ClientMessageRequestFactory()
         self.taskCancellationProvider = taskCancellationProvider
