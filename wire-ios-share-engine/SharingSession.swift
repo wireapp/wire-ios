@@ -23,18 +23,6 @@ import ZMTransport
 import WireMessageStrategy
 
 
-class ClientRegistrationDummy : NSObject, ClientRegistrationDelegate {
-    
-    var clientIsReadyForRequests: Bool {
-        return true
-    }
-    
-    func didDetectCurrentClientDeletion() {
-        // nop
-    }
-}
-
-
 class PushMessageHandlerDummy : NSObject, ZMPushMessageHandler {
     
     func processGenericMessage(_ genericMessage: ZMGenericMessage!) {
@@ -67,6 +55,45 @@ class DeliveryConfirmationDummy : NSObject, DeliveryConfirmationDelegate {
     
     func didConfirmMessage(_ messageNonce: UUID) {
         // nop
+    }
+    
+}
+
+class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
+    
+    let context : NSManagedObjectContext
+    
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+    
+    var clientIsReadyForRequests: Bool {
+        if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String { // TODO move constant into shared framework
+            return clientId.characters.count > 0
+        }
+        
+        return false
+    }
+    
+    func didDetectCurrentClientDeletion() {
+        // nop
+    }
+}
+
+class AuthenticationStatus : AuthenticationStatusProvider {
+    
+    let transportSession : ZMTransportSession
+    
+    init(transportSession: ZMTransportSession) {
+        self.transportSession = transportSession
+    }
+    
+    var state: AuthenticationState {
+        return isLoggedIn ? .authenticated : .unauthenticated
+    }
+    
+    private var isLoggedIn : Bool {
+        return transportSession.cookieStorage.authenticationCookieData != nil
     }
     
 }
@@ -113,6 +140,9 @@ public class SharingSession {
 
     /// The authentication status used to verify a user is authenticated
     private let authenticationStatus: AuthenticationStatusProvider
+    
+    /// The client registration status used to lookup if a user has registered a self client
+    private let clientRegistrationStatus : ClientRegistrationDelegate
 
     let transportSession: ZMTransportSession
     
@@ -123,7 +153,7 @@ public class SharingSession {
     
     /// Whether all prerequsisties for sharing are met
     public var canShare: Bool {
-        return authenticationStatus.state == .authenticated
+        return authenticationStatus.state == .authenticated && clientRegistrationStatus.clientIsReadyForRequests
     }
 
     /// List of non-archived conversations in which the user can write
@@ -144,7 +174,7 @@ public class SharingSession {
             throw SharingSessionError.missingSharedContainer
         }
         
-        try self.init(databaseDirectory: databaseDirectory, databaseIdentifier: hostBundleIdentifier, authenticationStatusProvider: DummyAuthenticationStatus())
+        try self.init(databaseDirectory: databaseDirectory, databaseIdentifier: hostBundleIdentifier)
     }
     
     /// Initializes a new `SessionDirectory` to be used in an extension environment
@@ -153,12 +183,11 @@ public class SharingSession {
     /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
-    init(databaseDirectory: URL, databaseIdentifier: String, authenticationStatusProvider: AuthenticationStatusProvider) throws {
+    init(databaseDirectory: URL, databaseIdentifier: String) throws {
         sharedDatabaseDirectory = databaseDirectory
-        authenticationStatus = authenticationStatusProvider
 
         guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory, identifier: databaseIdentifier) else { throw InitializationError.needsMigration }
-        guard authenticationStatusProvider.state == .authenticated else { throw InitializationError.loggedOut }
+
         userInterfaceContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory, storeIdentifier: databaseIdentifier)
         syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory, storeIdentifier: databaseIdentifier)
 
@@ -171,11 +200,16 @@ public class SharingSession {
             mainGroupQueue: userInterfaceContext,
             application: nil
         )
-
+        
+        authenticationStatus = AuthenticationStatus(transportSession: transportSession)
+        clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
+        
+        guard authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
+        
         let clientMessageTranscoder = ZMClientMessageTranscoder(
             managedObjectContext: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
-            clientRegistrationStatus: ClientRegistrationDummy(),
+            clientRegistrationStatus: clientRegistrationStatus,
             apnsConfirmationStatus: DeliveryConfirmationDummy()
         )!
 
