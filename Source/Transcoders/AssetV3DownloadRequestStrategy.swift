@@ -20,11 +20,6 @@
 import zimages
 import ZMTransport
 
-@objc public final class AssetV3DownloadRequestStrategyNotification: NSObject {
-    public static let downloadFinishedNotificationName = "AssetDownloadRequestStrategyDownloadFinishedNotificationName"
-    public static let downloadStartTimestampKey = "requestStartTimestamp"
-    public static let downloadFailedNotificationName = "AssetDownloadRequestStrategyDownloadFailedNotificationName"
-}
 
 @objc public final class AssetV3DownloadRequestStrategy: NSObject, RequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
 
@@ -63,13 +58,14 @@ import ZMTransport
     }
 
     func registerForCancellationNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(AssetDownloadRequestStrategy.cancelOngoingRequestForAssetClientMessage(_:)), name: NSNotification.Name(rawValue: ZMAssetClientMessageDidCancelFileDownloadNotificationName), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(cancelOngoingRequestForAssetClientMessage), name: NSNotification.Name(rawValue: ZMAssetClientMessageDidCancelFileDownloadNotificationName), object: nil)
     }
 
     func cancelOngoingRequestForAssetClientMessage(_ note: Notification) {
         guard let objectID = note.object as? NSManagedObjectID else { return }
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let message = self?.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
+            guard message.version == 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
             self?.taskCancellationProvider?.cancelTask(with: identifier)
             message.associatedTaskIdentifier = nil
