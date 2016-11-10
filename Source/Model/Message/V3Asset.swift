@@ -149,8 +149,17 @@ extension V3Asset: AssetProxyType {
     }
 
     public func requestImageDownload() {
-        guard isImage else { return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image") }
-        requestFileDownload()
+        if isImage {
+            requestFileDownload()
+        } else if assetClientMessage.genericAssetMessage?.assetData?.hasPreview() == true {
+            guard !assetClientMessage.objectID.isTemporaryID else { return }
+            NotificationCenter.default.post(
+                name: NSNotification.Name(rawValue: ZMAssetClientMessage.ImageDownloadNotificationName),
+                object: assetClientMessage.objectID
+            )
+        } else {
+            return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image or has a preview")
+        }
     }
 
     // MARK: - Helper
