@@ -315,3 +315,36 @@ extension AssetV3DownloadRequestStrategyTests {
     }
 }
 
+// MARK : - Download Cancellation
+
+extension AssetV3DownloadRequestStrategyTests {
+
+    func testThatItInformsTheTaskCancellationProviderToCancelARequestForAnAssetMessageWhenItReceivesTheNotification_V3() {
+        // given
+        let (message, _, _) = createFileMessageWithAssetId(in: conversation)!
+        XCTAssertNotNil(message.objectID)
+
+        // given the task has been created
+        guard let request = sut.nextRequest() else { return XCTFail("No request created") }
+
+        request.callTaskCreationHandlers(withIdentifier: 42, sessionIdentifier: name!)
+        XCTAssertTrue(syncMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let identifier = message.associatedTaskIdentifier
+        XCTAssertNotNil(identifier)
+
+        // when the transfer is cancelled
+        message.fileMessageData?.cancelTransfer()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then the cancellation provider should be informed to cancel the request
+        XCTAssertEqual(cancellationProvider.cancelledIdentifiers.count, 1)
+        let cancelledIdentifier = cancellationProvider.cancelledIdentifiers.first
+        XCTAssertEqual(cancelledIdentifier, identifier)
+
+        // It should nil-out the identifier as it has been cancelled
+        XCTAssertNil(message.associatedTaskIdentifier)
+    }
+    
+}
+
