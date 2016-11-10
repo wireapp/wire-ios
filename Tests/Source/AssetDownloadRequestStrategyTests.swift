@@ -22,11 +22,11 @@ import Foundation
 
 private let testDataURL = Bundle(for: AssetDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
-class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
+public class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
     
     var cancelledIdentifiers = [ZMTaskIdentifier]()
     
-    func cancelTask(with identifier: ZMTaskIdentifier) {
+    public func cancelTask(with identifier: ZMTaskIdentifier) {
         cancelledIdentifiers.append(identifier)
     }
 }
@@ -60,22 +60,25 @@ class AssetDownloadRequestStrategyTests: MessagingTest {
     fileprivate func createFileTransferMessage(_ conversation: ZMConversation) -> ZMAssetClientMessage {
         let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         message.assetId = UUID.create()
+        configureForDownloading(message: message)
+        return message
+    }
+
+    fileprivate func configureForDownloading(message: ZMAssetClientMessage) {
         message.fileMessageData?.transferState = .downloading
-        
         self.syncMOC.saveOrRollback()
-        
+
         self.sut.contextChangeTrackers.forEach { tracker in
             tracker.objectsDidChange(Set(arrayLiteral: message))
         }
-        
+
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        return message
     }
 }
 
 // request generation tests
 extension AssetDownloadRequestStrategyTests {
+
     func testThatItGeneratesNoRequestsIfTheStatusIsEmpty() {
         XCTAssertNil(self.sut.nextRequest())
     }
@@ -167,10 +170,12 @@ extension AssetDownloadRequestStrategyTests {
         XCTAssertNil(request2)
         
     }
+
 }
 
 // tests on result of request
 extension AssetDownloadRequestStrategyTests {
+
     func testThatItMarksDownloadAsSuccessIfSuccessfulDownloadAndDecryption() {
         
         // given
