@@ -166,48 +166,48 @@ open class FileAssetCache : NSObject {
     
     /// Returns the asset data for a given message. This will probably cause I/O
     open func assetData(_ messageID: UUID, fileName: String, encrypted: Bool) -> Data? {
-        return self.cache.assetData(type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+        return self.cache.assetData(type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
     }
     
     /// Returns the asset URL for a given message
     open func accessAssetURL(_ messageID: UUID, fileName: String) -> URL? {
-        return self.cache.assetURL(type(of: self).cacheKeyForAsset(messageID, fileName: fileName))
+        return self.cache.assetURL(type(of: self).cacheKeyForAsset(messageID, suffix: fileName))
     }
     
     /// Returns the asset URL for a given message
     open func accessRequestURL(_ messageID: UUID) -> URL? {
-        return cache.assetURL(type(of: self).cacheKeyForAsset(messageID, fileName: "", request: true))
+        return cache.assetURL(type(of: self).cacheKeyForAsset(messageID, suffix: "", request: true))
     }
     
     open func hasDataOnDisk(_ messageID: UUID, fileName: String, encrypted: Bool) -> Bool {
-        return cache.hasDataForKey(type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+        return cache.hasDataForKey(type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
     }
     
     /// Sets the asset data for a given message. This will cause I/O
     open func storeAssetData(_ messageID: UUID, fileName: String, encrypted: Bool, data: Data) {
-        self.cache.storeAssetData(data, key: type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+        self.cache.storeAssetData(data, key: type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
     }
     
     /// Sets the request data for a given message and returns the asset url. This will cause I/O
     open func storeRequestData(_ messageID: UUID, data: Data) -> URL? {
-        let key = type(of: self).cacheKeyForAsset(messageID, fileName: "", request: true)
+        let key = type(of: self).cacheKeyForAsset(messageID, suffix: "", request: true)
         cache.storeAssetData(data, key: key)
         return accessRequestURL(messageID)
     }
     
     /// Deletes the request data for a given message. This will cause I/O
     open func deleteRequestData(_ messageID: UUID) {
-        let key = type(of: self).cacheKeyForAsset(messageID, fileName: "", request: true)
+        let key = type(of: self).cacheKeyForAsset(messageID, suffix: "", request: true)
         cache.deleteAssetData(key)
     }
     
     /// Deletes the data for a given message. This will cause I/O
     open func deleteAssetData(_ messageID: UUID, fileName: String, encrypted: Bool) {
-        self.cache.deleteAssetData(type(of: self).cacheKeyForAsset(messageID, fileName: fileName, encrypted: encrypted))
+        self.cache.deleteAssetData(type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
     }
     
     /// Returns the cache key for an asset
-    static func cacheKeyForAsset(_ messageID: UUID, fileName: String, encrypted: Bool = false, request: Bool = false) -> String {
+    static func cacheKeyForAsset(_ messageID: UUID, suffix: String, encrypted: Bool = false, request: Bool = false) -> String {
         precondition(!(request && encrypted))
         
         if (encrypted) {
@@ -217,7 +217,7 @@ open class FileAssetCache : NSObject {
             return "\(messageID.transportString())_request"
         }
         else {
-            return "\(messageID.transportString())_\(fileName)"
+            return "\(messageID.transportString())_\(suffix)"
         }
     }
     

@@ -743,6 +743,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [self appendOTRMessageWithFileMetadata:fileMetadata nonce:NSUUID.UUID];
 }
 
+- (id<ZMConversationMessage>)appendMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata version3:(BOOL)version3
+{
+    return [self appendOTRMessageWithFileMetadata:fileMetadata nonce:NSUUID.UUID version3:version3];
+}
+
 - (nullable id<ZMConversationMessage>)appendMessageWithLocationData:(nonnull ZMLocationData *)locationData
 {
     return [self appendOTRMessageWithLocationData:locationData nonce:NSUUID.UUID];
@@ -1313,7 +1318,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce
 {
-    ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithFileMetadata:fileMetadata nonce:nonce managedObjectContext:self.managedObjectContext expiresAfter:self.messageDestructionTimeout];
+    return [self appendOTRMessageWithFileMetadata:fileMetadata nonce:nonce version3:NO];
+}
+
+- (nonnull ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata nonce:(nonnull NSUUID *)nonce version3:(BOOL)version3;
+{
+    ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithFileMetadata:fileMetadata nonce:nonce managedObjectContext:self.managedObjectContext expiresAfter:self.messageDestructionTimeout version3:version3];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     message.isEncrypted = YES;
     [self sortedAppendMessage:message];

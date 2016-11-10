@@ -130,6 +130,8 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 - (nullable id<ZMConversationMessage>)appendMessageWithImageData:(nonnull NSData *)imageData;
 /// Appends a file. see ZMFileMetaData, ZMAudioMetaData, ZMVideoMetaData.
 - (nullable id<ZMConversationMessage>)appendMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata;
+- (nullable id<ZMConversationMessage>)appendMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata version3:(BOOL)version3;
+
 /// Appends a location, see @c LocationData.
 - (nullable id<ZMConversationMessage>)appendMessageWithLocationData:(nonnull ZMLocationData *)locationData;
 

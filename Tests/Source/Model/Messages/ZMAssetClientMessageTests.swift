@@ -225,6 +225,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         
         XCTAssertNil(message.imageMessageData?.mediumData)
         XCTAssertFalse(message.hasDownloadedImage)
+        XCTAssertEqual(message.version, 0)
     }
     
 }
@@ -252,6 +253,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, ZMFileTransferState.uploading)
         XCTAssertEqual(sut.filename, currentTestURL!.lastPathComponent)
         XCTAssertNotNil(sut.fileMessageData)
+        XCTAssertEqual(sut.version, 0)
     }
     
     func testThatItHasDownloadedFileWhenTheFileIsOnDisk()
@@ -1999,4 +2001,260 @@ extension ZMAssetClientMessageTests {
         }
     }
     
+}
+
+
+// MARK: - Asset V3
+
+// MARK: Receiving
+
+
+extension ZMAssetClientMessageTests {
+
+    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String?, token: String?)
+
+    private func originalGenericMessage(nonce: String, image: ZMAssetImageMetaData? = nil, preview: ZMAssetPreview? = nil, mimeType: String = "image/jpg", name: String? = nil) -> ZMGenericMessage {
+        let asset = ZMAsset.asset(withOriginal: .original(withSize: 128, mimeType: mimeType, name: name, imageMetaData: image), preview: preview)
+        return ZMGenericMessage.genericMessage(asset: asset, messageID: nonce)
+    }
+
+    private func uploadedGenericMessage(nonce: String, otr: Data = .randomEncryptionKey(), sha: Data = .zmRandomSHA256Key(), assetId: String? = UUID.create().transportString(), token: String? = UUID.create().transportString()) -> ZMGenericMessage {
+
+        let assetBuilder = ZMAsset.builder()!
+        let remoteBuilder = ZMAssetRemoteData.builder()!
+
+        _ = remoteBuilder.setOtrKey(otr)
+        _ = remoteBuilder.setSha256(sha)
+        if let assetId = assetId {
+            _ = remoteBuilder.setAssetId(assetId)
+        }
+        if let token = token {
+            _ = remoteBuilder.setAssetToken(token)
+        }
+
+        assetBuilder.setUploaded(remoteBuilder)
+        return ZMGenericMessage.genericMessage(asset: assetBuilder.build(), messageID: nonce)
+    }
+
+    func previewGenericMessage(with nonce: String, assetId: String? = UUID.create().transportString(), token: String? = UUID.create().transportString(), otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (ZMGenericMessage, PreviewMeta) {
+        let assetBuilder = ZMAsset.builder()
+        let previewBuilder = ZMAssetPreview.builder()
+        let remoteBuilder = ZMAssetRemoteData.builder()
+
+        _ = remoteBuilder?.setOtrKey(otr)
+        _ = remoteBuilder?.setSha256(sha)
+        if let assetId = assetId {
+            _ = remoteBuilder?.setAssetId(assetId)
+        }
+        if let token = token {
+            _ = remoteBuilder?.setAssetToken(token)
+        }
+        _ = previewBuilder?.setSize(512)
+        _ = previewBuilder?.setMimeType("image/jpg")
+        _ = previewBuilder?.setRemote(remoteBuilder)
+        _ = assetBuilder?.setPreview(previewBuilder)
+
+        let previewMeta = (otr, sha, assetId, token)
+        return (ZMGenericMessage.genericMessage(asset: assetBuilder!.build(), messageID: nonce), previewMeta)
+    }
+
+    func createMessageWithNonce() -> (ZMAssetClientMessage, UUID) {
+        let nonce = UUID.create()
+        let sut = ZMAssetClientMessage.insertNewObject(in: uiMOC)
+        sut.nonce = nonce
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertNotNil(sut)
+        return (sut, nonce)
+    }
+
+    func testThatItSetsVersion3WhenAMessageIsUpdatedWithAnAssetUploadedWithAssetId_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+
+        // then
+        XCTAssertEqual(sut.version, 3)
+    }
+
+    func testThatItSetsVersion3WhenAMessageIsUpdatedWithAnAssetPreviewWithAssetId_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let (preview, _) = previewGenericMessage(with: nonce.transportString())
+        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+
+        // then
+        XCTAssertEqual(sut.version, 3)
+    }
+
+    func testThatItDoesNotSetVersion3WhenAMessageIsUpdatedWithAnAssetUploadedWithoutAssetId_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: nil, token: nil)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+
+        // then
+        XCTAssertEqual(sut.version, 0)
+    }
+
+    func testThatItDoesNotSetVersion3WhenAMessageIsUpdatedWithAnAssetPreviewWithoutAssetId_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let (preview, _) = previewGenericMessage(with: nonce.transportString(), assetId: nil, token: nil)
+        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+
+        // then
+        XCTAssertEqual(sut.version, 0)
+    }
+
+    func testThatItReportsDownloadedFileWhenThereIsAFileOnDisk_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let assetId = UUID.create().transportString()
+        let assetData = Data.secureRandomData(length: 512)
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        uiMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: assetId, encrypted: false, data: assetData)
+
+        // then
+        XCTAssertTrue(sut.hasDownloadedFile)
+        XCTAssertFalse(sut.hasDownloadedImage)
+        XCTAssertEqual(sut.version, 3)
+    }
+
+    func testThatItReportsDownloadedImageWhenThereIsAFileInTheCache_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let assetId = UUID.create().transportString()
+        let assetData = Data.secureRandomData(length: 512)
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        uiMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: assetId, encrypted: false, data: assetData)
+
+        // then
+        XCTAssertTrue(sut.hasDownloadedFile)
+        XCTAssertFalse(sut.hasDownloadedImage)
+        XCTAssertEqual(sut.version, 3)
+    }
+
+    func testThatItReportsIsImageWhenItHasImageMetaData() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
+        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+
+        // when
+        sut.update(with: original, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+
+        // then
+        XCTAssertTrue(sut.genericAssetMessage!.v3_isImage)
+        XCTAssertFalse(sut.hasDownloadedFile)
+        XCTAssertFalse(sut.hasDownloadedImage)
+        XCTAssertEqual(sut.imageMessageData?.originalSize, CGSize(width: 123, height: 4569))
+        XCTAssertEqual(sut.version, 3)
+    }
+
+    func testThatItReturnsAValidImageDataIdentifierContainingTheNonceAndSizeWhenItRepresentsAnImage_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+        let assetId = UUID.create().transportString()
+
+        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
+        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId)
+
+        // when
+        sut.update(with: original, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+
+        // then
+        XCTAssertEqual("\(nonce.transportString())-123x4569", sut.imageMessageData?.imageDataIdentifier)
+    }
+
+    func testThatItReturnsTheThumbnailIdWhenItHasAPreviewRemoteData_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let (preview, previewMeta) = previewGenericMessage(with: nonce.transportString())
+        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+
+        // then
+        XCTAssertEqual(sut.fileMessageData?.thumbnailAssetID, previewMeta.assetId)
+    }
+
+    func testThatItReturnsTheThumbnailDataWhenItHasItOnDisk_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        // when
+        let previewData = Data.secureRandomData(length: 512)
+        let (preview, _) = previewGenericMessage(with: nonce.transportString())
+        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+        uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: previewData)
+
+        // then
+        XCTAssertFalse(sut.hasDownloadedFile)
+        XCTAssertTrue(sut.hasDownloadedImage)
+        XCTAssertEqual(sut.version, 3)
+        XCTAssertEqual(sut.imageMessageData?.previewData, previewData)
+    }
+
+    func testThatIsHasDownloadedImageAndReturnsItWhenTheImageIsOnDisk_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+
+        let data = verySmallJPEGData()
+        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
+        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+
+        // when
+        sut.update(with: original, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+
+        uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: data)
+
+        // then
+        XCTAssertTrue(sut.genericAssetMessage!.v3_isImage)
+        XCTAssertFalse(sut.hasDownloadedFile)
+        XCTAssertTrue(sut.hasDownloadedImage)
+        XCTAssertEqual(sut.imageMessageData?.imageData, data)
+        XCTAssertEqual(sut.version, 3)
+    }
+
+    func testThatRequestingImageDownloadFiresANotification_V3() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
+        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+
+        // when
+        sut.update(with: original, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        XCTAssertEqual(sut.transferState, .uploaded)
+
+        // when
+        sut.requestImageDownload()
+
+        // then
+        XCTAssertEqual(sut.transferState, .downloading)
+    }
+
 }
