@@ -210,7 +210,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         XCTAssertNil(sut.nextRequest())
     }
 
-    func testThatItStoresAndDecryptsTheRawDataInTheFileCacheWhenItReceivesAResponse() {
+    func testThatItStoresAndDecryptsTheRawDataInTheImageCacheWhenItReceivesAResponse() {
         // given
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
@@ -235,6 +235,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         // then
         let data = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
         XCTAssertEqual(data, plainTextData)
+        XCTAssertEqual(message.fileMessageData!.previewData, plainTextData)
     }
 
 }
