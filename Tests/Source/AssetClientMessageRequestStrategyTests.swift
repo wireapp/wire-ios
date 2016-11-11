@@ -22,6 +22,22 @@ import WireRequestStrategy
 @testable import WireMessageStrategy
 
 
+fileprivate extension AssetClientMessageRequestStrategy {
+
+    @discardableResult func assertCreatesValidRequestForAsset(in conversation: ZMConversation, line: UInt = #line) -> ZMTransportRequest! {
+        guard let request = nextRequest() else {
+            XCTFail("No request generated", line: line)
+            return nil
+        }
+
+        XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages", line: line)
+        XCTAssertEqual(request.method, .methodPOST, line: line)
+        return request
+    }
+
+}
+
+
 class AssetClientMessageRequestStrategyTests: MessagingTest {
 
     fileprivate var clientRegistrationStatus: MockClientRegistrationStatus!
@@ -50,15 +66,55 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         otherUser.remoteIdentifier = .create()
     }
 
-    @discardableResult func createMessage(isImage: Bool = true, uploaded: Bool = true, assetId: Bool = true) -> ZMAssetClientMessage {
-        let message = conversation.appendMessage(withImageData: imageData, version3: true) as! ZMAssetClientMessage
+    @discardableResult func createMessage(
+        isImage: Bool = true,
+        uploaded: Bool = false,
+        preview: Bool = false,
+        assetId: Bool = false,
+        previewAssetId: Bool = false,
+        uploadState: ZMAssetUploadState = .uploadingFullAsset,
+        transferState: ZMFileTransferState = .uploading,
+        line: UInt = #line
+        ) -> ZMAssetClientMessage {
+
+        let message: ZMAssetClientMessage!
+        if isImage {
+            message = conversation.appendMessage(withImageData: imageData, version3: true) as! ZMAssetClientMessage
+        } else {
+            let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
+            message = conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil), version3: true) as! ZMAssetClientMessage
+        }
+
         if isImage {
             let size = CGSize(width: 368, height: 520)
             let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
             message.imageAssetStorage?.setImageData(imageData, for: .medium, properties: properties)
-            XCTAssertEqual(message.mimeType, "image/jpg")
-            XCTAssertEqual(message.size, 1024)
-            XCTAssertEqual(message.imageMessageData?.originalSize, size)
+            XCTAssertEqual(message.mimeType, "image/jpg", line: line)
+            XCTAssertEqual(message.size, 1024, line: line)
+            XCTAssertEqual(message.imageMessageData?.originalSize, size, line: line)
+            XCTAssertTrue(message.genericAssetMessage!.assetData!.hasOriginal(), line: line)
+        }
+
+        if preview {
+            let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+            let previewId: String? = previewAssetId ? UUID.create().transportString() : nil
+            let previewAsset = ZMAssetPreview.preview(
+                withSize: 128,
+                mimeType: "image/jpg",
+                remoteData: .remoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil),
+                imageMetaData: .imageMetaData(withWidth: 123, height: 420)
+            )
+
+            let previewMessage = ZMGenericMessage.genericMessage(
+                asset: .asset(withOriginal: nil, preview: previewAsset),
+                messageID: message.nonce.transportString(),
+                expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
+            )
+
+            message.add(previewMessage)
+            XCTAssertTrue(message.genericAssetMessage!.assetData!.hasPreview(), line: line)
+            XCTAssertEqual(message.genericAssetMessage!.assetData!.preview.remote.hasAssetId(), previewAssetId, line: line)
+            XCTAssertEqual(message.isEphemeral, conversation.messageDestructionTimeout != 0, line: line)
         }
 
         if uploaded {
@@ -67,22 +123,27 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
                 withUploadedOTRKey: otr,
                 sha256: sha,
                 messageID: message.nonce.transportString(),
-                expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
+                expiresAfter: NSNumber(value: self.conversation.messageDestructionTimeout)
             )
             if assetId {
                 uploaded = uploaded.updated(withAssetId: UUID.create().transportString(), token: nil)!
             }
             message.add(uploaded)
-            XCTAssertTrue(message.genericAssetMessage!.assetData!.hasUploaded())
-            XCTAssertEqual(message.isEphemeral, conversation.messageDestructionTimeout != 0)
+            XCTAssertTrue(message.genericAssetMessage!.assetData!.hasUploaded(), line: line)
+            XCTAssertEqual(message.isEphemeral, conversation.messageDestructionTimeout != 0, line: line)
         }
 
-        message.uploadState = .done
-        message.transferState = .uploaded
+        message.uploadState = uploadState
+        message.transferState = transferState
 
         syncMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), line: line)
         prepareUpload(of: message)
+
+        XCTAssertEqual(message.transferState, transferState, line: line)
+        XCTAssertEqual(message.version, 3, line: line)
+        XCTAssertEqual(message.uploadState, uploadState, line: line)
+        XCTAssertEqual(message.genericAssetMessage?.assetData?.original.hasImage(), isImage, line: line)
 
         return message
     }
@@ -108,7 +169,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
 
     func testThatItDoesNotCreateARequestForAnImageMessageWithUploadedButWithoutAssetId() {
         // given
-        createMessage(uploaded: true, assetId: false)
+        createMessage(uploaded: true)
 
         // then
         XCTAssertNil(sut.nextRequest())
@@ -117,7 +178,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
     func testThatItDoesNotCreateARequestForAnImageMessageWithUploadedAndAssetIdInTheWrongTransferState() {
         // given
         let message = createMessage()
-        message.transferState = .uploading
+        message.transferState = .uploaded
 
         // then
         XCTAssertNil(sut.nextRequest())
@@ -125,8 +186,8 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
 
     func testThatItDoesNotCreateARequestForAnImageMessageWithUploadedAndAssetIdInTheWrongUploadedState() {
         // given
-        let message = createMessage()
-        message.uploadState = .uploadingFullAsset
+        let message = createMessage(uploaded: true, assetId: true)
+        message.uploadState = .done
 
         // then
         XCTAssertNil(sut.nextRequest())
@@ -134,20 +195,16 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
 
     func testThatItCreatesARequestForAnUploadedImageMessage() {
         // given
-        createMessage()
-
-        // when
-        guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
+        createMessage(uploaded: true, assetId: true)
 
         // then
-        XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
-        XCTAssertEqual(request.method, .methodPOST)
+        sut.assertCreatesValidRequestForAsset(in: conversation)
     }
 
     func testThatItCreatesARequestForAnUploadedImageMessage_Ephemeral() {
         // given
         conversation.messageDestructionTimeout = 15
-        createMessage()
+        createMessage(uploaded: true, assetId: true)
 
         // when
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
@@ -158,12 +215,167 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         XCTAssertEqual(request.method, .methodPOST)
     }
 
+    func testThatItCreatesARequestForANonImageMessageWithOnlyAsset_Original() {
+        // given
+        createMessage(isImage: false, uploadState: .uploadingPlaceholder)
+
+        // then
+        sut.assertCreatesValidRequestForAsset(in: conversation)
+    }
+
+    func testThatItCreatesARequestForANonImageMessageWithAsset_PreviewAndPreviewAssetId() {
+        // given
+        createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingThumbnail)
+
+        // then
+        sut.assertCreatesValidRequestForAsset(in: conversation)
+    }
+
+    func testThatItDoesNotCreateARequestForANonImageMessageWithAsset_PreviewAndWithoutPreviewAssetId() {
+        // given
+        createMessage(isImage: false, preview: true, previewAssetId: false, uploadState: .uploadingThumbnail)
+
+        // then
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItCreatesARequestForANonImageMessageWithAsset_UploadedAndAssetId() {
+        // given
+        createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
+
+        // then
+        sut.assertCreatesValidRequestForAsset(in: conversation)
+    }
+
+    func testThatItDoesNotCreateARequestForANonImageMessageWithAsset_UploadedAndWithoutAssetId() {
+        // given
+        createMessage(isImage: false, uploaded: true, assetId: false, uploadState: .uploadingFullAsset)
+
+        // then
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItCreatesARequestToUploadNotUploaded_Failed() {
+        // given
+        let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset, transferState: .uploading)
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+
+        // when
+        let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        request.complete(with: response)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingFailed)
+        XCTAssertEqual(message.transferState, .failedUpload)
+        XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
+        sut.assertCreatesValidRequestForAsset(in: conversation)
+    }
+
+    func testThatItCreatesARequestToUploadAfterAPreviousAttemptFailed() {
+        // given
+        let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset, transferState: .uploading)
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+
+        // when
+        let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        request.complete(with: response)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingFailed)
+        XCTAssertEqual(message.transferState, .failedUpload)
+        XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
+        sut.assertCreatesValidRequestForAsset(in: conversation)
+
+        // when
+        message.resend()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingPlaceholder)
+        XCTAssertEqual(message.transferState, .uploading)
+        XCTAssertFalse(message.genericAssetMessage!.assetData!.hasNotUploaded())
+        sut.assertCreatesValidRequestForAsset(in: conversation)!
+    }
+
+    func testThatItCreatesARequestToUploadNotUploaded_Cancelled() {
+        // given
+        let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset, transferState: .uploading)
+
+        // when
+        message.fileMessageData?.cancelTransfer()
+        XCTAssertEqual(message.uploadState, .uploadingFailed)
+        XCTAssertEqual(message.transferState, .cancelledUpload)
+        XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
+
+        // then
+        sut.assertCreatesValidRequestForAsset(in: conversation)
+    }
+
+    func testThatItDoesNotCreateARequestToUploadNotUploaded_WrongStates() {
+        // given
+        let message = createMessage(isImage: false, uploadState: .uploadingFullAsset, transferState: .uploading)
+        let notUploaded = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: message.nonce.transportString())
+        message.add(notUploaded)
+
+        XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
+
+        // then
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItDoesNotCreateARequestForANonImageMessageWithOnlyAsset_Original_WrongStates() {
+        createMessage(isImage: false, uploadState: .uploadingThumbnail, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, uploadState: .uploadingFullAsset, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, uploadState: .uploadingFailed, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItDoesNotCreateARequestForANonImageMessageWithAsset_PreviewAndPreviewAssetId_WrongStates() {
+        createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .done, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingFullAsset, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingFailed, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingFullAsset, transferState: .downloaded)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingFailed, transferState: .uploaded)
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItDoesNotCreateARequestForANonImageMessageWithAsset_UploadedAndAssetId_WrongStates() {
+        createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .done, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFailed, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingThumbnail, transferState: .uploading)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingThumbnail, transferState: .downloaded)
+        XCTAssertNil(sut.nextRequest())
+
+        createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingThumbnail, transferState: .uploaded)
+        XCTAssertNil(sut.nextRequest())
+    }
+
     // MARK: Response handling
 
     func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse() {
         // given
-        let message = createMessage()
-        guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
+        let message = createMessage(uploaded: true, assetId: true)
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
 
         // when
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
@@ -179,7 +391,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
     func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse_Ephemeral() {
         // given
         conversation.messageDestructionTimeout = 15
-        let message = createMessage()
+        let message = createMessage(uploaded: true, assetId: true)
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
 
         // when
