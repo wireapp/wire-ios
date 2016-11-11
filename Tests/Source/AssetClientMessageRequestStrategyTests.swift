@@ -37,6 +37,16 @@ fileprivate extension AssetClientMessageRequestStrategy {
 
 }
 
+fileprivate extension ZMTransportRequest {
+
+    func complete(withHttpStatus status: Int) {
+        let payload = ["time": Date().transportString()] as ZMTransportData
+        let response = ZMTransportResponse(payload: payload, httpStatus: status, transportSessionError: nil)
+        complete(with: response)
+    }
+
+}
+
 
 class AssetClientMessageRequestStrategyTests: MessagingTest {
 
@@ -261,8 +271,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
-        request.complete(with: response)
+        request.complete(withHttpStatus: 400)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -278,8 +287,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
-        request.complete(with: response)
+        request.complete(withHttpStatus: 400)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -289,14 +297,18 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         sut.assertCreatesValidRequestForAsset(in: conversation)
 
         // when
+        XCTAssertNil(sut.nextRequest())
+        syncMOC.saveOrRollback()
         message.resend()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertEqual(message.uploadState, .uploadingPlaceholder)
         XCTAssertEqual(message.transferState, .uploading)
+        XCTAssertFalse(message.delivered)
+        XCTAssertEqual(message.version, 3)
         XCTAssertFalse(message.genericAssetMessage!.assetData!.hasNotUploaded())
-        sut.assertCreatesValidRequestForAsset(in: conversation)!
+        sut.assertCreatesValidRequestForAsset(in: conversation)
     }
 
     func testThatItCreatesARequestToUploadNotUploaded_Cancelled() {
@@ -378,8 +390,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
-        request.complete(with: response)
+        request.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -395,13 +406,158 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
-        request.complete(with: response)
+        request.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssert(message.delivered)
         XCTAssertEqual(message.deliveryState, .sent)
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageWithoutThumbnailAfterUploadingTheOriginal() {
+        // given
+        let message = createMessage(isImage: false, uploadState: .uploadingPlaceholder)
+
+        // when
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        request.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, ZMAssetUploadState.uploadingFullAsset)
+        XCTAssertEqual(message.transferState, .uploading)
+        XCTAssertFalse(message.delivered)
+
+        // No request should be generated until the full asset has been uploaded
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageWithThumbnailAfterUploadingTheOriginal() {
+        // given
+        let message = createMessage(isImage: false, preview: true, uploadState: .uploadingPlaceholder)
+
+        // when
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        request.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingThumbnail)
+        XCTAssertEqual(message.transferState, .uploading)
+        XCTAssertFalse(message.delivered)
+
+        // No request should be generated until the full asset has been uploaded
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageAfterUploadingTheThumbnail() {
+        // given
+        let message = createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingThumbnail)
+
+        // when
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        request.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingFullAsset)
+        XCTAssertEqual(message.transferState, .uploading)
+        XCTAssertFalse(message.delivered)
+
+        // No request should be generated until the full asset has been uploaded
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageAfterUploadingTheFullAsset() {
+        // given
+        let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
+
+        // when
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        request.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .done)
+        XCTAssertEqual(message.transferState, .downloaded)
+        XCTAssertTrue(message.delivered)
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageAfterUploadingTheFullAssetWithTheumbnail() {
+        // given
+        let message = createMessage(isImage: false, uploaded: true, preview: true, assetId: true, previewAssetId: true, uploadState: .uploadingFullAsset)
+
+        // when
+        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        request.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .done)
+        XCTAssertEqual(message.transferState, .downloaded)
+        XCTAssertTrue(message.delivered)
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageAfterUploadingTheNotUploaded() {
+        // given
+        let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
+
+        // when
+        let uploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        uploadedRequest.complete(withHttpStatus: 400)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        notUploadedRequest.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingFailed)
+        XCTAssertEqual(message.transferState, .failedUpload)
+        XCTAssertFalse(message.delivered)
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageAfterFailingToSendTheThumbnail() {
+        // given
+        let message = createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingThumbnail)
+
+        // when
+        let thumbnailRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        thumbnailRequest.complete(withHttpStatus: 400)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        notUploadedRequest.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingFailed)
+        XCTAssertEqual(message.transferState, .failedUpload)
+        XCTAssertFalse(message.delivered)
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageAfterFailingToSendTheFullAsset() {
+        // given
+        let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
+
+        // when
+        let uploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        uploadedRequest.complete(withHttpStatus: 400)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        notUploadedRequest.complete(withHttpStatus: 200)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.uploadState, .uploadingFailed)
+        XCTAssertEqual(message.transferState, .failedUpload)
+        XCTAssertFalse(message.delivered)
         XCTAssertNil(sut.nextRequest())
     }
 
