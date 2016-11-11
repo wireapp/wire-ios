@@ -182,6 +182,9 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
 /// if MIME type is indicating the audio content
 - (BOOL)isAudio;
 
+/// Whether the file message represents a v3 image
+- (BOOL)v3_isImage;
+
 @end
 
 #pragma mark - ZMLocationMessageData
