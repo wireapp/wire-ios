@@ -139,7 +139,7 @@ import ZMTransport
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self.assetDownstreamObjectSync]
+        return [assetDownstreamObjectSync]
     }
 
     // MARK: - ZMDownstreamTranscoder

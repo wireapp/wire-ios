@@ -80,9 +80,10 @@ extension ImageUploadRequestStrategy : ZMUpstreamTranscoder {
     
     fileprivate func update(_ message: ZMAssetClientMessage, withResponse response: ZMTransportResponse, updatedKeys keys: Set<String>) {
         message.markAsSent()
+        
         guard let payload = response.payload?.asDictionary() else { return }
         message.update(withPostPayload: payload, updatedKeys: keys)
-
+        
         if let clientRegistrationStatus = self.clientRegistrationStatus {
             let _ = message.parseUploadResponse(response, clientDeletionDelegate: clientRegistrationStatus)
         }

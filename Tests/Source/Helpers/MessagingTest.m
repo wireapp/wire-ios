@@ -77,8 +77,13 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     NSFileManager *fm = NSFileManager.defaultManager;
     self.groupIdentifier = [@"group." stringByAppendingString:[NSBundle bundleForClass:self.class].bundleIdentifier];
     self.databaseDirectory = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
+    if (nil == self.databaseDirectory) {
+        self.databaseDirectory = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    }
+    
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
+
     
     NSString *testName = NSStringFromSelector(self.invocation.selector);
     NSString *methodName = [NSString stringWithFormat:@"setup%@%@", [testName substringToIndex:1].capitalizedString, [testName substringFromIndex:1]];
@@ -109,7 +114,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
-    self.mockTransportSession.cryptoboxLocation = [UserClientKeysStore otrDirectory];
+    self.mockTransportSession.cryptoboxLocation = self.databaseDirectory;
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }
 
