@@ -222,7 +222,6 @@ extension ZMAssetClientMessage {
     private var v3_isReadyToUploadNotUploaded: Bool {
         let hasNotUploaded = genericAssetMessage?.assetData?.hasNotUploaded() == true
         let failedOrCancelled = transferState == .failedUpload || transferState == .cancelledUpload
-        print(hasNotUploaded, failedOrCancelled)
         return failedOrCancelled && hasNotUploaded
     }
 
