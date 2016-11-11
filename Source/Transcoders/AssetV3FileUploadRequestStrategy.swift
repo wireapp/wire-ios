@@ -44,6 +44,7 @@ extension ZMAssetClientMessage {
         return fileMessageData != nil
             && [.uploading, .failedUpload, .cancelledUpload].contains(transferState)
             && uploadState == .uploadingFullAsset
+            && transferState == .uploading
             && assetData?.hasUploaded() == true && assetData?.uploaded.hasAssetId() == false
             && (assetData?.uploaded.otrKey.count ?? 0) > 0
             && assetData?.original.hasImage() == false
