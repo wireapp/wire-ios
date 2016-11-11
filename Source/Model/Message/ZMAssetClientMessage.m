@@ -980,6 +980,11 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     return [self.mimeType isAudioMimeType];
 }
 
+- (BOOL)v3_isImage
+{
+    return self.genericAssetMessage.v3_isImage;
+}
+
 - (CGSize)videoDimensions
 {
     SInt32 width = self.genericAssetMessage.assetData.original.video.width;
