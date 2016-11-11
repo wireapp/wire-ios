@@ -155,15 +155,12 @@ import ZMTransport
                 self.managedObjectContext.enqueueDelayedSave()
             }
 
-            let addingHandlers: (ZMTransportRequest) -> ZMTransportRequest = { request in
+
+            if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage) {
                 request.add(taskCreationHandler)
                 request.add(completionHandler)
                 request.add(progressHandler)
                 return request
-            }
-
-            if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage) {
-                return addingHandlers(request)
             }
         }
         
