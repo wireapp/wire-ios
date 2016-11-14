@@ -7,15 +7,9 @@ language: objective-c
 osx_image: xcode8
 
 install:
-  - open -b com.apple.iphonesimulator
   - bundle install
-  - carthage bootstrap --platform iOS
   - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
 
 script:
   - set -o pipefail
-  - xcodebuild clean build test -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO | tee >build.log >(xcpretty)
   - bundle exec danger
-
-after_failure:
-  - tail -n 500 build.log
