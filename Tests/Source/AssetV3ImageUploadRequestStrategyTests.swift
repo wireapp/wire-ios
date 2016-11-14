@@ -46,6 +46,15 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
         return message as! ZMAssetClientMessage
     }
 
+    func createFileMessageWithPreview(ephemeral: Bool = false) -> ZMAssetClientMessage {
+        conversation.messageDestructionTimeout = ephemeral ? 10 : 0
+        let url = Bundle(for: AssetV3ImageUploadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
+        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil), version3: true) as! ZMAssetClientMessage
+        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: imageData)
+        syncMOC.saveOrRollback()
+        return message
+    }
+
     func createPreprocessedV2ImageMessage() -> ZMAssetClientMessage {
         let message = conversation.appendOTRMessage(withImageData: verySmallJPEGData(), nonce: .create(), version3: false)
         let properties = ZMIImageProperties(size: message.imageAssetStorage!.originalImageSize(), length: 1000, mimeType: "image/jpg")
@@ -55,13 +64,15 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
         return message
     }
 
-    func simulatePreprocessing(of message: ZMAssetClientMessage) {
+    func simulatePreprocessing(of message: ZMAssetClientMessage, preview: Bool = false) {
         let size = CGSize(width: 368, height: 520)
         let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
         message.imageAssetStorage?.setImageData(imageData, for: .medium, properties: properties)
-        XCTAssertEqual(message.mimeType, "image/jpg")
-        XCTAssertEqual(message.size, 1024)
-        XCTAssertEqual(message.imageMessageData?.originalSize, size)
+        if !preview {
+            XCTAssertEqual(message.mimeType, "image/jpg")
+            XCTAssertEqual(message.size, 1024)
+            XCTAssertEqual(message.imageMessageData?.originalSize, size)
+        }
     }
 
     func prepareUpload(of message: ZMAssetClientMessage) {
@@ -98,9 +109,17 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
         assertThatItCreatesARequest(for: message)
     }
 
-    func assertThatItCreatesARequest(for message: ZMAssetClientMessage, line: UInt = #line) {
+    func testThatItGeneratesARequestForAFilePreviewImageIfThePreviewIsProcessed() {
+        // given
+        let message = createFileMessageWithPreview()
+
+        // then
+        assertThatItCreatesARequest(for: message, preview: true)
+    }
+
+    func assertThatItCreatesARequest(for message: ZMAssetClientMessage, line: UInt = #line, preview: Bool = false) {
         // when
-        simulatePreprocessing(of: message)
+        simulatePreprocessing(of: message, preview: preview)
         prepareUpload(of: message)
 
         // then
@@ -117,9 +136,17 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
         assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message)
     }
 
-    func assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for message: ZMAssetClientMessage, line: UInt = #line) {
+    func testThatItPreprocessesThePreviewImageForANonImageFileMessageAndDeletesTheOriginalDataAfterwards() {
+        // given
+        let message = createFileMessageWithPreview()
+
+        // then
+        assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message, preview: true)
+    }
+
+    func assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for message: ZMAssetClientMessage, preview: Bool = false, line: UInt = #line) {
         // when 
-        XCTAssert(ZMAssetClientMessage.v3_imageProcessingFilter.evaluate(with: message), line: line)
+        XCTAssert(ZMAssetClientMessage.v3_imageProcessingFilter.evaluate(with: message), "Predicate does not match", line: line)
         XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true), line: line)
         XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false), line: line)
 
@@ -138,9 +165,17 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
         XCTAssertNotNil(mediumEncrypted, line: line)
         XCTAssertNotNil(mediumPlain, line: line)
         guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData", line: line) }
-        XCTAssertTrue(assetData.hasUploaded(), line: line)
-        XCTAssertTrue(assetData.uploaded.hasOtrKey(), line: line)
-        XCTAssertTrue(assetData.uploaded.hasSha256(), line: line)
+
+        if preview {
+            XCTAssertTrue(assetData.hasPreview(), line: line)
+            XCTAssertTrue(assetData.preview.hasRemote(), line: line)
+            XCTAssertTrue(assetData.preview.remote.hasOtrKey(), line: line)
+            XCTAssertTrue(assetData.preview.remote.hasSha256(), line: line)
+        } else {
+            XCTAssertTrue(assetData.hasUploaded(), line: line)
+            XCTAssertTrue(assetData.uploaded.hasOtrKey(), line: line)
+            XCTAssertTrue(assetData.uploaded.hasSha256(), line: line)
+        }
     }
 
     // MARK: – Request Response Parsing

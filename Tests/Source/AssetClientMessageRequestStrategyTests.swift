@@ -136,7 +136,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
                 expiresAfter: NSNumber(value: self.conversation.messageDestructionTimeout)
             )
             if assetId {
-                uploaded = uploaded.updated(withAssetId: UUID.create().transportString(), token: nil)!
+                uploaded = uploaded.updatedUploaded(withAssetId: UUID.create().transportString(), token: nil)!
             }
             message.add(uploaded)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasUploaded(), line: line)
@@ -281,36 +281,6 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         sut.assertCreatesValidRequestForAsset(in: conversation)
     }
 
-    func testThatItCreatesARequestToUploadAfterAPreviousAttemptFailed() {
-        // given
-        let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset, transferState: .uploading)
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
-
-        // when
-        request.complete(withHttpStatus: 400)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(message.uploadState, .uploadingFailed)
-        XCTAssertEqual(message.transferState, .failedUpload)
-        XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
-        sut.assertCreatesValidRequestForAsset(in: conversation)
-
-        // when
-        XCTAssertNil(sut.nextRequest())
-        syncMOC.saveOrRollback()
-        message.resend()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(message.uploadState, .uploadingPlaceholder)
-        XCTAssertEqual(message.transferState, .uploading)
-        XCTAssertFalse(message.delivered)
-        XCTAssertEqual(message.version, 3)
-        XCTAssertFalse(message.genericAssetMessage!.assetData!.hasNotUploaded())
-        sut.assertCreatesValidRequestForAsset(in: conversation)
-    }
-
     func testThatItCreatesARequestToUploadNotUploaded_Cancelled() {
         // given
         let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset, transferState: .uploading)
@@ -436,6 +406,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
     func testThatItUpdatesTheStateOfANonImageFileMessageWithThumbnailAfterUploadingTheOriginal() {
         // given
         let message = createMessage(isImage: false, preview: true, uploadState: .uploadingPlaceholder)
+        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: mediumJPEGData())
 
         // when
         let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
