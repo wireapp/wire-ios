@@ -34,7 +34,7 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTest {
         super.setUp()
         registrationStatus = MockClientRegistrationStatus()
         cancellationProvider = MockTaskCancellationProvider()
-        sut = AssetV3FileUploadRequestStrategy(clientRegistrationStatus: registrationStatus, managedObjectContext: syncMOC, taskCancellationProvider: cancellationProvider)
+        sut = AssetV3FileUploadRequestStrategy(clientRegistrationStatus: registrationStatus, taskCancellationProvider: cancellationProvider, managedObjectContext: syncMOC)
         conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         testFileURL = testURLWithFilename("file.dat")

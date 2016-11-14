@@ -66,7 +66,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTest {
             expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
         )
 
-        guard let uploadedWithId = uploaded.updated(withAssetId: assetId, token: token) else {
+        guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
             XCTFail("Failed to update asset")
             return nil
         }
