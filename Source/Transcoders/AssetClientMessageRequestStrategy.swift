@@ -73,6 +73,10 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
         // no-op
     }
 
+    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> ZMManagedObject? {
+        return (dependant as? ZMMessage)?.dependendObjectNeedingUpdateBeforeProcessing()
+    }
+
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
         guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message)") }
