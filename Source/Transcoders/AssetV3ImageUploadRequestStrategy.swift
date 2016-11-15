@@ -201,6 +201,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
 
         if !shouldRetry {
             if [.expired, .temporaryError, .tryAgainLater].contains(response.result) && message.uploadState == .uploadingThumbnail {
+                // If we are uploading a preview image we want to fail the file upload
                 message.didFailToUploadFileData()
                 managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
             } else {
