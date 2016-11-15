@@ -112,20 +112,39 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
     func testThatItGeneratesARequestForAFilePreviewImageIfThePreviewIsProcessed() {
         // given
         let message = createFileMessageWithPreview()
+        message.uploadState = .uploadingThumbnail
 
         // then
         assertThatItCreatesARequest(for: message, preview: true)
     }
 
-    func assertThatItCreatesARequest(for message: ZMAssetClientMessage, line: UInt = #line, preview: Bool = false) {
+    func testThatItDoesNotGeneratesARequestForAFilePreviewImageIfThePreviewIsProcessed_WrongUploadState() {
+        // given
+        let message = createFileMessageWithPreview()
+
+        // when
+        simulatePreprocessing(of: message, preview: true)
+        prepareUpload(of: message)
+
+        // then
+        XCTAssertNil(sut.nextRequest())
+    }
+
+    @discardableResult func assertThatItCreatesARequest(
+        for message: ZMAssetClientMessage,
+        line: UInt = #line,
+        preview: Bool = false
+        ) -> ZMTransportRequest? {
+
         // when
         simulatePreprocessing(of: message, preview: preview)
         prepareUpload(of: message)
 
         // then
-        guard let request = sut.nextRequest() else { return XCTFail("No request created", line: line) }
+        guard let request = sut.nextRequest() else { XCTFail("No request created", line: line); return nil }
         XCTAssertEqual(request.path, "/assets/v3", line: line)
         XCTAssertEqual(request.method, .methodPOST, line: line)
+        return request
     }
 
     func testThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards() {
@@ -208,14 +227,83 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
 
         // then
         guard let uploaded = message.genericAssetMessage?.assetData?.uploaded else { return XCTFail("No uploaded message", line: line) }
-        XCTAssertTrue(uploaded.hasOtrKey(), line: line)
-        XCTAssertTrue(uploaded.hasSha256(), line: line)
-        XCTAssertTrue(uploaded.hasAssetId(), line: line)
-        XCTAssertEqual(uploaded.hasAssetToken(), includeToken, line: line)
-        XCTAssertEqual(uploaded.assetId, assetKey, line: line)
+        assertThatRemoteDataHasAssetId(uploaded, assetId: assetKey, token: includeToken ? token : nil)
+    }
+
+    func testThatItUpdatesANonImageMessageWithPreviewTheAssetIdAndTokenFromTheResponse() {
+        assertThatItUpdatesThePreviewAssetIdFromTheResponse()
+    }
+
+    func testThatItUpdatesANonImageMessageWithPreviewTheAssetIdFromTheResponse() {
+        assertThatItUpdatesThePreviewAssetIdFromTheResponse(includeToken: false)
+    }
+
+    func assertThatItUpdatesThePreviewAssetIdFromTheResponse(includeToken: Bool = true, line: UInt = #line) {
+        // given
+        let message = createFileMessageWithPreview()
+        message.uploadState = .uploadingThumbnail
+        let (assetKey, token) = (UUID.create().transportString(), UUID.create().transportString())
+        simulatePreprocessing(of: message, preview: true)
+        prepareUpload(of: message)
+        guard let request = sut.nextRequest() else { return XCTFail("No request created", line: line) }
+        XCTAssertEqual(request.path, "/assets/v3", line: line)
+
+        // when
+        var payload = ["key": assetKey]
         if includeToken {
-            XCTAssertEqual(uploaded.assetToken, token, line: line)
+            payload["token"] = token
         }
+        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
+        request.complete(with: response)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        guard let remote = message.genericAssetMessage?.assetData?.preview.remote else { return XCTFail("No preview.remote message", line: line) }
+        assertThatRemoteDataHasAssetId(remote, assetId: assetKey, token: includeToken ? token : nil)
+    }
+
+    func assertThatRemoteDataHasAssetId(_ remote: ZMAssetRemoteData, assetId: String, token: String? = nil, line: UInt = #line) {
+        XCTAssertTrue(remote.hasOtrKey(), "No OTR key", line: line)
+        XCTAssertTrue(remote.hasSha256(), "No sha", line: line)
+        XCTAssertTrue(remote.hasAssetId(), "No assetId", line: line)
+        XCTAssertEqual(remote.hasAssetToken(), token != nil, "Token existence not matching", line: line)
+        XCTAssertEqual(remote.assetId, assetId, "Wrong asset ID", line: line)
+        if let token = token {
+            XCTAssertEqual(remote.assetToken, token, "Wrong asset token", line: line)
+        }
+    }
+
+    func testThatItUpdatesTheStateOfANonImageFileMessageWhenItReceivesASuccesfulResponse() {
+        // given
+        let message = createFileMessageWithPreview()
+        message.uploadState = .uploadingThumbnail
+
+        // when
+        let request = assertThatItCreatesARequest(for: message, preview: true)!
+        let payload = ["key": UUID.create().transportString()]
+        request.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.transferState, .uploading)
+        XCTAssertEqual(message.uploadState, .uploadingThumbnail)
+        XCTAssertFalse(message.delivered)
+    }
+
+    func testThatItFailsTheUploadIfItReceivesANonSuccessfullResponseWhenUploadingANonImageFileMessage() {
+        // given
+        let message = createFileMessageWithPreview()
+        message.uploadState = .uploadingThumbnail
+
+        // when
+        let request = assertThatItCreatesARequest(for: message, preview: true)!
+        request.complete(with: ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 400, transportSessionError: NSError.tryAgainLaterError() as Error))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(message.transferState, .failedUpload)
+        XCTAssertEqual(message.uploadState, .uploadingFailed)
+        XCTAssertEqual(message.deliveryState, .failedToSend)
     }
 
     // MARK: – Ephemeral
