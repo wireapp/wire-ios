@@ -248,6 +248,8 @@
 
 "content.message.like" = "Like";
 "content.message.unlike" = "Unlike";
+"content.message.forward" = "Forward";
+"content.message.forward.to" = "Send to...";
 
 "content.reactions_list.likers" = "Liked by";
 
