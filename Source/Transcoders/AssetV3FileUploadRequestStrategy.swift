@@ -170,7 +170,7 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
         request?.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
             message.associatedTaskIdentifier = nil
             if response.result == .expired || response.result == .temporaryError || response.result == .tryAgainLater {
-                self.failMessageUpload(message, keys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey), request: request)
+                self.failMessageUpload(message, keys: [ZMAssetClientMessageUploadedStateKey], request: request)
             }
         })
         request?.add(ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
