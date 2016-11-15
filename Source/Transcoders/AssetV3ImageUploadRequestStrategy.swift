@@ -72,14 +72,14 @@ extension ZMAssetClientMessage {
     }
 
     /// We want to upload file messages that DO NOT represent an image but have a preview image associated with them. 
-    /// The transfer state is `.uploading` and the uploadState is not `.done`.
+    /// The transfer state is `.uploading` and the uploadState is `.uploadingThumbnail`.
     /// We also want to wait for the preprocessing of the image preview data (encryption) to finish (thus the check for an existing preview otrKey).
     /// When the preprocessing is finished the message will have a preview generic message set (and an otrKey and image metadata).
     var v3_isReadyToUploadThumbnailData: Bool {
         guard let assetData = genericAssetMessage?.assetData, !assetData.original.hasImage() else { return false }
         return fileMessageData != nil
             && transferState == .uploading
-            && uploadState != .done
+            && uploadState == .uploadingThumbnail
             && assetData.hasPreview()
             && !assetData.preview.remote.hasAssetId()
             && assetData.preview.remote.otrKey.count > 0
@@ -191,6 +191,16 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         guard let message = managedObject as? ZMAssetClientMessage else { return nil }
         guard let data = managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true) else { return nil }
         guard let request = requestFactory.upstreamRequestForAsset(withData: data, shareable: false, retention: .Persistent) else { return nil }
+
+        if message.uploadState == .uploadingThumbnail {
+            request.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
+                message.associatedTaskIdentifier = nil
+                if response.result == .expired || response.result == .temporaryError || response.result == .tryAgainLater {
+                    self.failUpload(of: message, keys: [ZMAssetClientMessageUploadedStateKey], request: request)
+                }
+            })
+        }
+
         return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey), transportRequest: request)
     }
 
@@ -209,24 +219,26 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
-        guard let message = managedObject as? ZMAssetClientMessage, let status = clientRegistrationStatus else { return false }
-
-        let shouldRetry = message.parseUploadResponse(response, clientDeletionDelegate: status)
-
-        if !shouldRetry {
-            if [.expired, .temporaryError, .tryAgainLater].contains(response.result) && message.uploadState == .uploadingThumbnail {
-                // If we are uploading a preview image we want to fail the file upload
-                if message.transferState != .cancelledUpload {
-                    message.transferState = .failedUpload
-                    message.expire()
-                }
-                message.didFailToUploadFileData()
-                managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
-            }
-
+        guard let message = managedObject as? ZMAssetClientMessage else { return false }
+        if message.uploadState == .uploadingThumbnail {
+            failUpload(of: message, keys: keys, request: upstreamRequest.transportRequest)
+            return true
+        } else {
             message.uploadState = .uploadingFailed
+            return false
         }
-        return shouldRetry
+    }
+
+    private func failUpload(of message: ZMAssetClientMessage, keys: Set<String>, request: ZMTransportRequest?) {
+        if message.transferState != .cancelledUpload {
+            message.transferState = .failedUpload
+            message.expire()
+        }
+
+        guard keys.contains(ZMAssetClientMessageUploadedStateKey) else { return }
+        message.didFailToUploadFileData()
+        managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
+        message.uploadState = .uploadingFailed
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
