@@ -21,6 +21,16 @@ import Foundation
 import WireRequestStrategy
 
 
+/// The `AssetClientMessageRequestStrategy` for creating requests to insert the genericMessage of a `ZMAssetClientMessage`
+/// remotely. This is only necessary for the `/assets/v3' endpoint as we upload the asset, receive the asset ID in the response,
+/// manually add it to the genericMessage and send it using the `/otr/messages` endpoint like any other message.
+/// This is an additional step required as the fan-out was previously done by the backend when uploading a v2 asset.
+/// There are mutliple occasions where we might want to send the genericMessage of a `ZMAssetClientMessage` again:
+///
+/// * We just inserted the message and want to upload the `Asset.Original` containing the metadata about the asset.
+/// * (Optional) If the asset has data that can be used to show a preview of it, we want to upload the `Asset.Preview` as soon as the preview data has been preprocessed and uploaded using the `/assets/v3` endpoint.
+/// * When the actual asset data has been preprocessed (encrypted) and uploaded we want to insert the `Asset.Uploaded` message.
+/// * If we fail to upload the preview or uploaded message we will upload an `Asset.NOTUploaded` genericMessage.
 public final class AssetClientMessageRequestStrategy: ZMObjectSyncStrategy, RequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate let requestFactory = ClientMessageRequestFactory()
@@ -116,10 +126,10 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
             }
 
             return true
-        case .uploadingThumbnail:
+        case .uploadingThumbnail: // We uploaded the Asset.preview
             message.uploadState = .uploadingFullAsset
             return true
-        case .uploadingFullAsset:
+        case .uploadingFullAsset: // We uploaded the Asset.uploaded
             message.uploadState = .done
             message.transferState = .downloaded
             message.delivered = true

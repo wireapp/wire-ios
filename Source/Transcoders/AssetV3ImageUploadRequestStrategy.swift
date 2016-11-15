@@ -56,14 +56,13 @@ extension ZMAssetClientMessage {
         return NSPredicate(format: "v3_isReadyToUploadImageData == YES OR v3_isReadyToUploadThumbnailData == YES")
     }
 
-    /// We want to upload file messages that represent an image where the transfer state is
-    /// one of `.uploading`, `.failedUpload`, `.cancelledUpload` and only if we are not done uploading.
+    /// We want to upload file messages that represent an image where the transfer state is `.uploading`and only if we are not done uploading.
     /// We also want to wait for the preprocessing of the file data (encryption) to finish (thus the check for an existing otrKey).
     /// We also need to ensure this file message actually represents an image and that the image preprocessing finished.
     var v3_isReadyToUploadImageData: Bool {
         guard let assetData = genericAssetMessage?.assetData else { return false }
         return fileMessageData != nil
-            && [.uploading, .failedUpload, .cancelledUpload].contains(transferState)
+            && transferState == .uploading
             && uploadState != .done
             && assetData.hasUploaded()
             && !assetData.uploaded.hasAssetId()
@@ -72,10 +71,14 @@ extension ZMAssetClientMessage {
             && assetData.original.image.width > 0
     }
 
+    /// We want to upload file messages that DO NOT represent an image but have a preview image associated with them. 
+    /// The transfer state is `.uploading` and the uploadState is not `.done`.
+    /// We also want to wait for the preprocessing of the image preview data (encryption) to finish (thus the check for an existing preview otrKey).
+    /// When the preprocessing is finished the message will have a preview generic message set (and an otrKey and image metadata).
     var v3_isReadyToUploadThumbnailData: Bool {
         guard let assetData = genericAssetMessage?.assetData, !assetData.original.hasImage() else { return false }
         return fileMessageData != nil
-            && [.uploading, .failedUpload, .cancelledUpload].contains(transferState)
+            && transferState == .uploading
             && uploadState != .done
             && assetData.hasPreview()
             && !assetData.preview.remote.hasAssetId()
@@ -86,7 +89,13 @@ extension ZMAssetClientMessage {
 
 }
 
-
+/// This strategy is used to upload images to the `/assets/v3` endpoint.
+/// It uploads images for (v3) `ZMAssetClientMessage` that represent an image and
+/// for those that represent any other file but have a preview / thumbnail image.
+/// Images are stored in the ImageAsset cache to ensure they are not discarded to fast when the
+/// user also downloaded a lot of files.
+/// After the image has been uploaded either the `Asset.Uploaded` generic message (in case of images), or the
+/// `Asset.Preview` generic message will be updated and the state of the message updated accordingly.
 public final class AssetV3ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate let preprocessor: ZMImagePreprocessingTracker
@@ -147,12 +156,16 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         guard let payload = response.payload?.asDictionary(), let assetId = payload["key"] as? String else { fatal("No asset ID present in payload: \(response.payload)") }
         let token: String? = payload["token"] as? String
 
+        // We either uploaded the full asset if this file is an image, or we uploaded the preview image in case this
+        // file does not represent an image but has a thumbnail image. We need to make sure that we update the correct
+        // generic message (Asset.Uploaded in case of an image and Asset.Preview in case of a file with preview).an
         if let updated = genericMessage.updatedUploaded(withAssetId: assetId, token: token),
             asset.original.hasImage(),
             message.uploadState == .uploadingFullAsset {
 
+            // The AssetClientMessageTranscoder will send the genericMessage as soon as there is an
+            // asset ID, and will mark this message as sent afterwards.
             message.add(updated)
-            message.transferState = .uploading
             managedObjectContext.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
             managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
             // We need more requests to actually upload the message data (see AssetClientMessageRequestStrategy)
@@ -162,8 +175,9 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             !asset.original.hasImage(),
             asset.preview.hasImage() {
 
+            // The AssetClientMessageTranscoder will send the genericMessage as soon as there is an
+            // preview asset ID, afterwards the full asset will be uploaded.
             message.add(updated)
-            message.transferState = .uploading
             managedObjectContext.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
             managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
             // We need more requests to actually upload the message data (see AssetClientMessageRequestStrategy)
@@ -202,12 +216,15 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         if !shouldRetry {
             if [.expired, .temporaryError, .tryAgainLater].contains(response.result) && message.uploadState == .uploadingThumbnail {
                 // If we are uploading a preview image we want to fail the file upload
+                if message.transferState != .cancelledUpload {
+                    message.transferState = .failedUpload
+                    message.expire()
+                }
                 message.didFailToUploadFileData()
                 managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
-            } else {
-                // For images we only set the uploadState to failed
-                message.uploadState = .uploadingFailed
             }
+
+            message.uploadState = .uploadingFailed
         }
         return shouldRetry
     }
@@ -221,7 +238,6 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     func scheduleImageProcessing(forMessage message: ZMAssetClientMessage, format: ZMImageFormat) {
-        // TODO: This is only valid if the message represents an image, not if it is a file and the image we process is a thumbnail
         let genericMessage = ZMGenericMessage.genericMessage(
             withImageSize: .zero,
             mimeType: "",
