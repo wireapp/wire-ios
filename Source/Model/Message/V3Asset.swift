@@ -28,6 +28,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 /// asset types (v2 image & file vs. v3 file) from ZMAssetClientMessage.
 /// It only includes methods in which these two versions differentiate.
 @objc public protocol AssetProxyType {
+
     var hasDownloadedImage: Bool { get }
     var hasDownloadedFile: Bool { get }
     var imageMessageData: ZMImageMessageData? { get }
@@ -41,6 +42,10 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
     func requestFileDownload()
     func requestImageDownload()
+
+    // Image preprocessing
+    var requiredImageFormats: NSOrderedSet { get }
+    func processAddedImage(format: ZMImageFormat, properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys)
 }
 
 
@@ -62,7 +67,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var imageMessageData: ZMImageMessageData? {
-        guard isImage || (nil != assetClientMessage.fileMessageData && hasDownloadedImage) else { return nil }
+        guard isImage else { return nil }
         return self
     }
 
@@ -89,8 +94,8 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var previewData: Data? {
-        guard nil != assetClientMessage.fileMessageData, !isImage, assetClientMessage.hasDownloadedImage else { return nil }
-        return imageData(for: .medium, encrypted: false)
+        guard nil != assetClientMessage.fileMessageData, !isImage, hasDownloadedImage else { return nil }
+        return imageData(for: .medium, encrypted: false) ?? imageData(for: .original, encrypted: false)
     }
 
     public var isAnimatedGIF: Bool {
@@ -119,11 +124,8 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 extension V3Asset: AssetProxyType {
 
     public var hasDownloadedImage: Bool {
-        var downloaded = nil != imageData(for: .medium, encrypted: false)
-        if isImage {
-            downloaded = downloaded || nil != imageData(for: .original, encrypted: false)
-        }
-        return downloaded
+        return nil != imageData(for: .medium, encrypted: false)
+            || nil != imageData(for: .original, encrypted: false)
     }
 
     public var hasDownloadedFile: Bool {
@@ -160,6 +162,32 @@ extension V3Asset: AssetProxyType {
         } else {
             return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image or has a preview")
         }
+    }
+
+    public var requiredImageFormats: NSOrderedSet {
+        return NSOrderedSet(object: ZMImageFormat.medium.rawValue)
+    }
+
+    public func processAddedImage(format: ZMImageFormat, properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
+        guard format == .medium, let sha256 = keys.sha256 else { return zmLog.error("Tried to process non-medium v3 image for \(assetClientMessage)") }
+        let messageID = assetClientMessage.nonce.transportString()
+
+        let original = ZMGenericMessage.genericMessage(
+            withImageSize: properties.size,
+            mimeType: properties.mimeType,
+            size: UInt64(properties.length),
+            nonce: messageID,
+            expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
+        )
+        let uploaded = ZMGenericMessage.genericMessage(
+            withUploadedOTRKey: keys.otrKey,
+            sha256: sha256,
+            messageID: messageID,
+            expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
+        )
+
+        assetClientMessage.add(original)
+        assetClientMessage.add(uploaded)
     }
 
     // MARK: - Helper
