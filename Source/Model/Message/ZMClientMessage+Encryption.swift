@@ -53,17 +53,48 @@ public func ==(lhs: MissingClientsStrategy, rhs: MissingClientsStrategy) -> Bool
 }
 
 
-extension ZMClientMessage {
-    
+public protocol EncryptedPayloadGenerator {
     /// Returns the payload encrypted for each recipients, and the strategy
     /// to use to handle missing clients
+    func encryptedMessagePayloadData() -> (data: Data, strategy: MissingClientsStrategy)?
+
+    var debugInfo: String { get }
+}
+
+
+extension ZMClientMessage: EncryptedPayloadGenerator {
+
     public func encryptedMessagePayloadData() -> (data: Data, strategy: MissingClientsStrategy)? {
         guard let genericMessage = self.genericMessage, let conversation = self.conversation else {
             return nil
         }
         return genericMessage.encryptedMessagePayloadData(conversation, externalData: nil)
     }
+
+    public var debugInfo: String {
+        var info = "\(genericMessage)"
+        if let genericMessage = genericMessage, genericMessage.hasExternal() {
+            info = "External message: " + info
+        }
+        return info
+    }
+
 }
+
+
+extension ZMAssetClientMessage: EncryptedPayloadGenerator {
+
+    public func encryptedMessagePayloadData() -> (data: Data, strategy: MissingClientsStrategy)? {
+        guard let genericMessage = genericAssetMessage, let conversation = conversation else { return nil }
+        return genericMessage.encryptedMessagePayloadData(conversation, externalData: nil)
+    }
+
+    public var debugInfo: String {
+        return "\(genericAssetMessage)"
+    }
+    
+}
+
 
 extension ZMGenericMessage {
     

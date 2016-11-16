@@ -79,14 +79,11 @@ public extension ZMGenericMessage {
     }
 
     var v3_fileCacheKey: String {
-        if let original = assetData?.original,
-            original.hasName(),
-            let assetId = v3_uploadedAssetId,
-            let name = original.name {
-            return assetId + "_" + name
+        if let original = assetData?.original, original.hasName() {
+            return original.name
         }
 
-        return v3_uploadedAssetId ?? ""
+        return ""
     }
 
     var previewAssetId: String? {
@@ -155,6 +152,13 @@ public extension ZMGenericMessage {
         let asset = ZMImageAsset(mediumProperties: mediumImageProperties, processedProperties: processedImageProperties, encryptionKeys: encryptionKeys, format: format)
         return genericMessage(pbMessage: asset, messageID: nonce, expiresAfter: timeout)
     }
+
+    public static func genericMessage(withImageSize imageSize: CGSize, mimeType: String, size: UInt64, nonce: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
+        let imageMeta = ZMAssetImageMetaData.imageMetaData(withWidth: Int32(imageSize.width), height: Int32(imageSize.height))
+        let original = ZMAssetOriginal.original(withSize: size, mimeType: mimeType, name: nil, imageMetaData: imageMeta)
+        let asset = ZMAsset.asset(withOriginal: original, preview: nil)
+        return ZMGenericMessage.genericMessage(asset: asset, messageID: nonce, expiresAfter: timeout)
+    }
     
     // MARK: Text
 
@@ -176,7 +180,7 @@ public extension ZMGenericMessage {
     }
 
     // MARK: Updating assets with asset ID and token
-    public func updated(withAssetId assetId: String, token: String?) -> ZMGenericMessage? {
+    public func updatedUploaded(withAssetId assetId: String, token: String?) -> ZMGenericMessage? {
         guard let asset = assetData, let remote = asset.uploaded, asset.hasUploaded() else { return nil }
         let newRemote = remote.updated(withId: assetId, token: token)
         let builder = toBuilder()!
@@ -197,6 +201,29 @@ public extension ZMGenericMessage {
         return builder.build()
     }
 
+    public func updatedPreview(withAssetId assetId: String, token: String?) -> ZMGenericMessage? {
+        guard let asset = assetData, let preview = asset.preview, let remote = preview.remote, preview.hasRemote() else { return nil }
+        let newRemote = remote.updated(withId: assetId, token: token)
+        let previewBuilder = preview.toBuilder()
+        _ = previewBuilder?.setRemote(newRemote)
+        let builder = toBuilder()!
+        if hasAsset() {
+            let assetBuilder = asset.toBuilder()
+            _ = assetBuilder?.setPreview(previewBuilder)
+            builder.setAsset(assetBuilder)
+        } else if hasEphemeral() && ephemeral.hasAsset() {
+            let ephemeralBuilder = ephemeral.toBuilder()
+            let assetBuilder = ephemeral.asset.toBuilder()
+            _ = assetBuilder?.setPreview(previewBuilder)
+            _ = ephemeralBuilder?.setAsset(assetBuilder)
+            builder.setEphemeral(ephemeralBuilder)
+        } else {
+            return nil
+        }
+
+        return builder.build()
+    }
+
 }
 
 extension ZMAssetRemoteData {
@@ -204,7 +231,9 @@ extension ZMAssetRemoteData {
     public func updated(withId assetId: String, token: String?) -> ZMAssetRemoteData {
         let builder = toBuilder()!
         builder.setAssetId(assetId)
-        builder.setAssetToken(token)
+        if let token = token {
+            builder.setAssetToken(token)
+        }
         return builder.build()
     }
 
