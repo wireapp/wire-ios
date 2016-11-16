@@ -125,6 +125,12 @@ typedef NS_ENUM(int16_t, ZMAssetUploadState) {
                                             managedObjectContext:(NSManagedObjectContext * _Nonnull)moc
                                                     expiresAfter:(NSTimeInterval)timeout;
 
++ (instancetype _Nonnull)assetClientMessageWithOriginalImageData:(NSData * _Nonnull)imageData
+                                                  nonce:(NSUUID * _Nonnull)nonce
+                                   managedObjectContext:(NSManagedObjectContext * _Nonnull)moc
+                                           expiresAfter:(NSTimeInterval)timeout
+                                               version3:(BOOL)version3;
+
 /// Inserts a new @c ZMAssetClientMessage in the @c moc and updates it with the given file metadata
 + (nonnull instancetype)assetClientMessageWithFileMetadata:(nonnull ZMFileMetadata *)metadata
                                                      nonce:(nonnull NSUUID *)nonce
