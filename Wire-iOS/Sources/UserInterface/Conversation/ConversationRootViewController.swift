@@ -140,7 +140,12 @@ public extension ConversationViewController {
     }
     
     private func confirmCallInGroup(completion: @escaping (_ accepted: Bool) -> ()) {
-        let confirmation = UIAlertController(title: "conversation.call.many_participants_confirmation.title".localized, message: "conversation.call.many_participants_confirmation.message".localized, preferredStyle: .alert)
+        let participantsCount = self.conversation.activeParticipants.count - 1
+        let message = "conversation.call.many_participants_confirmation.message".localized(args: participantsCount)
+        
+        let confirmation = UIAlertController(title: "conversation.call.many_participants_confirmation.title".localized,
+                                             message: message,
+                                             preferredStyle: .alert)
         
         let actionCancel = UIAlertAction(title: "general.cancel".localized, style: .cancel) { _ in
             completion(false)
