@@ -28,8 +28,12 @@ public final class ClientMessageRequestFactory: NSObject {
     
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"
-    
+
     public func upstreamRequestForMessage(_ message: ZMClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
+        return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: conversationId);
+    }
+
+    public func upstreamRequestForMessage(_ message: EncryptedPayloadGenerator, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
         return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: conversationId);
     }
     
@@ -37,16 +41,14 @@ public final class ClientMessageRequestFactory: NSObject {
         return upstreamRequestForEncryptedImageMessage(format, message: message, forConversationWithId: conversationId);
     }
     
-    fileprivate func upstreamRequestForEncryptedClientMessage(_ message: ZMClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
+    fileprivate func upstreamRequestForEncryptedClientMessage(_ message: EncryptedPayloadGenerator, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
         let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
         guard let dataAndMissingClientStrategy = message.encryptedMessagePayloadData() else {
             return nil
         }
         let path = originalPath.pathWithMissingClientStrategy(strategy: dataAndMissingClientStrategy.strategy)
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: dataAndMissingClientStrategy.data, type: protobufContentType, contentDisposition: nil)
-        var debugInfo = "\(message.genericMessage)"
-        if let genericMessage = message.genericMessage , genericMessage.hasExternal() { debugInfo = "External message: " + debugInfo }
-        request.addContentDebugInformation(debugInfo)
+        request.addContentDebugInformation(message.debugInfo)
         return request
     }
 
