@@ -2122,9 +2122,11 @@ extension ZMAssetClientMessageTests {
         // when
         let assetId = UUID.create().transportString()
         let assetData = Data.secureRandomData(length: 512)
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId)
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
-        uiMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: assetId, encrypted: false, data: assetData)
+
+        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), name: "document.pdf"), updateEvent: ZMUpdateEvent())
+        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent())
+        uiMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: "document.pdf", encrypted: false, data: assetData)
+
 
         // then
         XCTAssertTrue(sut.hasDownloadedFile)
@@ -2132,20 +2134,21 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.version, 3)
     }
 
-    func testThatItReportsDownloadedImageWhenThereIsAFileInTheCache_V3() {
+    func testThatItReportsDownloadedImageWhenThereIsAnImageFileInTheCache_V3() {
         // given
         let (sut, nonce) = createMessageWithNonce()
 
         // when
         let assetId = UUID.create().transportString()
         let assetData = Data.secureRandomData(length: 512)
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId)
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
-        uiMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: assetId, encrypted: false, data: assetData)
+        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
+        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil), updateEvent: ZMUpdateEvent())
+        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent())
+        uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: assetData)
 
         // then
-        XCTAssertTrue(sut.hasDownloadedFile)
-        XCTAssertFalse(sut.hasDownloadedImage)
+        XCTAssertFalse(sut.hasDownloadedFile)
+        XCTAssertTrue(sut.hasDownloadedImage)
         XCTAssertEqual(sut.version, 3)
     }
 
@@ -2212,7 +2215,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertFalse(sut.hasDownloadedFile)
         XCTAssertTrue(sut.hasDownloadedImage)
         XCTAssertEqual(sut.version, 3)
-        XCTAssertEqual(sut.imageMessageData?.previewData, previewData)
+        XCTAssertEqual(sut.fileMessageData?.previewData, previewData)
     }
 
     func testThatIsHasDownloadedImageAndReturnsItWhenTheImageIsOnDisk_V3() {

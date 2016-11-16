@@ -166,4 +166,80 @@ extension V2Asset: AssetProxyType {
         )
     }
 
+    public var requiredImageFormats: NSOrderedSet {
+        if nil != assetClientMessage.fileMessageData {
+            return NSOrderedSet(object: ZMImageFormat.medium.rawValue)
+        } else if nil != imageMessageData {
+            return NSOrderedSet(array: [ZMImageFormat.medium.rawValue,  ZMImageFormat.preview.rawValue])
+        } else {
+            return NSOrderedSet()
+        }
+    }
+
+    public func processAddedImage(format: ZMImageFormat, properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
+        switch format {
+        case .medium: processAddedMediumImage(properties: properties, keys: keys)
+        case .preview: processAddedPreviewImage(properties: properties, keys: keys)
+        default: fatal("Unexpected format in -processAddedImage: \(format)")
+        }
+    }
+
+    func processAddedMediumImage(properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
+        let messageID = assetClientMessage.nonce.transportString()
+
+        let mediumMessage = ZMGenericMessage.genericMessage(
+            mediumImageProperties: properties,
+            processedImageProperties: properties,
+            encryptionKeys: keys,
+            nonce: messageID,
+            format: .medium,
+            expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
+        )
+        assetClientMessage.add(mediumMessage)
+
+        if var preview = assetStorage.genericMessage(for: .preview), preview.imageAssetData?.size > 0 { // if the preview is there, update it with the medium size
+            preview = ZMGenericMessage.genericMessage(
+                mediumImageProperties: imageProperties(from: mediumMessage),
+                processedImageProperties: imageProperties(from: preview),
+                encryptionKeys: encryptionKeys(from: preview),
+                nonce: messageID,
+                format: .preview,
+                expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
+            )
+
+            assetClientMessage.add(preview)
+        }
+    }
+
+    func processAddedPreviewImage(properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
+        let medium = assetStorage.genericMessage(for: .medium)
+        let message = ZMGenericMessage.genericMessage(
+            mediumImageProperties: medium.map(imageProperties),
+            processedImageProperties: properties,
+            encryptionKeys: keys,
+            nonce: assetClientMessage.nonce.transportString(),
+            format: .preview,
+            expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
+        )
+        assetClientMessage.add(message)
+
+    }
+
+    func imageProperties(from message: ZMGenericMessage) -> ZMIImageProperties {
+        return ZMIImageProperties(
+            size: CGSize(width: Int(message.imageAssetData?.width ?? 0), height: Int(message.imageAssetData?.height ?? 0)),
+            length: UInt(message.imageAssetData?.size ?? 0),
+            mimeType: message.imageAssetData?.mimeType ?? ""
+        )
+    }
+
+    func encryptionKeys(from message: ZMGenericMessage) -> ZMImageAssetEncryptionKeys {
+        let assetData = message.imageAssetData!
+        if assetData.hasSha256() == true {
+            return ZMImageAssetEncryptionKeys(otrKey: assetData.otrKey, sha256: assetData.sha256)
+        } else {
+            return ZMImageAssetEncryptionKeys(otrKey: assetData.otrKey, macKey: assetData.macKey, mac: assetData.mac)
+        }
+    }
+
 }

@@ -108,6 +108,34 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     return message;
 }
 
++ (instancetype)v3_assetClientMessageWithOriginalImageData:(NSData *)imageData nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout;
+{
+    [moc.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:imageData];
+
+    ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:moc];
+    CGSize originalSize = [ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData];
+
+    // We update the size and mimeType once the preprocesing is done
+    ZMGenericMessage *assetMessage = [ZMGenericMessage genericMessageWithImageSize:CGSizeZero mimeType:@"" size:imageData.length nonce:nonce.transportString expiresAfter:@(timeout)];
+    [message addGenericMessage:assetMessage];
+
+    message.preprocessedSize = originalSize;
+    message.uploadState = ZMAssetUploadStateUploadingFullAsset;
+    message.transferState = ZMFileTransferStateUploading;
+    message.version = 3;
+
+    return message;
+}
+
++ (instancetype)assetClientMessageWithOriginalImageData:(NSData *)imageData nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout version3:(BOOL)version3;
+{
+    if (version3) {
+        return [self v3_assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:moc expiresAfter:timeout];
+    } else {
+        return [self assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:moc expiresAfter:timeout];
+    }
+}
+
 + (instancetype)assetClientMessageWithFileMetadata:(ZMFileMetadata *)metadata nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout
 {
     return [self assetClientMessageWithFileMetadata:metadata nonce:nonce managedObjectContext:moc expiresAfter:timeout version3:NO];
@@ -122,10 +150,9 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
         ZMLogWarn(@"Failed to read data of file at url %@ : %@", metadata.fileURL, error);
         return nil;
     }
-    
+
     [moc.zm_fileAssetCache storeAssetData:nonce fileName:metadata.fileURL.lastPathComponent encrypted:NO data:data];
-    
-    
+
     ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:moc];
     message.transferState = ZMFileTransferStateUploading;
     message.uploadState = ZMAssetUploadStateUploadingPlaceholder;
@@ -338,6 +365,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
         if (data.genericMessage.assetData != nil && data.genericMessage.assetData.hasNotUploaded) {
             data.asset = nil;
             [self.managedObjectContext deleteObject:data];
+            self.cachedGenericAssetMessage = nil;
             return;
         }
     }
@@ -675,23 +703,6 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     return NO;
 }
 
-- (ZMIImageProperties *)propertiesFromGenericMessage:(ZMGenericMessage *)genericMessage
-{
-    return [ZMIImageProperties imagePropertiesWithSize:CGSizeMake(genericMessage.imageAssetData.width, genericMessage.imageAssetData.height)
-                                                length:(unsigned long)genericMessage.imageAssetData.size
-                                              mimeType:genericMessage.imageAssetData.mimeType];
-}
-
-- (ZMImageAssetEncryptionKeys *)keysFromGenericMessage:(ZMGenericMessage *)genericMessage
-{
-    if(genericMessage.imageAssetData.hasSha256) {
-        return [[ZMImageAssetEncryptionKeys alloc] initWithOtrKey:genericMessage.imageAssetData.otrKey sha256:genericMessage.imageAssetData.sha256];
-    }
-    else {
-        return [[ZMImageAssetEncryptionKeys alloc] initWithOtrKey:genericMessage.imageAssetData.otrKey macKey:genericMessage.imageAssetData.macKey mac:genericMessage.imageAssetData.mac];
-    }
-}
-
 - (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties *)properties
 {
     [self.managedObjectContext.zm_imageAssetCache storeAssetData:self.nonce format:format encrypted:NO data:imageData];
@@ -710,41 +721,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (void)processAddedImageWithFormat:(ZMImageFormat)format properties:(ZMIImageProperties *)properties encryptionKeys:(ZMImageAssetEncryptionKeys *)keys
 {
-    // We need to set the medium size on the preview message
-    if(format == ZMImageFormatMedium) {
-        ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithMediumImageProperties:properties
-                                                                            processedImageProperties:properties
-                                                                                      encryptionKeys:keys
-                                                                                               nonce:self.nonce.transportString
-                                                                                              format:ZMImageFormatMedium
-                                                                                         expiresAfter:@(self.deletionTimeout)];
-        [self addGenericMessage:genericMessage];
-        ZMGenericMessage *previewGenericMessage = [self genericMessageForFormat:ZMImageFormatPreview];
-        if(previewGenericMessage.imageAssetData.size > 0) { // if the preview is there, update it with the medium size
-            previewGenericMessage = [ZMGenericMessage genericMessageWithMediumImageProperties:[self propertiesFromGenericMessage:genericMessage]
-                                                                     processedImageProperties:[self propertiesFromGenericMessage:previewGenericMessage]
-                                                                               encryptionKeys:[self keysFromGenericMessage:previewGenericMessage]
-                                                                                        nonce:self.nonce.transportString
-                                                                                       format:ZMImageFormatPreview
-                                                                                  expiresAfter:@(self.deletionTimeout)];
-            [self addGenericMessage:previewGenericMessage];
-            
-        }
-        
-    }
-    else if(format == ZMImageFormatPreview) {
-        ZMGenericMessage *mediumGenericMessage = [self genericMessageForFormat:ZMImageFormatMedium]; // if the medium is there, update the preview with it
-        ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithMediumImageProperties:mediumGenericMessage != nil ? [self propertiesFromGenericMessage:mediumGenericMessage] : nil
-                                                                            processedImageProperties:properties
-                                                                                      encryptionKeys:keys
-                                                                                               nonce:self.nonce.transportString
-                                                                                              format:ZMImageFormatPreview
-                                                                                         expiresAfter:@(self.deletionTimeout)];
-        [self addGenericMessage:genericMessage];
-    }
-    else {
-        RequireString(false, "Unexpected format in setImageData:");
-    }
+    [self.asset processAddedImageWithFormat:format properties:properties keys:keys];
 }
 
 - (void)processAddedFilePreviewWithFormat:(ZMImageFormat)format properties:(ZMIImageProperties *)properties encryptionKeys:(__unused ZMImageAssetEncryptionKeys *)keys imageData:(NSData *)data
@@ -809,13 +786,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (NSOrderedSet *)requiredImageFormats
 {
-    if (nil != self.fileMessageData) {
-        return [NSOrderedSet orderedSetWithObject:@(ZMImageFormatMedium)];
-    } else if (nil != self.imageMessageData) {
-        return [NSOrderedSet orderedSetWithObjects:@(ZMImageFormatMedium), @(ZMImageFormatPreview), nil];
-    } else {
-        return [NSOrderedSet new];
-    }
+    return self.asset.requiredImageFormats;
 }
 
 - (BOOL)isInlineForFormat:(ZMImageFormat)format
