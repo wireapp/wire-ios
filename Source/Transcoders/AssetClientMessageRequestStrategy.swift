@@ -135,7 +135,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
             message.delivered = true
             message.markAsSent()
 
-            // Track succesfull fileupload
+            // Track successful fileupload
             assetAnalytics.trackUploadFinished(for: message, with: response)
 
         default: break
