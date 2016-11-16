@@ -101,7 +101,8 @@ extension AssetV3FileUploadRequestStrategy: ZMContextChangeTracker {
     // when the user cancels a file upload
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
         let assetClientMessages = object.flatMap { object -> ZMAssetClientMessage? in
-            guard let message = object as? ZMAssetClientMessage ,
+            guard let message = object as? ZMAssetClientMessage,
+                message.version == 3,
                 nil != message.fileMessageData && message.transferState == .cancelledUpload
                 else { return nil }
             return message

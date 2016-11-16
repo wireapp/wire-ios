@@ -102,8 +102,9 @@ public final class AssetV3ImageUploadRequestStrategy: ZMObjectSyncStrategy, Requ
     fileprivate let requestFactory = AssetRequestFactory()
     fileprivate weak var clientRegistrationStatus: ClientRegistrationDelegate?
     fileprivate var upstreamSync: ZMUpstreamModifiedObjectSync!
+    fileprivate weak var taskCancellationProvider: ZMRequestCancellation?
 
-    public init(clientRegistrationStatus: ClientRegistrationDelegate, managedObjectContext: NSManagedObjectContext) {
+    public init(clientRegistrationStatus: ClientRegistrationDelegate, taskCancellationProvider: ZMRequestCancellation, managedObjectContext: NSManagedObjectContext) {
         self.clientRegistrationStatus = clientRegistrationStatus
 
         preprocessor = ZMImagePreprocessingTracker(
@@ -127,13 +128,46 @@ public final class AssetV3ImageUploadRequestStrategy: ZMObjectSyncStrategy, Requ
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [preprocessor, upstreamSync]
+        return [preprocessor, upstreamSync, self]
     }
 
     public func nextRequest() -> ZMTransportRequest? {
         guard let status = clientRegistrationStatus, status.clientIsReadyForRequests else { return nil }
         return upstreamSync.nextRequest()
     }
+}
+
+extension AssetV3ImageUploadRequestStrategy: ZMContextChangeTracker {
+
+    // we need to cancel the requests manually as the upstream modified object sync
+    // will not pick up a change to keys which are already being synchronized (uploadState)
+    // when the user cancels a file upload
+    public func objectsDidChange(_ object: Set<NSManagedObject>) {
+        let assetClientMessages = object.flatMap { object -> ZMAssetClientMessage? in
+            guard let message = object as? ZMAssetClientMessage,
+                message.version == 3,
+                message.genericAssetMessage?.assetData?.hasPreview() == true,
+                nil != message.fileMessageData && message.transferState == .cancelledUpload
+                else { return nil }
+            return message
+        }
+
+        assetClientMessages.forEach(cancelOutstandingUploadRequests)
+    }
+
+    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+        return nil
+    }
+
+    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        // no op
+    }
+
+    fileprivate func cancelOutstandingUploadRequests(forMessage message: ZMAssetClientMessage) {
+        guard let identifier = message.associatedTaskIdentifier else { return }
+        taskCancellationProvider?.cancelTask(with: identifier)
+    }
+    
 }
 
 
@@ -198,6 +232,10 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
                 if response.result == .expired || response.result == .temporaryError || response.result == .tryAgainLater {
                     self.failUpload(of: message, keys: [ZMAssetClientMessageUploadedStateKey], request: request)
                 }
+            })
+
+            request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
+                message.associatedTaskIdentifier = identifier
             })
         }
 
