@@ -30,7 +30,7 @@ public final class ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStra
                 managedObjectContext: NSManagedObjectContext)
     {
         self.clientRegistrationStatus = clientRegistrationStatus
-        let fetchPredicate = NSPredicate(format: "delivered == NO")
+        let fetchPredicate = NSPredicate(format: "delivered == NO && version < 3")
         let needsProcessingPredicate = NSPredicate(format: "(mediumGenericMessage.imageAssetData.width == 0 || previewGenericMessage.imageAssetData.width == 0) && delivered == NO")
         self.imagePreprocessor = ZMImagePreprocessingTracker(managedObjectContext: managedObjectContext,
                                                              imageProcessingQueue: OperationQueue(),
@@ -40,7 +40,7 @@ public final class ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStra
         
         super.init(managedObjectContext: managedObjectContext)
         
-        let insertPredicate = NSPredicate(format: "\(ZMAssetClientMessageUploadedStateKey) != \(ZMAssetUploadState.done.rawValue)")
+        let insertPredicate = NSPredicate(format: "\(ZMAssetClientMessageUploadedStateKey) != \(ZMAssetUploadState.done.rawValue) && version < 3")
         let uploadFilter = NSPredicate { (object : Any, _) -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             return message.imageMessageData != nil &&

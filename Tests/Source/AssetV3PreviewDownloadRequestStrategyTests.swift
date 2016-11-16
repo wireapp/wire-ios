@@ -64,7 +64,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
             expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
         )
 
-        guard let uploadedWithId = uploaded.updated(withAssetId: assetId, token: token) else {
+        guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
             XCTFail("Failed to update asset")
             return nil
         }
@@ -192,18 +192,13 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         XCTAssertNil(sut.nextRequest())
     }
 
-    func testThatItDoesNotGenerateARequestForAV3FileMessageWithPreviewThatAlreadyHasBeenDownloaded() {
+    func testThatItDoesNotGenerateAReuqestForAV3FileMessageWithPreviewThatAlreadyHasBeenDownloaded() {
         // given
         let (message, _, _) = createMessage(in: conversation)!
         let (previewGenericMessage, _) = createPreview(with: message.nonce.transportString())
 
         // when
-        syncMOC.zm_imageAssetCache.storeAssetData(
-            message.nonce,
-            format: .medium,
-            encrypted: false,
-            data: Data.secureRandomData(length: 512)
-        )
+        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
 
         message.add(previewGenericMessage)
         prepareDownload(of: message)
@@ -215,7 +210,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         XCTAssertNil(sut.nextRequest())
     }
 
-    func testThatItStoresAndDecryptsTheRawDataInTheFileCacheWhenItReceivesAResponse() {
+    func testThatItStoresAndDecryptsTheRawDataInTheImageCacheWhenItReceivesAResponse() {
         // given
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
@@ -238,7 +233,6 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-
         let data = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
         XCTAssertEqual(data, plainTextData)
         XCTAssertEqual(message.fileMessageData!.previewData, plainTextData)
