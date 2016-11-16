@@ -369,7 +369,7 @@ NSString *const ZMUserSessionDidBecomeAvailableNotification = @"ZMUserSessionDid
     (void)[Settings sharedSettings];
     
     BOOL callKitSupported = ([CXCallObserver class] != nil) && !TARGET_IPHONE_SIMULATOR;
-    BOOL callKitDisabled = YES;//[[Settings sharedSettings] disableCallKit];
+    BOOL callKitDisabled = [[Settings sharedSettings] disableCallKit];
     
     [ZMUserSession setUseCallKit:callKitSupported && !callKitDisabled];
     
