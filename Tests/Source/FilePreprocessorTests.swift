@@ -28,7 +28,7 @@ class FilePreprocessorTests : MessagingTest {
 
     override func setUp() {
         super.setUp()
-        sut = FilePreprocessor(managedObjectContext: self.syncMOC, versionPredicate: NSPredicate(value: true))
+        sut = FilePreprocessor(managedObjectContext: self.syncMOC, additionalPredicate: NSPredicate(value: true))
     }
 
 }
@@ -45,7 +45,7 @@ extension FilePreprocessorTests {
 
         // given
         let name = "report.txt"
-        sut = FilePreprocessor(managedObjectContext: syncMOC, versionPredicate: NSPredicate(format: "version > 2"))
+        sut = FilePreprocessor(managedObjectContext: syncMOC, additionalPredicate: NSPredicate(format: "version > 2"))
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: syncMOC, expiresAfter:0.0)
 
@@ -69,7 +69,7 @@ extension FilePreprocessorTests {
 
         // given
         let name = "report.txt"
-        sut = FilePreprocessor(managedObjectContext: syncMOC, versionPredicate: NSPredicate(value: false))
+        sut = FilePreprocessor(managedObjectContext: syncMOC, additionalPredicate: NSPredicate(value: false))
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: syncMOC, expiresAfter:0.0)
 

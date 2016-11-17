@@ -67,7 +67,7 @@ private let reponseHeaderAssetIdKey = "Location"
         )
 
         let versionPredicate = NSPredicate(format: "version < 3")
-        self.filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, versionPredicate: versionPredicate)
+        self.filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, additionalPredicate: versionPredicate)
         self.clientRegistrationStatus = clientRegistrationStatus
         self.requestFactory = ClientMessageRequestFactory()
         self.taskCancellationProvider = taskCancellationProvider
