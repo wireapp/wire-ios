@@ -32,9 +32,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 @property (nonatomic) NSManagedObjectContext *uiMOC;
 @property (nonatomic) NSManagedObjectContext *syncMOC;
-
-@property (nonatomic) NSString *groupIdentifier;
-@property (nonatomic) NSURL *databaseDirectory;
+@property (nonatomic) NSURL *storeURL;
+@property (nonatomic) NSURL *keyStoreURL;
 
 @property (nonatomic) NSTimeInterval originalConversationLastReadTimestampTimerValue; // this will speed up the tests A LOT
 @property (nonatomic) MockTransportSession *mockTransportSession;
@@ -74,12 +73,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 {
     [super setUp];
     
-    NSFileManager *fm = NSFileManager.defaultManager;
-    self.groupIdentifier = [@"group." stringByAppendingString:[NSBundle bundleForClass:self.class].bundleIdentifier];
-    self.databaseDirectory = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
-    if (nil == self.databaseDirectory) {
-        self.databaseDirectory = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-    }
+    self.storeURL = [PersistentStoreRelocator storeURLInDirectory:NSCachesDirectory];
+    self.keyStoreURL = [self.storeURL URLByDeletingLastPathComponent];
     
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
@@ -114,7 +109,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
-    self.mockTransportSession.cryptoboxLocation = self.databaseDirectory;
+    self.mockTransportSession.cryptoboxLocation = self.keyStoreURL;
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }
 
@@ -206,16 +201,16 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     }
     [self performIgnoringZMLogError:^{
-        self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreDirectory:self.databaseDirectory];
+        self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreAtURL:self.storeURL];
     }];
     
-    ImageAssetCache *imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:100];
-    FileAssetCache *fileAssetCache = [[FileAssetCache alloc] init];
+    ImageAssetCache *imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:100 location:nil];
+    FileAssetCache *fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
     
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.name;
     
-    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreDirectory:self.databaseDirectory];
+    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreAtURL:self.storeURL keyStoreURL:self.keyStoreURL];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.name;
         [self.syncMOC addGroup:self.dispatchGroup];
