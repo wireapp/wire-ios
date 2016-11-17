@@ -448,7 +448,7 @@
         selfClient = self.createSelfClient;
         
         //other user client
-        EncryptionContext *otherClientsBox = [[EncryptionContext alloc] initWithPath:[self.databaseDirectory URLByAppendingPathComponent:@"otr"]];
+        EncryptionContext *otherClientsBox = [[EncryptionContext alloc] initWithPath:[self.keyStoreURL URLByAppendingPathComponent:@"otr"]];
         [conversation.otherActiveParticipants enumerateObjectsUsingBlock:^(ZMUser *user, NSUInteger __unused idx, BOOL *__unused stop) {
             UserClient *userClient = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
             userClient.remoteIdentifier = [NSString createAlphanumericalString];
