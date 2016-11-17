@@ -67,8 +67,8 @@ public final class AssetV3FileUploadRequestStrategy: ZMObjectSyncStrategy, Reque
     public init(clientRegistrationStatus: ClientRegistrationDelegate, taskCancellationProvider: ZMRequestCancellation, managedObjectContext: NSManagedObjectContext) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.taskCancellationProvider = taskCancellationProvider
-        let versionPredicate = NSPredicate(format: "version == 3 && uploadState == %d", ZMAssetUploadState.uploadingFullAsset.rawValue)
-        filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, additionalPredicate: versionPredicate)
+        let filter = NSPredicate(format: "version == 3 && uploadState == %d", ZMAssetUploadState.uploadingFullAsset.rawValue)
+        filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, filter: filter)
         assetAnalytics = AssetAnalytics(managedObjectContext: managedObjectContext)
 
         super.init(managedObjectContext: managedObjectContext)
