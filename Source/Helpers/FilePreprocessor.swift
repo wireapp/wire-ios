@@ -41,15 +41,15 @@ It creates an encrypted version from the plain text version
     /// are called from the thread of this managed object context
     let managedObjectContext : NSManagedObjectContext
 
-    private let versionPredicate: NSPredicate
+    private let additionalPredicate: NSPredicate
     
     /// Creates a file processor
     /// - note: All methods of this object should be called from the thread associated with the passed managedObjectContext
-    public init(managedObjectContext: NSManagedObjectContext, versionPredicate: NSPredicate) {
+    public init(managedObjectContext: NSManagedObjectContext, additionalPredicate: NSPredicate) {
         self.processingGroup = managedObjectContext.dispatchGroup
         self.processingQueue = DispatchQueue(label: "File processor")
         self.managedObjectContext = managedObjectContext
-        self.versionPredicate = versionPredicate
+        self.additionalPredicate = additionalPredicate
     }
     
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
@@ -60,7 +60,7 @@ It creates an encrypted version from the plain text version
     
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let predicate = NSPredicate(format: "%K == NO && %K == %d", DeliveredKey, ZMAssetClientMessageTransferStateKey, ZMFileTransferState.uploading.rawValue)
-        let compound = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, versionPredicate])
+        let compound = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, additionalPredicate])
         return ZMAssetClientMessage.sortedFetchRequest(with: compound)
     }
     
@@ -89,7 +89,7 @@ It creates an encrypted version from the plain text version
     /// Returns the object as a ZMAssetClientMessage if it is asset that needs preprocessing
     private func fileAssetToPreprocess(_ obj: NSObject) -> ZMAssetClientMessage? {
         guard let message = obj as? ZMAssetClientMessage else { return nil }
-        return message.needsEncryptedFile && versionPredicate.evaluate(with: message) ? message : nil
+        return message.needsEncryptedFile && additionalPredicate.evaluate(with: message) ? message : nil
     }
 }
 
