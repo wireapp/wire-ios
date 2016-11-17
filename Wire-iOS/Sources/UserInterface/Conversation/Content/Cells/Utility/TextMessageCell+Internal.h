@@ -16,16 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@class LinkInteractionTextView;
 
-#import "ImageMessageCell.h"
-
-@interface ImageMessageCell (Interal)
-
-- (void)setImage:(id<MediaAsset>)image;
-
-@end
-
-@interface ImageMessageCell ()
-@property (nonatomic) BOOL autoStretchVertically;
-@property (nonatomic) UIEdgeInsets defaultLayoutMargins;
+@interface TextMessageCell ()
+@property (nonatomic) LinkInteractionTextView *messageTextView;
+@property (nonatomic) BOOL smallLinkAttachments;
 @end
