@@ -33,7 +33,8 @@ public final class AssetRequestFactory : NSObject {
     public func backgroundUpstreamRequestForAsset(message: ZMAssetClientMessage, withData data: Data, shareable: Bool = true, retention: Retention = .persistent) -> ZMTransportRequest? {
         let path = "/assets/v3"
         guard let uploadURL = uploadURL(for: message, in: message.managedObjectContext!, shareable: shareable, retention: retention, data: data) else { return nil }
-        let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: "multipart/mixed")
+        let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: "multipart/mixed; boundary=frontier")
+        request.addContentDebugInformation("Uploading full asset to /assets/v3")
         return request
     }
 
