@@ -30,6 +30,7 @@
 @property (nonatomic, copy) NSDictionary *query;
 @property (nonatomic, readonly) ZMTransportRequestMethod method;
 @property (nonatomic, copy, readonly) id <ZMTransportData> payload;
+@property (nonatomic, readonly) NSArray<ZMMultipartBodyItem *> *multipartBodyItems;
 
 @property (nonatomic, copy) NSArray *pathComponents;
 @property (nonatomic, readonly, copy) NSString *binaryDataTypeAsMIME;
