@@ -298,7 +298,8 @@ import Foundation
         }, previewGenerator: .none)
         
         let contactButton = SettingsExternalScreenCellDescriptor(title: "self.help_center.contact_support".localized, isDestructive: false, presentationStyle: .modal, presentationAction: { _ in
-            return BrowserViewController(url: NSURL.wr_askSupport().wr_URLByAppendingLocaleParameter() as URL!)
+            NSURL.wr_askSupport().wr_URLByAppendingLocaleParameter().open()
+            return .none
         }, previewGenerator: .none)
         
         let helpSection = SettingsSectionDescriptor(cellDescriptors: [supportButton, contactButton])
