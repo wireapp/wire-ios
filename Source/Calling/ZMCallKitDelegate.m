@@ -373,7 +373,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)logForConversation:(NSString *)conversationId level:(ZMLogLevel_t)level line:(NSUInteger)line message:(NSString *)message
 {
-    NSString *messageWithLine = [NSString stringWithFormat:@"%s:%ld:%@ %@", __FILE__, line, level == ZMLogLevelError ? @"ERROR: " : @"", message];
+    NSString *messageWithLine = [NSString stringWithFormat:@"%s:%ld:%@ %@", __FILE__, (unsigned long)line, level == ZMLogLevelError ? @"ERROR: " : @"", message];
     [self.onDemandFlowManager.flowManager appendLogForConversation:conversationId message:messageWithLine];
 }
 
