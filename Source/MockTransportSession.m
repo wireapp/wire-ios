@@ -1514,6 +1514,23 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     return [NSURL URLWithString:self.embeddedRequest.path];
 }
 
+- (NSArray<ZMMultipartBodyItem *> *)multipartBodyItems
+{
+    if (nil != self.embeddedRequest.multipartBodyItems) {
+        return self.embeddedRequest.multipartBodyItems;
+    }
+
+    NSURL *fileURL = self.embeddedRequest.fileUploadURL;
+    NSData *multipartData = [[NSData alloc] initWithContentsOfURL:fileURL];
+
+    if (nil == multipartData) {
+        return nil;
+    }
+
+    return [multipartData multipartDataItemsSeparatedWithBoundary:@"frontier"];
+
+}
+
 - (ZMTransportRequestMethod)method;
 {
     return self.embeddedRequest.method;
