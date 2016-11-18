@@ -164,7 +164,7 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
         guard let name = message.fileMessageData?.filename else { return nil }
         guard let data = managedObjectContext.zm_fileAssetCache.assetData(message.nonce, fileName: name, encrypted: true) else { return nil }
 
-        let request = requestFactory.upstreamRequestForAsset(withData: data, shareable: false, retention: .Persistent)
+        let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: .persistent)
         request?.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
             message.associatedTaskIdentifier = identifier
         })
