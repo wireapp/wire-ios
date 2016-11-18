@@ -310,7 +310,8 @@
 - (ZMTransportResponse *)processAssetV3Post:(TestTransportSessionRequest *)sessionRequest;
 {
     
-    NSArray *multipart = [sessionRequest.embeddedRequest multipartBodyItems];
+    NSArray *multipart = sessionRequest.multipartBodyItems;
+
     if (multipart.count == 2) {
         
         ZMMultipartBodyItem *jsonObject = [multipart firstObject];
