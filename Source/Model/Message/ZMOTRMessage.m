@@ -226,7 +226,13 @@ NSString * const DeliveredKey = @"delivered";
     clientMessage.isPlainText = !encrypted;
     clientMessage.nonce = nonce;
     clientMessage.senderClientID = updateEvent.senderClientID;
+    
+    // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.
     [clientMessage updateWithGenericMessage:message updateEvent:updateEvent];
+    // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true. In addition the object will still have a managedObjectContext until the context is finally saved. In this case, we need to check the nonce (which would have previously been set) to avoid setting an invalid relationship between the deleted object and the conversation and / or sender
+    if (clientMessage.isZombieObject || clientMessage.nonce == nil) {
+        return nil;
+    }
     
     if (clearedMessage == nil) {
         [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:clientMessage.delivered];
