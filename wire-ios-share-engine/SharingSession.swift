@@ -130,9 +130,6 @@ public class SharingSession {
         case needsMigration, loggedOut
     }
     
-    /// The location of the database in the shared container
-    let sharedDatabaseDirectory: URL
-    
     /// The `NSManagedObjectContext` used to retrieve the conversations
     let userInterfaceContext: NSManagedObjectContext
 
@@ -168,29 +165,32 @@ public class SharingSession {
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
-    
-    public convenience init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
-        guard let databaseDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
-            throw SharingSessionError.missingSharedContainer
-        }
         
-        try self.init(databaseDirectory: databaseDirectory, databaseIdentifier: hostBundleIdentifier)
-    }
-    
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
     /// - throws: `InitializationError.NeedsMigration` in case the local store needs to be
     /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
-    init(databaseDirectory: URL, databaseIdentifier: String) throws {
-        sharedDatabaseDirectory = databaseDirectory
+    public init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
+        
+        guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
+            throw SharingSessionError.missingSharedContainer
+        }
+        
+        let storeURL = sharedContainerURL.appendingPathComponent(hostBundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
+        let keyStoreURL = storeURL.deletingLastPathComponent()
+        
+        guard !NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL) else { throw InitializationError.needsMigration }
+        
+        ZMSLog.set(level: .debug, tag: "Network")
 
-        guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory, identifier: databaseIdentifier) else { throw InitializationError.needsMigration }
-
-        userInterfaceContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory, storeIdentifier: databaseIdentifier)
-        syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory, storeIdentifier: databaseIdentifier)
-
+        userInterfaceContext = NSManagedObjectContext.createSearchWithStore(at: storeURL)
+        syncContext = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: keyStoreURL)
+        
+        userInterfaceContext.zm_sync = syncContext
+        syncContext.zm_userInterface = userInterfaceContext
+        
         let environment = ZMBackendEnvironment()
         
         transportSession = ZMTransportSession(
@@ -198,7 +198,8 @@ public class SharingSession {
             websocketURL: environment.backendWSURL,
             keyValueStore: syncContext,
             mainGroupQueue: userInterfaceContext,
-            application: nil
+            application: nil,
+            sharedContainerIdentifier: applicationGroupIdentifier
         )
         
         authenticationStatus = AuthenticationStatus(transportSession: transportSession)
@@ -212,9 +213,11 @@ public class SharingSession {
             clientRegistrationStatus: clientRegistrationStatus,
             apnsConfirmationStatus: DeliveryConfirmationDummy()
         )!
+        
+        let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext)
+        let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
 
-        let transcoders = [clientMessageTranscoder]
-        let requestGeneratorStore = RequestGeneratorStore(strategies: transcoders)
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy])
 
         operationLoop = RequestGeneratingOperationLoop(
             userContext: userInterfaceContext,
@@ -223,6 +226,24 @@ public class SharingSession {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
+        
+        setupCaches(atContainerURL: sharedContainerURL)
+    }
+    
+    private func setupCaches(atContainerURL containerURL: URL) {
+        let cachesURL = containerURL.appendingPathComponent("Library", isDirectory: true).appendingPathComponent("Caches", isDirectory: true)
+        
+        let userImageCache = UserImageLocalCache(location: cachesURL)
+        userInterfaceContext.zm_userImageCache = userImageCache
+        syncContext.zm_userImageCache = userImageCache
+        
+        let imageAssetCache = ImageAssetCache(MBLimit: 50, location: cachesURL)
+        userInterfaceContext.zm_imageAssetCache = imageAssetCache
+        syncContext.zm_imageAssetCache = imageAssetCache
+        
+        let fileAssetcache = FileAssetCache(location: cachesURL)
+        userInterfaceContext.zm_fileAssetCache = fileAssetcache
+        syncContext.zm_fileAssetCache = fileAssetcache
     }
 
     /// Cancel all pending tasks.
