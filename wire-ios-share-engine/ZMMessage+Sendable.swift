@@ -21,6 +21,11 @@ import Foundation
 import ZMCDataModel
 
 
+public class FileMetaData : ZMFileMetadata {
+    
+}
+
+
 private extension ZMMessage {
 
     var reportsProgress: Bool {
@@ -29,23 +34,47 @@ private extension ZMMessage {
 
 }
 
-//extension ZMMessage: Sendable {
-//
-//    public var deliveryProgress: Float? {
-//        if reportsProgress {
-//            // TODO
+extension ZMMessage: Sendable {
+
+    public var deliveryProgress: Float? {
+        if let asset = self as? ZMAssetClientMessage, reportsProgress {
+            return asset.progress
+        }
+        
+        return nil
+    }
+    
+    public func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken {
+//        let token =  NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: managedObjectContext, queue: .main) { (notification) in
+//            print("context did change")
+//            
+//            if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+//                print("updatedObjects: ", updatedObjects)
+//                
+//                if updatedObjects.contains(self) {
+//                    observer.onDeliveryChanged()
+//                }
+//            }
 //        }
-//        
-//        return nil
-//    }
-//    
-//    public func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken {
-//        return addObserver(observer)
-//    }
-//    
-//    
-//    public func remove(_ observerToken: SendableObserverToken) {
-//        removeObserver(observerToken)
-//    }
-//
-//}
+        
+        let token = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: managedObjectContext?.zm_sync, queue: .main) { (notification) in
+            print("context did save")
+            
+            if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+                print("updatedObjects: ", updatedObjects)
+                
+                if updatedObjects.flatMap({ $0.objectID }).contains(self.objectID) {
+                    observer.onDeliveryChanged()
+                }
+            }
+        }
+        
+        return SendableObserverToken(token: token)
+    }
+    
+    
+    public func remove(_ observerToken: SendableObserverToken) {
+        NotificationCenter.default.removeObserver(observerToken.token)
+    }
+    
+}

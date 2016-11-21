@@ -38,6 +38,10 @@ extension ZMConversation: Conversation {
         return appendMessageWithImage(at: url) as? Sendable
     }
     
+    public func appendImage(_ data: Data) -> Sendable? {
+        return appendMessage(withImageData: data) as? Sendable
+    }
+    
     public func appendFile(_ metaData: ZMFileMetadata) -> Sendable? {
         return appendMessage(with: metaData) as? Sendable
     }
