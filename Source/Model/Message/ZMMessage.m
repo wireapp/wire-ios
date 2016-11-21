@@ -292,9 +292,6 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 
 - (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 {
-    if (self.isZombieObject) {
-        return;
-    }
     [self updateTimestamp:serverTimestamp isUpdatingExistingMessage:isUpdate];
 
     if (self.managedObjectContext != conversation.managedObjectContext) {
