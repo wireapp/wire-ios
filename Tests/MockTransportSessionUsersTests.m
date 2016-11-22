@@ -560,6 +560,7 @@
     
     // then
     XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertEqualObjects(response.headers[@"Location"], path);
     [self checkThatTransportData:response.payload matchesUser:user isConnected:NO failureRecorder:NewFailureRecorder()];
 }
 
@@ -574,6 +575,7 @@
     
     // then
     XCTAssertEqual(response.HTTPStatus, 404);
+    XCTAssertEqualObjects(response.headers[@"Location"], path);
 }
 
 @end
