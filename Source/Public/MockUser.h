@@ -37,6 +37,7 @@ extern NSString * _Nonnull const ZMSearchUserTotalMutualFriendsKey;
 @property (nonatomic, nullable) NSString *email;
 @property (nonatomic, nullable) NSString *password;
 @property (nonatomic, nullable) NSString *phone;
+@property (nonatomic, nullable) NSString *handle;
 @property (nonatomic) int16_t accentID;
 @property (nonatomic, nullable) NSString *name;
 @property (nonatomic, nonnull) NSString *identifier;
