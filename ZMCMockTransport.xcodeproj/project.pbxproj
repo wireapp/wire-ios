@@ -85,7 +85,6 @@
 		54AE5AAD1B78FA62002757E9 /* MockTransportSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */; };
 		54AE5AAE1B78FA62002757E9 /* MockTransportSessionUsersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */; };
 		54C9023F1B7532DD007162A8 /* ZMCMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* ZMCMockTransport.framework */; };
-		54C902461B7532DD007162A8 /* ZMCMockTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C902451B7532DD007162A8 /* ZMCMockTransportTests.m */; };
 		54CE5E6E1B7534C4007F3065 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E6A1B7534C4007F3065 /* ZMCSystem.framework */; };
 		54CE5E701B7534C4007F3065 /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E6C1B7534C4007F3065 /* ZMUtilities.framework */; };
 		54CE5E711B7534C8007F3065 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E691B7534C4007F3065 /* ocmock.framework */; };
@@ -217,7 +216,6 @@
 		54C902371B7532DD007162A8 /* ZMCMockTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMCMockTransport-Info.plist"; sourceTree = "<group>"; };
 		54C9023E1B7532DD007162A8 /* ZMMockTransportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZMMockTransportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		54C902441B7532DD007162A8 /* ZMCMockTransport-Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMCMockTransport-Tests-Info.plist"; sourceTree = "<group>"; };
-		54C902451B7532DD007162A8 /* ZMCMockTransportTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMCMockTransportTests.m; sourceTree = "<group>"; };
 		54C902511B7532F6007162A8 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54C902541B7532F6007162A8 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		54C902551B7532F6007162A8 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
@@ -418,7 +416,6 @@
 				54AE5A9E1B78FA62002757E9 /* MockTransportSessionTests.h */,
 				54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */,
 				54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */,
-				54C902451B7532DD007162A8 /* ZMCMockTransportTests.m */,
 				CE471AF21C19AC670040802B /* MockTransportSessionInvitationTests.m */,
 				09E393F91BB0485300F3EA1B /* MockTransportSessionClientsTests.m */,
 				CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */,
@@ -685,7 +682,6 @@
 				54AE5AA81B78FA62002757E9 /* MockTransportSessionLoginTests.m in Sources */,
 				54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */,
 				54AE5AA91B78FA62002757E9 /* MockTransportSessionPushChannelTests.m in Sources */,
-				54C902461B7532DD007162A8 /* ZMCMockTransportTests.m in Sources */,
 				CE99C4A41D39183F0001D297 /* MockTransportSessionAssetsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -99,7 +99,7 @@
     else if ((sessionRequest.method == ZMMethodGET || sessionRequest.method == ZMMethodHEAD)
              && sessionRequest.pathComponents.count == 2
              && [sessionRequest.pathComponents[0] isEqualToString:@"handles"] ) {
-        return [self processUserHandleRequest:sessionRequest.pathComponents[1]];
+        return [self processUserHandleRequest:sessionRequest.pathComponents[1] requestPath:sessionRequest.embeddedRequest.path];
     }
 
     else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 2) {
@@ -311,7 +311,7 @@
 }
 
 // MARK: - Handles
-- (ZMTransportResponse *)processUserHandleRequest:(NSString *__unused)handle;
+- (ZMTransportResponse *)processUserHandleRequest:(NSString *)handle requestPath:(NSString *)path;
 {
     
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
@@ -321,10 +321,10 @@
     if(users.count > 0) {
         MockUser *user = users[0];
         id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
-        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Location":path}];
     }
     else {
-        return [self errorResponseWithCode:404 reason:@"not found"];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil headers:@{@"Location":path}];
     }
 
 }
