@@ -402,7 +402,11 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
     NOT_USED(session);
     NOT_USED(bytesSent);
-    
+
+    if (task.state == NSURLSessionTaskStateCanceling) {
+        return;
+    }
+
     ZMTransportRequest *request = [self requestForTask:task];
     float progress = 0;
     
@@ -415,6 +419,7 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
                                                            totalBytesExpected:totalBytesExpectedToSend];
         
         if (didFailRestartedRequest) {
+            [task cancel];
             return;
         }
     }
