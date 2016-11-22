@@ -899,6 +899,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     MockUser *user = (id) [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:self.managedObjectContext];
     user.name = name;
     user.identifier = [self createUUIDString];
+    user.handle = [self createUUIDString];
     
     if (shouldIncludeClient) {
         

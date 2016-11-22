@@ -73,6 +73,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
+                                                  @"handle": user1.handle
+
                                                   },
                                               
                                               @{
@@ -84,6 +86,8 @@
                                                   @"level": @1,
                                                   @"name": user2.name,
                                                   @"phone": user2phone,
+                                                  @"handle": user2.handle
+
                                                   }
                                               ]
                                       };
@@ -143,6 +147,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
+                                                  @"handle": user1.handle
+
                                                   
                                                   },
                                               
@@ -154,7 +160,9 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"phone": [NSNull null]
+                                                  @"phone": [NSNull null],
+                                                  @"handle": user2.handle
+
                                                   
                                                   },
                                               
@@ -167,7 +175,9 @@
                                                   @"id": user3.identifier,
                                                   @"level": @1,
                                                   @"name": user3.name,
-                                                  @"phone": user3phone
+                                                  @"phone": user3phone,
+                                                  @"handle": user3.handle
+
                                                   
                                                   }
                                               ]
@@ -211,7 +221,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"phone": [NSNull null]
+                                                  @"phone": [NSNull null],
+                                                  @"handle": user1.handle
                                                   
                                                   }
                                               ]

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15F34" minimumToolsVersion="Xcode 4.3">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11232" systemVersion="15G1108" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="Asset" representedClassName="MockAsset" syncable="YES">
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversation" optional="YES" attributeType="String" syncable="YES"/>
@@ -8,7 +8,7 @@
         <attribute name="token" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Connection" representedClassName="MockConnection" syncable="YES">
-        <attribute name="lastUpdate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="message" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="connection" inverseEntity="Conversation" syncable="YES"/>
@@ -17,25 +17,25 @@
     </entity>
     <entity name="Conversation" representedClassName="MockConversation" syncable="YES">
         <attribute name="archived" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="callWasDropped" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="callWasDropped" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="clearedEventID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="isVideoCall" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isVideoCall" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="lastEvent" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lastEventTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="lastEventTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="lastRead" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="muted" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="mutedTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="muted" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="mutedTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="otrArchived" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="otrArchived" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="otrArchivedRef" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="otrMuted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="otrMuted" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="otrMutedRef" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="selfIdentifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="statusRef" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="statusTime" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="statusTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="activeUsers" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="User" inverseName="activeConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="callParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="User" inverseName="activeCallConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="connection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Connection" inverseName="conversation" inverseEntity="Connection" syncable="YES"/>
@@ -47,13 +47,13 @@
     <entity name="Event" representedClassName="MockEvent" syncable="YES">
         <attribute name="data" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="time" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="events" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="from" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdEvents" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="PersonalInvitation" representedClassName="MockPersonalInvitation" syncable="YES">
-        <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="creationDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="inviteeEmail" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="inviteeName" optional="YES" attributeType="String" syncable="YES"/>
@@ -61,24 +61,25 @@
         <relationship name="inviter" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="invitations" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Picture" representedClassName="MockPicture" syncable="YES">
-        <attribute name="contentLength" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="contentLength" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="info" optional="YES" attributeType="Transformable" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="pictures" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="PreKey" representedClassName="MockPreKey" syncable="YES">
-        <attribute name="identifier" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="client" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="prekeys" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="lastPrekeyOfClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="lastPrekey" inverseEntity="UserClient" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName="MockUser" syncable="YES">
-        <attribute name="accentID" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="accentID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="isEmailValidated" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
-        <attribute name="isSendingVideo" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isEmailValidated" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="isSendingVideo" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
@@ -101,11 +102,11 @@
         <attribute name="enckey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="locationLatitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="locationLongitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="locationLatitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="locationLongitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="mackey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="model" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="time" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="lastPrekey" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PreKey" inverseName="lastPrekeyOfClient" inverseEntity="PreKey" syncable="YES"/>
         <relationship name="prekeys" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PreKey" inverseName="client" inverseEntity="PreKey" syncable="YES"/>
@@ -119,7 +120,7 @@
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="345"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="360"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
     </elements>
 </model>
