@@ -21,6 +21,9 @@ import zimages
 import ZMTransport
 
 
+fileprivate let zmLog = ZMSLog(tag: "Asset V3")
+
+
 @objc public final class AssetV3DownloadRequestStrategy: NSObject, RequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSync!
@@ -28,11 +31,15 @@ import ZMTransport
     fileprivate weak var authStatus: ClientRegistrationDelegate?
     fileprivate weak var taskCancellationProvider: ZMRequestCancellation?
 
+    private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
+
     public init(authStatus: ClientRegistrationDelegate, taskCancellationProvider: ZMRequestCancellation, managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
         self.authStatus = authStatus
         self.taskCancellationProvider = taskCancellationProvider
         super.init()
+
+        zmLog.debug("Asset V3 file download logging set up.")
         registerForCancellationNotification()
 
         let downstreamPredicate = NSPredicate(format: "transferState == %d AND visibleInConversation != nil AND version == 3", ZMFileTransferState.downloading.rawValue)
@@ -118,22 +125,37 @@ import ZMTransport
             let genericMessage = message.genericAssetMessage,
             let asset = genericMessage.assetData else { return false }
 
-        let (otrKey, sha256) = (asset.uploaded.otrKey!, asset.uploaded.sha256!)
+        let keys = (asset.uploaded.otrKey!, asset.uploaded.sha256!)
 
         if asset.original.hasImage() {
-            let cache = managedObjectContext.zm_imageAssetCache!
-            cache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: data)
-            return cache.decryptFileIfItMatchesDigest(message.nonce, format: .medium, encryptionKey: otrKey, sha256Digest: sha256)
+            return storeAndDecryptImage(asset: asset, nonce: message.nonce, data: data, keys: keys)
         } else {
-            let fileCache = managedObjectContext.zm_fileAssetCache
-            fileCache.storeAssetData(message.nonce, fileName: fileMessageData.filename, encrypted: true, data: data)
-            return fileCache.decryptFileIfItMatchesDigest(
-                message.nonce,
-                fileName: genericMessage.v3_fileCacheKey,
-                encryptionKey: otrKey,
-                sha256Digest: sha256
-            )
+            return storeAndDecryptFile(asset: asset, nonce: message.nonce, data: data, keys: keys, name: fileMessageData.filename)
         }
+    }
+
+    private func storeAndDecryptImage(asset: ZMAsset, nonce: UUID, data: Data, keys: DecryptionKeys) -> Bool {
+        precondition(asset.original.hasImage(), "Should only be called for assets with image")
+
+        let cache = managedObjectContext.zm_imageAssetCache!
+        cache.storeAssetData(nonce, format: .medium, encrypted: true, data: data)
+        let success = cache.decryptFileIfItMatchesDigest(nonce, format: .medium, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
+        if !success {
+            zmLog.error("Failed to decrypt v3 asset (image) message: \(asset), nonce:\(nonce)")
+        }
+        return success
+    }
+
+    private func storeAndDecryptFile(asset: ZMAsset, nonce: UUID, data: Data, keys: DecryptionKeys, name: String) -> Bool {
+        precondition(!asset.original.hasImage(), "Should not be called for assets with image")
+
+        let cache = managedObjectContext.zm_fileAssetCache
+        cache.storeAssetData(nonce, fileName: name, encrypted: true, data: data)
+        let success = cache.decryptFileIfItMatchesDigest(nonce, fileName: name, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
+        if !success {
+            zmLog.error("Failed to decrypt v3 asset (file) message: \(asset), nonce:\(nonce), name: \(name)")
+        }
+        return success
     }
 
     // MARK: - ZMContextChangeTrackerSource
@@ -160,17 +182,13 @@ import ZMTransport
                 self.managedObjectContext.enqueueDelayedSave()
             }
 
-            let addingHandlers: (ZMTransportRequest) -> ZMTransportRequest = { request in
-                request.add(taskCreationHandler)
-                request.add(completionHandler)
-                request.add(progressHandler)
-                return request
-            }
-
             if let asset = assetClientMessage.genericAssetMessage?.assetData {
                 let token = asset.uploaded.hasAssetToken() ? asset.uploaded.assetToken : nil
                 if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: asset.uploaded.assetId, token: token) {
-                    return addingHandlers(request)
+                    request.add(taskCreationHandler)
+                    request.add(completionHandler)
+                    request.add(progressHandler)
+                    return request
                 }
             }
         }
