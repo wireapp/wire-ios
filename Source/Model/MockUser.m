@@ -44,6 +44,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 @dynamic isSendingVideo;
 @dynamic activeCallConversations;
 @dynamic ignoredCallConversation;
+@dynamic handle;
 
 - (id<ZMTransportData>)transportData;
 {
@@ -60,6 +61,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
              @"accent_id": @(self.accentID),
              @"name": self.name ?: [NSNull null],
              @"id": self.identifier ?: [NSNull null],
+             @"handle": self.handle ?: [NSNull null],
              @"picture": (self.pictures == nil) ? @[] : [[self.pictures mapWithSelector:@selector(transportData)] array],
              };
 }

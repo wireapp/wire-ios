@@ -96,6 +96,12 @@
     else if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 1 && [sessionRequest.pathComponents.lastObject isEqualToString:@"prekeys"]) {
         return [self processUsersPreKeysRequest:sessionRequest];
     }
+    else if ((sessionRequest.method == ZMMethodGET || sessionRequest.method == ZMMethodHEAD)
+             && sessionRequest.pathComponents.count == 2
+             && [sessionRequest.pathComponents[0] isEqualToString:@"handles"] ) {
+        return [self processUserHandleRequest:sessionRequest.pathComponents[1]];
+    }
+
     else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 2) {
         return [self processSingleUserPreKeysRequest:sessionRequest];
     }
@@ -107,6 +113,7 @@
     }
 }
 
+// MARK: - Self
 /// handles /self
 - (ZMTransportResponse *)processSelfUserRequest:(TestTransportSessionRequest *)sessionRequest;
 {
@@ -129,6 +136,9 @@
         }
         else if([@"password" isEqualToString:sessionRequest.pathComponents.firstObject]) {
             return [self putSelfPassword:sessionRequest];
+        }
+        else if([@"handle" isEqualToString:sessionRequest.pathComponents.firstObject]) {
+            return [self putSelfHandle:sessionRequest];
         }
     }
     return [self errorResponseWithCode:400 reason:@"invalid method"];
@@ -192,6 +202,27 @@
     }
 }
 
+- (ZMTransportResponse *)putSelfHandle:(TestTransportSessionRequest *)sessionRequest;
+{
+    NSString *handle = [sessionRequest.payload asDictionary][@"handle"];
+    if(handle == nil) {
+        return [self errorResponseWithCode:400 reason:@"missing-key"];
+    }
+    
+    NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    
+    if(users.count > 0) {
+        return [self errorResponseWithCode:409 reason:@"key-exists"];
+    }
+    else {
+        self.selfUser.handle = handle;
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+    }
+    
+}
+
 - (ZMTransportResponse *)putSelfResponseForRequest:(TestTransportSessionRequest *)sessionRequest
 {
     NSDictionary *changedFields = [sessionRequest.embeddedRequest.payload asDictionary];
@@ -210,7 +241,7 @@
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
-// /users/prekeys
+// MARK: - /users/prekeys
 
 - (ZMTransportResponse *)processUsersPreKeysRequest:(TestTransportSessionRequest *__unused)sessionRequest;
 {
@@ -279,6 +310,24 @@
     return [self errorResponseWithCode:400 reason:@"invalid method"];
 }
 
+// MARK: - Handles
+- (ZMTransportResponse *)processUserHandleRequest:(NSString *__unused)handle;
+{
+    
+    NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    
+    if(users.count > 0) {
+        MockUser *user = users[0];
+        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    }
+    else {
+        return [self errorResponseWithCode:404 reason:@"not found"];
+    }
+
+}
 
 @end
 
