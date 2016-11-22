@@ -167,7 +167,7 @@
         if (![sessionsDirectory hasSessionForID:toClient.identifier]) {
             [sessionsDirectory createClientSession:toClient.identifier base64PreKeyString:toClient.lastPrekey.value error:&error];
         }
-        encryptedData = [sessionsDirectory encrypt:data recipientClientId:toClient.identifier error:&error];
+        encryptedData = [sessionsDirectory encrypt:data recipientIdentifier:toClient.identifier error:&error];
     }];
     return encryptedData;
 }

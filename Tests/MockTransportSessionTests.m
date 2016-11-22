@@ -404,7 +404,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:(id) data];
     [dict removeObjectForKey:@"tracking_id"];
     FHAssertTrue(fr, [dict isKindOfClass:[NSDictionary class]]);
-    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture"];
+    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle"];
     if(isConnected) {
         keys = [keys arrayByAddingObjectsFromArray:@[@"email", @"phone"]];
     }
@@ -421,6 +421,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         FHAssertEqualObjects(fr, dict[@"name"], user.name);
         FHAssertEqualObjects(fr, dict[@"id"], user.identifier);
         FHAssertEqualObjects(fr, dict[@"accent_id"], @(user.accentID));
+        FHAssertEqualObjects(fr, dict[@"handle"], user.handle);
     
         NSArray *pictures = dict[@"picture"];
         FHAssertEqual(fr, pictures.count, user.pictures.count);

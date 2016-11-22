@@ -132,7 +132,60 @@
     XCTAssertEqualObjects([data stringForKey:@"tracking_id"], trackingIdentifier);
 }
 
+- (void)testThatItCreatesHandleForSelfUser
+{
+    // given
+    __block MockUser *selfUser;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"Foo"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    NSString *path = @"/self";
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // then
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
+    NSDictionary *data = (id) response.payload;
+    XCTAssertNotNil([data stringForKey:@"handle"]);
+    XCTAssertGreaterThan([data stringForKey:@"handle"].length, 5u);
+}
 
+- (void)testThatItCreatesHandleForAnyUser
+{
+    // given
+    __block MockUser *user;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        user = [session insertUserWithName:@"Foo"];
+        user.identifier = [NSUUID createUUID].transportString;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    NSString *path = [@"/users/" stringByAppendingPathComponent:user.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // then
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
+    NSDictionary *data = (id) response.payload;
+    XCTAssertNotNil([data stringForKey:@"handle"]);
+    XCTAssertGreaterThan([data stringForKey:@"handle"].length, 5u);
+}
 
 
 - (void)testCreatingAndRequestingConnectedUser;
@@ -430,6 +483,98 @@
     XCTAssertEqual(response.HTTPStatus, 400);
 }
 
+- (void)testThatItPutsTheHandle
+{
+    // given
+    __block MockUser *selfUser;
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"Foo"];
+    }];
+    NSString *handle = @"aaa12";
+    
+    // when
+    ZMTransportResponse *response = [self responseForPayload:@{@"handle":handle} path:@"/self/handle" method:ZMMethodPUT];
+    
+    // then
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertEqualObjects(selfUser.handle, handle);
+}
+
+- (void)testThatDoesNotPutTheHandleIfItExistsAlready
+{
+    // given
+    __block MockUser *selfUser;
+    __block MockUser *otherUser;
+    NSString *initialHandle = @"initial33";
+    NSString *handle = @"foobar22222";
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"Foo"];
+        selfUser.handle = initialHandle;
+        otherUser = [session insertUserWithName:@"The other"];
+        otherUser.handle = handle;
+    }];
+    
+    // when
+    ZMTransportResponse *response = [self responseForPayload:@{@"handle":handle} path:@"/self/handle" method:ZMMethodPUT];
+    
+    // then
+    XCTAssertEqual(response.HTTPStatus, 409);
+    XCTAssertEqualObjects(response.payloadLabel, @"key-exists");
+    XCTAssertEqualObjects(selfUser.handle, initialHandle);
+    XCTAssertEqualObjects(otherUser.handle, handle);
+
+}
+
+- (void)testThatItFindsAnExhistingHandle_GET
+{
+    // given
+    NSString *handle = @"foobar22222";
+    __block MockUser *user;
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        user = [session insertUserWithName:@"The other"];
+        user.handle = handle;
+    }];
+    
+    // when
+    NSString *path = [@"/users/handles/" stringByAppendingPathComponent:handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // then
+    XCTAssertEqual(response.HTTPStatus, 200);
+    [self checkThatTransportData:response.payload matchesUser:user isConnected:NO failureRecorder:NewFailureRecorder()];
+}
+
+- (void)testThatItFindsAnExhistingHandle_HEAD
+{
+    // given
+    NSString *handle = @"foobar22222";
+    __block MockUser *user;
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        user = [session insertUserWithName:@"The other"];
+        user.handle = handle;
+    }];
+    
+    // when
+    NSString *path = [@"/users/handles/" stringByAppendingPathComponent:handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodHEAD];
+    
+    // then
+    XCTAssertEqual(response.HTTPStatus, 200);
+    [self checkThatTransportData:response.payload matchesUser:user isConnected:NO failureRecorder:NewFailureRecorder()];
+}
+
+- (void)testThatItDoesNotFindANonExhistingHandle
+{
+    // given
+    NSString *handle = @"foobar22222";
+    
+    // when
+    NSString *path = [@"/users/handles/" stringByAppendingPathComponent:handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // then
+    XCTAssertEqual(response.HTTPStatus, 404);
+}
 
 @end
 
@@ -468,5 +613,4 @@
 }
 
 @end
-
 
