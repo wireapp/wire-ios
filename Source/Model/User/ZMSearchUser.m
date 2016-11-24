@@ -50,6 +50,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 @property (nonatomic) NSString *displayName;
 @property (nonatomic) NSString *initials;
 @property (nonatomic) NSString *name; //< name received from BE
+@property (nonatomic) NSString *handle;
 
 @property (nonatomic) BOOL isConnected;
 @property (nonatomic) ZMAccentColor accentColorValue;
@@ -77,7 +78,13 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 
 @implementation ZMSearchUser
 
-- (instancetype)initWithName:(NSString *)name accentColor:(ZMAccentColor)color remoteID:(NSUUID *)remoteID user:(ZMUser *)user syncManagedObjectContext:(NSManagedObjectContext *)syncMOC uiManagedObjectContext:(NSManagedObjectContext *)uiMOC;
+- (instancetype)initWithName:(NSString *)name
+                      handle:(NSString *)handle
+                 accentColor:(ZMAccentColor)color
+                    remoteID:(NSUUID *)remoteID
+                        user:(ZMUser *)user
+    syncManagedObjectContext:(NSManagedObjectContext *)syncMOC
+      uiManagedObjectContext:(NSManagedObjectContext *)uiMOC;
 {
     self = [super init];
     if (self) {
@@ -86,6 +93,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
         _uiMOC = uiMOC;
         if (self.user == nil) {
             _name = name;
+            _handle = handle;
             
             ZMPersonName *personName = [ZMPersonName personWithName:name];
             _initials = personName.initials;
@@ -99,14 +107,29 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return self;
 }
 
-- (instancetype)initWithName:(NSString *)name accentColor:(ZMAccentColor)color remoteID:(NSUUID *)remoteID user:(ZMUser *)user userSession:(id<ZMManagedObjectContextProvider>)userSession;
+- (instancetype)initWithName:(NSString *)name
+                      handle:(NSString *)handle
+                 accentColor:(ZMAccentColor)color
+                    remoteID:(NSUUID *)remoteID
+                        user:(ZMUser *)user
+                 userSession:(id<ZMManagedObjectContextProvider>)userSession;
 {
-    return [self initWithName:name accentColor:color remoteID:remoteID user:user syncManagedObjectContext:userSession.syncManagedObjectContext uiManagedObjectContext:userSession.managedObjectContext];
+    return [self initWithName:name
+                       handle:handle
+                  accentColor:color
+                     remoteID:remoteID
+                         user:user
+     syncManagedObjectContext:userSession.syncManagedObjectContext
+       uiManagedObjectContext:userSession.managedObjectContext];
 }
 
-- (instancetype)initWithUser:(ZMUser *)user userSession:(id<ZMManagedObjectContextProvider>)userSession globalCommonConnections:(NSOrderedSet <ZMUser *> *)connections cachedCommonConnections:(ZMSuggestedUserCommonConnections *)cachedCommonConnections
+- (instancetype)initWithUser:(ZMUser *)user
+                 userSession:(id<ZMManagedObjectContextProvider>)userSession
+     globalCommonConnections:(NSOrderedSet <ZMUser *> *)connections
+     cachedCommonConnections:(ZMSuggestedUserCommonConnections *)cachedCommonConnections
 {
     self = [self initWithName:user.name
+                       handle:user.handle
                   accentColor:user.accentColorValue
                      remoteID:user.remoteIdentifier
                          user:user
@@ -160,6 +183,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
                                           inContext:userSession.managedObjectContext];
 
     self = [self initWithName:payload[@"name"]
+                       handle:payload[@"handle"]
                   accentColor:[ZMUser accentColorFromPayloadValue:accentId]
                      remoteID:identifier
                          user:existingUser
@@ -231,9 +255,16 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return [globalConnections filteredOrderedSetUsingPredicate:predicate];
 }
 
-- (instancetype)initWithContact:(ZMAddressBookContact *)contact user:(ZMUser *)user userSession:(id<ZMManagedObjectContextProvider>)userSession
+- (instancetype)initWithContact:(ZMAddressBookContact *)contact
+                           user:(ZMUser *)user
+                    userSession:(id<ZMManagedObjectContextProvider>)userSession
 {
-    self = [self initWithName:contact.name accentColor:ZMAccentColorUndefined remoteID:nil user:user userSession:userSession];
+    self = [self initWithName:contact.name
+                       handle:user.handle
+                  accentColor:ZMAccentColorUndefined
+                     remoteID:nil
+                         user:user
+                  userSession:userSession];
     
     if (self != nil) {
         _contact = contact;
@@ -245,6 +276,11 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 - (NSString *)name
 {
     return self.user ? self.user.name : _name;
+}
+
+- (NSString *)handle
+{
+    return self.user ? self.user.handle : _handle;
 }
 
 - (NSString *)displayName

@@ -2337,6 +2337,48 @@
     XCTAssertTrue(conversation.isArchived);
 }
 
+- (void)testThatAppendingATextMessageInAnArchivedConversationUnarchivesIt
+{
+    [self assertThatAppendingAMessageUnarchivesAConversation:^(ZMConversation *conversation) {
+        [conversation appendMessageWithText:@"Text"];
+    }];
+}
+
+- (void)testThatAppendingAnImageMessageInAnArchivedConversationUnarchivesIt
+{
+    [self assertThatAppendingAMessageUnarchivesAConversation:^(ZMConversation *conversation) {
+        [conversation appendMessageWithImageData:self.verySmallJPEGData];
+    }];
+}
+
+- (void)testThatAppendingALocationMessageInAnArchivedConversationUnarchivesIt
+{
+    [self assertThatAppendingAMessageUnarchivesAConversation:^(ZMConversation *conversation) {
+        ZMLocationData *location = [ZMLocationData locationDataWithLatitude:42 longitude:8 name:@"Mars" zoomLevel:9000];
+        [conversation appendMessageWithLocationData:location];
+    }];
+}
+
+- (void)assertThatAppendingAMessageUnarchivesAConversation:(void (^)(ZMConversation *))insertBlock
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = NSUUID.createUUID;
+    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    [conversation.mutableOtherActiveParticipants addObject:otherUser];
+    conversation.isArchived = YES;
+    XCTAssertTrue(conversation.isArchived);
+
+    // when
+    insertBlock(conversation);
+    WaitForAllGroupsToBeEmpty(0.5f);
+
+    // then
+    XCTAssertFalse(conversation.isArchived);
+}
+
 - (void)testThat_UnarchiveConversationFromEvent_unarchivesAConversationAndSetsLocallyModifications;
 {
 

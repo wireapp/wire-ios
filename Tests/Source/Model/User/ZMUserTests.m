@@ -89,6 +89,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     [self checkUserAttributeForKey:@"emailAddress" value:@"foo@example.com"];
 
     [self checkUserAttributeForKey:@"name" value:@"Foo Bar"];
+    [self checkUserAttributeForKey:@"handle" value:@"foo_bar"];
     [self checkUserAttributeForKey:@"phoneNumber" value:@"+123456789"];
     [self checkUserAttributeForKey:@"remoteIdentifier" value:[NSUUID createUUID]];
     [self checkUserAttributeForKey:@"mediumRemoteIdentifier" value:[NSUUID createUUID]];
@@ -101,6 +102,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     return [@{
               @"name" : @"Manuel Rodriguez",
               @"id" : userID.transportString,
+              @"handle" : @"el_manu",
               @"email" : @"mannie@example.com",
               @"phone" : @"000-000-45789",
               @"accent_id" : @3,
@@ -238,6 +240,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertEqualObjects(user.name, payload[@"name"]);
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
     XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
+    XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
 }
 
@@ -258,6 +261,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertEqualObjects(user.name, payload[@"name"]);
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
     XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
+    XCTAssertEqualObjects(user.handle, payload[@"handle"]);
 }
 
 
@@ -278,6 +282,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertEqualObjects(user.name, payload[@"name"]);
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
     XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
+    XCTAssertEqualObjects(user.handle, payload[@"handle"]);
 }
 
 
@@ -676,12 +681,14 @@ static NSString *const ValidEmail = @"foo77@example.com";
     NSString *name = @"Jean of Arc";
     NSString *email = @"jj@arc.example.com";
     NSString *phone = @"+33 11111111111";
+    NSString *handle = @"st_jean";
     
     NSUUID *uuid = [NSUUID createUUID];
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.remoteIdentifier = uuid;
     user.emailAddress =  email;
     user.name = name;
+    user.handle = handle;
     user.phoneNumber = phone;
     
     NSDictionary *payload = @{
@@ -697,6 +704,8 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertEqualObjects(name, user.name);
     XCTAssertEqualObjects(email, user.emailAddress);
     XCTAssertEqualObjects(phone, user.phoneNumber);
+    XCTAssertEqualObjects(handle, user.handle);
+
     
 }
 
