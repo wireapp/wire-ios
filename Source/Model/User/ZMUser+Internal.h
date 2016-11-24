@@ -44,8 +44,6 @@ extern NSString * __nonnull const SessionObjectIDKey;
 @property (nullable, nonatomic) NSData *imageSmallProfileData;
 @property (nullable, nonatomic, readonly) NSData *originalProfileImageData;
 
-
-
 - (void)updateWithTransportData:(nonnull NSDictionary *)transportData authoritative:(BOOL)authoritative;
 
 + (nullable instancetype)userWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
@@ -85,6 +83,8 @@ extern NSString * __nonnull const SessionObjectIDKey;
 
 @property (nullable, nonatomic, copy) NSString *emailAddress;
 @property (nullable, nonatomic, copy) NSString *phoneNumber;
+
+- (void)setHandle:(NSString * __nullable)handle;
 
 @end
 

@@ -31,6 +31,8 @@
 /// The display name will be short e.g. "John A" for connected users, but always the full name for non-connected users.
 @property (nonatomic, readonly) NSString *displayName;
 @property (nonatomic, readonly) NSString *initials;
+/// The "@name" handle
+@property (nonatomic, readonly) NSString *handle;
 
 /// whether this is the self user
 @property (nonatomic, readonly) BOOL isSelfUser;
