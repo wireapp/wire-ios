@@ -44,7 +44,8 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus, ClientRegistrationDelegate {
     var mockPhase : ZMClientRegistrationPhase?
     var mockCredentials : ZMEmailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
-    var mockAvailable : Bool = true
+    var mockReadiness :Bool = true
+    
     override var currentPhase: ZMClientRegistrationPhase {
         if let phase = mockPhase {
             return phase
@@ -61,9 +62,8 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus, ClientRegistra
     }
     
     override var clientIsReadyForRequests: Bool {
-        return mockAvailable
+        return mockReadiness
     }
-    
 }
 
 class ZMMockClientUpdateStatus: ClientUpdateStatus {
