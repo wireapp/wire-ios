@@ -39,7 +39,6 @@
 #import "ZMLastUpdateEventIDTranscoder.h"
 #import "ZMRegistrationTranscoder.h"
 #import "ZMFlowSync.h"
-#import "ZMPushTokenTranscoder.h"
 #import "ZMLoginTranscoder.h"
 #import "ZMCallStateTranscoder.h"
 #import "ZMRemovedSuggestedPeopleTranscoder.h"
@@ -76,7 +75,6 @@
 @property (nonatomic) ZMLoginTranscoder *loginTranscoder;
 @property (nonatomic) ZMLoginCodeRequestTranscoder *loginCodeRequestTranscoder;
 @property (nonatomic) ZMFlowSync *flowTranscoder;
-@property (nonatomic) ZMPushTokenTranscoder *pushTokenTranscoder;
 @property (nonatomic) ZMCallStateTranscoder *callStateTranscoder;
 @property (nonatomic) TypingStrategy *typingStrategy;
 @property (nonatomic) ZMRemovedSuggestedPeopleTranscoder *removedSuggestedPeopleTranscoder;
@@ -93,7 +91,9 @@
 @property (nonatomic) MissingClientsRequestStrategy *missingClientsRequestStrategy;
 @property (nonatomic) FileUploadRequestStrategy *fileUploadRequestStrategy;
 @property (nonatomic) LinkPreviewAssetDownloadRequestStrategy *linkPreviewAssetDownloadRequestStrategy;
+@property (nonatomic) PushTokenStrategy *pushTokenStrategy;
 @property (nonatomic) SearchUserImageStrategy *searchUserImageStrategy;
+
 @property (nonatomic) NSManagedObjectContext *eventMOC;
 @property (nonatomic) EventDecoder *eventDecoder;
 @property (nonatomic, weak) ZMLocalNotificationDispatcher *localNotificationDispatcher;
@@ -183,6 +183,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                                       clientUpdateStatus:clientUpdateStatus
                                                                                                  context:self.syncMOC];
         self.missingClientsRequestStrategy = [[MissingClientsRequestStrategy alloc] initWithClientRegistrationStatus:clientRegistrationStatus apnsConfirmationStatus: self.apnsConfirmationStatus managedObjectContext:self.syncMOC];
+        self.pushTokenStrategy = [[PushTokenStrategy alloc] initWithManagedObjectContext:self.syncMOC clientRegistrationDelegate:clientRegistrationStatus];
         self.typingStrategy = [[TypingStrategy alloc] initWithManagedObjectContext:self.syncMOC clientRegistrationDelegate:clientRegistrationStatus];
         self.searchUserImageStrategy = [[SearchUserImageStrategy alloc] initWithManagedObjectContext:self.syncMOC clientRegistrationDelegate:clientRegistrationStatus];
         self.requestStrategies = @[
@@ -217,6 +218,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                    self.linkPreviewAssetUploadRequestStrategy,
                                    self.imageDownloadRequestStrategy,
                                    self.imageUploadRequestStrategy,
+                                   self.pushTokenStrategy,
                                    self.typingStrategy,
                                    self.searchUserImageStrategy
                                    ];
@@ -258,7 +260,6 @@ ZM_EMPTY_ASSERTING_INIT()
     self.missingUpdateEventsTranscoder = [[ZMMissingUpdateEventsTranscoder alloc] initWithSyncStrategy:self previouslyReceivedEventIDsCollection:self.eventDecoder application:self.application backgroundAPNSPingbackStatus:backgroundAPNSPingBackStatus];
     self.lastUpdateEventIDTranscoder = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.syncMOC objectDirectory:self];
     self.flowTranscoder = [[ZMFlowSync alloc] initWithMediaManager:mediaManager onDemandFlowManager:onDemandFlowManager syncManagedObjectContext:self.syncMOC uiManagedObjectContext:uiMOC application:self.application];
-    self.pushTokenTranscoder = [[ZMPushTokenTranscoder alloc] initWithManagedObjectContext:self.syncMOC clientRegistrationStatus:clientRegistrationStatus];
     self.callStateTranscoder = [[ZMCallStateTranscoder alloc] initWithSyncManagedObjectContext:self.syncMOC uiManagedObjectContext:uiMOC objectStrategyDirectory:self];
     self.userImageTranscoder = [[ZMUserImageTranscoder alloc] initWithManagedObjectContext:self.syncMOC imageProcessingQueue:imageProcessingQueue];
     self.loginTranscoder = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus clientRegistrationStatus:clientRegistrationStatus];
@@ -476,7 +477,6 @@ ZM_EMPTY_ASSERTING_INIT()
              self.registrationTranscoder,
              self.flowTranscoder,
              self.callStateTranscoder,
-             self.pushTokenTranscoder,
              self.removedSuggestedPeopleTranscoder,
              self.phoneNumberVerificationTranscoder,
              self.loginCodeRequestTranscoder,

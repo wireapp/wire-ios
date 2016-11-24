@@ -46,7 +46,6 @@
 #import "ZMLastUpdateEventIDTranscoder.h"
 #import "ZMFlowSync.h"
 #import "ZMCallStateTranscoder.h"
-#import "ZMPushTokenTranscoder.h"
 #import "ZMLoginTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
 #import "ZMRemovedSuggestedPeopleTranscoder.h"
@@ -339,8 +338,6 @@
     [self verifyMockLater:flowTranscoder];
     id callStateTranscoder = [OCMockObject mockForClass:ZMCallStateTranscoder.class];
     [self verifyMockLater:callStateTranscoder];
-    id pushTokenTranscoder = [OCMockObject mockForClass:ZMPushTokenTranscoder.class];
-    [self verifyMockLater:pushTokenTranscoder];
     id loginTranscoder = [OCMockObject mockForClass:ZMLoginTranscoder.class];
     [self verifyMockLater:loginTranscoder];
     id loginCodeRequestTranscoder = [OCMockObject mockForClass:ZMLoginCodeRequestTranscoder.class];
@@ -364,7 +361,6 @@
     [[[objectDirectory stub] andReturn:lastUpdateEventIDTranscoder] lastUpdateEventIDTranscoder];
     [[[objectDirectory stub] andReturn:flowTranscoder] flowTranscoder];
     [[[objectDirectory stub] andReturn:callStateTranscoder] callStateTranscoder];
-    [[[objectDirectory stub] andReturn:pushTokenTranscoder] pushTokenTranscoder];
     [[[objectDirectory stub] andReturn:loginTranscoder] loginTranscoder];
     [[[objectDirectory stub] andReturn:loginCodeRequestTranscoder] loginCodeRequestTranscoder];
     [[[objectDirectory stub] andReturn:removedSuggestedPeopleTranscoder] removedSuggestedPeopleTranscoder];
@@ -384,7 +380,6 @@
                                         lastUpdateEventIDTranscoder,
                                         flowTranscoder,
                                         callStateTranscoder,
-                                        pushTokenTranscoder,
                                         loginTranscoder,
                                         loginCodeRequestTranscoder,
                                         removedSuggestedPeopleTranscoder,

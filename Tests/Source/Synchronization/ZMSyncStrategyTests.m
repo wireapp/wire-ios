@@ -44,7 +44,6 @@
 #import "ZMMissingUpdateEventsTranscoder.h"
 #import "ZMRegistrationTranscoder.h"
 #import "ZMFlowSync.h"
-#import "ZMPushTokenTranscoder.h"
 #import "ZMCallStateTranscoder.h"
 #import "ZMOperationLoop.h"
 #import "ZMRemovedSuggestedPeopleTranscoder.h"
@@ -143,10 +142,6 @@
     [[[[userImageTranscoder expect] andReturn:userImageTranscoder] classMethod] alloc];
     (void) [[[userImageTranscoder expect] andReturn:userImageTranscoder] initWithManagedObjectContext:self.syncMOC imageProcessingQueue:OCMOCK_ANY];
 
-    id pushTokenTranscoder = [OCMockObject mockForClass:ZMPushTokenTranscoder.class];
-    [[[[pushTokenTranscoder expect] andReturn:pushTokenTranscoder] classMethod] alloc];
-    (void) [[[pushTokenTranscoder expect] andReturn:pushTokenTranscoder] initWithManagedObjectContext:self.syncMOC clientRegistrationStatus:OCMOCK_ANY];
-
     id callStateTranscoder = [OCMockObject mockForClass:ZMCallStateTranscoder.class];
     [[[[callStateTranscoder expect] andReturn:callStateTranscoder] classMethod] alloc];
     (void) [[[callStateTranscoder expect] andReturn:callStateTranscoder] initWithSyncManagedObjectContext:self.syncMOC uiManagedObjectContext:self.uiMOC objectStrategyDirectory:OCMOCK_ANY];
@@ -197,7 +192,6 @@
                          missingUpdateEventsTranscoder,
                          registrationTranscoder,
                          flowTranscoder,
-                         pushTokenTranscoder,
                          callStateTranscoder,
                          removedSuggestedPeopleTranscoder,
                          loginCodeRequestTranscoder,
@@ -243,7 +237,6 @@
     XCTAssertEqual(self.sut.connectionTranscoder, connectionTranscoder);
     XCTAssertEqual(self.sut.registrationTranscoder, registrationTranscoder);
     XCTAssertEqual(self.sut.flowTranscoder, flowTranscoder);
-    XCTAssertEqual(self.sut.pushTokenTranscoder, pushTokenTranscoder);
     XCTAssertEqual(self.sut.callStateTranscoder, callStateTranscoder);
     XCTAssertEqual(self.sut.removedSuggestedPeopleTranscoder, removedSuggestedPeopleTranscoder);
     XCTAssertEqual(self.sut.loginCodeRequestTranscoder, loginCodeRequestTranscoder);
