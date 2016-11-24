@@ -30,9 +30,20 @@ FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 
 @interface ZMSearchUser ()
 
-- (instancetype)initWithName:(NSString *)name accentColor:(ZMAccentColor)color remoteID:(NSUUID *)remoteID user:(ZMUser *)user syncManagedObjectContext:(NSManagedObjectContext *)syncMOC uiManagedObjectContext:(NSManagedObjectContext *)uiMOC;
+- (instancetype)initWithName:(NSString *)name
+                      handle:(NSString *)handle
+                 accentColor:(ZMAccentColor)color
+                    remoteID:(NSUUID *)remoteID
+                        user:(ZMUser *)user
+    syncManagedObjectContext:(NSManagedObjectContext *)syncMOC
+      uiManagedObjectContext:(NSManagedObjectContext *)uiMOC;
 
-- (instancetype)initWithName:(NSString *)name accentColor:(ZMAccentColor)color remoteID:(NSUUID *)remoteID user:(ZMUser *)user userSession:(id<ZMManagedObjectContextProvider>)userSession;
+- (instancetype)initWithName:(NSString *)name
+                      handle:(NSString *)handle
+                 accentColor:(ZMAccentColor)color
+                    remoteID:(NSUUID *)remoteID
+                        user:(ZMUser *)user
+                 userSession:(id<ZMManagedObjectContextProvider>)userSession;
 
 + (NSArray <ZMSearchUser *> *)usersWithUsers:(NSArray <ZMUser *> *)users userSession:(id<ZMManagedObjectContextProvider>)userSession;
 

@@ -50,17 +50,35 @@
     // given
     NSUUID *remoteIDA = [NSUUID createUUID];
     NSUUID *remoteIDB = [NSUUID createUUID];
-    ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithName:@"A" accentColor:ZMAccentColorStrongLimeGreen remoteID:remoteIDA user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithName:@"A"
+                                                      handle:@"a"
+                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                    remoteID:remoteIDA
+                                                        user:nil
+                                    syncManagedObjectContext:self.syncMOC
+                                      uiManagedObjectContext:self.uiMOC];
 
 
     // (1)
-    ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithName:@"B" accentColor:ZMAccentColorSoftPink remoteID:remoteIDA user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithName:@"B"
+                                                      handle:@"b"
+                                                 accentColor:ZMAccentColorSoftPink
+                                                    remoteID:remoteIDA
+                                                        user:nil
+                                    syncManagedObjectContext: self.syncMOC
+                                      uiManagedObjectContext:self.uiMOC];
 
     XCTAssertEqualObjects(user1, user2);
     XCTAssertEqual(user1.hash, user2.hash);
     
     // (2)
-    ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithName:@"A" accentColor:ZMAccentColorStrongLimeGreen remoteID:remoteIDB user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithName:@"A"
+                                                      handle:@"b"
+                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                    remoteID:remoteIDB
+                                                        user:nil
+                                    syncManagedObjectContext:self.syncMOC
+                                      uiManagedObjectContext:self.uiMOC];
 
     XCTAssertNotEqualObjects(user1, user3);
 }
@@ -90,10 +108,17 @@
 {
     // given
     NSString *name = @"John Doe";
+    NSString *handle = @"doe";
     NSUUID *remoteID = [NSUUID createUUID];
     
     // when
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:name accentColor:ZMAccentColorStrongLimeGreen remoteID:remoteID user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:name
+                                                           handle:handle
+                                                      accentColor:ZMAccentColorStrongLimeGreen
+                                                         remoteID:remoteID
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     // then
@@ -104,6 +129,7 @@
     XCTAssertNil(searchUser.imageMediumData);
     XCTAssertNil(searchUser.imageSmallProfileData);
     XCTAssertNil(searchUser.user);
+    XCTAssertEqualObjects(searchUser.handle, handle);
 }
 
 
@@ -112,6 +138,7 @@
     // given
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"Actual name";
+    user.handle = @"my_handle";
     user.accentColorValue = ZMAccentColorVividRed;
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection.status = ZMConnectionStatusAccepted;
@@ -121,11 +148,18 @@
     [self.uiMOC saveOrRollback];
     
     // when
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Wrong name" accentColor:ZMAccentColorStrongLimeGreen remoteID:[NSUUID createUUID] user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Wrong name"
+                                                           handle:@"not_my_handle"
+                                                      accentColor:ZMAccentColorStrongLimeGreen
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     // then
     XCTAssertEqualObjects(searchUser.name, user.name);
+    XCTAssertEqualObjects(searchUser.handle, user.handle);
     XCTAssertEqualObjects(searchUser.displayName, user.displayName);
     XCTAssertEqual(searchUser.accentColorValue, user.accentColorValue);
     XCTAssertEqual(searchUser.isConnected, user.isConnected);
@@ -175,6 +209,7 @@
     // given
     
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                           handle:@"hans"
                                                       accentColor:ZMAccentColorStrongLimeGreen
                                                          remoteID:[NSUUID createUUID]
                                                              user:nil
@@ -217,6 +252,7 @@
     // given
     
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                           handle:@"hans"
                                                       accentColor:ZMAccentColorStrongLimeGreen
                                                          remoteID:[NSUUID createUUID]
                                                              user:nil
@@ -251,7 +287,13 @@
 {
     // given
     
-    ZMSearchUser *user = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorStrongLimeGreen remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *user = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                     handle:@"hans"
+                                                accentColor:ZMAccentColorStrongLimeGreen
+                                                   remoteID:[NSUUID createUUID]
+                                                       user:nil
+                                   syncManagedObjectContext:self.syncMOC
+                                     uiManagedObjectContext:self.uiMOC];
 
     user.remoteIdentifier = nil;
     
@@ -276,7 +318,13 @@
 {
     // given
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorStrongLimeGreen remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorStrongLimeGreen
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     searchUser.remoteIdentifier = [NSUUID createUUID];
     
@@ -301,7 +349,13 @@
 - (void)testThatItCanBeConnectedIfItIsNotAlreadyConnected
 {
     // given
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorStrongLimeGreen remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorStrongLimeGreen
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     // then
@@ -315,7 +369,13 @@
     __block ZMSearchUser *searchUser;
     
     [self performIgnoringZMLogError:^{
-        searchUser = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorStrongLimeGreen remoteID:nil user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+        searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                 handle:@"hans"
+                                            accentColor:ZMAccentColorStrongLimeGreen
+                                               remoteID:nil
+                                                   user:nil
+                               syncManagedObjectContext:self.syncMOC
+                                 uiManagedObjectContext:self.uiMOC];
 
     }];
     
@@ -335,7 +395,13 @@
     
     __block ZMSearchUser *searchUser;
     [self performIgnoringZMLogError:^{
-        searchUser = [[ZMSearchUser alloc] initWithName:nil accentColor:ZMAccentColorUndefined remoteID:nil user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+        searchUser = [[ZMSearchUser alloc] initWithName:nil
+                                                 handle:nil
+                                            accentColor:ZMAccentColorUndefined
+                                               remoteID:nil
+                                                   user:user
+                               syncManagedObjectContext:self.syncMOC
+                                 uiManagedObjectContext:self.uiMOC];
 
     }];
     searchUser.remoteIdentifier = nil;
@@ -368,7 +434,13 @@
 
     __block ZMSearchUser *searchUser;
     [self performIgnoringZMLogError:^{
-        searchUser = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorUndefined remoteID:nil user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+        searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                 handle:nil
+                                            accentColor:ZMAccentColorUndefined
+                                               remoteID:nil
+                                                   user:user
+                               syncManagedObjectContext:self.syncMOC
+                                 uiManagedObjectContext:self.uiMOC];
 
     }];
 
@@ -421,7 +493,13 @@
 
     __block ZMSearchUser *searchUser;
     [self performIgnoringZMLogError:^{
-        searchUser = [[ZMSearchUser alloc] initWithName:@"Hans" accentColor:ZMAccentColorStrongLimeGreen remoteID:[NSUUID createUUID] user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+        searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                 handle:@"hans"
+                                            accentColor:ZMAccentColorStrongLimeGreen
+                                               remoteID:[NSUUID createUUID]
+                                                   user:user
+                               syncManagedObjectContext:self.syncMOC
+                                 uiManagedObjectContext:self.uiMOC];
 
     }];
     searchUser.remoteIdentifier = nil;
@@ -592,7 +670,13 @@
 {
     // given
     NSData *mockImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
@@ -616,7 +700,13 @@
     
     [self.uiMOC saveOrRollback];
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:user.remoteIdentifier user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:user.remoteIdentifier
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [cache setObject:mockImage2 forKey:searchUser.remoteIdentifier];
@@ -632,7 +722,13 @@
 {
     // given
     NSData *mockImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
@@ -647,7 +743,13 @@
 - (void)testThatItReturnsANulRemoteIdentifierAsTheSmallProfileImageIdentifierIfItHasNoCachedImage
 {
     // given
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     // when
@@ -669,7 +771,13 @@
     
     [self.uiMOC saveOrRollback];
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:user.remoteIdentifier user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:user.remoteIdentifier
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
@@ -686,7 +794,13 @@
 {
     // given
     NSData *mockImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
@@ -709,7 +823,13 @@
 - (void)testThat_isLocalOrHasCachedProfileImageData_returnsNo
 {
     // given
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     // then
@@ -722,7 +842,13 @@
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.remoteIdentifier = [NSUUID createUUID];
     [self.uiMOC saveOrRollback];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:nil accentColor:ZMAccentColorUndefined remoteID:nil user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:nil
+                                                           handle:nil
+                                                      accentColor:ZMAccentColorUndefined
+                                                         remoteID:nil
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     // then
@@ -735,7 +861,13 @@
     NSData *smallImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *mediumImage = [@"foo" dataUsingEncoding:NSUTF8StringEncoding];
 
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *smallCache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [smallCache setObject:smallImage forKey:searchUser.remoteIdentifier];
@@ -753,7 +885,13 @@
     NSData *smallImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
     NSUUID *mediumAssetID = [NSUUID UUID];
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
     
     NSCache *smallImageCache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [smallImageCache setObject:smallImage forKey:searchUser.remoteIdentifier];
@@ -770,7 +908,13 @@
     // given
     NSData *smallImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
     
     NSCache *smallImageCache = [ZMSearchUser searchUserToSmallProfileImageCache];
     [smallImageCache setObject:smallImage forKey:searchUser.remoteIdentifier];
@@ -790,7 +934,13 @@
     // given
     NSUUID *assetID = [NSUUID UUID];
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
     
     NSCache *cache = [ZMSearchUser searchUserToMediumAssetIDCache];
     [cache setObject:assetID forKey:searchUser.remoteIdentifier];
@@ -806,7 +956,13 @@
 {
     // given
     NSData *mockImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToMediumImageCache];
     [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
@@ -830,7 +986,13 @@
     
     [self.uiMOC saveOrRollback];
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:user.remoteIdentifier user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:user.remoteIdentifier
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToMediumImageCache];
     [cache setObject:mockImage2 forKey:searchUser.remoteIdentifier];
@@ -847,7 +1009,13 @@
 {
     // given
     NSData *mockImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToMediumImageCache];
     [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
@@ -862,7 +1030,13 @@
 - (void)testThatItReturnsANulRemoteIdentifierAsTheMediumProfileImageIdentifierIfItHasNoCachedImage
 {
     // given
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     
     // when
@@ -884,7 +1058,13 @@
     
     [self.uiMOC saveOrRollback];
     
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:user.remoteIdentifier user:user syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:user.remoteIdentifier
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToMediumImageCache];
     [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
@@ -901,7 +1081,13 @@
 {
     // given
     NSData *mockImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo" accentColor:ZMAccentColorBrightYellow remoteID:[NSUUID createUUID] user:nil syncManagedObjectContext: self.syncMOC uiManagedObjectContext:self.uiMOC];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
 
     NSCache *cache = [ZMSearchUser searchUserToMediumImageCache];
     NSCache *idCache = [ZMSearchUser searchUserToMediumAssetIDCache];

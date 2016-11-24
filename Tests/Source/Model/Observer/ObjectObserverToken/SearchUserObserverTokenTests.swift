@@ -41,7 +41,13 @@ class SearchUserObserverTokenTests : ZMBaseManagedObjectTest {
         
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(name: "Hans", accentColor: .brightOrange, remoteID: remoteID, user: nil, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)!
+        let searchUser = ZMSearchUser(name: "Hans",
+                                      handle: "hans",
+                                      accentColor: .brightOrange,
+                                      remoteID: remoteID,
+                                      user: nil,
+                                      syncManagedObjectContext: self.syncMOC,
+                                      uiManagedObjectContext:self.uiMOC)!
         
         let testObserver = TestSearchUserObserver()
         let token = ZMUser.add(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
@@ -63,7 +69,13 @@ class SearchUserObserverTokenTests : ZMBaseManagedObjectTest {
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.remoteIdentifier = UUID.create()
         self.uiMOC.saveOrRollback()
-        let searchUser = ZMSearchUser(name: "Foo", accentColor: .brightYellow, remoteID: user.remoteIdentifier, user: user, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)!
+        let searchUser = ZMSearchUser(name: "Foo",
+                                      handle: "foo",
+                                      accentColor: .brightYellow,
+                                      remoteID: user.remoteIdentifier,
+                                      user: user,
+                                      syncManagedObjectContext: self.syncMOC,
+                                      uiManagedObjectContext:self.uiMOC)!
         
         let testObserver = TestSearchUserObserver()
         let token = ZMUser.add(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
@@ -85,7 +97,13 @@ class SearchUserObserverTokenTests : ZMBaseManagedObjectTest {
         
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(name: "Hans", accentColor: .brightOrange, remoteID: remoteID, user: nil, syncManagedObjectContext: self.syncMOC, uiManagedObjectContext:self.uiMOC)!
+        let searchUser = ZMSearchUser(name: "Hans",
+                                      handle: "hans",
+                                      accentColor: .brightOrange,
+                                      remoteID: remoteID,
+                                      user: nil,
+                                      syncManagedObjectContext: self.syncMOC,
+                                      uiManagedObjectContext:self.uiMOC)!
         
         let testObserver = TestSearchUserObserver()
         let token = ZMUser.add(testObserver, forUsers:[searchUser], managedObjectContext: self.uiMOC)
