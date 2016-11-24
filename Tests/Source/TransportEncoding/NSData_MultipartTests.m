@@ -185,4 +185,32 @@
     XCTAssertEqualObjects(createdItem, item);
 }
 
+- (void)testThatItIgnoresMalformattedHeaderValues
+{
+    // given
+    NSString *boundary = @"--boundary";
+    NSData *data = [@"1" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSMutableData *malformedMultipartData = [NSMutableData data];
+    [malformedMultipartData appendData:[boundary dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"Content-Length: 1" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"good: header" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"bad:header" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [malformedMultipartData appendData:data];
+    [malformedMultipartData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // when
+    ZMMultipartBodyItem *createdItem = [[ZMMultipartBodyItem alloc] initWithMultipartData:malformedMultipartData];
+    
+    // then
+    XCTAssertEqual(createdItem.headers.count, 1u);
+    XCTAssertEqualObjects(createdItem.headers[@"good"], @"header");
+    XCTAssertEqualObjects(createdItem.data, data);
+}
+
 @end

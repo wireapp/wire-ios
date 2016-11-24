@@ -222,12 +222,14 @@ static NSString *const ContentLengthPrefix = @"Content-Length: ";
 {
     if (line != nil) {
         NSRange colonRange = [line rangeOfString:@": "];
-        NSString *key = [line substringToIndex:colonRange.location];
-        NSString *value = [line substringFromIndex:NSMaxRange(colonRange)];
-        if (key != nil && value != nil) {
-            [*headers setValue:value forKey:key];
+        if (colonRange.location != NSNotFound) {
+            NSString *key = [line substringToIndex:colonRange.location];
+            NSString *value = [line substringFromIndex:NSMaxRange(colonRange)];
+            if (key != nil && value != nil) {
+                [*headers setValue:value forKey:key];
+            }
+            return YES;
         }
-        return YES;
     }
     return NO;
 }
