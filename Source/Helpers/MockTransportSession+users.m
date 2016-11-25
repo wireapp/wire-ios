@@ -313,20 +313,24 @@
 // MARK: - Handles
 - (ZMTransportResponse *)processUserHandleRequest:(NSString *)handle requestPath:(NSString *)path;
 {
-    
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
     NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-    
+    NSData *payloadData;
+    NSInteger statusCode;
+
     if(users.count > 0) {
+        statusCode = 200;
         MockUser *user = users[0];
-        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
-        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Location":path}];
+        id <ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        payloadData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
     }
     else {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil headers:@{@"Location":path}];
+        statusCode = 404;
     }
 
+    NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:path] statusCode:statusCode HTTPVersion:nil headerFields:@{@"Content-Type": @"application/json"}];
+    return [[ZMTransportResponse alloc] initWithHTTPURLResponse:urlResponse data:payloadData error:nil];;
 }
 
 @end
