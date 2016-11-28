@@ -22,8 +22,6 @@
 #import <ZMUtilities/ZMAccentColor.h>
 #import "ZMUser.h"
 
-@protocol ZMUserEditingObserver;
-@protocol ZMUserEditingObserverToken;
 @class ZMEmailCredentials;
 @class ZMPhoneCredentials;
 
@@ -41,37 +39,6 @@
 - (void)deleteProfileImage;
 
 @end
-
-
-
-@protocol ZMUserEditingObserver <NSObject>
-
-/// Invoked when the password could not be set on the backend
-- (void)passwordUpdateRequestDidFail;
-
-/// Invoked when the email could not be set on the backend (duplicated?).
-/// The password might already have been set though - this is how BE is designed and there's nothing SE can do about it
-- (void)emailUpdateDidFail:(NSError *)error;
-
-/// Invoked when the email was sent to the backend
-- (void)didSentVerificationEmail;
-
-/// Invoked when requesting the phone number verification code failed
-- (void)phoneNumberVerificationCodeRequestDidFail:(NSError *)error;
-
-/// Invoken when requesting the phone number verification code succeeded
-- (void)phoneNumberVerificationCodeRequestDidSucceed;
-
-/// Invoked when the phone number code verification failed
-- (void)phoneNumberVerificationDidFail:(NSError *)error;
-
-// NOTE:
-// - to know when the email was verified (by the user), just listen for changes in email on the self user
-// - to know when the phone number was updated, just listen for changes in phone number on the self user
-
-@end
-
-
 
 
 @interface ZMCompleteRegistrationUser : NSObject <ZMEditableUser>
