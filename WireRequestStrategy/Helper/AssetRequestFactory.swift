@@ -25,18 +25,26 @@ public final class AssetRequestFactory : NSObject {
     let octetStreamContentType = "application/octet-stream"
     
     public enum Retention : String {
-        case Persistent = "persistent"
-        case Eternal = "eternal"
-        case Volatile = "volatile"
+        case persistent = "persistent"
+        case eternal = "eternal"
+        case volatile = "volatile"
     }
 
-    public func upstreamRequestForAsset(withData data: Data, shareable: Bool = true, retention : Retention = .Persistent) -> ZMTransportRequest? {
+    public func backgroundUpstreamRequestForAsset(message: ZMAssetClientMessage, withData data: Data, shareable: Bool = true, retention: Retention = .persistent) -> ZMTransportRequest? {
+        let path = "/assets/v3"
+        guard let uploadURL = uploadURL(for: message, in: message.managedObjectContext!, shareable: shareable, retention: retention, data: data) else { return nil }
+        let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: "multipart/mixed; boundary=frontier")
+        request.addContentDebugInformation("Uploading full asset to /assets/v3")
+        return request
+    }
+
+    public func upstreamRequestForAsset(withData data: Data, shareable: Bool = true, retention : Retention = .persistent) -> ZMTransportRequest? {
         let path = "/assets/v3"
         guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: multipartData, type: "multipart/mixed; boundary=frontier", contentDisposition: nil)
         return request
     }
-    
+
     func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention : Retention) throws -> Data {
         let fileDataHeader = ["Content-MD5": (data as NSData).zmMD5Digest().base64String()]
         let metaData = try JSONSerialization.data(withJSONObject: ["public" : shareable, "retention" : retention.rawValue ], options: [])
@@ -45,6 +53,11 @@ public final class AssetRequestFactory : NSObject {
             ZMMultipartBodyItem(data: metaData, contentType: jsonContentType, headers: nil),
             ZMMultipartBodyItem(data: data, contentType: octetStreamContentType, headers: fileDataHeader),
             ], boundary: "frontier")
+    }
+
+    private func uploadURL(for message: ZMAssetClientMessage, in moc: NSManagedObjectContext, shareable: Bool, retention: Retention, data: Data) -> URL? {
+        guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
+        return moc.zm_fileAssetCache.storeRequestData(message.nonce, data: multipartData)
     }
     
 }
