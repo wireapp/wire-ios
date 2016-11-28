@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSError *)requestExpiredError;
 + (NSError *)tryAgainLaterError;
++ (NSError *)tryAgainLaterErrorWithUserInfo:(nullable NSDictionary *)userInfo;
 
 
 /// @c YES if the request what cancelled
