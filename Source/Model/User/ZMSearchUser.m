@@ -572,6 +572,9 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     [mocObserver notifyUpdatedSearchUser:self];
 }
 
+- (void)refreshData {
+    [self.user refreshData];
+}
 
 @end
 
