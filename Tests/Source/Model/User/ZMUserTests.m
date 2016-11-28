@@ -1069,6 +1069,21 @@ static NSString *const ValidEmail = @"foo77@example.com";
     }];
 }
 
+- (void)testThatCallingRefreshDataMarksItAsToDownload {
+    
+    // GIVEN
+    ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
+    user.remoteIdentifier = [NSUUID UUID];
+    user.needsToBeUpdatedFromBackend = false;
+    XCTAssertFalse(user.needsToBeUpdatedFromBackend);
+    
+    // WHEN
+    [user refreshData];
+    
+    // THEN
+    XCTAssertTrue(user.needsToBeUpdatedFromBackend);
+}
+
 @end
 
 

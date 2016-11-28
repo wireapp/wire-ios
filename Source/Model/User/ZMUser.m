@@ -352,6 +352,10 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
     return clientsRequiringUserAttention;
 }
 
+- (void)refreshData {
+    self.needsToBeUpdatedFromBackend = true;
+}
+
 @end
 
 
