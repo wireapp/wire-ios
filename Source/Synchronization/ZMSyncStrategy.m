@@ -43,7 +43,6 @@
 #import "ZMCallStateTranscoder.h"
 #import "ZMPhoneNumberVerificationTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
-#import "ZMUserProfileUpdateTranscoder.h"
 #import "ZMessagingLogs.h"
 #import "ZMClientRegistrationStatus.h"
 #import "ZMOnDemandFlowManager.h"
@@ -75,8 +74,6 @@
 @property (nonatomic) ZMLoginCodeRequestTranscoder *loginCodeRequestTranscoder;
 @property (nonatomic) ZMFlowSync *flowTranscoder;
 @property (nonatomic) ZMCallStateTranscoder *callStateTranscoder;
-@property (nonatomic) TypingStrategy *typingStrategy;
-@property (nonatomic) ZMUserProfileUpdateTranscoder *userProfileUpdateTranscoder;
 @property (nonatomic) LinkPreviewAssetUploadRequestStrategy *linkPreviewAssetUploadRequestStrategy;
 @property (nonatomic) ImageUploadRequestStrategy *imageUploadRequestStrategy;
 @property (nonatomic) ImageDownloadRequestStrategy *imageDownloadRequestStrategy;
@@ -125,7 +122,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 
 - (instancetype)initWithAuthenticationCenter:(ZMAuthenticationStatus *)authenticationStatus
-                     userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileStatus
+                     userProfileUpdateStatus:(UserProfileUpdateStatus *)userProfileStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
                           clientUpdateStatus:(ClientUpdateStatus *)clientUpdateStatus
                         proxiedRequestStatus:(ProxiedRequestsStatus *)proxiedRequestStatus
@@ -158,7 +155,6 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                           backgroundActivityFactory:[BackgroundActivityFactory sharedInstance]];
 
         [self createTranscodersWithClientRegistrationStatus:clientRegistrationStatus
-                                    userProfileUpdateStatus:userProfileStatus
                                localNotificationsDispatcher:localNotificationsDispatcher
                                        authenticationStatus:authenticationStatus
                                backgroundAPNSPingBackStatus:backgroundAPNSPingBackStatus
@@ -208,6 +204,9 @@ ZM_EMPTY_ASSERTING_INIT()
                                    [[AddressBookUploadRequestStrategy alloc] initWithAuthenticationStatus:authenticationStatus
                                                                                  clientRegistrationStatus:clientRegistrationStatus
                                                                                                       moc:self.syncMOC],
+                                   [[UserProfileRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC
+                                                                            userProfileUpdateStatus:userProfileStatus
+                                                                               authenticationStatus:authenticationStatus],
                                    self.fileUploadRequestStrategy,
                                    self.linkPreviewAssetDownloadRequestStrategy,
                                    self.linkPreviewAssetUploadRequestStrategy,
@@ -232,7 +231,6 @@ ZM_EMPTY_ASSERTING_INIT()
 }
 
 - (void)createTranscodersWithClientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                              userProfileUpdateStatus:(ZMUserProfileUpdateStatus *)userProfileStatus
                          localNotificationsDispatcher:(ZMLocalNotificationDispatcher *)localNotificationsDispatcher
                                  authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
                          backgroundAPNSPingBackStatus:(BackgroundAPNSPingBackStatus *)backgroundAPNSPingBackStatus
@@ -261,7 +259,6 @@ ZM_EMPTY_ASSERTING_INIT()
     self.loginTranscoder = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus clientRegistrationStatus:clientRegistrationStatus];
     self.loginCodeRequestTranscoder = [[ZMLoginCodeRequestTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus];
     self.phoneNumberVerificationTranscoder = [[ZMPhoneNumberVerificationTranscoder alloc] initWithManagedObjectContext:self.syncMOC authenticationStatus:authenticationStatus];
-    self.userProfileUpdateTranscoder = [[ZMUserProfileUpdateTranscoder alloc] initWithManagedObjectContext:self.syncMOC userProfileUpdateStatus:userProfileStatus];
     self.conversationStatusSync = [[ConversationStatusStrategy alloc] initWithManagedObjectContext:self.syncMOC];
     self.fileUploadRequestStrategy = [[FileUploadRequestStrategy alloc] initWithClientRegistrationStatus:clientRegistrationStatus managedObjectContext:self.syncMOC taskCancellationProvider:taskCancellationProvider];
     self.linkPreviewAssetDownloadRequestStrategy = [[LinkPreviewAssetDownloadRequestStrategy alloc] initWithAuthStatus:clientRegistrationStatus managedObjectContext:self.syncMOC];
@@ -474,7 +471,6 @@ ZM_EMPTY_ASSERTING_INIT()
              self.callStateTranscoder,
              self.phoneNumberVerificationTranscoder,
              self.loginCodeRequestTranscoder,
-             self.userProfileUpdateTranscoder,
              self.loginTranscoder,
              ];
 }

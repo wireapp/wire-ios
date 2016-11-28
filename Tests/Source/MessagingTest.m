@@ -49,7 +49,6 @@
 #import "ZMLoginTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
 #import "ZMUserSession+Internal.h"
-#import "ZMUserProfileUpdateTranscoder.h"
 #import <zmessaging/zmessaging-Swift.h>
 #import "zmessaging_iOS_Tests-Swift.h"
 
@@ -341,8 +340,6 @@
     [self verifyMockLater:loginTranscoder];
     id loginCodeRequestTranscoder = [OCMockObject mockForClass:ZMLoginCodeRequestTranscoder.class];
     [self verifyMockLater:loginCodeRequestTranscoder];
-    id userProfileUpdateTranscoder = [OCMockObject mockForClass:ZMUserProfileUpdateTranscoder.class];
-    [self verifyMockLater:userProfileUpdateTranscoder];
     
     
     [[[objectDirectory stub] andReturn:userTranscoder] userTranscoder];
@@ -360,7 +357,6 @@
     [[[objectDirectory stub] andReturn:callStateTranscoder] callStateTranscoder];
     [[[objectDirectory stub] andReturn:loginTranscoder] loginTranscoder];
     [[[objectDirectory stub] andReturn:loginCodeRequestTranscoder] loginCodeRequestTranscoder];
-    [[[objectDirectory stub] andReturn:userProfileUpdateTranscoder] userProfileUpdateTranscoder];
     
     [[[objectDirectory stub] andReturn:@[
                                         userTranscoder,
@@ -378,7 +374,6 @@
                                         callStateTranscoder,
                                         loginTranscoder,
                                         loginCodeRequestTranscoder,
-                                        userProfileUpdateTranscoder
                                         ]] allTranscoders];
     
     
