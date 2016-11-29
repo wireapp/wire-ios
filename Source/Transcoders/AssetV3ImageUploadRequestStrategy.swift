@@ -224,7 +224,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMAssetClientMessage else { return nil }
         guard let data = managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true) else { return nil }
-        guard let request = requestFactory.upstreamRequestForAsset(withData: data, shareable: false, retention: .Persistent) else { return nil }
+        guard let request = requestFactory.upstreamRequestForAsset(withData: data, shareable: false, retention: .persistent) else { return nil }
 
         if message.uploadState == .uploadingThumbnail {
             request.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
