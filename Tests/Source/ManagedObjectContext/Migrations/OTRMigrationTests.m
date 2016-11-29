@@ -626,9 +626,9 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     __block NSArray *assetClientMessages;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.21.2" block:^{
+    [self performMockingStoreURLWithVersion:@"2.21.2" block:^(NSURL *storeURL){
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.21.2 to the current mom"];
         
