@@ -18,10 +18,9 @@
 
 
 #import "DatabaseBaseTest.h"
-#import "NSManagedObjectContext+zmessaging-Internal.h"
 
 @import ZMTesting;
-
+@import ZMCDataModel;
 
 
 @interface DatabaseBaseTest ()
@@ -35,21 +34,20 @@
 @end
 
 
-
 @implementation DatabaseBaseTest
 
 - (void)setUp
 {
     [super setUp];
-    [self cleanUp];
     
     [NSManagedObjectContext setUseInMemoryStore:NO];
     self.fm = [NSFileManager defaultManager];
-    self.cachesDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSCachesDirectory];
-    self.applicationSupportDirectoryStoreURL = [NSManagedObjectContext storeURLInDirectory:NSApplicationSupportDirectory];
-    self.sharedContainerStoreURL = [NSManagedObjectContext storeURLInDirectory:NSDocumentDirectory];
+    self.cachesDirectoryStoreURL = [PersistentStoreRelocator storeURLInDirectory:NSCachesDirectory];
+    self.applicationSupportDirectoryStoreURL = [PersistentStoreRelocator storeURLInDirectory:NSApplicationSupportDirectory];
+    self.sharedContainerStoreURL = [PersistentStoreRelocator storeURLInDirectory:NSDocumentDirectory];
     self.sharedContainerDirectoryURL = [self.fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-    [NSManagedObjectContext setDatabaseDirectoryURL:self.sharedContainerDirectoryURL];
+    
+    [self cleanUp];
 }
 
 - (void)tearDown
@@ -95,28 +93,13 @@
 
 #pragma mark - Helper
 
-- (BOOL)moveDatabaseToSearchPathDirectory:(NSUInteger)directory
+- (BOOL)createDatabaseInDirectory:(NSSearchPathDirectory)directory
 {
-    NSError *error;
-    NSURL *toStoreURL = [NSManagedObjectContext storeURLInDirectory:directory];
-    NSURL *fromStoreURL = NSManagedObjectContext.storeURL;
+    NSURL *storeURL = [PersistentStoreRelocator storeURLInDirectory:directory];
 
-    // We need to create a database before we move it.
-    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:self.sharedContainerDirectoryURL backingUpCorruptedDatabase:NO completionHandler:nil];
+    [NSManagedObjectContext prepareLocalStoreAtURL:storeURL backupCorruptedDatabase:NO synchronous:YES completionHandler:nil];
 
-    for (NSString *extension in self.databaseFileExtensions) {
-        NSString *toPath = [toStoreURL.path stringByAppendingString:extension];
-        NSString *fromPath = [fromStoreURL.path stringByAppendingString:extension];
-        XCTAssertTrue([self.fm moveItemAtPath:fromPath toPath:toPath error:&error]);
-        XCTAssertNil(error);
-        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
-        
-        if (nil != error) {
-            return NO;
-        }
-    }
-
-    XCTAssertTrue([self createExternalSupportFileForDatabaseAtURL:toStoreURL]);
+    XCTAssertTrue([self createExternalSupportFileForDatabaseAtURL:storeURL]);
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     
     return YES;
@@ -126,23 +109,15 @@
 {
     BOOL success = YES;
     NSError *error;
-    NSString *supportPath = [databaseURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    NSString *storeName = [[databaseURL URLByDeletingPathExtension] lastPathComponent];
+    NSString *supportFile  = [NSString stringWithFormat:@".%@_SUPPORT", storeName];
+    NSString *supportPath = [databaseURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:supportFile].path;
     success &= [self.fm createDirectoryAtPath:supportPath withIntermediateDirectories:NO attributes:nil error:&error];
     XCTAssertNil(error);
     
     NSString *path = [supportPath stringByAppendingString:@"/image.dat"];
     success &= [self.mediumJPEGData writeToFile:path atomically:YES];
     return success;
-}
-
-- (BOOL)moveDatabaseToCachesDirectory
-{
-    return [self moveDatabaseToSearchPathDirectory:NSCachesDirectory];
-}
-
-- (BOOL)moveDatabaseToApplicationSupportDirectory
-{
-    return [self moveDatabaseToSearchPathDirectory:NSApplicationSupportDirectory];
 }
 
 - (NSData *)invalidData
@@ -152,6 +127,8 @@
 
 - (BOOL)createdUnreadableLocalStore
 {
+    [self createDirectoryForStoreAtURL:self.sharedContainerStoreURL];
+    
     NSData *data = self.invalidData;
     
     for (NSString *extension in self.databaseFileExtensions) {
@@ -173,22 +150,29 @@
 - (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase
 {
     [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreSync:YES
-                                          inDirectory:self.sharedContainerDirectoryURL
-                           backingUpCorruptedDatabase:backupCorruptedDatabase
-                                    completionHandler:nil];
+        [NSManagedObjectContext prepareLocalStoreAtURL:self.sharedContainerStoreURL backupCorruptedDatabase:backupCorruptedDatabase synchronous:YES completionHandler:nil];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
 }
 
-- (void)useApplicationSupportDirectoryAsDefault
+- (void)createDirectoryForStoreAtURL:(NSURL *)storeURL
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSError *error = nil;
-    NSURL * const directory = [fm URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
-    Require(error == nil);
-    self.sharedContainerDirectoryURL = directory;
-    [NSManagedObjectContext setDatabaseDirectoryURL:self.sharedContainerDirectoryURL];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *directory = storeURL.URLByDeletingLastPathComponent;
+    
+    if (! [fileManager fileExistsAtPath:directory.path]) {
+        NSError *error;
+        short const permissions = 0700;
+        NSDictionary *attr = @{NSFilePosixPermissions: @(permissions)};
+        RequireString([fileManager createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:attr error:&error],
+                      "Failed to create directory: %lu, error: %lu", (unsigned long)directory,  (unsigned long) error.code);
+    }
+    
+    // Make sure this is not backed up:
+    NSError *error;
+    if (! [directory setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+        ZMLogError(@"Error excluding %@ from backup %@", directory.path, error);
+    }
 }
 
 @end

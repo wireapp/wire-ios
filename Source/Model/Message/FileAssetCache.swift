@@ -43,29 +43,35 @@ extension NSManagedObjectContext
 /// OS will terminate the app before purging the cache.
 private struct FileCache : Cache {
     
-    /// URL of the cache
-    static let cacheFolderURL : URL = {
-        guard let cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
-            fatal("Can't create caches directory")
-        }
-        return cacheURL
-    }()
+    private let cacheFolderURL : URL
     
-    init(name: String) {
+    /// Create FileCahe
+    /// - parameter name: name of the cache
+    /// - parameter location: where cache is persisted on disk. Defaults to caches directory if nil.
+    init(name: String, location: URL? = nil) {
+        
+        // Create cache at the provided location or in the defalt caches directory if omitted
+        if let cacheFolderURL = location {
+            self.cacheFolderURL = cacheFolderURL
+        } else if let cacheFolderURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
+            self.cacheFolderURL = cacheFolderURL
+        } else {
+            fatal("Can't find/access caches directory")
+        }
         
         // create and set attributes
         do {
-            try FileManager.default.createDirectory(at: type(of: self).cacheFolderURL, withIntermediateDirectories:true, attributes:[FileAttributeKey.protectionKey.rawValue:FileProtectionType.completeUntilFirstUserAuthentication])
+            try FileManager.default.createDirectory(at: cacheFolderURL, withIntermediateDirectories:true, attributes:[FileAttributeKey.protectionKey.rawValue:FileProtectionType.completeUntilFirstUserAuthentication])
         }
         catch {
-            fatal("Can't create cache directory: \(type(of: self).cacheFolderURL)")
+            fatal("Can't create cache directory: \(cacheFolderURL)")
         }
         
         do {
-            try (type(of: self).cacheFolderURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
+            try (cacheFolderURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
         }
         catch {
-            fatal("Can not exclude cache directory from backup: \(type(of: self).cacheFolderURL)")
+            fatal("Can not exclude cache directory from backup: \(cacheFolderURL)")
         }
     }
     
@@ -138,13 +144,13 @@ private struct FileCache : Cache {
         for c in ":\\/%\"".characters { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
             safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")
         }
-        return type(of: self).cacheFolderURL.appendingPathComponent(safeKey)
+        return cacheFolderURL.appendingPathComponent(safeKey)
     }
 
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
-    static func wipeCaches() {
-        _ = try? FileManager.default.removeItem(at: self.cacheFolderURL)
+    func wipeCaches() {
+        _ = try? FileManager.default.removeItem(at: cacheFolderURL)
     }
 }
 
@@ -156,12 +162,17 @@ private struct FileCache : Cache {
 /// OS will terminate the app before purging the cache.
 open class FileAssetCache : NSObject {
     
-    let cache : Cache
+    fileprivate let fileCache : FileCache
+    
+    var cache : Cache {
+        return fileCache
+    }
     
     /// Creates an asset cache
-    public override init() {
+    public init(location: URL? = nil) {
+        self.fileCache = FileCache(name: "files", location: location)
         
-        self.cache = FileCache(name: "files")
+        super.init()
     }
     
     /// Returns the asset data for a given message. This will probably cause I/O
@@ -227,8 +238,8 @@ open class FileAssetCache : NSObject {
 public extension FileAssetCache {
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
-    static func wipeCaches() {
-        FileCache.wipeCaches()
+    func wipeCaches() {
+        fileCache.wipeCaches()
     }
 }
 

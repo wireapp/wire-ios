@@ -28,7 +28,6 @@ class MessageWindowChangeTokenTests : ZMBaseManagedObjectTest
 {
     override func setUp() {
         super.setUp()
-        self.setUpCaches()
         NotificationCenter.default.post(name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

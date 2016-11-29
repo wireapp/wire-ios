@@ -27,12 +27,7 @@ enum ContentType {
 }
 
 class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
-    
-    override func setUp() {
-        super.setUp()
-        self.setUpCaches()
-    }
-    
+        
     func insertMessageWithLinkPreview(contentType: ContentType) -> ZMClientMessage {
         let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
         let nonce = UUID()

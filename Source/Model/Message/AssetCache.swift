@@ -66,8 +66,13 @@ struct PINAssetCache : Cache {
     /// Creates an asset cache
     /// - parameter name: name of the cache
     /// - parameter MBLimit: maximum size of the cache on disk in MB
-    init(name: String, MBLimit : UInt) {
-        self.assetsCache = PINCache(name: name)
+    /// - parameter location: where on disk cache is persisted
+    init(name: String, MBLimit : UInt, location: URL? = nil) {
+        if let rootPath = location?.path {
+            self.assetsCache = PINCache(name: name, rootPath: rootPath)
+        } else {
+            self.assetsCache = PINCache(name: name)
+        }
         self.assetsCache.makeURLSecure()
         self.assetsCache.configureLimits(MBLimit * 1024 * 1024)
     }
@@ -110,8 +115,8 @@ open class ImageAssetCache : NSObject {
     
     /// Creates an asset cache for images
     /// - parameter MBLimit: maximum size of the cache on disk in MB
-    public init(MBLimit: UInt) {
-        self.cache = PINAssetCache(name: "images", MBLimit: MBLimit)
+    public init(MBLimit: UInt, location: URL? = nil) {
+        self.cache = PINAssetCache(name: "images", MBLimit: MBLimit, location: location)
     }
     
     /// Returns the asset data for a given message and format tag. This will probably cause I/O

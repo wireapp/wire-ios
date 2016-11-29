@@ -29,7 +29,7 @@ class ImageAssetCacheTests: XCTestCase {
 
 class FileAssetCacheTests: XCTestCase {
     override func setUp() {
-        FileAssetCache.wipeCaches()
+        FileAssetCache().wipeCaches()
     }
 }
 
