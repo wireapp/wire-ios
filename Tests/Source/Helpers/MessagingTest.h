@@ -43,7 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
 @property (nonatomic, readonly) MockTransportSession *mockTransportSession;
-@property (nonatomic, readonly) NSURL *databaseDirectory;
+@property (nonatomic, readonly) NSURL *storeURL;
+@property (nonatomic, readonly) NSURL *keyStoreURL;
 
 
 /// perform operations pretending that the uiMOC is a syncMOC
