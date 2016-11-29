@@ -83,7 +83,8 @@ extern NSString * const ZMTransportSessionShouldKeepWebsocketOpenKey;
                    websocketURL:(NSURL *)websocketURL
                   keyValueStore:(id<ZMKeyValueStore>)keyValueStore
                  mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
-                    application:(nullable UIApplication *)application;
+                    application:(nullable UIApplication *)application
+      sharedContainerIdentifier:(nullable NSString *)sharedContainerIdentifier;
 
 - (void)tearDown;
 

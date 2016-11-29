@@ -76,6 +76,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) NSOperationQueue *workQueue;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) BOOL tornDown;
+@property (nonatomic) NSString *sharedContainerIdentifier;
 
 @property (nonatomic) ZMTransportPushChannel *pushChannel;
 
@@ -117,7 +118,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithBaseURL:nil websocketURL:nil keyValueStore:nil mainGroupQueue:nil application:nil];
+    return [self initWithBaseURL:nil websocketURL:nil keyValueStore:nil mainGroupQueue:nil application:nil sharedContainerIdentifier:nil];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -154,10 +155,14 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-+ (NSURLSessionConfiguration *)backgroundSessionConfiguration
++ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)shardContainerIdentifier
 {
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:ZMURLSessionBackgroundIdentifier];
+    NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+    NSString *sessionIdentifier = bundleIdentifier ? bundleIdentifier : @"com.wire.background-session";
+    
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessionIdentifier];
     [self setUpConfiguration:configuration];
+    configuration.sharedContainerIdentifier = shardContainerIdentifier;
     return configuration;
 }
 
@@ -171,13 +176,13 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue application:(UIApplication *)application
+- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue application:(UIApplication *)application sharedContainerIdentifier:(NSString *)sharedContainerIdentifier
 {
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:@"ZMTransportSession"];
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"ZMTransportSession init"];
     
     ZMURLSession *foregroundSession = [ZMURLSession sessionWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:@"foreground-session"];
-    ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:[[self class] backgroundSessionConfiguration] delegate:self delegateQueue:queue identifier:@"background-session"];
+    ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:[[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:sharedContainerIdentifier] delegate:self delegateQueue:queue identifier:@"background-session"];
     ZMURLSession *voipSession = [ZMURLSession sessionWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:@"voip-session"];
 
     ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group];
