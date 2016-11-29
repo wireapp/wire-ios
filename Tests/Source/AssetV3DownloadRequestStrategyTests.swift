@@ -223,8 +223,10 @@ extension AssetV3DownloadRequestStrategyTests {
         let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 200, transportSessionError: .none)
 
         // when
-        request?.complete(with: response)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        performIgnoringZMLogError {
+            request?.complete(with: response)
+            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        }
 
         // then
         XCTAssertEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.failedDownload.rawValue)
@@ -238,6 +240,7 @@ extension AssetV3DownloadRequestStrategyTests {
 
         // when
         message.transferState = .uploaded
+        
         request?.complete(with: response)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

@@ -66,8 +66,8 @@ private let reponseHeaderAssetIdKey = "Location"
             entityClass: ZMAssetClientMessage.self
         )
 
-        let versionPredicate = NSPredicate(format: "version < 3")
-        self.filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, versionPredicate: versionPredicate)
+        let filter = NSPredicate(format: "version < 3")
+        self.filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, filter: filter)
         self.clientRegistrationStatus = clientRegistrationStatus
         self.requestFactory = ClientMessageRequestFactory()
         self.taskCancellationProvider = taskCancellationProvider
