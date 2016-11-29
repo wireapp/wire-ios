@@ -42,10 +42,8 @@
 - (void)setUp
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSURL * const directory = [fm URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-    [NSManagedObjectContext setDatabaseDirectoryURL:directory];
-    NSURL *storeURL = [NSManagedObjectContext storeURL];
-
+    NSURL *storeURL = [PersistentStoreRelocator storeURLInDirectory:NSDocumentDirectory];
+    
     if ([fm fileExistsAtPath:storeURL.path]) {
         NSError *error = nil;
         NSURL *parentURL;
@@ -83,11 +81,9 @@
 
 - (void)testThatPermissionsAreCorrectlySet;
 {
-    NSURL *storeURL = [NSManagedObjectContext storeURL];
-    
     NSError *error;
     NSURL *parentURL;
-    XCTAssert([storeURL getResourceValue:&parentURL forKey:NSURLParentDirectoryURLKey error:&error], @"%@", error);
+    XCTAssert([self.testSession.storeURL getResourceValue:&parentURL forKey:NSURLParentDirectoryURLKey error:&error], @"%@", error);
     
     NSNumber *excluded;
     XCTAssert([parentURL getResourceValue:&excluded forKey:NSURLIsExcludedFromBackupKey error:&error], @"%@", error);

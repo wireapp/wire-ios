@@ -24,6 +24,7 @@
 @interface DatabaseBaseTest : ZMTBaseTest
 
 @property (nonatomic, readonly) NSFileManager *fm;
+@property (nonatomic, readonly) NSString *databaseIdentifier;
 @property (nonatomic, readonly) NSURL *cachesDirectoryStoreURL;
 @property (nonatomic, readonly) NSURL *applicationSupportDirectoryStoreURL;
 @property (nonatomic, readonly) NSURL *sharedContainerDirectoryURL;
@@ -32,12 +33,11 @@
 
 
 - (void)cleanUp;
-- (BOOL)moveDatabaseToCachesDirectory;
-- (BOOL)moveDatabaseToApplicationSupportDirectory;
+- (BOOL)createDatabaseInDirectory:(NSSearchPathDirectory)directory;
 - (NSData *)invalidData;
-- (void)useApplicationSupportDirectoryAsDefault;
 - (BOOL)createdUnreadableLocalStore;
 - (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase;
 - (BOOL)createExternalSupportFileForDatabaseAtURL:(NSURL *)databaseURL;
+- (void)createDirectoryForStoreAtURL:(NSURL *)storeURL;
 
 @end

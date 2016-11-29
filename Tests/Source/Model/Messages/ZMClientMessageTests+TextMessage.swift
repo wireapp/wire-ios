@@ -44,11 +44,6 @@ private class NotificationObserver: NSObject {
 
 class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
-    override func setUp() {
-        super.setUp()
-        setUpCaches()
-    }
-
     override func tearDown() {
         super.tearDown()
         wipeCaches()
@@ -300,7 +295,6 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(_ preview: LinkPreview, line: UInt = #line) {
         let anExpectation = expectation(description: "It should fire a notification")
-        setUpCaches()
         
         // given
         let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)

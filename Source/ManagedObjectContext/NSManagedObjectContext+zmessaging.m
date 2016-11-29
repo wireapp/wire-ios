@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 @import ZMUtilities;
 @import UIKit;
 @import Cryptobox;
@@ -46,7 +45,6 @@ static NSString * const IsSaveDisabled = @"ZMIsSaveDisabled";
 static NSString * const IsFailingToSave = @"ZMIsFailingToSave";
 
 static BOOL UsesInMemoryStore;
-static NSURL * DatabaseDirectoryURL;
 static NSPersistentStoreCoordinator *sharedPersistentStoreCoordinator;
 static NSPersistentStoreCoordinator *inMemorySharedPersistentStoreCoordinator;
 static NSString * const ClearPersistentStoreOnStartKey = @"ZMClearPersistentStoreOnStart";
@@ -80,25 +78,25 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 
 static BOOL storeIsReady = NO;
 
-+ (BOOL)needsToPrepareLocalStoreInDirectory:(NSURL *)databaseDirectory;
++ (BOOL)needsToPrepareLocalStoreAtURL:(NSURL *)storeURL
 {
-    [self setDatabaseDirectoryURL:databaseDirectory];
+    BOOL needsMigration = NO;
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:storeURL.path]) {
+        NSManagedObjectModel *mom = self.loadManagedObjectModel;
+        NSDictionary *sharedContainerMetadata = [self metadataForStoreAtURL:storeURL];
+        needsMigration = sharedContainerMetadata != nil && ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
+    }
 
-    NSManagedObjectModel *mom = self.loadManagedObjectModel;
-    NSDictionary *sharedContainerMetadata = [self metadataForStoreAtURL:self.storeURL];
-    BOOL needsMigration = sharedContainerMetadata != nil && ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
+    PersistentStoreRelocator *storeRelocator = [[PersistentStoreRelocator alloc] initWithStoreLocation:storeURL];
 
-    BOOL databaseShouldBeInApplicationSupport = [self.applicationSupportDirectoryStoreURL.absoluteString hasPrefix:databaseDirectory.absoluteString];
-    BOOL needsToMoveDatabase = self.databaseExistsInCachesDirectory || (!databaseShouldBeInApplicationSupport && self.databaseExistsInApplicationSupportDirectory);
-    return needsMigration || needsToMoveDatabase || self.databaseExistsAndNotReadableDueToEncryption;
+    return needsMigration || storeRelocator.storeNeedsToBeRelocated || [self databaseExistsButIsNotReadableDueToEncryptionAtURL:storeURL];
 }
 
-+ (void)prepareLocalStoreInternalBackingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
-                                                inDirectory:(NSURL *)directory
-                                          completionHandler:(void (^)())completionHandler
++ (void)prepareLocalStoreAtURL:(NSURL *)storeURL
+       backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+             completionHandler:(void (^)())completionHandler
 {
-    [self setDatabaseDirectoryURL:directory];
-
     dispatch_block_t finally = ^() {
         storeIsReady = YES;
         if (nil != completionHandler) {
@@ -122,7 +120,7 @@ static BOOL storeIsReady = NO;
         // (2) User turns the phone on, but do not enter the passcode yet
         // (3) App is awake on the background due to VoIP push notification
         // We should wait then until the database is becoming available
-        if ([self databaseExistsAndNotReadableDueToEncryption]) {
+        if ([self databaseExistsButIsNotReadableDueToEncryptionAtURL:storeURL]) {
             ZM_WEAK(self);
             NSAssert(applicationProtectedDataDidBecomeAvailableObserver == nil, @"prepareLocalStoreInternalBackingUpCorruptedDatabase: called twice");
             
@@ -131,26 +129,26 @@ static BOOL storeIsReady = NO;
                                                                    queue:nil
                                                               usingBlock:^(NSNotification * _Nonnull __unused note) {
                                                                   ZM_STRONG(self);
-                                                                  sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorBackingUpCorrupedDatabases:backupCorruptedDatabase];
+                                                                  sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorAtURL:storeURL backupCorrupedDatabase:backupCorruptedDatabase];
                                                                   finally();
                                                                   [[NSNotificationCenter defaultCenter] removeObserver:applicationProtectedDataDidBecomeAvailableObserver];
                                                                   applicationProtectedDataDidBecomeAvailableObserver = nil;
                                                               }];
         }
         else {
-            sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorBackingUpCorrupedDatabases:backupCorruptedDatabase];
+            sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorAtURL:storeURL backupCorrupedDatabase:backupCorruptedDatabase];
             finally();
         }
     }
 }
 
-+ (void)prepareLocalStoreSync:(BOOL)sync
-                  inDirectory:(NSURL *)directory
-   backingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
-            completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreAtURL:(NSURL *)storeURL
+       backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+                   synchronous:(BOOL)synchronous
+             completionHandler:(void(^)())completionHandler;
 {
-    (sync ? dispatch_sync : dispatch_async)(UIContextCreationQueue(), ^{
-        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:backupCorruptedDatabase inDirectory:directory completionHandler:completionHandler];
+    (synchronous ? dispatch_sync : dispatch_async)(UIContextCreationQueue(), ^{
+        [self prepareLocalStoreAtURL:storeURL backupCorruptedDatabase:backupCorruptedDatabase completionHandler:completionHandler];
     });
 }
 
@@ -159,12 +157,12 @@ static BOOL storeIsReady = NO;
     return storeIsReady;
 }
 
-+ (NSPersistentStoreCoordinator *)requirePersistentStoreCoordinatorInDirectory:(NSURL *)directory
++ (NSPersistentStoreCoordinator *)persistentStoreCoordinatorAtURL:(NSURL *)storeURL
 {
     NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
     
     if (psc == nil) {
-        [self prepareLocalStoreInternalBackingUpCorruptedDatabase:NO inDirectory:directory completionHandler:nil];
+        [self prepareLocalStoreAtURL:storeURL backupCorruptedDatabase:NO completionHandler:nil];
         psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
         Require(psc != nil);
     }
@@ -172,9 +170,9 @@ static BOOL storeIsReady = NO;
     return psc;
 }
 
-+ (instancetype)createUserInterfaceContextWithStoreDirectory:(NSURL *)storeDirectory;
++ (instancetype)createUserInterfaceContextWithStoreAtURL:(NSURL *)storeURL
 {
-    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
+    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorAtURL:storeURL];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
     
     SharedUserInterfaceContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
@@ -195,9 +193,9 @@ static BOOL storeIsReady = NO;
     });
 }
 
-+ (instancetype)createSyncContextWithStoreDirectory:(NSURL *)storeDirectory;
++ (instancetype)createSyncContextWithStoreAtURL:(NSURL *)storeURL keyStoreURL:(NSURL *)keyStoreURL
 {
-    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
+    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorAtURL:storeURL];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
 
     NSManagedObjectContext *moc = [[self alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
@@ -205,17 +203,16 @@ static BOOL storeIsReady = NO;
         [moc markAsSyncContext];
         [moc configureWithPersistentStoreCoordinator:psc];
         [moc setupLocalCachedSessionAndSelfUser];
-        [moc setupUserKeyStoreForDirectory:storeDirectory];
+        [moc setupUserKeyStoreForDirectory:keyStoreURL];
         moc.undoManager = nil;
         moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSMergeByPropertyObjectTrumpMergePolicyType];
     }];
     return moc;
 }
 
-+ (instancetype)createSearchContextWithStoreDirectory:(NSURL *)storeDirectory;
++ (instancetype)createSearchContextWithStoreAtURL:(NSURL *)storeURL
 {
-    [self setDatabaseDirectoryURL:storeDirectory];
-    NSPersistentStoreCoordinator *psc = [self requirePersistentStoreCoordinatorInDirectory:storeDirectory];
+    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorAtURL:storeURL];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
     
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
@@ -229,14 +226,14 @@ static BOOL storeIsReady = NO;
     return moc;
 }
 
-- (void)configureWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)psc;
+- (void)configureWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)psc
 {
     RequireString(self.zm_isSyncContext || self.zm_isUserInterfaceContext || self.zm_isSearchContext, "Context is not marked, yet");
     [self createDispatchGroups];
     self.persistentStoreCoordinator = psc;
 }
 
-- (id)validUserInfoValueOfClass:(Class)class forKey:(NSString *)key;
+- (id)validUserInfoValueOfClass:(Class)class forKey:(NSString *)key
 {
     id value = self.userInfo[key];
     if (value == nil) {
@@ -257,17 +254,17 @@ static BOOL storeIsReady = NO;
     return value;
 }
 
-- (BOOL)zm_isSyncContext;
+- (BOOL)zm_isSyncContext
 {
     return [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsSyncContextKey] boolValue];
 }
 
-- (BOOL)zm_isUserInterfaceContext;
+- (BOOL)zm_isUserInterfaceContext
 {
     return [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsUserInterfaceContextKey] boolValue];
 }
 
-- (BOOL)zm_isSearchContext;
+- (BOOL)zm_isSearchContext
 {
     return [self.userInfo[IsSearchContextKey] boolValue];
 }
@@ -332,22 +329,12 @@ static BOOL storeIsReady = NO;
     return UsesInMemoryStore;
 }
 
-+ (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
++ (void)setUseInMemoryStore:(BOOL)useInMemoryStore
 {
     UsesInMemoryStore = useInMemoryStore;
 }
 
-+ (void)resetDatabaseDirectory;
-{
-    DatabaseDirectoryURL = nil;
-}
-
-+ (void)setDatabaseDirectoryURL:(NSURL *)directory
-{
-    DatabaseDirectoryURL = directory;
-}
-
-+ (NSPersistentStoreCoordinator *)inMemoryPersistentStoreCoordinator;
++ (NSPersistentStoreCoordinator *)inMemoryPersistentStoreCoordinator
 {
     NSManagedObjectModel *mom = [self loadManagedObjectModel];
     NSPersistentStoreCoordinator* persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
@@ -364,7 +351,7 @@ static BOOL storeIsReady = NO;
     return persistentStoreCoordinator;
 }
 
-+ (void)setClearPersistentStoreOnStart:(BOOL)flag;
++ (void)setClearPersistentStoreOnStart:(BOOL)flag
 {
     if (flag) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ClearPersistentStoreOnStartKey];
@@ -373,12 +360,12 @@ static BOOL storeIsReady = NO;
     }
 }
 
-+ (void)clearPersistentStoreOnStart;
++ (void)clearPersistentStoreAtURL:(NSURL *)storeURL
 {
     dispatch_once(&clearStoreOnceToken, ^{
         if ([[NSUserDefaults standardUserDefaults] boolForKey:ClearPersistentStoreOnStartKey]) {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:ClearPersistentStoreOnStartKey];
-            [self removePersistentStoreFromFilesystemAndCopyToBackup:NO storeURL:self.storeURL];
+            [self removePersistentStoreFromFilesystemAndCopyToBackup:NO storeURL:storeURL];
         }
     });
 }
@@ -457,7 +444,6 @@ static dispatch_once_t clearStoreOnceToken;
     sharedPersistentStoreCoordinator = nil;
     storeURLOnceToken = 0;
     clearStoreOnceToken = 0;
-    DatabaseDirectoryURL = nil;
 }
 
 + (NSPersistentStoreCoordinator *)onDiskPersistentStoreCoordinator
@@ -465,25 +451,57 @@ static dispatch_once_t clearStoreOnceToken;
     return sharedPersistentStoreCoordinator;
 }
 
-+ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorBackingUpCorrupedDatabases:(BOOL)backupCorruptedDatabase;
++ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorAtURL:(NSURL *)storeURL backupCorrupedDatabase:(BOOL)backupCorruptedDatabase
 {
-    RequireString(nil != DatabaseDirectoryURL, "No database url set, call -setDatabaseDirectoryURL: to set it first.");
+    [self clearPersistentStoreAtURL:storeURL];
+    [self createDirectoryForStoreAtURL:storeURL];
     
-    [self clearPersistentStoreOnStart];
-    [self moveDatabaseFromCachesToApplicationSupportIfNeeded];
-    [self moveDatabaseFromApplicationSupportToSharedContainerIfNeeded];
+    PersistentStoreRelocator *storeRelocator = [[PersistentStoreRelocator alloc] initWithStoreLocation:storeURL];
+    
+    NSError *error = nil;
+    [storeRelocator moveStoreIfNecessaryAndReturnError:&error];
+    
+    if (error != nil) {
+        ZMLogError(@"Moving store failed: %@", error);
+        return nil;
+    }
     
     NSManagedObjectModel *mom = [self loadManagedObjectModel];
     NSPersistentStoreCoordinator* psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
 
-    BOOL shouldMigrate = [self shouldMigrateStoreToNewModelVersion:self.storeURL];
-    [self addPersistenStoreWithMigration:shouldMigrate toCoordinator:psc storeURL:self.storeURL backupCorruptedDatabase:backupCorruptedDatabase];
+    BOOL shouldMigrate = [self shouldMigrateStoreToNewModelVersion:storeURL];
+    [self addPersistenStoreWithMigration:shouldMigrate toCoordinator:psc storeURL:storeURL backupCorruptedDatabase:backupCorruptedDatabase];
 
     return psc;
 }
 
++ (void)createDirectoryForStoreAtURL:(NSURL *)storeURL
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *directory = storeURL.URLByDeletingLastPathComponent;
+    
+    if (! [fileManager fileExistsAtPath:directory.path]) {
+        NSError *error;
+        short const permissions = 0700;
+        NSDictionary *attr = @{NSFilePosixPermissions: @(permissions)};
+        RequireString([fileManager createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:attr error:&error],
+                      "Failed to create directory: %lu, error: %lu", (unsigned long)directory,  (unsigned long) error.code);
+    }
+    
+    // Make sure this is not backed up:
+    NSError *error;
+    if (! [directory setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+        ZMLogError(@"Error excluding %@ from backup %@", directory.path, error);
+    }
+}
+
 + (BOOL)shouldMigrateStoreToNewModelVersion:(NSURL *)storeURL
 {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:storeURL.path]) {
+        // Store doesn't exist yet so need to migrate it.
+        return NO;
+    }
+    
     NSManagedObjectModel *mom = self.loadManagedObjectModel;
     NSDictionary *metadata = [self metadataForStoreAtURL:storeURL];
     NSString *oldModelVersion = [metadata[NSStoreModelVersionIdentifiersKey] firstObject];
@@ -585,206 +603,21 @@ static dispatch_once_t clearStoreOnceToken;
              };
 }
 
-+ (NSURL *)urlForDatabaseDirectoryInSearchPathDirectory:(NSSearchPathDirectory)searchPathDirectory
-{
-    NSError *error;
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSURL * const directory = [fm URLForDirectory:searchPathDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
-    RequireString(directory != nil, "Failed to get or create directory: %lu", (long) error.code);
-    NSString *identifier = [NSBundle mainBundle].bundleIdentifier;
-    if (identifier == nil) {
-        identifier = ((NSBundle *)[NSBundle bundleForClass:[ZMUser class]]).bundleIdentifier;
-    }
-    
-    return [directory URLByAppendingPathComponent:identifier];
-}
-
-+ (NSURL *)storeURLInDirectory:(NSSearchPathDirectory)directory;
-{
-    NSError *error;
-    NSURL *storeURL = [self urlForDatabaseDirectoryInSearchPathDirectory:directory];
-    
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if (! [fm fileExistsAtPath:storeURL.path]) {
-        short const permissions = 0700;
-        NSDictionary *attr = @{NSFilePosixPermissions: @(permissions)};
-        RequireString([fm createDirectoryAtURL:storeURL withIntermediateDirectories:YES attributes:attr error:&error],
-                      "Failed to create subdirectory in searchpath directory: %lu, error: %lu", (unsigned long)directory,  (unsigned long) error.code);
-    }
-    
-    // Make sure this is not backed up:
-    if (! [storeURL setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error]) {
-        ZMLogError(@"Error excluding %@ from backup %@", storeURL.path, error);
-    }
-    
-    NSString *storeFilename = @"store.wiredatabase";
-    return [storeURL URLByAppendingPathComponent:storeFilename];
-}
-
-+ (NSURL *)storeURL;
-{
-    RequireString(DatabaseDirectoryURL != nil, "Database directory not set");
-    NSString *identifier = [NSBundle mainBundle].bundleIdentifier;
-    if (identifier == nil) {
-        identifier = [NSBundle bundleForClass:ZMUser.class].bundleIdentifier;
-    }
-    
-    NSURL * const directory = [DatabaseDirectoryURL URLByAppendingPathComponent:identifier];
-    NSFileManager *fm = NSFileManager.defaultManager;
-    
-    if (! [fm fileExistsAtPath:directory.path]) {
-        NSError *error;
-        short const permissions = 0700;
-        NSDictionary *attr = @{NSFilePosixPermissions: @(permissions)};
-        RequireString([fm createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:attr error:&error],
-                      "Failed to create directory: %lu, error: %lu", (unsigned long)directory,  (unsigned long) error.code);
-    }
-    
-    // Make sure this is not backed up:
-    NSError *error;
-    if (! [directory setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error]) {
-        ZMLogError(@"Error excluding %@ from backup %@", directory.path, error);
-    }
-    
-    NSString *storeFilename = @"store.wiredatabase";
-    return [directory URLByAppendingPathComponent:storeFilename];
-}
-
-+ (NSURL *)applicationSupportDirectoryStoreURL;
-{
-    return [self storeURLInDirectory:NSApplicationSupportDirectory];
-}
-
-+ (NSURL *)cachesDirectoryStoreURL;
-{
-    return [self storeURLInDirectory:NSCachesDirectory];
-}
-
-/// If this is false it means we have succesfully moved the database from the caches directory to the application support directory
-+ (BOOL)databaseExistsInCachesDirectory
-{
-    return [self databaseExistsAtURL:self.cachesDirectoryStoreURL];
-}
-
-/// If this is false it means we have succesfully moved the database from the applications directory to the shared container
-+ (BOOL)databaseExistsInApplicationSupportDirectory;
-{
-    return [self databaseExistsAtURL:self.applicationSupportDirectoryStoreURL];
-}
-
-+ (BOOL)databaseExistsAtURL:(NSURL *)url;
-{
-    BOOL databaseExists = NO;
-    NSFileManager *fm = NSFileManager.defaultManager;
-    
-    for (NSString *extension in self.databaseFileExtensions) {
-        NSString *path = [url.path stringByAppendingString:extension];
-        databaseExists |= [fm fileExistsAtPath:path];
-    }
-
-    return databaseExists || [self externalBinaryFileExistsForDatabaseAtURL:url];
-}
-
-+ (BOOL)externalBinaryFileExistsForDatabaseAtURL:(NSURL *)databaseURL;
-{
-    NSFileManager *fm = NSFileManager.defaultManager;
-    NSString * const storeName = databaseURL.URLByDeletingPathExtension.lastPathComponent;
-    NSURL *parentURL = databaseURL.URLByDeletingLastPathComponent;
-    
-    BOOL isDirectory = NO;
-    if (![fm fileExistsAtPath:parentURL.path isDirectory:&isDirectory] || !isDirectory) {
-        return NO;
-    }
-
-    NSString *supportExtension = [NSString stringWithFormat:@".%@_SUPPORT", storeName];
-    NSURL *externalFileURL = [parentURL URLByAppendingPathComponent:supportExtension];
-    
-    return [fm fileExistsAtPath:externalFileURL.path];
-}
-
 /// Checks if database is created, but it is still locked with iOS file protection
-+ (BOOL)databaseExistsAndNotReadableDueToEncryption
++ (BOOL)databaseExistsButIsNotReadableDueToEncryptionAtURL:(NSURL *)storeURL
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSURL *databaseURL = self.databaseExistsInApplicationSupportDirectory ? self.applicationSupportDirectoryStoreURL : self.storeURL;
-    BOOL fileExists = [fm fileExistsAtPath:databaseURL.path isDirectory:nil];
+    BOOL fileExists = [fm fileExistsAtPath:storeURL.path isDirectory:nil];
     
     NSError *readError = nil;
-    [NSFileHandle fileHandleForReadingFromURL:databaseURL error:&readError];
+    [NSFileHandle fileHandleForReadingFromURL:storeURL error:&readError];
     
     BOOL result = fileExists && readError != nil;
     if (result) {
-        ZMLogError(@"databaseExistsAndNotReadableDueToEncryption=true, error=%@", readError);
+        ZMLogError(@"database exists but is not readable due to encryption, error=%@", readError);
     }
 
     return result;
-}
-
-+ (BOOL)moveDatabaseFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL
-{
-    if ([self databaseExistsAtURL:fromURL]) {
-        NSError *error;
-        NSFileManager *fm = NSFileManager.defaultManager;
-        
-        ZMLogDebug(@"Starting to move database from path: %@ to path: %@", fromURL, toURL);
-        
-        for (NSString *extension in self.databaseFileExtensions) {
-            
-            NSString *destinationPath = [toURL.path stringByAppendingString:extension];
-            NSString *sourcePath = [fromURL.path stringByAppendingString:extension];
-
-            if (! [fm fileExistsAtPath:sourcePath isDirectory:nil]) {
-                continue;
-            }
-            
-            if (! [fm moveItemAtPath:sourcePath toPath:destinationPath error:&error]) {
-                ZMLogError(@"Failed to copy database from caches: %@ to application support directory: %@ error: %@", sourcePath, destinationPath, error);
-                return NO;
-            }
-        }
-        
-        [self moveExternalBinaryFilesFromDatabaseAtURL:fromURL toDatabaseAtURL:toURL];
-    }
-    
-    return YES;
-}
-
-+ (BOOL)moveDatabaseFromCachesToApplicationSupportIfNeeded
-{
-    return [self moveDatabaseFromURL:self.cachesDirectoryStoreURL toURL:self.applicationSupportDirectoryStoreURL];
-}
-
-+ (BOOL)moveDatabaseFromApplicationSupportToSharedContainerIfNeeded
-{
-    return [self moveDatabaseFromURL:self.applicationSupportDirectoryStoreURL toURL:self.storeURL];
-}
-
-+ (void)moveExternalBinaryFilesFromDatabaseAtURL:(NSURL *)fromDatabaseURL toDatabaseAtURL:(NSURL *)toDatabaseURL
-{
-    NSString * const storeName = fromDatabaseURL.URLByDeletingPathExtension.lastPathComponent;
-    NSURL *parentURL = fromDatabaseURL.URLByDeletingLastPathComponent;
-    
-    NSFileManager *fm = NSFileManager.defaultManager;
-    if (! [self externalBinaryFileExistsForDatabaseAtURL:fromDatabaseURL]) {
-        return;
-    }
-
-    NSURL *toURLParent = toDatabaseURL.URLByDeletingLastPathComponent;
-    NSString *supportExtension = [NSString stringWithFormat:@".%@_SUPPORT", storeName];
-    NSURL *fromURL = [parentURL URLByAppendingPathComponent:supportExtension];
-    NSURL *toURL = [toURLParent URLByAppendingPathComponent:supportExtension];
-    
-    if ([fm fileExistsAtPath:fromURL.path]) {
-        NSError *error = nil;
-        if (! [fm moveItemAtURL:fromURL toURL:toURL error:&error]) {
-            ZMLogError(@"Unable to move external binary data item from: %@ to: %@", fromURL.path, error);
-        }
-    }
-}
-
-+ (NSArray <NSString *> *)databaseFileExtensions
-{
-    return @[@"", @"-wal", @"-shm"];
 }
 
 - (BOOL)saveOrRollback;

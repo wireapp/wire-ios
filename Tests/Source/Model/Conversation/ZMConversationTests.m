@@ -55,8 +55,7 @@
 - (void)setUp;
 {
     [super setUp];
-    [self setUpCaches];
-
+    
     [self setupSelfConversation]; // when updating lastRead we are posting to the selfConversation
 }
 
