@@ -35,7 +35,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 @property (nonatomic) ZMSDispatchGroup *dispatchGroup;
 @property (nonatomic) NSString *testName;
 @property (nonatomic) NSURL *databaseDirectory;
-
+@property (nonatomic) NSURL *storeURL;
 
 @property (nonatomic) NSTimeInterval originalConversationLastReadTimestampTimerValue; // this will speed up the tests A LOT
 
@@ -76,8 +76,9 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
     
-    NSFileManager *fm = NSFileManager.defaultManager;
-    self.databaseDirectory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    self.storeURL = [PersistentStoreRelocator storeURLInDirectory:NSDocumentDirectory];
+    self.databaseDirectory = self.storeURL.URLByDeletingLastPathComponent;
+    
     [NSManagedObjectContext setUseInMemoryStore:self.shouldUseInMemoryStore];
     
     [self resetState];
@@ -86,7 +87,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self resetUIandSyncContextsAndResetPersistentStore:YES];
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     
-    self.searchMOC = [NSManagedObjectContext createSearchContextWithStoreDirectory:self.databaseDirectory];
+    self.searchMOC = [NSManagedObjectContext createSearchContextWithStoreAtURL:self.storeURL];
     [self.searchMOC addGroup:self.dispatchGroup];
 }
 
@@ -158,7 +159,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     }
     
     // NOTE this produces logs if self.useInMemoryStore = NO
-    self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreDirectory:self.databaseDirectory];
+    self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreAtURL:self.storeURL];
     self.uiMOC.globalManagedObjectContextObserver.propagateChanges = YES;
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.testName;
@@ -166,8 +167,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [self.uiMOC setupUserKeyStoreForDirectory:self.databaseDirectory];
     }];
     
-    
-    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreDirectory:self.databaseDirectory];
+    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreAtURL:self.storeURL keyStoreURL:self.databaseDirectory];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.testName;
         [self.syncMOC addGroup:self.dispatchGroup];
@@ -182,21 +182,15 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self.syncMOC performGroupedBlockAndWait:^{        
         [self.syncMOC setZm_userInterfaceContext:self.uiMOC];
     }];
-    [self.uiMOC setZm_syncContext:self.syncMOC];    
+    [self.uiMOC setZm_syncContext:self.syncMOC];
+    [self setUpCaches];
 }
 
-@end
-
-
-
-@implementation ZMTestSession (FilesInCache)
-
-/// Sets up the asset caches on the managed object contexts
 - (void)setUpCaches
 {
-    self.uiMOC.zm_imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:5];
-    self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] init];
-    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] init];
+    self.uiMOC.zm_imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:5 location:nil];
+    self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
+    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
 
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.zm_imageAssetCache = self.uiMOC.zm_imageAssetCache;
@@ -207,11 +201,12 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)wipeCaches
 {
-    [FileAssetCache wipeCaches];
+    [self.uiMOC.zm_fileAssetCache wipeCaches];
     [self.uiMOC.zm_userImageCache wipeCache];
     [self.uiMOC.zm_imageAssetCache wipeCache];
 
-    [self.syncMOC performGroupedBlockAndWait:^{        
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC.zm_fileAssetCache wipeCaches];
         [self.syncMOC.zm_imageAssetCache wipeCache];
         [self.syncMOC.zm_userImageCache wipeCache];
     }];

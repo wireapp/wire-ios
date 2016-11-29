@@ -47,12 +47,6 @@ NSString * const ReactionsKey = @"reactions";
 
 @implementation ZMMessageTests
 
-- (void)setUp
-{
-    [super setUp];
-    [self setUpCaches];
-}
-
 - (void)testThatItIgnoresNanosecondSettingServerTimestampOnInsert
 {
     // given

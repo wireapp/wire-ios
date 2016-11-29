@@ -67,7 +67,7 @@ static NSString *const ValidEmail = @"foo77@example.com";
     self.shortPhoneNumbers = @[@"+", @"4", @"+4", @"+49", @"+491", @"+4912", @"+49123", @"+491234", @"+491235"];
     self.longPhoneNumbers = @[@"+491234567890123456789015", @"+4912345678901234567890156"];
     
-    UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] init];
+    UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
     
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.zm_userImageCache = userImageCache;

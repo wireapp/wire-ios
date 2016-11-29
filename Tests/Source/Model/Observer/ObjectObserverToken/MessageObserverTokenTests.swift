@@ -32,8 +32,7 @@ class MessageObserverTokenTests : ZMBaseManagedObjectTest {
     
     override func setUp() {
         super.setUp()
-        self.setUpCaches()
-
+    
         self.uiMOC.globalManagedObjectContextObserver.syncCompleted(Notification(name: Notification.Name(rawValue: "fake"), object: nil))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

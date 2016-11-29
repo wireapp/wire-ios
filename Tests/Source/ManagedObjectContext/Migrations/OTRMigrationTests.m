@@ -21,12 +21,12 @@
 #import <XCTest/XCTest.h>
 #import <CoreData/CoreData.h>
 #import <ZMTesting/ZMTesting.h>
-#import <OCMock/OCMock.h>
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "DatabaseBaseTest.h"
 
 
 static NSString * const DataBaseFileExtensionName = @"wiredatabase";
+static NSString * const DataBaseIdentifier = @"TestDatabase";
 
 
 @interface OTRMigrationTests : DatabaseBaseTest
@@ -46,12 +46,12 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     
     __block NSManagedObjectContext *syncContext;
     __block NSMutableArray *managedObjects = [[NSMutableArray alloc] init];
-        
+    
     // when
-    [self performMockingStoreURLWithVersion:@"1.24" block:^{
+    [self performMockingStoreURLWithVersion:@"1.24" block:^(NSURL *storeURL) {
 
         [self performIgnoringZMLogError:^{
-            syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+            syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         }];
         
         XCTestExpectation *migrationExpectation = [self expectationWithDescription:@"It should not migrate from non E2EE version"];
@@ -87,9 +87,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSUInteger userClientCount;
     
     // when
-    [self performMockingStoreURLWithVersion:@"1.25" block:^{
+    [self performMockingStoreURLWithVersion:@"1.25" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *migrationExpectation = [self expectationWithDescription:@"It should migrate from 1.25 to 1.27"];
         
@@ -145,9 +145,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSUInteger userClientCount;
     
     // when
-    [self performMockingStoreURLWithVersion:@"1.27" block:^{
+    [self performMockingStoreURLWithVersion:@"1.27" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *migrationExpectation = [self expectationWithDescription:@"It should migrate from 1.27 to current mom version"];
         
@@ -193,9 +193,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSUInteger userClientCount;
     
     // when
-    [self performMockingStoreURLWithVersion:@"1.28" block:^{
+    [self performMockingStoreURLWithVersion:@"1.28" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *migrationExpectation = [self expectationWithDescription:@"It should migrate from 1.28 to current mom version"];
         
@@ -241,9 +241,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSUInteger userClientCount;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.3" block:^{
+    [self performMockingStoreURLWithVersion:@"2.3" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.3 to the current mom"];
         
@@ -291,9 +291,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSUInteger userClientCount;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.4" block:^{
+    [self performMockingStoreURLWithVersion:@"2.4" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.4 to the current mom"];
         
@@ -342,9 +342,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSArray *assetClientMessages;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.5" block:^{
+    [self performMockingStoreURLWithVersion:@"2.5" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.5 to the current mom"];
         
@@ -405,9 +405,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSArray *assetClientMessages;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.6" block:^{
+    [self performMockingStoreURLWithVersion:@"2.6" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.6 to the current mom"];
         
@@ -460,9 +460,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSArray *assetClientMessages;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.7" block:^{
+    [self performMockingStoreURLWithVersion:@"2.7" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.7 to the current mom"];
         
@@ -516,9 +516,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSArray *assetClientMessages;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.8" block:^{
+    [self performMockingStoreURLWithVersion:@"2.8" block:^(NSURL *storeURL) {
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.8 to the current mom"];
         
@@ -571,9 +571,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSArray *assetClientMessages;
 
     // when
-    [self performMockingStoreURLWithVersion:@"2.21.1" block:^{
+    [self performMockingStoreURLWithVersion:@"2.21.1" block:^(NSURL *storeURL) {
 
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
 
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.21.1 to the current mom"];
 
@@ -626,9 +626,9 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     __block NSArray *assetClientMessages;
     
     // when
-    [self performMockingStoreURLWithVersion:@"2.21.2" block:^{
+    [self performMockingStoreURLWithVersion:@"2.21.2" block:^(NSURL *storeURL){
         
-        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStore];
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
         
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.21.2 to the current mom"];
         
@@ -671,16 +671,14 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
 
 #pragma mark - Helper
 
-- (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStore
+- (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:(NSURL *)storeURL
 {
     __block NSManagedObjectContext *syncContext;
-
-    NSFileManager *fm = NSFileManager.defaultManager;
-    NSURL *directory = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+    
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    [NSManagedObjectContext prepareLocalStoreSync:YES inDirectory:directory backingUpCorruptedDatabase:NO completionHandler:^{
-        [NSManagedObjectContext createUserInterfaceContextWithStoreDirectory:directory];
-        syncContext = [NSManagedObjectContext createSyncContextWithStoreDirectory:directory];
+    [NSManagedObjectContext prepareLocalStoreAtURL:storeURL backupCorruptedDatabase:NO synchronous:YES completionHandler:^{
+        [NSManagedObjectContext createUserInterfaceContextWithStoreAtURL:storeURL];
+        syncContext = [NSManagedObjectContext createSyncContextWithStoreAtURL:storeURL keyStoreURL:storeURL.URLByDeletingLastPathComponent];
         dispatch_semaphore_signal(sem);
     }];
 
@@ -730,7 +728,7 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
     return urls;
 }
 
-- (void)performMockingStoreURLWithVersion:(NSString *)version block:(dispatch_block_t)block;
+- (void)performMockingStoreURLWithVersion:(NSString *)version block:(void (^)(NSURL *storeURL))block;
 {
     NSString *suffix = [version stringByReplacingOccurrencesOfString:@"." withString:@"-"];
     NSArray <NSURL *>*databaseURLs = [self testBundleDataBaseURLsWithSuffix:suffix];
@@ -758,19 +756,13 @@ static NSString * const DataBaseFileExtensionName = @"wiredatabase";
         XCTAssertNil(error);
     }
 
-    // Mock the storeURL to return the unique path
-    id mock = [OCMockObject mockForClass:[NSManagedObjectContext class]];
-    [[[[mock stub] classMethod] andReturn:mockURLs.firstObject] storeURL];
-
     // Perform the migration test
-    block();
+    block(mockURLs.firstObject);
 
     for (NSUInteger idx = 0; idx < databaseURLs.count; idx++) {
         XCTAssertTrue([fm removeItemAtURL:mockURLs[idx] error:&error]);
         XCTAssertNil(error);
     }
-
-    [mock stopMocking];
 }
 
 #pragma mark - Fixtures

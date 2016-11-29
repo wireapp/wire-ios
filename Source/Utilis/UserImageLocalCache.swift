@@ -73,10 +73,23 @@ extension NSManagedObjectContext
     /// Cache for small user profile image
     fileprivate let smallUserImageCache : PINCache
     
-    public override init() {
-        largeUserImageCache = PINCache(name: "largeUserImages")
+    
+    /// Create UserImageLocalCache
+    /// - parameter location: where cache is persisted on disk. Defaults to caches directory if nil.
+    public init(location: URL? = nil) {
+        
+        let largeUserImageCacheName = "largeUserImages"
+        let smallUserImageCacheName = "smallUserImages"
+        
+        if let rootPath = location?.path {
+            largeUserImageCache = PINCache(name: largeUserImageCacheName, rootPath: rootPath)
+            smallUserImageCache = PINCache(name: smallUserImageCacheName, rootPath: rootPath)
+        } else {
+            largeUserImageCache = PINCache(name: largeUserImageCacheName)
+            smallUserImageCache = PINCache(name: smallUserImageCacheName)
+        }
+        
         largeUserImageCache.configureLimits(50 * MEGABYTE)
-        smallUserImageCache = PINCache(name: "smallUserImages")
         smallUserImageCache.configureLimits(25 * MEGABYTE)
         
         largeUserImageCache.makeURLSecure()
