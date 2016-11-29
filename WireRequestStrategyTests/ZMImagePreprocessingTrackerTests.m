@@ -49,7 +49,6 @@
     
     self.testSession = [[ZMTestSession alloc] initWithDispatchGroup:self.dispatchGroup];
     [self.testSession prepareForTestNamed:self.name];
-    [self.testSession setUpCaches];
     
     self.imageMessage1 = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
     self.imageMessage1.nonce = [NSUUID createUUID];
