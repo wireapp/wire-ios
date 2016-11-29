@@ -81,9 +81,6 @@
 
 @interface ZMBaseManagedObjectTest (FilesInCache)
 
-/// Sets up the asset caches on the managed object contexts
-- (void)setUpCaches;
-
 /// Wipes the asset caches on the managed object contexts
 - (void)wipeCaches;
 

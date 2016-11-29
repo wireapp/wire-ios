@@ -56,7 +56,6 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
     
     override func setUp() {
         super.setUp()
-        setUpCaches()
 
         self.syncMOC.performGroupedBlockAndWait {
             self.syncSelfUser = ZMUser.selfUser(in: self.syncMOC)

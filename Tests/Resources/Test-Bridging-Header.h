@@ -32,4 +32,5 @@
 #import "MessagingTest+EventFactory.h"
 #import "NotificationObservers.h"
 #import "NSString+RandomString.h"
+#import "DatabaseBaseTest.h"
 

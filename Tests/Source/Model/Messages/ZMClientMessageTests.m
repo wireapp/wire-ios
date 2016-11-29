@@ -39,12 +39,6 @@
 
 @implementation ZMClientMessageTests
 
-- (void)setUp
-{
-    [super setUp];
-    [self setUpCaches];
-}
-
 - (void)testThatItDoesNotCreateTextMessagesFromUpdateEventIfThereIsAlreadyAClientMessageWithTheSameNonce
 {
     // given

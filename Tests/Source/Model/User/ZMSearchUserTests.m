@@ -30,7 +30,6 @@
 
 - (void)setUp {
     [super setUp];
-    [self setUpCaches];
 
     self.userNotifications = [NSMutableArray array];
 }

@@ -44,7 +44,6 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatItDeletesAnAssetMessage_Image() {
         // given
-        setUpCaches()
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         let sut = conversation.appendOTRMessage(withImageData: mediumJPEGData(), nonce: .create())
         
@@ -71,7 +70,6 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatItDeletesAnAssetMessage_File() {
         // given
-        setUpCaches()
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         let data = "Hello World".data(using: String.Encoding.utf8)!
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
@@ -162,7 +160,6 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     
     func testThatItDeletesAPreEndToEndImageMessage() {
         // given
-        setUpCaches()
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         let sut = ZMImageMessage.insertNewObject(in: uiMOC) // Pre e2ee image message
         

@@ -34,31 +34,39 @@
 - (void)setPersistentStoreMetadata:(id)metaData forKey:(NSString *)key;
 
 /// Checks if migration is needed or the database has to be moved
-+ (BOOL)needsToPrepareLocalStoreInDirectory:(NSURL *)databaseDirectory;
++ (BOOL)needsToPrepareLocalStoreAtURL:(NSURL *)storeURL;
 
 /// Creates persistent store coordinator and migrates store if needed
 /// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
 ///         synchronously when @c +needsToPrepareLocalStore is YES)
+/// @param storeURL where database should be created / moved to
 /// @param backupCorruptedDatabase if true, will copy a corrupted database to another folder for later investigation
 /// @param completionHandler callback to be executed on completion (nullable), will be invoked on an arbitrary queue, it's the
 ///     caller responsibility to ensure this is switched back to the correct queue
-+ (void)prepareLocalStoreSync:(BOOL)sync
-                  inDirectory:(NSURL *)directory
-   backingUpCorruptedDatabase:(BOOL)backupCorruptedDatabase
-            completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreAtURL:(NSURL *)storeURL
+       backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+                   synchronous:(BOOL)synchronous
+             completionHandler:(void(^)())completionHandler;
 
 /// Returns whether the store is ready to be opened
 + (BOOL)storeIsReady;
 
-+ (instancetype)createUserInterfaceContextWithStoreDirectory:(NSURL *)storeDirectory;
+/// Create context used by the UI
+/// @param storeURL where database is located
++ (instancetype)createUserInterfaceContextWithStoreAtURL:(NSURL *)storeURL;
+
+/// Reset the user interface context. NOTE: only used in testing with a in-memory store.
 + (void)resetUserInterfaceContext;
 
 /// This context will mark updates to objects in such a way that these fields are "up to date", ie. that these fields have been fetched.
 /// C.f. @c zm_isSyncContext
-+ (instancetype)createSyncContextWithStoreDirectory:(NSURL *)storeDirectory;
+/// @param storeURL where database is located
+/// @param keyStoreURL where cryptobox sessions are located
++ (instancetype)createSyncContextWithStoreAtURL:(NSURL *)storeURL keyStoreURL:(NSURL *)keyStoreURL;
 
-/// Context used for searching
-+ (instancetype)createSearchContextWithStoreDirectory:(NSURL *)storeDirectory;
+/// Create context used for searching
+/// @param storeURL where database is located
++ (instancetype)createSearchContextWithStoreAtURL:(NSURL *)storeURL;
 
 /// Returns @c YES if the receiver is a context that is used for synchronisation with the backend.
 ///
@@ -116,9 +124,6 @@
 /// Executes a fetch request and asserts in case of error
 /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
 - (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
-
-+ (NSURL *)storeURL;
-+ (NSURL *)applicationSupportDirectoryStoreURL;
 
 @end
 

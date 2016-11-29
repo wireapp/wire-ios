@@ -156,12 +156,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 @implementation ZMBaseManagedObjectTest (FilesInCache)
 
-/// Sets up the asset caches on the managed object contexts
-- (void)setUpCaches
-{
-    [self.testSession setUpCaches];
-}
-
 - (void)wipeCaches
 {
     [self.testSession wipeCaches];

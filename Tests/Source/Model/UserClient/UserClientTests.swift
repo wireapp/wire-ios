@@ -22,12 +22,7 @@ import ZMUtilities
 import Cryptobox
 
 class UserClientTests: ZMBaseManagedObjectTest {
-    
-    override func setUp() {
-        super.setUp()
-        self.setUpCaches()
-    }
-    
+        
     func clientWithTrustedClientCount(_ trustedCount: UInt, ignoredClientCount: UInt, missedClientCount: UInt) -> UserClient
     {
         let client = UserClient.insertNewObject(in: self.uiMOC)

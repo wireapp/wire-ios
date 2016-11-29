@@ -28,12 +28,7 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
     
     var message: ZMAssetClientMessage!
     var currentTestURL : URL?
-    
-    override func setUp() {
-        super.setUp()
-        self.setUpCaches()
-    }
-    
+        
     override func tearDown() {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 2))
         if let url = currentTestURL {

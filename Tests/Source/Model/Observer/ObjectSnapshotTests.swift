@@ -22,14 +22,7 @@ import ZMCDataModel
 import ZMTesting
 
 
-class ObjectSnapshotTests : ZMBaseManagedObjectTest
-{
-    
-    override func setUp() {
-        super.setUp()
-        self.setUpCaches()
-    }
-
+class ObjectSnapshotTests : ZMBaseManagedObjectTest {
     
     class Foo : NSObject, ObjectInSnapshot
     {

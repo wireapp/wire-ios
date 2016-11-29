@@ -47,6 +47,8 @@
 /// The url in which the database will be stored (in case @c shouldUseInMemoryStore is set to @c NO)
 @property (nonatomic, readonly) NSURL *databaseDirectory;
 
+@property (nonatomic, readonly) NSURL *storeURL;
+
 /// Prepare the fixture for running a test.
 - (void)prepareForTestNamed:(NSString *)testName;
 
@@ -61,14 +63,6 @@
 
 /// Wait until all contexts have completed their task and tear them down
 - (void)waitAndDeleteAllManagedObjectContexts;
-
-@end
-
-
-@interface ZMTestSession (FilesInCache)
-
-/// Sets up the asset caches on the managed object contexts
-- (void)setUpCaches;
 
 /// Wipes the asset caches on the managed object contexts
 - (void)wipeCaches;
