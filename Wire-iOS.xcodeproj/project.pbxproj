@@ -434,7 +434,6 @@
 		872C2B7F1DD9C22B0086A574 /* ShareViewController+Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872C2B7E1DD9C22B0086A574 /* ShareViewController+Views.swift */; };
 		872C99121DB0EA54006A3BDE /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 872C99111DB0EA54006A3BDE /* Intents.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		872CB8B319E58816006752B4 /* ProfileFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CB8A419E58816006752B4 /* ProfileFooterView.m */; };
-		872CB8B419E58816006752B4 /* ProfileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CB8A619E58816006752B4 /* ProfileHeaderView.m */; };
 		872CB8B519E58816006752B4 /* ProfileIncomingConnectionRequestFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CB8A819E58816006752B4 /* ProfileIncomingConnectionRequestFooterView.m */; };
 		872CB8B819E58816006752B4 /* ProfileSendConnectionRequestFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CB8AE19E58816006752B4 /* ProfileSendConnectionRequestFooterView.m */; };
 		872CB8B919E58816006752B4 /* ProfileUnblockFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CB8B019E58816006752B4 /* ProfileUnblockFooterView.m */; };
@@ -784,6 +783,8 @@
 		BFA25DC71D9A8C7B0086DEBD /* ConversationInputBarViewController+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA25DC61D9A8C7B0086DEBD /* ConversationInputBarViewController+Emoji.swift */; };
 		BFA25DC91D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA25DC81D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift */; };
 		BFA25DCB1D9AB88A0086DEBD /* Emojis.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA25DCA1D9AB88A0086DEBD /* Emojis.swift */; };
+		BFAAB23D1DED8BB900CBC096 /* ProfileHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAB23C1DED8BB900CBC096 /* ProfileHeaderViewModel.swift */; };
+		BFAAB23F1DED95B100CBC096 /* ProfileHeaderViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAB23E1DED95B100CBC096 /* ProfileHeaderViewTests.swift */; };
 		BFAD3A171CD0F14800F0FBED /* ConversationTitleViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAD3A161CD0F14800F0FBED /* ConversationTitleViewTests.m */; };
 		BFAD3A191CD1011100F0FBED /* ProfilePictureStepViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAD3A181CD1011100F0FBED /* ProfilePictureStepViewControllerTests.m */; };
 		BFAD3A1D1CD1079200F0FBED /* unsplash_matterhorn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BFAD3A1C1CD1079200F0FBED /* unsplash_matterhorn.jpg */; };
@@ -802,6 +803,7 @@
 		BFCF31D51D9E91880039B3DC /* RecentlyUsedEmojis.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCF31D41D9E91880039B3DC /* RecentlyUsedEmojis.swift */; };
 		BFCF31D71DA3A9350039B3DC /* SettingsCellDescriptorFactory+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCF31D61DA3A9350039B3DC /* SettingsCellDescriptorFactory+Options.swift */; };
 		BFCF31DD1DA52ECE0039B3DC /* KeyboardHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCF31DC1DA52ECE0039B3DC /* KeyboardHeight.swift */; };
+		BFD9B9561DEDEE0400E47534 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD9B9551DEDEE0400E47534 /* ProfileHeaderView.swift */; };
 		BFE08C1C1D5B5CFA002367F6 /* MessageDeletedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE08C1B1D5B5CFA002367F6 /* MessageDeletedCell.swift */; };
 		BFE08C1E1D5B6F34002367F6 /* MessageDeletedCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE08C1D1D5B6F34002367F6 /* MessageDeletedCellTests.swift */; };
 		BFE277631D5B4FC50074DC6D /* ConversationContentViewController+MessageDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE277621D5B4FC50074DC6D /* ConversationContentViewController+MessageDeletion.swift */; };
@@ -1554,8 +1556,6 @@
 		872C99111DB0EA54006A3BDE /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		872CB8A319E58816006752B4 /* ProfileFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileFooterView.h; sourceTree = "<group>"; };
 		872CB8A419E58816006752B4 /* ProfileFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileFooterView.m; sourceTree = "<group>"; };
-		872CB8A519E58816006752B4 /* ProfileHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileHeaderView.h; sourceTree = "<group>"; };
-		872CB8A619E58816006752B4 /* ProfileHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileHeaderView.m; sourceTree = "<group>"; };
 		872CB8A719E58816006752B4 /* ProfileIncomingConnectionRequestFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileIncomingConnectionRequestFooterView.h; sourceTree = "<group>"; };
 		872CB8A819E58816006752B4 /* ProfileIncomingConnectionRequestFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileIncomingConnectionRequestFooterView.m; sourceTree = "<group>"; };
 		872CB8AD19E58816006752B4 /* ProfileSendConnectionRequestFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileSendConnectionRequestFooterView.h; sourceTree = "<group>"; };
@@ -2126,6 +2126,8 @@
 		BFA25DC61D9A8C7B0086DEBD /* ConversationInputBarViewController+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ConversationInputBarViewController+Emoji.swift"; path = "Emoji/ConversationInputBarViewController+Emoji.swift"; sourceTree = "<group>"; };
 		BFA25DC81D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmojiKeyboardViewController.swift; path = Emoji/EmojiKeyboardViewController.swift; sourceTree = "<group>"; };
 		BFA25DCA1D9AB88A0086DEBD /* Emojis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Emojis.swift; path = Emoji/Emojis.swift; sourceTree = "<group>"; };
+		BFAAB23C1DED8BB900CBC096 /* ProfileHeaderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewModel.swift; sourceTree = "<group>"; };
+		BFAAB23E1DED95B100CBC096 /* ProfileHeaderViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewTests.swift; sourceTree = "<group>"; };
 		BFAD3A161CD0F14800F0FBED /* ConversationTitleViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConversationTitleViewTests.m; sourceTree = "<group>"; };
 		BFAD3A181CD1011100F0FBED /* ProfilePictureStepViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfilePictureStepViewControllerTests.m; sourceTree = "<group>"; };
 		BFAD3A1A1CD1065B00F0FBED /* ProfilePictureStepViewController+Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProfilePictureStepViewController+Testing.h"; sourceTree = "<group>"; };
@@ -2148,6 +2150,7 @@
 		BFCF31DC1DA52ECE0039B3DC /* KeyboardHeight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHeight.swift; sourceTree = "<group>"; };
 		BFCF31DE1DA64AD40039B3DC /* Analytics+SendButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+SendButton.swift"; sourceTree = "<group>"; };
 		BFCF31E01DA64B970039B3DC /* Analytics+EmojiKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+EmojiKeyboard.swift"; sourceTree = "<group>"; };
+		BFD9B9551DEDEE0400E47534 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		BFE08C1B1D5B5CFA002367F6 /* MessageDeletedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDeletedCell.swift; sourceTree = "<group>"; };
 		BFE08C1D1D5B6F34002367F6 /* MessageDeletedCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDeletedCellTests.swift; sourceTree = "<group>"; };
 		BFE277621D5B4FC50074DC6D /* ConversationContentViewController+MessageDeletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationContentViewController+MessageDeletion.swift"; sourceTree = "<group>"; };
@@ -3382,8 +3385,7 @@
 			children = (
 				872CB8A319E58816006752B4 /* ProfileFooterView.h */,
 				872CB8A419E58816006752B4 /* ProfileFooterView.m */,
-				872CB8A519E58816006752B4 /* ProfileHeaderView.h */,
-				872CB8A619E58816006752B4 /* ProfileHeaderView.m */,
+				BFD9B9551DEDEE0400E47534 /* ProfileHeaderView.swift */,
 				BF5C37961C0E0D9C00EA11E3 /* ParticipantsDeviceHeaderView.h */,
 				BF5C37971C0E0D9C00EA11E3 /* ParticipantsDeviceHeaderView.m */,
 				BF5C37991C0E0E8700EA11E3 /* ParticipantDeviceCell.h */,
@@ -4435,6 +4437,7 @@
 			children = (
 				8FC852BE199245760008B66B /* ProfileViewController.h */,
 				8FC852BF199245760008B66B /* ProfileViewController.m */,
+				BFAAB23C1DED8BB900CBC096 /* ProfileHeaderViewModel.swift */,
 				1613C76C1C3D2E7400B1FB8A /* ProfileDetailsViewController.h */,
 				1613C76D1C3D2E7400B1FB8A /* ProfileDetailsViewController.m */,
 				BF999B5E1C0C984C008D5414 /* ProfileDevicesViewController.h */,
@@ -4504,6 +4507,7 @@
 				BF16FC4B1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift */,
 				BF808B501DE605DF00718076 /* ChangeHandleViewControllerTests.swift */,
 				BF808B581DE72B7100718076 /* UserNameTakeOverViewControllerTests.swift */,
+				BFAAB23E1DED95B100CBC096 /* ProfileHeaderViewTests.swift */,
 				BF606D761CAC1C0A002BAC94 /* ToolTipViewControllerTests.m */,
 				BF52C15D1CAEC1430037331F /* ArchivedNavigationBarTests.m */,
 				8751A93B1C737D7200C72324 /* IconSystemCellTests.m */,
@@ -5384,6 +5388,7 @@
 				87AC77DB1DE48C01009F6D56 /* Copyable.swift in Sources */,
 				87371C1A1B7355C400807499 /* ConversationListViewController+StartUI.m in Sources */,
 				8FC85451199245770008B66B /* ConversationContentViewController+Scrolling.m in Sources */,
+				BFD9B9561DEDEE0400E47534 /* ProfileHeaderView.swift in Sources */,
 				871BC3611D34F94200DF0793 /* Settings+ColorScheme.m in Sources */,
 				871BC2801D34F8F800DF0793 /* NSString+Filename.swift in Sources */,
 				16D453601B69131400675246 /* ConversationListCollectionViewLayout.m in Sources */,
@@ -5549,7 +5554,6 @@
 				87D5E4421C3E79C600EB8289 /* NSData+Fingerprint.swift in Sources */,
 				8725B7C21D780D2500ADBDEB /* ZMMessage+Likes.swift in Sources */,
 				8715A16A19EBF69500E2C6DE /* CommonConnectionsView.m in Sources */,
-				872CB8B419E58816006752B4 /* ProfileHeaderView.m in Sources */,
 				BF4199D71DB794B3006A4C02 /* LinkOpener.swift in Sources */,
 				871BC3511D34F94200DF0793 /* AccentColorChangeHandler.m in Sources */,
 				BF0BDF9A1DAD3806003C61DE /* Analytics+EmojiKeyboard.swift in Sources */,
@@ -5580,6 +5584,7 @@
 				876113EB1DD1FEC4007F5969 /* ConversationContentViewController+Forward.swift in Sources */,
 				871BC2941D34F8F800DF0793 /* UIView+Zeta.m in Sources */,
 				8FC85458199245770008B66B /* ConversationInputBarViewController.m in Sources */,
+				BFAAB23D1DED8BB900CBC096 /* ProfileHeaderViewModel.swift in Sources */,
 				87F61D1A1CD36F0900670794 /* GradientView.swift in Sources */,
 				87582BA21C886BB90061FEB1 /* ClassyCache.swift in Sources */,
 				871BC0151D34F56300DF0793 /* AnalyticsConnectionRequestEvent.m in Sources */,
@@ -5922,6 +5927,7 @@
 				BF2A74751CEB595E002608BF /* AudioButtonOverlayTests.swift in Sources */,
 				BF52C15E1CAEC1430037331F /* ArchivedNavigationBarTests.m in Sources */,
 				8732670E1D2D0C5C005A62C1 /* AudioRecordKeyboardViewControllerTests.swift in Sources */,
+				BFAAB23F1DED95B100CBC096 /* ProfileHeaderViewTests.swift in Sources */,
 				1688F35A1C68F0A700A68D8E /* VoiceChannelOverlayTests.m in Sources */,
 				AF917BAD1C6E9B2F00491EA9 /* AppControllerTests.m in Sources */,
 				BF808B511DE605DF00718076 /* ChangeHandleViewControllerTests.swift in Sources */,
