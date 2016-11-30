@@ -136,15 +136,19 @@ struct HandleChangeState {
     }
 
     private static var allowedCharacters: CharacterSet = {
-        return CharacterSet.decimalDigits.union(.letters).union(CharacterSet(charactersIn: "_"))
+        return CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_").union(.decimalDigits)
     }()
+
+    private static var allowedLength: CountableClosedRange<Int> {
+        return 2...21
+    }
 
     /// Validates the passed in handle and updates the state if
     /// no error occurs, otherwise a `ValidationError` will be thrown.
     mutating func update(_ handle: String) throws {
+        availability = .unknown
         try validate(handle)
         newHandle = handle
-        availability = .unknown
     }
 
     /// Validation a new handle, if passed in handle
@@ -153,8 +157,8 @@ struct HandleChangeState {
     func validate(_ handle: String) throws {
         let subset = CharacterSet(charactersIn: handle).isSubset(of: HandleChangeState.allowedCharacters)
         guard subset else { throw ValidationError.invalidCharacter }
-        guard handle.characters.count > 2 else { throw ValidationError.tooShort }
-        guard handle.characters.count < 22 else { throw ValidationError.tooLong }
+        guard handle.characters.count >= HandleChangeState.allowedLength.lowerBound else { throw ValidationError.tooShort }
+        guard handle.characters.count <= HandleChangeState.allowedLength.upperBound else { throw ValidationError.tooLong }
         guard handle != currentHandle else { throw ValidationError.sameAsPrevious }
     }
 
@@ -167,10 +171,15 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     private var footerLabel = UILabel()
     fileprivate weak var userProfile = ZMUserSession.shared().userProfile
     private var observerToken: AnyObject?
-
+    var popOnSuccess = true
 
     convenience init() {
         self.init(state: HandleChangeState(currentHandle: ZMUser.selfUser().handle ?? nil, newHandle: nil, availability: .unknown))
+    }
+
+    convenience init(suggestedHandle handle: String) {
+        self.init(state: .init(currentHandle: nil, newHandle: handle, availability: .available))
+        setupViews()
     }
 
     /// Used to inject a specific `HandleChangeState` in tests. See `ChangeHandleViewControllerTests`.
@@ -179,7 +188,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         super.init(style: .grouped)
         setupViews()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -198,6 +207,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     private func setupViews() {
         title = "self.settings.account_section.handle.change.title".localized
+        view.backgroundColor = .clear
         tableView.allowsSelection = false
         ChangeHandleTableViewCell.register(in: tableView)
         footerLabel.numberOfLines = 0
@@ -280,8 +290,8 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
 
     func tableViewCellDidChangeText(cell: ChangeHandleTableViewCell, text: String) {
         do {
-            try state.update(text)
             NSObject.cancelPreviousPerformRequests(withTarget: self)
+            try state.update(text)
             perform(#selector(checkAvailability), with: text, afterDelay: 0.2)
         } catch {
             // no-op
@@ -314,6 +324,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     func didSetHandle() {
         showLoadingView = false
         state.availability = .taken
+        guard popOnSuccess else { return }
         _ = navigationController?.popViewController(animated: true)
     }
 
