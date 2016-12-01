@@ -24,6 +24,7 @@
 @class ZMConversation;
 @class UserClient;
 @class ZMAddressBookContact;
+@class AddressBookEntry;
 
 
 @interface ZMUser : ZMManagedObject <ZMBareUser>
@@ -31,6 +32,7 @@
 @property (nonatomic, readonly) NSString *emailAddress;
 @property (nonatomic, readonly) NSString *phoneNumber;
 @property (nonatomic, readonly) ZMConversation *oneToOneConversation;
+@property (nonatomic) AddressBookEntry *addressBookEntry;
 
 ///
 @property (nonatomic, readonly) NSSet<UserClient *> *clients;
