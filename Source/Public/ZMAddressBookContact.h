@@ -42,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *lastName;
 @property (nonatomic, copy, nullable) NSString *nickname;
 @property (nonatomic, copy, nullable) NSString *organization;
+@property (nonatomic, copy, nullable) NSString *localIdentifier;
 
 @property (nonatomic, copy) NSArray<NSString *> *emailAddresses;
 @property (nonatomic, copy) NSArray<NSString *> *rawPhoneNumbers;
