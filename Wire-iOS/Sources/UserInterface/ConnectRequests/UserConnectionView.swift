@@ -30,9 +30,22 @@ public final class UserConnectionView: UIView, Copyable {
         self.onBlock = instance.onBlock
         self.showUserName = instance.showUserName
     }
+
+    static private var correlationFormatter: AddressBookCorrelationFormatter = {
+        return AddressBookCorrelationFormatter(
+            lightFont: UIFont(magicIdentifier: "style.text.small.font_spec_light"),
+            boldFont: UIFont(magicIdentifier: "style.text.small.font_spec_bold"),
+            color: ColorScheme.default().color(withName: ColorSchemeColorTextDimmed)
+        )
+    }()
     
     public typealias User = ZMBareUser & ZMBareUserConnection & ZMSearchableUser
-    private let nameInfoLabel = UILabel()
+
+    private let nameLabel = UILabel()
+    private let handleLabel = UILabel()
+    private let correlationLabel = UILabel()
+    private let labelContainer = UIView()
+
     private let userImageView = UserImageView()
     private let incomingConnectionFooter = UIView()
     private let acceptButton = Button(style: .full)
@@ -76,9 +89,15 @@ public final class UserConnectionView: UIView, Copyable {
     }
     
     private func setup() {
-        self.nameInfoLabel.numberOfLines = 0
-        self.nameInfoLabel.textAlignment = .center
-        
+        [nameLabel, handleLabel, correlationLabel].forEach {
+            $0.numberOfLines = 0
+            $0.textAlignment = .center
+        }
+
+        nameLabel.accessibilityIdentifier = "name"
+        handleLabel.accessibilityIdentifier = "handle"
+        correlationLabel.accessibilityIdentifier = "correlation"
+
         self.acceptButton.accessibilityLabel = "accept"
         self.acceptButton.setTitle("inbox.connection_request.connect_button_title".localized.uppercased(), for: .normal)
         self.acceptButton.addTarget(self, action: #selector(UserConnectionView.onAcceptButton(sender:)), for: .touchUpInside)
@@ -110,8 +129,8 @@ public final class UserConnectionView: UIView, Copyable {
         self.outgoingConnectionFooter.addSubview(self.cancelConnectionButton)
         self.outgoingConnectionFooter.addSubview(self.blockButton)
         
-        [self.nameInfoLabel, self.userImageView, self.incomingConnectionFooter, self.outgoingConnectionFooter].forEach(self.addSubview)
-        
+        [self.labelContainer, self.userImageView, self.incomingConnectionFooter, self.outgoingConnectionFooter].forEach(self.addSubview)
+        [self.nameLabel, self.handleLabel, self.correlationLabel].forEach(labelContainer.addSubview)
         self.updateForUser()
     }
     
@@ -121,71 +140,49 @@ public final class UserConnectionView: UIView, Copyable {
         self.incomingConnectionFooter.isHidden = self.user.isConnected || self.user.isPendingApprovalByOtherUser
         self.outgoingConnectionFooter.isHidden = !self.user.isPendingApprovalByOtherUser
     }
-    
+
+    private func setupNameLabelText() {
+        guard showUserName, let username = user.name else { return }
+        nameLabel.attributedText = username && [
+            NSForegroundColorAttributeName: ColorScheme.default().color(withName: ColorSchemeColorTextForeground),
+            NSFontAttributeName: UIFont(magicIdentifier: "style.text.normal.font_spec_bold")
+        ]
+    }
+
+    private func setupHandleLabelText() {
+        guard let handle = user.handle else { return }
+        handleLabel.attributedText = ("@" + handle) && [
+            NSForegroundColorAttributeName: ColorScheme.default().color(withName: ColorSchemeColorTextDimmed),
+            NSFontAttributeName: UIFont(magicIdentifier: "style.text.small.font_spec_bold")
+        ]
+    }
+
+    private func setupCorrelationLabelText() {
+        correlationLabel.attributedText = type(of: self).correlationFormatter.correlationText(
+            for: user,
+            with: Int(commonConnectionsCount),
+            addressBookName: BareUserToUser(user)?.contact()?.name
+        )
+    }
+
     private func setupLabelText() {
-
-        var name: NSAttributedString = NSAttributedString()
-        
-        if self.showUserName {
-            let nameStyle = [NSForegroundColorAttributeName: ColorScheme.default().color(withName: ColorSchemeColorTextForeground),
-                             NSFontAttributeName: UIFont(magicIdentifier: "style.text.normal.font_spec_bold")] as [String : AnyObject]
-            
-            name = (self.user.name + "\n\n") && nameStyle
-        }
-        
-        let labelStyle = [NSForegroundColorAttributeName: ColorScheme.default().color(withName: ColorSchemeColorTextDimmed),
-                          NSFontAttributeName: UIFont(magicIdentifier: "style.text.small.font_spec_light")] as [String : AnyObject]
-        
-        let labelStyleBold = [NSForegroundColorAttributeName: ColorScheme.default().color(withName: ColorSchemeColorTextDimmed),
-                              NSFontAttributeName: UIFont(magicIdentifier: "style.text.small.font_spec_bold")] as [String : AnyObject]
-        
-        var inAddressBook = false
-        var addressBookNameMatchFullName = false
-        
-        if let zmUser = self.user as? ZMUser,
-            let contact = zmUser.contact() {
-            inAddressBook = true
-            addressBookNameMatchFullName = contact.name.lowercased() == self.user.name
-        }
-        
-        let hasCommonConnections = self.commonConnectionsCount > 0
-
-        var handleText = ""
-        if let handle = self.user.handle {
-            handleText = "@" + handle
-        }
-
-        let username = handleText && labelStyle
-        
-        var secondLine: NSAttributedString? = .none
-        
-        if inAddressBook {
-            if addressBookNameMatchFullName {
-                secondLine = "conversation.connection_view.in_address_book".localized && labelStyle
-            }
-            else {
-                secondLine = (self.user.name && labelStyleBold) + " " + ("conversation.connection_view.in_address_book".localized && labelStyle)
-            }
-        }
-        else if hasCommonConnections {
-            secondLine = (String(format: "%ld", self.commonConnectionsCount) && labelStyleBold) + " " + ("conversation.connection_view.common_connections".localized && labelStyle)
-        }
-        
-        self.nameInfoLabel.attributedText = name + username + (secondLine != .none ? "\n" + secondLine! : "" && labelStyle)
+        setupNameLabelText()
+        setupHandleLabelText()
+        setupCorrelationLabelText()
     }
     
     private func createConstraints() {
         constrain(self.incomingConnectionFooter, self.acceptButton, self.ignoreButton) { incomingConnectionFooter, acceptButton, ignoreButton in
-            acceptButton.left == incomingConnectionFooter.left + 24
-            acceptButton.top == incomingConnectionFooter.top + 12
-            acceptButton.bottom == incomingConnectionFooter.bottom - 24
-            acceptButton.height == 40
-            acceptButton.width >= 140
+            ignoreButton.left == incomingConnectionFooter.left + 16
+            ignoreButton.top == incomingConnectionFooter.top + 12
+            ignoreButton.bottom == incomingConnectionFooter.bottom - 24
+            ignoreButton.height == 40
+            ignoreButton.right == incomingConnectionFooter.centerX - 8
             
-            ignoreButton.right == incomingConnectionFooter.right - 24
-            ignoreButton.centerY == acceptButton.centerY
-            ignoreButton.height == acceptButton.height
-            ignoreButton.width >= 140
+            acceptButton.right == incomingConnectionFooter.right - 16
+            acceptButton.left == incomingConnectionFooter.centerX + 8
+            acceptButton.centerY == ignoreButton.centerY
+            acceptButton.height == ignoreButton.height
         }
         
         constrain(self.outgoingConnectionFooter, self.cancelConnectionButton, self.blockButton) { outgoingConnectionFooter, cancelConnectionButton, blockButton in
@@ -197,15 +194,16 @@ public final class UserConnectionView: UIView, Copyable {
             blockButton.right == outgoingConnectionFooter.right - 24
         }
         
-        constrain(self, self.nameInfoLabel, self.incomingConnectionFooter, self.outgoingConnectionFooter, self.userImageView) { selfView, nameInfoLabel, incomingConnectionFooter, outgoingConnectionFooter, userImageView in
-            nameInfoLabel.centerX == selfView.centerX
-            nameInfoLabel.top == selfView.top + 12
-            nameInfoLabel.left >= selfView.left
-            nameInfoLabel.bottom <= userImageView.top
+        constrain(self, self.labelContainer, self.incomingConnectionFooter, self.outgoingConnectionFooter, self.userImageView) { selfView, labelContainer, incomingConnectionFooter, outgoingConnectionFooter, userImageView in
+            labelContainer.centerX == selfView.centerX
+            labelContainer.top == selfView.top + 12
+            labelContainer.left >= selfView.left
+            labelContainer.bottom <= userImageView.top
             
             userImageView.center == selfView.center
-            userImageView.left == selfView.left + 54
+            userImageView.left >= selfView.left + 54
             userImageView.width == userImageView.height
+            userImageView.height <= 264
             
             outgoingConnectionFooter.top >= userImageView.bottom
             outgoingConnectionFooter.left == selfView.left
@@ -216,6 +214,21 @@ public final class UserConnectionView: UIView, Copyable {
             incomingConnectionFooter.left == selfView.left
             incomingConnectionFooter.bottom == selfView.bottom
             incomingConnectionFooter.right == selfView.right
+        }
+
+        constrain(labelContainer, nameLabel, handleLabel, correlationLabel) { labelContainer, nameLabel, handleLabel, correlationLabel in
+            nameLabel.top == labelContainer.top
+            nameLabel.height == 32
+            handleLabel.top == nameLabel.bottom + 10
+            handleLabel.height == 16
+            correlationLabel.top == handleLabel.bottom
+            handleLabel.height == 16
+
+            [nameLabel, handleLabel, correlationLabel].forEach {
+                $0.leading == labelContainer.leading
+                $0.trailing == labelContainer.trailing
+            }
+
         }
     }
     

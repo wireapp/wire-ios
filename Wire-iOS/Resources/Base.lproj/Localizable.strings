@@ -80,7 +80,6 @@
 
 
 // Profile Header View
-"conversation.connection_view.common_connections" = "friends in common";
 "conversation.connection_view.in_address_book" = "in Address Book";
 
 
@@ -98,7 +97,7 @@
 "peoplepicker.hide_search_result_progress" = "Hiding…";
 
 "send_invitation.subject" = "Connect with me on Wire";
-"send_invitation.text" = "I’m on Wire. Search for %@\nor visit https://get.wire.com to connect with me.";
+"send_invitation.text" = "I’m on Wire, search for %@ or visit wire.com/download.";
 "send_invitation_no_email.text" = "I’m on Wire. Visit https://get.wire.com to connect with me.";
 
 "send_personal_invitation.text" = "I’m on Wire, talk to you there. https://get.wire.com";
