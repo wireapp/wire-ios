@@ -88,7 +88,7 @@ extension ConversationListViewController: UserNameTakeOverViewControllerDelegate
         switch action {
         case .chooseOwn(let suggested): openChangeHandleViewController(with: suggested)
         case .keepSuggestion(let suggested): setSuggested(handle: suggested)
-        case .learnMore: URL(string: "https://www.wire.com")?.open() // TODO: Insert correct URL
+        case .learnMore: URL(string: "https://wire.com/support/username/")?.open()
         }
     }
 
