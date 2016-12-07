@@ -113,8 +113,6 @@
 		F9A706511CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging-Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A705CB1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging-Internal.h */; };
 		F9A706521CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A705CC1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9A706531CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A705CD1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m */; };
-		F9A706541CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A705CE1CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F9A706551CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A705CF1CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.m */; };
 		F9A706561CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A705D01CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.h */; };
 		F9A706571CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A705D11CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m */; };
 		F9A706581CAEE01D00C2F5FE /* ZMSyncMergePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A705D21CAEE01D00C2F5FE /* ZMSyncMergePolicy.h */; };
@@ -494,8 +492,6 @@
 		F9A705CB1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging-Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+zmessaging-Internal.h"; sourceTree = "<group>"; };
 		F9A705CC1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+zmessaging.h"; sourceTree = "<group>"; };
 		F9A705CD1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+zmessaging.m"; sourceTree = "<group>"; };
-		F9A705CE1CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+ZMSearchDirectory.h"; sourceTree = "<group>"; };
-		F9A705CF1CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+ZMSearchDirectory.m"; sourceTree = "<group>"; };
 		F9A705D01CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotification+ManagedObjectContextSave.h"; sourceTree = "<group>"; };
 		F9A705D11CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+ManagedObjectContextSave.m"; sourceTree = "<group>"; };
 		F9A705D21CAEE01D00C2F5FE /* ZMSyncMergePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSyncMergePolicy.h; sourceTree = "<group>"; };
@@ -896,8 +892,6 @@
 				F9A705CC1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.h */,
 				F9A705CD1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m */,
 				F93265201D8950F10076AAD6 /* NSManagedObjectContext+FetchRequest.swift */,
-				F9A705CE1CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.h */,
-				F9A705CF1CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.m */,
 				F9A705D01CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.h */,
 				F9A705D11CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m */,
 				F9A705D21CAEE01D00C2F5FE /* ZMSyncMergePolicy.h */,
@@ -1635,7 +1629,6 @@
 				F9B71F2C1CB264EF001DB03F /* ZMConversation+UnreadCount.h in Headers */,
 				F963E9701D9ADD5A00098AD3 /* ZMGenericMessage+Utils.h in Headers */,
 				F9A706BB1CAEE01D00C2F5FE /* ZMVoiceChannelNotifications+Internal.h in Headers */,
-				F9A706541CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.h in Headers */,
 				F9A706981CAEE01D00C2F5FE /* ZMManagedObject+Internal.h in Headers */,
 				F9C9A7661CAE8DFC0039E10C /* ZMAddressBookContact.h in Headers */,
 				F9C9A65F1CAD76A50039E10C /* ZMCDataModel.h in Headers */,
@@ -1887,7 +1880,6 @@
 				16313D621D227DC1001B2AB3 /* LinkPreview+ProtocolBuffer.swift in Sources */,
 				F9A706A11CAEE01D00C2F5FE /* ZMOrderedSetState.mm in Sources */,
 				F9A706721CAEE01D00C2F5FE /* AssetCache.swift in Sources */,
-				F9A706551CAEE01D00C2F5FE /* NSManagedObjectContext+ZMSearchDirectory.m in Sources */,
 				F9331C841CB4191B00139ECC /* NSPredicate+ZMSearch.m in Sources */,
 				F9A706BD1CAEE01D00C2F5FE /* CryptoBox.swift in Sources */,
 				F9331C781CB4165100139ECC /* NSString+ZMPersonName.m in Sources */,

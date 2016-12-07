@@ -184,9 +184,6 @@
     
     OCMockObject *userClassMock = [OCMockObject niceMockForClass:ZMUser.class];
     [[[userClassMock stub] andReturn:[[NSOrderedSet alloc] initWithObject:user1]] usersWithRemoteIDs:OCMOCK_ANY inContext:OCMOCK_ANY];
-    
-    NSDictionary *payload = @{ZMSearchUserMutualFriendsKey: @[remoteIdentifierString2], ZMSearchUserTotalMutualFriendsKey: @1};
-    self.uiMOC.commonConnectionsForUsers = @{ user1.remoteIdentifier : [[ZMSuggestedUserCommonConnections alloc] initWithPayload:payload] };
     [self.uiMOC saveOrRollback];
     
     // when
@@ -194,8 +191,6 @@
 
     // then
     XCTAssertEqualObjects(searchUser.user, user1);
-    XCTAssertEqual([(ZMUser *)searchUser.topCommonConnections.firstObject remoteIdentifier], commonUser.remoteIdentifier);
-    XCTAssertEqual(searchUser.topCommonConnections.count, 1u);
 }
 
 @end
@@ -517,146 +512,6 @@
         XCTAssertFalse(self.syncMOC.hasChanges);
         XCTAssertEqual([self.syncMOC executeFetchRequestOrAssert:[ZMConnection sortedFetchRequest]].count, 1u);
     }];
-}
-
-@end
-
-
-
-
-@implementation ZMSearchUserTests (CommonContacts)
-
-
-- (void)testThatItReturnsCommonConnectionsForUser;
-{
-    // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString1 = [NSUUID createUUID].UUIDString;
-    user1.remoteIdentifier = remoteIdentifierString1.UUID;
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString2 = [NSUUID createUUID].UUIDString;
-    user2.remoteIdentifier = remoteIdentifierString2.UUID;
-    
-    [self.uiMOC saveOrRollback];
-    
-    // when
-    NSOrderedSet *identifiers = [NSOrderedSet orderedSetWithArray:@[remoteIdentifierString1, remoteIdentifierString2]];
-    NSOrderedSet *commonConnections = [ZMSearchUser commonConnectionsWithIds:identifiers inContext:self.uiMOC];
-    
-    // then
-    XCTAssertEqual(commonConnections.count, 2u);
-    XCTAssertTrue([commonConnections containsObject:user1]);
-    XCTAssertTrue([commonConnections containsObject:user2]);
-}
-
-- (void)testThatItFetchesAndReturnsCommonConnectionsForUserWhenNotInRegisteredObjects;
-{
-    // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString1 = [NSUUID createUUID].UUIDString;
-    user1.remoteIdentifier = remoteIdentifierString1.UUID;
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString2 = [NSUUID createUUID].UUIDString;
-    user2.remoteIdentifier = remoteIdentifierString2.UUID;
-    
-    [self.uiMOC saveOrRollback];
-    [self.uiMOC reset];
-    
-    // when
-    NSOrderedSet *identifiers = [NSOrderedSet orderedSetWithArray:@[remoteIdentifierString1, remoteIdentifierString2]];
-    NSOrderedSet *commonConnections = [ZMSearchUser commonConnectionsWithIds:identifiers inContext:self.uiMOC];
-    
-    // then
-    NSArray *objectIDs = [commonConnections.array mapWithBlock:^NSManagedObjectID *(ZMUser *user) {
-        return user.objectID;
-    }];
-    XCTAssertEqual(commonConnections.count, 2u);
-    XCTAssertTrue([objectIDs containsObject:user1.objectID]);
-    XCTAssertTrue([objectIDs containsObject:user2.objectID]);
-}
-
-- (void)testThatItCreatesCommonConnectionsFromPayloadInitializer;
-{
-    // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString1 = [NSUUID createUUID].UUIDString;
-    user1.remoteIdentifier = remoteIdentifierString1.UUID;
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString2 = [NSUUID createUUID].UUIDString;
-    user2.remoteIdentifier = remoteIdentifierString2.UUID;
-    
-    OCMockObject *userSession = [OCMockObject niceMockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[userSession stub] andReturn:self.uiMOC] managedObjectContext];
-    
-    [self.uiMOC saveOrRollback];
-    
-    NSDictionary *payload = @{
-                              @"accent_id": @7,
-                              @"blocked": @0,
-                              @"connected": @1,
-                              @"email": @"mail@example.com",
-                              @"id": [NSUUID createUUID].UUIDString,
-                              @"level": @1,
-                              @"mutual_friends": @[remoteIdentifierString1, remoteIdentifierString2],
-                              @"name": @"Test",
-                              @"phone": @"+491234567890",
-                              @"total_mutual_friends": @2,
-                              @"weight": @20320,
-                              };
-    
-    // when
-    NSOrderedSet *identifiers = [NSOrderedSet orderedSetWithArray:@[remoteIdentifierString1, remoteIdentifierString2]];
-    NSOrderedSet *connections = [ZMSearchUser commonConnectionsWithIds:identifiers inContext:self.uiMOC];
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithPayload:payload userSession:(id<ZMManagedObjectContextProvider>)userSession globalCommonConnections:connections];
-                                
-    // then
-    XCTAssertEqual(connections.count, 2u);
-    XCTAssertEqual(searchUser.topCommonConnections.count, 2u);
-    XCTAssertTrue([searchUser.topCommonConnections containsObject:user1]);
-    XCTAssertTrue([searchUser.topCommonConnections containsObject:user2]);
-}
-
-- (void)testThatItCreatesCommonConnectionsFromPayloadFactoryInitializer;
-{
-    // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString1 = [NSUUID createUUID].UUIDString;
-    user1.remoteIdentifier = remoteIdentifierString1.UUID;
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSString *remoteIdentifierString2 = [NSUUID createUUID].UUIDString;
-    user2.remoteIdentifier = remoteIdentifierString2.UUID;
-    
-    OCMockObject *userSession = [OCMockObject niceMockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[userSession stub] andReturn:self.uiMOC] managedObjectContext];
-    
-    [self.uiMOC saveOrRollback];
-    
-    NSArray *payload = @[@{
-                              @"accent_id": @7,
-                              @"blocked": @0,
-                              @"connected": @1,
-                              @"email": @"mail@example.com",
-                              @"id": [NSUUID createUUID].UUIDString,
-                              @"level": @1,
-                              @"mutual_friends": @[remoteIdentifierString1, remoteIdentifierString2],
-                              @"name": @"Test",
-                              @"phone": @"+491234567890",
-                              @"total_mutual_friends": @2,
-                              @"weight": @20320,
-                              }];
-    
-    // when
-    NSArray <ZMSearchUser *>*searchUsers = [ZMSearchUser  usersWithPayloadArray:payload userSession:(id<ZMManagedObjectContextProvider>)userSession];
-    
-    // then
-    XCTAssertEqual(searchUsers.count, 1u);
-    XCTAssertEqual(searchUsers.firstObject.topCommonConnections.count, 2u);
-    XCTAssertTrue([searchUsers.firstObject.topCommonConnections containsObject:user1]);
-    XCTAssertTrue([searchUsers.firstObject.topCommonConnections containsObject:user2]);
 }
 
 @end

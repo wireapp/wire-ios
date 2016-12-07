@@ -25,7 +25,6 @@
 @class ZMAddressBookContact;
 @class ManagedObjectContextObserver;
 
-FOUNDATION_EXPORT NSString *const ZMSearchUserMutualFriendsKey;
 FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 
 @interface ZMSearchUser ()
@@ -47,13 +46,11 @@ FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 
 + (NSArray <ZMSearchUser *> *)usersWithUsers:(NSArray <ZMUser *> *)users userSession:(id<ZMManagedObjectContextProvider>)userSession;
 
-- (instancetype)initWithPayload:(NSDictionary *)payload userSession:(id<ZMManagedObjectContextProvider>)userSession globalCommonConnections:(NSOrderedSet *)connections;
+- (instancetype)initWithPayload:(NSDictionary *)payload userSession:(id<ZMManagedObjectContextProvider>)userSession;
 
 + (NSArray <ZMSearchUser *> *)usersWithPayloadArray:(NSArray <NSDictionary *> *)payloadArray userSession:(id<ZMManagedObjectContextProvider> )userSession;
 
 - (instancetype)initWithContact:(ZMAddressBookContact *)contact user:(ZMUser *)user userSession:(id<ZMManagedObjectContextProvider> )userSession;
-
-+ (NSOrderedSet *)commonConnectionsWithIds:(NSOrderedSet *)set inContext:(NSManagedObjectContext *)moc;
 
 @property (nonatomic) NSUUID *remoteIdentifier;
 /// Returns @c YES if the receiver has a local user or cached profile image data.
@@ -62,7 +59,6 @@ FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 
 @property (nonatomic) NSUUID *mediumAssetID;
 
-@property (nonatomic, readwrite) NSOrderedSet *topCommonConnections;
 @property (nonatomic, readwrite) NSUInteger totalCommonConnections;
 
 + (NSCache *)searchUserToSmallProfileImageCache;
