@@ -42,6 +42,8 @@
 		3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */; };
 		3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */; };
 		3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BF681B1F693F00232589 /* NSDate+Utility.m */; };
+		54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54024FE51DF81C8E009BF6A0 /* Dictionary.swift */; };
+		54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */; };
 		543B049E1BC6B5FA008C2912 /* NSData+ZMSCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 543B049C1BC6B5FA008C2912 /* NSData+ZMSCrypto.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 543B04A01BC6B693008C2912 /* NSData+ZMSCrypto.m */; };
 		544B2FFE1C1FF79500384477 /* data_to_hash.enc in Resources */ = {isa = PBXBuildFile; fileRef = 544B2FFC1C1FF2DD00384477 /* data_to_hash.enc */; };
@@ -201,6 +203,8 @@
 		3E88BF601B1F68DC00232589 /* NSOperationQueue+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+Helpers.m"; sourceTree = "<group>"; };
 		3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+ZMAdditions.m"; sourceTree = "<group>"; };
 		3E88BF681B1F693F00232589 /* NSDate+Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Utility.m"; sourceTree = "<group>"; };
+		54024FE51DF81C8E009BF6A0 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
 		543B049C1BC6B5FA008C2912 /* NSData+ZMSCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ZMSCrypto.h"; sourceTree = "<group>"; };
 		543B04A01BC6B693008C2912 /* NSData+ZMSCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+ZMSCrypto.m"; sourceTree = "<group>"; };
 		544B2FFC1C1FF2DD00384477 /* data_to_hash.enc */ = {isa = PBXFileReference; lastKnownFileType = file; path = data_to_hash.enc; sourceTree = "<group>"; };
@@ -530,6 +534,7 @@
 				54CA31151B74F36B00B820C0 /* Functional.swift */,
 				BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */,
 				54CA311E1B74F36B00B820C0 /* Sets.swift */,
+				54024FE51DF81C8E009BF6A0 /* Dictionary.swift */,
 				54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */,
 				54CA31201B74F36B00B820C0 /* UnownedObject.swift */,
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
@@ -591,6 +596,7 @@
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
 				16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */,
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
+				54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -797,6 +803,7 @@
 				F9C9A7BD1CAEAF240039E10C /* ZMPropertyValidator.m in Sources */,
 				3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */,
 				54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */,
+				54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */,
 				54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */,
 				F9C9A7AC1CAEACB10039E10C /* ZMEmailAddressValidator.m in Sources */,
 				3E88BE3D1B1F478200232589 /* ZMDebugHelpers.m in Sources */,
@@ -839,6 +846,7 @@
 				F9C9A7C51CAEAFE10039E10C /* ZMAccentColorValidatorTests.m in Sources */,
 				F9C9A7C81CAEAFE10039E10C /* ZMStringLengthValidatorTests.m in Sources */,
 				F9D381DB1B70DF8500E6E4EB /* Hack.swift in Sources */,
+				54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */,
 				F9C9A7C71CAEAFE10039E10C /* ZMPhoneNumberValidatorTests.m in Sources */,
 				F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */,
 				F9D381B21B70B94B00E6E4EB /* NSSet+ZMUTests.m in Sources */,
