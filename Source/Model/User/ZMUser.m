@@ -280,11 +280,6 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
     return 0;
 }
 
-- (NSOrderedSet *)topCommonConnections
-{
-    return [NSOrderedSet orderedSet];
-}
-
 + (NSSet *)keyPathsForValuesAffectingIsConnected
 {
     return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];
