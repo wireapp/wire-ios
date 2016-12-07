@@ -23,7 +23,6 @@
 #import "ZMSearchUser+Internal.h"
 
 #import "NSManagedObjectContext+zmessaging.h"
-#import "NSManagedObjectContext+ZMSearchDirectory.h"
 #import "ZMUser+Internal.h"
 #import "ZMConnection+Internal.h"
 #import "ZMPersonName.h"
@@ -36,7 +35,6 @@ static NSCache *searchUserToSmallProfileImageCache;
 static NSCache *searchUserToMediumImageCache;
 static NSCache *searchUserToMediumAssetIDCache;
 
-NSString *const ZMSearchUserMutualFriendsKey = @"mutual_friends";
 NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 
 @interface ZMSearchUser ()
@@ -125,8 +123,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 
 - (instancetype)initWithUser:(ZMUser *)user
                  userSession:(id<ZMManagedObjectContextProvider>)userSession
-     globalCommonConnections:(NSOrderedSet <ZMUser *> *)connections
-     cachedCommonConnections:(ZMSuggestedUserCommonConnections *)cachedCommonConnections
 {
     self = [self initWithName:user.name
                        handle:user.handle
@@ -135,37 +131,17 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
                          user:user
                   userSession:userSession];
     if (nil != self) {
-        // Read data from the cache if present
-        if (cachedCommonConnections != nil && ![cachedCommonConnections isEmpty]) {
-            self.totalCommonConnections = cachedCommonConnections.totalCommonConnections;
-            self.topCommonConnections = [ZMSearchUser userTopCommonConnectionsWithConnectionIDs:cachedCommonConnections.topCommonConnectionsIDs
-                                                                        globalCommonConnections:connections];
-        }
-        else {
-            self.topCommonConnections = user.topCommonConnections;
-            self.totalCommonConnections = user.totalCommonConnections;
-        }
+        self.totalCommonConnections = user.totalCommonConnections;
     }
     return self;
 }
 
 + (NSArray <ZMSearchUser *> *)usersWithUsers:(NSArray <ZMUser *> *)users userSession:(id<ZMManagedObjectContextProvider>)userSession;
 {
-    VerifyReturnNil([users isKindOfClass:[NSArray class]]);
-    NSMutableOrderedSet *connectionUUIDs = [[NSMutableOrderedSet alloc] init];
-    NSMutableDictionary *cachedCommonConnections = [[NSMutableDictionary alloc] init];
-    
-    for (ZMUser *user in users) {
-        ZMSuggestedUserCommonConnections *suggestedCommonConnections = [userSession.managedObjectContext.commonConnectionsForUsers objectForKey:user.remoteIdentifier];
-        cachedCommonConnections[user.remoteIdentifier.UUIDString] = suggestedCommonConnections;
-        [connectionUUIDs addObjectsFromArray:suggestedCommonConnections.topCommonConnectionsIDs.array];
-    }
-    
-    NSOrderedSet *connections = [self commonConnectionsWithIds:connectionUUIDs inContext:userSession.managedObjectContext];
     NSMutableArray <ZMSearchUser *> *searchUsers = [[NSMutableArray alloc] init];
     
     for (ZMUser *user in users) {
-        ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithUser:user userSession:userSession globalCommonConnections:connections cachedCommonConnections:cachedCommonConnections[user.remoteIdentifier.UUIDString]];
+        ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithUser:user userSession:userSession];
         if (searchUser != nil) {
             [searchUsers addObject:searchUser];
         }
@@ -174,7 +150,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return searchUsers;
 }
 
-- (instancetype)initWithPayload:(NSDictionary *)payload userSession:(id<ZMManagedObjectContextProvider>)userSession globalCommonConnections:(NSOrderedSet <ZMUser *> *)connections
+- (instancetype)initWithPayload:(NSDictionary *)payload userSession:(id<ZMManagedObjectContextProvider>)userSession
 {
     NSUUID *identifier = [payload optionalUuidForKey:@"id"];
     NSNumber *accentId = [payload optionalNumberForKey:@"accent_id"];
@@ -191,68 +167,25 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     
     
     if (nil != self) {
-        if (payload[ZMSearchUserTotalMutualFriendsKey] == nil) {
-            // Read data from the cache if present
-            ZMSuggestedUserCommonConnections *cachedCommonConnections = [self.uiMOC.commonConnectionsForUsers objectForKey:self.remoteIdentifier];
-            
-            if (cachedCommonConnections != nil && ![cachedCommonConnections isEmpty]) {
-                self.totalCommonConnections = cachedCommonConnections.totalCommonConnections;
-                self.topCommonConnections = [ZMSearchUser userTopCommonConnectionsWithConnectionIDs:cachedCommonConnections.topCommonConnectionsIDs
-                                                                            globalCommonConnections:connections];
-            }
-        } else {
-            self.totalCommonConnections = [[payload optionalNumberForKey:ZMSearchUserTotalMutualFriendsKey] unsignedIntegerValue];
-            NSArray *uuids = [[payload optionalArrayForKey:ZMSearchUserMutualFriendsKey] mapWithBlock:^NSData *(NSString *uuid) {
-                return [NSUUID uuidWithTransportString:uuid].data;
-            }];
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", [ZMUser remoteIdentifierDataKey], uuids];
-            self.topCommonConnections = [connections filteredOrderedSetUsingPredicate:predicate];
-        }
+        self.totalCommonConnections = [[payload optionalNumberForKey:ZMSearchUserTotalMutualFriendsKey] unsignedIntegerValue];
     }
-    
-    
     return self;
 }
 
 + (NSArray <ZMSearchUser *> *)usersWithPayloadArray:(NSArray <NSDictionary *> *)payloadArray userSession:(id<ZMManagedObjectContextProvider>)userSession;
 {
-    VerifyReturnNil([payloadArray isKindOfClass:[NSArray class]]);
-    NSMutableOrderedSet *connectionUUIDs = [[NSMutableOrderedSet alloc] init];
-    
-    for (NSDictionary *payload in payloadArray) {
-        [connectionUUIDs addObjectsFromArray:[payload optionalArrayForKey:ZMSearchUserMutualFriendsKey]];
-    }
-    
-    NSOrderedSet *connections = [self commonConnectionsWithIds:connectionUUIDs inContext:userSession.managedObjectContext];
     NSMutableArray <ZMSearchUser *> *searchUsers = [[NSMutableArray alloc] init];
     
     for (NSDictionary *payload in payloadArray) {
         VerifyReturnNil([payload isKindOfClass:[NSDictionary class]]);
         VerifyReturnNil([payload uuidForKey:@"id"] != nil);
-        ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithPayload:payload userSession:userSession globalCommonConnections:connections];
+        ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithPayload:payload userSession:userSession];
         if (searchUser != nil) {
             [searchUsers addObject:searchUser];
         }
     }
     
     return searchUsers;
-}
-
-+ (NSOrderedSet *)commonConnectionsWithIds:(NSOrderedSet *)set inContext:(NSManagedObjectContext *)moc
-{
-    NSOrderedSet *uuids = [set mapWithBlock:^id(NSString *commonUserUUIDString) {
-        return [[NSUUID alloc] initWithUUIDString:commonUserUUIDString];
-    }];
-    return [ZMUser fetchObjectsWithRemoteIdentifiers:uuids inManagedObjectContext:moc];
-}
-
-+ (NSOrderedSet *)userTopCommonConnectionsWithConnectionIDs:(NSOrderedSet *)connectionIDs globalCommonConnections:(NSOrderedSet *)globalConnections
-{
-    NSArray *commonConnectionsUUIDData = [connectionIDs.array mapWithBlock:^NSData *(NSString *UUIDString) {
-        return [[NSUUID alloc] initWithUUIDString:UUIDString].data;
-    }];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", [ZMUser remoteIdentifierDataKey], commonConnectionsUUIDData];
-    return [globalConnections filteredOrderedSetUsingPredicate:predicate];
 }
 
 - (instancetype)initWithContact:(ZMAddressBookContact *)contact
