@@ -22,7 +22,7 @@ import AddressBook
 
 public class AddressBookEntry : ZMManagedObject {
     
-    enum Fields : String {
+    public enum Fields : String {
         case localIdentifier = "localIdentifier"
         case user = "user"
         case cachedName = "cachedName"
