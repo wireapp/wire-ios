@@ -101,6 +101,9 @@
              && [sessionRequest.pathComponents[0] isEqualToString:@"handles"] ) {
         return [self processUserHandleRequest:sessionRequest.pathComponents[1] requestPath:sessionRequest.embeddedRequest.path];
     }
+    else if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 1 && [sessionRequest.pathComponents[0] isEqualToString:@"handles"]) {
+        return [self processUserHandleAvailabilityRequest:sessionRequest.payload];
+    }
 
     else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 2) {
         return [self processSingleUserPreKeysRequest:sessionRequest];
@@ -331,6 +334,42 @@
 
     NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:path] statusCode:statusCode HTTPVersion:nil headerFields:@{@"Content-Type": @"application/json"}];
     return [[ZMTransportResponse alloc] initWithHTTPURLResponse:urlResponse data:payloadData error:nil];;
+}
+
+- (ZMTransportResponse *)processUserHandleAvailabilityRequest:(id<ZMTransportData>)payload
+{
+    NSDictionary *dictionary = [payload asDictionary];
+    if (dictionary == nil) {
+        return [self errorResponseWithCode:400 reason:@"bad request"];
+    }
+    
+    NSArray *handles = [dictionary optionalArrayForKey:@"handles"];
+    if (handles == nil) {
+        return [self errorResponseWithCode:400 reason:@"bad request"];
+    }
+    
+    NSNumber *returnNumber = [dictionary optionalNumberForKey:@"return"];
+    if (returnNumber.intValue < 1) {
+        return [self errorResponseWithCode:400 reason:@"bad request"];
+    }
+    
+    NSMutableArray *selectedHandles = [NSMutableArray array];
+    for (NSString *handle in handles) {
+        if (![handle isKindOfClass:NSString.class]) {
+            return [self errorResponseWithCode:400 reason:@"bad request"];
+        }
+        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        
+        if(users.count == 0) {
+            [selectedHandles addObject:handle];
+        }
+        if(selectedHandles.count == (NSUInteger)returnNumber.integerValue) {
+            break;
+        }
+    }
+    return [ZMTransportResponse responseWithPayload:selectedHandles HTTPStatus:200 transportSessionError:nil];
 }
 
 @end
