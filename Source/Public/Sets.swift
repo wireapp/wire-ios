@@ -74,29 +74,3 @@ extension NSSet {
         }
     }
 }
-
-// MARK: Dictionary
-extension Dictionary {
-    
-    /// Creates a dictionary by applying a function over a sequence, and assigning the calculated value to the sequence element. Also maps the keys
-    init<T, S: Sequence>(_ sequence: S, keyMapping: (T) -> Key, valueMapping: (T) -> Value) where S.Iterator.Element == T {
-        
-        self.init()
-        
-        for key in sequence {
-            let newKey = keyMapping(key)
-            let value = valueMapping(key)
-            self[newKey] = value
-        }
-    }
-
-    /// Maps the key keeping the association with values
-    func mapKeys<T: Hashable>(_ transform: (Key) -> T) -> [T: Value] {
-        var mapping : [T : Value] = [:]
-        for (key, value) in self {
-            mapping[transform(key)] = value
-        }
-        return mapping
-        
-    }
-}
