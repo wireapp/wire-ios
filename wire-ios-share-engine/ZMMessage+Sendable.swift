@@ -45,27 +45,18 @@ extension ZMMessage: Sendable {
     }
     
     public func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken {
-//        let token =  NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: managedObjectContext, queue: .main) { (notification) in
-//            print("context did change")
-//            
-//            if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-//                print("updatedObjects: ", updatedObjects)
-//                
-//                if updatedObjects.contains(self) {
-//                    observer.onDeliveryChanged()
-//                }
-//            }
-//        }
         
         let token = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: managedObjectContext?.zm_sync, queue: .main) { (notification) in
-            print("context did save")
             
-            if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-                print("updatedObjects: ", updatedObjects)
-                
-                if updatedObjects.flatMap({ $0.objectID }).contains(self.objectID) {
-                    observer.onDeliveryChanged()
-                }
+            let updatedObjects     = notification.userInfo?[NSUpdatedObjectsKey]     as? Set<NSManagedObject> ?? Set()
+            let insertedObjects    = notification.userInfo?[NSInsertedObjectsKey]    as? Set<NSManagedObject> ?? Set()
+            
+            let changedObjects = [updatedObjects, insertedObjects/*, deletedObject, refreshedObjects, invalidatedObjects*/].reduce(Set<NSManagedObject>()) {
+                $0.union($1)
+            }
+            
+            if changedObjects.flatMap({ $0.objectID }).contains(self.objectID) {
+                observer.onDeliveryChanged()
             }
         }
         
@@ -75,6 +66,15 @@ extension ZMMessage: Sendable {
     
     public func remove(_ observerToken: SendableObserverToken) {
         NotificationCenter.default.removeObserver(observerToken.token)
+    }
+    
+    public func cancel() {
+        
+        if let asset = self.fileMessageData {
+            asset.cancelTransfer()
+            return
+        }
+        self.expire()
     }
     
 }
