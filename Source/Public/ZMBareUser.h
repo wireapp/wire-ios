@@ -61,7 +61,6 @@
 - (void)connectWithMessageText:(NSString *)text completionHandler:(dispatch_block_t)handler;
 
 @property (nonatomic, readonly, copy) NSString *connectionRequestMessage;
-@property (nonatomic, readonly) NSOrderedSet *topCommonConnections;
 @property (nonatomic, readonly) NSUInteger totalCommonConnections;
 
 @end

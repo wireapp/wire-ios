@@ -33,7 +33,6 @@
 #import <ZMCDataModel/ZMConversationListDirectory.h>
 
 #import <ZMCDataModel/NSManagedObjectContext+zmessaging.h>
-#import <ZMCDataModel/NSManagedObjectContext+ZMSearchDirectory.h>
 #import <ZMCDataModel/NSManagedObjectContext+tests.h>
 
 #import <ZMCDataModel/ZMUser.h>
