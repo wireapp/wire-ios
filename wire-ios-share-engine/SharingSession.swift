@@ -214,7 +214,7 @@ public class SharingSession {
             apnsConfirmationStatus: DeliveryConfirmationDummy()
         )!
         
-        let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext)
+        let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, maxConcurrentImageOperation: 1)
         let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: [clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy])
