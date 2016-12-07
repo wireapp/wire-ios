@@ -21,18 +21,6 @@ import Foundation
 import ZMCSystem
 import ZMUtilities
 
-extension Dictionary {
-    
-    func mapKeys<T: Hashable>(_ transform: (Key) -> T) -> [T: Value] {
-        var mapping : [T : Value] = [:]
-        for (key, value) in self {
-            mapping[transform(key)] = value
-        }
-        return mapping
-        
-    }
-}
-
 public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
     
     public typealias KeysAndOldValues = [KeyPath: NSObject?]
