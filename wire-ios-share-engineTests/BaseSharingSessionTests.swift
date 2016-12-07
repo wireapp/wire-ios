@@ -34,12 +34,9 @@ class BaseSharingSessionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let fm = FileManager.default
-        let url = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:true)
-        
         authenticationStatus = FakeAuthenticationStatus()
-        sharingSession = try! SharingSession(databaseDirectory: url, authenticationStatusProvider: authenticationStatus)
-        moc = sharingSession.managedObjectContext
+        sharingSession = try! SharingSession(applicationGroupIdentifier: "SuperSharing", hostBundleIdentifier:"JCVDay")
+        moc = sharingSession.userInterfaceContext
     }
 
 }
