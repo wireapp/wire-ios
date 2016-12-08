@@ -163,7 +163,6 @@ extension AddressBookUploadRequestStrategy : RequestStrategy, ZMSingleRequestTra
         
         // do a single fetch for all users
         let userIds = cards.flatMap { ($0["id"] as? String).flatMap { UUID(uuidString: $0 ) } }
-        print(userIds)
         let users = ZMUser.fetchObjects(withRemoteIdentifiers: NSOrderedSet(array: userIds), in: self.managedObjectContext)!.array as! [ZMUser]
         
         let idToUsers = users.dictionary {
