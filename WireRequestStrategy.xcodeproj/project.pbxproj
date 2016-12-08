@@ -80,6 +80,10 @@
 		166902101D7083C5000FE4AF /* zimages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669020F1D7083C5000FE4AF /* zimages.framework */; };
 		166902121D70851E000FE4AF /* ZMOutstandingItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 166902111D70851E000FE4AF /* ZMOutstandingItems.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166902141D708709000FE4AF /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166902131D708709000FE4AF /* ZMCDataModel.framework */; };
+		16D0E07D1DF872FD0075DF8F /* DependencyEntitySyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E07C1DF872FD0075DF8F /* DependencyEntitySyncTests.swift */; };
+		16D0E07F1DF88B430075DF8F /* EntityTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E07E1DF88B430075DF8F /* EntityTranscoder.swift */; };
+		16D0E0871DF9928B0075DF8F /* DependencyMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E0861DF9928B0075DF8F /* DependencyMapTests.swift */; };
+		16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */; };
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		BF7D9BE21D8C353A00949267 /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166902131D708709000FE4AF /* ZMCDataModel.framework */; };
 		BF7D9BE31D8C353A00949267 /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166901FF1D7082B8000FE4AF /* ZMTransport.framework */; };
@@ -254,6 +258,10 @@
 		166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamInsertedObjectSyncTests.m; sourceTree = "<group>"; };
 		166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamModifiedObjectSyncTests.m; sourceTree = "<group>"; };
 		166902321D7092D6000FE4AF /* ZMTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTesting.framework; path = Carthage/Build/iOS/ZMTesting.framework; sourceTree = "<group>"; };
+		16D0E07C1DF872FD0075DF8F /* DependencyEntitySyncTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyEntitySyncTests.swift; sourceTree = "<group>"; };
+		16D0E07E1DF88B430075DF8F /* EntityTranscoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityTranscoder.swift; sourceTree = "<group>"; };
+		16D0E0861DF9928B0075DF8F /* DependencyMapTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyMapTests.swift; sourceTree = "<group>"; };
+		16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyEntitySync.swift; sourceTree = "<group>"; };
 		BF66512C1D8C2ED50074F367 /* ZMProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMProtos.framework; path = Carthage/Build/iOS/ZMProtos.framework; sourceTree = "<group>"; };
 		BF66512D1D8C2ED50074F367 /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
 		BF66512E1D8C2ED50074F367 /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cryptobox.framework; path = Carthage/Build/iOS/Cryptobox.framework; sourceTree = "<group>"; };
@@ -390,6 +398,8 @@
 				166901C81D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m */,
 				166901C91D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.h */,
 				166901CA1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m */,
+				16D0E07E1DF88B430075DF8F /* EntityTranscoder.swift */,
+				16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */,
 				166901CB1D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync+Testing.h */,
 				166901CC1D7081C7000FE4AF /* ZMUpstreamRequest.h */,
 				166901CD1D7081C7000FE4AF /* ZMUpstreamRequest.m */,
@@ -405,7 +415,10 @@
 			children = (
 				1621D2211D75AB2D007108C2 /* MockDataModel */,
 				1669017B1D707509000FE4AF /* Info.plist */,
+				166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */,
 				1666AA2B1D93FA0B00164C06 /* ZMChangeTrackerBootstrapTests.m */,
+				16D0E07C1DF872FD0075DF8F /* DependencyEntitySyncTests.swift */,
+				16D0E0861DF9928B0075DF8F /* DependencyMapTests.swift */,
 				1666AA2D1D93FBE200164C06 /* ZMSyncOperationSetTests.m */,
 				166902161D709110000FE4AF /* ZMDependentObjectsTests.m */,
 				166902171D709110000FE4AF /* ZMDownstreamObjectSyncOrderingTests.m */,
@@ -421,7 +434,6 @@
 				166902211D709110000FE4AF /* ZMTimedSingleRequestSyncTests.m */,
 				166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */,
 				166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */,
-				166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */,
 				1621D2311D75B221007108C2 /* NSManagedObjectContext+TestHelpers.h */,
 				1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */,
 				1621D2801D783529007108C2 /* RequestAvailableNotificationTests.swift */,
@@ -667,6 +679,7 @@
 				166901CF1D7081C7000FE4AF /* RequestStrategy.swift in Sources */,
 				F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */,
 				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
+				16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */,
 				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
 				166901FD1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m in Sources */,
 				166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */,
@@ -681,6 +694,7 @@
 				166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */,
 				166901D21D7081C7000FE4AF /* ZMDependentObjects.m in Sources */,
 				1621D22F1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m in Sources */,
+				16D0E07F1DF88B430075DF8F /* EntityTranscoder.swift in Sources */,
 				166901DD1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -699,6 +713,7 @@
 				1621D26B1D75C7FF007108C2 /* ZMUpstreamInsertedObjectSyncTests.m in Sources */,
 				1621D2691D75C77E007108C2 /* ZMSingleRequestSyncTests.m in Sources */,
 				1621D2661D75C755007108C2 /* ZMLocallyModifiedObjectSyncStatusTests.m in Sources */,
+				16D0E0871DF9928B0075DF8F /* DependencyMapTests.swift in Sources */,
 				1621D2611D75C742007108C2 /* ZMDownstreamObjectSyncTests.m in Sources */,
 				1621D25F1D75C132007108C2 /* ZMDependentObjectsTests.m in Sources */,
 				1621D2641D75C74D007108C2 /* ZMLocalInsertedObjectSetTests.m in Sources */,
@@ -708,6 +723,7 @@
 				1621D2651D75C750007108C2 /* ZMLocallyModifiedObjectSetTests.m in Sources */,
 				1666AA2C1D93FA0B00164C06 /* ZMChangeTrackerBootstrapTests.m in Sources */,
 				1621D26D1D75C806007108C2 /* NSManagedObjectContext+TestHelpers.m in Sources */,
+				16D0E07D1DF872FD0075DF8F /* DependencyEntitySyncTests.swift in Sources */,
 				1621D2671D75C776007108C2 /* ZMRemoteIdentifierObjectSyncTests.m in Sources */,
 				1621D26A1D75C782007108C2 /* ZMTimedSingleRequestSyncTests.m in Sources */,
 			);
