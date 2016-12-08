@@ -43,6 +43,11 @@ public class AddressBookEntry : ZMManagedObject {
     public override static func sortKey() -> String? {
         return Fields.localIdentifier.rawValue
     }
+
+    public override static func isTrackingLocalModifications() -> Bool {
+        return false
+    }
+    
 }
 
 extension AddressBookEntry {
