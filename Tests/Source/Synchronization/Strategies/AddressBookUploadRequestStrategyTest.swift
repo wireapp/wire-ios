@@ -556,13 +556,13 @@ extension AddressBookUploadRequestStrategyTest {
     
     /// Verify that a card matches the expected values: card ID and contact hash
     func checkCard(_ card: [String:AnyObject]?, expectedIndex: Int, line: UInt = #line, file: StaticString = #file) {
-        let cardIds = card?["cards"] as? [String]
+        let cardId = card?["card_id"] as? String
         guard let cardHashes = card?["contact"] as? [String] else {
             XCTFail(file: file, line: line)
             return
         }
         let expected = self.addressBook.fakeContacts[expectedIndex]
-        XCTAssertEqual(cardIds?.first, expected.localIdentifier, file: file, line: line)
+        XCTAssertEqual(cardId, expected.localIdentifier, file: file, line: line)
         XCTAssertEqual(cardHashes, expected.expectedHashes, file: file, line: line)
     }
     
