@@ -163,6 +163,7 @@ extension AddressBookUploadRequestStrategy : RequestStrategy, ZMSingleRequestTra
         
         // do a single fetch for all users
         let userIds = cards.flatMap { ($0["id"] as? String).flatMap { UUID(uuidString: $0 ) } }
+        print(userIds)
         let users = ZMUser.fetchObjects(withRemoteIdentifiers: NSOrderedSet(array: userIds), in: self.managedObjectContext)!.array as! [ZMUser]
         
         let idToUsers = users.dictionary {
@@ -177,17 +178,19 @@ extension AddressBookUploadRequestStrategy : RequestStrategy, ZMSingleRequestTra
         var missingIDs = Set(expectedContactIDs)
         cards.forEach {
             guard let userid = ($0["id"] as? String).flatMap({ UUID(uuidString: $0 )}),
-                let contactId = $0["card_id"] as? String,
+                let contactIds = $0["cards"] as? [String],
                 let user = idToUsers[userid]
             else { return }
-            
-            missingIDs.remove(contactId)
-            
-            if user.addressBookEntry == nil {
-                user.addressBookEntry = AddressBookEntry.insertNewObject(in: self.managedObjectContext)
+
+            contactIds.forEach { contactId in
+                missingIDs.remove(contactId)
+
+                if user.addressBookEntry == nil {
+                    user.addressBookEntry = AddressBookEntry.insertNewObject(in: self.managedObjectContext)
+                }
+                user.addressBookEntry.localIdentifier = contactId
+                user.addressBookEntry.cachedName = addressBook.contact(identifier: contactId)?.displayName
             }
-            user.addressBookEntry.localIdentifier = contactId
-            user.addressBookEntry.cachedName = addressBook.contact(identifier: contactId)?.displayName
         }
         
         // now remove all address book entries for those users that were previously using the missing IDs
