@@ -414,7 +414,7 @@ extension AddressBookUploadRequestStrategyTest {
                 ""
             ],
             "id": "",
-            "card_id": ""
+            "cards": [""]
         }
     ]
  }
@@ -440,11 +440,11 @@ extension AddressBookUploadRequestStrategyTest {
             "results" : [
                 [
                     "id" : user1.remoteIdentifier!.transportString(),
-                    "card_id" : contacts[0].localIdentifier
+                    "cards" : [contacts[0].localIdentifier]
                 ],
                 [
                     "id" : user2.remoteIdentifier!.transportString(),
-                    "card_id" : contacts[1].localIdentifier
+                    "cards" : [contacts[1].localIdentifier]
                 ],
             ]
         ]
@@ -556,13 +556,13 @@ extension AddressBookUploadRequestStrategyTest {
     
     /// Verify that a card matches the expected values: card ID and contact hash
     func checkCard(_ card: [String:AnyObject]?, expectedIndex: Int, line: UInt = #line, file: StaticString = #file) {
-        let cardId = card?["card_id"] as? String
+        let cardIds = card?["cards"] as? [String]
         guard let cardHashes = card?["contact"] as? [String] else {
             XCTFail(file: file, line: line)
             return
         }
         let expected = self.addressBook.fakeContacts[expectedIndex]
-        XCTAssertEqual(cardId, expected.localIdentifier, file: file, line: line)
+        XCTAssertEqual(cardIds?.first, expected.localIdentifier, file: file, line: line)
         XCTAssertEqual(cardHashes, expected.expectedHashes, file: file, line: line)
     }
     
