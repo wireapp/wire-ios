@@ -140,7 +140,7 @@ extension ZMConversation {
     
     /// If a missing client is not in this conversation, then we are out of sync with the BE
     /// and we should refetch
-    func checkIfMissingActiveParticipant(_ user: ZMUser) {
+    fileprivate func checkIfMissingActiveParticipant(_ user: ZMUser) {
         // are we out of sync?
         guard !self.activeParticipants.contains(user) else { return }
         
