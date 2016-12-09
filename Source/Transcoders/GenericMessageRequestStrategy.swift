@@ -32,33 +32,7 @@ public class GenericMessageEntity : OTREntity {
     }
     
     public var dependentObjectNeedingUpdateBeforeProcessing: AnyObject? {
-        // FIXME this should be shared with OTRMessage once it also implements the OTREntity protocol
-        
-        // If we receive a missing payload that includes users that are not part of the conversation,
-        // we need to refetch the conversation before recreating the message payload.
-        // Otherwise we end up in an endless loop receiving missing clients error
-        if conversation.needsToBeUpdatedFromBackend || conversation.remoteIdentifier == nil {
-            return conversation
-        }
-        
-        if (conversation.conversationType == .oneOnOne || conversation.conversationType == .connection) && conversation.connection?.needsToBeUpdatedFromBackend == true {
-            return conversation.connection
-        }
-        
-        // If we are missing clients, we need to refetch the clients before retrying
-        if let selfClient = ZMUser.selfUser(in: conversation.managedObjectContext!).selfClient(), let missingClients = selfClient.missingClients , missingClients.count > 0 {
-            
-            let activeClients = (conversation.activeParticipants.array as! [ZMUser]).flatMap({ Array($0.clients) })
-            
-            // Don't block sending of messages in conversations that are not affected by missing clients
-            if !missingClients.intersection(Set(activeClients)).isEmpty {
-                // make sure that we fetch those clients, even if we somehow gave up on fetching them
-                selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-                return selfClient
-            }
-        }
-        
-        return nil
+        return dependentObjectNeedingUpdateBeforeProcessingOTREntity
     }
     
 }
