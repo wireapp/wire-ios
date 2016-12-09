@@ -33,27 +33,27 @@ private let DeletedLabel = "deleted"
 /// Error label
 private let ErrorLabel = "label"
 
-public class OTREntityTranscoder<Entity : OTREntity> : NSObject, EntityTranscoder {
+open class OTREntityTranscoder<Entity : OTREntity> : NSObject, EntityTranscoder {
     
-    private let context : NSManagedObjectContext
-    private let clientRegistrationDelegate : ClientRegistrationDelegate
+    let context : NSManagedObjectContext
+    let clientRegistrationDelegate : ClientRegistrationDelegate
     
     public init(context: NSManagedObjectContext, clientRegistrationDelegate : ClientRegistrationDelegate) {
         self.context = context
         self.clientRegistrationDelegate = clientRegistrationDelegate
     }
     
-    public func request(forEntity entity: Entity) -> ZMTransportRequest? {
+    open func request(forEntity entity: Entity) -> ZMTransportRequest? {
         return nil
     }
     
     /// If you override this method in your subclass you must call super.
-    public func request(forEntity entity: Entity, didCompleteWithResponse response: ZMTransportResponse) {
+    open func request(forEntity entity: Entity, didCompleteWithResponse response: ZMTransportResponse) {
         _ = handleClientUpdates(fromResponse: response, triggeredByEntity: entity)
     }
     
     /// If you override this method in your subclass you must call super.
-    public func shouldTryToResend(entity: Entity, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
+    open func shouldTryToResend(entity: Entity, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
         
         if response.result == .permanentError {
             if self.handleDeletedSelfClient(fromResponse: response, clientDeletionDelegate: clientRegistrationDelegate) {
