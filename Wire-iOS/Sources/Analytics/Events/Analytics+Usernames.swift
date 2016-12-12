@@ -26,13 +26,6 @@ protocol Event {
 }
 
 
-extension Event {
-    var attributes: [AnyHashable: Any]? {
-        return nil
-    }
-}
-
-
 @objc public enum SearchContext: UInt {
     case startUI, addContacts
 
@@ -139,23 +132,11 @@ extension Analytics {
     
 }
 
-@objc public protocol AnalyticsConnectionStateProvider {
+
+@objc public protocol AnalyticsConnectionStateProvider: NSObjectProtocol {
     var analyticsConnectionState: AnalyticsConnectionState { get }
 }
 
-extension ZMConversation: AnalyticsConnectionStateProvider {
-
-    public var analyticsConnectionState: AnalyticsConnectionState {
-        switch relatedConnectionState {
-        case .accepted: return .connected
-        case .sent: return .outgoing
-        case .pending: return .incoming
-        case .blocked: return .blocked
-        default: return .unconnected
-        }
-    }
-
-}
 
 extension ZMUser: AnalyticsConnectionStateProvider {
 
@@ -173,6 +154,16 @@ extension ZMUser: AnalyticsConnectionStateProvider {
     }
 
 }
+
+
+extension ZMSearchUser: AnalyticsConnectionStateProvider {
+
+    public var analyticsConnectionState: AnalyticsConnectionState {
+        return user?.analyticsConnectionState ?? .unconnected
+    }
+    
+}
+
 
 // MARK: – Objective-C Interoperability
 
