@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// HTTP status of a request that has
+/// HTTP status of a request that's not authorized (client could have been deleted)
 private let ClientNotAuthorizedResponseStatus = 403
 
 /// Label error for uploading a message with a client that does not exist
