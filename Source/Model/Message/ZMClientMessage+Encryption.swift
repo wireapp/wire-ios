@@ -100,7 +100,7 @@ extension ZMGenericMessage {
     
     /// Returns the payload encrypted for each recipients in the conversation, 
     /// and the strategy to use to handle missing clients
-    func encryptedMessagePayloadData(_ conversation: ZMConversation,
+    public func encryptedMessagePayloadData(_ conversation: ZMConversation,
                                              externalData: Data?)
         -> (data: Data, strategy: MissingClientsStrategy)?
     {
