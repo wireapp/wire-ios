@@ -19,32 +19,13 @@
 
 #import "ZMUpstreamAssetSync.h"
 
-@interface ZMUpstreamAssetSync ()
-
-@property (nonatomic) NSPredicate *overriddenInsertPredicate;
-
-
-@end
-
 
 
 @implementation ZMUpstreamAssetSync
 
-- (instancetype)initWithTranscoder:(id<ZMUpstreamTranscoder>)transcoder
-                        entityName:(NSString *)entityName
-                        keysToSync:(NSArray<NSString *> *)keysToSync
-              managedObjectContext:(NSManagedObjectContext *)context;
-{
-    self = [super initWithTranscoder:transcoder entityName:entityName updatePredicate:nil filter:nil keysToSync:keysToSync managedObjectContext:context];
-    if (self != nil) {
-        self.overriddenInsertPredicate = [NSPredicate predicateWithFormat:@"NO == YES"];
-    }
-    return self;
-}
-
 - (NSPredicate *)insertPredicate;
 {
-    return self.overriddenInsertPredicate;
+    return [NSPredicate predicateWithValue:NO];
 }
 
 @end
