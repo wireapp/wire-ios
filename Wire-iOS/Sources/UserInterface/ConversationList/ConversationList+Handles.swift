@@ -59,7 +59,6 @@ extension ConversationListViewController {
         if parent?.presentedViewController is SettingsStyleNavigationController {
             parent?.presentedViewController?.dismiss(animated: true, completion: nil)
         }
-
     }
 
     fileprivate func openChangeHandleViewController(with handle: String) {
