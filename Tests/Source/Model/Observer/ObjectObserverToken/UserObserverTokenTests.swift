@@ -42,6 +42,7 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         case ProfileInfo = "profileInformationChanged"
         case ConnectionState = "connectionStateChanged"
         case TrustLevel = "trustLevelChanged"
+        case Handle = "handleChanged"
     }
 
     let userInfoChangeKeys: [UserInfoChangeKey] = [
@@ -187,6 +188,30 @@ class UserObserverTokenTests : ZMBaseManagedObjectTest {
         self.checkThatItNotifiesTheObserverOfAChange(user,
             modifier: { self.setEmailAddress(nil, on: $0) },
             expectedChangedField: .ProfileInfo)
+    }
+
+    func testThatItNotifiesTheObserverOfAnUsernameChange_fromNil()
+    {
+        // given
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        XCTAssertNil(user.handle)
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.setValue("handle", forKey: "handle") },
+                                                     expectedChangedField: .Handle)
+    }
+
+    func testThatItNotifiesTheObserverOfAnUsernameChange()
+    {
+        // given
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.setValue("oldHandle", forKey: "handle")
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.setValue("newHandle", forKey: "handle") },
+                                                     expectedChangedField: .Handle)
     }
 
     func testThatItNotifiesTheObserverOfAPhoneNumberChange()
