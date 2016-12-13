@@ -23,7 +23,7 @@ import ZMCSystem
 extension ZMUser : ObjectInSnapshot {
     
     public var observableKeys : [String] {
-        return ["name", "displayName", "accentColorValue", "imageMediumData", "imageSmallProfileData","emailAddress", "phoneNumber", "canBeConnected", "isConnected", "isPendingApprovalByOtherUser", "isPendingApprovalBySelfUser", "clients"]
+        return ["name", "displayName", "accentColorValue", "imageMediumData", "imageSmallProfileData","emailAddress", "phoneNumber", "canBeConnected", "isConnected", "isPendingApprovalByOtherUser", "isPendingApprovalBySelfUser", "clients", "handle"]
     }
 
     public func keyPathsForValuesAffectingValueForKey(forKey key: String) -> KeySet {
@@ -69,6 +69,10 @@ extension ZMUser : ObjectInSnapshot {
 
     open var clientsChanged : Bool {
         return changedKeysAndOldValues.keys.contains("clients")
+    }
+
+    public var handleChanged : Bool {
+        return changedKeysAndOldValues.keys.contains("handle")
     }
 
 
