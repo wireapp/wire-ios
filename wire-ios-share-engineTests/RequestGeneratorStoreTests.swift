@@ -38,14 +38,6 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
     var mockStrategy = MockStrategy()
     var sut : RequestGeneratorStore! = nil
     
-    override func setUp() {
-        
-    }
-    
-    override func tearDown() {
-        
-    }
-    
     func testThatItDoesNOTReturnARequestIfNoGeneratorsGiven() {
         sut = RequestGeneratorStore(strategies:[])
         XCTAssertNil(sut.requestGenerator())
@@ -113,6 +105,7 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
     }
     
     func testThatItReturnsRequestFromMultipleGenerators() {
+        
         let sourceRequest = ZMTransportRequest(path: "some path", method: .methodGET, payload: nil)
         let sourceRequest2 = ZMTransportRequest(path: "some path 2", method: .methodPOST, payload: nil)
         
