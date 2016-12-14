@@ -50,8 +50,11 @@ extension ZMMessage: Sendable {
             
             let updatedObjects  = notification.userInfo?[NSUpdatedObjectsKey]  as? Set<NSManagedObject> ?? Set()
             let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> ?? Set()
+            let deletedObjects  = notification.userInfo?[NSDeletedObjectsKey]  as? Set<NSManagedObject> ?? Set()
+            let refreshedObjects = notification.userInfo?[NSRefreshedObjectsKey] as? Set<NSManagedObject> ?? Set()
+            let invalidatedObjects = notification.userInfo?[NSInvalidatedObjectsKey] as? Set<NSManagedObject> ?? Set()
             
-            let changedObjects = [updatedObjects, insertedObjects/*, deletedObject, refreshedObjects, invalidatedObjects*/].reduce(Set<NSManagedObject>()) {
+            let changedObjects = [updatedObjects, insertedObjects, deletedObjects, refreshedObjects, invalidatedObjects].reduce(Set<NSManagedObject>()) {
                 $0.union($1)
             }
             
