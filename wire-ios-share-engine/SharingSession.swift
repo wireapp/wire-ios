@@ -172,7 +172,8 @@ public class SharingSession {
     /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
-    public init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
+    
+    public convenience init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
         
         guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
             throw SharingSessionError.missingSharedContainer
@@ -183,17 +184,17 @@ public class SharingSession {
         
         guard !NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL) else { throw InitializationError.needsMigration }
         
-        ZMSLog.set(level: .debug, tag: "Network")
+        ZMSLog.set  (level: .debug, tag: "Network")
 
-        userInterfaceContext = NSManagedObjectContext.createSearchWithStore(at: storeURL)
-        syncContext = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: keyStoreURL)
+        let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: storeURL)!
+        let syncContext = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: keyStoreURL)!
         
         userInterfaceContext.zm_sync = syncContext
         syncContext.zm_userInterface = userInterfaceContext
         
         let environment = ZMBackendEnvironment()
         
-        transportSession = ZMTransportSession(
+        let transportSession =  ZMTransportSession(
             baseURL: environment.backendURL,
             websocketURL: environment.backendWSURL,
             keyValueStore: syncContext,
@@ -201,6 +202,16 @@ public class SharingSession {
             application: nil,
             sharedContainerIdentifier: applicationGroupIdentifier
         )
+        
+        try self.init(userInterfaceContext: userInterfaceContext, syncContext: syncContext, transportSession: transportSession, sharedContainerURL: sharedContainerURL)
+        
+    }
+    
+    public init(userInterfaceContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, transportSession: ZMTransportSession, sharedContainerURL: URL) throws {
+        
+        self.userInterfaceContext = userInterfaceContext
+        self.syncContext = syncContext
+        self.transportSession = transportSession
         
         authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)

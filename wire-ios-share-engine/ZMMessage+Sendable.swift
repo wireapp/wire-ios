@@ -48,8 +48,8 @@ extension ZMMessage: Sendable {
         
         let token = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: managedObjectContext?.zm_sync, queue: .main) { (notification) in
             
-            let updatedObjects     = notification.userInfo?[NSUpdatedObjectsKey]     as? Set<NSManagedObject> ?? Set()
-            let insertedObjects    = notification.userInfo?[NSInsertedObjectsKey]    as? Set<NSManagedObject> ?? Set()
+            let updatedObjects  = notification.userInfo?[NSUpdatedObjectsKey]  as? Set<NSManagedObject> ?? Set()
+            let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> ?? Set()
             
             let changedObjects = [updatedObjects, insertedObjects/*, deletedObject, refreshedObjects, invalidatedObjects*/].reduce(Set<NSManagedObject>()) {
                 $0.union($1)

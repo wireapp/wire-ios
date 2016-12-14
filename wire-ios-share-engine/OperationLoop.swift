@@ -160,23 +160,24 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
             context.processPendingChanges() // We need this because merging sometimes leaves the MOC in a 'dirty' state
         }
     }
-        
+    
     func syncContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
         merge(changes: notification, intoContext: userContext)
         
-        self.changeClosure?(Set(insertedObjects).union(updatedObjects))
+        syncContext.performGroupedBlock {
+            self.changeClosure?(Set(insertedObjects).union(updatedObjects))
+        }
     }
     
     func userInterfaceContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
-        merge(changes: notification, intoContext: userContext)
+        merge(changes: notification, intoContext: syncContext)
         
         let insertedObjectsIds = insertedObjects.map({ $0.objectID })
-        let updatedObjectsIds = updatedObjects.map({ $0.objectID })
+        let updatedObjectsIds  =  updatedObjects.map({ $0.objectID })
         
         syncContext.performGroupedBlock {
             let insertedObjects = insertedObjectsIds.flatMap({ self.syncContext.object(with: $0) })
             let updatedObjects = updatedObjectsIds.flatMap({ self.syncContext.object(with: $0) })
-            
 
             self.changeClosure?(Set(insertedObjects).union(updatedObjects))
         }
@@ -227,8 +228,5 @@ final class RequestGeneratingOperationLoop {
         } while result.didGenerateNonNullRequest && result.didHaveLessRequestThanMax
         
     }
-    
-    
-    
 }
 
