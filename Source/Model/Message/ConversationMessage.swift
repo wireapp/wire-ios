@@ -115,6 +115,18 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var destructionDate: Date? { get }
 }
 
+extension ZMConversationMessage {
+    
+    /// Message category
+    public var categorization : MessageCategory {
+        guard let message = self as? ZMMessage else {
+            return .none
+        }
+        return message.category
+    }
+    
+}
+
 
 // MARK:- Conversation managed properties
 extension ZMMessage {
