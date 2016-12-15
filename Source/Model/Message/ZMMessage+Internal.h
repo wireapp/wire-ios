@@ -59,6 +59,7 @@ extern NSString * _Nonnull const ZMMessageUsersKey;
 extern NSString * _Nonnull const ZMMessageClientsKey;
 extern NSString * _Nonnull const ZMMessageHiddenInConversationKey;
 extern NSString * _Nonnull const ZMMessageConfirmationKey;
+extern NSString * _Nonnull const ZMMessageCachedCategoryKey;
 
 @interface ZMMessage : ZMManagedObject
 
@@ -257,7 +258,6 @@ extern NSString *  _Nonnull const ZMMessageServerTimestampKey;
 @property (nonatomic) NSData * _Nullable  previewData;
 @property (nonatomic) CGSize originalSize;
 @property (nonatomic) NSData * _Nullable originalImageData;
-
 
 @end
 

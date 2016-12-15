@@ -75,6 +75,7 @@ NSString * const ZMMessageReactionKey = @"reactions";
 NSString * const ZMMessageConfirmationKey = @"confirmations";
 NSString * const ZMMessageDestructionDateKey = @"destructionDate";
 NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
+NSString * const ZMMessageCachedCategoryKey = @"cachedCategory";
 
 
 @interface ZMMessage ()
@@ -127,7 +128,9 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
 {
-    return [self createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:moc prefetchResult:nil];
+    ZMMessage *message = [self createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:moc prefetchResult:nil];
+    [message updateCategoryCache];
+    return message;
 }
 
 + (BOOL)isDataAnimatedGIF:(NSData *)data
@@ -685,7 +688,8 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
                              ZMMessageConfirmationKey,
                              ZMMessageReactionKey,
                              ZMMessageDestructionDateKey,
-                             ZMMessageIsObfuscatedKey
+                             ZMMessageIsObfuscatedKey,
+                             ZMMessageCachedCategoryKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
