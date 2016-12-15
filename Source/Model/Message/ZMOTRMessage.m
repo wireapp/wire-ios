@@ -242,11 +242,13 @@ NSString * const DeliveredKey = @"delivered";
     }
     
     [clientMessage unarchiveConversationIfNeeded:conversation];
+    [clientMessage updateCategoryCache];
     
     BOOL needsConfirmation = NO;
     if (isNewMessage && !clientMessage.sender.isSelfUser && conversation.conversationType == ZMConversationTypeOneOnOne) {
         needsConfirmation = YES;
     }
+    
     
     MessageUpdateResult *result = [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:needsConfirmation wasInserted:isNewMessage];
     return result;

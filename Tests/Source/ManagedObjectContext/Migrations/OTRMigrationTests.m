@@ -669,6 +669,61 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     XCTAssertEqualObjects([userDictionaries subarrayWithRange:NSMakeRange(0, 3)], [self userDictionaryFixture2_7]);
 }
 
+- (void)testThatItPerformsMigrationFrom_2_24_1_ToCurrentModelVersion {
+    // given
+    __block NSManagedObjectContext *syncContext;
+    __block NSUInteger conversationCount;
+    __block NSUInteger messageCount;
+    __block NSUInteger systemMessageCount;
+    __block NSUInteger connectionCount;
+    __block NSArray *userDictionaries;
+    __block NSUInteger userClientCount;
+    __block NSArray *assetClientMessages;
+    
+    // when
+    [self performMockingStoreURLWithVersion:@"2.24.1" block:^(NSURL *storeURL){
+        
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
+        
+        XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.24.1 to the current mom"];
+        
+        [syncContext performGroupedBlockAndWait:^{
+            NSError *error = nil;
+            conversationCount = [syncContext countForFetchRequest:ZMConversation.sortedFetchRequest error:&error];
+            messageCount = [syncContext countForFetchRequest:ZMClientMessage.sortedFetchRequest error:&error];
+            systemMessageCount = [syncContext countForFetchRequest:ZMSystemMessage.sortedFetchRequest error:&error];
+            connectionCount = [syncContext countForFetchRequest:ZMConnection.sortedFetchRequest error:&error];
+            userClientCount = [syncContext countForFetchRequest:UserClient.sortedFetchRequest error:&error];
+            assetClientMessages = [syncContext executeFetchRequestOrAssert:ZMAssetClientMessage.sortedFetchRequest];
+            
+            XCTAssertNil(error);
+            
+            NSFetchRequest *userFetchRequest = ZMUser.sortedFetchRequest;
+            userFetchRequest.resultType = NSDictionaryResultType;
+            userFetchRequest.propertiesToFetch = self.userPropertiesToFetch;
+            userDictionaries = [syncContext executeFetchRequestOrAssert:userFetchRequest];
+            [expectation fulfill];
+        }];
+        
+        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(15);
+    
+    // then
+    XCTAssertEqual(assetClientMessages.count, 0lu);
+    XCTAssertEqual(conversationCount, 20lu);
+    XCTAssertEqual(messageCount, 3lu);
+    XCTAssertEqual(systemMessageCount, 21lu);
+    XCTAssertEqual(connectionCount, 16lu);
+    XCTAssertEqual(userClientCount, 12lu);
+    
+    XCTAssertNotNil(userDictionaries);
+    XCTAssertEqual(userDictionaries.count, 22lu);
+    
+    XCTAssertEqualObjects([userDictionaries subarrayWithRange:NSMakeRange(0, 3)], [self userDictionaryFixture2_25_1]);
+}
+
 #pragma mark - Helper
 
 - (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:(NSURL *)storeURL
@@ -697,7 +752,8 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
              @"modifiedKeys",
              @"name",
              @"normalizedEmailAddress",
-             @"normalizedName"
+             @"normalizedName",
+             @"handle"
              ];
 }
 
@@ -985,6 +1041,33 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
                  @"name": @"Chad",
                  @"normalizedEmailAddress": @"574@example.com",
                  @"normalizedName": @"Chad"
+                 },
+             @{
+                 @"accentColorValue": @5,
+                 @"emailAddress": @"183@example.com",
+                 @"name": @"Daniel",
+                 @"normalizedEmailAddress": @"183@example.com",
+                 @"normalizedName": @"Daniel",
+                 },
+             ];
+}
+
+- (NSArray <NSDictionary *>*)userDictionaryFixture2_25_1
+{
+    return @[
+             @{
+                 @"accentColorValue": @3,
+                 @"name": @"Andreas",
+                 @"normalizedName": @"Andreas",
+                 @"handle": @"andre"
+                 },
+             @{
+                 @"accentColorValue": @3,
+                 @"emailAddress": @"574@example.com",
+                 @"name": @"Chad",
+                 @"normalizedEmailAddress": @"574@example.com",
+                 @"normalizedName": @"Chad",
+                 @"handle":@"titus"
                  },
              @{
                  @"accentColorValue": @5,
