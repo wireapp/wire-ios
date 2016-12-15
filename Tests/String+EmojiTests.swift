@@ -42,4 +42,11 @@ class String_EmojiTests: XCTestCase {
         XCTAssertFalse("".containsEmoji)
     }
 
+    func testThatNonLatinsNotDetectedAsContainingEmoji() {
+        XCTAssertFalse("الأشخاص المفضلين".containsEmoji)
+    }
+
+    func testThatNonLatinWithEmojiIsDetectedAsContainingEmoji() {
+        XCTAssertTrue("الأشخاص المفضلين🙈".containsEmoji)
+    }
 }

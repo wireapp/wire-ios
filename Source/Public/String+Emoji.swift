@@ -17,17 +17,58 @@
 //
 
 
+extension String {
 
-public extension String {
+    private enum Transform {
+        case toLatin, stripDiacritics, stripCombiningMarks, toUnicodeName
 
-    var containsEmoji: Bool {
+        @available(iOS 9, *)
+        var stringTransform: StringTransform {
+            switch self {
+            case .toLatin: return .toLatin
+            case .stripDiacritics: return .stripDiacritics
+            case .stripCombiningMarks: return .stripCombiningMarks
+            case .toUnicodeName: return .toUnicodeName
+            }
+        }
+
+        var cfStringTransform: CFString {
+            switch self {
+            case .toLatin: return kCFStringTransformToLatin
+            case .stripDiacritics: return kCFStringTransformStripDiacritics
+            case .stripCombiningMarks: return kCFStringTransformStripCombiningMarks
+            case .toUnicodeName: return kCFStringTransformToUnicodeName
+            }
+        }
+    }
+
+    private func applying(transform: Transform) -> String? {
         if #available(iOS 9, *) {
-            return applyingTransform(.toUnicodeName, reverse: false) != self
+            return applyingTransform(transform.stringTransform, reverse: false)
         } else {
             let ref = NSMutableString(string: self) as CFMutableString
-            CFStringTransform(ref, nil, kCFStringTransformToLatin, false)
-            return ref as String != self
+            CFStringTransform(ref, nil, transform.cfStringTransform, false)
+            return ref as String
         }
+    }
+
+    static private var transforms: [Transform] {
+        return [
+            .toLatin,
+            .stripDiacritics,
+            .stripCombiningMarks
+        ]
+    }
+
+    private var normalized: String? {
+        return String.transforms.reduce(self) {
+            $0?.applying(transform: $1)
+        }
+    }
+
+    public var containsEmoji: Bool {
+        let latinNormalized = normalized
+        return latinNormalized != latinNormalized?.applying(transform: .toUnicodeName)
     }
 
 }
