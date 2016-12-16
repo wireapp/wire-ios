@@ -71,16 +71,11 @@ typedef NS_ENUM(int, ZMMessageWindowEvent) {
         }
             
         [self recalculateMessages];
-        
-//        ZMTraceUserInterfaceMessageWindow(self, ZMMessageWindowEventAddObserver);
     }
     return self;
 }
 
-- (void)dealloc
-{
-//    ZMTraceUserInterfaceMessageWindow(self, ZMMessageWindowEventRemoveObserver);
-}
+
 
 - (NSUInteger)activeSize;
 {
@@ -97,7 +92,12 @@ typedef NS_ENUM(int, ZMMessageWindowEvent) {
         [newMessages filterUsingPredicate:[NSPredicate predicateWithFormat:@"(%K == TRUE AND %K == FALSE) OR %K > conversation.%K",
                                            ZMMessageIsEncryptedKey, DeliveredKey,
                                            ZMMessageServerTimestampKey, ZMConversationClearedTimeStampKey]];
+        
+        [newMessages filterUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMManagedObject *  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable __unused bindings) {
+            return !evaluatedObject.isZombieObject;
+        }]];
     }
+    
     [self.mutableMessages removeAllObjects];
     [self.mutableMessages unionOrderedSet:newMessages];
 }
