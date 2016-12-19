@@ -21,6 +21,11 @@ public struct CategoryMatch : Hashable {
     public let including: MessageCategory
     public let excluding: MessageCategory
     
+    public init(including: MessageCategory, excluding: MessageCategory) {
+        self.including = including
+        self.excluding = excluding
+    }
+    
     public var hashValue: Int {
         return excluding.hashValue ^ including.hashValue
     }
