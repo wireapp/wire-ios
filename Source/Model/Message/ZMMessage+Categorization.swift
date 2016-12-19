@@ -91,6 +91,26 @@ extension ZMMessage {
         return self.sortedFetchRequest(with: finalPredicate)!
     }
     
+    public static func fetchRequestMatching(matchPairs: [CategoryMatch],
+                                            conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
+        
+        let categoryPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: matchPairs.map {
+            if $0.excluding != .none {
+                return NSPredicate(format: "((%K & %d) = %d) && ((%K & %d) = 0)" ,
+                                   ZMMessageCachedCategoryKey, $0.including.rawValue, $0.including.rawValue,
+                                   ZMMessageCachedCategoryKey, $0.excluding.rawValue)
+            }
+            return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.including.rawValue, $0.including.rawValue)
+            }
+        )
+        let conversationPredicate : NSPredicate? = (conversation != nil)
+            ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
+            : nil
+        
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].flatMap { $0 })
+        return self.sortedFetchRequest(with: finalPredicate)!
+    }
+    
 }
 
 // MARK: - Categories from specific content

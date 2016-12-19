@@ -20,22 +20,26 @@
 
 class MockAssetCollectionDelegate : NSObject, AssetCollectionDelegate {
     
-    var messagesByFilter = [[MessageCategory: [ZMMessage]]]()
+    var messagesByFilter = [[CategoryMatch: [ZMMessage]]]()
     var didCallDelegate = false
     var result : AssetFetchResult?
-    var finished: [MessageCategory] = []
+    var finished: [CategoryMatch] = []
     
     public func assetCollectionDidFinishFetching(collection: ZMCollection, result: AssetFetchResult) {
         self.result = result
         didCallDelegate = true
     }
     
-    public func assetCollectionDidFetch(collection: ZMCollection, messages: [MessageCategory : [ZMMessage]], hasMore: Bool) {
+    public func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch : [ZMMessage]], hasMore: Bool) {
         messagesByFilter.append(messages)
         didCallDelegate = true
         if !hasMore {
             finished = finished + messages.keys
         }
+    }
+    
+    func allMessages(for categoryMatch: CategoryMatch) -> [ZMMessage] {
+        return messagesByFilter.reduce([ZMMessage]()){$0 + ($1[categoryMatch] ?? [])}
     }
 }
 
@@ -63,14 +67,52 @@ class AssetColletionTests : ModelObjectsTests {
         super.tearDown()
     }
     
-    func insertAssetMessages(count: Int) {
+    var defaultMatchPair : CategoryMatch {
+        return CategoryMatch(including: .image, excluding: .none)
+    }
+    
+    @discardableResult func insertAssetMessages(count: Int) -> [ZMMessage] {
         var offset : TimeInterval = 0
+        var messages = [ZMMessage]()
         (0..<count).forEach{ _ in
             let message = conversation.appendMessage(withImageData: verySmallJPEGData()) as! ZMMessage
             offset = offset + 5
             message.setValue(Date().addingTimeInterval(offset), forKey: "serverTimestamp")
+            messages.append(message)
         }
         uiMOC.saveOrRollback()
+        return messages
+    }
+    
+    
+    func testThatItGetsMessagesInTheCorrectOrder() {
+        // given
+        let messages = insertAssetMessages(count: 10)
+        
+        // when
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        let receivedMessages = delegate.allMessages(for: defaultMatchPair)
+        XCTAssertTrue(receivedMessages.first!.compare(receivedMessages.last!) == .orderedDescending)
+        XCTAssertEqual(messages.first, receivedMessages.last)
+        XCTAssertEqual(messages.last, receivedMessages.first)
+    }
+    
+    func testThatItReturnsUIObjects(){
+        // given
+        insertAssetMessages(count: 1)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // when
+        let messages = sut.assets(for: defaultMatchPair)
+        
+        // then
+        XCTAssertEqual(messages.count, 1)
+        guard let moc = messages.first?.managedObjectContext else {return XCTFail()}
+        XCTAssertTrue(moc.zm_isUserInterfaceContext)
     }
     
     func testThatItCanGetMessages_TotalMessageCountSmallerThanInitialFetchCount() {
@@ -80,7 +122,7 @@ class AssetColletionTests : ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
         
         // when
-        sut = AssetCollection(conversation: conversation, including: [.image], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
@@ -88,10 +130,10 @@ class AssetColletionTests : ModelObjectsTests {
         XCTAssertEqual(delegate.messagesByFilter.count, 1)
         XCTAssertTrue(sut.doneFetching)
 
-        let receivedMessageCount = delegate.messagesByFilter.first?[.image]?.count
+        let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 90)
         
-        guard let lastMessage =  delegate.messagesByFilter.last?[.image]?.last,
+        guard let lastMessage =  delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
               let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -102,7 +144,7 @@ class AssetColletionTests : ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
         
         // when
-        sut = AssetCollection(conversation: conversation, including: [.image], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
@@ -110,10 +152,10 @@ class AssetColletionTests : ModelObjectsTests {
         XCTAssertEqual(delegate.messagesByFilter.count, 1)
         XCTAssertTrue(sut.doneFetching)
         
-        let receivedMessageCount = delegate.messagesByFilter.first?[.image]?.count
+        let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 100)
         
-        guard let lastMessage =  delegate.messagesByFilter.last?[.image]?.last,
+        guard let lastMessage =  delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -126,7 +168,7 @@ class AssetColletionTests : ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
         
         // when
-        sut = AssetCollection(conversation: conversation, including: [.image], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
@@ -135,17 +177,17 @@ class AssetColletionTests : ModelObjectsTests {
         XCTAssertEqual(delegate.messagesByFilter.count, 3)
         XCTAssertTrue(sut.doneFetching)
         
-        let receivedMessageCount = delegate.messagesByFilter.reduce(0){$0 + ($1[.image]?.count ?? 0)}
-        XCTAssertEqual(receivedMessageCount, 1000)
+        let receivedMessages = delegate.allMessages(for: defaultMatchPair)
+        XCTAssertEqual(receivedMessages.count, 1000)
         
-        guard let lastMessage =  delegate.messagesByFilter.last?[.image]?.last,
+        guard let lastMessage =  receivedMessages.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
     
     func testThatItCallsTheDelegateWhenTheMessageCountIsZero() {
         // when
-        sut = AssetCollection(conversation: conversation, including: [.image], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
@@ -160,7 +202,7 @@ class AssetColletionTests : ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
         
         // when
-        sut = AssetCollection(conversation: conversation, including: [.image], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
         sut.tearDown()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -185,7 +227,7 @@ class AssetColletionTests : ModelObjectsTests {
             
             // when
             self.startMeasuring()
-            self.sut = AssetCollection(conversation: self.conversation, including: [.image], delegate: self.delegate)
+            self.sut = AssetCollection(conversation: self.conversation, matchingCategories: [self.defaultMatchPair], delegate: self.delegate)
             XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             
             self.stopMeasuring()
@@ -205,12 +247,30 @@ class AssetColletionTests : ModelObjectsTests {
         conversation.messages.forEach{_ = ($0 as? ZMMessage)?.cachedCategory}
         uiMOC.saveOrRollback()
         
-        sut = AssetCollection(conversation: self.conversation, including: [.image], delegate: self.delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        let receivedMessageCount = delegate.messagesByFilter.first?[.image]?.count
+        let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 10)
+    }
+    
+    
+    func testThatItGetsPreCategorizedMessagesInTheCorrectOrder() {
+        // given
+        let messages = insertAssetMessages(count: 10)
+        conversation.messages.forEach{_ = ($0 as? ZMMessage)?.cachedCategory}
+        uiMOC.saveOrRollback()
+        
+        // when
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        let receivedMessages = delegate.allMessages(for: defaultMatchPair)
+        XCTAssertTrue(receivedMessages.first!.compare(receivedMessages.last!) == .orderedDescending)
+        XCTAssertEqual(messages.first, receivedMessages.last)
+        XCTAssertEqual(messages.last, receivedMessages.first)
     }
     
     func testThatItExcludesDefinedCategories_PreCategorized(){
@@ -226,13 +286,12 @@ class AssetColletionTests : ModelObjectsTests {
         // when
         conversation.messages.forEach{_ = ($0 as? ZMMessage)?.cachedCategory}
         uiMOC.saveOrRollback()
-        
-        sut = AssetCollection(conversation: self.conversation, including: [.image], excluding:[.GIF], delegate: self.delegate)
+        let excludingGif = CategoryMatch(including: .image, excluding: .GIF)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [excludingGif], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        let receivedMessages = delegate.messagesByFilter.first?[.image]?.count
-        XCTAssertNil(receivedMessages)
+        XCTAssertEqual(delegate.messagesByFilter.count, 0)
         
         XCTAssertTrue(delegate.didCallDelegate)
         XCTAssertEqual(delegate.result, .noAssetsToFetch)
@@ -240,6 +299,7 @@ class AssetColletionTests : ModelObjectsTests {
     
     func testThatItExcludesDefinedCategories_NotPreCategorized(){
         // given
+        insertAssetMessages(count: 1)
         let data = self.data(forResource: "animated", extension: "gif")!
         let message = ZMAssetClientMessage(originalImageData: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
         message.isEncrypted = true
@@ -249,13 +309,45 @@ class AssetColletionTests : ModelObjectsTests {
         uiMOC.saveOrRollback()
         
         // when
-        sut = AssetCollection(conversation: self.conversation, including: [.image], excluding:[.GIF], delegate: self.delegate)
+        let excludingGif = CategoryMatch(including: .image, excluding: .GIF)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [excludingGif], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        let receivedMessages = delegate.messagesByFilter.first?[.image]?.count
-        XCTAssertEqual(receivedMessages, 0)
+        let receivedMessages = delegate.messagesByFilter.first?[excludingGif]?.count
+        XCTAssertEqual(receivedMessages, 1)
         
+        XCTAssertTrue(delegate.didCallDelegate)
+        XCTAssertEqual(delegate.result, .success)
+    }
+    
+    func testThatItSortsExcludingCategories(){
+        // given
+        insertAssetMessages(count: 1)
+        let data = self.data(forResource: "animated", extension: "gif")!
+        let message = ZMAssetClientMessage(originalImageData: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        message.isEncrypted = true
+        let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
+        message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
+        conversation.mutableMessages.add(message)
+        uiMOC.saveOrRollback()
+        
+        // when
+        let excludingGif = CategoryMatch(including: .image, excluding: .GIF)
+        let onlyGif = CategoryMatch(including: .GIF, excluding: .none)
+        let allImages = defaultMatchPair
+        sut = AssetCollection(conversation: conversation, matchingCategories: [excludingGif, onlyGif, allImages], delegate: delegate)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        let receivedNonGifs = delegate.allMessages(for: excludingGif)
+        let receivedGifs = delegate.allMessages(for: onlyGif)
+        let receivedImages = delegate.allMessages(for: allImages)
+
+        XCTAssertEqual(receivedNonGifs.count, 1)
+        XCTAssertEqual(receivedGifs.count, 1)
+        XCTAssertEqual(receivedImages.count, 2)
+
         XCTAssertTrue(delegate.didCallDelegate)
         XCTAssertEqual(delegate.result, .success)
     }
@@ -267,15 +359,17 @@ class AssetColletionTests : ModelObjectsTests {
         uiMOC.saveOrRollback()
         
         // when
-        sut = AssetCollection(conversation: self.conversation, including: [.image, .text], delegate: self.delegate)
+        let textMatchPair = CategoryMatch(including: .text, excluding: .none)
+
+        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair, textMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        let receivedAssetCount = delegate.messagesByFilter.reduce(0){$0 + ($1[.image]?.count ?? 0)}
-        XCTAssertEqual(receivedAssetCount, 10)
+        let receivedAssets = delegate.allMessages(for: defaultMatchPair)
+        XCTAssertEqual(receivedAssets.count, 10)
         
-        let receivedTextCount = delegate.messagesByFilter.reduce(0){$0 + ($1[.text]?.count ?? 0)}
-        XCTAssertEqual(receivedTextCount, 1)
+        let receivedTexts = delegate.allMessages(for: textMatchPair)
+        XCTAssertEqual(receivedTexts.count, 1)
         
         XCTAssertEqual(delegate.result, .success)
     }
