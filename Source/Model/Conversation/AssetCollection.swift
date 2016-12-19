@@ -204,9 +204,9 @@ public class AssetCollection : NSObject, ZMCollection {
 
             // Merge with existing assets
             if let assets = self.assets {
-                self.assets = AssetCollectionBatched.merge(messageMap: assets, with: newAssets)
+                self.assets = AssetCollectionBatched.merge(messageMap: assets, with: uiAssets)
             } else {
-                self.assets = newAssets
+                self.assets = uiAssets
             }
             
             // Notify delegate
