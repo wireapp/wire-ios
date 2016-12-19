@@ -121,6 +121,10 @@ extension ZMMessage {
     /// Category according only to content (excluding likes)
     fileprivate var categoryFromContent : MessageCategory {
         
+        guard !self.isEphemeral, !self.isObfuscated, !self.isZombieObject else {
+            return .none
+        }
+        
         let category = [self.textCategory,
                         self.imageCategory,
                         self.fileCategory,
