@@ -89,7 +89,7 @@ import Foundation
         self.computeChanges()
     }
     
-    public func objectsDidChange(_ changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         if(self.shouldRecalculate || self.updatedMessages.count > 0) {
             self.computeChanges()
         }

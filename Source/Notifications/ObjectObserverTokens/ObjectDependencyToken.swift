@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -134,15 +134,15 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
         self.accumulatedChanges = self.accumulatedChanges.union(changedAffectedKeys)
     }
     
-    public func objectsDidChange(_ changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         if changes.updated.contains(self.observedObject) {
             self.accumulatedChanges = KeySet()
-            self.objectDidChangeKeys(.all)
+            self.objectDidChangeKeys(.all, accumulated: accumulated)
         }
         else if !self.accumulatedChanges.isEmpty {
             let changedKeys = self.accumulatedChanges
             self.accumulatedChanges = KeySet()
-            self.objectDidChangeKeys(.some(changedKeys))
+            self.objectDidChangeKeys(.some(changedKeys), accumulated: accumulated)
         }
     }
     
@@ -150,7 +150,7 @@ public final class ObjectDependencyToken : NSObject, ObjectsDidChangeDelegate {
         accumulatedChanges = accumulatedChanges.union(KeySet(keys))
     }
     
-    func objectDidChangeKeys(_ affectedKeys: AffectedKeys) {
+    func objectDidChangeKeys(_ affectedKeys: AffectedKeys, accumulated: Bool) {
         if let (newSnapShot, keysAndOldValues) = self.snapshot.updatedSnapshot(self.observedObject, affectedKeys: affectedKeys) {
 
             snapshot = newSnapShot

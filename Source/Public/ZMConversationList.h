@@ -25,6 +25,8 @@
 
 @property (nonatomic, readonly, nonnull) NSString *identifier;
 
+- (void)resort;
+
 @end
 
 
@@ -39,6 +41,8 @@
 
 + (nonnull ZMConversationList *)pendingConnectionConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 + (nonnull ZMConversationList *)clearedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
+
+
 
 @end
 
