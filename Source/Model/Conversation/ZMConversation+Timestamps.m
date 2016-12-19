@@ -22,6 +22,7 @@
 #import "ZMConversation+Timestamps.h"
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
+#import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 @implementation ZMConversation (Timestamps)
 
@@ -65,6 +66,7 @@
     if (newTime != nil) {
         self.lastModifiedDate = newTime;
     }
+
     return (newTime != nil);
 }
 

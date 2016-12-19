@@ -149,7 +149,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
     }
     
     // handling object changes
-    func objectsDidChange(_ changes: ManagedObjectChanges) {
+    func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         let updatedConnections = changes.updated as? [ZMConnection] ?? []
         let insertedConnection  = changes.inserted as? [ZMConnection] ?? []
         
@@ -166,7 +166,11 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         
         for listWrapper in self.conversationLists {
             if let list = listWrapper.unbox {
-                self.updateListAndNotifyObservers(list, inserted: inserted, deleted: deleted)
+                if accumulated {
+                    self.recomputeListAndNotifyObserver(list)
+                } else {
+                    self.updateListAndNotifyObservers(list, inserted: inserted, deleted: deleted)
+                }
             }
         }
         self.registerTokensForConversations(inserted)
@@ -191,6 +195,13 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         list.removeConversations(conversationsToRemove)
         
         if (!conversationsToInsert.isEmpty || !conversationsToRemove.isEmpty) && isSyncComplete {
+            self.notifyTokensForConversationList(list, updatedConversation: nil, changes: nil)
+        }
+    }
+    
+    fileprivate func recomputeListAndNotifyObserver(_ list: ZMConversationList) {
+        list.resort()
+        if (isSyncComplete) {
             self.notifyTokensForConversationList(list, updatedConversation: nil, changes: nil)
         }
     }
@@ -234,7 +245,7 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
                 if list.contains(conversation)
                 {
                     var didRemoveConversation = false
-                    if !list.predicateMatchesConversation(conversation){
+                    if !list.predicateMatchesConversation(conversation) {
                         list.removeConversations(Set(arrayLiteral: conversation))
                         didRemoveConversation = true
                     }

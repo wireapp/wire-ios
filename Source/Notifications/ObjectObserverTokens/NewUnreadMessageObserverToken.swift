@@ -49,7 +49,7 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
         self.observer = observer
     }
     
-    public func objectsDidChange(_ changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         let inserted = (changes.inserted as! [ZMMessage]).filter {$0.isUnreadMessage && $0.knockMessageData == nil }
         if !inserted.isEmpty {
             let changeInfo = NewUnreadMessagesChangeInfo(messages: inserted)
@@ -103,7 +103,7 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
         return Array(unreadMessages)
     }
     
-    public func objectsDidChange(_ changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         let insertedKnockMessages = filterUnreadKnocks(changes.inserted as! [ZMMessage]) + filterUnreadKnocks(changes.updated as! [ZMMessage])
         
         if !insertedKnockMessages.isEmpty {
@@ -151,7 +151,7 @@ public final class NewUnreadMessagesChangeInfo : NSObject  {
         return unreadMessages
     }
     
-    public func objectsDidChange(_ changes: ManagedObjectChanges) {
+    public func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         let unreadUnsentMessages = filterUnsentMessage(changes.updated as! [ZMMessage])
         
         if !unreadUnsentMessages.isEmpty {

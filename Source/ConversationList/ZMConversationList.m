@@ -113,13 +113,22 @@
 
 - (void)sortInsertConversation:(ZMConversation *)conversation
 {
-    NSComparator comparator = ^NSComparisonResult(ZMConversation *c1, ZMConversation* c2){
+    NSUInteger const idx = [self.backingList indexOfObject:conversation
+                                             inSortedRange:NSMakeRange(0, self.backingList.count)
+                                                   options:NSBinarySearchingInsertionIndex
+                                           usingComparator:self.comparator];
+    [self.backingList insertObject:conversation atIndex:idx];
+}
+
+- (NSComparator)comparator
+{
+    return ^NSComparisonResult(ZMConversation *c1, ZMConversation* c2){
         if(c1.conversationListIndicator == ZMConversationListIndicatorActiveCall && c2.conversationListIndicator != ZMConversationListIndicatorActiveCall) {
             return NSOrderedAscending;
         } else if(c2.conversationListIndicator == ZMConversationListIndicatorActiveCall && c1.conversationListIndicator != ZMConversationListIndicatorActiveCall) {
             return NSOrderedDescending;
         }
-        
+
         for (NSSortDescriptor *sd in self.sortDescriptors) {
             NSComparisonResult const r = [sd compareObject:c1 toObject:c2];
             if (r != NSOrderedSame) {
@@ -128,9 +137,6 @@
         }
         return NSOrderedSame;
     };
-    NSRange const range = NSMakeRange(0, self.backingList.count);
-    NSUInteger const idx = [self.backingList indexOfObject:conversation inSortedRange:range options:NSBinarySearchingInsertionIndex usingComparator:comparator];
-    [self.backingList insertObject:conversation atIndex:idx];
 }
 
 - (NSUInteger)count;
@@ -158,6 +164,11 @@
     return [[[self shortDescription] stringByAppendingString:@"\n"] stringByAppendingString:[super description]];
 }
 
+- (void)resort
+{
+    [self.backingList sortUsingComparator:self.comparator];
+}
+
 @end
 
 
@@ -179,7 +190,6 @@
     [self.backingList removeObject:conversation];
     [self sortInsertConversation:conversation];
 }
-
 
 - (void)removeConversations:(NSSet *)conversations
 {

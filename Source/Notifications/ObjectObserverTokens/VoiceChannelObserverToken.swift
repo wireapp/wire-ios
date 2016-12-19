@@ -218,7 +218,7 @@ class InternalVoiceChannelParticipantsObserverToken: NSObject, ObjectsDidChangeD
         }
     }
     
-    func objectsDidChange(_ changes: ManagedObjectChanges) {
+    func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         if shouldRecalculate {
             recalculateSet()
         }

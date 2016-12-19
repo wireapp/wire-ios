@@ -50,7 +50,7 @@ final class GlobalUserObserver : NSObject, ObjectsDidChangeDelegate, ZMUserObser
     }
     
     // handling object changes
-    func objectsDidChange(_ changes: ManagedObjectChanges) {
+    func objectsDidChange(_ changes: ManagedObjectChanges, accumulated: Bool) {
         if let updated = changes.updated as? [ZMConnection] , updated.count > 0 ,
            let inserted = changes.inserted as? [ZMConnection] , inserted.count > 0
         {
