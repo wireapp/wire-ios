@@ -136,7 +136,7 @@ extension ZMMessage {
             category.update(with: .link)
         }
         // now check in the msg text
-        let matches = linkParser.matches(in: text.messageText, range: NSRange(location: 0, length: text.messageText.utf8.count))
+        let matches = linkParser.matches(in: text.messageText, range: NSRange(location: 0, length: text.messageText.characters.count))
         if matches.count > 0 {
             category.update(with: .link)
         }
