@@ -180,7 +180,7 @@ public class SharingSession {
         }
         
         let storeURL = sharedContainerURL.appendingPathComponent(hostBundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
-        let keyStoreURL = storeURL.deletingLastPathComponent()
+        let keyStoreURL = sharedContainerURL
         
         guard !NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL) else { throw InitializationError.needsMigration }
         
@@ -225,10 +225,14 @@ public class SharingSession {
             apnsConfirmationStatus: DeliveryConfirmationDummy()
         )!
         
+        let missingClientStrategy = MissingClientsRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, apnsConfirmationStatus: DeliveryConfirmationDummy(), managedObjectContext: syncContext)
+        
+        let fetchinClientStrategy = FetchingClientRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, context: syncContext)
+        
         let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, maxConcurrentImageOperation: 1)
         let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy, missingClientStrategy, fetchinClientStrategy])
 
         operationLoop = RequestGeneratingOperationLoop(
             userContext: userInterfaceContext,
