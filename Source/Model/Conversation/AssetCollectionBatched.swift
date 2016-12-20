@@ -47,9 +47,11 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     private var assets : Dictionary<CategoryMatch, [ZMMessage]>?
     private let conversation: ZMConversation
     private let matchingCategories : [CategoryMatch]
-    private var allAssetMessages: [ZMAssetClientMessage] = []
-    private var allClientMessages: [ZMClientMessage] = []
-
+    private var assetMessageOffset : Int = 0
+    private var clientMessageOffset : Int = 0
+    private var assetMessagesDone : Bool = false
+    private var clientMessagesDone : Bool = false
+    
     enum MessagesToFetch {
         case client, asset
     }
@@ -67,7 +69,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     
     /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been tornDown
     public var doneFetching : Bool {
-        return tornDown || (allAssetMessages.count == 0 && allClientMessages.count == 0)
+        return tornDown || (assetMessagesDone && clientMessagesDone)
     }
     
     /// Returns a collection that automatically fetches the assets in batches
@@ -83,18 +85,18 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
             guard let syncConversation = (try? self.syncMOC?.existingObject(with: self.conversation.objectID)) as? ZMConversation else {
                 return
             }
-            self.allAssetMessages = self.unCategorizedMessages(for: syncConversation)
-            self.allClientMessages = self.unCategorizedMessages(for: syncConversation)
+            let allAssetMessages : [ZMAssetClientMessage] = self.unCategorizedMessages(for: syncConversation)
+            let allClientMessages : [ZMClientMessage] = self.unCategorizedMessages(for: syncConversation)
             
             let categorizedMessages : [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: self.matchingCategories)
             if categorizedMessages.count > 0 {
                 let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: self.matchingCategories)
                 self.assets = categorized
-                self.notifyDelegate(newAssets: self.assets!, type: nil)
+                self.notifyDelegate(newAssets: self.assets!, type: nil, didReachLastMessage: false)
             }
 
-            self.categorizeNextBatch(type: .asset)
-            self.categorizeNextBatch(type: .client)
+            self.categorizeNextBatch(type: .asset, allMessages: allAssetMessages)
+            self.categorizeNextBatch(type: .client, allMessages: allClientMessages)
         }
     }
     
@@ -118,47 +120,59 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
         return []
     }
     
-    private func categorizeNextBatch(type: MessagesToFetch){
+    private func setFetchingCompleteFor(type: MessagesToFetch) {
+        if type == .client {
+            clientMessagesDone = true
+        } else {
+            assetMessagesDone = true
+        }
+    }
+    
+    private func categorizeNextBatch(type: MessagesToFetch, allMessages: [ZMMessage]){
         guard !tornDown else { return }
         
-        // get next batch to categorize
-        let messages : [ZMMessage] = (type == .asset) ? self.allAssetMessages : self.allClientMessages
-        let numberToAnalyze = min(messages.count, AssetCollectionBatched.defaultFetchCount)
+        // get next offset
+        let offset = (type == .asset) ? self.assetMessageOffset : self.clientMessageOffset
+        let numberToAnalyze = min(allMessages.count - offset, AssetCollectionBatched.defaultFetchCount)
+        if type == .asset {
+            self.assetMessageOffset = self.assetMessageOffset + numberToAnalyze
+        } else {
+            self.clientMessageOffset = self.clientMessageOffset + numberToAnalyze
+        }
+        
+        // check if we reached the last message
+        let didReachLastMessage = (numberToAnalyze < AssetCollectionBatched.defaultFetchCount)
+        if didReachLastMessage {
+            self.setFetchingCompleteFor(type: type)
+        }
         if numberToAnalyze == 0 {
             if self.doneFetching {
                 self.notifyDelegateFetchingIsDone(result: .success)
             }
             return
         }
-        let messagesToAnalyze = Array(messages[0..<numberToAnalyze])
         
-        // categorize batch
+        // Get and categorize next batch
+        let messagesToAnalyze = Array(allMessages[offset..<(offset+numberToAnalyze)])
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
         
-        // Remove analyzed results from fetched messages
-        // TODO Sabine: I am not sure what effect this has on the array proxy we received through the fetch. The alternative would be storing the offset
-        // Profile this!
-        if type == .asset {
-            self.allAssetMessages = Array(self.allAssetMessages.dropFirst(numberToAnalyze))
-        } else {
-            self.allClientMessages = Array(self.allClientMessages.dropFirst(numberToAnalyze))
-        }
-        
         // Notify delegate
-        self.notifyDelegate(newAssets: newAssets, type: type)
+        self.notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
         
         // Return if done
-        if self.doneFetching {
+        if didReachLastMessage {
             return
         }
         
         syncMOC?.performGroupedBlock { [weak self] in
             guard let `self` = self, !self.tornDown else { return }
-            self.categorizeNextBatch(type: type)
+            self.categorizeNextBatch(type: type, allMessages: allMessages)
         }
     }
     
-    private func notifyDelegate(newAssets: [CategoryMatch : [ZMMessage]], type: MessagesToFetch?) {
+    
+    
+    private func notifyDelegate(newAssets: [CategoryMatch : [ZMMessage]], type: MessagesToFetch?, didReachLastMessage: Bool) {
         if newAssets.count == 0 {
             return
         }
@@ -180,13 +194,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
             }
 
             // Notify delegate
-            let hasMore : Bool
-            switch type {
-            case .some(.client): hasMore = self.allClientMessages.count != 0
-            case .some(.asset):  hasMore = self.allAssetMessages.count != 0
-            case .none:          hasMore = !self.doneFetching
-            }
-            self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: hasMore)
+            self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: !didReachLastMessage)
             if self.doneFetching {
                 self.delegate.assetCollectionDidFinishFetching(collection: self, result: .success)
             }
