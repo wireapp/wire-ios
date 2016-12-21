@@ -1042,25 +1042,23 @@
 - (void)testThatItSwitchesToRetryStateAfterWaitingInRateLimitState;
 {
     // We'll run this a few times, since the time interval is randomly shifted, and we want to try a few outcomes:
-    for (int i = 0; i < 7; ++i) {
+    for (int i = 0; i < 5; ++i) {
         // given
-        NSTimeInterval const interval = 0.05;
+        NSTimeInterval const interval = 0.1;
         self.sut.timeUntilRetryModeWhenRateLimited = interval;
         
         // when
         self.sut.schedulerState = ZMTransportRequestSchedulerStateRateLimitedHoldingOff;
         
-        double const upperRandomAdjustment = 2.0;   // this is the max of the range of possible value
-        double const upperBackoffAdjustment = 1.15; // this is set to a value above the possible range in the test case
-        
-        // we create a date that is above to the limit mode time to ensure it switches time
-        NSDate *high = [NSDate dateWithTimeIntervalSinceNow:upperBackoffAdjustment * upperRandomAdjustment * interval];
-        
         // then
         
         // backoffAdjustement * randrom adjustment * interval
-        [self spinMainQueueWithTimeout: 0.5 * 0.1 * interval];
+        [self spinMainQueueWithTimeout: 0.1 * interval];
         XCTAssertNotEqual(self.sut.schedulerState, ZMTransportRequestSchedulerStateRateLimitedRetrying, @"Iteration: %d", i);
+        
+        // we create a date that is above to the limit mode time to ensure it switches time
+        NSDate *high = [NSDate dateWithTimeIntervalSinceNow:interval * 2];
+        
         XCTAssertTrue([self waitUntilDate:high verificationBlock:^BOOL{
             return (self.sut.schedulerState == ZMTransportRequestSchedulerStateRateLimitedRetrying);
         }]);
