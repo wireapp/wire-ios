@@ -81,12 +81,9 @@ public final class FetchingClientRequestStrategy : ZMObjectSyncStrategy, ZMObjec
     }
     
     public func nextRequest() -> ZMTransportRequest? {
-        guard let clientRegistrationStatus = self.clientRegistrationStatus else {
+        guard let clientRegistrationStatus = self.clientRegistrationStatus,
+              clientRegistrationStatus.clientIsReadyForRequests else {
                 return nil
-        }
-        
-        if !clientRegistrationStatus.clientIsReadyForRequests {
-            return nil
         }
         
         return userClientsSync.nextRequest()
