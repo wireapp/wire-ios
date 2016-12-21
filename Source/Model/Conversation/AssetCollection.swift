@@ -92,8 +92,8 @@ public class AssetCollection : NSObject, ZMCollection {
             
             let categorizedMessages : [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: self.matchingCategories)
             if categorizedMessages.count > 0 {
-                self.assets = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: self.matchingCategories)
-                self.notifyDelegate(newAssets: self.assets!, type: nil, didReachLastMessage: false)
+                let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: self.matchingCategories)
+                self.notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
             }
             
             self.fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .asset, syncConversation: syncConversation)
