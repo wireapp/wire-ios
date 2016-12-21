@@ -43,6 +43,7 @@
                             websocketURL:(NSURL *)websocketURL
                         pushChannelClass:(Class)pushChannelClass
                           mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+                      initialAccessToken:(ZMAccessToken *)initialAccessToken
                              application:(UIApplication *)application NS_DESIGNATED_INITIALIZER;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;

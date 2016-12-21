@@ -77,6 +77,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group
                         backoff:(ZMExponentialBackoff *)backoff
+             initialAccessToken:(ZMAccessToken *)initialAccessToken
 {
     self = [super init];
     if (self) {
@@ -86,6 +87,8 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         self.group = group;
         self.workQueue = queue;
         self.backoff = backoff ?: [[ZMExponentialBackoff alloc] initWithGroup:self.group workQueue:self.workQueue];
+        self.accessToken = initialAccessToken;
+        self.lastKnownAccessToken = initialAccessToken;
     }
     return self;
 }

@@ -80,7 +80,9 @@
                                                     delegate:self.delegate
                                                        queue:self.queue
                                                        group:self.dispatchGroup
-                                                     backoff:(id)self.backoff];
+                                                     backoff:(id)self.backoff
+                                          initialAccessToken:nil
+                ];
     
 }
 
