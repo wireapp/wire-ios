@@ -170,8 +170,9 @@ public class AssetCollection : NSObject, ZMCollection {
             self.lastAssetMessage = messagesToAnalyze.last as? ZMAssetClientMessage
         }
         
-        // Categorize messages and merge results with existing result
+        // Categorize messages
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
+        self.syncMOC?.enqueueDelayedSave()
         
         // Notify delegate
         self.notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
