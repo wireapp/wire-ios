@@ -129,7 +129,7 @@ class AssetColletionTests : ModelObjectsTests {
         // then
         XCTAssertEqual(delegate.result, .success)
         XCTAssertEqual(delegate.messagesByFilter.count, 1)
-        XCTAssertTrue(sut.doneFetching)
+        XCTAssertTrue(sut.fetchingDone)
 
         let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 90)
@@ -151,7 +151,7 @@ class AssetColletionTests : ModelObjectsTests {
         // then
         XCTAssertEqual(delegate.result, .success)
         XCTAssertEqual(delegate.messagesByFilter.count, 1)
-        XCTAssertTrue(sut.doneFetching)
+        XCTAssertTrue(sut.fetchingDone)
         
         let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 100)
@@ -176,7 +176,7 @@ class AssetColletionTests : ModelObjectsTests {
         // messages were filtered in three batches
         XCTAssertEqual(delegate.result, .success)
         XCTAssertEqual(delegate.messagesByFilter.count, 3)
-        XCTAssertTrue(sut.doneFetching)
+        XCTAssertTrue(sut.fetchingDone)
         
         let receivedMessages = delegate.allMessages(for: defaultMatchPair)
         XCTAssertEqual(receivedMessages.count, 1000)
@@ -194,7 +194,7 @@ class AssetColletionTests : ModelObjectsTests {
         // then
         XCTAssertEqual(delegate.result, .noAssetsToFetch)
         XCTAssertTrue(delegate.didCallDelegate)
-        XCTAssertTrue(sut.doneFetching)
+        XCTAssertTrue(sut.fetchingDone)
     }
     
     func testThatItCanCancelFetchingMessages() {
@@ -210,7 +210,7 @@ class AssetColletionTests : ModelObjectsTests {
         // then
         // messages would filtered in three batches if the fetching was not cancelled
         XCTAssertNotEqual(delegate.messagesByFilter.count, 3)
-        XCTAssertTrue(sut.doneFetching)
+        XCTAssertTrue(sut.fetchingDone)
     }
     
     func testPerformanceOfMessageFetching() {
