@@ -68,7 +68,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     }
     
     /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been tornDown
-    public var doneFetching : Bool {
+    public var fetchingDone : Bool {
         return tornDown || (assetMessagesDone && clientMessagesDone)
     }
     
@@ -145,7 +145,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
             self.setFetchingCompleteFor(type: type)
         }
         if numberToAnalyze == 0 {
-            if self.doneFetching {
+            if self.fetchingDone {
                 self.notifyDelegateFetchingIsDone(result: .success)
             }
             return
@@ -195,7 +195,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
 
             // Notify delegate
             self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: !didReachLastMessage)
-            if self.doneFetching {
+            if self.fetchingDone {
                 self.delegate.assetCollectionDidFinishFetching(collection: self, result: .success)
             }
         }

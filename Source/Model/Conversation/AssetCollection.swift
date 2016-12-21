@@ -25,6 +25,7 @@ public enum AssetFetchResult : Int {
 public protocol ZMCollection : NSObjectProtocol {
     func tearDown()
     func assets(for category: CategoryMatch) -> [ZMMessage]
+    var fetchingDone : Bool { get }
 }
 
 public protocol AssetCollectionDelegate : NSObjectProtocol {
@@ -65,7 +66,7 @@ public class AssetCollection : NSObject, ZMCollection {
         }
     }
 
-    var doneFetching : Bool {
+    public var fetchingDone : Bool {
         return doneFetchingTexts && doneFetchingAssets
     }
     
@@ -133,7 +134,7 @@ public class AssetCollection : NSObject, ZMCollection {
     }
 
     private func fetchNextIfNotTornDown(limit: Int, type: MessagesToFetch, syncConversation: ZMConversation){
-        guard !doneFetching, !tornDown else { return }
+        guard !fetchingDone, !tornDown else { return }
         guard !syncConversation.isZombieObject else {
             self.notifyDelegateFetchingIsDone(result: .failed)
             return
@@ -157,7 +158,7 @@ public class AssetCollection : NSObject, ZMCollection {
             self.setFetchingCompleteFor(type: type)
         }
         if messagesToAnalyze.count == 0 {
-            if self.doneFetching {
+            if self.fetchingDone {
                 self.notifyDelegateFetchingIsDone(result: (self.assets == nil) ? .noAssetsToFetch : .success)
             }
             return
@@ -212,7 +213,7 @@ public class AssetCollection : NSObject, ZMCollection {
             
             // Notify delegate
             self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: didReachLastMessage)
-            if (self.doneFetching) {
+            if (self.fetchingDone) {
                 self.notifyDelegateFetchingIsDone(result: (self.assets == nil) ? .noAssetsToFetch : .success)
             }
         }
