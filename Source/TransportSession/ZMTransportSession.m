@@ -118,7 +118,12 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithBaseURL:nil websocketURL:nil mainGroupQueue:nil application:nil sharedContainerIdentifier:nil];
+    return [self initWithBaseURL:nil
+                    websocketURL:nil
+                  mainGroupQueue:nil
+              initialAccessToken:nil
+                     application:nil
+       sharedContainerIdentifier:nil];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -179,6 +184,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
                    websocketURL:(NSURL *)websocketURL
                  mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+             initialAccessToken:(ZMAccessToken *)initialAccessToken
                     application:(UIApplication *)application
       sharedContainerIdentifier:(NSString *)sharedContainerIdentifier
 {
@@ -205,6 +211,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                                   baseURL:baseURL
                              websocketURL:websocketURL
                            mainGroupQueue:mainGroupQueue
+                       initialAccessToken:initialAccessToken
                               application:application];
 }
 
@@ -216,6 +223,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
                           mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+                      initialAccessToken:(ZMAccessToken *)initialAccessToken
                              application:(UIApplication *)application
 {
     return [self initWithURLSessionSwitch:URLSessionSwitch
@@ -227,6 +235,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                              websocketURL:websocketURL
                          pushChannelClass:nil
                            mainGroupQueue:mainGroupQueue
+                       initialAccessToken:initialAccessToken
                               application:application];
 }
 
@@ -240,6 +249,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                             websocketURL:(NSURL *)websocketURL
                         pushChannelClass:(Class)pushChannelClass
                           mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+                      initialAccessToken:(ZMAccessToken *)initialAccessToken
                              application:(UIApplication *)application
 {
     self = [super init];
@@ -273,7 +283,15 @@ static NSInteger const DefaultMaximumRequests = 6;
             pushChannelClass = ZMTransportPushChannel.class;
         }
         self.pushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler userAgentString:[ZMUserAgent userAgentValue] URL:self.websocketURL];
-        self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL cookieStorage:self.cookieStorage delegate:self queue:queue group:group backoff:nil];
+        self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL
+                                                                  cookieStorage:self.cookieStorage
+                                                                       delegate:self
+                                                                          queue:queue
+                                                                          group:group
+                                                                        backoff:nil
+                                                             initialAccessToken:initialAccessToken
+
+                                   ];
         [self signUpForNotifications];
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {

@@ -453,6 +453,7 @@ static __weak FakeReachability *currentReachability;
                 websocketURL:self.webSocketURL
                 pushChannelClass:FakePushChannel.class
                 mainGroupQueue:[[FakeGroupQueue alloc] init]
+                initialAccessToken:nil
                 application:[UIApplication sharedApplication]];
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
@@ -576,6 +577,7 @@ static __weak FakeReachability *currentReachability;
                 websocketURL:url2
                 pushChannelClass:nil
                 mainGroupQueue:[[FakeGroupQueue alloc] init]
+                initialAccessToken:nil
                 application:[UIApplication sharedApplication]];
     
     self.sut.accessToken = self.validAccessToken;
@@ -793,6 +795,7 @@ static __weak FakeReachability *currentReachability;
                                websocketURL:url
                                pushChannelClass:nil
                                mainGroupQueue:[[FakeGroupQueue alloc] init]
+                               initialAccessToken:nil
                                application:[UIApplication sharedApplication]];
     
     sut.accessToken = self.validAccessToken;
@@ -832,6 +835,7 @@ static __weak FakeReachability *currentReachability;
                                websocketURL:url
                                pushChannelClass:nil
                                mainGroupQueue:nil
+                               initialAccessToken:nil
                                application:[UIApplication sharedApplication]];
     
     sut.accessToken = self.validAccessToken;

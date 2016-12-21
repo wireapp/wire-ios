@@ -42,7 +42,8 @@
                        delegate:(id<ZMAccessTokenHandlerDelegate>)delegate
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group
-                        backoff:(ZMExponentialBackoff *)backoff;
+                        backoff:(ZMExponentialBackoff *)backoff
+             initialAccessToken:(ZMAccessToken *)initialAccessToken;
 
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler;
 - (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
