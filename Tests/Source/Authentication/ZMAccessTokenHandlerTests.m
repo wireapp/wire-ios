@@ -75,15 +75,20 @@
     self.backoff = [[FakeExponentialBackoff alloc] init];
     self.delegate = [[FakeDelegate alloc] init];
     
+    [self createSutWithAccessToken:nil];
+}
+
+- (void)createSutWithAccessToken:(ZMAccessToken *)accessToken {
+    NSURL *baseURL = [NSURL URLWithString:@"http://www.example.com"];
+
     self.sut = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL
                                                cookieStorage:self.cookieStorage
                                                     delegate:self.delegate
                                                        queue:self.queue
                                                        group:self.dispatchGroup
                                                      backoff:(id)self.backoff
-                                          initialAccessToken:nil
+                                          initialAccessToken:accessToken
                 ];
-    
 }
 
 - (void)tearDown {
@@ -209,7 +214,7 @@
 - (void)testThatItReturns_YES_ForCanStartRequestAccessToken_IfAccesToken_IsSet_And_NotAboutToExpire
 {
     // given
-    self.sut.testing_accessToken = self.validAccessToken;
+    [self createSutWithAccessToken:self.validAccessToken];
     XCTAssertNotNil(self.sut.accessToken);
     
     // when
@@ -222,7 +227,7 @@
 - (void)testThatItReturns_NO_ForCanStartRequestAccessToken_IfAccesToken_IsSet_And_Expired
 {
     // given
-    self.sut.testing_accessToken = self.expiredAccessToken;
+    [self createSutWithAccessToken:self.expiredAccessToken];
     XCTAssertNotNil(self.sut.accessToken);
     
     // when
