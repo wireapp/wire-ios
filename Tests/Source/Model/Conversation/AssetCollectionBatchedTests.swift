@@ -56,6 +56,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
             offset = offset + 5
             message.setValue(Date().addingTimeInterval(offset), forKey: "serverTimestamp")
             messages.append(message)
+            message.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
         }
         uiMOC.saveOrRollback()
         return messages
