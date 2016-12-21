@@ -452,7 +452,6 @@ static __weak FakeReachability *currentReachability;
                 baseURL:self.baseURL
                 websocketURL:self.webSocketURL
                 pushChannelClass:FakePushChannel.class
-                keyValueStore:[[FakeKeyValueStore alloc] init]
                 mainGroupQueue:[[FakeGroupQueue alloc] init]
                 application:[UIApplication sharedApplication]];
     __weak id weakSelf = self;
@@ -576,7 +575,6 @@ static __weak FakeReachability *currentReachability;
                 baseURL:url
                 websocketURL:url2
                 pushChannelClass:nil
-                keyValueStore:[[FakeKeyValueStore alloc] init]
                 mainGroupQueue:[[FakeGroupQueue alloc] init]
                 application:[UIApplication sharedApplication]];
     
@@ -794,7 +792,6 @@ static __weak FakeReachability *currentReachability;
                                baseURL:url
                                websocketURL:url
                                pushChannelClass:nil
-                               keyValueStore:[[FakeKeyValueStore alloc] init]
                                mainGroupQueue:[[FakeGroupQueue alloc] init]
                                application:[UIApplication sharedApplication]];
     
@@ -834,7 +831,6 @@ static __weak FakeReachability *currentReachability;
                                baseURL:url
                                websocketURL:url
                                pushChannelClass:nil
-                               keyValueStore:[[FakeKeyValueStore alloc] init]
                                mainGroupQueue:nil
                                application:[UIApplication sharedApplication]];
     

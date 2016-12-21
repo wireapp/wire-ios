@@ -106,15 +106,3 @@
 @end
 
 
-
-
-//////////////////////////////////////////////////
-//
-#pragma mark - FakeKeyValueStore
-//
-//////////////////////////////////////////////////
-
-
-@interface FakeKeyValueStore : NSObject <ZMKeyValueStore>
-@property (nonatomic) NSMutableDictionary *store;
-@end
