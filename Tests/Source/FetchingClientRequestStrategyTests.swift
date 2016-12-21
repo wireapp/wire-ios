@@ -138,6 +138,24 @@ extension FetchClientRequestStrategyTests {
         XCTAssertEqual(user.clients.count, 1)
         XCTAssertEqual(user.clients.first?.remoteIdentifier, firstIdentifier)
     }
+    
+    func testThatItCreateTheCorrectRequest() {
+        // given
+        let (selfClient, _) = createClients()
+        XCTAssertEqual(selfClient.missingClients?.count, 0)
+        let identifiers = [UUID.create(), UUID.create()]
+        let userIdentifiers = Set(identifiers)
+        
+        // when
+        let request = sut.request(for: nil, remoteIdentifiers: userIdentifiers)
+        if let request = request {
+            let path = "users/\(identifiers.first!.transportString())/clients"
+            XCTAssertTrue(request.path.contains(path))
+            XCTAssertEqual(request.method, .methodGET)
+        } else {
+            XCTFail()
+        }
+    }
 }
 
 // MARK: fetching other user's clients / RemoteIdentifierObjectSync
