@@ -118,7 +118,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithBaseURL:nil websocketURL:nil keyValueStore:nil mainGroupQueue:nil application:nil sharedContainerIdentifier:nil];
+    return [self initWithBaseURL:nil websocketURL:nil mainGroupQueue:nil application:nil sharedContainerIdentifier:nil];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -176,7 +176,11 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-- (instancetype)initWithBaseURL:(NSURL *)baseURL websocketURL:(NSURL *)websocketURL keyValueStore:(id<ZMKeyValueStore>)keyValueStore mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue application:(UIApplication *)application sharedContainerIdentifier:(NSString *)sharedContainerIdentifier
+- (instancetype)initWithBaseURL:(NSURL *)baseURL
+                   websocketURL:(NSURL *)websocketURL
+                 mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
+                    application:(UIApplication *)application
+      sharedContainerIdentifier:(NSString *)sharedContainerIdentifier
 {
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:@"ZMTransportSession"];
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"ZMTransportSession init"];
@@ -200,7 +204,6 @@ static NSInteger const DefaultMaximumRequests = 6;
                                     group:group
                                   baseURL:baseURL
                              websocketURL:websocketURL
-                            keyValueStore:keyValueStore
                            mainGroupQueue:mainGroupQueue
                               application:application];
 }
@@ -212,7 +215,6 @@ static NSInteger const DefaultMaximumRequests = 6;
                                    group:(ZMSDispatchGroup *)group
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
-                           keyValueStore:(id<ZMKeyValueStore>)keyValueStore
                           mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
                              application:(UIApplication *)application
 {
@@ -224,7 +226,6 @@ static NSInteger const DefaultMaximumRequests = 6;
                                   baseURL:baseURL
                              websocketURL:websocketURL
                          pushChannelClass:nil
-                            keyValueStore:keyValueStore
                            mainGroupQueue:mainGroupQueue
                               application:application];
 }
@@ -238,7 +239,6 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
                         pushChannelClass:(Class)pushChannelClass
-                           keyValueStore:(id<ZMKeyValueStore>)keyValueStore
                           mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
                              application:(UIApplication *)application
 {
@@ -273,7 +273,7 @@ static NSInteger const DefaultMaximumRequests = 6;
             pushChannelClass = ZMTransportPushChannel.class;
         }
         self.pushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler userAgentString:[ZMUserAgent userAgentValue] URL:self.websocketURL];
-        self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL cookieStorage:self.cookieStorage delegate:self queue:queue group:group backoff:nil keyValueStore:keyValueStore];
+        self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL cookieStorage:self.cookieStorage delegate:self queue:queue group:group backoff:nil];
         [self signUpForNotifications];
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
@@ -858,7 +858,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)setAccessToken:(ZMAccessToken *)accessToken;
 {
-    [self.accessTokenHandler setAccessTokenForTesting:accessToken];
+    self.accessTokenHandler.testing_accessToken = accessToken;
 }
 
 @end

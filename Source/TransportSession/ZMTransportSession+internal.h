@@ -42,7 +42,6 @@
                                  baseURL:(NSURL *)baseURL
                             websocketURL:(NSURL *)websocketURL
                         pushChannelClass:(Class)pushChannelClass
-                           keyValueStore:(id<ZMKeyValueStore>)keyValueStore
                           mainGroupQueue:(id<ZMSGroupQueue>)mainGroupQueue
                              application:(UIApplication *)application NS_DESIGNATED_INITIALIZER;
 

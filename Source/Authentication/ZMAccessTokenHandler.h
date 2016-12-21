@@ -31,13 +31,6 @@
 
 @end
 
-@protocol ZMKeyValueStore <NSObject>
-
-- (void)setValue:(id)value forKey:(NSString*)key;
-- (id)valueForKey:(NSString *)key;
-
-@end
-
 
 @class ZMSDispatchGroup;
 
@@ -49,8 +42,7 @@
                        delegate:(id<ZMAccessTokenHandlerDelegate>)delegate
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group
-                        backoff:(ZMExponentialBackoff *)backoff
-                  keyValueStore:(id<ZMKeyValueStore>)keyValueStore;
+                        backoff:(ZMExponentialBackoff *)backoff;
 
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler;
 - (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
@@ -79,9 +71,8 @@
 
 @interface ZMAccessTokenHandler (Testing)
 
-- (void)setAccessTokenForTesting:(ZMAccessToken *)accessToken;
+@property (nonatomic) ZMAccessToken* testing_accessToken;
 
 @property (nonatomic, readonly) NSURLSessionTask *currentAccessTokenTask;
-@property (nonatomic, readonly) NSString *lastKnownAccessTokenString;
 
 @end
