@@ -38,8 +38,6 @@
 
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
-static NSString * const ZMLastAccessTokenKey = @"ZMLastAccessToken";
-static NSString * const ZMLastAccessTokenTypeKey = @"ZMLastAccessTokenType";
 
 
 static NSTimeInterval const MininumSecondsAccessTokenNeedsToBeValid = 15;
