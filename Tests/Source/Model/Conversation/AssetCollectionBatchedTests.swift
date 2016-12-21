@@ -353,4 +353,20 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         XCTAssertTrue(delegate.didCallDelegate)
         XCTAssertEqual(delegate.result, .success)
     }
+    
+    func testThatItFetchesPreAndUncategorizedObjectsAndSavesThemAsUIDObjects(){
+        // given
+        let messages = insertAssetMessages(count: 20)
+        messages[0..<10].forEach{_ = $0.cachedCategory}
+        uiMOC.saveOrRollback()
+        
+        // when
+        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        let allMessages = sut.assets(for: defaultMatchPair)
+        XCTAssertEqual(allMessages.count, 20)
+        XCTAssertTrue(allMessages.reduce(true){$0 && $1.managedObjectContext!.zm_isUserInterfaceContext})
+    }
 }
