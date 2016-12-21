@@ -724,10 +724,9 @@
     // when
     self.sut.schedulerState = ZMTransportRequestSchedulerStateOffline;
     
-    NSDate *high = [NSDate dateWithTimeIntervalSinceNow:1.3 * interval];
-    
     // then
     [self spinMainQueueWithTimeout:interval * 0.1];
+    NSDate *high = [NSDate dateWithTimeIntervalSinceNow:1];
     XCTAssertNotEqual(self.sut.schedulerState, ZMTransportRequestSchedulerStateNormal);
     XCTAssertTrue([self waitUntilDate:high verificationBlock:^BOOL{
         return (self.sut.schedulerState == ZMTransportRequestSchedulerStateNormal);
