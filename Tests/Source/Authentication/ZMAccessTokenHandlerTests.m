@@ -75,8 +75,20 @@
     self.backoff = [[FakeExponentialBackoff alloc] init];
     self.delegate = [[FakeDelegate alloc] init];
     
-    self.sut = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL cookieStorage:self.cookieStorage delegate:self.delegate queue:self.queue group:self.dispatchGroup backoff:(id)self.backoff keyValueStore:[[FakeKeyValueStore alloc] init]];
-    
+    [self createSutWithAccessToken:nil];
+}
+
+- (void)createSutWithAccessToken:(ZMAccessToken *)accessToken {
+    NSURL *baseURL = [NSURL URLWithString:@"http://www.example.com"];
+
+    self.sut = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL
+                                               cookieStorage:self.cookieStorage
+                                                    delegate:self.delegate
+                                                       queue:self.queue
+                                                       group:self.dispatchGroup
+                                                     backoff:(id)self.backoff
+                                          initialAccessToken:accessToken
+                ];
 }
 
 - (void)tearDown {
@@ -162,7 +174,7 @@
     XCTAssertEqual(self.delegate.delegateCallCount, 0u);
 
     // when
-    [self.sut setAccessTokenForTesting:self.validAccessToken];
+    self.sut.testing_accessToken = self.validAccessToken;
     
     // then
     XCTAssertEqual(self.delegate.delegateCallCount, 1u);
@@ -202,7 +214,7 @@
 - (void)testThatItReturns_YES_ForCanStartRequestAccessToken_IfAccesToken_IsSet_And_NotAboutToExpire
 {
     // given
-    [self.sut setAccessTokenForTesting:self.validAccessToken];
+    [self createSutWithAccessToken:self.validAccessToken];
     XCTAssertNotNil(self.sut.accessToken);
     
     // when
@@ -215,7 +227,7 @@
 - (void)testThatItReturns_NO_ForCanStartRequestAccessToken_IfAccesToken_IsSet_And_Expired
 {
     // given
-    [self.sut setAccessTokenForTesting:self.expiredAccessToken];
+    [self createSutWithAccessToken:self.expiredAccessToken];
     XCTAssertNotNil(self.sut.accessToken);
     
     // when
@@ -231,7 +243,7 @@
     id transportRequest = [OCMockObject niceMockForClass:[ZMTransportRequest class]];
     [[[transportRequest expect] andReturnValue:OCMOCK_VALUE(YES)] needsAuthentication];
     
-    [self.sut setAccessTokenForTesting:self.validAccessToken];
+    self.sut.testing_accessToken = self.validAccessToken;
     
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL new]];
     
@@ -460,7 +472,7 @@
 - (void)testThatItClearsAccessToken
 {
     // given
-    [self.sut setAccessTokenForTesting:self.validAccessToken];
+    self.sut.testing_accessToken = self.validAccessToken;
     XCTAssertNotNil([self.sut valueForKey:@"accessToken"]);
 
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
@@ -757,7 +769,7 @@
 - (void)testThatTheAccessTokenHasBeenSetWhenTheDelegateIsNotified_HandlerDidRecieveAccessToken
 {
     // given
-    [self.sut setAccessTokenForTesting:self.expiredAccessToken];
+    self.sut.testing_accessToken = self.expiredAccessToken;
     XCTAssertNotNil(self.sut.accessToken);
     NSString *expectedTokenString = @"new valid token";
     ZMAccessToken *token = [[ZMAccessToken alloc] initWithToken:expectedTokenString type:@"BEARER" expiresInSeconds:3000];
@@ -767,12 +779,12 @@
     // expect
     __weak typeof (self.sut) weakSut = self.sut;
     self.delegate.didReceiveAccessTokenBlock = ^{
-        lastKnownTokenString = weakSut.lastKnownAccessTokenString;
+        lastKnownTokenString = weakSut.testing_accessToken.token;
     };
     
     // when
     self.delegate.delegateCallCount = 0;
-    [self.sut setAccessTokenForTesting:token];
+    self.sut.testing_accessToken = token;
     
     // then
     XCTAssertEqual(self.delegate.delegateCallCount, 1lu);
@@ -782,7 +794,7 @@
 - (void)testThatItSetsTheAutorizationHeaderWithTheLastKnownAccessToken
 {
     // given
-    [self.sut setAccessTokenForTesting:self.validAccessToken];
+    self.sut.testing_accessToken = self.validAccessToken;
     XCTAssertNotNil(self.sut.accessToken);
     
     // expect that if it as an access token, it sets the correct header

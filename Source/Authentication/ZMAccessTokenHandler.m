@@ -38,8 +38,6 @@
 
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
-static NSString * const ZMLastAccessTokenKey = @"ZMLastAccessToken";
-static NSString * const ZMLastAccessTokenTypeKey = @"ZMLastAccessTokenType";
 
 
 static NSTimeInterval const MininumSecondsAccessTokenNeedsToBeValid = 15;
@@ -65,7 +63,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 @property (nonatomic) NSOperationQueue *workQueue;
 @property (nonatomic) ZMSDispatchGroup *group;
 
-@property (nonatomic) id<ZMKeyValueStore> keyValueStore;
+@property (nonatomic) ZMAccessToken *lastKnownAccessToken;
 @end
 
 
@@ -77,17 +75,18 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group
                         backoff:(ZMExponentialBackoff *)backoff
-                  keyValueStore:(id<ZMKeyValueStore>)keyValueStore;
+             initialAccessToken:(ZMAccessToken *)initialAccessToken
 {
     self = [super init];
     if (self) {
-        self.keyValueStore = keyValueStore;
         self.baseURL = baseURL;
         self.cookieStorage = cookieStorage;
         self.delegate = delegate;
         self.group = group;
         self.workQueue = queue;
         self.backoff = backoff ?: [[ZMExponentialBackoff alloc] initWithGroup:self.group workQueue:self.workQueue];
+        self.accessToken = initialAccessToken;
+        self.lastKnownAccessToken = initialAccessToken;
     }
     return self;
 }
@@ -123,21 +122,15 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     [self didChangeValueForKey:@"accessToken"];
     
     if (_accessToken != nil) {
-        [self setLastKnownAccessToken:accessToken];
+        self.lastKnownAccessToken = accessToken;
         [self.delegate handlerDidReceiveAccessToken:self];
     }
 }
 
-- (void)setLastKnownAccessToken:(ZMAccessToken *)accessToken
-{
-    [self.keyValueStore setValue:accessToken.token forKey:ZMLastAccessTokenKey];
-    [self.keyValueStore setValue:accessToken.type forKey:ZMLastAccessTokenTypeKey];
-}
-
 - (void)setRequestHeaderFieldsWithLastKnownAccessToken:(NSMutableURLRequest *)request
 {
-    NSString *token = [self.keyValueStore valueForKey:ZMLastAccessTokenKey];
-    NSString *type = [self.keyValueStore valueForKey:ZMLastAccessTokenTypeKey];
+    NSString *token = self.lastKnownAccessToken.token;
+    NSString *type = self.lastKnownAccessToken.type;
     if (token == nil || type == nil) {
         return;
     }
@@ -334,14 +327,12 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 @implementation ZMAccessTokenHandler (Testing)
 
-- (void)setAccessTokenForTesting:(ZMAccessToken *)accessToken;
-{
-    self.accessToken = accessToken;
+- (ZMAccessToken *)testing_accessToken {
+    return self.accessToken;
 }
 
-- (NSString *)lastKnownAccessTokenString
-{
-    return [self.keyValueStore valueForKey:ZMLastAccessTokenKey];
+- (void)setTesting_accessToken:(ZMAccessToken *)testing_accessToken {
+    self.accessToken = testing_accessToken;
 }
 
 @end

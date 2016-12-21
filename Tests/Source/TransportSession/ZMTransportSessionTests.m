@@ -452,8 +452,8 @@ static __weak FakeReachability *currentReachability;
                 baseURL:self.baseURL
                 websocketURL:self.webSocketURL
                 pushChannelClass:FakePushChannel.class
-                keyValueStore:[[FakeKeyValueStore alloc] init]
                 mainGroupQueue:[[FakeGroupQueue alloc] init]
+                initialAccessToken:nil
                 application:[UIApplication sharedApplication]];
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
@@ -576,8 +576,8 @@ static __weak FakeReachability *currentReachability;
                 baseURL:url
                 websocketURL:url2
                 pushChannelClass:nil
-                keyValueStore:[[FakeKeyValueStore alloc] init]
                 mainGroupQueue:[[FakeGroupQueue alloc] init]
+                initialAccessToken:nil
                 application:[UIApplication sharedApplication]];
     
     self.sut.accessToken = self.validAccessToken;
@@ -794,8 +794,8 @@ static __weak FakeReachability *currentReachability;
                                baseURL:url
                                websocketURL:url
                                pushChannelClass:nil
-                               keyValueStore:[[FakeKeyValueStore alloc] init]
                                mainGroupQueue:[[FakeGroupQueue alloc] init]
+                               initialAccessToken:nil
                                application:[UIApplication sharedApplication]];
     
     sut.accessToken = self.validAccessToken;
@@ -834,8 +834,8 @@ static __weak FakeReachability *currentReachability;
                                baseURL:url
                                websocketURL:url
                                pushChannelClass:nil
-                               keyValueStore:[[FakeKeyValueStore alloc] init]
                                mainGroupQueue:nil
+                               initialAccessToken:nil
                                application:[UIApplication sharedApplication]];
     
     sut.accessToken = self.validAccessToken;
