@@ -174,30 +174,3 @@
 
 @end
 
-
-
-
-@implementation FakeKeyValueStore
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        self.store = [NSMutableDictionary dictionary];
-    }
-    return self;
-}
-
-
-- (void)setValue:(id)value forKey:(NSString *)key
-{
-    self.store[key] = value;
-}
-
-- (id)valueForKey:(NSString *)key
-{
-    return self.store[key];
-}
-
-
-@end
