@@ -1309,9 +1309,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [message addData:data];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     [message setExpirationDate];
+    [message updateCategoryCache];
     [self sortedAppendMessage:message];
     [self unarchiveIfNeeded];
-
+    
     return message;
 }
 
@@ -1324,6 +1325,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:self.managedObjectContext expiresAfter:self.messageDestructionTimeout version3:version3];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    [message updateCategoryCache];
     if(hidden) {
         message.hiddenInConversation = self;
     }
@@ -1344,6 +1346,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithFileMetadata:fileMetadata nonce:nonce managedObjectContext:self.managedObjectContext expiresAfter:self.messageDestructionTimeout version3:version3];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     message.isEncrypted = YES;
+    [message updateCategoryCache];
     [self sortedAppendMessage:message];
     [self unarchiveIfNeeded];
     return message;

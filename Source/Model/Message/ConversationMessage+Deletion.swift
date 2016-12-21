@@ -63,6 +63,7 @@ extension ZMMessage {
         let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: NSUUID().transportString())
         let delete = conversation.append(deletedMessage, expires:false, hidden: true)
         removeClearingSender(false)
+        updateCategoryCache()
         return delete
     }
     
