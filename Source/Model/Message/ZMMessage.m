@@ -370,6 +370,7 @@ NSString * const ZMMessageCachedCategoryKey = @"cachedCategory";
                                         inManagedObjectContext:moc];
     
     [localMessage addReaction:reaction.emoji forUser:user];
+    [localMessage updateCategoryCache];
 }
 
 + (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
@@ -396,6 +397,7 @@ NSString * const ZMMessageCachedCategoryKey = @"cachedCategory";
         [self stopDeletionTimerForMessage:message];
     } else {
         [message removeMessageClearingSender:YES];
+        [message updateCategoryCache];
     }
 }
 

@@ -69,6 +69,7 @@ extension ZMMessage {
             let newReaction = Reaction.insertReaction(unicodeValue, users:[user], inMessage: self)
             self.mutableSetValue(forKey: "reactions").add(newReaction)
         }
+        updateCategoryCache()
     }
     
     fileprivate func removeReaction(forUser user: ZMUser)

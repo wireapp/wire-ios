@@ -42,6 +42,26 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
     }
     
+    
+    func testThatItSetsTheCategoryToUndefined() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        guard let sut = conversation.appendMessage(withText: name!) as? ZMMessage else { return XCTFail() }
+        XCTAssertEqual(sut.cachedCategory, .text)
+
+        // when
+        performPretendingUiMocIsSyncMoc {
+            let delete = sut.deleteForEveryone()
+            delete?.update(withPostPayload: [:], updatedKeys: Set())
+        }
+        
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        XCTAssertEqual(sut.cachedCategory, .undefined)
+    }
+    
     func testThatItDeletesAnAssetMessage_Image() {
         // given
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
@@ -320,6 +340,29 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertEqual(conversation.messages.count, 0)
         // A deletion should not update the lastModified date
         XCTAssertEqual(conversation.lastModifiedDate, lastModified)
+    }
+    
+    
+    func testThatTheMessageCategoryIsSetToUndefinedWhenReceiveingADeleteEvent() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        guard let sut = conversation.appendMessage(withText: name!) as? ZMMessage else { return XCTFail() }
+        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        conversation.lastModifiedDate = lastModified
+        XCTAssertEqual(sut.cachedCategory, .text)
+
+        // when
+        let updateEvent = createMessageDeletedUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier!, senderID: sut.sender!.remoteIdentifier!)
+        
+        performPretendingUiMocIsSyncMoc {
+            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        XCTAssertEqual(sut.cachedCategory, .undefined)
     }
     
     func testThatAMessageSentByAnotherUserCanBeDeletedAndASystemMessageIsInserted() {
