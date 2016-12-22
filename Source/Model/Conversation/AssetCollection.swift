@@ -85,6 +85,7 @@ public class AssetCollection : NSObject, ZMCollection {
         self.matchingCategories = matchingCategories
         super.init()
         
+
         guard let syncMOC = self.syncMOC else {
             fatal("syncMOC not accessible")
         }
