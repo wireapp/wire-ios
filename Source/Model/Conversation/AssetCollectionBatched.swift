@@ -219,6 +219,8 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     static func categorizedMessages<T : ZMMessage>(for conversation: ZMConversation, matchPairs: [CategoryMatch]) -> [T] {
         precondition(conversation.managedObjectContext!.zm_isSyncContext, "Fetch should only be performed on the sync context")
         let request = T.fetchRequestMatching(matchPairs: matchPairs, conversation: conversation)
+        let excludedCategoryPredicate =  NSPredicate(format: "%K & %d == 0", ZMMessageCachedCategoryKey, MessageCategory.excludedFromCollection.rawValue)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [request.predicate!, excludedCategoryPredicate])
         request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
 
         guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request as! NSFetchRequest<T>) else {return []}
@@ -270,7 +272,9 @@ extension AssetCollectionBatched  {
         let unionIncluding : MessageCategory = matchingCategories.reduce(.none){$0.union($1.including)}
         messages.forEach{ message in
             let category = message.cachedCategory
-            guard (category.intersection(unionIncluding) != .none) else { return }
+            guard     (category.intersection(unionIncluding) != .none)
+                  && !(category.contains(MessageCategory.excludedFromCollection))
+            else { return }
 
             matchingCategories.forEach {
                 if category.contains($0.including) && (category.intersection($0.excluding) == .none) {
