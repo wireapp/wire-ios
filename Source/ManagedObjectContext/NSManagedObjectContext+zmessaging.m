@@ -240,15 +240,21 @@ static BOOL storeIsReady = NO;
         return nil;
     }
     if (![value isKindOfClass:class]) {
+        
+        NSMutableString *userInfoKeys = [NSMutableString string];
+        for(NSString *dictKey in self.userInfo.allKeys) {
+            [userInfoKeys appendString:[NSString stringWithFormat:@"%@, ", dictKey]];
+        }
+        
         if ([value isKindOfClass:NSDictionary.class]) {
             NSMutableString *keys = [NSMutableString string];
-            for (key in ((NSDictionary*) value).allKeys) {
-                [keys appendString:[NSString stringWithFormat:@"%@, ", key]];
+            for (NSString *dictKey in ((NSDictionary*) value).allKeys) {
+                [keys appendString:[NSString stringWithFormat:@"%@, ", dictKey]];
             }
-            RequireString([value isKindOfClass:class], "Value for key %s is a dictionary: keys %s", key.UTF8String, keys.UTF8String);
+            RequireString([value isKindOfClass:class], "Value for key %s is a dictionary: keys %s. \n User info has keys: %s", [key cStringUsingEncoding:NSUTF8StringEncoding], [keys cStringUsingEncoding:NSUTF8StringEncoding], [userInfoKeys cStringUsingEncoding:NSUTF8StringEncoding]);
 
         } else {
-            RequireString([value isKindOfClass:class], "Value for key %s is not of class %s - userInfo contains: %s", key.UTF8String, NSStringFromClass(class).UTF8String, self.userInfo.debugDescription.UTF8String);
+            RequireString([value isKindOfClass:class], "Value for key %s is not of class %s. \n User info has keys: %s", [key cStringUsingEncoding:NSUTF8StringEncoding], [NSStringFromClass(class) cStringUsingEncoding:NSUTF8StringEncoding], [userInfoKeys cStringUsingEncoding:NSUTF8StringEncoding]);
         }
     }
     return value;
