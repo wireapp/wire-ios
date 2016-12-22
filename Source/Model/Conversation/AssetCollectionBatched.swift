@@ -80,9 +80,12 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
         self.matchingCategories = matchingCategories
         super.init()
         
-        syncMOC?.performGroupedBlock {
-            guard !self.tornDown else { return }
-            guard let syncConversation = (try? self.syncMOC?.existingObject(with: self.conversation.objectID)) as? ZMConversation else {
+        guard let syncMOC = self.syncMOC else {
+            fatal("syncMOC not accessible")
+        }
+        syncMOC.performGroupedBlock { [weak self] in
+            guard let `self` = self, !self.tornDown else { return }
+            guard let syncConversation = (try? syncMOC.existingObject(with: self.conversation.objectID)) as? ZMConversation else {
                 return
             }
             let allAssetMessages : [ZMAssetClientMessage] = self.unCategorizedMessages(for: syncConversation)
@@ -94,8 +97,8 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
                 self.notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
             }
 
-            self.categorizeNextBatch(type: .asset, allMessages: allAssetMessages)
-            self.categorizeNextBatch(type: .client, allMessages: allClientMessages)
+            self.categorizeNextBatch(type: .asset, allMessages: allAssetMessages, managedObjectContext: syncMOC)
+            self.categorizeNextBatch(type: .client, allMessages: allClientMessages, managedObjectContext: syncMOC)
         }
     }
     
@@ -127,7 +130,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
         }
     }
     
-    private func categorizeNextBatch(type: MessagesToFetch, allMessages: [ZMMessage]){
+    private func categorizeNextBatch(type: MessagesToFetch, allMessages: [ZMMessage], managedObjectContext: NSManagedObjectContext){
         guard !tornDown else { return }
         
         // get next offset
@@ -154,7 +157,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
         // Get and categorize next batch
         let messagesToAnalyze = Array(allMessages[offset..<(offset+numberToAnalyze)])
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
-        self.syncMOC?.enqueueDelayedSave()
+        managedObjectContext.enqueueDelayedSave()
 
         // Notify delegate
         self.notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
@@ -164,9 +167,9 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
             return
         }
         
-        syncMOC?.performGroupedBlock { [weak self] in
+        managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self, !self.tornDown else { return }
-            self.categorizeNextBatch(type: type, allMessages: allMessages)
+            self.categorizeNextBatch(type: type, allMessages: allMessages, managedObjectContext:managedObjectContext)
         }
     }
     
