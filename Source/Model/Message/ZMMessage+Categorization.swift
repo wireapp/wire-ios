@@ -152,15 +152,16 @@ extension ZMMessage {
     }
     
     fileprivate var textCategory : MessageCategory {
-        guard let text = self.textMessageData, !text.messageText.isEmpty else {
+        guard let textData = self.textMessageData,
+              let text = textData.messageText, !text.isEmpty else {
             return .none
         }
         var category = MessageCategory.text
-        if text.linkPreview != nil {
+        if textData.linkPreview != nil {
             category.update(with: .link)
         }
         // now check in the msg text
-        let matches = linkParser.matches(in: text.messageText, range: NSRange(location: 0, length: text.messageText.characters.count))
+        let matches = linkParser.matches(in: text, range: NSRange(location: 0, length: text.characters.count))
         if matches.count > 0 {
             category.update(with: .link)
         }
