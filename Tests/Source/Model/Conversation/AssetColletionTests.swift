@@ -390,6 +390,47 @@ class AssetColletionTests : ModelObjectsTests {
         XCTAssertEqual(allMessages.count, 20)
         XCTAssertTrue(allMessages.reduce(true){$0 && $1.managedObjectContext!.zm_isUserInterfaceContext})
     }
+    
+    func testThatItDoesNotReturnFailedToUploadAssets_Uncategorized(){
+        // given
+        let includedMessage = self.conversation.appendMessage(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let excludedMessage = self.conversation.appendMessage(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        excludedMessage.transferState = .failedUpload
+        excludedMessage.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
+        includedMessage.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
+        uiMOC.saveOrRollback()
+        
+        let match = CategoryMatch(including:.file, excluding:.none)
+        
+        // when
+        sut = AssetCollection(conversation: conversation, matchingCategories: [match], delegate: delegate)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        let receivedMessages = delegate.allMessages(for: match)
+        XCTAssertEqual(receivedMessages.count, 1)
+        XCTAssertEqual(receivedMessages.first, includedMessage)
+    }
+    
+    func testThatItDoesNotReturnFailedToUploadAssets_PreCategorized(){
+        // given
+        let includedMessage = self.conversation.appendMessage(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let excludedMessage = self.conversation.appendMessage(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        excludedMessage.transferState = .failedUpload
+        excludedMessage.updateCategoryCache()
+        uiMOC.saveOrRollback()
+        
+        let match = CategoryMatch(including:.file, excluding:.none)
+        
+        // when
+        sut = AssetCollection(conversation: conversation, matchingCategories: [match], delegate: delegate)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        let receivedMessages = delegate.allMessages(for: match)
+        XCTAssertEqual(receivedMessages.count, 1)
+        XCTAssertEqual(receivedMessages.first, includedMessage)
+    }
 }
 
 

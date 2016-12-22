@@ -126,6 +126,28 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(message.categorization, MessageCategory.file)
     }
     
+    func testThatItDoesCategorizeAFailedToUploadFile_ExcludedFromCollection() {
+        
+        // GIVEN
+        let message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt")!)) as! ZMAssetClientMessage
+        message.transferState = .failedUpload
+        message.updateCategoryCache()
+        
+        // THEN
+        XCTAssertEqual(message.categorization, [MessageCategory.file, MessageCategory.excludedFromCollection])
+    }
+    
+    func testThatItDoesNotCategorizeACancelledToUploadFile_ExcludedFromCollection() {
+        
+        // GIVEN
+        let message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt")!)) as! ZMAssetClientMessage
+        message.transferState = .cancelledUpload
+        message.updateCategoryCache()
+        
+        // THEN
+        XCTAssertEqual(message.categorization, [MessageCategory.file, MessageCategory.excludedFromCollection])
+    }
+    
     func testThatItCategorizesAudioFile() {
         
         // GIVEN
