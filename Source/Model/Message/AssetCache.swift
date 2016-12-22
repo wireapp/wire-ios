@@ -109,7 +109,7 @@ struct PINAssetCache : Cache {
 }
 
 // MARK: - Image assets
-open class ImageAssetCache : NSObject {
+public class ImageAssetCache : NSObject {
 
     let cache : PINAssetCache
     
@@ -121,17 +121,17 @@ open class ImageAssetCache : NSObject {
     
     /// Returns the asset data for a given message and format tag. This will probably cause I/O
     open func assetData(_ messageID: UUID, format: ZMImageFormat, encrypted: Bool) -> Data? {
-        return self.cache.assetData(type(of: self).cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
+        return self.cache.assetData(ImageAssetCache.cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
     }
     
     /// Sets the asset data for a given message and format tag. This will cause I/O
     open func storeAssetData(_ messageID: UUID, format: ZMImageFormat, encrypted: Bool, data: Data) {
-        self.cache.storeAssetData(data, key: type(of: self).cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
+        self.cache.storeAssetData(data, key: ImageAssetCache.cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
     }
     
     /// Deletes the data for a given message and format tag. This will cause I/O
     open func deleteAssetData(_ messageID: UUID, format: ZMImageFormat, encrypted: Bool) {
-        self.cache.deleteAssetData(type(of: self).cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
+        self.cache.deleteAssetData(ImageAssetCache.cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
     }
     
     /// Returns the cache key for an asset
