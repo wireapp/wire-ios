@@ -94,6 +94,23 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(message.categorization, MessageCategory.image)
     }
     
+    func testThatItCategorizesAnImageMessage_WithoutMediumData() {
+        
+        // GIVEN
+        let imageData = verySmallJPEGData()
+        let messageNonce = UUID.create()
+        let message = ZMAssetClientMessage.insertNewObject(in: uiMOC)
+        let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
+        let properties = ZMIImageProperties(size:imageSize, length:UInt(imageData.count), mimeType:"image/jpeg")
+        let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
+        let imageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce.transportString(), format: .preview, expiresAfter: NSNumber(value: message.deletionTimeout))
+        message.add(imageMessage)
+        message.updateCategoryCache()
+        
+        // THEN
+        XCTAssertEqual(message.categorization, [MessageCategory.image, MessageCategory.excludedFromCollection])
+    }
+    
     func testThatItCategorizesAGifImageMessage() {
         
         // GIVEN

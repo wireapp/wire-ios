@@ -145,6 +145,9 @@ extension ZMMessage {
             return .none
         }
         var category = MessageCategory.image
+        if let asset = self as? ZMAssetClientMessage, (asset.imageAssetStorage?.mediumGenericMessage == nil && imageData.mediumData == nil) {
+            category.update(with: .excludedFromCollection)
+        }
         if imageData.isAnimatedGIF {
             category.update(with: .GIF)
         }
