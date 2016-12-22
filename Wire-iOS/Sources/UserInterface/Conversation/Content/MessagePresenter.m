@@ -64,7 +64,9 @@
     else if ([Message isFileTransferMessage:message]) {
         if (message.fileMessageData.fileURL == nil) {
             self.waitingForFileDownload = YES;
-            [message requestFileDownload];
+            [[ZMUserSession sharedSession] performChanges:^{
+                [message requestFileDownload];
+            }];
         }
         else {
             [self openFileMessage:message targetView:targetView];
