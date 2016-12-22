@@ -85,9 +85,12 @@ public class AssetCollection : NSObject, ZMCollection {
         self.matchingCategories = matchingCategories
         super.init()
         
-        syncMOC?.performGroupedBlock {
-            guard !self.tornDown else { return }
-            guard let syncConversation = (try? self.syncMOC?.existingObject(with: self.conversation.objectID)) as? ZMConversation else {
+        guard let syncMOC = self.syncMOC else {
+            fatal("syncMOC not accessible")
+        }
+        syncMOC.performGroupedBlock { [weak self] in
+            guard let `self` = self, !self.tornDown else { return }
+            guard let syncConversation = (try? syncMOC.existingObject(with: self.conversation.objectID)) as? ZMConversation else {
                 return
             }
             
@@ -173,7 +176,7 @@ public class AssetCollection : NSObject, ZMCollection {
         
         // Categorize messages
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
-        self.syncMOC?.enqueueDelayedSave()
+        conversation.managedObjectContext?.enqueueDelayedSave()
         
         // Notify delegate
         self.notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
@@ -183,7 +186,7 @@ public class AssetCollection : NSObject, ZMCollection {
             return
         }
         
-        syncMOC?.performGroupedBlock { [weak self] in
+        conversation.managedObjectContext?.performGroupedBlock { [weak self] in
             guard let `self` = self, !self.tornDown else { return }
             self.fetchNextIfNotTornDown(limit: AssetCollection.defaultFetchCount, type: type, syncConversation: syncConversation)
         }
