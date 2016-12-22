@@ -118,11 +118,13 @@ import ZMTransport
         }
         
         let messageObjectId = assetClientMessage.objectID
-        self.managedObjectContext.zm_userInterface.performGroupedBlock({ () -> Void in
-            let uiMessage = try? self.managedObjectContext.zm_userInterface.existingObject(with: messageObjectId)
+        let uiManagedObjectContext = self.managedObjectContext.zm_userInterface
+        self.managedObjectContext.saveOrRollback() // I have to force this, or message could not have been merged to UI context when I call the next block
+        uiManagedObjectContext?.performGroupedBlock({ () -> Void in
+            let uiMessage = (try? uiManagedObjectContext!.existingObject(with: messageObjectId)) as? ZMAssetClientMessage
             
             let userInfo = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp]
-            if assetClientMessage.transferState == .downloaded {
+            if uiMessage?.transferState == .downloaded {
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName), object: uiMessage, userInfo: userInfo)
             }
             else {
