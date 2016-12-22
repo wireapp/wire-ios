@@ -119,6 +119,7 @@ import ZMTransport
         
         let messageObjectId = assetClientMessage.objectID
         let uiManagedObjectContext = self.managedObjectContext.zm_userInterface
+        self.managedObjectContext.saveOrRollback() // I have to force this, or message could not have been merged to UI context when I call the next block
         uiManagedObjectContext?.performGroupedBlock({ () -> Void in
             let uiMessage = (try? uiManagedObjectContext!.existingObject(with: messageObjectId)) as? ZMAssetClientMessage
             
