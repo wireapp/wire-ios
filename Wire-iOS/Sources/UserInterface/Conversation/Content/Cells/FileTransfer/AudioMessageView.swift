@@ -62,7 +62,7 @@ final class AudioMessageView: UIView, TransferView {
         self.allViews.forEach(self.addSubview)
         
         CASStyler.default().styleItem(self)
-        self.timeLabel.font = self.timeLabel.font.monospacedFont()
+        self.timeLabel.font = self.timeLabel.font.monospaced()
         
         self.createConstraints()
         
