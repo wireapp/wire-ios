@@ -201,8 +201,8 @@ class ProfileClientViewController: UIViewController, UserClientObserver, UITextV
     
     func updateIDLabel() {
         if let IDLabel = self.IDLabel,
-            let fingerprintSmallMonospaceFont = self.fingerprintSmallFont?.monospacedFont(),
-            let fingerprintSmallBoldMonospaceFont = self.fingerprintSmallBoldFont?.monospacedFont() {
+            let fingerprintSmallMonospaceFont = self.fingerprintSmallFont?.monospaced(),
+            let fingerprintSmallBoldMonospaceFont = self.fingerprintSmallBoldFont?.monospaced() {
                 IDLabel.attributedText = self.userClient.attributedRemoteIdentifier(
                     [NSFontAttributeName: fingerprintSmallMonospaceFont],
                     boldAttributes: [NSFontAttributeName: fingerprintSmallBoldMonospaceFont],
@@ -233,8 +233,8 @@ class ProfileClientViewController: UIViewController, UserClientObserver, UITextV
         if let fullIDLabel = self.fullIDLabel,
             let spinner = self.spinner {
             
-            if let fingerprintMonospaceFont = self.fingerprintFont?.monospacedFont(),
-                let fingerprintBoldMonospaceFont = self.fingerprintBoldFont?.monospacedFont(),
+            if let fingerprintMonospaceFont = self.fingerprintFont?.monospaced(),
+                let fingerprintBoldMonospaceFont = self.fingerprintBoldFont?.monospaced(),
                 let attributedFingerprint = self.userClient.fingerprint?.attributedFingerprint(
                     attributes: [NSFontAttributeName: fingerprintMonospaceFont],
                     boldAttributes: [NSFontAttributeName: fingerprintBoldMonospaceFont],
