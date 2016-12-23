@@ -145,7 +145,11 @@ extension ZMMessage {
             return .none
         }
         var category = MessageCategory.image
-        if let asset = self as? ZMAssetClientMessage, (asset.imageAssetStorage?.mediumGenericMessage == nil && imageData.mediumData == nil) {
+        if let asset = self as? ZMAssetClientMessage,
+            (asset.imageAssetStorage?.originalImageData() == nil
+                && asset.imageAssetStorage?.mediumGenericMessage == nil
+                && imageData.mediumData == nil)
+        {
             category.update(with: .excludedFromCollection)
         }
         if imageData.isAnimatedGIF {
@@ -175,7 +179,8 @@ extension ZMMessage {
     }
     
     fileprivate var fileCategory : MessageCategory {
-        guard let fileData = self.fileMessageData else {
+        guard let fileData = self.fileMessageData,
+            self.imageCategory == .none else {
             return .none
         }
         var category = MessageCategory.file
