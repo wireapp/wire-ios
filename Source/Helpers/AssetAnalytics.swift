@@ -37,11 +37,12 @@ final public class AssetAnalytics {
 
     func trackUploadFinished(for message: ZMAssetClientMessage, with response: ZMTransportResponse) {
         let messageObjectId = message.objectID
+        let uiMoc = self.moc.zm_userInterface!
 
-        moc.zm_userInterface.performGroupedBlock {
+        uiMoc.performGroupedBlock {
             self.notificationCenter.post(
                 name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFinishedNotificationName),
-                object: try? self.moc.zm_userInterface.existingObject(with: messageObjectId),
+                object: try? uiMoc.existingObject(with: messageObjectId),
                 userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: response.startOfUploadTimestamp]
             )
         }
@@ -49,11 +50,12 @@ final public class AssetAnalytics {
 
     func trackUploadFailed(for message: ZMAssetClientMessage, with request: ZMTransportRequest?) {
         let messageObjectId = message.objectID
+        let uiMoc = self.moc.zm_userInterface!
 
-        moc.zm_userInterface.performGroupedBlock {
+        uiMoc.performGroupedBlock {
             self.notificationCenter.post(
                 name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFailedNotificationName),
-                object: try? self.moc.zm_userInterface.existingObject(with: messageObjectId),
+                object: try? uiMoc.existingObject(with: messageObjectId),
                 userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: request?.startOfUploadTimestamp != nil ?? Date()]
             )
         }
