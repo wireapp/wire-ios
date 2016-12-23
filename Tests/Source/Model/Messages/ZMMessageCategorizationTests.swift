@@ -82,7 +82,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         message.linkPreviewState = .processed
         
         // THEN
-        XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.link])
+        XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.link, MessageCategory.linkPreview])
     }
     
     func testThatItCategorizesAnImageMessage() {
