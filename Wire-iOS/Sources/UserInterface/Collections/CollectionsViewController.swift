@@ -34,7 +34,6 @@ extension CategoryMatch {
 
 final public class CollectionsViewController: UIViewController {
     public var onDismiss: ((CollectionsViewController)->())?
-    public var analyticsTracker: AnalyticsTracker?
     public let sections: CollectionsSectionSet
     public weak var delegate: CollectionsViewControllerDelegate?
     
@@ -50,11 +49,18 @@ final public class CollectionsViewController: UIViewController {
     
     fileprivate let collection: AssetCollectionWrapper
     
+    fileprivate var openCollectionsIsTracked: Bool = false
+    
     fileprivate var fetchingDone: Bool = false {
         didSet {
             if self.isViewLoaded {
                 self.updateNoElementsState()
                 self.contentView.collectionView.collectionViewLayout.invalidateLayout()
+            }
+            
+            if self.inOverviewMode && self.fetchingDone && !self.openCollectionsIsTracked {
+                Analytics.shared()?.tagCollectionOpen(for: self.collection.conversation, itemCount: UInt(self.totalNumberOfElements()))
+                self.openCollectionsIsTracked = true
             }
         }
     }
@@ -113,7 +119,6 @@ final public class CollectionsViewController: UIViewController {
 
         self.messagePresenter.targetViewController = self
         self.messagePresenter.modalTargetController = self
-        self.messagePresenter.analyticsTracker = self.analyticsTracker
 
         self.contentView.collectionView.delegate = self
         self.contentView.collectionView.dataSource = self
@@ -155,8 +160,7 @@ final public class CollectionsViewController: UIViewController {
     }
     
     private func updateNoElementsState() {
-        // Empty collection contains one element (loading cell)
-        if self.fetchingDone && self.inOverviewMode && self.totalNumberOfElements() == 1 {
+        if self.fetchingDone && self.inOverviewMode && self.totalNumberOfElements() == 0 {
             self.contentView.noItemsInLibrary = true
         }
     }
@@ -182,7 +186,30 @@ final public class CollectionsViewController: UIViewController {
                 message.fileMessageData?.cancelTransfer()
             }
         case .present:
-            self.messagePresenter.open(message, targetView: view)
+            
+            Analytics.shared()?.tagCollectionOpenItem(for: self.collection.conversation, itemType: CollectionItemType(message: message))
+            
+            if Message.isImageMessage(message) {
+                let imageViewController = FullscreenImageViewController(message: message)
+                
+                let backButton = CollectionsView.backButton()
+                backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
+
+                let closeButton = CollectionsView.closeButton()
+                closeButton.addTarget(self, action: #selector(CollectionsViewController.closeButtonPressed(_:)), for: .touchUpInside)
+
+                imageViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+                imageViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeButton)
+                guard let sender = message.sender, let serverTimestamp = message.serverTimestamp else {
+                    return
+                }
+                imageViewController.navigationItem.titleView = TwoLineTitleView(first: sender.displayName.uppercased(), second: serverTimestamp.wr_formattedDate())
+                
+                self.navigationController?.pushViewController(imageViewController, animated: true)
+            }
+            else {
+                self.messagePresenter.open(message, targetView: view)
+            }
             
         default:
             break
@@ -273,7 +300,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     fileprivate func totalNumberOfElements() -> Int {
-        return CollectionsSectionSet.visible.map { self.numberOfElements(for: $0) }.reduce(0, +)
+        // Empty collection contains one element (loading cell)
+        return CollectionsSectionSet.visible.map { self.numberOfElements(for: $0) }.reduce(0, +) - 1
     }
     
     fileprivate func moreElementsToSee(in section: CollectionsSectionSet) -> Bool {
@@ -291,7 +319,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     fileprivate var girdElementSize: CGSize {
         let size = self.contentView.collectionView.bounds.size.width / CGFloat(self.elementsPerLine)
         
-        return CGSize(width: size - 1, height: size - 1)
+        return CGSize(width: size, height: size)
     }
     
     fileprivate var elementsPerLine: Int {
@@ -423,7 +451,6 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                     return
                 }
                 let collectionController = CollectionsViewController(collection: self.collection, sections: section, messages: self.elements(for: section), fetchingDone: self.fetchingDone)
-                collectionController.analyticsTracker = self.analyticsTracker
                 collectionController.onDismiss = self.onDismiss
                 self.navigationController?.pushViewController(collectionController, animated: true)
             }
@@ -436,6 +463,18 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let message = self.message(for: indexPath)
         self.perform(.present, for: message, from: collectionView.cellForItem(at: indexPath)!)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        guard let section = CollectionsSectionSet(index: UInt(section)) else {
+            fatal("Unknown section")
+        }
+        
+        if section == CollectionsSectionSet.loading {
+            return .zero
+        }
+        
+        return self.elements(for: section).count > 0 ? UIEdgeInsets(top: 0, left: 0, bottom: 24, right: 0) : .zero
     }
 }
 
