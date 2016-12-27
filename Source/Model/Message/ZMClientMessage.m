@@ -109,6 +109,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         self.nonce = [NSUUID uuidWithTransportString:messageData.genericMessage.messageId];
     }
     
+    [self updateCategoryCache];
     [self setLocallyModifiedKeys:[NSSet setWithObject:ClientMessageDataSetKey]];
 }
 
