@@ -96,6 +96,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self wipeCaches];
     ZMConversationDefaultLastReadTimestampSaveDelay = self.originalConversationLastReadTimestampTimerValue;
     [self resetState];
+    [[NSFileManager defaultManager] removeItemAtURL:self.databaseDirectory error:nil];
 }
 
 - (void)resetState
