@@ -20,7 +20,7 @@
 import Foundation
 import XCTest
 
-class NSPersistentStoreMetadataTests : BaseZMMessageTests {
+class NSPersistentStoreMetadataTests : ZMBaseManagedObjectTest {
     
     var shouldUseInMemoryStore : Bool {
         return false
