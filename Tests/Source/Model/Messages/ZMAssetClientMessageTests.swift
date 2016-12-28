@@ -617,7 +617,7 @@ extension ZMAssetClientMessageTests {
             let selfClient = UserClient.insertNewObject(in: self.syncMOC)
             selfClient.remoteIdentifier = self.name
             selfClient.user = .selfUser(in: self.syncMOC)
-            self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier, forKey: "PersistedClientId")
+            self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: "PersistedClientId")
             XCTAssertNotNil(ZMUser.selfUser(in: self.syncMOC).selfClient())
             
             let user2 = ZMUser.insertNewObject(in:self.syncMOC)
@@ -649,7 +649,7 @@ extension ZMAssetClientMessageTests {
             XCTAssertNotNil(sut)
             let encryptedUpstreamMetaData = sut.encryptedMessagePayloadForDataType(.fullAsset)
             XCTAssertNotNil(encryptedUpstreamMetaData)
-            self.syncMOC.setPersistentStoreMetadata(nil, forKey: "PersistedClientId")
+            self.syncMOC.setPersistentStoreMetadata(nil as String?, key: "PersistedClientId")
         }
     }
 

@@ -82,55 +82,6 @@
     XCTAssertEqualObjects([ZMUser selfUserInContext:self.uiMOC].objectID, syncUser.objectID);
 }
 
-- (void)testThatWeCanStoreMetadataInStore
-{
-    XCTAssertNil([self.uiMOC persistentStoreMetadataForKey:@"TestKey"]);
-    [self.uiMOC setPersistentStoreMetadata:@"value_172653" forKey:@"TestKey"];
-    XCTAssertEqualObjects([self.uiMOC persistentStoreMetadataForKey:@"TestKey"], @"value_172653");
-}
-
-- (void)testThatItIgnoresNilValuesWhenStoringMetadata
-{
-    XCTAssertNil([self.uiMOC persistentStoreMetadataForKey:nil]);
-    XCTAssertNoThrow([self.uiMOC setPersistentStoreMetadata:nil forKey:@"TestKey"]);
-    [self performIgnoringZMLogError:^{
-        XCTAssertNoThrow([self.uiMOC setPersistentStoreMetadata:@"dummy" forKey:nil]);
-    }];
-}
-
-- (void)testThatItSavesMetadataWhenSaveIsSuccessfull;
-{
-    //given
-    NSManagedObjectContext *sut = self.alternativeTestMOC;
-    NSString *key = @"Good stuff", *value = @"Jambon";
-    [sut setPersistentStoreMetadata:value forKey:key];
-    
-    //when
-    [sut saveOrRollback]; //will save
-    
-    //then
-    XCTAssertNil(sut.userInfo[@"ZMMetadataKey"]);
-    XCTAssertNotNil([sut persistentStoreMetadataForKey:key]);
-    XCTAssertEqualObjects([sut persistentStoreMetadataForKey:key], value);
-}
-
-- (void)testThatItRevertsMetadataWhenRollback;
-{
-    //given
-    NSManagedObjectContext *sut = self.alternativeTestMOC;
-    NSString *key = @"Good stuff", *value = @"Jambon";
-    [sut setPersistentStoreMetadata:value forKey:key];
-    [sut enableForceRollback];
-    
-    //when
-    [sut saveOrRollback]; // will rollback
-    
-    //then
-    XCTAssertNil(sut.userInfo[@"ZMMetadataKey"]);
-    XCTAssertNil([sut persistentStoreMetadataForKey:key]);
-}
-
-
 - (void)testThatUserInterfaceContextIsMarkedAsSuch;
 {
     __block BOOL isUI = NO;
