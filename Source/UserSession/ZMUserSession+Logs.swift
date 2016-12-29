@@ -70,11 +70,13 @@ extension ZMUserSession {
             let userInfo : [String: Any] = context.userInfo.asDictionary() as! [String: Any]
             handler(metadata, type, error, userInfo)
         }
-        self.syncManagedObjectContext.errorOnSaveCallback = { (context, error) in
-            let metadata : [String: Any] = context.persistentStoreCoordinator!.persistentStores[0].metadata as [String: Any]
-            let type = context.type
-            let userInfo : [String: Any] = context.userInfo.asDictionary() as! [String: Any]
-            handler(metadata, type, error, userInfo)
+        self.syncManagedObjectContext.performGroupedBlock {
+            self.syncManagedObjectContext.errorOnSaveCallback = { (context, error) in
+                let metadata : [String: Any] = context.persistentStoreCoordinator!.persistentStores[0].metadata as [String: Any]
+                let type = context.type
+                let userInfo : [String: Any] = context.userInfo.asDictionary() as! [String: Any]
+                handler(metadata, type, error, userInfo)
+            }
         }
     }
 }
