@@ -63,7 +63,7 @@ extension ZMUserSession {
     
     /// Register a handle for monitoring when one of the manage object contexts fails
     /// to save and is rolled back
-    func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
+    public func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
         self.managedObjectContext.errorOnSaveCallback = { (context, error) in
             let metadata : [String: Any] = context.persistentStoreCoordinator!.persistentStores[0].metadata as [String: Any]
             let type = context.type
