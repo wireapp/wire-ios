@@ -109,10 +109,10 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         let messageObjectId = assetClientMessage.objectID
         let uiMOC = self.managedObjectContext.zm_userInterface!
         uiMOC.performGroupedBlock({ () -> Void in
-            let uiMessage = try? uiMOC.existingObject(with: messageObjectId)
+            let uiMessage = (try? uiMOC.existingObject(with: messageObjectId)) as? ZMAssetClientMessage
 
             let userInfo = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp]
-            if assetClientMessage.transferState == .downloaded {
+            if uiMessage?.transferState == .downloaded {
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName), object: uiMessage, userInfo: userInfo)
             }
             else {
