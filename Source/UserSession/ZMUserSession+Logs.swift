@@ -34,11 +34,11 @@ extension ZMUserSession {
 
 // MARK: - Error on context save debugging
 
-public enum ContextType {
-    case UI
-    case Sync
-    case Search
-    case Other
+public enum ContextType : String {
+    case UI = "UI"
+    case Sync = "Sync"
+    case Search = "Search"
+    case Other = "Other"
 }
 
 extension NSManagedObjectContext {
@@ -62,7 +62,7 @@ extension ZMUserSession {
     public typealias SaveFailureCallback = (_ metadata: [String: Any], _ type: ContextType, _ error: NSError, _ userInfo: [String: Any]) -> ()
     
     /// Register a handle for monitoring when one of the manage object contexts fails
-    /// to save and is rolled back
+    /// to save and is rolled back. The call is invoked on the context queue, so it might not be on the main thread
     public func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
         self.managedObjectContext.errorOnSaveCallback = { (context, error) in
             let metadata : [String: Any] = context.persistentStoreCoordinator!.persistentStores[0].metadata as [String: Any]
@@ -74,9 +74,7 @@ extension ZMUserSession {
             let metadata : [String: Any] = context.persistentStoreCoordinator!.persistentStores[0].metadata as [String: Any]
             let type = context.type
             let userInfo : [String: Any] = context.userInfo.asDictionary() as! [String: Any]
-            self.managedObjectContext.perform {
-                handler(metadata, type, error, userInfo)
-            }
+            handler(metadata, type, error, userInfo)
         }
     }
 }
