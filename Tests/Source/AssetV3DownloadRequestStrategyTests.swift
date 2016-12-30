@@ -47,34 +47,6 @@ class AssetV3DownloadRequestStrategyTests: MessagingTest {
         return conversation
     }
     
-    fileprivate func createAssetV3ImageWithAssetId(
-        in conversation: ZMConversation,
-        otrKey: Data = Data.randomEncryptionKey(),
-        sha: Data  = Data.randomEncryptionKey()
-        ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
-        
-        let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("image")
-        
-        try! self.mediumJPEGData().write(to: url)
-        
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
-        let uploaded = ZMGenericMessage.genericMessage(
-            withUploadedOTRKey: otrKey,
-            sha256: sha,
-            messageID: message.nonce.transportString(),
-            expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
-        )
-        guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
-            XCTFail("Failed to update asset")
-            return nil
-        }
-        
-        message.add(uploadedWithId)
-        configureForDownloading(message: message)
-        XCTAssertEqual(message.version, 3)
-        return (message, assetId, token)
-    }
-    
     fileprivate func createFileMessageWithAssetId(
         in conversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
@@ -324,27 +296,47 @@ extension AssetV3DownloadRequestStrategyTests {
     func testThatItRecategorizeMessageAfterDownloadingAssetContent() {
         
         // given
-        let plainTextData = Data.secureRandomData(length: 500)
+        let plainTextData = self.verySmallJPEGData()
         let key = Data.randomEncryptionKey()
         let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
+        let messageId = UUID.create()
         
+        let selfClient = createSelfClient()
         
+        let asset = ZMAssetBuilder()
+            .setOriginal(ZMAssetOriginalBuilder()
+                .setMimeType("image/jpeg")
+                .setSize(UInt64(plainTextData.count))
+                .setImage(ZMAssetImageMetaDataBuilder()
+                    .setWidth(100)
+                    .setHeight(100)
+                    .setTag("medium")))
+            .setUploaded(ZMAssetRemoteDataBuilder()
+                .setOtrKey(key)
+                .setSha256(sha)
+                .setAssetId("someId")
+                .setAssetToken("someToken"))
+            .build()
         
-        let (message, _, _) = createAssetV3ImageWithAssetId(in: conversation, otrKey: key, sha: sha)!
-        print(message.category)
+        let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId.transportString())
         
-        let dict = ["recipient": selfUser.remoteIdentifier, "sender": client.remoteIdentifier, "text": "some payload"];
-        ZMUpdateEvent *updateEvent = [ZMUpdateEvent eventFromEventStreamPayload:
-        [
+        let dict = ["recipient": selfClient.remoteIdentifier, "sender": selfClient.remoteIdentifier, "text": genericMessage.data().base64String()] as NSDictionary
+        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
             "type": "conversation.otr-message-add",
             "data":dict,
-            "conversation":conversation.remoteIden.transportString,
-            "time":[NSDate dateWithTimeIntervalSince1970:555555].transportString
-        ] uuid:nil];
+            "conversation":conversation.remoteIdentifier!.transportString(),
+            "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)
         
-
-        XCTAssertEqual(message.category, [.image])
+        let message = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
+        message.visibleInConversation = conversation
+        message.transferState = .downloading
+        
+        XCTAssertEqual(message.category, [.image, .excludedFromCollection])
+        
+        sut.contextChangeTrackers.forEach { (tracker) in
+            tracker.objectsDidChange([message])
+        }
         
         let request = sut.nextRequest()
         request?.markStartOfUploadTimestamp()
