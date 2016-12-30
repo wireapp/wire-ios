@@ -234,7 +234,7 @@ NSString *const ZMInterruptedCallConversationObjectIDKey = @"InterruptedCallConv
         return NO;
     }
     
-    return [conversation.objectID isEqual:[self storedConversationInContext:self.uiManagedObjectContext].objectID];
+    return [conversation.objectID isEqual:[self storedConversationInContext:conversation.managedObjectContext].objectID];
 }
 
 - (void)logIsInterrupted:(BOOL)isInterrupted
