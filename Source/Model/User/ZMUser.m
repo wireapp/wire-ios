@@ -532,7 +532,7 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
     }
     
     NSArray *picture = [transportData optionalArrayForKey:@"picture"];
-    if ((picture != nil || authoritative) && ![self hasLocalModificationsForKeys:[NSSet setWithArray:@[ImageMediumDataKey, ImageSmallProfileDataKey]]]) {
+    if ((picture != nil || authoritative) && ![self hasLocalModificationsForKeys:[NSSet setWithArray:@[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey]]]) {
         [self updateImageWithTransportData:picture];
     }
     
