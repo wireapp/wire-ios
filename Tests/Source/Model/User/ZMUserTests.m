@@ -44,6 +44,11 @@ static NSString *const LongPhoneCode = @"123456789012345678901234567890";
 static NSString *const ValidEmail = @"foo77@example.com";
 
 
+static NSString *const MediumRemoteIdentifierDataKey = @"mediumRemoteIdentifier_data";
+static NSString *const SmallProfileRemoteIdentifierDataKey = @"smallProfileRemoteIdentifier_data";
+static NSString *const ImageMediumDataKey = @"imageMediumData";
+static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
+
 @interface ZMUserTests : ModelObjectsTests
 
 @property (nonatomic) NSArray *validPhoneNumbers;
@@ -518,6 +523,38 @@ static NSString *const ValidEmail = @"foo77@example.com";
     XCTAssertNil(user.imageMediumData);
     XCTAssertNil(user.mediumRemoteIdentifier);
     XCTAssertNil(user.smallProfileRemoteIdentifier);
+}
+
+- (void)testThatItKeepPicturesWhenTheyHaveLocalModifications
+{
+    NSArray *keysProtectingImageFromRemoteUpdates = @[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey];
+    
+    for (NSString *locallyModifiedKey in keysProtectingImageFromRemoteUpdates) {
+        
+        // given
+        ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
+        user.smallProfileRemoteIdentifier = [NSUUID createUUID];
+        user.mediumRemoteIdentifier = [NSUUID createUUID];
+        user.imageCorrelationIdentifier = [NSUUID createUUID];
+        user.imageSmallProfileData = [self dataForResource:@"tiny" extension:@"jpg"];
+        user.imageMediumData = [self dataForResource:@"tiny" extension:@"jpg"];
+        
+        NSMutableDictionary *payload = [self samplePayloadForUserID:user.remoteIdentifier];
+        payload[@"picture"] = @[];
+        
+        [user setLocallyModifiedKeys:[NSSet setWithObject:locallyModifiedKey]];
+        
+        // when
+        [user updateWithTransportData:payload authoritative:NO];
+        
+        // then
+        XCTAssertNotNil(user.imageSmallProfileData);
+        XCTAssertNotNil(user.imageMediumData);
+        XCTAssertNotNil(user.mediumRemoteIdentifier);
+        XCTAssertNotNil(user.smallProfileRemoteIdentifier);
+        
+        [user resetLocallyModifiedKeys:[NSSet setWithObject:locallyModifiedKey]];
+    }
 }
 
 - (void)testThatItHandlesEmptyOptionalData
