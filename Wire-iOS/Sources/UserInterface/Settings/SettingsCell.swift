@@ -181,6 +181,9 @@ class SettingsTableCell: UITableViewCell, SettingsCellType, Reusable {
             imagePreview.centerY == contentView.centerY
         }
         
+        var currentElements = self.accessibilityElements ?? []
+        currentElements.append(contentsOf: [cellNameLabel, valueLabel, imagePreview])
+        self.accessibilityElements = currentElements
     }
     
     func updateBackgroundColor() {
