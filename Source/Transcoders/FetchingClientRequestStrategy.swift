@@ -40,7 +40,7 @@ public extension ZMUser {
 }
 
 @objc
-public final class FetchingClientRequestStrategy : ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder, ZMSingleRequestTranscoder {
+public final class FetchingClientRequestStrategy : ZMObjectSyncStrategy, ZMEventConsumer {
 
     fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
 
@@ -57,11 +57,11 @@ public final class FetchingClientRequestStrategy : ZMObjectSyncStrategy, ZMObjec
     }
     
     public init(clientRegistrationStatus:ClientRegistrationDelegate,
-                context: NSManagedObjectContext)
+        managedObjectContext: NSManagedObjectContext)
     {
         self.clientRegistrationStatus = clientRegistrationStatus
         
-        super.init(managedObjectContext: context)
+        super.init(managedObjectContext: managedObjectContext)
         
         self.userClientsSync = ZMRemoteIdentifierObjectSync(transcoder: self, managedObjectContext: self.managedObjectContext)
         
@@ -87,61 +87,6 @@ public final class FetchingClientRequestStrategy : ZMObjectSyncStrategy, ZMObjec
         }
         
         return userClientsSync.nextRequest()
-    }
-    
-    //we don;t use this method but it's required by ZMObjectStrategy protocol
-    public var requestGenerators: [ZMRequestGenerator] {
-        return []
-    }
-    
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return []
-    }
-    
-    public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
-    }
-    
-    public func request(for sync: ZMSingleRequestSync!) -> ZMTransportRequest! {
-        return nil
-    }
-    
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
-        return nil
-    }
-    
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
-        return nil
-    }
-    
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
-        return false
-    }
-    
-    public func didReceive(_ response: ZMTransportResponse!, forSingleRequest sync: ZMSingleRequestSync!) {
-        //no-op
-    }
-    
-    public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
-        //no-op
-    }
-    
-    /// Returns whether synchronization of this object needs additional requests
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable: Any]?, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
-        return false
-    }
-
-    // Should return the objects that need to be refetched from the BE in case of upload error
-    public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
-    }
-    
-    public var isSlowSyncDone: Bool {
-        return true
-    }
-    
-    public func setNeedsSlowSync() {
-        //no op
     }
     
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
