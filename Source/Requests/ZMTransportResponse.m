@@ -95,7 +95,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
         _HTTPStatus = status;
         _headers = headers;
         
-        self.rawResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL new] statusCode:status HTTPVersion:@"HTTP/1.1" headerFields:headers];
+        self.rawResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:status HTTPVersion:@"HTTP/1.1" headerFields:headers];
         self.rawData = self.imageData ?: [ZMTransportCodec encodedTransportData:self.payload];
     }
     return self;

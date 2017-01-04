@@ -245,7 +245,7 @@
     
     self.sut.testing_accessToken = self.validAccessToken;
     
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL new]];
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@""]];
     
     // when
     [self.sut checkIfRequest:transportRequest needsToFetchAccessTokenInURLRequest:urlRequest];
