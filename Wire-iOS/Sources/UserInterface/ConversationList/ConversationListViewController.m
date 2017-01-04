@@ -230,7 +230,7 @@
 
 - (void)requestSuggestedHandlesIfNeeded
 {
-    if (nil == ZMUser.selfUser.handle && self.initialSyncCompleted && !ZMUser.selfUser.needsToBeUpdatedFromBackend) {
+    if (nil == ZMUser.selfUser.handle && self.initialSyncCompleted && !ZMUserSession.sharedSession.isPendingHotFixChanges) {
         self.userProfileObserverToken = [self.userProfile addObserver:self];
         [self.userProfile suggestHandles];
     }
@@ -849,11 +849,6 @@
             [self.listContentController selectConversation:conversation focusOnView:YES animated:YES];
         }];
     }];
-}
-
-- (void)archivedListViewController:(ArchivedListViewController *)controller wantsActionMenuForConversation:(ZMConversation *)conversation
-{
-    [self showActionMenuForConversation:conversation];
 }
 
 @end

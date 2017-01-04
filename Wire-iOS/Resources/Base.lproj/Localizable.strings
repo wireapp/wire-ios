@@ -63,7 +63,7 @@
 // Contacts UI
 "contacts_ui.search_placeholder" = "Search by name";
 "contacts_ui.invite_others" = "Invite others";
-"contacts_ui.name_in_contacts" = "%@ in address book";
+"contacts_ui.name_in_contacts" = "%@ in Contacts";
 "contacts_ui.connection_request" = "Requested to connect";
 "contacts_ui.action_button.invite" = "Invite";
 "contacts_ui.action_button.open" = "Open";
@@ -76,11 +76,11 @@
 "contacts_ui.no_contact.message" = "Tap contacts to start a conversation";
 
 // Conversation List Bottom Bar
-"bottom_bar.contacts_button.title" = "contacts";
+"bottom_bar.contacts_button.title" = "people";
 
 
 // Profile Header View
-"conversation.connection_view.in_address_book" = "in Address Book";
+"conversation.connection_view.in_address_book" = "in Contacts";
 
 
 // Archived List
@@ -148,7 +148,7 @@
 "conversation.call.many_participants_confirmation.message" = "This will call %d people";
 "conversation.call.many_participants_confirmation.call" = "Call";
 
-"conversation.connection_view.in_address_book" = "in Address Book";
+"conversation.connection_view.in_address_book" = "in Contacts";
 
 // Image confirmation dialogue
 "image_confirmer.confirm" = "OK";
@@ -256,6 +256,7 @@
 "content.message.like" = "Like";
 "content.message.unlike" = "Unlike";
 "content.message.forward" = "Forward";
+"content.message.go_to_conversation" = "Show in conversation";
 "content.message.forward.to" = "Send to...";
 
 "content.reactions_list.likers" = "Liked by";
@@ -774,3 +775,11 @@
 "invite_banner.title" = "Bring your friends to Wire!";
 "invite_banner.message" = "Enjoy calls, messages, sketches, GIFs and more in private or with groups.";
 "invite_banner.invite_button_title" = "Invite more people";
+
+// Collections
+"collections.section.images.title" = "Pictures";
+"collections.section.files.title" = "Files";
+"collections.section.videos.title" = "Videos";
+"collections.section.links.title" = "Links";
+"collections.section.all.button" = "All →";
+"collections.section.no_items" = "No items in library";

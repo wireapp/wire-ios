@@ -43,6 +43,7 @@
 #import <Classy/UIViewController+CASAdditions.h>
 #import "UIViewController+Errors.h"
 #import "ConversationViewController.h"
+#import "ConversationViewController+Private.h"
 #import "ConversationListCollectionViewLayout.h"
 #import "ConversationListCell.h"
 #import "GapLoadingBar.h"
@@ -59,6 +60,9 @@
 #import "SwizzleTransition.h"
 #import "ARCollectionViewMasonryLayout.h"
 #import "ZiphyClient+Convenience.h"
+#import "ConversationDetailsTransitioningDelegate.h"
+#import "ActionSheetController.h"
+#import "ActionSheetController+Conversation.h"
 
 // View Controllers
 #import "ZClientViewController.h"
@@ -126,6 +130,7 @@
 #import "Message+Formatting.h"
 #import "UIImagePickerController+GetImage.h"
 #import <Classy/UIColor+CASAdditions.h>
+#import "MessagePresenter.h"
 @import HockeySDK;
 
 // Camera
