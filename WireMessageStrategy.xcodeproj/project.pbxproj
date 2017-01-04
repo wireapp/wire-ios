@@ -23,6 +23,8 @@
 		BFC32F8F1DD1E7A100EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC32F8D1DD1E73400EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift */; };
 		BFE85DED1DD9F47C00BCD68B /* AssetAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE85DEC1DD9F47C00BCD68B /* AssetAnalytics.swift */; };
 		BFE9FF261DD4AD1A00B8BA74 /* AssetV3FileUploadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE9FF251DD4AD1A00B8BA74 /* AssetV3FileUploadRequestStrategyTests.swift */; };
+		CED80BAC1E03FAC40053915D /* FetchingClientRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED80BAB1E03FAC40053915D /* FetchingClientRequestStrategy.swift */; };
+		CED80BAE1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED80BAD1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift */; };
 		F963E90B1D956FC100098AD3 /* ZMMessageExpirationTimerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F963E9091D956EE700098AD3 /* ZMMessageExpirationTimerTests.m */; };
 		F963E9221D95885700098AD3 /* AssetDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E91F1D95885700098AD3 /* AssetDownloadRequestStrategy.swift */; };
 		F963E9231D95885700098AD3 /* ImageDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E9201D95885700098AD3 /* ImageDownloadRequestStrategy.swift */; };
@@ -145,6 +147,8 @@
 		BFC32F8D1DD1E73400EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3ImageUploadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		BFE85DEC1DD9F47C00BCD68B /* AssetAnalytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetAnalytics.swift; sourceTree = "<group>"; };
 		BFE9FF251DD4AD1A00B8BA74 /* AssetV3FileUploadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3FileUploadRequestStrategyTests.swift; sourceTree = "<group>"; };
+		CED80BAB1E03FAC40053915D /* FetchingClientRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategy.swift; sourceTree = "<group>"; };
+		CED80BAD1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F963E9091D956EE700098AD3 /* ZMMessageExpirationTimerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMessageExpirationTimerTests.m; sourceTree = "<group>"; };
 		F963E91F1D95885700098AD3 /* AssetDownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetDownloadRequestStrategy.swift; sourceTree = "<group>"; };
 		F963E9201D95885700098AD3 /* ImageDownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloadRequestStrategy.swift; sourceTree = "<group>"; };
@@ -334,6 +338,7 @@
 		F9F056DD1D93D3FF00FA1AAD /* Transcoders */ = {
 			isa = PBXGroup;
 			children = (
+				CED80BAB1E03FAC40053915D /* FetchingClientRequestStrategy.swift */,
 				F963E9331D958BBE00098AD3 /* MissingClientsRequestFactory.swift */,
 				F963E9341D958BBE00098AD3 /* MissingClientsRequestStrategy.swift */,
 				F963E91F1D95885700098AD3 /* AssetDownloadRequestStrategy.swift */,
@@ -470,6 +475,7 @@
 				F9F057CD1D943BCA00FA1AAD /* ZMCryptoBoxUpdateEventsTests.m */,
 				F9F057E81D954CD700FA1AAD /* FilePreprocessorTests.swift */,
 				F963E9301D958A5200098AD3 /* LinkPreviewAssetDownloadRequestStrategyTests.swift */,
+				CED80BAD1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift */,
 				F9F057E91D954CD700FA1AAD /* FileUploadRequestStrategyTests.swift */,
 				F9F057EA1D954CD700FA1AAD /* ImageUploadRequestStrategyTests.swift */,
 				BFC32F8D1DD1E73400EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift */,
@@ -749,6 +755,7 @@
 				BFC32F8C1DD1D37F00EDD540 /* AssetV3ImageUploadRequestStrategy.swift in Sources */,
 				16D0E0811DF88B820075DF8F /* OTREntityTranscoder.swift in Sources */,
 				F9F056EE1D93D3FF00FA1AAD /* ZMClientMessageTranscoder+UpdateEvents.m in Sources */,
+				CED80BAC1E03FAC40053915D /* FetchingClientRequestStrategy.swift in Sources */,
 				F9F056F01D93D3FF00FA1AAD /* ZMClientMessageTranscoder.m in Sources */,
 				F9F057D81D943DA200FA1AAD /* LinkPreviewAssetUploadRequestStrategy.swift in Sources */,
 			);
@@ -767,6 +774,7 @@
 				F963E92E1D9589C100098AD3 /* ImageDownloadRequestStrategyTests.swift in Sources */,
 				BF260C551DCA28C1009C97D9 /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
 				F9F0575B1D94129600FA1AAD /* ZMClientMessageTranscoderTests.m in Sources */,
+				CED80BAE1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift in Sources */,
 				BFC32F8F1DD1E7A100EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift in Sources */,
 				F963E90B1D956FC100098AD3 /* ZMMessageExpirationTimerTests.m in Sources */,
 				F963E94A1D9A67FF00098AD3 /* RequestStrategyTestBase.swift in Sources */,
@@ -953,6 +961,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireMessageStrategy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
