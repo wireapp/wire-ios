@@ -22,7 +22,6 @@ import Foundation
 
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
-
 class AssetV3DownloadRequestStrategyTests: MessagingTest {
 
     var authStatus: MockClientRegistrationStatus!
@@ -47,7 +46,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTest {
         conversation.remoteIdentifier = UUID.create()
         return conversation
     }
-
+    
     fileprivate func createFileMessageWithAssetId(
         in conversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
@@ -292,6 +291,63 @@ extension AssetV3DownloadRequestStrategyTests {
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
+    }
+    
+    func testThatItRecategorizeMessageAfterDownloadingAssetContent() {
+        
+        // given
+        let plainTextData = self.verySmallJPEGData()
+        let key = Data.randomEncryptionKey()
+        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        let sha = encryptedData.zmSHA256Digest()
+        let messageId = UUID.create()
+        
+        let selfClient = createSelfClient()
+        
+        let asset = ZMAssetBuilder()
+            .setOriginal(ZMAssetOriginalBuilder()
+                .setMimeType("image/jpeg")
+                .setSize(UInt64(plainTextData.count))
+                .setImage(ZMAssetImageMetaDataBuilder()
+                    .setWidth(100)
+                    .setHeight(100)
+                    .setTag("medium")))
+            .setUploaded(ZMAssetRemoteDataBuilder()
+                .setOtrKey(key)
+                .setSha256(sha)
+                .setAssetId("someId")
+                .setAssetToken("someToken"))
+            .build()
+        
+        let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId.transportString())
+        
+        let dict = ["recipient": selfClient.remoteIdentifier, "sender": selfClient.remoteIdentifier, "text": genericMessage.data().base64String()] as NSDictionary
+        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+            "type": "conversation.otr-message-add",
+            "data":dict,
+            "conversation":conversation.remoteIdentifier!.transportString(),
+            "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)
+        
+        let message = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
+        message.visibleInConversation = conversation
+        message.transferState = .downloading
+        
+        XCTAssertEqual(message.category, [.image, .excludedFromCollection])
+        
+        sut.contextChangeTrackers.forEach { (tracker) in
+            tracker.objectsDidChange([message])
+        }
+        
+        let request = sut.nextRequest()
+        request?.markStartOfUploadTimestamp()
+        let response = ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: .none, headers: [:])
+        
+        // when
+        request?.complete(with: response)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        XCTAssertEqual(message.category, [.image])
     }
 
     func testThatItSendsTheNotificationIfCannotDownload_V3() {
