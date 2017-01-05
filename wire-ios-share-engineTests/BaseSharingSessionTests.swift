@@ -39,7 +39,7 @@ class BaseSharingSessionTests: XCTestCase {
         let url                  = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: url)!
         let syncContext          = NSManagedObjectContext.createSyncContextWithStore(at: url, keyStore: url)!
-        let transport            = ZMTransportSession(baseURL: url, websocketURL: url, keyValueStore: syncContext, mainGroupQueue: userInterfaceContext, application: nil, sharedContainerIdentifier: "some identifier")
+        let transport            = ZMTransportSession(baseURL: url, websocketURL: url, mainGroupQueue: userInterfaceContext, initialAccessToken: ZMAccessToken(), application: nil, sharedContainerIdentifier: "some identifier")
         
         sharingSession = try! SharingSession(userInterfaceContext: userInterfaceContext, syncContext: syncContext, transportSession: transport, sharedContainerURL: url)
         moc = sharingSession.userInterfaceContext

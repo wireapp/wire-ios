@@ -79,7 +79,9 @@ class OperationLoopTests :  ZMTBaseTest {
                 self.syncMoc.globalManagedObjectContextObserver.tearDown()
                 self.syncMoc.userInfo.removeAllObjects()
             }
-            _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
+            if !waitForAllGroupsToBeEmpty(withTimeout: 0.5) {
+                fatalError()
+            }
         }
         NSManagedObjectContext.resetUserInterfaceContext()
         NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
@@ -106,6 +108,7 @@ extension OperationLoopTests {
         uiMoc.performGroupedBlock {
             let uiUser = ZMUser(remoteID: userID, createIfNeeded: false, in: self.uiMoc)!
             uiUser.name = "Jean Claude YouKnowWho"
+            XCTAssertNotNil(uiUser)
             self.uiMoc.saveOrRollback()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -129,6 +132,7 @@ extension OperationLoopTests {
         var uiUser : ZMUser! = nil
         uiMoc.performGroupedBlock {
             uiUser = ZMUser(remoteID: userID, createIfNeeded: false, in: self.uiMoc)!
+            XCTAssertNotNil(uiUser)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         

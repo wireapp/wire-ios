@@ -68,7 +68,7 @@ class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     }
     
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String { // TODO move constant into shared framework
+        if let clientId = context.persistentStoreMetadata(key: "PersistedClientId") as? String { // TODO move constant into shared framework
             return clientId.characters.count > 0
         }
         
@@ -94,18 +94,6 @@ class AuthenticationStatus : AuthenticationStatusProvider {
     
     private var isLoggedIn : Bool {
         return transportSession.cookieStorage.authenticationCookieData != nil
-    }
-    
-}
-
-extension NSManagedObjectContext : ZMKeyValueStore {
-    
-    open override func setValue(_ value: Any?, forKey key: String) {
-        setPersistentStoreMetadata(value, forKey: key)
-    }
-    
-    open override func value(forKey key: String) -> Any? {
-        return persistentStoreMetadata(forKey: key)
     }
     
 }
@@ -197,8 +185,8 @@ public class SharingSession {
         let transportSession =  ZMTransportSession(
             baseURL: environment.backendURL,
             websocketURL: environment.backendWSURL,
-            keyValueStore: syncContext,
             mainGroupQueue: userInterfaceContext,
+            initialAccessToken: ZMAccessToken(),
             application: nil,
             sharedContainerIdentifier: applicationGroupIdentifier
         )
@@ -227,7 +215,7 @@ public class SharingSession {
         
         let missingClientStrategy = MissingClientsRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, apnsConfirmationStatus: DeliveryConfirmationDummy(), managedObjectContext: syncContext)
         
-        let fetchinClientStrategy = FetchingClientRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, context: syncContext)
+        let fetchinClientStrategy = FetchingClientRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext)
         
         let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, maxConcurrentImageOperation: 1)
         let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
