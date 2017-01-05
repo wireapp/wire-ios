@@ -33,13 +33,16 @@ class BaseSharingSessionTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
-        let fm = FileManager.default
-        let url = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:true)
-        
+
         authenticationStatus = FakeAuthenticationStatus()
-        sharingSession = try! SharingSession(databaseDirectory: url, authenticationStatusProvider: authenticationStatus)
-        moc = sharingSession.managedObjectContext
+        
+        let url                  = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: url)!
+        let syncContext          = NSManagedObjectContext.createSyncContextWithStore(at: url, keyStore: url)!
+        let transport            = ZMTransportSession(baseURL: url, websocketURL: url, mainGroupQueue: userInterfaceContext, initialAccessToken: ZMAccessToken(), application: nil, sharedContainerIdentifier: "some identifier")
+        
+        sharingSession = try! SharingSession(userInterfaceContext: userInterfaceContext, syncContext: syncContext, transportSession: transport, sharedContainerURL: url)
+        moc = sharingSession.userInterfaceContext
     }
 
 }
