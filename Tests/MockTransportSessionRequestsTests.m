@@ -29,7 +29,7 @@
 
 - (void)testThatItReturnsResponseFromResponseGenerator
 {
-    // given
+    // GIVEN
     NSDictionary *expectedPayload = @{@"foo": @"baar"};
     NSError *expectedError = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeTryAgainLater userInfo:nil];
     NSInteger expectedStatus = 451;
@@ -45,10 +45,10 @@
         return [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:expectedStatus transportSessionError:expectedError];
     };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:requestPath method:requestMethod];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if(!response) {
         return;
@@ -76,16 +76,16 @@
     ZMTransportRequestMethod requestMethod = ZMMethodGET;
     NSArray *requestPayload = nil;
     
-    // given
+    // GIVEN
     self.sut.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NOT_USED(request);
         return nil;
     };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:requestPath method:requestMethod];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if(!response) {
         return;
@@ -99,7 +99,7 @@
 
 - (void)testThatItNeverCompletesIfTheResponseGeneratorReturns_ZMCustomResponseGeneratorReturnResponseNotCompleted
 {
-    // given
+    // GIVEN
     self.sut.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NOT_USED(request);
         return ResponseGenerator.ResponseNotCompleted;
@@ -117,7 +117,7 @@
     WaitForAllGroupsToBeEmpty(0.2);
     [self spinMainQueueWithTimeout:0.2];
     
-    // then
+    // THEN
     XCTAssertTrue(result.didHaveLessRequestThanMax);
     XCTAssertTrue(result.didGenerateNonNullRequest);
     XCTAssertFalse(completed);
@@ -132,7 +132,7 @@
 
 - (void)testThatItReturnsAnImage
 {
-    // given
+    // GIVEN
     NSString *convID = [NSUUID createUUID].transportString;
     NSString *assetID = [NSUUID createUUID].transportString;
     NSData *expectedImageData =  [ZMTBaseTest verySmallJPEGData];
@@ -149,10 +149,10 @@
     
     NSString *path = [NSString pathWithComponents:@[@"/", @"assets", [NSString stringWithFormat:@"%@?conv_id=%@", assetID, convID]]];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
     AssertEqualData(response.imageData, expectedImageData);
@@ -161,7 +161,7 @@
 
 - (void)testThatItDoesNotRespondToRequests
 {
-    // given
+    // GIVEN
     self.sut.doNotRespondToRequests = YES;
     
     __block MockUser *selfUser;
@@ -189,7 +189,7 @@
     
     // (1)
     {
-        // when
+        // WHEN
         NSDictionary *payload = @{
                                   @"content" : messageText,
                                   @"nonce" : nonce.transportString
@@ -215,13 +215,13 @@
     
     // (2)
     {
-        // when
+        // WHEN
         self.sut.doNotRespondToRequests = NO;
         
         NSString *path = @"/notifications";
         ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
         
-        // then
+        // THEN
         XCTAssertNotNil(response);
         if (!response) {
             return;
@@ -238,11 +238,11 @@
 
 - (void)testThatOfflineWeNeverGetAResponseToOurRequest {
     
-    // given
+    // GIVEN
     self.sut.doNotRespondToRequests = YES;
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString stringWithFormat:@"/conversations/ids"];
     
     ZMTransportSession *mockedTransportSession = self.sut.mockedTransportSession;
@@ -268,7 +268,7 @@
     
     [self spinMainQueueWithTimeout:0.3];
     
-    // then
+    // THEN
     XCTAssertNil(response);
     
     WaitForAllGroupsToBeEmpty(0.5);
@@ -278,11 +278,11 @@
 
 - (void)testThatWhenOfflineAndMessageHasAnExpirationDateWeExpireTheRequest
 {
-    // given
+    // GIVEN
     self.sut.doNotRespondToRequests = YES;
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString stringWithFormat:@"/conversations/ids"];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
@@ -309,7 +309,7 @@
     XCTAssertTrue(result.didGenerateNonNullRequest);
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -338,26 +338,26 @@
 
 - (void)testThatTheListOfRequestsContainsTheRequestsSent
 {
-    // given
+    // GIVEN
     ZMTransportRequest *req1 = [ZMTransportRequest requestGetFromPath:@"/this/path"];
     ZMTransportRequest *req2 = [ZMTransportRequest requestWithPath:@"/foo/bar" method:ZMMethodDELETE payload:nil];
     ZMTransportRequest *req3 = [ZMTransportRequest requestWithPath:@"/arrrr" method:ZMMethodPUT payload:@{@"name":@"Johnny"}];
     
     NSArray *requests = @[req1, req2, req3];
     
-    // when
+    // WHEN
     for(ZMTransportRequest *request in requests) {
         [self sendRequestToMockTransportSession:request];
     }
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqualObjects(requests, self.sut.receivedRequests);
 }
 
 - (void)testThatResetRequestDiscardsPreviousRequests
 {
-    // given
+    // GIVEN
     ZMTransportRequest *req1 = [ZMTransportRequest requestGetFromPath:@"/this/path"];
     ZMTransportRequest *req2 = [ZMTransportRequest requestWithPath:@"/foo/bar" method:ZMMethodDELETE payload:nil];
     ZMTransportRequest *req3 = [ZMTransportRequest requestWithPath:@"/arrrr" method:ZMMethodPUT payload:@{@"name":@"Johnny"}];
@@ -366,11 +366,11 @@
     }
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self.sut resetReceivedRequests];
     [self sendRequestToMockTransportSession:req3];
     
-    // then
+    // THEN
     XCTAssertEqualObjects(self.sut.receivedRequests, @[req3]);
 }
 

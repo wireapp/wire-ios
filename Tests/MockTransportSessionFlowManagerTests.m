@@ -30,12 +30,12 @@
 
 - (void)testThatItReturnsAMockFlowManager;
 {
-    // when
+    // WHEN
     id flowManager1 = self.sut.flowManager;
     id flowManager2 = self.sut.flowManager;
     MockFlowManager *mockFlowManager = self.sut.mockFlowManager;
     
-    // then
+    // THEN
     XCTAssertNotNil(flowManager1);
     XCTAssertEqual(flowManager1, flowManager2);
     XCTAssertEqual((id) flowManager1, (id) mockFlowManager);
@@ -44,37 +44,37 @@
 
 - (void)testThatTheFlowManagerCanAquireFlows;
 {
-    // given
+    // GIVEN
     id flowManager = self.sut.flowManager;
     MockFlowManager *mockFlowManager = self.sut.mockFlowManager;
     NSString *identifier = [NSUUID createUUID].transportString;
     
-    // when
+    // WHEN
     XCTAssertTrue([(MockFlowManager *)flowManager acquireFlows:identifier]);
     
-    // then
+    // THEN
     XCTAssertEqualObjects(mockFlowManager.aquiredFlows, @[identifier]);
     XCTAssertEqualObjects(mockFlowManager.releasedFlows, @[]);
 }
 
 - (void)testThatTheFlowManagerCanReleaseFlows;
 {
-    // given
+    // GIVEN
     id flowManager = self.sut.flowManager;
     MockFlowManager *mockFlowManager = self.sut.mockFlowManager;
     NSString *identifier = [NSUUID createUUID].transportString;
     
-    // when
+    // WHEN
     [flowManager releaseFlows:identifier];
     
-    // then
+    // THEN
     XCTAssertEqualObjects(mockFlowManager.aquiredFlows, @[]);
     XCTAssertEqualObjects(mockFlowManager.releasedFlows, @[identifier]);
 }
 
 - (void)testThatItSendsAnEventWhenSimulatingSendingVideo_YES
 {
-    // given
+    // GIVEN
     __block  MockUser *user;
     __block  MockUser *selfUser;
     __block MockConversation *conversation;
@@ -90,11 +90,11 @@
     
     NSUInteger eventCount = self.sut.updateEvents.count;
     
-    // when
+    // WHEN
     [self.sut.mockFlowManager simulateOther:user isSendingVideo:YES conv:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertNotEqual(self.sut.updateEvents.count, eventCount);
     MockPushEvent *event =  self.sut.updateEvents.lastObject;
     NSDictionary *payload = @{@"participants": @{selfUser.identifier: @{@"state": @"idle", @"videod": @NO},
@@ -109,7 +109,7 @@
 
 - (void)testThatItSendsAnEventWhenSimulatingSendingVideo_NO
 {
-    // given
+    // GIVEN
     __block  MockUser *user;
     __block  MockUser *selfUser;
     __block MockConversation *conversation;
@@ -125,11 +125,11 @@
     
     NSUInteger eventCount = self.sut.updateEvents.count;
     
-    // when
+    // WHEN
     [self.sut.mockFlowManager simulateOther:user isSendingVideo:NO conv:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertNotEqual(self.sut.updateEvents.count, eventCount);
     MockPushEvent *event =  self.sut.updateEvents.lastObject;
     NSDictionary *payload = @{@"participants": @{selfUser.identifier: @{@"state": @"idle", @"videod": @NO},

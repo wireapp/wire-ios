@@ -61,7 +61,7 @@
 
 - (void)testThatRegistrationReturns400OnWrongMethod
 {
-    // given
+    // GIVEN
     ZMTransportRequestMethod methods[] = {ZMMethodHEAD, ZMMethodGET, ZMMethodDELETE, ZMMethodPUT};
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -70,10 +70,10 @@
                               };
     
     for(size_t i = 0; i < sizeof(methods)/sizeof(methods[0]); ++i) {
-        // when
+        // WHEN
         ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:methods[i]];
         
-        // then
+        // THEN
         XCTAssertEqual(response.HTTPStatus, 400);
         MockUser *user = [self userForEmail:payload[@"email"]];
         XCTAssertNil(user);
@@ -82,17 +82,17 @@
 
 - (void)testThatRegistrationReturns200AndCreatesAUserWithEmailIfAllRequiredUserFieldWherePresentOnAPost
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
                               @"password" : @"supersecure",
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
@@ -108,18 +108,18 @@
 
 - (void)testThatRegistrationWithEmailReturnsCookies
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
                               @"password" : @"supersecure",
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     NSURL *url = [NSURL URLWithString:@"/register" relativeToURL:self.sut.baseURL];
     
-    // then
+    // THEN
     NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:response.headers forURL:url];
     XCTAssertEqual(cookies.count, 1u);
     XCTAssertEqualObjects([(NSHTTPCookie *)cookies.firstObject name], @"zuid");
@@ -127,7 +127,7 @@
 
 - (void)testThatRegistrationWithEmailStoresCookiesIfPolicyIsAlways
 {
-    // given
+    // GIVEN
     [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -135,7 +135,7 @@
                               @"password" : @"supersecure",
                               };
     
-    // when
+    // WHEN
     __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
     // expect
@@ -147,7 +147,7 @@
 
 - (void)testThatRegistrationWithEmailDoesNotStoreCookiesIfPolicyIsNever
 {
-    // given
+    // GIVEN
     [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -155,7 +155,7 @@
                               @"password" : @"supersecure",
                               };
     
-    // when
+    // WHEN
     __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
     // expect
@@ -168,17 +168,17 @@
 
 - (void)testThatRegistrationCreatesAUserWithNoValidatedEmail
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
                               @"password" : @"supersecure",
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
@@ -191,23 +191,23 @@
 
 - (void)testThatRegistrationWithNotVerifiedEmailReturnsPayloadWithNoEmail
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
                               @"password" : @"supersecure",
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNil([[response.payload asDictionary] optionalStringForKey:@"email"]);
 }
 
 - (void)testThatRegistrationCreatesAUserWithValidatedEmailIfItsWhitelisted
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
@@ -218,11 +218,11 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     XCTAssertEqualObjects([[response.payload asDictionary] optionalStringForKey:@"email"], payload[@"email"]);
 
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
@@ -235,7 +235,7 @@
 
 - (void)testThattestThatARegisterEmailUserPendingValidationIsValidatedWhenWhitelisted
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
@@ -245,12 +245,12 @@
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     XCTAssertNotNil(response);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session whiteListEmail:payload[@"email"]];
     }];
     
-    // then
+    // THEN
     MockUser *user = [self userForEmail:payload[@"email"]];
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -262,7 +262,7 @@
 
 - (void)testThatRegistrationWithEmailReturns200AndCreatesAUserWithallFieldsOnAPost
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
@@ -270,10 +270,10 @@
                               @"accent_id" : @(2)
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
@@ -291,7 +291,7 @@
 
 - (void)testThatRegistrationReturns400IfSomeRequiredFieldAreMissing
 {
-    // given
+    // GIVEN
     NSDictionary *originalPayload = @{
                                       @"name" : @"Someone someone",
                                       @"email" : @"someone@example.com",
@@ -302,10 +302,10 @@
         NSMutableDictionary *dictionaryWithoutAKey = [dictionaryWithoutAKey mutableCopy];
         [dictionaryWithoutAKey removeObjectForKey:key];
         
-        // when
+        // WHEN
         ZMTransportResponse *response = [self responseForPayload:dictionaryWithoutAKey path:@"/register" method:ZMMethodPOST];
         
-        // then
+        // THEN
         XCTAssertEqual(response.HTTPStatus, 400);
         MockUser *user = [self userForEmail:originalPayload[@"email"]];
         XCTAssertNil(user);
@@ -314,7 +314,7 @@
 
 - (void)testThatRegistrationReturns409IfTheEmailIsAlreadyRegistered
 {
-    // given
+    // GIVEN
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"xxx-someone@example.com",
@@ -327,10 +327,10 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
     XCTAssertEqualObjects([response payloadLabel], @"key-exists");
 }
@@ -343,7 +343,7 @@
 
 - (void)testThatRegistrationWithPhoneNumberReturns201AndCreatesAUserIfItHasAValidPhoneVerificationCode
 {
-    // given
+    // GIVEN
     NSString *phone = @"+490000000";
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -352,10 +352,10 @@
                               };
     [self requestVerificationCodeForPhone:phone];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForPhone:phone];
     XCTAssertNotNil(user);
@@ -365,7 +365,7 @@
 
 - (void)testThatRegistrationWithPhoneNumberReturns201AndSetsTheCookie
 {
-    // given
+    // GIVEN
     NSString *phone = @"+490000000";
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -378,17 +378,17 @@
     __block NSData *cookieData;
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:ZM_ARG_SAVE(cookieData)];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNotNil(cookieData);
 }
 
 - (void)testThatRegistrationWithPhoneNumberReturns409ItThereIsAlreadyAUserWithThatPhone
 {
-    // given
+    // GIVEN
     NSString *phone = @"+490000000";
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -401,17 +401,17 @@
         user.phone = payload[@"phone"];
     }];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
     XCTAssertEqualObjects([response payloadLabel], @"key-exists");
 }
 
 - (void)testThatRegistrationWithPhoneNumberReturns404IfThereIsNoPhoneWithPendingVerificationCode
 {
-    // given
+    // GIVEN
     NSString *phone = @"+490000000";
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -419,16 +419,16 @@
                               @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
 }
 
 - (void)testThatRegistrationWithPhoneNumberReturns404IfTheVerificationCodeIsWrong
 {
-    // given
+    // GIVEN
     NSString *phone = @"+490000000";
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
@@ -437,16 +437,16 @@
                               };
     [self requestVerificationCodeForPhone:phone];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
 }
 
 - (void)testThatRegisteringWithInvitationCodeReturns200WithEmailRegistration;
 {
-    // given
+    // GIVEN
     NSString *email = @"volgaar@vicking.com";
     NSString *password = @"i.am.a.vicking.";
     NSString *inviteeName = @"Volgaar";
@@ -465,16 +465,16 @@
                               };
     
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
 }
 
 - (void)testThatRegisteringWithInvalidInvitationCodeReturns404CodeForEmailRegistration;
 {
-    // given
+    // GIVEN
     NSString *email = @"volgaar@vicking.com";
     NSString *password = @"i.am.a.vicking.";
     NSString *inviteeName = @"Volgaar";
@@ -492,16 +492,16 @@
                               @"invitation_code" : self.sut.invalidInvitationCode,
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
 }
 
 - (void)testThatRegisteringWithValidInvitationCodeReturns404CodeIfInvitationDoesNotExist;
 {
-    // given
+    // GIVEN
     NSString *email = @"volgaar@vicking.com";
     NSString *password = @"i.am.a.vicking.";
     NSString *inviteeName = @"Volgaar";
@@ -514,17 +514,17 @@
                               @"invitation_code" : self.sut.invitationCode,
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
 }
 
 
 - (void)testThatRegisteringWithInvitationCodeReturns200WithoutPhoneCode;
 {
-    // given
+    // GIVEN
     NSString *phone = @"+490000000";
     NSString *inviteeName = @"Volgaar";
 
@@ -541,16 +541,16 @@
                               };
     
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
 }
 
 - (void)testThatRegisteringWithInvalidInvitationCodeReturns400Code;
 {
-    // given
+    // GIVEN
     NSString *phone = @"+490000000";
     NSString *inviteeName = @"Volgaar";
     
@@ -566,10 +566,10 @@
                               @"invitation_code" : self.sut.invalidInvitationCode,
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
 }
 

@@ -29,7 +29,7 @@
 
 - (void)testThatItRespondsWithSearchResults
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     __block MockUser *user2;
     NSString *user2email = @"foo@example.com";
@@ -58,12 +58,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=AA&l=200&d=1"]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{
@@ -100,7 +100,7 @@
 
 - (void)testThatItLimitsTheNumberOfSearchResults
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     __block MockUser *user2;
     __block MockUser *user3;
@@ -132,12 +132,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=aa&l=3&d=1"]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{
@@ -192,7 +192,7 @@
 
 - (void)testThatItDoesNotReturnSelfUser
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"SelfUser"];
@@ -205,12 +205,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=User&l=200&d=1"]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{
@@ -235,7 +235,7 @@
 
 - (void)testThatItReturnsAllConnectedUsersWhenAskingForCommonContacts
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     __block MockUser *user2;
     __block MockUser *user3;
@@ -257,11 +257,11 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"common", user3.identifier]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{

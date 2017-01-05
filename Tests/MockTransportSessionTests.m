@@ -145,10 +145,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 - (void)testThatACreatedUserHasValidatedEmail
 {
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        // when
+        // WHEN
         MockUser *user = [session insertUserWithName:@"Mario"];
         
-        // then
+        // THEN
         XCTAssertTrue(user.isEmailValidated);
     }];
     WaitForAllGroupsToBeEmpty(0.5);

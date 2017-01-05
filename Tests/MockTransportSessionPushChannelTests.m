@@ -28,22 +28,22 @@
 
 - (void)testThatAfterSimulatePushChannelClosedTheDelegateIsInvoked
 {
-    // given
+    // GIVEN
     [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session simulatePushChannelClosed];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelDidCloseCount, 1u);
 }
 
 - (void)testThatAfterSimulatePushChannelOpenedTheDelegateIsInvoked
 {
-    // given
+    // GIVEN
     [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
     __block NSDictionary *payload;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -54,10 +54,10 @@
         payload = @{@"email" : selfUser.email, @"password" : selfUser.password};
     }];
     
-    // when
+    // WHEN
     [self responseForPayload:payload path:@"/login" method:ZMMethodPOST]; // this will simulate the user logging in
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelDidOpenCount, 1u);
 }
 
@@ -70,14 +70,14 @@
     WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
         selfUser.name = @"New";
         
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
 }
 
@@ -90,7 +90,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
     
-    // when
+    // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
         selfUser.name = @"New";
@@ -98,7 +98,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
 }
 
@@ -111,7 +111,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
     
-    // when
+    // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session simulatePushChannelClosed];
@@ -123,13 +123,13 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
 }
 
 - (void)testThatWeReceiveAPushEventWhenChangingSelfUserName
 {
-    // given
+    // GIVEN
     NSString *newName = @"NEWNEWNEW";
     [self createAndOpenPushChannel];
     
@@ -144,7 +144,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
     
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
         selfUser.name = newName;
         expectedUserPayload = @{
@@ -162,7 +162,7 @@
 
 - (void)testThatWeReceiveAPushEventWhenChangingSelfProfile
 {
-    // given
+    // GIVEN
     NSString *newValue = @"NEWNEWNEW";
     [self createAndOpenPushChannel];
     
@@ -177,7 +177,7 @@
     
     
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
         selfUser.email = [newValue stringByAppendingString:@"-email"];
         selfUser.phone = [newValue stringByAppendingString:@"-phone"];
@@ -199,7 +199,7 @@
 
 - (void)testThatWeReceiveAPushEventWhenCreatingAConnection
 {
-    // given
+    // GIVEN
     NSString *message = @"How're you doin'?";
     [self createAndOpenPushChannel];
     
@@ -215,7 +215,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
     
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         MockConnection *connection = [session insertConnectionWithSelfUser:selfUser toUser:otherUser];
         connection.message = message;
@@ -231,7 +231,7 @@
 
 - (void)testThatWeReceiveAPushEventWhenChangingAConnection
 {
-    // given
+    // GIVEN
     NSString *message = @"How're you doin'?";
     [self createAndOpenPushChannel];
     
@@ -247,7 +247,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     [self.pushChannelReceivedEvents removeAllObjects];
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
         connection.status = @"blocked";
         expectedConnectionPayload = connection.transportData;
@@ -262,13 +262,13 @@
 
 - (void)testThatWeReceivePushEventsWhenCreatingAConversationAndInsertingMessages
 {
-    // given
+    // GIVEN
     [self createAndOpenPushChannel];
     __block id<ZMTransportData> conversationPayload;
     __block id<ZMTransportData> event1Payload;
     __block id<ZMTransportData> event2Payload;
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         MockUser *selfUser = session.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
@@ -287,7 +287,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 4u);
     TestPushChannelEvent *createConversationEvent = [self popEventMatchingWithBlock:^BOOL(TestPushChannelEvent *event) {
         return event.type == ZMTUpdateEventConversationCreate;
@@ -313,7 +313,7 @@
 
 - (void)testThatWeReceiveAPushEventWhenChangingAConversationName
 {
-    // given
+    // GIVEN
     NSString *name = @"So much name";
     [self createAndOpenPushChannel];
     __block MockConversation *conversation;
@@ -328,13 +328,13 @@
     WaitForAllGroupsToBeEmpty(0.5);
     [self.pushChannelReceivedEvents removeAllObjects];
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [conversation changeNameByUser:session.selfUser name:name];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *nameChangeName = self.pushChannelReceivedEvents.firstObject;
     
@@ -343,12 +343,12 @@
 
 - (void)testThatWeReceiveAPushEventWhenCreatingAConversation
 {
-    // given
+    // GIVEN
     [self createAndOpenPushChannel];
     __block MockConversation *conversation;
     __block id<ZMTransportData> expectedData;
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         MockUser *selfUser = session.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
@@ -361,7 +361,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     
-    // then
+    // THEN
     XCTAssertGreaterThanOrEqual(self.pushChannelReceivedEvents.count, 1u);
     NSUInteger index = [self.pushChannelReceivedEvents indexOfObjectPassingTest:^BOOL(TestPushChannelEvent *event, NSUInteger idx ZM_UNUSED, BOOL *stop ZM_UNUSED) {
         return event.type == ZMTUpdateEventConversationCreate;
@@ -375,7 +375,7 @@
 
 - (void)testThatWeReceiveAPushEventWhenAddingAParticipantToAConversation
 {
-    // given
+    // GIVEN
     [self createAndOpenPushChannel];
     __block MockConversation *conversation;
     __block MockUser *user3;
@@ -391,13 +391,13 @@
     WaitForAllGroupsToBeEmpty(0.5);
     [self.pushChannelReceivedEvents removeAllObjects];
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [conversation addUsersByUser:session.selfUser addedUsers:@[user3]];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *memberAddEvent = self.pushChannelReceivedEvents.firstObject;
     
@@ -406,7 +406,7 @@
 
 - (void)testThatWeReceiveAPushEventWhenRemovingAParticipantFromAConversation
 {
-    // given
+    // GIVEN
     [self createAndOpenPushChannel];
     __block MockConversation *conversation;
     __block MockUser *user2;
@@ -420,13 +420,13 @@
     WaitForAllGroupsToBeEmpty(0.5);
     [self.pushChannelReceivedEvents removeAllObjects];
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [conversation removeUsersByUser:session.selfUser removedUser:user2];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *memberRemoveEvent = self.pushChannelReceivedEvents.firstObject;
     XCTAssertEqual(memberRemoveEvent.type, ZMTUpdateEventConversationMemberLeave);
@@ -451,11 +451,11 @@
     WaitForAllGroupsToBeEmpty(0.5);
     [self.pushChannelReceivedEvents removeAllObjects];
     
-    // when
+    // WHEN
     [self.sut sendIsTypingEventForConversation:conversation user:user2 started:YES];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *isTypingEvent = self.pushChannelReceivedEvents.firstObject;
     
@@ -469,7 +469,7 @@
 
 - (void)testThatThePushChannelIsOpenAfterALogin
 {
-    // given
+    // GIVEN
     [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
     
     __block MockUser *selfUser;
@@ -484,7 +484,7 @@
     [[(id) self.cookieStorage stub] setAuthenticationCookieData:OCMOCK_ANY];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = @"/login";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
@@ -492,7 +492,7 @@
                                                                } path:path method:ZMMethodPOST];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertTrue(self.sut.isPushChannelActive);
@@ -501,27 +501,27 @@
 
 - (void)testThatThePushChannelIsOpenAfterSimulateOpenPushChannel
 {
-    // when
+    // WHEN
     [self createAndOpenPushChannel];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelDidOpenCount, 1u);
     XCTAssertTrue(self.sut.isPushChannelActive);
 }
 
 - (void)testThatThePushChannelIsClosedAfterSimulateClosePushChannel
 {
-    // given
+    // GIVEN
     [self createAndOpenPushChannel];
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session simulatePushChannelClosed];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.pushChannelDidOpenCount, 1u);
     XCTAssertEqual(self.pushChannelDidCloseCount, 1u);
     XCTAssertFalse(self.sut.isPushChannelActive);
@@ -529,7 +529,7 @@
 
 - (NSArray *)createConversationAndReturnExpectedNotificationTypes
 {
-    // given
+    // GIVEN
     const NSInteger NUM_MESSAGES = 10;
     __block MockUser *selfUser;
     __block MockUser *user1;
@@ -580,13 +580,13 @@
 
 - (void)testThatItReturnsTheLastPushChannelEventsWhenRequestingNotifications
 {
-    // given
+    // GIVEN
     NSArray *expectedTypes = [self createConversationAndReturnExpectedNotificationTypes];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications" method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);
     NSArray* events = [[[response.payload asDictionary] arrayForKey:@"notifications" ] asDictionaries];
     XCTAssertEqual(events.count, expectedTypes.count);
@@ -605,14 +605,14 @@
 
 - (void)testThatItReturnsTheLastPushChannelEventsEvenIfRequestingSinceANonExistingOne
 {
-    // given
+    // GIVEN
     NSArray *expectedTypes = [self createConversationAndReturnExpectedNotificationTypes];
     
-    // when
+    // WHEN
     NSString *path = [NSString stringWithFormat:@"/notifications?since=%@", [NSUUID createUUID].transportString];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
     NSArray* events = [[[response.payload asDictionary] arrayForKey:@"notifications" ] asDictionaries];
     XCTAssertEqual(events.count, expectedTypes.count);
@@ -631,7 +631,7 @@
 
 - (void)testThatItReturnsOnlyTheNotificationsFollowingTheOneRequested
 {
-    // given
+    // GIVEN
     const NSUInteger eventsOffset = 4;
     NSArray *expectedTypes = [self createConversationAndReturnExpectedNotificationTypes];
     XCTAssertTrue(eventsOffset < expectedTypes.count);
@@ -641,11 +641,11 @@
     NSArray *allEvents = [[[response.payload asDictionary] arrayForKey:@"notifications" ] asDictionaries];
     NSUUID *startingEventID = [allEvents[eventsOffset-1] uuidForKey:@"id"];
     
-    // when
+    // WHEN
     NSString *path = [NSString stringWithFormat:@"/notifications?since=%@", startingEventID.transportString];
     response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     NSArray *expectedEvents = [allEvents subarrayWithRange:NSMakeRange(eventsOffset, allEvents.count - eventsOffset)];
     XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);
     NSArray *events = [[[response.payload asDictionary] arrayForKey:@"notifications" ] asDictionaries];
@@ -655,7 +655,7 @@
 
 - (void)testThatItReturnsTheLastUpdateEventWhenRequested
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     __block MockUser *user2;
@@ -680,10 +680,10 @@
         connection2.status = @"accepted";
     }];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications/last" method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);
     XCTAssertEqualObjects(response.payload, [self.sut.generatedPushEvents.lastObject transportData]);
 }

@@ -27,7 +27,7 @@
 
 - (void)testThatWeCanCreateAndRequestConnections;
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     __block MockUser *user2;
@@ -50,10 +50,10 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:@"/connections" method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if(!response) {
         return;
@@ -72,7 +72,7 @@
 
 - (void)testThatWeCanPostAConnection
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     NSUUID *user1Identifier = [NSUUID createUUID];
@@ -87,7 +87,7 @@
     
     NSString *message = @"Hello, World!";
     
-    // when
+    // WHEN
     NSDictionary *payload = @{
                               @"user": user1Identifier.transportString,
                               @"name": @"",
@@ -95,7 +95,7 @@
                               };
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
     __block NSDictionary *expectedPayload;
     
@@ -117,7 +117,7 @@
 
 - (void)testThatPostingAConnectionCreatesAConversation
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     NSUUID *user1Identifier = [NSUUID createUUID];
@@ -130,7 +130,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSDictionary *payload = @{
                               @"user": user1Identifier.transportString,
                               @"name": @"",
@@ -139,7 +139,7 @@
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
     
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -158,7 +158,7 @@
 
 - (void)testThatCanNotChangeConnectionFromCancelledToSent
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     NSUUID *user1Identifier = [NSUUID createUUID];
@@ -186,7 +186,7 @@
 
 - (void)testThatResendingACancelledConnectionDoesNotCreateConversation
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     NSUUID *user1Identifier = [NSUUID createUUID];
@@ -204,7 +204,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    // when
+    // WHEN
     NSDictionary *payload = @{
                               @"user": user1Identifier.transportString,
                               @"name": @"",
@@ -212,7 +212,7 @@
                               };
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -227,7 +227,7 @@
 
 - (void)testThatCreatesANewConnectionWhenRequested
 {
-    // given
+    // GIVEN
     NSUUID *userID = [NSUUID createUUID];
     NSUUID *selfUserID = [NSUUID createUUID];
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -245,10 +245,10 @@
                               @"message" : @"Wassup"
                               };
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {

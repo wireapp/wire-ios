@@ -25,26 +25,26 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
     
     func testThatItCallsTheTaskCreationCallback() {
         
-        // given
+        // GIVEN
         let request = ZMTransportRequest(getFromPath: "Foo")
         var identifier : ZMTaskIdentifier?
         request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
             identifier = $0
         })
         
-        // when
+        // WHEN
         sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
             return request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertNotNil(identifier)
     }
     
     func testThatItCanCancelARequestThatIsNotCompletedYet() {
         
-        // given
+        // GIVEN
         let request = ZMTransportRequest(getFromPath: "Foo")
         var requestCompleted = false
         var identifier : ZMTaskIdentifier?
@@ -62,27 +62,27 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
             return ResponseGenerator.ResponseNotCompleted
         }
         
-        // when
+        // WHEN
         sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
             return request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertFalse(requestCompleted)
         XCTAssertNotNil(identifier)
         
-        // when
+        // WHEN
         sut.mockedTransportSession().cancelTask(with: identifier!)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
+        // THEN
         XCTAssertTrue(requestCompleted)
     }
     
     func testThatItDoesNotCancelARequestThatIsAlreadyCompleted() {
         
-        // given
+        // GIVEN
         let request = ZMTransportRequest(getFromPath: "Foo")
         var requestCompletedCount = 0
         var identifier : ZMTaskIdentifier?
@@ -96,21 +96,21 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
             identifier = $0
             })
         
-        // when
+        // WHEN
         sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
             return request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertEqual(requestCompletedCount, 1)
         XCTAssertNotNil(identifier)
         
-        // when
+        // WHEN
         sut.mockedTransportSession().cancelTask(with: identifier!)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertEqual(requestCompletedCount, 1)
     }
     

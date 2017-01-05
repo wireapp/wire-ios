@@ -56,7 +56,7 @@
 
 - (void)testThatWhenSwitchingTheStateOfACallToJoinedWeSetTheStateAndReceiveTheRightPayloadBack
 {
-    // given
+    // GIVEN
     
     
     NSUUID *conversationUUID = [NSUUID createUUID];
@@ -85,10 +85,10 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -101,7 +101,7 @@
 - (void)testThatWhenSwitchingTheStateOfACallToIdleWeReceiveTheRightPayloadBack
 
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockConversation *oneOnOneConversation;
     __block MockUser *selfUser;
@@ -127,10 +127,10 @@
 
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -142,7 +142,7 @@
 
 - (void)testThatWhenJoiningAVideoCallWeGetTheCorrectPayloadBack
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockConversation *oneOnOneConversation;
     __block MockUser *selfUser;
@@ -170,10 +170,10 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -185,7 +185,7 @@
 
 - (void)testThatWhenSwitchingTheStateOfACallToAnInvalidStateWeReceiveA400
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         
@@ -203,17 +203,17 @@
                                      };
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
     XCTAssertNil(response.payload);
 }
 
 - (void)testThatWhenSwitchingTheStateOfACallWithoutSpecifyingTheStateItReturns400
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         
@@ -230,10 +230,10 @@
                                      };
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
     XCTAssertNil(response.payload);
 }
@@ -241,7 +241,7 @@
 
 - (void)testThatWhenSwitchingTheStateOfAConversationThatDoesNotExistItReturns404
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     
     NSDictionary *requestPayload = @{
@@ -251,17 +251,17 @@
                                      };
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
     XCTAssertNil(response.payload);
 }
 
 - (void)testThatWhenRequestingTheStateOfACallItReturnsIdleByDefault
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockUser *selfUser;
     __block MockUser *user1;
@@ -279,25 +279,25 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
 }
 
 - (void)testThatWhenRequestingTheStateOfACallItReturns404IfTheConversationDoesNotExist
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
     XCTAssertNil(response.payload);
 }
@@ -306,7 +306,7 @@
 
 - (void)testThatWhenSwitchingTheStateOfACallToJoinedAndRequestingTheStateWeReceiveTheRightPayloadBack
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     
     __block MockUser *selfUser;
@@ -326,17 +326,17 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call/state", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
 }
 
 - (void)testThatWeCanGetConversationsCall
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockUser *selfUser;
     __block MockUser *user1;
@@ -356,17 +356,17 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
 }
 
 - (void)testThatWeCanGetConversationsVideoCall
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockUser *selfUser;
     __block MockUser *user1;
@@ -400,17 +400,17 @@
                                       };
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, expectedPayload);
 }
 
 - (void)testThatSettingTheSelfStateOnAGroupConversationReturns200
 {
-    // given
+    // GIVEN
     
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockUser *selfUser;
@@ -448,17 +448,17 @@
                                               }
                                       },
                               };
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:expectedPayload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, expectedPayload);
 }
 
 - (void)testThatGettingTheSelfStateOnAGroupConversationReturns200
 {
-    // given
+    // GIVEN
     
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockUser *selfUser;
@@ -496,17 +496,17 @@
                                                       }
                                               },
                                       };
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, expectedPayload);
 }
 
 - (void)testThatGettingTheStateOnAGroupConversationDoesNotReturns400
 {
-    // given
+    // GIVEN
     
     NSUUID *conversationUUID = [NSUUID createUUID];
     
@@ -521,10 +521,10 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/call", conversationUUID.transportString];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNotNil(response.payload);
 }
@@ -532,7 +532,7 @@
 
 - (void)testThatAPushEventIsSentWhenSelfUserJoinsVoiceChannel
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     
     __block NSString *selfUserID;
@@ -554,7 +554,7 @@
     
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -564,7 +564,7 @@
     
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     NSDictionary *expectedParticipantsPayload =
     @{
       selfUserID : @{
@@ -593,7 +593,7 @@
 
 - (void)testThatAPushEventIsSentWhenOtherUserJoinsVoiceChannel
 {
-    // given
+    // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
     
     __block NSString *selfUserID;
@@ -615,7 +615,7 @@
     
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -625,7 +625,7 @@
     
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     NSDictionary *expectedParticipantsPayload =
     @{
       selfUserID : @{
