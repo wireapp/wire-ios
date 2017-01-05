@@ -23,74 +23,63 @@
 #import "MockTransportSession+Clients.h"
 #import "MockTransportSession+internal.h"
 #import "MockUserClient.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 @implementation MockTransportSession (Clients)
 
 // /clients
-- (ZMTransportResponse *)processClientsRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processClientsRequest:(ZMTransportRequest *)request;
 {
-    // POST /clients
-    if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 0) {
-        return [self processRegisterClientRequest:sessionRequest];
+    if ([request matchesWithPath:@"/clients" method:ZMMethodPOST]) {
+        return [self processRegisterClientWithPayload:[request.payload asDictionary]];
     }
-    // GET /clients
-    else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 0) {
-        return [self processGetClientsListRequest:sessionRequest];
+    else if ([request matchesWithPath:@"/clients" method:ZMMethodGET]) {
+        return [self processGetClientsListRequest];
     }
-    // GET /clients/id
-    else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 1) {
-        return [self processGetClientByIdRequest:sessionRequest];
+    else if ([request matchesWithPath:@"/clients/*" method:ZMMethodGET]) {
+        return [self processGetClientById:[request RESTComponentAtIndex:1]];
     }
-    // PUT /clients/id
-    else if (sessionRequest.method == ZMMethodPUT && sessionRequest.pathComponents.count == 1) {
-        return [self processUpdateClientRequest:sessionRequest];
+    else if ([request matchesWithPath:@"/clients/*" method:ZMMethodPUT]) {
+        return [self processUpdateClient:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
-    // DELETE /clients/id
-    else if (sessionRequest.method == ZMMethodDELETE && sessionRequest.pathComponents.count == 1) {
-        return [self processDeleteClientRequest:sessionRequest];
+    else if ([request matchesWithPath:@"/clients/*" method:ZMMethodDELETE]) {
+        return [self processDeleteClientRequest:[request RESTComponentAtIndex:1]];
     }
-    // GET /clients/id/prekeys
-    else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 2) {
-        return [self processClientPreKeysRequest:sessionRequest];
+    else if ([request matchesWithPath:@"/clients/*/prekeys" method:ZMMethodGET]) {
+        return [self processClientPreKeysForClient:[request RESTComponentAtIndex:1]];
     }
     return [self errorResponseWithCode:400 reason:@"invalid method"];
 }
 
 static NSInteger const MaxUserClientsAllowed = 2;
 
-// POST /clients
-- (ZMTransportResponse *)processRegisterClientRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processRegisterClientWithPayload:(NSDictionary *)payload
 {
-    ZMTransportResponse *invalidRequestResponse = [self errorResponseWithCode:400 reason:@"invalid method"];
-    ZMTransportResponse *toManyClientsRespone = [self errorResponseWithCode:403 reason:@"too-many-clients"];
-    ZMTransportResponse *passwordRequiredRespone = [self errorResponseWithCode:403 reason:@"missing-auth"];
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"UserClient"];
-    NSArray *existingClients = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"UserClient"];
+    NSArray *existingClients = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
     if (existingClients.count == MaxUserClientsAllowed) {
-        return toManyClientsRespone;
+        return [self errorResponseWithCode:403 reason:@"too-many-clients"];
     }
     
     BOOL selfClientExists = nil != [existingClients firstObjectMatchingWithBlock:^BOOL(MockUserClient *userClient){
         return userClient.user == self.selfUser;
     }];
     
-    NSDictionary *paylod = sessionRequest.payload.asDictionary;
-    
-    NSString *password = [paylod optionalStringForKey:@"password"];
+    NSString *password = [payload optionalStringForKey:@"password"];
     if (selfClientExists &&
         !(password != nil && [password isEqualToString:self.selfUser.password])) {
-        return passwordRequiredRespone;
+        return [self errorResponseWithCode:403 reason:@"missing-auth"];
     }
     
-    MockUserClient *newClient = [MockUserClient insertClientWithPayload:paylod contenxt:self.managedObjectContext];
+    MockUserClient *newClient = [MockUserClient insertClientWithPayload:payload contenxt:self.managedObjectContext];
     newClient.user = self.selfUser;
     
     if (newClient != nil) {
         return [ZMTransportResponse responseWithPayload:[newClient transportData] HTTPStatus:200 transportSessionError:nil];
     }
     
-    return invalidRequestResponse;
+    return [self errorResponseWithCode:400 reason:@"bad request"];
 }
 
 - (MockUserClient *)userClientByIdentifier:(NSString *)identifier
@@ -103,8 +92,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
     return userClients.firstObject;
 }
 
-// GET /clients
-- (ZMTransportResponse *)processGetClientsListRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processGetClientsListRequest
 {
     NSArray *payload = [self.selfUser.clients mapWithBlock:^id(MockUserClient *client) {
         return [client transportData];
@@ -112,10 +100,9 @@ static NSInteger const MaxUserClientsAllowed = 2;
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
 }
 
-// GET /clients/id
-- (ZMTransportResponse *)processGetClientByIdRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processGetClientById:(NSString *)clientId
 {
-    MockUserClient *userClient = [self userClientByIdentifier:sessionRequest.pathComponents[0]];
+    MockUserClient *userClient = [self userClientByIdentifier:clientId];
     if (userClient == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
@@ -123,22 +110,19 @@ static NSInteger const MaxUserClientsAllowed = 2;
     return [ZMTransportResponse responseWithPayload:userClient.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
-// GET /clients/id/prekeys
-- (ZMTransportResponse *)processClientPreKeysRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processClientPreKeysForClient:(NSString *__unused)clientId
 {
     return [self errorResponseWithCode:418 reason:@"Not implemented"];
 }
 
-// PUT /clients/id
-- (ZMTransportResponse *)processUpdateClientRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processUpdateClient:(NSString *__unused)clientId payload:(NSDictionary *__unused)payload;
 {
     return [self errorResponseWithCode:418 reason:@"Not implemented"];
 }
 
-// DELETE /clients/id
-- (ZMTransportResponse *)processDeleteClientRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processDeleteClientRequest:(NSString *)clientId;
 {
-    MockUserClient *userClient = [self userClientByIdentifier:sessionRequest.pathComponents[0]];
+    MockUserClient *userClient = [self userClientByIdentifier:clientId];
     if (userClient == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }

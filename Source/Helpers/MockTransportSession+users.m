@@ -24,6 +24,8 @@
 #import "MockTransportSession+internal.h"
 #import "MockUserClient.h"
 #import "MockPreKey.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 @implementation MockTransportSession (Users)
 
@@ -46,110 +48,140 @@
 }
 
 /// handles /users/
-- (ZMTransportResponse *)processUsersRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processUsersRequest:(ZMTransportRequest *)request;
 {
-    if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 1) && ![sessionRequest.pathComponents.lastObject isEqualToString:@"prekeys"]) {
-        NSString *userID = sessionRequest.pathComponents[0];
-        
-        NSFetchRequest *request = [MockUser sortedFetchRequest];
-        request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
-        
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-        
-        // check that I got all of them
-        if (users.count < 1) {
-            return [self errorResponseWithCode:404 reason:@"user not found"];
-        } else {
-            MockUser *user = users[0];
-            id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
-            return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
-        }
-    } else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 0)) {
-        NSString *justIDs = [sessionRequest.URL.query componentsSeparatedByString:@"="][1];
-        
-        // If we had a query like "ids=", justIDs would be "" and userIDs would become [""], i.e. contain
-        // one empty element. The assert makes sure that that doesn't happen, because it would be Very Bad™
-        RequireString(justIDs.length > 0, "Malformed query");
-        
-        NSArray *userIDs = [justIDs componentsSeparatedByString:@","];
-        userIDs = [self convertToLowercase:userIDs];
-        
-        NSFetchRequest *request = [MockUser sortedFetchRequest];
-        request.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", userIDs];
-        
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-        
-        // check that I got all of them
-        if (users.count != userIDs.count) {
-            return [self errorResponseWithCode:404 reason:@"user not found"];
-        }
-        
-        // output
-        NSMutableArray *resultArray = [NSMutableArray array];
-        for (MockUser *user in users) {
-            
-            id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
-            [resultArray addObject:payload];
-        }
-        return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
+    if ([request matchesWithPath:@"/users/*" method:ZMMethodGET]) {
+        return [self processUserIDRequest:[request RESTComponentAtIndex:1]];
     }
-    else if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 1 && [sessionRequest.pathComponents.lastObject isEqualToString:@"prekeys"]) {
-        return [self processUsersPreKeysRequest:sessionRequest];
+    else if ([request matchesWithPath:@"/users" method:ZMMethodGET]) {
+        return [self processUsersIDsRequest:request.queryParameters[@"ids"]];
     }
-    else if ((sessionRequest.method == ZMMethodGET || sessionRequest.method == ZMMethodHEAD)
-             && sessionRequest.pathComponents.count == 2
-             && [sessionRequest.pathComponents[0] isEqualToString:@"handles"] ) {
-        return [self processUserHandleRequest:sessionRequest.pathComponents[1] requestPath:sessionRequest.embeddedRequest.path];
+    else if ([request matchesWithPath:@"/users/prekeys" method:ZMMethodPOST]) {
+        return [self processUsersPreKeysRequestWithPayload:[request.payload asDictionary]];
     }
-    else if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 1 && [sessionRequest.pathComponents[0] isEqualToString:@"handles"]) {
-        return [self processUserHandleAvailabilityRequest:sessionRequest.payload];
+    else if ([request matchesWithPath:@"/users/handles/*" method:ZMMethodGET]
+             || [request matchesWithPath:@"/users/handles/*" method:ZMMethodHEAD]) {
+        return [self processUserHandleRequest:[request RESTComponentAtIndex:2] path:request.path];
+    }
+    else if ([request matchesWithPath:@"/users/handles" method:ZMMethodPOST]) {
+        return [self processUserHandleAvailabilityRequest:request.payload];
+    }
+    else if ([request matchesWithPath:@"/users/*/prekeys" method:ZMMethodGET]) {
+        return [self processSingleUserPreKeysRequest:[request RESTComponentAtIndex:1]];
+    }
+    else if ([request matchesWithPath:@"/users/*/prekeys/*" method:ZMMethodGET]) {
+        return [self processUserPreKeysRequest:[request RESTComponentAtIndex:1] client:[request RESTComponentAtIndex:3]];
+    }
+    else if ([request matchesWithPath:@"/users/*/clients" method:ZMMethodGET]) {
+        return [self getUserClientsForUser:[request RESTComponentAtIndex:1]];
     }
 
-    else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 2) {
-        return [self processSingleUserPreKeysRequest:sessionRequest];
-    }
-    else if (sessionRequest.method == ZMMethodGET && sessionRequest.pathComponents.count == 3) {
-        return [self processUserClientPreKeysRequest:sessionRequest];
-    }
-    else {
-        return [self errorResponseWithCode:400 reason:@"invalid-method"];
-    }
+    return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }
 
-// MARK: - Self
-/// handles /self
-- (ZMTransportResponse *)processSelfUserRequest:(TestTransportSessionRequest *)sessionRequest;
-{
-    if ((sessionRequest.method == ZMMethodGET)) {
-        NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:(id) [self.selfUser transportData]];
-        if (self.selfUser.trackingIdentifier != nil) {
-            payload[@"tracking_id"] = self.selfUser.trackingIdentifier;
+- (ZMTransportResponse *)getUserClientsForUser:(NSString *)userID {
+    
+    NSFetchRequest *request = [MockUser sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
+    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    
+    // check that I got all of them
+    if (users.count < 1) {
+        return [self errorResponseWithCode:404 reason:@"user not found"];
+    } else {
+        NSMutableArray *payload = [NSMutableArray array];
+        for (MockUserClient *client in [users.firstObject clients]) {
+            [payload addObject:client.transportData];
         }
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     }
-    else if(sessionRequest.method == ZMMethodPUT) {
-        if(sessionRequest.pathComponents.count == 0) {
-            return [self putSelfResponseForRequest:sessionRequest];
-        }
-        else if([@"phone" isEqualToString:sessionRequest.pathComponents.firstObject]) {
-            return [self putSelfPhone:sessionRequest];
-        }
-        else if([@"email" isEqualToString:sessionRequest.pathComponents.firstObject]) {
-            return [self putSelfEmail:sessionRequest];
-        }
-        else if([@"password" isEqualToString:sessionRequest.pathComponents.firstObject]) {
-            return [self putSelfPassword:sessionRequest];
-        }
-        else if([@"handle" isEqualToString:sessionRequest.pathComponents.firstObject]) {
-            return [self putSelfHandle:sessionRequest];
-        }
+}
+
+- (ZMTransportResponse *)processUserIDRequest:(NSString *)userID {
+    
+    NSFetchRequest *request = [MockUser sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
+    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    
+    // check that I got all of them
+    if (users.count < 1) {
+        return [self errorResponseWithCode:404 reason:@"user not found"];
+    } else {
+        MockUser *user = users[0];
+        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    }
+}
+
+- (ZMTransportResponse *)processUsersIDsRequest:(NSString *)IDs {
+    
+    // If we had a query like "ids=", justIDs would be "" and userIDs would become [""], i.e. contain
+    // one empty element. The assert makes sure that that doesn't happen, because it would be Very Bad™
+    RequireString(IDs.length > 0, "Malformed query");
+    
+    NSArray *userIDs = [IDs componentsSeparatedByString:@","];
+    userIDs = [self convertToLowercase:userIDs];
+    
+    NSFetchRequest *request = [MockUser sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", userIDs];
+    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    
+    // check that I got all of them
+    if (users.count != userIDs.count) {
+        return [self errorResponseWithCode:404 reason:@"user not found"];
+    }
+    
+    // output
+    NSMutableArray *resultArray = [NSMutableArray array];
+    for (MockUser *user in users) {
+        
+        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        [resultArray addObject:payload];
+    }
+    return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
+}
+
+
+// MARK: - Self
+/// handles /self
+- (ZMTransportResponse *)processSelfUserRequest:(ZMTransportRequest *)request;
+{
+    if ([request matchesWithPath:@"/self" method:ZMMethodGET]) {
+        return [self getSelfUser];
+    }
+    else if([request matchesWithPath:@"/self" method:ZMMethodPUT]) {
+        return [self putSelfResponseWithPayload:[request.payload asDictionary]];
+    }
+    else if([request matchesWithPath:@"/self/phone" method:ZMMethodPUT]) {
+        return [self putSelfPhoneWithPayload:[request.payload asDictionary]];
+    }
+    else if([request matchesWithPath:@"/self/email" method:ZMMethodPUT]) {
+        return [self putSelfEmailWithPayload:[request.payload asDictionary]];
+    }
+    else if([request matchesWithPath:@"/self/password" method:ZMMethodPUT]) {
+        return [self putSelfPasswordWithPayload:[request.payload asDictionary]];
+    }
+    else if([request matchesWithPath:@"/self/handle" method:ZMMethodPUT]) {
+        return [self putSelfHandleWithPayload:[request.payload asDictionary]];
     }
     return [self errorResponseWithCode:400 reason:@"invalid method"];
 }
 
-- (ZMTransportResponse *)putSelfPhone:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)getSelfUser
 {
-    NSString *phone = [sessionRequest.payload asDictionary][@"phone"];
+    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:(id) [self.selfUser transportData]];
+    if (self.selfUser.trackingIdentifier != nil) {
+        payload[@"tracking_id"] = self.selfUser.trackingIdentifier;
+    }
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+}
+
+- (ZMTransportResponse *)putSelfPhoneWithPayload:(NSDictionary *)payload
+{
+    NSString *phone = [payload asDictionary][@"phone"];
     if(phone == nil) {
         return [self errorResponseWithCode:400 reason:@"missing-key"];
     }
@@ -167,9 +199,9 @@
     }
 }
 
-- (ZMTransportResponse *)putSelfEmail:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)putSelfEmailWithPayload:(NSDictionary *)payload
 {
-    NSString *email = [sessionRequest.payload asDictionary][@"email"];
+    NSString *email = [payload asDictionary][@"email"];
     if(email == nil) {
         return [self errorResponseWithCode:400 reason:@"missing-key"];
     }
@@ -187,10 +219,10 @@
     
 }
 
-- (ZMTransportResponse *)putSelfPassword:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)putSelfPasswordWithPayload:(NSDictionary *)payload
 {
-    NSString *old_password = [sessionRequest.payload asDictionary][@"old_password"];
-    NSString *new_password = [sessionRequest.payload asDictionary][@"new_password"];
+    NSString *old_password = [payload asDictionary][@"old_password"];
+    NSString *new_password = [payload asDictionary][@"new_password"];
 
     if(new_password == nil) {
         return [self errorResponseWithCode:400 reason:@"missing-key"];
@@ -205,9 +237,9 @@
     }
 }
 
-- (ZMTransportResponse *)putSelfHandle:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)putSelfHandleWithPayload:(NSDictionary *)payload
 {
-    NSString *handle = [sessionRequest.payload asDictionary][@"handle"];
+    NSString *handle = [payload asDictionary][@"handle"];
     if(handle == nil) {
         return [self errorResponseWithCode:400 reason:@"missing-key"];
     }
@@ -226,9 +258,8 @@
     
 }
 
-- (ZMTransportResponse *)putSelfResponseForRequest:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)putSelfResponseWithPayload:(NSDictionary *)changedFields
 {
-    NSDictionary *changedFields = [sessionRequest.embeddedRequest.payload asDictionary];
     if(changedFields == nil) {
         return [self errorResponseWithCode:400 reason:@"missing-key"];
     }
@@ -246,9 +277,8 @@
 
 // MARK: - /users/prekeys
 
-- (ZMTransportResponse *)processUsersPreKeysRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processUsersPreKeysRequestWithPayload:(NSDictionary *)clientsMap;
 {
-    NSDictionary *clientsMap = sessionRequest.embeddedRequest.payload.asDictionary;
     NSFetchRequest *usersRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
     usersRequest.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", clientsMap.allKeys];
     NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:usersRequest];
@@ -299,22 +329,18 @@
     return userClientsKeys;
 }
 
-// /users/id/prekeys
-
-- (ZMTransportResponse *)processSingleUserPreKeysRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processSingleUserPreKeysRequest:(NSString *__unused)userID;
 {
     return [self errorResponseWithCode:400 reason:@"invalid method"];
 }
 
-// /users/id/prekeys/clientid
-
-- (ZMTransportResponse *)processUserClientPreKeysRequest:(TestTransportSessionRequest *__unused)sessionRequest;
+- (ZMTransportResponse *)processUserPreKeysRequest:(NSString *__unused)userID client:(NSString *__unused)clientID;
 {
     return [self errorResponseWithCode:400 reason:@"invalid method"];
 }
 
 // MARK: - Handles
-- (ZMTransportResponse *)processUserHandleRequest:(NSString *)handle requestPath:(NSString *)path;
+- (ZMTransportResponse *)processUserHandleRequest:(NSString *)handle path:(NSString *)path;
 {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];

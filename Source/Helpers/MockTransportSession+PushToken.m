@@ -24,21 +24,23 @@
 #import "MockTransportSession.h"
 #import "MockUser.h"
 #import "MockConnection.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 
 @implementation MockTransportSession (PushToken)
 
 /// handles /push/tokens/
-- (ZMTransportResponse *)processPushTokenRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processPushTokenRequest:(ZMTransportRequest *)sessionRequest;
 {
-    if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 0)) {
+    if ([sessionRequest matchesWithPath:@"/push/tokens" method:ZMMethodPOST]) {
         return [self processPostPushes:sessionRequest];
     }
     
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
-- (ZMTransportResponse *)processPostPushes:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processPostPushes:(ZMTransportRequest *)sessionRequest;
 {
     NSDictionary *payload = [sessionRequest.payload asDictionary];
     if (payload != nil) {

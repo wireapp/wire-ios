@@ -230,24 +230,6 @@
     return response;
 }
 
-- (void)testThatItAddsAClientMessage
-{
-    NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
-    NSDictionary *payload = @{
-                              @"content" : base64Content
-                              };
-    
-    NSString *path = @"client-messages";
-    ZMTransportResponse *response = [self responseForAddingMessageWithPayload:payload path:path expectedEventType:@"conversation.client-message-add"];
-    if (response != nil) {
-        NSString *data = [[response.payload asDictionary] stringForKey:@"data"];
-        XCTAssertNotNil(data);
-        XCTAssertEqualObjects(data, base64Content);
-    }
-}
-
 - (void)testThatItReturnsMissingClientsWhenReceivingOTRMessage
 {
     // given
@@ -1472,8 +1454,12 @@
         XCTAssertEqualObjects(previewEvent.type, @"conversation.asset-add");
         XCTAssertEqual(previewEvent.conversation, conversation);
         if (isInline) {
-            NSData *recievedData = [[NSData alloc] initWithBase64EncodedString:previewEvent.data[@"data"] options:0];
-            AssertEqualData(recievedData, data);
+            NSString *dataString = previewEvent.data[@"data"];
+            XCTAssertNotNil(dataString);
+            if (dataString != nil) {
+                NSData *recievedData = [[NSData alloc] initWithBase64EncodedString:previewEvent.data[@"data"] options:0];
+                AssertEqualData(recievedData, data);
+            }
         }
         else {
             XCTAssertEqualObjects(previewEvent.data[@"data"], [NSNull null]);

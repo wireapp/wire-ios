@@ -22,22 +22,6 @@
 @class ZMTransportRequest;
 @class MockPushEvent;
 
-@interface TestTransportSessionRequest : NSObject
-
-@property (nonatomic) ZMTransportRequest *embeddedRequest;
-
-@property (nonatomic, readonly) NSURL *URL;
-@property (nonatomic, copy) NSDictionary *query;
-@property (nonatomic, readonly) ZMTransportRequestMethod method;
-@property (nonatomic, copy, readonly) id <ZMTransportData> payload;
-@property (nonatomic, readonly) NSArray<ZMMultipartBodyItem *> *multipartBodyItems;
-
-@property (nonatomic, copy) NSArray *pathComponents;
-@property (nonatomic, readonly, copy) NSString *binaryDataTypeAsMIME;
-
-@end
-
-
 
 @interface MockTransportSession (Internal)
 
@@ -58,7 +42,7 @@
 @property (nonatomic, readonly) NSMutableSet *phoneNumbersWaitingForVerificationForLogin;
 @property (nonatomic, readonly) NSMutableSet *phoneNumbersWaitingForVerificationForProfile;
 @property (atomic, weak, readonly) id<ZMPushChannelConsumer> pushChannelConsumer;
-
+@property (atomic) BOOL clientCompletedLogin;
 
 @end
 

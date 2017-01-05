@@ -30,6 +30,8 @@
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
 #import "MockFlowManager.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransport";
@@ -42,179 +44,137 @@ static NSString * const IdleString = @"idle";
 //TODO: filter requests using array of NSPredicates
 
 // handles /conversations
-- (ZMTransportResponse *)processConversationsRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processConversationsRequest:(ZMTransportRequest *)request;
 {
-    // GET /conversations
-    if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 0)) {
-        return [self processConversationsGetConversationsRequest:sessionRequest];
+    if ([request matchesWithPath:@"/conversations" method:ZMMethodGET]) {
+        return [self processConversationsGetConversationsIDs:request.queryParameters[@"ids"]];
     }
-    // GET /conversations/ids
-    else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 1) && [sessionRequest.pathComponents[0] isEqualToString:@"ids"])
+    else if ([request matchesWithPath:@"/conversations/ids" method:ZMMethodGET])
     {
-        return [self processIDsRequest:sessionRequest];
+        return [self processConversationIDsQuery:request.queryParameters];
     }
-    // GET /conversations/<id>
-    else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 1))
+    else if ([request matchesWithPath:@"/conversations/*" method:ZMMethodGET])
     {
-        return [self processConversationsGetConversationRequest:sessionRequest];
+        return [self processConversationsGetConversation:[request RESTComponentAtIndex:1]];
     }
-    // POST /conversations
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 0))
+    else if ([request matchesWithPath:@"/conversations" method:ZMMethodPOST])
     {
-        return [self processConversationsPostConversationsRequest:sessionRequest];
+        return [self processConversationsPostConversationsRequest:request];
     }
-    // POST /conversations/<id>/client-messages
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"client-messages"])
+    else if ([request matchesWithPath:@"/conversations/*/otr/messages" method:ZMMethodPOST])
     {
-        return [self processAddGenericMessageToConversationWithRequest:sessionRequest];
-    }
-    // POST /conversations/<id>/otr/messages
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 3) && [sessionRequest.pathComponents[1] isEqualToString:@"otr"] && [sessionRequest.pathComponents.lastObject isEqual:@"messages"])
-    {
-        if (sessionRequest.embeddedRequest.binaryData != nil) {
-            return [self processAddOTRMessageToConversationWithRequestWithProtobuffData:sessionRequest];
+        if (request.binaryData != nil) {
+            return [self processAddOTRMessageToConversation:[request RESTComponentAtIndex:1]
+                                          withProtobuffData:request.binaryData
+                                                      query:request.queryParameters];
         }
         else {
-            return [self processAddOTRMessageToConversationWithRequest:sessionRequest];
+            return [self processAddOTRMessageToConversation:[request RESTComponentAtIndex:1]
+                                                    payload:[request.payload asDictionary]
+                                                      query:request.queryParameters];
         }
     }
-    // POST /conversations/<id>/members
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"members"])
+    else if ([request matchesWithPath:@"/conversations/*/members" method:ZMMethodPOST])
     {
-        return [self processAddMembersToConversationWithRequest:sessionRequest];
+        return [self processAddMembersToConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
-    // PUT /conversations/<id>
-    else if ((sessionRequest.method == ZMMethodPUT) && (sessionRequest.pathComponents.count == 1))
+    else if ([request matchesWithPath:@"/conversations/*" method:ZMMethodPUT])
     {
-        return [self processPutConversationWithRequest:sessionRequest];
+        return [self processPutConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
-    // PUT /conversations/<id>/self
-    else if ((sessionRequest.method == ZMMethodPUT) && (sessionRequest.pathComponents.count == 2) && ([sessionRequest.pathComponents[1] isEqualToString:@"self"]))
+    else if ([request matchesWithPath:@"/conversations/*/self" method:ZMMethodPUT])
     {
-        return [self processPutConversationSelfWithRequest:sessionRequest];
+        return [self processPutConversationSelf:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
-    // DELETE /conversations/<id>/members/<userid>
-    else if ((sessionRequest.method == ZMMethodDELETE) && (sessionRequest.pathComponents.count == 3))
+    else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMMethodDELETE])
     {
-        return [self processDeleteConversationMemberWithRequest:sessionRequest];
+        return [self processDeleteConversation:[request RESTComponentAtIndex:1] member:[request RESTComponentAtIndex:3]];
     }
-    // PUT /conversations/<id>/call/state
-    else if ((sessionRequest.method == ZMMethodPUT) && (sessionRequest.pathComponents.count == 3) && [sessionRequest.pathComponents[1] isEqualToString:@"call"] &&
-             [sessionRequest.pathComponents[2] isEqualToString:@"state"])
+    else if ([request matchesWithPath:@"/conversations/*/call/state" method:ZMMethodPUT])
     {
-        return [self processCallStateChange:sessionRequest];
+        return [self processCallStateChange:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
-    // GET /conversations/<id>/call/state
-    else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 3) && [sessionRequest.pathComponents[1] isEqualToString:@"call"] &&
-             [sessionRequest.pathComponents[2] isEqualToString:@"state"])
+    else if ([request matchesWithPath:@"/conversations/*/call/state" method:ZMMethodGET])
     {
-        return [self processCallStateRequest:sessionRequest];
+        return [self processConversationCallState:[request RESTComponentAtIndex:1]];
     }
-    // GET /conversations/<id>/call
-    else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"call"])
+    else if ([request matchesWithPath:@"/conversations/*/call" method:ZMMethodGET])
     {
-        return [self processCallRequest:sessionRequest];
+        return [self processConversationCallRequest:[request RESTComponentAtIndex:1]];
     }
-    // POST /conversations/<id>/knock
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"knock"])
+    else if ([request matchesWithPath:@"/conversations/*/typing" method:ZMMethodPOST])
     {
-        return [self processKnockRequest:sessionRequest];
+        return [self processConversationTyping:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
-    // POST /conversations/<id>/hot-knock
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"hot-knock"])
+    else if ([request matchesWithPath:@"/conversations/*/assets/*" method:ZMMethodGET])
     {
-        return [self processHotKnockRequest:sessionRequest];
+        return [self processAssetRequest:request];
     }
-    // POST /conversations/<id>/typing
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"typing"])
+    else if ([request matchesWithPath:@"/conversations/*/otr/assets" method:ZMMethodPOST])
     {
-        return [self processTypingRequest:sessionRequest];
+        return [self processAssetRequest:request];
     }
-    // POST /conversations/<id>/assets
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 2) && [sessionRequest.pathComponents[1] isEqualToString:@"assets"])
+    else if ([request matchesWithPath:@"/conversations/*/assets" method:ZMMethodPOST])
     {
-        return [self processAssetRequest:sessionRequest];
+        return [self processAssetRequest:request];
     }
-    // GET /conversations/<id>/assets/<id>
-    else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 3) && [sessionRequest.pathComponents[1] isEqualToString:@"assets"])
+    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodPOST])
     {
-        return [self processAssetRequest:sessionRequest];
+        return [self processAssetRequest:request];
     }
-    // POST /conversations/<id>/otr/assets
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 3) && [sessionRequest.pathComponents[2] isEqual:@"assets"])
+    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodGET])
     {
-        return [self processAssetRequest:sessionRequest];
-    }
-    // POST /conversations/<id>/otr/assets/<assetID>
-    else if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 4) && [sessionRequest.pathComponents[2] isEqualToString:@"assets"])
-    {
-        return [self processAssetRequest:sessionRequest];
-    }
-    // GET /conversations/<id>/otr/assets/<assetID>
-    else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 4) && [sessionRequest.pathComponents[2] isEqualToString:@"assets"])
-    {
-        return [self processAssetRequest:sessionRequest];
+        return [self processAssetRequest:request];
     }
 
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 
 }
 
-// POST /conversations/<id>/client-messages
-- (ZMTransportResponse *)processAddGenericMessageToConversationWithRequest:(TestTransportSessionRequest *)sessionRequest;
-{
-    NSAssert(self.selfUser != nil, @"No self user in mock transport session");
-    
-    NSString *content = [sessionRequest.payload.asDictionary stringForKey:@"content"];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithBase64String:content];
-    
-    __unused NSUUID *nonce = [NSUUID uuidWithTransportString:message.messageId];
-    NSAssert(nonce != nil, @"");
-    
-    MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
-    MockEvent *event = [conversation insertClientMessageFromUser:self.selfUser data:message.data];
-    return [ZMTransportResponse responseWithPayload:[event transportData] HTTPStatus:201 transportSessionError:nil];
-}
 
 // POST /conversations/<id>/otr/messages
-- (ZMTransportResponse *)processAddOTRMessageToConversationWithRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processAddOTRMessageToConversation:(NSString *)conversationId payload:(NSDictionary *)payload query:(NSDictionary *)query;
 {
     NSAssert(self.selfUser != nil, @"No self user in mock transport session");
     
-    MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     NSAssert(conversation, @"No conv found");
 
-    NSDictionary *recipients = [sessionRequest.payload asDictionary][@"recipients"];
-    MockUserClient *senderClient = [self otrMessageSender:sessionRequest.payload.asDictionary];
+    NSDictionary *recipients = payload[@"recipients"];
+    MockUserClient *senderClient = [self otrMessageSender:payload];
     if (senderClient == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
 
-    NSString *onlyForUser = sessionRequest.query[@"report_missing"];
+    NSString *onlyForUser = query[@"report_missing"];
     NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
     NSDictionary *redundantClients = [self redundantClients:recipients conversation:conversation];
     
-    NSDictionary *payload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
+    NSDictionary *responsePayload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
     
     NSInteger statusCode = 412;
     if (missedClients.count == 0) {
         statusCode = 201;
-        [self insertOTRMessageEventsToConversation:conversation requestPayload:sessionRequest.payload.asDictionary createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData) {
+        [self insertOTRMessageEventsToConversation:conversation requestPayload:payload createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData) {
             return [conversation insertOTRMessageFromClient:senderClient toClient:recipient data:messageData];
         }];
     }
     
-    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil];
 }
 
-- (ZMTransportResponse *)processAddOTRMessageToConversationWithRequestWithProtobuffData:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processAddOTRMessageToConversation:(NSString *)conversationID
+                                          withProtobuffData:(NSData *)binaryData
+                                                      query:(NSDictionary *)query;
 {
     NSAssert(self.selfUser != nil, @"No self user in mock transport session");
     
-    MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
-    NSAssert(conversation, @"No conv found");
+    MockConversation *conversation = [self fetchConversationWithIdentifier:conversationID];
+    if (conversation == nil) {
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+    }
     
-    ZMNewOtrMessage *otrMetaData = (ZMNewOtrMessage *)[[[ZMNewOtrMessage builder] mergeFromData:sessionRequest.embeddedRequest.binaryData] build];
+    ZMNewOtrMessage *otrMetaData = (ZMNewOtrMessage *)[[[ZMNewOtrMessage builder] mergeFromData:binaryData] build];
     if (otrMetaData == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
@@ -224,7 +184,7 @@ static NSString * const IdleString = @"idle";
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    NSString *onlyForUser = sessionRequest.query[@"report_missing"];
+    NSString *onlyForUser = query[@"report_missing"];
     NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetaData.recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
     NSDictionary *redundantClients = [self redundantClientsFromRecipients:otrMetaData.recipients conversation:conversation];
     
@@ -241,15 +201,14 @@ static NSString * const IdleString = @"idle";
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
 }
 
-// PUT /conversations/<id>
-- (ZMTransportResponse *)processPutConversationWithRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processPutConversation:(NSString *)conversationId payload:(NSDictionary *)payload;
 {
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    NSString *newName = [[sessionRequest.payload asDictionary] stringForKey:@"name"];
+    NSString *newName = [payload optionalStringForKey:@"name"];
     
     if(newName == nil) {
         return [ZMTransportResponse responseWithPayload:@{@"error":@"no name in payload"} HTTPStatus:400 transportSessionError:nil];
@@ -286,15 +245,12 @@ static NSString * const IdleString = @"idle";
     return archivedRef != nil;
 }
 
-// PUT /conversations/<id>/self
-- (ZMTransportResponse *)processPutConversationSelfWithRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processPutConversationSelf:(NSString *)conversationId payload:(NSDictionary *)payload;
 {
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
-    
-    NSDictionary *payload = [sessionRequest.payload asDictionary];
     
     BOOL hadOTRMuted = [self updateConversation:conversation isOTRMutedFromPutSelfConversationPayload:payload];
     BOOL hadOTRArchived = [self updateConversation:conversation isOTRArchivedFromPutSelfConversationPayload:payload];
@@ -306,16 +262,15 @@ static NSString * const IdleString = @"idle";
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
-// GET /conversations
-- (ZMTransportResponse *)processConversationsGetConversationsRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processConversationsGetConversationsIDs:(NSString *)ids;
 {
     NSFetchRequest *request = [MockConversation sortedFetchRequest];
     NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert:request];
     NSMutableArray *data = [NSMutableArray array];
     
-    if (sessionRequest.query[@"ids"] != nil) {
+    if (ids != nil) {
         
-        NSSet *requestedIDs = [NSSet setWithArray:[sessionRequest.query[@"ids"] componentsSeparatedByString:@","]];
+        NSSet *requestedIDs = [NSSet setWithArray:[ids componentsSeparatedByString:@","]];
         
         for (MockConversation *conversation in conversations) {
             if([requestedIDs containsObject:conversation.identifier]) {
@@ -333,10 +288,9 @@ static NSString * const IdleString = @"idle";
 
 }
 
-// GET /conversations/<id>
-- (ZMTransportResponse *)processConversationsGetConversationRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processConversationsGetConversation:(NSString *)conversationId;
 {
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
@@ -344,11 +298,10 @@ static NSString * const IdleString = @"idle";
     return [ZMTransportResponse responseWithPayload:conversation.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
-// POST /conversations
-- (ZMTransportResponse *)processConversationsPostConversationsRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processConversationsPostConversationsRequest:(ZMTransportRequest *)request;
 {
-    NSArray *participantIDs = sessionRequest.payload[@"users"];
-    NSString *name = sessionRequest.payload[@"name"];
+    NSArray *participantIDs = request.payload[@"users"];
+    NSString *name = request.payload[@"name"];
     
     NSMutableArray *otherUsers = [NSMutableArray array];
     
@@ -372,27 +325,25 @@ static NSString * const IdleString = @"idle";
 }
 
 
-// DELETE /conversations/<id>/members/<userid>
-- (ZMTransportResponse *)processDeleteConversationMemberWithRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processDeleteConversation:(NSString *)conversationId member:(NSString *)memberId;
 {
-    MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     if (conversation == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    MockUser *user = [self fetchUserWithIdentifier:sessionRequest.pathComponents[2]];
+    MockUser *user = [self fetchUserWithIdentifier:memberId];
     MockEvent *event = [conversation removeUsersByUser:self.selfUser removedUser:user];
     
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
 
-// POST /conversations/<id>/members
-- (ZMTransportResponse *)processAddMembersToConversationWithRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processAddMembersToConversation:(NSString *)conversationId payload:(NSDictionary *)payload;
 {
-    MockConversation *conversation = [self fetchConversationWithIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     
-    NSArray *addedUserIDs = sessionRequest.payload[@"users"];
+    NSArray *addedUserIDs = payload[@"users"];
     NSMutableArray *addedUsers = [NSMutableArray array];
     MockUser *selfUser = self.selfUser;
     NSAssert(selfUser != nil, @"Self not found");
@@ -433,13 +384,12 @@ static NSString * const IdleString = @"idle";
     return conversations.count > 0 ? conversations[0] : nil;
 }
 
-// PUT /conversations/<id>/call/state
-- (ZMTransportResponse *)processCallStateChange:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)processCallStateChange:(NSString *)conversationId payload:(NSDictionary *)payload
 {
-    NSDictionary *selfState = [sessionRequest.payload asDictionary][@"self"];
+    NSDictionary *selfState = payload[@"self"];
     NSString *incomingState = selfState[@"state"];
     
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
     
     BOOL isJoining = [incomingState isEqualToString:JoinedString];
     BOOL isSendingVideo = [selfState[@"videod"] boolValue];
@@ -515,11 +465,9 @@ static NSString * const IdleString = @"idle";
     return response;
 }
 
-// GET /conversations/<id>/call/state
-- (ZMTransportResponse *)processCallStateRequest:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)processConversationCallState:(NSString *)conversationId
 {
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
-    NOT_USED(sessionRequest);
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
     
     NSInteger statusCode;
     NSDictionary *payload;
@@ -538,12 +486,9 @@ static NSString * const IdleString = @"idle";
     return response;
 }
 
-// GET /conversations/<id>/call
-- (ZMTransportResponse *)processCallRequest:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)processConversationCallRequest:(NSString *)conversationId
 {
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
-    NOT_USED(sessionRequest);
-    
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
     
     NSInteger statusCode;
     NSDictionary *payload;
@@ -578,77 +523,26 @@ static NSString * const IdleString = @"idle";
              };
 }
 
-
-// POST /conversations/<id>/knock
-- (ZMTransportResponse *)processKnockRequest:(TestTransportSessionRequest *)sessionRequest
-{
-    NSInteger statusCode;
-    NSDictionary *payload;
-    
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
-    if (conversation == nil) {
-        statusCode = 404;
-    }
-    else {
-        statusCode = 201;
-        NSUUID *nonce = [NSUUID uuidWithTransportString:sessionRequest.payload[@"nonce"]];
-        MockEvent *event = [conversation insertKnockFromUser:self.selfUser nonce:nonce];
-        payload = [event transportData].asDictionary;
-    }
-    
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
-    return response;
-}
-
-
-// POST /conversations/<id>/hot-knock
-- (ZMTransportResponse *)processHotKnockRequest:(TestTransportSessionRequest *)sessionRequest
-{
-    NSInteger statusCode;
-    NSDictionary *payload;
-    
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
-    if (conversation == nil) {
-        statusCode = 404;
-    }
-    else {
-        statusCode = 201;
-        NSUUID *nonce = [NSUUID uuidWithTransportString:sessionRequest.payload[@"nonce"]];
-        MockEvent *event = [conversation insertHotKnockFromUser:self.selfUser nonce:nonce ref:@""];
-        payload = [event transportData].asDictionary;
-    }
-    
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
-    return response;
-}
-
 // POST /conversations/<id>/typing
-- (ZMTransportResponse *)processTypingRequest:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)processConversationTyping:(NSString *)conversationId payload:(NSDictionary *)payload
 {
-    NSInteger statusCode;
-    NSDictionary *payload;
-    
-    MockConversation *conversation = [self conversationByIdentifier:sessionRequest.pathComponents[0]];
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
-        statusCode = 404;
-    }
-    else {
-        statusCode = 201;
-        NSDictionary *requestPayload = [sessionRequest.payload asDictionary];
-        BOOL isTyping = [[requestPayload optionalStringForKey:@"status"] isEqualToString:@"started"];
-        MockEvent *event = [conversation insertTypingEventFromUser:self.selfUser isTyping:isTyping];
-        payload = [event transportData].asDictionary;
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
-    return response;
+    BOOL isTyping = [[payload optionalStringForKey:@"status"] isEqualToString:@"started"];
+    MockEvent *event = [conversation insertTypingEventFromUser:self.selfUser isTyping:isTyping];
+    NSDictionary *responsePayload = [event transportData].asDictionary;
+    
+    return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:201 transportSessionError:nil];
 }
 
 // GET /conversations/ids
-- (ZMTransportResponse *)processIDsRequest:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)processConversationIDsQuery:(NSDictionary *)query
 {
-    NSString *sizeString = [sessionRequest.query optionalStringForKey:@"size"];
-    NSUUID *start = [sessionRequest.query optionalUuidForKey:@"start"];
+    NSString *sizeString = [query optionalStringForKey:@"size"];
+    NSUUID *start = [query optionalUuidForKey:@"start"];
     
     NSFetchRequest *request = [MockConversation sortedFetchRequest];
     NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert:request];
