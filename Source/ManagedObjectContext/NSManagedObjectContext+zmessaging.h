@@ -32,7 +32,7 @@
 + (BOOL)needsToPrepareLocalStoreAtURL:(NSURL *)storeURL;
 
 /// Creates persistent store coordinator and migrates store if needed
-/// @param sync defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
+/// @param synchronous defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
 ///         synchronously when @c +needsToPrepareLocalStore is YES)
 /// @param storeURL where database should be created / moved to
 /// @param backupCorruptedDatabase if true, will copy a corrupted database to another folder for later investigation
