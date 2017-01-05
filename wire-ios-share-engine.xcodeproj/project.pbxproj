@@ -69,27 +69,6 @@
 			remoteGlobalIDString = 5470D3E71D76E1B000FDE440;
 			remoteInfo = "wire-ios-share-engine";
 		};
-		CE7FBFB41DFFF3B500E1C4C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CE7FBFAE1DFFF3B500E1C4C9 /* zmessaging-cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 549815931A43232400A7CE2E;
-			remoteInfo = "zmessaging-ios";
-		};
-		CE7FBFB61DFFF3B500E1C4C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CE7FBFAE1DFFF3B500E1C4C9 /* zmessaging-cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3E1860C3191A649D000FE027;
-			remoteInfo = "zmessaging-iOS-Tests";
-		};
-		CE7FBFB81DFFF3B500E1C4C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CE7FBFAE1DFFF3B500E1C4C9 /* zmessaging-cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3E186088191A56F6000FE027;
-			remoteInfo = "zmessaging Test Host";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -169,7 +148,6 @@
 		CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireRequestStrategy.framework; path = Carthage/Build/iOS/WireRequestStrategy.framework; sourceTree = "<group>"; };
 		CE7FBFAA1DFEE95F00E1C4C9 /* ZMTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTesting.framework; path = Carthage/Build/iOS/ZMTesting.framework; sourceTree = "<group>"; };
 		CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
-		CE7FBFAE1DFFF3B500E1C4C9 /* zmessaging-cocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "zmessaging-cocoa.xcodeproj"; path = "../wire-ios-sync-engine/zmessaging-cocoa.xcodeproj"; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
 		CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoopTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -223,7 +201,6 @@
 		5470D3DE1D76E1B000FDE440 = {
 			isa = PBXGroup;
 			children = (
-				CE7FBFAE1DFFF3B500E1C4C9 /* zmessaging-cocoa.xcodeproj */,
 				5470D42B1D770CEE00FDE440 /* LICENSE */,
 				5470D42C1D770CEE00FDE440 /* README.md */,
 				5470D4021D76E2A400FDE440 /* Resources */,
@@ -337,16 +314,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		CE7FBFAF1DFFF3B500E1C4C9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CE7FBFB51DFFF3B500E1C4C9 /* zmessaging.framework */,
-				CE7FBFB71DFFF3B500E1C4C9 /* zmessaging-iOS-Tests.xctest */,
-				CE7FBFB91DFFF3B500E1C4C9 /* zmessaging Test Host.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -431,12 +398,6 @@
 			mainGroup = 5470D3DE1D76E1B000FDE440;
 			productRefGroup = 5470D3E91D76E1B000FDE440 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = CE7FBFAF1DFFF3B500E1C4C9 /* Products */;
-					ProjectRef = CE7FBFAE1DFFF3B500E1C4C9 /* zmessaging-cocoa.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				5470D3E71D76E1B000FDE440 /* wire-ios-share-engine */,
@@ -444,30 +405,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		CE7FBFB51DFFF3B500E1C4C9 /* zmessaging.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = zmessaging.framework;
-			remoteRef = CE7FBFB41DFFF3B500E1C4C9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CE7FBFB71DFFF3B500E1C4C9 /* zmessaging-iOS-Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "zmessaging-iOS-Tests.xctest";
-			remoteRef = CE7FBFB61DFFF3B500E1C4C9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CE7FBFB91DFFF3B500E1C4C9 /* zmessaging Test Host.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "zmessaging Test Host.app";
-			remoteRef = CE7FBFB81DFFF3B500E1C4C9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5470D3E61D76E1B000FDE440 /* Resources */ = {
