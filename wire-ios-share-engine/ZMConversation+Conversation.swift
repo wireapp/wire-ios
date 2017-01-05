@@ -23,9 +23,9 @@ import ZMCDataModel
 
 extension ZMConversation: Conversation {
 
-    var name: String { return displayName }
+    public var name: String { return displayName }
     
-    var image: Data? {
+    public var image: Data? {
         guard conversationType == .oneOnOne  else { return nil }
         return (otherActiveParticipants.firstObject as? ZMBareUser)?.imageSmallProfileData
     }
@@ -36,6 +36,10 @@ extension ZMConversation: Conversation {
     
     public func appendImage(_ url: URL) -> Sendable? {
         return appendMessageWithImage(at: url) as? Sendable
+    }
+    
+    public func appendImage(_ data: Data) -> Sendable? {
+        return appendMessage(withImageData: data) as? Sendable
     }
     
     public func appendFile(_ metaData: ZMFileMetadata) -> Sendable? {

@@ -23,22 +23,84 @@ import ZMTransport
 import WireMessageStrategy
 
 
-fileprivate class RequestGeneratorStore {
-
-    let requestGenerators: [ZMTransportRequestGenerator]
-
-    init(transcoders: [ZMRequestGeneratorSource], strategies: [RequestStrategy]) {
-        requestGenerators =  strategies.flatMap {
-                $0.nextRequest
-            } + transcoders.flatMap {
-                $0.requestGenerators
-            }.flatMap {
-                $0.nextRequest
-        }
+class PushMessageHandlerDummy : NSObject, ZMPushMessageHandler {
+    
+    func processGenericMessage(_ genericMessage: ZMGenericMessage!) {
+        // nop
     }
-
+    
+    func processMessage(_ message: ZMMessage!) {
+        // nop
+    }
+    
+    func didFail(toSentMessage message: ZMMessage!) {
+        // nop
+    }
+    
 }
 
+class DeliveryConfirmationDummy : NSObject, DeliveryConfirmationDelegate {
+    
+    static var sendDeliveryReceipts: Bool {
+        return false
+    }
+    
+    var needsToSyncMessages: Bool {
+        return false
+    }
+    
+    func needsToConfirmMessage(_ messageNonce: UUID) {
+        // nop
+    }
+    
+    func didConfirmMessage(_ messageNonce: UUID) {
+        // nop
+    }
+    
+}
+
+class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
+    
+    let context : NSManagedObjectContext
+    
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+    
+    var clientIsReadyForRequests: Bool {
+        if let clientId = context.persistentStoreMetadata(key: "PersistedClientId") as? String { // TODO move constant into shared framework
+            return clientId.characters.count > 0
+        }
+        
+        return false
+    }
+    
+    func didDetectCurrentClientDeletion() {
+        // nop
+    }
+}
+
+class AuthenticationStatus : AuthenticationStatusProvider {
+    
+    let transportSession : ZMTransportSession
+    
+    init(transportSession: ZMTransportSession) {
+        self.transportSession = transportSession
+    }
+    
+    var state: AuthenticationState {
+        return isLoggedIn ? .authenticated : .unauthenticated
+    }
+    
+    private var isLoggedIn : Bool {
+        return transportSession.cookieStorage.authenticationCookieData != nil
+    }
+    
+}
+
+public enum SharingSessionError : Error {
+    case missingSharedContainer
+}
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of 
@@ -56,9 +118,6 @@ public class SharingSession {
         case needsMigration, loggedOut
     }
     
-    /// The location of the database in the shared container
-    let sharedDatabaseDirectory: URL
-    
     /// The `NSManagedObjectContext` used to retrieve the conversations
     let userInterfaceContext: NSManagedObjectContext
 
@@ -66,6 +125,9 @@ public class SharingSession {
 
     /// The authentication status used to verify a user is authenticated
     private let authenticationStatus: AuthenticationStatusProvider
+    
+    /// The client registration status used to lookup if a user has registered a self client
+    private let clientRegistrationStatus : ClientRegistrationDelegate
 
     let transportSession: ZMTransportSession
     
@@ -75,73 +137,139 @@ public class SharingSession {
     }
     
     /// Whether all prerequsisties for sharing are met
-    var canShare: Bool {
-        return authenticationStatus.state == .authenticated
+    public var canShare: Bool {
+        return authenticationStatus.state == .authenticated && clientRegistrationStatus.clientIsReadyForRequests
     }
 
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
-    var writeableNonArchivedConversations : [Conversation] {
+    public var writeableNonArchivedConversations : [Conversation] {
         return directory.unarchivedAndNotCallingConversations.conversationArray
     }
     
     /// List of archived conversations in which the user can write
-    var writebleArchivedConversations : [Conversation] {
+    public var writebleArchivedConversations : [Conversation] {
         return directory.archivedConversations.conversationArray
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
-    private let requestGenerators: RequestGeneratorStore
-    
+        
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
     /// - throws: `InitializationError.NeedsMigration` in case the local store needs to be
     /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
-    init(databaseDirectory: URL, authenticationStatusProvider: AuthenticationStatusProvider) throws {
-        sharedDatabaseDirectory = databaseDirectory
-        authenticationStatus = authenticationStatusProvider
+    
+    public convenience init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
+        
+        guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
+            throw SharingSessionError.missingSharedContainer
+        }
+        
+        let storeURL = sharedContainerURL.appendingPathComponent(hostBundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
+        let keyStoreURL = sharedContainerURL
+        
+        guard !NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL) else { throw InitializationError.needsMigration }
+        
+        ZMSLog.set  (level: .debug, tag: "Network")
 
-        guard !NSManagedObjectContext.needsToPrepareLocalStore(inDirectory: databaseDirectory) else { throw InitializationError.needsMigration }
-        guard authenticationStatusProvider.state == .authenticated else { throw InitializationError.loggedOut }
-        userInterfaceContext = NSManagedObjectContext.createUserInterfaceContext(withStoreDirectory: databaseDirectory)
-        syncContext = NSManagedObjectContext.createSyncContext(withStoreDirectory: databaseDirectory)
-
+        let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: storeURL)!
+        let syncContext = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: keyStoreURL)!
+        
+        userInterfaceContext.zm_sync = syncContext
+        syncContext.zm_userInterface = userInterfaceContext
+        
         let environment = ZMBackendEnvironment()
-
-        transportSession = ZMTransportSession(
+        
+        let transportSession =  ZMTransportSession(
             baseURL: environment.backendURL,
             websocketURL: environment.backendWSURL,
-            keyValueStore: syncContext as! ZMKeyValueStore,
             mainGroupQueue: userInterfaceContext,
-            application: nil
+            initialAccessToken: ZMAccessToken(),
+            application: nil,
+            sharedContainerIdentifier: applicationGroupIdentifier
         )
-
+        
+        try self.init(userInterfaceContext: userInterfaceContext, syncContext: syncContext, transportSession: transportSession, sharedContainerURL: sharedContainerURL)
+        
+    }
+    
+    public init(userInterfaceContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, transportSession: ZMTransportSession, sharedContainerURL: URL) throws {
+        
+        self.userInterfaceContext = userInterfaceContext
+        self.syncContext = syncContext
+        self.transportSession = transportSession
+        
+        authenticationStatus = AuthenticationStatus(transportSession: transportSession)
+        clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
+        
+        guard authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
+        
         let clientMessageTranscoder = ZMClientMessageTranscoder(
             managedObjectContext: syncContext,
-            localNotificationDispatcher: nil,
-            clientRegistrationStatus: nil,
-            apnsConfirmationStatus: nil
+            localNotificationDispatcher: PushMessageHandlerDummy(),
+            clientRegistrationStatus: clientRegistrationStatus,
+            apnsConfirmationStatus: DeliveryConfirmationDummy()
         )!
+        
+        let missingClientStrategy = MissingClientsRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, apnsConfirmationStatus: DeliveryConfirmationDummy(), managedObjectContext: syncContext)
+        
+        let fetchinClientStrategy = FetchingClientRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext)
+        
+        let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, maxConcurrentImageOperation: 1)
+        let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
 
-        let transcoders = [clientMessageTranscoder]
-
-        requestGenerators = RequestGeneratorStore(transcoders: transcoders, strategies: [])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy, missingClientStrategy, fetchinClientStrategy])
 
         operationLoop = RequestGeneratingOperationLoop(
-            context: syncContext,
+            userContext: userInterfaceContext,
+            syncContext: syncContext,
             callBackQueue: .main,
-            requestProducers: requestGenerators.requestGenerators,
+            requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
+        
+        setupCaches(atContainerURL: sharedContainerURL)
+    }
+    
+    private func setupCaches(atContainerURL containerURL: URL) {
+        let cachesURL = containerURL.appendingPathComponent("Library", isDirectory: true).appendingPathComponent("Caches", isDirectory: true)
+        
+        let userImageCache = UserImageLocalCache(location: cachesURL)
+        userInterfaceContext.zm_userImageCache = userImageCache
+        syncContext.zm_userImageCache = userImageCache
+        
+        let imageAssetCache = ImageAssetCache(MBLimit: 50, location: cachesURL)
+        userInterfaceContext.zm_imageAssetCache = imageAssetCache
+        syncContext.zm_imageAssetCache = imageAssetCache
+        
+        let fileAssetcache = FileAssetCache(location: cachesURL)
+        userInterfaceContext.zm_fileAssetCache = fileAssetcache
+        syncContext.zm_fileAssetCache = fileAssetcache
     }
 
     /// Cancel all pending tasks.
     /// Should be called when the extension is dismissed
-    func cancelAllPendingTasks() {
+    public func cancelAllPendingTasks() {
         // TODO
 
+    }
+    
+    public func enqueue(changes: @escaping () -> Void) {
+        enqueue(changes: changes, completionHandler: nil)
+    }
+    
+    public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
+        userInterfaceContext.performGroupedBlock { [weak self] in
+            changes()
+            
+            self?.userInterfaceContext.saveOrRollback()
+            
+            if let completionHandler = completionHandler {
+                completionHandler()
+            }
+        }
     }
 
 }

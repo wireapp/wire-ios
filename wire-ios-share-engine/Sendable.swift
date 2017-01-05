@@ -37,6 +37,8 @@ public protocol Sendable {
     /// Removes an observer token
     func remove(_ observerToken: SendableObserverToken)
     
+    /// Expire message sending
+    func cancel()
 }
 
 /// An observer of the progress of a Sendable

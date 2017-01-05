@@ -42,6 +42,23 @@
 		BFE7F7511D78820700FEA685 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */; };
 		BFE7F7531D7885ED00FEA685 /* ZMMessage+Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7521D7885ED00FEA685 /* ZMMessage+Sendable.swift */; };
 		BFE7F7551D7885FF00FEA685 /* ZMConversation+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */; };
+		CE3EB58B1DFEBDCE001FE3AE /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* Cryptobox.framework */; };
+		CE3EB58C1DFEBDCE001FE3AE /* libPhoneNumber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44B1D77169900FDE440 /* libPhoneNumber.framework */; };
+		CE3EB58D1DFEBDCE001FE3AE /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44C1D77169900FDE440 /* Ono.framework */; };
+		CE3EB58E1DFEBDCE001FE3AE /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; };
+		CE3EB58F1DFEBDCE001FE3AE /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; };
+		CE3EB5901DFEBDCE001FE3AE /* zimages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44F1D77169900FDE440 /* zimages.framework */; };
+		CE3EB5911DFEBDCE001FE3AE /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; };
+		CE3EB5921DFEBDCE001FE3AE /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4511D77169900FDE440 /* ZMCSystem.framework */; };
+		CE3EB5931DFEBDCE001FE3AE /* ZMProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4521D77169900FDE440 /* ZMProtos.framework */; };
+		CE3EB5941DFEBDCE001FE3AE /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* ZMTransport.framework */; };
+		CE3EB5951DFEBDCE001FE3AE /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* ZMUtilities.framework */; };
+		CE3EB5981DFEBDCF001FE3AE /* WireMessageStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */; };
+		CE3EB5991DFEBDCF001FE3AE /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */; };
+		CE7FBFAB1DFEE95F00E1C4C9 /* ZMTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7FBFAA1DFEE95F00E1C4C9 /* ZMTesting.framework */; };
+		CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */; };
+		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
+		CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +144,12 @@
 		BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationStatusProvider.swift; sourceTree = "<group>"; };
 		BFE7F7521D7885ED00FEA685 /* ZMMessage+Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Sendable.swift"; sourceTree = "<group>"; };
 		BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Conversation.swift"; sourceTree = "<group>"; };
+		CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireMessageStrategy.framework; path = Carthage/Build/iOS/WireMessageStrategy.framework; sourceTree = "<group>"; };
+		CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireRequestStrategy.framework; path = Carthage/Build/iOS/WireRequestStrategy.framework; sourceTree = "<group>"; };
+		CE7FBFAA1DFEE95F00E1C4C9 /* ZMTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTesting.framework; path = Carthage/Build/iOS/ZMTesting.framework; sourceTree = "<group>"; };
+		CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
+		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
+		CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoopTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +176,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */,
+				CE7FBFAB1DFEE95F00E1C4C9 /* ZMTesting.framework in Frameworks */,
+				CE3EB5981DFEBDCF001FE3AE /* WireMessageStrategy.framework in Frameworks */,
+				CE3EB5991DFEBDCF001FE3AE /* WireRequestStrategy.framework in Frameworks */,
+				CE3EB58B1DFEBDCE001FE3AE /* Cryptobox.framework in Frameworks */,
+				CE3EB58C1DFEBDCE001FE3AE /* libPhoneNumber.framework in Frameworks */,
+				CE3EB58D1DFEBDCE001FE3AE /* Ono.framework in Frameworks */,
+				CE3EB58E1DFEBDCE001FE3AE /* PINCache.framework in Frameworks */,
+				CE3EB58F1DFEBDCE001FE3AE /* ProtocolBuffers.framework in Frameworks */,
+				CE3EB5901DFEBDCE001FE3AE /* zimages.framework in Frameworks */,
+				CE3EB5911DFEBDCE001FE3AE /* ZMCDataModel.framework in Frameworks */,
+				CE3EB5921DFEBDCE001FE3AE /* ZMCSystem.framework in Frameworks */,
+				CE3EB5931DFEBDCE001FE3AE /* ZMProtos.framework in Frameworks */,
+				CE3EB5941DFEBDCE001FE3AE /* ZMTransport.framework in Frameworks */,
+				CE3EB5951DFEBDCE001FE3AE /* ZMUtilities.framework in Frameworks */,
 				5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +243,8 @@
 				5470D3F91D76E1B000FDE440 /* Info.plist */,
 				BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */,
 				BF64A2111D796DC300725918 /* wire-ios-share-engineTests-Bridging-Header.h */,
+				CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */,
+				CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */,
 			);
 			path = "wire-ios-share-engineTests";
 			sourceTree = "<group>";
@@ -254,6 +294,10 @@
 		5470D4331D77165E00FDE440 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */,
+				CE7FBFAA1DFEE95F00E1C4C9 /* ZMTesting.framework */,
+				CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */,
+				CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */,
 				5470D44A1D77169900FDE440 /* Cryptobox.framework */,
 				5470D44B1D77169900FDE440 /* libPhoneNumber.framework */,
 				5470D44C1D77169900FDE440 /* Ono.framework */,
@@ -310,6 +354,7 @@
 				5470D3EF1D76E1B000FDE440 /* Frameworks */,
 				5470D3F01D76E1B000FDE440 /* Resources */,
 				54B04A611D77359000CED57C /* CopyFiles */,
+				CE3EB59A1DFED6B1001FE3AE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -327,7 +372,7 @@
 		5470D3DF1D76E1B000FDE440 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
+				LastSwiftUpdateCheck = 0800;
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = com.wire;
 				TargetAttributes = {
@@ -348,6 +393,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 5470D3DE1D76E1B000FDE440;
 			productRefGroup = 5470D3E91D76E1B000FDE440 /* Products */;
@@ -377,6 +423,37 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CE3EB59A1DFED6B1001FE3AE /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/WireMessageStrategy.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Cryptobox.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumber.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Ono.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/zimages.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZMCDataModel.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZMCSystem.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZMProtos.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZMTransport.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZMUtilities.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZMTesting.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		5470D3E31D76E1B000FDE440 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -397,7 +474,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */,
 				BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */,
+				CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
