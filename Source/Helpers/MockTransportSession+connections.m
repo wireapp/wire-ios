@@ -24,24 +24,25 @@
 #import "MockTransportSession.h"
 #import "MockUser.h"
 #import "MockConnection.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 @implementation MockTransportSession (ConnectionsHelper)
 
 
 
 /// handles /connections
-- (ZMTransportResponse *)processSelfConnectionsRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processSelfConnectionsRequest:(ZMTransportRequest *)sessionRequest;
 {
-    if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 0)) {
-        return [self processGetConnections:sessionRequest];
+    if ([sessionRequest matchesWithPath:@"/connections" method:ZMMethodGET]) {
+        return [self processGetConnections:sessionRequest.queryParameters];
     }
-    if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 1)) {
+    if ([sessionRequest matchesWithPath:@"/connections/*" method:ZMMethodGET]) {
         return [self processGetSpecifiedConnection:sessionRequest];
     }
-    if ((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 0)) {
+    if ([sessionRequest matchesWithPath:@"/connections" method:ZMMethodPOST]) {
         return [self processPostConnection:sessionRequest];
     }
-    if (sessionRequest.method == ZMMethodPUT && (sessionRequest.pathComponents.count == 1)) {
+    if ([sessionRequest matchesWithPath:@"/connections/*" method:ZMMethodPUT]) {
         return [self processPutConnection:sessionRequest];
     }
     
@@ -49,16 +50,16 @@
 }
 
 
-/// PUT /connections/to-user-id
-- (ZMTransportResponse *)processPutConnection:(TestTransportSessionRequest *)sessionRequest
+/// PUT /connections/<to-user-id>
+- (ZMTransportResponse *)processPutConnection:(ZMTransportRequest *)sessionRequest
 {
-    NSString *remoteID = sessionRequest.pathComponents[0];
+    NSString *remoteID = [sessionRequest RESTComponentAtIndex:1];
     MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
     }
     
-    NSDictionary *changedFields = [sessionRequest.embeddedRequest.payload asDictionary];
+    NSDictionary *changedFields = [sessionRequest.payload asDictionary];
     if(changedFields == nil) {
         return [self errorResponseWithCode:400 reason:@"missing fields"];
     }
@@ -96,10 +97,10 @@
 }
 
 
-/// GET /connections/to-user-id
-- (ZMTransportResponse *)processGetSpecifiedConnection:(TestTransportSessionRequest *)sessionRequest
+/// GET /connections/<to-user-id>
+- (ZMTransportResponse *)processGetSpecifiedConnection:(ZMTransportRequest *)sessionRequest
 {
-    NSString *remoteID = sessionRequest.pathComponents[0];
+    NSString *remoteID = [sessionRequest RESTComponentAtIndex:1];
     MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
@@ -109,10 +110,10 @@
 }
 
 /// GET /connections
-- (ZMTransportResponse *)processGetConnections:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)processGetConnections:(NSDictionary *)queryParameters
 {
-    NSString *sizeString = [sessionRequest.query optionalStringForKey:@"size"];
-    NSUUID *start = [sessionRequest.query optionalUuidForKey:@"start"];
+    NSString *sizeString = [queryParameters optionalStringForKey:@"size"];
+    NSUUID *start = [queryParameters optionalUuidForKey:@"start"];
     
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
     
@@ -153,7 +154,7 @@
 }
 
 /// POST /connections
-- (ZMTransportResponse *)processPostConnection:(TestTransportSessionRequest *)sessionRequest
+- (ZMTransportResponse *)processPostConnection:(ZMTransportRequest *)sessionRequest
 {
     NSString *userID = [[sessionRequest.payload asDictionary] stringForKey:@"user"];
     NSString *message = [[sessionRequest.payload asDictionary] stringForKey:@"message"];

@@ -55,8 +55,6 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
 
 static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
-static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7REFVR2hCk6r9AtUXtUX1YpC3NFdrA-KjztS6AgxgrnZSgcyFIHrULCw==.1403273423.a.39562cc3-717d-4395-979c-5387ae17f5c3.6885777252650447174";
-
 @interface MockTransportSession ()
 
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
@@ -69,7 +67,6 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 @property (nonatomic, readonly) NSMutableArray *nonCompletedRequests;
 
-@property (atomic) BOOL simulateFallbackFailure;
 @property (atomic) BOOL shouldSendPushChannelEvents;
 @property (atomic) BOOL clientRequestedPushChannel;
 @property (atomic) BOOL clientCompletedLogin;
@@ -410,49 +407,43 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 - (NSArray *)methodMap
 {
     return @[
-             @[@[@"/", @"push", @"fallback"], @"processNotificationFallbackRequest:"],
-             @[@[@"/", @"push", @"tokens"], @"processPushTokenRequest:"],
-             @[@[@"/", @"connections"], @"processSelfConnectionsRequest:"],
-             @[@[@"/", @"users"], @"processUsersRequest:"],
-             @[@[@"/", @"clients"], @"processClientsRequest:"],
-             @[@[@"/", @"conversations"], @"processConversationsRequest:"],
-             @[@[@"/", @"login", @"send"], @"processLoginCodeRequest:"],
-             @[@[@"/", @"login"], @"processLoginRequest:"],
-             @[@[@"/", @"self"], @"processSelfUserRequest:"],
-             @[@[@"/", @"assets", @"v3"], @"processAssetV3Request:"],
-             @[@[@"/", @"assets"], @"processAssetRequest:"],
-             @[@[@"/", @"search", @"contacts"], @"processSearchRequest:"],
-             @[@[@"/", @"search", @"common"], @"processCommonConnectionsSearchRequest:"],
-             @[@[@"/", @"search", @"suggestions"], @"processSearchForSuggestionsRequest:"],
-             @[@[@"/", @"notifications"], @"processNotificationsRequest:"],
-             @[@[@"/", @"register"], @"processRegistrationRequest:"],
-             @[@[@"/", @"activate", @"send"], @"processVerificationCodeRequest:"],
-             @[@[@"/", @"activate"], @"processPhoneActivationRequest:"],
-             @[@[@"/", @"onboarding", @"v2"], @"processOnboardingRequest:"],
-             @[@[@"/", @"invitations"], @"processInvitationsRequest:"],
+             @[@"/push/fallback", @"processNotificationFallbackRequest:"],
+             @[@"/push/tokens", @"processPushTokenRequest:"],
+             @[@"/connections", @"processSelfConnectionsRequest:"],
+             @[@"/users", @"processUsersRequest:"],
+             @[@"/clients", @"processClientsRequest:"],
+             @[@"/conversations", @"processConversationsRequest:"],
+             @[@"/login/send", @"processLoginCodeRequest:"],
+             @[@"/login", @"processLoginRequest:"],
+             @[@"/self", @"processSelfUserRequest:"],
+             @[@"/assets/v3", @"processAssetV3Request:"],
+             @[@"/assets", @"processAssetRequest:"],
+             @[@"/search/contacts", @"processSearchRequest:"],
+             @[@"/search/common", @"processCommonConnectionsSearchRequest:"],
+             @[@"/search/suggestions", @"processSearchForSuggestionsRequest:"],
+             @[@"/notifications", @"processNotificationsRequest:"],
+             @[@"/register", @"processRegistrationRequest:"],
+             @[@"/activate/send", @"processVerificationCodeRequest:"],
+             @[@"/activate", @"processPhoneActivationRequest:"],
+             @[@"/onboarding/v2", @"processOnboardingRequest:"],
+             @[@"/invitations", @"processInvitationsRequest:"],
              ];
 }
 
-- (void)completeRequest:(ZMTransportRequest *)originalRequest completionHandler:(ZMCompletionHandlerBlock)completionHandler
+- (void)completeRequest:(ZMTransportRequest *)request completionHandler:(ZMCompletionHandlerBlock)completionHandler
 {
     ZMTransportResponse *response;
-    
-    TestTransportSessionRequest *request = [[TestTransportSessionRequest alloc] init];
-    request.embeddedRequest = originalRequest;
     
     SEL matchedSelector = NULL;
     
     // Check the path components and find the method to call:
-    NSArray *pathComponents = [request.URL.path pathComponents];
     for (NSArray *pair in self.methodMap) {
         NSAssert(pair.count == 2, @"Unexpected pair count in method map");
-        NSArray *components = pair[0];
+        NSString *path = pair[0];
         NSString *selectorString = pair[1];
-        if ((components.count <= pathComponents.count) &&
-            [components isEqualToArray:[pathComponents subarrayWithRange:NSMakeRange(0, components.count)]])
+        if ([request.path hasPrefix:path])
         {
             matchedSelector = NSSelectorFromString(selectorString);
-            request.pathComponents = [pathComponents subarrayWithRange:NSMakeRange(components.count, pathComponents.count - components.count)];
             break;
         }
     }
@@ -475,12 +466,12 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     [self saveAndCreatePushChannelEvents];
     
     if (response != nil) {
-        LogNetwork(@"<--- Response to %@: %@", originalRequest.path, response);
+        LogNetwork(@"<--- Response to %@: %@", request.path, response);
         if(completionHandler) {
             completionHandler(response);
         }
     } else {
-        LogNetwork(@"<--- Response to %@: 404 (request not handled)", originalRequest.path);
+        LogNetwork(@"<--- Response to %@: 404 (request not handled)", request.path);
         response = [self errorResponseWithCode:404 reason:@"not implemented"];
         if(completionHandler) {
             completionHandler(response);
@@ -490,30 +481,28 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 }
 
 
-- (void)processRequest:(ZMTransportRequest *)originalRequest completionHandler:(ZMCompletionHandlerBlock)completionHandler;
+- (void)processRequest:(ZMTransportRequest *)request completionHandler:(ZMCompletionHandlerBlock)completionHandler;
 {
-    [self.generatedTransportRequests addObject:originalRequest];
+    [self.generatedTransportRequests addObject:request];
     
     ZMTransportResponse *response;
     
-    LogNetwork(@"---> Request: %@", originalRequest);
+    LogNetwork(@"---> Request: %@", request);
     
-    TestTransportSessionRequest *request = [[TestTransportSessionRequest alloc] init];
-    request.embeddedRequest = originalRequest;
     
     if(self.responseGeneratorBlock) {
-        response = self.responseGeneratorBlock(originalRequest);
+        response = self.responseGeneratorBlock(request);
         if (response == ResponseGenerator.ResponseNotCompleted) {
             // do not complete this request
-            LogNetwork(@"<--- Not completing request to %@ due to custom responseHandler", originalRequest.path);
-            [self.nonCompletedRequests addObject:originalRequest];
+            LogNetwork(@"<--- Not completing request to %@ due to custom responseHandler", request.path);
+            [self.nonCompletedRequests addObject:request];
             if(completionHandler) {
                 completionHandler((ZMTransportResponse * _Nonnull) nil);
             }
             return;
         }
         if (response != nil) {
-            LogNetwork(@"<--- Custom response to %@: %@", originalRequest.path, response);
+            LogNetwork(@"<--- Custom response to %@: %@", request.path, response);
             if(completionHandler) {
                 completionHandler(response);
             }
@@ -521,267 +510,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         }
     }
     
-    [self completeRequest:originalRequest completionHandler:completionHandler];
+    [self completeRequest:request completionHandler:completionHandler];
     
 }
-
-/// handles /login/send
-- (ZMTransportResponse *)processLoginCodeRequest:(TestTransportSessionRequest *)sessionRequest;
-{
-    if((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 0)) {
-        NSString *phone = [sessionRequest.payload.asDictionary optionalStringForKey:@"phone"];
-        
-        if(phone == nil) {
-            [self errorResponseWithCode:400 reason:@"missing-key"];
-        }
-        
-        NSFetchRequest *request = [MockUser sortedFetchRequest];
-        request.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-        
-        if (users.count < 1) {
-            return [self errorResponseWithCode:404 reason:@"not-found"];
-        }
-        else {
-            [self.phoneNumbersWaitingForVerificationForLogin addObject:phone];
-            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
-        }
-
-    }
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
-/// handles /login
-- (ZMTransportResponse *)processLoginRequest:(TestTransportSessionRequest *)sessionRequest;
-{
-    if((sessionRequest.method == ZMMethodPOST) && (sessionRequest.pathComponents.count == 0)) {
-        NSString *password = [sessionRequest.payload.asDictionary optionalStringForKey:@"password"];
-        NSString *email = [sessionRequest.payload.asDictionary optionalStringForKey:@"email"];
-        NSString *phone = [sessionRequest.payload.asDictionary optionalStringForKey:@"phone"];
-        NSString *code = [sessionRequest.payload.asDictionary optionalStringForKey:@"code"];
-        
-        if((password == nil || email == nil) && (code == nil || phone == nil)) {
-            return [self errorResponseWithCode:400 reason:@"missing-key"];
-        }
-        
-        if(phone != nil
-           && (
-               ! [self.phoneNumbersWaitingForVerificationForLogin containsObject:phone] ||
-               ! [self.phoneVerificationCodeForLogin isEqualToString:code]
-           )
-        )
-        {
-            return [self errorResponseWithCode:404 reason:@"invalid-key"];
-        }
-        
-        NSFetchRequest *request = [MockUser sortedFetchRequest];
-        if(email != nil) {
-            request.predicate = [NSPredicate predicateWithFormat: @"email == %@ AND password == %@", email, password];
-        }
-        else if(phone != nil) {
-            request.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
-        }
-        
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-        
-        if (users.count < 1) {
-            return [self errorResponseWithCode:403 reason:@"invalid-credentials"];
-        }
-
-        
-        MockUser *user = users[0];
-        if(!user.isEmailValidated) {
-            return [self errorResponseWithCode:403 reason:@"pending-activation"];
-        }
-        
-        if(phone != nil) {
-            [self.phoneNumbersWaitingForVerificationForLogin removeObject:phone];
-        }
-        
-        [self.cookieStorage setAuthenticationCookieData:[@"fake-cookie" dataUsingEncoding:NSUTF8StringEncoding]];
-        
-        // also open push channel
-        self.clientCompletedLogin = YES;
-        [self simulatePushChannelOpened];
-        
-        NSDictionary *responsePayload = @{
-                                          @"access_token" : HardcodedAccessToken,
-                                          @"expires_in" : @900,
-                                          @"token_type" : @"Bearer"
-        };
-        
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
-    }
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
-/// handles /search/common/xxxxxxx
-- (ZMTransportResponse *)processCommonConnectionsSearchRequest:(TestTransportSessionRequest *)request
-{
-    if (request.method == ZMMethodGET && request.pathComponents.count == 1u) {
-        
-        // check that requested user exists
-        {
-            NSString *userID = request.pathComponents[0];
-            
-            NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-            fetchRequest.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
-            
-            NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-            if(users == nil || users.count != 1u) {
-                return [self errorResponseWithCode:404 reason:@"uknown user"];
-            }
-        }
-        
-        // return results
-        {
-            NSFetchRequest *fetchRequest = [MockConnection sortedFetchRequest];
-            NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-            NSArray *connectionsSortedByUserName = [connections sortedArrayUsingComparator:^NSComparisonResult(MockConnection *c1, MockConnection *c2) {
-                return [c1.to.name compare:c2.to.name];
-            }];
-            
-            NSMutableArray *resultData = [NSMutableArray array];
-            for (MockConnection *c in connectionsSortedByUserName) {
-                [resultData addObject:@{@"id": c.to.identifier}];
-            }
-            
-            NSDictionary *payload = @{@"documents" : resultData};
-            return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
-        }
-    }
-    
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
-- (ZMTransportResponse *)processSearchForSuggestionsRequest:(TestTransportSessionRequest *)request;
-{
-    if (request.method == ZMMethodGET && request.pathComponents.count == 0u) {
-        // Find all users that are not connected to the self user:
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(self != %@) && (NOT ANY connectionsFrom.to == %@) && (NOT ANY connectionsTo.from == %@)", self.selfUser, self.selfUser, self.selfUser];
-        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequestWithPredicate:predicate];
-        fetchRequest.fetchLimit = (NSUInteger) [request.query[@"size"] integerValue];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
-        NSArray *contacts = [users mapWithBlock:^(MockUser *user) {
-            NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-            if (user.name != nil) {
-                payload[@"name"] = user.name;
-            }
-            if (user.identifier != nil) {
-                payload[@"id"] = user.identifier;
-            }
-            
-            NSPredicate *commonConnectionsPredicate = [NSPredicate predicateWithFormat:@"((ANY connectionsFrom.to == %@) OR (ANY connectionsTo.from == %@)) AND ((ANY connectionsFrom.to = %@) OR (ANY connectionsTo.from = %@))", self.selfUser, self.selfUser, user, user];
-            
-            NSFetchRequest *fetchRequestForCommonConnections = [MockUser sortedFetchRequestWithPredicate:commonConnectionsPredicate];
-            NSArray *commonConnections = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequestForCommonConnections];
-            
-            NSArray *commonConnectionsUUIDs = [commonConnections mapWithBlock:^id(MockUser * obj) {
-                return obj.identifier;
-            }];
-            
-            if (commonConnectionsUUIDs.count > 3) {
-                commonConnectionsUUIDs = [commonConnectionsUUIDs subarrayWithRange:NSMakeRange(0, 3)];
-            }
-            
-            payload[ZMSearchUserMutualFriendsKey] = commonConnectionsUUIDs;
-            payload[ZMSearchUserTotalMutualFriendsKey] = @(commonConnections.count);
-            return payload;
-        }];
-        
-        id responsePayload = @{@"found": @(contacts.count),
-                               @"returned": @(contacts.count),
-                               @"documents": contacts,};
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
-    }
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
-/// handles /search/contacts/
-- (ZMTransportResponse *)processSearchRequest:(TestTransportSessionRequest *)request;
-{
-    if (request.method == ZMMethodGET) {
-        NSString *query = request.query[@"q"];
-        NSUInteger limit = (NSUInteger) [request.query[@"l"] integerValue];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(name CONTAINS[cd] %@) AND (identifier != %@)", query, self.selfUser.identifier];
-        
-        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequestWithPredicate:predicate];
-        fetchRequest.fetchLimit = limit;
-        
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
-        NSMutableArray *userPayload = [NSMutableArray array];
-        for (MockUser *user in users) {
-            
-            MockConnection *connection = [self fetchConnectionFrom:self.selfUser to:user];
-            
-            NSMutableDictionary *payload;
-            if(connection != nil) {
-                payload = [(NSMutableDictionary *)user.transportData mutableCopy];
-            }
-            else {
-                payload = [(NSMutableDictionary *)user.transportDataWhenNotConnected mutableCopy];
-            }
-            
-            payload[@"blocked"]= @NO;
-            payload[@"connected"]= @(connection != nil);
-            payload[@"level"]= @1;
-            [payload removeObjectForKey:@"picture"];
-
-            
-            [userPayload addObject:payload];
-        }
-        
-        NSDictionary *responsePayload = @{
-                                          @"documents": userPayload
-                                          };
-        
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
-    }
-    
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
-// handles /onboarding
-- (ZMTransportResponse *)processOnboardingRequest:(TestTransportSessionRequest *)request
-{
-    if(request.method == ZMMethodPOST) {
-        NSArray *selfEmailArray = [[request.payload asDictionary] arrayForKey:@"self"];
-        if(selfEmailArray.count == 0) {
-            return [self errorResponseWithCode:400 reason:@"no self email"];
-        }
-        NSArray *cards = [[request.payload asDictionary] arrayForKey:@"cards"];
-        if(cards == nil) {
-            return [self errorResponseWithCode:400 reason:@"missing contacts"];
-        }
-        
-        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"SELF != %@", self.selfUser];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
-        ZM_ALLOW_MISSING_SELECTOR(
-        NSDictionary *responsePayload = @{
-                                          @"results" : [users mapWithSelector:@selector(identifier)]
-                                          };
-        )
-        
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
-        
-    }
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
-// handles /push/fallback
-- (ZMTransportResponse *)processNotificationFallbackRequest:(TestTransportSessionRequest *)request
-{
-    if(request.method == ZMMethodPOST && ! self.simulateFallbackFailure) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
-    }
-    
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
 
 - (MockConversation *)fetchConversationWithIdentifier:(NSString *)conversationID;
 {
@@ -1145,55 +876,6 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 @implementation MockTransportSession (PushEvents)
 
-
-/// handles /notifications
-- (ZMTransportResponse *)processNotificationsRequest:(TestTransportSessionRequest *)sessionRequest
-{
-    // /notifications
-    if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 0)) {
-        
-        NSUUID *since = [sessionRequest.query optionalUuidForKey:@"since"];
-        
-        NSArray *eventsToSend;
-        BOOL notFound = NO;
-        if(since != nil) {
-            NSUInteger index = [self.generatedPushEvents indexOfObjectPassingTest:^BOOL(MockPushEvent *obj, NSUInteger idx, BOOL *stop) {
-                NOT_USED(idx);
-                NOT_USED(stop);
-                return [obj.uuid isEqual:since];
-            }];
-            notFound = index == NSNotFound;
-            if(!notFound) {
-                ++index;
-                eventsToSend = [self.generatedPushEvents subarrayWithRange:NSMakeRange(index, self.generatedPushEvents.count - index)];
-            }
-        }
-        if (eventsToSend == nil) {
-            eventsToSend = self.generatedPushEvents;
-        }
-        
-        NSArray *payload = [eventsToSend mapWithBlock:^id(MockPushEvent *event) {
-            return event.transportData;
-        }];
-        NSInteger statusCode = notFound ? 404 : 200;
-        return [ZMTransportResponse responseWithPayload:@{@"notifications":payload} HTTPStatus:statusCode transportSessionError:nil];
-    }
-    // /notifications/last
-    else if((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 1) && [sessionRequest.pathComponents[0] isEqualToString:@"last"])
-    {
-        MockPushEvent *last = self.generatedPushEvents.lastObject;
-        if(last != nil) {
-            return [ZMTransportResponse responseWithPayload:last.transportData HTTPStatus:200 transportSessionError:nil];
-        }
-        else {
-            return [self errorResponseWithCode:404 reason:@"no notification to send"];
-        }
-    }
-    else {
-        return [self errorResponseWithCode:400 reason:@"invalid-method"];
-    }
-}
-
 - (void)openPushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 {
     LogNetwork(@"---> Request: (fake) /access");
@@ -1494,64 +1176,6 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 - (MockFlowManager *)mockFlowManager;
 {
     return self.flowManager;
-}
-
-@end
-
-
-
-
-
-@implementation TestTransportSessionRequest
-
-- (void)setEmbeddedRequest:(ZMTransportRequest *)embeddedRequest;
-{
-    _embeddedRequest = embeddedRequest;
-    self.query = self.URL.zm_queryComponents;
-}
-
-- (NSURL *)URL;
-{
-    return [NSURL URLWithString:self.embeddedRequest.path];
-}
-
-- (NSArray<ZMMultipartBodyItem *> *)multipartBodyItems
-{
-    if (nil != self.embeddedRequest.multipartBodyItems) {
-        return self.embeddedRequest.multipartBodyItems;
-    }
-
-    NSURL *fileURL = self.embeddedRequest.fileUploadURL;
-    NSData *multipartData = [[NSData alloc] initWithContentsOfURL:fileURL];
-
-    if (nil == multipartData) {
-        return nil;
-    }
-
-    return [multipartData multipartDataItemsSeparatedWithBoundary:@"frontier"];
-
-}
-
-- (ZMTransportRequestMethod)method;
-{
-    return self.embeddedRequest.method;
-}
-
-- (id<ZMTransportData>)payload;
-{
-    return self.embeddedRequest.payload;
-}
-
-- (NSString *)binaryDataTypeAsMIME;
-{
-    return [MockTransportSession binaryDataTypeAsMIME:self.embeddedRequest.binaryDataType];
-}
-
-- (NSString *)description;
-{
-    NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: %p>", [self class], self];
-    [description appendFormat:@" %@ %@, payload: %@", [ZMTransportRequest stringForMethod:self.method], self.URL, self.payload];
-    return description;
 }
 
 @end

@@ -21,6 +21,6 @@
 
 @interface MockTransportSession (ConnectionsHelper)
 
-- (ZMTransportResponse *)processSelfConnectionsRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processSelfConnectionsRequest:(ZMTransportRequest *)sessionRequest;
 
 @end

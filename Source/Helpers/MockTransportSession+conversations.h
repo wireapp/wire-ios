@@ -21,7 +21,7 @@
 
 @interface MockTransportSession (Conversations)
 
-- (ZMTransportResponse *)processConversationsRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processConversationsRequest:(ZMTransportRequest *)sessionRequest;
 - (NSDictionary *)participantsPayloadForConversation:(MockConversation *)conversation;
 - (NSDictionary *)callStateForUser:(MockUser*)user conversation:(MockConversation *)conversation;
 

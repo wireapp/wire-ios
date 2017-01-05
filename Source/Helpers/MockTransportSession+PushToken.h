@@ -20,12 +20,9 @@
 #import "MockTransportSession.h"
 
 @class ZMTransportResponse;
-@class TestTransportSessionRequest;
-
-
 
 @interface MockTransportSession (PushToken)
 
-- (ZMTransportResponse *)processPushTokenRequest:(TestTransportSessionRequest *)sessionRequest;
+- (ZMTransportResponse *)processPushTokenRequest:(ZMTransportRequest *)sessionRequest;
 
 @end

@@ -23,8 +23,15 @@
 		09E393F51BB0336A00F3EA1B /* MockPreKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393F31BB0336A00F3EA1B /* MockPreKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393F71BB0339200F3EA1B /* MockPreKey.m */; };
 		09E393FA1BB0485300F3EA1B /* MockTransportSessionClientsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393F91BB0485300F3EA1B /* MockTransportSessionClientsTests.m */; };
+		5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */; };
 		541797651CE1F86500C7646D /* MockTransportSessionCancelationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541797641CE1F86500C7646D /* MockTransportSessionCancelationTests.swift */; };
 		541797671CE1FC0C00C7646D /* CustomResponseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */; };
+		5425EEFD1E1E30DF006D7A01 /* MockTransportSession+login.h in Headers */ = {isa = PBXBuildFile; fileRef = 5425EEFB1E1E30DF006D7A01 /* MockTransportSession+login.h */; };
+		5425EEFE1E1E30DF006D7A01 /* MockTransportSession+login.m in Sources */ = {isa = PBXBuildFile; fileRef = 5425EEFC1E1E30DF006D7A01 /* MockTransportSession+login.m */; };
+		5425EF011E1E339B006D7A01 /* MockTransportSession+search.h in Headers */ = {isa = PBXBuildFile; fileRef = 5425EEFF1E1E339B006D7A01 /* MockTransportSession+search.h */; };
+		5425EF021E1E339B006D7A01 /* MockTransportSession+search.m in Sources */ = {isa = PBXBuildFile; fileRef = 5425EF001E1E339B006D7A01 /* MockTransportSession+search.m */; };
+		5425EF051E1E3579006D7A01 /* MockTransportSession+notifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 5425EF031E1E3579006D7A01 /* MockTransportSession+notifications.h */; };
+		5425EF061E1E3579006D7A01 /* MockTransportSession+notifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 5425EF041E1E3579006D7A01 /* MockTransportSession+notifications.m */; };
 		545AFFBC1CB6950B0054B665 /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 545AFFB81CB695040054B665 /* medium.jpg */; };
 		545AFFBD1CB6950B0054B665 /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 545AFFB91CB695040054B665 /* tiny.jpg */; };
 		54664D351CBEB9FA00527CDA /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54664D331CBEB9FA00527CDA /* medium.jpg */; };
@@ -153,9 +160,16 @@
 		09E393F31BB0336A00F3EA1B /* MockPreKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPreKey.h; sourceTree = "<group>"; };
 		09E393F71BB0339200F3EA1B /* MockPreKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPreKey.m; sourceTree = "<group>"; };
 		09E393F91BB0485300F3EA1B /* MockTransportSessionClientsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionClientsTests.m; sourceTree = "<group>"; };
+		5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMTransportRequest+Utils.swift"; sourceTree = "<group>"; };
 		541797631CE1F86500C7646D /* ZMCMockTransportTests-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMCMockTransportTests-ios-Bridging-Header.h"; sourceTree = "<group>"; };
 		541797641CE1F86500C7646D /* MockTransportSessionCancelationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionCancelationTests.swift; sourceTree = "<group>"; };
 		541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomResponseGenerator.swift; sourceTree = "<group>"; };
+		5425EEFB1E1E30DF006D7A01 /* MockTransportSession+login.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+login.h"; sourceTree = "<group>"; };
+		5425EEFC1E1E30DF006D7A01 /* MockTransportSession+login.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+login.m"; sourceTree = "<group>"; };
+		5425EEFF1E1E339B006D7A01 /* MockTransportSession+search.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+search.h"; sourceTree = "<group>"; };
+		5425EF001E1E339B006D7A01 /* MockTransportSession+search.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+search.m"; sourceTree = "<group>"; };
+		5425EF031E1E3579006D7A01 /* MockTransportSession+notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+notifications.h"; sourceTree = "<group>"; };
+		5425EF041E1E3579006D7A01 /* MockTransportSession+notifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+notifications.m"; sourceTree = "<group>"; };
 		545AFFB81CB695040054B665 /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
 		545AFFB91CB695040054B665 /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tiny.jpg; sourceTree = "<group>"; };
 		54664D331CBEB9FA00527CDA /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
@@ -289,8 +303,12 @@
 		54AE5A4C1B78FA43002757E9 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				5425EEFF1E1E339B006D7A01 /* MockTransportSession+search.h */,
+				5425EF001E1E339B006D7A01 /* MockTransportSession+search.m */,
 				54AE5A4D1B78FA43002757E9 /* MockTransportSession+assets.h */,
 				54AE5A4E1B78FA43002757E9 /* MockTransportSession+assets.m */,
+				5425EEFB1E1E30DF006D7A01 /* MockTransportSession+login.h */,
+				5425EEFC1E1E30DF006D7A01 /* MockTransportSession+login.m */,
 				54AE5A4F1B78FA43002757E9 /* MockTransportSession+connections.h */,
 				54AE5A501B78FA43002757E9 /* MockTransportSession+connections.m */,
 				54AE5A511B78FA43002757E9 /* MockTransportSession+conversations.h */,
@@ -307,6 +325,8 @@
 				09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */,
 				CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */,
 				CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */,
+				5425EF031E1E3579006D7A01 /* MockTransportSession+notifications.h */,
+				5425EF041E1E3579006D7A01 /* MockTransportSession+notifications.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -381,6 +401,7 @@
 				54AE5A591B78FA43002757E9 /* MockFlowManager.m */,
 				54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */,
 				54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */,
+				5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */,
 				54AE5A5C1B78FA43002757E9 /* Model */,
 				54AE5A661B78FA43002757E9 /* Public */,
 				54C902361B7532DD007162A8 /* Supporting Files */,
@@ -511,6 +532,7 @@
 				54AE5A8A1B78FA43002757E9 /* MockConversation.h in Headers */,
 				54AE5A8F1B78FA43002757E9 /* MockTransportSession.h in Headers */,
 				54AE5A751B78FA43002757E9 /* MockTransportSession+conversations.h in Headers */,
+				5425EEFD1E1E30DF006D7A01 /* MockTransportSession+login.h in Headers */,
 				54AE5A8B1B78FA43002757E9 /* MockEvent.h in Headers */,
 				54AE5A881B78FA43002757E9 /* MockAsset.h in Headers */,
 				54AE5A911B78FA43002757E9 /* ZMCMockTransport.h in Headers */,
@@ -519,7 +541,9 @@
 				09BCDB691BC7CFFC0020DCC7 /* MockTransportSession+OTR.h in Headers */,
 				09E393F51BB0336A00F3EA1B /* MockPreKey.h in Headers */,
 				54AE5A7F1B78FA43002757E9 /* MockTransportSession+internal.h in Headers */,
+				5425EF011E1E339B006D7A01 /* MockTransportSession+search.h in Headers */,
 				54AE5A771B78FA43002757E9 /* MockTransportSession+PushToken.h in Headers */,
+				5425EF051E1E3579006D7A01 /* MockTransportSession+notifications.h in Headers */,
 				54AE5A8D1B78FA43002757E9 /* MockPicture.h in Headers */,
 				54AE5A7B1B78FA43002757E9 /* MockTransportSession+users.h in Headers */,
 				54AE5A731B78FA43002757E9 /* MockTransportSession+connections.h in Headers */,
@@ -641,6 +665,7 @@
 				54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */,
 				54AE5A851B78FA43002757E9 /* MockPushEvent.m in Sources */,
 				09E393EA1BB010B700F3EA1B /* MockUserClient.m in Sources */,
+				5425EF021E1E339B006D7A01 /* MockTransportSession+search.m in Sources */,
 				CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */,
 				09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */,
 				09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */,
@@ -650,10 +675,13 @@
 				54AE5A821B78FA43002757E9 /* MockConversation.m in Sources */,
 				54AE5A7E1B78FA43002757E9 /* MockTransportSession.m in Sources */,
 				54AE5A721B78FA43002757E9 /* MockTransportSession+assets.m in Sources */,
+				5425EEFE1E1E30DF006D7A01 /* MockTransportSession+login.m in Sources */,
 				54AE5A761B78FA43002757E9 /* MockTransportSession+conversations.m in Sources */,
+				5425EF061E1E3579006D7A01 /* MockTransportSession+notifications.m in Sources */,
 				54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */,
 				54AE5A811B78FA43002757E9 /* MockConnection.m in Sources */,
 				54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */,
+				5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */,
 				54AE5A831B78FA43002757E9 /* MockEvent.m in Sources */,
 				54AE5A7C1B78FA43002757E9 /* MockTransportSession+users.m in Sources */,
 				54AE5A871B78FA43002757E9 /* MockUser.m in Sources */,
@@ -808,7 +836,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;

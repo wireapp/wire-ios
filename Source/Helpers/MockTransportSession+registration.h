@@ -25,8 +25,8 @@
 
 @interface MockTransportSession (Registration)
 
-- (ZMTransportResponse *)processRegistrationRequest:(TestTransportSessionRequest *)sessionRequest;
-- (ZMTransportResponse *)processPhoneActivationRequest:(TestTransportSessionRequest *)sessionRequest;
-- (ZMTransportResponse *)processVerificationCodeRequest:(TestTransportSessionRequest *)request;
+- (ZMTransportResponse *)processRegistrationRequest:(ZMTransportRequest *)sessionRequest;
+- (ZMTransportResponse *)processPhoneActivationRequest:(ZMTransportRequest *)sessionRequest;
+- (ZMTransportResponse *)processVerificationCodeRequest:(ZMTransportRequest *)request;
 
 @end

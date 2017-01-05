@@ -19,28 +19,30 @@
 
 #import "MockTransportSession+invitations.h"
 #import "MockPersonalInvitation.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 @implementation MockTransportSession (invitations)
 
-- (ZMTransportResponse *)processInvitationsRequest:(TestTransportSessionRequest *)request;
+- (ZMTransportResponse *)processInvitationsRequest:(ZMTransportRequest *)request;
 {
-    if ((request.method == ZMMethodGET) && (request.pathComponents.count == 0)) {
+    if ([request matchesWithPath:@"/invitations" method:ZMMethodGET]) {
         return [self processGetInvitationRequest:request];
     }
-    if ((request.method == ZMMethodGET) && (request.pathComponents.count == 1)) {
+    if ([request matchesWithPath:@"/invitations/*" method:ZMMethodGET]) {
         return [self processGetSpecificInivitationRequest:request];
     }
-    if ((request.method == ZMMethodPOST) && (request.pathComponents.count == 0)) {
+    if ([request matchesWithPath:@"/invitations" method:ZMMethodPOST]) {
         return [self processPostInivitationRequest:request];
     }
-    if (request.method == ZMMethodDELETE && (request.pathComponents.count == 1)) {
+    if ([request matchesWithPath:@"/invitations/*" method:ZMMethodDELETE]) {
         return [self processDeleteInivitationRequest:request];
     }
     
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
-- (ZMTransportResponse *)processPostInivitationRequest:(TestTransportSessionRequest *)request;
+- (ZMTransportResponse *)processPostInivitationRequest:(ZMTransportRequest *)request;
 {
     NSDictionary *payload = [request.payload asDictionary];
     NSString *inviterName = [payload stringForKey:@"inviter_name"];
@@ -89,7 +91,7 @@
     return [ZMTransportResponse responseWithPayload:personalInvitation.transportData HTTPStatus:201 transportSessionError:nil];
 }
 
-- (ZMTransportResponse *)processGetInvitationRequest:(__unused TestTransportSessionRequest *)request;
+- (ZMTransportResponse *)processGetInvitationRequest:(__unused ZMTransportRequest *)request;
 {
     NSFetchRequest *fetchRequest = [MockPersonalInvitation sortedFetchRequest];
     [fetchRequest setFetchLimit:10];
@@ -97,9 +99,9 @@
     return [ZMTransportResponse responseWithPayload:[self invitationsTransportDataFromInvitations:invitations] HTTPStatus:200 transportSessionError:nil];
 }
 
-- (ZMTransportResponse *)processGetSpecificInivitationRequest:(TestTransportSessionRequest *)request;
+- (ZMTransportResponse *)processGetSpecificInivitationRequest:(ZMTransportRequest *)request;
 {
-    NSString *invitationID = request.pathComponents[0];
+    NSString *invitationID = [request RESTComponentAtIndex:1];
     if ([invitationID length] == 0lu) {
         return [self errorResponseWithCode:404 reason:@"ID to delete does not exist"];
     }
@@ -112,9 +114,9 @@
     return [ZMTransportResponse responseWithPayload:[[invitations firstObject] transportData] HTTPStatus:200 transportSessionError:nil];
 }
 
-- (ZMTransportResponse *)processDeleteInivitationRequest:(TestTransportSessionRequest *)request;
+- (ZMTransportResponse *)processDeleteInivitationRequest:(ZMTransportRequest *)request;
 {
-    NSString *invitationID = request.pathComponents[0];
+    NSString *invitationID = [request RESTComponentAtIndex:1];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", invitationID];
     NSFetchRequest *fetchRequest = [MockPersonalInvitation sortedFetchRequestWithPredicate:predicate];
     NSArray *invitations = [self.managedObjectContext executeFetchRequest:fetchRequest error:nil];
