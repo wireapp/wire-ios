@@ -33,7 +33,7 @@
 
 - (void)testThatWeCanManuallyCreateAndRequestConversations;
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     __block MockUser *user2;
@@ -63,10 +63,10 @@
     
     // (1)
     {
-        // when
+        // WHEN
         ZMTransportResponse *response = [self responseForPayload:nil path:@"/conversations/" method:ZMMethodGET];
         
-        // then
+        // THEN
         XCTAssertNotNil(response);
         if (!response) {
             return;
@@ -89,11 +89,11 @@
         return; // 1 TODO: Fix threading violation here
         // -com.apple.CoreData.SQLDebug 1
         
-        // when
+        // WHEN
         NSString *path = [@"/conversations/" stringByAppendingPathComponent:conversation.identifier];
         ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
         
-        // then
+        // THEN
         XCTAssertNotNil(response);
         if (!response) {
             return;
@@ -110,7 +110,7 @@
 - (void)testThatWeCanCreateAConversationWithAPostRequest
 {
     
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     __block MockUser *user2;
@@ -141,7 +141,7 @@
     
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/conversations/" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
@@ -167,7 +167,7 @@
 
 - (ZMTransportResponse *)responseForAddingMessageWithPayload:(NSDictionary *)payload path:(NSString *)path expectedEventType:(NSString *)expectedEventType
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     __block MockUser *user1;
@@ -189,7 +189,7 @@
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, path]];
     ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return nil;
@@ -208,7 +208,7 @@
     path = @"/notifications";
     ZMTransportResponse *eventsResponse = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertNotNil(eventsResponse);
     if (!eventsResponse) {
         return nil;
@@ -232,7 +232,7 @@
 
 - (void)testThatItReturnsMissingClientsWhenReceivingOTRMessage
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -273,7 +273,7 @@
                                       }
                               };
     
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
     
@@ -302,7 +302,7 @@
 
 - (void)testThatItReturnsMissingClientsOnlyForOneUserWhenReceivingOTRMessage
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -342,7 +342,7 @@
                                       }
                               };
     
-    // when
+    // WHEN
     NSString *requestBasePath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     NSString *requestPath = [NSString stringWithFormat:@"%@?report_missing=%@", requestBasePath, otherUser.identifier];
     ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
@@ -367,7 +367,7 @@
 
 - (void)testThatItDoesNotReturnsMissingClientsOnlyForOneUserWhenReceivingOTRMessage
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -405,7 +405,7 @@
                                       }
                               };
     
-    // when
+    // WHEN
     NSString *requestBasePath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     NSString *requestPath = [NSString stringWithFormat:@"%@?report_missing=%@", requestBasePath, otherUser.identifier];
     ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
@@ -422,7 +422,7 @@
 
 - (void)testThatItReturnsMissingClientsWhenReceivingOTRMessage_Protobuf
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -490,11 +490,11 @@
     
     NSData *messageData = [[builder build] data];
     
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     ZMTransportResponse *response = [self responseForProtobufData:messageData path:requestPath method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -520,7 +520,7 @@
 
 - (void)testThatItReturnsMissingAndRedundantClientsWhenReceivingOTRAsset
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -563,11 +563,11 @@
                                       }
                               };
     
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
     ZMTransportResponse *response = [self responseForImageData:imageData contentDisposition:payload path:requestPath];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -594,7 +594,7 @@
 
 - (void)testThatItReturnsMissingAndRedundantClientsWhenReceivingOTRAsset_Protobuf
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -662,11 +662,11 @@
     
     NSData *messageData = [[builder build] data];
     
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
     ZMTransportResponse *response = [self responseForImageData:imageData metaData:messageData imageMediaType:@"image/jpeg" path:requestPath];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -692,7 +692,7 @@
 
 - (void)testThatItCreatesPushEventsWhenReceivingOTRMessageWithoutMissedClients
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -738,11 +738,11 @@
                                       }
                               };
     
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -772,7 +772,7 @@
 
 - (void)testThatItCreatesPushEventsWhenReceivingOTRMessageWithoutMissedClients_Protobuf
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -849,11 +849,11 @@
     
     NSData *messageData = [[builder build] data];
 
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     ZMTransportResponse *response = [self responseForProtobufData:messageData path:requestPath method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -884,7 +884,7 @@
 
 - (void)testThatItCreatesPushEventsWhenReceivingOTRAssetWithoutMissedClients
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -931,11 +931,11 @@
                                       }
                               };
     
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
     ZMTransportResponse *response = [self responseForImageData:imageData contentDisposition:payload path:requestPath];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -965,7 +965,7 @@
 
 - (void)testThatItCreatesPushEventsWhenReceivingEncryptedOTRMessageWithCorrectData;
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     
@@ -990,14 +990,14 @@
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"Je suis kaput" nonce:nonce.transportString expiresAfter:nil];
     NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(__unused MockTransportSession<MockTransportSessionObjectCreation> *session) {
         NSData *encryptedData = [MockUserClient encryptedDataFromClient:otherUserClient toClient:selfClient data:message.data];
         [conversation insertOTRMessageFromClient:otherUserClient toClient:selfClient data:encryptedData];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
     NSDictionary *lastEventPayload = [lastEvent.payload asDictionary];
     XCTAssertEqualObjects(lastEventPayload[@"type"], @"conversation.otr-message-add");
@@ -1008,7 +1008,7 @@
 
 - (void)testThatItCreatesPushEventsWhenReceivingEncryptedOTRAssetWithCorrectData;
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     
@@ -1035,14 +1035,14 @@
     
     ZMGenericMessage *message = [ZMGenericMessage genericMessageWithImageData:imageData format:ZMImageFormatMedium nonce:nonce.transportString expiresAfter:nil];
     NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(__unused MockTransportSession<MockTransportSessionObjectCreation> *session) {
         NSData *encryptedData = [MockUserClient encryptedDataFromClient:otherUserClient toClient:selfClient data:message.data];
         [conversation  insertOTRAssetFromClient:otherUserClient toClient:selfClient metaData:encryptedData imageData:imageData assetId:assetID isInline:YES];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
     NSDictionary *lastEventPayload = [lastEvent.payload asDictionary];
     XCTAssertEqualObjects(lastEventPayload[@"type"], @"conversation.otr-asset-add");
@@ -1054,7 +1054,7 @@
 
 - (void)testThatItReturnsAValidResponseWenUploadingAFile
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
@@ -1071,14 +1071,14 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSData *fileData = [NSData secureRandomDataOfLength:256];
     ZMOtrAssetMeta *metaData = [self OTRAssetMetaWithSender:selfClient recipients:@[otherUser] text:[NSData secureRandomDataOfLength:16]];
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
     ZMTransportResponse *response = [self responseForFileData:fileData path:requestPath metadata:metaData.data contentType:@"multipart/mixed"];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -1128,7 +1128,7 @@
 
 - (void)testThatItCreatesPushEventsWhenReceivingOTRAssetWithoutMissedClients_Protobuf
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *selfClient;
     __block MockUserClient *secondSelfClient;
@@ -1204,11 +1204,11 @@
     
     NSData *messageData = [[builder build] data];
     
-    // when
+    // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
     ZMTransportResponse *response = [self responseForImageData:imageData metaData:messageData imageMediaType:@"image/jpeg" path:requestPath];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
     
@@ -1238,7 +1238,7 @@
 
 - (void)testThatInsertingArbitraryEventWithBlock:(MockEvent *(^)(MockTransportSession<MockTransportSessionObjectCreation> *session, MockConversation *conversation))eventBlock expectedPayloadData:(id<ZMTransportData>)expectedPayloadData
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     
     __block MockConversation *conversation;
@@ -1251,13 +1251,13 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * session) {
         event = eventBlock(session, conversation);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertNotNil(event);
         if ([[MockEvent persistentEvents] containsObject:@(event.eventType)]) {
@@ -1366,19 +1366,19 @@
 
 - (void)testThatItAddsTwoImageEventsToTheConversation
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
         conversation = [session insertSelfConversationWithSelfUser:selfUser];
         
-        // when
+        // WHEN
         [conversation insertImageEventsFromUser:selfUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertNotNil(conversation.events);
         XCTAssertNotEqual([conversation.events indexOfObjectPassingTest:^BOOL(MockEvent *event, NSUInteger idx, BOOL *stop) {
@@ -1424,7 +1424,7 @@
         eventsStart = [conversation.events copy];
     }];
     
-    // when
+    // WHEN
     NSString * const MD5String = [[data zmMD5Digest] base64EncodedStringWithOptions:0];
     NSUUID * const correlationIdentifier = [NSUUID createUUID];
     CGSize const originalSize = CGSizeMake(1900, 1500);
@@ -1444,7 +1444,7 @@
                                          };
     ZMTransportResponse *response = [self responseForImageData:data contentDisposition:disposition path:path];
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         NSMutableOrderedSet *addedEvents = [conversation.events mutableCopy];
         [addedEvents minusOrderedSet:eventsStart];
@@ -1477,7 +1477,7 @@
 
 - (void)testThatItInsertsAnEventsWhenPostingPreviewImageToAConversationV1;
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session insertSelfUserWithName:@"Me Myself"];
@@ -1485,7 +1485,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    // then
+    // THEN
     [self checkThatItInsertsAnEventsWhenPostingPreviewImageToAConversation:conversation
                                                                       path:@"/assets"
                                                                       data:[self verySmallJPEGData]
@@ -1495,7 +1495,7 @@
 
 - (void)testThatItInsertsAnEventsWhenPostingPreviewImageToAConversationV2;
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1505,7 +1505,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    // then
+    // THEN
     NSString *path = [NSString pathWithComponents:@[@"/",@"conversations", conversation.identifier, @"assets"]];
     [self checkThatItInsertsAnEventsWhenPostingPreviewImageToAConversation:conversation
                                                                       path:path
@@ -1515,7 +1515,7 @@
 
 - (void)testThatItInsertsAnEventsWhenPostingMediumImageToAConversationV1;
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session insertSelfUserWithName:@"Me Myself"];
@@ -1523,7 +1523,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     [self checkThatItInsertsAnEventsWhenPostingPreviewImageToAConversation:conversation
                                                                       path:@"/assets"
                                                                       data:[self verySmallJPEGData]
@@ -1532,7 +1532,7 @@
 
 - (void)testThatItInsertsAnEventsWhenPostingMediumImageToAConversationV2;
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1542,7 +1542,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     NSString *path = [NSString pathWithComponents:@[@"/",@"conversations", conversation.identifier, @"assets"]];
     [self checkThatItInsertsAnEventsWhenPostingPreviewImageToAConversation:conversation
                                                                       path:path
@@ -1554,7 +1554,7 @@
 {
     ZMTransportResponse *getResponse = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertNotNil(getResponse);
     XCTAssertEqual(getResponse.HTTPStatus, 200);
     XCTAssertEqual(getResponse.result, ZMTransportResponseStatusSuccess);
@@ -1564,7 +1564,7 @@
 
 - (void)testThatItReturnsMediumImageDataAfterItHasBeenUploadedV1
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1576,7 +1576,7 @@
     
     NSData *mediumData = [self verySmallJPEGData];
     
-    // when
+    // WHEN
     ZMTransportResponse *postResponse = [self checkThatItInsertsAnEventsWhenPostingPreviewImageToAConversation:conversation
                                                                                                           path:@"/assets"
                                                                                                           data:mediumData
@@ -1587,13 +1587,13 @@
     NSString *query = [NSString stringWithFormat:@"%@?conv_id=%@", assetID.transportString, conversationID];
     NSString *getPath = [NSString pathWithComponents:@[@"/assets", query]];
     
-    // then
+    // THEN
     [self checkThatItCanGetMediumImageAtPath:getPath expectedData:mediumData];
 }
 
 - (void)testThatItReturnsMediumImageDataAfterItHasBeenUploadedV2
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1606,7 +1606,7 @@
     NSData *mediumData = [self verySmallJPEGData];
     NSString *path = [NSString pathWithComponents:@[@"/",@"conversations", conversation.identifier, @"assets"]];
 
-    // when
+    // WHEN
     ZMTransportResponse *postResponse = [self checkThatItInsertsAnEventsWhenPostingPreviewImageToAConversation:conversation
                                                                                                           path:path
                                                                                                           data:mediumData
@@ -1615,13 +1615,13 @@
     NSUUID *assetID = [[[postResponse.payload asDictionary] dictionaryForKey:@"data"] uuidForKey:@"id"];
     NSString *getPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"assets", assetID.transportString]];
     
-    // then
+    // THEN
     [self checkThatItCanGetMediumImageAtPath:getPath expectedData:mediumData];
 }
 
 - (void)testThatWeCanSetAConversationNameUsingPUT
 {
-    // given
+    // GIVEN
     NSString *conversationName = @"New name";
     __block MockConversation *conversation;
     __block NSString *conversationID;
@@ -1637,10 +1637,10 @@
     
     NSString *path = [@"/conversations/" stringByAppendingString:conversationID];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertEqualObjects(conversation.name, conversationName);
         XCTAssertNotNil(response);
@@ -1651,7 +1651,7 @@
 
 - (void)testThatWeCanDeleteAParticipantFromAConversation
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     __block MockUser *user2;
@@ -1675,7 +1675,7 @@
     
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodDELETE];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -1692,7 +1692,7 @@
 
 - (void)testThatWeCanAddParticipantsToAConversation
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     __block MockUser *user2;
@@ -1725,7 +1725,7 @@
     
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -1742,7 +1742,7 @@
 
 - (void)testThatItRefusesToAddMembersToTheConversationThatAreNotConnectedToTheSelfUser
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUser *user1;
     __block MockUser *user2;
@@ -1771,7 +1771,7 @@
     
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -1786,7 +1786,7 @@
 
 - (void)testThatItReturnsAllConversationIDs
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     
     NSMutableArray *conversationIDs = [NSMutableArray array];
@@ -1804,11 +1804,11 @@
         
     }];
     
-    // when
+    // WHEN
     NSString *path = @"/conversations/ids";
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
     
@@ -1822,7 +1822,7 @@
 
 - (void)testThatItReturnsConversationsForSpecificIDs
 {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     
     NSMutableDictionary *conversationMap = [NSMutableDictionary dictionary];
@@ -1849,11 +1849,11 @@
         return obj.identifier;
     }];
     
-    // when
+    // WHEN
     NSString *path = [NSString stringWithFormat:@"/conversations?ids=%@", [requestedConversationIDs componentsJoinedByString:@","]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
     
@@ -1879,7 +1879,7 @@
 
 - (void)testThatItSetsTheArchivedEventOnTheConversationWhenAsked
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1895,10 +1895,10 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
@@ -1911,7 +1911,7 @@
 
 - (void)testThatItUnsetsTheArchivedEventOnTheConversationWhenAsked
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1928,10 +1928,10 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
@@ -1944,7 +1944,7 @@
 
 - (void)testThatItSetsMutedOnTheConversationWhenAsked
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1960,10 +1960,10 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
@@ -1976,7 +1976,7 @@
 
 - (void)testThatItUnsetsMutedOnTheConversationWhenAsked
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -1993,10 +1993,10 @@
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
     
-    // then
+    // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertNotNil(response);
         XCTAssertEqual(response.HTTPStatus, 200);
@@ -2014,7 +2014,7 @@
 
 - (void)testThatCreatesAnEventForUserIgnoringCall
 {
-    // given
+    // GIVEN
     __block MockConversation *conversation;
     __block MockUser *selfUser;
     __block NSString *conversationID;
@@ -2025,14 +2025,14 @@
         conversationID = conversation.identifier;
     }];
     
-    // when
+    // WHEN
     NSUInteger events = self.sut.updateEvents.count;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [conversation ignoreCallByUser:selfUser];
         [session saveAndCreatePushChannelEventForSelfUser];
     }];
     
-    // then
+    // THEN
     XCTAssertGreaterThan(self.sut.updateEvents.count, events);
     
     

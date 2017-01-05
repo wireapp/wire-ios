@@ -27,7 +27,7 @@
 
 - (void)testThatLoginSucceedsAndSetsTheCookieWithEmail
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
@@ -43,14 +43,14 @@
     self.sut.cookieStorage = [OCMockObject mockForClass:[ZMPersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
     
-    // when
+    // WHEN
     NSString *path = @"/login";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password
                                                                } path:path method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
     [self verifyMockLater:self.cookieStorage];
@@ -59,7 +59,7 @@
 
 - (void)testThatLoginSucceedsAndSetsTheCookieWithPhoneNumberAfterRequestingALoginCode
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
@@ -73,7 +73,7 @@
     self.sut.cookieStorage = [OCMockObject mockForClass:[ZMPersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
     
-    // when
+    // WHEN
     [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
     
     // and when
@@ -82,7 +82,7 @@
                                                                @"code": self.sut.phoneVerificationCodeForLogin
                                                                } path:@"/login" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
     [self verifyMockLater:self.cookieStorage];
@@ -91,7 +91,7 @@
 
 - (void)testThatPhoneLoginFailsIfTheLoginCodeIsWrong
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
@@ -105,7 +105,7 @@
     self.sut.cookieStorage = [OCMockObject mockForClass:[ZMPersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
     
-    // when
+    // WHEN
     [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
     
     // and when
@@ -114,7 +114,7 @@
                                                                @"code": self.sut.invalidPhoneVerificationCode
                                                                } path:@"/login" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 404);
     [self verifyMockLater:self.cookieStorage];
@@ -123,7 +123,7 @@
 
 - (void)testThatPhoneLoginFailsIfThereIsNoUserWithSuchPhone
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
@@ -137,7 +137,7 @@
     self.sut.cookieStorage = [OCMockObject mockForClass:[ZMPersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
     
-    // when
+    // WHEN
     [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
     
     // and when
@@ -146,7 +146,7 @@
                                                                @"code": self.sut.phoneVerificationCodeForLogin
                                                                } path:@"/login" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 404);
     [self verifyMockLater:self.cookieStorage];
@@ -155,7 +155,7 @@
 
 - (void)testThatRequestingThePhoneLoginCodeSucceedsIfThereIsAUserWithSuchPhone
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
@@ -166,10 +166,10 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-     // when
+     // WHEN
     ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
 }
@@ -177,7 +177,7 @@
 
 - (void)testThatRequestingThePhoneLoginCodeFailsIfThereIsNoUserWithSuchPhone
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
@@ -188,17 +188,17 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 404);
 }
 
 - (void)testThatPhoneLoginFailsIfNoVerificationCodeWasRequested
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
@@ -212,13 +212,13 @@
     self.sut.cookieStorage = [OCMockObject mockForClass:[ZMPersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"phone": phone,
                                                                @"code": self.sut.phoneVerificationCodeForLogin
                                                                } path:@"/login" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 404);
     [self verifyMockLater:self.cookieStorage];
@@ -228,7 +228,7 @@
 
 - (void)testThatItReturns403PendingActivationIfTheUserIsPendingEmailValidation
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
@@ -242,14 +242,14 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = @"/login";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password
                                                                } path:path method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
     XCTAssertEqualObjects([response payloadLabel], @"pending-activation");
@@ -257,7 +257,7 @@
 
 - (void)testThatLoginFailsAndDoesNotSetTheCookie
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
@@ -271,14 +271,14 @@
     WaitForAllGroupsToBeEmpty(0.5);
     [[(id) self.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
     
-    // when
+    // WHEN
     NSString *path = @"/login";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": @"invalid"
                                                                } path:path method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
     XCTAssertEqualObjects(response.payload[@"label"], @"invalid-credentials");
@@ -289,7 +289,7 @@
 
 - (void)testThatLoginFailsForWrongEmailAndDoesNotSetTheCookie
 {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
@@ -304,14 +304,14 @@
     [[(id) self.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
     
     
-    // when
+    // WHEN
     NSString *path = @"/login";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": @"invalid@example.com",
                                                                @"password": password
                                                                } path:path method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
     XCTAssertEqualObjects(response.payload[@"label"], @"invalid-credentials");

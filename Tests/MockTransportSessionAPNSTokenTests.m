@@ -27,23 +27,23 @@
 
 - (void)testThatWeCanRegisterAPushToken;
 {
-    // given
+    // GIVEN
     NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
     NSDictionary *payload = @{@"token" : token,
                               @"app" : @"com.wire.zclient.mac",
                               @"transport" : @"APNS"};
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, (NSInteger) 201);
     XCTAssertEqualObjects(response.payload, payload);
 }
 
 - (void)testThatItFailsWhenAnyFieldIsMissing;
 {
-    // given
+    // GIVEN
     NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
     NSDictionary *payload = @{@"token" : token,
                               @"app" : @"com.wire.zclient.mac",
@@ -53,13 +53,13 @@
         NSMutableDictionary *p2 = [payload mutableCopy];
         [p2 removeObjectForKey:key];
         
-        // when
+        // WHEN
         __block ZMTransportResponse *response;
         [self performIgnoringZMLogError:^{
             response = [self responseForPayload:p2 path:@"/push/tokens" method:ZMMethodPOST];
         }];
         
-        // then
+        // THEN
         XCTAssertEqual(response.HTTPStatus, (NSInteger) 400);
     }
     //{
@@ -71,16 +71,16 @@
 
 - (void)testThatItFailsWhenTheTransportIsNotAPNS;
 {
-    // given
+    // GIVEN
     NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
     NSDictionary *payload = @{@"token" : token,
                               @"app" : @"com.wire.zclient.mac",
                               @"transport" : @"sfkhhksdf"};
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertEqual(response.HTTPStatus, (NSInteger) 400);
     
     //{
