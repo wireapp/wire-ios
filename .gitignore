@@ -12,6 +12,7 @@ WireShareEngine.framework.zip
 Carthage/*
 
 # Test artefacts
+build/
 xcode-*.log
 tests.xml
 code-coverage/*
