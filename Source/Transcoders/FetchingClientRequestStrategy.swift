@@ -106,7 +106,7 @@ extension FetchingClientRequestStrategy: ZMRemoteIdentifierObjectTranscoder {
         guard let userId = (identifiers.first as NSUUID?)?.transportString() else { return nil }
         
         //GET /users/<user-id>/clients
-        let path = NSString.path(withComponents: ["users", "\(userId)", "clients"])
+        let path = NSString.path(withComponents: ["/users", "\(userId)", "clients"])
         return ZMTransportRequest(path: path, method: .methodGET, payload: nil)
     }
     

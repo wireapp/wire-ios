@@ -157,8 +157,8 @@ extension FetchClientRequestStrategyTests {
         
         // THEN
         if let request = request {
-            let path = "users/\(user.remoteIdentifier!.transportString())/clients"
-            XCTAssertTrue(request.path.contains(path))
+            let path = "/users/\(user.remoteIdentifier!.transportString())/clients"
+            XCTAssertEqual(request.path, path)
             XCTAssertEqual(request.method, .methodGET)
         } else {
             XCTFail()
