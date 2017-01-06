@@ -85,8 +85,9 @@ public extension ConversationViewController {
             items.append(backBarButtonItem)
         }
         
-        items.append(collectionsBarButtonItem)
-        
+        if (false) {
+            items.append(collectionsBarButtonItem)
+        }
         return items
     }
     
