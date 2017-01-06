@@ -84,10 +84,7 @@ public extension ConversationViewController {
         if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
             items.append(backBarButtonItem)
         }
-        
-        if (false) {
-            items.append(collectionsBarButtonItem)
-        }
+        items.append(collectionsBarButtonItem)
         return items
     }
     
