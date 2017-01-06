@@ -85,10 +85,9 @@ public extension ConversationViewController {
             items.append(backBarButtonItem)
         }
         
-        if Settings.shared().enableCollections {
+        if (false) {
             items.append(collectionsBarButtonItem)
         }
-        
         return items
     }
     
@@ -140,7 +139,6 @@ public extension ConversationViewController {
     
     func onCollectionButtonPressed(_ sender: AnyObject!) {
         let collections = CollectionsViewController(conversation: conversation)
-        collections.analyticsTracker = self.analyticsTracker
         collections.delegate = self
         
         let navigationController = collections.wrap(inNavigationControllerClass: RotationAwareNavigationController.self)
@@ -167,14 +165,20 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
         switch action {
         case .forward:
             self.parent?.dismiss(animated: true) {
-                self.contentViewController.scroll(to: message) { cell in
+                self.contentViewController.scroll(to: message) {[weak self] cell in
+                    guard let `self` = self else {
+                        return
+                    }
                     self.contentViewController.showForwardFor(message: message, fromCell: cell)
                 }
             }
             
             
         case .showInConversation:
-            self.parent?.dismiss(animated: true) {
+            self.parent?.dismiss(animated: true) { [weak self] in
+                guard let `self` = self else {
+                    return
+                }
                 self.contentViewController.scroll(to: message)
             }
         default:
