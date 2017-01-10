@@ -7,4 +7,4 @@ install:
 script:
   - open -b com.apple.iphonesimulator
   - set -o pipefail
-  - xcodebuild build test -scheme Cryptobox-ios -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | xcpretty -s
+  - xcodebuild build test -scheme Cryptobox-ios -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.2' | xcpretty -s
