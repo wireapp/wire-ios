@@ -19,12 +19,7 @@ branches:
 install:
   - bundle install
   - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
-  - carthage bootstrap --platform iOS
 
 script:
   - set -o pipefail
-  - xcodebuild clean build test -scheme Transport-ios -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | tee >build.log >(xcpretty -s)
   - bundle exec danger
-
-after_failure:
-  - tail -n 500 build.log
