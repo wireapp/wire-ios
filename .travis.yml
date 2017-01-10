@@ -13,18 +13,11 @@ notifications:
 
 cache:
   - bundler
-  - cocoapods
 
 install:
   - bundle install
-  - carthage bootstrap --platform iOS
   - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
 
 script:
-  - open -b com.apple.iphonesimulator
   - set -o pipefail
-  - xcodebuild build test -scheme ZMUtilities-ios -destination 'platform=iOS Simulator,name=iPhone 6s,OS=10.0' | tee >build.log >(xcpretty -s)
   - bundle exec danger
-
-after_failure:
-  - tail -n 500 build.log
