@@ -405,62 +405,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [NSSet setWithObjects:ConversationTypeKey, ZMConversationIsSelfAnActiveMemberKey, nil];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingAttributedDisplayName;
-{
-    return [ZMConversation keyPathsForValuesAffectingDisplayName];
-}
-
-- (NSString *)displayName
-{
-    switch (self.conversationType) {
-        case ZMConversationTypeConnection:
-        {
-            NSString *name = self.connectedUser.name;
-            if (name.length == 0) {
-                name = self.userDefinedName;
-            }
-            return name ?: @"…";
-        }
-        case ZMConversationTypeGroup:
-            if (0 < self.userDefinedName.length) {
-                return self.userDefinedName;
-            }
-            else {
-                ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-                NSArray *activeNames = [self.otherActiveParticipants.array mapWithBlock:^NSString*(ZMUser *user) {
-                    if(user == selfUser || user.name.length < 1) {
-                        return nil;
-                    }
-                    return user.displayName;
-                }];
-                
-                
-                NSString *joiner = @", ";
-                NSString *activeNamesString = [activeNames componentsJoinedByString:joiner];
-                return activeNamesString;
-            }
-            
-        case ZMConversationTypeOneOnOne:
-        {
-            ZMUser *other = self.otherActiveParticipants.firstObject ?: self.connectedUser;
-            NSString *name = other.name;
-            if (0 < name.length) {
-                return name;
-            }
-            else {
-                // The user is most probably deleted
-                return @"…";
-            }
-        }
-            
-        case ZMConversationTypeSelf:
-            return [ZMUser selfUserInContext:self.managedObjectContext].displayName ?: @"";
-            
-        case ZMConversationTypeInvalid:
-            return @"";
-    }
-}
-
 + (NSSet *)keyPathsForValuesAffectingDisplayName;
 {
     return [NSSet setWithObjects:ConversationTypeKey, @"connection",

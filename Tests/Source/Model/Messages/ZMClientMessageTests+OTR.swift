@@ -370,7 +370,7 @@ extension ClientMessageTests_OTR {
             self.syncMOC.saveOrRollback()
             
             let confirmationMessage = clientmessage.confirmReception()
-            print(confirmationMessage)
+
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()
                 else { return XCTFail()}
@@ -393,7 +393,7 @@ extension ClientMessageTests_OTR {
             self.syncMOC.saveOrRollback()
             
             let confirmationMessage = clientmessage.confirmReception()
-            print(confirmationMessage)
+
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()
                 else { return XCTFail()}

@@ -1380,6 +1380,17 @@
     XCTAssertEqualObjects(conversation.displayName, @"…");
 }
 
+- (void)testThatTheDisplayNameForGroupConversationWithoutParticipantsIsTheEmptyGroupConversationName;
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    [self.uiMOC saveOrRollback];
+
+    // then
+    XCTAssertEqualObjects(conversation.displayName, @"conversation.displayname.emptygroup");
+}
+
 - (void)testThatTheDisplayNameIsTheOtherUsersNameForAConnectionRequest;
 {
     __block NSManagedObjectID *moid;

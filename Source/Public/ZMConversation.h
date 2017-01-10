@@ -67,7 +67,6 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 @interface ZMConversation : ZMManagedObject
 
 @property (nonatomic, copy, nullable) NSString *userDefinedName;
-@property (nonatomic, readonly, nonnull) NSString *displayName;
 
 @property (readonly, nonatomic) ZMConversationType conversationType;
 @property (readonly, nonatomic, nonnull) NSDate *lastModifiedDate;
