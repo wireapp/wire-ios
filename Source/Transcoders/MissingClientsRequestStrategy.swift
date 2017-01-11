@@ -48,7 +48,7 @@ public extension UserClient {
 
 // Register new client, update it with new keys, deletes clients.
 @objc
-public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder {
+public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder, RequestStrategy {
     
     weak var clientRegistrationStatus: ClientRegistrationDelegate?
     weak var apnsConfirmationStatus: DeliveryConfirmationDelegate?
@@ -79,7 +79,7 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
     }
     
     public func nextRequest() -> ZMTransportRequest? {
-        guard let clientStatus = clientRegistrationStatus , clientStatus.clientIsReadyForRequests
+        guard let clientStatus = clientRegistrationStatus, clientStatus.clientIsReadyForRequests
         else { return nil }
         
         return modifiedSync.nextRequest()
@@ -92,6 +92,7 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
     public var hasOutstandingItems : Bool {
         return modifiedSync.hasOutstandingItems
     }
+
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
         return false
     }
@@ -116,11 +117,11 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
         guard keys.contains(ZMUserClientMissingKey)
         else { fatal("Unknown keys to sync (\(keys))") }
         
-        guard let missing = client.missingClients , missing.count > 0
+        guard let missing = client.missingClients, missing.count > 0
         else { fatal("no missing clients found") }
         
         let request = requestsFactory.fetchMissingClientKeysRequest(missing)
-        if let confStatus = apnsConfirmationStatus , confStatus.needsToSyncMessages {
+        if let confStatus = apnsConfirmationStatus, confStatus.needsToSyncMessages {
             request?.transportRequest.forceToVoipSession()
         }
         return request

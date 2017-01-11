@@ -82,7 +82,7 @@ public extension ZMOTRMessage {
         let allMissingClients = Set(missingMap.flatMap { pair -> [UserClient] in
             
             // user
-            guard let userID = UUID(uuidString: pair.0) else { return []}
+            guard let userID = UUID(uuidString: pair.0) else { return [] }
             let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.managedObjectContext!)!
             
             // client
