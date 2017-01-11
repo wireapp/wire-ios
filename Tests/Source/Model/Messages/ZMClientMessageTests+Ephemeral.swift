@@ -268,7 +268,7 @@ extension ZMClientMessageTests_Ephemeral {
             conversation.mutableOtherActiveParticipants.add(self.syncUser1)
             self.syncMOC.saveOrRollback()
             
-            let textMessage = conversation.appendOTRMessage(withText: "foo", nonce: UUID.create())
+            let textMessage = conversation.appendOTRMessage(withText: "foo", nonce: UUID.create(), fetchLinkPreview: true)
             
             //when
             guard let _ = textMessage.encryptedMessagePayloadData()
