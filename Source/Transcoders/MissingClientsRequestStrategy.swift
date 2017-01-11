@@ -48,7 +48,7 @@ public extension UserClient {
 
 // Register new client, update it with new keys, deletes clients.
 @objc
-public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder {
+public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder, RequestStrategy {
     
     weak var clientRegistrationStatus: ClientRegistrationDelegate?
     weak var apnsConfirmationStatus: DeliveryConfirmationDelegate?
