@@ -434,7 +434,7 @@
     
     [self.syncMOC performGroupedBlock:^{
         conversation = self.insertGroupConversation;
-        message = [conversation appendOTRMessageWithText:messageText nonce:[NSUUID createUUID]];
+        message = [conversation appendOTRMessageWithText:messageText nonce:[NSUUID createUUID]fetchLinkPreview:@YES];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
