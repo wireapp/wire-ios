@@ -111,7 +111,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         
         // then
         XCTAssertEqual(messages.count, 1)
-        guard let moc = messages.first?.managedObjectContext else {return XCTFail()}
+        guard let message = messages.first as? ZMMessage , let moc = message.managedObjectContext else {return XCTFail()}
         XCTAssertTrue(moc.zm_isUserInterfaceContext)
     }
     
@@ -367,7 +367,10 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         // then
         let allMessages = sut.assets(for: defaultMatchPair)
         XCTAssertEqual(allMessages.count, 20)
-        XCTAssertTrue(allMessages.reduce(true){$0 && $1.managedObjectContext!.zm_isUserInterfaceContext})
+        XCTAssertTrue(allMessages.reduce(true){ result, element in
+            guard let message = element as? ZMMessage else { return false }
+            return result && message.managedObjectContext!.zm_isUserInterfaceContext
+        })
     }
     
     func testThatItDoesNotReturnFailedToUploadAssets_Uncategorized(){

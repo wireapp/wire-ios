@@ -30,8 +30,14 @@ class MockAssetCollectionDelegate : NSObject, AssetCollectionDelegate {
         didCallDelegate = true
     }
     
-    public func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch : [ZMMessage]], hasMore: Bool) {
-        messagesByFilter.append(messages)
+    public func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch : [ZMConversationMessage]], hasMore: Bool) {
+        // For testing purposes it's easier to work with ZMMessage directly
+        var toAppend = [CategoryMatch: [ZMMessage]]()
+        for (key, value) in messages {
+            toAppend[key] = value.map { $0 as! ZMMessage }
+        }
+        messagesByFilter.append(toAppend)
+        
         didCallDelegate = true
         if !hasMore {
             finished = finished + messages.keys
@@ -112,7 +118,7 @@ class AssetColletionTests : ModelObjectsTests {
         
         // then
         XCTAssertEqual(messages.count, 1)
-        guard let moc = messages.first?.managedObjectContext else {return XCTFail()}
+        guard let message = messages.first as? ZMMessage , let moc = message.managedObjectContext else {return XCTFail()}
         XCTAssertTrue(moc.zm_isUserInterfaceContext)
     }
     
@@ -388,7 +394,10 @@ class AssetColletionTests : ModelObjectsTests {
         // then
         let allMessages = sut.assets(for: defaultMatchPair)
         XCTAssertEqual(allMessages.count, 20)
-        XCTAssertTrue(allMessages.reduce(true){$0 && $1.managedObjectContext!.zm_isUserInterfaceContext})
+        XCTAssertTrue(allMessages.reduce(true){ result, element in
+            guard let message = element as? ZMMessage else { return false }
+            return result && message.managedObjectContext!.zm_isUserInterfaceContext
+        })
     }
     
     func testThatItDoesNotReturnFailedToUploadAssets_Uncategorized(){
