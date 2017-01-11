@@ -31,7 +31,7 @@ extension ZMConversation: Conversation {
     }
     
     public func appendTextMessage(_ message: String) -> Sendable? {
-        return appendMessage(withText: message) as? Sendable
+        return appendMessage(withText: message, fetchLinkPreview: false) as? Sendable
     }
     
     public func appendImage(_ url: URL) -> Sendable? {
