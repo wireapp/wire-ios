@@ -123,7 +123,7 @@ import ZMTransport
         uiManagedObjectContext?.performGroupedBlock({ () -> Void in
             let uiMessage = (try? uiManagedObjectContext!.existingObject(with: messageObjectId)) as? ZMAssetClientMessage
             
-            let userInfo = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp]
+            let userInfo = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
             if uiMessage?.transferState == .downloaded {
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName), object: uiMessage, userInfo: userInfo)
             }

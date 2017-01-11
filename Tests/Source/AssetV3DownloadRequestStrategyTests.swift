@@ -321,7 +321,7 @@ extension AssetV3DownloadRequestStrategyTests {
         
         let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId.transportString())
         
-        let dict = ["recipient": selfClient.remoteIdentifier, "sender": selfClient.remoteIdentifier, "text": genericMessage.data().base64String()] as NSDictionary
+        let dict = ["recipient": selfClient.remoteIdentifier!, "sender": selfClient.remoteIdentifier!, "text": genericMessage.data().base64String()] as NSDictionary
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
             "type": "conversation.otr-message-add",
             "data":dict,

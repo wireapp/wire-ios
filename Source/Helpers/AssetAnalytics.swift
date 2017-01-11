@@ -43,7 +43,7 @@ final public class AssetAnalytics {
             self.notificationCenter.post(
                 name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFinishedNotificationName),
                 object: try? uiMoc.existingObject(with: messageObjectId),
-                userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: response.startOfUploadTimestamp]
+                userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
             )
         }
     }
@@ -56,7 +56,7 @@ final public class AssetAnalytics {
             self.notificationCenter.post(
                 name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFailedNotificationName),
                 object: try? uiMoc.existingObject(with: messageObjectId),
-                userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: request?.startOfUploadTimestamp != nil ?? Date()]
+                userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: request?.startOfUploadTimestamp ?? Date()]
             )
         }
     }
