@@ -172,7 +172,7 @@ public class SharingSession {
         
         guard !NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL) else { throw InitializationError.needsMigration }
         
-        ZMSLog.set  (level: .debug, tag: "Network")
+        ZMSLog.set(level: .debug, tag: "Network")
 
         let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: storeURL)!
         let syncContext = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: keyStoreURL)!
@@ -214,13 +214,10 @@ public class SharingSession {
         )!
         
         let missingClientStrategy = MissingClientsRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, apnsConfirmationStatus: DeliveryConfirmationDummy(), managedObjectContext: syncContext)
-        
-        let fetchinClientStrategy = FetchingClientRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext)
-        
         let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, maxConcurrentImageOperation: 1)
         let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy, missingClientStrategy, fetchinClientStrategy])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [missingClientStrategy, clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy])
 
         operationLoop = RequestGeneratingOperationLoop(
             userContext: userInterfaceContext,
@@ -249,13 +246,6 @@ public class SharingSession {
         syncContext.zm_fileAssetCache = fileAssetcache
     }
 
-    /// Cancel all pending tasks.
-    /// Should be called when the extension is dismissed
-    public func cancelAllPendingTasks() {
-        // TODO
-
-    }
-    
     public func enqueue(changes: @escaping () -> Void) {
         enqueue(changes: changes, completionHandler: nil)
     }
