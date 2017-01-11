@@ -340,7 +340,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     fileprivate var maxOverviewElementsInTable: Int {
-        return 2
+        return 3
     }
     
     fileprivate var maxOverviewVideoElementsInTable: Int {
