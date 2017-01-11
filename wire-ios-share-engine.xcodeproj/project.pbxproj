@@ -572,7 +572,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4071D76E2A400FDE440 /* wire-ios-share-engine-test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "wire-ios-share-engineTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -588,7 +588,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4071D76E2A400FDE440 /* wire-ios-share-engine-test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "wire-ios-share-engineTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
