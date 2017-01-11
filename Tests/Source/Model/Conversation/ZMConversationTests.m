@@ -825,7 +825,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.lastModifiedDate = [NSDate.date dateByAddingTimeInterval:-100];
-    ZMClientMessage *clientMessage = [conversation appendOTRMessageWithText:@"Test Message" nonce:[NSUUID new]];
+    ZMClientMessage *clientMessage = [conversation appendOTRMessageWithText:@"Test Message" nonce:[NSUUID new] fetchLinkPreview:YES];
     
     // then
     XCTAssertEqualObjects(conversation.lastModifiedDate, clientMessage.serverTimestamp);
@@ -846,7 +846,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.lastModifiedDate = [NSDate.date dateByAddingTimeInterval:-100];
-    ZMClientMessage *clientMessage = [conversation appendOTRMessageWithText:@"Test Message" nonce:[NSUUID new]];
+    ZMClientMessage *clientMessage = [conversation appendOTRMessageWithText:@"Test Message" nonce:[NSUUID new] fetchLinkPreview:YES];
     
     NSDate *postingDate = clientMessage.serverTimestamp;
     // then
@@ -3398,7 +3398,7 @@
         
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID];
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID fetchLinkPreview:YES];
         
         ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
         NSData *contentData = message.data;
@@ -3530,7 +3530,7 @@
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
         
-        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:[NSUUID createUUID]];
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:[NSUUID createUUID] fetchLinkPreview:YES];
         NSUInteger previusMessagesCount = conversation.messages.count;
         
         ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:[NSUUID createUUID].transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
@@ -3566,7 +3566,7 @@
         
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID];
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID fetchLinkPreview:YES];
         NSUInteger previusMessagesCount = conversation.messages.count;
         
         ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
@@ -3602,7 +3602,7 @@
         
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID];
+        [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID fetchLinkPreview:YES];
         NSUInteger previusMessagesCount = conversation.messages.count;
         
         ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];

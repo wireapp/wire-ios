@@ -646,12 +646,17 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (id <ZMConversationMessage>)appendMessageWithText:(NSString *)text;
 {
+    return [self appendMessageWithText:text fetchLinkPreview:YES];
+}
+
+- (nullable id <ZMConversationMessage>)appendMessageWithText:(nullable NSString *)text fetchLinkPreview:(BOOL)fetchPreview;
+{
     VerifyReturnNil(![text zmHasOnlyWhitespaceCharacters]);
     VerifyReturnNil(text != nil);
 
     NSUUID *nonce = NSUUID.UUID;
-    id <ZMConversationMessage> message = [self appendOTRMessageWithText:text nonce:nonce];
-    
+    id <ZMConversationMessage> message = [self appendOTRMessageWithText:text nonce:nonce fetchLinkPreview:fetchPreview];
+
     [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationClearTypingNotificationName object:self];
     return message;
 }
@@ -1312,13 +1317,18 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return message;
 }
 
-- (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce
+- (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview
 {
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:text nonce:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
-    message.linkPreviewState = ZMLinkPreviewStateWaitingToBeProcessed;
+    message.linkPreviewState = fetchPreview ? ZMLinkPreviewStateWaitingToBeProcessed : ZMLinkPreviewStateDone;
     message.isEncrypted = YES;
     return message;
+}
+
+- (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce
+{
+    return [self appendOTRMessageWithText:text nonce:nonce fetchLinkPreview:YES];
 }
 
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce
