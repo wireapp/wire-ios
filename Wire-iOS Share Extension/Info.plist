@@ -28,7 +28,7 @@
 	<string>$(WIRE_BUNDLE_ID)</string>
 	<key>NSExtension</key>
 	<dict>
-		<key>NSExtensionAttributes</key>
+		<key>NSExtensionActivationRule</key>
 		<dict>
 			<key>NSExtensionActivationSupportsMovieWithMaxCount</key>
 			<integer>1</integer>
