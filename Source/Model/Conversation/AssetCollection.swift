@@ -24,14 +24,14 @@ public enum AssetFetchResult : Int {
 
 public protocol ZMCollection : NSObjectProtocol {
     func tearDown()
-    func assets(for category: CategoryMatch) -> [ZMMessage]
+    func assets(for category: CategoryMatch) -> [ZMConversationMessage]
     var fetchingDone : Bool { get }
 }
 
 public protocol AssetCollectionDelegate : NSObjectProtocol {
     /// The AssetCollection calls this when the fetching completes
     /// To get all messages for any category defined in `including`, call `assets(for category: CategoryMatch)`
-    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMMessage]], hasMore: Bool)
+    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool)
     
     /// This method is called when all assets in the conversation have been fetched & analyzed / categorized
     func assetCollectionDidFinishFetching(collection: ZMCollection, result : AssetFetchResult)
@@ -119,7 +119,7 @@ public class AssetCollection : NSObject, ZMCollection {
     }
     
     /// Returns all assets that have been fetched thus far
-    public func assets(for category: CategoryMatch) -> [ZMMessage] {
+    public func assets(for category: CategoryMatch) -> [ZMConversationMessage] {
         // Remove zombie objects and return remaining
         if let values = assets?[category] {
             let withoutZombie = values.filter{!$0.isZombieObject}
