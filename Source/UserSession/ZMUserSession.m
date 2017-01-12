@@ -221,7 +221,7 @@ ZM_EMPTY_ASSERTING_INIT()
                   appGroupIdentifier:(NSString *)appGroupIdentifier;
 {
     zmSetupEnvironments();
-    ZMBackendEnvironment *environment = [[ZMBackendEnvironment alloc] init];
+    ZMBackendEnvironment *environment = [[ZMBackendEnvironment alloc] initWithUserDefaults:NSUserDefaults.standardUserDefaults];
     NSURL *backendURL = environment.backendURL;
     NSURL *websocketURL = environment.backendWSURL;
     self.applicationGroupIdentifier = appGroupIdentifier;
