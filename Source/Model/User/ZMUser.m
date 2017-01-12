@@ -79,8 +79,8 @@ static NSString *const UserClientsKey = @"clients";
 static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 
-static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.com$";
-
+static NSString *const OttoBotHandle = @"ottothebot";
+static NSString *const AnnaBotHandle = @"annathebot";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -249,20 +249,7 @@ static NSString *const UserBotEmailRegex = @"^(welcome|anna)(|\\+(.*))@wire\\.co
 
 - (BOOL)isBot
 {
-    static NSRegularExpression *botRegEx = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSError *regexParseError = nil;
-        botRegEx = [[NSRegularExpression alloc] initWithPattern:UserBotEmailRegex options:NSRegularExpressionCaseInsensitive error:&regexParseError];
-        assert(regexParseError == nil);
-    });
-    
-    if (self.emailAddress.length == 0) {
-        return NO;
-    }
-    NSRange matchRange = [botRegEx rangeOfFirstMatchInString:self.emailAddress options:NSMatchingAnchored range:NSMakeRange(0, self.emailAddress.length)];
-    
-    return ((matchRange.location == 0) && (matchRange.length == self.emailAddress.length));
+    return [self.handle isEqualToString:AnnaBotHandle] || [self.handle isEqualToString:OttoBotHandle];
 }
 
 - (BOOL)canBeConnected;
