@@ -1661,23 +1661,12 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    user.emailAddress = @"anna+123@wire.com";
+    user.handle = @"annathebot";
     
     // then
     XCTAssertTrue(user.isBot);
 }
 
-- (void)testThatItDetectsSimpleAnnaAsBot
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.emailAddress = @"anna@wire.com";
-    
-    // then
-    XCTAssertTrue(user.isBot);
-}
 
 - (void)testThatItDetectsOttoAsBot
 {
@@ -1685,7 +1674,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    user.emailAddress = @"welcome+321@wire.com";
+    user.handle = @"ottothebot";
     
     // then
     XCTAssertTrue(user.isBot);
@@ -1697,43 +1686,16 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    user.emailAddress = @"ivan@ivanovich.com";
+    user.handle = @"florence";
     
     // then
     XCTAssertFalse(user.isBot);
 }
 
-- (void)testThatItDoesNotDetectPrefixedName
+- (void)testThatItDoesNotDetectUserWithoutHandleAsBot
 {
     // given
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.emailAddress = @"annalisa@wire.com";
-    
-    // then
-    XCTAssertFalse(user.isBot);
-}
-
-- (void)testThatItDoesNotDetectWireUserAsBot
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.emailAddress = @"ivan@wire.com";
-    
-    // then
-    XCTAssertFalse(user.isBot);
-}
-
-- (void)testThatItDoesNotDetectEmptyEmailAsBot
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.emailAddress = @"";
     
     // then
     XCTAssertFalse(user.isBot);
