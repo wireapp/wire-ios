@@ -180,7 +180,7 @@ public class SharingSession {
         userInterfaceContext.zm_sync = syncContext
         syncContext.zm_userInterface = userInterfaceContext
         
-        let environment = ZMBackendEnvironment()
+        let environment = ZMBackendEnvironment(userDefaults: UserDefaults.shared())
         
         let transportSession =  ZMTransportSession(
             baseURL: environment.backendURL,
