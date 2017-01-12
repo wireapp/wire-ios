@@ -21,7 +21,7 @@
 // Share Extension
 
 
-"share_extension.conversation_selection.title" = "Share to:";
+"share_extension.conversation_selection.title" = "Conversation:";
 "share_extension.send_button.title" = "Send";
-"share_extension.conversation_selection.empty.value" = "None";
-"share_extension.input.placeholder" = "Type something…";
+"share_extension.conversation_selection.empty.value" = "Choose";
+"share_extension.input.placeholder" = "Type a message";
