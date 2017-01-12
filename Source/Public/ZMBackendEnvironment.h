@@ -47,6 +47,8 @@ extern NSString * const ZMBackendEnvironmentTypeKey;
 /// Returns an environment of the given type
 + (instancetype)environmentWithType:(ZMBackendEnvironmentType)type;
 
+- (instancetype)init NS_UNAVAILABLE;
+
 /// Returns an environment of the type specified in the user defaults
 - (instancetype)initWithUserDefaults:(NSUserDefaults *)defaults;
 
