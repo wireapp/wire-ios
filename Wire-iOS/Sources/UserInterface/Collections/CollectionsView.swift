@@ -51,7 +51,7 @@ import Cartography
         self.collectionView.register(CollectionLinkCell.self, forCellWithReuseIdentifier: CollectionLinkCell.reuseIdentifier)
         self.collectionView.register(CollectionLoadingCell.self, forCellWithReuseIdentifier: CollectionLoadingCell.reuseIdentifier)
         self.collectionView.register(CollectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: CollectionHeaderView.reuseIdentifier)
-        self.collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 24, right: 0)
+        self.collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         self.collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.collectionView.allowsMultipleSelection = false
         self.collectionView.allowsSelection = true
@@ -68,15 +68,7 @@ import Cartography
         self.noItemsIcon.isHidden = true
         self.addSubview(self.noItemsIcon)
         
-        let backgroundColor: UIColor
-        if ColorScheme.default().variant == .light {
-            backgroundColor = UIColor(white:0.98, alpha:1)
-        }
-        else {
-            backgroundColor = ColorScheme.default().color(withName: ColorSchemeColorBackground)
-        }
-        
-        self.backgroundColor = backgroundColor
+        let backgroundColor = ColorScheme.default().color(withName: ColorSchemeColorBackground)
         let placeholderColor = backgroundColor.mix(ColorScheme.default().color(withName: ColorSchemeColorTextForeground), amount: 0.16)
         
         self.noItemsIcon.image = UIImage(for: .library, fontSize: 160, color: placeholderColor)
