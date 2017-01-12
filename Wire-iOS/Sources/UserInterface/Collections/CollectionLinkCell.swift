@@ -77,7 +77,6 @@ final public class CollectionLinkCell: CollectionCell {
             self.articleView = nil
             
             self.createArticleView(with: textMessageData)
-            message.requestImageDownload()
         }
     }
     
