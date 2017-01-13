@@ -59,6 +59,8 @@
 		CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
 		CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */; };
+		F125E9AC1E28D4F6006583A2 /* ZMCMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F125E9AB1E28D4F6006583A2 /* ZMCMockTransport.framework */; };
+		F125E9AD1E28D603006583A2 /* ZMCMockTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F125E9AB1E28D4F6006583A2 /* ZMCMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +80,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F125E9AD1E28D603006583A2 /* ZMCMockTransport.framework in CopyFiles */,
 				54B04A621D77359900CED57C /* Cryptobox.framework in CopyFiles */,
 				54B04A631D77359900CED57C /* libPhoneNumber.framework in CopyFiles */,
 				54B04A641D77359900CED57C /* Ono.framework in CopyFiles */,
@@ -150,6 +153,7 @@
 		CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
 		CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoopTests.swift; sourceTree = "<group>"; };
+		F125E9AB1E28D4F6006583A2 /* ZMCMockTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCMockTransport.framework; path = Carthage/Build/iOS/ZMCMockTransport.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +180,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F125E9AC1E28D4F6006583A2 /* ZMCMockTransport.framework in Frameworks */,
 				CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */,
 				CE7FBFAB1DFEE95F00E1C4C9 /* ZMTesting.framework in Frameworks */,
 				CE3EB5981DFEBDCF001FE3AE /* WireMessageStrategy.framework in Frameworks */,
@@ -294,6 +299,7 @@
 		5470D4331D77165E00FDE440 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F125E9AB1E28D4F6006583A2 /* ZMCMockTransport.framework */,
 				CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */,
 				CE7FBFAA1DFEE95F00E1C4C9 /* ZMTesting.framework */,
 				CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */,
