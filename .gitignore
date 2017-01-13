@@ -17,3 +17,4 @@ xcode-*.log
 tests.xml
 code-coverage/*
 cobertura.xml
+*.xcscmblueprint
