@@ -44,7 +44,7 @@
                                       @"self":@[@"2312rfw32434234"],
                                       @"cards": @[@{@"contact":@[]}]
                                       };
-    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v2"]];
+    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v3"]];
     ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST];
     
     // THEN
@@ -65,7 +65,7 @@
                                       @"self":@[],
                                       @"contacts":@[]
                                       };
-    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v2"]];
+    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v3"]];
     
     // WHEN
     ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST];
@@ -80,7 +80,7 @@
     NSDictionary *upstreamPayload = @{
                                       @"contacts":@[]
                                       };
-    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v2"]];
+    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v3"]];
     
     // WHEN
     [self performIgnoringZMLogError:^{
@@ -98,7 +98,7 @@
     NSDictionary *upstreamPayload = @{
                                       @"self":@[@"fooooooooo"]
                                       };
-    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v2"]];
+    NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v3"]];
     
     // WHEN
     [self performIgnoringZMLogError:^{
