@@ -202,6 +202,7 @@ public class SharingSession {
                   syncContext: NSManagedObjectContext,
                   transportSession: ZMTransportSession,
                   sharedContainerURL: URL,
+                  modifiedConversations: SharedModifiedConversationsList,
                   authenticationStatus: AuthenticationStatusProvider,
                   clientRegistrationStatus: ClientRegistrationStatus,
                   operationLoop: RequestGeneratingOperationLoop) throws {
@@ -209,6 +210,7 @@ public class SharingSession {
         self.userInterfaceContext = userInterfaceContext
         self.syncContext = syncContext
         self.transportSession = transportSession
+        self.modifiedConversations = modifiedConversations
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.operationLoop = operationLoop
@@ -244,13 +246,14 @@ public class SharingSession {
             transportSession: transportSession
         )
 
-        modifiedConversations = SharedModifiedConversationsList()
+        let modifiedConversations = SharedModifiedConversationsList()
         
         try self.init(
             userInterfaceContext: userInterfaceContext,
             syncContext: syncContext,
             transportSession: transportSession,
             sharedContainerURL: sharedContainerURL,
+            modifiedConversations: modifiedConversations,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: clientRegistrationStatus,
             operationLoop: operationLoop
