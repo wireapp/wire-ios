@@ -129,6 +129,9 @@ public class SharingSession {
     /// The client registration status used to lookup if a user has registered a self client
     private let clientRegistrationStatus : ClientRegistrationDelegate
 
+    /// The list to which touched conversations are added to in order to refresh them in the main app
+    public let modifiedConversations: SharedModifiedConversationsList
+
     let transportSession: ZMTransportSession
     
     /// The `ZMConversationListDirectory` containing all conversation lists
@@ -226,6 +229,8 @@ public class SharingSession {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
+
+        modifiedConversations = SharedModifiedConversationsList()
         
         setupCaches(atContainerURL: sharedContainerURL)
     }
