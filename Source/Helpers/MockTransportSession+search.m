@@ -167,16 +167,20 @@
         }
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"SELF != %@", self.selfUser];
         NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
         
-        ZM_ALLOW_MISSING_SELECTOR(
-                                  NSDictionary *responsePayload = @{
-                                                                    @"results" : [users mapWithSelector:@selector(identifier)]
-                                                                    };
-                                  )
-        
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
+        // This method is just a simulation, it does not do any actual matching, it just returns all users
+        NSMutableArray *results = [NSMutableArray array];
+        for (MockUser *user in users) {
+            if (user == self.selfUser) {
+                continue;
+            }
+            [results addObject:@{
+                                @"id" : user.identifier,
+                                @"cards" : @[]
+                                }];
+        }
+        return [ZMTransportResponse responseWithPayload:@{@"results" : results} HTTPStatus:200 transportSessionError:nil];
         
     }
     return [self errorResponseWithCode:400 reason:@"invalid-method"];

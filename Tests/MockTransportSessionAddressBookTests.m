@@ -50,8 +50,8 @@
     // THEN
     NSDictionary *expectedPayload = @{
                                       @"results": @[
-                                              user1.identifier,
-                                              user2.identifier
+                                              @{@"id": user1.identifier, @"cards": @[]},
+                                              @{@"id": user2.identifier, @"cards": @[]},
                                               ]
                                       };
     XCTAssertEqual(response.HTTPStatus, 200);
