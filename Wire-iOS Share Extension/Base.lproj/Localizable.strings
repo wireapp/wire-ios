@@ -26,3 +26,5 @@
 "share_extension.conversation_selection.empty.value" = "Choose";
 "share_extension.input.placeholder" = "Type a message";
 "share_extension.sending_progress.title" = "Sending…";
+
+"conversation.displayname.emptygroup" = "Empty group conversation";
