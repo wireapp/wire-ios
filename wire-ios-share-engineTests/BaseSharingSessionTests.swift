@@ -19,13 +19,15 @@
 
 import XCTest
 import ZMCDataModel
+import ZMCMockTransport
+import ZMTesting
 @testable import WireShareEngine
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
 }
 
-class BaseSharingSessionTests: XCTestCase {
+class BaseSharingSessionTests: ZMTBaseTest {
 
     var moc: NSManagedObjectContext!
     var sharingSession: SharingSession!
@@ -36,12 +38,37 @@ class BaseSharingSessionTests: XCTestCase {
 
         authenticationStatus = FakeAuthenticationStatus()
         
-        let url                  = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: url)!
-        let syncContext          = NSManagedObjectContext.createSyncContextWithStore(at: url, keyStore: url)!
-        let transport            = ZMTransportSession(baseURL: url, websocketURL: url, mainGroupQueue: userInterfaceContext, initialAccessToken: ZMAccessToken(), application: nil, sharedContainerIdentifier: "some identifier")
+        let testSession = ZMTestSession(dispatchGroup: dispatchGroup)
+        testSession?.shouldUseInMemoryStore = true
+        testSession?.prepare(forTestNamed: name)
         
-        sharingSession = try! SharingSession(userInterfaceContext: userInterfaceContext, syncContext: syncContext, transportSession: transport, sharedContainerURL: url)
+        let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let userInterfaceContext = testSession?.uiMOC
+        let syncContext = testSession?.syncMOC
+        
+        let mockTransport = MockTransportSession(dispatchGroup: ZMSDispatchGroup(label: "ZMSharingSession"))
+        let transportSession = mockTransport.mockedTransportSession()
+        
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [])
+        let registrationStatus = ClientRegistrationStatus(context: syncContext!)
+        let operationLoop = RequestGeneratingOperationLoop(
+            userContext: userInterfaceContext!,
+            syncContext: syncContext!,
+            callBackQueue: .main,
+            requestGeneratorStore: requestGeneratorStore,
+            transportSession: transportSession
+        )
+
+        sharingSession = try! SharingSession(
+            userInterfaceContext: userInterfaceContext!,
+            syncContext: syncContext!,
+            transportSession: transportSession,
+            sharedContainerURL: url,
+            authenticationStatus: authenticationStatus,
+            clientRegistrationStatus: registrationStatus,
+            operationLoop: operationLoop
+        )
+
         moc = sharingSession.userInterfaceContext
     }
 
