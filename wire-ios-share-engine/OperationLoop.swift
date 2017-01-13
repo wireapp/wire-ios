@@ -189,7 +189,6 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
 
 }
 
-
 final class RequestGeneratingOperationLoop {
 
     private let operationLoop: OperationLoop!
@@ -210,7 +209,7 @@ final class RequestGeneratingOperationLoop {
         operationLoop.requestAvailableClosure = enqueueRequests
     }
 
-    func objectsDidChange(changes: Set<NSManagedObject>) {
+    fileprivate func objectsDidChange(changes: Set<NSManagedObject>) {
         
         requestGeneratorStore.changeTrackers.forEach {
             $0.objectsDidChange(changes)
@@ -219,7 +218,7 @@ final class RequestGeneratingOperationLoop {
         enqueueRequests()
     }
     
-    func enqueueRequests() {
+    fileprivate func enqueueRequests() {
         
         var result : ZMTransportEnqueueResult
         
