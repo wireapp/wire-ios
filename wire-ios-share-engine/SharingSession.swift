@@ -147,12 +147,12 @@ public class SharingSession {
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
     public var writeableNonArchivedConversations : [Conversation] {
-        return directory.unarchivedAndNotCallingConversations.conversationArray
+        return directory.unarchivedAndNotCallingConversations.writeableConversations
     }
     
     /// List of archived conversations in which the user can write
     public var writebleArchivedConversations : [Conversation] {
-        return directory.archivedConversations.conversationArray
+        return directory.archivedConversations.writeableConversations
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
@@ -198,16 +198,30 @@ public class SharingSession {
         
     }
     
-    public init(userInterfaceContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, transportSession: ZMTransportSession, sharedContainerURL: URL) throws {
+    internal init(userInterfaceContext: NSManagedObjectContext,
+                  syncContext: NSManagedObjectContext,
+                  transportSession: ZMTransportSession,
+                  sharedContainerURL: URL,
+                  authenticationStatus: AuthenticationStatusProvider,
+                  clientRegistrationStatus: ClientRegistrationStatus,
+                  operationLoop: RequestGeneratingOperationLoop) throws {
         
         self.userInterfaceContext = userInterfaceContext
         self.syncContext = syncContext
         self.transportSession = transportSession
-        
-        authenticationStatus = AuthenticationStatus(transportSession: transportSession)
-        clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
+        self.authenticationStatus = authenticationStatus
+        self.clientRegistrationStatus = clientRegistrationStatus
+        self.operationLoop = operationLoop
         
         guard authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
+        
+        setupCaches(atContainerURL: sharedContainerURL)
+    }
+    
+    public convenience init(userInterfaceContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, transportSession: ZMTransportSession, sharedContainerURL: URL) throws {
+        
+        let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
+        let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         
         let clientMessageTranscoder = ZMClientMessageTranscoder(
             managedObjectContext: syncContext,
@@ -222,7 +236,7 @@ public class SharingSession {
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: [missingClientStrategy, clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy])
 
-        operationLoop = RequestGeneratingOperationLoop(
+        let operationLoop = RequestGeneratingOperationLoop(
             userContext: userInterfaceContext,
             syncContext: syncContext,
             callBackQueue: .main,
@@ -232,7 +246,15 @@ public class SharingSession {
 
         modifiedConversations = SharedModifiedConversationsList()
         
-        setupCaches(atContainerURL: sharedContainerURL)
+        try self.init(
+            userInterfaceContext: userInterfaceContext,
+            syncContext: syncContext,
+            transportSession: transportSession,
+            sharedContainerURL: sharedContainerURL,
+            authenticationStatus: authenticationStatus,
+            clientRegistrationStatus: clientRegistrationStatus,
+            operationLoop: operationLoop
+        )
     }
     
     private func setupCaches(atContainerURL containerURL: URL) {
@@ -271,10 +293,15 @@ public class SharingSession {
 
 // MARK: - Helper
 
-extension ZMConversationList {
-
-    var conversationArray: [Conversation] {
-        return self.flatMap { $0 as? Conversation }
+fileprivate extension ZMConversationList {
+    
+    var writeableConversations: [Conversation] {
+        return self.filter {
+            if let conversation = $0 as? ZMConversation {
+                return !conversation.isReadOnly
+            }
+            return false
+        }.flatMap { $0 as? Conversation }
     }
 
 }
