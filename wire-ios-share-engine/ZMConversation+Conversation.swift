@@ -30,6 +30,10 @@ extension ZMConversation: Conversation {
         return (otherActiveParticipants.firstObject as? ZMBareUser)?.imageSmallProfileData
     }
     
+    public var isTrusted: Bool {
+        return trusted
+    }
+    
     public func appendTextMessage(_ message: String) -> Sendable? {
         return appendMessage(withText: message, fetchLinkPreview: false) as? Sendable
     }
