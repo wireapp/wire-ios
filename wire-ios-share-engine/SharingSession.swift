@@ -147,12 +147,12 @@ public class SharingSession {
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
     public var writeableNonArchivedConversations : [Conversation] {
-        return directory.unarchivedAndNotCallingConversations.conversationArray
+        return directory.unarchivedAndNotCallingConversations.writeableConversations
     }
     
     /// List of archived conversations in which the user can write
     public var writebleArchivedConversations : [Conversation] {
-        return directory.archivedConversations.conversationArray
+        return directory.archivedConversations.writeableConversations
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
@@ -293,10 +293,15 @@ public class SharingSession {
 
 // MARK: - Helper
 
-extension ZMConversationList {
-
-    var conversationArray: [Conversation] {
-        return self.flatMap { $0 as? Conversation }
+fileprivate extension ZMConversationList {
+    
+    var writeableConversations: [Conversation] {
+        return self.filter {
+            if let conversation = $0 as? ZMConversation {
+                return !conversation.isReadOnly
+            }
+            return false
+        }.flatMap { $0 as? Conversation }
     }
 
 }

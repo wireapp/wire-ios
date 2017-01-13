@@ -43,13 +43,13 @@ class SharingSessionTests: BaseSharingSessionTests {
         archivedConversation = createConversation(type: .group, archived: true)
         archivedConnection = createConversation(type: .connection, archived: true)
     }
-    
-    func testThatActiveConversationsAreReturned() {
+
+    func testThatWriteableNonArchivedConversationsAreReturned() {
         let conversations = Set(sharingSession.writeableNonArchivedConversations.map { $0 as! ZMConversation })
         XCTAssertEqual(conversations, Set(arrayLiteral: activeConversation1, activeConversation2))
     }
-    
-    func testThatArchivedConversationsAreReturned() {
+
+    func testThatWritebleArchivedConversationsAreReturned() {
         let conversations = sharingSession.writebleArchivedConversations.map { $0 as! ZMConversation }
         XCTAssertEqual(conversations, [archivedConversation])
     }
