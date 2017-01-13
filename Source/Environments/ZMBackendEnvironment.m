@@ -102,6 +102,15 @@ static void setSettingsForEnvironmentType(ZMBackendEnvironmentType key, NSDictio
     return self;
 }
 
+- (instancetype)initWithType:(ZMBackendEnvironmentType)type
+{
+    self = [super init];
+    if (self) {
+        self.type = type;
+    }
+    return self;
+}
+
 + (void)setupEnvironmentOfType:(ZMBackendEnvironmentType)type
                withBackendHost:(NSString *)backendHost
                         wsHost:(NSString *)wsHost
@@ -202,20 +211,6 @@ static void setSettingsForEnvironmentType(ZMBackendEnvironmentType key, NSDictio
     
     ZMLogError(@"Error: %@ is not a valid environment - switching to default (production) environment", key);
     return ZMBackendEnvironmentTypeProduction;
-}
-
-- (instancetype)init
-{
-    return [self initWithUserDefaults:[NSUserDefaults standardUserDefaults]];
-}
-
-- (instancetype)initWithType:(ZMBackendEnvironmentType)type
-{
-    self = [super init];
-    if (self) {
-        self.type = type;
-    }
-    return self;
 }
 
 + (instancetype)environmentWithType:(ZMBackendEnvironmentType)type;
