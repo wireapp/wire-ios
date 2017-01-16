@@ -20,13 +20,26 @@
 @testable import ZMCDataModel
 
 
-class SharedModifiedConversationsListTests: BaseZMMessageTests {
+fileprivate extension Notification {
 
-    var sut: SharedModifiedConversationsList!
+    init(inserted: [NSManagedObject] = [], updated: [NSManagedObject] = [], deleted: [NSManagedObject] = []) {
+        self.init(name: .NSManagedObjectContextDidSave, userInfo: [
+            NSInsertedObjectsKey: Set<NSManagedObject>(inserted),
+            NSUpdatedObjectsKey: Set<NSManagedObject>(updated),
+            NSDeletedObjectsKey: Set<NSManagedObject>(deleted)
+        ])
+    }
+
+}
+
+
+class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
+
+    var sut: ContextDidSaveNotificationPersistence!
 
     override func setUp() {
         super.setUp()
-        sut = SharedModifiedConversationsList()
+        sut = ContextDidSaveNotificationPersistence()
     }
 
     override func tearDown() {
@@ -34,70 +47,78 @@ class SharedModifiedConversationsListTests: BaseZMMessageTests {
         super.tearDown()
     }
 
-    func testThatItCanStoreAndReadAConversation() {
+    func testThatItCanStoreAndReadAChangeNotification() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = .create()
+        let uri = conversation.objectID.uriRepresentation()
+        XCTAssertNotNil(uri)
 
         // When
-        sut.add(conversation)
+        sut.add(.init(inserted: [conversation]))
 
         // Then
-        XCTAssertEqual(sut.storedIdentifiers, [conversation.remoteIdentifier!])
+        let expected = [NSInsertedObjectsKey: [uri] as AnyObject] as [AnyHashable: AnyObject]
+        XCTAssertEqual(sut.storedNotifications.count, 1)
+
+        for (key, value) in sut.storedNotifications.first! {
+            XCTAssertEqual(value as? Set<NSManagedObject>, expected[key] as? Set<NSManagedObject>)
+        }
     }
 
-    func testThatItCanClearTheStoredIdentifiers() {
+    func testThatItCanClearTheStoredNotifications() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = .create()
-        sut.add(conversation)
-        XCTAssertEqual(sut.storedIdentifiers, [conversation.remoteIdentifier!])
+        XCTAssertNotNil(conversation.objectID.uriRepresentation())
+        sut.add(.init(inserted: [conversation]))
+        XCTAssertEqual(sut.storedNotifications.count, 1)
 
         // When
         sut.clear()
 
         // Then
-        XCTAssertEqual(sut.storedIdentifiers, [])
+        XCTAssertEqual(sut.storedNotifications.count, 0)
 
     }
 
-    func testThatItCanSaveMultipleConversations() {
+    func testThatItCanSaveMultipleNotifications() {
         // Given
         let firstConversation = ZMConversation.insertNewObject(in: uiMOC)
-        firstConversation.remoteIdentifier = .create()
+        let firstURI = firstConversation.objectID.uriRepresentation()
+
         let secondConversation = ZMConversation.insertNewObject(in: uiMOC)
-        secondConversation.remoteIdentifier = .create()
+        let secondURI = secondConversation.objectID.uriRepresentation()
 
         // When
-        sut.add(firstConversation)
+        sut.add(.init(inserted: [firstConversation], deleted: [firstConversation]))
 
         // Then
-        XCTAssertEqual(sut.storedIdentifiers, [firstConversation.remoteIdentifier!])
+        XCTAssertEqual(sut.storedNotifications.count, 1)
 
         // When
-        sut.add(secondConversation)
+        sut.add(.init(updated: [secondConversation]))
 
         // Then
-        XCTAssertEqual(sut.storedIdentifiers, [firstConversation.remoteIdentifier!, secondConversation.remoteIdentifier!])
+        XCTAssertEqual(sut.storedNotifications.count, 2)
+
+        // Then
+        let firstExpected = [
+            NSInsertedObjectsKey: [firstURI] as AnyObject,
+            NSDeletedObjectsKey: [secondURI] as AnyObject
+            ] as [AnyHashable: AnyObject]
+
+        let secondExpected = [
+            NSUpdatedObjectsKey: [secondURI] as AnyObject
+            ] as [AnyHashable: AnyObject]
+
+        for (key, value) in sut.storedNotifications.first! {
+            XCTAssertEqual(value as? Set<NSManagedObject>, firstExpected[key] as? Set<NSManagedObject>)
+        }
+
+        for (key, value) in sut.storedNotifications.last! {
+            XCTAssertEqual(value as? Set<NSManagedObject>, secondExpected[key] as? Set<NSManagedObject>)
+        }
     }
 
-    func testThatItAddsAConversationAddedMultipleTimesOnce() {
-        // Given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = .create()
-
-        // When
-        sut.add(conversation)
-
-        // Then
-        XCTAssertEqual(sut.storedIdentifiers, [conversation.remoteIdentifier!])
-
-        // When
-        sut.add(conversation)
-
-        // Then
-        XCTAssertEqual(sut.storedIdentifiers, [conversation.remoteIdentifier!])
-    }
 
 }
 

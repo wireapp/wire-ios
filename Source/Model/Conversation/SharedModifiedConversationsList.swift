@@ -17,60 +17,49 @@
 //
 
 
-import Foundation
+fileprivate extension Notification {
 
-
-private let zmLog = ZMSLog(tag: "modified conversations")
-
-
-/// This class is used to mark conversations as modified in an extension 
-/// context in order to refetch them in the main application.
-@objc public class SharedModifiedConversationsList: NSObject {
-
-    private let defaults = UserDefaults.shared()
-    private let modifiedKey = "modifiedConversations"
-
-    public func add(_ conversation: ZMConversation) {
-        guard let identifier = conversation.remoteIdentifier else { return }
-        let identifiers = storedIdentifiers + [identifier]
-        let identifiersAsString = identifiers.map { $0.uuidString }
-        defaults?.set(Array(identifiersAsString), forKey: modifiedKey)
-    }
-
-    public func clear() {
-        defaults?.set(nil, forKey: modifiedKey)
-    }
-
-    public var storedIdentifiers: Set<UUID> {
-        let stored = defaults?.object(forKey: modifiedKey) as? [String]
-        if let identifiers = stored?.flatMap(UUID.init) {
-            return Set(identifiers)
+    var contextDidSaveData: [AnyHashable : AnyObject] {
+        guard let info = userInfo else { return [:] }
+        var changes = [AnyHashable : AnyObject]()
+        for (key, value) in info {
+            guard let set = value as? NSSet else { continue }
+            changes[key] = set.flatMap {
+                return ($0 as? NSManagedObject)?.objectID.uriRepresentation()
+            } as AnyObject
         }
-        return []
-    }
 
+        return changes
+    }
 }
 
 
-public extension NSManagedObjectContext {
+/// This class is used to persist `NSManagedObjectContext` change
+/// notifications in order to merge them into the main app contexts.
+@objc public class ContextDidSaveNotificationPersistence: NSObject {
 
-    @objc(notifyMessagesChangedInConversationWithRemoteIdentifiers:)
-    public func notifyMessagesChanged(with identifiers: Set<UUID>) {
-        guard !identifiers.isEmpty else { return zmLog.warn("Call made to notify without remote identifiers") }
-        let conversations = ZMConversation.fetchObjects(withRemoteIdentifiers: NSOrderedSet(set: identifiers), in: self)?.array as? [ZMConversation]
+    private let defaults = UserDefaults.shared()
+    private let saveNotificationKey = "contextDidChangeNotifications"
 
-        conversations?.forEach { conversation in
-            refresh(conversation, mergeChanges: true)
-        }
-
-        if zm_isUserInterfaceContext {
-            conversations?.forEach {
-                // When notifying the last message changed, the message window will be
-                // recalculated and a notification about a potentially added message will be fired.
-                guard let message = $0.messages.lastObject as? ZMMessage else { return }
-                globalManagedObjectContextObserver.notifyNonCoreDataChangeInManagedObject(message)
-            }
-        }
+    public func add(_ note: Notification) {
+        var current = storedNotifications
+        current.append(note.contextDidSaveData)
+        let archived = NSKeyedArchiver.archivedData(withRootObject: current)
+        defaults?.set(archived, forKey: saveNotificationKey)
+        defaults?.synchronize()
     }
 
+    public func clear() {
+        defaults?.set(nil, forKey: saveNotificationKey)
+    }
+
+    public var storedNotifications: [[AnyHashable : AnyObject]] {
+        if let data = defaults!.object(forKey: saveNotificationKey) as? Data,
+            let stored = NSKeyedUnarchiver.unarchiveObject(with: data) as? [[AnyHashable : AnyObject]] {
+            return stored
+        }
+
+        return []
+    }
+    
 }
