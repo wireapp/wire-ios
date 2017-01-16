@@ -45,6 +45,7 @@ final public class CollectionsViewController: UIViewController {
     fileprivate let collection: AssetCollectionWrapper
     
     fileprivate var openCollectionsIsTracked: Bool = false
+    fileprivate var lastLayoutSize: CGSize = .zero
     
     fileprivate var fetchingDone: Bool = false {
         didSet {
@@ -142,8 +143,11 @@ final public class CollectionsViewController: UIViewController {
     
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.contentView.collectionViewLayout.invalidateLayout()
-        self.contentView.collectionView.reloadData()
+        if self.lastLayoutSize != self.view.bounds.size {
+            self.lastLayoutSize = self.view.bounds.size
+            self.contentView.collectionViewLayout.invalidateLayout()
+            self.contentView.collectionView.reloadData()
+        }
     }
     
     override public var prefersStatusBarHidden: Bool {
