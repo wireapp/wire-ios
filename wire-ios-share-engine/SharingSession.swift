@@ -129,8 +129,10 @@ public class SharingSession {
     /// The client registration status used to lookup if a user has registered a self client
     private let clientRegistrationStatus : ClientRegistrationDelegate
 
-    /// The list to which touched conversations are added to in order to refresh them in the main app
-    public let modifiedConversations: SharedModifiedConversationsList
+    /// The list to which save notifications of the UI moc are appended and persistet
+    private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
+
+    private var contextSaveObserverToken: NSObjectProtocol?
 
     let transportSession: ZMTransportSession
     
@@ -202,7 +204,7 @@ public class SharingSession {
                   syncContext: NSManagedObjectContext,
                   transportSession: ZMTransportSession,
                   sharedContainerURL: URL,
-                  modifiedConversations: SharedModifiedConversationsList,
+                  saveNotificationPersistence: ContextDidSaveNotificationPersistence,
                   authenticationStatus: AuthenticationStatusProvider,
                   clientRegistrationStatus: ClientRegistrationStatus,
                   operationLoop: RequestGeneratingOperationLoop) throws {
@@ -210,7 +212,7 @@ public class SharingSession {
         self.userInterfaceContext = userInterfaceContext
         self.syncContext = syncContext
         self.transportSession = transportSession
-        self.modifiedConversations = modifiedConversations
+        self.saveNotificationPersistence = saveNotificationPersistence
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.operationLoop = operationLoop
@@ -218,6 +220,7 @@ public class SharingSession {
         guard authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
         
         setupCaches(atContainerURL: sharedContainerURL)
+        setupObservers()
     }
     
     public convenience init(userInterfaceContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, transportSession: ZMTransportSession, sharedContainerURL: URL) throws {
@@ -246,18 +249,25 @@ public class SharingSession {
             transportSession: transportSession
         )
 
-        let modifiedConversations = SharedModifiedConversationsList()
+        let saveNotificationPersistence = ContextDidSaveNotificationPersistence()
         
         try self.init(
             userInterfaceContext: userInterfaceContext,
             syncContext: syncContext,
             transportSession: transportSession,
             sharedContainerURL: sharedContainerURL,
-            modifiedConversations: modifiedConversations,
+            saveNotificationPersistence: saveNotificationPersistence,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: clientRegistrationStatus,
             operationLoop: operationLoop
         )
+    }
+
+    deinit {
+        if let token = contextSaveObserverToken {
+            NotificationCenter.default.removeObserver(token)
+            contextSaveObserverToken = nil
+        }
     }
     
     private func setupCaches(atContainerURL containerURL: URL) {
@@ -274,6 +284,15 @@ public class SharingSession {
         let fileAssetcache = FileAssetCache(location: cachesURL)
         userInterfaceContext.zm_fileAssetCache = fileAssetcache
         syncContext.zm_fileAssetCache = fileAssetcache
+    }
+
+    private func setupObservers() {
+        contextSaveObserverToken = NotificationCenter.default.addObserver(
+            forName: .NSManagedObjectContextDidSave,
+            object: userInterfaceContext,
+            queue: .main,
+            using: saveNotificationPersistence.add
+        )
     }
 
     public func enqueue(changes: @escaping () -> Void) {
