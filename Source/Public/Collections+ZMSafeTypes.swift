@@ -24,7 +24,7 @@ private let zmLog = ZMSLog(tag: "SafeTypes")
 
 func lastCallstackFrames() -> String {
     let symbols = Thread.callStackSymbols
-    return symbols[3..<(min(15, symbols.count))].joined(separator: "\n")
+    return symbols[min(3,symbols.count)..<(min(15, symbols.count))].joined(separator: "\n")
 }
 
 
