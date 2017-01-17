@@ -196,8 +196,13 @@ public class SharingSession {
             sharedContainerIdentifier: applicationGroupIdentifier
         )
         
-        try self.init(userInterfaceContext: userInterfaceContext, syncContext: syncContext, transportSession: transportSession, sharedContainerURL: sharedContainerURL)
-        
+        try self.init(
+            userInterfaceContext: userInterfaceContext,
+            syncContext: syncContext,
+            transportSession: transportSession,
+            sharedContainerURL: sharedContainerURL
+        )
+
     }
     
     internal init(userInterfaceContext: NSManagedObjectContext,
@@ -268,6 +273,8 @@ public class SharingSession {
             NotificationCenter.default.removeObserver(token)
             contextSaveObserverToken = nil
         }
+
+        transportSession.tearDown()
     }
     
     private func setupCaches(atContainerURL containerURL: URL) {
