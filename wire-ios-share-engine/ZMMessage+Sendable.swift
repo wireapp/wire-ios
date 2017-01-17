@@ -46,8 +46,8 @@ extension ZMMessage: Sendable {
     
     public func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken {
         
-        let token = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: managedObjectContext?.zm_sync, queue: .main) { (notification) in
-            
+        let token = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: managedObjectContext?.zm_sync, queue: .main) { [weak observer, weak self] (notification) in
+            guard let `self` = self else { return }
             let updatedObjects  = notification.userInfo?[NSUpdatedObjectsKey]  as? Set<NSManagedObject> ?? Set()
             let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> ?? Set()
             let deletedObjects  = notification.userInfo?[NSDeletedObjectsKey]  as? Set<NSManagedObject> ?? Set()
@@ -59,7 +59,7 @@ extension ZMMessage: Sendable {
             }
             
             if changedObjects.flatMap({ $0.objectID }).contains(self.objectID) {
-                observer.onDeliveryChanged()
+                observer?.onDeliveryChanged()
             }
         }
         
