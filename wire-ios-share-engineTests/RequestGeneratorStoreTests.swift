@@ -50,7 +50,7 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
     
     func testThatItDoesNOTReturnARequestIfNoGeneratorsGiven() {
         sut = RequestGeneratorStore(strategies:[])
-        XCTAssertNil(sut.requestGenerator())
+        XCTAssertNil(sut.nextRequest())
     }
     
     func testThatItCallsTheGivenGenerator() {
@@ -65,7 +65,7 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         
         sut = RequestGeneratorStore(strategies: [mockStrategy])
         
-        XCTAssertNil(sut.requestGenerator())
+        XCTAssertNil(sut.nextRequest())
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
     }
     
@@ -81,7 +81,7 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         
         sut = RequestGeneratorStore(strategies: [mockStrategy])
         
-        let request = sut.requestGenerator()
+        let request = sut.nextRequest()
         XCTAssertNotNil(request)
         XCTAssertEqual(request, sourceRequest)
     }
@@ -105,12 +105,12 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         
         sut = RequestGeneratorStore(strategies: [mockStrategy])
         
-        let request = sut.requestGenerator()
+        let request = sut.nextRequest()
         XCTAssertNotNil(request)
         XCTAssertEqual(request, sourceRequest)
         
         
-        let secondRequest = sut.requestGenerator()
+        let secondRequest = sut.nextRequest()
         XCTAssertNil(secondRequest)
     }
     
@@ -138,11 +138,11 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         
         sut = RequestGeneratorStore(strategies: [mockStrategy])
         
-        let request = sut.requestGenerator()
+        let request = sut.nextRequest()
         XCTAssertNotNil(request)
         XCTAssertEqual(request, sourceRequest)
         
-        let secondRequest = sut.requestGenerator()
+        let secondRequest = sut.nextRequest()
         XCTAssertNotNil(sourceRequest)
         XCTAssertEqual(sourceRequest2, secondRequest)
     }
