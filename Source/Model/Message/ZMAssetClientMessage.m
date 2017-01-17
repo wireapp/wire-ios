@@ -710,6 +710,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     
     if (nil != self.imageMessageData) {
         [self processAddedImageWithFormat:format properties:properties encryptionKeys:keys];
+        [self updateCategoryCache];
     } else if (nil != self.fileMessageData) {
         [self processAddedFilePreviewWithFormat:format properties:properties encryptionKeys:keys imageData:imageData];
     } else {
