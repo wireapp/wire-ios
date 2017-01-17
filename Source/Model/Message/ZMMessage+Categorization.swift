@@ -258,6 +258,37 @@ public struct MessageCategory : OptionSet {
     }
 }
 
+extension MessageCategory : CustomDebugStringConvertible {
+
+    fileprivate static let descriptions: [MessageCategory : String] = [
+        .undefined : "Undefined",
+        .text : "Text",
+        .link : "Link",
+        .image : "Image",
+        .GIF : "GIF",
+        .file : "File",
+        .audio : "Audio",
+        .video : "Video",
+        .location : "Location",
+        .liked : "Liked",
+        .knock : "Knock",
+        .systemMessage : "System message",
+        .excludedFromCollection : "Excluded from collection",
+        .linkPreview : "Link preview"
+    ]
+
+    public var debugDescription: String {
+        let categories = MessageCategory.descriptions
+            .filter { (category, _) -> Bool in
+                return contains(category)
+            }.map { (_, description) -> String in
+                return description
+            }
+        let description = categories.isEmpty ? "None" : categories.joined(separator: ", ")
+        return description
+    }
+}
+
 extension MessageCategory : Hashable {
     
     public var hashValue : Int {
