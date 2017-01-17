@@ -123,8 +123,8 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
     typealias ChangeClosure = (_ changed: Set<NSManagedObject>) -> Void
     typealias SaveClosure = (_ notification: Notification, _ insertedObjects: Set<NSManagedObject>, _ updatedObjects: Set<NSManagedObject>) -> Void
 
-    private var syncContext: NSManagedObjectContext
-    private var userContext: NSManagedObjectContext
+    private let syncContext: NSManagedObjectContext
+    private let userContext: NSManagedObjectContext
     private let callBackQueue: OperationQueue
     private var tokens: [NSObjectProtocol] = []
     
