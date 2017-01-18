@@ -31,7 +31,7 @@ extension ZMConversation: Conversation {
     }
     
     public var isTrusted: Bool {
-        return trusted
+        return securityLevel == .secure
     }
     
     public func appendTextMessage(_ message: String) -> Sendable? {
