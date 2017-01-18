@@ -296,7 +296,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         XCTAssertEqual(receivedMessages.count, 0)
         
         XCTAssertTrue(delegate.didCallDelegate)
-        XCTAssertEqual(delegate.result, .success)
+        XCTAssertEqual(delegate.result, .noAssetsToFetch)
     }
     
     func testThatItFetchesImagesAndTextMessages(){
