@@ -48,7 +48,7 @@ public protocol Sendable {
 }
 
 /// An observer of the progress of a Sendable
-public protocol SendableObserver {
+public protocol SendableObserver: class {
     
     /// Either the delivery state or the delivery progress changed
     func onDeliveryChanged()

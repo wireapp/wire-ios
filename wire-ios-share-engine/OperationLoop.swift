@@ -26,6 +26,7 @@ final class RequestGeneratorStore {
     
     let requestGenerators: [ZMTransportRequestGenerator]
     let changeTrackers : [ZMContextChangeTracker]
+    private var isTornDown = false
     
     private let strategies : [AnyObject]
     
@@ -37,7 +38,6 @@ final class RequestGeneratorStore {
         var changeTrackers : [ZMContextChangeTracker] = []
         
         for strategy in strategies {
-            
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append({
@@ -64,12 +64,20 @@ final class RequestGeneratorStore {
         self.requestGenerators = requestGenerators
         self.changeTrackers = changeTrackers
     }
-    
-    var requestGenerator : ZMTransportRequestGenerator {
-        return nextRequest
+
+    deinit {
+        precondition(isTornDown, "Need to call `tearDown` before deallocating this object")
+    }
+
+    func tearDown() {
+        strategies.forEach {
+            $0.tearDown()
+        }
+
+        isTornDown = true
     }
     
-    private func nextRequest() -> ZMTransportRequest? {
+    public func nextRequest() -> ZMTransportRequest? {
         for requestGenerator in requestGenerators {
             if let request = requestGenerator() {
                 return request
@@ -84,19 +92,14 @@ final class RequestGeneratorStore {
 final class RequestGeneratorObserver {
     
     private let context : NSManagedObjectContext
-    private let observedGenerator : ZMTransportRequestGenerator
+    public var observedGenerator: ZMTransportRequestGenerator? = nil
     
-    init(requestGenerator: @escaping ZMTransportRequestGenerator, context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext) {
         self.context = context
-        self.observedGenerator = requestGenerator
     }
     
-    var requestGenerator : ZMTransportRequestGenerator {
-        return nextRequest
-    }
-    
-    private func nextRequest() -> ZMTransportRequest? {
-        guard let request = observedGenerator() else { return nil }
+    public func nextRequest() -> ZMTransportRequest? {
+        guard let request = observedGenerator?() else { return nil }
         
         request.add(ZMCompletionHandler(on: context, block: { [weak self] transportResponse in
             self?.context.enqueueDelayedSave(with: transportResponse.dispatchGroup)
@@ -137,8 +140,12 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
         
         RequestAvailableNotification.addObserver(self)
         
-        tokens.append(setupObserver(for: userContext, onSave: userInterfaceContextDidSave))
-        tokens.append(setupObserver(for: syncContext, onSave: syncContextDidSave))
+        tokens.append(setupObserver(for: userContext) { [weak self] (note, inserted, updated) in
+            self?.userInterfaceContextDidSave(notification: note, insertedObjects: inserted, updatedObjects: updated)
+        })
+        tokens.append(setupObserver(for: syncContext) { [weak self] (note, inserted, updated) in
+            self?.syncContextDidSave(notification: note, insertedObjects: inserted, updatedObjects: updated)
+        })
     }
 
     deinit {
@@ -195,35 +202,39 @@ final class RequestGeneratingOperationLoop {
     private let callBackQueue: OperationQueue
     
     private let requestGeneratorStore: RequestGeneratorStore
-    private let requestGeneratorObserver : RequestGeneratorObserver
+    private let requestGeneratorObserver: RequestGeneratorObserver
     private let transportSession: ZMTransportSession
     
 
     init(userContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, callBackQueue: OperationQueue = .main, requestGeneratorStore: RequestGeneratorStore, transportSession: ZMTransportSession) {
         self.callBackQueue = callBackQueue
         self.requestGeneratorStore = requestGeneratorStore
-        self.requestGeneratorObserver = RequestGeneratorObserver(requestGenerator: requestGeneratorStore.requestGenerator, context: syncContext)
+        self.requestGeneratorObserver = RequestGeneratorObserver(context: syncContext)
         self.transportSession = transportSession
         self.operationLoop = OperationLoop(userContext: userContext, syncContext: syncContext, callBackQueue: callBackQueue)
-        operationLoop.changeClosure = objectsDidChange
-        operationLoop.requestAvailableClosure = enqueueRequests
+
+        operationLoop.changeClosure =  { [weak self] changes in self?.objectsDidChange(changes: changes) }
+        operationLoop.requestAvailableClosure = { [weak self] in self?.enqueueRequests() }
+        requestGeneratorObserver.observedGenerator = { [weak self] in self?.requestGeneratorStore.nextRequest() }
     }
 
     fileprivate func objectsDidChange(changes: Set<NSManagedObject>) {
-        
         requestGeneratorStore.changeTrackers.forEach {
             $0.objectsDidChange(changes)
         }
         
         enqueueRequests()
     }
+
+    deinit {
+        requestGeneratorStore.tearDown()
+    }
     
     fileprivate func enqueueRequests() {
-        
         var result : ZMTransportEnqueueResult
         
         repeat {
-            result = transportSession.attemptToEnqueueSyncRequest(generator: requestGeneratorObserver.requestGenerator)
+            result = transportSession.attemptToEnqueueSyncRequest(generator: { [weak self] in self?.requestGeneratorObserver.nextRequest() })
         } while result.didGenerateNonNullRequest && result.didHaveLessRequestThanMax
         
     }
