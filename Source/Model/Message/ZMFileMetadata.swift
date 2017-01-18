@@ -28,12 +28,17 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
     
     open let fileURL : URL
     open let thumbnail : Data?
+    open let filename : String
     
-    required public init(fileURL: URL, thumbnail: Data? = nil) {
+    required public init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
         self.thumbnail = thumbnail?.count > 0 ? thumbnail : nil
-        
+        self.filename = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" :  fileURL.lastPathComponent)
         super.init()
+    }
+    
+    convenience public init(fileURL: URL, thumbnail: Data? = nil) {
+        self.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
     
     var asset : ZMAsset {
@@ -56,14 +61,13 @@ open class ZMAudioMetadata : ZMFileMetadata {
         self.duration = duration
         self.normalizedLoudness = normalizedLoudness
         
-        super.init(fileURL: fileURL, thumbnail: thumbnail)
+        super.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
     
-    required public init(fileURL: URL, thumbnail: Data?) {
+    required public init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
         self.duration = 0
         self.normalizedLoudness = []
-        
-        super.init(fileURL: fileURL, thumbnail: thumbnail)
+        super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
     
     override var asset : ZMAsset {
@@ -88,14 +92,14 @@ open class ZMVideoMetadata : ZMFileMetadata {
         self.duration = duration
         self.dimensions = dimensions
         
-        super.init(fileURL: fileURL, thumbnail: thumbnail)
+        super.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
     
-    required public init(fileURL: URL, thumbnail: Data?) {
+    required public init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
         self.duration = 0
         self.dimensions = CGSize.zero
         
-        super.init(fileURL: fileURL, thumbnail: thumbnail)
+        super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
     
     override var asset : ZMAsset {
@@ -122,12 +126,6 @@ extension ZMFileMetadata {
             }
             
             return (MIMEType.takeRetainedValue()) as String
-        }
-    }
-    
-    public var filename : String {
-        get {
-            return  fileURL.lastPathComponent.isEmpty ? "unnamed" :  fileURL.lastPathComponent
         }
     }
     
