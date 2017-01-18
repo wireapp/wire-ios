@@ -113,6 +113,10 @@ public protocol ZMConversationMessage : NSObjectProtocol {
 
     /// Returns the date when a ephemeral message will be destructed or `nil` if th message is not ephemeral
     var destructionDate: Date? { get }
+    
+    /// Returns whether this is a message that caused the security level of the conversation to degrade in this session (since the 
+    /// app was restarted)
+    var causedSecurityLevelDegradation : Bool { get }
 }
 
 // MARK:- Conversation managed properties
@@ -130,6 +134,10 @@ extension ZMMessage {
 // MARK:- Conversation Message protocol implementation
 
 extension ZMMessage : ZMConversationMessage {
+    
+    public var causedSecurityLevelDegradation : Bool {
+        return false
+    }
 }
 
 extension ZMMessage {
