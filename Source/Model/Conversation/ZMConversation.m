@@ -85,6 +85,7 @@ NSString *const ZMConversationClearTypingNotificationName = @"ZMConversationClea
 NSString *const ZMConversationIsVerifiedNotificationName = @"ZMConversationIsVerifiedNotificationName";
 NSString *const ZMConversationFailedToDecryptMessageNotificationName = @"ZMConversationFailedToDecryptMessageNotificationName";
 NSString *const ZMConversationLastReadDidChangeNotificationName = @"ZMConversationLastReadDidChangeNotification";
+NSString *const SecurityLevelKey = @"securityLevel";
 
 static NSString *const CallStateNeedsToBeUpdatedFromBackendKey = @"callStateNeedsToBeUpdatedFromBackend";
 static NSString *const ConnectedUserKey = @"connectedUser";
@@ -102,7 +103,6 @@ static NSString *const VoiceChannelStateKey = @"voiceChannelState";
 static NSString *const CallDeviceIsActiveKey = @"callDeviceIsActive";
 static NSString *const IsFlowActiveKey = @"isFlowActive";
 
-static NSString *const SecurityLevelKey = @"securityLevel";
 static NSString *const MessageDestructionTimeoutKey = @"messageDestructionTimeout";
 
 
