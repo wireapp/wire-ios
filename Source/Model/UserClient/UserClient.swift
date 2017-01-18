@@ -170,7 +170,9 @@ public class UserClient: ZMManagedObject, UserClientType {
         managedObjectContext?.delete(self)
         
         // increase securityLevel of affected conversations
-        conversations.forEach{$0.increaseSecurityLevelIfNeededAfterRemovingClient(for: user)}
+        if let previousUser = user {
+            conversations.forEach{ $0.increaseSecurityLevelIfNeededAfterRemovingClient(for: previousUser) }
+        }
     }
     
     /// Checks if there is an existing session with the selfClient
@@ -444,13 +446,11 @@ enum SecurityChangeType {
     func changeSecurityLevel(_ conversation: ZMConversation, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {
         switch (self) {
         case .clientTrusted:
-            conversation.increaseSecurityLevelIfNeeded(afterUserClientsWereTrusted: clients)
-            break
+            conversation.increaseSecurityLevelIfNeededAfterTrusting(clients: clients)
         case .clientIgnored:
-            conversation.decreaseSecurityLevelIfNeeded(afterUserClientsWereIgnored: clients)
-            break
+            conversation.decreaseSecurityLevelIfNeededAfterIgnoring(clients: clients)
         case .clientDiscovered:
-            conversation.decreaseSecurityLevelIfNeeded(afterUserClientsWereDiscovered: clients, causedBy: causedBy)
+            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: causedBy)
         }
     }
 }

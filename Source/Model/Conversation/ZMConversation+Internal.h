@@ -147,10 +147,6 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;
 @property (nonatomic) BOOL callStateNeedsToBeUpdatedFromBackend;
 
-
-@property (nonatomic) enum ZMConversationSecurityLevel securityLevel;
-
-
 /// unreadTimeStamps is created on didAwakeFromFetch:
 /// updated when messages are inserted and the lastReadServerTimeStamp changes
 @property (nonatomic, nullable) NSMutableOrderedSet *unreadTimeStamps;

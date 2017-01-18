@@ -60,6 +60,7 @@ extern NSString * _Nonnull const ZMMessageClientsKey;
 extern NSString * _Nonnull const ZMMessageHiddenInConversationKey;
 extern NSString * _Nonnull const ZMMessageConfirmationKey;
 extern NSString * _Nonnull const ZMMessageCachedCategoryKey;
+extern NSString * _Nonnull const ZMMessageSystemMessageClientsKey;
 
 @interface ZMMessage : ZMManagedObject
 
@@ -151,7 +152,6 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 @property (nonatomic) BOOL needsUpdatingUsers;
 
 + (ZMSystemMessage * _Nullable)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation * _Nonnull)conversation;
-+ (ZMSystemMessage * _Nullable)fetchStartedUsingOnThisDeviceMessageForConversation:(ZMConversation * _Nonnull)conversation;
 - (void)updateNeedsUpdatingUsersIfNeeded;
 
 @end

@@ -18,7 +18,6 @@
 
 
 #import "ZMConversationTests.h"
-#import "ZMConversation+OTR.h"
 #import "ZMConversation+Transport.h"
 
 @interface ZMConversationTests (OTR)
