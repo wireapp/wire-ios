@@ -44,7 +44,6 @@
 #import <ZMCDataModel/ZMConversation+Internal.h>
 #import <ZMCDataModel/ZMConversation+UnreadCount.h>
 #import <ZMCDataModel/ZMConversation+Transport.h>
-#import <ZMCDataModel/ZMConversation+OTR.h>
 #import <ZMCDataModel/ZMConversationSecurityLevel.h>
 
 #import <ZMCDataModel/ZMConversationMessageWindow.h>

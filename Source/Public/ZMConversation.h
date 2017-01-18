@@ -69,7 +69,7 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 @property (nonatomic, copy, nullable) NSString *userDefinedName;
 
 @property (readonly, nonatomic) ZMConversationType conversationType;
-@property (readonly, nonatomic, nonnull) NSDate *lastModifiedDate;
+@property (readonly, nonatomic, nullable) NSDate *lastModifiedDate;
 @property (readonly, nonatomic, nonnull) NSOrderedSet *messages;
 @property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *activeParticipants;
 @property (readonly, nonatomic, nonnull) ZMUser *creator;
@@ -87,15 +87,8 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 @property (nonatomic) BOOL isMuted DEPRECATED_ATTRIBUTE;
 @property (nonatomic) BOOL isArchived;
 
-/// True only if every active client in this conversation is trusted by self client
-@property (nonatomic, getter=trusted) BOOL isTrusted;
-
-/// If true the conversation might still be trusted / ignored
-@property (nonatomic, readonly) BOOL hasUntrustedClients;
-
 /// returns whether the user is allowed to write to this conversation
 @property (nonatomic, readonly) BOOL isReadOnly;
-
 
 /// For group conversation this will be nil, for one to one or connection conversation this will be the other user
 @property (nonatomic, readonly, nullable) ZMUser *connectedUser;

@@ -390,7 +390,7 @@ NSString * const ZMMessageCachedCategoryKey = @"cachedCategory";
 
     // Only clients other than self should see the system message
     if (nil != message && ![senderID isEqual:selfUser.remoteIdentifier] && !message.isEphemeral) {
-        [conversation appendDeletedForEveryoneSystemMessageWithTimestamp:message.serverTimestamp sender:message.sender];
+        [conversation appendDeletedForEveryoneSystemMessageAt:message.serverTimestamp sender:message.sender];
     }
     // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop the deletion timer
     if (nil != message && message.isEphemeral && ![message.sender.remoteIdentifier isEqual:selfUser.remoteIdentifier]) {
@@ -921,20 +921,6 @@ NSString * const ZMMessageCachedCategoryKey = @"cachedCategory";
 - (NSDictionary<NSString *,NSArray<ZMUser *> *> *)usersReaction
 {
     return [NSDictionary dictionary];
-}
-
-+ (ZMSystemMessage *)fetchStartedUsingOnThisDeviceMessageForConversation:(ZMConversation *)conversation
-{
-    NSPredicate *conversationPredicate = [NSPredicate predicateWithFormat:@"%K == %@ OR %K == %@", ZMMessageConversationKey, conversation, ZMMessageHiddenInConversationKey, conversation];
-    NSPredicate *newClientPredicate = [NSPredicate predicateWithFormat:@"%K == %d", ZMMessageSystemMessageTypeKey, ZMSystemMessageTypeNewClient];
-    NSPredicate *containsSelfClient = [NSPredicate predicateWithFormat:@"ANY %K == %@", ZMMessageSystemMessageClientsKey, [ZMUser selfUserInContext:conversation.managedObjectContext].selfClient];
-    NSCompoundPredicate *compound = [NSCompoundPredicate andPredicateWithSubpredicates:@[conversationPredicate, newClientPredicate, containsSelfClient]];
-    
-    NSArray *result = [conversation.managedObjectContext executeFetchRequestOrAssert:[ZMSystemMessage sortedFetchRequestWithPredicate:compound]];
-    if(result.count) {
-        return result[0];
-    }
-    return nil;
 }
 
 + (ZMSystemMessage *)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation *)conversation
