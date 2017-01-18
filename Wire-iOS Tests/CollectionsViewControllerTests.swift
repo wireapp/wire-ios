@@ -44,36 +44,36 @@ class CollectionsViewControllerTests: ZMSnapshotTestCase {
         linkMessage = MockMessageFactory.linkMessage()
     }
     
-    func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
+    func disabled_testThatNoElementStateIsShownWhenCollectionIsEmpty() {
         let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true)
         verifyInAllIPhoneSizes(view: controller.view)
     }
     
-    func testThatLoadingIsShownWhenFetching() {
+    func disabled_testThatLoadingIsShownWhenFetching() {
         let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: false)
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
         verifyInAllIPhoneSizes(view: controller.view)
     }
     
-    func testFilesSectionWhenNotFull() {
+    func disabled_testFilesSectionWhenNotFull() {
         let assetCollection = MockCollection(fileMessages: [fileMessage])
         let controller = createController(showingCollection: assetCollection)
         verifyInAllIPhoneSizes(view: controller.view)
     }
 
-    func testFilesSectionWhenFull() {
+    func disabled_testFilesSectionWhenFull() {
         let assetCollection = MockCollection(fileMessages: [fileMessage, fileMessage, fileMessage, fileMessage])
         let controller = createController(showingCollection: assetCollection)
         verifyInAllIPhoneSizes(view: controller.view)
     }
 
-    func testLinksSectionWhenNotFull() {
+    func disabled_testLinksSectionWhenNotFull() {
         let assetCollection = MockCollection(linkMessages: [linkMessage])
         let controller = createController(showingCollection: assetCollection)
         verifyInAllIPhoneSizes(view: controller.view)
     }
 
-    func testLinksSectionWhenFull() {
+    func disabled_testLinksSectionWhenFull() {
         let assetCollection = MockCollection(linkMessages: [linkMessage, linkMessage, linkMessage, linkMessage])
         let controller = createController(showingCollection: assetCollection)
         verifyInAllIPhoneSizes(view: controller.view)
