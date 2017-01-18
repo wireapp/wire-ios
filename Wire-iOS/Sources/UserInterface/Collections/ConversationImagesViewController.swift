@@ -96,17 +96,17 @@ internal final class ConversationImagesViewController: UIViewController {
         
         let saveButton = IconButton.iconButtonDefault()
         saveButton.setIcon(.save, with: .tiny, for: .normal)
-        copyButton.accessibilityLabel = "save"
+        saveButton.accessibilityLabel = "save"
         saveButton.addTarget(self, action: #selector(ConversationImagesViewController.saveCurrent(_:)), for: .touchUpInside)
         
         let shareButton = IconButton.iconButtonDefault()
         shareButton.setIcon(.export, with: .tiny, for: .normal)
-        copyButton.accessibilityLabel = "share"
+        shareButton.accessibilityLabel = "share"
         shareButton.addTarget(self, action: #selector(ConversationImagesViewController.shareCurrent(_:)), for: .touchUpInside)
         
         let revealButton = IconButton.iconButtonDefault()
         revealButton.setIcon(.eye, with: .tiny, for: .normal)
-        copyButton.accessibilityLabel = "reveal in conversation"
+        revealButton.accessibilityLabel = "reveal in conversation"
         revealButton.addTarget(self, action: #selector(ConversationImagesViewController.revealCurrent(_:)), for: .touchUpInside)
         
         self.buttonsBar = InputBarButtonsView(buttons: [copyButton, saveButton, shareButton, revealButton])
