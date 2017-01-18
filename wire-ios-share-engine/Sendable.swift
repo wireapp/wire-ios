@@ -25,6 +25,9 @@ public protocol Sendable {
     /// The state of the delivery
     var deliveryState : ZMDeliveryState { get }
 
+    /// Whether the sendable is currently blocked because of missing clients
+    var blockedBecauseOfMissingClients : Bool { get }
+    
     /// The progress of the delivery, from 0 to 1.
     /// It will be nil if the progress can not be tracked.
     /// It will be 1 when the delivery is completed.
@@ -39,6 +42,9 @@ public protocol Sendable {
     
     /// Expire message sending
     func cancel()
+    
+    /// Resend ignoring missing clients
+    func resendIgnoringMissingClients()
 }
 
 /// An observer of the progress of a Sendable

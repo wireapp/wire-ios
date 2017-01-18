@@ -36,6 +36,13 @@ private extension ZMMessage {
 
 extension ZMMessage: Sendable {
 
+    public var blockedBecauseOfMissingClients : Bool {
+        guard let message = self as? ZMOTRMessage else {
+            return false
+        }
+        return self.deliveryState == .failedToSend && !message.missingRecipients.isEmpty
+    }
+    
     public var deliveryProgress: Float? {
         if let asset = self as? ZMAssetClientMessage, reportsProgress {
             return asset.progress
@@ -78,6 +85,10 @@ extension ZMMessage: Sendable {
             return
         }
         self.expire()
+    }
+    
+    public func resendIgnoringMissingClients() {
+        self.resend()
     }
     
 }
