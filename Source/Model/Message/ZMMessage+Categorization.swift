@@ -42,7 +42,7 @@ extension ZMMessage {
         
         get {
             self.willAccessValue(forKey: ZMMessageCachedCategoryKey)
-            let value = self.primitiveValue(forKey: ZMMessageCachedCategoryKey) as! NSNumber
+            let value = (self.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber) ?? NSNumber(value: 0)
             self.didAccessValue(forKey: ZMMessageCachedCategoryKey)
             
             var category = MessageCategory(rawValue: value.int32Value)
