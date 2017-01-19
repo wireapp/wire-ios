@@ -131,7 +131,7 @@ extension ZMConversation {
     /// Increase the security level if all clients are now trusted
     /// - returns: true if the security level was increased
     private func increaseSecurityLevelIfNeeded() -> Bool {
-        guard self.allUsersTrusted && self.allParticipantsHaveClients else { return false }
+        guard self.allUsersTrusted && self.allParticipantsHaveClients && self.securityLevel != .secure else { return false }
         self.securityLevel = .secure
         return true
     }
@@ -246,9 +246,9 @@ extension ZMConversation {
         let users = Set(clients.flatMap { $0.user })
         let timestamp : Date?
         if let message = message, message.conversation == self {
-            timestamp = self.timestamp(after: self.messages.lastObject as? ZMMessage)
-        } else {
             timestamp = self.timestamp(before: message)
+        } else {
+            timestamp = self.timestamp(after: self.messages.lastObject as? ZMMessage)
         }
         _ = self.appendSystemMessage(type: .newClient,
                                      sender: ZMUser.selfUser(in: self.managedObjectContext!),
@@ -281,7 +281,7 @@ extension ZMConversation {
         systemMessage.users = users ?? Set()
         systemMessage.clients = clients ?? Set()
         systemMessage.nonce = UUID()
-        systemMessage.serverTimestamp = timestamp ?? Date()
+        systemMessage.serverTimestamp = timestamp
         
         let index = self.sortedAppendMessage(systemMessage)
         systemMessage.visibleInConversation = self
@@ -296,7 +296,7 @@ extension ZMConversation {
         guard let timestamp = before?.serverTimestamp ?? self.lastModifiedDate else { return nil }
         // this feels a bit hackish, but should work. If two messages are less than 1 milliseconds apart
         // then in this case one of them will be out of order
-        return timestamp.addingTimeInterval(-0.001)
+        return timestamp.addingTimeInterval(-0.01)
     }
     
     /// Returns a timestamp that is shortly (as short as possible) after the given message,
@@ -305,7 +305,7 @@ extension ZMConversation {
         guard let timestamp = after?.serverTimestamp ?? self.lastModifiedDate else { return nil }
         // this feels a bit hackish, but should work. If two messages are less than 1 milliseconds apart
         // then in this case one of them will be out of order
-        return timestamp.addingTimeInterval(0.001)
+        return timestamp.addingTimeInterval(0.01)
     }
 }
 
