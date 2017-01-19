@@ -162,7 +162,10 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
     }
     
     func merge(changes notification: Notification, intoContext context: NSManagedObjectContext) {
+        let moc = notification.object as! NSManagedObjectContext
+        let userInfo = moc.userInfo as NSDictionary as! [String: Any]
         context.performGroupedBlock {
+            context.mergeUserInfo(fromUserInfo: userInfo)
             context.mergeChanges(fromContextDidSave: notification)
             context.processPendingChanges() // We need this because merging sometimes leaves the MOC in a 'dirty' state
         }
