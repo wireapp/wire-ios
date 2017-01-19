@@ -21,7 +21,7 @@
 #import "ZMConversation+Timestamps.h"
 #import "ZMConversation+Internal.h"
 
-@interface ZMConversationTests_Timestamp : ZMConversationTests
+@interface ZMConversationTests_Timestamp : ZMConversationTestsBase
 @end
 
 @implementation ZMConversationTests_Timestamp

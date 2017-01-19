@@ -21,12 +21,11 @@
 #import "ZMConversationTests.h"
 #import "ZMConversation+UnreadCount.h"
 
-
-@interface ZMConversationTests (UnreadCount)
+@interface ZMConversationUnreadCountTests : ZMConversationTestsBase
 @end
 
 
-@implementation ZMConversationTests (UnreadCount)
+@implementation ZMConversationUnreadCountTests
 
 
 - (ZMMessage *)insertMessageIntoConversation:(ZMConversation *)conversation sender:(ZMUser *)sender  timeSinceLastRead:(NSTimeInterval)intervalSinceLastRead
@@ -213,7 +212,7 @@
 
 
 
-@implementation ZMConversationTests (HasUnreadMissedCall)
+@implementation ZMConversationUnreadCountTests (HasUnreadMissedCall)
 
 - (void)testThatItSetsHasUnreadMissedCallToNoWhenLastReadEqualsLastServerTime
 {
@@ -304,7 +303,7 @@
 
 
 
-@implementation ZMConversationTests (HasUnreadKnock)
+@implementation ZMConversationUnreadCountTests (HasUnreadKnock)
 
 - (void)testThatItSetsHasUnreadKnockToNoWhenLastReadEqualsLastTimestamp
 {
@@ -365,7 +364,7 @@
 
 
 
-@implementation ZMConversationTests (HasUnreadUnsentMessage)
+@implementation ZMConversationUnreadCountTests (HasUnreadUnsentMessage)
 
 - (void)testThatItResetsHasUnreadUnsentMessage
 {

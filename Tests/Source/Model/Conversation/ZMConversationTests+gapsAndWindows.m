@@ -21,7 +21,10 @@
 #import "ZMConversationList+Internal.h"
 
 
-@implementation ZMConversationTests (ConversationWindow)
+@interface ZMConversationGapsAndWindowTests : ZMConversationTestsBase
+@end
+
+@implementation ZMConversationGapsAndWindowTests
 
 
 - (void)testThatItInsertsANewConversation

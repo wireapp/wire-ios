@@ -20,11 +20,11 @@
 #import "ZMConversationTests.h"
 #import "ZMConversation+Transport.h"
 
-@interface ZMConversationTests (OTR)
+@interface ZMConversationSecurityTests : ZMConversationTestsBase
 
 @end
 
-@implementation ZMConversationTests (OTR)
+@implementation ZMConversationSecurityTests
 
 - (NSArray<ZMUser *> *)createUsersWithClientsOnSyncMOC
 {
@@ -88,7 +88,7 @@
         [selfClient trustClients:connectedUser.clients];
         
         // then
-        XCTAssertFalse(conversation.trusted);
+        XCTAssertFalse(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelNotSecure);
         
         // when
@@ -96,7 +96,7 @@
         [selfClient trustClients:unconnectedUser.clients];
         
         // then
-        XCTAssertTrue(conversation.trusted);
+        XCTAssertTrue(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
         
         ZMUser *newUnconnectedUser = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
@@ -107,14 +107,14 @@
         [conversation addParticipant:newUnconnectedUser];
         
         // then the conversation should degrade
-        XCTAssertFalse(conversation.trusted);
+        XCTAssertFalse(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
         
         // when
         [conversation removeParticipant:newUnconnectedUser];
         
         // then
-        XCTAssertTrue(conversation.trusted);
+        XCTAssertTrue(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
     }];
 }
@@ -298,21 +298,22 @@
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
-- (void)insertUserInConversation:(ZMConversation *)conversation userIsTrusted:(BOOL)trusted
+- (ZMUser *)insertUserInConversation:(ZMConversation *)conversation userIsTrusted:(BOOL)trusted managedObjectContext:(NSManagedObjectContext *)moc
 {
     [self createSelfClient];
     [self.uiMOC refreshAllObjects];
     
-    UserClient *selfClient = [ZMUser selfUserInContext:self.uiMOC].selfClient;
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:moc];
     [[conversation mutableOtherActiveParticipants] addObject:user];
-    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:moc];
     client.user  = user;
     if (trusted) {
         [selfClient trustClient:client];
     } else {
         [selfClient ignoreClient:client];
     }
+    return user;
 }
 
 - (void)testThatItReturns_HasUntrustedClients_YES_ifThereAreUntrustedClients
@@ -322,7 +323,7 @@
     conversation.conversationType = ZMConversationTypeGroup;
 
     // when
-    [self insertUserInConversation:conversation userIsTrusted:NO];
+    [self insertUserInConversation:conversation userIsTrusted:NO managedObjectContext:self.uiMOC];
     BOOL hasUntrustedClients = conversation.hasUntrustedClients;
     
     // then
@@ -337,7 +338,7 @@
     conversation.conversationType = ZMConversationTypeGroup;
     
     // when
-    [self insertUserInConversation:conversation userIsTrusted:YES];
+    [self insertUserInConversation:conversation userIsTrusted:YES managedObjectContext:self.uiMOC];
     BOOL hasUntrustedClients = conversation.hasUntrustedClients;
     
     // then
@@ -446,10 +447,175 @@
 
 }
 
+- (void)testThatAConversationIsNotTrustedIfItHasNoOtherParticipants
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    
+    // THEN
+    XCTAssertFalse(conversation.allUsersTrusted);
+}
+
+- (void)testThatAConversationIsNotTrustedIfNotAMemberAnymore
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    [conversation addParticipant:otherUser];
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    client.user = otherUser;
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    [[selfUser selfClient] trustClient:client];
+    
+    // WHEN
+    [conversation removeParticipant:selfUser];
+    
+    // THEN
+    XCTAssertFalse(conversation.allUsersTrusted);
+}
+
 @end
 
+#pragma mark - Resending / cancelling messages in degraded conversation
+@implementation ZMConversationSecurityTests (ResendingMessages)
 
-@implementation ZMConversationTests (HotFix)
+- (void)testItExpiresAllMessagesAfterTheCurrentOneWhenAMessageCausesDegradation
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // GIVEN
+        [self createSelfClient];
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        ZMUser *user = [self insertUserInConversation:conversation userIsTrusted:YES managedObjectContext:self.syncMOC];
+        conversation.securityLevel = ZMConversationSecurityLevelSecure;
+
+        ZMOTRMessage *message2 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 2" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message3 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 3" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message4 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 4" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message5 = (ZMOTRMessage *)[conversation appendMessageWithImageData:[self verySmallJPEGData]];
+        
+        
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.remoteIdentifier = @"aabbccdd";
+        client.user = user;
+        
+        // WHEN
+        [conversation decreaseSecurityLevelIfNeededAfterDiscoveringClients:[NSSet setWithObject:client] causedByMessage:message3];
+        
+        // THEN
+        XCTAssertFalse(message2.isExpired);
+        XCTAssertFalse(message2.causedSecurityLevelDegradation);
+        XCTAssertTrue(message3.isExpired);
+        XCTAssertTrue(message3.causedSecurityLevelDegradation);
+        XCTAssertTrue(message4.isExpired);
+        XCTAssertTrue(message4.causedSecurityLevelDegradation);
+        XCTAssertTrue(message5.isExpired);
+        XCTAssertTrue(message5.causedSecurityLevelDegradation);
+        XCTAssertFalse(conversation.allUsersTrusted);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
+    }];
+}
+
+- (void)testItResendsAllMessagesThatCausedDegradation
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // GIVEN
+        [self createSelfClient];
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        ZMUser *user = [self insertUserInConversation:conversation userIsTrusted:YES managedObjectContext:self.syncMOC];
+        conversation.securityLevel = ZMConversationSecurityLevelSecure;
+        
+        ZMOTRMessage *message2 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 2" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message3 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 3" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message4 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 4" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message5 = (ZMOTRMessage *)[conversation appendMessageWithImageData:[self verySmallJPEGData]];
+        
+        
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.remoteIdentifier = @"aabbccdd";
+        client.user = user;
+        [conversation decreaseSecurityLevelIfNeededAfterDiscoveringClients:[NSSet setWithObject:client] causedByMessage:message3];
+        
+        // WHEN
+        [conversation resendMessagesThatCausedConversationSecurityDegradation];
+        
+        // THEN
+        XCTAssertFalse(message2.isExpired);
+        XCTAssertFalse(message2.causedSecurityLevelDegradation);
+        XCTAssertFalse(message3.isExpired);
+        XCTAssertFalse(message3.causedSecurityLevelDegradation);
+        XCTAssertEqual(message3.deliveryState, ZMDeliveryStatePending);
+        XCTAssertFalse(message4.isExpired);
+        XCTAssertFalse(message4.causedSecurityLevelDegradation);
+        XCTAssertEqual(message4.deliveryState, ZMDeliveryStatePending);
+        XCTAssertFalse(message5.isExpired);
+        XCTAssertFalse(message5.causedSecurityLevelDegradation);
+        XCTAssertEqual(message5.deliveryState, ZMDeliveryStatePending);
+        XCTAssertFalse(conversation.allUsersTrusted);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
+    }];
+}
+
+- (void)testItCancelsAllMessagesThatCausedDegradation
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        
+        // GIVEN
+        [self createSelfClient];
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        ZMUser *user = [self insertUserInConversation:conversation userIsTrusted:YES managedObjectContext:self.syncMOC];
+        conversation.securityLevel = ZMConversationSecurityLevelSecure;
+        
+        ZMOTRMessage *message2 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 2" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message3 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 3" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message4 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 4" fetchLinkPreview:NO];
+        [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
+        ZMOTRMessage *message5 = (ZMOTRMessage *)[conversation appendMessageWithImageData:[self verySmallJPEGData]];
+        
+        
+        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        client.remoteIdentifier = @"aabbccdd";
+        client.user = user;
+        [conversation decreaseSecurityLevelIfNeededAfterDiscoveringClients:[NSSet setWithObject:client] causedByMessage:message3];
+        
+        // WHEN
+        [conversation doNotResendMessagesThatCausedDegradation];
+        
+        // THEN
+        XCTAssertFalse(message2.isExpired);
+        XCTAssertFalse(message2.causedSecurityLevelDegradation);
+        XCTAssertTrue(message3.isExpired);
+        XCTAssertFalse(message3.causedSecurityLevelDegradation);
+        XCTAssertEqual(message3.deliveryState, ZMDeliveryStateFailedToSend);
+        XCTAssertTrue(message4.isExpired);
+        XCTAssertFalse(message4.causedSecurityLevelDegradation);
+        XCTAssertEqual(message4.deliveryState, ZMDeliveryStateFailedToSend);
+        XCTAssertTrue(message5.isExpired);
+        XCTAssertFalse(message5.causedSecurityLevelDegradation);
+        XCTAssertEqual(message5.deliveryState, ZMDeliveryStateFailedToSend);
+        XCTAssertFalse(conversation.allUsersTrusted);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
+    }];
+}
+
+@end
+
+#pragma mark - Hotfix
+@implementation ZMConversationSecurityTests (HotFix)
 
 - (void)testThatItUpdatesFirstNewClientSystemMessage
 {

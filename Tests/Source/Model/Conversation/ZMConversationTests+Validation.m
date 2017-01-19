@@ -21,7 +21,10 @@
 
 #import "ZMConversationTests.h"
 
-@implementation ZMConversationTests (Validation)
+@interface ZMConversationValidationTests : ZMConversationTestsBase
+@end
+
+@implementation ZMConversationValidationTests
 
 - (void)testThatItTrimmsTheUserDefinedNameForLeadingAndTrailingWhitespace;
 {

@@ -20,8 +20,10 @@
 #import "ZMConversationTests.h"
 #import "ZMConversation+Transport.h"
 
+@interface ZMConversationParticipantsTests : ZMConversationTestsBase
+@end
 
-@implementation ZMConversationTests (Participants)
+@implementation ZMConversationParticipantsTests
 
 - (void)testThatUpdatingUsersFromTransportDataPreservesUnsyncedInactiveAndActiveParticipants
 {
@@ -1047,7 +1049,7 @@
 
 
 
-@implementation ZMConversationTests (ConnectedUser)
+@implementation ZMConversationParticipantsTests (ConnectedUser)
 
 - (void)testThatTheConnectedUserIsNilForGroupConversation
 {
@@ -1106,7 +1108,7 @@
 @end
 
 
-@implementation ZMConversationTests (Sorting)
+@implementation ZMConversationParticipantsTests (Sorting)
 
 - (void)testThatItSortsParticipantsByFullName
 {
