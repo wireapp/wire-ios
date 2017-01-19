@@ -38,6 +38,12 @@ public protocol Conversation : SharingTarget {
     
     /// Adds an observer for when the conversation verification status degrades
     func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo)->()) -> TearDownCapable
+    
+    /// Resends all those messages that caused conversation security degradation
+    func resendMessagesThatCausedConversationSecurityDegradation()
+    
+    /// Do not resend all those messages that caused conversation security degradation
+    func doNotResendMessagesThatCausedDegradation()
 }
 
 
