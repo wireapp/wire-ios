@@ -270,7 +270,7 @@ extension ConversationChangeInfo {
             return .none;
         }
         var foundSystemMessage : ZMSystemMessage? = .none
-        var foundExpiredMessage = false
+        var foundDegradingMessage = false
         self.conversation.messages.enumerateObjects(options: NSEnumerationOptions.reverse) { (msg, _, stop) -> Void in
             if let systemMessage = msg as? ZMSystemMessage {
                 if systemMessage.systemMessageType == .newClient {
@@ -281,11 +281,11 @@ extension ConversationChangeInfo {
                     systemMessage.systemMessageType == .conversationIsSecure {
                         stop.pointee = true
                 }
-            } else if let sentMessage = msg as? ZMMessage , sentMessage.isExpired {
-                foundExpiredMessage = true
+            } else if let sentMessage = msg as? ZMMessage , sentMessage.causedSecurityLevelDegradation {
+                foundDegradingMessage = true
             }
         }
-        return foundExpiredMessage ? foundSystemMessage : .none
+        return foundDegradingMessage ? foundSystemMessage : .none
     }
     
     /// True if the conversation was just degraded
