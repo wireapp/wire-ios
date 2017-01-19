@@ -32,6 +32,9 @@ extension ZMOTRMessage {
         set {
             guard let moc = self.managedObjectContext else { return }
             guard moc.zm_isSyncContext else { fatal("Cannot set security level on non-sync moc") }
+            if self.objectID.isTemporaryID {
+                try! moc.obtainPermanentIDs(for: [self])
+            }
             var set = moc.messagesThatCausedSecurityLevelDegradation
             if newValue {
                 set.insert(self.objectID)
