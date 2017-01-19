@@ -35,4 +35,21 @@ public protocol Conversation : SharingTarget {
     
     /// Returns true if the conversation is trusted (all participants are trusted)
     var isTrusted : Bool { get }
+    
+    /// Adds an observer for when the conversation verification status degrades
+    func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo)->()) -> TearDownCapable
+    
+    /// Resends all those messages that caused conversation security degradation
+    func resendMessagesThatCausedConversationSecurityDegradation()
+    
+    /// Do not resend all those messages that caused conversation security degradation
+    func doNotResendMessagesThatCausedDegradation()
+}
+
+
+/// Object that can be torn down when not needed anymore
+public protocol TearDownCapable {
+    
+    func tearDown()
+    
 }

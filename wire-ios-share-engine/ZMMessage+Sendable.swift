@@ -36,6 +36,13 @@ private extension ZMMessage {
 
 extension ZMMessage: Sendable {
 
+    public var blockedBecauseOfMissingClients : Bool {
+        guard let message = self as? ZMOTRMessage else {
+            return false
+        }
+        return self.deliveryState == .failedToSend && message.causedSecurityLevelDegradation
+    }
+    
     public var deliveryProgress: Float? {
         if let asset = self as? ZMAssetClientMessage, reportsProgress {
             return asset.progress
@@ -46,7 +53,7 @@ extension ZMMessage: Sendable {
     
     public func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken {
         
-        let token = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: managedObjectContext?.zm_sync, queue: .main) { [weak observer, weak self] (notification) in
+        let token = NotificationCenter.default.addObserver(forName: contextWasMergedNotification, object: nil, queue: .main) { [weak observer, weak self] (notification) in
             guard let `self` = self else { return }
             let updatedObjects  = notification.userInfo?[NSUpdatedObjectsKey]  as? Set<NSManagedObject> ?? Set()
             let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> ?? Set()
@@ -78,6 +85,10 @@ extension ZMMessage: Sendable {
             return
         }
         self.expire()
+    }
+    
+    public func resendIgnoringMissingClients() {
+        self.resend()
     }
     
 }

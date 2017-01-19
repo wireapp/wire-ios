@@ -22,6 +22,9 @@ import CoreData
 import ZMTransport
 import WireRequestStrategy
 
+let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
+
+
 final class RequestGeneratorStore {
     
     let requestGenerators: [ZMTransportRequestGenerator]
@@ -102,7 +105,7 @@ final class RequestGeneratorObserver {
         guard let request = observedGenerator?() else { return nil }
         
         request.add(ZMCompletionHandler(on: context, block: { [weak self] transportResponse in
-            self?.context.enqueueDelayedSave(with: transportResponse.dispatchGroup)
+            self?.context.saveOrRollback()
             
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
             
@@ -162,9 +165,14 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
     }
     
     func merge(changes notification: Notification, intoContext context: NSManagedObjectContext) {
+        let moc = notification.object as! NSManagedObjectContext
+        let userInfo = moc.userInfo as NSDictionary as! [String: Any]
         context.performGroupedBlock {
+            context.mergeUserInfo(fromUserInfo: userInfo)
             context.mergeChanges(fromContextDidSave: notification)
             context.processPendingChanges() // We need this because merging sometimes leaves the MOC in a 'dirty' state
+            
+            NotificationCenter.default.post(name: contextWasMergedNotification, object: context)
         }
     }
     
