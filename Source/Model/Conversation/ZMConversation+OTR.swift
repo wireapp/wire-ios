@@ -140,33 +140,38 @@ extension ZMConversation {
 // MARK: - Messages resend/expiration
 extension ZMConversation {
     
-    /// Resend last non sent messages
+    /// Resend last non sent messages. This method is expected to be called from the UI context
     public func resendMessagesThatCausedConversationSecurityDegradation() {
-        self.messages.enumerateObjects(options: .reverse) { (msg, idx, stop) in
-            // resend the ones that caused degradation, until I find the system message that told me about degradation
-            guard let message = msg as? ZMMessage else { return }
-            
-            if let otrMessage = message as? ZMOTRMessage, message.causedSecurityLevelDegradation {
-                otrMessage.resend()
-                otrMessage.causedSecurityLevelDegradation = false
-            }
-            
-            if message.isConversationNotVerifiedSystemMessage {
-                stop.initialize(to: true)
-            }
+        precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
+        self.enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
+            $0.causedSecurityLevelDegradation = false
+            $0.resend()
         }
     }
     
-    /// Reset those that caused degradation
+    /// Reset those that caused degradation. This method is expected to be called from the UI context
     public func doNotResendMessagesThatCausedDegradation() {
-        self.messages.enumerateObjects(options: .reverse) { (msg, idx, stop) in
-            // resend the ones that caused degradation, until I find the system message that told me about degradation
-            guard let message = msg as? ZMMessage else { return }
-            if let otrMessage = message as? ZMOTRMessage, message.causedSecurityLevelDegradation {
-                otrMessage.causedSecurityLevelDegradation = false
-            }
-            if message.isConversationNotVerifiedSystemMessage {
-                stop.initialize(to: true)
+        precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
+        self.enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
+            $0.causedSecurityLevelDegradation = false
+        }
+    }
+    
+    /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered, 
+    /// halting the enumeration when a system message for security level degradation is found.
+    /// This is executed asychronously on the sync context
+    private func enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext(block: @escaping (ZMOTRMessage)->()) {
+        guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
+        syncMOC.performGroupedBlock {
+            let conversation = try! syncMOC.existingObject(with: self.objectID) as! ZMConversation
+            conversation.messages.enumerateObjects(options: .reverse) { (msg, idx, stop) in
+                guard let message = msg as? ZMMessage else { return }
+                if let otrMessage = message as? ZMOTRMessage, otrMessage.causedSecurityLevelDegradation {
+                    block(otrMessage)
+                }
+                if message.isConversationNotVerifiedSystemMessage {
+                    stop.initialize(to: true)
+                }
             }
         }
     }
