@@ -667,6 +667,7 @@ static dispatch_once_t clearStoreOnceToken;
         }
         [tp warnIfLongerThanInterval];
         [self refreshUnneededObjects];
+        self.zm_hasUserInfoChanges = NO;
     }
     else {
         ZMLogDebug(@"Not saving because there is no change");

@@ -553,6 +553,13 @@
         client.user = user;
         [conversation decreaseSecurityLevelIfNeededAfterDiscoveringClients:[NSSet setWithObject:client] causedByMessage:message2];
         [self.syncMOC saveOrRollback];
+        
+        XCTAssertFalse(message1.isExpired);
+        XCTAssertFalse(message1.causedSecurityLevelDegradation);
+        XCTAssertTrue(message2.isExpired);
+        XCTAssertTrue(message2.causedSecurityLevelDegradation);
+        XCTAssertTrue(message3.isExpired);
+        XCTAssertTrue(message3.causedSecurityLevelDegradation);
     }];
     
     // WHEN
