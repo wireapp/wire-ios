@@ -20,11 +20,10 @@
 #import "ZMConversationTests.h"
 #import "ZMConversation+Transport.h"
 
-@interface ZMConversationTests (Transport)
-
+@interface ZMConversationTransportTests : ZMConversationTestsBase
 @end
 
-@implementation ZMConversationTests (Transport)
+@implementation ZMConversationTransportTests
 
 - (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation conversationType:(ZMBackendConversationType)conversationType isArchived:(BOOL)isArchived archivedRef:(NSDate *)archivedRef isSilenced:(BOOL)isSilenced
     silencedRef: (NSDate *)silencedRef;

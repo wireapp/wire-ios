@@ -35,7 +35,7 @@
 #import "ZMConversation+Transport.h"
 
 
-@interface ZMConversationTests ()
+@interface ZMConversationTestsBase ()
 
 @property (nonatomic) NSMutableArray *receivedNotifications;
 
@@ -50,7 +50,7 @@
 @end
 
 
-@implementation ZMConversationTests
+@implementation ZMConversationTestsBase
 
 - (void)setUp;
 {
@@ -166,7 +166,15 @@
 @end
 
 
-@implementation ZMConversationTests (General)
+
+
+@interface ZMConversationTests : ZMConversationTestsBase
+
+@end
+
+
+
+@implementation ZMConversationTests
 
 - (void)testThatItSetsTheSelfUserAsCreatorWhenCreatingAGroupConversationFromTheUI
 {

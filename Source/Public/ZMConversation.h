@@ -130,9 +130,6 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 /// Appends a location, see @c LocationData.
 - (nullable id<ZMConversationMessage>)appendMessageWithLocationData:(nonnull ZMLocationData *)locationData;
 
-/// Resend last non sent messages
-- (void)resendLastUnsentMessages;
-
 @end
 
 @interface ZMConversation (History)

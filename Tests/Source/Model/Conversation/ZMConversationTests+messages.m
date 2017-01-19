@@ -20,8 +20,10 @@
 #import "ZMConversationTests.h"
 #import "ZMClientMessage.h"
 
+@interface ZMConversationMessagesTests : ZMConversationTestsBase
+@end
 
-@implementation ZMConversationTests (Messages)
+@implementation ZMConversationMessagesTests
 
 - (void)testThatWeCanInsertATextMessage;
 {

@@ -868,17 +868,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [self mutableOrderedSetValueForKey:LastServerSyncedActiveParticipantsKey];
 }
 
-
-- (void)resendLastUnsentMessages
-{
-    [self.messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ZMMessage *message, __unused NSUInteger idx, BOOL *stop) {
-        if (message.isExpired) {
-            [message resend];
-            *stop = YES;
-        }
-    }];
-}
-
 @end
 
 
