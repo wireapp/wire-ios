@@ -83,10 +83,11 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
         self.conversationWasVerified = conversation.isTrusted
         self.conversation = conversation
         super.init()
-        self.observer = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave,
-                                               object: conversation.managedObjectContext!.zm_sync,
-                                               queue: .main) { [weak self] (notification: Notification) -> Void in
-                                                self?.processNotification(notification: notification)
+        self.observer = NotificationCenter.default.addObserver(forName: contextWasMergedNotification, object: nil, queue: nil) { _ in
+                                                DispatchQueue.main.async { [weak self] _ in
+                                                    self?.processSaveNotification()
+                                                }
+                                                
         }
     }
     
@@ -101,10 +102,8 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
         }
     }
     
-    private func processNotification(notification: Notification) {
-        // this is a very rough approach (not checking if the specific conversation/clients changed)
-        // but I think it's probably faster (performance + code) to just check the flag at every save
-        if self.conversationWasVerified && !self.conversation.isTrusted {
+    private func processSaveNotification() {
+        if self.conversationWasVerified && self.conversation.didDegradeSecurityLevel {
             let untrustedUsers = Set((self.conversation.activeParticipants.array as! [ZMUser]).filter {
                 $0.clients.first { !$0.verified } != nil
             })
