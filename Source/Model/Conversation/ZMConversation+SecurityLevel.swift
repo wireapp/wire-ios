@@ -173,6 +173,7 @@ extension ZMConversation {
                     stop.initialize(to: true)
                 }
             }
+            syncMOC.saveOrRollback()
         }
     }
     

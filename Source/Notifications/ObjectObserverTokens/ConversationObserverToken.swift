@@ -265,10 +265,7 @@ extension ConversationChangeInfo {
     /// might have added a participant or renamed the conversation (causing a
     /// system message to be inserted)
     fileprivate var recentNewClientsSystemMessageWithExpiredMessages : ZMSystemMessage? {
-        let previousSecurityLevel = (self.previousValueForKey(SecurityLevelKey) as? NSNumber).flatMap { ZMConversationSecurityLevel(rawValue: $0.int16Value) }
-        if(!self.securityLevelChanged || self.conversation.securityLevel != .secureWithIgnored || previousSecurityLevel == nil) {
-            return .none;
-        }
+        guard self.conversation.didDegradeSecurityLevel else { return nil }
         var foundSystemMessage : ZMSystemMessage? = .none
         var foundDegradingMessage = false
         self.conversation.messages.enumerateObjects(options: NSEnumerationOptions.reverse) { (msg, _, stop) -> Void in

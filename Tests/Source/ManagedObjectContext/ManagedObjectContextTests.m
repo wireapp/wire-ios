@@ -338,3 +338,47 @@
 
 @end
 
+
+
+@implementation ManagedObjectContextTests (UserInfoChanges)
+
+- (void)testThatItDoesNotSaveWhenThereAreNoUserInfoChanges {
+    
+    // GIVEN
+    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    
+    // WHEN
+    [self.uiMOC saveOrRollback];
+    
+    // THEN
+    XCTAssertFalse([self waitForCustomExpectationsWithTimeout:0.001]);
+}
+
+- (void)testThatItSaveWhenThereAreUserInfoChanges {
+    
+    // GIVEN
+    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    self.uiMOC.zm_hasUserInfoChanges = YES;
+    
+    // WHEN
+    [self.uiMOC saveOrRollback];
+    
+    // THEN
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.1]);
+}
+
+- (void)testThatItResetsUserInfoChangesAfterASave {
+    
+    // GIVEN
+    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    self.uiMOC.zm_hasUserInfoChanges = YES;
+    
+    // WHEN
+    [self.uiMOC saveOrRollback];
+    
+    // THEN
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.1]);
+    XCTAssertFalse(self.uiMOC.zm_hasUserInfoChanges);
+}
+
+@end

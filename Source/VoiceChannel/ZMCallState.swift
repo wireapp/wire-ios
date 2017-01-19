@@ -49,6 +49,8 @@ public enum ZMCallStateReasonToLeave : UInt {
     }
 }
 
+private let userInfoHasChangesKey = "zm_userInfoHasChanges"
+
 extension NSManagedObjectContext {
     
     public var zm_callState: ZMCallState {
@@ -61,11 +63,21 @@ extension NSManagedObjectContext {
         }()
     }
     
+    /// True if the context has some changes in the user info that should cause a save
+    public var zm_hasUserInfoChanges : Bool {
+        get {
+            return (self.userInfo[userInfoHasChangesKey] as? Bool) ?? false
+        }
+        set {
+            self.userInfo[userInfoHasChangesKey] = newValue
+        }
+    }
+    
     /// Checks hasChanges and callStateHasChanges.
     ///
     /// The call state changes do not dirty the context's objects, hence need to be tracked / checked seperately.
     public var zm_hasChanges: Bool {
-        return hasChanges || callStateHasChanges
+        return hasChanges || callStateHasChanges || self.zm_hasUserInfoChanges
     }
 
     public var callStateHasChanges: Bool {
