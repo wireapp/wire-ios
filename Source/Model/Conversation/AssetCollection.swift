@@ -137,6 +137,7 @@ public class AssetCollection : NSObject, ZMCollection {
         }
     }
 
+    // NB: Method is expected to be run only on sync queue.
     private func fetchNextIfNotTornDown(limit: Int, type: MessagesToFetch, syncConversation: ZMConversation){
         guard !fetchingDone, !tornDown else { return }
         guard !syncConversation.isZombieObject else {
@@ -177,7 +178,7 @@ public class AssetCollection : NSObject, ZMCollection {
         
         // Categorize messages
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
-        conversation.managedObjectContext?.enqueueDelayedSave()
+        syncConversation.managedObjectContext?.enqueueDelayedSave()
         
         // Notify delegate
         self.notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
@@ -187,7 +188,7 @@ public class AssetCollection : NSObject, ZMCollection {
             return
         }
         
-        conversation.managedObjectContext?.performGroupedBlock { [weak self] in
+        syncConversation.managedObjectContext?.performGroupedBlock { [weak self] in
             guard let `self` = self, !self.tornDown else { return }
             self.fetchNextIfNotTornDown(limit: AssetCollection.defaultFetchCount, type: type, syncConversation: syncConversation)
         }
