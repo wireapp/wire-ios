@@ -83,11 +83,10 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
         self.conversationWasVerified = conversation.isTrusted
         self.conversation = conversation
         super.init()
-        self.observer = NotificationCenter.default.addObserver(forName: contextWasMergedNotification, object: nil, queue: nil) { _ in
-                                                DispatchQueue.main.async { [weak self] _ in
+        self.observer = NotificationCenter.default.addObserver(forName: contextWasMergedNotification, object: nil, queue: nil) { [weak self] _ in
+                                                DispatchQueue.main.async {
                                                     self?.processSaveNotification()
                                                 }
-                                                
         }
     }
     
