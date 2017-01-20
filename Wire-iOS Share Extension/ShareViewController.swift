@@ -41,10 +41,10 @@ class ShareViewController: SLComposeServiceViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.postContent = PostContent(attachments: self.allAttachments)
         self.setupNavigationBar()
         self.appendTextToEditor()
         self.placeholder = "share_extension.input.placeholder".localized
-        self.postContent = PostContent(attachments: self.allAttachments)
     }
     
     required init?(coder aDecoder: NSCoder) {
