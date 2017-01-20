@@ -71,7 +71,6 @@ extension ZMConversation {
     /// from any context.
     public var didDegradeSecurityLevel : Bool {
         get {
-            let conversationsDictionary = self.managedObjectContext?.messagesThatCausedSecurityLevelDegradationByConversation
             return self.managedObjectContext?.messagesThatCausedSecurityLevelDegradationByConversation.keys.contains(self.objectID) ?? false
         }
     }
