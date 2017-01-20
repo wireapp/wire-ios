@@ -46,10 +46,10 @@ public final class SendableBatchObserver {
     }
     
     public var allSendablesSent: Bool {
-        return sendables.first { sendable -> Bool in
-            return sendable.deliveryState != .sent
-                && sendable.deliveryState != .delivered
-            } == nil
+        let notSent = sendables.first { sendable -> Bool in
+            return sendable.deliveryState != .sent && sendable.deliveryState != .delivered
+        }
+        return notSent == nil
     }
     
     public func onDeliveryChanged() {
