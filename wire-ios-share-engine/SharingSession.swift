@@ -295,8 +295,8 @@ public class SharingSession {
 
     private func setupObservers() {
         contextSaveObserverToken = NotificationCenter.default.addObserver(
-            forName: .NSManagedObjectContextDidSave,
-            object: userInterfaceContext,
+            forName: contextWasMergedNotification,
+            object: nil,
             queue: .main,
             using: saveNotificationPersistence.add
         )
