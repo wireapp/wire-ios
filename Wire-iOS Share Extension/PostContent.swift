@@ -94,6 +94,11 @@ extension PostContent {
         { [weak self]
             messages in
             allMessagesEnqueuedGroup.leave()
+            
+            guard !messages.isEmpty else {
+                didFinishSending()
+                return
+            }
 
             self?.batchObserver = SendableBatchObserver(sendables: messages)
             self?.batchObserver?.progressHandler = {
