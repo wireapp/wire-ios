@@ -251,6 +251,44 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.version, 0)
     }
     
+    func testThatFileAssetMessageCanBeExpired()
+    {
+        // given
+        let nonce = UUID.create()
+        let fileMetadata = addFile()
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: nonce,
+            managedObjectContext: uiMOC,
+            expiresAfter: 0)
+        
+        // when
+        sut.expire()
+        
+        // then
+        XCTAssertNotNil(sut)
+        XCTAssertFalse(sut.delivered)
+        XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
+        XCTAssertEqual(sut.uploadState, ZMAssetUploadState.uploadingFailed)
+        XCTAssertTrue(sut.isExpired)
+    }
+    
+    func testThatImageMessageCanBeExpired() {
+        
+        //given
+        let sut = self.appendImageMessage(.medium, to: self.syncConversation)
+            
+        //when
+        sut.expire()
+            
+        //then
+        XCTAssertNotNil(sut)
+        XCTAssertFalse(sut.delivered)
+        XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
+        XCTAssertEqual(sut.uploadState, ZMAssetUploadState.uploadingFailed)
+        XCTAssertTrue(sut.isExpired)
+    }
+    
     func testThatItHasDownloadedFileWhenTheFileIsOnDisk()
     {
         // given

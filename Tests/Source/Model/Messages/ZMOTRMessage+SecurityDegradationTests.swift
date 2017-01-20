@@ -60,10 +60,10 @@ class ZMOTRMessage_SecurityDegradationTests : ZMBaseManagedObjectTest {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = convo.appendMessage(withText: "Foo")! as! ZMOTRMessage
-            
+            self.syncMOC.saveOrRollback()
+
             // WHEN
             message.causedSecurityLevelDegradation = true
-            self.syncMOC.saveOrRollback()
             
             // THEN
             XCTAssertTrue(message.causedSecurityLevelDegradation)
@@ -80,10 +80,10 @@ class ZMOTRMessage_SecurityDegradationTests : ZMBaseManagedObjectTest {
             let convo = self.createConversation(moc: self.syncMOC)
             let message = convo.appendMessage(withText: "Foo")! as! ZMOTRMessage
             message.causedSecurityLevelDegradation = true
+            self.syncMOC.saveOrRollback()
             
             // WHEN
             message.causedSecurityLevelDegradation = false
-            self.syncMOC.saveOrRollback()
 
             
             // THEN
@@ -113,8 +113,8 @@ class ZMOTRMessage_SecurityDegradationTests : ZMBaseManagedObjectTest {
             XCTAssertTrue(convo.didDegradeSecurityLevel)
             
             // and WHEN
-            message2.causedSecurityLevelDegradation = false
             self.syncMOC.saveOrRollback()
+            message2.causedSecurityLevelDegradation = false
             
             // THEN
             XCTAssertFalse(message2.causedSecurityLevelDegradation)

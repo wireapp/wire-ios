@@ -193,6 +193,19 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     self.cachedGenericAssetMessage = nil;
 }
 
+- (void)expire {
+    [super expire];
+    if (self.delivered) {
+        return;
+    }
+    if (self.uploadState != ZMAssetUploadStateDone) {
+        self.uploadState = ZMAssetUploadStateUploadingFailed;
+    }
+    if (self.transferState == ZMFileTransferStateUploading) {
+        self.transferState = ZMFileTransferStateFailedUpload;
+    }
+}
+
 - (void)didTurnIntoFault
 {
     [super didTurnIntoFault];
