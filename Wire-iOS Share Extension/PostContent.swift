@@ -34,7 +34,7 @@ class PostContent {
     /// Whether the posting was canceled
     var isCanceled : Bool = false
 
-    fileprivate var batchObserver : SendableBatchObserver?
+    fileprivate var batchObserver: SendableBatchObserver?
     
     /// List of attachments to post
     var attachments : [NSItemProvider]
@@ -71,17 +71,16 @@ extension PostContent {
         let allMessagesEnqueuedGroup = DispatchGroup()
         allMessagesEnqueuedGroup.enter()
         
-        let conversationObserverToken = conversation.add(conversationVerificationDegradedObserver: { [weak self]
+        let degradationObserver = conversation.add(conversationVerificationDegradedObserver: {
             change in
             // make sure that we notify only when we are done preparing all the ones to be sent
-            allMessagesEnqueuedGroup.notify(queue: DispatchQueue.main, execute: { 
+            allMessagesEnqueuedGroup.notify(queue: DispatchQueue.main, execute: {
                 conversationDidDegrade(change.users) {
                     switch $0 {
                     case .sendAnyway:
                         conversation.resendMessagesThatCausedConversationSecurityDegradation()
                     case .cancelSending:
                         conversation.doNotResendMessagesThatCausedDegradation()
-                        self?.batchObserver = nil
                         didFinishSending()
                     }
                 }
@@ -103,9 +102,8 @@ extension PostContent {
             didScheduleSending()
             
             self?.batchObserver?.sentHandler = {
-                conversationObserverToken.tearDown()
+                degradationObserver.tearDown()
                 didFinishSending()
-                self?.batchObserver = nil
             }
         }
     }
@@ -151,11 +149,10 @@ extension PostContent {
         
         
         
-        sendingGroup.notify(queue: .main) {
-            
+        sendingGroup.notify(queue: .main) { [weak self] in
             if !text.isEmpty {
                 sendingGroup.enter()
-                self.sendAsText(sharingSession: sharingSession, conversation: conversation, text: text, completionHandler: completeAndAppendToMessages)
+                self?.sendAsText(sharingSession: sharingSession, conversation: conversation, text: text, completionHandler: completeAndAppendToMessages)
             }
             
             sendingGroup.notify(queue: .main) {
