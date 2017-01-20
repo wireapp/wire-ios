@@ -17,8 +17,6 @@
 //
 
 import Foundation
-import WireShareEngine
-
 
 public final class SendableBatchObserver {
     
@@ -42,7 +40,9 @@ public final class SendableBatchObserver {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self.observerToken)
+        if let observer = self.observerToken {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     public var allSendablesSent: Bool {
