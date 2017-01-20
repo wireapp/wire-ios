@@ -171,8 +171,8 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
             context.mergeUserInfo(fromUserInfo: userInfo)
             context.mergeChanges(fromContextDidSave: notification)
             context.processPendingChanges() // We need this because merging sometimes leaves the MOC in a 'dirty' state
-            
-            NotificationCenter.default.post(name: contextWasMergedNotification, object: context)
+
+            NotificationCenter.default.post(name: contextWasMergedNotification, object: context, userInfo: notification.userInfo)
         }
     }
     
