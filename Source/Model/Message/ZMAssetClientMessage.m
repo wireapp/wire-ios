@@ -199,7 +199,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
         return;
     }
     if (self.uploadState != ZMAssetUploadStateDone) {
-        self.uploadState = ZMAssetUploadStateUploadingFailed;
+        self.uploadState = ZMAssetUploadStateDone;
     }
     if (self.transferState == ZMFileTransferStateUploading) {
         self.transferState = ZMFileTransferStateFailedUpload;
