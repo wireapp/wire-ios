@@ -298,7 +298,7 @@ public class SharingSession {
             forName: contextWasMergedNotification,
             object: nil,
             queue: .main,
-            using: saveNotificationPersistence.add
+            using: { [weak self] note in self?.saveNotificationPersistence.add(note) }
         )
     }
 
@@ -309,12 +309,8 @@ public class SharingSession {
     public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
         userInterfaceContext.performGroupedBlock { [weak self] in
             changes()
-            
             self?.userInterfaceContext.saveOrRollback()
-            
-            if let completionHandler = completionHandler {
-                completionHandler()
-            }
+            completionHandler?()
         }
     }
 

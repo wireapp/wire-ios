@@ -26,14 +26,12 @@ public final class SendableBatchObserver {
     public var progressHandler: ((Float) -> Void)?
     private var observerToken : Any?
     
-    
-    
     public init(sendables: [Sendable]) {
         self.sendables = sendables
         self.observerToken = NotificationCenter.default.addObserver(forName: contextWasMergedNotification,
                                                                     object: nil,
-                                                                    queue: nil) { _ in
-            DispatchQueue.main.async { [weak self] _ in
+                                                                    queue: nil) { [weak self] _ in
+            DispatchQueue.main.async {
                 self?.onDeliveryChanged()
             }
         }
