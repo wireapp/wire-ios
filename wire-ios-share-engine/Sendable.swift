@@ -33,29 +33,6 @@ public protocol Sendable {
     /// It will be 1 when the delivery is completed.
     var deliveryProgress : Float? { get }
     
-    /// Adds an observer for a change in status or delivery progress
-    /// - returns: the observable token
-    func registerObserverToken(_ observer: SendableObserver) -> SendableObserverToken
-    
-    /// Removes an observer token
-    func remove(_ observerToken: SendableObserverToken)
-    
     /// Expire message sending
     func cancel()
-    
-    /// Resend ignoring missing clients
-    func resendIgnoringMissingClients()
-}
-
-/// An observer of the progress of a Sendable
-public protocol SendableObserver: class {
-    
-    /// Either the delivery state or the delivery progress changed
-    func onDeliveryChanged()
-    
-}
-
-/// Wrapper around an observer token for SendableObserver
-public struct SendableObserverToken {
-    let token : AnyObject
 }

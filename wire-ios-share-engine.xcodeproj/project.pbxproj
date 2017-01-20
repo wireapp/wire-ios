@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		543972AD1E3154BA00A02C5F /* SendableBatchObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543972AC1E3154B900A02C5F /* SendableBatchObserver.swift */; };
 		5470D3EC1D76E1B000FDE440 /* WireShareEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		5470D4301D77154200FDE440 /* SharingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D42F1D77154200FDE440 /* SharingSession.swift */; };
@@ -100,6 +101,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		543972AC1E3154B900A02C5F /* SendableBatchObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendableBatchObserver.swift; sourceTree = "<group>"; };
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireShareEngine.h; sourceTree = "<group>"; };
 		5470D3ED1D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "wire-ios-share-engine/Info.plist"; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				5470D4621D7722A500FDE440 /* Sendable.swift */,
 				BF9F130A1DC1052100700255 /* OperationLoop.swift */,
 				BFE7F7521D7885ED00FEA685 /* ZMMessage+Sendable.swift */,
+				543972AC1E3154B900A02C5F /* SendableBatchObserver.swift */,
 			);
 			path = "wire-ios-share-engine";
 			sourceTree = "<group>";
@@ -469,6 +472,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFE7F7551D7885FF00FEA685 /* ZMConversation+Conversation.swift in Sources */,
+				543972AD1E3154BA00A02C5F /* SendableBatchObserver.swift in Sources */,
 				BF9F130B1DC1052100700255 /* OperationLoop.swift in Sources */,
 				BFE7F7511D78820700FEA685 /* AuthenticationStatusProvider.swift in Sources */,
 				5470D4301D77154200FDE440 /* SharingSession.swift in Sources */,
