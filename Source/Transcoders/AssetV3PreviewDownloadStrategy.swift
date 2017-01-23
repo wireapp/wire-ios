@@ -100,12 +100,10 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         }
 
         // Notify about the changes
-        let uiMOC = managedObjectContext.zm_userInterface
-
-        uiMOC?.performGroupedBlock {
-            guard let message = try? uiMOC?.existingObject(with: assetClientMessage.objectID) else { return }
-            uiMOC?.globalManagedObjectContextObserver.notifyNonCoreDataChangeInManagedObject(message!)
-        }
+        guard let uiMOC = managedObjectContext.zm_userInterface else { return }
+        NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
+                                                        changedKeys: [ZMAssetClientMessageDownloadedImageKey],
+                                                        uiContext: uiMOC)
     }
 
     // MARK: - ZMContextChangeTrackerSource
