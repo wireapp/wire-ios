@@ -26,15 +26,15 @@ import MobileCoreServices
 /// Content that is shared on a share extension post attempt
 class PostContent {
     
-    var conversationObserverToken : Any?
-    
     /// Conversation to post to
-    var target : Conversation? = nil
-    
-    /// Whether the posting was canceled
-    var isCanceled : Bool = false
+    var target: Conversation? = nil
 
-    fileprivate var batchObserver: SendableBatchObserver?
+    fileprivate var sendController: SendController?
+
+    var sentAllSendables: Bool {
+        guard let sendController = sendController else { return false }
+        return sendController.sentAllSendables
+    }
     
     /// List of attachments to post
     var attachments : [NSItemProvider]
@@ -42,7 +42,9 @@ class PostContent {
     init(attachments: [NSItemProvider]) {
         self.attachments = attachments
     }
+
 }
+
 
 // MARK: - Send attachments
 
@@ -53,254 +55,46 @@ enum DegradationStrategy {
     case cancelSending
 }
 
+
 extension PostContent {
-    
-    typealias DegradationStrategyChoice = (DegradationStrategy)->()
-    
+
     /// Send the content to the selected conversation
-    func send(text: String,
-              sharingSession: SharingSession,
-              didScheduleSending: @escaping () -> Void,
-              newProgressAvailable: @escaping (Float) -> Void,
-              didFinishSending: @escaping (Void) -> Void,
-              conversationDidDegrade: @escaping (Set<ZMUser>, @escaping DegradationStrategyChoice) -> Void
-        ) {
-        
-        let conversation = self.target!
-        
+    func send(text: String, sharingSession: SharingSession, progress: @escaping Progress) {
+        let conversation = target!
+        sendController = SendController(text: text, attachments: attachments, conversation: conversation, sharingSession: sharingSession)
+
         let allMessagesEnqueuedGroup = DispatchGroup()
         allMessagesEnqueuedGroup.enter()
-        
-        let degradationObserver = conversation.add(conversationVerificationDegradedObserver: {
-            change in
+
+        let conversationObserverToken = conversation.add { change in
             // make sure that we notify only when we are done preparing all the ones to be sent
-            allMessagesEnqueuedGroup.notify(queue: DispatchQueue.main, execute: {
-                conversationDidDegrade(change.users) {
+            allMessagesEnqueuedGroup.notify(queue: .main, execute: {
+                let degradationStrategy: DegradationStrategyChoice = {
                     switch $0 {
                     case .sendAnyway:
                         conversation.resendMessagesThatCausedConversationSecurityDegradation()
                     case .cancelSending:
                         conversation.doNotResendMessagesThatCausedDegradation()
-                        didFinishSending()
+                        progress(.done)
                     }
                 }
+                progress(.conversationDidDegrade((change.users, degradationStrategy)))
             })
-        })
-        
-        self.sendAttachments(sharingSession: sharingSession,
-                             conversation: conversation,
-                             text: text)
-        { [weak self]
-            messages in
-            allMessagesEnqueuedGroup.leave()
-            
-            guard !messages.isEmpty else {
-                didFinishSending()
-                return
+        }
+
+        sendController?.send {
+            switch $0 {
+            case .done: conversationObserverToken.tearDown()
+            case .startingSending: allMessagesEnqueuedGroup.leave()
+            default: break
             }
 
-            self?.batchObserver = SendableBatchObserver(sendables: messages)
-            self?.batchObserver?.progressHandler = {
-                newProgressAvailable($0)
-            }
-            
-            didScheduleSending()
-            
-            self?.batchObserver?.sentHandler = {
-                degradationObserver.tearDown()
-                didFinishSending()
-            }
-        }
-    }
-    
-    /// Send all attachments
-    fileprivate func sendAttachments(sharingSession: SharingSession,
-                                     conversation: Conversation,
-                                     text: String,
-                                     didScheduleSending: @escaping ([Sendable])->()) {
-        
-        let sendingGroup = DispatchGroup()
-        
-        var messages : [Sendable] = [] // this will always modifed on the main thread
-        
-        let completeAndAppendToMessages : (Sendable?)->() = { [weak self] sendable in
-            defer { sendingGroup.leave() }
-            guard let sendable = sendable else {
-                return
-            }
-            messages.append(sendable)
-        }
-        
-        self.attachments.forEach { attachment in
-            if attachment.hasItemConformingToTypeIdentifier(kUTTypeImage as String) {
-                sendingGroup.enter()
-                self.sendAsImage(sharingSession: sharingSession, conversation: conversation, attachment: attachment, completionHandler: completeAndAppendToMessages)
-            }
-            else if attachment.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
-                sendingGroup.enter()
-                attachment.fetchURL { url in
-                    if let url = url, !url.isFileURL == true { // remote URL, send as link
-                        sendingGroup.leave()
-                    } else if attachment.hasItemConformingToTypeIdentifier(kUTTypeData as String) {
-                        self.sendAsFile(sharingSession: sharingSession, conversation: conversation, name: url?.lastPathComponent, attachment: attachment, completionHandler: completeAndAppendToMessages)
-                    }
-                }
-            }
-            else if attachment.hasItemConformingToTypeIdentifier(kUTTypeData as String) {
-                sendingGroup.enter()
-                self.sendAsFile(sharingSession: sharingSession, conversation: conversation, name: nil, attachment: attachment, completionHandler: completeAndAppendToMessages)
-            }
-        }
-        
-        
-        
-        sendingGroup.notify(queue: .main) { [weak self] in
-            if !text.isEmpty {
-                sendingGroup.enter()
-                self?.sendAsText(sharingSession: sharingSession, conversation: conversation, text: text, completionHandler: completeAndAppendToMessages)
-            }
-            
-            sendingGroup.notify(queue: .main) {
-                didScheduleSending(messages)
-            }
-        }
-    }
-    
-    /// Appends a file message, and invokes the callback when the message is available
-    fileprivate func sendAsFile(sharingSession: SharingSession, conversation: Conversation, name: String?, attachment: NSItemProvider, completionHandler: @escaping (Sendable?)->()) {
-        
-        attachment.loadItem(forTypeIdentifier: kUTTypeData as String, options: [:], dataCompletionHandler: { (data, error) in
-            
-            guard let data = data, let UTIString = attachment.registeredTypeIdentifiers.first as? String, error == nil else {
-                sharingSession.enqueue {
-                    completionHandler(nil)
-                }
-                return
-            }
-            
-            self.prepareForSending(data:data, UTIString: UTIString, name: name) { url, error in
-                
-                guard let url = url, error == nil else {
-                    sharingSession.enqueue {
-                        completionHandler(nil)
-                    }
-                    return
-                }
-                
-                FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: name ?? url.lastPathComponent) { metadata -> Void in
-                    sharingSession.enqueue {
-                        completionHandler(conversation.appendFile(metadata))
-                    }
-                }
-            }
-        })
-    }
-
-    /// Appends an image message, and invokes the callback when the message is available
-    fileprivate func sendAsImage(sharingSession: SharingSession, conversation: Conversation, attachment: NSItemProvider, completionHandler: @escaping (Sendable?)->()) {
-        let preferredSize = NSValue.init(cgSize: CGSize(width: 1024, height: 1024))
-        attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: [NSItemProviderPreferredImageSizeKey : preferredSize], imageCompletionHandler: { (image, error) in
-
-            sharingSession.enqueue {
-                guard let image = image, let imageData = UIImageJPEGRepresentation(image, 0.9), error == nil else {
-                    completionHandler(nil)
-                    return
-                }
-                
-                completionHandler(conversation.appendImage(imageData))
-            }
-        })
-    }
-    
-    /// Appends an image message, and invokes the callback when the message is available
-    fileprivate func sendAsText(sharingSession: SharingSession, conversation: Conversation, text: String, completionHandler: @escaping (Sendable?)->()) {
-        sharingSession.enqueue {
-            completionHandler(conversation.appendTextMessage(text))
-        }
-    }
-    
-    /// Process data to the right format to be sent
-    private func prepareForSending(data: Data, UTIString UTI: String, name: String?, completionHandler: @escaping (URL?, Error?) -> Void) {
-
-        guard let fileName = nameForFile(withUTI: UTI, name: name) else {
-            return completionHandler(nil, nil)
-        }
-        
-        let tempDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString) // temp subdir
-        if !FileManager.default.fileExists(atPath: tempDirectory.absoluteString) {
-            try! FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true)
-        }
-        let tempFileURL = tempDirectory.appendingPathComponent(fileName)
-        
-        if FileManager.default.fileExists(atPath: tempFileURL.absoluteString) {
-            try! FileManager.default.removeItem(at: tempFileURL)
-        }
-        do {
-            try data.write(to: tempFileURL)
-        } catch {
-            completionHandler(nil, error)
-            return
-        }
-        
-        
-        if UTTypeConformsTo(UTI as CFString, kUTTypeMovie) {
-            AVAsset.wr_convertVideo(at: tempFileURL) { [weak self] (url, _, error) in
-                // Video conversation can take a while, we need to ensure the user did not cancel
-                if self?.isCanceled == false {
-                    completionHandler(url, error)
-                } else {
-                    completionHandler(nil, error)
-                }
-            }
-        } else {
-            completionHandler(tempFileURL, nil)
+            progress($0)
         }
     }
 
-    private func nameForFile(withUTI UTI: String, name: String?) -> String? {
-        if let fileExtension = UTTypeCopyPreferredTagWithClass(UTI as CFString, kUTTagClassFilenameExtension)?.takeRetainedValue() as? String {
-            return "\(UUID().uuidString).\(fileExtension)"
-        }
-        return name
+    func cancel(completion: @escaping () -> Void) {
+        sendController?.cancel(completion: completion)
     }
-}
 
-// MARK: - Process attachements
-extension PostContent {
-    
-    /// Gets all the URLs in this post, and invoke the callback (on main queue) when done
-    func fetchURLAttachments(callback: @escaping ([URL])->()) {
-        var urls : [URL] = []
-        let group = DispatchGroup()
-        self.attachments.forEach { attachment in
-            if attachment.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
-                group.enter()
-                attachment.fetchURL { url in
-                    DispatchQueue.main.async {
-                        defer {  group.leave() }
-                        guard let url = url else { return }
-                        urls.append(url)
-                    }
-                }
-            }
-        }
-        group.notify(queue: .main) { _ in callback(urls) }
-    }
-}
-
-extension NSItemProvider {
-    
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?)->()) {
-        self.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil, urlCompletionHandler: { (url, error) in
-            completion(url)
-        })
-    }
-    
-    /// Extracts data from the item provider
-    func fetchData(completion: @escaping(Data?)->()) {
-        self.loadItem(forTypeIdentifier: kUTTypeData as String, options: [:], dataCompletionHandler: { (data, error) in
-            completion(data)
-        })
-    }
 }
