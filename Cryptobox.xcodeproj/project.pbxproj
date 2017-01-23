@@ -13,9 +13,9 @@
 		09E393C31BAC2E5600F3EA1B /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* Cryptobox.framework */; };
 		54060B7B1DB7719000AEA9BB /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; };
 		54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54060B7C1DB771B400AEA9BB /* Logs.swift */; };
-		54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5421C5F81D2C152C00048251 /* NSData+CBox.swift */; };
-		5471A6501D23D8E70092A9A9 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = F50302F11B8CFA230053E406 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5442B4DB1E360195006B5282 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 5442B4DA1E360195006B5282 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5471A6591D24215B0092A9A9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6581D24215B0092A9A9 /* main.m */; };
 		5471A65C1D24215B0092A9A9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A65B1D24215B0092A9A9 /* AppDelegate.m */; };
 		5471A65F1D24215B0092A9A9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A65E1D24215B0092A9A9 /* ViewController.m */; };
@@ -102,6 +102,7 @@
 		54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
+		5442B4DA1E360195006B5282 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
 		5471A6551D24215B0092A9A9 /* test-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5471A6581D24215B0092A9A9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5471A65A1D24215B0092A9A9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -313,6 +314,7 @@
 		BA7EF9601B7109B600204A8E /* Cryptobox */ = {
 			isa = PBXGroup;
 			children = (
+				5442B4DA1E360195006B5282 /* cbox.h */,
 				0928E36C1BA0908F0057232E /* Cryptobox.h */,
 				54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */,
 				5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */,
@@ -445,7 +447,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5471A6501D23D8E70092A9A9 /* cbox.h in Headers */,
+				5442B4DB1E360195006B5282 /* cbox.h in Headers */,
 				0928E36D1BA0908F0057232E /* Cryptobox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -457,6 +459,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "Cryptobox-ios" */;
 			buildPhases = (
+				5442B4D91E35FD9F006B5282 /* ShellScript */,
 				5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */,
 				0928E2621BA078750057232E /* Check for dependencies  */,
 				0928E22F1BA0777A0057232E /* Sources */,
@@ -518,7 +521,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = Cryptobox;
 				TargetAttributes = {
 					0928E2331BA0777A0057232E = {
@@ -599,6 +602,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\n";
+		};
+		5442B4D91E35FD9F006B5282 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/include/cbox.h Cryptobox/cbox.h";
 		};
 		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
 			isa = PBXShellScriptBuildPhase;
