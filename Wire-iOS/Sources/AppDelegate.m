@@ -85,9 +85,6 @@
 @interface AppDelegate (PushNotifications)
 @end
 
-@interface AppDelegate (ThirdPartyServicesDelegate) <ZMThirdPartyServicesDelegate>
-@end
-
 
 @implementation AppDelegate
 
@@ -140,7 +137,7 @@
     
     
     [Analytics setConsoleAnayltics:containsConsoleAnalytics];
-    [Analytics shared]; // preload analytics to listen to some notifications in time
+    [Analytics setupSharedInstanceWithLaunchOptions:launchOptions]; // preload analytics to listen to some notifications in time
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(userSessionDidBecomeAvailable:)
@@ -164,9 +161,6 @@
 {
     DDLogInfo(@"applicationWillEnterForeground: (applicationState = %ld)", (long)application.applicationState);
     [self.appController applicationWillEnterForeground:application];
-    
-    // Calling this in `applicationDidBecomeActive:` and `applicationWillEnterForeground:` is safe, since subsequent calls are ignored by Localytics
-    [[Analytics shared] resume];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application;
@@ -174,11 +168,10 @@
     DDLogInfo(@"applicationDidBecomeActive START (applicationState = %ld)", (long)application.applicationState);
     
     [self.appController applicationDidBecomeActive:application];
-    
     self.addressBookUploadShouldBeChecked = YES;
     
     // Resume any analytics work after migration
-    [[Analytics shared] resume];
+    [Analytics.shared loadCustomSessionSummary];
     
     switch (self.launchType) {
         case ApplicationLaunchURL:
@@ -209,8 +202,7 @@
 {
     DDLogInfo(@"applicationDidEnterBackground:  (applicationState = %ld)", (long)application.applicationState);
     
-    [[Analytics shared] closeAndUpload];
-    
+    [Analytics.shared persistCustomSessionSummary];
     self.launchType = ApplicationLaunchUnknown;
     self.addressBookUploadShouldBeChecked = NO;
     
@@ -220,7 +212,6 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     DDLogInfo(@"applicationWillTerminate:  (applicationState = %ld)", (long)application.applicationState);
-    [[Analytics shared] closeAndUpload];
     
     // In case of normal termination we do not need the run duration to persist
     [[UIApplication sharedApplication] resetRunDuration];
@@ -244,7 +235,6 @@
 
 - (void)userSessionDidBecomeAvailable:(NSNotification *)notification
 {
-    self.zetaUserSession.thirdPartyServicesDelegate = self;
     [ZMUserSession addInitalSyncCompletionObserver:self];
     [ZMNetworkAvailabilityChangeNotification addNetworkAvailabilityObserver:self userSession:self.zetaUserSession];
     [self trackLaunchAnalyticsWithLaunchOptions:self.launchOptions];
@@ -294,9 +284,8 @@
         // Intentional NSLog
         NSLog(@"INFO: Received URL: %@", [url absoluteString]);
     }
-    
-    // Passing it to Analytics as the last resort, cause there is no way to tell if Analytics can handle this URL
-    return [[Analytics shared] handleOpenURL:url];
+
+    return NO;
 }
 
 #pragma mark - AppController
@@ -352,7 +341,6 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
 {
     DDLogWarn(@"Received APNS token: %@", newDeviceToken);
-    [[Analytics shared] setPushToken:newDeviceToken];
     [[ZMUserSession sharedSession] application:application didRegisterForRemoteNotificationsWithDeviceToken:newDeviceToken];
 }
 
@@ -380,7 +368,6 @@
         [[Analytics shared] tagAppLaunchWithType:ApplicationLaunchPush];
         self.trackedResumeEvent = YES;
     }
-    [[Analytics shared] handleRemoteNotification:userInfo];
     [self.appController performAfterUserSessionIsInitialized:^{
         [[ZMUserSession sharedSession] application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
     }];
@@ -394,8 +381,6 @@
     [self.appController performAfterUserSessionIsInitialized:^{
         [[ZMUserSession sharedSession] application:application didReceiveLocalNotification:notification];
     }];
-    
-    [[Analytics shared] handleRemoteNotification:notification.userInfo];
     self.launchType = (application.applicationState == UIApplicationStateInactive || application.applicationState == UIApplicationStateBackground) ? ApplicationLaunchPush: ApplicationLaunchDirect;
 }
 
@@ -455,15 +440,6 @@
 - (void)initialSyncCompleted:(NSNotification *)notification
 {
     [self.zetaUserSession setInitialSyncOnceCompleted:@(YES)];
-}
-
-@end
-
-@implementation AppDelegate (ThirdPartyServicesDelegate)
-
-- (void)userSessionIsReadyToUploadServicesData:(ZMUserSession *)userSession;
-{
-    [[Analytics shared] upload];
 }
 
 @end
