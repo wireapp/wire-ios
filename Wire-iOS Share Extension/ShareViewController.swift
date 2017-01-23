@@ -31,13 +31,12 @@ private let progressDisplayDelay: TimeInterval = 0.5
 class ShareViewController: SLComposeServiceViewController {
     
     var conversationItem : SLComposeSheetConfigurationItem?
-    var postContent : PostContent?
 
+    fileprivate var postContent: PostContent?
     fileprivate var sharingSession: SharingSession? = nil
 
     private var observer: SendableBatchObserver? = nil
     private weak var progressViewController: SendingProgressViewController? = nil
-    private var conversationDegradationObserverToken : Any? = nil
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -80,7 +79,6 @@ class ShareViewController: SLComposeServiceViewController {
         guard let applicationGroupIdentifier = infoDict?["ApplicationGroupIdentifier"] as? String,
             let hostBundleIdentifier = infoDict?["HostBundleIdentifier"] as? String else { return }
 
-        sharingSession = nil
         sharingSession = try? SharingSession(
             applicationGroupIdentifier: applicationGroupIdentifier,
             hostBundleIdentifier: hostBundleIdentifier
@@ -94,41 +92,42 @@ class ShareViewController: SLComposeServiceViewController {
 
     /// invoked when the user wants to post
     func appendPostTapped() {
-        
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 
-        var sendingCompleted = false
-        
-        let didScheduleSending : (Void)->Void = { [weak self] _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                guard !sendingCompleted && nil == self?.progressViewController else { return }
-                self?.presentSendingProgress(mode: .preparing)
+        postContent?.send(text: contentText, sharingSession: sharingSession!) { [weak self] progress in
+            guard let `self` = self, let postContent = self.postContent else { return }
+
+            switch progress {
+            case .preparing:
+                DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
+                    guard !postContent.sentAllSendables && nil == self.progressViewController else { return }
+                    self.presentSendingProgress(mode: .preparing)
+                }
+
+            case .startingSending:
+                DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
+                    guard postContent.sentAllSendables && nil == self.progressViewController else { return }
+                    self.presentSendingProgress(mode: .sending)
+                }
+
+            case .sending(let progress):
+                self.progressViewController?.progress = progress
+
+            case .done:
+                UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseIn, animations: {
+                    self.view.alpha = 0
+                    self.navigationController?.view.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                }, completion: { _ in
+                    self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
+                })
+
+            case .conversationDidDegrade((let users, let strategyChoice)):
+                self.conversationDidDegrade(
+                    change: ConversationDegradationInfo(conversation: postContent.target!, users: users),
+                    callback: strategyChoice
+                )
             }
         }
-        let newProgressAvailable : (Float)->Void = { [weak self] progress in
-            self?.progressViewController?.progress = progress
-        }
-        let didFinishSending : (Void)->Void = { [weak self] _ in
-            sendingCompleted = true
-            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseIn, animations: {
-                self?.view.alpha = 0
-                self?.navigationController?.view.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-            }, completion: { _ in
-                self?.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
-            })
-        }
-        let conversationDidDegrade : (Set<ZMUser>, @escaping PostContent.DegradationStrategyChoice)->Void = { [weak self] users, strategyChoice in
-            guard let `self` = self else { return }
-            self.conversationDidDegrade(change: ConversationDegradationInfo(conversation: self.postContent!.target!, users: users), callback: strategyChoice)
-        }
-        
-        self.postContent?.send(text: self.textView.text,
-                               sharingSession: sharingSession!,
-                               didScheduleSending: didScheduleSending,
-                               newProgressAvailable: newProgressAvailable,
-                               didFinishSending: didFinishSending,
-                               conversationDidDegrade: conversationDidDegrade
-                               )
     }
     
     /// Display a preview image
@@ -146,14 +145,9 @@ class ShareViewController: SLComposeServiceViewController {
         return nil
     }
 
-    override func cancel() {
-        self.postContent?.isCanceled = true
-        super.cancel()
-    }
-
     /// If there is a URL attachment, copy the text of the URL attachment into the text field
     private func appendTextToEditor() {
-        self.postContent?.fetchURLAttachments { [weak self] (urls) in
+        fetchURLAttachments { [weak self] (urls) in
             guard let url = urls.first, let `self` = self else { return }
             if !url.isFileURL { // remote URL (not local file)
                 let separator = self.textView.text.isEmpty ? "" : "\n"
@@ -181,20 +175,9 @@ class ShareViewController: SLComposeServiceViewController {
         progressViewController?.mode = mode
 
         progressSendingViewController.cancelHandler = { [weak self] in
-            guard let `self` = self else { return }
-
-            self.postContent?.isCanceled = true
-            let sendablesToCancel = self.observer?.sendables.lazy.filter {
-                $0.deliveryState != .sent && $0.deliveryState != .delivered
+            self?.postContent?.cancel {
+                self?.cancel()
             }
-
-            self.sharingSession?.enqueue {
-                sendablesToCancel?.forEach {
-                    $0.cancel()
-                }
-            }
-
-            self.cancel()
         }
 
         progressViewController = progressSendingViewController
@@ -226,8 +209,9 @@ class ShareViewController: SLComposeServiceViewController {
         
         pushConfigurationViewController(conversationSelectionViewController)
     }
+
     
-    private func conversationDidDegrade(change: ConversationDegradationInfo, callback: @escaping PostContent.DegradationStrategyChoice) {
+    private func conversationDidDegrade(change: ConversationDegradationInfo, callback: @escaping DegradationStrategyChoice) {
         let title = titleForMissingClients(users: change.users)
         let alert = UIAlertController(title: title, message: "meta.degraded.dialog_message".localized, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "meta.degraded.send_anyway_button".localized, style: .destructive, handler: { _ in
@@ -240,17 +224,6 @@ class ShareViewController: SLComposeServiceViewController {
     }
 }
 
-
-// MARK: - Process attachments
-extension ShareViewController {
-    
-       /// Get all the attachments to this post
-    var allAttachments : [NSItemProvider] {
-        guard let items = extensionContext?.inputItems as? [NSExtensionItem] else { return [] }
-        return items.flatMap { $0.attachments as? [NSItemProvider] } // remove optional
-            .flatMap { $0 } // flattens array
-    }
-}
 
 private func titleForMissingClients(users: Set<ZMUser>) -> String {
     let template = users.count > 1 ? "meta.degraded.degradation_reason_message.plural" : "meta.degraded.degradation_reason_message.singular"
