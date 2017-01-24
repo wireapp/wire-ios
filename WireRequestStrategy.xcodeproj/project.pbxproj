@@ -607,7 +607,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Wire GmbH";
 				TargetAttributes = {
 					166901691D707509000FE4AF = {
@@ -832,7 +832,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901951D7075D7000FE4AF /* WireRequestStrategy-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -860,7 +859,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901951D7075D7000FE4AF /* WireRequestStrategy-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
