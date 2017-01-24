@@ -402,6 +402,26 @@ extension ClientMessageTests_OTR {
 
 }
 
+// MARK: - Session identifier
+extension ClientMessageTests_OTR {
+    
+    func testThatItUsesTheProperSessionIdentifier() {
+        
+        // GIVEN
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.remoteIdentifier = UUID.create()
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        client.user = user
+        client.remoteIdentifier = UUID.create().transportString()
+        
+        // WHEN
+        let identifier = client.sessionIdentifier
+        
+        // THEN
+        XCTAssertEqual(identifier, EncryptionSessionIdentifier(rawValue: "\(user.remoteIdentifier!)_\(client.remoteIdentifier!)"))
+    }
+}
+
 // MARK: - Helper
 extension ClientMessageTests_OTR {
     
