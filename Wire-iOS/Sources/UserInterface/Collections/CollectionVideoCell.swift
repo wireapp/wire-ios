@@ -43,8 +43,10 @@ final public class CollectionVideoCell: CollectionCell {
     }
     
     func loadView() {
+        
         self.videoMessageView.delegate = self
         self.videoMessageView.clipsToBounds = true
+        self.videoMessageView.timeLabelHidden = true
         self.contentView.addSubview(self.videoMessageView)
         
         constrain(self.contentView, self.videoMessageView) { contentView, videoMessageView in
@@ -52,9 +54,13 @@ final public class CollectionVideoCell: CollectionCell {
         }
     }
     
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-        self.message = .none
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        switch action {
+        case #selector(CollectionCell.forward(_:)):
+            return self.message?.isFileDownloaded() ?? false
+        default:
+            return super.canPerformAction(action, withSender: sender)
+        }
     }
 }
 

@@ -441,6 +441,14 @@ ProfileClientViewController {
         }
     }
     
+    deleteDeviceButton: @{
+        titleColor[state:normal]: $color-accent-current;
+        titleLabel: @{
+            font: $font-small-light;
+        }
+    }
+    
+    
     fingerprintSmallFont: $font-small-light;
     fingerprintSmallBoldFont: $font-small-medium;
     
@@ -1524,33 +1532,37 @@ TokenField.share {
 /* Collections */
 
 CollectionsView {
-    backgroundColor: $color-text-background;
+    backgroundColor: $color-background-new;
     noItemsLabel: @{
         font: $font-medium-medium;
-        textColor: lightGray;
+    }
+}
+
+FeedbackOverlayView {
+    backgroundColor: $color-background;
+    titleLabel: @{
+        font: $font-small-medium;
+        textColor: $color-text-foreground;
     }
 }
 
 CollectionHeaderView {
-    backgroundColor: $color-placeholder-background;
-    
     titleLabel: @{
         font: $font-small-medium;
-        textColor: gray;
+        textColor: $color-text-foreground;
     }
 
     actionButton: @{
         titleLabel: @{
-            font: $font-small-light;
+            font: $font-small-medium;
         }
-        titleColor[state:normal]: rgb(72, 72, 72);
+        titleColor[state:normal]: $color-accent-blue;
     }
 }
 
 CollectionCellHeader {
     nameLabel: @{
-        font: $font-small-light;
-        textColor: rgb(72, 72, 72);
+        font: $font-small-medium;
     }
     
     dateLabel: @{
@@ -1568,5 +1580,11 @@ TwoLineTitleView {
     subtitleLabel: @{
         font: $font-small-light;
         textColor: $color-text-foreground;
+    }
+}
+
+ConversationImagesViewController {
+    view: @{
+        backgroundColor: $color-background;
     }
 }

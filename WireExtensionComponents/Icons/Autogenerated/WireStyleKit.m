@@ -4185,29 +4185,72 @@ static UIImage* _imageOfShieldnotverified = nil;
 + (void)drawIcon_0x260_32ptWithColor: (UIColor*)color
 {
 
-    //// Bezier Drawing
-    UIBezierPath* bezierPath = [UIBezierPath bezierPath];
-    [bezierPath moveToPoint: CGPointMake(0, 0)];
-    [bezierPath addLineToPoint: CGPointMake(7.96, 0)];
-    [bezierPath addLineToPoint: CGPointMake(7.96, 64)];
-    [bezierPath addLineToPoint: CGPointMake(0, 64)];
-    [bezierPath addLineToPoint: CGPointMake(0, 0)];
-    [bezierPath closePath];
-    [bezierPath moveToPoint: CGPointMake(15.93, 0)];
-    [bezierPath addLineToPoint: CGPointMake(23.89, 0)];
-    [bezierPath addLineToPoint: CGPointMake(23.89, 64)];
-    [bezierPath addLineToPoint: CGPointMake(15.93, 64)];
-    [bezierPath addLineToPoint: CGPointMake(15.93, 0)];
-    [bezierPath closePath];
-    [bezierPath moveToPoint: CGPointMake(29.86, 5.38)];
-    [bezierPath addLineToPoint: CGPointMake(37.08, 2)];
-    [bezierPath addLineToPoint: CGPointMake(64, 60)];
-    [bezierPath addLineToPoint: CGPointMake(56.78, 63.38)];
-    [bezierPath addLineToPoint: CGPointMake(29.86, 5.38)];
-    [bezierPath closePath];
-    bezierPath.usesEvenOddFillRule = YES;
+    //// Collection Drawing
+    UIBezierPath* collectionPath = [UIBezierPath bezierPath];
+    [collectionPath moveToPoint: CGPointMake(0.02, 27.98)];
+    [collectionPath addCurveToPoint: CGPointMake(3.67, 24) controlPoint1: CGPointMake(-0.2, 25.78) controlPoint2: CGPointMake(1.42, 24)];
+    [collectionPath addLineToPoint: CGPointMake(60.33, 24)];
+    [collectionPath addCurveToPoint: CGPointMake(63.98, 27.98) controlPoint1: CGPointMake(62.57, 24) controlPoint2: CGPointMake(64.2, 25.77)];
+    [collectionPath addLineToPoint: CGPointMake(60.33, 64)];
+    [collectionPath addLineToPoint: CGPointMake(3.67, 64)];
+    [collectionPath addLineToPoint: CGPointMake(0.02, 27.98)];
+    [collectionPath closePath];
+    [collectionPath moveToPoint: CGPointMake(3.67, 15)];
+    [collectionPath addCurveToPoint: CGPointMake(6.71, 12) controlPoint1: CGPointMake(3.67, 13.34) controlPoint2: CGPointMake(5.01, 12)];
+    [collectionPath addLineToPoint: CGPointMake(57.29, 12)];
+    [collectionPath addCurveToPoint: CGPointMake(60.33, 15) controlPoint1: CGPointMake(58.97, 12) controlPoint2: CGPointMake(60.33, 13.33)];
+    [collectionPath addLineToPoint: CGPointMake(60.33, 18)];
+    [collectionPath addLineToPoint: CGPointMake(3.67, 18)];
+    [collectionPath addLineToPoint: CGPointMake(3.67, 15)];
+    [collectionPath closePath];
+    [collectionPath moveToPoint: CGPointMake(7.71, 3)];
+    [collectionPath addCurveToPoint: CGPointMake(10.75, 0) controlPoint1: CGPointMake(7.71, 1.34) controlPoint2: CGPointMake(9.06, 0)];
+    [collectionPath addLineToPoint: CGPointMake(53.25, 0)];
+    [collectionPath addCurveToPoint: CGPointMake(56.29, 3) controlPoint1: CGPointMake(54.93, 0) controlPoint2: CGPointMake(56.29, 1.33)];
+    [collectionPath addLineToPoint: CGPointMake(56.29, 6)];
+    [collectionPath addLineToPoint: CGPointMake(7.71, 6)];
+    [collectionPath addLineToPoint: CGPointMake(7.71, 3)];
+    [collectionPath closePath];
+    collectionPath.usesEvenOddFillRule = YES;
     [color setFill];
-    [bezierPath fill];
+    [collectionPath fill];
+}
+
++ (void)drawIcon_0x234_32ptWithColor: (UIColor*)color
+{
+
+    //// Copy Drawing
+    UIBezierPath* copyPath = [UIBezierPath bezierPath];
+    [copyPath moveToPoint: CGPointMake(24, 40)];
+    [copyPath addLineToPoint: CGPointMake(56, 40)];
+    [copyPath addLineToPoint: CGPointMake(56, 8)];
+    [copyPath addLineToPoint: CGPointMake(24, 8)];
+    [copyPath addLineToPoint: CGPointMake(24, 40)];
+    [copyPath closePath];
+    [copyPath moveToPoint: CGPointMake(19.98, 0)];
+    [copyPath addCurveToPoint: CGPointMake(16, 4.01) controlPoint1: CGPointMake(17.82, 0) controlPoint2: CGPointMake(16, 1.8)];
+    [copyPath addLineToPoint: CGPointMake(16, 43.99)];
+    [copyPath addCurveToPoint: CGPointMake(19.98, 48) controlPoint1: CGPointMake(16, 46.18) controlPoint2: CGPointMake(17.78, 48)];
+    [copyPath addLineToPoint: CGPointMake(60.02, 48)];
+    [copyPath addCurveToPoint: CGPointMake(64, 43.99) controlPoint1: CGPointMake(62.18, 48) controlPoint2: CGPointMake(64, 46.21)];
+    [copyPath addLineToPoint: CGPointMake(64, 4.01)];
+    [copyPath addCurveToPoint: CGPointMake(60.02, 0) controlPoint1: CGPointMake(64, 1.82) controlPoint2: CGPointMake(62.22, 0)];
+    [copyPath addLineToPoint: CGPointMake(19.98, 0)];
+    [copyPath closePath];
+    [copyPath moveToPoint: CGPointMake(8, 16)];
+    [copyPath addLineToPoint: CGPointMake(3.98, 16)];
+    [copyPath addCurveToPoint: CGPointMake(0, 20.01) controlPoint1: CGPointMake(1.82, 16) controlPoint2: CGPointMake(0, 17.79)];
+    [copyPath addLineToPoint: CGPointMake(0, 59.99)];
+    [copyPath addCurveToPoint: CGPointMake(3.98, 64) controlPoint1: CGPointMake(0, 62.18) controlPoint2: CGPointMake(1.78, 64)];
+    [copyPath addLineToPoint: CGPointMake(44.02, 64)];
+    [copyPath addCurveToPoint: CGPointMake(48, 59.99) controlPoint1: CGPointMake(46.18, 64) controlPoint2: CGPointMake(48, 62.21)];
+    [copyPath addLineToPoint: CGPointMake(48, 56)];
+    [copyPath addLineToPoint: CGPointMake(8, 56)];
+    [copyPath addLineToPoint: CGPointMake(8, 16)];
+    [copyPath closePath];
+    copyPath.usesEvenOddFillRule = YES;
+    [color setFill];
+    [copyPath fill];
 }
 
 + (void)drawMissedcallWithAccent: (UIColor*)accent
@@ -7708,6 +7751,17 @@ static UIImage* _imageOfShieldnotverified = nil;
     UIGraphicsEndImageContext();
 
     return imageOfIcon_0x260_32pt;
+}
+
++ (UIImage*)imageOfIcon_0x234_32ptWithColor: (UIColor*)color
+{
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(64, 64), NO, 0);
+    [WireStyleKit drawIcon_0x234_32ptWithColor: color];
+
+    UIImage* imageOfIcon_0x234_32pt = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return imageOfIcon_0x234_32pt;
 }
 
 + (UIImage*)imageOfMissedcallWithAccent: (UIColor*)accent

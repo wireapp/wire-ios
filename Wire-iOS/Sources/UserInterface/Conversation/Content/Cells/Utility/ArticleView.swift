@@ -22,6 +22,7 @@ import Cartography
 import ZMCLinkPreview
 import TTTAttributedLabel
 import WireExtensionComponents
+import Classy
 
 @objc protocol ArticleViewDelegate: class {
     func articleViewWantsToOpenURL(_ articleView: ArticleView, url: URL)
@@ -160,7 +161,7 @@ class ArticleView: UIView {
     static var imageCache : ImageCache  = {
         let cache = ImageCache(name: "ArticleView.imageCache")
         cache.maxConcurrentOperationCount = 4;
-        cache.totalCostLimit = 1024 * 1024 * 10; // 10 MB
+        cache.totalCostLimit = UInt(1024 * 1024 * 10); // 10 MB
         cache.qualityOfService = .utility;
         return cache
     }()
@@ -254,9 +255,9 @@ extension LinkPreview {
     var openableURL: NSURL? {
         let application = UIApplication.shared
 
-        if let permanentURL = permanentURL , application.canOpenURL(permanentURL) {
+        if let permanentURL = permanentURL, application.canOpenURL(permanentURL) {
             return permanentURL as NSURL?
-        } else if let originalURL = NSURL(string: originalURLString) , application.canOpenURL(originalURL as URL) {
+        } else if let originalURL = NSURL(string: originalURLString), application.canOpenURL(originalURL as URL) {
             return originalURL
         }
 

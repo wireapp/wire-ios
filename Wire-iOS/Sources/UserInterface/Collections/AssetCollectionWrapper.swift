@@ -42,7 +42,7 @@ final class AssetCollectionMulticastDelegate: MulticastDelegate<AssetCollectionD
 }
 
 extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
-    public func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch : [ZMMessage]], hasMore: Bool) {
+    public func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch : [ZMConversationMessage]], hasMore: Bool) {
         self.call {
             $0.assetCollectionDidFetch(collection: collection, messages: messages, hasMore: hasMore)
         }
@@ -60,16 +60,22 @@ final class AssetCollectionWrapper: NSObject {
     let assetCollection: ZMCollection
     let assetCollectionDelegate: AssetCollectionMulticastDelegate
     
-    init(conversation: ZMConversation, matchingCategories: [CategoryMatch]) {
+    init(conversation: ZMConversation, assetCollection: ZMCollection, assetCollectionDelegate: AssetCollectionMulticastDelegate) {
         self.conversation = conversation
-        self.assetCollectionDelegate = AssetCollectionMulticastDelegate()
-        
+        self.assetCollection = assetCollection
+        self.assetCollectionDelegate = assetCollectionDelegate
+    }
+    
+    convenience init(conversation: ZMConversation, matchingCategories: [CategoryMatch]) {
+        let assetCollection: ZMCollection
+        let delegate = AssetCollectionMulticastDelegate()
         if Settings.shared().enableBatchCollections {
-            self.assetCollection = AssetCollectionBatched(conversation: conversation, matchingCategories: matchingCategories, delegate: self.assetCollectionDelegate)
+            assetCollection = AssetCollectionBatched(conversation: conversation, matchingCategories: matchingCategories, delegate: delegate)
         }
         else {
-            self.assetCollection = AssetCollection(conversation: conversation, matchingCategories: matchingCategories, delegate: self.assetCollectionDelegate)
+            assetCollection = AssetCollection(conversation: conversation, matchingCategories: matchingCategories, delegate: delegate)
         }
+        self.init(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate)
     }
     
     deinit {

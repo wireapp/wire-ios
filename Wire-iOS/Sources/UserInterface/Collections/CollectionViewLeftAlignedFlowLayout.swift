@@ -21,6 +21,10 @@ import Foundation
 
 // NB: This class assumes that the elements in one section are of the same size.
 final class CollectionViewLeftAlignedFlowLayout: UICollectionViewFlowLayout {
+    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return newBounds.width != self.collectionView?.bounds.size.width
+    }
+    
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let oldAttributes: [UICollectionViewLayoutAttributes] = super.layoutAttributesForElements(in: rect) else {
             return .none
@@ -30,6 +34,12 @@ final class CollectionViewLeftAlignedFlowLayout: UICollectionViewFlowLayout {
         let maxCellWidth = self.collectionView!.bounds.size.width - self.sectionInset.left - self.sectionInset.right
         
         for attributes: UICollectionViewLayoutAttributes in oldAttributes {
+            
+            guard attributes.representedElementCategory == .cell else {
+                newAttributes.append(attributes)
+
+                continue
+            }
             
             let totalElementsInSection = self.collectionView!.numberOfItems(inSection: attributes.indexPath.section)
             let sectionHasLessElementsThanWidth = totalElementsInSection == 1

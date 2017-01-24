@@ -24,6 +24,7 @@
 #import "NSURL+WireURLs.h"
 #import "WireExtensionComponents.h"
 
+@import Classy;
 
 @interface ParticipantDeviceHeaderView () <UITextViewDelegate>
 @property (strong, nonatomic) UITextView *textView;
@@ -121,7 +122,7 @@
                                                                                        attributes:textAttributes];
 
     [attributedText addAttributes:linkAttributes range:learnMoreLinkRange];
-    return attributedText;
+    return [[NSAttributedString alloc] initWithAttributedString:attributedText];
 }
 
 @end

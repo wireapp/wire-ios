@@ -47,18 +47,18 @@ final public class CollectionAudioCell: CollectionCell {
     func loadView() {
         self.audioMessageView.delegate = self
         self.audioMessageView.layer.cornerRadius = 4
-        self.audioMessageView.cas_styleClass = "container-view"
         self.audioMessageView.clipsToBounds = true
         
-        self.contentView.layoutMargins = UIEdgeInsetsMake(8, 16, 4, 16)
+        self.contentView.cas_styleClass = "container-view"
+        self.contentView.layoutMargins = UIEdgeInsetsMake(16, 4, 4, 4)
         
         self.contentView.addSubview(self.headerView)
         self.contentView.addSubview(self.audioMessageView)
         
         constrain(self.contentView, self.audioMessageView, self.headerView) { contentView, audioMessageView, headerView in
             headerView.top == contentView.topMargin
-            headerView.leading == contentView.leadingMargin
-            headerView.trailing == contentView.trailingMargin
+            headerView.leading == contentView.leadingMargin + 12
+            headerView.trailing == contentView.trailingMargin - 12
             
             audioMessageView.top == headerView.bottom + 4
             
@@ -68,9 +68,13 @@ final public class CollectionAudioCell: CollectionCell {
         }
     }
     
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-        self.message = .none
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        switch action {
+        case #selector(CollectionCell.forward(_:)):
+            return self.message?.isFileDownloaded() ?? false
+        default:
+            return super.canPerformAction(action, withSender: sender)
+        }
     }
 }
 

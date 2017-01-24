@@ -18,7 +18,7 @@
 
 import Foundation
 import Cartography
-
+import Classy
 
 final public class FileTransferView: UIView, TransferView {
     public var fileMessage: ZMConversationMessage?
@@ -252,9 +252,7 @@ final public class FileTransferView: UIView, TransferView {
             if .none != message.fileMessageData!.fileURL {
                 self.delegate?.transferView(self, didSelect: .cancel)
             }
-        case .failedUpload:
-            fallthrough
-        case .cancelledUpload:
+        case .failedUpload, .cancelledUpload:
             self.delegate?.transferView(self, didSelect: .resend)
         case .failedDownload:
             self.delegate?.transferView(self, didSelect: .present)

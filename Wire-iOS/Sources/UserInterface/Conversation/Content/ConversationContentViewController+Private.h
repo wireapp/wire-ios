@@ -23,6 +23,7 @@
 
 #import "WAZUIMagicIOS.h"
 #import <zmessaging/zmessaging.h>
+#import "MessageAction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) void (^onMessageShown)(ConversationCell *);
 
 - (void)removeHighlightsAndMenu;
-- (nullable UITableViewCell *)cellForMessage:(id<ZMConversationMessage>)message;
+- (nullable ConversationCell *)cellForMessage:(id<ZMConversationMessage>)message;
 
 @end
 
@@ -48,5 +49,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)expandMessageWindowUp;
 
 @end
+
+
+@interface ConversationContentViewController (MessageActionResponder) <MessageActionResponder>
+
+@end
+
 
 NS_ASSUME_NONNULL_END

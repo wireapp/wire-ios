@@ -23,9 +23,15 @@ protocol CollectionCellDelegate: class {
     func collectionCell(_ cell: CollectionCell, performAction: MessageAction)
 }
 
+protocol CollectionCellMessageChangeDelegate: class {
+    func messageDidChange(_ cell: CollectionCell, changeInfo: MessageChangeInfo)
+}
+
 open class CollectionCell: UICollectionViewCell, Reusable {
     var messageObserverToken: ZMMessageObserverOpaqueToken? = .none
     weak var delegate: CollectionCellDelegate?
+    // Cell forwards the message changes to the delegate
+    weak var messageChangeDelegate: CollectionCellMessageChangeDelegate?
     
     var message: ZMConversationMessage? = .none {
         didSet {
@@ -62,6 +68,10 @@ open class CollectionCell: UICollectionViewCell, Reusable {
     }
     
     private var cachedSize: CGSize? = .none
+    
+    public func flushCachedSize() {
+        cachedSize = .none
+    }
     
     override open func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
         if let cachedSize = self.cachedSize {
@@ -101,6 +111,9 @@ open class CollectionCell: UICollectionViewCell, Reusable {
     }
     
     func loadContents() {
+        self.contentView.layer.masksToBounds = true
+        self.contentView.layer.cornerRadius = 4
+        
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(CollectionCell.onLongPress(_:)))
         
         self.contentView.addGestureRecognizer(longPressGestureRecognizer)
@@ -109,6 +122,7 @@ open class CollectionCell: UICollectionViewCell, Reusable {
     override open func prepareForReuse() {
         super.prepareForReuse()
         self.cachedSize = .none
+        self.message = .none
     }
     
     func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer!) {
@@ -192,5 +206,6 @@ open class CollectionCell: UICollectionViewCell, Reusable {
 extension CollectionCell: ZMMessageObserver {
     public func messageDidChange(_ changeInfo: MessageChangeInfo!) {
         self.updateForMessage(changeInfo: changeInfo)
+        self.messageChangeDelegate?.messageDidChange(self, changeInfo: changeInfo)
     }
 }
