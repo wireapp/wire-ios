@@ -272,6 +272,54 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.uploadState, ZMAssetUploadState.done)
         XCTAssertTrue(sut.isExpired)
     }
+
+    func testThatFileAssetMessageCanBeExpired_UploadingFullAsset() {
+        // given
+        let nonce = UUID.create()
+        let fileMetadata = addFile()
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: nonce,
+            managedObjectContext: uiMOC,
+            expiresAfter: 0)
+
+
+        sut.uploadState = .uploadingFullAsset
+
+        // when
+        sut.expire()
+
+        // then
+        XCTAssertNotNil(sut)
+        XCTAssertFalse(sut.delivered)
+        XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
+        XCTAssertEqual(sut.uploadState.rawValue, ZMAssetUploadState.uploadingFailed.rawValue)
+        XCTAssertTrue(sut.isExpired)
+    }
+
+    func testThatFileAssetMessageCanBeExpired_UploadingThumbnail() {
+        // given
+        let nonce = UUID.create()
+        let fileMetadata = addFile()
+        let sut = ZMAssetClientMessage(
+            fileMetadata: fileMetadata,
+            nonce: nonce,
+            managedObjectContext: uiMOC,
+            expiresAfter: 0)
+
+
+        sut.uploadState = .uploadingThumbnail
+
+        // when
+        sut.expire()
+
+        // then
+        XCTAssertNotNil(sut)
+        XCTAssertFalse(sut.delivered)
+        XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
+        XCTAssertEqual(sut.uploadState.rawValue, ZMAssetUploadState.uploadingFailed.rawValue)
+        XCTAssertTrue(sut.isExpired)
+    }
     
     func testThatImageMessageCanBeExpired() {
         
