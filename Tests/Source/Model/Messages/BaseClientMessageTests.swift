@@ -61,7 +61,7 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             self.syncSelfUser = ZMUser.selfUser(in: self.syncMOC)
             
             self.syncSelfClient1 = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.setPersistentStoreMetadata(self.syncSelfClient1.remoteIdentifier, key: "PersistedClientId")
+            self.syncMOC.setPersistentStoreMetadata(self.syncSelfClient1.remoteIdentifier!, key: "PersistedClientId")
             
             self.syncSelfClient2 = self.createClient(for: self.syncSelfUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             

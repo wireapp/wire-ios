@@ -163,8 +163,8 @@ public class UserClient: ZMManagedObject, UserClientType {
         // reset the relationship
         self.user = nil
         // reset the session
-        if let remoteIdentifier = remoteIdentifier {
-            UserClient.deleteSession(forClientWithRemoteIdentifier: remoteIdentifier, managedObjectContext: managedObjectContext!)
+        if let sessionIdentifier = self.sessionIdentifier {
+            UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: managedObjectContext!)
         }
         // delete the object
         managedObjectContext?.delete(self)
@@ -185,8 +185,8 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
         var hasSession = false
         selfClient.keysStore.encryptionContext.perform { [weak self](sessionsDirectory) in
-            guard let strongSelf = self, let remoteIdentifier = strongSelf.remoteIdentifier else {return}
-            hasSession = sessionsDirectory.hasSessionForID(remoteIdentifier)
+            guard let strongSelf = self, let sessionIdentifier = strongSelf.sessionIdentifier else {return}
+            hasSession = sessionsDirectory.hasSession(for: sessionIdentifier)
         }
         return hasSession
     }
@@ -194,10 +194,10 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
     public func resetSession() {
-        guard let remoteIdentifier = self.remoteIdentifier else { return }
+        guard let sessionIdentifier = self.sessionIdentifier else { return }
         
         // Delete should happen on sync context since the cryptobox could be accessed only from there
-        UserClient.deleteSession(forClientWithRemoteIdentifier: remoteIdentifier, managedObjectContext: (self.managedObjectContext?.zm_sync)!)
+        UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: (self.managedObjectContext?.zm_sync)!)
         
         self.fingerprint = .none
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
@@ -218,7 +218,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 }
 
 
-// MARK SelfUser client methods  (selfClient + other clients of the selfUser)
+// MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
 public extension UserClient {
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
@@ -311,12 +311,12 @@ public extension UserClient {
             guard let syncMOC = self.managedObjectContext?.zm_sync,
                 let obj = try? syncMOC.existingObject(with: selfClient.objectID),
                 let syncClient = obj as? UserClient,
-                let syncClientRemoteIdentifier = syncClient.remoteIdentifier
+                let sessionIdentifier = syncClient.sessionIdentifier
                 else { return }
             
             syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
                 syncClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                    syncClient.fingerprint = sessionsDirectory.fingerprintForClient(syncClientRemoteIdentifier)
+                    syncClient.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
                     if syncClient.fingerprint == nil {
                         zmLog.error("Cannot fetch local fingerprint for client \(syncClient)")
                     } else {
@@ -353,7 +353,7 @@ public extension UserClient {
 }
 
 
-// MARK: SelfClient methods
+// MARK: - SelfClient methods
 public extension UserClient {
     
     public func isSelfClient() -> Bool {
@@ -382,8 +382,8 @@ public extension UserClient {
     
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
-    static func deleteSession(forClientWithRemoteIdentifier clientID: String, managedObjectContext: NSManagedObjectContext) {
-        guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() , selfClient.remoteIdentifier != clientID
+    static func deleteSession(for clientID: EncryptionSessionIdentifier, managedObjectContext: NSManagedObjectContext) {
+        guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() , selfClient.sessionIdentifier != clientID
             else { return }
         
         selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
@@ -395,14 +395,14 @@ public extension UserClient {
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
     func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
-        guard isSelfClient(), let clientRemoteIdentifier = client.remoteIdentifier else { return false }
+        guard isSelfClient(), let sessionIdentifier = client.sessionIdentifier else { return false }
         
         var didEstablishSession = false
         keysStore.encryptionContext.perform { (sessionsDirectory) in
-            sessionsDirectory.delete(clientRemoteIdentifier)
+            sessionsDirectory.delete(sessionIdentifier)
             do {
-                try sessionsDirectory.createClientSession(clientRemoteIdentifier, base64PreKeyString: preKey)
-                client.fingerprint = sessionsDirectory.fingerprintForClient(clientRemoteIdentifier)
+                try sessionsDirectory.createClientSession(sessionIdentifier, base64PreKeyString: preKey)
+                client.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
                 didEstablishSession = true
             } catch {
                 zmLog.error("Cannot create session for prekey \(preKey)")
@@ -415,8 +415,8 @@ public extension UserClient {
     fileprivate func fetchFingerprint() -> Data? {
         var fingerprint : Data?
         keysStore.encryptionContext.perform { [weak self] (sessionsDirectory) in
-            guard let strongSelf = self, let remoteIdentifier = strongSelf.remoteIdentifier else { return }
-            fingerprint = sessionsDirectory.fingerprintForClient(remoteIdentifier)
+            guard let strongSelf = self, let sessionIdentifier = strongSelf.sessionIdentifier else { return }
+            fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
         }
         return fingerprint
     }
@@ -456,7 +456,7 @@ enum SecurityChangeType {
 }
 
 
-// MARK: Trusting
+// MARK: - Trusting
 extension UserClient {
     
     public func trustClient(_ client: UserClient) {
@@ -539,7 +539,7 @@ extension UserClient {
     }
 }
 
-// MARK: APSSignaling
+// MARK: - APSSignaling
 extension UserClient {
 
     public static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
@@ -555,7 +555,5 @@ extension UserClient {
     }
 
 }
-
-
 
  
