@@ -254,7 +254,7 @@ public class SharingSession {
             transportSession: transportSession
         )
 
-        let saveNotificationPersistence = ContextDidSaveNotificationPersistence()
+        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(sharedContainerURL: sharedContainerURL)
         
         try self.init(
             userInterfaceContext: userInterfaceContext,
