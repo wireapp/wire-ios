@@ -19,7 +19,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+@import zmessaging;
 
+NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const ColorSchemeColorTextForeground;
 extern NSString * const ColorSchemeColorTextBackground;
@@ -44,6 +46,7 @@ extern NSString * const ColorSchemeColorTabSelected;
 extern NSString * const ColorSchemeColorTabHighlighted;
 
 extern NSString * const ColorSchemeColorBackground;
+extern NSString * const ColorSchemeColorBackgroundNew;
 extern NSString * const ColorSchemeColorSeparator;
 extern NSString * const ColorSchemeColorBackgroundOverlay;
 extern NSString * const ColorSchemeColorBackgroundOverlayWithoutPicture;
@@ -52,6 +55,10 @@ extern NSString * const ColorSchemeColorAvatarBorder;
 extern NSString * const ColorSchemeColorLoadingDotActive;
 extern NSString * const ColorSchemeColorLoadingDotInactive;
 
+extern NSString * const ColorSchemeColorNameAccentPrefix;
+
+extern NSString * const ColorSchemeColorGraphite;
+extern NSString * const ColorSchemeColorLightGraphite;
 
 typedef NS_ENUM(NSUInteger, ColorSchemeVariant) {
     ColorSchemeVariantLight,
@@ -76,4 +83,14 @@ typedef NS_ENUM(NSUInteger, ColorSchemeVariant) {
 - (UIColor *)colorWithName:(NSString *)colorName;
 - (UIColor *)colorWithName:(NSString *)colorName variant:(ColorSchemeVariant)variant;
 
+- (UIColor *)nameAccentForColor:(ZMAccentColor)color variant:(ColorSchemeVariant)variant;
 @end
+
+@interface UIColor (ColorScheme)
+
+/// Creates UIColor instance with color corresponding to @p accentColor that can be used to display the name.
++ (UIColor *)nameColorForZMAccentColor:(ZMAccentColor)accentColor variant:(ColorSchemeVariant)variant;
+
+@end
+
+NS_ASSUME_NONNULL_END

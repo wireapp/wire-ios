@@ -23,16 +23,16 @@ import CocoaLumberjackSwift
 import WireExtensionComponents
 
 final public class CollectionImageCell: CollectionCell {
-    static var imageCache: ImageCache {
+    public static var imageCache: ImageCache = {
         let cache = ImageCache(name: "CollectionImageCell.imageCache")
         cache.maxConcurrentOperationCount = 4
-        cache.totalCostLimit = 1024 * 1024 * 20 // 20 MB
+        cache.totalCostLimit = UInt(1024 * 1024 * 20) // 20 MB
         cache.qualityOfService = .utility
     
         return cache
-    }
+    }()
     
-    static let maxCellSize: CGFloat = 120
+    static let maxCellSize: CGFloat = 100
 
     override var message: ZMConversationMessage? {
         didSet {
@@ -61,16 +61,17 @@ final public class CollectionImageCell: CollectionCell {
     var isHeightCalculated: Bool = false
     
     func loadView() {
-        self.backgroundColor = UIColor(white: 0, alpha: 0.08)
         self.imageView.contentMode = .scaleAspectFill
         self.imageView.clipsToBounds = true
+        self.imageView.accessibilityIdentifier = "image"
+        self.loadingView.accessibilityIdentifier = "loading"
         self.contentView.addSubview(self.imageView)
         self.contentView.addSubview(self.loadingView)
         constrain(self, self.imageView, self.loadingView) { selfView, imageView, loadingView in
             imageView.left == selfView.left
-            imageView.right == selfView.right - 1
+            imageView.right == selfView.right
             imageView.top == selfView.top
-            imageView.bottom == selfView.bottom - 1
+            imageView.bottom == selfView.bottom
             loadingView.center == selfView.center
         }
     }
@@ -92,6 +93,47 @@ final public class CollectionImageCell: CollectionCell {
         if changeInfo.imageChanged {
             self.loadImage()
         }
+    }
+    
+    override func menuConfigurationProperties() -> MenuConfigurationProperties? {
+        guard let properties = super.menuConfigurationProperties() else {
+            return .none
+        }
+        
+        var mutableItems = properties.additionalItems ?? []
+        
+        let saveItem = UIMenuItem(title: "content.image.save_image".localized, action: #selector(CollectionImageCell.save(_:)))
+        mutableItems.append(saveItem)
+        
+        properties.additionalItems = mutableItems
+        return properties
+    }
+    
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        switch action {
+        case #selector(CollectionImageCell.save(_:)): fallthrough
+        case #selector(copy(_:)):
+            return true
+        default:
+            return super.canPerformAction(action, withSender: sender)
+        }
+    }
+    
+    override public func copy(_ sender: Any?) {
+        guard let imageData = self.message?.imageMessageData?.imageData else {
+            return
+        }
+        
+        UIPasteboard.general.setMediaAsset(UIImage(data: imageData))
+    }
+    
+    func save(_ sender: AnyObject!) {
+        guard let imageData = self.message?.imageMessageData?.imageData, let orientation = self.imageView.image?.imageOrientation else {
+            return
+        }
+        
+        let savableImage = SavableImage(data: imageData, orientation: orientation)
+        savableImage.saveToLibrary()
     }
     
     fileprivate func loadImage() {
@@ -117,10 +159,11 @@ final public class CollectionImageCell: CollectionCell {
                     image = UIImage(from: data, withMaxSize: CollectionImageCell.maxCellSize * UIScreen.main.scale)
                 }
                 
-                if (image == nil) {
-                    DDLogError("Invalid image data cannot be loaded: \(self.message)")
+                guard let finalImage = image else {
+                    fatal("Invalid image data cannot be loaded: \(self.message)")
                 }
-                return image
+                
+                return finalImage
                 
                 }, completion: { (image: Any?, cacheKey: String) in
                     // Double check that our cell's current image is still the same one

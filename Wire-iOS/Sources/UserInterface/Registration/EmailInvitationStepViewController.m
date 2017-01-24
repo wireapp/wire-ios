@@ -22,7 +22,7 @@
 #import "EmailInvitationStepViewController.h"
 
 #import <PureLayout/PureLayout.h>
-#import <WireExtensionComponents/WireExtensionComponents.h>
+@import WireExtensionComponents;
 
 #import "RegistrationTextField.h"
 #import "Button.h"
@@ -111,7 +111,7 @@
                                      NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.large.font_spec_thin"] }
                             range:[text rangeOfString:paragraph]];
     
-    return attributedText;
+    return [[NSAttributedString alloc] initWithAttributedString: attributedText];
 }
 
 - (void)createEmailField

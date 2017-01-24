@@ -29,6 +29,7 @@ import Cartography
         self.contentView.clipsToBounds = true
         
         self.loadingView.startAnimating()
+        self.loadingView.hidesWhenStopped = false
         
         constrain(self.contentView, self.loadingView) { contentView, loadingView in
             loadingView.center == contentView.center
@@ -40,11 +41,15 @@ import Cartography
     }
     
     var containerWidth: CGFloat = 320
-    var collapsed: Bool = false
+    var collapsed: Bool = false {
+        didSet {
+            self.loadingView.isHidden = self.collapsed
+        }
+    }
 
     override public func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
         var newFrame = layoutAttributes.frame
-        newFrame.size.height = self.collapsed ? 0 : 64
+        newFrame.size.height = 24 + (self.collapsed ? 0 : 64)
         newFrame.size.width = self.containerWidth
         layoutAttributes.frame = newFrame
         return layoutAttributes

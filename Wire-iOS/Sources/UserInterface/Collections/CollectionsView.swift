@@ -21,10 +21,12 @@ import Foundation
 import Cartography
 
 @objc public final class CollectionsView: UIView {
-    let collectionViewLayout = CollectionViewLeftAlignedFlowLayout()
-    var collectionView: UICollectionView
+    var collectionViewLayout: CollectionViewLeftAlignedFlowLayout!
+    var collectionView: UICollectionView!
     let noItemsLabel = UILabel()
-    let noItemsIcon = UIImageView(image: UIImage(for: .library, fontSize: 160, color: UIColor.lightGray))
+    let noItemsIcon = UIImageView()
+    
+    static public let useAutolayout = false
     
     var noItemsInLibrary: Bool = false {
         didSet {
@@ -34,15 +36,11 @@ import Cartography
     }
     
     override init(frame: CGRect) {
-        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
-
         super.init(frame: frame)
         
-        self.collectionViewLayout.scrollDirection = .vertical
-        self.collectionViewLayout.minimumLineSpacing = 0
-        self.collectionViewLayout.minimumInteritemSpacing = 0
-        self.collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        self.collectionViewLayout.estimatedItemSize = CGSize(width: 320, height: 64)
+        self.recreateLayout()
+        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: self.collectionViewLayout)
+
         self.collectionView.register(CollectionImageCell.self, forCellWithReuseIdentifier: CollectionImageCell.reuseIdentifier)
         self.collectionView.register(CollectionFileCell.self, forCellWithReuseIdentifier: CollectionFileCell.reuseIdentifier)
         self.collectionView.register(CollectionAudioCell.self, forCellWithReuseIdentifier: CollectionAudioCell.reuseIdentifier)
@@ -50,6 +48,7 @@ import Cartography
         self.collectionView.register(CollectionLinkCell.self, forCellWithReuseIdentifier: CollectionLinkCell.reuseIdentifier)
         self.collectionView.register(CollectionLoadingCell.self, forCellWithReuseIdentifier: CollectionLoadingCell.reuseIdentifier)
         self.collectionView.register(CollectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: CollectionHeaderView.reuseIdentifier)
+        self.collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         self.collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.collectionView.allowsMultipleSelection = false
         self.collectionView.allowsSelection = true
@@ -66,7 +65,26 @@ import Cartography
         self.noItemsIcon.isHidden = true
         self.addSubview(self.noItemsIcon)
         
+        let backgroundColor = ColorScheme.default().color(withName: ColorSchemeColorBackground)
+        let placeholderColor = backgroundColor.mix(ColorScheme.default().color(withName: ColorSchemeColorTextForeground), amount: 0.16)
+        
+        self.noItemsIcon.image = UIImage(for: .library, fontSize: 160, color: placeholderColor)
+        self.noItemsLabel.textColor = placeholderColor
+        
         self.constrainViews()
+    }
+    
+    private func recreateLayout() {
+        let layout = CollectionViewLeftAlignedFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
+        if CollectionsView.useAutolayout {
+            layout.estimatedItemSize = CGSize(width: 64, height: 64)
+        }
+        
+        self.collectionViewLayout = layout
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -85,7 +103,8 @@ import Cartography
     public static func backButton() -> IconButton {
         let button = IconButton.iconButtonDefault()
         button.setIcon(.backArrow, with: .tiny, for: .normal)
-        button.frame = CGRect(x: 0, y: 0, width: 30, height: 20)
+        button.frame = CGRect(x: 0, y: 0, width: 38, height: 20)
+        button.imageEdgeInsets = UIEdgeInsetsMake(0, -16, 0, 0)
         button.accessibilityIdentifier = "back"
         return button
     }

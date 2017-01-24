@@ -21,7 +21,7 @@
 #import "ConversationListViewController+StartUI.h"
 
 #import <PureLayout/PureLayout.h>
-#import <WireExtensionComponents/WireExtensionComponents.h>
+@import WireExtensionComponents;
 
 #import "Settings.h"
 #import "UIScrollView+Zeta.h"
@@ -268,7 +268,7 @@
                         attributes:textAttributes];
     
     self.noConversationLabel = [[UILabel alloc] initForAutoLayout];
-    self.noConversationLabel.attributedText = [attributedString copy];
+    self.noConversationLabel.attributedText = [[NSAttributedString alloc] initWithAttributedString:attributedString];
     self.noConversationLabel.numberOfLines = 0;
     [self.contentContainer addSubview:self.noConversationLabel];
 }
