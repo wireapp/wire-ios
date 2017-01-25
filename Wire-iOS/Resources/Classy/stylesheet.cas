@@ -393,10 +393,10 @@ ProfileClientViewController {
     view: @{
         backgroundColor: $color-background;
     }
+
+    descriptionTextFont: $font-normal-light;
     
-    reviewInvitationTextFont: $font-normal-light;
-    
-    reviewInvitationTextView: @{
+    descriptionTextView: @{
         textColor: $color-text-foreground;
         backgroundColor: $color-text-background;
     }

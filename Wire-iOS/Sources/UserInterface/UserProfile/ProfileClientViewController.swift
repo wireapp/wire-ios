@@ -41,7 +41,7 @@ class ProfileClientViewController: UIViewController {
 
     var userClientToken: UserClientObserverOpaqueToken?
     var resetSessionPending: Bool = false
-    var reviewInvitationTextFont: UIFont?
+    var descriptionTextFont: UIFont?
     var fromConversation: Bool = false
 
     /// Used for debugging purposes, disabled in public builds
@@ -162,9 +162,9 @@ class ProfileClientViewController: UIViewController {
         descriptionTextView.delegate = self
         descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
         if let user = self.userClient.user,
-            let reviewInvitationTextFont = self.reviewInvitationTextFont {
-            descriptionTextView.attributedText = (String(format: "profile.devices.detail.verify_message".localized, user.displayName) && reviewInvitationTextFont) + "\n" +
-                ("profile.devices.detail.verify_message.link".localized && [NSFontAttributeName: reviewInvitationTextFont, NSLinkAttributeName: NSURL.wr_fingerprintHowToVerify()])
+            let descriptionTextFont = self.descriptionTextFont {
+            descriptionTextView.attributedText = (String(format: "profile.devices.detail.verify_message".localized, user.displayName) && descriptionTextFont) + "\n" +
+                ("profile.devices.detail.verify_message.link".localized && [NSFontAttributeName: descriptionTextFont, NSLinkAttributeName: NSURL.wr_fingerprintHowToVerify()])
         }
         self.contentView.addSubview(descriptionTextView)
     }
