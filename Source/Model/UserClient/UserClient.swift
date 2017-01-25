@@ -195,26 +195,29 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Can be called several times without issues
     public func resetSession() {
         guard let sessionIdentifier = self.sessionIdentifier else { return }
-        
+
         // Delete should happen on sync context since the cryptobox could be accessed only from there
-        UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: (self.managedObjectContext?.zm_sync)!)
-        
-        self.fingerprint = .none
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        guard let selfClient = selfUser.selfClient()
-            else { return }
-        
-        selfClient.missesClient(self)
-        selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-        
-        // Send session reset message so other user can send us messages immediately
-        if let user = self.user {
-            let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: managedObjectContext!) : self.user?.oneToOneConversation
-            _ = conversation?.appendOTRSessionResetMessage()
+        let syncMOC = managedObjectContext!.zm_sync!
+        syncMOC.performGroupedBlock {
+            UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: syncMOC)
+
+            self.fingerprint = .none
+            let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
+            guard let selfClient = selfUser.selfClient() else { return }
+
+            selfClient.missesClient(self)
+            selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+
+            // Send session reset message so other user can send us messages immediately
+            if let user = self.user {
+                let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: syncMOC) : self.user?.oneToOneConversation
+                _ = conversation?.appendOTRSessionResetMessage()
+            }
+
+            syncMOC.saveOrRollback()
         }
-        
-        self.managedObjectContext?.saveOrRollback()
     }
+
 }
 
 
