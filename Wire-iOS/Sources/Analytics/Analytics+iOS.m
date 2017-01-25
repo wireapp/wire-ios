@@ -43,7 +43,8 @@ static Analytics *sharedAnalytics = nil;
     if (useConsoleAnalytics || [[NSUserDefaults standardUserDefaults] boolForKey:ZMEnableConsoleLog]) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            sharedAnalytics = [[Analytics alloc] initWithProvider:[AnalyticsConsoleProvider new]];
+            id <AnalyticsProvider> provider = [[AnalyticsConsoleProvider alloc] initWithLaunchOptions:launchOptions];
+            sharedAnalytics = [[Analytics alloc] initWithProvider:provider];
         });
         return sharedAnalytics;
     }
