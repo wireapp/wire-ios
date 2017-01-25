@@ -268,7 +268,7 @@ extension ZMGenericMessage {
 extension UserClient {
     
     /// Session identifier of the local cryptobox session with this client
-    var sessionIdentifier : EncryptionSessionIdentifier? {
+    public var sessionIdentifier : EncryptionSessionIdentifier? {
         guard let userIdentifier = self.user?.remoteIdentifier,
             let clientIdentifier = self.remoteIdentifier
         else { return nil }
