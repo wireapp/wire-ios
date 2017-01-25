@@ -36,6 +36,5 @@ FOUNDATION_EXPORT const unsigned char ZMCMockTransportVersionString[];
 #import <ZMCMockTransport/MockPushEvent.h>
 #import <ZMCMockTransport/MockTransportSession.h>
 #import <ZMCMockTransport/MockUser.h>
-#import <ZMCMockTransport/MockUserClient.h>
 #import <ZMCMockTransport/MockPreKey.h>
 #import <ZMCMockTransport/MockPersonalInvitation.h>

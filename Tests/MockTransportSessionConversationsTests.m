@@ -18,6 +18,7 @@
 
 
 #import "MockTransportSessionTests.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 #import "MockPushEvent.h"
 @import ZMProtos;
@@ -992,7 +993,7 @@
     
     // WHEN
     [self.sut performRemoteChanges:^(__unused MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        NSData *encryptedData = [MockUserClient encryptedDataFromClient:otherUserClient toClient:selfClient data:message.data];
+        NSData *encryptedData = [MockUserClient encryptedWithData:message.data from:otherUserClient to:selfClient];
         [conversation insertOTRMessageFromClient:otherUserClient toClient:selfClient data:encryptedData];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1037,7 +1038,7 @@
     NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
     // WHEN
     [self.sut performRemoteChanges:^(__unused MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        NSData *encryptedData = [MockUserClient encryptedDataFromClient:otherUserClient toClient:selfClient data:message.data];
+        NSData *encryptedData = [MockUserClient encryptedWithData:message.data from:otherUserClient to:selfClient];
         [conversation  insertOTRAssetFromClient:otherUserClient toClient:selfClient metaData:encryptedData imageData:imageData assetId:assetID isInline:YES];
     }];
     WaitForAllGroupsToBeEmpty(0.5);

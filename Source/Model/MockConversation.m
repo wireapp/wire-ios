@@ -27,7 +27,8 @@
 #import "MockEvent.h"
 #import "MockEvent.h"
 #import "MockAsset.h"
-#import "MockUserClient+Internal.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 static NSString * const JoinedString = @"joined";
 static NSString * const IdleString = @"idle";
@@ -280,6 +281,9 @@ static NSString * const IdleString = @"idle";
                                  toClient:(MockUserClient *)toClient
                                      data:(NSData *)data;
 {
+    Require(fromClient.identifier != nil);
+    Require(toClient.identifier != nil);
+    Require(data != nil);
     NSDictionary *eventData = @{
                                 @"sender": fromClient.identifier,
                                 @"recipient": toClient.identifier,
@@ -292,12 +296,19 @@ static NSString * const IdleString = @"idle";
                                      toClient:(MockUserClient *)toClient
                                          data:(NSData *)data;
 {
-    NSData *encrypted = [MockUserClient encryptedDataFromClient:fromClient toClient:toClient data:data];
+    Require(fromClient.identifier != nil);
+    Require(toClient.identifier != nil);
+    Require(data != nil);
+    NSData *encrypted = [MockUserClient encryptedWithData:data from:fromClient to:toClient];
     return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
 - (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient metaData:(NSData *)metaData imageData:(NSData *)imageData assetId:(NSUUID *)assetId isInline:(BOOL)isInline
 {
+    Require(fromClient.identifier != nil);
+    Require(toClient.identifier != nil);
+    Require(assetId != nil);
+    Require(metaData != nil);
     NSDictionary *eventData = @{
                                 @"sender": fromClient.identifier,
                                 @"recipient": toClient.identifier,

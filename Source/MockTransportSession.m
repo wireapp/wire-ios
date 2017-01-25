@@ -29,7 +29,6 @@
 #import "MockConnection.h"
 #import "MockFlowManager.h"
 #import "MockPushEvent.h"
-#import "MockUserClient+Internal.h"
 #import "MockPreKey.h"
 #import "ZMCMockTransport/ZMCMockTransport-Swift.h"
 
@@ -634,7 +633,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
     if (shouldIncludeClient) {
         
-        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" atLocation:self.cryptoboxLocation inContext:self.managedObjectContext];
+        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" context:self.managedObjectContext];
         client.user = user;
         
         NSMutableSet *clients = [NSMutableSet setWithObject:client];
@@ -825,7 +824,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 - (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type
 {
     
-    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type atLocation:self.cryptoboxLocation inContext:self.managedObjectContext];
+    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type context:self.managedObjectContext];
     client.user = user;
     [user.clients addObject:client];
     return client;

@@ -61,8 +61,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic) BOOL doNotRespondToRequests; //to simulate offline
 
-@property (nonatomic) NSURL *cryptoboxLocation;
-
 @property (nonatomic) NSUInteger maxMembersForGroupCall;
 @property (nonatomic) NSUInteger maxCallParticipants;
 

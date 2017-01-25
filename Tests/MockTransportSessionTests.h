@@ -27,7 +27,6 @@
 #import "MockConnection.h"
 #import "MockFlowManager.h"
 #import "MockUser.h"
-#import "MockUserClient.h"
 
 
 @interface TestPushChannelEvent : NSObject

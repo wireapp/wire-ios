@@ -22,7 +22,6 @@
 #import "MockTransportSession+users.h"
 #import "MockConnection.h"
 #import "MockTransportSession+internal.h"
-#import "MockUserClient.h"
 #import "MockPreKey.h"
 #import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
