@@ -127,10 +127,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     self.pushChannelReceivedEvents = [NSMutableArray array];
     self.cookieStorage = [OCMockObject niceMockForClass:[ZMPersistentCookieStorage class]];
     self.sut = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
-    NSURL *documentURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
-    NSURL *otrDirectory = [documentURL URLByAppendingPathComponent:@"otrDirectory"];
-    [[NSFileManager defaultManager] createDirectoryAtURL:otrDirectory withIntermediateDirectories:YES attributes:nil error:nil];
-    self.sut.cryptoboxLocation = otrDirectory;
     self.sut.cookieStorage = self.cookieStorage;
 }
 

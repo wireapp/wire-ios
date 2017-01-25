@@ -22,7 +22,6 @@
 
 #import "MockTransportSession+Clients.h"
 #import "MockTransportSession+internal.h"
-#import "MockUserClient.h"
 #import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 
@@ -72,7 +71,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
         return [self errorResponseWithCode:403 reason:@"missing-auth"];
     }
     
-    MockUserClient *newClient = [MockUserClient insertClientWithPayload:payload contenxt:self.managedObjectContext];
+    MockUserClient *newClient = [MockUserClient insertClientWithPayload:payload context:self.managedObjectContext];
     newClient.user = self.selfUser;
     
     if (newClient != nil) {

@@ -18,6 +18,8 @@
 
 
 #import "MockTransportSession+OTR.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 @implementation MockTransportSession (OTR)
 
