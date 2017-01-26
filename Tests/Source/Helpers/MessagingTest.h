@@ -57,8 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MessagingTest (OTR)
 
-- (NSData *)encryptedMessage:(ZMGenericMessage *)message recipient:(UserClient *)recipient;
-
 - (UserClient *)createSelfClient;
 - (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
 

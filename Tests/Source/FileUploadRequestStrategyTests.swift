@@ -915,19 +915,13 @@ extension FileUploadRequestStrategyTests {
         let clientEntries = otrMessage?.recipients.flatMap { $0.clients }.joined()
         XCTAssertEqual(clientEntries?.count, 1)
         
-        let encryptionContext = syncMOC.zm_cryptKeyStore.encryptionContext
         guard let entry = clientEntries?.first else { XCTFail("Unable to get client entry"); return nil }
-        
-        var message : ZMGenericMessage?
-        encryptionContext.perform { sessionsDirectory in
-            do {
-                let decryptedData = try sessionsDirectory.decrypt(entry.text, senderClientId: client.remoteIdentifier!)
-                message = ZMGenericMessage.builder().merge(from: decryptedData).build() as? ZMGenericMessage
-            } catch {
-                XCTFail("Failed to decrypt generic message: \(error)")
-            }
+        guard let decryptedData = self.decryptMessageFromSelf(cypherText: entry.text, to: client) else {
+            XCTFail()
+            return nil
         }
-        return message
+        
+        return ZMGenericMessage.builder().merge(from: decryptedData).build() as? ZMGenericMessage
     }
 
     func testThatItRemovesDeletedClients() {

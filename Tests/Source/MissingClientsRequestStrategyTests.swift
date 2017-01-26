@@ -56,11 +56,11 @@ class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
         missingUser.remoteIdentifier = UUID.create()
         
         let firstMissingClient = UserClient.insertNewObject(in: self.syncMOC)
-        firstMissingClient.remoteIdentifier = NSString.createAlphanumerical()
+        firstMissingClient.remoteIdentifier = NSString.createAlphanumerical() as String
         firstMissingClient.user = missingUser
         
         let secondMissingClient = UserClient.insertNewObject(in: self.syncMOC)
-        secondMissingClient.remoteIdentifier = NSString.createAlphanumerical()
+        secondMissingClient.remoteIdentifier = NSString.createAlphanumerical() as String
         secondMissingClient.user = missingUser
         
         // when
@@ -87,7 +87,7 @@ class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
         let client = createSelfClient()
         
         let missingClient = UserClient.insertNewObject(in: self.sut.managedObjectContext)
-        missingClient.remoteIdentifier = NSString.createAlphanumerical()
+        missingClient.remoteIdentifier = NSString.createAlphanumerical() as String
         let missingUser = ZMUser.insertNewObject(in: self.sut.managedObjectContext)
         missingUser.remoteIdentifier = UUID.create()
         missingClient.user = missingUser
