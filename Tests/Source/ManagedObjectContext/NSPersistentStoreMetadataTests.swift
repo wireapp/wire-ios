@@ -51,7 +51,7 @@ extension NSPersistentStoreMetadataTests {
         self.uiMOC.setPersistentStoreMetadata(data, key: key)
         
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
     
     func testThatItDeletesMetadataFromMemory() {
@@ -65,7 +65,7 @@ extension NSPersistentStoreMetadataTests {
         self.uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
         
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
     
     func testThatMetadataAreNotPersisted() {
@@ -79,7 +79,7 @@ extension NSPersistentStoreMetadataTests {
         self.resetUIandSyncContextsAndResetPersistentStore(false)
         
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
     
     func testThatItPersistsMetadataWhenSaving() {
@@ -94,7 +94,7 @@ extension NSPersistentStoreMetadataTests {
         self.resetUIandSyncContextsAndResetPersistentStore(false)
         
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
     
     func testThatItDiscardsMetadataWhenRollingBack() {
@@ -109,7 +109,7 @@ extension NSPersistentStoreMetadataTests {
         self.forceSave()
         
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
         
         // AFTER
         self.uiMOC.disableForceRollback()
@@ -127,7 +127,7 @@ extension NSPersistentStoreMetadataTests {
         self.uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
         
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
     
     func testThatItDiscardsDeletesAlreadySetMetadataInMemory() {
@@ -143,7 +143,7 @@ extension NSPersistentStoreMetadataTests {
         self.resetUIandSyncContextsAndResetPersistentStore(false)
         
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
     
     func testThatItDeletesAlreadySetMetadataFromStore() {
@@ -160,7 +160,7 @@ extension NSPersistentStoreMetadataTests {
         self.resetUIandSyncContextsAndResetPersistentStore(false)
         
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(key: key) as? String)
+        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 }
 
@@ -178,7 +178,7 @@ extension NSPersistentStoreMetadataTests {
         self.resetUIandSyncContextsAndResetPersistentStore(false)
         
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(key: key) as? T, file: file, line: line)
+        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? T, file: file, line: line)
     }
     
     func testThatItCanStoreStrings() {
@@ -205,7 +205,7 @@ extension NSPersistentStoreMetadataTests {
         
         // THEN
         for i in 0..<data.count {
-            XCTAssertEqual(data[i], (self.uiMOC.persistentStoreMetadata(key: key) as? [String])?[i])
+            XCTAssertEqual(data[i], (self.uiMOC.persistentStoreMetadata(forKey: key) as? [String])?[i])
         }
     }
 }

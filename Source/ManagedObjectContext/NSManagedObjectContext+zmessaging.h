@@ -120,5 +120,9 @@
 /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
 - (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
 
+/// Fetch metadata for key from in-memory non-persisted metadata
+/// or from persistent store metadata, in that order
+- (id)persistentStoreMetadataForKey:(NSString *)key;
+
 @end
 
