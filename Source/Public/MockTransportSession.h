@@ -148,6 +148,13 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (void)deleteUserClientWithIdentifier:(NSString *)identifier forUser:(MockUser *)user;
 
 - (void)createAssetWithData:(NSData *)data identifier:(NSString *)identifier contentType:(NSString *)contentType forConversation:(NSString *)conversation;
+
+/// Returns the user (if any) with the given remote identifier
+- (nullable MockUser *)userWithRemoteIdentifier:(NSString *)remoteIdentifier;
+
+/// Returns the client (if any) for the given remote identifier
+- (nullable MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier;
+
 @end
 
 

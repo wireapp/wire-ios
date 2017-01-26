@@ -868,6 +868,23 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.generatedPushEvents removeAllObjects];
 }
 
+- (MockUser *)userWithRemoteIdentifier:(NSString *)remoteIdentifier {
+    NSFetchRequest *userFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
+    userFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", remoteIdentifier];
+    
+    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert:userFetchRequest];
+    return results.firstObject;
+}
+
+- (MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier {
+    NSFetchRequest *userClientFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
+    userClientFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND user == %@", remoteIdentifier, user];
+    
+    NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert:userClientFetchRequest];
+    return results.firstObject;
+}
+
+
 @end
 
 
