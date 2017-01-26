@@ -42,7 +42,7 @@
     
     __block MockAsset *asset = nil;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         asset = [session insertAssetWithID:assetID assetToken:assetToken assetData:imageData contentType:@"image/jpeg"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);

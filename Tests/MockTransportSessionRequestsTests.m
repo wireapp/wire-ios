@@ -67,7 +67,7 @@
 
 - (void)testThatItReturnsTheOriginalResponseIfTheResponseGeneratorReturnsNil
 {
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
         selfUser.email = @"me@example.com";
         selfUser.phone = @"456456456";
@@ -137,7 +137,7 @@
     NSString *assetID = [NSUUID createUUID].transportString;
     NSData *expectedImageData =  [ZMTBaseTest verySmallJPEGData];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         NOT_USED(session);
         MockAsset *asset = [MockAsset insertIntoManagedObjectContext:self.sut.managedObjectContext];
@@ -170,7 +170,7 @@
     __block MockConversation *oneOnOneConversation;
     __block NSString *selfUserID;
     __block NSString *oneOnOneConversationID;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
         selfUserID = selfUser.identifier;

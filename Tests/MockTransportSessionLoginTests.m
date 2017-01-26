@@ -33,7 +33,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
         selfUser.password = password;
@@ -64,7 +64,7 @@
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.phone = phone;
     }];
@@ -96,7 +96,7 @@
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.phone = phone;
     }];
@@ -128,7 +128,7 @@
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.phone = @"+491231231231231123";
     }];
@@ -160,7 +160,7 @@
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.phone = phone;
     }];
@@ -182,7 +182,7 @@
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.phone = @"4324324";
     }];
@@ -203,7 +203,7 @@
     __block MockUser *selfUser;
     NSString *phone = @"+49000000";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.phone = phone;
     }];
@@ -234,7 +234,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
         selfUser.password = password;
@@ -263,7 +263,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"good"];
         selfUser.email = email;
         selfUser.password = password;
@@ -295,7 +295,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"good"];
         selfUser.email = email;
         selfUser.password = password;

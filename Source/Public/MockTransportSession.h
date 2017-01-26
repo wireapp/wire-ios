@@ -93,7 +93,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @interface MockTransportSession (CreatingObjects)
 
 /// Runs the given @c block on the context's queue and saves the context.
-- (void)performRemoteChanges:(void(^)(MockTransportSession<MockTransportSessionObjectCreation> *session))block;
+- (void)performRemoteChanges:(void(^)(id<MockTransportSessionObjectCreation>))block;
 
 - (void)saveAndCreatePushChannelEvents;
 - (void)saveAndCreatePushChannelEventForSelfUser;

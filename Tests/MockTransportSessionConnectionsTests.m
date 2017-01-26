@@ -35,7 +35,7 @@
     __block MockConnection *connection1;
     __block MockConnection *connection2;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         [session addProfilePictureToUser:selfUser];
         user1 = [session insertUserWithName:@"Bar"];
@@ -77,7 +77,7 @@
     __block MockUser *user1;
     NSUUID *user1Identifier = [NSUUID createUUID];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         [session addProfilePictureToUser:selfUser];
         user1 = [session insertUserWithName:@"Bar"];
@@ -99,7 +99,7 @@
     XCTAssertEqual(response.HTTPStatus, 201);
     __block NSDictionary *expectedPayload;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertEqual(user1.connectionsTo.count, 1u);
         MockConnection *firstConnection = [user1.connectionsTo firstObject];
@@ -122,7 +122,7 @@
     __block MockUser *user1;
     NSUUID *user1Identifier = [NSUUID createUUID];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         [session addProfilePictureToUser:selfUser];
         user1 = [session insertUserWithName:@"Bar"];
@@ -142,7 +142,7 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertEqual(user1.connectionsTo.count, 1u);
         MockConnection *firstConnection = [user1.connectionsTo firstObject];
@@ -165,7 +165,7 @@
     __block MockConversation *conversation;
     __block MockConnection *connection;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         [session addProfilePictureToUser:selfUser];
         user1 = [session insertUserWithName:@"Bar"];
@@ -192,7 +192,7 @@
     NSUUID *user1Identifier = [NSUUID createUUID];
     __block MockConversation *conversation;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         [session addProfilePictureToUser:selfUser];
         user1 = [session insertUserWithName:@"Bar"];
@@ -215,7 +215,7 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertEqual(user1.connectionsTo.count, 1u); // new connection should not be created after resending
         MockConnection *connection = [user1.connectionsTo lastObject];
@@ -230,7 +230,7 @@
     // GIVEN
     NSUUID *userID = [NSUUID createUUID];
     NSUUID *selfUserID = [NSUUID createUUID];
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Tom"];
         selfUser.identifier = selfUserID.transportString;
         
@@ -251,7 +251,7 @@
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         NSFetchRequest *fetchRequest = [MockConnection sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"to.identifier == %@", userID.transportString];

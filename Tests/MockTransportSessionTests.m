@@ -140,7 +140,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (void)testThatACreatedUserHasValidatedEmail
 {
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         // WHEN
         MockUser *user = [session insertUserWithName:@"Mario"];
         
@@ -165,13 +165,13 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 - (void)createAndOpenPushChannelAndCreateSelfUser:(BOOL)shouldCreateSelfUser
 {
     __block NSDictionary *payload;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser;
         if (shouldCreateSelfUser) {
             selfUser = [session insertSelfUserWithName:@"Me Myself"];
         }
         else {
-            selfUser = session.selfUser;
+            selfUser = self.sut.selfUser;
         }
         
         RequireString(selfUser != nil, "We need a selfUser for this");
@@ -185,7 +185,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     
     [self responseForPayload:payload path:@"/login" method:ZMMethodPOST]; // this will simulate the user logging in
     [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session simulatePushChannelOpened];
     }];
     WaitForAllGroupsToBeEmpty(0.5);

@@ -64,7 +64,7 @@
     __block MockUser *selfUser;
     __block MockUser *user1;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -91,9 +91,9 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
-        XCTAssert([oneOnOneConversation.callParticipants containsObject:session.selfUser]);
+        XCTAssert([oneOnOneConversation.callParticipants containsObject:self.sut.selfUser]);
     }];
 }
 
@@ -107,7 +107,7 @@
     __block MockUser *selfUser;
     __block MockUser *user1;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -133,9 +133,9 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
-        XCTAssertFalse([oneOnOneConversation.callParticipants containsObject:session.selfUser]);
+        XCTAssertFalse([oneOnOneConversation.callParticipants containsObject:self.sut.selfUser]);
     }];
 }
 
@@ -148,7 +148,7 @@
     __block MockUser *selfUser;
     __block MockUser *user1;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -176,9 +176,9 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, responsePayload);
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
-        XCTAssertTrue([oneOnOneConversation.callParticipants containsObject:session.selfUser]);
+        XCTAssertTrue([oneOnOneConversation.callParticipants containsObject:self.sut.selfUser]);
     }];
 }
 
@@ -187,7 +187,7 @@
 {
     // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
         MockUser *user1 = [session insertUserWithName:@"Foo"];
@@ -215,7 +215,7 @@
 {
     // GIVEN
     NSUUID *conversationUUID = [NSUUID createUUID];
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
         MockUser *user1 = [session insertUserWithName:@"Foo"];
@@ -265,7 +265,7 @@
     NSUUID *conversationUUID = [NSUUID createUUID];
     __block MockUser *selfUser;
     __block MockUser *user1;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -311,7 +311,7 @@
     
     __block MockUser *selfUser;
     __block MockUser *user1;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -341,7 +341,7 @@
     __block MockUser *selfUser;
     __block MockUser *user1;
 
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -371,7 +371,7 @@
     __block MockUser *selfUser;
     __block MockUser *user1;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -417,7 +417,7 @@
     __block MockUser *user1;
     __block MockUser *user2;
 
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -465,7 +465,7 @@
     __block MockUser *user1;
     __block MockUser *user2;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         user1 = [session insertUserWithName:@"Foo"];
@@ -510,7 +510,7 @@
     
     NSUUID *conversationUUID = [NSUUID createUUID];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
         MockUser *user1 = [session insertUserWithName:@"Foo"];
@@ -541,14 +541,14 @@
     
     
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Self user"];
         selfUserID = selfUser.identifier;
         MockUser *user1 = [session insertUserWithName:@"Foo"];
         user1ID = user1.identifier;
         
-        oneOnOneConversation = [session insertOneOnOneConversationWithSelfUser:session.selfUser otherUser:user1];
+        oneOnOneConversation = [session insertOneOnOneConversationWithSelfUser:self.sut.selfUser otherUser:user1];
         oneOnOneConversation.identifier = conversationUUID.transportString;
     }];
     
@@ -557,9 +557,9 @@
     // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
-        [oneOnOneConversation addUserToCall:session.selfUser];
+        [oneOnOneConversation addUserToCall:self.sut.selfUser];
     }];
     
     WaitForAllGroupsToBeEmpty(0.5);
@@ -602,14 +602,14 @@
     __block MockUser *user1;
     
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Self user"];
         selfUserID = selfUser.identifier;
         user1 = [session insertUserWithName:@"Foo"];
         user1ID = user1.identifier;
         
-        oneOnOneConversation = [session insertOneOnOneConversationWithSelfUser:session.selfUser otherUser:user1];
+        oneOnOneConversation = [session insertOneOnOneConversationWithSelfUser:self.sut.selfUser otherUser:user1];
         oneOnOneConversation.identifier = conversationUUID.transportString;
     }];
     
@@ -618,7 +618,7 @@
     // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         [oneOnOneConversation addUserToCall:user1];
     }];

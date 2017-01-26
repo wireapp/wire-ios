@@ -28,12 +28,12 @@
 - (MockUser *)userForEmail:(NSString *)email
 {
     __block MockUser *user;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"email == %@", email];
         
-        NSArray *users = [session.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
         
         if (users.count == 1) {
             user = users[0];
@@ -45,12 +45,12 @@
 - (MockUser *)userForPhone:(NSString *)phone
 {
     __block MockUser *user;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation>  __unused session) {
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
         
-        NSArray *users = [session.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
         
         if (users.count == 1) {
             user = users[0];
@@ -96,7 +96,7 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertNotNil(user);
         XCTAssertEqualObjects(user.password, payload[@"password"]);
@@ -182,7 +182,7 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertFalse(user.isEmailValidated);
     }];
@@ -213,7 +213,7 @@
                               @"email" : @"someone@example.com",
                               @"password" : @"supersecure",
                               };
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session whiteListEmail:payload[@"email"]];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -226,7 +226,7 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertTrue(user.isEmailValidated);
     }];
@@ -246,14 +246,14 @@
     XCTAssertNotNil(response);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session whiteListEmail:payload[@"email"]];
     }];
     
     // THEN
     MockUser *user = [self userForEmail:payload[@"email"]];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertTrue(user.isEmailValidated);
     }];
@@ -277,7 +277,7 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     MockUser *user = [self userForEmail:payload[@"email"]];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         NOT_USED(session);
         XCTAssertNotNil(user);
         XCTAssertEqualObjects(user.password, payload[@"password"]);
@@ -321,7 +321,7 @@
                               @"password" : @"supersecure",
                               };
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *user = [session insertUserWithName:payload[@"name"]];
         user.email = payload[@"email"];
     }];
@@ -396,7 +396,7 @@
                               @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
                               };
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *user = [session insertUserWithName:payload[@"name"]];
         user.phone = payload[@"phone"];
     }];
@@ -451,7 +451,7 @@
     NSString *password = @"i.am.a.vicking.";
     NSString *inviteeName = @"Volgaar";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Louis-Émile"];
         [session insertInvitationForSelfUser:selfUser inviteeName:inviteeName mail:email];
     }];
@@ -479,7 +479,7 @@
     NSString *password = @"i.am.a.vicking.";
     NSString *inviteeName = @"Volgaar";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Louis-Émile"];
         [session insertInvitationForSelfUser:selfUser inviteeName:inviteeName mail:email];
     }];
@@ -528,7 +528,7 @@
     NSString *phone = @"+490000000";
     NSString *inviteeName = @"Volgaar";
 
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Louis-Émile"];
         [session insertInvitationForSelfUser:selfUser inviteeName:inviteeName phone:phone];
     }];
@@ -554,7 +554,7 @@
     NSString *phone = @"+490000000";
     NSString *inviteeName = @"Volgaar";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Louis-Émile"];
         [session insertInvitationForSelfUser:selfUser inviteeName:inviteeName phone:phone];
     }];

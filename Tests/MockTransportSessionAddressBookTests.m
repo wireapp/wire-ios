@@ -31,7 +31,7 @@
     __block MockUser *user1;
     __block MockUser *user2;
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"SelfUser"];
         user1 = [session insertUserWithName:@"User1 AAAA"];
         user2 = [session insertUserWithName:@"User2 AABB"];

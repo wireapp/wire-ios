@@ -29,7 +29,7 @@
 {
     //given
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
     }];
@@ -61,7 +61,7 @@
 {
     //given
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
     }];
@@ -84,7 +84,7 @@
     //given
     __block MockUser *selfUser;
     __block MockUser *existingUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
         
@@ -114,7 +114,7 @@
     __block MockUser *selfUser;
     __block MockUser *existingUser;
     __block MockConnection *connection;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
         
@@ -145,7 +145,7 @@
 {
     //given
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
     }];
@@ -165,7 +165,7 @@
 {
     //given
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
     }];
@@ -186,11 +186,11 @@
     //given
     __block MockUser *selfUser;
     __block MockPersonalInvitation *invitation;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
         NSString *inviteeName = [[NSUUID createUUID] transportString];
-        invitation = [MockPersonalInvitation invitationInMOC:session.managedObjectContext fromUser:selfUser toInviteeWithName:inviteeName email:[inviteeName stringByAppendingString:@"@wire.com"] phoneNumber:nil];
+        invitation = [MockPersonalInvitation invitationInMOC:self.sut.managedObjectContext fromUser:selfUser toInviteeWithName:inviteeName email:[inviteeName stringByAppendingString:@"@wire.com"] phoneNumber:nil];
         
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -212,7 +212,7 @@
     //given
     __block MockUser *selfUser;
     __block NSMutableArray *invitations = [NSMutableArray array];
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
@@ -255,7 +255,7 @@
 {
     //given
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
     }];
@@ -276,11 +276,11 @@
     //given
     __block MockUser *selfUser;
     __block MockPersonalInvitation *invitation;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Jean-Nobert"];
         selfUser.identifier = [[NSUUID createUUID] transportString];
         NSString *inviteeName = [[NSUUID createUUID] transportString];
-        invitation = [MockPersonalInvitation invitationInMOC:session.managedObjectContext fromUser:selfUser toInviteeWithName:inviteeName email:[inviteeName stringByAppendingString:@"@wire.com"] phoneNumber:nil];
+        invitation = [MockPersonalInvitation invitationInMOC:self.sut.managedObjectContext fromUser:selfUser toInviteeWithName:inviteeName email:[inviteeName stringByAppendingString:@"@wire.com"] phoneNumber:nil];
         
     }];
     WaitForAllGroupsToBeEmpty(0.5);
