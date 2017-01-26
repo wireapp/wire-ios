@@ -38,6 +38,7 @@
 		54B04A6B1D77359A00CED57C /* ZMTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* ZMTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A6C1D77359A00CED57C /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A6D1D77359A00CED57C /* ZMCDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BF2009331E3A24A2006F8930 /* StrategyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2009321E3A24A2006F8930 /* StrategyFactory.swift */; };
 		BF9F130B1DC1052100700255 /* OperationLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9F130A1DC1052100700255 /* OperationLoop.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		BFE7F7511D78820700FEA685 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */; };
@@ -144,6 +145,7 @@
 		5470D4601D771BD600FDE440 /* SharingTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTarget.swift; sourceTree = "<group>"; };
 		5470D4621D7722A500FDE440 /* Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sendable.swift; sourceTree = "<group>"; };
 		5470D4641D772A6000FDE440 /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		BF2009321E3A24A2006F8930 /* StrategyFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrategyFactory.swift; sourceTree = "<group>"; };
 		BF64A2111D796DC300725918 /* wire-ios-share-engineTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "wire-ios-share-engineTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		BF9F130A1DC1052100700255 /* OperationLoop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 			children = (
 				5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */,
 				5470D42F1D77154200FDE440 /* SharingSession.swift */,
+				BF2009321E3A24A2006F8930 /* StrategyFactory.swift */,
 				5470D4641D772A6000FDE440 /* Conversation.swift */,
 				BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */,
 				BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */,
@@ -480,6 +483,7 @@
 				5470D4611D771BD600FDE440 /* SharingTarget.swift in Sources */,
 				BFE7F7531D7885ED00FEA685 /* ZMMessage+Sendable.swift in Sources */,
 				5470D4651D772A6000FDE440 /* Conversation.swift in Sources */,
+				BF2009331E3A24A2006F8930 /* StrategyFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

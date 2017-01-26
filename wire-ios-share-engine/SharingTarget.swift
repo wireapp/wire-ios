@@ -23,7 +23,7 @@ import ZMCDataModel
 public protocol SharingTarget {
     
     /// Appends a text message in the conversation
-    func appendTextMessage(_ message: String) -> Sendable?
+    func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable?
     
     /// Appends an image in the conversation
     func appendImage(_ image: URL) -> Sendable?

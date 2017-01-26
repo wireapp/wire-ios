@@ -23,7 +23,7 @@ import ZMCDataModel
 public protocol Sendable {
     
     /// The state of the delivery
-    var deliveryState : ZMDeliveryState { get }
+    var isSent: Bool { get }
 
     /// Whether the sendable is currently blocked because of missing clients
     var blockedBecauseOfMissingClients : Bool { get }
