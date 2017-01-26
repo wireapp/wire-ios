@@ -34,7 +34,7 @@
     __block MockUser *user2;
     NSString *user2email = @"foo@example.com";
     NSString *user2phone = @"454545456456";
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"SelfUser"];
         user1 = [session insertUserWithName:@"User1 AAAA"];
         user2 = [session insertUserWithName:@"User2 AABB"];
@@ -107,7 +107,7 @@
     NSString *user2email = @"foo2@example.com";
     NSString *user3email = @"foo3@example.com";
     NSString *user3phone = @"66767567657";
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"SelfUser"];
         user1 = [session insertUserWithName:@"User1 AA"];
         user2 = [session insertUserWithName:@"User2 AA"];
@@ -194,7 +194,7 @@
 {
     // GIVEN
     __block MockUser *user1;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"SelfUser"];
         user1 = [session insertUserWithName:@"OtherUser"];
         user1.accentID = 2;
@@ -239,7 +239,7 @@
     __block MockUser *user1;
     __block MockUser *user2;
     __block MockUser *user3;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"SelfUser"];
         user1 = [session insertUserWithName:@"User1 AAAA"];
         user2 = [session insertUserWithName:@"User2 AABB"];

@@ -78,7 +78,7 @@
     // GIVEN
 
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         selfUser.password = @"Cestmonmotdepassesupermagique";
     }];
@@ -144,7 +144,7 @@
 - (void)testThatItCanRegisterSecondClientWithPassword {
     // GIVEN
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         selfUser.password = @"123";
     }];
@@ -207,7 +207,7 @@
 - (void)testThatItCanNotRegisterSecondClientWithoutPassword {
     // GIVEN
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         selfUser.password = @"123";
     }];
@@ -240,7 +240,7 @@
 - (void)testThatItCanNotRegisterSecondClientWithWrongPassword {
     // GIVEN
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         selfUser.password = @"123";
     }];
@@ -274,7 +274,7 @@
 - (void)testThatItCanNotRegisterTooManyClients {
     // GIVEN
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         selfUser.password = @"123";
     }];
@@ -376,7 +376,7 @@
     
     // GIVEN
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         selfUser.password = @"monmotdepasseesttropsecurisetasvue";
     }];
@@ -406,7 +406,7 @@
     
     __block MockUser *selfUser;
     __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
         client.deviceClass = @"desktop";
@@ -448,7 +448,7 @@
     
     // GIVEN
     __block MockUser *user1;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         user1 = [session insertUserWithName:@"Foo"];
         [session registerClientForUser:user1 label:@"foobar" type:@"temporary"];
     }];
@@ -483,7 +483,7 @@
     
     __block MockUser *selfUser;
     __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         
         [session registerClientForUser:selfUser label:@"foobar" type:@"temporary"];
@@ -528,7 +528,7 @@
     
     __block MockUser *selfUser;
     __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
     }];
@@ -563,13 +563,13 @@
     // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -585,14 +585,14 @@
     // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         client = [selfUser.clients anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session deleteUserClientWithIdentifier:client.identifier forUser:selfUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -606,7 +606,7 @@
     // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
         client = [selfUser.clients anyObject];
@@ -616,7 +616,7 @@
     NSString *clientId = client.identifier;
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session deleteUserClientWithIdentifier:client.identifier forUser:selfUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -640,13 +640,13 @@
     __block MockUserClient *client;
     NSString *clientLabel = @"client label";
     NSString *clientType = @"permanent";
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         client = [session registerClientForUser:selfUser label:clientLabel type:clientType];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -674,13 +674,13 @@
 - (void)testThatItDoesNotSendsANoficationWhenAddingAClientOfAnotherUser {
     // GIVEN
     __block MockUser *otherUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         otherUser = [session insertUserWithName:@"Foo"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session registerClientForUser:otherUser label:@"client" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -693,14 +693,14 @@
     // GIVEN
     __block MockUser *otherUser;
     __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         otherUser = [session insertUserWithName:@"Foo"];
         client = [session registerClientForUser:otherUser label:@"client" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session deleteUserClientWithIdentifier:client.identifier forUser:otherUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -713,7 +713,7 @@
 {
     __block MockUserClient *selfClient;
     __block MockUserClient *destClient;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Brigite Sorço"];
         selfClient = [session registerClientForUser:selfUser label:@"moi" type:@"permanent"];

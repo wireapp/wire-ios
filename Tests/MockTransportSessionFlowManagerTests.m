@@ -79,13 +79,12 @@
     __block  MockUser *selfUser;
     __block MockConversation *conversation;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"selfUser"];
         user = [session insertUserWithName:@"name"];
         conversation = [session insertOneOnOneConversationWithSelfUser:self.sut.selfUser otherUser:user];
         [conversation addUserToVideoCall:user];
         user.isSendingVideo = NO;
-        [session saveAndCreatePushChannelEvents];
     }];
     
     NSUInteger eventCount = self.sut.updateEvents.count;
@@ -114,13 +113,12 @@
     __block  MockUser *selfUser;
     __block MockConversation *conversation;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"selfUser"];
         user = [session insertUserWithName:@"name"];
         conversation = [session insertOneOnOneConversationWithSelfUser:self.sut.selfUser otherUser:user];
         [conversation addUserToVideoCall:user];
         user.isSendingVideo = YES;
-        [session saveAndCreatePushChannelEvents];
     }];
     
     NSUInteger eventCount = self.sut.updateEvents.count;

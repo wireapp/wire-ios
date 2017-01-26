@@ -32,7 +32,7 @@
     [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session simulatePushChannelClosed];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -46,7 +46,7 @@
     // GIVEN
     [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
     __block NSDictionary *payload;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
         selfUser.email = @"me@example.com";
         selfUser.password = @"123456";
@@ -64,7 +64,7 @@
 - (void)testThatNoPushChannelEventIsSentBeforeThePushChannelIsOpened
 {
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Old self username"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -84,7 +84,7 @@
 - (void)testThatPushChannelEventsAreSentWhenThePushChannelIsOpened
 {
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Old self username"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -105,7 +105,7 @@
 - (void)testThatNoPushChannelEventAreSentAfterThePushChannelIsClosed
 {
     __block MockUser *selfUser;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Old self username"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -113,7 +113,7 @@
     
     // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session simulatePushChannelClosed];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -136,8 +136,8 @@
     __block MockUser *selfUser;
     __block NSDictionary *expectedUserPayload;
     __block NSString *selfUserID;
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
+        selfUser = self.sut.selfUser;
         selfUserID = selfUser.identifier;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -169,8 +169,8 @@
     __block MockUser *selfUser;
     __block NSDictionary *expectedUserPayload;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
+        selfUser = self.sut.selfUser;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
@@ -207,8 +207,8 @@
     __block MockUser *otherUser;
     __block id<ZMTransportData> expectedConnectionPayload;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = self.sut.selfUser;
         otherUser = [session insertUserWithName:@"Mr. Other User"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -216,7 +216,7 @@
     
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockConnection *connection = [session insertConnectionWithSelfUser:selfUser toUser:otherUser];
         connection.message = message;
         expectedConnectionPayload = connection.transportData;
@@ -238,8 +238,8 @@
     __block MockConnection *connection;
     __block id<ZMTransportData> expectedConnectionPayload;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *selfUser = self.sut.selfUser;
         MockUser *otherUser = [session insertUserWithName:@"Mr. Other User"];
         connection = [session insertConnectionWithSelfUser:selfUser toUser:otherUser];
         connection.message = message;
@@ -269,8 +269,8 @@
     __block id<ZMTransportData> event2Payload;
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *selfUser = self.sut.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
         MockUser *user2 = [session insertUserWithName:@"Name2 866"];
         
@@ -318,19 +318,19 @@
     [self createAndOpenPushChannel];
     __block MockConversation *conversation;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *selfUser = self.sut.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
         MockUser *user2 = [session insertUserWithName:@"Name2 866"];
         conversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1,user2]];
-        [conversation changeNameByUser:session.selfUser name:@"Something boring"];
+        [conversation changeNameByUser:self.sut.selfUser name:@"Something boring"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.pushChannelReceivedEvents removeAllObjects];
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [conversation changeNameByUser:session.selfUser name:name];
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
+        [conversation changeNameByUser:self.sut.selfUser name:name];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -349,12 +349,12 @@
     __block id<ZMTransportData> expectedData;
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *selfUser = self.sut.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
         MockUser *user2 = [session insertUserWithName:@"Name2 866"];
         conversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1,user2]];
-        [conversation changeNameByUser:session.selfUser name:@"Trolls"];
+        [conversation changeNameByUser:self.sut.selfUser name:@"Trolls"];
         
         expectedData = conversation.transportData;
     }];
@@ -380,8 +380,8 @@
     __block MockConversation *conversation;
     __block MockUser *user3;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *selfUser = self.sut.selfUser;
         selfUser.name = @"Some self user name";
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
         MockUser *user2 = [session insertUserWithName:@"Name2 866"];
@@ -392,8 +392,8 @@
     [self.pushChannelReceivedEvents removeAllObjects];
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [conversation addUsersByUser:session.selfUser addedUsers:@[user3]];
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
+        [conversation addUsersByUser:self.sut.selfUser addedUsers:@[user3]];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -411,8 +411,8 @@
     __block MockConversation *conversation;
     __block MockUser *user2;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *selfUser = self.sut.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
         user2 = [session insertUserWithName:@"Name2 866"];
         conversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1,user2]];
@@ -421,8 +421,8 @@
     [self.pushChannelReceivedEvents removeAllObjects];
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [conversation removeUsersByUser:session.selfUser removedUser:user2];
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
+        [conversation removeUsersByUser:self.sut.selfUser removedUser:user2];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -440,8 +440,8 @@
     __block NSString *conversationIdentifier;
     __block NSString *userIdentifier;
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        MockUser *selfUser = session.selfUser;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *selfUser = self.sut.selfUser;
         MockUser *user1 = [session insertUserWithName:@"Name1 213"];
         user2 = [session insertUserWithName:@"Name2 866"];
         conversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1,user2]];
@@ -476,7 +476,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
         selfUser.password = password;
@@ -516,7 +516,7 @@
     [self createAndOpenPushChannel];
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session simulatePushChannelClosed];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -540,7 +540,7 @@
     
     // do in separate blocks so I'm sure of the order of events - if done together there is a single
     // save and I don't know the order
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"SelfUser Name"];
         user1 = [session insertUserWithName:@"Name of User 1"];
         user2 = [session insertUserWithName:@"Name of user 2"];
@@ -556,7 +556,7 @@
         connection2.status = @"accepted";
     }];
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         // conversation creation event + member join event
         [expectedTypes addObject:@"conversation.create"];
         [expectedTypes addObject:@"conversation.member-join"];
@@ -566,7 +566,7 @@
     
     for(int i = 0; i < NUM_MESSAGES; ++i) {
         // NUM_MESSAGES message events
-        [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
             [expectedTypes addObject:@"conversation.otr-message-add"];
             NSData *data = [[NSString stringWithFormat:@"Message %d", i] dataUsingEncoding:NSUTF8StringEncoding];
             [conversation insertOTRMessageFromClient:user1.clients.anyObject toClient:user2.clients.anyObject data:data];
@@ -664,7 +664,7 @@
     
     // do in separate blocks so I'm sure of the order of events - if done together there is a single
     // save and I don't know the order
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"SelfUser Name"];
         user1 = [session insertUserWithName:@"Name of User 1"];
         user2 = [session insertUserWithName:@"Name of user 2"];

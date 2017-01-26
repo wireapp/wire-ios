@@ -35,7 +35,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
         selfUser.password = password;
@@ -60,7 +60,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
         selfUser.password = password;
@@ -88,7 +88,7 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
         selfUser.password = password;
@@ -126,7 +126,7 @@
     // GIVEN
     NSString *phone = @"+49123456789";
     NSDictionary *requestPayload = @{@"phone":phone};
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *user = [session insertUserWithName:@"foo"];
         user.phone = phone;
     }];

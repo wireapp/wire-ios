@@ -581,7 +581,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     NSAssert(result, @"Failed to save: %@", error);
 }
 
-- (void)performRemoteChanges:(void(^)(MockTransportSession<MockTransportSessionObjectCreation> *))block;
+- (void)performRemoteChanges:(void(^)(id<MockTransportSessionObjectCreation>))block;
 {
     // If you crash here, it's probably due to bug in the block being passed to this method
     ZM_WEAK(self);
