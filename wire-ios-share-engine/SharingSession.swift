@@ -233,18 +233,13 @@ public class SharingSession {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         
-        let clientMessageTranscoder = ZMClientMessageTranscoder(
-            managedObjectContext: syncContext,
-            localNotificationDispatcher: PushMessageHandlerDummy(),
-            clientRegistrationStatus: clientRegistrationStatus,
-            apnsConfirmationStatus: DeliveryConfirmationDummy()
-        )!
-        
-        let missingClientStrategy = MissingClientsRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, apnsConfirmationStatus: DeliveryConfirmationDummy(), managedObjectContext: syncContext)
-        let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, maxConcurrentImageOperation: 1)
-        let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
+        let strategyFactory = StrategyFactory(
+            syncContext: syncContext,
+            registrationStatus: clientRegistrationStatus,
+            cancellationProvider: transportSession
+        )
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [missingClientStrategy, clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.createStrategies())
 
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: userInterfaceContext,
