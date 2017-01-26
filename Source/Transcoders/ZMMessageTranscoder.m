@@ -28,8 +28,6 @@
 #import "ZMMessageExpirationTimer.h"
 #import <WireMessageStrategy/WireMessageStrategy-Swift.h>
 
-#import "CBCryptoBox+UpdateEvents.h"
-
 static NSString * ZMLogTag ZM_UNUSED = @"MessageTranscoder";
 
 typedef NS_ENUM(int8_t, ZMAssetTag) {
