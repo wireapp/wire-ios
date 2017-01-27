@@ -34,7 +34,7 @@ extension NSManagedObjectContext {
         let sharedDirectory = directory.appendingPathComponent(UserClientKeysStore.otrFolderPrefix)
 
         let newKeyStore = UserClientKeysStore(in: sharedDirectory)
-        self.userInfo.setObject(newKeyStore, forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey as NSCopying)
+        self.userInfo[NSManagedObjectContext.ZMUserClientKeysStoreKey] = newKeyStore
     }
     
     /// Returns the cryptobox instance associated with this managed object context
@@ -48,13 +48,11 @@ extension NSManagedObjectContext {
         } else {
             fatal("Can't access key store: not keystore found.")
         }
-        
     }
     
     public func zm_tearDownCryptKeyStore() {
         self.userInfo.removeObject(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
     }
-
 }
 
 public enum UserClientKeyStoreError: Error {
