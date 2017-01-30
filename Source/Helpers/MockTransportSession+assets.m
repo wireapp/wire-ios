@@ -257,13 +257,18 @@
         ZMMultipartBodyItem *imageDataItem = bodyItems.lastObject;
         NSData *imageData = imageDataItem.data;
         
-        [self insertOTRMessageEventsToConversation:conversation requestRecipients:otrMetadata.recipients createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData) {
-            return [conversation insertOTRAssetFromClient:senderClient
-                                                 toClient:recipient
-                                                 metaData:messageData
-                                                imageData:imageData
-                                                  assetId:assetID
-                                                 isInline:inlineData];
+        [self insertOTRMessageEventsToConversation:conversation
+                                 requestRecipients:otrMetadata.recipients
+                                      senderClient:senderClient
+                                  createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData, NSData *decrypted) {
+                                      MockEvent *event = [conversation insertOTRAssetFromClient:senderClient
+                                                                                       toClient:recipient
+                                                                                       metaData:messageData
+                                                                                      imageData:imageData
+                                                                                        assetId:assetID
+                                                                                       isInline:inlineData];
+                                      event.decryptedOTRData = decrypted;
+                                      return event;
         }];
     }
     

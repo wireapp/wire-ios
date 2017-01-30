@@ -120,7 +120,19 @@ static NSString * const IdleString = @"idle";
 
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMTUpdateEventType)type data:(id<ZMTransportData>)data
 {
-    NSArray *eventTypesWithPushOnInsert = @[@(ZMTUpdateEventConversationAssetAdd), @(ZMTUpdateEventConversationMessageAdd), @(ZMTUpdateEventConversationClientMessageAdd), @(ZMTUpdateEventConversationOTRMessageAdd), @(ZMTUpdateEventConversationOTRAssetAdd), @(ZMTUpdateEventConversationCreate), @(ZMTUpdateEventConversationMemberJoin), @(ZMTUpdateEventConversationConnectRequest), @(ZMTUpdateEventConversationVoiceChannelDeactivate), @(ZMTUpdateEventCallState), @(ZMTUpdateEventConversationKnock), @(ZMTUpdateEventConversationHotKnock), @(ZMTUpdateEventConversationMemberUpdate)];
+    NSArray *eventTypesWithPushOnInsert = @[@(ZMTUpdateEventConversationAssetAdd),
+                                            @(ZMTUpdateEventConversationMessageAdd),
+                                            @(ZMTUpdateEventConversationClientMessageAdd),
+                                            @(ZMTUpdateEventConversationOTRMessageAdd),
+                                            @(ZMTUpdateEventConversationOTRAssetAdd),
+                                            @(ZMTUpdateEventConversationCreate),
+                                            @(ZMTUpdateEventConversationMemberJoin),
+                                            @(ZMTUpdateEventConversationConnectRequest),
+                                            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
+                                            @(ZMTUpdateEventCallState),
+                                            @(ZMTUpdateEventConversationKnock),
+                                            @(ZMTUpdateEventConversationHotKnock),
+                                            @(ZMTUpdateEventConversationMemberUpdate)];
     
 
     if(self.isInserted && ![eventTypesWithPushOnInsert containsObject:@(type)]) {
@@ -303,7 +315,12 @@ static NSString * const IdleString = @"idle";
     return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
-- (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient metaData:(NSData *)metaData imageData:(NSData *)imageData assetId:(NSUUID *)assetId isInline:(BOOL)isInline
+- (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient
+                               toClient:(MockUserClient *)toClient
+                               metaData:(NSData *)metaData
+                              imageData:(NSData *)imageData
+                                assetId:(NSUUID *)assetId
+                               isInline:(BOOL)isInline
 {
     Require(fromClient.identifier != nil);
     Require(toClient.identifier != nil);

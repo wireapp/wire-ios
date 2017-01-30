@@ -35,6 +35,7 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
 @dynamic type;
 @dynamic data;
 @dynamic conversation;
+@dynamic decryptedOTRData;
 
 + (NSArray *)eventStringToEnumValueTuples
 {
@@ -102,7 +103,20 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
 
 + (NSArray *)persistentEvents;
 {
-   return @[@(ZMTUpdateEventConversationRename), @(ZMTUpdateEventConversationMemberJoin), @(ZMTUpdateEventConversationMemberLeave), @(ZMTUpdateEventConversationConnectRequest), @(ZMTUpdateEventConversationMessageAdd), @(ZMTUpdateEventConversationClientMessageAdd), @(ZMTUpdateEventConversationAssetAdd), @(ZMTUpdateEventConversationKnock), @(ZMTUpdateEventConversationHotKnock), @(ZMTUpdateEventConversationVoiceChannelActivate), @(ZMTUpdateEventConversationVoiceChannelDeactivate)];
+   return @[@(ZMTUpdateEventConversationRename),
+            @(ZMTUpdateEventConversationMemberJoin),
+            @(ZMTUpdateEventConversationMemberLeave),
+            @(ZMTUpdateEventConversationConnectRequest),
+            @(ZMTUpdateEventConversationMessageAdd),
+            @(ZMTUpdateEventConversationClientMessageAdd),
+            @(ZMTUpdateEventConversationAssetAdd),
+            @(ZMTUpdateEventConversationKnock),
+            @(ZMTUpdateEventConversationHotKnock),
+            @(ZMTUpdateEventConversationVoiceChannelActivate),
+            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
+            @(ZMTUpdateEventConversationOTRMessageAdd),
+            @(ZMTUpdateEventConversationOTRAssetAdd)
+            ];
 }
 
 

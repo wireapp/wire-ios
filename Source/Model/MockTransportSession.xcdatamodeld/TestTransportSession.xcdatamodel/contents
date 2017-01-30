@@ -46,6 +46,7 @@
     </entity>
     <entity name="Event" representedClassName="MockEvent" syncable="YES">
         <attribute name="data" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="decryptedOTRData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
@@ -116,7 +117,7 @@
         <element name="Asset" positionX="0" positionY="0" width="128" height="120"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Conversation" positionX="0" positionY="0" width="128" height="450"/>
-        <element name="Event" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>

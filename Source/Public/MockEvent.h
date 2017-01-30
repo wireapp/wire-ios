@@ -69,6 +69,7 @@ typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
 @property (nonatomic, nonnull) NSString *type;
 @property (nonatomic, readonly) ZMTUpdateEventType eventType;
 @property (nonatomic, nullable) id data;
+@property (nonatomic, nullable) NSData* decryptedOTRData;
 @property (nonatomic, nullable) MockConversation *conversation;
 
 - (nonnull id<ZMTransportData>)transportData;

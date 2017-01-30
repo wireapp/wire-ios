@@ -146,8 +146,9 @@
     return redundantClients;
 }
 
-
-- (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation requestPayload:(NSDictionary *)requestPayload createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData))createEventBlock
+- (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation
+                              requestPayload:(NSDictionary *)requestPayload
+                            createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData))createEventBlock
 {
     NSDictionary *recipients = requestPayload[@"recipients"];
     
@@ -167,8 +168,9 @@
 }
 
 - (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation
-                             requestRecipients:(NSArray *)recipients
-                            createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData))createEventBlock;
+                           requestRecipients:(NSArray *)recipients
+                                senderClient:(MockUserClient *)senderClient
+                            createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData, NSData *decryptedData))createEventBlock;
 {
     NSArray *activeClients = [conversation.activeUsers.array flattenWithBlock:^NSArray *(MockUser *user) {
         return [user.clients.allObjects mapWithBlock:^id(MockUserClient *client) {
@@ -191,7 +193,7 @@
         }]] firstObject];
 
         if (client != nil) {
-            createEventBlock(client, clientEntry.text);
+            createEventBlock(client, clientEntry.text, [MockUserClient decryptMessageWithData:clientEntry.text from:senderClient to:client]);
         }
     }
 }
