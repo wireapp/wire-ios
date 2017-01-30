@@ -633,8 +633,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
     if (shouldIncludeClient) {
         
-        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" context:self.managedObjectContext];
-        client.user = user;
+        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" user:user context:self.managedObjectContext];
         
         NSMutableSet *clients = [NSMutableSet setWithObject:client];
         user.clients = clients;
@@ -823,31 +822,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 - (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type
 {
-    
-    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type context:self.managedObjectContext];
-    client.user = user;
-    [user.clients addObject:client];
-    return client;
-}
-
-- (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type preKeys:(NSArray *)preKeys lastPreKey:(NSString *)lastPreKey
-{
-    MockUserClient *client = [NSEntityDescription insertNewObjectForEntityForName:@"UserClient" inManagedObjectContext:self.managedObjectContext];
-    client.label = label;
-    client.type = type;
-    client.identifier = [NSString createAlphanumericalString];
-    client.time = [NSDate date];
-
-    NSMutableArray *prekeysPayload = [NSMutableArray new];
-    [preKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL * __unused stop) {
-        [prekeysPayload addObject:@{@"id": @(idx), @"key": obj}];
-    }];
-    
-    client.lastPrekey = [MockPreKey insertNewKeyWithPayload:@{@"id": @(0xFFFF), @"key": lastPreKey} context:self.managedObjectContext];
-    client.prekeys = [MockPreKey insertNewKeysWithPayload:prekeysPayload context:self.managedObjectContext];
-    client.enckey = [NSString createAlphanumericalString];
-    client.mackey = [NSString createAlphanumericalString];
-    client.user = user;
+    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type user:user context:self.managedObjectContext];
     return client;
 }
 

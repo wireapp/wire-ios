@@ -135,10 +135,12 @@ extension MockUserClient {
     }
     
     /// Insert a new client, automatically generate prekeys and last key
-    public static func insertClient(label: String, type: String, context: NSManagedObjectContext) -> MockUserClient?
+    @objc(insertClientWithLabel:type:user:context:)
+    public static func insertClient(label: String, type: String, for user: MockUser, in context: NSManagedObjectContext) -> MockUserClient?
     {
         let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
     
+        newClient.user = user
         newClient.identifier = NSString.createAlphanumerical() as String
         newClient.label = label;
         newClient.type = type;
@@ -161,6 +163,7 @@ extension MockUserClient {
         newClient.prekeys = Set(mockPrekey)
         
         let mockLastPrekey = MockPreKey.insertNewKey(withPrekey: lastPrekey, for: newClient, in: context)
+        mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
         newClient.lastPrekey = mockLastPrekey;
         return newClient;
     }
@@ -233,13 +236,27 @@ extension MockUserClient {
         return encryptedData!
     }
     
-    /// Decrypt a prekey message (hence establishing a session) from a client to a client
-    public static func decryptPrekeyMessage(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
+    /// Decrypt a message (possibly establishing a session, if there is no session) from a client to a client
+    public static func decryptMessage(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
         var decryptedData: Data?
         to.encryptionContext.perform { (session) in
-            decryptedData = try? session.createClientSessionAndReturnPlaintext(for: from.sessionIdentifier!, prekeyMessage: data)
+            if !session.hasSession(for: from.sessionIdentifier!) {
+                decryptedData = try? session.createClientSessionAndReturnPlaintext(for: from.sessionIdentifier!, prekeyMessage: data)
+            } else {
+                decryptedData = try? session.decrypt(data, from: from.sessionIdentifier!)
+            }
         }
-        return decryptedData!
+        return decryptedData ?? Data()
+    }
+    
+    /// Returns whether there is a encryption session between self and the give client
+    public func hasSession(with client: MockUserClient) -> Bool {
+        guard let identifier = client.sessionIdentifier else { return false }
+        var hasSession = false
+        self.encryptionContext.perform { (session) in
+            hasSession = session.hasSession(for: identifier)
+        }
+        return hasSession
     }
 }
 

@@ -431,7 +431,7 @@
     __block MockUser *otherUser;
     __block MockUserClient *otherUserClient;
     __block MockUserClient *secondOtherUserClient;
-    
+    __block MockUserClient *redundantClient;
     __block MockConversation *conversation;
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
@@ -439,57 +439,25 @@
         [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
 
         otherUser = [session insertUserWithName:@"bar"];
-        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
+        otherUserClient = [otherUser.clients anyObject];
+        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        redundantClient = [session registerClientForUser:otherUser label:@"Wire for OS/2" type:@"permanent"];
         
         selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [otherUser.clients anyObject];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
     
     NSString *messageText = @"Fofooof";
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
+    NSData *messageData = [[selfClient OTRMessageBuilderWithRecipientsForClients:@[otherUserClient, redundantClient] plainText:message.data] build].data;
     
-    NSString *redundantClientId = [NSString createAlphanumericalString];
-    
-    ZMNewOtrMessageBuilder *builder = [ZMNewOtrMessage builder];
-    ZMClientIdBuilder *senderBuilder = [ZMClientId builder];
-    
-    unsigned long long senderId = 0;
-    [[NSScanner scannerWithString:selfClient.identifier] scanHexLongLong:&senderId];
-    
-    [senderBuilder setClient:senderId];
-    [builder setSender:[senderBuilder build]];
-    
-    ZMUserEntryBuilder *userEntryBuilder = [ZMUserEntry builder];
-    ZMUserIdBuilder *userIdBuilder = [ZMUserId builder];
-    [userIdBuilder setUuid:[[NSUUID uuidWithTransportString:otherUser.identifier] data]];
-    [userEntryBuilder setUser:[userIdBuilder build]];
-    
-    NSArray *recipients = [@[otherUserClient.identifier, redundantClientId] mapWithBlock:^id(NSString *clientId) {
-        
-        ZMClientIdBuilder *recipientBuilder = [ZMClientId builder];
-        
-        unsigned long long recipientId = 0;
-        [[NSScanner scannerWithString:clientId] scanHexLongLong:&recipientId];
-        
-        [recipientBuilder setClient:recipientId];
-        
-        ZMClientEntryBuilder *clientEntryBuilder = [ZMClientEntry builder];
-        [clientEntryBuilder setClient:[recipientBuilder build]];
-        [clientEntryBuilder setText:message.data];
-        
-        return [clientEntryBuilder build];
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
+        redundantClient.user = nil;
     }];
-    
-    [userEntryBuilder setClientsArray:recipients];
-    ZMUserEntry *userEntry = [userEntryBuilder build];
-    [builder setRecipientsArray:@[userEntry]];
-    
-    NSData *messageData = [[builder build] data];
     
     // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
@@ -508,7 +476,7 @@
                                                           otherUser.identifier: @[secondOtherUserClient.identifier]
                                                           },
                                                   @"redundant": @{
-                                                          otherUser.identifier: @[redundantClientId]
+                                                          otherUser.identifier: @[redundantClient.identifier]
                                                           }
                                                   };
         
@@ -517,6 +485,49 @@
     }
     
     XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount);
+}
+
+- (void)testThatItDecodesOTRMessageProtobufOnReceivingClient
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    __block MockUserClient *selfClient;
+    
+    __block MockUser *otherUser;
+    __block MockUserClient *otherUserClient;
+    
+    __block MockConversation *conversation;
+    
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"foo"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        
+        otherUser = [session insertUserWithName:@"bar"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
+        
+        selfClient = [selfUser.clients anyObject];
+        otherUserClient = [otherUser.clients anyObject];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *messageText = @"Fofooof";
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
+    
+    ZMNewOtrMessageBuilder *builder = [selfClient OTRMessageBuilderWithRecipientsForClients:@[otherUserClient] plainText:message.data];
+    NSData *messageData = [[builder build] data];
+    
+    // WHEN
+    NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
+    ZMTransportResponse *response = [self responseForProtobufData:messageData path:requestPath method:ZMMethodPOST];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 201);
+    MockEvent *lastEvent = conversation.events.lastObject;
+    XCTAssertNotNil(lastEvent);
+    XCTAssertEqual(lastEvent.eventType, ZMTUpdateEventConversationOTRMessageAdd);
+    XCTAssertNotNil(lastEvent.decryptedOTRData);
+    ZMGenericMessage *decryptedMessage = (ZMGenericMessage *)[[[[ZMGenericMessageBuilder alloc] init] mergeFromData:lastEvent.decryptedOTRData] build];
+    XCTAssertEqualObjects(decryptedMessage.textData.content, messageText);
 }
 
 - (void)testThatItReturnsMissingAndRedundantClientsWhenReceivingOTRAsset
@@ -624,43 +635,9 @@
     
     NSData *imageData = [self verySmallJPEGData];
     ZMGenericMessage *message = [ZMGenericMessage genericMessageWithImageData:imageData format:ZMImageFormatMedium nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSString *redundantClientId = [NSString createAlphanumericalString];
     
-    ZMOtrAssetMetaBuilder *builder = [ZMOtrAssetMeta builder];
-    ZMClientIdBuilder *senderBuilder = [ZMClientId builder];
-    
-    unsigned long long senderId = 0;
-    [[NSScanner scannerWithString:selfClient.identifier] scanHexLongLong:&senderId];
-    
-    [senderBuilder setClient:senderId];
-    [builder setSender:[senderBuilder build]];
+    ZMOtrAssetMetaBuilder *builder = [selfClient OTRAssetMessageBuilderWithRecipientsForClients:@[otherUserClient] plainText:message.data];
     [builder setIsInline:NO];
-    
-    ZMUserEntryBuilder *userEntryBuilder = [ZMUserEntry builder];
-    ZMUserIdBuilder *userIdBuilder = [ZMUserId builder];
-    [userIdBuilder setUuid:[[NSUUID uuidWithTransportString:otherUser.identifier] data]];
-    [userEntryBuilder setUser:[userIdBuilder build]];
-    
-    NSArray *recipients = [@[otherUserClient.identifier, redundantClientId] mapWithBlock:^id(NSString *clientId) {
-
-        ZMClientIdBuilder *recipientBuilder = [ZMClientId builder];
-        
-        unsigned long long recipientId = 0;
-        [[NSScanner scannerWithString:clientId] scanHexLongLong:&recipientId];
-        
-        [recipientBuilder setClient:recipientId];
-        
-        ZMClientEntryBuilder *clientEntryBuilder = [ZMClientEntry builder];
-        [clientEntryBuilder setClient:[recipientBuilder build]];
-        [clientEntryBuilder setText:message.data];
-        
-        return [clientEntryBuilder build];
-    }];
-    
-    [userEntryBuilder setClientsArray:recipients];
-    ZMUserEntry *userEntry = [userEntryBuilder build];
-    [builder setRecipientsArray:@[userEntry]];
-    
     NSData *messageData = [[builder build] data];
     
     // WHEN
@@ -679,9 +656,7 @@
                                                           selfUser.identifier: @[secondSelfClient.identifier],
                                                           otherUser.identifier: @[secondOtherUserClient.identifier]
                                                           },
-                                                  @"redundant": @{
-                                                          otherUser.identifier: @[redundantClientId]
-                                                          }
+                                                  @"redundant": @{}
                                                   };
         
         AssertEqualDictionaries(expectedResponsePayload[@"missing"], response.payload.asDictionary[@"missing"]);
@@ -802,51 +777,7 @@
     
     NSString *messageText = @"Fofooof";
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    
-    NSString *redundantClientId = [NSString createAlphanumericalString];
-    
-    ZMNewOtrMessageBuilder *builder = [ZMNewOtrMessage builder];
-    ZMClientIdBuilder *senderBuilder = [ZMClientId builder];
-    
-    unsigned long long senderId = 0;
-    [[NSScanner scannerWithString:selfClient.identifier] scanHexLongLong:&senderId];
-    
-    [senderBuilder setClient:senderId];
-    [builder setSender:[senderBuilder build]];
-    
-    NSDictionary *usersToClients = @{
-                                     selfUser.identifier: @[secondSelfClient.identifier],
-                                     otherUser.identifier: @[otherUserClient.identifier, secondOtherUserClient.identifier, redundantClientId]
-                                     };
-    
-    for (NSString *userId in usersToClients) {
-        
-        NSArray *recipients = [(NSArray *)usersToClients[userId] mapWithBlock:^id(NSString *clientId) {
-            
-            ZMClientIdBuilder *recipientBuilder = [ZMClientId builder];
-            
-            unsigned long long recipientId = 0;
-            [[NSScanner scannerWithString:clientId] scanHexLongLong:&recipientId];
-            
-            [recipientBuilder setClient:recipientId];
-            
-            ZMClientEntryBuilder *clientEntryBuilder = [ZMClientEntry builder];
-            [clientEntryBuilder setClient:[recipientBuilder build]];
-            [clientEntryBuilder setText:message.data];
-            
-            return [clientEntryBuilder build];
-        }];
-        
-        ZMUserEntryBuilder *userEntryBuilder = [ZMUserEntry builder];
-        ZMUserIdBuilder *userIdBuilder = [ZMUserId builder];
-        [userIdBuilder setUuid:[[NSUUID uuidWithTransportString:userId] data]];
-        [userEntryBuilder setUser:[userIdBuilder build]];
-
-        [userEntryBuilder setClientsArray:recipients];
-        ZMUserEntry *userEntry = [userEntryBuilder build];
-        
-        [builder addRecipients:userEntry];
-    }
+    ZMNewOtrMessageBuilder *builder = [selfClient OTRMessageBuilderWithRecipientsForClients:@[secondSelfClient, otherUserClient, secondOtherUserClient] plainText:message.data];
     
     NSData *messageData = [[builder build] data];
 
@@ -863,9 +794,7 @@
         
         NSDictionary *expectedResponsePayload = @{
                                                   @"missing": @{},
-                                                  @"redundant": @{
-                                                          otherUser.identifier: @[redundantClientId]
-                                                          }
+                                                  @"redundant": @{}
                                                   };
         
         AssertEqualDictionaries(expectedResponsePayload[@"missing"], response.payload.asDictionary[@"missing"]);
@@ -1074,7 +1003,7 @@
     
     // WHEN
     NSData *fileData = [NSData secureRandomDataOfLength:256];
-    ZMOtrAssetMeta *metaData = [self OTRAssetMetaWithSender:selfClient recipients:@[otherUser] text:[NSData secureRandomDataOfLength:16]];
+    ZMOtrAssetMeta *metaData = [[selfClient OTRAssetMessageBuilderWithRecipientsForClients:otherUser.clients.allObjects plainText:[NSData secureRandomDataOfLength:16]] build];
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
     ZMTransportResponse *response = [self responseForFileData:fileData path:requestPath metadata:metaData.data contentType:@"multipart/mixed"];
@@ -1090,41 +1019,6 @@
     }
     
     XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount + 1u);
-}
-
-- (ZMOtrAssetMeta *)OTRAssetMetaWithSender:(MockUserClient *)sender recipients:(NSArray <MockUser *>*)recipients text:(NSData *)text
-{
-    ZMOtrAssetMetaBuilder *builder = ZMOtrAssetMeta.builder;
-    ZMClientIdBuilder *senderIDBuilder = ZMClientId.builder;
-    
-    NSArray <ZMUserEntry *>* userEntries = [recipients mapWithBlock:^ZMUserEntry *(MockUser *user) {
-        ZMUserEntryBuilder *entryBuilder = ZMUserEntry.builder;
-        ZMUserIdBuilder *userIDBuilder = ZMUserId.builder;
-        [userIDBuilder setUuid:[NSUUID uuidWithTransportString:user.identifier].data];
-        entryBuilder.user = userIDBuilder.build;
-        [entryBuilder setClientsArray:[user.clients.allObjects mapWithBlock:^ZMClientEntry *(MockUserClient *client) {
-            ZMClientEntryBuilder *clientBuilder = ZMClientEntry.builder;
-            ZMClientIdBuilder *clientIDBuilder = ZMClientId.builder;
-            unsigned long long hexID;
-            [[NSScanner scannerWithString:client.identifier] scanHexLongLong:&hexID];
-            [clientIDBuilder setClient:hexID];
-            [clientBuilder setClient:clientIDBuilder.build];
-            [clientBuilder setText:text];
-            return clientBuilder.build;
-        }]];
-        
-        return entryBuilder.build;
-    }];
-    
-    [builder setRecipientsArray:userEntries];
-    builder.isInline = NO;
-    builder.nativePush = YES;
-
-    unsigned long long hexID;
-    [[NSScanner scannerWithString:sender.identifier] scanHexLongLong:&hexID];
-    [senderIDBuilder setClient:hexID];
-    builder.sender = senderIDBuilder.build;
-    return builder.build;
 }
 
 - (void)testThatItCreatesPushEventsWhenReceivingOTRAssetWithoutMissedClients_Protobuf
@@ -1158,51 +1052,7 @@
     NSData *imageData = [self verySmallJPEGData];
     ZMGenericMessage *message = [ZMGenericMessage genericMessageWithImageData:imageData format:ZMImageFormatMedium nonce:[NSUUID createUUID].transportString expiresAfter:nil];
     
-    NSString *redundantClientId = [NSString createAlphanumericalString];
-    
-    ZMOtrAssetMetaBuilder *builder = [ZMOtrAssetMeta builder];
-    ZMClientIdBuilder *senderBuilder = [ZMClientId builder];
-    
-    unsigned long long senderId = 0;
-    [[NSScanner scannerWithString:selfClient.identifier] scanHexLongLong:&senderId];
-    
-    [senderBuilder setClient:senderId];
-    [builder setSender:[senderBuilder build]];
-    
-    NSDictionary *usersToClients = @{
-                                     selfUser.identifier: @[secondSelfClient.identifier],
-                                     otherUser.identifier: @[otherUserClient.identifier, secondOtherUserClient.identifier, redundantClientId]
-                                     };
-    
-    for (NSString *userId in usersToClients) {
-        
-        NSArray *recipients = [(NSArray *)usersToClients[userId] mapWithBlock:^id(NSString *clientId) {
-            
-            ZMClientIdBuilder *recipientBuilder = [ZMClientId builder];
-            
-            unsigned long long recipientId = 0;
-            [[NSScanner scannerWithString:clientId] scanHexLongLong:&recipientId];
-            
-            [recipientBuilder setClient:recipientId];
-            
-            ZMClientEntryBuilder *clientEntryBuilder = [ZMClientEntry builder];
-            [clientEntryBuilder setClient:[recipientBuilder build]];
-            [clientEntryBuilder setText:message.data];
-            
-            return [clientEntryBuilder build];
-        }];
-        
-        ZMUserEntryBuilder *userEntryBuilder = [ZMUserEntry builder];
-        ZMUserIdBuilder *userIdBuilder = [ZMUserId builder];
-        [userIdBuilder setUuid:[[NSUUID uuidWithTransportString:userId] data]];
-        [userEntryBuilder setUser:[userIdBuilder build]];
-        
-        [userEntryBuilder setClientsArray:recipients];
-        ZMUserEntry *userEntry = [userEntryBuilder build];
-        
-        [builder addRecipients:userEntry];
-    }
-    
+    ZMOtrAssetMetaBuilder *builder = [selfClient OTRAssetMessageBuilderWithRecipientsForClients:@[secondSelfClient, otherUserClient, secondOtherUserClient] plainText:message.data];
     NSData *messageData = [[builder build] data];
     
     // WHEN
@@ -1218,9 +1068,7 @@
         
         NSDictionary *expectedResponsePayload = @{
                                                   @"missing": @{},
-                                                  @"redundant": @{
-                                                          otherUser.identifier: @[redundantClientId]
-                                                          }
+                                                  @"redundant": @{}
                                                   };
         
         AssertEqualDictionaries(expectedResponsePayload[@"missing"], response.payload.asDictionary[@"missing"]);
