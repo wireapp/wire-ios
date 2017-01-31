@@ -1424,6 +1424,34 @@ SettingsClientViewController {
     }
 }
 
+ChangeEmailTableViewCell {
+    backgroundColor: clear;
+    
+    emailTextField: @{
+        font: $font-normal;
+        textColor: $color-text-foreground-dark;
+        backgroundColor: clear
+    }
+}
+
+ConfirmEmailDescriptionView {
+    backgroundColor: clear;
+    descriptionLabel: @{
+        font: $font-normal-medium;
+        textColor: $color-text-foreground-dark;
+        backgroundColor: clear
+    }
+}
+
+ShortLabelTableViewCell {
+    backgroundColor: clear;
+    textLabel: @{
+        font: $font-normal-medium;
+        textColor: $color-text-foreground-dark;
+        backgroundColor: clear
+    }
+}
+
 ChangeHandleTableViewCell {
     backgroundColor: clear;
 
