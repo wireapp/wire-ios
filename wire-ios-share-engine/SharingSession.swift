@@ -68,7 +68,7 @@ class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     }
     
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(key: "PersistedClientId") as? String { // TODO move constant into shared framework
+        if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String { // TODO move constant into shared framework
             return clientId.characters.count > 0
         }
         
