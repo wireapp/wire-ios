@@ -89,7 +89,8 @@
     self.hasHidden ||
     self.hasEdited ||
     self.hasConfirmation ||
-    self.hasEphemeral;
+    self.hasEphemeral ||
+    self.hasCalling;
 }
 
 
@@ -171,6 +172,19 @@
     ZMConfirmation *confirmation = [ZMConfirmation messageWithMessageID:messageID confirmationType:type];
     return [ZMGenericMessage genericMessageWithPbMessage:confirmation messageID:nonce expiresAfter:nil];
 }
+
++ (ZMGenericMessage *)messageWithCallingContent:(NSString *)content
+                                          nonce:(NSString *)nonce;
+{
+    ZMCallingBuilder *callingBuilder = [ZMCalling builder];
+    callingBuilder.content = content;
+    
+    ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
+    builder.calling = [callingBuilder build];
+    builder.messageId = nonce;
+    return [builder build];
+}
+
 
 @end
 

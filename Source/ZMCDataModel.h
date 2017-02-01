@@ -71,11 +71,6 @@
 #import <ZMCDataModel/ZMNotifications.h>
 #import <ZMCDataModel/ZMNotifications+Internal.h>
 
-#import <ZMCDataModel/ZMVoiceChannel.h>
-#import <ZMCDataModel/ZMVoiceChannel+Internal.h>
-#import <ZMCDataModel/ZMVoiceChannelNotifications.h>
-#import <ZMCDataModel/ZMVoiceChannelNotifications+Internal.h>
-
 #import <ZMCDataModel/ZMUpdateEvent+ZMCDataModel.h>
 #import <ZMCDataModel/ZMPersonName.h>
 #import <ZMCDataModel/NSFetchRequest+ZMRelationshipKeyPaths.h>

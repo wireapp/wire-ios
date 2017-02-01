@@ -84,6 +84,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (ZMGenericMessage *)messageWithEmojiString:(NSString *)emojiString
                                    messageID:(NSString *)messageID
                                        nonce:(NSString *)nonce;
+
++ (ZMGenericMessage *)messageWithCallingContent:(NSString *)content
+                                          nonce:(NSString *)nonce;
+
 - (BOOL)knownMessage;
 
 @end

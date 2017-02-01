@@ -141,30 +141,6 @@ class ConversationObserverTokenTests : ZMBaseManagedObjectTest {
         user.name = name
         self.uiMOC.saveOrRollback()
     }
-
-    func testThatItNotifiesTheObserverIfTheVoiceChannelStateChanges()
-    {
-        // given
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = ZMConversationType.group
-        let otherUser = ZMUser.insertNewObject(in:self.uiMOC)
-        otherUser.name = "Foo"
-        conversation.mutableOtherActiveParticipants.add(otherUser)
-        self.uiMOC.saveOrRollback()
-        
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-            modifier: { _ in
-                conversation.callDeviceIsActive = true
-
-                self.uiMOC.globalManagedObjectContextObserver.notifyUpdatedCallState(Set(arrayLiteral:conversation), notifyDirectly:true)
-            },
-            expectedChangedFields: KeySet(["voiceChannelStateChanged", "conversationListIndicatorChanged"]),
-            expectedChangedKeys: KeySet(["voiceChannelState", "conversationListIndicator"])
-        )
-        
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
     
     func testThatItNotifiesTheObserverOfANameChangeBecauseOfActiveParticipants()
     {

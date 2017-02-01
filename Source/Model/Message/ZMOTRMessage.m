@@ -189,7 +189,7 @@ NSString * const DeliveredKey = @"delivered";
         }
     }
     
-    if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction) {
+    if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction || message.hasCalling) {
         return nil;
     }
     

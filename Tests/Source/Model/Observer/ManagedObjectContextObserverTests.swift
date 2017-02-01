@@ -30,11 +30,10 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
 
     }
     
-    class TestObserver : NSObject, ZMConversationObserver, ZMUserObserver, ZMVoiceChannelStateObserver, ZMMessageObserver {
+    class TestObserver : NSObject, ZMConversationObserver, ZMUserObserver, ZMMessageObserver {
     
         var conversationNotes: [ConversationChangeInfo] = []
         var userNotes: [UserChangeInfo] = []
-        var voiceChannelNotes: [VoiceChannelStateChangeInfo] = []
         var messageChangeNotes: [MessageChangeInfo] = []
 
         func conversationDidChange(_ note: ConversationChangeInfo!) {
@@ -42,10 +41,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
         }
         func userDidChange(_ note: UserChangeInfo!) {
             userNotes.append(note)
-        }
-        
-        func voiceChannelStateDidChange(_ note: VoiceChannelStateChangeInfo) {
-            voiceChannelNotes.append(note)
         }
         
         func messageDidChange(_ note: MessageChangeInfo!) {
@@ -112,58 +107,6 @@ class ManagedObjectContextObserverTests : ZMBaseManagedObjectTest {
 
         ZMConversation.removeObserver(for: conversationToken)
         ZMUser.removeObserver(for: userToken)
-    }
-    
-    
-    func testThatItAddsCallStateChangesAndProcessThemLater() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = .group
-        self.uiMOC.saveOrRollback()
-        
-        let observer = TestObserver()
-        let voiceChannelToken = conversation.voiceChannel.add(observer)
-        
-        // when
-        conversation.callDeviceIsActive = true;
-        self.uiMOC.globalManagedObjectContextObserver.notifyUpdatedCallState(Set(arrayLiteral:conversation), notifyDirectly: false)
-        
-        // then
-        XCTAssertEqual(observer.voiceChannelNotes.count, 0)
-        
-        // and when
-        NotificationCenter.default.post(name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: self.uiMOC)
-        
-        // then
-        XCTAssertEqual(observer.voiceChannelNotes.count, 1)
-        
-        conversation.voiceChannel.removeStateObserver(for: voiceChannelToken!)
-    }
-    
-    func testThatItAddsCallStateChangesAndProcessesThemDirectly() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = .group
-        self.uiMOC.saveOrRollback()
-        
-        let observer = TestObserver()
-        let voiceChannelToken = conversation.voiceChannel.add(observer)
-        
-        // when
-        conversation.callDeviceIsActive = true;
-        self.uiMOC.globalManagedObjectContextObserver.notifyUpdatedCallState(Set(arrayLiteral:conversation), notifyDirectly: true)
-        
-        // then
-        XCTAssertEqual(observer.voiceChannelNotes.count, 1)
-        observer.voiceChannelNotes = []
-        
-        // and when
-        NotificationCenter.default.post(name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: self.uiMOC)
-        
-        // then
-        XCTAssertEqual(observer.voiceChannelNotes.count, 0)
-        
-        conversation.voiceChannel.removeStateObserver(for: voiceChannelToken!)
     }
     
     func testThatItFiltersZombieObjectsFromManagedObjectChangesInsertedAndUpdated() {

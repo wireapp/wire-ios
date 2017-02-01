@@ -43,15 +43,6 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         }
     }
     
-    class GlobalVoiceChannelTestObserver : NSObject, ZMVoiceChannelStateObserver {
-        
-        var changes : [VoiceChannelStateChangeInfo] = []
-        
-        @objc func voiceChannelStateDidChange(_ info: VoiceChannelStateChangeInfo) {
-            changes.append(info)
-        }
-    }
-    
     func testThatItNotifiesObserversWhenANewConversationIsInsertedThatMatchesListPredicate()
     {
         // given
@@ -107,7 +98,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -135,7 +126,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -166,52 +157,6 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
 
     }
     
-    func testThatItNotifiesObserversWhenAConversationChangesToNotMatchThePredicateAndThenToMatchThePredicateAgain_Calling()
-    {
-        // given
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        let user = ZMUser.insertNewObject(in:self.uiMOC)
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        
-        conversation.conversationType = .oneOnOne
-        conversation.mutableOtherActiveParticipants.add(user)
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
-        let mutableCallParticipants = conversation.mutableOrderedSetValue(forKey: ZMConversationCallParticipantsKey)
-        mutableCallParticipants.add(user)
-        self.uiMOC.saveOrRollback()
-        
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
-        
-        // when
-        conversation.callDeviceIsActive = true
-        conversation.isFlowActive = true
-        conversation.activeFlowParticipants = NSOrderedSet(array: [user, selfUser])
-        self.uiMOC.globalManagedObjectContextObserver.notifyUpdatedCallState(Set(arrayLiteral: conversation), notifyDirectly: true)
-        
-        conversation.callDeviceIsActive = false
-        conversation.isFlowActive = false
-        self.uiMOC.globalManagedObjectContextObserver.notifyUpdatedCallState(Set(arrayLiteral: conversation), notifyDirectly: true)
-        
-        // then
-        XCTAssertEqual(testObserver.changes.count, 2)
-        if let first = testObserver.changes.first {
-            XCTAssertEqual(first.insertedIndexes, IndexSet())
-            XCTAssertEqual(first.deletedIndexes, IndexSet(integer: 0))
-            XCTAssertEqual(first.updatedIndexes, IndexSet())
-            XCTAssertEqual(self.movedIndexes(first), [])
-        }
-        if let first = testObserver.changes.last {
-            XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
-            XCTAssertEqual(first.deletedIndexes, IndexSet())
-            XCTAssertEqual(first.updatedIndexes, IndexSet())
-            XCTAssertEqual(self.movedIndexes(first), [])
-        }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        conversationList.removeObserver(for: token)
-
-    }
-    
     func testThatItNotifiesObserversWhenAConversationChangesSoItNowDoesMatchThePredicate()
     {
         // given
@@ -219,7 +164,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation.conversationType = .group
         conversation.isArchived = true
         self.uiMOC.saveOrRollback()
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         XCTAssertEqual(conversationList.count, 0)
         
         self.uiMOC.saveOrRollback()
@@ -249,7 +194,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         conversation.isArchived = true
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -297,7 +242,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation3.lastModifiedDate = Date(timeIntervalSince1970: 1400)
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
 
         let token = conversationList.add(testObserver)
@@ -331,7 +276,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation2.lastModifiedDate = Date(timeIntervalSince1970: 100)
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
 
         let token = conversationList.add(testObserver)
@@ -359,7 +304,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         let conversation1 = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation1.conversationType = .group
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
         let token = conversationList.add(testObserver)
         self.uiMOC.saveOrRollback()
@@ -433,7 +378,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -461,7 +406,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -492,7 +437,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation.mutableOtherActiveParticipants.add(user)
         conversation.conversationType = .group
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
         user.name = "Foo"
@@ -523,7 +468,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -561,7 +506,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         self.uiMOC.saveOrRollback()
         
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
         let token = conversationList.add(testObserver)
         
@@ -570,6 +515,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         // when
         self.simulateUnreadCount(1, for: conversation)
         self.uiMOC.saveOrRollback()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(conversation.estimatedUnreadCount, 1)
@@ -594,7 +540,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
         let token = conversationList.add(testObserver)
         
@@ -657,7 +603,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
         let token = conversationList.add(testObserver)
         
@@ -685,13 +631,14 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation.conversationType = .group
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
         let token = conversationList.add(testObserver)
 
         // when
         self.simulateUnreadMissedCall(in: conversation)
         self.uiMOC.saveOrRollback()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
@@ -717,7 +664,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchivedAndCalling(in: self.uiMOC)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
         let token = conversationList.add(testObserver)
         conversationList.removeObserver(for: token)
@@ -731,27 +678,4 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(testObserver.changes.count, 0)
     }
 
-    func testThatItNotifiesGlobalVoiceChannelObserversWhenAVoiceChannelStateChanges()
-    {
-        // given
-        let conversation1 = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation1.conversationType = .oneOnOne
-        let conversation2 = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation2.conversationType = .oneOnOne
-        let conversation3 = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation3.conversationType = .oneOnOne
-        self.uiMOC.saveOrRollback()
-        
-        let testObserver = GlobalVoiceChannelTestObserver()
-        let token: AnyObject = self.uiMOC.globalManagedObjectContextObserver.addGlobalVoiceChannelObserver(testObserver)
-        
-        // when
-        conversation1.callDeviceIsActive = true
-        self.uiMOC.globalManagedObjectContextObserver.notifyUpdatedCallState(Set(arrayLiteral: conversation1, conversation2, conversation3), notifyDirectly: true)
-        
-        // then
-        XCTAssertEqual(testObserver.changes.count, 1);
-        
-        self.uiMOC.globalManagedObjectContextObserver.removeGlobalVoiceChannelStateObserverForToken(token)
-    }
 }

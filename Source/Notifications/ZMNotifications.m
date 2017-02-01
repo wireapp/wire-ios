@@ -280,41 +280,6 @@ NSString *const ZMDatabaseCorruptionNotificationName = @"ZMDatabaseCorruptionNot
 @end
 
 
-
-
-@interface ZMCallEndedNotification ()
-@property (nonatomic) ZMVoiceChannelCallEndReason reason;
-@end
-
-@implementation ZMCallEndedNotification
-
-+ (instancetype)notificationWithConversation:(ZMConversation *)conversation reason:(ZMVoiceChannelCallEndReason)reason;
-{
-    ZMCallEndedNotification *note = [[ZMCallEndedNotification alloc] initWithName:ZMCallEndedNotificationName object:conversation];
-    note.reason = reason;
-    return note;
-}
-
-- (ZMConversation *)conversation
-{
-    return self.object;
-}
-
-+ (void)addCallEndObserver:(id<ZMCallEndObserver>)observer
-{
-    ZM_ALLOW_MISSING_SELECTOR
-    ([[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(didEndCall:) name:ZMCallEndedNotificationName object:nil]);
-}
-
-+ (void)removeCallEndObserver:(id<ZMCallEndObserver>)observer
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:ZMCallEndedNotificationName object:nil];
-}
-
-@end
-
-
-
 @implementation ZMInvitationStatusChangedNotification : ZMNotification
 
 + (instancetype)invitationStatusChangedNotificationForContactEmailAddress:(NSString *)emailAddress status:(ZMInvitationStatus)status

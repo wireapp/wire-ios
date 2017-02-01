@@ -23,11 +23,11 @@ extension ZMConversation {
 
     /// Appends a "message was delete" system message
     public func appendDeletedForEveryoneSystemMessage(at date: Date, sender: ZMUser) {
-        _ = self.appendSystemMessage(type: .messageDeletedForEveryone,
-                                     sender: sender,
-                                     users: nil,
-                                     clients: nil,
-                                     timestamp: date)
+        self.appendSystemMessage(type: .messageDeletedForEveryone,
+                                 sender: sender,
+                                 users: nil,
+                                 clients: nil,
+                                 timestamp: date)
         
     }
 }

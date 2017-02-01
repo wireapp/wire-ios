@@ -19,10 +19,25 @@
 
 import Foundation
 
-struct SetStateUpdate {
+public extension NSOrderedSet {
     
-    let newSnapshot : SetSnapshot
-    let changeInfo : SetChangeInfo
+    public func subtracting(orderedSet: NSOrderedSet) -> NSOrderedSet {
+        let mutableSelf = mutableCopy() as! NSMutableOrderedSet
+        mutableSelf.minus(orderedSet)
+        return NSOrderedSet(orderedSet: mutableSelf)
+    }
+    
+    public func adding(orderedSet: NSOrderedSet) -> NSOrderedSet {
+        let mutableSelf = mutableCopy() as! NSMutableOrderedSet
+        mutableSelf.union(orderedSet)
+        return NSOrderedSet(orderedSet: mutableSelf)
+    }
+}
+
+public struct SetStateUpdate {
+    
+    public let newSnapshot : SetSnapshot
+    public let changeInfo : SetChangeInfo
     
     let removedObjects : NSOrderedSet
     let insertedObjects : NSOrderedSet
@@ -67,12 +82,12 @@ struct SetStateUpdate {
 
 }
 
- struct SetSnapshot {
+public struct SetSnapshot {
     
-    let set : NSOrderedSet
-    let moveType : ZMSetChangeMoveType
+    public let set : NSOrderedSet
+    public let moveType : ZMSetChangeMoveType
     
-    init(set: NSOrderedSet, moveType : ZMSetChangeMoveType) {
+    public init(set: NSOrderedSet, moveType : ZMSetChangeMoveType) {
         self.set = set.copy() as! NSOrderedSet
         self.moveType = moveType
     }
@@ -86,7 +101,7 @@ struct SetStateUpdate {
     }
     
     // Returns the new state and the notification to send after some changes in messages
-    func updatedState(_ updatedObjects: NSOrderedSet, observedObject: NSObject, newSet: NSOrderedSet) -> SetStateUpdate? {
+    public func updatedState(_ updatedObjects: NSOrderedSet, observedObject: NSObject, newSet: NSOrderedSet) -> SetStateUpdate? {
     
         if self.set == newSet && updatedObjects.count == 0 {
             return nil

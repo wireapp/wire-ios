@@ -26,7 +26,6 @@
 #import "ZMChangedIndexes.h"
 #import "ZMNotifications+Internal.h"
 #import "ZMEditableUser.h"
-#import "ZMVoiceChannel+Testing.h"
 #import "ZMMessageTests.h"
 #import "ZMBaseManagedObjectTest.h"
 #import "MessagingTest+EventFactory.h"
