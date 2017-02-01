@@ -82,6 +82,7 @@
 		16D0E07F1DF88B430075DF8F /* EntityTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E07E1DF88B430075DF8F /* EntityTranscoder.swift */; };
 		16D0E0871DF9928B0075DF8F /* DependencyMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E0861DF9928B0075DF8F /* DependencyMapTests.swift */; };
 		16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */; };
+		5442A7301E4222BD00415104 /* libPhoneNumberiOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54FB03B31E422125000E13DC /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */; };
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		BF7D9BE21D8C353A00949267 /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166902131D708709000FE4AF /* ZMCDataModel.framework */; };
@@ -136,6 +137,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				5442A7301E4222BD00415104 /* libPhoneNumberiOS.framework in CopyFiles */,
 				BF7D9BF01D8C355100949267 /* ZMProtos.framework in CopyFiles */,
 				BF7D9BF11D8C355100949267 /* Ono.framework in CopyFiles */,
 				BF7D9BF21D8C355100949267 /* Cryptobox.framework in CopyFiles */,
