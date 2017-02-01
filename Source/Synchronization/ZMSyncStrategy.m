@@ -175,7 +175,9 @@ ZM_EMPTY_ASSERTING_INIT()
         self.userClientRequestStrategy = [[UserClientRequestStrategy alloc] initWithAuthenticationStatus:authenticationStatus
                                                                                 clientRegistrationStatus:clientRegistrationStatus
                                                                                       clientUpdateStatus:clientUpdateStatus
-                                                                                                 context:self.syncMOC];
+                                                                                                 context:self.syncMOC
+                                                                                                userKeysStore:self.syncMOC.zm_cryptKeyStore
+                                          ];
         self.fetchingClientRequestStrategy = [[FetchingClientRequestStrategy alloc] initWithClientRegistrationStatus:clientRegistrationStatus managedObjectContext:self.syncMOC];
         self.missingClientsRequestStrategy = [[MissingClientsRequestStrategy alloc] initWithClientRegistrationStatus:clientRegistrationStatus apnsConfirmationStatus: self.apnsConfirmationStatus managedObjectContext:self.syncMOC];
         
@@ -425,10 +427,10 @@ ZM_EMPTY_ASSERTING_INIT()
             if(self == nil || self.tornDown) {
                 return;
             }
+            [self.syncMOC mergeUserInfoFromUserInfo:userInfo];
             NSSet *changedConversations = [self.syncMOC mergeCallStateChanges:callStateChanges];
             [self.syncMOC mergeChangesFromContextDidSaveNotification:note];
             [self processSaveWithInsertedObjects:[NSSet set] updateObjects:changedConversations];
-            [self.syncMOC mergeUserInfoFromUserInfo:userInfo];
             [self.syncMOC processPendingChanges]; // We need this because merging sometimes leaves the MOC in a 'dirty' state
         }];
     } else if (mocThatSaved.zm_isSyncContext) {
@@ -440,12 +442,11 @@ ZM_EMPTY_ASSERTING_INIT()
             if(self == nil || self.tornDown) {
                 return;
             }
-    
+
+            [self.uiMOC mergeUserInfoFromUserInfo:userInfo];
             NSSet *changedConversations = [strongUiMoc mergeCallStateChanges:callStateChanges];
             [strongUiMoc.globalManagedObjectContextObserver notifyUpdatedCallState:changedConversations notifyDirectly:[self shouldForwardCallStateChangeDirectlyForNote:note]];
-           
             [strongUiMoc mergeChangesFromContextDidSaveNotification:note];
-            [self.uiMOC mergeUserInfoFromUserInfo:userInfo];
             [strongUiMoc processPendingChanges]; // We need this because merging sometimes leaves the MOC in a 'dirty' state
         }];
     }
