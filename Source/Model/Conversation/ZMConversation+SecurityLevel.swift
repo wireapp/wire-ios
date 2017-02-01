@@ -67,18 +67,18 @@ extension ZMConversation {
         guard ZMSystemMessage.fetchStartedUsingOnThisDeviceMessage(conversation: self) == nil else { return }
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
-        _ = self.appendSystemMessage(type: .usingNewDevice,
-                                     sender: selfUser,
-                                     users: Set(arrayLiteral: selfUser),
-                                     clients: Set(arrayLiteral: selfClient),
-                                     timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
+        self.appendSystemMessage(type: .usingNewDevice,
+                                 sender: selfUser,
+                                 users: Set(arrayLiteral: selfUser),
+                                 clients: Set(arrayLiteral: selfClient),
+                                 timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
     }
 
     /// Creates a system message when a device has previously been used before, but was logged out due to invalid cookie and/ or invalidated client
     public func appendContinuedUsingThisDeviceMessage() {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
-        _ = self.appendSystemMessage(type: .reactivatedDevice,
+        self.appendSystemMessage(type: .reactivatedDevice,
                                  sender: selfUser,
                                  users: Set(arrayLiteral: selfUser),
                                  clients: Set(arrayLiteral: selfClient),
@@ -113,11 +113,11 @@ extension ZMConversation {
         let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
         let clients = client.flatMap { Set(arrayLiteral: $0) } ?? Set<UserClient>()
         let serverTimestamp = date ?? self.timestamp(after: self.messages.lastObject as? ZMMessage)
-        _ = self.appendSystemMessage(type: type,
-                                     sender: sender,
-                                     users: nil,
-                                     clients: clients,
-                                     timestamp: serverTimestamp)
+        self.appendSystemMessage(type: type,
+                                 sender: sender,
+                                 users: nil,
+                                 clients: clients,
+                                 timestamp: serverTimestamp)
     }
     
     /// Decrease the security level if some clients are now not trusted
@@ -234,7 +234,7 @@ extension ZMConversation {
             self.securityLevel != .secureWithIgnored else {
                 return
             }
-        _ = self.appendSystemMessage(type: .conversationIsSecure,
+        self.appendSystemMessage(type: .conversationIsSecure,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
                                  clients: clients,
@@ -251,23 +251,24 @@ extension ZMConversation {
         } else {
             timestamp = self.timestamp(after: self.messages.lastObject as? ZMMessage)
         }
-        _ = self.appendSystemMessage(type: .newClient,
-                                     sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                     users: users,
-                                     clients: clients,
-                                     timestamp: timestamp)
+        self.appendSystemMessage(type: .newClient,
+                                 sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                                 users: users,
+                                 clients: clients,
+                                 timestamp: timestamp)
     }
     
     fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
         let users = Set(clients.flatMap { $0.user })
-        _ = self.appendSystemMessage(type: .ignoredClient,
-                                     sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                     users: users,
-                                     clients: clients,
-                                     timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
+        self.appendSystemMessage(type: .ignoredClient,
+                                 sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                                 users: users,
+                                 clients: clients,
+                                 timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
     }
     
+    @discardableResult
     func appendSystemMessage(type: ZMSystemMessageType,
                                          sender: ZMUser,
                                          users: Set<ZMUser>?,

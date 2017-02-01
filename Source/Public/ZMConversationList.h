@@ -35,14 +35,7 @@
 + (nonnull ZMConversationList *)conversationsIncludingArchivedInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 + (nonnull ZMConversationList *)conversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 + (nonnull ZMConversationList *)archivedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-
-+ (nonnull ZMConversationList *)nonIdleVoiceChannelConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)activeCallConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-
 + (nonnull ZMConversationList *)pendingConnectionConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 + (nonnull ZMConversationList *)clearedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 
-
-
 @end
-

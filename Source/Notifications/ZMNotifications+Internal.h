@@ -57,16 +57,6 @@
 @end
 
 
-@interface ZMCallEndedNotification (Internal)
-
-@property (nonatomic) ZMVoiceChannelCallEndReason reason;
-
-+ (instancetype)notificationWithConversation:(ZMConversation *)conversation reason:(ZMVoiceChannelCallEndReason)reason;
-
-@end
-
-
-
 @interface ZMInvitationStatusChangedNotification ()
 
 @property (nonatomic, readwrite, copy) NSString *emailAddress;

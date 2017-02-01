@@ -23,7 +23,6 @@
 #import "ZMSearchUser.h"
 #import "ZMConversationMessageWindow.h"
 #import "ZMConversationList.h"
-#import "ZMVoiceChannel.h"
 #import "ZMAddressBookContact.h"
 
 @class ZMMessage;
@@ -192,23 +191,6 @@ extern NSString * const ZMDatabaseCorruptionNotificationName;
 @end
 
 
-@protocol ZMCallEndObserver
-- (void)didEndCall:(ZMCallEndedNotification *)note;
-@end
-
-@interface ZMCallEndedNotification : ZMNotification
-
-@property (nonatomic, readonly) ZMConversation *conversation;
-@property (nonatomic, readonly) ZMVoiceChannelCallEndReason reason;
-
-+ (void)addCallEndObserver:(id<ZMCallEndObserver>)observer;
-+ (void)removeCallEndObserver:(id<ZMCallEndObserver>)observer;
-
-@end
-
-
-
-
 @protocol ZMInvitationStatusObserver <NSObject>
 - (void)invitationStatusChanged:(ZMInvitationStatusChangedNotification *)note;
 @end
@@ -223,6 +205,3 @@ extern NSString * const ZMDatabaseCorruptionNotificationName;
 + (void)removeInvitationStatusObserver:(id<ZMInvitationStatusObserver>)observer;
 
 @end
-
-
-

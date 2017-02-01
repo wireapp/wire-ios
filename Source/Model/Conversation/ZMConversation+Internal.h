@@ -99,19 +99,10 @@ NS_ASSUME_NONNULL_END
 + (nullable instancetype)conversationWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc created:(nullable BOOL *)created;
 + (nullable instancetype)insertGroupConversationIntoManagedObjectContext:(nonnull NSManagedObjectContext *)moc withParticipants:(nonnull NSArray *)participants;
 
-+ (nonnull NSPredicate *)predicateForConversationsIncludingArchived;
-+ (nonnull NSPredicate *)predicateForArchivedConversations;
-+ (nonnull NSPredicate *)predicateForClearedConversations;
-+ (nonnull NSPredicate *)predicateForConversationsExcludingArchivedAndInCall;
-+ (nonnull NSPredicate *)predicateForPendingConversations;
-+ (nonnull NSPredicate *)predicateForConversationsWithNonIdleVoiceChannel;
-+ (nonnull NSPredicate *)predicateForConversationWithActiveCalls;
-+ (nonnull NSPredicate *)predicateForSharableConversations;
-
 + (nonnull ZMConversationList *)conversationsIncludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
 + (nonnull ZMConversationList *)archivedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
 + (nonnull ZMConversationList *)clearedConversationsInContext:(nonnull NSManagedObjectContext *)moc;
-+ (nonnull ZMConversationList *)conversationsExcludingArchivedAndCallingInContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull ZMConversationList *)conversationsExcludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
 + (nonnull ZMConversationList *)pendingConversationsInContext:(nonnull NSManagedObjectContext *)moc;
 
 + (nonnull NSPredicate *)predicateForSearchString:(nonnull NSString *)searchString;

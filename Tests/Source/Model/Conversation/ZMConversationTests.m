@@ -24,8 +24,6 @@
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "ZMConversationList+Internal.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMVoiceChannel+Testing.h"
 #import "ZMConversationMessageWindow.h"
 #import "ZMConnection+Internal.h"
 #import "ZMConversation+Internal.h"
@@ -2731,10 +2729,18 @@
     [self simulateUnreadMissedCallInConversation:conversation];
 }
 
-
 - (void)setConversationAsHavingActiveCall:(ZMConversation *)conversation
 {
     conversation.callDeviceIsActive = YES;
+}
+
+- (void)setConversationAsHavingIgnoredCall:(ZMConversation *)conversation
+{
+    conversation.isIgnoringCall = YES;
+    
+    ZMUser *participant = [self createUserOnMoc:self.syncMOC];
+    NSMutableOrderedSet *participants = [conversation mutableOrderedSetValueForKey:ZMConversationCallParticipantsKey];
+    [participants addObject:participant];
 }
 
 - (void)setConversationAsBeingPending:(ZMConversation *)conversation inContext:(NSManagedObjectContext *)context
@@ -2818,7 +2824,7 @@
 }
 
 
-- (void)testThatConversationListIndicatorIsVoiceActiveWhenItHasActiveVoiceChannelAndLowerPriorityEvents
+- (void)testThatConversationListIndicatorIsVoiceInactiveWhenItHasIgnoredActiveVoiceChannelAndLowerPriorityEvents
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -2827,11 +2833,10 @@
         [self simulateUnreadMissedKnockInConversation:conversation];
         [self simulateUnreadMissedCallInConversation:conversation];
         [conversation setHasUnreadUnsentMessage:YES];
-        [self setConversationAsHavingActiveCall:conversation];
+        [self setConversationAsHavingIgnoredCall:conversation];
         
         // then
-        XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorActiveCall);
-        [conversation.voiceChannel tearDown];
+        XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorInactiveCall);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 }
@@ -2846,12 +2851,10 @@
         [self simulateUnreadMissedKnockInConversation:conversation];
         [self simulateUnreadMissedCallInConversation:conversation];
         [conversation setHasUnreadUnsentMessage:YES];
-        [self setConversationAsHavingActiveCall:conversation];
         [self setConversationAsBeingPending:conversation inContext:self.syncMOC];
         
         // then
         XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorPending);
-        [conversation.voiceChannel tearDown];
 
     }];
     WaitForAllGroupsToBeEmpty(0.5);

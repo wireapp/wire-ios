@@ -20,6 +20,7 @@
 #import "ZMConversationListDirectory.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversationList+Internal.h"
+#import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 static NSString * const ConversationListDirectoryKey = @"ZMConversationListDirectory";
 
@@ -32,12 +33,10 @@ static NSString * const PendingKey = @"Pending";
 
 @interface ZMConversationListDirectory ()
 
-@property (nonatomic) ZMConversationList* unarchivedAndNotCallingConversations;
+@property (nonatomic) ZMConversationList* unarchivedConversations;
 @property (nonatomic) ZMConversationList* conversationsIncludingArchived;
 @property (nonatomic) ZMConversationList* archivedConversations;
 @property (nonatomic) ZMConversationList* pendingConnectionConversations;
-@property (nonatomic) ZMConversationList* nonIdleVoiceChannelConversations;
-@property (nonatomic) ZMConversationList* activeCallConversations;
 @property (nonatomic) ZMConversationList* clearedConversations;
 
 @end
@@ -52,12 +51,10 @@ static NSString * const PendingKey = @"Pending";
     if (self) {
         NSArray *allConversations = [self fetchAllConversations:moc];
         
-        self.unarchivedAndNotCallingConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationsExcludingArchivedAndInCall] moc:moc debugDescription:@"unarchivedAndNotCallingConversations"];
+        self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationsExcludingArchived] moc:moc debugDescription:@"unarchivedConversations"];
         self.archivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForArchivedConversations] moc:moc debugDescription:@"archivedConversations"];
         self.conversationsIncludingArchived = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationsIncludingArchived] moc:moc debugDescription:@"conversationsIncludingArchived"];
         self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForPendingConversations] moc:moc debugDescription:@"pendingConnectionConversations"];
-        self.nonIdleVoiceChannelConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationsWithNonIdleVoiceChannel] moc:moc debugDescription:@"nonIdleVoiceChannelConversations"];
-        self.activeCallConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationWithActiveCalls] moc:moc debugDescription:@"activeCallConversations"];
         self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForClearedConversations] moc:moc debugDescription:@"clearedConversations"];
         
     }
@@ -84,9 +81,7 @@ static NSString * const PendingKey = @"Pending";
              self.pendingConnectionConversations,
              self.archivedConversations,
              self.conversationsIncludingArchived,
-             self.unarchivedAndNotCallingConversations,
-             self.nonIdleVoiceChannelConversations,
-             self.activeCallConversations
+             self.unarchivedConversations,
              ];
 }
 

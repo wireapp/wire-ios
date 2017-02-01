@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -22,8 +22,6 @@
 #import "ZMConversationListDirectory.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConnection+Internal.h"
-#import "ZMVoiceChannel+Internal.h"
-#import "ZMVoiceChannel+Testing.h"
 #import "ZMUser+Internal.h"
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
 
@@ -37,8 +35,6 @@
 @property (nonatomic) ZMConversation *invalidConversation;
 @property (nonatomic) ZMConversation *groupConversation;
 @property (nonatomic) ZMConversation *oneToOneConversation;
-@property (nonatomic) ZMConversation *oneToOneConversationWithActiveCall;
-@property (nonatomic) ZMConversation *groupConversationWithIncomingCall;
 @property (nonatomic) ZMConversation *clearedConversation;
 
 @end
@@ -95,20 +91,6 @@
     self.invalidConversation.conversationType = ZMConversationTypeInvalid;
     self.invalidConversation.userDefinedName = @"invalidConversation";
     
-    self.oneToOneConversationWithActiveCall = [self createConversation];
-    self.oneToOneConversationWithActiveCall.conversationType = ZMConversationTypeOneOnOne;
-    self.oneToOneConversationWithActiveCall.userDefinedName = @"oneToOneConversationWithActiveCall";
-    self.oneToOneConversationWithActiveCall.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.oneToOneConversationWithActiveCall.connection.status = ZMConnectionStatusAccepted;
-    self.oneToOneConversationWithActiveCall.callDeviceIsActive = YES;
-    
-    self.groupConversationWithIncomingCall = [self createConversation];
-    self.groupConversationWithIncomingCall.conversationType = ZMConversationTypeOneOnOne;
-    self.groupConversationWithIncomingCall.userDefinedName = @"groupConversationWithIncomingCall";
-    self.groupConversationWithIncomingCall.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
-    self.groupConversationWithIncomingCall.connection.status = ZMConnectionStatusAccepted;
-    [self.groupConversationWithIncomingCall.mutableOtherActiveParticipants addObject:otherUser];
-    
     self.clearedConversation = [self createConversation];
     self.clearedConversation.conversationType = ZMConversationTypeOneOnOne;
     self.clearedConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -118,30 +100,6 @@
     self.clearedConversation.isArchived = YES;
 
     [self.uiMOC saveOrRollback];
-    ZMCallState *callStateFromUIMOC = [self.uiMOC.zm_callState createCopyAndResetHasChanges];
-    [self.syncMOC performGroupedBlockAndWait:^{
-        [self.syncMOC mergeCallStateChanges:callStateFromUIMOC];
-
-        ZMConversation *oneToOneConv = (id)[self.syncMOC objectWithID:self.oneToOneConversationWithActiveCall.objectID];
-        
-        oneToOneConv.activeFlowParticipants = [NSOrderedSet orderedSetWithObject:otherUser];
-        [oneToOneConv.mutableOtherActiveParticipants addObject:otherUser];
-        [[oneToOneConv mutableOrderedSetValueForKey:ZMConversationCallParticipantsKey] addObject:otherUser];
-        oneToOneConv.isFlowActive = YES;
-        
-        ZMConversation *groupConv = (id)[self.syncMOC objectWithID:self.groupConversationWithIncomingCall.objectID];
-        [[groupConv mutableOrderedSetValueForKey:ZMConversationCallParticipantsKey] addObject:otherUser];
-
-        [self.syncMOC saveOrRollback];
-        [self.uiMOC mergeCallStateChanges:[self.syncMOC.zm_callState createCopyAndResetHasChanges]];
-    }];
-    
-    [self.uiMOC refreshObject:self.oneToOneConversationWithActiveCall mergeChanges:NO];
-    [self.uiMOC refreshObject:self.groupConversationWithIncomingCall mergeChanges:NO];
-
-    XCTAssertEqual(self.oneToOneConversationWithActiveCall.voiceChannelState, ZMVoiceChannelStateSelfConnectedToActiveChannel);
-    XCTAssertEqual(self.groupConversationWithIncomingCall.voiceChannelState, ZMVoiceChannelStateIncomingCall);
-    
 }
 
 - (void)tearDown
@@ -154,8 +112,7 @@
     self.archivedOneToOneConversation = nil;
     self.archivedGroupConversation = nil;
     self.oneToOneConversation = nil;
-    self.groupConversationWithIncomingCall = nil;
-    self.oneToOneConversationWithActiveCall = nil;
+    
     [super tearDown];
 }
 
@@ -163,7 +120,7 @@
 {
     // when
     ZMConversationList *list = [self.uiMOC.conversationListDirectory conversationsIncludingArchived];
-    NSSet *exepected = [NSSet setWithArray:@[self.archivedGroupConversation, self.archivedOneToOneConversation, self.groupConversation, self.oneToOneConversation, self.oneToOneConversationWithActiveCall, self.groupConversationWithIncomingCall]];
+    NSSet *exepected = [NSSet setWithArray:@[self.archivedGroupConversation, self.archivedOneToOneConversation, self.groupConversation, self.oneToOneConversation]];
     // then
     
     XCTAssertEqualObjects([NSSet setWithArray:list], exepected);
@@ -172,8 +129,8 @@
 - (void)testThatItReturnsUnarchivedConversations;
 {
     // when
-    ZMConversationList *list = [self.uiMOC.conversationListDirectory unarchivedAndNotCallingConversations];
-    NSSet *exepected = [NSSet setWithArray:@[self.groupConversation, self.oneToOneConversation, self.groupConversationWithIncomingCall]];
+    ZMConversationList *list = [self.uiMOC.conversationListDirectory unarchivedConversations];
+    NSSet *exepected = [NSSet setWithArray:@[self.groupConversation, self.oneToOneConversation]];
     
     // then
     XCTAssertEqualObjects([NSSet setWithArray:list], exepected);
@@ -207,26 +164,6 @@
     
     //then
     XCTAssertEqual(list1, list2);
-}
-
-- (void)testThatItReturnsNonIdleVoiceChannelConversations
-{
-    // when
-    ZMConversationList *list = [self.uiMOC.conversationListDirectory nonIdleVoiceChannelConversations];
-    NSSet *exepected = [NSSet setWithArray:@[self.groupConversationWithIncomingCall, self.oneToOneConversationWithActiveCall]];
-    
-    // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], exepected);
-}
-
-- (void)testThatItReturnsActiveCallConversations
-{
-    // when
-    ZMConversationList *list = [self.uiMOC.conversationListDirectory activeCallConversations];
-    NSSet *exepected = [NSSet setWithArray:@[self.oneToOneConversationWithActiveCall]];
-    
-    // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], exepected);
 }
 
 - (void)testThatItReturnsClearedConversations

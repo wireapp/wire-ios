@@ -38,7 +38,6 @@ public enum ObjectObserverType: Int {
     case searchUser
     case message
     case conversation
-    case voiceChannel
     case reaction
     case conversationMessageWindow
     case conversationList
@@ -65,7 +64,7 @@ public enum ObjectObserverType: Int {
     
     var shouldForwardDuringSync : Bool {
         switch self {
-        case .invalid, .client, .userList, .user, .searchUser, .message, .conversation, .voiceChannel, .conversationMessageWindow, .displayName, .reaction:
+        case .invalid, .client, .userList, .user, .searchUser, .message, .conversation, .conversationMessageWindow, .displayName, .reaction:
             return false
         case .conversationList, .connection:
             return true
@@ -74,7 +73,7 @@ public enum ObjectObserverType: Int {
     
     func observedObjectType() -> ObjectObserverType {
         switch self {
-        case .voiceChannel, .conversationMessageWindow, .conversationList:
+        case .conversationMessageWindow, .conversationList:
             return .conversation
         case .userList, .displayName:
             return .user
@@ -97,8 +96,6 @@ public enum ObjectObserverType: Int {
             return "Message"
         case .conversation:
             return "Conversation"
-        case .voiceChannel:
-            return "VoiceChannel"
         case .conversationMessageWindow:
             return "ConversationMessageWindow"
         case .conversationList:
@@ -162,7 +159,7 @@ public struct ManagedObjectChanges: CustomDebugStringConvertible {
     public let deleted: [NSObject]
     public let updated: [NSObject]
     
-    public init(inserted: [NSObject], deleted: [NSObject], updated: [NSObject]){
+    public init(inserted: [NSObject], deleted: [NSObject], updated: [NSObject]) {
         self.inserted = inserted
         self.deleted = deleted
         self.updated = updated
@@ -195,7 +192,7 @@ public struct ManagedObjectChanges: CustomDebugStringConvertible {
         )
     }
     
-    init(note: Notification) {
+    public init(note: Notification) {
 
         var inserted, deleted: [NSObject]?
         var updatedAndRefreshed = [NSObject]()
@@ -272,11 +269,7 @@ public final class ManagedObjectContextObserver: NSObject {
     fileprivate var globalUserObserver : GlobalUserObserver!
     
     fileprivate var accumulatedChanges = ManagedObjectChanges()
-    fileprivate var changedCallStateConversations = ManagedObjectChanges()
     fileprivate var isSyncDone = false
-    
-    public let callCenter = CTCallCenter()
-    
     
     public var propagateChanges = false {
         didSet {
@@ -367,9 +360,7 @@ public final class ManagedObjectContextObserver: NSObject {
 
         let changes = ManagedObjectChanges(note: note)
             + changesFromDisplayNameGenerator(note)
-            + changedCallStateConversations
         
-        changedCallStateConversations = ManagedObjectChanges()
         processChanges(changes)
     }
     
@@ -425,18 +416,6 @@ public final class ManagedObjectContextObserver: NSObject {
 
         let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: [user])
         propagateChangesForObservers(changes, observerType: .searchUser, accumulated: false)
-    }
-        
-    @objc public func notifyUpdatedCallState(_ conversations: Set<ZMConversation>, notifyDirectly: Bool) {
-        guard startObservingIfNeeded() else { return }
-
-        let changes = ManagedObjectChanges(inserted: [], deleted: [], updated: Array(conversations))
-
-        if notifyDirectly {
-            processChanges(changes)
-        } else {
-            changedCallStateConversations = changedCallStateConversations + changes
-        }
     }
     
     @objc public func notifyNonCoreDataChangeInManagedObject(_ object: NSObject) {
@@ -494,18 +473,6 @@ extension ManagedObjectContextObserver  {
         return self.globalConversationObserver.addObserver(observer, conversationList: conversationList)
     }
     
-    /// Adds a global voiceChannel observer
-    public func addGlobalVoiceChannelObserver(_ observer: ZMVoiceChannelStateObserver) -> AnyObject
-    {
-        return self.globalConversationObserver.addGlobalVoiceChannelStateObserver(observer)
-    }
-    
-    /// Adds a voiceChannel observer
-    public func addVoiceChannelStateObserver(_ observer: ZMVoiceChannelStateObserver, conversation: ZMConversation) -> AnyObject
-    {
-        return self.globalConversationObserver.addVoiceChannelStateObserver(observer, conversation: conversation)
-    }
-    
     /// Adds a conversation list observer
     public func addConversationObserver(_ observer: ZMConversationObserver, conversation: ZMConversation) -> AnyObject
     {
@@ -516,13 +483,6 @@ extension ManagedObjectContextObserver  {
     public func addUserObserver(_ observer: ZMUserObserver, user: ZMBareUser) -> AnyObject?
     {
         return self.globalUserObserver.addUserObserver(observer, user: user)
-    }
-    
-    /// Adds a voiceChannel participant observer
-    public func addCallParticipantsObserver(_ observer: ZMVoiceChannelParticipantsObserver, voiceChannel: ZMVoiceChannel) -> AnyObject
-    {
-        let token = self.globalConversationObserver.addVoiceChannelParticipantsObserver(observer, conversation: voiceChannel.conversation!)
-        return token
     }
     
     /// Adds a conversation window observer
@@ -591,27 +551,6 @@ extension ManagedObjectContextObserver  {
     public func removeUserObserverForToken(_ token: AnyObject) {
         if let observerToken = token as? UserObserverToken {
             self.globalUserObserver.removeUserObserverForToken(observerToken)
-        }
-    }
-    
-    /// Removes a global voiceChannel observer
-    public func removeGlobalVoiceChannelStateObserverForToken(_ token: AnyObject) {
-        if let observerToken = token as? GlobalVoiceChannelStateObserverToken {
-            self.globalConversationObserver.removeGlobalVoiceChannelStateObserver(observerToken)
-        }
-    }
-    
-    /// Removes a global voiceChannel observer
-    public func removeVoiceChannelStateObserverForToken(_ token: AnyObject) {
-        if let observerToken = token as? VoiceChannelStateObserverToken {
-            self.globalConversationObserver.removeVoiceChannelStateObserverForToken(observerToken)
-        }
-    }
-    
-    /// Removes a voiceChannel participant observer
-    public func removeCallParticipantsObserverForToken(_ token: AnyObject) {
-        if let observerToken = token as? VoiceChannelParticipantsObserverToken {
-            self.globalConversationObserver.removeVoiceChannelParticipantsObserverForToken(observerToken)
         }
     }
     

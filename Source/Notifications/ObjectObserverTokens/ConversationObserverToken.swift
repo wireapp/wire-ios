@@ -27,7 +27,7 @@ public protocol ZMGeneralConversationObserver {
 extension ZMConversation : ObjectInSnapshot {
     
     public var observableKeys : [String] {
-        var keys = ["messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "activeFlowParticipants", "callParticipants", "isSilenced", SecurityLevelKey, "otherActiveVideoCallParticipants", "displayName", "estimatedUnreadCount", "clearedTimeStamp"]
+        var keys = ["messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "isSilenced", SecurityLevelKey, "displayName", "estimatedUnreadCount", "clearedTimeStamp"]
         if self.conversationType == .group {
             keys.append("otherActiveParticipants")
             keys.append("isSelfAnActiveMember")
@@ -49,28 +49,16 @@ open class GeneralConversationChangeInfo : ObjectChangeInfo {
     
     var conversation : ZMConversation { return self.object as! ZMConversation }
     
-    
     internal var internalConversationChangeInfo : ConversationChangeInfo?
-    internal var internalVoiceChannelStateChangeInfo : VoiceChannelStateChangeInfo?
-    var callParticipantsChanged : Bool {
-        return !keysForCallParticipantsChangeInfo.isDisjoint(with: changedKeysAndOldValues.keys)
-    }
-    var videoParticipantsChanged : Bool {
-        return changedKeysAndOldValues.keys.contains("otherActiveVideoCallParticipants")
-    }
     
     fileprivate var keysForConversationChangeInfo : Set<String> {
-        return Set(arrayLiteral: "messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "voiceChannelState", "isSilenced", "otherActiveParticipants", "isSelfAnActiveMember", "displayName", "relatedConnectionState", "estimatedUnreadCount", "clearedTimeStamp", SecurityLevelKey)
-    }
-    
-    fileprivate var keysForCallParticipantsChangeInfo : Set <String> {
-        return Set(arrayLiteral: "activeFlowParticipants", "callParticipants", "otherActiveVideoCallParticipants")
+        return Set(arrayLiteral: "messages", "lastModifiedDate", "isArchived", "conversationListIndicator", "isSilenced", "otherActiveParticipants", "isSelfAnActiveMember", "displayName", "relatedConnectionState", "estimatedUnreadCount", "clearedTimeStamp", SecurityLevelKey)
     }
     
     func setAllKeys() {
         // we register conversation observers lazily when we receive a change from a save notification
         // in this case we don't know which keys changed nor their previous value, therefore we set all of them to true
-        let keys = keysForConversationChangeInfo.union(keysForCallParticipantsChangeInfo)
+        let keys = keysForConversationChangeInfo
         var dict : Dictionary<String, NSObject?> = [:]
         
         for key in keys {
@@ -86,14 +74,6 @@ open class GeneralConversationChangeInfo : ObjectChangeInfo {
             internalConversationChangeInfo!.changedKeysAndOldValues = changedKeysAndOldValues
         }
         return internalConversationChangeInfo
-    }
-    
-    var voiceChannelStateChangeInfo : VoiceChannelStateChangeInfo? {
-        if internalVoiceChannelStateChangeInfo == nil && changedKeysAndOldValues.keys.contains("voiceChannelState") {
-            internalVoiceChannelStateChangeInfo = VoiceChannelStateChangeInfo(object: object)
-            internalVoiceChannelStateChangeInfo!.changedKeysAndOldValues = changedKeysAndOldValues
-        }
-        return internalVoiceChannelStateChangeInfo
     }
     
     override open var description : String { return self.debugDescription }
@@ -219,10 +199,6 @@ class GeneralConversationObserverToken<T: NSObject> : ObjectObserverTokenContain
         return changedKeysAndOldValues.keys.contains("conversationListIndicator")
     }
 
-    public var voiceChannelStateChanged : Bool {
-        return changedKeysAndOldValues.keys.contains("voiceChannelState")
-    }
-
     public var clearedChanged : Bool {
         return changedKeysAndOldValues.keys.contains("clearedTimeStamp")
     }
@@ -245,7 +221,6 @@ class GeneralConversationObserverToken<T: NSObject> : ObjectObserverTokenContain
         "isArchivedChanged: \(isArchivedChanged)," +
         "isSilencedChanged: \(isSilencedChanged)," +
         "conversationListIndicatorChanged \(conversationListIndicatorChanged)," +
-        "voiceChannelStateChanged \(voiceChannelStateChanged)," +
         "clearedChanged \(clearedChanged)," +
         "securityLevelChanged \(securityLevelChanged),"
     }
