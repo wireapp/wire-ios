@@ -68,6 +68,10 @@ struct ChangeEmailState {
     let currentEmail: String
     var newEmail: String?
     
+    var visibleEmail: String {
+        return newEmail ?? currentEmail
+    }
+    
     var validatedEmail: String? {
         var validatedEmail = newEmail as AnyObject?
         let pointer = AutoreleasingUnsafeMutablePointer<AnyObject?>(&validatedEmail)
@@ -160,9 +164,11 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ChangeEmailTableViewCell.zm_reuseIdentifier, for: indexPath) as! ChangeEmailTableViewCell
-        cell.emailTextField.text = state.currentEmail
+        
+        cell.emailTextField.text = state.visibleEmail
         cell.emailTextField.becomeFirstResponder()
         cell.delegate = self
+        updateSaveButtonState()
         return cell
     }
 
@@ -173,7 +179,7 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
     func emailUpdateDidFail(_ error: Error!) {
         showLoadingView = false
         updateSaveButtonState()
-        presentFailureAlert()
+        showAlert(forError: error)
     }
     
     func didSentVerificationEmail() {
@@ -183,18 +189,7 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
             let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self)
             navigationController?.pushViewController(confirmController, animated: true)
         }
-    }
-    
-    private func presentFailureAlert() {
-        let alert = UIAlertController(
-            title: "self.settings.account_section.email.change.failure_alert.title".localized,
-            message: "self.settings.account_section.email.change.failure_alert.message".localized,
-            preferredStyle: .alert
-        )
-        
-        alert.addAction(.init(title: "general.ok".localized, style: .cancel, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
+    }    
 }
 
 extension ChangeEmailViewController: ConfirmEmailDelegate {
@@ -212,6 +207,16 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
     func resendVerification(inController controller: ConfirmEmailViewController) {
         if let validatedEmail = state.validatedEmail {
             try? userProfile?.requestEmailChange(email: validatedEmail)
+            
+            let message = String(format: "self.settings.account_section.email.change.resend.message".localized, validatedEmail)
+            let alert = UIAlertController(
+                title: "self.settings.account_section.email.change.resend.title".localized,
+                message: message,
+                preferredStyle: .alert
+            )
+            
+            alert.addAction(.init(title: "general.ok".localized, style: .cancel, handler: nil))
+            present(alert, animated: true, completion: nil)
         }
     }
 }
