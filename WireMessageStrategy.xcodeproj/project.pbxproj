@@ -12,6 +12,7 @@
 		16D0E0851DF8954F0075DF8F /* OTREntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E0841DF8954F0075DF8F /* OTREntity.swift */; };
 		16D0E08A1DF9994E0075DF8F /* OTREntityTranscoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E0881DF999460075DF8F /* OTREntityTranscoderTests.swift */; };
 		16D0E08C1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E08B1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift */; };
+		5442A7341E4224DB00415104 /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5442A7331E4224DB00415104 /* libPhoneNumberiOS.framework */; };
 		54979CB71E37CC95005EA09F /* EncryptionSessionDirectory+UpdateEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54979CB61E37CC95005EA09F /* EncryptionSessionDirectory+UpdateEvents.swift */; };
 		54FAE67F1E39FD1900E6DE42 /* MessagingTest+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE67D1E39F5CA00E6DE42 /* MessagingTest+Encryption.swift */; };
 		BF260C501DCA1FD9009C97D9 /* AssetV3PreviewDownloadStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF260C4F1DCA1FD9009C97D9 /* AssetV3PreviewDownloadStrategy.swift */; };
@@ -136,6 +137,7 @@
 		16D0E0841DF8954F0075DF8F /* OTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTREntity.swift; sourceTree = "<group>"; };
 		16D0E0881DF999460075DF8F /* OTREntityTranscoderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTREntityTranscoderTests.swift; sourceTree = "<group>"; };
 		16D0E08B1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageRequestStrategyTests.swift; sourceTree = "<group>"; };
+		5442A7331E4224DB00415104 /* libPhoneNumberiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumberiOS.framework; path = Carthage/Build/iOS/libPhoneNumberiOS.framework; sourceTree = "<group>"; };
 		54979CB61E37CC95005EA09F /* EncryptionSessionDirectory+UpdateEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EncryptionSessionDirectory+UpdateEvents.swift"; sourceTree = "<group>"; };
 		54FAE67D1E39F5CA00E6DE42 /* MessagingTest+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MessagingTest+Encryption.swift"; sourceTree = "<group>"; };
 		BF260C4F1DCA1FD9009C97D9 /* AssetV3PreviewDownloadStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3PreviewDownloadStrategy.swift; sourceTree = "<group>"; };
@@ -210,7 +212,6 @@
 		F9F057271D93D50200FA1AAD /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		F9F057281D93D50200FA1AAD /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
 		F9F057291D93D50200FA1AAD /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
-		F9F0572A1D93D50200FA1AAD /* libPhoneNumber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumber.framework; path = Carthage/Build/iOS/libPhoneNumber.framework; sourceTree = "<group>"; };
 		F9F0573C1D93DC8100FA1AAD /* ZMMessage+Dependency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Dependency.swift"; sourceTree = "<group>"; };
 		F9F0573E1D93DD5300FA1AAD /* ClientMessageRequestFactory+Files.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageRequestFactory+Files.swift"; sourceTree = "<group>"; };
 		F9F0573F1D93DD5300FA1AAD /* ClientMessageRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientMessageRequestFactory.swift; sourceTree = "<group>"; };
@@ -262,6 +263,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5442A7341E4224DB00415104 /* libPhoneNumberiOS.framework in Frameworks */,
 				F9F0571E1D93D4DE00FA1AAD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -420,6 +422,7 @@
 		F9F0571C1D93D4DE00FA1AAD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5442A7331E4224DB00415104 /* libPhoneNumberiOS.framework */,
 				F963E9541D9A775B00098AD3 /* libz.tbd */,
 				F963E9521D9A771A00098AD3 /* libc++.tbd */,
 				F9F057BF1D94284F00FA1AAD /* ZMCMockTransport.framework */,
@@ -436,7 +439,6 @@
 				F9F057271D93D50200FA1AAD /* ZMCSystem.framework */,
 				F9F057281D93D50200FA1AAD /* PINCache.framework */,
 				F9F057291D93D50200FA1AAD /* ProtocolBuffers.framework */,
-				F9F0572A1D93D50200FA1AAD /* libPhoneNumber.framework */,
 				F9F0571D1D93D4DE00FA1AAD /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -599,7 +601,7 @@
 				F9F057621D94141C00FA1AAD /* Frameworks */,
 				F9F057631D94141C00FA1AAD /* Resources */,
 				F9F057821D94157700FA1AAD /* Embed Frameworks */,
-				F9F0578A1D94173F00FA1AAD /* ShellScript */,
+				F9F0578A1D94173F00FA1AAD /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -691,7 +693,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		F9F0578A1D94173F00FA1AAD /* ShellScript */ = {
+		F9F0578A1D94173F00FA1AAD /* Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -711,9 +713,10 @@
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ZMTesting.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumber.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumberiOS.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 			);
+			name = "Copy Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
