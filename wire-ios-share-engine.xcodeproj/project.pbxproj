@@ -365,7 +365,7 @@
 				5470D3EF1D76E1B000FDE440 /* Frameworks */,
 				5470D3F01D76E1B000FDE440 /* Resources */,
 				54B04A611D77359000CED57C /* CopyFiles */,
-				CE3EB59A1DFED6B1001FE3AE /* ShellScript */,
+				CE3EB59A1DFED6B1001FE3AE /* Copy Carthage Frameworks */,
 			);
 			buildRules = (
 			);
@@ -435,7 +435,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CE3EB59A1DFED6B1001FE3AE /* ShellScript */ = {
+		CE3EB59A1DFED6B1001FE3AE /* Copy Carthage Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -444,7 +444,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireMessageStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Cryptobox.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumber.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumberiOS.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Ono.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
@@ -457,6 +457,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ZMTesting.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
 			);
+			name = "Copy Carthage Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
