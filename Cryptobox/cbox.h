@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __CRYPTOBOX_H__
-#define __CRYPTOBOX_H__
+#ifndef CRYPTOBOX_H
+#define CRYPTOBOX_H
 
 #include <stdint.h>
 
@@ -96,7 +96,20 @@ typedef enum {
 
     // An unknown critical error was encountered which prevented the
     // computation from succeeding.
-    CBOX_PANIC                   = 15
+    //
+    // Nb. If a `CBOX_PANIC` has been returned from an API operation,
+    // any further use of the `CBox` or any `CBoxSession` results in
+    // undefined behaviour!
+    CBOX_PANIC                   = 15,
+
+    // Failure to initialise proteus/libsodium. Client code should not
+    // proceed after encountering this error (which can only happen
+    // when opening a cbox).
+    CBOX_INIT_ERROR              = 16,
+
+    // Unsafe key material was used.
+    CBOX_DEGENERATED_KEY         = 17
+
 } CBoxResult;
 
 // CBoxIdentityMode /////////////////////////////////////////////////////////
@@ -317,4 +330,4 @@ CBoxResult cbox_is_prekey(uint8_t const * prekey, size_t prekey_len, uint16_t * 
 }
 #endif
 
-#endif // __CRYPTOBOX_H__
+#endif // CRYPTOBOX_H

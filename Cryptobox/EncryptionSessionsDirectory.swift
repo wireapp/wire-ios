@@ -172,9 +172,8 @@ extension EncryptionSessionsDirectory {
         }
         zmLog.debug("Create session from prekey \(base64PreKeyString) for client: \(identifier)")
         
-        guard result == CBOX_SUCCESS else {
-            throw CryptoboxError(rawValue: result.rawValue)!
-        }
+        try result.throwIfError()
+
         let session = EncryptionSession(id: identifier,
                                         session: cbsession,
                                         requiresSave: true,
@@ -202,9 +201,8 @@ extension EncryptionSessionsDirectory {
         }
         zmLog.debug("Create session for client \(identifier) from prekey message: \(prekeyMessage.base64Dump)")
         
-        guard result == CBOX_SUCCESS else {
-            throw CryptoboxError(rawValue: result.rawValue)!
-        }
+        try result.throwIfError()
+
         let plainText = Data.moveFromCBoxVector(plainTextBacking)!
         let session = EncryptionSession(id: identifier,
                                         session: cbsession,
@@ -245,9 +243,7 @@ extension EncryptionSessionsDirectory {
         let prekey = Data.moveFromCBoxVector(vectorBacking)
         zmLog.debug("Generate prekey \(id)")
         
-        guard result == CBOX_SUCCESS else {
-            throw CryptoboxError(rawValue: result.rawValue)!
-        }
+        try result.throwIfError()
         
         return prekey!.base64EncodedString(options: [])
     }
@@ -487,9 +483,8 @@ extension EncryptionSession {
                          &vectorBacking)
         }
         
-        guard result == CBOX_SUCCESS else {
-            throw CryptoboxError(rawValue: result.rawValue)!
-        }
+        try result.throwIfError()
+
         self.hasChanges = true
         return Data.moveFromCBoxVector(vectorBacking)!
     }
@@ -507,9 +502,8 @@ extension EncryptionSession {
                          &vectorBacking)
         }
         
-        guard result == CBOX_SUCCESS else {
-            throw CryptoboxError(rawValue: result.rawValue)!
-        }
+        try result.throwIfError()
+
         self.hasChanges = true
         let data = Data.moveFromCBoxVector(vectorBacking)!
         zmLog.ifDebug {
