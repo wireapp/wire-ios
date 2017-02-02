@@ -16,8 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@interface ZMVoiceChannel (CallFlowPrivate)
-- (void)join;
-- (void)leave;
-- (BOOL)joinVideoCall:(NSError **)error;
+@import CallKit;
+
+
+@class ZMUser;
+@class ZMConversation;
+@class ZMUserSession;
+
+
+@interface ZMCallKitDelegate (Internal)
+
+@property (nonatomic, readonly, nonnull) id<CallKitProviderType> provider;
+@property (nonatomic, readonly, nonnull) ZMUserSession *userSession;
+@property (nonatomic, nullable) ZMConversation *connectedCallConversation;
+
+- (void)indicateIncomingCallFromUser:(nonnull ZMUser *)user inConversation:(nonnull ZMConversation *)conversation video:(BOOL)video;
+
 @end

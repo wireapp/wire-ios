@@ -30,6 +30,7 @@
 #import "ZMUserSession+Registration.h"
 #import "ZMCredentials.h"
 #import <zmessaging/ZMAuthenticationStatus+Testing.h>
+#import <zmessaging/zmessaging-Swift.h>
 #import "ZMFlowSync.h"
 #import "ZMGSMCallHandler.h"
 #import "ZMOperationLoop+Private.h"
@@ -95,6 +96,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     self.mockFlowManager = self.mockTransportSession.mockFlowManager;
 
     ZMFlowSyncInternalFlowManagerOverride = self.mockFlowManager;
+    WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self;
     
     [self createObjects];
     
