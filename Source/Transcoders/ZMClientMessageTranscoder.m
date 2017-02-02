@@ -23,7 +23,6 @@
 #import "ZMMessageTranscoder+Internal.h"
 #import "ZMMessageExpirationTimer.h"
 
-#import "CBCryptoBox+UpdateEvents.h"
 #import <WireMessageStrategy/WireMessageStrategy-Swift.h>
 
 @interface ZMClientMessageTranscoder()

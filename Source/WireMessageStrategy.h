@@ -13,5 +13,4 @@
 #import <WireMessageStrategy/ZMMessageTranscoder+Internal.h>
 
 #import <WireMessageStrategy/ZMPushMessageHandler.h>
-#import <WireMessageStrategy/CBCryptoBox+UpdateEvents.h>
 
