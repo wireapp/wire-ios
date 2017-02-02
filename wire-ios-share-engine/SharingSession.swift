@@ -149,7 +149,7 @@ public class SharingSession {
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
     public var writeableNonArchivedConversations : [Conversation] {
-        return directory.unarchivedAndNotCallingConversations.writeableConversations
+        return directory.unarchivedConversations.writeableConversations
     }
     
     /// List of archived conversations in which the user can write
