@@ -20,7 +20,7 @@
 @import ZMCMockTransport;
 
 #import "MessagingTest.h"
-#import "CBCryptoBox+UpdateEvents.h"
+#import "WireMessageStrategyTests-Swift.h"
 
 @interface ZMCryptoBoxUpdateEventsTests : MessagingTest
 
@@ -34,10 +34,11 @@
     NSUUID *notificationID = [NSUUID createUUID];
     ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
     UserClient *selfClient = [self createSelfClient];
+    UserClient *otherClient = [self createClientForUser:[ZMUser insertNewObjectInManagedObjectContext:self.syncMOC] createSessionWithSelfUser:NO];
     
     // create encrypted message
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:self.name nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSData *encryptedData = [self encryptedMessage:message recipient:selfClient];
+    NSData *encryptedData = [self encryptedMessageToSelfWithMessage:message fromSender:otherClient];
     
     NSDictionary *payload = @{
                               @"recipient": selfClient.remoteIdentifier,
@@ -69,6 +70,7 @@
     NSUUID *notificationID = [NSUUID createUUID];
     ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
     UserClient *selfClient = [self createSelfClient];
+    UserClient *otherClient = [self createClientForUser:[ZMUser insertNewObjectInManagedObjectContext:self.syncMOC] createSessionWithSelfUser:NO];
     
     //create encrypted message
     NSData *imageData = [self verySmallJPEGData];
@@ -86,7 +88,7 @@
                                                                             format:ZMImageFormatMedium
                                                                       expiresAfter:nil];
     
-    NSData *encryptedData = [self encryptedMessage:message recipient:selfClient];
+    NSData *encryptedData = [self encryptedMessageToSelfWithMessage:message fromSender:otherClient];
     
     NSDictionary *payload = @{
                               @"recipient": selfClient.remoteIdentifier,
@@ -163,13 +165,14 @@
     NSUUID *notificationID = NSUUID.createUUID;
     ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
     UserClient *selfClient = self.createSelfClient;
-    
+    UserClient *otherClient = [self createClientForUser:[ZMUser insertNewObjectInManagedObjectContext:self.syncMOC] createSessionWithSelfUser:NO];
+
     // create symmetrically encrypted text message and encrypt external message holding the keys using cryptobox
     ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:NSUUID.createUUID.transportString expiresAfter:nil];
     ZMExternalEncryptedDataWithKeys *dataWithKeys = [ZMGenericMessage encryptedDataWithKeysFromMessage:textMessage];
     
     ZMGenericMessage *externalMessage = [ZMGenericMessage genericMessageWithKeyWithChecksum:dataWithKeys.keys messageID:NSUUID.createUUID.transportString];
-    NSData *encryptedData = [self encryptedMessage:externalMessage recipient:selfClient];
+    NSData *encryptedData = [self encryptedMessageToSelfWithMessage:externalMessage fromSender:otherClient];
     
     // create encrypted update event
     NSDictionary *payload = @{
