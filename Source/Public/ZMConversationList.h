@@ -27,10 +27,18 @@
 
 - (void)resort;
 
+/// Call this when the app enters the background and reenters the foreground
+/// It recreates the backinglist and notifies the conversationlist observer center about the update
+- (void)recreateWithAllConversations:( NSArray * _Nonnull )conversations;
+
 @end
 
 
 @interface ZMConversationList (UserSession)
+
+/// Refetches all conversation lists and resets the snapshots
+/// Call this when the app re-enters the foreground
++ (void)refetchAllListsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 
 + (nonnull ZMConversationList *)conversationsIncludingArchivedInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 + (nonnull ZMConversationList *)conversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;

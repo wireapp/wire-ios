@@ -87,6 +87,11 @@
     return self.moc;
 }
 
+- (void)recreateWithAllConversations:(NSArray *)conversations
+{
+    [self createBackingList:conversations];
+}
+
 - (void)calculateKeysAffectingPredicateAndSort;
 {
     NSMutableSet *keysAffectingSorting = [NSMutableSet set];
@@ -209,6 +214,11 @@
 
 
 @implementation ZMConversationList (UserSession)
+
++ (void)refetchAllListsInUserSession:(id<ZMManagedObjectContextProvider>)session;
+{
+    [session.managedObjectContext.conversationListDirectory refetchAllListsInManagedObjectContext:session.managedObjectContext];
+}
 
 + (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ZMManagedObjectContextProvider>)session;
 {

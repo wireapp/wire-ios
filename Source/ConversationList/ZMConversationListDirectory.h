@@ -21,6 +21,7 @@
 @import CoreData;
 @class ZMConversationList;
 @class ZMSharableConversations;
+@class NSManagedObjectContext;
 
 
 @interface ZMConversationListDirectory : NSObject
@@ -32,6 +33,10 @@
 @property (nonatomic, readonly, nonnull) ZMConversationList *clearedConversations; /// conversations with deleted messages (clearedTimestamp is set)
 
 - (nonnull NSArray *)allConversationLists;
+
+/// Refetches all conversation lists
+/// Call this when the app re-enters the foreground
+- (void)refetchAllListsInManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 @end
 

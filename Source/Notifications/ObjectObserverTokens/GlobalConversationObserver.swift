@@ -105,6 +105,14 @@ final class GlobalConversationObserver : NSObject, ObjectsDidChangeDelegate, ZMG
         }
     }
     
+    // Refresh the snapshots when the app re-enters the foreground
+    func refresh(allConversations: [ZMConversation]){
+        // Refresh the state of all existing tokens
+        internalConversationListObserverTokens.values.forEach{$0.refreshState()}
+        // Add new tokens for new conversations
+        registerTokensForConversations(allConversations)
+    }
+    
     func removeConversationList(_ conversationList: ZMConversationList) {
         self.conversationLists = self.conversationLists.filter { $0.unbox != conversationList}
     }

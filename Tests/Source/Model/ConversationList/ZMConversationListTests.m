@@ -27,6 +27,7 @@
 #import "ZMNotifications+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "NotificationObservers.h"
+#import "ZMConversationList.h"
 
 @interface ZMConversationListTests : ZMBaseManagedObjectTest
 @end
@@ -153,6 +154,57 @@
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c2, c1, c3];
     XCTAssertEqualObjects(list, expected);
+}
+
+- (void)testThatItRecreatesListsAndTokens
+{
+    // given
+    ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    c1.conversationType = ZMConversationTypeGroup;
+    c1.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:10];
+    
+    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    ConversationListChangeObserver *obs = [[ConversationListChangeObserver alloc] initWithConversationList:(ZMConversationList *)list];
+    ZMConversation *c2;
+    
+    // when
+    // conversation is inserted while the app is in the background
+    {
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = NO;
+        c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+        c2.conversationType = ZMConversationTypeGroup;
+        c2.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:-20];
+        WaitForAllGroupsToBeEmpty(0.5);
+        
+        // then changes are not forwarded
+        NSArray *expected = @[c1];
+        XCTAssertEqualObjects(list, expected);
+        XCTAssertEqual(obs.notifications.count, 0u);
+    }
+    // and when
+    // refresh list and observer token
+    {
+        NSArray *allConversations = @[c1,c2];
+        [(ZMConversationList*)list recreateWithAllConversations:allConversations];
+        [self.uiMOC.globalManagedObjectContextObserver refreshConversationListObserverWithAllConversations:allConversations];
+        
+        // then list is updated
+        NSArray *expected = @[c1, c2];
+        XCTAssertEqualObjects(list, expected);
+    }
+    // and when
+    // forward accumulated changes
+    {
+        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = YES;
+        WaitForAllGroupsToBeEmpty(0.5);
+
+        // then the updated snapshot prevents outdated list change notifications
+        XCTAssertEqual(obs.notifications.count, 0u);
+        NSArray *expected = @[c1, c2];
+        XCTAssertEqualObjects(list, expected);
+    }
+    [obs tearDown];
+
 }
 
 - (void)testThatItUpdatesWhenNewConversationsAreInserted
