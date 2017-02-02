@@ -96,6 +96,8 @@ public struct FrameworkVersion: Comparable, Equatable {
         for comp in zip(lhs.components, rhs.components) {
             if comp.0 < comp.1 {
                 return true
+            } else if comp.0 > comp.1 {
+                return false
             }
         }
         return false
