@@ -95,7 +95,7 @@ import WireRequestStrategy
         
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
         NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
-                                                        changedKeys: ["linkPreview"],
+                                                        changedKeys: ["linkPreview", ZMAssetClientMessageDownloadedImageKey],
                                                         uiContext: uiMOC)
     }
 
