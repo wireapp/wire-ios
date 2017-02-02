@@ -287,6 +287,12 @@ extension ZMConversation {
         
         let index = self.sortedAppendMessage(systemMessage)
         systemMessage.visibleInConversation = self
+        
+        if systemMessage.shouldGenerateUnreadCount() {
+            precondition(timestamp != nil, "An unread dot generating system message must have a timestamp")
+            updateLastServerTimeStampIfNeeded(timestamp)
+        }
+        
         return (message: systemMessage, insertionIndex: index)
     }
     
