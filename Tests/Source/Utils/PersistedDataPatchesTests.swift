@@ -165,7 +165,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         PersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         
         // THEN
-        XCTAssertFalse(patchApplied)
+        XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
     }
     
     func testThatItMigratesClientsSessionIdentifiers() {
