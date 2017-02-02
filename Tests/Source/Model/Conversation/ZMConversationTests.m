@@ -160,6 +160,17 @@
     return message;
 }
 
+- (ZMSystemMessage *)insertNonUnreadDotGeneratingMessageIntoConversation:(ZMConversation *)conversation
+{
+    NSDate *newTime = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
+    
+    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:conversation.managedObjectContext];
+    systemMessage.serverTimestamp = newTime;
+    systemMessage.systemMessageType = ZMSystemMessageTypeNewClient;
+    [conversation.mutableMessages addObject:systemMessage];
+    
+    return systemMessage;
+}
 
 @end
 
@@ -1579,6 +1590,33 @@
         
         // then
         XCTAssertNil(conversation.lastReadMessage);
+    }];
+}
+
+- (void)testThatItSkipsMessagesWhichDoesntGenerateUnreadDotsDirectlyAfterTheLastReadMessage
+{
+    // timestamp
+    //   					last read timestamp is 1.0
+    //  -------------------
+    //   1.0     message A
+    //   2.0     message B *doesn't generate unread dot*
+    //   3.0     message C *doesn't generate unread dot* <- expected last read message
+    //   4.0     message D
+    
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.lastServerTimeStamp = [self timeStampForSortAppendMessageToConversation:conversation];
+        [self insertNonUnreadDotGeneratingMessageIntoConversation:conversation];
+        ZMSystemMessage *lastSystemMessage = [self insertNonUnreadDotGeneratingMessageIntoConversation:conversation];
+        [self timeStampForSortAppendMessageToConversation:conversation];
+        
+        // when
+        conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp;
+        
+        // then
+        XCTAssertEqualObjects(conversation.lastReadMessage, lastSystemMessage);
     }];
 }
 

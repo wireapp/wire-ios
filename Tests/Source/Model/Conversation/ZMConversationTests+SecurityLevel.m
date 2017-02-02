@@ -392,7 +392,6 @@
     XCTAssertNotNil(message.serverTimestamp);
 }
 
-
 - (void)testThatItAppendsASystemMessageOfTypeRemoteIDChangedForCBErrorCodeRemoteIdentityChanged
 {
     // given

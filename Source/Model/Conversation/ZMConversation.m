@@ -788,6 +788,25 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
                                             result = message;
                                         }
                                     }];
+    
+    
+    if (result != nil) {
+        // Skip ahead if the message after the last read message should
+        // not generate an unread dot
+        
+        NSUInteger nextMessageIndex = [self.messages indexOfObject:result] + 1;
+        while (nextMessageIndex < self.messages.count) {
+            ZMMessage *nextMessage = [self.messages objectAtIndex:nextMessageIndex];
+            
+            if (nextMessage.shouldGenerateUnreadCount) {
+                break;
+            }
+            
+            result = nextMessage;
+            nextMessageIndex += 1;
+        }
+    }
+    
     return result;
 }
 
