@@ -52,6 +52,11 @@ class InternalConversationListObserverToken: NSObject {
         super.init()
     }
     
+    func refreshState(){
+        guard let list = conversationList else { return }
+        self.state = SetSnapshot(set: list.toOrderedSet(), moveType: .uiCollectionView)
+    }
+    
     func notifyObserver(_ changedConversation: ZMConversation?, changes: ConversationChangeInfo?) {
         guard let conversationList = self.conversationList else {tearDown(); return}
         
