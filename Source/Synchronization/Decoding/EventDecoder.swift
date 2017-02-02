@@ -96,7 +96,7 @@ extension EventDecoder {
     /// - parameter events The new events that should be decrypted and stored in the database.
     /// - parameter startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
     fileprivate func storeEvents(_ events: [ZMUpdateEvent], startingAtIndex startIndex: Int64) {
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] (sessionsDirectory) in
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] (sessionsDirectory) -> Void in
             guard let `self` = self else { return }
             
             let newUpdateEvents = events.flatMap { event -> ZMUpdateEvent? in
