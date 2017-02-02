@@ -101,8 +101,8 @@ extension EncryptionSessionsDirectoryTests {
             _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: "aabb")
             XCTFail("should have failed to use prekey")
         }
-        catch let err as CryptoboxError {
-            XCTAssertEqual(err, CryptoboxError.decodeError)
+        catch let err as CBoxResult {
+            XCTAssertEqual(err, CBOX_DECODE_ERROR)
         } catch {
             XCTFail("should have thrown a CBoxResult")
         }
@@ -369,7 +369,7 @@ extension EncryptionSessionsDirectoryTests {
             _ = try statusBob.decrypt(cypherText, from: Person.Alice.identifier)
             XCTFail("Should have failed")
             return
-        } catch let err as CryptoboxError where err == .duplicateMessage {
+        } catch let err as CBoxResult where err == CBOX_DUPLICATE_MESSAGE {
             // pass
         } catch {
             XCTFail("Wrong error")
@@ -389,8 +389,8 @@ extension EncryptionSessionsDirectoryTests {
             _ = try statusBob.decrypt(cypherText, from: Person.Alice.identifier)
             XCTFail("Should have failed")
             return
-        } catch let error as NSError {
-            XCTAssertEqual(error.code, Int(CryptoboxError.duplicateMessage.rawValue))
+        } catch let error as CBoxResult {
+            XCTAssertEqual(error, CBOX_DUPLICATE_MESSAGE)
         } catch {
             XCTFail()
         }
@@ -431,7 +431,7 @@ extension EncryptionSessionsDirectoryTests {
             _ = try statusBob.decrypt(cypherText, from: Person.Alice.identifier)
             XCTFail("Should have failed")
             return
-        } catch let err as CryptoboxError where err == .duplicateMessage {
+        } catch let err as CBoxResult where err == CBOX_DUPLICATE_MESSAGE {
             // pass
         } catch {
             XCTFail("Wrong error")
