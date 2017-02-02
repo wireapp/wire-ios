@@ -329,7 +329,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "Cryptobox-ios" */;
 			buildPhases = (
-				5442B4D91E35FD9F006B5282 /* Copy cbox header to public */,
 				5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */,
 				0928E2621BA078750057232E /* Check for dependencies  */,
 				0928E22F1BA0777A0057232E /* Sources */,
@@ -471,21 +470,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\n";
-		};
-		5442B4D91E35FD9F006B5282 /* Copy cbox header to public */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy cbox header to public";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cp lib/include/cbox.h Cryptobox/cbox.h";
+			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash wget || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h Cryptobox/cbox.h";
 		};
 		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -584,7 +569,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CRYPTOBOX_VERSION = 0.8.1;
+				CRYPTOBOX_VERSION = 1.0.0;
 				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
@@ -608,7 +593,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CRYPTOBOX_VERSION = 0.8.1;
+				CRYPTOBOX_VERSION = 1.0.0;
 				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
