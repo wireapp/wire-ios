@@ -56,7 +56,7 @@ extension EncryptionSessionsDirectory {
                 return nil
             }
             (createdNewSession, decryptedEvent) = result
-        } catch let error as CryptoboxError {
+        } catch let error as CBoxResult {
             self.appendFailedToDecryptMessage(after: error, for: event, sender: senderClient, in: moc)
             return nil
         } catch {
@@ -76,9 +76,9 @@ extension EncryptionSessionsDirectory {
 extension EncryptionSessionsDirectory {
     
     /// Appends a system message for a failed decryption
-    fileprivate func appendFailedToDecryptMessage(after error: CryptoboxError?, for event: ZMUpdateEvent, sender: UserClient, in moc: NSManagedObjectContext) {
-        zmLog.error("Failed to decrypt message with error: \(error?.description), client id \(sender.remoteIdentifier!), event debug: \(event.debugInformation ?? "")")
-        if error == .outdatedMessage || error == .duplicateMessage {
+    fileprivate func appendFailedToDecryptMessage(after error: CBoxResult?, for event: ZMUpdateEvent, sender: UserClient, in moc: NSManagedObjectContext) {
+        zmLog.error("Failed to decrypt message with error: \(error), client id \(sender.remoteIdentifier!), event debug: \(event.debugInformation ?? "")")
+        if error == CBOX_OUTDATED_MESSAGE || error == CBOX_DUPLICATE_MESSAGE {
             return // do not notify the user if the error is just "duplicated"
         }
         
@@ -89,7 +89,7 @@ extension EncryptionSessionsDirectory {
         }
         
         let userInfo = [
-            "cause": error?.description as Any,
+            "cause": error?.rawValue as Any,
             "deviceClass" : sender.deviceClass as Any
         ]
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: ZMConversationFailedToDecryptMessageNotificationName),
@@ -206,46 +206,6 @@ extension ZMUpdateEvent {
             return "info"
         default:
             fatal("Decrypting wrong type of event")
-        }
-    }
-}
-
-extension CryptoboxError: CustomStringConvertible {
-    
-    public var description : String {
-        switch(self) {
-        case .storageError:
-            return "CBErrorCodeStorageError"
-        case .sessionNotFound:
-            return "CBErrorCodeNoSession"
-        case .prekeyNotFound:
-            return "CBErrorCodeNoPreKey"
-        case .decodeError:
-            return "CBErrorCodeDecodeError"
-        case .remoteIdentityChanged:
-            return "CBErrorCodeRemoteIdentityChanged"
-        case .identityError:
-            return "CBErrorCodeInvalidIdentity"
-        case .invalidSignature:
-            return "CBErrorCodeInvalidSignature"
-        case .invalidMessage:
-            return "CBErrorCodeInvalidMessage"
-        case .duplicateMessage:
-            return "CBErrorCodeDuplicateMessage"
-        case .tooDistantFuture:
-            return "CBErrorCodeTooDistantFuture"
-        case .outdatedMessage:
-            return "CBErrorCodeOutdatedMessage"
-        case .UTF8Error:
-            return "CBErrorCodeUTF8Error"
-        case .nulError:
-            return "CBErrorCodeNULError"
-        case .encodeError:
-            return "CBErrorCodeEncodeError"
-        case .panic:
-            return "CBErrorCodePanic"
-        default:
-            return "Unknown error code: \(self.rawValue)"
         }
     }
 }
