@@ -132,7 +132,7 @@ public class SharingSession {
     /// The list to which save notifications of the UI moc are appended and persistet
     private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
 
-    private let analyticsEventPersistence: ShareExtensionAnalyticsPersistence
+    public let analyticsEventPersistence: ShareExtensionAnalyticsPersistence
 
     private var contextSaveObserverToken: NSObjectProtocol?
 
