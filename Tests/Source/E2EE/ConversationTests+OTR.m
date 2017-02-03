@@ -2196,7 +2196,7 @@
     [[NSNotificationCenter defaultCenter] addObserverForName:ZMConversationFailedToDecryptMessageNotificationName object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
         XCTAssertEqualObjects(conversation.remoteIdentifier, [(ZMConversation *)note.object remoteIdentifier]);
         XCTAssertNotNil(note.userInfo[@"cause"]);
-        XCTAssertEqualObjects(note.userInfo[@"cause"], @"CBErrorCodeDecodeError");
+        XCTAssertEqualObjects(note.userInfo[@"cause"], @3);
         [expectation fulfill];
     }];
     
