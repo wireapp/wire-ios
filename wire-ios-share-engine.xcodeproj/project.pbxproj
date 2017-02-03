@@ -13,7 +13,6 @@
 		5470D4301D77154200FDE440 /* SharingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D42F1D77154200FDE440 /* SharingSession.swift */; };
 		5470D4321D77165800FDE440 /* ZMCDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; };
 		5470D4551D77169900FDE440 /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* Cryptobox.framework */; };
-		5470D4561D77169900FDE440 /* libPhoneNumber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44B1D77169900FDE440 /* libPhoneNumber.framework */; };
 		5470D4571D77169900FDE440 /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44C1D77169900FDE440 /* Ono.framework */; };
 		5470D4581D77169900FDE440 /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; };
 		5470D4591D77169900FDE440 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; };
@@ -27,7 +26,6 @@
 		5470D4631D7722A500FDE440 /* Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4621D7722A500FDE440 /* Sendable.swift */; };
 		5470D4651D772A6000FDE440 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470D4641D772A6000FDE440 /* Conversation.swift */; };
 		54B04A621D77359900CED57C /* Cryptobox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* Cryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54B04A631D77359900CED57C /* libPhoneNumber.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44B1D77169900FDE440 /* libPhoneNumber.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A641D77359900CED57C /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44C1D77169900FDE440 /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A651D77359900CED57C /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A661D77359900CED57C /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -38,13 +36,14 @@
 		54B04A6B1D77359A00CED57C /* ZMTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* ZMTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A6C1D77359A00CED57C /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A6D1D77359A00CED57C /* ZMCDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* ZMCDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		54FB03B11E42202A000E13DC /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */; };
+		BF2009331E3A24A2006F8930 /* StrategyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2009321E3A24A2006F8930 /* StrategyFactory.swift */; };
 		BF9F130B1DC1052100700255 /* OperationLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9F130A1DC1052100700255 /* OperationLoop.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		BFE7F7511D78820700FEA685 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */; };
 		BFE7F7531D7885ED00FEA685 /* ZMMessage+Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7521D7885ED00FEA685 /* ZMMessage+Sendable.swift */; };
 		BFE7F7551D7885FF00FEA685 /* ZMConversation+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */; };
 		CE3EB58B1DFEBDCE001FE3AE /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* Cryptobox.framework */; };
-		CE3EB58C1DFEBDCE001FE3AE /* libPhoneNumber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44B1D77169900FDE440 /* libPhoneNumber.framework */; };
 		CE3EB58D1DFEBDCE001FE3AE /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44C1D77169900FDE440 /* Ono.framework */; };
 		CE3EB58E1DFEBDCE001FE3AE /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; };
 		CE3EB58F1DFEBDCE001FE3AE /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; };
@@ -84,7 +83,6 @@
 			files = (
 				F125E9AD1E28D603006583A2 /* ZMCMockTransport.framework in CopyFiles */,
 				54B04A621D77359900CED57C /* Cryptobox.framework in CopyFiles */,
-				54B04A631D77359900CED57C /* libPhoneNumber.framework in CopyFiles */,
 				54B04A641D77359900CED57C /* Ono.framework in CopyFiles */,
 				54B04A651D77359900CED57C /* PINCache.framework in CopyFiles */,
 				54B04A661D77359900CED57C /* ProtocolBuffers.framework in CopyFiles */,
@@ -131,7 +129,6 @@
 		5470D42F1D77154200FDE440 /* SharingSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingSession.swift; sourceTree = "<group>"; };
 		5470D4311D77165800FDE440 /* ZMCDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCDataModel.framework; path = Carthage/Build/iOS/ZMCDataModel.framework; sourceTree = "<group>"; };
 		5470D44A1D77169900FDE440 /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cryptobox.framework; path = Carthage/Build/iOS/Cryptobox.framework; sourceTree = "<group>"; };
-		5470D44B1D77169900FDE440 /* libPhoneNumber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumber.framework; path = Carthage/Build/iOS/libPhoneNumber.framework; sourceTree = "<group>"; };
 		5470D44C1D77169900FDE440 /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
 		5470D44D1D77169900FDE440 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
 		5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
@@ -144,6 +141,8 @@
 		5470D4601D771BD600FDE440 /* SharingTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTarget.swift; sourceTree = "<group>"; };
 		5470D4621D7722A500FDE440 /* Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sendable.swift; sourceTree = "<group>"; };
 		5470D4641D772A6000FDE440 /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumberiOS.framework; path = Carthage/Build/iOS/libPhoneNumberiOS.framework; sourceTree = "<group>"; };
+		BF2009321E3A24A2006F8930 /* StrategyFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrategyFactory.swift; sourceTree = "<group>"; };
 		BF64A2111D796DC300725918 /* wire-ios-share-engineTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "wire-ios-share-engineTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		BF9F130A1DC1052100700255 /* OperationLoop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
@@ -165,8 +164,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54FB03B11E42202A000E13DC /* libPhoneNumberiOS.framework in Frameworks */,
 				5470D4581D77169900FDE440 /* PINCache.framework in Frameworks */,
-				5470D4561D77169900FDE440 /* libPhoneNumber.framework in Frameworks */,
 				5470D4571D77169900FDE440 /* Ono.framework in Frameworks */,
 				5470D45A1D77169900FDE440 /* zimages.framework in Frameworks */,
 				5470D4321D77165800FDE440 /* ZMCDataModel.framework in Frameworks */,
@@ -190,7 +189,6 @@
 				CE3EB5981DFEBDCF001FE3AE /* WireMessageStrategy.framework in Frameworks */,
 				CE3EB5991DFEBDCF001FE3AE /* WireRequestStrategy.framework in Frameworks */,
 				CE3EB58B1DFEBDCE001FE3AE /* Cryptobox.framework in Frameworks */,
-				CE3EB58C1DFEBDCE001FE3AE /* libPhoneNumber.framework in Frameworks */,
 				CE3EB58D1DFEBDCE001FE3AE /* Ono.framework in Frameworks */,
 				CE3EB58E1DFEBDCE001FE3AE /* PINCache.framework in Frameworks */,
 				CE3EB58F1DFEBDCE001FE3AE /* ProtocolBuffers.framework in Frameworks */,
@@ -235,6 +233,7 @@
 			children = (
 				5470D3EB1D76E1B000FDE440 /* WireShareEngine.h */,
 				5470D42F1D77154200FDE440 /* SharingSession.swift */,
+				BF2009321E3A24A2006F8930 /* StrategyFactory.swift */,
 				5470D4641D772A6000FDE440 /* Conversation.swift */,
 				BFE7F7541D7885FF00FEA685 /* ZMConversation+Conversation.swift */,
 				BFE7F7501D78820700FEA685 /* AuthenticationStatusProvider.swift */,
@@ -305,13 +304,13 @@
 		5470D4331D77165E00FDE440 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */,
 				F125E9AB1E28D4F6006583A2 /* ZMCMockTransport.framework */,
 				CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */,
 				CE7FBFAA1DFEE95F00E1C4C9 /* ZMTesting.framework */,
 				CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */,
 				CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */,
 				5470D44A1D77169900FDE440 /* Cryptobox.framework */,
-				5470D44B1D77169900FDE440 /* libPhoneNumber.framework */,
 				5470D44C1D77169900FDE440 /* Ono.framework */,
 				5470D44D1D77169900FDE440 /* PINCache.framework */,
 				5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */,
@@ -366,7 +365,7 @@
 				5470D3EF1D76E1B000FDE440 /* Frameworks */,
 				5470D3F01D76E1B000FDE440 /* Resources */,
 				54B04A611D77359000CED57C /* CopyFiles */,
-				CE3EB59A1DFED6B1001FE3AE /* ShellScript */,
+				CE3EB59A1DFED6B1001FE3AE /* Copy Carthage Frameworks */,
 			);
 			buildRules = (
 			);
@@ -436,7 +435,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CE3EB59A1DFED6B1001FE3AE /* ShellScript */ = {
+		CE3EB59A1DFED6B1001FE3AE /* Copy Carthage Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -445,7 +444,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireMessageStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Cryptobox.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumber.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumberiOS.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Ono.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
@@ -458,6 +457,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ZMTesting.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
 			);
+			name = "Copy Carthage Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -480,6 +480,7 @@
 				5470D4611D771BD600FDE440 /* SharingTarget.swift in Sources */,
 				BFE7F7531D7885ED00FEA685 /* ZMMessage+Sendable.swift in Sources */,
 				5470D4651D772A6000FDE440 /* Conversation.swift in Sources */,
+				BF2009331E3A24A2006F8930 /* StrategyFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

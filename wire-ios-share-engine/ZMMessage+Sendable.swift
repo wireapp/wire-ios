@@ -42,6 +42,18 @@ extension ZMMessage: Sendable {
         }
         return self.deliveryState == .failedToSend && message.causedSecurityLevelDegradation
     }
+
+    public var isSent: Bool {
+        if let clientMessage = self as? ZMClientMessage {
+            return clientMessage.linkPreviewState == .done && sentOrDelivered
+        } else {
+            return sentOrDelivered
+        }
+    }
+
+    private var sentOrDelivered: Bool {
+        return deliveryState == .sent || deliveryState == .delivered
+    }
     
     public var deliveryProgress: Float? {
         if let asset = self as? ZMAssetClientMessage, reportsProgress {

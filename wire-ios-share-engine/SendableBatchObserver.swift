@@ -44,10 +44,7 @@ public final class SendableBatchObserver {
     }
     
     public var allSendablesSent: Bool {
-        let notSent = sendables.first { sendable -> Bool in
-            return sendable.deliveryState != .sent && sendable.deliveryState != .delivered
-        }
-        return notSent == nil
+        return !sendables.contains { !$0.isSent }
     }
     
     public func onDeliveryChanged() {
@@ -64,7 +61,7 @@ public final class SendableBatchObserver {
         var totalProgress: Float = 0
         
         sendables.forEach { message in
-            if message.deliveryState == .sent || message.deliveryState == .delivered {
+            if message.isSent {
                 totalProgress = totalProgress + 1.0 / Float(sendables.count)
             } else {
                 let messageProgress = (message.deliveryProgress ?? 0)

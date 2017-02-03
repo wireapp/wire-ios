@@ -68,7 +68,7 @@ class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     }
     
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(key: "PersistedClientId") as? String { // TODO move constant into shared framework
+        if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String { // TODO move constant into shared framework
             return clientId.characters.count > 0
         }
         
@@ -151,7 +151,7 @@ public class SharingSession {
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
     public var writeableNonArchivedConversations : [Conversation] {
-        return directory.unarchivedAndNotCallingConversations.writeableConversations
+        return directory.unarchivedConversations.writeableConversations
     }
     
     /// List of archived conversations in which the user can write
@@ -237,18 +237,13 @@ public class SharingSession {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         
-        let clientMessageTranscoder = ZMClientMessageTranscoder(
-            managedObjectContext: syncContext,
-            localNotificationDispatcher: PushMessageHandlerDummy(),
-            clientRegistrationStatus: clientRegistrationStatus,
-            apnsConfirmationStatus: DeliveryConfirmationDummy()
-        )!
-        
-        let missingClientStrategy = MissingClientsRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, apnsConfirmationStatus: DeliveryConfirmationDummy(), managedObjectContext: syncContext)
-        let imageUploadStrategy = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, maxConcurrentImageOperation: 1)
-        let fileUploadStrategy = FileUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncContext, taskCancellationProvider: transportSession)
+        let strategyFactory = StrategyFactory(
+            syncContext: syncContext,
+            registrationStatus: clientRegistrationStatus,
+            cancellationProvider: transportSession
+        )
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [missingClientStrategy, clientMessageTranscoder, imageUploadStrategy, fileUploadStrategy])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.createStrategies())
 
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: userInterfaceContext,

@@ -34,8 +34,8 @@ extension ZMConversation: Conversation {
         return securityLevel == .secure
     }
     
-    public func appendTextMessage(_ message: String) -> Sendable? {
-        return appendMessage(withText: message, fetchLinkPreview: false) as? Sendable
+    public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
+        return appendMessage(withText: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
     }
     
     public func appendImage(_ url: URL) -> Sendable? {
