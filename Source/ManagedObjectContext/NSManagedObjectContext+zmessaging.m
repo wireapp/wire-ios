@@ -205,6 +205,11 @@ static BOOL storeIsReady = NO;
         [moc setupUserKeyStoreForDirectory:keyStoreURL];
         moc.undoManager = nil;
         moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSMergeByPropertyObjectTrumpMergePolicyType];
+    }];
+    [moc performGroupedBlock:^{
+        // this will be done async, not to block the UI thread, but
+        // enqueued on the syncMOC anyway, so it will execute before
+        // any other block of code has a chance to use it
         [moc applyPersistedDataPatchesForCurrentVersion];
     }];
     return moc;
