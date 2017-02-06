@@ -201,17 +201,21 @@ public class UserClient: ZMManagedObject, UserClientType {
         syncMOC.performGroupedBlock {
             UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: syncMOC)
 
-            self.fingerprint = .none
-            let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-            guard let selfClient = selfUser.selfClient() else { return }
-
-            selfClient.missesClient(self)
-            selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-
-            // Send session reset message so other user can send us messages immediately
-            if let user = self.user {
-                let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: syncMOC) : self.user?.oneToOneConversation
-                _ = conversation?.appendOTRSessionResetMessage()
+            self.managedObjectContext?.performGroupedBlock {
+                self.fingerprint = .none
+                let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
+                guard let selfClient = selfUser.selfClient() else { return }
+                
+                selfClient.missesClient(self)
+                selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+                
+                // Send session reset message so other user can send us messages immediately
+                if let user = self.user {
+                    let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: syncMOC) : self.user?.oneToOneConversation
+                    _ = conversation?.appendOTRSessionResetMessage()
+                }
+                
+                self.managedObjectContext?.saveOrRollback()
             }
 
             syncMOC.saveOrRollback()
@@ -265,7 +269,7 @@ public extension UserClient {
             if client.remoteIdentifier != selfClient.remoteIdentifier &&
                 fetchedClient == .none
             {
-                client.markForFetchingPreKeys()
+                client.fetchFingerprintOrPrekeys()
                 
                 if let selfClientActivationdate = selfClient.activationDate , client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
                     client.needsToNotifyUser = true
@@ -304,34 +308,48 @@ public extension UserClient {
         self.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMarkedToDeleteKey))
     }
     
+    @available(*, deprecated)
     public func markForFetchingPreKeys() {
-        guard let managedObjectContext = self.managedObjectContext,
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            , self.fingerprint == .none
+        self.fetchFingerprintOrPrekeys()
+    }
+    
+    public func fetchFingerprintOrPrekeys() {
+        guard self.fingerprint == .none,
+            let syncMOC = self.managedObjectContext?.zm_sync
             else { return }
         
-        if selfClient.remoteIdentifier == self.remoteIdentifier {
-            guard let syncMOC = self.managedObjectContext?.zm_sync,
-                let obj = try? syncMOC.existingObject(with: selfClient.objectID),
-                let syncClient = obj as? UserClient,
-                let sessionIdentifier = syncClient.sessionIdentifier
+        let selfObjectID = self.objectID
+        
+        syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
+            guard let obj = try? syncMOC.existingObject(with: selfObjectID),
+                  let syncClient = obj as? UserClient,
+                  let sessionIdentifier = syncClient.sessionIdentifier,
+                  let syncSelfClient = ZMUser.selfUser(in: syncMOC).selfClient()
                 else { return }
             
-            syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
-                syncClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                    syncClient.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
-                    if syncClient.fingerprint == nil {
-                        zmLog.error("Cannot fetch local fingerprint for client \(syncClient)")
-                    } else {
-                        syncMOC.saveOrRollback()
-                    }
+            if syncSelfClient == syncClient {
+                syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
+                    syncClient.fingerprint = sessionsDirectory.localFingerprint
+                    syncMOC.saveOrRollback()
                 })
-                })
-        }
-        else {
-            selfClient.missesClient(self)
-            selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-        }
+            }
+            else {
+                if !syncClient.hasSessionWithSelfClient {
+                    syncSelfClient.missesClient(syncClient)
+                    syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+                }
+                else {
+                    syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
+                        syncClient.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
+                        if syncClient.fingerprint == nil {
+                            zmLog.error("Cannot fetch fingerprint for client \(syncClient.sessionIdentifier!)")
+                        } else {
+                            syncMOC.saveOrRollback()
+                        }
+                    })
+                }
+            }
+        })
     }
 }
 
@@ -401,8 +419,15 @@ public extension UserClient {
         guard isSelfClient(), let sessionIdentifier = client.sessionIdentifier else { return false }
         
         var didEstablishSession = false
+        
         keysStore.encryptionContext.perform { (sessionsDirectory) in
-            sessionsDirectory.delete(sessionIdentifier)
+            
+            // Session is already established?
+            guard !sessionsDirectory.hasSession(for: sessionIdentifier) else {
+                zmLog.debug("Session with \(sessionIdentifier) is already established")
+                return
+            }
+            
             do {
                 try sessionsDirectory.createClientSession(sessionIdentifier, base64PreKeyString: preKey)
                 client.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
