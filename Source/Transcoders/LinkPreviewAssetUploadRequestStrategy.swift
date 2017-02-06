@@ -105,7 +105,7 @@ public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy,
     }
     
     var filterForAssetUpload: NSPredicate {
-        return NSPredicate { object, _ in
+        return NSPredicate { [unowned self] object, _ in
             guard let message = object as? ZMClientMessage else { return false }
             return nil != self.managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true)
         }
