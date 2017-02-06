@@ -64,7 +64,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
     
     func testThatItSyncClientsWithNoRemoteIdentifier() {
         let unsyncedClient = UserClient.insertNewObject(in: self.uiMOC)
-        let syncedClient = UserClient.insertNewObject(in: self.uiMOC);
+        let syncedClient = UserClient.insertNewObject(in: self.uiMOC)
         syncedClient.remoteIdentifier = "synced"
         
         XCTAssertTrue(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream().evaluate(with: unsyncedClient))
@@ -449,5 +449,103 @@ extension UserClientTests {
     
 }
 
+// MARK : fetchFingerprintOrPrekeys
 
+extension UserClientTests {
+    func testThatItDoNothingWhenHasAFingerprint() {
+        // GIVEN
+        let fingerprint = Data(base64Encoded: "cmVhZGluZyB0ZXN0cyBpcyBjb29s")
+        
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        client.fingerprint = fingerprint
+        
+        self.uiMOC.saveOrRollback()
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+        
+        // WHEN
+        client.fetchFingerprintOrPrekeys()
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+        
+        // THEN
+        XCTAssertTrue(client.keysThatHaveLocalModifications.isEmpty)
+        XCTAssertEqual(client.fingerprint, fingerprint)
+    }
+    
+    func testThatItLoadsFingerprintForSelfClient() {
+        // GIVEN
+        let selfClient = createSelfClient(onMOC: self.syncMOC)
+        selfClient.fingerprint = .none
+        
+        var newFingerprint : Data?
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
+            newFingerprint = sessionsDirectory.localFingerprint
+        }
+        
+        self.syncMOC.saveOrRollback()
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+        
+        // WHEN
+        selfClient.fetchFingerprintOrPrekeys()
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+        
+        // THEN
+        XCTAssertTrue(selfClient.keysThatHaveLocalModifications.isEmpty)
+        XCTAssertEqual(selfClient.fingerprint!, newFingerprint)
+    }
+    
+    func testThatItLoadsFingerprintForExistingSession() {
+        // GIVEN
+        let selfClient = createSelfClient(onMOC: self.syncMOC)
+        
+        var preKeys : [(id: UInt16, prekey: String)] = []
+        
+        selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
+            preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
+        })
+    
+        guard let preKey = preKeys.first
+            else {
+                XCTFail("could not generate prekeys")
+                return }
+        
+        let client = UserClient.insertNewObject(in: self.syncMOC)
+        let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
+        otherUser.remoteIdentifier = UUID.create()
+        client.user = otherUser
+        client.remoteIdentifier = "badf00d"
+        
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
+            try! sessionsDirectory.createClientSession(client.sessionIdentifier!, base64PreKeyString: preKey.prekey)
+        }
+        
+        // WHEN
+        client.fetchFingerprintOrPrekeys()
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+        
+        // THEN
+        XCTAssertTrue(client.keysThatHaveLocalModifications.isEmpty)
+        XCTAssertNotEqual(client.fingerprint!.count, 0)
+    }
+    
+    func testThatItMarksMissingWhenNoSession() {
+        // GIVEN
+        let selfClient = createSelfClient(onMOC: self.syncMOC)
+        let client = UserClient.insertNewObject(in: self.syncMOC)
+        let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
+        otherUser.remoteIdentifier = UUID.create()
+        client.user = otherUser
+        client.remoteIdentifier = "badf00d"
+
+        self.syncMOC.saveOrRollback()
+        
+        // WHEN
+        client.fetchFingerprintOrPrekeys()
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+        
+        // THEN
+        XCTAssertTrue(selfClient.hasLocalModifications(forKey: ZMUserClientMissingKey))
+        XCTAssertEqual(client.fingerprint, .none)
+    }
+    
+}
 
