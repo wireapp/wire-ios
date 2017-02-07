@@ -90,6 +90,8 @@
 		BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
+		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
+		F9479C771E4A2D2F0039F55F /* NSOrderedSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */; };
 		F991CE1D1CB64205004D8465 /* ZMPropertyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A7891CAE9F900039E10C /* NSString+Normalization.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A78B1CAE9F9A0039E10C /* NSString+Normalization.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */; };
@@ -273,6 +275,8 @@
 		BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-sandbox.xml"; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
+		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
+		F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSOrderedSetTests.swift; path = Source/NSOrderedSetTests.swift; sourceTree = "<group>"; };
 		F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPropertyValidator.h; sourceTree = "<group>"; };
 		F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Normalization.h"; sourceTree = "<group>"; };
 		F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Normalization.m"; sourceTree = "<group>"; };
@@ -536,6 +540,7 @@
 				0917995F1B7E04E700E60DD9 /* ZMDeploymentEnvironment.h */,
 				F9FCE0A01C7DBBD00092BA68 /* ZMSwiftExceptionHandler.h */,
 				54CA31151B74F36B00B820C0 /* Functional.swift */,
+				F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */,
 				BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */,
 				54CA311E1B74F36B00B820C0 /* Sets.swift */,
 				54024FE51DF81C8E009BF6A0 /* Dictionary.swift */,
@@ -594,6 +599,7 @@
 				0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */,
 				091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */,
 				546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */,
+				F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */,
 				871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */,
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
 				BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */,
@@ -815,6 +821,7 @@
 				3E88BE3D1B1F478200232589 /* ZMDebugHelpers.m in Sources */,
 				091799531B7DFA1500E60DD9 /* ZMMobileProvisionParser.m in Sources */,
 				3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */,
+				F9479C771E4A2D2F0039F55F /* NSOrderedSetTests.swift in Sources */,
 				54CA313B1B74F36B00B820C0 /* Sets.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
 				BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */,
@@ -841,6 +848,7 @@
 				091799641B7E04FE00E60DD9 /* ZMAPNSEnvironment.m in Sources */,
 				16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */,
 				870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */,
+				F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
