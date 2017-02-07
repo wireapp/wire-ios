@@ -25,11 +25,6 @@ extension ZMConversation: Conversation {
 
     public var name: String { return displayName }
     
-    public var image: Data? {
-        guard conversationType == .oneOnOne  else { return nil }
-        return (otherActiveParticipants.firstObject as? ZMBareUser)?.imageSmallProfileData
-    }
-    
     public var isTrusted: Bool {
         return securityLevel == .secure
     }
