@@ -18,6 +18,7 @@
 
 
 @import ZMProtos;
+@import ZMUtilities;
 
 #import "ZMGenericMessageData.h"
 
@@ -37,6 +38,16 @@ static NSString * const ZMGenericMessageDataDataKey = @"data";
 - (ZMGenericMessage *)genericMessage
 {
     return (ZMGenericMessage *)[[[ZMGenericMessage builder] mergeFromData:self.data] build];
+}
+
+- (NSSet *)modifiedKeys
+{
+    return [NSSet set];
+}
+
+- (void)setModifiedKeys:(NSSet *)keys
+{
+    NOT_USED(keys);
 }
 
 @end

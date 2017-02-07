@@ -102,8 +102,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (void)resetState
 {
     [self waitAndDeleteAllManagedObjectContexts];
-    [self.syncMOC.globalManagedObjectContextObserver tearDown];
-    [self.uiMOC.globalManagedObjectContextObserver tearDown];
     
     self.uiMOC = nil;
     self.syncMOC = nil;
@@ -133,20 +131,10 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [refSearchMoc performBlockAndWait:^{
         // Do nothing
     }];
-    
-    [refUiMOC.globalManagedObjectContextObserver tearDown];
-    [refSyncMoc performGroupedBlockAndWait:^{
-        [refSyncMoc.globalManagedObjectContextObserver tearDown];
-    }];
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore
 {
-    [self.syncMOC performGroupedBlockAndWait:^ {        
-        [self.syncMOC.globalManagedObjectContextObserver tearDown];
-    }];
-    [self.uiMOC.globalManagedObjectContextObserver tearDown];
-    
     NSString *clientID = [self.uiMOC persistentStoreMetadataForKey:ZMPersistedClientIdKey];
     self.uiMOC = nil;
     self.syncMOC = nil;
@@ -161,7 +149,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     
     // NOTE this produces logs if self.useInMemoryStore = NO
     self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreAtURL:self.storeURL];
-    self.uiMOC.globalManagedObjectContextObserver.propagateChanges = YES;
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.testName;
     [self performPretendingUiMocIsSyncMoc:^{

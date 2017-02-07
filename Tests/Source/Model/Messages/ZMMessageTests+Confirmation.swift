@@ -19,20 +19,6 @@
 import ZMTesting
 
 class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
-
-    override func setUp() {
-        super.setUp()
-        XCTAssertNotNil(self.uiMOC.globalManagedObjectContextObserver)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-    
-    override func tearDown() {
-        self.uiMOC.globalManagedObjectContextObserver.tearDown()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        super.tearDown()
-    }
 }
 
 // MARK: - Adding confirmation locally
@@ -248,6 +234,8 @@ extension ZMMessageTests_Confirmation {
     
     func testThatItSendsOutNotificationsForTheDeliveryStatusChange(){
         // given
+        let dispatcher = NotificationDispatcher(managedObjectContext: uiMOC)
+        
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = .create()
         let lastModified = Date(timeIntervalSince1970: 1234567890)
@@ -258,11 +246,10 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(self.uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let convObserver = ConversationChangeObserver(conversation: conversation)
-        let messageObserver = MessageChangeObserver(message: sut)
-        defer {
-            convObserver.tearDown()
-            messageObserver.tearDown()
+        let convObserver = ConversationObserver(conversation: conversation)
+        var messageObserver : MessageObserver!
+        self.performIgnoringZMLogError{
+            messageObserver = MessageObserver(message: sut)
         }
         
         // when
@@ -277,10 +264,11 @@ extension ZMMessageTests_Confirmation {
         if convObserver.notifications.count > 0 {
             return XCTFail()
         }
-        guard let messageChangeInfo = messageObserver.notifications.firstObject  as? MessageChangeInfo else {
+        guard let messageChangeInfo = messageObserver.notifications.first else {
             return XCTFail()
         }
         XCTAssertTrue(messageChangeInfo.deliveryStateChanged)
+        dispatcher.tearDown()
     }
     
     func testThatAMessageConfirmationDoesNotExpire() {

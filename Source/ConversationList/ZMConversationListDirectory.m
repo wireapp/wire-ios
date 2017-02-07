@@ -81,7 +81,6 @@ static NSString * const PendingKey = @"Pending";
     for (ZMConversationList* list in self.allConversationLists){
         [list recreateWithAllConversations:allConversations];
     }
-    [moc.globalManagedObjectContextObserver refreshConversationListObserverWithAllConversations:allConversations];
 }
 
 - (NSArray *)allConversationLists;

@@ -25,73 +25,13 @@
 #import "ZMConversationList.h"
 #import "ZMAddressBookContact.h"
 
-@class ZMMessage;
 @class ZMConversation;
-@class ZMConnection;
 
-@class ZMNewUnreadMessagesNotification;
-@class ZMNewUnreadKnocksNotification;
-@class ZMCallEndedNotification;
 @class ZMInvitationStatusChangedNotification;
-
-@class MessageWindowChangeInfo;
-@class ConversationListChangeInfo;
-@class MessageChangeInfo;
-@class ConversationChangeInfo;
-@class UserChangeInfo;
-@class NewUnreadMessagesChangeInfo;
-@class NewUnreadKnockMessagesChangeInfo;
-@class NewUnreadUnsentMessageChangeInfo;
 
 
 extern NSString * const ZMDatabaseCorruptionNotificationName;
 
-
-@protocol ZMMessageObserver <NSObject>
-- (void)messageDidChange:(MessageChangeInfo *)changeInfo;
-@end
-
-
-@protocol ZMConversationObserver <NSObject>
-- (void)conversationDidChange:(ConversationChangeInfo *)note;
-@end
-
-@protocol ZMUserObserver <NSObject>
-- (void)userDidChange:(UserChangeInfo *)note;
-@end
-
-
-@protocol ZMConversationListObserver <NSObject>
-- (void)conversationListDidChange:(ConversationListChangeInfo *)changeInfo;
-
-@optional
-- (void)conversationInsideList:(ZMConversationList*)list didChange:(ConversationChangeInfo *)changeInfo;
-
-@end
-
-
-@protocol ZMConversationMessageWindowObserver <NSObject>
-- (void)conversationWindowDidChange:(MessageWindowChangeInfo *)note;
-
-@optional
-- (void)messagesInsideWindowDidChange:(NSArray *)messageChangeInfos;
-
-@end
-
-
-@protocol ZMNewUnreadMessagesObserver <NSObject>
-- (void)didReceiveNewUnreadMessages:(NewUnreadMessagesChangeInfo *)note;
-@end
-
-
-@protocol ZMNewUnreadKnocksObserver <NSObject>
-- (void)didReceiveNewUnreadKnockMessages:(NewUnreadKnockMessagesChangeInfo *)note;
-@end
-
-
-@protocol ZMNewUnreadUnsentMessageObserver <NSObject>
-- (void)didReceiveNewUnreadUnsentMessages:(NewUnreadUnsentMessageChangeInfo *)note;
-@end
 
 
 
@@ -107,88 +47,6 @@ extern NSString * const ZMDatabaseCorruptionNotificationName;
 
 @end
 
-
-@protocol ZMConversationMessageWindowObserverOpaqueToken <NSObject>
-@end
-
-@interface ZMConversationMessageWindow (Notifications)
-
-- (id<ZMConversationMessageWindowObserverOpaqueToken>)addConversationWindowObserver:(id<ZMConversationMessageWindowObserver>)observer ZM_MUST_USE_RETURN;
-- (void)removeConversationWindowObserverToken:(id<ZMConversationMessageWindowObserverOpaqueToken>)token;
-
-@end
-
-
-
-@protocol ZMConversationObserverOpaqueToken <NSObject>
-@end
-
-@interface ZMConversation (Observer)
-
-- (id<ZMConversationObserverOpaqueToken>)addConversationObserver:(id<ZMConversationObserver>)observer;
-+ (void)removeConversationObserverForToken:(id<ZMConversationObserverOpaqueToken>)token;
-
-@end
-
-
-
-@protocol ZMConversationListObserverOpaqueToken <NSObject>
-@end
-
-@interface ZMConversationList (ListChangeNotification)
-
-- (id<ZMConversationListObserverOpaqueToken>)addConversationListObserver:(id<ZMConversationListObserver>)observer;
-- (void)removeConversationListObserverForToken:(id<ZMConversationListObserverOpaqueToken>)token;
-
-@end
-
-
-@protocol ZMMessageObserverOpaqueToken <NSObject>
-@end
-@protocol ZMNewUnreadMessageObserverOpaqueToken <NSObject>
-@end
-@protocol ZMNewUnreadKnockMessageObserverOpaqueToken <NSObject>
-@end
-@protocol ZMNewUnreadUnsentMessageObserverOpaqueToken <NSObject>
-@end
-
-
-
-@interface ZMMessageNotification : NSObject
-
-+ (id<ZMMessageObserverOpaqueToken>)addMessageObserver:(id<ZMMessageObserver>)observer forMessage:(id<ZMConversationMessage>)conversationMessage;
-+ (void)removeMessageObserverForToken:(id<ZMMessageObserverOpaqueToken>)token;
-
-+ (id<ZMNewUnreadMessageObserverOpaqueToken>)addNewMessagesObserver:(id<ZMNewUnreadMessagesObserver>)observer inUserSession:(ZMUserSession *)userSession;
-+ (void)removeNewMessagesObserverForToken:(id<ZMNewUnreadMessageObserverOpaqueToken>)token inUserSession:(ZMUserSession *)userSession;
-
-+ (id<ZMNewUnreadKnockMessageObserverOpaqueToken>)addNewKnocksObserver:(id<ZMNewUnreadKnocksObserver>)observer inUserSession:(ZMUserSession *)userSession;
-+ (void)removeNewKnocksObserverForToken:(id<ZMNewUnreadKnockMessageObserverOpaqueToken>)token inUserSession:(ZMUserSession *)userSession;
-
-+ (id<ZMNewUnreadUnsentMessageObserverOpaqueToken>)addUnreadUnsentMessageObserver:(id<ZMNewUnreadKnocksObserver>)observer inUserSession:(ZMUserSession *)userSession;
-+ (void)removeUnreadUnsentMessageObserverForToken:(id<ZMNewUnreadUnsentMessageObserverOpaqueToken>)token inUserSession:(ZMUserSession *)userSession;
-
-@end
-
-
-@protocol ZMUserObserverOpaqueToken <NSObject>
-@end
-
-@protocol ZMObservableUser
-
-+ (id<ZMUserObserverOpaqueToken>)addUserObserver:(id<ZMUserObserver>)observer forUsers:(NSArray *)users inUserSession:(ZMUserSession *)userSession;
-+ (id<ZMUserObserverOpaqueToken>)addUserObserver:(id<ZMUserObserver>)observer forUsers:(NSArray *)users managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-+ (void)removeUserObserverForToken:(id<ZMUserObserverOpaqueToken>)token;
-
-@end
-
-
-@interface ZMUser (ChangeNotification) <ZMObservableUser>
-@end
-
-
-@interface ZMSearchUser (ChangeNotification) <ZMObservableUser>
-@end
 
 
 @protocol ZMInvitationStatusObserver <NSObject>

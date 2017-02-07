@@ -32,31 +32,6 @@
 @end
 
 
-@interface ZMMessageNotification (Internal)
-
-+ (id<ZMNewUnreadMessageObserverOpaqueToken>)addNewMessagesObserver:(id<ZMNewUnreadMessagesObserver>)observer managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-+ (void)removeNewMessagesObserverForToken:(id<ZMNewUnreadMessageObserverOpaqueToken>)token managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-
-+ (id<ZMNewUnreadKnockMessageObserverOpaqueToken>)addNewKnocksObserver:(id<ZMNewUnreadKnocksObserver>)observer managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-+ (void)removeNewKnocksObserverForToken:(id<ZMNewUnreadKnockMessageObserverOpaqueToken>)token managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-
-@end
-
-
-@interface ZMUser (InternalObservers)
-
-+ (id<ZMUserObserverOpaqueToken>)addUserObserver:(id<ZMUserObserver>)observer forUsers:(NSArray *)users managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-
-@end
-
-
-@interface ZMSearchUser (InternalObservers)
-
-+ (id<ZMUserObserverOpaqueToken>)addUserObserver:(id<ZMUserObserver>)observer forUsers:(NSArray *)users managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
-
-@end
-
-
 @interface ZMInvitationStatusChangedNotification ()
 
 @property (nonatomic, readwrite, copy) NSString *emailAddress;

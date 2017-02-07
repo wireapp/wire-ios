@@ -241,42 +241,6 @@
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
-- (void)testThatItNotifiesObserversWhenConnectingToASearchUserThatHasNoLocalUser;
-{
-    // given
-    
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
-                                                           handle:@"hans"
-                                                      accentColor:ZMAccentColorStrongLimeGreen
-                                                         remoteID:[NSUUID createUUID]
-                                                             user:nil
-                                         syncManagedObjectContext:self.syncMOC
-                                           uiManagedObjectContext:self.uiMOC];
-    
-    searchUser.remoteIdentifier = [NSUUID createUUID];
-    XCTAssertFalse(searchUser.isPendingApprovalByOtherUser);
-    
-    id userToken = [ZMUser addUserObserver:self forUsers:@[searchUser] managedObjectContext:self.uiMOC];
-    
-    // expect
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
-    
-    // when
-    [searchUser connectWithMessageText:@"Hey!" completionHandler:^{
-        [callbackCalled fulfill];
-    }];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-    
-    // then
-    XCTAssertEqual(self.userNotifications.count, 1u);
-    UserChangeInfo *note = self.userNotifications.firstObject;
-    XCTAssertEqualObjects(note.user, searchUser);
-    XCTAssertTrue(note.connectionStateChanged);
-    
-    [ZMUser removeUserObserverForToken:userToken];
-}
-
-
 - (void)testThatItDoesNotConnectIfTheSearchUserHasNoRemoteIdentifier;
 {
     // given
@@ -417,61 +381,6 @@
     }];
     XCTAssertEqual(user.connection.status, ZMConnectionStatusSent);
 }
-
-
-- (void)testThatItNotifiesObserverWhenConnectingToALocalUser;
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user.remoteIdentifier = [NSUUID createUUID];
-    XCTAssert([self.uiMOC saveOrRollback]);
-
-    __block ZMSearchUser *searchUser;
-    [self performIgnoringZMLogError:^{
-        searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
-                                                 handle:nil
-                                            accentColor:ZMAccentColorUndefined
-                                               remoteID:nil
-                                                   user:user
-                               syncManagedObjectContext:self.syncMOC
-                                 uiManagedObjectContext:self.uiMOC];
-
-    }];
-
-    id userObserver = [OCMockObject niceMockForProtocol:@protocol(ZMUserObserver)];
-    
-    searchUser.remoteIdentifier = nil;
-    id userToken1 = [ZMUser addUserObserver:self forUsers:@[searchUser] managedObjectContext:self.uiMOC];
-    id userToken2 = [ZMUser addUserObserver:userObserver forUsers:@[searchUser] managedObjectContext:self.uiMOC];
-
-    // expect
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
-    [(id<ZMUserObserver>)[userObserver expect] userDidChange:[OCMArg checkWithBlock:^BOOL(UserChangeInfo *changeInfo) {
-        if (changeInfo.connectionStateChanged) {
-            [callbackCalled fulfill];
-            return YES;
-        }
-        return NO;
-    }]];
-    
-    // when
-    [searchUser connectWithMessageText:@"Hey!" completionHandler:nil];
-    XCTAssert([self.uiMOC saveOrRollback]);
-
-    XCTAssert([self waitForCustomExpectationsWithTimeout:1.5]);
-    
-    // then
-    XCTAssertTrue(searchUser.user.isPendingApprovalByOtherUser);
-    XCTAssertEqual(self.userNotifications.count, 1u);
-    UserChangeInfo *note = self.userNotifications.firstObject;
-    XCTAssertEqualObjects(note.user, searchUser);
-    XCTAssertTrue(note.connectionStateChanged);
-    
-    [ZMUser removeUserObserverForToken:userToken1];
-    [ZMUser removeUserObserverForToken:userToken2];
-
-}
-
 
 - (void)testThatItDoesNotConnectIfTheSearchUserHasAConnectedUser;
 {

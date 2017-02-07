@@ -44,6 +44,7 @@
 @property (nonatomic) ZMUserDisplayNameGenerator *displayNameGenerator;
 
 /// Returns those ZMUser instances for which names have been updated, and updates the internal name generator
-- (NSSet *)updateDisplayNameGeneratorWithChanges:(NSNotification *)note;
-
+- (NSSet<ZMUser *> *)updateDisplayNameGeneratorWithUpdatedUsers:(NSSet<ZMUser *>*)updatedUsers
+                                        insertedUsers:(NSSet<ZMUser *>*)insertedUsers
+                                         deletedUsers:(NSSet<ZMUser *>*)deletedUsers;
 @end

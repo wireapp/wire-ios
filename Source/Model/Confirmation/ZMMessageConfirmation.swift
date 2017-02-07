@@ -34,15 +34,24 @@ import CoreData
 }
 
 @objc(ZMMessageConfirmation)
-open class ZMMessageConfirmation: NSManagedObject {
+open class ZMMessageConfirmation: ZMManagedObject {
 
     @NSManaged open var type: MessageConfirmationType
     @NSManaged open var message: ZMMessage
     @NSManaged open var user: ZMUser
 
-    static var entityName: String {
+    override open class func entityName() -> String {
         return "MessageConfirmation"
     }
+    
+    open override var modifiedKeys: Set<AnyHashable>? {
+        get {
+            return Set()
+        } set {
+            // do nothing
+        }
+    }
+    
     
     /// Creates a ZMMessageConfirmation object that holds a reference to a message that was confirmed and the user who confirmed it.
     /// It can have 2 types: Delivered and Read depending on the genericMessage confirmation type
@@ -57,7 +66,7 @@ open class ZMMessageConfirmation: NSManagedObject {
         
         var confirmation = message.confirmations.filter{$0.user == sender}.first
         if confirmation == nil {
-            confirmation = NSEntityDescription.insertNewObject(forEntityName: ZMMessageConfirmation.entityName, into: moc) as? ZMMessageConfirmation
+            confirmation = NSEntityDescription.insertNewObject(forEntityName: ZMMessageConfirmation.entityName(), into: moc) as? ZMMessageConfirmation
         }
         confirmation?.user = sender
         confirmation?.message = message

@@ -672,9 +672,19 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     return [self genericMessageDataFromDataSetForFormat:ZMImageFormatMedium].genericMessage;
 }
 
++ (NSSet *)keyPathsForValuesAffectingMediumGenericMessage
+{
+    return [NSSet setWithObjects:@"dataSet", @"dataSet.data", nil];
+}
+
 - (ZMGenericMessage *)previewGenericMessage
 {
     return [self genericMessageDataFromDataSetForFormat:ZMImageFormatPreview].genericMessage;
+}
+
++ (NSSet *)keyPathsForValuesAffectingPreviewGenericMessage
+{
+    return [NSSet setWithObjects:@"dataSet", @"dataSet.data", nil];
 }
 
 - (BOOL)shouldReprocessForFormat:(ZMImageFormat)format

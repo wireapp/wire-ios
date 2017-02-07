@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+@import ZMCDataModel;
 
 #import "ZMBaseManagedObjectTest.h"
 #import "ZMConversationList+Internal.h"
@@ -26,10 +27,53 @@
 #import "ZMUser+Internal.h"
 #import "ZMNotifications+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "NotificationObservers.h"
-#import "ZMConversationList.h"
+#import "ZMCDataModelTests-Swift.h"
+
+
+typedef void(^ObserverCallback)( NSObject * _Nonnull  note);
+
+
+@interface ConversationListChangeObserver : NSObject <ZMConversationListObserver>
+
+@property (nonatomic, readonly, nonnull) NSMutableArray *notifications;
+@property (nonatomic, copy, nullable) ObserverCallback notificationCallback;
+@property (nonatomic, weak) ZMConversationList *conversationList;
+@property (nonatomic) id token;
+
+- (nonnull instancetype)initWithConversationList:(nonnull ZMConversationList *)conversationList;
+
+@end
+
+
+@implementation ConversationListChangeObserver
+
+ZM_EMPTY_ASSERTING_INIT()
+
+- (instancetype)initWithConversationList:(ZMConversationList *)conversationList;
+{
+    self = [super init];
+    if(self) {
+        self.conversationList = conversationList;
+        self.token = [ConversationListChangeInfo addObserver:self forList:conversationList];
+    }
+    return self;
+}
+
+- (void)conversationListDidChange:(ConversationListChangeInfo *)note;
+{
+    [self.notifications addObject:note];
+    if (self.notificationCallback) {
+        self.notificationCallback(note);
+    }
+
+}
+
+
+@end
+
 
 @interface ZMConversationListTests : ZMBaseManagedObjectTest
+@property (nonatomic) NotificationDispatcher *dispatcher;
 @end
 
 
@@ -38,13 +82,11 @@
 
 - (void)setUp {
     [super setUp];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ZMApplicationDidEnterEventProcessingStateNotification" object:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
-
+    self.dispatcher = [[NotificationDispatcher alloc] initWithManagedObjectContext:self.uiMOC];
 }
 
 - (void)tearDown {
+    [self.dispatcher tearDown];
     [super tearDown];
 }
 - (void)testThatItDoesNotReturnTheSelfConversation;
@@ -170,7 +212,7 @@
     // when
     // conversation is inserted while the app is in the background
     {
-        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = NO;
+        [self.dispatcher applicationDidEnterBackground];
         c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
         c2.conversationType = ZMConversationTypeGroup;
         c2.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:-20];
@@ -186,7 +228,6 @@
     {
         NSArray *allConversations = @[c1,c2];
         [(ZMConversationList*)list recreateWithAllConversations:allConversations];
-        [self.uiMOC.globalManagedObjectContextObserver refreshConversationListObserverWithAllConversations:allConversations];
         
         // then list is updated
         NSArray *expected = @[c1, c2];
@@ -195,16 +236,14 @@
     // and when
     // forward accumulated changes
     {
-        self.uiMOC.globalManagedObjectContextObserver.propagateChanges = YES;
+        [self.dispatcher applicationWillEnterForeground];
         WaitForAllGroupsToBeEmpty(0.5);
-
+        
         // then the updated snapshot prevents outdated list change notifications
         XCTAssertEqual(obs.notifications.count, 0u);
         NSArray *expected = @[c1, c2];
         XCTAssertEqualObjects(list, expected);
     }
-    [obs tearDown];
-
 }
 
 - (void)testThatItUpdatesWhenNewConversationsAreInserted
@@ -238,7 +277,7 @@
     XCTAssertEqual(list.count, 4u);
     expected = @[c1, c2, c3, c4];
     AssertArraysContainsSameObjects(list, expected);
-    [observer tearDown];
+    (void)observer;
 }
 
 - (void)testThatItUpdatesWhenNewConversationLastModifiedChangesThroughTheNotificationDispatcher
@@ -266,13 +305,13 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     
     c3.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:20];
-    [self.uiMOC processPendingChanges];
+    [self.uiMOC saveOrRollback];
     
     // then
     XCTAssertEqual(list.count, 3u);
     expected = @[c3, c2, c1];
     XCTAssertEqualObjects(list, expected);
-    [observer tearDown];
+    (void)observer;
 }
 
 - (void)testThatItUpdatesWhenNewConnectionIsIgnored;
@@ -303,7 +342,7 @@
     // then
     XCTAssertEqual(list.count, 0u);
     XCTAssertEqualObjects(list, @[]);
-    [observer tearDown];
+    (void)observer;
 }
 
 - (void)testThatItUpdatesWhenNewConnectionIsCancelled;
@@ -333,7 +372,7 @@
     // then
     XCTAssertEqual(list.count, 0u);
     XCTAssertEqualObjects(list, @[]);
-    [observer tearDown];
+    (void)observer;
 }
 
 - (void)testThatItUpdatesWhenNewConnectionIsAccepted;
@@ -369,8 +408,8 @@
     XCTAssertEqualObjects(normalList, @[conversation]);
     XCTAssertEqual(pendingList.count, 0u);
     XCTAssertEqualObjects(pendingList, @[]);
-    [normalObserver tearDown];
-    [pendingObserver tearDown];
+    (void)normalObserver;
+    (void)pendingObserver;
 }
 
 - (void)testThatItUpdatesWhenNewAUserIsUnblocked;
@@ -398,7 +437,7 @@
     // then
     XCTAssertEqual(normalList.count, 1u);
     XCTAssertEqualObjects(normalList, @[conversation]);
-    [observer tearDown];
+    (void)observer;
 }
 
 - (void)testThatItUpdatesWhenTwoNewConnectionsAreAccepted;
@@ -444,8 +483,8 @@
     XCTAssertEqualObjects(normalList, conversations);
     XCTAssertEqual(pendingList.count, 0u);
     XCTAssertEqualObjects(pendingList, @[]);
-    [normalObserver tearDown];
-    [pendingObserver tearDown];
+    (void)normalObserver;
+    (void)pendingObserver;
 }
 
 
@@ -481,8 +520,8 @@
     XCTAssertEqualObjects(normalList, @[]);
     XCTAssertEqual(archivedList.count, 1u);
     XCTAssertEqualObjects(archivedList, @[conversation]);
-    [normalObserver tearDown];
-    [archivedObserver tearDown];
+    (void)normalObserver;
+    (void)archivedObserver;
 }
 
 - (void)testThatClearingConversationMovesItToClearedList
@@ -509,7 +548,6 @@
 
     // when
     [c1 clearMessageHistory];
-
     XCTAssertTrue([self.uiMOC saveOrRollback]);
     
     

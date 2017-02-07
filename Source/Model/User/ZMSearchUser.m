@@ -271,7 +271,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 - (void)connectWithMessageText:(NSString *)text completionHandler:(dispatch_block_t)handler;
 {
     dispatch_block_t completionHandler = ^(){
-        [self.uiMOC.globalManagedObjectContextObserver notifyUpdatedSearchUser:self];
+        [self.uiMOC.searchUserObserverCenter notifyUpdatedSearchUser:self];
         if (handler != nil) {
             handler();
         }
@@ -491,18 +491,19 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return nil;
 }
 
-- (void)notifyNewSmallImageData:(NSData *)data managedObjectContextObserver:(ManagedObjectContextObserver *)mocObserver;
+
+- (void)notifyNewSmallImageData:(NSData *)data searchUserObserverCenter:(SearchUserObserverCenter *)searchUserObserverCenter;
 {
     _imageSmallProfileData = data;
-    [mocObserver notifyUpdatedSearchUser:self];
+    [searchUserObserverCenter notifyUpdatedSearchUser:self];
 }
 
-- (void)setAndNotifyNewMediumImageData:(NSData *)data managedObjectContextObserver:(ManagedObjectContextObserver *)mocObserver;
+- (void)setAndNotifyNewMediumImageData:(NSData *)data searchUserObserverCenter:(SearchUserObserverCenter *)searchUserObserverCenter;
 {
     if (_imageMediumData == nil || ![_imageMediumData isEqualToData:data]) {
         _imageMediumData = data;
     }
-    [mocObserver notifyUpdatedSearchUser:self];
+    [searchUserObserverCenter notifyUpdatedSearchUser:self];
 }
 
 - (void)refreshData {

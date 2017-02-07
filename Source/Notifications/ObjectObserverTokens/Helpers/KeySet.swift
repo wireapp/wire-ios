@@ -20,6 +20,39 @@
 import Foundation
 import ZMUtilities
 
+public enum AffectedKeys : Equatable {
+    case some(KeySet)
+    case all
+    
+    func combinedWith(_ other: AffectedKeys) -> AffectedKeys {
+        switch (self, other) {
+        case let (.some(k1), .some(k2)):
+            return .some(k1.union(k2))
+        default:
+            return .all
+        }
+    }
+    
+    func containsKey(_ key: KeyPath) -> Bool {
+        switch(self) {
+        case let .some(keySet):
+            return keySet.contains(key)
+        case .all:
+            return true
+        }
+    }
+}
+
+public func ==(lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
+    switch (lhs, rhs) {
+    case let (.some(lk), .some(rk)):
+        return lk == rk
+    case (.all, .all):
+        return true
+    default:
+        return false
+    }
+}
 
 public struct KeySet : Sequence {
     public typealias Key = KeyPath
