@@ -32,6 +32,21 @@ extension Dictionary {
         }
     }
     
+    /// Maps a dictionary's keys and values to a new dictionary applying `keysMapping` to all keys and `valueMapping` 
+    /// If `valueMapping` returns nil, the new dictionary will not contain the corresponding key
+    public func mapKeysAndValues<NewKey, NewValue>(keysMapping: ((Key) -> NewKey),
+                                                   valueMapping: ((Key, Value) -> NewValue?))
+        -> Dictionary<NewKey, NewValue>
+    {
+        var dict = Dictionary<NewKey, NewValue>()
+        for (key, value) in self {
+            if let newValue = valueMapping(key, value) {
+                dict.updateValue(newValue, forKey: keysMapping(key))
+            }
+        }
+        return dict
+    }
+    
     /// Maps the key keeping the association with values
     public func mapKeys<T: Hashable>(_ transform: (Key) -> T) -> [T: Value] {
         var mapping : [T : Value] = [:]
@@ -41,7 +56,27 @@ extension Dictionary {
         return mapping
         
     }
+    
+    /// Creates a dictionary with the given keys and and sets `repeatedValue` as value for all keys
+    public init(keys: [Key], repeatedValue: Value) {
+        self.init()
+        for key in keys {
+            updateValue(repeatedValue, forKey: key)
+        }
+    }
+    
+    /// Joins two dictionaries with each other while overwriting existing values with values in `other`
+    public func updated(other:Dictionary) -> Dictionary {
+        var newDict = self
+        for (key,value) in other {
+            newDict.updateValue(value, forKey:key)
+        }
+        return newDict
+    }
 }
+
+
+
 
 extension Sequence {
     
@@ -55,4 +90,5 @@ extension Sequence {
         }
         return mapping
     }
+    
 }
