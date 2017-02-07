@@ -28,11 +28,6 @@ public protocol Conversation : SharingTarget {
     /// Type of the conversation
     var conversationType : ZMConversationType { get }
     
-    /// Image associated with conversation
-    /// E.g. will be nil for group conversation and will 
-    /// be user's image for one-to-one
-    var image : Data? { get }
-    
     /// Returns true if the conversation is trusted (all participants are trusted)
     var isTrusted : Bool { get }
     
