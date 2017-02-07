@@ -21,10 +21,6 @@ import Foundation
 import ZMCDataModel
 
 
-public class FileMetaData : ZMFileMetadata {
-    
-}
-
 
 private extension ZMMessage {
 
