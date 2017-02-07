@@ -180,7 +180,6 @@ static BOOL storeIsReady = NO;
     [SharedUserInterfaceContext initialiseSessionAndSelfUser];
     
     SharedUserInterfaceContext.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSRollbackMergePolicyType];
-    (void)SharedUserInterfaceContext.globalManagedObjectContextObserver;
     
     return SharedUserInterfaceContext;
 }

@@ -34,7 +34,7 @@
 
 - (nonnull NSArray *)allConversationLists;
 
-/// Refetches all conversation lists
+/// Refetches all conversation lists and resets the snapshots
 /// Call this when the app re-enters the foreground
 - (void)refetchAllListsInManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 

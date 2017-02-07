@@ -18,12 +18,13 @@
 
 
 @import CoreData;
+#import "ZMManagedObject.h"
 
 @class ZMGenericMessage;
 @class ZMClientMessage;
 @class ZMAssetClientMessage;
 
-@interface ZMGenericMessageData: NSManagedObject
+@interface ZMGenericMessageData: ZMManagedObject
 
 @property (nonatomic) NSData *data;
 @property (nonatomic, readonly) ZMGenericMessage *genericMessage;

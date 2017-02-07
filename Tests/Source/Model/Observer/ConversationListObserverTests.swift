@@ -1,31 +1,44 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
-import ZMCDataModel
+@testable import ZMCDataModel
 
-class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
+class ConversationListObserverTests : NotificationDispatcherTestBase {
+    
+    class TestObserver : NSObject, ZMConversationListObserver {
+        
+        var changes : [ConversationListChangeInfo] = []
+        
+        @objc func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+            changes.append(changeInfo)
+        }
+    }
+    var testObserver : TestObserver!
     
     override func setUp() {
+        testObserver = TestObserver()
         super.setUp()
-        self.uiMOC.globalManagedObjectContextObserver.syncCompleted(NSNotification(name: NSNotification.Name(rawValue: "fake"), object: nil) as Notification)
-        NotificationCenter.default.post(name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+    
+    override func tearDown() {
+        testObserver = nil
+        super.tearDown()
     }
     
     fileprivate func movedIndexes(_ changeSet: ConversationListChangeInfo) -> [ZMMovedIndex] {
@@ -34,24 +47,27 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         return array
     }
     
-    class TestObserver : NSObject, ZMConversationListObserver {
+    func testThatItDeallocates(){
+        // given
+        let conversationList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
+        self.uiMOC.saveOrRollback()
         
-        var changes : [ConversationListChangeInfo] = []
+        // when
+        weak var observerCenter = uiMOC.conversationListObserverCenter
+        uiMOC.userInfo.removeObject(forKey: NSManagedObjectContext.ConversationListObserverCenterKey)
         
-        @objc func conversationListDidChange(_ changeInfo: ConversationListChangeInfo!) {
-            changes.append(changeInfo)
-        }
+        // then
+        XCTAssertNil(observerCenter)
+        XCTAssertNotNil(conversationList)
     }
     
     func testThatItNotifiesObserversWhenANewConversationIsInsertedThatMatchesListPredicate()
     {
         // given
         let conversationList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
-
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
@@ -65,10 +81,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         if let first = testObserver.changes.first {
             XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(first.deletedIndexes, IndexSet())
-            XCTAssertEqual(first.updatedIndexes, IndexSet())
+            XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
     }
     
     func testThatItDoesNotNotifyObserversWhenANewConversationIsInsertedThatDoesNotMatchListPredicate()
@@ -78,8 +94,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
@@ -88,8 +103,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         // then
         XCTAssertEqual(testObserver.changes.count, 0)
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
     }
     
     
@@ -102,8 +116,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         conversation.isArchived = true
@@ -117,8 +130,8 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
     
     func testThatItNotifiesObserversWhenAConversationChangesToNotMatchThePredicateAndThenToMatchThePredicateAgain()
@@ -130,15 +143,15 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         conversation.isArchived = true
         self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         conversation.isArchived = false
         self.uiMOC.saveOrRollback()
-        
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // then
         XCTAssertEqual(testObserver.changes.count, 2)
         if let first = testObserver.changes.first {
@@ -153,9 +166,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
+    
     
     func testThatItNotifiesObserversWhenAConversationChangesSoItNowDoesMatchThePredicate()
     {
@@ -169,8 +183,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         conversation.isArchived = false
@@ -184,8 +197,8 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
     
     func testThatAConversationThatGetsAddedToTheListIsLaterRemovedWhenItChangesNotToMatchThePredicate()
@@ -198,8 +211,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         conversation.isArchived = false
@@ -221,8 +233,8 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(last.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(last), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
     
     
@@ -243,9 +255,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        let testObserver = TestObserver()
-
-        let token = conversationList.add(testObserver)
+        XCTAssertEqual(conversationList.toOrderedSet().array.map{($0 as! ZMConversation).objectID},
+                       [conversation3, conversation2, conversation1].map{$0.objectID})
+        
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         XCTAssertEqual(conversationList.count, 3)
         
         // when
@@ -253,15 +266,18 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         self.uiMOC.saveOrRollback()
         
         // then
+        XCTAssertEqual(conversationList.toOrderedSet().array.map{($0 as! ZMConversation).objectID},
+                       [conversation2, conversation3, conversation1].map{$0.objectID})
         XCTAssertEqual(conversationList.count, 3)
-        if let first = testObserver.changes.first {
+        XCTAssertEqual(testObserver.changes.count, 1)
+        if let first = testObserver.changes.last {
             XCTAssertEqual(first.insertedIndexes, IndexSet())
             XCTAssertEqual(first.deletedIndexes, IndexSet())
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [ZMMovedIndex(from: 1, to: 0)])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
     
     func testThatTheListIsOrderedWhenAConversationIsInserted()
@@ -278,8 +294,8 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let testObserver = TestObserver()
-
-        let token = conversationList.add(testObserver)
+        
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         XCTAssertEqual(conversationList.count, 2)
         
         // when
@@ -287,6 +303,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation3.conversationType = .group
         conversation3.lastModifiedDate = Date(timeIntervalSince1970: 50)
         self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(conversationList.count, 3)
@@ -294,8 +311,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(conversationList[1] as? ZMConversation, conversation3)
         XCTAssertEqual(conversationList[2] as? ZMConversation, conversation1)
         
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
     }
     
     func testThatAnObserverIsNotNotifiedAfterBeingRemoved()
@@ -305,18 +321,18 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation1.conversationType = .group
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         self.uiMOC.saveOrRollback()
         
         XCTAssertEqual(conversationList.count, 1)
         
         // when
-        conversationList.removeObserver(for: token)
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
         let conversation2 = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation2.conversationType = .group
         self.uiMOC.saveOrRollback()
-        
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         // then
         XCTAssertEqual(conversationList.count, 2)
         XCTAssertEqual(testObserver.changes.count, 0)
@@ -333,18 +349,18 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         let pendingList = ZMConversation.pendingConversations(in: self.uiMOC)
         let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
-
+        
         let pendingObserver = TestObserver()
-        let token1 = pendingList.add(pendingObserver)
+        let token1 = ConversationListChangeInfo.add(observer: pendingObserver, for: pendingList)
         
         let normalObserver = TestObserver()
-        let token2 = normalList.add(normalObserver)
+        let token2 = ConversationListChangeInfo.add(observer: normalObserver, for: normalList)
         
         self.uiMOC.saveOrRollback()
         
         XCTAssertEqual(pendingList.count, 1)
         XCTAssertEqual(normalList.count, 0)
-
+        
         // when
         conversation.connection!.status = .accepted
         conversation.conversationType = .oneOnOne
@@ -354,9 +370,9 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(pendingList.count, 0)
         XCTAssertEqual(normalList.count, 1)
         
-        XCTAssertEqual(pendingObserver.changes.count, 1)
+        XCTAssertEqual(pendingObserver.changes.count, 2)
         XCTAssertEqual(normalObserver.changes.count, 1)
-        if let pendingNote = pendingObserver.changes.first {
+        if let pendingNote = pendingObserver.changes.last {
             XCTAssertEqual(pendingNote.insertedIndexes, IndexSet())
             XCTAssertEqual(pendingNote.deletedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(pendingNote.updatedIndexes, IndexSet())
@@ -368,9 +384,8 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(normalNote.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(normalNote), [])
         }
-        pendingList.removeObserver(for: token1)
-        normalList.removeObserver(for: token2)
-
+        ConversationListChangeInfo.remove(observer: token1, for:pendingList)
+        ConversationListChangeInfo.remove(observer: token2, for:normalList)
     }
     
     func testThatItNotifiesListObserversWhenAConversationIsRemovedFromTheListBecauseItIsArchived()
@@ -382,8 +397,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         conversation.isArchived = true
@@ -397,8 +411,8 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
     
     func testThatItNotifiesObserversWhenAConversationUpdatesUserDefinedName()
@@ -410,8 +424,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         conversation.userDefinedName = "Soap"
@@ -425,10 +438,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
-
+    
     func testThatItNotifiesObserversWhenAUserInAConversationChangesTheirName()
     {
         // given
@@ -443,8 +456,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         user.name = "Foo"
         self.uiMOC.saveOrRollback()
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         user.name = "Soap"
@@ -458,10 +470,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
-
+    
     func testThatItNotifiesObserversWhenThereIsAnUnreadPingInAConversation()
     {
         // given
@@ -473,14 +485,12 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         self.uiMOC.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
-        self.simulateUnreadMissedKnock(in: conversation)
-        self.uiMOC.saveOrRollback()
+        self.simulateUnreadMissedKnock(in: conversation, merge: mergeLastChanges)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
+        
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
         if let first = testObserver.changes.first {
@@ -489,7 +499,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
     }
     
     func testThatItNotifiesObserversWhenTheEstimatedUnreadCountChanges()
@@ -507,19 +517,16 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         XCTAssertEqual(conversation.estimatedUnreadCount, 0)
         
         // when
-        self.simulateUnreadCount(1, for: conversation)
-        self.uiMOC.saveOrRollback()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        self.simulateUnreadCount(1, for: conversation, merge: mergeLastChanges)
         
         // then
         XCTAssertEqual(conversation.estimatedUnreadCount, 1)
-
+        
         XCTAssertEqual(testObserver.changes.count, 1)
         if let first = testObserver.changes.first {
             XCTAssertEqual(first.insertedIndexes, IndexSet())
@@ -527,10 +534,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
-
+    
     func testThatItDoesNotNotifyObserversWhenTheOnlyChangeIsAnInsertedMessage()
     {
         // given
@@ -541,8 +548,7 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         conversation.mutableMessages.add(ZMTextMessage.insertNewObject(in: self.uiMOC))
@@ -550,10 +556,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         
         // then
         XCTAssertEqual(testObserver.changes.count, 0)
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
-
+    
     func testThatItNotifiesObserversWhenTheUserInOneOnOneConversationGetsBlocked()
     {
         // given
@@ -565,11 +571,10 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
         conversation.conversationType = .oneOnOne
         conversation.connection?.to = user
         self.uiMOC.saveOrRollback()
-
+        
         let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
         
-        let testObserver = TestObserver()
-        let token = normalList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer:testObserver, for:normalList)
         
         XCTAssertEqual(normalList.count, 1)
         
@@ -587,29 +592,24 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
         }
-        normalList.removeObserver(for: token)
+        ConversationListChangeInfo.remove(observer: token, for: normalList)
     }
     
     func testThatItNotifiesObserversWhenAMessageBecomesUnreadUnsent()
     {
         // given
+        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
         
-        let message = ZMTextMessage.insertNewObject(in: self.uiMOC)
-
         let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         conversation.mutableMessages.add(message)
-
-        
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
         message.expire()
-        
         self.uiMOC.saveOrRollback()
         
         // then
@@ -620,25 +620,22 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
-
+    
     func testThatItNotifiesObserversWhenWeInsertAnUnreadMissedCall()
     {
         // given
-        let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
-
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
+        
         // when
-        self.simulateUnreadMissedCall(in: conversation)
-        self.uiMOC.saveOrRollback()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        self.simulateUnreadMissedCall(in: conversation, merge: mergeLastChanges)
         
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
@@ -648,34 +645,30 @@ class GlobalConversationObserverTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
         }
-        conversationList.removeObserver(for: token)
-
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+        
     }
     
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
-        let message = ZMTextMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
         
         let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         conversation.mutableMessages.add(message)
-        
-        
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        let testObserver = TestObserver()
-        let token = conversationList.add(testObserver)
-        conversationList.removeObserver(for: token)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
         
         // when
         message.expire()
         self.uiMOC.saveOrRollback()
-
+        
         
         // then
         XCTAssertEqual(testObserver.changes.count, 0)
     }
-
 }

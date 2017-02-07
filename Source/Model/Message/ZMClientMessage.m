@@ -130,19 +130,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     ZMGenericMessageData *existingMessageData = [self.dataSet firstObject];
     
     if (existingMessageData != nil) {
-        existingMessageData.data = data;
-        
-        NSManagedObjectContext *uiMOC = self.managedObjectContext.zm_userInterfaceContext;
-        NSManagedObjectID *objectID = self.objectID;
-        
-        [uiMOC performGroupedBlock:^{
-            ZMClientMessage *uiMOCMessage = [uiMOC existingObjectWithID:objectID error:nil];
-            if (nil == uiMOCMessage) {
-                return;
-            }
-            [uiMOC.globalManagedObjectContextObserver notifyNonCoreDataChangeInManagedObject:uiMOCMessage];
-        }];
-        
+        existingMessageData.data = data;        
         return existingMessageData;
     }
     else {
@@ -410,6 +398,11 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     }
     
     return nil;
+}
+
++ (NSSet *)keyPathsForValuesAffectingLinkPreview
+{
+    return [NSSet setWithObjects:@"dataSet", @"dataSet.data", nil];
 }
 
 - (ZMLinkPreview *)firstZMLinkPreview

@@ -120,6 +120,7 @@ extension NSManagedObjectContext
     open func setLargeUserImage(_ user: ZMUser, imageData: Data) {
         if let largeId = user.largeImageCacheKey {
             self.largeUserImageCache.setObject(imageData as NSCoding, forKey: largeId)
+            usersWithChangedLargeImage.append(user.objectID)
         }
     }
     
@@ -136,8 +137,13 @@ extension NSManagedObjectContext
     open func setSmallUserImage(_ user: ZMUser, imageData: Data) {
         if let smallId = user.smallImageCacheKey {
             self.smallUserImageCache.setObject(imageData as NSCoding, forKey: smallId)
+            usersWithChangedSmallImage.append(user.objectID)
         }
     }
+    
+    var usersWithChangedSmallImage : [NSManagedObjectID] = []
+    var usersWithChangedLargeImage : [NSManagedObjectID] = []
+
 }
 
 public extension UserImageLocalCache {

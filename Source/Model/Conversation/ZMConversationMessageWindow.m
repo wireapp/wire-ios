@@ -24,8 +24,10 @@
 #import "ZMOrderedSetState.h"
 #import "ZMMessage+Internal.h"
 #import "ZMOTRMessage.h"
+#import <ZMCDataModel/ZMCDataModel-Swift.h>
 
 NSString * const ZMConversationMessageWindowScrolledNotificationName = @"ZMConversationMessageWindowScrolledNotification";
+NSString * const ZMConversationMessageWindowCreatedNotificationName = @"ZMConversationMessageWindowCreatedNotification";
 
 typedef NS_ENUM(int, ZMMessageWindowEvent) {
     ZMMessageWindowEventAddObserver = 1,
@@ -54,6 +56,7 @@ typedef NS_ENUM(int, ZMMessageWindowEvent) {
 
 @implementation ZMConversationMessageWindow
 
+
 - (instancetype)initWithConversation:(ZMConversation *)conversation size:(NSUInteger)size;
 {
     self = [super init];
@@ -71,10 +74,15 @@ typedef NS_ENUM(int, ZMMessageWindowEvent) {
         }
             
         [self recalculateMessages];
+        [conversation.managedObjectContext.messageWindowObserverCenter windowWasCreated: self];
     }
     return self;
 }
 
+- (void)dealloc
+{
+    [self.conversation.managedObjectContext.messageWindowObserverCenter removeMessageWindow: self];
+}
 
 
 - (NSUInteger)activeSize;
@@ -114,7 +122,7 @@ typedef NS_ENUM(int, ZMMessageWindowEvent) {
     self.size += amountOfMessages;
     if(oldSize != self.activeSize) {
         [self recalculateMessages];
-        [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationMessageWindowScrolledNotificationName object:self];
+        [self.conversation.managedObjectContext.messageWindowObserverCenter windowDidScroll:self];
     }
 }
 

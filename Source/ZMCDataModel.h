@@ -62,6 +62,7 @@
 #import <ZMCDataModel/ZMAssetClientMessage+Testing.h>
 #import <ZMCDataModel/ZMGenericMessage+External.h>
 #import <ZMCDataModel/ZMGenericMessage+UpdateEvent.h>
+#import <ZMCDataModel/ZMGenericMessageData.h>
 
 #import <ZMCDataModel/UserClientTypes.h>
 

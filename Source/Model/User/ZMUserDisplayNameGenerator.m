@@ -141,25 +141,15 @@ static NSString * const DisplayNameGeneratorKey = @"ZMUserDisplayNameGenerator";
     }
 }
 
-- (NSSet *)updateDisplayNameGeneratorWithChanges:(NSNotification *)note;
+- (NSSet *)updateDisplayNameGeneratorWithUpdatedUsers:(NSSet<ZMUser *>*)updatedUsers
+                                        insertedUsers:(NSSet<ZMUser *>*)insertedUsers
+                                        deletedUsers:(NSSet<ZMUser *>*)deletedUsers;
 {
-    if (self.displayNameGenerator == nil) return [NSSet set];
- 
-    [self.displayNameGenerator fetchAllUsers];
-    
-    NSManagedObject* (^filteringBlock)(NSManagedObject *obj) = ^NSManagedObject*(NSManagedObject *evaluatedObject) {
-        return [evaluatedObject isKindOfClass:ZMUser.class] ? evaluatedObject : nil;
-    };
-    NSSet *insertedUsers = [(NSSet *)note.userInfo[NSInsertedObjectsKey] mapWithBlock:filteringBlock] ?: [NSSet set];
-    NSSet *deletedUsers =  [(NSSet *)note.userInfo[NSDeletedObjectsKey] mapWithBlock:filteringBlock] ?: [NSSet set];
-    NSSet *updatedUsers =  [(NSSet *)note.userInfo[NSUpdatedObjectsKey] mapWithBlock:filteringBlock] ?: [NSSet set];
-    NSSet *refreshedUsers =  [(NSSet *)note.userInfo[NSRefreshedObjectsKey] mapWithBlock:filteringBlock] ?: [NSSet set];
-    
-    updatedUsers = [updatedUsers setByAddingObjectsFromSet:refreshedUsers];
-    
     if (insertedUsers.count == 0 && deletedUsers.count == 0 && updatedUsers.count == 0) {
         return [NSSet set];
     }
+    if (self.displayNameGenerator == nil) return [NSSet set];
+    [self.displayNameGenerator fetchAllUsers];
     
     // loop through updated. If the user name changed then replace those users in the updatedSet
     NSMutableSet *updatedSet = [self.displayNameGenerator.allUsers mutableCopy];
@@ -174,7 +164,6 @@ static NSString * const DisplayNameGeneratorKey = @"ZMUserDisplayNameGenerator";
     [updatedSet minusSet:deletedUsers];
     [updatedSet unionSet:insertedUsers];
     
-    NSSet *updatedMOIDs = [NSSet set];
 
     //At this point inserted users should have temporary id's, but after the save they will have permament id's.
     //Display name generator maps names to user id's so it needs permament id's to be able to match them on subsecquent changes.
@@ -182,6 +171,7 @@ static NSString * const DisplayNameGeneratorKey = @"ZMUserDisplayNameGenerator";
     BOOL success = [self obtainPermanentIDsForObjects:updatedSet.allObjects error:&error];
     Require(success == YES && error == nil);
     
+    NSSet *updatedMOIDs = [NSSet set];
     ZMUserDisplayNameGenerator *newGenerator = [self.displayNameGenerator updatedWithUsers:updatedSet managedObjectIDsForChangedUsers:&updatedMOIDs];
     // If the old one wasn't 'nil' the new one can't be nil either:
     Require((self.displayNameGenerator.allUsers == nil) || (newGenerator.allUsers != nil));

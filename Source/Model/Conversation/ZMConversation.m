@@ -191,7 +191,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingEstimatedUnreadCount
 {
-    return [NSSet setWithObject: ZMConversationInternalEstimatedUnreadCountKey];
+    return [NSSet setWithObjects: ZMConversationInternalEstimatedUnreadCountKey, ZMConversationLastReadServerTimeStampKey, nil];
 }
 
 
@@ -248,7 +248,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     if (self.managedObjectContext.zm_isSyncContext) {
         // From the documentation: The managed object context’s change processing is explicitly disabled around this method so that you can use public setters to establish transient values and other caches without dirtying the object or its context.
         // Therefore we need to do a dispatch async  here in a performGroupedBlock to update the unread properties outside of awakeFromFetch
+        ZM_WEAK(self);
         [self.managedObjectContext performGroupedBlock:^{
+            ZM_STRONG(self);
             [self didUpdateConversationWhileFetchingUnreadMessages];
         }];
     }
@@ -327,7 +329,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingRelatedConnectionState
 {
-    return [NSSet setWithObject:@"connection"];
+    return [NSSet setWithObject:@"connection.status"];
 }
 
 - (NSSet *)ignoredKeys;
@@ -390,8 +392,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingDisplayName;
 {
-    return [NSSet setWithObjects:ZMConversationConversationTypeKey, @"connection",
-            ZMConversationUserDefinedNameKey, nil];
+    return [NSSet setWithObjects:ZMConversationConversationTypeKey, @"otherActiveParticipants", @"otherActiveParticipants.name", @"connection.to.name", @"otherActiveParticipants.displayName", @"connection.to.displayName", ZMConversationUserDefinedNameKey, nil];
 }
 
 + (instancetype)insertGroupConversationIntoUserSession:(id<ZMManagedObjectContextProvider>)session withParticipants:(NSArray *)participants
@@ -732,7 +733,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingConversationListIndicator
 {
-    return [ZMConversation keyPathsForValuesAffectingUnreadListIndicator];
+    return [[ZMConversation keyPathsForValuesAffectingUnreadListIndicator] union:[NSSet setWithObject: @"voiceChannelState"]];
 }
 
 
