@@ -39,7 +39,8 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 
     override func setUp() {
         super.setUp()
-        sut = ContextDidSaveNotificationPersistence()
+        let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        sut = ContextDidSaveNotificationPersistence(sharedContainerURL: url)
     }
 
     override func tearDown() {
@@ -54,11 +55,11 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
         XCTAssertNotNil(uri)
 
         // When
-        sut.add(.init(inserted: [conversation]))
+        XCTAssertTrue(sut.add(.init(inserted: [conversation])))
 
         // Then
         let expected = [NSInsertedObjectsKey: [uri] as AnyObject] as [AnyHashable: AnyObject]
-        XCTAssertEqual(sut.storedNotifications.count, 1)
+        guard sut.storedNotifications.count == 1 else { return XCTFail("Wrong amount of notifications") }
 
         for (key, value) in sut.storedNotifications.first! {
             XCTAssertEqual(value as? Set<NSManagedObject>, expected[key] as? Set<NSManagedObject>)
@@ -69,7 +70,7 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         XCTAssertNotNil(conversation.objectID.uriRepresentation())
-        sut.add(.init(inserted: [conversation]))
+        XCTAssertTrue(sut.add(.init(inserted: [conversation])))
         XCTAssertEqual(sut.storedNotifications.count, 1)
 
         // When
@@ -89,13 +90,13 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
         let secondURI = secondConversation.objectID.uriRepresentation()
 
         // When
-        sut.add(.init(inserted: [firstConversation], deleted: [firstConversation]))
+        XCTAssertTrue(sut.add(.init(inserted: [firstConversation], deleted: [firstConversation])))
 
         // Then
         XCTAssertEqual(sut.storedNotifications.count, 1)
 
         // When
-        sut.add(.init(updated: [secondConversation]))
+        XCTAssertTrue(sut.add(.init(updated: [secondConversation])))
 
         // Then
         XCTAssertEqual(sut.storedNotifications.count, 2)
@@ -110,6 +111,8 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
             NSUpdatedObjectsKey: [secondURI] as AnyObject
             ] as [AnyHashable: AnyObject]
 
+        guard sut.storedNotifications.count == 2 else { return XCTFail("Wrong amount of notifications") }
+
         for (key, value) in sut.storedNotifications.first! {
             XCTAssertEqual(value as? Set<NSManagedObject>, firstExpected[key] as? Set<NSManagedObject>)
         }
@@ -119,7 +122,52 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
         }
     }
 
-
 }
 
 
+class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
+
+    var sut: ShareExtensionAnalyticsPersistence!
+
+    override func setUp() {
+        super.setUp()
+        let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        sut = ShareExtensionAnalyticsPersistence(sharedContainerURL: url)
+    }
+
+    override func tearDown() {
+        sut.clear()
+        super.tearDown()
+    }
+
+    func testThatItCanStoreAndReadAStorableTrackingEvent() {
+        // Given
+        let event = StorableTrackingEvent(name: "eventName", attributes: ["first": true])
+
+        // When
+        XCTAssertTrue(sut.add(event))
+
+        // Then
+        XCTAssertEqual(sut.storedTrackingEvents.count, 1)
+        let actualEvent = sut.storedTrackingEvents.first
+        XCTAssertEqual(event.name, actualEvent?.name)
+        XCTAssertEqual(actualEvent?.attributes.keys.count, 2)
+        XCTAssertNotNil(actualEvent?.attributes["timestamp"])
+        XCTAssertEqual(actualEvent?.attributes["first"] as? Bool, true)
+    }
+
+    func testThatItCanClearTheStoredNotifications() {
+        // Given
+        let event = StorableTrackingEvent(name: "eventName", attributes: ["first": true])
+        XCTAssertTrue(sut.add(event))
+        XCTAssertEqual(sut.storedTrackingEvents.count, 1)
+
+        // When
+        sut.clear()
+
+        // Then
+        XCTAssertEqual(sut.storedTrackingEvents.count, 0)
+
+    }
+
+}
