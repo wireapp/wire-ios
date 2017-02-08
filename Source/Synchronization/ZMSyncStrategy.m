@@ -104,6 +104,7 @@
 
 @property (nonatomic, weak) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic, weak) ZMClientRegistrationStatus *clientRegistrationStatus;
+@property (nonatomic) NotificationDispatcher *notificationDispatcher;
 
 @end
 
@@ -144,6 +145,8 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     self = [super init];
     if (self) {
+        self.notificationDispatcher = [[NotificationDispatcher alloc] initWithManagedObjectContext: uiMOC];
+        [self.notificationDispatcher addChangeInfoConsumer:uiMOC.wireCallCenterV2];
         self.application = application;
         self.localNotificationDispatcher = localNotificationsDispatcher;
         self.authenticationStatus = authenticationStatus;
@@ -282,6 +285,7 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     NOT_USED(note);
     ZMBackgroundActivity *activity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:@"enter background"];
+    [self.notificationDispatcher applicationDidEnterBackground];
     [self.syncMOC performGroupedBlock:^{
         [self.stateMachine enterBackground];
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
@@ -294,6 +298,7 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     NOT_USED(note);
     ZMBackgroundActivity *activity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:@"enter foreground"];
+    [self.notificationDispatcher applicationWillEnterForeground];
     [self.syncMOC performGroupedBlock:^{
         [self.stateMachine enterForeground];
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
@@ -340,7 +345,7 @@ ZM_EMPTY_ASSERTING_INIT()
             [s tearDown];
         }
     }
-
+    [self.notificationDispatcher tearDown];
     [self.conversationStatusSync tearDown];
     [self.fileUploadRequestStrategy tearDown];
 }
@@ -421,9 +426,7 @@ ZM_EMPTY_ASSERTING_INIT()
         
         NSSet *conversationsWithCallChanges = [callStateChanges allContainedConversationsInContext:strongUiMoc];
         if (conversationsWithCallChanges != nil) {
-            [NSNotificationCenter.defaultCenter postNotificationName:WireCallCenterV2.CallStateDidChangeNotification
-                                                              object:nil
-                                                            userInfo:@{ @"updated": conversationsWithCallChanges }];
+            [strongUiMoc.wireCallCenterV2 callStateDidChangeWithConversations:conversationsWithCallChanges];
         }
         
         ZM_WEAK(self);
@@ -441,6 +444,8 @@ ZM_EMPTY_ASSERTING_INIT()
     } else if (mocThatSaved.zm_isSyncContext) {
         RequireString(mocThatSaved == self.syncMOC, "Not the right MOC!");
         
+        NSSet<NSManagedObjectID*>* changedObjectsIDs = [self extractManagedObjectIDsFrom:note];
+
         ZM_WEAK(self);
         [strongUiMoc performGroupedBlock:^{
             ZM_STRONG(self);
@@ -448,17 +453,34 @@ ZM_EMPTY_ASSERTING_INIT()
                 return;
             }
 
-            [self.uiMOC mergeUserInfoFromUserInfo:userInfo];
+            [strongUiMoc mergeUserInfoFromUserInfo:userInfo];
             NSSet *changedConversations = [strongUiMoc mergeCallStateChanges:callStateChanges];
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:WireCallCenterV2.CallStateDidChangeNotification
-                                                              object:nil
-                                                            userInfo:@{ @"updated": changedConversations }];
+            if (changedConversations != nil) {
+                [strongUiMoc.wireCallCenterV2 callStateDidChangeWithConversations: changedConversations];
+            }
            
+            [self.notificationDispatcher willMergeChanges:changedObjectsIDs];
             [strongUiMoc mergeChangesFromContextDidSaveNotification:note];
+            
             [strongUiMoc processPendingChanges]; // We need this because merging sometimes leaves the MOC in a 'dirty' state
+            [self.notificationDispatcher didMergeChanges];
+
         }];
     }
+}
+
+- (NSSet<NSManagedObjectID*>*)extractManagedObjectIDsFrom:(NSNotification *)note
+{
+    NSSet<NSManagedObjectID*>* changedObjectsIDs;
+    if (note.userInfo[NSUpdatedObjectsKey] != nil) {
+        NSSet<NSManagedObject *>* changedObjects = note.userInfo[NSUpdatedObjectsKey];
+        changedObjectsIDs = [changedObjects mapWithBlock:^id(NSManagedObject* obj) {
+            return obj.objectID;
+        }];
+    } else {
+        changedObjectsIDs = [NSSet set];
+    }
+    return changedObjectsIDs;
 }
 
 - (BOOL)shouldForwardCallStateChangeDirectlyForNote:(NSNotification *)note

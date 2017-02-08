@@ -601,6 +601,8 @@ extension UserClientRequestStrategyTests {
         
         // when
         self.sut.processEvents([event], liveEvents:false, prefetchResult: .none)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        self.syncMOC.saveOrRollback()
         
         // then
         XCTAssertEqual(selfUser.clients.count, 1)

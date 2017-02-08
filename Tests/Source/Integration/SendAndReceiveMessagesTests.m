@@ -626,7 +626,7 @@
     
     // assert
     XCTAssertEqual(list.count, 4u);
-    [observer tearDown];
+    (void)observer;
 }
 
 - (void)testThatSystemEventsAreAddedToAConversationWhenTheyAreGeneratedRemotely
@@ -1209,7 +1209,6 @@
     }];
     
     
-    
     // then
     XCTAssertEqual(observer.notifications.count, 1u);
     if (observer.notifications.count > 0 ) {
@@ -1224,7 +1223,6 @@
     // finally
     WaitForEverythingToBeDoneWithTimeout(0.5);
     [ZMMessage resetDefaultExpirationTime];
-    [observer tearDown];
 }
 
 

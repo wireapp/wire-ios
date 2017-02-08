@@ -1292,12 +1292,11 @@
     [self.userSession performChanges:^{
         [message requestImageDownload];
     }];
-    
     WaitForAllGroupsToBeEmpty(0.5);
     
     XCTAssertNotNil(message);
     NSArray *notifications = observer.notifications;
-    XCTAssertEqual(notifications.count, 1lu);
+    XCTAssertEqual(notifications.count, 2lu);
     MessageChangeInfo *info = notifications.lastObject;
     XCTAssertTrue(info.imageChanged);
     
@@ -1306,8 +1305,7 @@
     XCTAssertEqualObjects(message.fileMessageData.thumbnailAssetID, thumbnailIDString);
     XCTAssertEqualObjects(message.nonce, nonce);
     XCTAssertEqual(message.transferState, ZMFileTransferStateUploading);
-    
-    [observer tearDown];
+
 }
 
 - (void)testThatAFileUpload_AssetOriginal_MessageIsReceivedWhenSentRemotely
@@ -1856,7 +1854,7 @@
     
     XCTAssertNotNil(message);
     NSArray *notifications = observer.notifications;
-    XCTAssertEqual(notifications.count, 1lu);
+    XCTAssertEqual(notifications.count, 2lu);
     MessageChangeInfo *info = notifications.lastObject;
     XCTAssertTrue(info.imageChanged);
     
@@ -1867,7 +1865,6 @@
     XCTAssertEqual(message.transferState, ZMFileTransferStateUploading);
     XCTAssertTrue(message.isEphemeral);
 
-    [observer tearDown];
 }
 
 - (void)testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_Ephemeral
@@ -1995,7 +1992,7 @@
 
     XCTAssertNotNil(message);
     NSArray *notifications = observer.notifications;
-    XCTAssertEqual(notifications.count, 1lu);
+    XCTAssertEqual(notifications.count, 2lu);
     MessageChangeInfo *info = notifications.lastObject;
     XCTAssertTrue(info.imageChanged);
 
@@ -2005,7 +2002,6 @@
     XCTAssertEqualObjects(message.nonce, nonce);
     XCTAssertEqual(message.transferState, ZMFileTransferStateUploading);
     
-    [observer tearDown];
 }
 
 - (void)testThatItReceivesAVideoFileMessageThumbnailSentRemotely_Ephemeral_V3
@@ -2066,7 +2062,7 @@
 
     XCTAssertNotNil(message);
     NSArray *notifications = observer.notifications;
-    XCTAssertEqual(notifications.count, 1lu);
+    XCTAssertEqual(notifications.count, 2lu);
     MessageChangeInfo *info = notifications.lastObject;
     XCTAssertTrue(info.imageChanged);
 
@@ -2076,8 +2072,7 @@
     XCTAssertEqualObjects(message.nonce, nonce);
     XCTAssertEqual(message.transferState, ZMFileTransferStateUploading);
     XCTAssertTrue(message.isEphemeral);
-    
-    [observer tearDown];
+
 }
 
 - (void)testThatAFileUpload_AssetUploaded_MessageIsReceivedAndUpdatesTheOriginalMessageWhenSentRemotely_V3

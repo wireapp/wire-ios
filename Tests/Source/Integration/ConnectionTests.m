@@ -210,7 +210,6 @@
     // then
     XCTAssertFalse([pending containsObject:conversation]);
     XCTAssertEqual(observer.notifications.count, 1u);
-    [observer tearDown];
 }
 
 - (void)testThatAConnectionRequestIsRemovedFromConversationsListWhenItIsCancelled;
@@ -238,7 +237,6 @@
     // then
     XCTAssertFalse([conversations containsObject:conversation]);
     XCTAssertEqual(observer.notifications.count, 1u);
-    [observer tearDown];
 }
 
 - (void)testThatConnectionRequestsFromTwoUsersAreBothAddedToActiveConversations;
@@ -308,9 +306,6 @@
         XCTAssertEqual(note.deletedIndexes.count, 0u);
     }
     XCTAssertEqual(insertionsCount, 2);
-    [pendingObserver tearDown];
-    [activeObserver tearDown];
-
 }
 
 - (void)addConnectionRequestInMockTransportsession:(MockTransportSession<MockTransportSessionObjectCreation> *)session forUser:(MockUser *)mockUser
@@ -391,8 +386,8 @@
         [conversationListObserver clearNotifications];
     }
     
-    id token1 = [conv1 addConversationObserver:convObserver];
-    id token2 = [conv2 addConversationObserver:convObserver];
+    id token1 = [ConversationChangeInfo addObserver:convObserver forConversation:conv1];
+    id token2 = [ConversationChangeInfo addObserver:convObserver forConversation:conv2];
     
     // when accepting the connection requests
     {
@@ -406,7 +401,7 @@
     
     // we should receive notifcations about the list change and the conversation updates and the connection status should change
     {
-        NSIndexSet *expectedSet1 = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 1)];
+        NSIndexSet *expectedSet1 = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
 
         NSArray *listNotes = conversationListObserver.notifications;
         XCTAssertEqual(listNotes.count, 2u);
@@ -415,9 +410,15 @@
         ConversationListChangeInfo *listNote2 = listNotes.lastObject;
 
         XCTAssertEqualObjects(listNote1.insertedIndexes, expectedSet1);
-        XCTAssertLessThanOrEqual(listNote2.insertedIndexes.firstIndex, 1u); // there is a race condition, it might be 1 or 0
-
+        XCTAssertEqualObjects(listNote1.updatedIndexes, [NSIndexSet indexSet]);
+        XCTAssertEqualObjects(listNote1.deletedIndexes, [NSIndexSet indexSet]);
+        XCTAssertEqual(listNote1.movedIndexPairs.count, 0u);
         
+        XCTAssertEqualObjects(listNote2.insertedIndexes, [NSIndexSet indexSet]);
+        XCTAssertEqualObjects(listNote2.updatedIndexes, expectedSet1);
+        XCTAssertEqualObjects(listNote2.deletedIndexes, [NSIndexSet indexSet]);
+        XCTAssertEqual(listNote2.movedIndexPairs.count, 0u);
+
         NSArray *convNotes = convObserver.notifications;
         convNotes = convObserver.notifications;
         XCTAssertNotNil(convNotes);
@@ -447,11 +448,9 @@
         XCTAssertEqual(conv2.messages.count, 2u); // accepting connection request produces a new conversation system message
     }
     
-    [ZMConversation removeConversationObserverForToken:token1];
-    [ZMConversation removeConversationObserverForToken:token2];
-    [conversationListObserver tearDown];
-    [pendingConversationListObserver tearDown];
-} 
+    (void)token1;
+    (void)token2;
+}
 
 - (void)testThatConnectionRequestsToTwoUsersAreAddedToPending;
 {
@@ -516,8 +515,8 @@
     }
     
     ConversationChangeObserver *observer = self.conversationChangeObserver;
-    id token1 = [conv1 addConversationObserver:observer];
-    id token2 = [conv2 addConversationObserver:observer];
+    id token1 = [ConversationChangeInfo addObserver:observer forConversation:conv1];
+    id token2 = [ConversationChangeInfo addObserver:observer forConversation:conv2];
 
     // when the remote users accept the connection requests
     {
@@ -555,13 +554,13 @@
         }
         XCTAssertTrue(conv1StateChanged);
         XCTAssertTrue(conv2StateChanged);
-        XCTAssertFalse(conv1ParticipantsChanged);
-        XCTAssertFalse(conv2ParticipantsChanged);
+        XCTAssertTrue(conv1ParticipantsChanged);
+        XCTAssertTrue(conv2ParticipantsChanged);
     }
     
-    [ZMConversation removeConversationObserverForToken:token1];
-    [ZMConversation removeConversationObserverForToken:token2];
-    [listObserver tearDown];
+    (void)token1;
+    (void)token2;
+    (void)listObserver;
 }
 
 - (void)testThatWeSeeANewConversationSystemMessageWhenAcceptingAConnectionRequest;
@@ -741,7 +740,7 @@
     }
     
     ConversationChangeObserver *observer = self.conversationChangeObserver;
-    id token = [conv1 addConversationObserver:observer];
+    id token1 = [ConversationChangeInfo addObserver:observer forConversation:conv1];
     [observer clearNotifications];
     
     // when the remote users accept the connection requests
@@ -778,13 +777,12 @@
             }
         }
         XCTAssertTrue(conv1StateChanged);
-        XCTAssertFalse(conv1ParticipantsChanged);
+        XCTAssertTrue(conv1ParticipantsChanged);
     }
     
     WaitForEverythingToBeDoneWithTimeout(0.1);
-    [ZMConversation removeConversationObserverForToken:token];
+    (void)token1;
 }
-
 
 - (void)testThatItNotifiesObserversWhenWeSendAConnectionRequest
 {
@@ -828,11 +826,10 @@
         ConversationListChangeInfo *note = notifications.firstObject;
         XCTAssertNotNil(note);
         XCTAssertEqualObjects(note.insertedIndexes, [NSIndexSet indexSetWithIndex:0]);
+        XCTAssertEqualObjects(note.updatedIndexes, [NSIndexSet indexSetWithIndex:0]);
         XCTAssertTrue(note.deletedIndexes.count == 0);
-        XCTAssertTrue(note.updatedIndexes.count == 0);
         XCTAssertTrue(note.movedIndexPairs.count == 0);
     }
-    [observer tearDown];
 }
 
 - (void)testThatItTheConnectionRequestConversationIsOnTopOfTheConversationList
@@ -902,7 +899,6 @@
     // then
     XCTAssertTrue([conversations containsObject:conversation]);
     XCTAssertEqual(observer.notifications.count, 2u);
-    [observer tearDown];
 }
 
 
@@ -1066,7 +1062,7 @@
     XCTAssertEqual(pending.count, pendingCount + 1u);
     
     id listObserver = [OCMockObject niceMockForProtocol:@protocol(ZMConversationListObserver)];
-    id listToken = [pending addConversationListObserver:listObserver];
+    id listToken = [ConversationListChangeInfo addObserver:listObserver forList:pending];
     
     ZMUser *realUser1 = [self userForMockUser:mockUser];
     
@@ -1104,8 +1100,7 @@
         // then
         XCTAssertEqual(pending.count, pendingCount + 1u);
     }
-    
-    [pending removeConversationListObserverForToken:listToken];
+    (void)listToken;
 }
 
 - (void)testThatItSendsOutANotificationWhenAConnectionStatusChangeFromPendingToAcceptedIsRejectedByTheBackend

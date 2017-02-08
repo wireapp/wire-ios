@@ -122,9 +122,9 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     [BackgroundActivityFactory tearDownInstance];
     [LinkPreviewDetectorHelper tearDown];
     
-    [self.conversationChangeObserver tearDown];
-    [self.userChangeObserver tearDown];
-    [self.messageChangeObserver tearDown];
+    self.conversationChangeObserver = nil;
+    self.userChangeObserver = nil;
+    self.messageChangeObserver = nil;
 
     WaitForAllGroupsToBeEmpty(0.5);
     
