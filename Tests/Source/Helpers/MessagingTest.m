@@ -334,7 +334,9 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     
     [self.syncMOC setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];
     
-    [UserClient createOrUpdateClient:@{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]} context:self.syncMOC];
+    [UserClient createOrUpdateSelfUserClient:@{@"id": selfClient.remoteIdentifier,
+                                               @"type": @"permanent",
+                                               @"time": [[NSDate date] transportString]} context:self.syncMOC];
     [self.syncMOC saveOrRollback];
     
     return selfClient;
