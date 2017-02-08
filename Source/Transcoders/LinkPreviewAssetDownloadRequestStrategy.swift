@@ -93,12 +93,10 @@ import WireRequestStrategy
         
         guard success! else { return }
         
-        let uiMOC = managedObjectContext.zm_userInterface
-        let objectID = message.objectID
-        uiMOC?.performGroupedBlock {
-            guard let uiMessage = try? uiMOC?.existingObject(with: objectID) else { return }
-            uiMOC?.globalManagedObjectContextObserver.notifyNonCoreDataChangeInManagedObject(uiMessage!)
-        }
+        guard let uiMOC = managedObjectContext.zm_userInterface else { return }
+        NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
+                                                        changedKeys: [ZMClientMessageLinkPreviewKey, ZMAssetClientMessageDownloadedImageKey],
+                                                        uiContext: uiMOC)
     }
 
 }

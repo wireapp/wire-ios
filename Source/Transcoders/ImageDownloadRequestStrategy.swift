@@ -111,12 +111,10 @@ extension ImageDownloadRequestStrategy : ZMDownstreamTranscoder {
     fileprivate func updateMediumImage(forMessage message: ZMAssetClientMessage, imageData: Data) {
         _ = message.imageAssetStorage?.updateMessage(withImageData: imageData, for: .medium)
         
-        let uiMOC = managedObjectContext.zm_userInterface
-        
-        uiMOC?.performGroupedBlock { 
-            guard let message = try? uiMOC?.existingObject(with: message.objectID) else { return }
-            uiMOC?.globalManagedObjectContextObserver.notifyNonCoreDataChangeInManagedObject(message!)
-        }
+        guard let uiMOC = managedObjectContext.zm_userInterface else { return }
+        NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
+                                                        changedKeys: [ZMAssetClientMessageDownloadedImageKey],
+                                                        uiContext: uiMOC)
     }
     
 }
