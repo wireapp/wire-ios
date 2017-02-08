@@ -25,7 +25,6 @@
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMUser+Internal.h"
 #import "ZMConnection+Internal.h"
-#import "ZMPersonName.h"
 #import "ZMAddressBookContact.h"
 
 #import "ZMNotifications+Internal.h"
@@ -93,7 +92,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
             _name = name;
             _handle = handle;
             
-            ZMPersonName *personName = [ZMPersonName personWithName:name];
+            PersonName *personName = [PersonName personWithName:name];
             _initials = personName.initials;
             
             _accentColorValue =  color;

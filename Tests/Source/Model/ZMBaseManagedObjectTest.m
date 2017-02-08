@@ -31,7 +31,6 @@
 #import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "ZMUserDisplayNameGenerator.h"
 #import "ZMConversation+UnreadCount.h"
 
 #import "NSString+RandomString.h"
@@ -127,8 +126,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)updateDisplayNameGeneratorWithUsers:(NSArray *)users;
 {
-    [self.uiMOC saveOrRollback];
-    [self.uiMOC updateDisplayNameGeneratorWithUpdatedUsers:[NSSet set] insertedUsers:[NSSet setWithArray:users] deletedUsers:[NSSet set]];
+    [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet set] insertedUsers:[NSSet setWithArray:users] deletedUsers:[NSSet set]];
 }
 
 @end

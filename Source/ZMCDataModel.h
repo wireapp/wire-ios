@@ -34,7 +34,6 @@
 
 #import <ZMCDataModel/ZMUser.h>
 #import <ZMCDataModel/ZMUser+Internal.h>
-#import <ZMCDataModel/ZMUserDisplayNameGenerator.h>
 #import <ZMCDataModel/UserClientTypes.h>
 
 #import <ZMCDataModel/ZMSearchUser.h>
@@ -73,11 +72,12 @@
 #import <ZMCDataModel/ZMNotifications+Internal.h>
 
 #import <ZMCDataModel/ZMUpdateEvent+ZMCDataModel.h>
-#import <ZMCDataModel/ZMPersonName.h>
 #import <ZMCDataModel/NSFetchRequest+ZMRelationshipKeyPaths.h>
 
 #import <ZMCDataModel/ZMAddressBookContact.h>
 #import <ZMCDataModel/ZMTestSession.h>
+
+#import <ZMCDataModel/NSString+ZMPersonName.h>
 
 #import <ZMCDataModel/ZMGenericMessage+Utils.h>
 #import <ZMCDataModel/ZMGenericMessage+PropertyUtils.h>

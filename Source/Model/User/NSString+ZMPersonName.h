@@ -22,10 +22,10 @@
 @interface NSString (ZMPersonName)
 
 /// If the string starts with a number, return that prefix, otherwise return the first composed character.
-- (NSString *)zmLeadingNumberOrFirstComposedCharacter;
+- ( NSString * _Nullable )zmLeadingNumberOrFirstComposedCharacter;
 
-- (NSString *)zmFirstComposedCharacter;
-- (NSString *)zmSecondComposedCharacter;
+- ( NSString * _Nullable )zmFirstComposedCharacter;
+- ( NSString * _Nullable )zmSecondComposedCharacter;
 
 - (BOOL)zmIsGodName;
 
