@@ -229,7 +229,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 public extension UserClient {
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    public static func createOrUpdateClient(_ payloadData: [String: AnyObject], context: NSManagedObjectContext) -> UserClient? {
+    public static func createOrUpdateSelfUserClient(_ payloadData: [String: AnyObject], context: NSManagedObjectContext) -> UserClient? {
         
         guard let id = payloadData["id"] as? String,
               let type = payloadData["type"] as? String
@@ -265,10 +265,12 @@ public extension UserClient {
         client.activationLocationLongitude = longitude
         client.remoteIdentifier = id
         
-        if let selfClient = ZMUser.selfUser(in: context).selfClient() {
+        let selfUser = ZMUser.selfUser(in: context)
+        if let selfClient = selfUser.selfClient() {
             if client.remoteIdentifier != selfClient.remoteIdentifier &&
                 fetchedClient == .none
             {
+                client.user = client.user ?? selfUser
                 client.fetchFingerprintOrPrekeys()
                 
                 if let selfClientActivationdate = selfClient.activationDate , client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
