@@ -44,6 +44,7 @@ static NSString * const ClientMessageUpdateTimestamp = @"updatedTimestamp";
 
 NSString * const ZMClientMessageLinkPreviewImageDownloadNotificationName = @"ZMClientMessageLinkPreviewImageDownloadNotificationName";
 NSString * const ZMClientMessageLinkPreviewStateKey = @"linkPreviewState";
+NSString * const ZMClientMessageLinkPreviewKey = @"linkPreview";
 NSString * const ZMFailedToCreateEncryptedMessagePayloadString = @"💣";
 // From https://github.com/wearezeta/generic-message-proto:
 // "If payload is smaller then 256KB then OM can be sent directly"

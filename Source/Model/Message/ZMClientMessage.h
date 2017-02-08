@@ -29,6 +29,7 @@ extern NSString * _Nonnull const ZMFailedToCreateEncryptedMessagePayloadString;
 extern NSUInteger const ZMClientMessageByteSizeExternalThreshold;
 extern NSString * _Nonnull const ZMClientMessageLinkPreviewStateKey;
 extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotificationName;
+extern NSString * _Nonnull const ZMClientMessageLinkPreviewKey;
 
 
 @interface ZMClientMessage : ZMOTRMessage
