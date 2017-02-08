@@ -95,6 +95,7 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) NSString *applicationGroupIdentifier;
 @property (nonatomic) NSURL *storeURL;
 @property (nonatomic) NSURL *keyStoreURL;
+@property (nonatomic, readwrite) NSURL *sharedContainerURL;
 @property (nonatomic) TopConversationsDirectory *topConversationsDirectory;
 
 
@@ -238,7 +239,6 @@ ZM_EMPTY_ASSERTING_INIT()
         syncMOC.analytics = analytics;
     }];
 
-    self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] init];
     UIApplication *application = [UIApplication sharedApplication];
     
     ZMTransportSession *session = [[ZMTransportSession alloc] initWithBaseURL:backendURL
@@ -295,7 +295,8 @@ ZM_EMPTY_ASSERTING_INIT()
         self.pushChannelIsOpen = NO;
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushChannelDidChange:) name:ZMPushChannelStateChangeNotificationName object:nil];
-        
+
+        self.sharedContainerURL = [self.class sharedContainerDirectoryForApplicationGroup:appGroupIdentifier];
         self.apnsEnvironment = apnsEnvironment;
         self.networkIsOnline = YES;
         self.managedObjectContext = userInterfaceContext;
@@ -405,6 +406,7 @@ ZM_EMPTY_ASSERTING_INIT()
         [self enableBackgroundFetch];
 
         self.wireCallCenterV2 = [[WireCallCenterV2 alloc] initWithContext:self.managedObjectContext];
+        self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] initWithSharedContainerURL:self.sharedContainerURL];
         
         self.managedObjectContext.globalManagedObjectContextObserver.propagateChanges = self.application.applicationState != UIApplicationStateBackground;
         ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:self
