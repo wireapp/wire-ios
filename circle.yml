@@ -2,7 +2,6 @@ machine:
   xcode:
     version: "8.2"
   environment:
-    SCRIPTS_REPO: https://github.com/wireapp/wire-ios-scripts.git
     # Used for compatibility with scripts made for Jenkins
     WORKSPACE: $(pwd) 
     JENKINS_HOME: WORKSPACE
@@ -13,7 +12,7 @@ checkout:
     - mkdir -p "${CIRCLE_PROJECT_REPONAME}"
     - rsync -a . "${CIRCLE_PROJECT_REPONAME}/" --exclude "${CIRCLE_PROJECT_REPONAME}"
     # Clone scripts repo if not already cached
-    - if [ ! -d "wire-ios-scripts" ]; then git clone "${SCRIPTS_REPO}"; fi
+    - if [ ! -d "wire-ios-scripts" ]; then git clone https://github.com/wireapp/wire-ios-scripts.git; fi
 
 dependencies:
   override:
@@ -38,4 +37,4 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - mkdir -p $CIRCLE_TEST_REPORTS/code_coverage/
     - cp $CIRCLE_PROJECT_REPONAME/tests.xml $CIRCLE_TEST_REPORTS/junit/
-    - rsync -auv $CIRCLE_PROJECT_REPONAME/code_coverage/ $CIRCLE_TEST_REPORTS/code_coverage/
+    - rsync -auv $CIRCLE_PROJECT_REPONAME/code-coverage/ $CIRCLE_TEST_REPORTS/code-coverage/
