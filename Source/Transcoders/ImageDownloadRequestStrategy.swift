@@ -113,7 +113,7 @@ extension ImageDownloadRequestStrategy : ZMDownstreamTranscoder {
         
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
         NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
-                                                        changedKeys: ["mediumData", ZMAssetClientMessageDownloadedImageKey],
+                                                        changedKeys: [ZMAssetClientMessageDownloadedImageKey],
                                                         uiContext: uiMOC)
     }
     
