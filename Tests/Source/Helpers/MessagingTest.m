@@ -126,11 +126,9 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)resetState
 {
-    [self.uiMOC.globalManagedObjectContextObserver tearDown];
     [self.uiMOC zm_teardownMessageDeletionTimer];
     
     [self.syncMOC performGroupedBlock:^{
-        [self.syncMOC.globalManagedObjectContextObserver tearDown];
         [self.syncMOC zm_tearDownCryptKeyStore];
         [self.syncMOC zm_teardownMessageObfuscationTimer];
         [self.syncMOC.userInfo removeAllObjects];
@@ -168,11 +166,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self.mockTransportSession.managedObjectContext performBlockAndWait:^{
         // Do nothing
     }];
-    [refUiMOC.globalManagedObjectContextObserver tearDown];
 
-    [refSyncMoc performGroupedBlockAndWait:^{
-        [refSyncMoc.globalManagedObjectContextObserver tearDown];
-    }];
 }
 
 - (void)cleanUpAndVerify {
@@ -188,9 +182,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore notificationContentHidden:(BOOL)notificationContentVisible;
 {
-    [self.syncMOC.globalManagedObjectContextObserver tearDown];
-    [self.uiMOC.globalManagedObjectContextObserver tearDown];
-    
     NSString *clientID = [self.uiMOC persistentStoreMetadataForKey:ZMPersistedClientIdKey];
     self.uiMOC = nil;
     self.syncMOC = nil;
