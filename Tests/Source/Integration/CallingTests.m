@@ -37,27 +37,23 @@
     return self;
 }
 
-- (void)conversationWindowDidChange:(MessageWindowChangeInfo *)note
+- (void)conversationWindowDidChange:(MessageWindowChangeInfo *)changeInfo
 {
     if(self.notificationHandler) {
-        self.notificationHandler(note);
+        self.notificationHandler(changeInfo);
     }
     
     [self.window.conversation setVisibleWindowFromMessage:self.window.conversation.messages.firstObject toMessage:self.window.conversation.messages.lastObject];
-    [self.notifications addObject:note];
+    [self.notifications addObject:changeInfo];
 }
 
 - (void)registerOnConversation:(ZMConversation *)conversation;
 {
     NSAssert(self.observerToken == nil, @"Registered twice??");
     self.window = [conversation conversationWindowWithSize:20];
-    self.observerToken = [self.window addConversationWindowObserver:self];
+    self.observerToken = [MessageWindowChangeInfo addObserver:self forWindow:self.window];
 }
 
-- (void)dealloc
-{
-    [self.window removeConversationWindowObserverToken:self.observerToken];
-}
 
 @end
 
@@ -414,6 +410,7 @@
 
 - (void)testThatItSendsOutAllExpectedNotificationsWhenOtherUserCalls
 {
+    ///3333333
     // given
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
     ZMConversation * NS_VALID_UNTIL_END_OF_SCOPE oneToOneConversation = self.conversationUnderTest;
@@ -564,7 +561,9 @@
     // given
     XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
     WaitForAllGroupsToBeEmpty(0.5);
-
+//    ZMConversation *conv = [self conversationForMockConversation:self.selfToUser2Conversation];
+//    (void)conv.callParticipants.count;
+    
     V2CallStateTestObserver *stateObserver = [[V2CallStateTestObserver alloc] init];
     id stateToken = [WireCallCenterV2 addVoiceChannelStateObserverWithObserver:stateObserver context:self.uiMOC];
 
@@ -709,6 +708,9 @@
     [self otherJoinCall];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    XCTAssertEqual(stateObserver.changes.count, 1u);
+    XCTAssertEqual(stateObserver.changes.lastObject.state, VoiceChannelV2StateIncomingCall);
+
     [self selfJoinCall];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -1599,7 +1601,7 @@
     }]];
     
     ZMConversationList* list = [ZMConversationList conversationsInUserSession:self.userSession];
-    id<ZMConversationListObserverOpaqueToken> listToken = [list addConversationListObserver:listObserver];
+    id listToken = [ConversationListChangeInfo addObserver:listObserver forList:list];
     
     [self.mockTransportSession resetReceivedRequests];
     
@@ -1617,8 +1619,8 @@
     XCTAssertEqual(callStateRequest.count, 0u);
    
     // after
-    [list removeConversationListObserverForToken:listToken];
     [self tearDownVoiceChannelForConversation:conversationToObserve];
+    (void)listToken;
 }
 
 

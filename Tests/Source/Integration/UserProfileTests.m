@@ -101,7 +101,6 @@
     XCTAssertTrue(note.accentColorValueChanged);
     
     XCTAssertEqual(selfUser.accentColorValue, accentColor);
-    [observer tearDown];
 }
 
 @end
@@ -158,7 +157,7 @@
     XCTAssertEqualObjects(selfUser.phoneNumber, @"");
     
     id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserver)];
-    id userObserverToken = [ZMUser addUserObserver:userObserver forUsers:@[selfUser] inUserSession:self.userSession];
+    id userObserverToken = [UserChangeInfo addObserver:userObserver forBareUser:selfUser];
     
     id editableUserObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
     id editableUserObserverToken = [self.userSession.userProfile addObserver:editableUserObserver];
@@ -189,9 +188,8 @@
     XCTAssertEqualObjects(selfUser.phoneNumber, phone);
     
     // after
-    [ZMUser removeUserObserverForToken:userObserverToken];
     [self.userSession.userProfile removeObserverWithToken:editableUserObserverToken];
-
+    (void)userObserverToken;
 }
 
 - (void)testThatItIsNotifiedWhenItConfirmsWithTheWrongCode
@@ -415,7 +413,7 @@
     [[editUserObserver expect] didSentVerificationEmail];
     
     id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserver)];
-    id userObserverToken = [ZMUser addUserObserver:userObserver forUsers:@[selfUser] inUserSession:self.userSession];
+    id userObserverToken = [UserChangeInfo addObserver:userObserver forBareUser:selfUser];
     [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the email was set
     
     
@@ -435,9 +433,8 @@
     XCTAssertEqualObjects(selfUser.emailAddress, email);
     
     // after
-    [ZMUser removeUserObserverForToken:userObserverToken];
     [self.userSession.userProfile removeObserverWithToken:editUserObserverToken];
-    
+    (void)userObserverToken;
 }
 
 - (void)testThatItNotifiesWhenFailingToSetThePasswordForNetworkError
@@ -492,7 +489,7 @@
     id editingObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
     id editingToken = [self.userSession.userProfile addObserver:editingObserver];
     id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserver)];
-    id userToken = [ZMUser addUserObserver:userObserver forUsers:@[selfUser] inUserSession:self.userSession];
+    id userObserverToken = [UserChangeInfo addObserver:userObserver forBareUser:selfUser];
     [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // when receiving this, I know that the email was set
     
     // expect
@@ -521,9 +518,8 @@
     XCTAssertEqualObjects(selfUser.emailAddress, email);
     
     // after
-    [ZMUser removeUserObserverForToken:userToken];
     [self.userSession.userProfile removeObserverWithToken:editingToken];
-    
+    (void)userObserverToken;
 }
 
 - (void)testThatItNotifiesWhenFailingToSetTheEmailBecauseOfGenericError

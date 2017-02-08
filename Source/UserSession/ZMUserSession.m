@@ -405,10 +405,8 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         [self enableBackgroundFetch];
 
-        self.wireCallCenterV2 = [[WireCallCenterV2 alloc] initWithContext:self.managedObjectContext];
         self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] initWithSharedContainerURL:self.sharedContainerURL];
         
-        self.managedObjectContext.globalManagedObjectContextObserver.propagateChanges = self.application.applicationState != UIApplicationStateBackground;
         ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:self
                                                                            selector:@selector(didEnterEventProcessingState:)
                                                                                name:ZMApplicationDidEnterEventProcessingStateNotificationName
@@ -450,7 +448,7 @@ ZM_EMPTY_ASSERTING_INIT()
     
     __block NSMutableArray *keysToRemove = [NSMutableArray array];
     [self.managedObjectContext.userInfo enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL * ZM_UNUSED stop) {
-        if ([obj respondsToSelector:@selector(tearDown)]) {
+        if ([obj respondsToSelector:@selector((tearDown))]) {
             [obj tearDown];
             [keysToRemove addObject:key];
         }
@@ -459,7 +457,7 @@ ZM_EMPTY_ASSERTING_INIT()
     [keysToRemove removeAllObjects];
     [self.syncManagedObjectContext performBlockAndWait:^{
         [self.managedObjectContext.userInfo enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL * ZM_UNUSED stop) {
-            if ([obj respondsToSelector:@selector(tearDown)]) {
+            if ([obj respondsToSelector:@selector((tearDown))]) {
                 [obj tearDown];
             }
             [keysToRemove addObject:key];
