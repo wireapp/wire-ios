@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import ZMUtilities
 
 struct Snapshot {
     let attributes : [String : NSObject?]
@@ -61,7 +62,7 @@ public class SnapshotCenter {
         let relationShips = object.entity.relationshipsByName
         
         let attributesDict = attributes.mapToDictionaryWithOptionalValue{object.primitiveValue(forKey: $0) as? NSObject}
-        let relationshipsDict : [String : Int] = relationShips.mapping(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
+        let relationshipsDict : [String : Int] = relationShips.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
             guard relationShipDescription.isToMany else { return nil}
             return (object.primitiveValue(forKey: key) as? Countable)?.count
         })
