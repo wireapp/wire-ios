@@ -296,9 +296,9 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = ZMConversationType.group
         conversation.mutableOtherActiveParticipants.add(user1)
-        
-        XCTAssertEqual(user1.displayName, "Foo")
         uiMOC.saveOrRollback()
+
+        XCTAssertEqual(user1.displayName, "Foo")
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // when

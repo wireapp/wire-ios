@@ -333,15 +333,15 @@ public class NotificationDispatcher : NSObject {
     
     /// Gets additional changes from UserDisplayNameGenerator
     func checkForDisplayNameUpdates(updatedUsers: Set<ZMUser>, insertedUsers: Set<ZMUser>, deletedUsers: Set<ZMUser>) -> Set<ZMUser> {
-        let changedUsers = managedObjectContext.updateDisplayNameGenerator(withUpdatedUsers: updatedUsers,
-                                                                           insertedUsers: insertedUsers,
-                                                                           deletedUsers: deletedUsers)
-        changedUsers?.forEach{ user in
+        let changedUsers = managedObjectContext.updateNameGenerator(updatedUsers: updatedUsers,
+                                                                    insertedUsers: insertedUsers,
+                                                                    deletedUsers: deletedUsers)
+        changedUsers.forEach{ user in
             var newValue = userChanges[user] ?? Set()
             newValue.insert("displayName")
             userChanges[user] = newValue
         }
-        return changedUsers ?? Set()
+        return changedUsers
     }
     
     /// Extracts changes from the updated objects
