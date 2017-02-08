@@ -41,10 +41,16 @@ extension ZMMessage: Sendable {
 
     public var isSent: Bool {
         if let clientMessage = self as? ZMClientMessage {
-            return clientMessage.linkPreviewState == .done && sentOrDelivered
-        } else {
-            return sentOrDelivered
+            if clientMessage.linkPreviewState != .done {
+                return false
+            }
+        } else if let assetMessage = self as? ZMAssetClientMessage {
+            if assetMessage.uploadState != .done {
+                return false
+            }
         }
+
+        return sentOrDelivered
     }
 
     private var sentOrDelivered: Bool {
