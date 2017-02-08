@@ -462,8 +462,9 @@ class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
             "type": "permanent" as AnyObject,
             "time": Date().transportString() as AnyObject
         ]
-        let newSelfClient = UserClient.createOrUpdateClient(payload, context: self.syncMOC)!
-        newSelfClient.user = selfClient.user
+        _ = UserClient.createOrUpdateSelfUserClient(payload, context: self.syncMOC)!
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        syncMOC.saveOrRollback()
         sut.notifyChangeTrackers(selfClient)
         
         // when
