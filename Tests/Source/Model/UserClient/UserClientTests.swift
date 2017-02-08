@@ -352,6 +352,7 @@ extension UserClientTests {
 }
 
 extension UserClientTests {
+    
     func testThatSelfClientIsTrusted() {
         // given & when
         let selfClient = self.createSelfClient()
@@ -452,6 +453,28 @@ extension UserClientTests {
 // MARK : fetchFingerprintOrPrekeys
 
 extension UserClientTests {
+    
+    func testThatItSetsTheUserWhenInsertingANewSelfUserClient(){
+        // given
+        _ = createSelfClient()
+        let newClientPayload : [String : AnyObject] = ["id": UUID().transportString() as AnyObject,
+                                                       "type": "permanent" as AnyObject,
+                                                       "time": Date().transportString() as AnyObject]
+        // when
+        var newClient : UserClient!
+        self.performPretendingUiMocIsSyncMoc {
+            newClient = UserClient.createOrUpdateSelfUserClient(newClientPayload, context: self.uiMOC)
+            XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        }
+        
+        // then
+        XCTAssertNotNil(newClient)
+        XCTAssertNotNil(newClient.user)
+        XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
+        XCTAssertNotNil(newClient.sessionIdentifier)
+    }
+    
+    
     func testThatItDoNothingWhenHasAFingerprint() {
         // GIVEN
         let fingerprint = Data(base64Encoded: "cmVhZGluZyB0ZXN0cyBpcyBjb29s")
