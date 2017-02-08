@@ -49,7 +49,9 @@ class BaseSharingSessionTests: ZMTBaseTest {
         let mockTransport = MockTransportSession(dispatchGroup: ZMSDispatchGroup(label: "ZMSharingSession"))
         let transportSession = mockTransport.mockedTransportSession()
 
-        let saveNotificationPersistence = ContextDidSaveNotificationPersistence()
+        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(sharedContainerURL: url)
+        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(sharedContainerURL: url)
+
         let requestGeneratorStore = RequestGeneratorStore(strategies: [])
         let registrationStatus = ClientRegistrationStatus(context: syncContext!)
         let operationLoop = RequestGeneratingOperationLoop(
@@ -66,6 +68,7 @@ class BaseSharingSessionTests: ZMTBaseTest {
             transportSession: transportSession,
             sharedContainerURL: url,
             saveNotificationPersistence: saveNotificationPersistence,
+            analyticsEventPersistence: analyticsEventPersistence,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: registrationStatus,
             operationLoop: operationLoop

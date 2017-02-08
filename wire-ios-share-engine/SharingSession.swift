@@ -132,6 +132,8 @@ public class SharingSession {
     /// The list to which save notifications of the UI moc are appended and persistet
     private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
 
+    public let analyticsEventPersistence: ShareExtensionAnalyticsPersistence
+
     private var contextSaveObserverToken: NSObjectProtocol?
 
     let transportSession: ZMTransportSession
@@ -210,6 +212,7 @@ public class SharingSession {
                   transportSession: ZMTransportSession,
                   sharedContainerURL: URL,
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
+                  analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
                   authenticationStatus: AuthenticationStatusProvider,
                   clientRegistrationStatus: ClientRegistrationStatus,
                   operationLoop: RequestGeneratingOperationLoop) throws {
@@ -218,6 +221,7 @@ public class SharingSession {
         self.syncContext = syncContext
         self.transportSession = transportSession
         self.saveNotificationPersistence = saveNotificationPersistence
+        self.analyticsEventPersistence = analyticsEventPersistence
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.operationLoop = operationLoop
@@ -249,7 +253,8 @@ public class SharingSession {
             transportSession: transportSession
         )
 
-        let saveNotificationPersistence = ContextDidSaveNotificationPersistence()
+        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(sharedContainerURL: sharedContainerURL)
+        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(sharedContainerURL: sharedContainerURL)
         
         try self.init(
             userInterfaceContext: userInterfaceContext,
@@ -257,6 +262,7 @@ public class SharingSession {
             transportSession: transportSession,
             sharedContainerURL: sharedContainerURL,
             saveNotificationPersistence: saveNotificationPersistence,
+            analyticsEventPersistence: analyticsEventPersistence,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: clientRegistrationStatus,
             operationLoop: operationLoop
