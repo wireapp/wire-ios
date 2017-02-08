@@ -474,6 +474,25 @@ extension UserClientTests {
         XCTAssertNotNil(newClient.sessionIdentifier)
     }
     
+    func testThatItSetsTheUserWhenInsertingANewSelfUserClient_NoExistingSelfClient(){
+        // given
+        let newClientPayload : [String : AnyObject] = ["id": UUID().transportString() as AnyObject,
+                                                       "type": "permanent" as AnyObject,
+                                                       "time": Date().transportString() as AnyObject]
+        // when
+        var newClient : UserClient!
+        self.performPretendingUiMocIsSyncMoc {
+            newClient = UserClient.createOrUpdateSelfUserClient(newClientPayload, context: self.uiMOC)
+            XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        }
+        
+        // then
+        XCTAssertNotNil(newClient)
+        XCTAssertNotNil(newClient.user)
+        XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
+        XCTAssertNil(newClient.sessionIdentifier)
+    }
+    
     
     func testThatItDoNothingWhenHasAFingerprint() {
         // GIVEN

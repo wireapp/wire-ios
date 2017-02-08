@@ -266,11 +266,12 @@ public extension UserClient {
         client.remoteIdentifier = id
         
         let selfUser = ZMUser.selfUser(in: context)
+        client.user = client.user ?? selfUser
+
         if let selfClient = selfUser.selfClient() {
             if client.remoteIdentifier != selfClient.remoteIdentifier &&
                 fetchedClient == .none
             {
-                client.user = client.user ?? selfUser
                 client.fetchFingerprintOrPrekeys()
                 
                 if let selfClientActivationdate = selfClient.activationDate , client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
