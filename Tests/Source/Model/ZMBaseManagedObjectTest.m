@@ -88,8 +88,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (void)tearDown;
 {
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
-    
     [self.testSession tearDown];
+    self.testSession = nil;
     [super tearDown];
 }
 
