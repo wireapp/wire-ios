@@ -1422,17 +1422,17 @@ SettingsClientViewController {
     }
 }
 
-ChangeEmailTableViewCell {
+RegistrationTextFieldCell {
     backgroundColor: clear;
     
-    emailTextField: @{
+    textField: @{
         font: $font-normal;
         textColor: $color-text-foreground-dark;
         backgroundColor: clear
     }
 }
 
-ConfirmEmailDescriptionView {
+DescriptionHeaderView {
     backgroundColor: clear;
     descriptionLabel: @{
         font: $font-normal;
