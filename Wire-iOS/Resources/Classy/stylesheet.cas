@@ -1605,3 +1605,22 @@ ConversationImagesViewController {
         backgroundColor: $color-background;
     }
 }
+
+TextSearchViewController {
+    view: @{
+        backgroundColor: $color-background;
+    }
+}
+
+TextSearchResultCell {
+    messageFont: $font-normal;
+    
+    textView: @{
+        backgroundColor: $color-background;
+        textColor: $color-text-foreground;
+    }
+    
+    contentView: @{
+        backgroundColor: $color-background;
+    }
+}
