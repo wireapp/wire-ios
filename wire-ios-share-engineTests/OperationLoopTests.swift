@@ -69,14 +69,9 @@ class OperationLoopTests :  ZMTBaseTest {
     }
     
     func resetState() {
-    
-        if uiMoc != nil {
-            uiMoc.globalManagedObjectContextObserver.tearDown()
-        }
         
         if syncMoc != nil {
             syncMoc.performGroupedBlock {
-                self.syncMoc.globalManagedObjectContextObserver.tearDown()
                 self.syncMoc.userInfo.removeAllObjects()
             }
             if !waitForAllGroupsToBeEmpty(withTimeout: 0.5) {
