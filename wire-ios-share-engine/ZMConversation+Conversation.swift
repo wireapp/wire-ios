@@ -109,7 +109,7 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
         self.conversationWasVerified = self.conversation.isTrusted
     }
     
-    func conversationDidChange(_ note: ConversationChangeInfo!) {
+    func conversationDidChange(_ note: ConversationChangeInfo) {
         if note.didDegradeSecurityLevelBecauseOfMissingClients {
             self.callback(ConversationDegradationInfo(conversation: note.conversation,
                                                       users: Set(note.usersThatCausedConversationToDegrade)))
