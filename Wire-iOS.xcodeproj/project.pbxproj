@@ -185,7 +185,7 @@
 		1EF42D411B1889B300A3145D /* stylesheet.cas in Resources */ = {isa = PBXBuildFile; fileRef = 1EF42D401B1889B300A3145D /* stylesheet.cas */; };
 		1EF42D481B188C8A00A3145D /* colors.cas in Resources */ = {isa = PBXBuildFile; fileRef = 1EF42D471B188C8A00A3145D /* colors.cas */; };
 		1EFB23DC1ACEDE5400244571 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 1EFB23DE1ACEDE5400244571 /* Localizable.stringsdict */; };
-		2A77CCCEB062D23763E94900 /* libPods-Wire Share Extension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 09840860C07422F288E71923 /* libPods-Wire Share Extension.a */; };
+		374561E93C8454D5EA46EA22 /* libPods-WireExtensionComponents.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8571A3524311D898C8012582 /* libPods-WireExtensionComponents.a */; };
 		39260D2402C36A8DE422A998 /* libPods-Wire-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C88A846215D617F8CCFBEB80 /* libPods-Wire-iOS.a */; };
 		5407B8C31A643CCE009090C6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5407B8C21A643CCE009090C6 /* UIKit.framework */; };
 		543E0C641E2394F4000E2161 /* ConversationSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543E0C611E2394E7000E2161 /* ConversationSelectionViewController.swift */; };
@@ -200,7 +200,6 @@
 		54F7C27F1D74367E004D8087 /* AddressBookHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F7C27E1D74367E004D8087 /* AddressBookHelper.swift */; };
 		54F7C2831D7467FA004D8087 /* AutomationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4A15D11D4900930051E8BA /* AutomationHelper.swift */; };
 		54F7C2851D746F3F004D8087 /* AddressBookHelper+Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F7C2841D746F3F004D8087 /* AddressBookHelper+Automation.swift */; };
-		7A27B7986757069DCFB89168 /* libPods-WireExtensionComponents.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8571A3524311D898C8012582 /* libPods-WireExtensionComponents.a */; };
 		848DE12B1A83D20000E154B1 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 848DE12A1A83D20000E154B1 /* emoticons.min.json */; };
 		87023D7B1D76E4E2007B667E /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87023D7A1D76E4E2007B667E /* AFNetworking.framework */; };
 		870533FF1DD6162400A7F822 /* OverflowSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870533FE1DD6162400A7F822 /* OverflowSeparatorView.swift */; };
@@ -230,6 +229,8 @@
 		8711A5A01E0C320100043ACF /* FloatingPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8711A59F1E0C320100043ACF /* FloatingPoint.swift */; };
 		8711A5A21E0D395A00043ACF /* CollectionCellHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8711A5A11E0D395A00043ACF /* CollectionCellHeader.swift */; };
 		8711A5A41E0D6C8800043ACF /* TwoLineTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8711A5A31E0D6C8800043ACF /* TwoLineTitleView.swift */; };
+		871608431E4DF7B000461934 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 871608411E4DF7A900461934 /* HockeySDK.framework */; };
+		871608441E4DF7E400461934 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 871608411E4DF7A900461934 /* HockeySDK.framework */; };
 		871878BD1C1ACA72001FFCC5 /* NSDate+WRFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 871878BB1C1ACA72001FFCC5 /* NSDate+WRFormat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		871878BE1C1ACA72001FFCC5 /* NSDate+WRFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 871878BC1C1ACA72001FFCC5 /* NSDate+WRFormat.m */; };
 		8719FD671C88802C005FBEC0 /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8719FD661C88802C005FBEC0 /* Delay.swift */; };
@@ -705,7 +706,6 @@
 		8FC854CC199245770008B66B /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC852BF199245760008B66B /* ProfileViewController.m */; };
 		8FC8563E19924CBA0008B66B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8FC8564019924CBA0008B66B /* Localizable.strings */; };
 		8FD5A08619F0490500550525 /* ZMUserSession+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD5A08519F0490500550525 /* ZMUserSession+Additions.m */; };
-		AD9B051D39B8B636620B905E /* libPods-Wire-iOS-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC9C38FFEE2CB1B4A68D125E /* libPods-Wire-iOS-Tests.a */; };
 		AF1D126B1C7CF02A00959DF5 /* ParticipantDeviceCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1D126A1C7CF02A00959DF5 /* ParticipantDeviceCellTests.m */; };
 		AF65A25C1D7E202D00EBA38E /* ReactionsListViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF65A25B1D7E202D00EBA38E /* ReactionsListViewControllerTests.swift */; };
 		AF917BAD1C6E9B2F00491EA9 /* AppControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AF917BAC1C6E9B2F00491EA9 /* AppControllerTests.m */; };
@@ -1205,8 +1205,6 @@
 		1EF42D401B1889B300A3145D /* stylesheet.cas */ = {isa = PBXFileReference; explicitFileType = text.css; fileEncoding = 4; name = stylesheet.cas; path = Classy/stylesheet.cas; sourceTree = "<group>"; };
 		1EF42D471B188C8A00A3145D /* colors.cas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = colors.cas; path = Classy/colors.cas; sourceTree = "<group>"; };
 		1EFB23DD1ACEDE5400244571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Base; path = Base.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		2729F031D6F030693AF9AEB5 /* Pods-Wire-iOS-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests.release.xcconfig"; sourceTree = "<group>"; };
-		34FC4EA42010986A36883210 /* Pods-Wire-iOS-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		5407B8C21A643CCE009090C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		543E0C611E2394E7000E2161 /* ConversationSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationSelectionViewController.swift; sourceTree = "<group>"; };
 		543E0C651E23A72F000E2161 /* SendingProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendingProgressViewController.swift; sourceTree = "<group>"; };
@@ -1218,8 +1216,9 @@
 		54F4BAB51E143B4C00603C6F /* AppDelegate+ErrorTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppDelegate+ErrorTracking.swift"; sourceTree = "<group>"; };
 		54F7C27E1D74367E004D8087 /* AddressBookHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressBookHelper.swift; sourceTree = "<group>"; };
 		54F7C2841D746F3F004D8087 /* AddressBookHelper+Automation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AddressBookHelper+Automation.swift"; sourceTree = "<group>"; };
-		612D3A1ADB6D5E7ED627CDB5 /* Pods-WireExtensionComponents.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WireExtensionComponents.release.xcconfig"; path = "Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents.release.xcconfig"; sourceTree = "<group>"; };
+		597184FEC66FBCEC21973EDC /* Pods-WireExtensionComponents.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WireExtensionComponents.release.xcconfig"; path = "Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents.release.xcconfig"; sourceTree = "<group>"; };
 		64D671EBEE8C57217EB00733 /* Pods-Wire-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS/Pods-Wire-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		7190BAB91AC2BC0874284A71 /* Pods-WireExtensionComponents.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WireExtensionComponents.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents.debug.xcconfig"; sourceTree = "<group>"; };
 		848DE12A1A83D20000E154B1 /* emoticons.min.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = emoticons.min.json; path = ../Sources/emoticons.min.json; sourceTree = "<group>"; };
 		8571A3524311D898C8012582 /* libPods-WireExtensionComponents.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WireExtensionComponents.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		87023D7A1D76E4E2007B667E /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
@@ -1254,6 +1253,7 @@
 		8711A59F1E0C320100043ACF /* FloatingPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatingPoint.swift; sourceTree = "<group>"; };
 		8711A5A11E0D395A00043ACF /* CollectionCellHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionCellHeader.swift; sourceTree = "<group>"; };
 		8711A5A31E0D6C8800043ACF /* TwoLineTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwoLineTitleView.swift; sourceTree = "<group>"; };
+		871608411E4DF7A900461934 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
 		871878BB1C1ACA72001FFCC5 /* NSDate+WRFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+WRFormat.h"; sourceTree = "<group>"; };
 		871878BC1C1ACA72001FFCC5 /* NSDate+WRFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+WRFormat.m"; sourceTree = "<group>"; };
 		8719FD661C88802C005FBEC0 /* Delay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
@@ -2199,7 +2199,6 @@
 		BF732A701D9C14C7003077DB /* emoji_people.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = emoji_people.plist; sourceTree = "<group>"; };
 		BF732A711D9C14C7003077DB /* emoji_symbols.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = emoji_symbols.plist; sourceTree = "<group>"; };
 		BF732A721D9C14C7003077DB /* emoji_travel.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = emoji_travel.plist; sourceTree = "<group>"; };
-		BF74EE4B1CD249B000D626CB /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
 		BF78687D1D86B36D0063762F /* LocationDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationDataTests.swift; sourceTree = "<group>"; };
 		BF7ED2D51DF18724003A4397 /* UserNameDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNameDetailView.swift; sourceTree = "<group>"; };
 		BF7ED2D71DF1A30C003A4397 /* IncomingConnectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IncomingConnectionView.swift; sourceTree = "<group>"; };
@@ -2335,7 +2334,6 @@
 		DBE6F98D1B1DE51C00B7DD32 /* ziphy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ziphy.framework; path = Carthage/Build/iOS/ziphy.framework; sourceTree = "<group>"; };
 		DBF597571A3600FC00269B7F /* icon-no-appstore.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "icon-no-appstore.xcassets"; sourceTree = "<group>"; };
 		DBF7235E1B5566B80036F4C5 /* a_lot_of_people.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a_lot_of_people.json; sourceTree = "<group>"; };
-		DED0F5481EC64D8BDC062834 /* Pods-WireExtensionComponents.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WireExtensionComponents.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents.debug.xcconfig"; sourceTree = "<group>"; };
 		EA28157E1A0BA2C5001D6124 /* ConversationViewController+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ConversationViewController+Private.h"; sourceTree = "<group>"; };
 		EA7BBD361993890900DB5E50 /* NSLayoutConstraint+Magic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSLayoutConstraint+Magic.h"; path = "Wire-iOS/Sources/Helpers/NSLayoutConstraint+Magic.h"; sourceTree = SOURCE_ROOT; };
 		EA7BBD371993890900DB5E50 /* NSLayoutConstraint+Magic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSLayoutConstraint+Magic.m"; path = "Wire-iOS/Sources/Helpers/NSLayoutConstraint+Magic.m"; sourceTree = SOURCE_ROOT; };
@@ -2364,7 +2362,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				54BB91DE1E1FA5070039E91F /* WireExtensionComponents.framework in Frameworks */,
-				2A77CCCEB062D23763E94900 /* libPods-Wire Share Extension.a in Frameworks */,
+				871608441E4DF7E400461934 /* HockeySDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2376,7 +2374,7 @@
 				CE8E4FB01DF0668A0009F437 /* ImageIO.framework in Frameworks */,
 				CE8E4FAE1DF066860009F437 /* MobileCoreServices.framework in Frameworks */,
 				1E65799D1B8F3698002E0869 /* CocoaLumberjack.framework in Frameworks */,
-				7A27B7986757069DCFB89168 /* libPods-WireExtensionComponents.a in Frameworks */,
+				374561E93C8454D5EA46EA22 /* libPods-WireExtensionComponents.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2404,6 +2402,7 @@
 				1E7222A41B8335EA004180EC /* CocoaLumberjack.framework in Frameworks */,
 				876FAEDB1C762CFC00EBA732 /* TTTAttributedLabel.framework in Frameworks */,
 				54BB91E01E1FA6330039E91F /* WireShareEngine.framework in Frameworks */,
+				871608431E4DF7B000461934 /* HockeySDK.framework in Frameworks */,
 				87BEB0361D39018600DE9575 /* FormatterKit.framework in Frameworks */,
 				CEE02EAD1DDDEF3A00BA2BE2 /* avs.framework in Frameworks */,
 				39260D2402C36A8DE422A998 /* libPods-Wire-iOS.a in Frameworks */,
@@ -2423,7 +2422,6 @@
 				871BE95B1CD0C3A5002267E8 /* OCMock.framework in Frameworks */,
 				1E2267E81B382EB2003980E3 /* ziphy.framework in Frameworks */,
 				871BE95A1CD0C2E7002267E8 /* FBSnapshotTestCase.framework in Frameworks */,
-				AD9B051D39B8B636620B905E /* libPods-Wire-iOS-Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2852,6 +2850,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				871608411E4DF7A900461934 /* HockeySDK.framework */,
 				87AAE4281E43682E00E1D13A /* LocalAuthentication.framework */,
 				CEE02EAB1DDDD15200BA2BE2 /* avs.framework */,
 				54BB91DF1E1FA6330039E91F /* WireShareEngine.framework */,
@@ -2870,7 +2869,6 @@
 				872786CA1D38EE2000CC3C15 /* OnePasswordExtension.framework */,
 				873478061D34EE5100CB200F /* libstdc++.tbd */,
 				87E0D6D41CD3978900C54196 /* AVKit.framework */,
-				BF74EE4B1CD249B000D626CB /* HockeySDK.framework */,
 				871BE9551CD0C2DD002267E8 /* FBSnapshotTestCase.framework */,
 				871BE9561CD0C2DD002267E8 /* OCMock.framework */,
 				169FF9321C57CB2100C5BF90 /* VideoToolbox.framework */,
@@ -4665,10 +4663,8 @@
 			children = (
 				B9CC3BACA5F83DE94F1D4A0A /* Pods-Wire-iOS.debug.xcconfig */,
 				64D671EBEE8C57217EB00733 /* Pods-Wire-iOS.release.xcconfig */,
-				34FC4EA42010986A36883210 /* Pods-Wire-iOS-Tests.debug.xcconfig */,
-				2729F031D6F030693AF9AEB5 /* Pods-Wire-iOS-Tests.release.xcconfig */,
-				DED0F5481EC64D8BDC062834 /* Pods-WireExtensionComponents.debug.xcconfig */,
-				612D3A1ADB6D5E7ED627CDB5 /* Pods-WireExtensionComponents.release.xcconfig */,
+				7190BAB91AC2BC0874284A71 /* Pods-WireExtensionComponents.debug.xcconfig */,
+				597184FEC66FBCEC21973EDC /* Pods-WireExtensionComponents.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -4969,11 +4965,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 168A16B41D9597C2005CFA6C /* Build configuration list for PBXNativeTarget "Wire Share Extension" */;
 			buildPhases = (
-				F02AD529FC5AE02BC3CBC3B6 /* [CP] Check Pods Manifest.lock */,
 				168A16A51D9597C2005CFA6C /* Sources */,
 				168A16A61D9597C2005CFA6C /* Frameworks */,
 				168A16A71D9597C2005CFA6C /* Resources */,
-				88033907010FABC458929189 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -4988,12 +4982,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1EE85C701B5F96FC008E084B /* Build configuration list for PBXNativeTarget "WireExtensionComponents" */;
 			buildPhases = (
-				C198CE3E06A275436D70FA1C /* [CP] Check Pods Manifest.lock */,
+				89A86BC5689CD136F1067D6A /* [CP] Check Pods Manifest.lock */,
 				1EE85C4B1B5F96FB008E084B /* Sources */,
 				1EE85C4C1B5F96FB008E084B /* Frameworks */,
 				1EE85C4D1B5F96FB008E084B /* Headers */,
 				1EE85C4E1B5F96FB008E084B /* Resources */,
-				F08F57F139A7BBA7DB4BBC33 /* [CP] Copy Pods Resources */,
+				C203424DDFCA9902F16DFDB5 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -5036,13 +5030,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BACB88591AF7C48900DDCDB0 /* Build configuration list for PBXNativeTarget "Wire-iOS-Tests" */;
 			buildPhases = (
-				7A81020FCB57CE9D4EB07679 /* [CP] Check Pods Manifest.lock */,
 				BACB884D1AF7C48900DDCDB0 /* Sources */,
 				BACB884E1AF7C48900DDCDB0 /* Frameworks */,
 				BACB884F1AF7C48900DDCDB0 /* Resources */,
 				871BE95D1CD0C44A002267E8 /* CopyFiles */,
-				C560AB42B1267C94E14E8F75 /* [CP] Copy Pods Resources */,
-				840A1405C5EE554698423D37 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -5254,7 +5245,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = $SRCROOT/Scripts/copyExtraAudioNotifications;
+			shellScript = "$SRCROOT/Scripts/copyExtraAudioNotifications";
 		};
 		193B0B9A94C0482E9B6C33B0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5285,36 +5276,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wire-iOS/Pods-Wire-iOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7A81020FCB57CE9D4EB07679 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		840A1405C5EE554698423D37 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		873AA0501D05A74B0038343B /* Strip BitCode */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -5343,19 +5304,19 @@
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/Scripts/embedBuildInfo --output ${SRCROOT}/Wire-iOS/ComponentsVersions.plist";
 		};
-		88033907010FABC458929189 /* [CP] Copy Pods Resources */ = {
+		89A86BC5689CD136F1067D6A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "[CP] Copy Pods Resources";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wire Share Extension/Pods-Wire Share Extension-resources.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		B51FF934CF48FDB769715E40 /* [CP] Embed Pods Frameworks */ = {
@@ -5373,22 +5334,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wire-iOS/Pods-Wire-iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C198CE3E06A275436D70FA1C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		C560AB42B1267C94E14E8F75 /* [CP] Copy Pods Resources */ = {
+		C203424DDFCA9902F16DFDB5 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5400,7 +5346,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wire-iOS-Tests/Pods-Wire-iOS-Tests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DBB1CF591A88C15600912518 /* Copy Frameworks and DSYMs */ = {
@@ -5439,6 +5385,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Canvas.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/avs.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireShareEngine.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework",
 			);
 			name = "Copy Frameworks and DSYMs";
 			outputPaths = (
@@ -5446,36 +5393,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# to run locally, replace with $(BUILT_PRODUCTS_DIR)/zmessaging.framework\n/usr/local/bin/carthage copy-frameworks";
-		};
-		F02AD529FC5AE02BC3CBC3B6 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		F08F57F139A7BBA7DB4BBC33 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -6378,6 +6295,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Pods/HockeySDK/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				INFOPLIST_FILE = "Wire-iOS Share Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -6407,6 +6325,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Pods/HockeySDK/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				INFOPLIST_FILE = "Wire-iOS Share Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -6421,7 +6340,7 @@
 		};
 		1EE85C6A1B5F96FC008E084B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DED0F5481EC64D8BDC062834 /* Pods-WireExtensionComponents.debug.xcconfig */;
+			baseConfigurationReference = 7190BAB91AC2BC0874284A71 /* Pods-WireExtensionComponents.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -6456,7 +6375,7 @@
 		};
 		1EE85C6B1B5F96FC008E084B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 612D3A1ADB6D5E7ED627CDB5 /* Pods-WireExtensionComponents.release.xcconfig */;
+			baseConfigurationReference = 597184FEC66FBCEC21973EDC /* Pods-WireExtensionComponents.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -6598,6 +6517,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Pods/HockeySDK/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				GCC_PREFIX_HEADER = "Wire-iOS/Wire-iOS-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -6630,6 +6550,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Pods/HockeySDK/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				GCC_PREFIX_HEADER = "Wire-iOS/Wire-iOS-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -6648,7 +6569,6 @@
 		};
 		BACB885A1AF7C48900DDCDB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 34FC4EA42010986A36883210 /* Pods-Wire-iOS-Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6701,7 +6621,6 @@
 		};
 		BACB885B1AF7C48900DDCDB0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2729F031D6F030693AF9AEB5 /* Pods-Wire-iOS-Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
