@@ -14,7 +14,6 @@ PODS:
     - GTMSessionFetcher/Core (= 1.1.8)
   - HockeySDK (4.1.3):
     - HockeySDK/DefaultLib (= 4.1.3)
-  - HockeySDK/CrashOnlyExtensionsLib (4.1.3)
   - HockeySDK/DefaultLib (4.1.3)
   - Localytics (4.2.0)
   - MTAnimation (1.2.2)
@@ -29,7 +28,6 @@ DEPENDENCIES:
   - FLAnimatedImage (from `https://github.com/wireapp/FLAnimatedImage`, tag `1.0.12`)
   - GoogleAPIClient/YouTube (= 1.0.4)
   - HockeySDK
-  - HockeySDK/CrashOnlyExtensionsLib
   - Localytics (= 4.2.0)
   - MTAnimation (from `https://github.com/wireapp/MTAnimation`, tag `1.2.2-crash-fix`)
   - NSObject-ObjectMap (from `https://github.com/wireapp/NSObject-ObjectMap`, tag `v2.3.1`)
@@ -97,6 +95,6 @@ SPEC CHECKSUMS:
   RBBAnimation: 74263069442b91350aa4264089c1c05c0395503e
   SCSiriWaveformView: b8b2756af42addcd31900c3945f24edafefb5395
 
-PODFILE CHECKSUM: 59291887ef1f1de11be773c09f427fe16637b8ff
+PODFILE CHECKSUM: c178e81f5bb20abea1ccccbbad6be9465ced8e8d
 
 COCOAPODS: 1.2.0
