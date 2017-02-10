@@ -273,4 +273,18 @@ class DisplayNameGeneratorTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(generator.initials(for: user4), "K");
     }
     
+    func testThatItFetchesAllUsersWhenNotFetchedYet()
+    {
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Rob A";
+
+        // when
+        let displayName = user1.displayName
+        
+        // then
+        XCTAssertNotNil(displayName)
+        XCTAssertEqual(displayName, "Rob")
+    }
+    
 }

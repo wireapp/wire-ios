@@ -24,6 +24,7 @@ public class DisplayNameGenerator : NSObject {
     unowned var managedObjectContext: NSManagedObjectContext
     
     public func personName(for user: ZMUser) -> PersonName? {
+        fetchAllUsersIfNeeded()
         return idToPersonNameMap[user.objectID]
     }
     
