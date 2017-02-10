@@ -40,6 +40,6 @@ target 'WireExtensionComponents' do
 end
 
 target 'Wire Share Extension' do
-  pod "HockeySDK", :subspecs => ['CrashOnlyExtensionsLib']
+  pod "HockeySDK"
 end
 
