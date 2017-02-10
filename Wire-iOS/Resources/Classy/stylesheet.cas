@@ -1608,7 +1608,7 @@ ConversationImagesViewController {
 
 AppLockView {
     authenticateLabel: @{
-        font: $font-small-medium;
+        font: $font-large-thin;
         textColor: $color-text-foreground-dark;
     }
 }

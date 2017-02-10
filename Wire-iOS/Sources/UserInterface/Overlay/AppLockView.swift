@@ -25,7 +25,7 @@ import Cartography
     public let shieldViewContainer = UIView()
     public let blurView: UIVisualEffectView!
     public let authenticateLabel = UILabel()
-    public let authenticateButton = Button(style: .empty)
+    public let authenticateButton = Button(style: .fullMonochrome)
     
     public var showReauth: Bool = false {
         didSet {
@@ -66,14 +66,14 @@ import Cartography
             shieldViewContainer.edges == selfView.edges
             blurView.edges == selfView.edges
             
-            authenticateLabel.width <= 256
-            authenticateLabel.centerX == selfView.centerX
+            authenticateLabel.leading == selfView.leading + 24
+            authenticateLabel.trailing == selfView.trailing - 24
             
             authenticateButton.top == authenticateLabel.bottom + 24
-            authenticateButton.width >= 120
-            authenticateButton.height == 40
-            authenticateButton.centerX == selfView.centerX
+            authenticateButton.leading == selfView.leading + 24
+            authenticateButton.trailing == selfView.trailing - 24
             authenticateButton.bottom == selfView.bottom - 24
+            authenticateButton.height == 40
         }
     }
     
