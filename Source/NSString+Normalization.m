@@ -24,17 +24,26 @@
 
 @implementation NSString (Normalization)
 
-
-- (instancetype)normalizedEmailaddress;
+- (instancetype)normalizedInternal
 {
     NSMutableString *string = [self mutableCopy];
-    
+
     CFRange range = CFRangeMake(0, (NSInteger)string.length);
     Boolean success = CFStringTransform((__bridge CFMutableStringRef)string, &range, (__bridge CFStringRef) @"Any-Latin; Latin-ASCII; Lower", NO);
     VerifyString(success, "Unable to normalize string");
     return string;
 }
 
+- (instancetype)normalizedEmailaddress;
+{
+    return [self normalizedInternal];
+}
+
+- (instancetype)normalizedForSearch
+{
+    NSString *normalized = [self normalizedInternal];
+    return [normalized removePunctuationCharacters];
+}
 
 - (instancetype)normalizedString;
 {
@@ -43,6 +52,35 @@
     return cleanedString;
 }
 
+- (instancetype)removePunctuationCharacters
+{
+    NSCharacterSet *characterSet = NSCharacterSet.punctuationCharacterSet;
+    NSCharacterSet *invertedSet = self.class.invertedPunctuationSet;
+
+    NSScanner *scanner = [NSScanner scannerWithString:self];
+    scanner.charactersToBeSkipped = characterSet;
+
+    NSMutableString *result = [NSMutableString string];
+    while (!scanner.atEnd) {
+        NSString *subString;
+        if ([scanner scanCharactersFromSet:invertedSet intoString:&subString]) {
+            [result appendString:subString];
+        }
+    }
+    return result;
+}
+
++ (NSCharacterSet *)invertedPunctuationSet
+{
+    static dispatch_once_t onceToken;
+    static NSCharacterSet *invertedSet = nil;
+    dispatch_once(&onceToken, ^{
+        NSCharacterSet *characterSet = NSCharacterSet.punctuationCharacterSet;
+        invertedSet = characterSet.invertedSet;
+    });
+
+    return invertedSet;
+}
 
 - (instancetype)removeNonAlphaNumericCharacters
 {

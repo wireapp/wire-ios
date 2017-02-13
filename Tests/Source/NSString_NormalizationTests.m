@@ -84,9 +84,7 @@
 {
     NSString *normalizedString = [@"hey you" normalizedString];
     XCTAssertEqualObjects(normalizedString, @"hey you");
-    
 }
-
 
 - (void)testThatItDoesNotRemoveSpecialCharactersInEmailaddresses
 {
@@ -94,6 +92,64 @@
     XCTAssertEqualObjects(normalizedEmailaddress, @"hallo-du@example.com");
 }
 
+- (void)testThatItConvertsToLowercase_ForSearch
+{
+    NSString *normalizedString = [@"SomEThIng" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString, @"something");
+}
 
+- (void)testThatItRemovesDiacritics_ForSearch
+{
+    NSString *normalizedString = [@"sömëthîñg" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString, @"something");
+
+    NSString *normalizedString2 = [@"Håkon Bø" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString2, @"hakon bo");
+}
+
+- (void)testThatItConvertsToLatin_ForSearch
+{
+    NSString *normalizedString = [@"שלום" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString, @"slwm");
+
+    NSString *normalizedString2 = [@"안녕하세요" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString2, @"annyeonghaseyo");
+
+    NSString *normalizedString3 = [@"ひらがな" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString3, @"hiragana");
+}
+
+- (void)testThatItDoesNotRemoveEmoji_ForSearch
+{
+    NSString *normalizedString = [@"😍hey😍hey😍hey😍hey😍hey😍hey😍hey😍" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString, @"😍hey😍hey😍hey😍hey😍hey😍hey😍hey😍");
+
+    NSString *normalizedString5 = [@"😍😍" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString5, @"😍😍");
+
+    NSString *normalizedString6 = [@"😍😍hey" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString6, @"😍😍hey");
+}
+
+- (void)testThatItDoesNotRemoveWhiteSpaceCharacters_ForSearch
+{
+    NSString *normalizedString = [@"hey you" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString, @"hey you");
+}
+
+- (void)testThatItRemovesPunctuationCharacters_ForSearch
+{
+    NSString *normalizedEmailaddress = [@"hello. world? worlds!..." normalizedForSearch];
+    XCTAssertEqualObjects(normalizedEmailaddress, @"hello world worlds");
+
+    NSString *normalizedString2 = [@"#hey" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString2, @"hey");
+
+    NSString *normalizedString3 = [@"@hey" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString3, @"hey");
+
+    NSString *normalizedString4 = [@"(hey)" normalizedForSearch];
+    XCTAssertEqualObjects(normalizedString4, @"hey");
+}
 
 @end
