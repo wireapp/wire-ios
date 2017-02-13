@@ -17,12 +17,10 @@
 //
 
 
-public func &&(lhs: NSPredicate, rhs: NSPredicate?) -> NSPredicate {
-    guard let rhs = rhs else { return lhs }
+public func &&(lhs: NSPredicate, rhs: NSPredicate) -> NSPredicate {
     return NSCompoundPredicate(andPredicateWithSubpredicates: [lhs, rhs])
 }
 
-public func ||(lhs: NSPredicate, rhs: NSPredicate?) -> NSPredicate {
-    guard let rhs = rhs else { return lhs }
+public func ||(lhs: NSPredicate, rhs: NSPredicate) -> NSPredicate {
     return NSCompoundPredicate(orPredicateWithSubpredicates: [lhs, rhs])
 }
