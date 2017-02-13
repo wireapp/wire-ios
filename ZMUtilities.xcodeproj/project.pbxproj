@@ -89,6 +89,8 @@
 		BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */; };
 		BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */; };
 		BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */; };
+		BF7851BB1E51C8E700E24EB8 /* NSPredicateOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7851BA1E51C8E700E24EB8 /* NSPredicateOperators.swift */; };
+		BF7851BE1E51CA7A00E24EB8 /* NSPredicateOperatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7851BC1E51C93500E24EB8 /* NSPredicateOperatorTests.swift */; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
 		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
@@ -273,6 +275,8 @@
 		BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-production.xml"; sourceTree = "<group>"; };
 		BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "appstore-sandbox.xml"; path = "../appstore-sandbox.xml"; sourceTree = "<group>"; };
 		BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-sandbox.xml"; sourceTree = "<group>"; };
+		BF7851BA1E51C8E700E24EB8 /* NSPredicateOperators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSPredicateOperators.swift; sourceTree = "<group>"; };
+		BF7851BC1E51C93500E24EB8 /* NSPredicateOperatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSPredicateOperatorTests.swift; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
 		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
@@ -549,6 +553,7 @@
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
 				16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
+				BF7851BA1E51C8E700E24EB8 /* NSPredicateOperators.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
 			);
 			path = Public;
@@ -605,6 +610,7 @@
 				BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */,
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
+				BF7851BC1E51C93500E24EB8 /* NSPredicateOperatorTests.swift */,
 				16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */,
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
 				54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */,
@@ -829,6 +835,7 @@
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
 				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
+				BF7851BB1E51C8E700E24EB8 /* NSPredicateOperators.swift in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
 				54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */,
 				3E88BE551B1F478200232589 /* ZMTimer.m in Sources */,
@@ -881,6 +888,7 @@
 				54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */,
 				54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */,
 				546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */,
+				BF7851BE1E51CA7A00E24EB8 /* NSPredicateOperatorTests.swift in Sources */,
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
 				54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */,
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
