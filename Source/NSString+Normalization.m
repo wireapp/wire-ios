@@ -41,7 +41,7 @@
 
 - (instancetype)normalizedForSearch
 {
-    return [self.normalizedInternal stringByTrimmingCharactersInSet:NSCharacterSet.punctuationCharacterSet];
+    return [[self.normalizedInternal componentsSeparatedByCharactersInSet:NSCharacterSet.punctuationCharacterSet] componentsJoinedByString:@""];
 }
 
 - (instancetype)normalizedString;
