@@ -195,12 +195,14 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *__unused)updateEvent
 {
     [self addData:message.data];
+    [self updateNormalizedText];
 }
 
 - (void)deleteContent
 {
     _genericMessage = nil;
     self.dataSet = [NSOrderedSet orderedSet];
+    self.normalizedText = nil;
     self.genericMessage = nil;
 }
 

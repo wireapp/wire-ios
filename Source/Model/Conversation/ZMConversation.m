@@ -1276,6 +1276,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (NSUInteger)sortedAppendMessage:(ZMMessage *)message;
 {
     Require(message != nil);
+    [message updateNormalizedText];
+
     // This is more efficient than adding to mutableMessages and re-sorting all of them.
     NSUInteger index = self.messages.count;
     ZMMessage * const currentLastMessage = self.messages.lastObject;
