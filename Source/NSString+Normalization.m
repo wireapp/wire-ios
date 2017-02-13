@@ -41,8 +41,7 @@
 
 - (instancetype)normalizedForSearch
 {
-    NSString *normalized = [self normalizedInternal];
-    return [normalized removePunctuationCharacters];
+    return [self.normalizedInternal stringByTrimmingCharactersInSet:NSCharacterSet.punctuationCharacterSet];
 }
 
 - (instancetype)normalizedString;
@@ -50,36 +49,6 @@
     NSString *string = [self normalizedEmailaddress];
     NSString *cleanedString = [string removeNonAlphaNumericCharacters];
     return cleanedString;
-}
-
-- (instancetype)removePunctuationCharacters
-{
-    NSCharacterSet *characterSet = NSCharacterSet.punctuationCharacterSet;
-    NSCharacterSet *invertedSet = self.class.invertedPunctuationSet;
-
-    NSScanner *scanner = [NSScanner scannerWithString:self];
-    scanner.charactersToBeSkipped = characterSet;
-
-    NSMutableString *result = [NSMutableString string];
-    while (!scanner.atEnd) {
-        NSString *subString;
-        if ([scanner scanCharactersFromSet:invertedSet intoString:&subString]) {
-            [result appendString:subString];
-        }
-    }
-    return result;
-}
-
-+ (NSCharacterSet *)invertedPunctuationSet
-{
-    static dispatch_once_t onceToken;
-    static NSCharacterSet *invertedSet = nil;
-    dispatch_once(&onceToken, ^{
-        NSCharacterSet *characterSet = NSCharacterSet.punctuationCharacterSet;
-        invertedSet = characterSet.invertedSet;
-    });
-
-    return invertedSet;
 }
 
 - (instancetype)removeNonAlphaNumericCharacters
