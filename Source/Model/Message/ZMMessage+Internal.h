@@ -61,6 +61,7 @@ extern NSString * _Nonnull const ZMMessageHiddenInConversationKey;
 extern NSString * _Nonnull const ZMMessageConfirmationKey;
 extern NSString * _Nonnull const ZMMessageCachedCategoryKey;
 extern NSString * _Nonnull const ZMMessageSystemMessageClientsKey;
+extern NSString * _Nonnull const ZMMessageDeliveryStateKey;
 
 @interface ZMMessage : ZMManagedObject
 

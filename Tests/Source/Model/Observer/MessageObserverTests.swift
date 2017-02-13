@@ -251,8 +251,21 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             expectedChangedField: "reactionsChanged"
         )
     }
-    
-    
+
+    func testThatItNotifiesObserversWhenDeliveredChanges(){
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        XCTAssertFalse(message.delivered)
+        uiMOC.saveOrRollback()
+        
+        // when
+        checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { $0.markAsSent()
+                        XCTAssertTrue(($0 as! ZMOTRMessage).delivered)},
+            expectedChangedField: "deliveryStateChanged"
+        )
+    }
     
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         

@@ -76,6 +76,7 @@ NSString * const ZMMessageConfirmationKey = @"confirmations";
 NSString * const ZMMessageDestructionDateKey = @"destructionDate";
 NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 NSString * const ZMMessageCachedCategoryKey = @"cachedCategory";
+NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
 
 
 @interface ZMMessage ()
