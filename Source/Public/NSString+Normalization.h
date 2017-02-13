@@ -22,6 +22,7 @@
 @interface NSString (Normalization)
 
 - (instancetype)normalizedString;
+- (instancetype)normalizedForSearch;
 - (instancetype)normalizedEmailaddress;
 
 - (BOOL)zmHasOnlyWhitespaceCharacters;

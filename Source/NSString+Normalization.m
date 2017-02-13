@@ -24,17 +24,25 @@
 
 @implementation NSString (Normalization)
 
-
-- (instancetype)normalizedEmailaddress;
+- (instancetype)normalizedInternal
 {
     NSMutableString *string = [self mutableCopy];
-    
+
     CFRange range = CFRangeMake(0, (NSInteger)string.length);
     Boolean success = CFStringTransform((__bridge CFMutableStringRef)string, &range, (__bridge CFStringRef) @"Any-Latin; Latin-ASCII; Lower", NO);
     VerifyString(success, "Unable to normalize string");
     return string;
 }
 
+- (instancetype)normalizedEmailaddress;
+{
+    return [self normalizedInternal];
+}
+
+- (instancetype)normalizedForSearch
+{
+    return [[self.normalizedInternal componentsSeparatedByCharactersInSet:NSCharacterSet.punctuationCharacterSet] componentsJoinedByString:@""];
+}
 
 - (instancetype)normalizedString;
 {
@@ -42,7 +50,6 @@
     NSString *cleanedString = [string removeNonAlphaNumericCharacters];
     return cleanedString;
 }
-
 
 - (instancetype)removeNonAlphaNumericCharacters
 {
