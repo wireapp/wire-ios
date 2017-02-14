@@ -44,6 +44,13 @@ open class ObjectChangeInfo : NSObject, ObjectChangeInfoProtocol {
     func changedKeysContain(keys: String...) -> Bool {
         return !changedKeys.isDisjoint(with: keys)
     }
+    
+    var customDebugDescription : String {
+        guard let managedObject = object as? NSManagedObject else {
+            return "ChangeInfo for \(object) with changedKeys: \(changedKeys), changeInfos: \(changeInfos)"
+        }
+        return "ChangeInfo for \(managedObject.objectID) with changedKeys: \(changedKeys), changeInfos: \(changeInfos)"
+    }
 }
 
 
