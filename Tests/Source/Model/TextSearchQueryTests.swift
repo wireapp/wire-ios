@@ -55,15 +55,12 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(otherConversation.messages.count, 41)
 
         // When
-        let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: "in the conversation", delegate: delegate)!
-        sut.execute()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard delegate.fetchedResults.count == 1 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)") }
 
-        let result = delegate.fetchedResults.first!
+        let result = results.first!
         XCTAssertFalse(result.hasMore)
         XCTAssertEqual(result.matches.count, 1)
 
@@ -91,15 +88,12 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(otherConversation.messages.count, 41)
 
         // When
-        let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: "in the conversation", delegate: delegate)!
-        sut.execute()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard delegate.fetchedResults.count == 1 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)") }
 
-        let result = delegate.fetchedResults.first!
+        let result = results.first!
         XCTAssertFalse(result.hasMore)
         XCTAssertEqual(result.matches.count, 1)
 
@@ -128,18 +122,15 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(conversation.messages.count, 403)
 
         // When
-        let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: "in the conversation", delegate: delegate)!
-        sut.execute()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard delegate.fetchedResults.count == 3 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
-        for result in delegate.fetchedResults.dropLast() {
+        guard results.count == 3 else { return XCTFail("Unexpected count \(results.count)") }
+        for result in results.dropLast() {
             XCTAssertTrue(result.hasMore)
         }
 
-        let finalResult = delegate.fetchedResults.last!
+        let finalResult = results.last!
         XCTAssertFalse(finalResult.hasMore)
         XCTAssertEqual(finalResult.matches.count, 3)
 
@@ -167,15 +158,12 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(conversation.messages.count, 2)
 
         // When
-        let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: "in the conversation", delegate: delegate)
-        sut?.execute()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard delegate.fetchedResults.count == 1 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)") }
 
-        let result = delegate.fetchedResults.first!
+        let result = results.first!
         XCTAssertFalse(result.hasMore)
         XCTAssertEqual(result.matches.count, 2)
 
@@ -202,19 +190,16 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(conversation.messages.count, 403)
 
         // When
-        let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: "in the conversation", delegate: delegate)
-        sut?.execute()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard delegate.fetchedResults.count == 3 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        guard results.count == 3 else { return XCTFail("Unexpected count \(results.count)") }
 
-        for fetchedResult in delegate.fetchedResults.dropLast() {
+        for fetchedResult in results.dropLast() {
             XCTAssert(fetchedResult.hasMore)
         }
 
-        let result = delegate.fetchedResults.last!
+        let result = results.last!
         XCTAssertFalse(result.hasMore)
         XCTAssertEqual(result.matches.count, 3)
 
@@ -286,18 +271,15 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(conversation.messages.count, 403)
 
         // When
-        let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: "in the conversation", delegate: delegate)!
-        sut.execute()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let results = search(for: "in the conversation", in: conversation)
 
         // Then
-        guard delegate.fetchedResults.count == 4 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
-        for result in delegate.fetchedResults.dropLast() {
+        guard results.count == 4 else { return XCTFail("Unexpected count \(results.count)") }
+        for result in results.dropLast() {
             XCTAssertTrue(result.hasMore)
         }
 
-        let finalResult = delegate.fetchedResults.last!
+        let finalResult = results.last!
         XCTAssertFalse(finalResult.hasMore)
         XCTAssertEqual(finalResult.matches.count, 3)
 
@@ -320,21 +302,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         verifyThatItFindsMessage(withText: "Coracao", whenSearchingFor: "Coração")
         verifyThatItFindsMessage(withText: "❤️🍕", whenSearchingFor: "❤️🍕")
         verifyThatItFindsMessage(withText: "苹果", whenSearchingFor: "苹果")
-        verifyThatItFindsMessage(withText: "苹果", whenSearchingFor: "Ping guo")
-        verifyThatItFindsMessage(withText: "苹果", whenSearchingFor: "Ping")
-        verifyThatItFindsMessage(withText: "苹果", whenSearchingFor: "gu")
-        verifyThatItFindsMessage(withText: "Ping guo", whenSearchingFor: "苹果")
-        verifyThatItFindsMessage(withText: "सेवफलम्", whenSearchingFor: "sevaphalam")
         verifyThatItFindsMessage(withText: "सेवफलम्", whenSearchingFor: "सेवफलम्")
-        verifyThatItFindsMessage(withText: "sevaphalam", whenSearchingFor: "सेवफलम्")
         verifyThatItFindsMessage(withText: "μήλο", whenSearchingFor: "μήλο")
-        verifyThatItFindsMessage(withText: "μήλο", whenSearchingFor: "melo")
-        verifyThatItFindsMessage(withText: "Яблоко", whenSearchingFor: "abloko")
-        verifyThatItFindsMessage(withText: "abloko", whenSearchingFor: "Яблоко")
-        verifyThatItFindsMessage(withText: "خطای سطح دسترسی", whenSearchingFor: "khtay sth dstrsy")
-        verifyThatItFindsMessage(withText: "khtay sth dstrsy", whenSearchingFor: "خطای سطح دسترسی")
-        verifyThatItFindsMessage(withText: "תפוח", whenSearchingFor: "tpwh")
-        verifyThatItFindsMessage(withText: "tpwh", whenSearchingFor: "תפוח")
+        verifyThatItFindsMessage(withText: "Яблоко", whenSearchingFor: "Яблоко")
+        verifyThatItFindsMessage(withText: "خطای سطح دسترسی", whenSearchingFor: "خطای سطح دسترسی")
+        verifyThatItFindsMessage(withText: "תפוח", whenSearchingFor: "תפוח")
         verifyThatItFindsMessage(withText: "ᑭᒻᒥᓇᐅᔭᖅ", whenSearchingFor: "ᑭᒻᒥᓇᐅᔭᖅ")
         verifyThatItFindsMessage(withText: "aa aa aa", whenSearchingFor: "aa")
         verifyThatItFindsMessage(withText: "aa.aa", whenSearchingFor: "aa")
@@ -381,6 +353,69 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertTrue(result.matches.isEmpty, "Expected to not find a match")
     }
 
+    func testThatItUpdatesTheNormalizedTextWhenEditingAMessage() {
+        // Given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = .create()
+        let message = conversation.appendMessage(withText: "Håkon") as! ZMMessage
+        message.markAsSent()
+        XCTAssert(uiMOC.saveOrRollback())
+        XCTAssertEqual(message.normalizedText, "hakon")
+
+        // When
+        let edited = ZMMessage.edit(message, newText: "Coração")
+        XCTAssertNotNil(edited)
+        XCTAssert(uiMOC.saveOrRollback())
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertNil(message.visibleInConversation)
+        XCTAssertNil(message.normalizedText)
+        XCTAssertEqual(edited?.normalizedText, "coracao")
+
+        guard let originalMatches = search(for: "hakon", in: conversation).first?.matches,
+              let editedMatches = search(for: "coracao", in: conversation).first?.matches else {
+                return XCTFail("Unable to get matches")
+        }
+
+        XCTAssert(originalMatches.isEmpty)
+        guard let editedMatch = editedMatches.first, editedMatches.count == 1 else {
+            return XCTFail("Unexpected number of edited matches")
+        }
+
+        XCTAssertEqual(editedMatch, edited)
+    }
+
+    func testThatItDoesNotReturnEphemeralMessagesAsSearchResults() {
+        // Given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = .create()
+        let message = conversation.appendMessage(withText: "This is a regular message in the conversation") as! ZMMessage
+        let otherMessage = conversation.appendMessage(withText: "This is the another message in the conversation") as! ZMMessage
+        conversation.messageDestructionTimeout = 300
+        let ephemeralMessage = conversation.appendMessage(withText: "This is a timed message in the conversation") as! ZMMessage
+
+        XCTAssert(uiMOC.saveOrRollback())
+        XCTAssertNotNil(message.normalizedText)
+        XCTAssertNotNil(otherMessage.normalizedText)
+        XCTAssertEqual(ephemeralMessage.normalizedText, "")
+        XCTAssertEqual(conversation.messages.count, 3)
+
+        // When
+        guard let ephemeralMatches = search(for: "timed", in: conversation).first?.matches,
+            let firstMessageMatches = search(for: "regular message", in: conversation).first?.matches else {
+                return XCTFail("Unable to get matches")
+        }
+
+        // Then
+        XCTAssert(ephemeralMatches.isEmpty)
+        guard let messageMatch = firstMessageMatches.first, firstMessageMatches.count == 1 else {
+            return XCTFail("Unexpected number of regular matches")
+        }
+
+        XCTAssertEqual(messageMatch, message)
+    }
+
     // MARK: Helper
 
     func fillConversationWithMessages(conversation: ZMConversation, messageCount: Int, normalized: Bool) {
@@ -398,8 +433,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     }
 
     func verifyAllMessagesAreIndexed(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
-        let predicate = ZMClientMessage.predicateForNotIndexedMessages()
-                     && ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!)
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            ZMClientMessage.predicateForNotIndexedMessages(),
+            ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!)
+        ])
         let request = ZMClientMessage.sortedFetchRequest(with: predicate)!
         let notIndexedMessageCount = (try? uiMOC.count(for: request)) ?? 0
 
@@ -428,14 +465,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         // When
-        let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: query, delegate: delegate)!
-        sut.execute()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+        let results = search(for: query, in: conversation)
 
         // Then
-        guard delegate.fetchedResults.count == 1 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)", file: file, line: line) }
-        let result = delegate.fetchedResults.first!
+        guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)", file: file, line: line) }
+        let result = results.first!
         XCTAssertFalse(result.hasMore, file: file, line: line)
 
         if shouldFind {
@@ -445,6 +479,14 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         } else {
             XCTAssertTrue(result.matches.isEmpty, "Expected to not find a match", file: file, line: line)
         }
+    }
+
+    fileprivate func search(for text: String, in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> [TextQueryResult] {
+        let delegate = MockTextSearchQueryDelegate()
+        let sut = TextSearchQuery(conversation: conversation, query: text, delegate: delegate)!
+        sut.execute()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+        return delegate.fetchedResults
     }
 
 }
