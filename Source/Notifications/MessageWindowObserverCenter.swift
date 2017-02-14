@@ -56,6 +56,7 @@ extension NSManagedObjectContext {
         if let snapshot = windowSnapshot, snapshot.conversation == window.conversation {
             snapshot.windowDidScroll()
         } else {
+            zmLog.debug("WindowDidScroll - Creating snapshot for window \(window), removing snapshot for old window in conversation: \(windowSnapshot?.conversation)")
             windowSnapshot?.tearDown()
             windowSnapshot = MessageWindowSnapshot(window: window)
         }
@@ -66,8 +67,10 @@ extension NSManagedObjectContext {
     /// Call this when initializing a new message window
     @objc public func windowWasCreated(_ window: ZMConversationMessageWindow) {
         if let snapshot = windowSnapshot, snapshot.conversation == window.conversation {
+            zmLog.debug("WindowWasCreated - Using existing snapshot for window \(window)")
             return
         }
+        zmLog.debug("WindowWasCreated - Creating snapshot for window \(window), removing snapshot for old window in conversation: \(windowSnapshot?.conversation)")
         windowSnapshot?.tearDown()
         windowSnapshot = MessageWindowSnapshot(window: window)
     }
@@ -78,20 +81,27 @@ extension NSManagedObjectContext {
         if let snapshot = windowSnapshot, snapshot.conversation != window.conversation {
             return
         }
+        zmLog.debug("Removing snapshot for window \(window)")
         windowSnapshot?.tearDown()
         windowSnapshot = nil
     }
     
     public func objectsDidChange(changes: [ClassIdentifier : [ObjectChangeInfo]]) {
-        guard let snapshot = windowSnapshot else { return }
+        guard let snapshot = windowSnapshot else {
+            zmLog.debug("ObjectsDidChange, but no snapshot to update")
+            return
+        }
         changes.values.forEach{
             if let convChanges = $0 as? [ConversationChangeInfo] {
+                zmLog.debug("Conversations did change: \n \(convChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
                 convChanges.forEach{snapshot.conversationDidChange($0)}
             }
             if let userChanges = $0 as? [UserChangeInfo] {
+                zmLog.debug("Users did change: \n \(userChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
                 userChanges.forEach{snapshot.userDidChange(changeInfo: $0)}
             }
             if let messageChanges = $0 as? [MessageChangeInfo] {
+                zmLog.debug("Messages did change: \n \(messageChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
                 messageChanges.forEach{snapshot.messageDidChange($0)}
             }
         }
@@ -168,6 +178,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
         guard let conversation = conversation, changeInfo.conversation == conversation else { return }
         if(changeInfo.messagesChanged || changeInfo.clearedChanged) {
             shouldRecalculate = true
+            zmLog.debug("Recalculating window due to conversation change \(changeInfo.customDebugDescription)")
         }
     }
     
@@ -189,6 +200,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
         
         userChanges[user.objectID] = changeInfo
         shouldRecalculate = true
+        zmLog.debug("Recalculating window due to user change \(changeInfo.customDebugDescription)")
     }
     
     
@@ -258,12 +270,22 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
             userInfo["messageWindowChangeInfo"] = changeInfo
         }
         NotificationCenter.default.post(name: .MessageWindowDidChange, object: window, userInfo: userInfo)
+        zmLog.debug(logMessage(for: messageChangeInfos, windowChangeInfo: windowChangeInfo))
     }
     
     
     public func applicationWillEnterForeground() {
         shouldRecalculate = true
         computeChanges()
+    }
+    
+    func logMessage(for messageChangeInfos: [MessageChangeInfo], windowChangeInfo: MessageWindowChangeInfo?) -> String {
+        var message = "Posting notification with messageChangeInfos: \n"
+        message.append(messageChangeInfos.map{$0.customDebugDescription}.joined(separator: "\n"))
+        
+        guard let changeInfo = windowChangeInfo else { return message }
+        message.append("\n MessageWindowChangeInfo: \(changeInfo.description)")
+        return message
     }
 }
 
