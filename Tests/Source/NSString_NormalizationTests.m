@@ -104,19 +104,19 @@
     XCTAssertEqualObjects(normalizedString, @"something");
 
     NSString *normalizedString2 = [@"Håkon Bø" normalizedForSearch];
-    XCTAssertEqualObjects(normalizedString2, @"hakon bo");
+    XCTAssertEqualObjects(normalizedString2, @"hakon bø"); // U+00F8 is it's own Unicode character
 }
 
 - (void)testThatItConvertsToLatin_ForSearch
 {
     NSString *normalizedString = [@"שלום" normalizedForSearch];
-    XCTAssertEqualObjects(normalizedString, @"slwm");
+    XCTAssertEqualObjects(normalizedString, @"שלום");
 
     NSString *normalizedString2 = [@"안녕하세요" normalizedForSearch];
-    XCTAssertEqualObjects(normalizedString2, @"annyeonghaseyo");
+    XCTAssertEqualObjects(normalizedString2, @"안녕하세요");
 
     NSString *normalizedString3 = [@"ひらがな" normalizedForSearch];
-    XCTAssertEqualObjects(normalizedString3, @"hiragana");
+    XCTAssertEqualObjects(normalizedString3, @"ひらがな");
 }
 
 - (void)testThatItDoesNotRemoveEmoji_ForSearch
