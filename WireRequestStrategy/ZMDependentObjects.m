@@ -40,7 +40,7 @@
     return self;
 }
 
-- (void)addManagedObject:(ZMManagedObject *)dependantObject withDependency:(NSObject *)dependency;
+- (void)addManagedObject:(ZMManagedObject *)dependantObject withDependency:(id)dependency;
 {
     VerifyReturn(dependantObject != nil);
     VerifyReturn(dependency != nil);
@@ -54,10 +54,10 @@
     }
 }
 
-- (NSObject *)anyDependencyForObject:(ZMManagedObject *)dependant
+- (id)anyDependencyForObject:(ZMManagedObject *)dependant
 {
     NSEnumerator *keyEnumbertor = [self.dependenciesToDependants keyEnumerator];
-    NSObject *dependency;
+    id dependency;
     while ((dependency = keyEnumbertor.nextObject)) {
         NSOrderedSet *dependencies = [self.dependenciesToDependants objectForKey:dependency];
         if ([dependencies containsObject:dependant]) {
@@ -67,7 +67,7 @@
     return nil;
 }
 
-- (void)enumerateManagedObjectsForDependency:(NSObject *)dependency withBlock:(BOOL(^)(ZMManagedObject *managedObject))block;
+- (void)enumerateManagedObjectsForDependency:(id)dependency withBlock:(BOOL(^)(ZMManagedObject *managedObject))block;
 {
     VerifyReturn(dependency != nil);
     NSMutableOrderedSet *trackedDependants = [self.dependenciesToDependants objectForKey:dependency];
