@@ -41,7 +41,8 @@
 
 - (instancetype)normalizedForSearch
 {
-    return [[self.normalizedInternal componentsSeparatedByCharactersInSet:NSCharacterSet.punctuationCharacterSet] componentsJoinedByString:@""];
+    NSString *string = [self stringByFoldingWithOptions:NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch locale:nil];
+    return string.removePunctuationCharacters;
 }
 
 - (instancetype)normalizedString;
@@ -68,6 +69,11 @@
         }
     }
     return result;
+}
+
+- (instancetype)removePunctuationCharacters
+{
+    return [[self componentsSeparatedByCharactersInSet:NSCharacterSet.punctuationCharacterSet] componentsJoinedByString:@""];
 }
 
 - (BOOL)zmHasOnlyWhitespaceCharacters
