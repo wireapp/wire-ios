@@ -25,11 +25,11 @@
 
 @interface ZMDependentObjects : NSObject
 
-- (void)addManagedObject:(ZMManagedObject *)managedObject withDependency:(ZMManagedObject *)dependency;
+- (void)addManagedObject:(ZMManagedObject *)managedObject withDependency:(NSObject *)dependency;
 
 /// When the @c block returns @c YES the object will get removed from the reciver, otherwise it will stay registered with the given dependency.
-- (void)enumerateManagedObjectsForDependency:(ZMManagedObject *)dependency withBlock:(BOOL(^)(ZMManagedObject *managedObject))block;
+- (void)enumerateManagedObjectsForDependency:(NSObject *)dependency withBlock:(BOOL(^)(ZMManagedObject *managedObject))block;
 
-- (ZMManagedObject *)anyDependencyForObject:(ZMManagedObject *)dependant;
+- (NSObject *)anyDependencyForObject:(ZMManagedObject *)dependant;
 
 @end
