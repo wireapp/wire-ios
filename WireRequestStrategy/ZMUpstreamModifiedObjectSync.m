@@ -178,7 +178,7 @@ ZM_EMPTY_ASSERTING_INIT();
 - (void)checkForUpdatedDependency:(ZMManagedObject *)existingDependency;
 {
     [self.updatedObjectsWithDependencies enumerateManagedObjectsForDependency:existingDependency withBlock:^BOOL(ZMManagedObject *mo) {
-        NSObject *newDependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
+        id newDependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (newDependency == nil) {
             [self addUpdatedObjectWithoutDependency:mo];
             return YES;
@@ -204,7 +204,7 @@ ZM_EMPTY_ASSERTING_INIT();
 - (void)addUpdatedObject:(ZMManagedObject *)mo
 {
     if (self.updatedObjectsWithDependencies) {
-        NSObject *dependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
+        id dependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (dependency != nil) {
             [self.updatedObjectsWithDependencies addManagedObject:mo withDependency:dependency];
             return;
@@ -222,7 +222,7 @@ ZM_EMPTY_ASSERTING_INIT();
     }
     
     //if we still has a dependency for this object we don't sync it
-    NSObject *dependency = [self.updatedObjectsWithDependencies anyDependencyForObject:objectWithKeys.object];
+    id dependency = [self.updatedObjectsWithDependencies anyDependencyForObject:objectWithKeys.object];
     if (dependency != nil) {
         return nil;
     }

@@ -48,7 +48,7 @@
 /// at which time the upstream object sync will ask the transcoder again.
 ///
 /// Dependant -> depends on -> dependency
-- (NSObject * _Nullable)dependentObjectNeedingUpdateBeforeProcessingObject:(ZMManagedObject * _Nonnull)dependant;
+- (id _Nullable)dependentObjectNeedingUpdateBeforeProcessingObject:(ZMManagedObject * _Nonnull)dependant;
 
 /// If implemented, the upstream object sync will call this when an upstream request timed out. Having a request
 /// that might time out but not implementing this will trigger an assertion.
