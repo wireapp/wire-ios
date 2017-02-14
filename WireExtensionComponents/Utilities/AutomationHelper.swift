@@ -63,9 +63,7 @@ import zmessaging
         if arguments.hasFlag(AutomationKey.LogNetwork.rawValue) {
             ZMSLog.set(level: .debug, tag: "Network")
         }
-        if arguments.hasFlag(AutomationKey.LogTags.rawValue) {
-            AutomationHelper.enableLogTags(arguments)
-        }
+        AutomationHelper.enableLogTags(arguments)
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
         super.init()
     }
@@ -92,7 +90,7 @@ import zmessaging
     // Switches on all flags that you would like to log listed after `--debug-log=` tags should be separated by comma
     fileprivate static func enableLogTags(_ arguments: ArgumentsType) {
         guard let tagsString = arguments.flagValueIfPresent(AutomationKey.LogTags.rawValue) else { return }
-        let tags = tagsString.replacingOccurrences(of: " ", with: "").components(separatedBy: ",")
+        let tags = tagsString.components(separatedBy: ",")
         tags.forEach{ ZMSLog.set(level: .debug, tag: $0) }
     }
     
