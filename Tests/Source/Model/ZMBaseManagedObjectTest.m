@@ -122,16 +122,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 @end
 
 
-@implementation ZMBaseManagedObjectTest (DisplayNameGenerator)
-
-- (void)updateDisplayNameGeneratorWithUsers:(NSArray *)users;
-{
-    [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet set] insertedUsers:[NSSet setWithArray:users] deletedUsers:[NSSet set]];
-}
-
-@end
-
-
 @implementation ZMBaseManagedObjectTest (UserTesting)
 
 - (void)setEmailAddress:(NSString *)emailAddress onUser:(ZMUser *)user;

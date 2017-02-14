@@ -42,6 +42,8 @@
 
 @property (nonatomic, readonly) BOOL isBot;
 
+- (NSString *)displayNameInConversation:(ZMConversation *)conversation;
+
 @end
 
 

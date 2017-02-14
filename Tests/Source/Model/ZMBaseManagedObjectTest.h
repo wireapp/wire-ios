@@ -62,14 +62,6 @@
 
 
 
-@interface ZMBaseManagedObjectTest (DisplayNameGenerator)
-
-- (void)updateDisplayNameGeneratorWithUsers:(nonnull NSArray *)users;
-
-@end
-
-
-
 @interface ZMBaseManagedObjectTest (UserTesting)
 
 - (void)setEmailAddress:(nullable NSString *)emailAddress onUser:(nonnull ZMUser *)user;

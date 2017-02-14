@@ -29,7 +29,7 @@ public class PersonName : NSObject {
     
     let components : [String]
     let fullName : String
-    var displayName : String?
+    let rawFullName : String
     let nameOrder: NameOrder
     static let stringsToPersonNames = NSCache<NSString, PersonName>()
 
@@ -90,30 +90,32 @@ public class PersonName : NSObject {
         return _initials;
     }()
     
-    static func person(withName name: String) -> PersonName {
+    static func person(withName name: String, schemeTagger: NSLinguisticTagger?) -> PersonName {
+        let tagger = schemeTagger ?? NSLinguisticTagger(tagSchemes: [NSLinguisticTagSchemeScript], options: 0)
+
         if let cachedPersonName = stringsToPersonNames.object(forKey: name as NSString) {
             return cachedPersonName
         }
-        let cachedPersonName = PersonName(name: name)
+        let cachedPersonName = PersonName(name: name, schemeTagger: tagger)
         stringsToPersonNames.setObject(cachedPersonName, forKey: name as NSString)
         return cachedPersonName
     }
     
-    init(name: String){
+    init(name: String, schemeTagger: NSLinguisticTagger){
         // We're using -precomposedStringWithCanonicalMapping (Unicode Normalization Form C)
         // since this allows us to use faster string comparison later.
+        self.rawFullName = name
         self.fullName = name.precomposedStringWithCanonicalMapping 
-        self.nameOrder = type(of:self).script(of: name)
+        self.nameOrder = type(of:self).script(of: name, schemeTagger: schemeTagger)
         self.components = type(of:self).splitNameComponents(fullName: fullName)
     }
     
-    static func script(of string: String) -> NameOrder {
+    static func script(of string: String, schemeTagger: NSLinguisticTagger) -> NameOrder {
         // We are checking the linguistic scheme in order to distinguisch between differences in the order of given and last name
         // If the name contains latin scheme tag, it uses the first name as the given name
         // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for god
-        let tagger =  NSLinguisticTagger(tagSchemes: [NSLinguisticTagSchemeScript], options: 0)
-        tagger.string = string
-        let tags = tagger.tags(in: NSMakeRange(0, tagger.string!.characters.count), scheme: NSLinguisticTagSchemeScript, options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
+        schemeTagger.string = string
+        let tags = schemeTagger.tags(in: NSMakeRange(0, schemeTagger.string!.characters.count), scheme: NSLinguisticTagSchemeScript, options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
         
         let nameOrder : NameOrder
         if tags.contains("Arab") {

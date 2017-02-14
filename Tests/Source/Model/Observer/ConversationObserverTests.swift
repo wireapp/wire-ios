@@ -164,7 +164,6 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                                         let otherUser = ZMUser.insertNewObject(in:self.uiMOC)
                                                         otherUser.name = "Foo"
                                                         conversation.mutableOtherActiveParticipants.add(otherUser)
-                                                        self.updateDisplayNameGenerator(withUsers: [otherUser])
             },
                                                      expectedChangedFields: KeySet(["nameChanged", "participantsChanged"]),
                                                      expectedChangedKeys: KeySet(["displayName", "otherActiveParticipants"])
@@ -256,94 +255,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
     }
     
-    func testThatItNotifiesTheObserverOfANameChangeBecauseAUserWasAdded()
-    {
-        // given
-        let user1 = ZMUser.insertNewObject(in:self.uiMOC)
-        user1.name = "Foo A"
-        
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = ZMConversationType.group
-        conversation.mutableOtherActiveParticipants.add(user1)
-        
-        self.uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        XCTAssertTrue(user1.displayName == "Foo")
-        
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _ in
-                                                        let user2 = ZMUser.insertNewObject(in:self.uiMOC)
-                                                        user2.name = "Foo B"
-                                                        self.uiMOC.saveOrRollback()
-                                                        XCTAssertEqual(user1.displayName, "Foo A")
-            },
-                                                     expectedChangedField: "nameChanged",
-                                                     expectedChangedKeys: KeySet(["displayName"])
-        )
-    }
     
-    func testThatItNotifiesTheObserverOfANameChangeBecauseAUserWasAddedAndLaterItsNameChanged()
-    {
-        // given
-        let user1 = ZMUser.insertNewObject(in:self.uiMOC)
-        user1.name = "Foo A"
-        
-        let user2 = ZMUser.insertNewObject(in:self.uiMOC)
-        user2.name = "Bar"
-        
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = ZMConversationType.group
-        conversation.mutableOtherActiveParticipants.add(user1)
-        uiMOC.saveOrRollback()
-
-        XCTAssertEqual(user1.displayName, "Foo")
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _ in
-                                                        user2.name = "Foo B"
-                                                        uiMOC.saveOrRollback()
-                                                        XCTAssertEqual(user1.displayName, "Foo A")
-            },
-                                                     expectedChangedField: "nameChanged",
-                                                     expectedChangedKeys: KeySet(["displayName"])
-        )
-    }
-    
-    func testThatItDoesNotNotifyTheObserverOfANameChangeBecauseAUserWasRemovedAndLaterItsNameChanged()
-    {
-        // given
-        let user1 = ZMUser.insertNewObject(in:self.uiMOC)
-        user1.name = "Foo A"
-        
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = ZMConversationType.group
-        conversation.mutableOtherActiveParticipants.add(user1)
-        
-        self.updateDisplayNameGenerator(withUsers: [user1])
-        
-        XCTAssertTrue(user1.displayName == "Foo")
-        XCTAssertTrue(conversation.otherActiveParticipants.contains(user1))
-        
-        uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, observer in
-                                                        conversation.mutableOtherActiveParticipants.remove(user1)
-                                                        self.uiMOC.saveOrRollback()
-                                                        observer.clearNotifications()
-                                                        user1.name = "Bar"
-                                                        self.updateDisplayNameGenerator(withUsers: [user1])
-            },
-                                                     expectedChangedField: nil,
-                                                     expectedChangedKeys: KeySet()
-        )
-    }
     
     func testThatItNotifysTheObserverOfANameChangeBecauseAUserWasAddedLaterAndHisNameChanged()
     {

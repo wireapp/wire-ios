@@ -84,7 +84,6 @@ public class SnapshotCenter {
             guard let count = (object.value(forKey: $0) as? Countable)?.count, count != $1 else { return }
             changedKeys.insert($0)
         }
-        snapshots.removeValue(forKey: object.objectID)
         return changedKeys
     }
     
