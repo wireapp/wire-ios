@@ -28,7 +28,7 @@ public extension ZMConversation {
         case .connection: return connectionDisplayName()
         case .group: return groupDisplayName()
         case .oneOnOne: return oneOnOneDisplayName()
-        case .self: return managedObjectContext.map(ZMUser.selfUser)?.displayName ?? ""
+        case .self: return managedObjectContext.map(ZMUser.selfUser)?.name ?? ""
         case .invalid: return ""
         }
     }
@@ -56,7 +56,7 @@ public extension ZMConversation {
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
         let activeNames: [String] = otherActiveParticipants.flatMap {
             guard let user = $0 as? ZMUser, user != selfUser && user.name?.characters.count > 0 else { return nil }
-            return user.displayName
+            return user.name
         }
 
         if activeNames.count > 0 {

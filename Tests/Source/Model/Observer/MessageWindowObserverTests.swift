@@ -468,30 +468,7 @@ extension MessageWindowObserverTests {
                                             XCTAssertTrue($0.nameChanged)
         })
     }
-    
-    func testThatItNotifiesObserverWhenTheSenderNameChangesBecauseOfAnotherUserWithTheSameName() {
-        // given
-        let sender = ZMUser.insertNewObject(in:self.uiMOC)
-        sender.name = "Hans A"
-        
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        message.sender = sender
-        
-        let window = createConversationWindowWithMessages([message], uiMoc: self.uiMOC)
-        uiMOC.saveOrRollback()
 
-        updateDisplayNameGenerator(withUsers: [sender])
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // when
-        checkThatItNotifiesAboutUserChange(in: window,
-                                           modifier: {
-                                            let newUser = ZMUser.insertNewObject(in:self.uiMOC)
-                                            newUser.name = "Hans K"},
-                                           callBack: {
-                                            XCTAssertTrue($0.nameChanged)
-        })
-    }
 
     func testThatItNotifiesObserverWhenTheSenderAccentColorChanges() {
         // given

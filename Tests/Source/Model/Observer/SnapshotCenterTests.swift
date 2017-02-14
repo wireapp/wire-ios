@@ -149,19 +149,6 @@ class SnapshotCenterTests : BaseZMMessageTests {
     
     }
     
-    func testThatItRemovesTheSnapshotAfterAccessingIt(){
-        // given
-        let conv = ZMConversation.insertNewObject(in: uiMOC)
-        sut.willMergeChanges(changes: Set([conv.objectID]))
-        
-        // when
-        XCTAssertNotNil(sut.snapshots[conv.objectID])
-        _ = sut.extractChangedKeysFromSnapshot(for: conv)
-        
-        // then
-        XCTAssertNil(sut.snapshots[conv.objectID])
-    }
-    
     func testThatReturnsChangedKeys() {
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)

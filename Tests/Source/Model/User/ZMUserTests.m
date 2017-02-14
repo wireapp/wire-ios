@@ -2324,8 +2324,6 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"User Name";
     
-    [self updateDisplayNameGeneratorWithUsers:@[user]];
-    
     XCTAssertEqualObjects(user.displayName, @"User");
 }
 
@@ -2334,8 +2332,6 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"User Name";
     
-    [self updateDisplayNameGeneratorWithUsers:@[user]];
-
     XCTAssertEqualObjects(user.initials, @"UN");
 }
 

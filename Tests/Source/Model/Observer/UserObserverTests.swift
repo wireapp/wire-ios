@@ -165,7 +165,6 @@ extension UserObserverTests {
         user.mediumRemoteIdentifier = UUID.create()
         user.imageMediumData = self.verySmallJPEGData()
         uiMOC.saveOrRollback()
-        updateDisplayNameGenerator(withUsers: [user])
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // when

@@ -28,8 +28,9 @@
 
 /// The full name
 @property (nonatomic, readonly) NSString *name;
-/// The display name will be short e.g. "John A" for connected users, but always the full name for non-connected users.
+/// The given name / first name e.g. "John" for "John Smith"
 @property (nonatomic, readonly) NSString *displayName;
+/// The initials e.g. "JS" for "John Smith"
 @property (nonatomic, readonly) NSString *initials;
 /// The "@name" handle
 @property (nonatomic, readonly) NSString *handle;

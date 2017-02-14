@@ -252,14 +252,7 @@ public class NotificationDispatcher : NSObject {
         let insertedObjects = extractObjects(for: NSInsertedObjectsKey, from: userInfo)
         let deletedObjects = extractObjects(for: NSDeletedObjectsKey, from: userInfo)
         
-        let updatedAndRefreshed : Set<ZMManagedObject> = updatedObjects.union(refreshedObjects)
-        let existingUsers : [ZMUser] = updatedAndRefreshed.flatMap{$0 as? ZMUser}
-        let usersWithNewName : Set<ZMManagedObject> = checkForDisplayNameUpdates(updatedUsers:  Set(existingUsers),
-                                                          insertedUsers: Set(insertedObjects.flatMap{$0 as? ZMUser}),
-                                                          deletedUsers: Set(deletedObjects.flatMap{$0 as? ZMUser}))
-        let usersWithNewImage : Set<ZMManagedObject> = checkForChangedImages()
-        
-        let allUpdated = updatedAndRefreshed.union(usersWithNewName).union(usersWithNewImage)
+        let allUpdated = updatedObjects.union(refreshedObjects).union(usersWithChangedImages())
         extractChanges(from: allUpdated)
         extractChangesCausedByInsertionOrDeletion(of: insertedObjects)
         extractChangesCausedByInsertionOrDeletion(of: deletedObjects)
@@ -310,7 +303,7 @@ public class NotificationDispatcher : NSObject {
     }
     
     /// Gets additional user changes from userImageCache
-    func checkForChangedImages() -> Set<ZMUser> {
+    func usersWithChangedImages() -> Set<ZMManagedObject> {
         let largeImageChanges = managedObjectContext.zm_userImageCache?.usersWithChangedLargeImage
         let largeImageUsers = extractUsersWithImageChange(objectIDs: largeImageChanges,
                                                           changedKey: "imageMediumData")
@@ -336,19 +329,6 @@ public class NotificationDispatcher : NSObject {
         return users
     }
     
-    /// Gets additional changes from UserDisplayNameGenerator
-    func checkForDisplayNameUpdates(updatedUsers: Set<ZMUser>, insertedUsers: Set<ZMUser>, deletedUsers: Set<ZMUser>) -> Set<ZMUser> {
-        let changedUsers = managedObjectContext.updateNameGenerator(updatedUsers: updatedUsers,
-                                                                    insertedUsers: insertedUsers,
-                                                                    deletedUsers: deletedUsers)
-        changedUsers.forEach{ user in
-            var newValue = userChanges[user] ?? Set()
-            newValue.insert("displayName")
-            userChanges[user] = newValue
-        }
-        return changedUsers
-    }
-    
     /// Extracts changes from the updated objects
     func extractChanges(from changedObjects: Set<ZMManagedObject>) {
         
@@ -358,8 +338,6 @@ public class NotificationDispatcher : NSObject {
                 // If the object is a fault, calling changedValues() will return an empty set
                 // Luckily we created a snapshot of the object before the merge happend which we can use to compare the values
                 changedKeys = snapshotCenter.extractChangedKeysFromSnapshot(for: object)
-            } else {
-                snapshotCenter.removeSnapshot(for:object)
             }
             if let knownKeys = userChanges[object] {
                 changedKeys = changedKeys.union(knownKeys)

@@ -1328,9 +1328,8 @@
     [conversation.mutableOtherActiveParticipants addObject:user2];
     [conversation.mutableOtherActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
     [self.uiMOC saveOrRollback];
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2, selfUser]];
     
-    NSString *expected = @"Foo, Bar";
+    NSString *expected = @"Foo 1, Bar 2";
     
     // when
     conversation.userDefinedName = nil;
@@ -1358,11 +1357,10 @@
     [conversation.mutableOtherActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
     [self.uiMOC saveOrRollback];
     
-    NSString *expected = @"Bar, Baz";
+    NSString *expected = @"Bar 2, Baz 4";
     
     // when
     conversation.userDefinedName = nil;
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2, user3, user4, selfUser]];
     
     // then
     XCTAssertEqualObjects(conversation.displayName, expected);

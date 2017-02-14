@@ -26,6 +26,7 @@
 @class ZMConnection;
 
 extern NSString * __nonnull const SessionObjectIDKey;
+extern NSString * __nonnull const ZMUserActiveConversationsKey;
 
 @interface ZMUser (Internal)
 

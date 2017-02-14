@@ -38,6 +38,7 @@
 
 
 NSString *const SessionObjectIDKey = @"ZMSessionManagedObjectID";
+NSString *const ZMUserActiveConversationsKey = @"activeConversations";
 
 static NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
@@ -52,7 +53,6 @@ static NSString *const NormalizedEmailAddressKey = @"normalizedEmailAddress";
 static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
 
 static NSString *const ConversationsCreatedKey = @"conversationsCreated";
-static NSString *const ActiveConversationsKey = @"activeConversations";
 static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
 static NSString *const ConnectionKey = @"connection";
 static NSString *const EmailAddressKey = @"emailAddress";
@@ -229,7 +229,12 @@ static NSString *const AnnaBotHandle = @"annathebot";
 - (NSString *)displayName;
 {
     PersonName *personName = [self.managedObjectContext.nameGenerator personNameFor:self];
-    return personName.displayName ?: @"";
+    return personName.givenName ?: @"";
+}
+
+- (NSString *)displayNameInConversation:(ZMConversation *)conversation;
+{
+    return [self.managedObjectContext.nameGenerator displayNameFor:self in:conversation];
 }
 
 - (NSString *)initials
@@ -368,7 +373,7 @@ static NSString *const AnnaBotHandle = @"annathebot";
         [ignoredKeys addObjectsFromArray:@[
                                            NormalizedNameKey,
                                            ConversationsCreatedKey,
-                                           ActiveConversationsKey,
+                                           ZMUserActiveConversationsKey,
                                            ActiveCallConversationsKey,
                                            ConnectionKey,
                                            ConversationsCreatedKey,

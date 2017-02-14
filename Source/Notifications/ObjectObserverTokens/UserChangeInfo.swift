@@ -29,7 +29,6 @@ extension ZMUser : ObjectInSnapshot {
     
     static public var observableKeys : Set<String> {
         return Set([#keyPath(ZMUser.name),
-                    #keyPath(ZMUser.displayName),
                     #keyPath(ZMUser.accentColorValue),
                     #keyPath(ZMUser.imageMediumData),
                     #keyPath(ZMUser.imageSmallProfileData),
@@ -82,7 +81,7 @@ extension ZMUser : ObjectInSnapshot {
     }
 
     open var nameChanged : Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.name), #keyPath(ZMUser.displayName))
+        return changedKeysContain(keys: #keyPath(ZMUser.name))
     }
     
     open var accentColorValueChanged : Bool {

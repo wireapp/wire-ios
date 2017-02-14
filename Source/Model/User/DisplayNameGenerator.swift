@@ -16,102 +16,87 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+private var zmLog = ZMSLog(tag: "DisplayNameGenerator")
+
 
 public class DisplayNameGenerator : NSObject {
     private var idToPersonNameMap : [NSManagedObjectID: PersonName] = [:]
-
-    var allUsers : Set<ZMUser>?
-    unowned var managedObjectContext: NSManagedObjectContext
+    unowned private var managedObjectContext: NSManagedObjectContext
+    private let tagger =  NSLinguisticTagger(tagSchemes: [NSLinguisticTagSchemeScript], options: 0)
     
-    public func personName(for user: ZMUser) -> PersonName? {
-        fetchAllUsersIfNeeded()
-        return idToPersonNameMap[user.objectID]
+    init(managedObjectContext: NSManagedObjectContext) {
+        self.managedObjectContext = managedObjectContext
+        super.init()
     }
     
-    public func displayName(for user: ZMUser) -> String? {
-        fetchAllUsersIfNeeded()
-        return idToPersonNameMap[user.objectID]?.displayName
+    // MARK : Accessors
+
+    public func personName(for user: ZMUser) -> PersonName {
+        if user.objectID.isTemporaryID {
+            try! managedObjectContext.obtainPermanentIDs(for: [user])
+        }
+        if let name = idToPersonNameMap[user.objectID], name.rawFullName == (user.name ?? "") {
+            return name
+        }
+        let newName = PersonName.person(withName: user.name ?? "", schemeTagger: nil)
+        idToPersonNameMap[user.objectID] = newName
+        return newName
+    }
+    
+    public func givenName(for user: ZMUser) -> String? {
+        return personName(for: user).givenName
     }
     
     public func initials(for user: ZMUser) -> String? {
-        fetchAllUsersIfNeeded()
-        return idToPersonNameMap[user.objectID]?.initials
+        return personName(for: user).initials
     }
     
-    init(managedObjectContext: NSManagedObjectContext, allUsers: Set<ZMUser>?) {
-        self.managedObjectContext = managedObjectContext
-        super.init()
-        self.allUsers = allUsers
-        mapUsersToNames(returnChanges: false)
+    
+    // MARK : DisplayNames on a conversation basis
+    
+    private var currentDisplayNameMap : ConversationDisplayNameMap?
+    
+    /// Can be used by the UI to return the displayNames for a conversation. Note that the name does not update when a user is added or removed or their name changes. It is however updated every time a different conversation is requested.
+    /// Calculates a map for this conversation, as soon as another conversation's displayNames are requested, it discards the map
+    @objc public func displayName(for user: ZMUser, in conversation: ZMConversation) -> String {
+        if let map = currentDisplayNameMap, map.conversationObjectID == conversation.objectID, let name = map.map[user.objectID] {
+            return name
+        }
+        let newMap = displayNames(for: conversation)
+        currentDisplayNameMap = ConversationDisplayNameMap(conversationObjectID: conversation.objectID, map: newMap)
+        guard let name = newMap[user.objectID] else {
+            zmLog.warn("User is not member of this conversation")
+            return user.name
+        }
+        return name
     }
     
-    /// Creates a copy the existing generator and returns the objectIDs of users whose displayName or fullName changed
-    public func createCopy(with allUsers: Set<ZMUser>) -> (newGenerator: DisplayNameGenerator, updatedUserIDs: Set<NSManagedObjectID>) {
-        let generator = DisplayNameGenerator(managedObjectContext: managedObjectContext, allUsers: Set())
-        generator.allUsers = allUsers
-        let updatedUsers = generator.mapUsersToNames(oldIDToPersonNameMap: idToPersonNameMap, returnChanges: true)
-        return (generator, updatedUsers)
-    }
-    
-    // Use the old map to avoid the expensive calculation of personNames
-    // Return users that have a new fullName or were inserted
-    static func mapIDsToPersonName(oldMap: [NSManagedObjectID : PersonName], users: Set<ZMUser>) -> (newMap: [NSManagedObjectID : PersonName], updatedUsers: Set<NSManagedObjectID>){
-        var newIdToPersonNameMap : [NSManagedObjectID : PersonName] = [:]
-        var updatedUsers = Set<NSManagedObjectID>()
-        users.forEach{
-            let fullName = $0.name ?? ""
-            if let oldPersonName = oldMap[$0.objectID], oldPersonName.fullName == fullName  {
-                newIdToPersonNameMap[$0.objectID] = oldPersonName
+    private func displayNames(for conversation: ZMConversation) -> [NSManagedObjectID : String] {
+        let givenNames : [String] = conversation.activeParticipants.array.flatMap{
+            guard let user = $0 as? ZMUser, !user.isSelfUser else { return nil }
+            let personName = self.personName(for: user)
+            return personName.givenName
+        }
+        let countedGivenName = NSCountedSet(array: givenNames)
+        var map = [NSManagedObjectID : String]()
+        conversation.activeParticipants.forEach{ user in
+            guard let user = user as? ZMUser else { return }
+            let personName = self.personName(for: user)
+            if countedGivenName.count(for: personName.givenName) == 1 {
+                map[user.objectID] = personName.givenName
             } else {
-                newIdToPersonNameMap[$0.objectID] = PersonName.person(withName: fullName)
-                updatedUsers.insert($0.objectID)
+                map[user.objectID] = personName.fullName
             }
         }
-        return (newIdToPersonNameMap, updatedUsers)
+        return map
     }
     
-    /// Update the displayNames
-    /// Return users that have a new displayName
-    func updateDisplayNames() -> Set<NSManagedObjectID> {
-        let givenNameCounts = NSCountedSet(array: idToPersonNameMap.values.flatMap{$0.givenName})
-        var updatedUsers = Set<NSManagedObjectID>()
-        idToPersonNameMap.forEach{ (key, personName) in
-            if givenNameCounts.count(for: personName.givenName) < 2 {
-                if personName.displayName != personName.givenName {
-                    personName.displayName = personName.givenName
-                    updatedUsers.insert(key)
-                }
-            } else {
-                if personName.displayName != personName.fullName {
-                    personName.displayName = personName.fullName
-                    updatedUsers.insert(key)
-                }
-            }
-        }
-        return updatedUsers
-    }
+}
+
+struct ConversationDisplayNameMap {
     
-    func fetchAllUsers(in context:NSManagedObjectContext) -> Set<ZMUser> {
-        let fetchRequest = ZMUser.sortedFetchRequest()
-        guard let allUsers = context.executeFetchRequestOrAssert(fetchRequest) as? [ZMUser] else { return Set()}
-        return Set(allUsers)
-    }
-    
-    @discardableResult func mapUsersToNames(oldIDToPersonNameMap: [NSManagedObjectID : PersonName] = [:], returnChanges: Bool) -> Set<NSManagedObjectID> {
-        guard let users = allUsers else { return Set()}
-        
-        let (idToPersonNameMap, updated1) = type(of:self).mapIDsToPersonName(oldMap: oldIDToPersonNameMap, users: users)
-        self.idToPersonNameMap = idToPersonNameMap
-        let updated2 = self.updateDisplayNames()
-        return returnChanges ? updated1.union(updated2) : Set()
-    }
-    
-    func fetchAllUsersIfNeeded() {
-        guard allUsers == nil else { return }
-        allUsers = fetchAllUsers(in:managedObjectContext)
-        mapUsersToNames(returnChanges: false)
-    }
-    
+    let conversationObjectID : NSManagedObjectID
+    let map : [NSManagedObjectID : String]
 }
 
 let DisplayNameGeneratorKey = "DisplayNameGenerator"
@@ -130,39 +115,10 @@ extension NSManagedObjectContext {
             }
         }
     }
-    
-    func updateNameGenerator(updatedUsers: Set<ZMUser>, insertedUsers: Set<ZMUser>, deletedUsers: Set<ZMUser>) -> Set<ZMUser> {
-        guard let generator = nameGenerator else { return Set()}
-        let (newGenerator, updatedUsers) = generator.updateWithChanges(updatedUsers: updatedUsers, insertedUsers: insertedUsers, deletedUsers: deletedUsers)
-        self.nameGenerator = newGenerator
-        return updatedUsers
-    }
-
 }
 
 
-extension DisplayNameGenerator {
 
-    func updateWithChanges(updatedUsers: Set<ZMUser>, insertedUsers: Set<ZMUser>, deletedUsers: Set<ZMUser>)
-        -> (newGenerator:  DisplayNameGenerator, updatedUsers: Set<ZMUser>)
-    {
-        fetchAllUsersIfNeeded()
-        
-        if (insertedUsers.count == 0 && deletedUsers.count == 0 && updatedUsers.count == 0) {
-            return (self, Set())
-        }
-        let newAllUsers = allUsers!.union(insertedUsers).subtracting(deletedUsers)
-        
-        //At this point inserted users should have temporary id's, but after the save they will have permament id's.
-        //Display name generator maps names to user id's so it needs permament id's to be able to match them on subsecquent changes.
-        try! managedObjectContext.obtainPermanentIDs(for: Array(newAllUsers))
-        
-        let (newGenerator, updatedUserIDs) = createCopy(with: newAllUsers)
-        let usersToReturn = updatedUserIDs.flatMap{(try? managedObjectContext.existingObject(with: $0)) as? ZMUser}
-        
-        return (newGenerator, Set(usersToReturn))
-    }
-    
-}
+
 
 

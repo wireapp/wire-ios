@@ -92,7 +92,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
             _name = name;
             _handle = handle;
             
-            PersonName *personName = [PersonName personWithName:name];
+            PersonName *personName = [PersonName personWithName:name schemeTagger:nil];
             _initials = personName.initials;
             
             _accentColorValue =  color;

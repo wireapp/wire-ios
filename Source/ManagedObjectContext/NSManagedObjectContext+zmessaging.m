@@ -973,7 +973,7 @@ static dispatch_queue_t UIContextCreationQueue(void)
 {
     [self performBlockAndWait:^{
         self.userInfo[IsUserInterfaceContextKey] = @YES;
-        self.nameGenerator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self allUsers:nil];
+        self.nameGenerator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self];
     }];
 }
 

@@ -48,8 +48,8 @@
     NSString *nameWithLineBreak = @"The Name \n Break Name";
     
     // when
-    PersonName *nameWithSpaceComp = [PersonName personWithName:nameWithSpace];
-    PersonName *nameWithLineBreakComp = [PersonName personWithName:nameWithLineBreak];
+    PersonName *nameWithSpaceComp = [PersonName personWithName:nameWithSpace schemeTagger:self.tagger];
+    PersonName *nameWithLineBreakComp = [PersonName personWithName:nameWithLineBreak schemeTagger:self.tagger];
     
     //then
     NSArray *nameWithSpaceArray = @[@"Henry", @"The", @"Great", @"Emporer"];
@@ -67,8 +67,8 @@
     NSString *name2 = @"The *Starred* Name";
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
     
     // then
     NSArray *nameArray1 = @[@"Henry", @"The", @"Great", @"Emporer"];
@@ -85,8 +85,8 @@
     NSString *name2 = @"The (   ) Empty Name";
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
     
     // then
     NSArray *nameArray1 = @[@"Henry", @"Great", @"Emporer"];
@@ -100,7 +100,7 @@
 {
     NSString *name1 = @"Henry The Great Emporer";
     
-    PersonName *nameComp1 = [PersonName personWithName:name1];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
     
     XCTAssertEqualObjects(nameComp1.givenName, @"Henry");
 
@@ -113,8 +113,8 @@
     NSString *name2 = @"Henry ()";
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
 
 
     // then
@@ -130,8 +130,8 @@
     NSString *name2 = @"**********";
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
     
     
     // then
@@ -147,7 +147,7 @@
     NSString *name1 = @"\u00cbmil Super Man";
     
     // when
-    PersonName *personName1 = [PersonName personWithName:name1];
+    PersonName *personName1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
 
     // then
     XCTAssertEqualObjects(personName1.initials, @"\u00cbM");
@@ -159,7 +159,7 @@
     NSString *name2 = @"E\u0308mil";
     
     // when
-    PersonName *personName2 = [PersonName personWithName:name2];
+    PersonName *personName2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(personName2.initials, @"\u00cb");
@@ -216,7 +216,7 @@
     NSString *name1 = @"李淑蒙";              // Lǐ Shūméng - Lǐ (李) is the secondName, Shūméng (淑蒙) the firstName
 
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
 
     // then
     XCTAssertEqualObjects(nameComp1.givenName, @"李淑蒙");
@@ -228,7 +228,7 @@
     NSString *name1 = @"李淑蒙";
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp1.initials, @"李淑");
@@ -240,7 +240,7 @@
     NSString *name3 = @"李";
     
     // when
-    PersonName *nameComp3 = [PersonName personWithName:name3];
+    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp3.initials, @"李");
@@ -300,9 +300,9 @@
     NSString *name3 = @"ひら がな";                // hiragana
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
-    PersonName *nameComp3 = [PersonName personWithName:name3];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
+    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp1.givenName, @"マルテイ");
@@ -318,9 +318,9 @@
     NSString *name3 = @"ひ";                // hiragana
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
-    PersonName *nameComp3 = [PersonName personWithName:name3];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
+    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp1.initials, @"ツル");
@@ -354,7 +354,7 @@
     NSString *name1 = @"मोहनदास करमचंद गांधी"; // Mohandas Karamchand Gandhi - Mohandas Karamchand is the secondName, Gandhi the firstName
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp1.givenName, @"गांधी");
@@ -424,9 +424,9 @@
     NSString *name3 = @"امه العليم السوسوه‎";               // Amat Al'Alim Alsoswa, where "امه العليم" (Amat al Alim = Slave of the all knowing) is the firstName
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
-    PersonName *nameComp3 = [PersonName personWithName:name3];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
+    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
 
     // then
     XCTAssertEqualObjects(nameComp1.givenName, @"محمد");
@@ -448,9 +448,9 @@
     NSString *name3 = @"امه العليم السوسوه‎";               // Amat Al'Alim Alsoswa, where "امه العليم" (Amat al Alim = Slave of the all knowing) is the firstName
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
-    PersonName *nameComp3 = [PersonName personWithName:name3];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
+    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp1.initials, @"ما");
@@ -468,8 +468,8 @@
     NSString *name3 = @"shumeng (李淑蒙)";    // should use the chinese name as "firstName"
     
     // when
-    PersonName *nameComp2 = [PersonName personWithName:name2];
-    PersonName *nameComp3 = [PersonName personWithName:name3];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
+    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp2.givenName, @"李淑蒙");
@@ -484,8 +484,8 @@
     NSString *name2 = @"shumeng (李淑蒙)";
     
     // when
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
     
     // then
     XCTAssertEqualObjects(nameComp1.initials, @"李s");
@@ -498,8 +498,8 @@
     NSString *name1 = @"𠀲𫝶𫝷𫝚𫞉𫟘善屠屮 𠂎";
     NSString *name2 = @"( 𝓐𝓑 𝓑";
 
-    PersonName *nameComp1 = [PersonName personWithName:name1];
-    PersonName *nameComp2 = [PersonName personWithName:name2];
+    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
+    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
 
     XCTAssertNotEqual(nameComp1.components.count, 0u);
     XCTAssertNotEqual(nameComp2.components.count, 0u);
@@ -537,9 +537,9 @@
 {
     // C.f. https://wearezeta.atlassian.net/browse/MEC-656
     
-    XCTAssertEqualObjects([PersonName personWithName:@""].initials, @"");
-    XCTAssertEqualObjects([PersonName personWithName:@"A"].initials, @"A");
-    XCTAssertEqualObjects([PersonName personWithName:@"𝓐"].initials, @"𝓐");
+    XCTAssertEqualObjects([PersonName personWithName:@"" schemeTagger:self.tagger].initials, @"");
+    XCTAssertEqualObjects([PersonName personWithName:@"A" schemeTagger:self.tagger].initials, @"A");
+    XCTAssertEqualObjects([PersonName personWithName:@"𝓐" schemeTagger:self.tagger].initials, @"𝓐");
 }
 
 @end

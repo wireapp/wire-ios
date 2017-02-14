@@ -239,27 +239,8 @@ static NSString * const UserNames[] = {
                                                                                           }];
 }
 
-- (void)testThatItFetchesAllUsers
-{
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.name = @"User 1";
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user2.name = @"User 2";
-    XCTAssert([self.uiMOC saveOrRollback]);
-    
-    // when
-    DisplayNameGenerator *generator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self.uiMOC allUsers:nil];
-    [generator fetchAllUsersIfNeeded];
-    
-    // then
-    NSSet *expectedUsers = [NSSet setWithObjects:selfUser, user1, user2, nil];
-    XCTAssertEqualObjects(generator.allUsers, expectedUsers);
-}
 
-
-- (void)testThatItReturnsDisplayNameForUser
+- (void)testThatItReturnsGivenNameForUser
 {
     // given
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -271,14 +252,14 @@ static NSString * const UserNames[] = {
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // when
-    DisplayNameGenerator *generator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self.uiMOC allUsers:nil];
-    NSString *displayName1 = [generator displayNameFor:user1];
-    NSString *displayName2 = [generator displayNameFor:user2];
-    NSString *displayName3 = [generator displayNameFor:user3];
+    DisplayNameGenerator *generator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self.uiMOC];
+    NSString *displayName1 = [generator givenNameFor:user1];
+    NSString *displayName2 = [generator givenNameFor:user2];
+    NSString *displayName3 = [generator givenNameFor:user3];
 
     // then
-    XCTAssertEqualObjects(displayName1, @"Anna Blume");
-    XCTAssertEqualObjects(displayName2, @"Anna Sturm");
+    XCTAssertEqualObjects(displayName1, @"Anna");
+    XCTAssertEqualObjects(displayName2, @"Anna");
     XCTAssertEqualObjects(displayName3, @"Ben");
 }
 
@@ -294,7 +275,7 @@ static NSString * const UserNames[] = {
     XCTAssert([self.uiMOC saveOrRollback]);
 
     // when
-    DisplayNameGenerator *generator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self.uiMOC allUsers:nil];
+    DisplayNameGenerator *generator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self.uiMOC];
     NSString *initials1 = [generator initialsFor:user1];
     NSString *initials2 = [generator initialsFor:user2];
     NSString *initials3 = [generator initialsFor:user3];
@@ -309,169 +290,12 @@ static NSString * const UserNames[] = {
 
 
 
-@implementation ZMUserDisplayNameGeneratorTest (ManagedObjectContext)
-
-- (void)testThatItDoesNotUpdateDisplayNameGeneratorIfItIsNotSetInitially
-{
-    // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.name = @"Anna Blume";
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user2.name = @"Anna SuperDuper";
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2]];
-
-    XCTAssertEqualObjects(user1.displayName, user1.name);
-    XCTAssertEqualObjects(user2.displayName, user2.name);
-    
-    // when
-    self.uiMOC.nameGenerator = nil;
-    NSSet *updatedSet = [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet set] insertedUsers:[NSSet set] deletedUsers:[NSSet setWithObject:user2]];
-    
-    // then
-    XCTAssertEqual(updatedSet.count, 0u);
-}
-
-- (void)testThatItReturnsTheCorrectSetForChangedNamesWhenAUserIsRemovedFromTheContext
-{
-    // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.name = @"Anna Blume";
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user2.name = @"Ben SuperDuper";
-    
-    ZMUser *user3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user3.name = @"Anna";
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2, user3]];
-
-    XCTAssertEqualObjects(user1.displayName, @"Anna Blume");
-    XCTAssertEqualObjects(user2.displayName, @"Ben");
-    XCTAssertEqualObjects(user3.displayName, @"Anna");
-
-    // when
-    NSSet *updatedSet = [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet set] insertedUsers:[NSSet set] deletedUsers:[NSSet setWithObject:user3]];
-    
-    // then
-    NSSet *expectedSet = [NSSet setWithObject:user1];
-    XCTAssertEqual(updatedSet.count, 1u);
-    XCTAssertEqualObjects(updatedSet, expectedSet);
-    
-    XCTAssertEqualObjects(user1.displayName, @"Anna");
-    XCTAssertEqualObjects(user2.displayName, @"Ben");
-}
-
-- (void)testThatItReturnsTheCorrectSetForChangedNamesWhenAUserChangesHisName
-{
-    // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.name = @"Anna Blume";
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user2.name = @"Ben SuperDuper";
-    [self updateDisplayNameGeneratorWithUsers:@[user1, user2]];
-
-    XCTAssertEqualObjects(user1.displayName, @"Anna");
-    XCTAssertEqualObjects(user2.displayName, @"Ben");
-    
-    // when
-    user2.name = @"Anna";
-    NSSet *updatedSet =  [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet setWithObject:user2] insertedUsers:[NSSet set] deletedUsers:[NSSet set]];
-    
-    // then
-    NSSet *expectedSet = [NSSet setWithObjects:user2, user1, nil];
-    XCTAssertEqual(updatedSet.count, 2u);
-    XCTAssertEqualObjects(updatedSet, expectedSet);
-    
-    XCTAssertEqualObjects(user1.displayName, @"Anna Blume");
-    XCTAssertEqualObjects(user2.displayName, @"Anna");
-}
-
-- (void)testThatItKeepsAStrongRefereneToAllUsers;
-{
-    // given
-    ZMUser *user1;
-    ZMUser *user2;
-    {
-        user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-        user1.name = @"Anna Blume";
-        
-        user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-        user2.name = @"Ben SuperDuper";
-        
-        XCTAssert([self.uiMOC saveOrRollback]);
-        
-        // when
-        //
-        // Ask for the display names to trigger changes and make the generator have a strong reference.
-        // If we never ask for the name, we can't expect to get notifications about changes.
-        XCTAssertNotNil(user1.displayName);
-        XCTAssertNotNil(user2.displayName);
-    }
-    
-    // Turn everything into a fault:
-    for (NSManagedObject *mo in self.uiMOC.registeredObjects) {
-        [self.uiMOC refreshObject:mo mergeChanges:NO];
-    }
-    [self.uiMOC processPendingChanges];
-    
-    
-    // then
-    //
-    // The users should still be around
-    NSMutableArray *registeredUsers = [NSMutableArray array];
-    for (NSManagedObject *mo in self.uiMOC.registeredObjects) {
-        if ([mo.entity.name isEqual:ZMUser.entityName]) {
-            [registeredUsers addObject:mo];
-        }
-    }
-    NSSet *user1and2 = [NSSet setWithObjects:user1, user2, nil];
-    XCTAssertTrue([user1and2 isSubsetOfSet:[NSSet setWithArray:registeredUsers]]);
-}
-
-- (void)testThatItMakesSureNoneOfTheUsersAreFaultsWhenItProcessesChanges;
-{
-    // given
-    ZMUser *user1;
-    ZMUser *user2;
-    {
-        user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-        user1.name = @"Anna Blume";
-        
-        user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-        user2.name = @"Ben SuperDuper";
-        
-        XCTAssert([self.uiMOC saveOrRollback]);
-        
-        // when
-        //
-        // Ask for the display names to trigger changes and make the generator have a strong reference.
-        // If we never ask for the name, we can't expect to get notifications about changes.
-        XCTAssertNotNil(user1.displayName);
-        XCTAssertNotNil(user2.displayName);
-    }
-    
-    // Turn everything into a fault:
-    for (NSManagedObject *mo in self.uiMOC.registeredObjects) {
-        [self.uiMOC refreshObject:mo mergeChanges:NO];
-    }
-    [self.uiMOC processPendingChanges];
-    [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet setWithObject:user1] insertedUsers:[NSSet set] deletedUsers:[NSSet set]];
-    
-    // then
-    XCTAssertFalse(user1.isFault);
-    XCTAssertFalse(user2.isFault);
-}
-
-@end
-
-
 @implementation ZMUserDisplayNameGeneratorTest (Performance)
 
-- (void)testDisplayNamePerformanceForDisplayNames
+- (void)testDisplayNamePerformanceForGivenNames_FirstAccess
 {
-    // before: average: 0.000, relative standard deviation: 15.034%, values: [0.000149, 0.000135, 0.000134, 0.000107, 0.000125, 0.000115, 0.000177, 0.000113, 0.000118, 0.000123]
-    // after: average: 0.000, relative standard deviation: 9.364%, values: [0.000300, 0.000228, 0.000221, 0.000244, 0.000244, 0.000228, 0.000221, 0.000245, 0.000222, 0.000243]
+    // average: 0.003, relative standard deviation: 203.282%, values: [0.021145, 0.000971, 0.000854, 0.000955, 0.000901, 0.000912, 0.000846, 0.000868, 0.001065, 0.001276]
+
     [self measureMetrics:@[XCTPerformanceMetric_WallClockTime] automaticallyStartMeasuring:NO forBlock:^{
         [self resetUIandSyncContextsAndResetPersistentStore:YES];
         NSMutableArray *users = [NSMutableArray array];
@@ -479,6 +303,34 @@ static NSString * const UserNames[] = {
             ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
             user.name = UserNames[i];
             [users addObject:user];
+        }
+        XCTAssertNotNil(users);
+        XCTAssertEqual(users.count, 198u);
+        XCTAssert([self.uiMOC saveOrRollback]);
+        WaitForAllGroupsToBeEmpty(0.5);
+        
+        [self startMeasuring];
+        {
+            for (ZMUser *user in users) {
+                XCTAssertNotNil(user.displayName);
+            }
+        }
+        [self stopMeasuring];
+    }];
+}
+
+- (void)testDisplayNamePerformanceForGivenNames_SecondAccess
+{
+    // average: 0.001, relative standard deviation: 4.426%, values: [0.000564, 0.000552, 0.000532, 0.000524, 0.000514, 0.000577, 0.000541, 0.000561, 0.000517, 0.000588]
+
+    [self measureMetrics:@[XCTPerformanceMetric_WallClockTime] automaticallyStartMeasuring:NO forBlock:^{
+        [self resetUIandSyncContextsAndResetPersistentStore:YES];
+        NSMutableArray *users = [NSMutableArray array];
+        for (size_t i = 0; i < (sizeof(UserNames)/sizeof(*UserNames)); ++i) {
+            ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+            user.name = UserNames[i];
+            [users addObject:user];
+            XCTAssertNotNil(user.displayName);
         }
         XCTAssertNotNil(users);
         XCTAssertEqual(users.count, 198u);
@@ -496,10 +348,9 @@ static NSString * const UserNames[] = {
     }];
 }
 
-- (void)testPerformanceForInitials
+- (void)testPerformanceForInitials_FirstAccess
 {
-    // average: 0.000, relative standard deviation: 106.904%, values: [0.000149, 0.000104, 0.000096, 0.000757, 0.000117, 0.000097, 0.000154, 0.000098, 0.000111, 0.000123],
-    // average: 0.000, relative standard deviation: 24.868%, values: [0.000795, 0.000297, 0.000362, 0.000302, 0.000334, 0.000328, 0.000361, 0.000309, 0.000306, 0.000392],
+    // average: 0.003, relative standard deviation: 197.335%, values: [0.022672, 0.001109, 0.001086, 0.001095, 0.001128, 0.001081, 0.001140, 0.001099, 0.001130, 0.001223],
     [self measureMetrics:@[XCTPerformanceMetric_WallClockTime] automaticallyStartMeasuring:NO forBlock:^{
         [self resetUIandSyncContextsAndResetPersistentStore:YES];
 
@@ -510,8 +361,8 @@ static NSString * const UserNames[] = {
             [users addObject:user];
         }
         XCTAssertNotNil(users);
+        XCTAssert([self.uiMOC saveOrRollback]);
         XCTAssertEqual(users.count, 198u);
-        [self updateDisplayNameGeneratorWithUsers:users];
         
         [self startMeasuring];
         {
@@ -523,10 +374,9 @@ static NSString * const UserNames[] = {
     }];
 }
 
-- (void)testDisplayNamePerformanceWhenChangingAUserName
+- (void)testPerformanceForInitials_SecondAccess
 {
-    // old system: average: 0.001, relative standard deviation: 10.917%, values: [0.001375, 0.001146, 0.001141, 0.001142, 0.001551, 0.001360, 0.001423, 0.001230, 0.001197, 0.001144]
-    // average: 0.006, relative standard deviation: 109.292%, values: [0.024821, 0.003850, 0.003629, 0.003675, 0.003652, 0.003567, 0.003655, 0.004051, 0.003516, 0.003606
+    // 0.000, relative standard deviation: 7.984%, values: [0.000499, 0.000416, 0.000427, 0.000389, 0.000486, 0.000403, 0.000434, 0.000446, 0.000439, 0.000394]
     [self measureMetrics:@[XCTPerformanceMetric_WallClockTime] automaticallyStartMeasuring:NO forBlock:^{
         [self resetUIandSyncContextsAndResetPersistentStore:YES];
         
@@ -535,117 +385,23 @@ static NSString * const UserNames[] = {
             ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
             user.name = UserNames[i];
             [users addObject:user];
+            XCTAssertNotNil(user.initials);
         }
         XCTAssertNotNil(users);
-        XCTAssertEqual(users.count, 198u);
         XCTAssert([self.uiMOC saveOrRollback]);
-        
-        ZMUser *existingUser = users[0];
-        (void) existingUser.displayName;
-        NSString *newName = @"Brian WhoKnows";
-        XCTAssertNotEqualObjects(existingUser.name, newName);
-        
-        existingUser.name = newName;
-        [self.uiMOC saveOrRollback];
+        XCTAssertEqual(users.count, 198u);
         
         [self startMeasuring];
         {
-            [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet setWithObject:existingUser] insertedUsers:[NSSet set] deletedUsers:[NSSet set]];
             for (ZMUser *user in users) {
-                XCTAssertNotNil(user.displayName);
+                XCTAssertNotNil(user.initials);
             }
         }
         [self stopMeasuring];
-        
-        XCTAssertEqualObjects(existingUser.displayName, newName);
-    }];
-
-}
-
-- (void)testPerformanceWhenInsertingAUserWithAnExistingUserName
-{
-    // average: 0.001, relative standard deviation: 12.563%, values: [0.001146, 0.001109, 0.001155, 0.001154, 0.001117, 0.001075, 0.001109, 0.001086, 0.001596, 0.001095]
-    // average: 0.002, relative standard deviation: 2.371%, values: [0.001641, 0.001630, 0.001646, 0.001566, 0.001544, 0.001579, 0.001647, 0.001559, 0.001580, 0.001572]
-    
-    [self measureMetrics:@[XCTPerformanceMetric_WallClockTime] automaticallyStartMeasuring:NO forBlock:^{
-        [self resetUIandSyncContextsAndResetPersistentStore:YES];
-        
-        NSMutableArray *users = [NSMutableArray array];
-        for (size_t i = 0; i < (sizeof(UserNames)/sizeof(*UserNames)); ++i) {
-            ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-            user.name = UserNames[i];
-            [users addObject:user];
-        }
-        XCTAssertNotNil(users);
-        XCTAssertEqual(users.count, 198u);
-        [self updateDisplayNameGeneratorWithUsers:users];
-        
-        ZMUser *existingUser = users[0];
-        XCTAssertEqualObjects(existingUser.name, @"Adam Rivera");
-        XCTAssertEqualObjects(existingUser.displayName, @"Adam");
-        
-        for (ZMUser *user in users) {
-            XCTAssertNotNil(user.displayName);
-        }
-        
-        ZMUser *newUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-        newUser.name = existingUser.name;
-        [users addObject:newUser];
-        
-        XCTAssert([self.uiMOC saveOrRollback]);
-        [self startMeasuring];
-        {
-            [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet set] insertedUsers:[NSSet setWithObject:newUser] deletedUsers:[NSSet set]];
-            for (ZMUser *user in users) {
-                XCTAssertNotNil(user.displayName);
-            }
-        }
-        [self stopMeasuring];
-        
-        XCTAssertEqualObjects(existingUser.displayName, @"Adam Rivera");
     }];
 }
 
-- (void)testDisplayNamePerformanceWhenRemovingAUserWithAnExistingUserName
-{
-    // average: 0.001, relative standard deviation: 2.793%, values: [0.001145, 0.001081, 0.001156, 0.001155, 0.001091, 0.001085, 0.001130, 0.001088, 0.001088, 0.001078],
-    // average: 0.002, relative standard deviation: 4.928%, values: [0.001804, 0.001729, 0.001585, 0.001650, 0.001536, 0.001557, 0.001637, 0.001586, 0.001680, 0.001722]
-    
-    [self measureMetrics:@[XCTPerformanceMetric_WallClockTime] automaticallyStartMeasuring:NO forBlock:^{
-        [self resetUIandSyncContextsAndResetPersistentStore:YES];
-        NSMutableArray *users = [NSMutableArray array];
-        for (size_t i = 0; i < (sizeof(UserNames)/sizeof(*UserNames)); ++i) {
-            ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-            user.name = UserNames[i];
-            [users addObject:user];
-        }
-        XCTAssertNotNil(users);
-        XCTAssertEqual(users.count, 198u);
-        [self updateDisplayNameGeneratorWithUsers:users];
-        
-        ZMUser *existingUser1 = users[13];
-        XCTAssertEqualObjects(existingUser1.name, @"Arthur Jenkins");
-        
-        ZMUser *existingUser2 = users[14];
-        XCTAssertEqualObjects(existingUser2.name, @"Arthur Thomas");
-        XCTAssertEqualObjects(existingUser2.displayName, @"Arthur Thomas");
-        
-        [users removeObject:existingUser1];
-        
-        XCTAssert([self.uiMOC saveOrRollback]);
-        
-        [self startMeasuring];
-        {
-            [self.uiMOC updateNameGeneratorWithUpdatedUsers:[NSSet set] insertedUsers:[NSSet set] deletedUsers:[NSSet setWithObject:existingUser1]];
-            for (ZMUser *user in users) {
-                XCTAssertNotNil(user.displayName);
-            }
-        }
-        [self stopMeasuring];
-        
-        XCTAssertEqualObjects(existingUser2.displayName, @"Arthur");
-    }];
-}
+
 
 @end
 
