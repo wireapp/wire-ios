@@ -137,7 +137,7 @@
 - (void)checkForUpdatedDependency:(ZMManagedObject *)existingDependency;
 {
     [self.insertedObjectsWithDependencies enumerateManagedObjectsForDependency:existingDependency withBlock:^BOOL(ZMManagedObject *mo) {
-        NSObject *newDependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
+        id newDependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (newDependency == nil) {
             [self.insertedObjects addObjectToSynchronize:mo];
             return YES;
@@ -159,7 +159,7 @@
 - (BOOL)addInsertedObject:(ZMManagedObject *)mo
 {
     if (self.insertedObjectsWithDependencies) {
-        NSObject *dependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
+        id dependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (dependency != nil) {
             [self.insertedObjectsWithDependencies addManagedObject:mo withDependency:dependency];
             return NO;
