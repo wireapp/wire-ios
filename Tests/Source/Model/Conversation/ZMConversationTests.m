@@ -132,6 +132,7 @@
     }
     ZMMessage *message = [ZMMessage insertNewObjectInManagedObjectContext:conversation.managedObjectContext];
     message.serverTimestamp = [conversation.lastServerTimeStamp dateByAddingTimeInterval:5];
+    message.visibleInConversation = conversation;
     [conversation resortMessagesWithUpdatedMessage:message];
     conversation.lastServerTimeStamp = message.serverTimestamp;
     return message.serverTimestamp;
