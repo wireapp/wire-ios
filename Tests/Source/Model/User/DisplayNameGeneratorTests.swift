@@ -247,7 +247,47 @@ extension DisplayNameGeneratorTests {
         
         // then
         XCTAssertEqual(displayName, "Uschi")
+    }
     
+    func testThatAUserWithTheSameNameAsTheSelfUserShowsFullName_Group(){
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Uschi Schmidt"
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.name = "Uschi Meier"
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        conversation.mutableOtherActiveParticipants.addObjects(from: [user1])
+        
+        // when
+        let displayName1 = user1.displayName(in: conversation)
+        let displayName2 = selfUser.displayName(in: conversation)
+
+        // then
+        XCTAssertEqual(displayName1, "Uschi Schmidt")
+        XCTAssertEqual(displayName2, "Uschi")
+    }
+    
+    func testThatAUserWithTheSameNameAsTheSelfUserShowsFirstName_OneOnOne(){
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Uschi Schmidt"
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.name = "Uschi Meier"
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.connection = ZMConnection.insertNewObject(in: uiMOC)
+        conversation.connection?.to = user1
+        
+        // when
+        let displayName1 = user1.displayName(in: conversation)
+        let displayName2 = selfUser.displayName(in: conversation)
+        
+        // then
+        XCTAssertEqual(displayName1, "Uschi")
+        XCTAssertEqual(displayName2, "Uschi")
     }
 
 }
