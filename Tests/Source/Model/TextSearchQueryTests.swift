@@ -416,6 +416,75 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(messageMatch, message)
     }
 
+    func testThatItCanSearchForALargeMessage() {
+        do {
+            let longText = try String(contentsOf: fileURL(forResource: "ExternalMessageTextFixture", extension: "txt"), encoding: .utf8)
+            let text = longText + "search query"
+            verifyThatItFindsMessage(withText: text, whenSearchingFor: "search query")
+        } catch {
+            XCTFail("Unexpected error thrown: \(error)")
+        }
+    }
+
+    func testThatItCanSearchForALikedMessage() {
+        verifyThatItFindsMessage(withText: "search term query test", whenSearchingFor: "search query") { message in
+            // When we like the message before searching
+            message.markAsSent()
+            ZMMessage.appendReaction("❤️", toMessage: message)
+        }
+    }
+
+    func testThatItCanSearchForAMessageThatHasALinkPreview() {
+        verifyThatItFindsMessage(withText: "search term query test", whenSearchingFor: "search query") { message in
+            // When we add a linkpreview to the message before searching
+            guard let clientMessage = message as? ZMClientMessage else { return XCTFail("No client message") }
+            let (title, summary, url, permanentURL) = ("title", "summary", "www.example.com/original", "www.example.com/permanent")
+            let image = ZMAsset.asset(withUploadedOTRKey: Data.secureRandomData(ofLength: 16), sha256: Data.secureRandomData(ofLength: 16))
+            let preview = ZMLinkPreview.linkPreview(
+                withOriginalURL: url,
+                permanentURL: permanentURL,
+                offset: 42,
+                title: title,
+                summary: summary,
+                imageAsset: image
+            )
+
+            let genericMessage = ZMGenericMessage.message(
+                text: message.textMessageData!.messageText,
+                linkPreview: preview,
+                nonce: message.nonce.transportString(),
+                expiresAfter: NSNumber(value: message.deletionTimeout)
+            )
+
+            clientMessage.add(genericMessage.data())
+            message.markAsSent()
+        }
+    }
+
+    func testThatItCanSearchForAMessageThatContainsALinkWithoutPreview() {
+        verifyThatItFindsMessage(withText: "Hey, check out this amazing link: www.wire.com", whenSearchingFor: "wire.com")
+    }
+
+    func testThatItDoesNotReturnAnyMessagesOtherThanTextInTheResults() {
+        // Given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = .create()
+        _ = conversation.appendMessage(with: .init(latitude: 52.520008, longitude: 13.404954, name: "Berlin, Germany", zoomLevel: 8))
+        _ = conversation.appendMessage(withImageData: mediumJPEGData())
+        _ = conversation.appendKnock()
+        _ = conversation.appendMessage(withImageData: verySmallJPEGData(), version3: true)
+        fillConversationWithMessages(conversation: conversation, messageCount: 10, normalized: true)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        verifyAllMessagesAreIndexed(in: conversation)
+
+        // When & Then
+        verifyThatItFindsMessage(
+            withText: "Please check the following messages to get the whole picture!",
+            whenSearchingFor: "get the picture",
+            in: conversation
+        )
+    }
+
     // MARK: Helper
 
     func fillConversationWithMessages(conversation: ZMConversation, messageCount: Int, normalized: Bool) {
@@ -454,14 +523,19 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         withText text: String,
         whenSearchingFor query: String,
         shouldFind: Bool = true,
+        in conversation: ZMConversation? = nil,
         file: StaticString = #file,
-        line: UInt = #line
+        line: UInt = #line,
+        messageModifier: ((ZMMessage) -> Void)? = nil
         ) {
 
         // Given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = .create()
+        let conversation = conversation ?? ZMConversation.insertNewObject(in: uiMOC)
+        if nil == conversation.remoteIdentifier {
+            conversation.remoteIdentifier = .create()
+        }
         let message = conversation.appendMessage(withText: text) as! ZMMessage
+        messageModifier?(message)
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         // When

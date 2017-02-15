@@ -302,7 +302,7 @@ public class TextSearchQuery: NSObject {
     /// Returns the count of not indexed indexed messages in the conversation. 
     /// Needs to be called from the syncMOC's Queue.
     private func countForNonIndexedMessages() -> Int {
-        guard let request = ZMMessage.sortedFetchRequest(with: predicateForNotIndexedMessages) else { return 0 }
+        guard let request = ZMClientMessage.sortedFetchRequest(with: predicateForNotIndexedMessages) else { return 0 }
         return (try? self.syncMOC.count(for: request)) ?? 0
     }
 
