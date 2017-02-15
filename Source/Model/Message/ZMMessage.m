@@ -570,13 +570,6 @@ NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
                 return (id) message;
             }
         }
-        for (ZMMessage *message in conversation.hiddenMessages) {
-            if (message.isFault) {
-                checkedAllHiddenMessages = NO;
-            } else if ([message.entity isKindOfEntity:entity] && [noncePredicate evaluateWithObject:message]) {
-                return (id) message;
-            }
-        }
     }
     
     if (![conversation hasFaultForRelationshipNamed:ZMConversationHiddenMessagesKey]) {
