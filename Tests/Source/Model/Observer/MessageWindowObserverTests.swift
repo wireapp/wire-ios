@@ -529,7 +529,28 @@ extension MessageWindowObserverTests {
                                            callBack: {
                                             XCTAssertTrue($0.imageSmallProfileDataChanged)
         })
-
+    }
+    
+    func testThatItRecreatesTheSnapshotIfTheWindowIsRecreatedForTheSameConversation(){
+        // given
+        let sender = ZMUser.insertNewObject(in:self.uiMOC)
+        sender.remoteIdentifier = UUID.create()
+        sender.smallProfileRemoteIdentifier = UUID.create()
+        
+        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        message.sender = sender
+        
+        let window = createConversationWindowWithMessages([message], uiMoc: self.uiMOC)
+        let newWindow = window.conversation.conversationWindow(withSize: 10)
+        uiMOC.saveOrRollback()
+        
+        // when
+        checkThatItNotifiesAboutUserChange(in: newWindow,
+                                           modifier: { message.sender!.imageSmallProfileData = self.verySmallJPEGData()},
+                                           callBack: {
+                                            XCTAssertTrue($0.imageSmallProfileDataChanged)
+        })
+    
     }
 
 }
