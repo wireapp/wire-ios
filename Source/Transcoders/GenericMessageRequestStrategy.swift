@@ -49,7 +49,7 @@ extension GenericMessageEntity : EncryptedPayloadGenerator {
     
 }
 
-public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageEntity>, ZMRequestGenerator {
+public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageEntity>, ZMRequestGenerator, ZMContextChangeTracker {
     
     private var sync : DependencyEntitySync<GenericMessageRequestStrategy>?
     private var requestFactory = ClientMessageRequestFactory()
@@ -79,4 +79,15 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
         return sync?.nextRequest()
     }
     
+    public func objectsDidChange(_ object: Set<NSManagedObject>) {
+        sync?.objectsDidChange(object)
+    }
+    
+    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+        return sync?.fetchRequestForTrackedObjects()
+    }
+    
+    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        sync?.addTrackedObjects(objects)
+    }
 }
