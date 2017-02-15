@@ -229,5 +229,25 @@ extension DisplayNameGeneratorTests {
         // then
         XCTAssertEqual(displayName1, "Hans")
     }
+    
+    func testThatTheSelfUserHasGivenNameAsDisplayName(){
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Hans Schmidt"
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.name = "Uschi Meier"
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.connection = ZMConnection.insertNewObject(in: uiMOC)
+        conversation.connection?.to = user1
+        
+        // when
+        let displayName = selfUser.displayName(in: conversation)
+        
+        // then
+        XCTAssertEqual(displayName, "Uschi")
+    
+    }
 
 }
