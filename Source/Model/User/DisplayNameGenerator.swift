@@ -73,7 +73,7 @@ public class DisplayNameGenerator : NSObject {
     
     private func displayNames(for conversation: ZMConversation) -> [NSManagedObjectID : String] {
         let givenNames : [String] = conversation.activeParticipants.array.flatMap{
-            guard let user = $0 as? ZMUser, !user.isSelfUser else { return nil }
+            guard let user = $0 as? ZMUser else { return nil }
             let personName = self.personName(for: user)
             return personName.givenName
         }
@@ -82,7 +82,10 @@ public class DisplayNameGenerator : NSObject {
         conversation.activeParticipants.forEach{ user in
             guard let user = user as? ZMUser else { return }
             let personName = self.personName(for: user)
-            if countedGivenName.count(for: personName.givenName) == 1 || user.isSelfUser {
+            if countedGivenName.count(for: personName.givenName) == 1
+                || conversation.conversationType == .oneOnOne
+                || user.isSelfUser
+            {
                 map[user.objectID] = personName.givenName
             } else {
                 map[user.objectID] = personName.fullName
