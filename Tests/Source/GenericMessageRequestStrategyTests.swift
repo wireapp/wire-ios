@@ -57,4 +57,30 @@ class GenericMessageRequestStrategyTests : MessagingTest {
         XCTAssertEqual(request!.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
     }
     
+    func testThatItForwardsObjectDidChangeToTheSync(){
+        // given
+        let selfClient = createSelfClient()
+        let user = conversation.otherActiveParticipants.firstObject as! ZMUser
+        let newClient = createClient(for: user, createSessionWithSelfUser: false)
+        selfClient.missesClient(newClient)
+        
+        let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
+        sut.schedule(message: genericMessage, inConversation: conversation) { ( _ ) in }
+        
+        // when
+        let request1 = sut.nextRequest()
+        
+        // then
+        XCTAssertNil(request1)
+        
+        // and when
+        selfClient.removeMissingClient(newClient)
+        sut.objectsDidChange(Set([selfClient]))
+        let request2 = sut.nextRequest()
+
+        // then
+        XCTAssertEqual(request2!.method, .methodPOST)
+        XCTAssertEqual(request2!.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
+    }
+    
 }
