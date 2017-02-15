@@ -53,11 +53,10 @@ extension NSManagedObjectContext {
     var windowSnapshot : MessageWindowSnapshot?
     
     @objc public func windowDidScroll(_ window: ZMConversationMessageWindow) {
-        if let snapshot = windowSnapshot, snapshot.conversation == window.conversation {
+        if let snapshot = windowSnapshot, snapshot.conversationWindow == window {
             snapshot.windowDidScroll()
         } else {
             zmLog.debug("WindowDidScroll - Creating snapshot for window \(window), removing snapshot for old window in conversation: \(windowSnapshot?.conversation)")
-            windowSnapshot?.tearDown()
             windowSnapshot = MessageWindowSnapshot(window: window)
         }
     }
@@ -66,23 +65,21 @@ extension NSManagedObjectContext {
     /// It automatically tears down the old window snapshot, since there should only be one window open at any time
     /// Call this when initializing a new message window
     @objc public func windowWasCreated(_ window: ZMConversationMessageWindow) {
-        if let snapshot = windowSnapshot, snapshot.conversation == window.conversation {
+        if let snapshot = windowSnapshot, snapshot.conversationWindow == window {
             zmLog.debug("WindowWasCreated - Using existing snapshot for window \(window)")
             return
         }
-        zmLog.debug("WindowWasCreated - Creating snapshot for window \(window), removing snapshot for old window in conversation: \(windowSnapshot?.conversation)")
-        windowSnapshot?.tearDown()
+        zmLog.debug("WindowWasCreated - Creating snapshot for window \(window), removing snapshot for old window \(windowSnapshot?.conversationWindow) in conversation: \(windowSnapshot?.conversation)")
         windowSnapshot = MessageWindowSnapshot(window: window)
     }
     
     /// Removes the windowSnapshot if there is one
     /// Call this when tearing down or deallocating the messageWindow
     @objc public func removeMessageWindow(_ window: ZMConversationMessageWindow) {
-        if let snapshot = windowSnapshot, snapshot.conversation != window.conversation {
+        if let snapshot = windowSnapshot, snapshot.conversationWindow != window {
             return
         }
         zmLog.debug("Removing snapshot for window \(window)")
-        windowSnapshot?.tearDown()
         windowSnapshot = nil
     }
     
@@ -149,16 +146,6 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
         self.conversationWindow = window
         self.state = SetSnapshot(set: window.messages, moveType: .uiCollectionView)
         super.init()
-    }
-    
-    func tearDown() {
-        if isTornDown { return }
-        updatedMessages = []
-        isTornDown = true
-    }
-    
-    deinit {
-        tearDown()
     }
     
     func windowDidScroll() {
