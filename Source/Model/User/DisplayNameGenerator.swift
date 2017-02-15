@@ -82,7 +82,7 @@ public class DisplayNameGenerator : NSObject {
         conversation.activeParticipants.forEach{ user in
             guard let user = user as? ZMUser else { return }
             let personName = self.personName(for: user)
-            if countedGivenName.count(for: personName.givenName) == 1 {
+            if countedGivenName.count(for: personName.givenName) == 1 || user.isSelfUser {
                 map[user.objectID] = personName.givenName
             } else {
                 map[user.objectID] = personName.fullName
