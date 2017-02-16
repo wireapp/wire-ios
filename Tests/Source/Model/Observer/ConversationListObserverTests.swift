@@ -64,24 +64,29 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
     func testThatItNotifiesObserversWhenANewConversationIsInsertedThatMatchesListPredicate()
     {
         // given
-        let conversationList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
+        let conversationList = ZMConversation.pendingConversations(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = .group
-        conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-        conversation.connection?.status = .accepted
-        self.uiMOC.saveOrRollback()
+        syncMOC.performGroupedBlockAndWait {
+            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.conversationType = .connection
+            conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            conversation.connection?.status = .pending
+            self.syncMOC.saveOrRollback()
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        mergeLastChanges()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
         if let first = testObserver.changes.first {
             XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(first.deletedIndexes, IndexSet())
-            XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
         }
         ConversationListChangeInfo.remove(observer: token, for:conversationList)

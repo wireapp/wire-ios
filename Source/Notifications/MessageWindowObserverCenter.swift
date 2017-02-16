@@ -256,6 +256,11 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
         if let changeInfo = windowChangeInfo {
             userInfo["messageWindowChangeInfo"] = changeInfo
         }
+        guard !userInfo.isEmpty else {
+            zmLog.debug("No changes to post for window \(window)")
+            return
+        }
+        
         NotificationCenter.default.post(name: .MessageWindowDidChange, object: window, userInfo: userInfo)
         zmLog.debug(logMessage(for: messageChangeInfos, windowChangeInfo: windowChangeInfo))
     }
@@ -267,7 +272,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
     }
     
     func logMessage(for messageChangeInfos: [MessageChangeInfo], windowChangeInfo: MessageWindowChangeInfo?) -> String {
-        var message = "Posting notification with messageChangeInfos: \n"
+        var message = "Posting notification for window \(self.conversationWindow) with messageChangeInfos: \n"
         message.append(messageChangeInfos.map{$0.customDebugDescription}.joined(separator: "\n"))
         
         guard let changeInfo = windowChangeInfo else { return message }
