@@ -7,9 +7,7 @@ language: ruby
 rvm: 2.2.5
 
 notifications:
-  email:
-    on_success: never
-    on_failure: always
+  email: false
 
 branches:
   only:
