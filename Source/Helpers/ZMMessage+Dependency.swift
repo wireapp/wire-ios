@@ -55,6 +55,12 @@ extension ZMOTRMessage {
                 return selfClient
             }
         }
+        
+        // If the conversation is degraded we shouldn't send the message until the conversation
+        // is marked as not secure or it's verified again
+        if conversation.securityLevel == .secureWithIgnored {
+            return conversation
+        }
         return super.dependendObjectNeedingUpdateBeforeProcessing()
     }
 }
