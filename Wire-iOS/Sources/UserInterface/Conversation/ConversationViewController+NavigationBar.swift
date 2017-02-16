@@ -65,7 +65,8 @@ public extension ConversationViewController {
     }
     
     var collectionsBarButtonItem: IconButton {
-        return barButtonItem(withType: .library,
+        let showingSearchResults = (self.collectionController?.isShowingSearchResults ?? false)
+        return barButtonItem(withType: showingSearchResults ? .searchOngoing : .search,
                              target: self,
                              action: #selector(ConversationViewController.onCollectionButtonPressed(_:)),
                              accessibilityIdentifier: "collection",
@@ -164,32 +165,34 @@ public extension ConversationViewController {
     }
     
     func onCollectionButtonPressed(_ sender: AnyObject!) {
-        let collections = CollectionsViewController(conversation: conversation)
-        collections.delegate = self
+        if self.collectionController == .none {
+            let collections = CollectionsViewController(conversation: conversation)
+            collections.delegate = self
+            
+            collections.onDismiss = { [weak self] _ in
+                
+                guard let `self` = self, let collectionController = self.collectionController else {
+                    return
+                }
+                
+                collectionController.dismiss(animated: true, completion: {
+                    UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
+                })
+            }
+            self.collectionController = collections
+        }
         
-        self.collectionController = collections
-        
-        let navigationController = collections.wrapInNavigationController(RotationAwareNavigationController.self)
+        let navigationController = KeyboardAvoidingViewController(viewController: self.collectionController).wrapInNavigationController(RotationAwareNavigationController.self)
         navigationController.transitioningDelegate = self.conversationDetailsTransitioningDelegate
 
         ZClientViewController.shared().present(navigationController, animated: true, completion: {
             UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
         })
-        
-        collections.onDismiss = { [weak self] _ in
-            guard let `self` = self, let collectionController = self.collectionController else {
-                return
-            }
-
-            collectionController.dismiss(animated: true, completion: {
-                UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
-            })
-        }
     }
     
     internal func dismissCollectionIfNecessary() {
-        if let _ = self.collectionController {
-            self.collectionController.dismiss(animated: false)
+        if let collectionController = self.collectionController {
+            collectionController.dismiss(animated: false)
         }
     }
 }
@@ -213,7 +216,9 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
                 guard let `self` = self else {
                     return
                 }
-                self.contentViewController.scroll(to: message)
+                self.contentViewController.scroll(to: message) { cell in
+                    cell.flashBackground()
+                }
             }
         default:
             self.contentViewController.wants(toPerform: action, for: message)

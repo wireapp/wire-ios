@@ -140,7 +140,7 @@
 
 @property (nonatomic) BOOL isAppearing;
 @property (nonatomic) ConversationTitleView *titleView;
-@property (nonatomic, weak) CollectionsViewController *collectionController;
+@property (nonatomic) CollectionsViewController *collectionController;
 
 @end
 
@@ -329,6 +329,8 @@
         [Settings sharedSettings].lastViewedConversation = self.conversation;
     }
 
+    self.contentViewController.searchQueries = self.collectionController.currentTextSearchQuery;
+    
     self.isAppearing = NO;
 }
 
@@ -370,6 +372,14 @@
 - (BOOL)definesPresentationContext
 {
     return YES;
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    if (self.collectionController.view.window == nil) {
+        self.collectionController = nil;
+    }
 }
 
 - (void)openConversationList
@@ -499,6 +509,13 @@
     }];
 }
 
+- (void)setCollectionController:(CollectionsViewController *)collectionController
+{
+    _collectionController = collectionController;
+    
+    [self updateLeftNavigationBarItems];
+}
+
 #pragma mark - SwipeNavigationController's panning
 
 - (BOOL)frameworkShouldRecognizePan:(UIPanGestureRecognizer *)gestureRecognizer
@@ -536,8 +553,6 @@
                         withLatestMessage:(id<ZMConversationMessage>)message
 {
     self.inputBarController.inputBarOverlapsContent = ! contentViewController.isScrolledToBottom;
-    
-    
 }
 
 - (void)didTapOnUserAvatar:(ZMUser *)user view:(UIView *)view
