@@ -1330,7 +1330,7 @@
     [conversation.mutableOtherActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
     [self.uiMOC saveOrRollback];
     
-    NSString *expected = @"Foo 1, Bar 2";
+    NSString *expected = @"Foo, Bar";
     
     // when
     conversation.userDefinedName = nil;
@@ -1358,7 +1358,7 @@
     [conversation.mutableOtherActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
     [self.uiMOC saveOrRollback];
     
-    NSString *expected = @"Bar 2, Baz 4";
+    NSString *expected = @"Bar, Baz";
     
     // when
     conversation.userDefinedName = nil;
