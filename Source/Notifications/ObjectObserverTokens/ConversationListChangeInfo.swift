@@ -20,6 +20,8 @@
 import Foundation
 import ZMCSystem
 
+private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
+
 extension ZMConversationList {
     
     func toOrderedSet() -> NSOrderedSet {
@@ -50,17 +52,19 @@ extension ConversationListChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forList:)
     public static func add(observer: ZMConversationListObserver,for list: ZMConversationList) -> NSObjectProtocol {
+        zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
         return NotificationCenterObserverToken(name: .ZMConversationListDidChange, object: list)
         { [weak observer] (note) in
-            guard let `observer` = observer, let list = note.object as? ZMConversationList
+            guard let `observer` = observer, let aList = note.object as? ZMConversationList
                 else { return }
+            zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
             
             if let changeInfo = note.userInfo?["conversationListChangeInfo"] as? ConversationListChangeInfo{
                 observer.conversationListDidChange(changeInfo)
             }
             if let changeInfos = note.userInfo?["conversationChangeInfos"] as? [ConversationChangeInfo] {
                 changeInfos.forEach{
-                    observer.conversationInsideList?(list, didChange: $0)
+                    observer.conversationInsideList?(aList, didChange: $0)
                 }
             }
         }
@@ -68,6 +72,7 @@ extension ConversationListChangeInfo {
     
     @objc(removeObserver:forList:)
     public static func remove(observer: NSObjectProtocol, for list: ZMConversationList?) {
+        zmLog.debug("Removing observer \(observer) for list \(list?.identifier)")
         guard let token = (observer as? NotificationCenterObserverToken)?.token else {
             NotificationCenter.default.removeObserver(observer, name: .ZMConversationListDidChange, object: list)
             return
