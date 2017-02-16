@@ -25,7 +25,7 @@ extension ZMConversation {
 
     /// Contains current security level of conversation.
     ///Client should check this property to properly annotate conversation.
-    @NSManaged public var securityLevel : ZMConversationSecurityLevel
+    @NSManaged public internal(set) var securityLevel : ZMConversationSecurityLevel
 
     /// Should be called when client is trusted.
     /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
@@ -143,6 +143,8 @@ extension ZMConversation {
     /// Resend last non sent messages. This method is expected to be called from the UI context
     public func resendMessagesThatCausedConversationSecurityDegradation() {
         precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
+        self.securityLevel = .notSecure // The conversation needs to be marked as not secure for new messages to be sent
+        self.managedObjectContext?.saveOrRollback()
         self.enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
             $0.causedSecurityLevelDegradation = false
             $0.resend()
@@ -151,9 +153,11 @@ extension ZMConversation {
     
     /// Reset those that caused degradation. This method is expected to be called from the UI context
     public func doNotResendMessagesThatCausedDegradation() {
-        precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
-        self.enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
-            $0.causedSecurityLevelDegradation = false
+        guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
+        syncMOC.performGroupedBlock {
+            guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
+            conversation.clearMessagesThatCausedSecurityLevelDegradation()
+            syncMOC.saveOrRollback()
         }
     }
     
@@ -163,16 +167,8 @@ extension ZMConversation {
     private func enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext(block: @escaping (ZMOTRMessage)->()) {
         guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
-            let conversation = try! syncMOC.existingObject(with: self.objectID) as! ZMConversation
-            conversation.messages.enumerateObjects(options: .reverse) { (msg, idx, stop) in
-                guard let message = msg as? ZMMessage else { return }
-                if let otrMessage = message as? ZMOTRMessage, otrMessage.causedSecurityLevelDegradation {
-                    block(otrMessage)
-                }
-                if message.isConversationNotVerifiedSystemMessage {
-                    stop.initialize(to: true)
-                }
-            }
+            guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
+            conversation.messagesThatCausedSecurityLevelDegradation.forEach(block)
             syncMOC.saveOrRollback()
         }
     }
@@ -182,8 +178,16 @@ extension ZMConversation {
         self.messages.enumerateObjects(options: .reverse) { (msg, idx, stop) in
             guard let message = msg as? ZMOTRMessage else { return }
             if message.deliveryState != .delivered && message.deliveryState != .sent {
-                message.expire()
-                message.causedSecurityLevelDegradation = true
+                if let clientMessage = message as? ZMClientMessage,
+                    let genericMessage = clientMessage.genericMessage,
+                    genericMessage.hasConfirmation() {
+                    // Delivery receipt: just expire it
+                    clientMessage.expire()
+                } else {
+                    // All other messages: expire and mark that it caused security degradation
+                    message.expire()
+                    message.causedSecurityLevelDegradation = true
+                }
             }
             if startingMessage == message {
                 stop.initialize(to: true)

@@ -31,4 +31,4 @@
 #import "MessagingTest+EventFactory.h"
 #import "NSString+RandomString.h"
 #import "DatabaseBaseTest.h"
-
+#import "ZMConversationTests.h"

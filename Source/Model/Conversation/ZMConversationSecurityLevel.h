@@ -20,21 +20,22 @@
 /* Secure level can change only the following way:
  
  NotSecure -> Secure
-                ^
-                |
-                v           
-            PartialSecureWithIgnored
+     ^          ^
+      \         |
+       \        v
+        \---- PartialSecureWithIgnored
  
  Initially conversation is not secured. If user goes and trust all current participants' clients
  it goes to secure state. If new client is added it goes to partial secure state.
  When user trust this new client conversation goes back to secure state.
+ If the user chooses to send the messages anyway, conversation goes to not secure state
  */
 typedef NS_ENUM(int16_t, ZMConversationSecurityLevel) {
-    /// Conversation was never secured
+    /// Conversation is not secured
     ZMConversationSecurityLevelNotSecure = 0,
     
     /// All of participants' clients are trusted or ignored
-    /// (messages can be sent but conversation is marked as not secure)
+    /// (messages will not be sent until the conversation becomes secure or not secure)
     ZMConversationSecurityLevelSecureWithIgnored,
     
     /// All of participants' clients are trusted

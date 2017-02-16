@@ -525,6 +525,29 @@
     }];
 }
 
+- (void)testIMarksConversationAsNotSecureAfterResendMessages
+{
+    __block ZMConversation *conversation;
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // GIVEN
+        conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        conversation.securityLevel = ZMConversationSecurityLevelSecureWithIgnored;
+        [self.syncMOC saveOrRollback];
+    }];
+    
+    // WHEN
+    ZMConversation *uiConversation = (ZMConversation *)[self.uiMOC existingObjectWithID:conversation.objectID error:nil];
+    [uiConversation resendMessagesThatCausedConversationSecurityDegradation];
+    [self.uiMOC saveOrRollback];
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC refreshAllObjects];
+        
+        // THEN
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelNotSecure);
+    }];
+}
+
 - (void)testItResendsAllMessagesThatCausedDegradation
 {
     __block ZMConversation *conversation;
@@ -577,7 +600,7 @@
         XCTAssertFalse(message3.causedSecurityLevelDegradation);
         XCTAssertEqual(message3.deliveryState, ZMDeliveryStatePending);
         XCTAssertFalse(conversation.allUsersTrusted);
-        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
+        XCTAssertNotEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
     }];
 }
 
