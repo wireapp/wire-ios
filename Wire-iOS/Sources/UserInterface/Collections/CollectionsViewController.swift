@@ -141,8 +141,12 @@ final public class CollectionsViewController: UIViewController {
             self.contentView.collectionView.prefetchDataSource = self
         }
 
-        self.setupNavigationItem()
         self.updateNoElementsState()
+    }
+    
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.setupNavigationItem()
     }
     
     override public func viewWillDisappear(_ animated: Bool) {
