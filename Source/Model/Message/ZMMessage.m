@@ -201,6 +201,7 @@ NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
 {
     self.isExpired = NO;
     [self setExpirationDate];
+    [self prepareToSend];
 }
 
 - (void)setExpirationDate

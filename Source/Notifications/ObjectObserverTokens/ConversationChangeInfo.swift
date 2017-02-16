@@ -175,45 +175,22 @@ extension ConversationChangeInfo {
 /// Conversation degraded
 extension ConversationChangeInfo {
     
-    /// Gets the last system message with new clients in the conversation.
-    /// If last system message is of the wrong type, it returns nil.
-    /// It will search past non-security related system messages, as someone
-    /// might have added a participant or renamed the conversation (causing a
-    /// system message to be inserted)
-    fileprivate var recentNewClientsSystemMessageWithExpiredMessages : ZMSystemMessage? {
-        guard self.conversation.didDegradeSecurityLevel else { return nil }
-        var foundSystemMessage : ZMSystemMessage? = .none
-        var foundDegradingMessage = false
-        self.conversation.messages.enumerateObjects(options: NSEnumerationOptions.reverse) { (msg, _, stop) -> Void in
-            if let systemMessage = msg as? ZMSystemMessage {
-                if systemMessage.systemMessageType == .newClient {
-                    foundSystemMessage = systemMessage
-                }
-                if systemMessage.systemMessageType == .newClient ||
-                    systemMessage.systemMessageType == .ignoredClient ||
-                    systemMessage.systemMessageType == .conversationIsSecure {
-                    stop.pointee = true
-                }
-            } else if let sentMessage = msg as? ZMMessage , sentMessage.causedSecurityLevelDegradation {
-                foundDegradingMessage = true
-            }
-        }
-        return foundDegradingMessage ? foundSystemMessage : .none
-    }
-    
-    /// True if the conversation was just degraded
-    public var didDegradeSecurityLevelBecauseOfMissingClients : Bool {
-        return self.recentNewClientsSystemMessageWithExpiredMessages != .none
+    /// True if the conversation security level is .secureWithIgnored and we tried to send a message
+    public var didNotSendMessagesBecauseOfConversationSecurityLevel : Bool {
+        return self.securityLevelChanged &&
+            self.conversation.securityLevel == .secureWithIgnored &&
+            !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
     }
     
     /// Users that caused the conversation to degrade
     public var usersThatCausedConversationToDegrade : Set<ZMUser> {
-        if let message = self.recentNewClientsSystemMessageWithExpiredMessages {
-            return message.users
+        guard let activeParticipants = self.conversation.activeParticipants.array as? [ZMUser] else {
+            return []
         }
-        return Set<ZMUser>()
+        
+        let untrustedParticipants = activeParticipants.filter { user -> Bool in
+            return !user.trusted()
+        }
+        return Set(untrustedParticipants)
     }
 }
-
-
-

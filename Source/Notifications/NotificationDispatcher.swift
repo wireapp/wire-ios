@@ -430,7 +430,7 @@ public class NotificationDispatcher : NSObject {
 
 extension NotificationDispatcher {
 
-    
+    /// - note: This can safely be called from any thread as it will switch to uiContext internally
     public static func notifyNonCoreDataChanges(objectID: NSManagedObjectID, changedKeys: [String], uiContext: NSManagedObjectContext) {
         uiContext.performGroupedBlock {
             guard let uiMessage = try? uiContext.existingObject(with: objectID) else { return }

@@ -25,12 +25,16 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
     func checkThatItNotifiesTheObserverOfAChange(_ conversation : ZMConversation,
                                                  modifier: (ZMConversation, ConversationObserver) -> Void,
                                                  expectedChangedField : String?,
-                                                 expectedChangedKeys: KeySet) {
+                                                 expectedChangedKeys: KeySet,
+                                                 file: StaticString = #file,
+                                                 line: UInt = #line) {
         
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: modifier,
                                                      expectedChangedFields: expectedChangedField != nil ? KeySet(key: expectedChangedField!) : KeySet(),
-                                                     expectedChangedKeys: expectedChangedKeys)
+                                                     expectedChangedKeys: expectedChangedKeys,
+                                                     file: file,
+                                                     line: line)
     }
     
     var conversationInfoKeys : [String] {
@@ -43,14 +47,20 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
             "connectionStateChanged",
             "isArchivedChanged",
             "isSilencedChanged",
-            "conversationListIndicatorChanged"
+            "conversationListIndicatorChanged",
+            "clearedChanged",
+            "securityLevelChanged",
+            "callParticipantsChanged",
+            "videoParticipantsChanged"
         ]
     }
     
     func checkThatItNotifiesTheObserverOfAChange(_ conversation : ZMConversation,
                                                  modifier: (ZMConversation, ConversationObserver) -> Void,
                                                  expectedChangedFields : KeySet,
-                                                 expectedChangedKeys: KeySet) {
+                                                 expectedChangedKeys: KeySet,
+                                                 file: StaticString = #file,
+                                                 line: UInt = #line) {
         
         // given
         let observer = ConversationObserver()
@@ -63,44 +73,48 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         // then
         let changeCount = observer.notifications.count
         if !expectedChangedFields.isEmpty {
-            XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).")
+            XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).", file: file, line: line)
         } else {
-            XCTAssertEqual(changeCount, 0, "Observer was notified, but DID NOT expect a notification")
+            XCTAssertEqual(changeCount, 0, "Observer was notified, but DID NOT expect a notification", file: file, line: line)
         }
         
         // and when
         self.uiMOC.saveOrRollback()
         
         // then
-        XCTAssertEqual(observer.notifications.count, changeCount, "Should have changed only once")
+        XCTAssertEqual(observer.notifications.count, changeCount, "Should have changed only once", file: file, line: line)
         
         if expectedChangedFields.isEmpty {
             return
         }
         
         if let changes = observer.notifications.first {
-            checkChangeInfoContainsExpectedKeys(changes: changes, expectedChangedFields: expectedChangedFields, expectedChangedKeys: expectedChangedKeys)
+            checkChangeInfoContainsExpectedKeys(changes: changes, expectedChangedFields: expectedChangedFields, expectedChangedKeys: expectedChangedKeys, file: file, line: line)
         }
         
         ConversationChangeInfo.remove(observer:token, for: conversation)
     }
     
-    func checkChangeInfoContainsExpectedKeys(changes: ConversationChangeInfo, expectedChangedFields : KeySet, expectedChangedKeys: KeySet){
+    func checkChangeInfoContainsExpectedKeys(changes: ConversationChangeInfo,
+                                             expectedChangedFields : KeySet,
+                                             expectedChangedKeys: KeySet,
+                                             file: StaticString = #file,
+                                             line: UInt = #line){
         for key in conversationInfoKeys {
             if expectedChangedFields.contains(key) {
                 if let value = changes.value(forKey: key) as? NSNumber {
-                    XCTAssertTrue(value.boolValue, "\(key) was supposed to be true")
+                    XCTAssertTrue(value.boolValue, "\(key) was supposed to be true", file: file, line: line)
                 }
                 continue
             }
             if let value = changes.value(forKey: key) as? NSNumber {
-                XCTAssertFalse(value.boolValue, "\(key) was supposed to be false")
+                XCTAssertFalse(value.boolValue, "\(key) was supposed to be false", file: file, line: line)
             }
             else {
-                XCTFail("Can't find key or key is not boolean for '\(key)'")
+                XCTFail("Can't find key or key is not boolean for '\(key)'", file: file, line: line)
             }
         }
-        XCTAssertEqual(KeySet(Array(changes.changedKeys)), expectedChangedKeys)
+        XCTAssertEqual(KeySet(Array(changes.changedKeys)), expectedChangedKeys, file: file, line: line)
     }
     
     
@@ -611,6 +625,59 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                                      expectedChangedFields: KeySet(["securityLevelChanged" , "nameChanged", "participantsChanged"]),
                                                      expectedChangedKeys: KeySet(["displayName", "otherActiveParticipants", "securityLevel"]))
     
+    }
+    
+    func testThatItNotifiesAboutSecurityLevelChange_AddingDevice(){
+        // given
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+
+        conversation.conversationType = .group
+        conversation.securityLevel = .secure
+        self.uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                     modifier: { conversation, _ in
+                                                        let client = UserClient.insertNewObject(in: self.uiMOC)
+                                                        client.remoteIdentifier = "aabbccdd";
+                                                        client.user = user;
+
+                                                        conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [client], causedBy: nil)
+
+        },
+                                                     expectedChangedFields: KeySet(["securityLevelChanged", "messagesChanged"]),
+                                                     expectedChangedKeys: KeySet(["securityLevel", "messages"]))
+        
+    }
+    
+    func testThatItNotifiesAboutSecurityLevelChange_SendingMessageToDegradedConversation(){
+        // given
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation.securityLevel = .secureWithIgnored
+        self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let observer = ConversationObserver()
+        let token = ConversationChangeInfo.add(observer: observer, for: conversation)
+        
+        // when
+        conversation.appendMessage(withText: "Foo")
+        self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(observer.notifications.count, 2)
+        
+        guard let first = observer.notifications.first, let second = observer.notifications.last else { return }
+        
+        // We get two notifications - one for messages added and another for non-core data change
+        let messagesNotification = first.messagesChanged ? first : second
+        let securityNotification = first.securityLevelChanged ? first : second
+        
+        XCTAssertTrue(messagesNotification.messagesChanged)
+        XCTAssertTrue(securityNotification.securityLevelChanged)
+
+        ConversationChangeInfo.remove(observer:token, for: conversation)
     }
     
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {

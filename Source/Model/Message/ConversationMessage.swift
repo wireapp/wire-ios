@@ -134,7 +134,6 @@ extension ZMMessage {
 // MARK:- Conversation Message protocol implementation
 
 extension ZMMessage : ZMConversationMessage {
-    
     public var causedSecurityLevelDegradation : Bool {
         return false
     }
