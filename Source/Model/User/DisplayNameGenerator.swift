@@ -56,10 +56,13 @@ public class DisplayNameGenerator : NSObject {
     
     private var currentDisplayNameMap : ConversationDisplayNameMap?
     
-    /// Can be used by the UI to return the displayNames for a conversation. Note that the name does not update when a user is added or removed or their name changes. It is however updated every time a different conversation is requested.
+    /// Can be used by the UI to return the displayNames for a conversation.
     /// Calculates a map for this conversation, as soon as another conversation's displayNames are requested, it discards the map
     @objc public func displayName(for user: ZMUser, in conversation: ZMConversation) -> String {
-        if let map = currentDisplayNameMap, map.conversationObjectID == conversation.objectID, let name = map.map[user.objectID] {
+        if idToPersonNameMap[user.objectID]?.rawFullName == (user.name ?? ""),                  // the user name is still the same
+           let map = currentDisplayNameMap, map.conversationObjectID == conversation.objectID,  // the current map is of the same conversation
+           let name = map.map[user.objectID]                                                    // the current map contains the user
+        {
             return name
         }
         let newMap = displayNames(for: conversation)
