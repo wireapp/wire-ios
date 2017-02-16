@@ -63,7 +63,7 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         zmLog.debug("Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
         zmLog.ifDebug {
             (conversationList as Array).forEach{
-                zmLog.debug("Conversation in \(conversationList.identifier) includes: \($0.objectID) with type: \($0.conversationType)")
+                zmLog.debug("Conversation in \(conversationList.identifier) includes: \($0.objectID) with type: \($0.conversationType.rawValue)")
             }
         }
         listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList)
@@ -77,8 +77,9 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     
     // MARK: Forwarding updates
     public func objectsDidChange(changes: [ClassIdentifier : [ObjectChangeInfo]]) {
-        guard let convChanges = changes[ZMConversation.classIdentifier] as? [ConversationChangeInfo] else { return }
-        convChanges.forEach{conversationDidChange($0)}
+        if let convChanges = changes[ZMConversation.classIdentifier] as? [ConversationChangeInfo] {
+            convChanges.forEach{conversationDidChange($0)}
+        }
         forwardToSnapshots{$0.recalculateListAndNotify()}
     }
     
@@ -171,7 +172,7 @@ class ConversationListSnapshot: NSObject {
         }
         else if list.predicateMatchesConversation(conversation) {
             // list did not contain conversation and now it should
-            zmLog.debug("Inserted conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType) into list \(list.identifier)")
+            zmLog.debug("Inserted conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) into list \(list.identifier)")
             list.insertConversations(Set(arrayLiteral: conversation))
             needsToRecalculate = true
         }
@@ -182,12 +183,12 @@ class ConversationListSnapshot: NSObject {
     private func updateDidRemoveConversation(list: ZMConversationList, changes: ConversationChangeInfo) -> Bool {
         if !list.predicateMatchesConversation(changes.conversation) {
             list.removeConversations(Set(arrayLiteral: changes.conversation))
-            zmLog.debug("Removed conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType) from list \(list.identifier)")
+            zmLog.debug("Removed conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) from list \(list.identifier)")
             return true
         }
         if list.sortingIsAffected(byConversationKeys: changes.changedKeys) {
             list.resortConversation(changes.conversation)
-            zmLog.debug("Resorted conversation \(changes.conversation.objectID) with type: \(changes.conversation.conversationType) in list \(list.identifier)")
+            zmLog.debug("Resorted conversation \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) in list \(list.identifier)")
         }
         return false
     }
@@ -195,7 +196,7 @@ class ConversationListSnapshot: NSObject {
     /// Handles inserted and removed conversations, updates lists and notifies observers
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation], accumulated : Bool) {
         guard let list = conversationList else { return }
-        
+
         if accumulated {
             list.resort()
             needsToRecalculate = true
@@ -249,6 +250,10 @@ class ConversationListSnapshot: NSObject {
         }
         if let changes = listChanges {
             userInfo["conversationListChangeInfo"] = changes
+        }
+        guard !userInfo.isEmpty else {
+            zmLog.debug("No changes for conversationList \(self.conversationList)")
+            return
         }
         NotificationCenter.default.post(name: .ZMConversationListDidChange, object: self.conversationList, userInfo: userInfo)
         zmLog.debug(logMessage(for: conversationChanges, listChanges: listChanges))
