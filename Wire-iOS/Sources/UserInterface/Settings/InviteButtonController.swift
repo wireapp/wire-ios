@@ -23,11 +23,13 @@ import Cartography
 
 class InviteButtonView: UIView {
 
+    typealias ButtonTapHandler = (Button) -> Void
     private let inviteButton = Button(style: .fullMonochrome)
-    var onTap: ((Button) -> Void)?
+    private let onTap: ButtonTapHandler
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(onTap: @escaping ButtonTapHandler) {
+        self.onTap = onTap
+        super.init(frame: .zero)
         setupViews()
         createConstraints()
     }
@@ -45,11 +47,12 @@ class InviteButtonView: UIView {
     private func createConstraints() {
         constrain(self, inviteButton) { view, button in
             button.edges == inset(view.edges, 24)
+            button.height == 32
         }
     }
 
     func inviteButtonTapped(_ sender: Button) {
-        onTap?(sender)
+        onTap(sender)
     }
 
 }
