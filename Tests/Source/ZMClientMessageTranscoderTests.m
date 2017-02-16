@@ -146,6 +146,69 @@
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
+- (void)testThatItDoesNotReturnConversationAsDependencyIfSecurityLevelIsNotSecure
+{
+    [self.syncMOC performGroupedBlock:^{
+        
+        //given
+        
+        ZMConversation *conversation = [self insertGroupConversation];
+        conversation.securityLevel = ZMConversationSecurityLevelNotSecure;
+        
+        ZMClientMessage *message = [self insertMessageInConversation:conversation];
+        
+        // when
+        ZMManagedObject *dependentObject1 = [self.sut dependentObjectNeedingUpdateBeforeProcessingObject:message];
+        
+        // then
+        XCTAssertNil(dependentObject1);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
+- (void)testThatItDoesNotReturnConversationAsDependencyIfSecurityLevelIsSecure
+{
+    [self.syncMOC performGroupedBlock:^{
+        
+        //given
+        
+        ZMConversation *conversation = [self insertGroupConversation];
+        conversation.securityLevel = ZMConversationSecurityLevelSecure;
+        
+        ZMClientMessage *message = [self insertMessageInConversation:conversation];
+        
+        // when
+        ZMManagedObject *dependentObject1 = [self.sut dependentObjectNeedingUpdateBeforeProcessingObject:message];
+        
+        // then
+        XCTAssertNil(dependentObject1);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
+- (void)testThatItReturnsConversationAsDependencyIfSecurityLevelIsSecureWithIgnored
+{
+    [self.syncMOC performGroupedBlock:^{
+        
+        //given
+        
+        ZMConversation *conversation = [self insertGroupConversation];
+        conversation.securityLevel = ZMConversationSecurityLevelSecureWithIgnored;
+        
+        ZMClientMessage *message = [self insertMessageInConversation:conversation];
+        
+        // when
+        ZMManagedObject *dependentObject1 = [self.sut dependentObjectNeedingUpdateBeforeProcessingObject:message];
+        
+        // then
+        XCTAssertNotNil(dependentObject1);
+        XCTAssertEqual(dependentObject1, conversation);
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+}
 
 - (void)testThatItReturnsConversationIfNeedsToBeUpdatedFromBackendBeforeMissingClients
 {
