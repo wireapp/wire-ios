@@ -69,13 +69,11 @@ public struct ConversationDegradationInfo {
 class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
     
     let callback : (ConversationDegradationInfo)->()
-    var conversationWasVerified : Bool
     let conversation : ZMConversation
     private var observer : Any? = nil
     
     init(conversation: ZMConversation, callback: @escaping (ConversationDegradationInfo)->()) {
         self.callback = callback
-        self.conversationWasVerified = conversation.isTrusted
         self.conversation = conversation
         super.init()
         self.observer = NotificationCenter.default.addObserver(forName: contextWasMergedNotification, object: nil, queue: nil) { [weak self] _ in
@@ -97,7 +95,7 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
     }
     
     private func processSaveNotification() {
-        if self.conversationWasVerified && self.conversation.didDegradeSecurityLevel {
+        if !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
             let untrustedUsers = Set((self.conversation.activeParticipants.array as! [ZMUser]).filter {
                 $0.clients.first { !$0.verified } != nil
             })
@@ -106,11 +104,10 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
                                                       users: untrustedUsers)
             )
         }
-        self.conversationWasVerified = self.conversation.isTrusted
     }
     
     func conversationDidChange(_ note: ConversationChangeInfo) {
-        if note.didDegradeSecurityLevelBecauseOfMissingClients {
+        if note.didNotSendMessagesBecauseOfConversationSecurityLevel {
             self.callback(ConversationDegradationInfo(conversation: note.conversation,
                                                       users: Set(note.usersThatCausedConversationToDegrade)))
         }
