@@ -289,5 +289,48 @@ extension DisplayNameGeneratorTests {
         XCTAssertEqual(displayName1, "Uschi")
         XCTAssertEqual(displayName2, "Uschi")
     }
+    
+    func testThatItUpdatesTheMapWhenAUsersNameChanges_UserWithSameName(){
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Hans Schmidt"
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
+        user2.name = "Uschi Meier"
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        conversation.mutableOtherActiveParticipants.addObjects(from: [user1, user2])
+        
+        XCTAssertEqual(user1.displayName(in: conversation), "Hans")
+        XCTAssertEqual(user2.displayName(in: conversation), "Uschi")
+
+        // when
+        user1.name = "Uschi Schmidt"
+
+        // then
+        XCTAssertEqual(user1.displayName(in: conversation), "Uschi Schmidt")
+        XCTAssertEqual(user2.displayName(in: conversation), "Uschi Meier")
+    }
+    
+    func testThatItUpdatesTheMapWhenAUsersNameChanges(){
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Hans Schmidt"
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.name = "Uschi Meier"
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.connection = ZMConnection.insertNewObject(in: uiMOC)
+        conversation.connection?.to = user1
+        
+        XCTAssertEqual(user1.displayName(in: conversation), "Hans")
+        
+        // when
+        user1.name = "Harald Schmidt"
+        
+        // then
+        XCTAssertEqual(user1.displayName(in: conversation), "Harald")
+    }
 
 }
