@@ -26,29 +26,26 @@
 
 @implementation ZMConversationSecurityTests
 
-- (NSArray<ZMUser *> *)createUsersWithClientsOnSyncMOC
+- (NSArray<ZMUser *> *)createUsersWithClientsOnSyncMOCWithCount:(NSUInteger)count
 {
     self.selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-    UserClient *user1Client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    ZMConnection *user1Connection = [ZMConnection insertNewSentConnectionToUser:user1];
-    user1Connection.status = ZMConnectionStatusAccepted;
-    user1Client.user = user1;
-    
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-    UserClient *user2Client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    ZMConnection *user2Connection = [ZMConnection insertNewSentConnectionToUser:user2];
-    user2Connection.status = ZMConnectionStatusAccepted;
-    user2Client.user = user2;
-    
-    return @[user1, user2];
+    NSMutableArray *users = [NSMutableArray array];
+    for (NSUInteger i = 0; i < count; i++) {
+        ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        UserClient *user1Client = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMConnection *user1Connection = [ZMConnection insertNewSentConnectionToUser:user1];
+        user1Connection.status = ZMConnectionStatusAccepted;
+        user1Client.user = user1;
+        [users addObject:user1];
+    }
+    return users;
 }
 
 - (void)testThatConversationInitialSecurityLevelIsNotSecured
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         
         // then
@@ -60,7 +57,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
@@ -76,7 +73,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         
         ZMUser *unconnectedUser = users.firstObject, *connectedUser = users.lastObject;
         unconnectedUser.connection.status = ZMConnectionStatusSent;
@@ -119,11 +116,51 @@
     }];
 }
 
+- (void)testThatItInsertsAnIgnoredClientsSystemMessageWhenAddingAConversationParticipantInASecuredConversation
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
+        
+        ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
+        
+        // when
+        [selfClient trustClients:users.firstObject.clients];
+        [selfClient trustClients:users.lastObject.clients];
+
+        // then
+        XCTAssertTrue(conversation.allUsersTrusted);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
+        
+        // when adding a new participant
+        ZMUser *user3 = [self createUsersWithClientsOnSyncMOCWithCount:1].lastObject;
+        [conversation addParticipant:user3];
+        
+        // then the conversation should degrade
+        XCTAssertFalse(conversation.allUsersTrusted);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
+        ZMSystemMessage *message = conversation.messages.lastObject;
+        XCTAssertEqual(message.systemMessageType, ZMSystemMessageTypeIgnoredClient);
+        XCTAssertEqualObjects(message.addedUsers, [NSSet setWithObject:user3]);
+        XCTAssertEqualObjects(message.users, [NSSet setWithObject:user3]);
+
+        // when
+        [conversation removeParticipant:user3];
+        
+        // then
+        XCTAssertTrue(conversation.allUsersTrusted);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
+        ZMSystemMessage *message2 = conversation.messages.lastObject;
+        XCTAssertEqual(message2.systemMessageType, ZMSystemMessageTypeConversationIsSecure);
+    }];
+}
+
 - (void)testThatItDoesNotIncreaseSecurityLevelIfNotAllClientsAreTrusted
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
@@ -140,7 +177,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMUser *userWithoutClients = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        NSArray<ZMUser *> *users = [[self createUsersWithClientsOnSyncMOC] arrayByAddingObject:userWithoutClients];
+        NSArray<ZMUser *> *users = [[self createUsersWithClientsOnSyncMOCWithCount:2] arrayByAddingObject:userWithoutClients];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
@@ -163,7 +200,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
@@ -180,7 +217,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
@@ -233,7 +270,7 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
@@ -256,7 +293,7 @@
     
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray <ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray <ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         NSSet *clients = [users.firstObject.clients setByAddingObjectsFromSet:users.lastObject.clients];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         [selfClient trustClients:clients];
@@ -281,7 +318,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        NSArray <ZMUser *> *users = [self createUsersWithClientsOnSyncMOC];
+        NSArray <ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         [selfClient trustClients:users.firstObject.clients];
         

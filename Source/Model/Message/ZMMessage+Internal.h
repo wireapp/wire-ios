@@ -147,7 +147,7 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 @property (nonatomic) ZMSystemMessageType systemMessageType;
 @property (nonatomic) NSSet<ZMUser *> * _Nonnull users;
 @property (nonatomic) NSSet <id<UserClientType>>* _Nonnull clients;
-@property (nonatomic) NSSet<ZMUser *> * _Nonnull addedUsers; // Only filled for ZMSystemMessageTypePotentialGap
+@property (nonatomic) NSSet<ZMUser *> * _Nonnull addedUsers; // Only filled for ZMSystemMessageTypePotentialGap and ZMSystemMessageTypeIgnoredClient
 @property (nonatomic) NSSet<ZMUser *> * _Nonnull removedUsers; // Only filled for ZMSystemMessageTypePotentialGap
 @property (nonatomic, copy) NSString * _Nullable text;
 @property (nonatomic) BOOL needsUpdatingUsers;

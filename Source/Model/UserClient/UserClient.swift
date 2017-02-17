@@ -479,7 +479,7 @@ enum SecurityChangeType {
         case .clientTrusted:
             conversation.increaseSecurityLevelIfNeededAfterTrusting(clients: clients)
         case .clientIgnored:
-            conversation.decreaseSecurityLevelIfNeededAfterIgnoring(clients: clients)
+            conversation.decreaseSecurityLevelIfNeededAfterIgnoring(clients: clients, addedUser: nil)
         case .clientDiscovered:
             conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: causedBy)
         }

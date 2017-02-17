@@ -56,10 +56,11 @@ extension ZMConversation {
     }
 
     /// Should be called when a client is ignored
-    @objc(decreaseSecurityLevelIfNeededAfterIgnoringClients:)
-    public func decreaseSecurityLevelIfNeededAfterIgnoring(clients: Set<UserClient>) {
+    @objc(decreaseSecurityLevelIfNeededAfterIgnoringClients:addedUser:)
+    public func decreaseSecurityLevelIfNeededAfterIgnoring(clients: Set<UserClient>, addedUser: ZMUser?) {
         guard self.decreaseSecurityLevelIfNeeded() else { return }
-        self.appendIgnoredClientsSystemMessage(ignored: clients)
+        let addedUsers = (addedUser != nil) ? Set(arrayLiteral: addedUser!) : Set()
+        self.appendIgnoredClientsSystemMessage(ignored: clients, addedUsers: addedUsers)
     }
 
     /// Creates system message that says that you started using this device, if you were not registered on this device
@@ -262,12 +263,13 @@ extension ZMConversation {
                                  timestamp: timestamp)
     }
     
-    fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
+    fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>, addedUsers: Set<ZMUser>) {
         guard !clients.isEmpty else { return }
         let users = Set(clients.flatMap { $0.user })
         self.appendSystemMessage(type: .ignoredClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
+                                 addedUsers: addedUsers,
                                  clients: clients,
                                  timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
     }
@@ -276,6 +278,7 @@ extension ZMConversation {
     func appendSystemMessage(type: ZMSystemMessageType,
                                          sender: ZMUser,
                                          users: Set<ZMUser>?,
+                                         addedUsers: Set<ZMUser> = Set(),
                                          clients: Set<UserClient>?,
                                          timestamp: Date?
                                          ) -> (message: ZMSystemMessage, insertionIndex: UInt) {
@@ -285,6 +288,7 @@ extension ZMConversation {
         systemMessage.isEncrypted = false
         systemMessage.isPlainText = true
         systemMessage.users = users ?? Set()
+        systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
         systemMessage.nonce = UUID()
         systemMessage.serverTimestamp = timestamp
