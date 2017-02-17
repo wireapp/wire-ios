@@ -172,9 +172,6 @@
 - (ZMTransportResponse *)getSelfUser
 {
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:(id) [self.selfUser transportData]];
-    if (self.selfUser.trackingIdentifier != nil) {
-        payload[@"tracking_id"] = self.selfUser.trackingIdentifier;
-    }
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
 }
 

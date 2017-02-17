@@ -398,7 +398,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 - (void)checkThatTransportData:(id <ZMTransportData>)data matchesUser:(MockUser *)user isConnected:(BOOL)isConnected failureRecorder:(ZMTFailureRecorder *)fr;
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:(id) data];
-    [dict removeObjectForKey:@"tracking_id"];
     FHAssertTrue(fr, [dict isKindOfClass:[NSDictionary class]]);
     NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle"];
     if(isConnected) {

@@ -615,7 +615,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     RequireString(self.selfUser == nil, "SelfUser already exists!");
     self.selfUser = [self insertUserWithName:name includeClient:NO];
-    self.selfUser.trackingIdentifier = [self createUUIDString];
     return self.selfUser;
 }
 
