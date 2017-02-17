@@ -103,15 +103,12 @@
 {
     // GIVEN
     __block MockUser *selfUser;
-    __block NSString *trackingIdentifier;
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         selfUser.email = @"foo@example.com";
         selfUser.phone = @"+4555575653498";
         selfUser.accentID = 4;
-        trackingIdentifier = [selfUser.trackingIdentifier copy];
-        XCTAssertEqual(selfUser.trackingIdentifier.length, 36u);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -130,7 +127,6 @@
     NSDictionary *data = (id) response.payload;
     
     [self checkThatTransportData:data matchesUser:selfUser isConnected:YES failureRecorder:NewFailureRecorder()];
-    XCTAssertEqualObjects([data stringForKey:@"tracking_id"], trackingIdentifier);
 }
 
 - (void)testThatItCreatesHandleForSelfUser

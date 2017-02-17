@@ -33,7 +33,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 @dynamic accentID;
 @dynamic name;
 @dynamic identifier;
-@dynamic trackingIdentifier;
 @dynamic pictures;
 @dynamic password;
 @dynamic connectionsFrom;

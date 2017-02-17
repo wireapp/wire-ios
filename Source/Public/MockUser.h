@@ -41,7 +41,6 @@ extern NSString * _Nonnull const ZMSearchUserTotalMutualFriendsKey;
 @property (nonatomic) int16_t accentID;
 @property (nonatomic, nullable) NSString *name;
 @property (nonatomic, nonnull) NSString *identifier;
-@property (nonatomic, nullable) NSString *trackingIdentifier;
 @property (nonatomic, nonnull) NSOrderedSet *pictures;
 @property (nonatomic) BOOL isEmailValidated;
 @property (nonatomic) BOOL isSendingVideo;
