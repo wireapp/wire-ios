@@ -55,9 +55,11 @@ public final class TextSearchInputView: UIView {
         
         searchInput.borderStyle = .none
         searchInput.delegate = self
+        searchInput.accessibilityLabel = "Search"
         searchInput.accessibilityIdentifier = "search input"
         
         placeholderLabel.textAlignment = .center
+        placeholderLabel.isAccessibilityElement = false
         
         cancelButton.setIcon(.clearInput, with: .tiny, for: .normal)
         cancelButton.addTarget(self, action: #selector(TextSearchInputView.onCancelButtonTouchUpInside(_:)), for: .touchUpInside)
