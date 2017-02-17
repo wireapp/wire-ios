@@ -333,4 +333,30 @@ extension DisplayNameGeneratorTests {
         XCTAssertEqual(user1.displayName(in: conversation), "Harald")
     }
 
+    func testThatItDoesNotCrashWhenTheConversationIsNil(){
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Hans Schmidt"
+        
+        // then
+        XCTAssertEqual(user1.displayName(in: nil), "Hans")
+    }
+    
+    func testThatItDoesNotCrashWhenTheUserIsNotInTheConversationAndItsNameIsNil(){
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
+        user2.name = "Uschi Meier"
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        conversation.mutableOtherActiveParticipants.addObjects(from: [user2])
+        
+        // then
+        performIgnoringZMLogError{
+            XCTAssertEqual(user1.displayName(in: conversation), "")
+        }
+    }
+    
+    
 }
