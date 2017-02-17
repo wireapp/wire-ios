@@ -74,7 +74,6 @@
 		5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAppleSystemLoggerWrapper.h; sourceTree = "<group>"; };
 		5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSAppleSystemLoggerWrapper.m; sourceTree = "<group>"; };
 		5473E7D51B31A9C300C6A937 /* ZMCSystem-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ZMCSystem-ios.xcconfig"; sourceTree = "<group>"; };
-		5473E7D61B31A9C300C6A937 /* ZMCSystem-osx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ZMCSystem-osx.xcconfig"; sourceTree = "<group>"; };
 		5473E7E41B31AA2600C6A937 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		548662451B344AAB00298EFD /* ZMSAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAsserts.h; sourceTree = "<group>"; };
 		5486624B1B344BA900298EFD /* ZMSActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSActivity.h; sourceTree = "<group>"; };
@@ -205,7 +204,6 @@
 				5473E7E41B31AA2600C6A937 /* version.xcconfig */,
 				092758691B70E68F00AD5A78 /* ZMCSystem.xcconfig */,
 				5473E7D51B31A9C300C6A937 /* ZMCSystem-ios.xcconfig */,
-				5473E7D61B31A9C300C6A937 /* ZMCSystem-osx.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
