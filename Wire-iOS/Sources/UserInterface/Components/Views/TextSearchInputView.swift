@@ -59,7 +59,7 @@ public final class TextSearchInputView: UIView {
         
         placeholderLabel.textAlignment = .center
         
-        cancelButton.setIcon(.cancel, with: .tiny, for: .normal)
+        cancelButton.setIcon(.clearInput, with: .tiny, for: .normal)
         cancelButton.addTarget(self, action: #selector(TextSearchInputView.onCancelButtonTouchUpInside(_:)), for: .touchUpInside)
         cancelButton.isHidden = true
         cancelButton.accessibilityIdentifier = "cancel search"
@@ -104,8 +104,12 @@ public final class TextSearchInputView: UIView {
         self.searchInput.resignFirstResponder()
     }
     
+    fileprivate func updatePlaceholderLabel() {
+        self.placeholderLabel.isHidden = !self.query.isEmpty || self.searchInput.isEditing
+    }
+    
     fileprivate func updateForSearchQuery() {
-        self.placeholderLabel.isHidden = !self.query.isEmpty
+        self.updatePlaceholderLabel()
         cancelButton.isHidden = self.query.isEmpty
     }
 }
@@ -129,5 +133,13 @@ extension TextSearchInputView: UITextFieldDelegate {
             textField.resignFirstResponder()
         }
         return shouldReturn
+    }
+    
+    public func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.updatePlaceholderLabel()
+    }
+    
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        self.updatePlaceholderLabel()
     }
 }
