@@ -1443,7 +1443,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         if(isAuthoritative) {
             [self.mutableLastServerSyncedActiveParticipants addObject:participant];
         }
-        [self decreaseSecurityLevelIfNeededAfterIgnoringClients:participant.clients];
+        [self decreaseSecurityLevelIfNeededAfterIgnoringClients:participant.clients addedUser:participant];
     }
 }
 
