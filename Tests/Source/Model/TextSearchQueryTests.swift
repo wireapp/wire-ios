@@ -172,6 +172,17 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(second.textMessageData?.messageText, firstMessage.textMessageData?.messageText)
     }
 
+    func testThatItCallsTheDelegateWithEmptyResultsIfThereAreNoMessages() {
+        // Given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = .create()
+
+        // Then
+        let results = search(for: "search query", in: conversation)
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual(results.first?.matches.count, 0)
+    }
+
 
     func testThatItReturnsMatchesWhenAllMessagesAreIndexed() {
         // Given

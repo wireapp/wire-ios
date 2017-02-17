@@ -200,6 +200,12 @@ public class TextSearchQuery: NSObject {
             self.notIndexedMessageCount = self.countForNonIndexedMessages()
             zmLog.debug("Searching for \"\(self.originalQuery)\", indexed: \(self.indexedMessageCount), not indexed: \(self.notIndexedMessageCount)")
 
+            if self.indexedMessageCount == 0 && self.notIndexedMessageCount == 0 {
+                // No need to perform a search if there are not messages.
+                zmLog.debug("Skipping search as there are no searchable messages.")
+                return self.notifyDelegate(with: [], hasMore: false)
+            }
+
             self.executeQueryForIndexedMessages { [weak self] in
                 self?.executeQueryForNonIndexedMessages()
             }
@@ -287,6 +293,7 @@ public class TextSearchQuery: NSObject {
             let queryResult = self.result?.updated(appending: uiMessages, hasMore: hasMore)
                            ?? TextQueryResult(query: self, matches: uiMessages, hasMore: hasMore)
 
+            zmLog.debug("Notifying delegate with \(uiMessages.count) new and \(queryResult.matches.count) total matches")
             self.result = queryResult
             self.delegate?.textSearchQueryDidReceive(result: queryResult)
         }
