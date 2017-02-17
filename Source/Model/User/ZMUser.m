@@ -234,6 +234,9 @@ static NSString *const AnnaBotHandle = @"annathebot";
 
 - (NSString *)displayNameInConversation:(ZMConversation *)conversation;
 {
+    if (conversation == nil) {
+        return self.displayName;
+    }
     return [self.managedObjectContext.nameGenerator displayNameFor:self in:conversation];
 }
 

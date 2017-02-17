@@ -69,7 +69,7 @@ public class DisplayNameGenerator : NSObject {
         currentDisplayNameMap = ConversationDisplayNameMap(conversationObjectID: conversation.objectID, map: newMap)
         guard let name = newMap[user.objectID] else {
             zmLog.warn("User is not member of this conversation")
-            return user.name
+            return user.name ?? ""
         }
         return name
     }
