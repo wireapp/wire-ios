@@ -240,8 +240,8 @@ public class NotificationDispatcher : NSObject {
     /// Call this from syncStrategy AFTER merging the changes from syncMOC into uiMOC
     public func didMergeChanges() {
         guard forwardChanges else { return }
-        fireAllNotifications()
         snapshotCenter.clearAllSnapshots()
+        fireAllNotifications()
     }
     
     func process(note: Notification) {
@@ -388,8 +388,14 @@ public class NotificationDispatcher : NSObject {
     }
     
     func fireAllNotifications(){
+        let changes = allChanges
+        let unreads = unreadMessages
+        
+        unreadMessages = [:]
+        allChanges = [:]
+        
         var allChangeInfos : [ClassIdentifier: [ObjectChangeInfo]] = [:]
-        allChanges.forEach{ (object, changedKeys) in
+        changes.forEach{ (object, changedKeys) in
             guard let notificationName = (object as? ObjectInSnapshot)?.notificationName,
                 let changeInfo = ObjectChangeInfo.changeInfo(for: object, changes: changedKeys)
                 else { return }
@@ -402,14 +408,12 @@ public class NotificationDispatcher : NSObject {
             allChangeInfos[classIdentifier] = previousChanges
         }
         forwardNotificationToObserverCenters(changeInfos: allChangeInfos)
-        fireNewUnreadMessagesNotifications()
-        unreadMessages = [:]
-        allChanges = [:]
+        fireNewUnreadMessagesNotifications(unreadMessages: unreads)
     }
     
     
     /// Fire all new unread notifications
-    func fireNewUnreadMessagesNotifications(){
+    func fireNewUnreadMessagesNotifications(unreadMessages: [Notification.Name : Set<ZMMessage>]){
         unreadMessages.forEach{ (notificationName, messages) in
             guard messages.count > 0 else { return }
             guard let changeInfo = ObjectChangeInfo.changeInfoforNewMessageNotification(with: notificationName, changedMessages: messages) else {
