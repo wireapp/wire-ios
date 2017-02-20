@@ -528,7 +528,7 @@ NSString *SplitLayoutObservableDidChangeToLayoutSizeNotification = @"SplitLayout
                 [self.rightViewController endAppearanceTransition];
             }
             
-            if (self.openPercentage == 0) {
+            if (self.openPercentage == 0 && self.layoutSize != SplitViewControllerLayoutSizeRegularLandscape) {
                 self.leftView.hidden = YES;
             }
         }];

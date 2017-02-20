@@ -30,7 +30,10 @@ import Cartography
             
             self.nameLabel.textColor = sender.nameAccentColor
             self.nameLabel.text = sender.displayName
+            self.nameLabel.accessibilityValue = self.nameLabel.text
+            
             self.dateLabel.text = serverTimestamp.wr_formattedDate()
+            self.dateLabel.accessibilityValue = self.dateLabel.text
         }
     }
     
