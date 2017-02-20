@@ -838,7 +838,8 @@
     confirmImageViewController.onConfirm = ^(UIImage *editedImage){
         @strongify(self);
         [self dismissViewControllerAnimated:NO completion:nil];
-        [self postImage:editedImage];
+        id<MediaAsset> finalImage = editedImage == nil ? image : editedImage;
+        [self postImage:finalImage];
     };
     
     confirmImageViewController.onCancel = ^() {
