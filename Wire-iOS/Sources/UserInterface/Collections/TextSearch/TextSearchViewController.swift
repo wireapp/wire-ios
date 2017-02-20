@@ -35,9 +35,7 @@ final public class TextSearchViewController: NSObject {
     
     fileprivate var results: [ZMConversationMessage] = [] {
         didSet {
-            self.resultsView.tableView.isHidden = results.count == 0
-            self.resultsView.noResultsView.isHidden = results.count != 0
-            self.resultsView.tableView.reloadData()
+            reloadResults()
         }
     }
 
@@ -93,6 +91,21 @@ final public class TextSearchViewController: NSObject {
         }
     }
 
+    fileprivate func reloadResults() {
+        let query = searchQuery ?? ""
+        let noResults = results.isEmpty
+        let validQuery = query.characters.count >= 2
+
+        // We hide the results when we either have none or the query is too short
+        resultsView.tableView.isHidden = noResults || !validQuery
+        // We only show the no results view if there are no results and a valid query
+        resultsView.noResultsView.isHidden = !noResults || !validQuery
+        // If the user did not enter any search query we show the collection again
+        resultsView.isHidden = query.isEmpty
+
+        resultsView.tableView.reloadData()
+    }
+
     @objc fileprivate func showLoadingSpinner() {
         searchBar.isLoading = true
     }
@@ -122,17 +135,15 @@ extension TextSearchViewController: TextSearchInputViewDelegate {
     public func searchView(_ searchView: TextSearchInputView, didChangeQueryTo query: String) {
         textSearchQuery?.cancel()
         searchStartedDate = nil
-
-        if query.isEmpty {
-            self.resultsView.isHidden = true
-        }
-        else {
-            self.scheduleSearch()
-            self.resultsView.isHidden = false
-        }
+        hideLoadingSpinner()
+        reloadResults()
 
         if query.characters.count < 2 {
-            hideLoadingSpinner()
+            // We reset the results to avoid showing the previous 
+            // results for a short period for subsequential searches
+            results = []
+        } else {
+            scheduleSearch()
         }
     }
 
