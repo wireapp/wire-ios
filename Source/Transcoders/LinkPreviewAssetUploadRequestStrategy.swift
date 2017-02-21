@@ -60,7 +60,6 @@ public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy,
     fileprivate var assetUpstreamSync : ZMUpstreamModifiedObjectSync!
     
     public convenience init(clientRegistrationDelegate: ClientRegistrationDelegate, managedObjectContext: NSManagedObjectContext) {
-        ZMSLog.set(level: .debug, tag: "link previews")
         if nil == LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() {
             LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector(resultsQueue: OperationQueue.current!))
         }
