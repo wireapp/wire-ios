@@ -104,6 +104,7 @@ const static int ConversationContentViewControllerMessagePrefetchDepth = 10;
 @property (nonatomic) id messageWindowObserverToken;
 @property (nonatomic) BOOL onScreen;
 @property (nonatomic) UserConnectionViewController *connectionViewController;
+@property (nonatomic) DeletionDialogPresenter *deletionDialogPresenter;
 @end
 
 
@@ -121,6 +122,7 @@ const static int ConversationContentViewControllerMessagePrefetchDepth = 10;
         self.messagePresenter.targetViewController = self;
         self.messagePresenter.modalTargetController = self.parentViewController;
         self.messagePresenter.analyticsTracker = self.analyticsTracker;
+        self.deletionDialogPresenter = [[DeletionDialogPresenter alloc] initWithSourceViewController:self];
     }
     
     return self;
@@ -338,7 +340,7 @@ const static int ConversationContentViewControllerMessagePrefetchDepth = 10;
                 
             case MessageActionDelete:
             {
-                [self presentDeletionAlertControllerForMessage:cell.message completion:^{
+                [self.deletionDialogPresenter presentDeletionAlertControllerForMessage:cell.message source:cell completion:^{
                     cell.beingEdited = NO;
                 }];
             }
@@ -369,8 +371,9 @@ const static int ConversationContentViewControllerMessagePrefetchDepth = 10;
                     else {
                         targetView = cell;
                     }
-                    
-                    [self.messagePresenter openDocumentControllerForMessage:cell.message targetView:targetView withPreview:NO];
+
+                    UIActivityViewController *saveController = [[UIActivityViewController alloc] initWithMessage:message from:targetView];
+                    [self presentViewController:saveController animated:YES completion:nil];
                 }
             }
                 break;

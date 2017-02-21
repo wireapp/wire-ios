@@ -62,6 +62,7 @@ final public class CollectionsViewController: UIViewController {
     fileprivate var collection: AssetCollectionWrapper!
 
     fileprivate var lastLayoutSize: CGSize = .zero
+    fileprivate var deletionDialogPresenter: DeletionDialogPresenter?
     
     fileprivate var fetchingDone: Bool = false {
         didSet {
@@ -111,6 +112,7 @@ final public class CollectionsViewController: UIViewController {
         
         super.init(nibName: .none, bundle: .none)
         self.collection.assetCollectionDelegate.add(self)
+        self.deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: self)
     }
     
     deinit {
@@ -333,6 +335,10 @@ final public class CollectionsViewController: UIViewController {
             else {
                 self.messagePresenter.open(message, targetView: view, actionResponder: self)
             }
+
+        case .save:
+            guard let saveController = UIActivityViewController(message: message, from: view) else { return }
+            present(saveController, animated: true, completion: nil)
             
         default:
             break
@@ -547,7 +553,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionImageCell.reuseIdentifier, for: indexPath) as! CollectionImageCell
             
         case CollectionsSectionSet.filesAndAudio:
-            if self.message(for: indexPath).fileMessageData!.isAudio() {
+            if self.message(for: indexPath).fileMessageData?.isAudio() == true {
                 resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionAudioCell.reuseIdentifier, for: indexPath) as! CollectionAudioCell
             }
             else {
@@ -680,6 +686,10 @@ extension CollectionsViewController: CollectionCellDelegate {
         switch action {
         case .forward, .showInConversation:
             self.delegate?.collectionsViewController(self, performAction: action, onMessage: message)
+        case .delete:
+            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: cell) { [weak self] in
+                self?.refetchCollection()
+            }
         default:
             if Message.isFileTransferMessage(message) {
                 self.perform(action, for: message, from: cell)
@@ -712,7 +722,7 @@ extension CollectionsViewController: MessageActionResponder {
     public func canPerform(_ action: MessageAction, for message: ZMConversationMessage!) -> Bool {
         if Message.isImageMessage(message) {
             switch action {
-            case .forward, .copy, .save, .showInConversation:
+            case .like, .forward, .copy, .save, .showInConversation:
                 return true
             
             default:
@@ -727,6 +737,11 @@ extension CollectionsViewController: MessageActionResponder {
         switch action {
         case .forward, .copy, .save, .showInConversation:
             self.delegate?.collectionsViewController(self, performAction: action, onMessage: message)
+        case .delete:
+            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: nil) { [weak self] in
+                _ = self?.navigationController?.popViewController(animated: true)
+                self?.refetchCollection()
+            }
         default: break
         }
     }

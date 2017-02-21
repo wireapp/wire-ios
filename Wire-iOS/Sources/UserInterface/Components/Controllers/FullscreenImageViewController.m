@@ -473,18 +473,19 @@
          */
         [self.view.window makeKeyWindow];
         [self.view.window becomeFirstResponder];
-        
         [self.view becomeFirstResponder];
         
         UIMenuController *menuController = UIMenuController.sharedMenuController;
-        UIMenuItem *saveItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.image.save_image", @"") action:@selector(saveImage)];
-        UIMenuItem *forwardItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.message.forward", @"") action:@selector(forward)];
-        UIMenuItem *revealInConversation = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"content.message.go_to_conversation", @"") action:@selector(revealInConversation)];
-        menuController.menuItems = @[saveItem, forwardItem, revealInConversation];
+        menuController.menuItems = @[
+                                     [UIMenuItem likeItemForMessage:self.message action:@selector(likeImage)],
+                                     [UIMenuItem saveItemWithAction:@selector(saveImage)],
+                                     [UIMenuItem forwardItemWithAction:@selector(forward)],
+                                     [UIMenuItem deleteItemWithAction:@selector(deleteImage)],
+                                     [UIMenuItem revealItemWithAction:@selector(revealInConversation)]
+                                     ];
         
         [menuController setTargetRect:self.imageView.bounds inView:self.imageView];
         [menuController setMenuVisible:YES animated:YES];
-
         [self setSelectedByMenu:YES animated:YES];
     }
 }
@@ -509,6 +510,12 @@
     }
     else if (action == @selector(revealInConversation)) {
         return !self.message.isEphemeral && [self.delegate canPerformAction:MessageActionShowInConversation forMessage:self.message];
+    }
+    else if (action == @selector(likeImage)) {
+        return [Message messageCanBeLiked:self.message];
+    }
+    else if (action == @selector(deleteImage)) {
+        return self.message.canBeDeleted;
     }
     else if (action == @selector(paste:)) {
         return NO;
@@ -542,6 +549,16 @@
 - (void)saveImage
 {
     [self.delegate wantsToPerformAction:MessageActionSave forMessage:self.message];
+}
+
+- (void)likeImage
+{
+    [self.delegate wantsToPerformAction:MessageActionLike forMessage:self.message];
+}
+
+-(void)deleteImage
+{
+    [self.delegate wantsToPerformAction:MessageActionDelete forMessage:self.message];
 }
 
 - (void)setSelectedByMenu:(BOOL)selected animated:(BOOL)animated

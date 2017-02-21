@@ -252,12 +252,14 @@
 "content.image.save_image" = "Save";
 
 "content.message.delete" = "Delete";
+"content.message.save" = "Save";
 
 "content.message.like" = "Like";
 "content.message.unlike" = "Unlike";
 "content.message.forward" = "Share";
 "content.message.go_to_conversation" = "Reveal";
 "content.message.forward.to" = "Search…";
+"content.message.open" = "Open";
 
 "content.reactions_list.likers" = "Liked by";
 
