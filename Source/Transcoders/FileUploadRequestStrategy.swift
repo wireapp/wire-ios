@@ -93,9 +93,9 @@ private let reponseHeaderAssetIdKey = "Location"
         return false
     }
     
-    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> ZMManagedObject? {
+    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
         guard let message = dependant as? ZMAssetClientMessage else { return nil }
-        let dependency = message.dependendObjectNeedingUpdateBeforeProcessing()
+        let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
         return dependency
     }
     

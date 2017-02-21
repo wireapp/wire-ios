@@ -22,7 +22,7 @@ import WireRequestStrategy
 public class GenericMessageEntity : OTREntity {
     
     public var message : ZMGenericMessage
-    public var conversation : ZMConversation
+    public var conversation : ZMConversation?
     public var completionHandler : (_ response: ZMTransportResponse) -> Void
     
     init(conversation: ZMConversation, message: ZMGenericMessage, completionHandler: @escaping (_ response: ZMTransportResponse) -> Void) {
@@ -32,15 +32,18 @@ public class GenericMessageEntity : OTREntity {
     }
     
     public var dependentObjectNeedingUpdateBeforeProcessing: AnyObject? {
-        return dependentObjectNeedingUpdateBeforeProcessingOTREntity
+        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity()
     }
     
+    public func missesRecipients(_ recipients: Set<UserClient>!) {
+        // no-op
+    }
 }
 
 extension GenericMessageEntity : EncryptedPayloadGenerator {
     
     public func encryptedMessagePayloadData() -> (data: Data, strategy: MissingClientsStrategy)? {
-        return message.encryptedMessagePayloadData(conversation, externalData: nil)
+        return message.encryptedMessagePayloadData(conversation!, externalData: nil)
     }
     
     public var debugInfo: String {
@@ -66,7 +69,7 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
     }
     
     public override func request(forEntity entity: GenericMessageEntity) -> ZMTransportRequest? {
-         return requestFactory.upstreamRequestForMessage(entity, forConversationWithId: entity.conversation.remoteIdentifier!)
+         return requestFactory.upstreamRequestForMessage(entity, forConversationWithId: entity.conversation!.remoteIdentifier!)
     }
     
     public override func request(forEntity entity: GenericMessageEntity, didCompleteWithResponse response: ZMTransportResponse) {

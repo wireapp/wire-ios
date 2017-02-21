@@ -84,9 +84,9 @@ extension ImageUploadRequestStrategy : ZMUpstreamTranscoder {
         return nil // no-op
     }
     
-    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> ZMManagedObject? {
+    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
         guard let message = dependant as? ZMMessage else { return nil }
-        return message.dependendObjectNeedingUpdateBeforeProcessing()
+        return message.dependentObjectNeedingUpdateBeforeProcessing
     }
     
     fileprivate func update(_ message: ZMAssetClientMessage, withResponse response: ZMTransportResponse, updatedKeys keys: Set<String>) {
