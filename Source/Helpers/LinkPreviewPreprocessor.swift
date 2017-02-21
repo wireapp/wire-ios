@@ -21,6 +21,9 @@ import Foundation
 import ZMCLinkPreview
 import WireRequestStrategy
 import ZMCDataModel
+import ZMUtilities
+
+private let zmLog = ZMSLog(tag: "link previews")
 
 @objc public final class LinkPreviewPreprocessor : NSObject, ZMContextChangeTracker {
         
@@ -64,7 +67,9 @@ import ZMCDataModel
         objectsBeingProcessed.insert(message)
         
         if let messageText = (message as ZMConversationMessage).textMessageData?.messageText {
+            zmLog.debug("Fetching previews in message with text \(messageText)")
             linkPreviewDetector.downloadLinkPreviews?(inText: messageText) { [weak self] linkPreviews in
+                zmLog.debug("Found \(linkPreviews.count) previews in message with text \(messageText):\n\(linkPreviews)")
                 self?.managedObjectContext.performGroupedBlock({
                     self?.didProcessMessage(message, linkPreviews: linkPreviews)
                 })
@@ -77,14 +82,16 @@ import ZMCDataModel
     func didProcessMessage(_ message: ZMClientMessage, linkPreviews: [LinkPreview]) {
         objectsBeingProcessed.remove(message)
         
-        if let preview = linkPreviews.first, let messsageText = message.textMessageData?.messageText, !message.isObfuscated {
-            let updatedMessage = ZMGenericMessage.message(text: messsageText, linkPreview: preview.protocolBuffer, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
+        if let preview = linkPreviews.first, let messageText = message.textMessageData?.messageText, !message.isObfuscated {
+            let updatedMessage = ZMGenericMessage.message(text: messageText, linkPreview: preview.protocolBuffer, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
             message.add(updatedMessage.data())
             
             if let imageData = preview.imageData.first {
+                zmLog.debug("Image in linkPreview, setting linkPreviewState to .downloaded for message with text \(messageText)")
                 managedObjectContext.zm_imageAssetCache.storeAssetData(message.nonce, format:.original, encrypted: false, data: imageData)
                 message.linkPreviewState = .downloaded
             } else {
+                zmLog.debug("No image, setting linkPreviewState to .uploaded for message with text \(messageText)")
                 message.linkPreviewState = .uploaded
             }
         } else {
