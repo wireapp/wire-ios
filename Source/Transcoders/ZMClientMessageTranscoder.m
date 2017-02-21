@@ -72,11 +72,11 @@
     return request;
 }
 
-- (void)updateInsertedObject:(ZMMessage *)message request:(ZMUpstreamRequest *)upstreamRequest response:(ZMTransportResponse *)response;
+- (void)updateInsertedObject:(ZMOTRMessage *)message request:(ZMUpstreamRequest *)upstreamRequest response:(ZMTransportResponse *)response;
 {
     [super updateInsertedObject:message request:upstreamRequest response:response];
-    [(id)message parseUploadResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
-    
+    [message parseMissingClientsResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
+
     // if it's reaction
     if ([message isKindOfClass:[ZMClientMessage class]] && !message.isZombieObject) {
         
@@ -94,15 +94,14 @@
 - (BOOL)updateUpdatedObject:(ZMAssetClientMessage *)message requestUserInfo:(NSDictionary *)requestUserInfo response:(ZMTransportResponse *)response keysToParse:(NSSet *)keysToParse
 {
     BOOL result = [super updateUpdatedObject:message requestUserInfo:requestUserInfo response:response keysToParse:keysToParse];
-    
-    [message parseUploadResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
+    [message parseMissingClientsResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
     
     return result;
 }
 
 - (BOOL)shouldRetryToSyncAfterFailedToUpdateObject:(ZMClientMessage *)message request:(ZMUpstreamRequest *__unused)upstreamRequest response:(ZMTransportResponse *)response keysToParse:(NSSet * __unused)keys
 {
-    return [message parseUploadResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
+    return [message parseMissingClientsResponse:response clientDeletionDelegate:self.clientRegistrationStatus];
 }
 
 - (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject *)managedObject forKeys:(NSSet<NSString *> *)keys withSync:(id)sync;
@@ -120,7 +119,7 @@
 
 - (ZMManagedObject *)dependentObjectNeedingUpdateBeforeProcessingObject:(ZMClientMessage *)message;
 {
-    return message.dependendObjectNeedingUpdateBeforeProcessing;
+    return message.dependentObjectNeedingUpdateBeforeProcessing;
 }
 
 - (ZMMessage *)messageFromUpdateEvent:(ZMUpdateEvent *)event

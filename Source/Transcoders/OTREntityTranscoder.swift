@@ -116,7 +116,7 @@ open class OTREntityTranscoder<Entity : OTREntity> : NSObject, EntityTranscoder 
             let clients = clientIDs.map { UserClient.fetchUserClient(withRemoteId: $0, forUser: user, createIfNeeded: true)! }
             
             // is this user not there?
-            entity.conversation.checkIfMissingActiveParticipant(user)
+            entity.conversation!.checkIfMissingActiveParticipant(user)
             
             return clients
         })

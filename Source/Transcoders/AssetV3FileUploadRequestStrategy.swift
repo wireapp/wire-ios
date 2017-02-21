@@ -133,8 +133,8 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
         return nil // no-op
     }
 
-    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> ZMManagedObject? {
-        return (dependant as? ZMMessage)?.dependendObjectNeedingUpdateBeforeProcessing()
+    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
+        return (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
     }
 
     fileprivate func update(_ message: ZMAssetClientMessage, withResponse response: ZMTransportResponse, updatedKeys keys: Set<String>) {
@@ -189,6 +189,11 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
             fatal("No asset ID present in payload: \(response.payload)")
         }
 
+        if let delegate = self.clientRegistrationStatus {
+            // this will remove deleted clients that are returned in the payload
+            _ = message.parseUploadResponse(response, clientDeletionDelegate: delegate)
+        }
+        
         if let updated = message.genericAssetMessage?.updatedUploaded(withAssetId: assetId, token: payload["token"] as? String) {
             message.add(updated)
         }

@@ -177,8 +177,8 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         return nil // no-op
     }
 
-    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> ZMManagedObject? {
-        return (dependant as? ZMMessage)?.dependendObjectNeedingUpdateBeforeProcessing()
+    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
+        return (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
     }
 
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {

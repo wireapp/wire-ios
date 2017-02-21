@@ -24,11 +24,15 @@ import XCTest
 
 class MockOTREntity : OTREntity {
     
+    public func missesRecipients(_ recipients: Set<UserClient>!) {
+        // no-op
+    }
+    public var conversation: ZMConversation?
+    
     var isMissingClients = false
     var didCallHandleClientUpdates = false
     
     var dependentObjectNeedingUpdateBeforeProcessing: AnyObject?
-    var conversation: ZMConversation
     
     init(conversation: ZMConversation) {
         self.conversation = conversation
