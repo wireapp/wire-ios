@@ -133,10 +133,10 @@ open class CollectionCell: UICollectionViewCell, Reusable {
         let properties = MenuConfigurationProperties()
         properties.targetRect = self.contentView.bounds
         properties.targetView = self.contentView
-        
-        let forwardItem = UIMenuItem(title: "content.message.forward".localized, action: #selector(CollectionCell.forward(_:)))
-        let goToConversation = UIMenuItem(title: "content.message.go_to_conversation".localized, action: #selector(CollectionCell.showInConversation(_:)))
-        properties.additionalItems = [forwardItem, goToConversation]
+        if message?.canBeLiked == true {
+            properties.additionalItems = [.like(for: message, with: #selector(like))]
+        }
+
         return properties
     }
     
@@ -156,9 +156,12 @@ open class CollectionCell: UICollectionViewCell, Reusable {
         self.becomeFirstResponder()
         
         let menuController = UIMenuController.shared
-        
-        menuController.menuItems = menuConfigurationProperties.additionalItems
-        
+        let menuItems: [UIMenuItem] = [
+            .forward(with: #selector(forward)),
+            .delete(with: #selector(deleteMessage)),
+            .reveal(with: #selector(showInConversation)),
+        ]
+        menuController.menuItems = menuConfigurationProperties.additionalItems + menuItems
         menuController.setTargetRect(menuConfigurationProperties.targetRect, in: menuConfigurationProperties.targetView)
         menuController.setMenuVisible(true, animated: true)
         
@@ -171,9 +174,12 @@ open class CollectionCell: UICollectionViewCell, Reusable {
     
     override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         switch action {
-        case #selector(CollectionCell.forward(_:)): fallthrough
-        case #selector(CollectionCell.showInConversation(_:)):
+        case #selector(forward), #selector(showInConversation):
             return true
+        case #selector(like):
+            return message?.canBeLiked == true
+        case #selector(deleteMessage):
+            return message?.canBeDeleted == true
         default:
             return false
         }
@@ -183,7 +189,17 @@ open class CollectionCell: UICollectionViewCell, Reusable {
     func updateForMessage(changeInfo: MessageChangeInfo?) {
         // no-op
     }
-    
+
+    func deleteMessage(_ sender: AnyObject!) {
+        guard message?.canBeDeleted == true else { return }
+        delegate?.collectionCell(self, performAction: .delete)
+    }
+
+    func like(_ sender: AnyObject!) {
+        guard let message = message else { return }
+        Message.setLikedMessage(message, liked: !message.liked)
+    }
+
     func forward(_ sender: AnyObject!) {
         self.delegate?.collectionCell(self, performAction: .forward)
         guard let message = self.message else {
