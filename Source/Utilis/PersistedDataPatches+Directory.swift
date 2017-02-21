@@ -22,7 +22,8 @@ extension PersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        PersistedDataPatch(version: "41.0.0", block: UserClient.migrateAllSessionsClientIdentifiers)
+        PersistedDataPatch(version: "41.0.0", block: UserClient.migrateAllSessionsClientIdentifiers),
+        PersistedDataPatch(version: "43.0.4", block: ZMConversation.migrateAllSecureWithIgnored)
     ]
 
 }
