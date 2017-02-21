@@ -42,11 +42,12 @@ import WireRequestStrategy
 }
 
 
+private let zmLog = ZMSLog(tag: "link previews")
+
+
 public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy, RequestStrategy, ZMContextChangeTrackerSource {
-    
-    
-    
-    let requestFactory = AssetRequestFactory()
+
+    fileprivate let requestFactory = AssetRequestFactory()
     
     /// Auth status to know whether we can make requests
     fileprivate let clientRegistrationDelegate: ClientRegistrationDelegate
@@ -59,7 +60,7 @@ public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy,
     fileprivate var assetUpstreamSync : ZMUpstreamModifiedObjectSync!
     
     public convenience init(clientRegistrationDelegate: ClientRegistrationDelegate, managedObjectContext: NSManagedObjectContext) {
-        
+        ZMSLog.set(level: .debug, tag: "link previews")
         if nil == LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() {
             LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector(resultsQueue: OperationQueue.current!))
         }
@@ -144,14 +145,18 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
     
     public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable: Any]?, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
         guard let message = managedObject as? ZMClientMessage else { return false }
+        guard keysToParse.contains(ZMClientMessageLinkPreviewStateKey) else { return false }
         guard let payload = response.payload?.asDictionary(), let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload: \(response.payload)") }
         
         if let linkPreview = message.genericMessage?.linkPreviews.first, !message.isObfuscated {
             let updatedPreview = linkPreview.update(withAssetKey: assetKey, assetToken: payload["token"] as? String)
             let genericMessage = ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: updatedPreview, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
             message.add(genericMessage.data())
+            zmLog.debug("Uploaded image for message with linkPreview: \(linkPreview), genericMessage: \(message.genericMessage)")
             message.linkPreviewState = .uploaded
+            return true
         } else {
+            zmLog.warn("Uploaded image but message does not have a link preview: \(message.genericMessage)")
             message.linkPreviewState = .done
         }
 

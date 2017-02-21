@@ -27,6 +27,8 @@
 		BFC32F8F1DD1E7A100EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC32F8D1DD1E73400EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift */; };
 		BFE85DED1DD9F47C00BCD68B /* AssetAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE85DEC1DD9F47C00BCD68B /* AssetAnalytics.swift */; };
 		BFE9FF261DD4AD1A00B8BA74 /* AssetV3FileUploadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE9FF251DD4AD1A00B8BA74 /* AssetV3FileUploadRequestStrategyTests.swift */; };
+		BFED61BD1E5C52E700F352F8 /* LinkPreviewUploadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFED61BC1E5C52E700F352F8 /* LinkPreviewUploadRequestStrategy.swift */; };
+		BFED61C11E5C59C700F352F8 /* LinkPreviewUploadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFED61C01E5C59C700F352F8 /* LinkPreviewUploadRequestStrategyTests.swift */; };
 		CED80BAC1E03FAC40053915D /* FetchingClientRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED80BAB1E03FAC40053915D /* FetchingClientRequestStrategy.swift */; };
 		CED80BAE1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED80BAD1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift */; };
 		F963E90B1D956FC100098AD3 /* ZMMessageExpirationTimerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F963E9091D956EE700098AD3 /* ZMMessageExpirationTimerTests.m */; };
@@ -153,6 +155,8 @@
 		BFC32F8D1DD1E73400EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3ImageUploadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		BFE85DEC1DD9F47C00BCD68B /* AssetAnalytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetAnalytics.swift; sourceTree = "<group>"; };
 		BFE9FF251DD4AD1A00B8BA74 /* AssetV3FileUploadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetV3FileUploadRequestStrategyTests.swift; sourceTree = "<group>"; };
+		BFED61BC1E5C52E700F352F8 /* LinkPreviewUploadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPreviewUploadRequestStrategy.swift; sourceTree = "<group>"; };
+		BFED61C01E5C59C700F352F8 /* LinkPreviewUploadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPreviewUploadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		CED80BAB1E03FAC40053915D /* FetchingClientRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategy.swift; sourceTree = "<group>"; };
 		CED80BAD1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F963E9091D956EE700098AD3 /* ZMMessageExpirationTimerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMessageExpirationTimerTests.m; sourceTree = "<group>"; };
@@ -356,6 +360,7 @@
 				F9F057D01D943D8000FA1AAD /* FileUploadRequestStrategy.swift */,
 				F9F057D11D943D8000FA1AAD /* ImageUploadRequestStrategy.swift */,
 				F9F057D21D943D8000FA1AAD /* LinkPreviewAssetUploadRequestStrategy.swift */,
+				BFED61BC1E5C52E700F352F8 /* LinkPreviewUploadRequestStrategy.swift */,
 				F9F056E01D93D3FF00FA1AAD /* ZMClientMessageTranscoder+Internal.h */,
 				F9F056E11D93D3FF00FA1AAD /* ZMClientMessageTranscoder+UpdateEvents.h */,
 				F9F056E21D93D3FF00FA1AAD /* ZMClientMessageTranscoder+UpdateEvents.m */,
@@ -492,6 +497,7 @@
 				F963E92B1D95899300098AD3 /* ImageDownloadRequestStrategyTests.swift */,
 				16D0E0881DF999460075DF8F /* OTREntityTranscoderTests.swift */,
 				16D0E08B1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift */,
+				BFED61C01E5C59C700F352F8 /* LinkPreviewUploadRequestStrategyTests.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -762,6 +768,7 @@
 				F9F056EE1D93D3FF00FA1AAD /* ZMClientMessageTranscoder+UpdateEvents.m in Sources */,
 				CED80BAC1E03FAC40053915D /* FetchingClientRequestStrategy.swift in Sources */,
 				F9F056F01D93D3FF00FA1AAD /* ZMClientMessageTranscoder.m in Sources */,
+				BFED61BD1E5C52E700F352F8 /* LinkPreviewUploadRequestStrategy.swift in Sources */,
 				F9F057D81D943DA200FA1AAD /* LinkPreviewAssetUploadRequestStrategy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -790,6 +797,7 @@
 				F963E9321D958A6500098AD3 /* LinkPreviewAssetDownloadRequestStrategyTests.swift in Sources */,
 				16D0E08C1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift in Sources */,
 				F9F057F01D954CD700FA1AAD /* ImageUploadRequestStrategyTests.swift in Sources */,
+				BFED61C11E5C59C700F352F8 /* LinkPreviewUploadRequestStrategyTests.swift in Sources */,
 				F963E92F1D9589D000098AD3 /* AssetDownloadRequestStrategyTests.swift in Sources */,
 				F9F057CE1D943BCA00FA1AAD /* ZMCryptoBoxUpdateEventsTests.m in Sources */,
 				F9F057EF1D954CD700FA1AAD /* FileUploadRequestStrategyTests.swift in Sources */,
