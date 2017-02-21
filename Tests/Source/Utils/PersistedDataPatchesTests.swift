@@ -206,4 +206,27 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
     }
+    
+    func testThatItMigratesDegradedConversationsWithSecureWithIgnored() {
+        // GIVEN
+        let notSecureConversation = ZMConversation.insertNewObject(in: syncMOC)
+        notSecureConversation.conversationType = .oneOnOne
+        notSecureConversation.securityLevel = .notSecure
+        let secureConversation = ZMConversation.insertNewObject(in: syncMOC)
+        secureConversation.securityLevel = .secure
+        secureConversation.conversationType = .group
+        let secureWithIgnoredConversation = ZMConversation.insertNewObject(in: syncMOC)
+        secureWithIgnoredConversation.securityLevel = .secureWithIgnored
+        secureWithIgnoredConversation.conversationType = .oneOnOne
+        
+        syncMOC.saveOrRollback()
+
+        // WHEN
+        PersistedDataPatch.applyAll(in: syncMOC, fromVersion: "0.0.0")
+        syncMOC.saveOrRollback()
+        
+        XCTAssertEqual(notSecureConversation.securityLevel, .notSecure)
+        XCTAssertEqual(secureConversation.securityLevel, .secure)
+        XCTAssertEqual(secureWithIgnoredConversation.securityLevel, .notSecure)
+    }
 }
