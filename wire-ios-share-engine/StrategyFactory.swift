@@ -40,7 +40,8 @@ class StrategyFactory {
             createClientMessageTranscoder(),
             createImageUploadRequestStrategy(),
             createFileUploadRequestStrategy(),
-            createLinkPreviewAssetUploadRequestStrategy()
+            createLinkPreviewAssetUploadRequestStrategy(),
+            createLinkPreviewUploadRequestStrategy()
         ]
     }
 
@@ -79,6 +80,10 @@ class StrategyFactory {
 
     private func createLinkPreviewAssetUploadRequestStrategy() -> LinkPreviewAssetUploadRequestStrategy {
         return LinkPreviewAssetUploadRequestStrategy(clientRegistrationDelegate: registrationStatus, managedObjectContext: syncContext)
+    }
+
+    private func createLinkPreviewUploadRequestStrategy() -> LinkPreviewUploadRequestStrategy {
+        return LinkPreviewUploadRequestStrategy(managedObjectContext: syncContext, clientRegistrationDelegate: registrationStatus)
     }
 
 }
