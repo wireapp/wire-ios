@@ -243,7 +243,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         // GIVEN
         let message = self.conversation.appendMessage(withText: "ramble on!")! as! ZMClientMessage
         message.delivered = true
-        ZMMessage.addReaction("❤️", toMessage: message)
+        ZMMessage.addReaction(.like, toMessage: message)
         XCTAssertFalse(message.usersReaction.isEmpty)
         self.conversation.managedObjectContext?.saveOrRollback()
         
@@ -256,7 +256,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         // GIVEN
         let message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt")!))! as! ZMAssetClientMessage
         message.delivered = true
-        ZMMessage.addReaction("❤️", toMessage: message)
+        ZMMessage.addReaction(.like, toMessage: message)
         XCTAssertFalse(message.usersReaction.isEmpty)
         self.conversation.managedObjectContext?.saveOrRollback()
         

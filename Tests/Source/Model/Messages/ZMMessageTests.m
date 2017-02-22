@@ -2075,10 +2075,10 @@ NSString * const ReactionsKey = @"reactions";
     [self.uiMOC saveOrRollback];
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateSent);
 
-    //when
-    NSString *reactionUnicode = @"❤️";
+    // when
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:reactionUnicode toMessage:message];
+    
+    [ZMMessage addReaction:MessageReactionLike toMessage:message];
     [self.uiMOC saveOrRollback];
 
     //then
@@ -2086,7 +2086,7 @@ NSString * const ReactionsKey = @"reactions";
     ZMClientMessage *reactionMessage = [conversation.hiddenMessages lastObject];
     XCTAssertNotNil(reactionMessage.genericMessage);
     XCTAssertTrue(reactionMessage.genericMessage.hasReaction);
-    XCTAssertEqualObjects(reactionMessage.genericMessage.reaction.emoji, reactionUnicode);
+    XCTAssertEqualObjects(reactionMessage.genericMessage.reaction.emoji, @"❤️");
 }
 
 - (void)testThatAUnSentMessageCanNotBeLiked;
@@ -2098,10 +2098,9 @@ NSString * const ReactionsKey = @"reactions";
     [self.uiMOC saveOrRollback];
     XCTAssertEqual(message.deliveryState, ZMDeliveryStatePending);
 
-    //when
-    NSString *reactionUnicode = @"❤️";
+    // when
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:reactionUnicode toMessage:message];
+    [ZMMessage addReaction:MessageReactionLike toMessage:message];
     [self.uiMOC saveOrRollback];
 
     //then
