@@ -19,6 +19,7 @@
 
 #import "ZMConversationTests.h"
 #import "ZMClientMessage.h"
+@import zimages;
 
 @interface ZMConversationMessagesTests : ZMConversationTestsBase
 @end
@@ -125,7 +126,7 @@
     XCTAssertEqual(message.conversation, conversation);
     XCTAssertTrue([conversation.messages containsObject:message]);
     XCTAssertNotNil(message.nonce);
-    NSData *expectedData = [NSData dataWithContentsOfURL:imageFileURL];
+    NSData *expectedData = [[NSData dataWithContentsOfURL:imageFileURL] wr_imageDataWithoutMetadataAndReturnError:nil];
     XCTAssertNotNil(expectedData);
     AssertEqualData(message.originalImageData, expectedData);
     XCTAssertEqualObjects(selfUser, message.sender);
@@ -148,7 +149,7 @@
     XCTAssertEqual(message.conversation, conversation);
     XCTAssertTrue([conversation.messages containsObject:message]);
     XCTAssertNotNil(message.nonce);
-    NSData *expectedData = [NSData dataWithContentsOfURL:imageFileURL];
+    NSData *expectedData = [[NSData dataWithContentsOfURL:imageFileURL] wr_imageDataWithoutMetadataAndReturnError:nil];
     XCTAssertNotNil(expectedData);
     AssertEqualData(message.originalImageData, expectedData);
 }
@@ -195,7 +196,7 @@
 - (void)testThatWeCanInsertAnImageMessageFromImageData;
 {
     // given
-    NSData *imageData = [self dataForResource:@"1900x1500" extension:@"jpg"];
+    NSData *imageData = [[self dataForResource:@"1900x1500" extension:@"jpg"] wr_imageDataWithoutMetadataAndReturnError:nil];
     XCTAssertNotNil(imageData);
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
@@ -210,13 +211,13 @@
     XCTAssertEqual(message.conversation, conversation);
     XCTAssertTrue([conversation.messages containsObject:message]);
     XCTAssertNotNil(message.nonce);
-    AssertEqualData(message.originalImageData, imageData);
+    XCTAssertEqual(message.originalImageData.length, imageData.length);
 }
 
 - (void)testThatItIsSafeToPassInMutableDataWhenCreatingAnImageMessage
 {
     // given
-    NSData *originalImageData = [self dataForResource:@"1900x1500" extension:@"jpg"];
+    NSData *originalImageData = [[self dataForResource:@"1900x1500" extension:@"jpg"] wr_imageDataWithoutMetadataAndReturnError:nil];
     NSMutableData *imageData = [originalImageData mutableCopy];
     XCTAssertNotNil(imageData);
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -227,7 +228,7 @@
     
     // then
     [imageData appendBytes:((const char []) {1, 2}) length:2];
-    AssertEqualData(message.originalImageData, originalImageData);
+    XCTAssertEqual(message.originalImageData.length, originalImageData.length);
 }
 
 - (void)testThatNoMessageIsInsertedWhenTheImageDataIsNotAnImage;
