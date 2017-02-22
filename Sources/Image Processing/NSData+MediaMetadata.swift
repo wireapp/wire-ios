@@ -29,6 +29,7 @@ public extension NSData {
     private static let nullMetadataProperties: CFDictionary = {
         var swiftMetadataProperties: [String: AnyObject] = [:]
         swiftMetadataProperties[String(kCGImagePropertyExifDictionary)] = kCFNull
+        swiftMetadataProperties[String(kCGImagePropertyExifAuxDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyTIFFDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyGPSDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyIPTCDictionary)] = kCFNull
