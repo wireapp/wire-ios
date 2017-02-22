@@ -3483,7 +3483,7 @@
         
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        [conversation appendOTRMessageWithImageData:[NSData secureRandomDataOfLength:500] nonce:messageID];
+        [conversation appendOTRMessageWithImageData:self.verySmallJPEGData nonce:messageID];
         
         // store asset data
         [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatOriginal encrypted:NO data:imageData];

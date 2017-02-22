@@ -1353,7 +1353,7 @@ NSString * const ReactionsKey = @"reactions";
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    NSData *jpegData = self.verySmallJPEGData;
+    NSData *jpegData = [self.verySmallJPEGData wr_imageDataWithoutMetadataAndReturnError:nil];
     id<ZMConversationMessage> temporaryMessage = [conversation appendMessageWithImageData:jpegData];
     
     // when
@@ -1361,7 +1361,7 @@ NSString * const ReactionsKey = @"reactions";
     
     // then
     XCTAssertNotNil(imageData);
-    AssertEqualData(imageData, jpegData);
+    XCTAssertEqual(imageData.length, jpegData.length);
 }
 
 @end
