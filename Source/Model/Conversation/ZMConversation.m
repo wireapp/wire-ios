@@ -23,6 +23,7 @@
 @import ZMTransport;
 @import Cryptobox;
 @import MobileCoreServices;
+@import zimages;
 
 #import "ZMManagedObject+Internal.h"
 #import "ZMManagedObjectContextProvider.h"
@@ -1238,7 +1239,17 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce version3:(BOOL)version3
 {
-    ZMAssetClientMessage *message = [self appendAssetClientMessageWithNonce:nonce hidden:false imageData:imageData version3:version3];
+    NSError *metadataError = nil;
+    NSData *imageDataWithoutMetadata = [imageData wr_imageDataWithoutMetadataAndReturnError:&metadataError];
+    
+    if (metadataError != nil) {
+        ZMLogError(@"Cannot remove image metadata: %@", metadataError);
+    }
+    if (imageDataWithoutMetadata == nil) {
+        imageDataWithoutMetadata = imageData;
+    }
+    
+    ZMAssetClientMessage *message = [self appendAssetClientMessageWithNonce:nonce hidden:false imageData:imageDataWithoutMetadata version3:version3];
     message.isEncrypted = YES;
     return message;
 }
