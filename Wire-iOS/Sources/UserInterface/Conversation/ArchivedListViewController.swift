@@ -141,24 +141,11 @@ extension ArchivedListViewController: ZMInitialSyncCompletionObserver {
 // MARK: - ArchivedListViewModelDelegate
 
 extension ArchivedListViewController: ArchivedListViewModelDelegate {
-    internal func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, usingBlock: @escaping () -> ()) {
+    internal func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, applyChangesClosure: @escaping () -> ()) {
   
         guard initialSyncCompleted else { return }
-        let indexPathForItem: (Int) -> IndexPath = { return IndexPath(item: $0, section: 0) }
-        
-        collectionView.performBatchUpdates({
-            usingBlock()
-            
-            if change.deletedIndexes.count > 0 {
-                self.collectionView.deleteItems(at: change.deletedIndexes.map(indexPathForItem))
-            }
-            if change.insertedIndexes.count > 0 {
-                self.collectionView.insertItems(at: change.insertedIndexes.map(indexPathForItem))
-            }
-            change.enumerateMovedIndexes { from, to in
-                self.collectionView.moveItem(at: indexPathForItem(Int(from)), to: indexPathForItem(Int(to)))
-            }
-        }, completion: nil)
+        applyChangesClosure()
+        collectionView.reloadData()
     }
     
     func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo) {
