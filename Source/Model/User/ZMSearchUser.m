@@ -88,19 +88,21 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
         _user = user;
         _syncMOC = syncMOC;
         _uiMOC = uiMOC;
+
         if (self.user == nil) {
             _name = name;
             _handle = handle;
             
             PersonName *personName = [PersonName personWithName:name schemeTagger:nil];
             _initials = personName.initials;
-            
             _accentColorValue =  color;
             _isConnected = NO;
             _remoteIdentifier = remoteID;
+        } else {
+            [self.user updateWithSearchResultName:name handle:handle];
         }
-//        CheckString(self.remoteIdentifier != nil, "No remote ID?");
     }
+
     return self;
 }
 
