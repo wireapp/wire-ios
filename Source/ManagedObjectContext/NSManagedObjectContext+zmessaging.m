@@ -333,6 +333,15 @@ static BOOL storeIsReady = NO;
     return self.zm_isUserInterfaceContext && !self.zm_isRefreshOfObjectsDisabled;
 }
 
+- (NSURL *)zm_storeURL {
+    NSPersistentStore *store = self.persistentStoreCoordinator.persistentStores.firstObject;
+    if (store != nil) {
+        return [self.persistentStoreCoordinator URLForPersistentStore:store];
+    } else {
+        return nil;
+    }
+}
+
 + (BOOL)useInMemoryStore;
 {
     return UsesInMemoryStore;

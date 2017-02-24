@@ -88,6 +88,9 @@
 /// Returns the set containing all user clients that failed to establish a session with selfClient
 @property (nonatomic, readonly) NSMutableSet* zm_failedToEstablishSessionStore;
 
+/// Returns the URL of the store. This is supposed to be used for debugging purposes only
+@property (nonatomic, readonly) NSURL *zm_storeURL;
+
 /// This is used for unit tests.
 + (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
 + (BOOL)useInMemoryStore;
