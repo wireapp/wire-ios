@@ -634,6 +634,19 @@ static NSString *const AnnaBotHandle = @"annathebot";
     return predicate;
 }
 
+- (void)updateWithSearchResultName:(NSString *)name handle:(NSString *)handle;
+{
+    // We never refetch unconnected users, but when performing a search we
+    // might receive updated result and can update existing local users.
+    if (name != nil && name != self.name) {
+        self.name = name;
+    }
+
+    if (handle != nil && handle != self.handle) {
+        self.handle = handle;
+    }
+}
+
 @end
 
 

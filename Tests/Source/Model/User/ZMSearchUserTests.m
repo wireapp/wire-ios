@@ -382,6 +382,30 @@
     XCTAssertEqual(user.connection.status, ZMConnectionStatusSent);
 }
 
+- (void)testThatALocalUserIsUpdatedWhenTheSearchUserHasAnUpdatedNameAndHandle
+{
+    // Given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.name = @"Bruno";
+    user.handle = @"bruno";
+    XCTAssert([self.uiMOC saveOrRollback]);
+
+    // When
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"Hans"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorUndefined
+                                                         remoteID:nil
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
+
+    NOT_USED(searchUser);
+
+    // Then
+    XCTAssertEqualObjects(user.name, @"Hans");
+    XCTAssertEqualObjects(user.handle, @"hans");
+}
+
 - (void)testThatItDoesNotConnectIfTheSearchUserHasAConnectedUser;
 {
     // We expect the search user to only have a user, if that user has a (matching)
@@ -391,6 +415,8 @@
     // given
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.name = @"Hans";
+    user.handle = @"hans";
     user.connection.status = ZMConnectionStatusAccepted;
     XCTAssert([self.uiMOC saveOrRollback]);
 
