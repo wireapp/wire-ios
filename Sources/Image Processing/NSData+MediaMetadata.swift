@@ -35,12 +35,14 @@ public extension NSData {
         swiftMetadataProperties[String(kCGImagePropertyIPTCDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyCIFFDictionary)] = kCFNull
         swiftMetadataProperties[String(kCGImagePropertyMakerAppleDictionary)] = kCFNull
-        swiftMetadataProperties[String(kCGImagePropertyMakerCanonDictionary)] = kCFNull
-        swiftMetadataProperties[String(kCGImagePropertyMakerNikonDictionary)] = kCFNull
-        swiftMetadataProperties[String(kCGImagePropertyMakerMinoltaDictionary)] = kCFNull
-        swiftMetadataProperties[String(kCGImagePropertyMakerFujiDictionary)] = kCFNull
-        swiftMetadataProperties[String(kCGImagePropertyMakerOlympusDictionary)] = kCFNull
-        swiftMetadataProperties[String(kCGImagePropertyMakerPentaxDictionary)] = kCFNull
+        // TODO: iOS8 is crashing when the following symbols are imported from ImageIO.
+        // It looks like a linker issue, since the symbols are marked as available from iOS4.
+        swiftMetadataProperties["{MakerCanon}"]   = kCFNull // kCGImagePropertyMakerCanonDictionary
+        swiftMetadataProperties["{MakerNikon}"]   = kCFNull // kCGImagePropertyMakerNikonDictionary
+        swiftMetadataProperties["{MakerMinolta}"] = kCFNull // kCGImagePropertyMakerMinoltaDictionary
+        swiftMetadataProperties["{MakerFuji}"]    = kCFNull // kCGImagePropertyMakerFujiDictionary
+        swiftMetadataProperties["{MakerOlympus}"] = kCFNull // kCGImagePropertyMakerOlympusDictionary
+        swiftMetadataProperties["{MakerPentax}"]  = kCFNull // kCGImagePropertyMakerPentaxDictionary
         
         return swiftMetadataProperties as CFDictionary
     }()
