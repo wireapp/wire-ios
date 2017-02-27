@@ -786,6 +786,70 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     }
 }
 
+- (void)testThatItPerformsMigrationFrom_2_26_0_ToCurrentModelVersion {
+    // given
+    __block NSManagedObjectContext *syncContext;
+    __block NSUInteger conversationCount;
+    __block NSUInteger messageCount;
+    __block NSUInteger systemMessageCount;
+    __block NSUInteger connectionCount;
+    __block NSArray *userDictionaries;
+    __block NSUInteger userClientCount;
+    __block NSArray *assetClientMessages;
+    __block NSArray<ZMMessage *> *messages;
+
+    // when
+    [self performMockingStoreURLWithVersion:@"2.26.0" block:^(NSURL *storeURL){
+
+        // We additionally check that Core Data will will perform a migration as we only added an index.
+        // Without setting a version hash modifier Core Data will not trigger a migration for this change.
+        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreAtURL:storeURL]);
+        syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:storeURL];
+        XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.26.0 to the current mom"];
+
+        [syncContext performGroupedBlockAndWait:^{
+            NSError *error = nil;
+            conversationCount = [syncContext countForFetchRequest:ZMConversation.sortedFetchRequest error:&error];
+            messageCount = [syncContext countForFetchRequest:ZMClientMessage.sortedFetchRequest error:&error];
+            messages = [syncContext executeFetchRequestOrAssert:ZMMessage.fetchRequest];
+            systemMessageCount = [syncContext countForFetchRequest:ZMSystemMessage.sortedFetchRequest error:&error];
+            connectionCount = [syncContext countForFetchRequest:ZMConnection.sortedFetchRequest error:&error];
+            userClientCount = [syncContext countForFetchRequest:UserClient.sortedFetchRequest error:&error];
+            assetClientMessages = [syncContext executeFetchRequestOrAssert:ZMAssetClientMessage.sortedFetchRequest];
+
+            XCTAssertNil(error);
+
+            NSFetchRequest *userFetchRequest = ZMUser.sortedFetchRequest;
+            userFetchRequest.resultType = NSDictionaryResultType;
+            userFetchRequest.propertiesToFetch = self.userPropertiesToFetch;
+            userDictionaries = [syncContext executeFetchRequestOrAssert:userFetchRequest];
+            [expectation fulfill];
+        }];
+
+        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+    }];
+
+    WaitForAllGroupsToBeEmpty(15);
+
+    // then
+    XCTAssertEqual(assetClientMessages.count, 0lu);
+    XCTAssertEqual(conversationCount, 20lu);
+    XCTAssertEqual(messageCount, 3lu);
+    XCTAssertEqual(systemMessageCount, 21lu);
+    XCTAssertEqual(connectionCount, 16lu);
+    XCTAssertEqual(userClientCount, 12lu);
+
+    XCTAssertNotNil(userDictionaries);
+    XCTAssertEqual(userDictionaries.count, 22lu);
+
+    XCTAssertEqualObjects([userDictionaries subarrayWithRange:NSMakeRange(0, 3)], [self userDictionaryFixture2_25_1]);
+    XCTAssertGreaterThan(messages.count, 0lu);
+
+    for (ZMMessage *message in messages) {
+        XCTAssertNil(message.normalizedText);
+    }
+}
+
 #pragma mark - Helper
 
 - (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStoreAtURL:(NSURL *)storeURL
