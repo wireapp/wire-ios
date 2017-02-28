@@ -41,12 +41,15 @@ extension CallClosedReason {
 extension ZMCallKitDelegate : WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
     
     public func callCenterDidChange(callState: CallState, conversationId: UUID, userId: UUID?) {
+        guard let conversation = ZMConversation(remoteID: conversationId, createIfNeeded: false, in: userSession.managedObjectContext),
+                !conversation.isSilenced else {
+            return
+        }
         
         switch callState {
         case .incoming(video: let video):
             guard
                 let userId = userId,
-                let conversation = ZMConversation(remoteID: conversationId, createIfNeeded: false, in: userSession.managedObjectContext),
                 let user = ZMUser(remoteID: userId, createIfNeeded: false, in: userSession.managedObjectContext) else {
                     break
             }
@@ -86,6 +89,10 @@ extension ZMCallKitDelegate : WireCallCenterCallStateObserver, WireCallCenterMis
 extension ZMCallKitDelegate : WireCallCenterV2CallStateObserver {
     
     public func callCenterDidChange(voiceChannelState: VoiceChannelV2State, conversation: ZMConversation) {
+        guard !conversation.isSilenced else {
+            return
+        }
+        
         switch voiceChannelState {
         case .incomingCall:
             guard let user = conversation.voiceChannelRouter?.v2.participants.firstObject as? ZMUser else { return }
