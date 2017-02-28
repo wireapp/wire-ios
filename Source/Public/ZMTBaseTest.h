@@ -31,6 +31,7 @@ typedef BOOL(^VerificationBlock)(void);
 
 /// Calls @c -verify during @c -tearDown
 - (void)verifyMockLater:(nonnull id)mock;
+/// Verify all mocks
 - (void)verifyMocksNow;
 
 - (void)setUp ZM_REQUIRES_SUPER;
@@ -39,7 +40,9 @@ typedef BOOL(^VerificationBlock)(void);
 /// Should be wrapped in call to @c XCTAssert()
 - (BOOL)waitOnMainLoopUntilBlock:(nonnull VerificationBlock)block timeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
 
+/// Wait for a condition to be met, periodically verifying if the condition is met. It will verify at least once
 - (BOOL)waitWithTimeout:(NSTimeInterval)timeout verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN;
+/// Wait for a condition to be met, periodically verifying if the condition is met. It will verify at least once
 - (BOOL)waitUntilDate:(nonnull NSDate *)runUntil verificationBlock:(nonnull VerificationBlock)block ZM_MUST_USE_RETURN;
 
 /// Returns whether we are debugging the tests. This is enabled by setting the "DEBUG_TESTS" environment variable to 1
@@ -52,9 +55,17 @@ typedef BOOL(^VerificationBlock)(void);
 
 /// If this is set to true, we will ignore the debug flag for tests in timer (use this to test timer test failures)
 @property (nonatomic) BOOL ignoreTestDebugFlagForTestTimers;
-@property (nonatomic, readonly, nonnull) ZMSDispatchGroup *dispatchGroup;
 
+/// The test dispatch group
+@property (nonatomic, readonly, nonnull) ZMSDispatchGroup *dispatchGroup;
+/// List of dispatch groups that are waited on when calling @c waitForAllGroupsToBeEmptyWithTimeout
+@property (nonatomic, readonly, nonnull) NSArray<ZMSDispatchGroup *> *allDispatchGroups;
+
+
+/// Spins the main queue run loop for the given amount of time
 - (void)spinMainQueueWithTimeout:(NSTimeInterval)timeout;
+
+/// Wait for all dispatch groups to be empty
 - (BOOL)waitForAllGroupsToBeEmptyWithTimeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;
 
 - (BOOL)waitForCustomExpectationsWithTimeout:(NSTimeInterval)timeout handler:(nullable XCWaitCompletionHandler)handlerOrNil ZM_MUST_USE_RETURN;
