@@ -152,6 +152,10 @@ NSString * const DeliveredKey = @"delivered";
     VerifyReturnNil(message != nil);
     
     BOOL encrypted = [updateEvent isEncrypted];
+
+    if (!message.knownMessage) {
+        [UnknownMessageAnalyticsTracker tagUnknownMessageWithAnalytics:moc.analytics];
+    }
     
     ZMConversation *conversation = [self.class conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
     VerifyReturnNil(conversation != nil);
