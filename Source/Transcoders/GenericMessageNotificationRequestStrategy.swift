@@ -17,12 +17,20 @@
 //
 
 
-public final class GenericMessageNotificationRequestStrategy: GenericMessageRequestStrategy {
+@objc
+public final class GenericMessageNotificationRequestStrategy: NSObject, RequestStrategy {
 
     private var token: NotificationCenterObserverToken?
+    private let managedObjectContext: NSManagedObjectContext
+    fileprivate let genericMessageStrategy: GenericMessageRequestStrategy
 
     public init(managedObjectContext: NSManagedObjectContext, clientRegistrationDelegate: ClientRegistrationDelegate) {
-        super.init(context: managedObjectContext, clientRegistrationDelegate: clientRegistrationDelegate)
+        self.managedObjectContext = managedObjectContext
+        self.genericMessageStrategy = GenericMessageRequestStrategy(
+            context: managedObjectContext,
+            clientRegistrationDelegate: clientRegistrationDelegate
+        )
+        super.init()
         setupObserver()
     }
 
@@ -30,11 +38,36 @@ public final class GenericMessageNotificationRequestStrategy: GenericMessageRequ
         token = NotificationCenterObserverToken(name: GenericMessageScheduleNotification.name) { [weak self] note in
             guard let `self` = self, let (message, conversation) = note.object as? (ZMGenericMessage, ZMConversation) else { return }
             let identifier = conversation.objectID
-            self.context.performGroupedBlock {
-                guard let syncConversation = (try? self.context.existingObject(with: identifier)) as? ZMConversation else { return }
-                self.schedule(message: message, inConversation: syncConversation, completionHandler: nil)
+            self.managedObjectContext.performGroupedBlock {
+                guard let syncConversation = (try? self.managedObjectContext.existingObject(with: identifier)) as? ZMConversation else { return }
+                self.genericMessageStrategy.schedule(message: message, inConversation: syncConversation, completionHandler: nil)
             }
         }
+    }
+
+    public func nextRequest() -> ZMTransportRequest? {
+        return genericMessageStrategy.nextRequest()
+    }
+
+}
+
+
+extension GenericMessageNotificationRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        return [genericMessageStrategy]
+    }
+
+    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+        return nil
+    }
+
+    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        // no-op
+    }
+
+    public func objectsDidChange(_ objects: Set<NSManagedObject>) {
+        // no-op
     }
 
 }
