@@ -23,7 +23,11 @@ import Cartography
 
 public extension ZMConversationList {
     func hasUnreadMessages(excluding: ZMConversation) -> Bool {
-        return self.flatMap { $0 as? ZMConversation }.filter { $0 != excluding }.map { $0.estimatedUnreadCount }.reduce(0, +) > 0
+        return self.conversations().filter { $0 != excluding }.map { $0.estimatedUnreadCount }.reduce(0, +) > 0
+    }
+    
+    func conversations() -> [ZMConversation] {
+        return self.flatMap { $0 as? ZMConversation }
     }
 }
 
