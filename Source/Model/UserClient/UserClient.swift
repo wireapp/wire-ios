@@ -210,9 +210,10 @@ public class UserClient: ZMManagedObject, UserClientType {
                 selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
                 
                 // Send session reset message so other user can send us messages immediately
-                if let user = self.user {
-                    let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: syncMOC) : self.user?.oneToOneConversation
-                    _ = conversation?.appendOTRSessionResetMessage()
+                if let user = self.user,
+                    let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: syncMOC) : self.user?.oneToOneConversation {
+                    let message = ZMGenericMessage.sessionReset(withNonce: UUID().transportString())
+                    GenericMessageScheduleNotification(message: message, conversation: conversation).post()
                 }
                 
                 self.managedObjectContext?.saveOrRollback()

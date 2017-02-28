@@ -169,7 +169,6 @@ NS_ASSUME_NONNULL_END
 
 - (nonnull ZMClientMessage *)appendClientMessageWithData:(nonnull NSData *)data;
 - (nonnull ZMClientMessage *)appendOTRKnockMessageWithNonce:(nonnull NSUUID *)nonce;
-- (nonnull ZMClientMessage *)appendOTRSessionResetMessage;
 - (nonnull ZMClientMessage *)appendOTRMessageWithText:(nonnull NSString *)text nonce:(nonnull NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview;
 - (nonnull ZMClientMessage *)appendOTRMessageWithLocationData:(nonnull ZMLocationData *)locationData nonce:(nonnull NSUUID *)nonce;
 - (nonnull ZMAssetClientMessage *)appendOTRMessageWithImageData:(nonnull NSData *)imageData nonce:(nonnull NSUUID *)nonce;

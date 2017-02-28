@@ -287,8 +287,16 @@ class UserClientTests: ZMBaseManagedObjectTest {
         }
     }
     
-    func testThatItSendsMessageWhenResettingSession() {
-        var connection: ZMConnection?
+    func testThatItPostsANotificationToSendASessionResetMessageWhenResettingSession() {
+        var (message, conversation): (ZMGenericMessage?, ZMConversation?)
+
+        let noteExpectation = expectation(description: "GenericMessageScheduleNotification should be fired")
+        let token = NotificationCenterObserverToken(name: GenericMessageScheduleNotification.name) { note in
+            guard let tuple = note.object as? (ZMGenericMessage, ZMConversation) else { return }
+            message = tuple.0
+            conversation = tuple.1
+            noteExpectation.fulfill()
+        }
 
         self.syncMOC.performGroupedBlockAndWait {
             // given
@@ -301,8 +309,8 @@ class UserClientTests: ZMBaseManagedObjectTest {
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
             
-            connection = ZMConnection.insertNewSentConnection(to: otherUser)!
-            connection?.status = .accepted
+            let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+            connection.status = .accepted
             
             selfClient.trustClient(otherClient)
             
@@ -311,19 +319,14 @@ class UserClientTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedBlockAndWait {
-            // then
-            XCTAssertEqual(connection?.conversation.messages.count, 1)
-            
-            if let message = connection?.conversation.messages.lastObject as? ZMClientMessage {
-                XCTAssertTrue(message.genericMessage!.hasClientAction())
-                XCTAssertEqual(message.genericMessage!.clientAction, ZMClientAction.RESETSESSION)
-            } else {
-                XCTFail("Did not insert session reset message")
-            }
-        }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        // then
+        XCTAssertNotNil(message)
+        XCTAssertNotNil(conversation)
+        XCTAssertEqual(message?.hasClientAction(), true)
+        XCTAssertEqual(message?.clientAction, .RESETSESSION)
+        _ = token // Silence warning
     }
 }
 
