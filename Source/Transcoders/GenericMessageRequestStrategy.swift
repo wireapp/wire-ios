@@ -23,9 +23,9 @@ public class GenericMessageEntity : OTREntity {
     
     public var message : ZMGenericMessage
     public var conversation : ZMConversation?
-    public var completionHandler : (_ response: ZMTransportResponse) -> Void
+    public var completionHandler : ((_ response: ZMTransportResponse) -> Void)?
     
-    init(conversation: ZMConversation, message: ZMGenericMessage, completionHandler: @escaping (_ response: ZMTransportResponse) -> Void) {
+    init(conversation: ZMConversation, message: ZMGenericMessage, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         self.conversation = conversation
         self.message = message
         self.completionHandler = completionHandler
@@ -52,6 +52,9 @@ extension GenericMessageEntity : EncryptedPayloadGenerator {
     
 }
 
+/// This should not be used as a standalone strategy but either subclassed or used within another
+/// strategy. Please have a look at `CallingRequestStrategy` and `GenericMessageNotificationRequestStrategy`
+/// before modifying the behaviour of this class.
 public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageEntity>, ZMRequestGenerator, ZMContextChangeTracker {
     
     private var sync : DependencyEntitySync<GenericMessageRequestStrategy>?
@@ -63,7 +66,7 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
         sync = DependencyEntitySync(transcoder: self, context: context)
     }
     
-    public func schedule(message: ZMGenericMessage, inConversation conversation: ZMConversation, completionHandler: @escaping (_ response: ZMTransportResponse) -> Void) {
+    public func schedule(message: ZMGenericMessage, inConversation conversation: ZMConversation, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         sync?.synchronize(entity: GenericMessageEntity(conversation: conversation, message: message, completionHandler: completionHandler))
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
@@ -75,7 +78,7 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
     public override func request(forEntity entity: GenericMessageEntity, didCompleteWithResponse response: ZMTransportResponse) {
         super.request(forEntity: entity, didCompleteWithResponse: response)
         
-        entity.completionHandler(response)
+        entity.completionHandler?(response)
     }
     
     public func nextRequest() -> ZMTransportRequest? {
