@@ -622,8 +622,8 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                                         let user = ZMUser.insertNewObject(in: self.uiMOC)
                                                         conversation.addParticipant(user)
         },
-                                                     expectedChangedFields: KeySet(["securityLevelChanged" , "nameChanged", "participantsChanged"]),
-                                                     expectedChangedKeys: KeySet(["displayName", "otherActiveParticipants", "securityLevel"]))
+                                                     expectedChangedFields: KeySet(["securityLevelChanged", "messagesChanged", "nameChanged", "participantsChanged"]),
+                                                     expectedChangedKeys: KeySet(["displayName", "messages", "otherActiveParticipants", "securityLevel"]))
     
     }
     

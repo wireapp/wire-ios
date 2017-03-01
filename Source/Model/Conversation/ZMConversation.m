@@ -463,16 +463,29 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (void)addParticipant:(ZMUser *)participant
 {
+    [self addParticipants:[NSSet setWithObject:participant]];
+}
+
+- (void)addParticipants:(nonnull NSSet<ZMUser *> *)participants
+{
     VerifyReturn(self.conversationType == ZMConversationTypeGroup);
-    RequireString(participant != [ZMUser selfUserInContext:self.managedObjectContext], "Can't add self user to a conversation");
-    [self internalAddParticipant:participant isAuthoritative:NO];
+    [participants enumerateObjectsUsingBlock:^(ZMUser * _Nonnull participant, BOOL * _Nonnull stop __unused) {
+        RequireString(participant != [ZMUser selfUserInContext:self.managedObjectContext], "Can't add self user to a conversation");
+    }];
+    
+    [self internalAddParticipants:participants isAuthoritative:NO];
 }
 
 - (void)removeParticipant:(ZMUser *)participant;
 {
+    [self removeParticipants:[NSSet setWithObject:participant]];
+}
+
+- (void)removeParticipants:(nonnull NSSet<ZMUser *> *)participants;
+{
     VerifyReturn(self.conversationType == ZMConversationTypeGroup);
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    [self internalRemoveParticipant:participant sender:selfUser];
+    [self internalRemoveParticipants:participants sender:selfUser];
 }
 
 - (void)setVisibleWindowFromMessage:(ZMMessage *)oldestMessage toMessage:(ZMMessage *)newestMessage;
@@ -1077,7 +1090,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         const BOOL isSelf = (participant == selfUser);
         RequireString(!isSelf, "Can't pass self user as a participant of a group conversation");
         if(!isSelf) {
-            [conversation internalAddParticipant:participant isAuthoritative:NO];
+            [conversation internalAddParticipants:[NSSet setWithObject:participant] isAuthoritative:NO];
         }
     }
     
@@ -1434,38 +1447,67 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 @implementation ZMConversation (ParticipantsInternal)
 
-- (void)internalAddParticipant:(ZMUser *)participant isAuthoritative:(BOOL)isAuthoritative;
++ (NSSet<UserClient *>*)clientsOfUsers:(NSSet<ZMUser *> *)users
 {
-    VerifyReturn(participant != nil);
-    RequireString([participant isKindOfClass:ZMUser.class], "Participant must be a ZMUser");
-    if (participant.isSelfUser) {
+    NSMutableSet *result = [NSMutableSet set];
+    [users enumerateObjectsUsingBlock:^(ZMUser * _Nonnull user, BOOL * _Nonnull stop __unused) {
+        [result addObjectsFromArray:user.clients.allObjects];
+    }];
+    return result;
+}
+
+- (void)internalAddParticipants:(NSSet<ZMUser *> *)participants isAuthoritative:(BOOL)isAuthoritative;
+{
+    VerifyReturn(participants != nil);
+    
+    [participants enumerateObjectsUsingBlock:^(ZMUser * _Nonnull participant, BOOL * _Nonnull stop __unused) {
+        RequireString([participant isKindOfClass:ZMUser.class], "Participant must be a ZMUser");
+    }];
+    
+    NSSet<ZMUser *>* selfUserSet = [NSSet setWithObject:[ZMUser selfUserInContext:self.managedObjectContext]];
+    
+    NSMutableSet<ZMUser *>* otherUsers = [participants mutableCopy];
+    [otherUsers minusSet:selfUserSet];
+    
+    if ([participants intersectsSet:selfUserSet]) {
         self.isSelfAnActiveMember = YES;
         self.needsToBeUpdatedFromBackend = YES;
-    } else {
-        [self.mutableOtherActiveParticipants addObject:participant];
+    }
+    
+    if (otherUsers.count > 0) {
+        [self.mutableOtherActiveParticipants addObjectsFromArray:otherUsers.allObjects];
         if(isAuthoritative) {
-            [self.mutableLastServerSyncedActiveParticipants addObject:participant];
+            [self.mutableLastServerSyncedActiveParticipants addObjectsFromArray:otherUsers.allObjects];
         }
-        [self decreaseSecurityLevelIfNeededAfterIgnoringClients:participant.clients addedUser:participant];
+        
+        [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[ZMConversation clientsOfUsers:otherUsers] causedByAddedUsers:otherUsers];
     }
 }
 
-- (void)internalRemoveParticipant:(ZMUser *)participant sender:(ZMUser *)sender;
+- (void)internalRemoveParticipants:(NSSet<ZMUser *> *)participants sender:(ZMUser *)sender
 {
-    VerifyReturn(participant != nil);
-    RequireString([participant isKindOfClass:ZMUser.class], "Participant must be a ZMUser");
+    VerifyReturn(participants != nil);
     
-    if (participant.isSelfUser) {
+    [participants enumerateObjectsUsingBlock:^(ZMUser * _Nonnull participant, BOOL * _Nonnull stop __unused) {
+        RequireString([participant isKindOfClass:ZMUser.class], "Participant must be a ZMUser");
+    }];
+    
+    NSSet<ZMUser *>* selfUserSet = [NSSet setWithObject:[ZMUser selfUserInContext:self.managedObjectContext]];
+    
+    NSMutableSet<ZMUser *>* otherUsers = [participants mutableCopy];
+    [otherUsers minusSet:selfUserSet];
+    
+    if ([participants intersectsSet:selfUserSet]) {
         self.isSelfAnActiveMember = NO;
         self.isArchived = sender.isSelfUser;
+    }
+    
+    if (! [self.otherActiveParticipants intersectsSet:otherUsers]) {
         return;
     }
     
-    if (! [self.otherActiveParticipants containsObject:participant]) {
-        return;
-    }
-    [self.mutableOtherActiveParticipants removeObject:participant];
-    [self increaseSecurityLevelIfNeededAfterRemovingClientForUser:participant];
+    [self.mutableOtherActiveParticipants removeObjectsInArray:otherUsers.allObjects];
+    [self increaseSecurityLevelIfNeededAfterRemovingClientForUsers:otherUsers];
 }
 
 @dynamic isSelfAnActiveMember;
@@ -1501,6 +1543,65 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     NSMutableOrderedSet *set = [self.otherActiveParticipants mutableCopy];
     [set minusOrderedSet:self.mutableLastServerSyncedActiveParticipants];
     return set;
+}
+
+- (void)insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:(ZMSystemMessage *)participantsChange
+{
+    NSUInteger messageIndex = [self.messages indexOfObject:participantsChange];
+    if (messageIndex == 0) {
+        return;
+    }
+    ZMMessage *previousMessage = [self.messages objectAtIndex:messageIndex - 1];
+    
+    BOOL (^isAppropriateVerificationSystemMessage)(ZMMessage *message) = ^BOOL(ZMMessage *message) {
+        if (![previousMessage isKindOfClass:[ZMSystemMessage class]]) {
+            return NO;
+        }
+        
+        ZMSystemMessage *systemMessage = (ZMSystemMessage *)message;
+        
+        if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsAdded &&
+            systemMessage.systemMessageType == ZMSystemMessageTypeNewClient) {
+            return ([systemMessage.addedUsers isEqualToSet:participantsChange.users]);
+        }
+        else if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsRemoved &&
+                 systemMessage.systemMessageType == ZMSystemMessageTypeConversationIsSecure) {
+            return ([systemMessage.users isEqualToSet:participantsChange.users]);
+        }
+        
+        return NO;
+    };
+    
+    if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsAdded) {
+        // Check if the previous system message about the conversation degradation must be now moved or inserted
+        // The message needs to be moved when the action (adding the participant) was local
+        // The message needs to be inserted when the action was remote
+        
+        if (isAppropriateVerificationSystemMessage(previousMessage)) {
+            NSDate *newDate = [participantsChange.serverTimestamp dateByAddingTimeInterval:0.01];
+            
+            previousMessage.serverTimestamp = newDate;
+            [self resortMessagesWithUpdatedMessage:previousMessage];
+        }
+        else {
+            [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[NSSet set] causedByAddedUsers:participantsChange.users];
+        }
+    }
+    else if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsRemoved) {
+        // Check if the previous system message about the conversation is secured must be now moved or inserted
+        // The message needs to be moved when the action (removing the participant) was local
+        // The message needs to be inserted when the action was remote
+        
+        if (isAppropriateVerificationSystemMessage(previousMessage)) {
+            NSDate *newDate = [participantsChange.serverTimestamp dateByAddingTimeInterval:0.01];
+            
+            previousMessage.serverTimestamp = newDate;
+            [self resortMessagesWithUpdatedMessage:previousMessage];
+        }
+        else {
+            [self increaseSecurityLevelIfNeededAfterRemovingClientForUsers:participantsChange.users];
+        }
+    }
 }
 
 @end

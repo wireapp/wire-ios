@@ -100,7 +100,9 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 @property (nonatomic, readonly) NSTimeInterval messageDestructionTimeout;
 
 - (void)addParticipant:(nonnull ZMUser *)participant;
+- (void)addParticipants:(nonnull NSSet<ZMUser *> *)participants;
 - (void)removeParticipant:(nonnull ZMUser *)participant;
+- (void)removeParticipants:(nonnull NSSet<ZMUser *> *)participant;
 
 /// This method loads messages in a window when there are visible messages
 - (void)setVisibleWindowFromMessage:(nullable ZMMessage *)oldestMessage toMessage:(nullable ZMMessage *)newestMessage;

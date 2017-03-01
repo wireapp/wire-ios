@@ -38,10 +38,10 @@ extension ZMConversation {
 
     /// Should be called when client is deleted.
     /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
-    @objc(increaseSecurityLevelIfNeededAfterRemovingClientForUser:)
-    public func increaseSecurityLevelIfNeededAfterRemovingClient(for user: ZMUser) {
+    @objc(increaseSecurityLevelIfNeededAfterRemovingClientForUsers:)
+    public func increaseSecurityLevelIfNeededAfterRemovingClient(for users: Set<ZMUser>) {
         guard self.increaseSecurityLevelIfNeeded() else { return }
-        self.appendNewIsSecureSystemMessage(verified: Set<UserClient>(), for: Set(arrayLiteral: user))
+        self.appendNewIsSecureSystemMessage(verified: Set<UserClient>(), for: users)
         self.notifyOnUI(notification: ZMConversationIsVerifiedNotificationName)
     }
 
@@ -49,18 +49,24 @@ extension ZMConversation {
     @objc(decreaseSecurityLevelIfNeededAfterDiscoveringClients:causedByMessage:)
     public func decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set<UserClient>, causedBy message: ZMOTRMessage?) {
         guard self.decreaseSecurityLevelIfNeeded() else { return }
-        self.appendNewAddedClientSystemMessage(added: clients, before: message)
+        self.appendNewAddedClientSystemMessage(added: clients, causedBy: DiscoveryCause.message(message))
         if let message = message {
             self.expireAllPendingMessagesBecauseOfSecurityLevelDegradation(staringFrom: message)
         }
     }
+    
+    /// Should be called when a new user is added to the conversation
+    @objc(decreaseSecurityLevelIfNeededAfterDiscoveringClients:causedByAddedUsers:)
+    public func decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set<UserClient>, causedBy users: Set<ZMUser>) {
+        guard self.decreaseSecurityLevelIfNeeded() else { return }
+        self.appendNewAddedClientSystemMessage(added: clients, causedBy: DiscoveryCause.addedUsers(users))
+    }
 
     /// Should be called when a client is ignored
-    @objc(decreaseSecurityLevelIfNeededAfterIgnoringClients:addedUser:)
-    public func decreaseSecurityLevelIfNeededAfterIgnoring(clients: Set<UserClient>, addedUser: ZMUser?) {
+    @objc(decreaseSecurityLevelIfNeededAfterIgnoringClients:)
+    public func decreaseSecurityLevelIfNeededAfterIgnoring(clients: Set<UserClient>) {
         guard self.decreaseSecurityLevelIfNeeded() else { return }
-        let addedUsers = (addedUser != nil) ? Set(arrayLiteral: addedUser!) : Set()
-        self.appendIgnoredClientsSystemMessage(ignored: clients, addedUsers: addedUsers)
+        self.appendIgnoredClientsSystemMessage(ignored: clients)
     }
 
     /// Creates system message that says that you started using this device, if you were not registered on this device
@@ -244,32 +250,47 @@ extension ZMConversation {
                                  users: users,
                                  clients: clients,
                                  timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
-        
     }
     
-    fileprivate func appendNewAddedClientSystemMessage(added clients: Set<UserClient>, before message: ZMOTRMessage?) {
-        guard !clients.isEmpty else { return }
+    fileprivate enum DiscoveryCause {
+        case message(ZMOTRMessage?)
+        case addedUsers(Set<ZMUser>)
+    }
+    
+    fileprivate func appendNewAddedClientSystemMessage(added clients: Set<UserClient>, causedBy cause: DiscoveryCause) {
         let users = Set(clients.flatMap { $0.user })
-        let timestamp : Date?
-        if let message = message, message.conversation == self {
-            timestamp = self.timestamp(before: message)
-        } else {
+        var timestamp : Date?
+        var addedUsers: Set<ZMUser> = Set<ZMUser>([])
+        
+        switch cause {
+        case .addedUsers(let users):
+            addedUsers = users
+        case .message(let message):
+            if let message = message, message.conversation == self {
+                timestamp = self.timestamp(before: message)
+            }
+        }
+        
+        guard !clients.isEmpty || !addedUsers.isEmpty else { return }
+
+        if timestamp == .none {
             timestamp = self.timestamp(after: self.messages.lastObject as? ZMMessage)
         }
+        
         self.appendSystemMessage(type: .newClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
+                                 addedUsers: addedUsers,
                                  clients: clients,
                                  timestamp: timestamp)
     }
     
-    fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>, addedUsers: Set<ZMUser>) {
+    fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
         let users = Set(clients.flatMap { $0.user })
         self.appendSystemMessage(type: .ignoredClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
-                                 addedUsers: addedUsers,
                                  clients: clients,
                                  timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
     }

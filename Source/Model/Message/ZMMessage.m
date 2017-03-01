@@ -907,6 +907,11 @@ NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
 
     message.isEncrypted = NO;
     message.isPlainText = YES;
+    
+    if (type == ZMSystemMessageTypeParticipantsAdded || type == ZMSystemMessageTypeParticipantsRemoved) {
+        [conversation insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:message];
+    }
+    
     return message;
 }
 
