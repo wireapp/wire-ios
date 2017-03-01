@@ -48,6 +48,7 @@
 @property (nonatomic, strong) UIView *imageViewContainer;
 @property (nonatomic, strong) ObfuscationView *obfuscationView;
 @property (nonatomic) SavableImage *savableImage;
+@property (nonatomic) UITapGestureRecognizer *imageTapRecognizer;
 
 /// Can either be UIImage or FLAnimatedImage
 @property (nonatomic, strong) id<MediaAsset> image;
@@ -174,6 +175,9 @@ static const CGFloat ImageToolbarMinimumSize = 192;
 
     self.obfuscationView = [[ObfuscationView alloc] initWithIcon:ZetaIconTypePhoto];
     [self.imageViewContainer addSubview:self.obfuscationView];
+
+    self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
+    [self.imageViewContainer addGestureRecognizer:self.imageTapRecognizer];
     self.obfuscationView.hidden = YES;
   
     self.accessibilityIdentifier = @"ImageCell";
@@ -232,17 +236,7 @@ static const CGFloat ImageToolbarMinimumSize = 192;
         
         if (self.autoStretchVertically) {
             self.imageRightConstraint.active = NO;
-            
-            CGRect screen = UIScreen.mainScreen.bounds;
-            CGFloat screenRatio = CGRectGetHeight(screen) / CGRectGetWidth(screen);
-            CGFloat imageRatio = self.imageSize.height / self.imageSize.width;
-            CGFloat lowerBound = screenRatio * 0.84, upperBound = screenRatio * 1.2;
-            
-            BOOL imageWidthExceedsBounds = self.imageSize.width > self.bounds.size.width;
-            BOOL similarRatio = lowerBound < imageRatio && imageRatio < upperBound;
-            BOOL displayEdgeToEdge = imageWidthExceedsBounds && !similarRatio;
-            
-            self.messageContentView.layoutMargins = displayEdgeToEdge ? UIEdgeInsetsZero : self.defaultLayoutMargins;
+            self.messageContentView.layoutMargins = self.defaultLayoutMargins;
             self.imageWidthConstraint.constant = self.imageSize.width;
             
             if (! self.imageAspectConstraint) {
@@ -458,6 +452,10 @@ static const CGFloat ImageToolbarMinimumSize = 192;
 
 - (void)onTextSketchPressed:(id)sender {
     [self.delegate conversationCell:self didSelectAction:MessageActionSketchText];
+}
+
+- (void)imageTapped:(id)sender {
+    [self.delegate conversationCell:self didSelectAction:MessageActionPresent];
 }
 
 #pragma mark - Message updates
