@@ -38,6 +38,7 @@
 @class ZMUpdateEvent;
 @class ZMLocationData;
 @class ZMGenericMessage;
+@class ZMSystemMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 extern NSString *const ZMConversationConnectionKey;
@@ -207,8 +208,8 @@ NS_ASSUME_NONNULL_END
 
 @interface ZMConversation (ParticipantsInternal)
 
-- (void)internalAddParticipant:(nonnull ZMUser *)participant isAuthoritative:(BOOL)isAuthoritative;
-- (void)internalRemoveParticipant:(nonnull ZMUser *)participant sender:(nonnull ZMUser *)sender;
+- (void)internalAddParticipants:(nonnull NSSet<ZMUser *> *)participants isAuthoritative:(BOOL)isAuthoritative;
+- (void)internalRemoveParticipants:(nonnull NSSet<ZMUser *> *)participants sender:(nonnull ZMUser *)sender;
 
 @property (nonatomic) BOOL isSelfAnActiveMember; ///< whether the self user is an active member (as opposed to a past member)
 @property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *otherActiveParticipants;
@@ -225,6 +226,10 @@ NS_ASSUME_NONNULL_END
 
 /// List of users which have been added to the conversation locally but not one the backend
 @property (readonly, nonatomic, nullable) NSOrderedSet<ZMUser *> *unsyncedActiveParticipants;
+
+/// Checks if the security level changed as the result of the participants change.
+/// Appends or moves the security level system message.
+- (void)insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:(nonnull ZMSystemMessage *)participantsChange;
 
 @end
 

@@ -19,6 +19,8 @@
 
 #import "ZMConversationTests.h"
 #import "ZMConversation+Transport.h"
+#import "MessagingTest+EventFactory.h"
+@import ZMTransport;
 
 @interface ZMConversationSecurityTests : ZMConversationTestsBase
 
@@ -140,11 +142,12 @@
         // then the conversation should degrade
         XCTAssertFalse(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
-        ZMSystemMessage *message = conversation.messages.lastObject;
-        XCTAssertEqual(message.systemMessageType, ZMSystemMessageTypeIgnoredClient);
-        XCTAssertEqualObjects(message.addedUsers, [NSSet setWithObject:user3]);
-        XCTAssertEqualObjects(message.users, [NSSet setWithObject:user3]);
-
+        
+        // Conversation degraded message
+        ZMSystemMessage *conversationDegradedMessage = conversation.messages.lastObject;
+        XCTAssertEqual(conversationDegradedMessage.systemMessageType, ZMSystemMessageTypeNewClient);
+        XCTAssertEqualObjects(conversationDegradedMessage.addedUsers, [NSSet setWithObject:user3]);
+        XCTAssertEqualObjects(conversationDegradedMessage.users, [NSSet setWithObject:user3]);
         // when
         [conversation removeParticipant:user3];
         
@@ -720,6 +723,376 @@
     
     // then
     XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageTypeUsingNewDevice);
+}
+
+@end
+
+@interface ZMConversationSecurityTests (AddRemoveParticipant)
+
+@end
+
+@implementation ZMConversationSecurityTests (AddRemoveParticipant)
+
+// Adding participants
+
+- (ZMSystemMessage *)simulateAdding:(NSSet<ZMUser *>*)usersToAdd to:(ZMConversation *)conv by:(ZMUser *)actionUser
+{
+    NSSet *userIDs = [usersToAdd mapWithBlock:^NSString *(ZMUser *user) {
+        return user.remoteIdentifier.transportString;
+    }];
+    
+    NSDictionary *data = @{@"user_ids": userIDs.allObjects};
+    NSDictionary *payload = [self payloadForMessageInConversation:conv type:EventConversationMemberJoin data:data time:[NSDate date] fromUser:actionUser];
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    __block ZMSystemMessage *result = nil;
+    [self performPretendingUiMocIsSyncMoc:^{
+        [usersToAdd enumerateObjectsUsingBlock:^(ZMUser * _Nonnull obj, BOOL * _Nonnull stop __unused) {
+            [conv.mutableOtherActiveParticipants addObject:obj];
+        }];
+        result = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:event
+                                                inManagedObjectContext:conv.managedObjectContext
+                                                        prefetchResult:nil];
+    }];
+
+    return result;
+}
+
+- (ZMSystemMessage *)simulateRemoving:(NSSet<ZMUser *>*)usersToRemove from:(ZMConversation *)conv by:(ZMUser *)actionUser
+{
+    NSSet *userIDs = [usersToRemove mapWithBlock:^NSString *(ZMUser *user) {
+        return user.remoteIdentifier.transportString;
+    }];
+    
+    NSDictionary *data = @{@"user_ids": userIDs.allObjects};
+    NSDictionary *payload = [self payloadForMessageInConversation:conv type:EventConversationMemberLeave data:data time:[NSDate date] fromUser:actionUser];
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    __block ZMSystemMessage *result = nil;
+    [self performPretendingUiMocIsSyncMoc:^{
+        [usersToRemove enumerateObjectsUsingBlock:^(ZMUser * _Nonnull obj, BOOL * _Nonnull stop __unused) {
+            [conv.mutableOtherActiveParticipants removeObject:obj];
+        }];
+        result = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:event
+                                                inManagedObjectContext:conv.managedObjectContext
+                                                        prefetchResult:nil];
+    }];
+    
+    return result;
+}
+
+- (ZMConversation *)setupVerifiedConversation
+{
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID new];
+    UserClient *selfClient = [self createSelfClientOnMOC:self.uiMOC];
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    conversation.remoteIdentifier = [NSUUID new];
+    
+    ZMUser *verifiedUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    verifiedUser.remoteIdentifier = [NSUUID new];
+    ZMConnection *verifiedUserConnection = [ZMConnection insertNewSentConnectionToUser:verifiedUser];
+    verifiedUserConnection.status = ZMConnectionStatusAccepted;
+    
+    UserClient *verifiedUserClient = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    verifiedUserClient.user = verifiedUser;
+    
+    [conversation addParticipant:verifiedUser];
+    
+    [selfClient trustClients:[NSSet setWithObject:verifiedUserClient]];
+    [conversation increaseSecurityLevelIfNeededAfterTrustingClients:[NSSet setWithObject:verifiedUserClient]];
+    
+    return conversation;
+}
+
+- (NSSet<ZMUser *> *)setupUnverifiedUsers:(NSUInteger)count
+{
+    NSMutableSet<ZMUser *> *result = [[NSMutableSet alloc] init];
+    
+    for (NSUInteger i = 0; i < count; i++) {
+        ZMUser *unverifiedUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+        ZMConnection *unverifiedUserConnection = [ZMConnection insertNewSentConnectionToUser:unverifiedUser];
+        unverifiedUserConnection.status = ZMConnectionStatusAccepted;
+        unverifiedUser.remoteIdentifier = [NSUUID new];
+        [result addObject:unverifiedUser];
+    }
+    
+    return result;
+}
+
+- (void)testThatItMovesExistingDegradedMessageWhenLocalParticpantsAdd
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
+    [conversation addParticipants:unverifiedUsers];
+
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)2);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+    
+    // WHEN
+    ZMSystemMessage *addingSystemMessage = [self simulateAdding:unverifiedUsers to:conversation by:selfUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)3);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+    
+    XCTAssertEqual(((ZMSystemMessage *)[conversation.messages objectAtIndex:conversation.messages.count - 2]).systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+    XCTAssertEqual([conversation.messages objectAtIndex:conversation.messages.count - 2], addingSystemMessage);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+}
+
+- (void)testThatItMovesExistingDegradedMessageWhenLocalParticpantsAdd_Multiple
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:5];
+    [conversation addParticipants:unverifiedUsers];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)2);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+    
+    // WHEN
+    ZMSystemMessage *addingSystemMessage = [self simulateAdding:unverifiedUsers to:conversation by:selfUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)3);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+    
+    XCTAssertEqual(((ZMSystemMessage *)[conversation.messages objectAtIndex:conversation.messages.count - 2]).systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+    XCTAssertEqual([conversation.messages objectAtIndex:conversation.messages.count - 2], addingSystemMessage);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+}
+
+- (void)testThatItMovesExistingDegradedMessageWhenRemoteParticpantsAdd
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *verifiedUser = [conversation.activeParticipants filteredOrderedSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUser *  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings __unused) {
+        return !evaluatedObject.isSelfUser;
+    }]].firstObject;
+    
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)1);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    
+    // WHEN
+    ZMSystemMessage *addingSystemMessage = [self simulateAdding:unverifiedUsers to:conversation by:verifiedUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)3);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+    
+    XCTAssertEqual(((ZMSystemMessage *)[conversation.messages objectAtIndex:conversation.messages.count - 2]).systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+    XCTAssertEqual([conversation.messages objectAtIndex:conversation.messages.count - 2], addingSystemMessage);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+}
+
+- (void)testThatItMovesExistingDegradedMessageWhenRemoteParticpantsAdd_Multiple
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *verifiedUser = [conversation.activeParticipants filteredOrderedSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUser *  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings __unused) {
+        return !evaluatedObject.isSelfUser;
+    }]].firstObject;
+    
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:5];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)1);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    
+    // WHEN
+    ZMSystemMessage *addingSystemMessage = [self simulateAdding:unverifiedUsers to:conversation by:verifiedUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)3);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+    
+    XCTAssertEqual(((ZMSystemMessage *)[conversation.messages objectAtIndex:conversation.messages.count - 2]).systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+    XCTAssertEqual([conversation.messages objectAtIndex:conversation.messages.count - 2], addingSystemMessage);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+}
+
+
+- (void)testThatItDoesNotInsertDegradedMessageWhenAddingVerifiedUsers
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+
+    // WHEN
+    ZMUser *verifiedUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    verifiedUser.remoteIdentifier = [NSUUID new];
+    ZMConnection *verifiedUserConnection = [ZMConnection insertNewSentConnectionToUser:verifiedUser];
+    verifiedUserConnection.status = ZMConnectionStatusAccepted;
+    
+    UserClient *verifiedUserClient = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    verifiedUserClient.user = verifiedUser;
+    [selfUser.selfClient trustClients:[NSSet setWithObject:verifiedUserClient]];
+
+    [conversation addParticipant:verifiedUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)1);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeConversationIsSecure);
+    
+    // WHEN
+    [self simulateAdding:[NSSet setWithObject:verifiedUser] to:conversation by:verifiedUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)2);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+}
+
+- (void)testThatItDoesNotMoveExistingDegradedMessageWhenRemoteParticpantsAdd_OtherParticipants
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
+    [conversation addParticipants:unverifiedUsers];
+    
+    NSSet<ZMUser *> *otherUnverifiedUsers = [self setupUnverifiedUsers:1];
+
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)2);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeNewClient);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).addedUsers isEqualToSet:unverifiedUsers]);
+    
+    // WHEN
+    [self simulateAdding:otherUnverifiedUsers to:conversation by:selfUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)3);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+}
+
+// Removing participants
+
+- (void)testThatItMovesExistingVerifiedMessageWhenLocalParticpantsRemove
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
+    [conversation addParticipants:unverifiedUsers];
+    [self simulateAdding:unverifiedUsers to:conversation by:selfUser];
+
+    [conversation removeParticipants:unverifiedUsers];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)4);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeConversationIsSecure);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
+    
+    // WHEN
+    
+    ZMSystemMessage *removingSystemMessage = [self simulateRemoving:unverifiedUsers from:conversation by:selfUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)5);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeConversationIsSecure);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
+    
+    XCTAssertEqual(((ZMSystemMessage *)[conversation.messages objectAtIndex:conversation.messages.count - 2]).systemMessageType, ZMSystemMessageTypeParticipantsRemoved);
+    XCTAssertEqual([conversation.messages objectAtIndex:conversation.messages.count - 2], removingSystemMessage);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
+}
+
+- (void)testThatItMovesExistindVerifiedMessageWhenLocalParticpantsRemove_Multiple
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
+    [conversation addParticipants:unverifiedUsers];
+    [self simulateAdding:unverifiedUsers to:conversation by:selfUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)3);
+    
+    // WHEN
+    
+    ZMSystemMessage *removingSystemMessage = [self simulateRemoving:unverifiedUsers from:conversation by:selfUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)5);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeConversationIsSecure);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
+    
+    XCTAssertEqual(((ZMSystemMessage *)[conversation.messages objectAtIndex:conversation.messages.count - 2]).systemMessageType, ZMSystemMessageTypeParticipantsRemoved);
+    XCTAssertEqual([conversation.messages objectAtIndex:conversation.messages.count - 2], removingSystemMessage);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
+}
+
+- (void)testThatItMovesExistingVerifiedMessageWhenRemoteParticpantsRemove
+{
+    // GIVEN
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *verifiedUser = [conversation.activeParticipants filteredOrderedSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUser *  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings __unused) {
+        return !evaluatedObject.isSelfUser;
+    }]].firstObject;
+    
+    // WHEN
+    NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
+    [conversation addParticipants:unverifiedUsers];
+    [self simulateAdding:unverifiedUsers to:conversation by:verifiedUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)3);
+    
+    // WHEN
+    
+    ZMSystemMessage *removingSystemMessage = [self simulateRemoving:unverifiedUsers from:conversation by:verifiedUser];
+    
+    // THEN
+    XCTAssertEqual(conversation.messages.count, (NSUInteger)5);
+    XCTAssertTrue([conversation.messages.lastObject isKindOfClass:[ZMSystemMessage class]]);
+    XCTAssertEqual(((ZMSystemMessage *)conversation.messages.lastObject).systemMessageType, ZMSystemMessageTypeConversationIsSecure);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
+    
+    XCTAssertEqual(((ZMSystemMessage *)[conversation.messages objectAtIndex:conversation.messages.count - 2]).systemMessageType, ZMSystemMessageTypeParticipantsRemoved);
+    XCTAssertEqual([conversation.messages objectAtIndex:conversation.messages.count - 2], removingSystemMessage);
+    XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
 }
 
 @end

@@ -1847,6 +1847,24 @@
     XCTAssertEqualObjects(conversation.keysThatHaveLocalModifications, [NSSet setWithObject:ZMConversationUnsyncedActiveParticipantsKey]);
 }
 
+- (void)testThatAddingMultipleParticipantsSetsTheModifiedKeys
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    XCTAssertTrue([self.uiMOC saveOrRollback]);
+    
+    // when
+    [conversation addParticipants:[NSSet setWithObjects:user1, user2, user3, nil]];
+    XCTAssertTrue([self.uiMOC saveOrRollback]);
+    
+    // then
+    XCTAssertEqualObjects(conversation.keysThatHaveLocalModifications, [NSSet setWithObject:ZMConversationUnsyncedActiveParticipantsKey]);
+}
+
 - (void)testThatRemovingParticipantsSetsTheModifiedKeys
 {
     // given
@@ -2192,7 +2210,7 @@
     ZMConversationList *clearedList = [ZMConversationList clearedConversationsInUserSession:self.mockUserSessionWithUIMOC];
     
     // when
-    [conversation internalRemoveParticipant:selfUser sender:user0];
+    [conversation internalRemoveParticipants:[NSSet setWithObject:selfUser] sender:user0];
     
     // then
     XCTAssertTrue([activeList predicateMatchesConversation:conversation]);

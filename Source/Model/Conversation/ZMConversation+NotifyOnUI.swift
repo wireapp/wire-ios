@@ -22,7 +22,10 @@ extension ZMConversation {
 
     /// Sends a notification with the given name on the UI context
     func notifyOnUI(notification: String) {
-        self.managedObjectContext?.zm_userInterface .performGroupedBlock {
+        guard let userInterfaceContext = self.managedObjectContext?.zm_userInterface else {
+            return
+        }
+        userInterfaceContext.performGroupedBlock {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: notification), object: self)
         }
     }

@@ -549,7 +549,7 @@
     selfUser.remoteIdentifier = [NSUUID createUUID];
     
     [conversation addParticipant:user1];
-    [conversation internalAddParticipant:selfUser isAuthoritative:YES];
+    [conversation internalAddParticipants:[NSSet setWithObject:selfUser] isAuthoritative:YES];
     
     XCTAssertTrue(conversation.isSelfAnActiveMember);
     

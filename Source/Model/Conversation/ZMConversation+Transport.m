@@ -112,7 +112,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
         ZMUser *user = [ZMUser userWithRemoteID:userId createIfNeeded:YES inContext:self.managedObjectContext];
         
         if([[userDict numberForKey:ConversationInfoStatusKey] intValue] == 0) {
-            [self internalAddParticipant:user isAuthoritative:YES];
+            [self internalAddParticipants:[NSSet setWithObject:user] isAuthoritative:YES];
         }
         else {
             [self.mutableOtherActiveParticipants removeObject:user];

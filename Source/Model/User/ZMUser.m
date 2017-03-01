@@ -963,6 +963,9 @@ static NSString *const AnnaBotHandle = @"annathebot";
 
 - (BOOL)trusted
 {
+    if (self.clients.count == 0) {
+        return false;
+    }
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
     UserClient *selfClient = selfUser.selfClient;
     __block BOOL hasOnlyTrustedClients = YES;

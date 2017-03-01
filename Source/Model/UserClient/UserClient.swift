@@ -171,7 +171,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         
         // increase securityLevel of affected conversations
         if let previousUser = user {
-            conversations.forEach{ $0.increaseSecurityLevelIfNeededAfterRemovingClient(for: previousUser) }
+            conversations.forEach{ $0.increaseSecurityLevelIfNeededAfterRemovingClient(for: Set(arrayLiteral: previousUser)) }
         }
     }
     
@@ -480,7 +480,7 @@ enum SecurityChangeType {
         case .clientTrusted:
             conversation.increaseSecurityLevelIfNeededAfterTrusting(clients: clients)
         case .clientIgnored:
-            conversation.decreaseSecurityLevelIfNeededAfterIgnoring(clients: clients, addedUser: nil)
+            conversation.decreaseSecurityLevelIfNeededAfterIgnoring(clients: clients)
         case .clientDiscovered:
             conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: causedBy)
         }

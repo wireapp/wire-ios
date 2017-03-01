@@ -2420,7 +2420,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     return user;
 }
 
-- (void)testThatItReturns_Trusted_YES_WhenThereAreNoClients
+- (void)testThatItReturns_Trusted_NO_WhenThereAreNoClients
 {
     // given
     ZMUser *user = [self userWithClients:0 trusted:NO];
@@ -2429,7 +2429,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     BOOL isTrusted = user.trusted;
     
     //then
-    XCTAssertTrue(isTrusted);
+    XCTAssertFalse(isTrusted);
 }
 
 
