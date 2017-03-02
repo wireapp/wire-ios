@@ -108,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
             
             self.pinchImageView.transform = CGAffineTransformScale(translation, scale, scale);
             
-            self.dimView.alpha = MIN(1.0f, (scale - 1.0f) / 2.0f) * 0.48f + 0.16f;
+            self.dimView.alpha = MIN(1.0f, (scale - 1.0f) / 2.0f) * 0.56f + 0.16f;
         }
             break;
         case UIGestureRecognizerStateEnded:
