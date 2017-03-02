@@ -58,16 +58,17 @@ public enum UserClientChangeInfoKey: String {
     open var trustedByClientsChanged : Bool {
         return changedKeysContain(keys: #keyPath(UserClient.trustedByClients))
     }
+    
     open var ignoredByClientsChanged : Bool {
         return changedKeysContain(keys: #keyPath(UserClient.ignoredByClients))
     }
 
     open var fingerprintChanged : Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyUser))
+        return changedKeysContain(keys: #keyPath(UserClient.fingerprint))
     }
 
     open var needsToNotifyUserChanged : Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.fingerprint))
+        return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyUser))
     }
 
     open let userClient: UserClient
