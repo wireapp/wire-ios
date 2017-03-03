@@ -22,3 +22,5 @@ The wire-ios-protos framework contains precompiled protocol buffer definitions f
 This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
 
 You can now open the Xcode project and build.
+
+You need protocol buffer objective-C installed. Follow the instructions here: https://github.com/alexeyxo/protobuf-objc
