@@ -23,6 +23,11 @@ import ZMTesting
 
 
 class MockDependencyEntity : DependencyEntity {
+    public var isExpired: Bool = false
+
+    public func expire() {
+         isExpired = true
+    }
     
     var dependentObjectNeedingUpdateBeforeProcessing: AnyObject?
     
@@ -107,6 +112,20 @@ class DependencyEntitySyncTests : ZMTBaseTest {
         XCTAssertFalse(mockTranscoder.didCallRequestForEntity)
     }
     
+    func testThatEntityIsExpired_whenExpiringEntitiesWithDependencies() {
+        
+        // given
+        let entity = MockDependencyEntity()
+        entity.dependentObjectNeedingUpdateBeforeProcessing = dependency
+        sut.synchronize(entity: entity)
+        
+        // when
+        sut.expireEntities(withDependency: dependency)
+        
+        // then
+        XCTAssertTrue(entity.isExpired)
+    }
+    
     func testThatTranscoderIsNotAskedToCreateRequest_whenEntityHasSwappedDependenciesAfterAnUpdate() {
         
         // given
@@ -117,6 +136,20 @@ class DependencyEntitySyncTests : ZMTBaseTest {
         // when
         entity.dependentObjectNeedingUpdateBeforeProcessing = anotherDependency
         sut.objectsDidChange(Set(arrayLiteral: dependency))
+        _ = sut.nextRequest()
+        
+        // then
+        XCTAssertFalse(mockTranscoder.didCallRequestForEntity)
+    }
+    
+    func testThatTranscoderIsNotAskedToCreateRequest_whenEntityHasExpired() {
+        
+        // given
+        let entity = MockDependencyEntity()
+        sut.synchronize(entity: entity)
+        entity.expire()
+        
+        // when
         _ = sut.nextRequest()
         
         // then
