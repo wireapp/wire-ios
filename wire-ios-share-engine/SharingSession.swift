@@ -98,9 +98,6 @@ class AuthenticationStatus : AuthenticationStatusProvider {
     
 }
 
-public enum SharingSessionError : Error {
-    case missingSharedContainer
-}
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of 
@@ -111,11 +108,12 @@ public enum SharingSessionError : Error {
 /// is not supported and will result in undefined behaviour
 public class SharingSession {
     
-     /// The failure reason of a `SharingSession` initialization
-     /// - NeedsMigration: The database needs a migration which is only done in the main app
-     /// - LoggedOut:      No user is logged in
+    /// The failure reason of a `SharingSession` initialization
+    /// - NeedsMigration: The database needs a migration which is only done in the main app
+    /// - LoggedOut: No user is logged in
+    /// - missingSharedContainer: The shared container is missing
     enum InitializationError: Error {
-        case needsMigration, loggedOut
+        case needsMigration, loggedOut, missingSharedContainer
     }
     
     /// The `NSManagedObjectContext` used to retrieve the conversations
@@ -171,15 +169,13 @@ public class SharingSession {
     public convenience init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
         
         guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
-            throw SharingSessionError.missingSharedContainer
+            throw InitializationError.missingSharedContainer
         }
         
         let storeURL = sharedContainerURL.appendingPathComponent(hostBundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
         let keyStoreURL = sharedContainerURL
         
         guard !NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL) else { throw InitializationError.needsMigration }
-        
-        ZMSLog.set(level: .debug, tag: "Network")
 
         let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: storeURL)!
         let syncContext = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: keyStoreURL)!
