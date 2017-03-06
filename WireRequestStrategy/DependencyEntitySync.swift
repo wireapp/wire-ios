@@ -21,7 +21,8 @@ import Foundation
 public protocol DependencyEntity : AnyObject {
     
     var dependentObjectNeedingUpdateBeforeProcessing : AnyObject? { get }
-    
+    var isExpired: Bool { get }
+    func expire()
 }
 
 class DependencyMap<Key : AnyObject,Value : AnyObject> {
@@ -61,6 +62,12 @@ public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMC
         self.context = context
     }
     
+    public func expireEntities(withDependency dependency: AnyObject) {
+        for entity in entitiesWithDependencies.entities(withDependency: dependency) {
+            entity.expire()
+        }
+    }
+    
     public func synchronize(entity: Transcoder.Entity) {
         if let dependency = entity.dependentObjectNeedingUpdateBeforeProcessing {
             entitiesWithDependencies.add(dependency: dependency, forEntity: entity)
@@ -88,8 +95,8 @@ public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMC
         guard let entity = entitiesWithoutDependencies.first else { return nil }
         
         entitiesWithoutDependencies.removeFirst()
-        
-        if let request = transcoder?.request(forEntity: entity) {
+    
+        if !entity.isExpired, let request = transcoder?.request(forEntity: entity) {
             
             request.add(ZMCompletionHandler(on: context, block: { [weak self] (response) in
                 guard
