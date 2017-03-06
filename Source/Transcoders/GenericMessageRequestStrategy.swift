@@ -75,6 +75,11 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
          return requestFactory.upstreamRequestForMessage(entity, forConversationWithId: entity.conversation!.remoteIdentifier!)
     }
     
+    public override func shouldTryToResend(entity: GenericMessageEntity, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
+        entity.completionHandler?(response)
+        return super.shouldTryToResend(entity: entity, afterFailureWithResponse: response)
+    }
+    
     public override func request(forEntity entity: GenericMessageEntity, didCompleteWithResponse response: ZMTransportResponse) {
         super.request(forEntity: entity, didCompleteWithResponse: response)
         
