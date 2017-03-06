@@ -24,6 +24,7 @@ public class GenericMessageEntity : OTREntity {
     public var message : ZMGenericMessage
     public var conversation : ZMConversation?
     public var completionHandler : ((_ response: ZMTransportResponse) -> Void)?
+    public var isExpired: Bool = false
     
     init(conversation: ZMConversation, message: ZMGenericMessage, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         self.conversation = conversation
@@ -37,6 +38,10 @@ public class GenericMessageEntity : OTREntity {
     
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
+    }
+    
+    public func expire() {
+        isExpired = true
     }
 }
 
@@ -69,6 +74,10 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
     public func schedule(message: ZMGenericMessage, inConversation conversation: ZMConversation, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         sync?.synchronize(entity: GenericMessageEntity(conversation: conversation, message: message, completionHandler: completionHandler))
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+    }
+    
+    public func expireEntities(withDependency dependency: AnyObject) {
+        sync?.expireEntities(withDependency: dependency)
     }
     
     public override func request(forEntity entity: GenericMessageEntity) -> ZMTransportRequest? {
