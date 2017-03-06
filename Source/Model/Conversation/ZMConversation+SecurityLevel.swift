@@ -147,6 +147,13 @@ extension ZMConversation {
 // MARK: - Messages resend/expiration
 extension ZMConversation {
     
+    /// Mark conversation as not secure. This method is expected to be called from the UI context
+    public func makeNotSecure() {
+        precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
+        self.securityLevel = .notSecure
+        self.managedObjectContext?.saveOrRollback()
+    }
+    
     /// Resend last non sent messages. This method is expected to be called from the UI context
     public func resendMessagesThatCausedConversationSecurityDegradation() {
         precondition(self.managedObjectContext!.zm_isUserInterfaceContext)

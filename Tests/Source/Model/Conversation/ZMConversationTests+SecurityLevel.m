@@ -118,6 +118,20 @@
     }];
 }
 
+- (void)testThatItDoesDecreaseTheSecurityLevelWhenAskedToMakeNotSecure
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeOneOnOne;
+    conversation.securityLevel = ZMConversationSecurityLevelSecureWithIgnored;
+    
+    // when
+    [conversation makeNotSecure];
+    
+    // then
+    XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelNotSecure);
+}
+
 - (void)testThatItInsertsAnIgnoredClientsSystemMessageWhenAddingAConversationParticipantInASecuredConversation
 {
     [self.syncMOC performGroupedBlockAndWait:^{
