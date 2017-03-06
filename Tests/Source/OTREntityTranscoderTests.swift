@@ -24,6 +24,11 @@ import XCTest
 
 class MockOTREntity : OTREntity {
     
+    public var isExpired: Bool = false
+    public func expire() {
+        isExpired = true
+    }
+    
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
     }
