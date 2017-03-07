@@ -43,6 +43,41 @@ class GenericMessageRequestStrategyTests : MessagingTest {
         conversation.addParticipant(user)
     }
     
+    func testThatItCallsEntityCompletionHandlerOnRequestCompletion() {
+        // given
+        let expectation = self.expectation(description: "Should complete")
+        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+        let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
+        let message = GenericMessageEntity(conversation: conversation, message: genericMessage) {
+            XCTAssertEqual($0, response)
+            expectation.fulfill()
+        }
+        
+        // when 
+        sut.request(forEntity: message, didCompleteWithResponse: response)
+        
+        // then
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+    }
+    
+    func testThatItCallsEntityCompletionHandlerOnShouldRetry() {
+        // given
+        let expectation = self.expectation(description: "Should complete")
+        let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil)
+        let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
+        let message = GenericMessageEntity(conversation: conversation, message: genericMessage) {
+            XCTAssertEqual($0, response)
+            expectation.fulfill()
+        }
+        
+        // when
+        _ = sut.shouldTryToResend(entity: message, afterFailureWithResponse: response)
+        
+        // then
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    
     func testThatItCreatesARequestForAGenericMessage() {
         
         // given
