@@ -220,7 +220,7 @@ class ProfileClientViewController: UIViewController {
 
     private func setupVerifiedToggle() {
         verifiedToggle.isOn = self.userClient.verified
-        verifiedToggle.accessibilityLabel = "is verified"
+        verifiedToggle.accessibilityLabel = "device verified"
         verifiedToggle.addTarget(self, action: #selector(ProfileClientViewController.onTrustChanged(_:)), for: .valueChanged)
         self.contentView.addSubview(verifiedToggle)
     }
