@@ -39,25 +39,22 @@ public class SnapshotCenter {
     public init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
     }
-    
-    /// This function needs to be called when the sync context saved and we receive the NSManagedObjectContextDidSave notification and before the changes are merged into the UI context
-    func willMergeChanges(changes: Set<NSManagedObjectID>){
-        let newSnapshots : [NSManagedObjectID : Snapshot] = changes.mapToDictionary{ objectID in
-            guard let obj = (try? managedObjectContext.existingObject(with: objectID)) else { return nil }
-            return snapshot(for: obj)
-        }
-        newSnapshots.forEach{ (key, value) in
-            if snapshots[key] == nil {
-                snapshots[key] = value
+
+    func createSnapshots(for insertedObjects: Set<NSManagedObject>) {
+        insertedObjects.forEach{
+            if $0.objectID.isTemporaryID {
+                try? managedObjectContext.obtainPermanentIDs(for: [$0])
             }
+            let newSnapshot = createSnapshot(for: $0)
+            snapshots[$0.objectID] = newSnapshot
         }
     }
     
-    func removeSnapshot(for object: NSManagedObject) {
-        snapshots.removeValue(forKey: object.objectID)
+    func updateSnapshot(for object: NSManagedObject){
+        snapshots[object.objectID] = createSnapshot(for: object)
     }
     
-    func snapshot(for object: NSManagedObject) -> Snapshot {
+    func createSnapshot(for object: NSManagedObject) -> Snapshot {
         let attributes = Array(object.entity.attributesByName.keys)
         let relationShips = object.entity.relationshipsByName
         
@@ -73,7 +70,17 @@ public class SnapshotCenter {
     /// Before merging the sync into the ui context, we create a snapshot of all changed objects
     /// This function compares the snapshot values to the current ones and returns all keys and new values where the value changed due to the merge
     func extractChangedKeysFromSnapshot(for object: ZMManagedObject) -> Set<String> {
-        guard let snapshot = snapshots[object.objectID] else { return Set()}
+        guard let snapshot = snapshots[object.objectID] else {
+            if object.objectID.isTemporaryID {
+                try? managedObjectContext.obtainPermanentIDs(for: [object])
+            }
+            // create new snapshot
+            let newSnapshot = createSnapshot(for: object)
+            snapshots[object.objectID] = newSnapshot
+            // return all keys as changed
+            return Set(newSnapshot.attributes.keys).union(newSnapshot.toManyRelationships.keys)
+        }
+        
         var changedKeys = Set<String>()
         snapshot.attributes.forEach{
             let currentValue = object.value(forKey: $0) as? NSObject
@@ -84,6 +91,10 @@ public class SnapshotCenter {
         snapshot.toManyRelationships.forEach{
             guard let count = (object.value(forKey: $0) as? Countable)?.count, count != $1 else { return }
             changedKeys.insert($0)
+        }
+        // Update snapshot
+        if changedKeys.count > 0 {
+            snapshots[object.objectID] = createSnapshot(for: object)
         }
         return changedKeys
     }

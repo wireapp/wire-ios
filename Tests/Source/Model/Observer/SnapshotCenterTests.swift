@@ -38,7 +38,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         let conv = ZMConversation.insertNewObject(in: uiMOC)
         
         // when
-        sut.willMergeChanges(changes: Set([conv.objectID]))
+        _ = sut.createSnapshot(for: conv)
         
         // then
         XCTAssertNotNil(sut.snapshots[conv.objectID])
@@ -47,7 +47,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
     func testThatItSnapshotsNilValues(){
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)
-        sut.willMergeChanges(changes: Set([conv.objectID]))
+        _ = sut.createSnapshot(for: conv)
         
         // when
         guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
@@ -105,7 +105,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         conv.isSelfAnActiveMember = false
         conv.appendMessage(withText: "foo")
         conv.resetLocallyModifiedKeys(conv.keysThatHaveLocalModifications)
-        sut.willMergeChanges(changes: Set([conv.objectID]))
+        _ = sut.createSnapshot(for: conv)
         
         // when
         guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
@@ -152,7 +152,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
     func testThatReturnsChangedKeys() {
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)
-        sut.willMergeChanges(changes: Set([conv.objectID]))
+        _ = sut.createSnapshot(for: conv)
         
         // when
         conv.userDefinedName = "foo"
@@ -162,5 +162,37 @@ class SnapshotCenterTests : BaseZMMessageTests {
         XCTAssertEqual(changedKeys.count, 2)
         XCTAssertEqual(changedKeys, Set(["normalizedUserDefinedName", "userDefinedName"]))
     }
+    
+    func testThatItUpatesTheSnapshot(){
+        // given
+        let conv = ZMConversation.insertNewObject(in: uiMOC)
+        _ = sut.createSnapshot(for: conv)
+        
+        // when
+        conv.userDefinedName = "foo"
+        _ = sut.extractChangedKeysFromSnapshot(for: conv)
+        
+        // then
+        guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
+        
+        // then
+        XCTAssertEqual(snapshot.attributes["userDefinedName"] as? String, "foo")
+    }
+    
+    func testThatItReturnsAllKeysChangedWhenSnapshotDoesNotExist(){
+        // given
+        let conv = ZMConversation.insertNewObject(in: uiMOC)
+
+        // when
+        let changedKeys = sut.extractChangedKeysFromSnapshot(for: conv)
+
+        // then
+        XCTAssertEqual(changedKeys, Set(conv.entity.attributesByName.keys).union(["hiddenMessages",
+                                                                                  "lastServerSyncedActiveParticipants",
+                                                                                  "messages",
+                                                                                  "otherActiveParticipants",
+                                                                                  "callParticipants"]))
+    }
+
 }
 
