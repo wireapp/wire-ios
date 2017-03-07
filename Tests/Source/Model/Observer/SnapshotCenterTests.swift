@@ -38,7 +38,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         let conv = ZMConversation.insertNewObject(in: uiMOC)
         
         // when
-        _ = sut.createSnapshot(for: conv)
+        _ = sut.extractChangedKeysFromSnapshot(for: conv)
         
         // then
         XCTAssertNotNil(sut.snapshots[conv.objectID])
@@ -47,7 +47,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
     func testThatItSnapshotsNilValues(){
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)
-        _ = sut.createSnapshot(for: conv)
+        _ = sut.extractChangedKeysFromSnapshot(for: conv)
         
         // when
         guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
@@ -105,7 +105,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         conv.isSelfAnActiveMember = false
         conv.appendMessage(withText: "foo")
         conv.resetLocallyModifiedKeys(conv.keysThatHaveLocalModifications)
-        _ = sut.createSnapshot(for: conv)
+        _ = sut.extractChangedKeysFromSnapshot(for: conv)
         
         // when
         guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
@@ -152,7 +152,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
     func testThatReturnsChangedKeys() {
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)
-        _ = sut.createSnapshot(for: conv)
+        _ = sut.extractChangedKeysFromSnapshot(for: conv)
         
         // when
         conv.userDefinedName = "foo"
@@ -166,7 +166,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
     func testThatItUpatesTheSnapshot(){
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)
-        _ = sut.createSnapshot(for: conv)
+        _ = sut.extractChangedKeysFromSnapshot(for: conv)
         
         // when
         conv.userDefinedName = "foo"
