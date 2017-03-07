@@ -98,8 +98,8 @@
     [overlayView setVideoButtonTarget:self          action:@selector(videoButtonClicked:)];
     [overlayView setSwitchCameraButtonTarget:self   action:@selector(switchCameraButtonClicked:)];
     [overlayView setCallingConversation:self.conversation];
-    overlayView.hidesSpeakerButton = IS_IPAD;
     overlayView.selfUser = [ZMUser selfUser];
+    overlayView.hidesSpeakerButton = IS_IPAD;
     self.overlayView = overlayView;
     
     self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
