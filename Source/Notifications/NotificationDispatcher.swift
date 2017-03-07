@@ -229,18 +229,11 @@ public class NotificationDispatcher : NSObject {
                                                             accumulated: false)
     }
     
-    /// Call this from syncStrategy BEFORE merging the changes from syncMOC into uiMOC
-    /// Get updated objects from notifications userInfo and map them to objectIDs
-    /// After merging call `didMergeChanges()`
-    public func willMergeChanges(_ changes: Set<NSManagedObjectID>){
-        guard forwardChanges else { return }
-        snapshotCenter.willMergeChanges(changes: changes)
-    }
-    
     /// Call this from syncStrategy AFTER merging the changes from syncMOC into uiMOC
-    public func didMergeChanges() {
+    public func didMergeChanges(_ changedObjectIDs: Set<NSManagedObjectID>) {
         guard forwardChanges else { return }
-        snapshotCenter.clearAllSnapshots()
+        let changedObjects : [ZMManagedObject] = changedObjectIDs.flatMap{(try? managedObjectContext.existingObject(with: $0)) as? ZMManagedObject}
+        extractChanges(from: Set(changedObjects))
         fireAllNotifications()
     }
     
@@ -251,6 +244,8 @@ public class NotificationDispatcher : NSObject {
         let refreshedObjects = extractObjects(for: NSRefreshedObjectsKey, from: userInfo)
         let insertedObjects = extractObjects(for: NSInsertedObjectsKey, from: userInfo)
         let deletedObjects = extractObjects(for: NSDeletedObjectsKey, from: userInfo)
+        
+        snapshotCenter.createSnapshots(for: insertedObjects)
         
         let allUpdated = updatedObjects.union(refreshedObjects).union(usersWithChangedImages())
         extractChanges(from: allUpdated)
@@ -338,6 +333,8 @@ public class NotificationDispatcher : NSObject {
                 // If the object is a fault, calling changedValues() will return an empty set
                 // Luckily we created a snapshot of the object before the merge happend which we can use to compare the values
                 changedKeys = snapshotCenter.extractChangedKeysFromSnapshot(for: object)
+            } else {
+                snapshotCenter.updateSnapshot(for: object)
             }
             if let knownKeys = userChanges[object] {
                 changedKeys = changedKeys.union(knownKeys)

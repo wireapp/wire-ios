@@ -53,12 +53,10 @@ import Foundation
     @objc public func mergeLastChanges() {
         guard let change = mergeNotifications.last else { return }
         let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map{$0.objectID} ?? []
-        self.dispatcher.willMergeChanges(Set(changedObjects))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         self.uiMOC.mergeChanges(fromContextDidSave: change)
-
-        self.dispatcher.didMergeChanges()
+        self.dispatcher.didMergeChanges(Set(changedObjects))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         mergeNotifications = []
@@ -206,7 +204,8 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         XCTAssertEqual(observer.notifications.count, 0)
         
         // and when
-        sut.didMergeChanges()
+        sut.didMergeChanges(Set(arrayLiteral: user.objectID))
+        
         // then
         XCTAssertEqual(observer.notifications.count, 1)
         if let note = observer.notifications.first {
@@ -359,5 +358,33 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         }
     }
     
+    func testThatItProcessesChangedObjectIDsFromMerge(){
+        // given
+        let conv = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
+        let token = ConversationChangeInfo.add(observer: conversationObserver, for: conv)
+
+        syncMOC.performGroupedBlockAndWait {
+            let syncConv = try! self.syncMOC.existingObject(with: conv.objectID) as! ZMConversation
+            syncConv.userDefinedName = "foo"
+            self.syncMOC.saveOrRollback()
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        self.uiMOC.mergeChanges(fromContextDidSave: mergeNotifications.last!)
+        
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(conversationObserver.notifications.count, 0)
+
+        // when
+        sut.didMergeChanges(Set(arrayLiteral: conv.objectID))
+        
+        // then
+        XCTAssertEqual(conversationObserver.notifications.count, 1)
+        guard let changeInfo = conversationObserver.notifications.first else {
+            return XCTFail()
+        }
+        XCTAssertTrue(changeInfo.nameChanged)
+        ConversationChangeInfo.remove(observer: token, for: conv)
+    }
     
 }
