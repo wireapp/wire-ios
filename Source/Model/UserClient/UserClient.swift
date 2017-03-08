@@ -194,32 +194,34 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
     public func resetSession() {
-        guard let sessionIdentifier = self.sessionIdentifier else { return }
+        guard let sessionIdentifier = self.sessionIdentifier,
+              let uiMOC = self.managedObjectContext,
+              let syncMOC = uiMOC.zm_sync
+        else { return }
 
         // Delete should happen on sync context since the cryptobox could be accessed only from there
-        let syncMOC = managedObjectContext!.zm_sync!
         syncMOC.performGroupedBlock {
+            guard let selfClient = ZMUser.selfUser(in: syncMOC).selfClient(),
+                  let syncClient = (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
+            else { return }
+
+            // Delete session and fingerprint
             UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: syncMOC)
-
-            self.managedObjectContext?.performGroupedBlock {
-                self.fingerprint = .none
-                let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-                guard let selfClient = selfUser.selfClient() else { return }
-                
-                selfClient.missesClient(self)
-                selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-                
-                // Send session reset message so other user can send us messages immediately
-                if let user = self.user,
-                    let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: syncMOC) : self.user?.oneToOneConversation {
-                    let message = ZMGenericMessage.sessionReset(withNonce: UUID().transportString())
-                    GenericMessageScheduleNotification(message: message, conversation: conversation).post()
-                }
-                
-                self.managedObjectContext?.saveOrRollback()
-            }
-
+            syncClient.fingerprint = .none
+            
+            // Mark clients as needing to be refetched
+            selfClient.missesClient(syncClient)
             syncMOC.saveOrRollback()
+
+            uiMOC.performGroupedBlock {
+                // Send session reset message so other user can send us messages immediately
+                guard let user = self.user,
+                      let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: uiMOC) : user.oneToOneConversation
+                else { return }
+                
+                let message = ZMGenericMessage.sessionReset(withNonce: UUID().transportString())
+                GenericMessageScheduleNotification(message: message, conversation: conversation).post()
+            }
         }
     }
 
