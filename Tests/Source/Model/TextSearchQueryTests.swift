@@ -322,6 +322,33 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         verifyThatItFindsMessage(withText: "aa aa aa", whenSearchingFor: "aa")
         verifyThatItFindsMessage(withText: "aa.aa", whenSearchingFor: "aa")
         verifyThatItFindsMessage(withText: "11:45", whenSearchingFor: "11:45")
+        verifyThatItFindsMessage(withText: "aabb", whenSearchingFor: "aabb")
+        verifyThatItFindsMessage(withText: "aabb", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aabb", whenSearchingFor: "bb")
+        verifyThatItFindsMessage(withText: "bb aa", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa bb", whenSearchingFor: "aa bb")
+        verifyThatItFindsMessage(withText: "aabb", whenSearchingFor: "aa\nbb")
+        verifyThatItFindsMessage(withText: "aa aa aa", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa bb aa", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa aa aa", whenSearchingFor: "aa aa")
+        verifyThatItFindsMessage(withText: "aa.bb", whenSearchingFor: "bb")
+        verifyThatItFindsMessage(withText: "aa...bb", whenSearchingFor: "bb")
+        verifyThatItFindsMessage(withText: "aa.bb", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa...bb", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa-bb", whenSearchingFor: "aa-bb")
+        verifyThatItFindsMessage(withText: "aa-bb", whenSearchingFor: "aa bb")
+        verifyThatItFindsMessage(withText: "aa-bb", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa/bb", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa/bb", whenSearchingFor: "bb")
+        verifyThatItFindsMessage(withText: "aa:bb", whenSearchingFor: "aa")
+        verifyThatItFindsMessage(withText: "aa:bb", whenSearchingFor: "bb")
+        verifyThatItFindsMessage(withText: "@peter", whenSearchingFor: "peter")
+        verifyThatItFindsMessage(withText: "rené", whenSearchingFor: "Rene")
+        verifyThatItFindsMessage(withText: "https://www.link.com/something-to-read?q=12&second#reader", whenSearchingFor: "something to read")
+        verifyThatItFindsMessage(withText: "<8000 x a's>", whenSearchingFor: "<8000 x a's>")
+        verifyThatItFindsMessage(withText: "bb бб bb", whenSearchingFor: "бб")
+        verifyThatItFindsMessage(withText: "bb бб bb", whenSearchingFor: "bb")
+
     }
 
     func testThatItUsesANDConjunctionForSearchTerms() {
@@ -550,7 +577,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         // When
-        let results = search(for: query, in: conversation)
+        let results = search(for: query, in: conversation, file: file, line: line)
 
         // Then
         guard results.count == 1 else { return XCTFail("Unexpected count \(results.count)", file: file, line: line) }
@@ -568,7 +595,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
     fileprivate func search(for text: String, in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> [TextQueryResult] {
         let delegate = MockTextSearchQueryDelegate()
-        let sut = TextSearchQuery(conversation: conversation, query: text, delegate: delegate)!
+        guard let sut = TextSearchQuery(conversation: conversation, query: text, delegate: delegate) else {
+            XCTFail("Unable to create a query object, ensure the query is >= 2 characters", file: file, line: line)
+            return []
+        }
         sut.execute()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         return delegate.fetchedResults
