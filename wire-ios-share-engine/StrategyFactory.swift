@@ -63,7 +63,7 @@ class StrategyFactory {
             createImageUploadRequestStrategy(),
             createFileUploadRequestStrategy(),
 
-            // Asset V3
+            // Assets V3
             createAssetClientMessageRequestStrategy(),
             createAssetV3ImageUploadRequestStrategy(),
             createAssetV3FileUploadRequestStrategy()
