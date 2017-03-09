@@ -26,13 +26,10 @@ public protocol SharingTarget {
     func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable?
     
     /// Appends an image in the conversation
-    func appendImage(_ image: URL) -> Sendable?
-    
-    /// Appends an image in the conversation
-    func appendImage(_ data: Data) -> Sendable?
+    func appendImage(_ data: Data, v3: Bool) -> Sendable?
     
     /// Appends a file in the conversation
-    func appendFile(_ metaData: ZMFileMetadata) -> Sendable?
+    func appendFile(_ metaData: ZMFileMetadata, v3: Bool) -> Sendable?
     
     /// Append a location in the conversation
     func appendLocation(_ location: LocationData) -> Sendable?
