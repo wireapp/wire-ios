@@ -158,6 +158,8 @@ public class SharingSession {
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
+
+    private let strategyFactory: StrategyFactory
         
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -211,7 +213,9 @@ public class SharingSession {
                   analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
                   authenticationStatus: AuthenticationStatusProvider,
                   clientRegistrationStatus: ClientRegistrationStatus,
-                  operationLoop: RequestGeneratingOperationLoop) throws {
+                  operationLoop: RequestGeneratingOperationLoop,
+                  strategyFactory: StrategyFactory
+        ) throws {
         
         self.userInterfaceContext = userInterfaceContext
         self.syncContext = syncContext
@@ -221,6 +225,7 @@ public class SharingSession {
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.operationLoop = operationLoop
+        self.strategyFactory = strategyFactory
         
         guard authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
         
@@ -239,7 +244,7 @@ public class SharingSession {
             cancellationProvider: transportSession
         )
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.createStrategies())
+        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
 
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: userInterfaceContext,
@@ -261,7 +266,8 @@ public class SharingSession {
             analyticsEventPersistence: analyticsEventPersistence,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: clientRegistrationStatus,
-            operationLoop: operationLoop
+            operationLoop: operationLoop,
+            strategyFactory: strategyFactory
         )
     }
 
@@ -272,6 +278,7 @@ public class SharingSession {
         }
 
         transportSession.tearDown()
+        strategyFactory.tearDown()
     }
     
     private func setupCaches(atContainerURL containerURL: URL) {

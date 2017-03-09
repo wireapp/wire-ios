@@ -62,6 +62,12 @@ class BaseSharingSessionTests: ZMTBaseTest {
             transportSession: transportSession
         )
 
+        let strategyFactory = StrategyFactory(
+            syncContext: syncContext!,
+            registrationStatus: registrationStatus,
+            cancellationProvider: transportSession
+        )
+
         sharingSession = try! SharingSession(
             userInterfaceContext: userInterfaceContext!,
             syncContext: syncContext!,
@@ -71,7 +77,8 @@ class BaseSharingSessionTests: ZMTBaseTest {
             analyticsEventPersistence: analyticsEventPersistence,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: registrationStatus,
-            operationLoop: operationLoop
+            operationLoop: operationLoop,
+            strategyFactory: strategyFactory
         )
 
         moc = sharingSession.userInterfaceContext
