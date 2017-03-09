@@ -27,14 +27,27 @@ class StrategyFactory {
     let syncContext: NSManagedObjectContext
     let registrationStatus: ClientRegistrationStatus
     let cancellationProvider: ZMRequestCancellation
+    private(set) var strategies = [AnyObject]()
+
+    private var tornDown = false
 
     init(syncContext: NSManagedObjectContext, registrationStatus: ClientRegistrationStatus, cancellationProvider: ZMRequestCancellation) {
         self.syncContext = syncContext
         self.registrationStatus = registrationStatus
         self.cancellationProvider = cancellationProvider
+        self.strategies = createStrategies()
     }
 
-    func createStrategies() -> [AnyObject] {
+    deinit {
+        precondition(tornDown, "Need to call `tearDown` before `deinit`")
+    }
+
+    func tearDown() {
+        strategies.flatMap { $0 as? ZMObjectSyncStrategy }.forEach { $0.tearDown() }
+        tornDown = true
+    }
+
+    private func createStrategies() -> [AnyObject] {
         return [
             // Missing Clients
             createMissingClientsStrategy(),
