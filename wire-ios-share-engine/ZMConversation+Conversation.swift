@@ -33,16 +33,12 @@ extension ZMConversation: Conversation {
         return appendMessage(withText: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
     }
     
-    public func appendImage(_ url: URL) -> Sendable? {
-        return appendMessageWithImage(at: url) as? Sendable
+    public func appendImage(_ data: Data, v3: Bool) -> Sendable? {
+        return appendMessage(withImageData: data, version3: v3) as? Sendable
     }
     
-    public func appendImage(_ data: Data) -> Sendable? {
-        return appendMessage(withImageData: data) as? Sendable
-    }
-    
-    public func appendFile(_ metaData: ZMFileMetadata) -> Sendable? {
-        return appendMessage(with: metaData) as? Sendable
+    public func appendFile(_ metaData: ZMFileMetadata, v3: Bool) -> Sendable? {
+        return appendMessage(with: metaData, version3: v3) as? Sendable
     }
     
     public func appendLocation(_ location: LocationData) -> Sendable? {
