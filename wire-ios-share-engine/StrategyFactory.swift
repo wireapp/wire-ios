@@ -27,21 +27,50 @@ class StrategyFactory {
     let syncContext: NSManagedObjectContext
     let registrationStatus: ClientRegistrationStatus
     let cancellationProvider: ZMRequestCancellation
+    private(set) var strategies = [AnyObject]()
+
+    private var tornDown = false
 
     init(syncContext: NSManagedObjectContext, registrationStatus: ClientRegistrationStatus, cancellationProvider: ZMRequestCancellation) {
         self.syncContext = syncContext
         self.registrationStatus = registrationStatus
         self.cancellationProvider = cancellationProvider
+        self.strategies = createStrategies()
     }
 
-    func createStrategies() -> [AnyObject] {
+    deinit {
+        precondition(tornDown, "Need to call `tearDown` before `deinit`")
+    }
+
+    func tearDown() {
+        strategies.forEach {
+            if $0.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
+                ($0 as? ZMObjectSyncStrategy)?.tearDown()
+            }
+        }
+        tornDown = true
+    }
+
+    private func createStrategies() -> [AnyObject] {
         return [
+            // Missing Clients
             createMissingClientsStrategy(),
+
+            // Client Messages
             createClientMessageTranscoder(),
+
+            // Link Previews
+            createLinkPreviewAssetUploadRequestStrategy(),
+            createLinkPreviewUploadRequestStrategy(),
+
+            // Assets V2
             createImageUploadRequestStrategy(),
             createFileUploadRequestStrategy(),
-            createLinkPreviewAssetUploadRequestStrategy(),
-            createLinkPreviewUploadRequestStrategy()
+
+            // Assets V3
+            createAssetClientMessageRequestStrategy(),
+            createAssetV3ImageUploadRequestStrategy(),
+            createAssetV3FileUploadRequestStrategy()
         ]
     }
 
@@ -78,12 +107,44 @@ class StrategyFactory {
         )
     }
 
+    // MARK: – Link Previews
+
     private func createLinkPreviewAssetUploadRequestStrategy() -> LinkPreviewAssetUploadRequestStrategy {
-        return LinkPreviewAssetUploadRequestStrategy(clientRegistrationDelegate: registrationStatus, managedObjectContext: syncContext)
+        return LinkPreviewAssetUploadRequestStrategy(
+            clientRegistrationDelegate: registrationStatus,
+            managedObjectContext: syncContext
+        )
     }
 
     private func createLinkPreviewUploadRequestStrategy() -> LinkPreviewUploadRequestStrategy {
-        return LinkPreviewUploadRequestStrategy(managedObjectContext: syncContext, clientRegistrationDelegate: registrationStatus)
+        return LinkPreviewUploadRequestStrategy(
+            managedObjectContext: syncContext,
+            clientRegistrationDelegate: registrationStatus
+        )
     }
 
+    // MARK: - Asset V3
+
+    private func createAssetV3FileUploadRequestStrategy() -> AssetV3FileUploadRequestStrategy {
+        return AssetV3FileUploadRequestStrategy(
+            clientRegistrationStatus: registrationStatus,
+            taskCancellationProvider: cancellationProvider,
+            managedObjectContext: syncContext
+        )
+    }
+
+    private func createAssetV3ImageUploadRequestStrategy() -> AssetV3ImageUploadRequestStrategy {
+        return AssetV3ImageUploadRequestStrategy(
+            clientRegistrationStatus: registrationStatus,
+            taskCancellationProvider: cancellationProvider,
+            managedObjectContext: syncContext
+        )
+    }
+
+    private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
+        return AssetClientMessageRequestStrategy(
+            clientRegistrationStatus: registrationStatus,
+            managedObjectContext: syncContext
+        )
+    }
 }
