@@ -214,8 +214,11 @@ public class NotificationDispatcher : NSObject {
         let change = Changes(changedKeys: Set(changedKeys))
 
         let objectAndChangedKeys = [object: change]
-        allChanges = allChanges.merged(with: objectAndChangedKeys) 
-        managedObjectContext.forceSaveOrRollback()
+        allChanges = allChanges.merged(with: objectAndChangedKeys)
+        // Fire notifications only if there won't be a save happening anytime soon
+        if !managedObjectContext.zm_hasChanges {
+            fireAllNotifications()
+        }
     }
     
     /// Forwards inserted and deleted conversations to the conversationList observer to update lists accordingly

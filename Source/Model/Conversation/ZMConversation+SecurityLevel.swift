@@ -327,6 +327,7 @@ extension ZMConversation {
         if systemMessage.shouldGenerateUnreadCount() {
             precondition(timestamp != nil, "An unread dot generating system message must have a timestamp")
             updateLastServerTimeStampIfNeeded(timestamp)
+            updateUnreadMessages(with: systemMessage)
         }
         
         return (message: systemMessage, insertionIndex: index)

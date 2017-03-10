@@ -22,6 +22,9 @@ public extension ZMConversation {
     
     public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date) {
         appendSystemMessage(type: .missedCall, sender: user, users: Set<ZMUser>([user]), clients: nil, timestamp: timestamp)
+        if isArchived && !isSilenced {
+            isArchived = false
+        }
     }
     
 }
