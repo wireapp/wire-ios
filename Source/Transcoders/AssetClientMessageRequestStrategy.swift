@@ -101,6 +101,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
         if response.result == .success {
             if message.fileMessageData?.v3_isImage() == true {
                 message.delivered = true
+                message.uploadState = .done
                 message.markAsSent()
             } else {
                 return updateNonImageFileMessageStatus(for: message, response: response)
