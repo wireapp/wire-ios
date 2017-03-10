@@ -20,6 +20,10 @@
 import Foundation
 import WireRequestStrategy
 @testable import WireMessageStrategy
+import XCTest
+import WireMessageStrategy
+import ZMCDataModel
+
 
 
 fileprivate extension AssetClientMessageRequestStrategy {
@@ -48,34 +52,19 @@ fileprivate extension ZMTransportRequest {
 }
 
 
-class AssetClientMessageRequestStrategyTests: MessagingTest {
+class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     fileprivate var clientRegistrationStatus: MockClientRegistrationStatus!
     fileprivate var sut: AssetClientMessageRequestStrategy!
-    fileprivate var conversation: ZMConversation!
-    fileprivate var otherUser: ZMUser!
     fileprivate var imageData = mediumJPEGData()
 
     override func setUp() {
         super.setUp()
         clientRegistrationStatus = MockClientRegistrationStatus()
         sut = AssetClientMessageRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: syncMOC)
-        createConversation()
-        createSelfClient()
     }
 
     // MARK: Helper
-
-    func createConversation() {
-        conversation = .insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = .create()
-        conversation.conversationType = .oneOnOne
-        conversation.connection = .insertNewObject(in: syncMOC)
-        otherUser = .insertNewObject(in: syncMOC)
-        conversation.connection?.to = otherUser
-        otherUser.remoteIdentifier = .create()
-    }
-
     @discardableResult func createMessage(
         isImage: Bool = true,
         uploaded: Bool = false,
@@ -89,10 +78,10 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
 
         let message: ZMAssetClientMessage!
         if isImage {
-            message = conversation.appendMessage(withImageData: imageData, version3: true) as! ZMAssetClientMessage
+            message = self.groupConversation.appendMessage(withImageData: imageData, version3: true) as! ZMAssetClientMessage
         } else {
             let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-            message = conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil), version3: true) as! ZMAssetClientMessage
+            message = self.groupConversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil), version3: true) as! ZMAssetClientMessage
         }
 
         if isImage {
@@ -118,13 +107,13 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
             let previewMessage = ZMGenericMessage.genericMessage(
                 asset: .asset(withOriginal: nil, preview: previewAsset),
                 messageID: message.nonce.transportString(),
-                expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
+                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
             )
 
             message.add(previewMessage)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasPreview(), line: line)
             XCTAssertEqual(message.genericAssetMessage!.assetData!.preview.remote.hasAssetId(), previewAssetId, line: line)
-            XCTAssertEqual(message.isEphemeral, conversation.messageDestructionTimeout != 0, line: line)
+            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeout != 0, line: line)
         }
 
         if uploaded {
@@ -133,14 +122,14 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
                 withUploadedOTRKey: otr,
                 sha256: sha,
                 messageID: message.nonce.transportString(),
-                expiresAfter: NSNumber(value: self.conversation.messageDestructionTimeout)
+                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
             )
             if assetId {
                 uploaded = uploaded.updatedUploaded(withAssetId: UUID.create().transportString(), token: nil)!
             }
             message.add(uploaded)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasUploaded(), line: line)
-            XCTAssertEqual(message.isEphemeral, conversation.messageDestructionTimeout != 0, line: line)
+            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeout != 0, line: line)
         }
 
         message.uploadState = uploadState
@@ -208,19 +197,19 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         createMessage(uploaded: true, assetId: true)
 
         // then
-        sut.assertCreatesValidRequestForAsset(in: conversation)
+        sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
     }
 
     func testThatItCreatesARequestForAnUploadedImageMessage_Ephemeral() {
         // given
-        conversation.messageDestructionTimeout = 15
+        self.groupConversation.messageDestructionTimeout = 15
         createMessage(uploaded: true, assetId: true)
 
         // when
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
 
         // then
-        let expected = "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages?report_missing=\(otherUser.remoteIdentifier!.transportString())"
+        let expected = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages?report_missing=\(otherUser.remoteIdentifier!.transportString())"
         XCTAssertEqual(request.path, expected)
         XCTAssertEqual(request.method, .methodPOST)
     }
@@ -230,7 +219,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         createMessage(isImage: false, uploadState: .uploadingPlaceholder)
 
         // then
-        sut.assertCreatesValidRequestForAsset(in: conversation)
+        sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
     }
 
     func testThatItCreatesARequestForANonImageMessageWithAsset_PreviewAndPreviewAssetId() {
@@ -238,7 +227,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingThumbnail)
 
         // then
-        sut.assertCreatesValidRequestForAsset(in: conversation)
+        sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
     }
 
     func testThatItDoesNotCreateARequestForANonImageMessageWithAsset_PreviewAndWithoutPreviewAssetId() {
@@ -254,7 +243,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
 
         // then
-        sut.assertCreatesValidRequestForAsset(in: conversation)
+        sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
     }
 
     func testThatItDoesNotCreateARequestForANonImageMessageWithAsset_UploadedAndWithoutAssetId() {
@@ -268,7 +257,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
     func testThatItCreatesARequestToUploadNotUploaded_Failed() {
         // given
         let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset, transferState: .uploading)
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let request = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
 
         // when
         request.complete(withHttpStatus: 400)
@@ -278,7 +267,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         XCTAssertEqual(message.uploadState, .uploadingFailed)
         XCTAssertEqual(message.transferState, .failedUpload)
         XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
-        sut.assertCreatesValidRequestForAsset(in: conversation)
+        sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
     }
 
     func testThatItCreatesARequestToUploadNotUploaded_Cancelled() {
@@ -292,7 +281,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
 
         // then
-        sut.assertCreatesValidRequestForAsset(in: conversation)
+        sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
     }
 
     func testThatItDoesNotCreateARequestToUploadNotUploaded_WrongStates() {
@@ -357,7 +346,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
     func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse() {
         // given
         let message = createMessage(uploaded: true, assetId: true)
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let request = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
 
         // when
         request.complete(withHttpStatus: 200)
@@ -372,7 +361,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
 
     func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse_Ephemeral() {
         // given
-        conversation.messageDestructionTimeout = 15
+        self.groupConversation.messageDestructionTimeout = 15
         let message = createMessage(uploaded: true, assetId: true)
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
 
@@ -391,7 +380,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let message = createMessage(isImage: false, uploadState: .uploadingPlaceholder)
 
         // when
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let request = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         request.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -410,7 +399,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: mediumJPEGData())
 
         // when
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let request = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         request.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -428,7 +417,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let message = createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingThumbnail)
 
         // when
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let request = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         request.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -446,7 +435,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
 
         // when
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let request = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         request.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -462,7 +451,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let message = createMessage(isImage: false, uploaded: true, preview: true, assetId: true, previewAssetId: true, uploadState: .uploadingFullAsset)
 
         // when
-        let request = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let request = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         request.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -478,11 +467,11 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
 
         // when
-        let uploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let uploadedRequest = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         uploadedRequest.complete(withHttpStatus: 400)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         notUploadedRequest.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -498,11 +487,11 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let message = createMessage(isImage: false, preview: true, previewAssetId: true, uploadState: .uploadingThumbnail)
 
         // when
-        let thumbnailRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let thumbnailRequest = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         thumbnailRequest.complete(withHttpStatus: 400)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         notUploadedRequest.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -518,11 +507,11 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         let message = createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingFullAsset)
 
         // when
-        let uploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let uploadedRequest = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         uploadedRequest.complete(withHttpStatus: 400)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: conversation)!
+        let notUploadedRequest = sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
         notUploadedRequest.complete(withHttpStatus: 200)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

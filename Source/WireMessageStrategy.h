@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import <WireMessageStrategy/ZMClientMessageTranscoder.h>
-#import <WireMessageStrategy/ZMMessageTranscoder.h>
-#import <WireMessageStrategy/ZMMessageTranscoder+Internal.h>
+//! Project version number for DDModel.
+FOUNDATION_EXPORT double WireMessageStrategyVersionNumber;
 
-#import <WireMessageStrategy/ZMPushMessageHandler.h>
+//! Project version string for DDModel.
+FOUNDATION_EXPORT const unsigned char WireMessageStrategyVersionString[];
+
+
 

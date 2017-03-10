@@ -18,8 +18,10 @@
 
 import Foundation
 @testable import WireMessageStrategy
+import XCTest
+import ZMCDataModel
 
-class ImageDownloadRequestStrategyTests: MessagingTest {
+class ImageDownloadRequestStrategyTests: MessagingTestBase {
     
     fileprivate var clientRegistrationStatus : MockClientRegistrationStatus!
     fileprivate var sut : ImageDownloadRequestStrategy!
@@ -28,15 +30,12 @@ class ImageDownloadRequestStrategyTests: MessagingTest {
         super.setUp()
         
         self.clientRegistrationStatus = MockClientRegistrationStatus()
-        self.sut = ImageDownloadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus , managedObjectContext: self.syncMOC)
-        
-        createSelfClient()
+        self.sut = ImageDownloadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus , managedObjectContext: self.syncMOC)        
     }
     
     func createImageMessage(withAssetId assetId: UUID?) -> ZMAssetClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
-        
         let message = conversation.appendOTRMessage(withImageData: verySmallJPEGData(), nonce: UUID.create())
         
         let imageData = message.imageAssetStorage?.originalImageData()

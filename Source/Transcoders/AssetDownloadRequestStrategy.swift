@@ -19,6 +19,7 @@
 
 import zimages
 import ZMTransport
+import WireRequestStrategy
 
 @objc public final class AssetDownloadRequestStrategyNotification: NSObject {
     public static let downloadFinishedNotificationName = "AssetDownloadRequestStrategyDownloadFinishedNotificationName"

@@ -19,28 +19,25 @@
 import XCTest
 @testable import WireMessageStrategy
 import ZMTesting
+import ZMCDataModel
 
-class ZMOTRMessageMissingTests: MessagingTest {
-    
-    var user: ZMUser!
-    var conversation: ZMConversation!
+
+class ZMOTRMessageMissingTests: MessagingTestBase {
+
     var message: ZMOTRMessage!
     
     override func setUp() {
         
         super.setUp()
-        
-        self.createSelfClient()
-        self.uiMOC.saveOrRollback()
-        
         self.syncMOC.performGroupedBlockAndWait {
-            self.user = ZMUser.insertNewObject(in: self.syncMOC)
-            self.user.remoteIdentifier = UUID.create()
-            self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            self.message = ZMClientMessage.insertNewObject(in: self.syncMOC)
-            self.message.visibleInConversation = self.conversation
+            self.message = self.groupConversation.appendMessage(withText: "Test message") as! ZMClientMessage
             self.syncMOC.saveOrRollback()
         }
+    }
+    
+    override func tearDown() {
+        self.message =  nil
+        super.tearDown()
     }
     
     func testThatItInsertsMissingClientsFromUploadResponse() {
@@ -51,7 +48,7 @@ class ZMOTRMessageMissingTests: MessagingTest {
             let missingClientIdentifiers = ["aabbccdd", "ddeeff22"]
             let payload = [
                 "missing" : [
-                    self.user.remoteIdentifier!.transportString() : missingClientIdentifiers
+                    self.otherUser.remoteIdentifier!.transportString() : missingClientIdentifiers
                 ],
                 "deleted" : [:],
                 "redundant" : [:]
@@ -62,7 +59,7 @@ class ZMOTRMessageMissingTests: MessagingTest {
             self.syncMOC.saveOrRollback()
             
             // THEN
-            let allExistingClients = Set(self.user.clients.map { $0.remoteIdentifier! })
+            let allExistingClients = Set(self.otherUser.clients.map { $0.remoteIdentifier! })
             missingClientIdentifiers.forEach {
                 XCTAssert(allExistingClients.contains($0))
             }
@@ -75,21 +72,21 @@ class ZMOTRMessageMissingTests: MessagingTest {
             // GIVEN
             let client1 = UserClient.insertNewObject(in: self.syncMOC)
             client1.remoteIdentifier = "aabbccdd"
-            client1.user = self.user
+            client1.user = self.otherUser
             let client2 = UserClient.insertNewObject(in: self.syncMOC)
             client2.remoteIdentifier = "11223344"
-            client2.user = self.user
+            client2.user = self.otherUser
             let client3 = UserClient.insertNewObject(in: self.syncMOC)
             client3.remoteIdentifier = "abccdeef"
-            client3.user = self.user
+            client3.user = self.otherUser
             self.syncMOC.saveOrRollback()
-            XCTAssertEqual(self.user.clients.count, 3)
+            XCTAssertEqual(self.otherUser.clients.count, 4)
             
             let deletedClientsIdentifier = [client1.remoteIdentifier!, client2.remoteIdentifier!]
             let payload = [
                 "missing" : [:],
                 "deleted" : [
-                    self.user.remoteIdentifier!.transportString() : deletedClientsIdentifier
+                    self.otherUser.remoteIdentifier!.transportString() : deletedClientsIdentifier
                 ],
                 "redundant" : [:]
             ]
@@ -99,7 +96,7 @@ class ZMOTRMessageMissingTests: MessagingTest {
             self.syncMOC.saveOrRollback()
             
             // THEN
-            let allExistingClients = Set(self.user.clients.map { $0.remoteIdentifier! })
+            let allExistingClients = Set(self.otherUser.clients.map { $0.remoteIdentifier! })
             deletedClientsIdentifier.forEach {
                 XCTAssertFalse(allExistingClients.contains($0))
             }
@@ -109,12 +106,12 @@ class ZMOTRMessageMissingTests: MessagingTest {
     
     func testThatItMarksConversationToDownloadFromRedundantUploadResponse() {
         // GIVEN
-        XCTAssertFalse(self.conversation.needsToBeUpdatedFromBackend)
+        XCTAssertFalse(self.groupConversation.needsToBeUpdatedFromBackend)
         let payload = [
             "missing" : [:],
             "deleted" : [:],
             "redundant" : [
-                self.user.remoteIdentifier!.transportString() : "aabbccdd"
+                self.otherUser.remoteIdentifier!.transportString() : "aabbccdd"
             ]
         ]
         
@@ -123,7 +120,7 @@ class ZMOTRMessageMissingTests: MessagingTest {
         self.syncMOC.saveOrRollback()
         
         // THEN
-        XCTAssertTrue(self.conversation.needsToBeUpdatedFromBackend)
+        XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
     }
     
 }

@@ -17,18 +17,12 @@
 // 
 
 
-@import WireRequestStrategy;
+CRYPTO_ROOT = $(PROJECT_DIR)/Carthage/Checkouts/cryptobox-ios/build
+CRYPTO_INCLUDE = $(CRYPTO_ROOT)/include
+CRYPTO_LIB = $(CRYPTO_ROOT)/lib
 
-#import "ZMPushMessageHandler.h"
-#import "ZMMessageTranscoder.h"
+LIBRARY_SEARCH_PATHS = $(inherited)
+HEADER_SEARCH_PATHS = $(inherited) $(CRYPTO_INCLUDE)
 
-@protocol ClientRegistrationDelegate;
-@protocol DeliveryConfirmationDelegate;
 
-@interface ZMClientMessageTranscoder : ZMMessageTranscoder
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                 localNotificationDispatcher:(id<ZMPushMessageHandler>)dispatcher
-                    clientRegistrationStatus:(id<ClientRegistrationDelegate>)clientDeletionDelegate
-                      apnsConfirmationStatus:(id<DeliveryConfirmationDelegate>)apnsConfirmationStatus;
-@end

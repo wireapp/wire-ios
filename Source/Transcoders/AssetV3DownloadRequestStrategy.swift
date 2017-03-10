@@ -19,7 +19,7 @@
 
 import zimages
 import ZMTransport
-
+import WireRequestStrategy
 
 fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 

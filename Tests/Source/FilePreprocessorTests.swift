@@ -22,7 +22,7 @@ import ZMCDataModel
 @testable import WireMessageStrategy
 
 
-class FilePreprocessorTests : MessagingTest {
+class FilePreprocessorTests : MessagingTestBase {
 
     var sut: FilePreprocessor!
 

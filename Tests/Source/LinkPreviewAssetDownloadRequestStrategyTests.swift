@@ -19,10 +19,13 @@
 
 import Foundation
 import ZMCDataModel
+import XCTest
+import WireMessageStrategy
+
 
 @testable import WireMessageStrategy
 
-class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTest {
+class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var sut: LinkPreviewAssetDownloadRequestStrategy!
     var authStatus: MockClientRegistrationStatus!

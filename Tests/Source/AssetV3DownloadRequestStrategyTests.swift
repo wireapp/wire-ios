@@ -19,10 +19,12 @@
 
 import Foundation
 @testable import WireMessageStrategy
+import XCTest
+import ZMCDataModel
 
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
-class AssetV3DownloadRequestStrategyTests: MessagingTest {
+class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
     var authStatus: MockClientRegistrationStatus!
     var cancellationProvider: MockTaskCancellationProvider!
@@ -54,22 +56,22 @@ class AssetV3DownloadRequestStrategyTests: MessagingTest {
         ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
 
         let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL), version3: true) as! ZMAssetClientMessage
-
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
 
         // TODO: We should replace this manual update with inserting a v3 asset as soon as we have sending support
+        let timer: NSNumber? = conversation.messageDestructionTimeout > 0 ? NSNumber(value: conversation.messageDestructionTimeout) : nil
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: otrKey,
             sha256: sha,
             messageID: message.nonce.transportString(),
-            expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
+            expiresAfter: timer
         )
 
         guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
             XCTFail("Failed to update asset")
             return nil
         }
-
+        
         message.add(uploadedWithId)
         configureForDownloading(message: message)
         XCTAssertEqual(message.version, 3)
@@ -110,6 +112,8 @@ class AssetV3DownloadRequestStrategyTests: MessagingTest {
         let conversation = createConversation()
         conversation.messageDestructionTimeout = 5
         guard let (message, assetId, token) = createFileMessageWithAssetId(in: conversation) else { return XCTFail("No message") }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        self.spinMainQueue(withTimeout: 0.1) // give the disk some time?
 
         guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData found") }
         XCTAssert(assetData.hasUploaded())
@@ -301,9 +305,7 @@ extension AssetV3DownloadRequestStrategyTests {
         let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
-        
-        let selfClient = createSelfClient()
-        
+                
         let asset = ZMAssetBuilder()
             .setOriginal(ZMAssetOriginalBuilder()
                 .setMimeType("image/jpeg")

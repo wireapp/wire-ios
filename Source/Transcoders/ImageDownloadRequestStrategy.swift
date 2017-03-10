@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 public final class ImageDownloadRequestStrategy : ZMObjectSyncStrategy, RequestStrategy {
     

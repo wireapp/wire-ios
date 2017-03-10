@@ -19,6 +19,7 @@
 import Foundation
 import ZMCSystem
 import Cryptobox
+import WireRequestStrategy
 
 private let zmLog = ZMSLog(tag: "cryptobox")
 

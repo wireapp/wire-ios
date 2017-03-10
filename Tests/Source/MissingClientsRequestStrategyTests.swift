@@ -20,26 +20,27 @@ import XCTest
 @testable import WireMessageStrategy
 import ZMUtilities
 import ZMTesting
-import ZMCMockTransport
 import ZMCDataModel
+import WireRequestStrategy
 
-
-class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
+class MissingClientsRequestStrategyTests: MessagingTestBase {
 
     var sut: MissingClientsRequestStrategy!
     var clientRegistrationStatus: MockClientRegistrationStatus!
     var confirmationStatus : MockConfirmationStatus!
     
+    var validPrekey: String {
+        return try! self.selfClient.keysStore.lastPreKey()
+    }
+    
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         clientRegistrationStatus = MockClientRegistrationStatus()
         confirmationStatus = MockConfirmationStatus()
         sut = MissingClientsRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, apnsConfirmationStatus: confirmationStatus, managedObjectContext: self.syncMOC)
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         clientRegistrationStatus = nil
         confirmationStatus = nil
         sut.tearDown()
@@ -49,468 +50,494 @@ class MissingClientsRequestStrategyTests: RequestStrategyTestBase {
     
     func testThatItCreatesMissingClientsRequest() {
         
-        // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
+        // GIVEN
+        let missingUser = self.createUser()
         
-        let missingUser = ZMUser.insertNewObject(in: self.syncMOC)
-        missingUser.remoteIdentifier = UUID.create()
+        let firstMissingClient = self.createClient(user: missingUser)
+        let secondMissingClient = self.createClient(user: missingUser)
         
-        let firstMissingClient = UserClient.insertNewObject(in: self.syncMOC)
-        firstMissingClient.remoteIdentifier = NSString.createAlphanumerical() as String
-        firstMissingClient.user = missingUser
+        // WHEN
+        self.selfClient.missesClient(firstMissingClient)
+        self.selfClient.missesClient(secondMissingClient)
         
-        let secondMissingClient = UserClient.insertNewObject(in: self.syncMOC)
-        secondMissingClient.remoteIdentifier = NSString.createAlphanumerical() as String
-        secondMissingClient.user = missingUser
-        
-        // when
-        client.missesClient(firstMissingClient)
-        client.missesClient(secondMissingClient)
-        
-        let request = sut.requestsFactory.fetchMissingClientKeysRequest(client.missingClients!)
-        _ = [missingUser.remoteIdentifier!.transportString(): [firstMissingClient.remoteIdentifier, secondMissingClient.remoteIdentifier]]
-        
-        // then
-        AssertOptionalNotNil(request, "Should create request to fetch clients' keys") { request in
-            XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.methodPOST)
-            XCTAssertEqual(request.transportRequest.path, "/users/prekeys")
-            let userPayload = request.transportRequest.payload?.asDictionary()?[missingUser.remoteIdentifier!.transportString()] as? NSArray
-            AssertOptionalNotNil(userPayload, "Clients map should contain missid user id") {userPayload in
-                XCTAssertTrue(userPayload.contains(firstMissingClient.remoteIdentifier!), "Clients map should contain all missed clients id for each user")
-                XCTAssertTrue(userPayload.contains(secondMissingClient.remoteIdentifier!), "Clients map should contain all missed clients id for each user")
-            }
+        guard let request = sut.requestsFactory.fetchMissingClientKeysRequest(self.selfClient.missingClients!) else {
+            return XCTFail()
         }
+        
+        // THEN
+        XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request.transportRequest.path, "/users/prekeys")
+        guard let recipientsPayload = request.transportRequest.payload as? [String: [String]] else {
+            return XCTFail()
+        }
+        guard let userPayload = recipientsPayload[missingUser.remoteIdentifier!.transportString()] else {
+            return XCTFail()
+        }
+        XCTAssertEqual(userPayload.sorted(), [firstMissingClient.remoteIdentifier!, secondMissingClient.remoteIdentifier!].sorted())
+        
     }
-    
+
     func testThatItCreatesARequestToFetchMissedKeysIfClientHasMissingClientsAndMissingKeyIsModified() {
-        // given
-        let client = createSelfClient()
+        // GIVEN
         
-        let missingClient = UserClient.insertNewObject(in: self.sut.managedObjectContext)
-        missingClient.remoteIdentifier = NSString.createAlphanumerical() as String
-        let missingUser = ZMUser.insertNewObject(in: self.sut.managedObjectContext)
-        missingUser.remoteIdentifier = UUID.create()
-        missingClient.user = missingUser
+        self.selfClient.missesClient(self.otherClient)
+        sut.notifyChangeTrackers(self.selfClient)
         
-        client.missesClient(missingClient)
-        sut.notifyChangeTrackers(client)
+        // WHEN
+        guard let request = self.sut.nextRequest() else {
+            return XCTFail()
+        }
         
-        // when
-        let request = self.sut.nextRequest()
-        
-        // then
-        assertRequestEqualsExpectedRequest(request)
+        // THEN
+        checkRequestForClientsPrekeys(request, expectedClients: [self.otherClient])
     }
-    
+
     func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientHasMissingClientsAndMissingKeyIsNotModified() {
-        // given
-        let client = createSelfClient()
-        let missingClient = createRemoteClient()
+        // GIVEN
+        self.selfClient.mutableSetValue(forKey: ZMUserClientMissingKey).add(self.otherClient)
+        sut.notifyChangeTrackers(self.selfClient)
         
-        client.mutableSetValue(forKey: ZMUserClientMissingKey).add(missingClient)
-        sut.notifyChangeTrackers(client)
-        
-        // when
+        // WHEN
         let request = self.sut.nextRequest()
         
-        // then
+        // THEN
         XCTAssertNil(request, "Should not fetch missing clients keys if missing key is not modified")
     }
-    
+
     func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsNotModified() {
-        // given
-        let client = createSelfClient()
-        let _ = createRemoteClient()
+        // GIVEN
+        self.selfClient.missingClients = nil
+        sut.notifyChangeTrackers(self.selfClient)
         
-        client.missingClients = nil
-        sut.notifyChangeTrackers(client)
-        
-        // when
+        // WHEN
         let request = self.sut.nextRequest()
         
-        // then
+        // THEN
         XCTAssertNil(request, "Should not fetch missing clients keys if missing key is not modified")
     }
-    
+
     func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsModified() {
-        // given
-        let client = createSelfClient()
-        let _ = createRemoteClient()
+        // GIVEN
+        self.selfClient.missingClients = nil
+        self.selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+        sut.notifyChangeTrackers(self.selfClient)
         
-        client.missingClients = nil
-        client.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-        sut.notifyChangeTrackers(client)
-        
-        // when
+        // WHEN
         let request = self.sut.nextRequest()
         
-        // then
+        // THEN
         XCTAssertNil(request, "Should not fetch missing clients keys if missing key is not modified")
     }
-    
+
     func testThatItPaginatesMissedClientsRequest() {
         
         self.sut.requestsFactory = MissingClientsRequestFactory(pageSize: 1)
         
-        // given
-        
-        let selfClient = createSelfClient()        
-        let client1 = createRemoteClient()
-        let client2 = createRemoteClient()
-        
-        selfClient.missesClient(client1)
-        selfClient.missesClient(client2)
+        // GIVEN
+        self.selfClient.missesClient(self.otherClient)
+        let user = self.createUser(alsoCreateClient: true)
+        let otherClient2 = user.clients.first!
+        self.selfClient.missesClient(otherClient2)
         
         sut.notifyChangeTrackers(selfClient)
         
-        // when
-        let firstRequest = self.sut.nextRequest()
+        // WHEN
+        guard let firstRequest = self.sut.nextRequest(),
+            let firstPayload = firstRequest.payload as? [String: [String]] else {
+            return XCTFail()
+        }
         
-        // then
-        assertRequestEqualsExpectedRequest(firstRequest)
+        // THEN
+        XCTAssertEqual(firstRequest.method, .methodPOST)
+        XCTAssertEqual(firstRequest.path, "/users/prekeys")
+        XCTAssertEqual(firstPayload.count, 1)
+        guard let firstEntry = firstPayload.first else {
+            return XCTFail()
+        }
+        
+        firstRequest.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 200, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // and when
-        let secondRequest = self.sut.nextRequest()
+        guard let secondRequest = self.sut.nextRequest(),
+            let secondPayload = secondRequest.payload as? [String: [String]] else {
+            return XCTFail()
+        }
         
-        // then
-        assertRequestEqualsExpectedRequest(secondRequest)
+        // THEN
+        XCTAssertEqual(secondRequest.method, .methodPOST)
+        XCTAssertEqual(secondRequest.path, "/users/prekeys")
+        XCTAssertEqual(secondPayload.count, 1)
+        guard let secondEntry = secondPayload.first else {
+            return XCTFail()
+        }
+        secondRequest.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 200, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // and when
         let thirdRequest = self.sut.nextRequest()
         
-        // then
+        // THEN
         XCTAssertNil(thirdRequest, "Should not request clients keys any more")
+        XCTAssertTrue([user.remoteIdentifier!.transportString(),
+                       self.otherUser.remoteIdentifier!.transportString()].contains(firstEntry.key),
+                      "Unrecognized user")
+        XCTAssertTrue([user.remoteIdentifier!.transportString(),
+                       self.otherUser.remoteIdentifier!.transportString()].contains(secondEntry.key),
+                      "Unrecognized user")
+        XCTAssertNotEqual(firstEntry.key, secondEntry.key)
+        let expectedClients1 = [self.otherClient.remoteIdentifier!]
+        let expectedClients2 = [otherClient2.remoteIdentifier!]
+        XCTAssertTrue(firstEntry.value == expectedClients1 || firstEntry.value == expectedClients2, "Not matching clients")
+        XCTAssertTrue(secondEntry.value == expectedClients1 || secondEntry.value == expectedClients2, "Not matching clients")
+        XCTAssertNotEqual(firstEntry.value, secondEntry.value)
     }
-    
+
     func testThatItRemovesMissingClientWhenResponseContainsItsKey() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient])
+        // GIVEN
+        let request = missingClientsRequest(missingClients: [self.otherClient])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: self.response(forMissing: [self.otherClient]),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertEqual(selfClient.missingClients!.count, 0)
     }
-    
+
     func testThatItRemovesMissingClientWhenResponseDoesNotContainItsKey() {
-        //given
-        let (selfClient, otherClient) = self.createClients()
-        let (request, response) = self.missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: [String: [String: AnyObject]]())
+        // GIVEN
+        let request = self.missingClientsRequest(missingClients: [otherClient])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(self.selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: ZMTransportResponse(payload: [String: [String: AnyObject]]() as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertEqual(selfClient.missingClients!.count, 0)
     }
-    
+
     func testThatItRemovesOtherMissingClientsEvenIfOneOfThemHasANilValue() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let lastKey = try! selfClient.keysStore.lastPreKey()
+        // GIVEN
         let payload : [ String : [String : Any]] = [
             otherClient.user!.remoteIdentifier!.transportString() :
                 [
                     otherClient.remoteIdentifier!: [
-                        "id": 3, "key": lastKey
+                        "id": 3, "key": self.validPrekey
                     ],
                     "2360fe0d2adc69e8" : NSNull()
             ]
         ]
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: payload)
+        let request = missingClientsRequest(missingClients: [otherClient])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertEqual(selfClient.missingClients!.count, 0)
     }
     
     func testThatItRemovesMissingClientsIfTheRequestForThoseClientsDidNotGiveUsAnyPrekey() {
         
-        //given
-        let (selfClient, otherClient1) = createClients()
-        let otherClient2 = self.createRemoteClient()
-        
+        // GIVEN
         let payload : [ String : [String : AnyObject]] = [
-            otherClient1.user!.remoteIdentifier!.transportString() : [:]
+            self.otherUser.remoteIdentifier!.transportString() : [:]
         ]
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient1, otherClient2], payload: payload)
+        let otherClient2 = self.createClient(user: self.otherUser)
+        let request = missingClientsRequest(missingClients: [self.otherClient, otherClient2])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertEqual(selfClient.missingClients!.count, 0)
     }
-    
+
     func testThatItAddsMissingClientToCurroptedClientsStoreIfTheRequestForTheClientDidNotGiveUsAnyPrekey() {
         
-        //given
-        let (selfClient, otherClient1) = createClients()
+        // GIVEN
+        let payload = [self.otherUser.remoteIdentifier!.transportString() : [self.otherClient.remoteIdentifier!: ""]] as [String: [String : Any]]
+        let request = missingClientsRequest(missingClients: [self.otherClient])
         
-        let payload = [otherClient1.user!.remoteIdentifier!.transportString() : [otherClient1.remoteIdentifier!: ""]] as [String: [String : Any]]
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient1], payload: payload)
+        // WHEN
+        _ = self.sut.updateUpdatedObject(selfClient,
+                                         requestUserInfo: request.userInfo,
+                                         response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                         keysToParse: request.keys)
         
-        //when
-        _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
-        
-        //then
+        // THEN
         XCTAssertEqual(selfClient.missingClients!.count, 0)
-        XCTAssertTrue(otherClient1.failedToEstablishSession)
+        XCTAssertTrue(self.otherClient.failedToEstablishSession)
     }
     
-    
+
     func testThatItDoesNotRemovesMissingClientsIfTheRequestForThoseClientsGivesUsAtLeastOneNewPrekey() {
         
-        //given
-        let (selfClient, otherClient1) = createClients()
-        let lastKey = try! selfClient.keysStore.lastPreKey()
-        let otherClient2 = self.createRemoteClient()
+        // GIVEN
+        let response = self.response(forMissing: [self.otherClient])
+        let otherClient2 = self.createClient(user: self.otherUser)
+        let request = missingClientsRequest(missingClients: [self.otherClient, otherClient2])
         
-        let payload : [ String : [String : Any]] = [
-            otherClient1.user!.remoteIdentifier!.transportString() :
-                [
-                    otherClient1.remoteIdentifier!: [
-                        "id": 3, "key": lastKey
-                    ],
-            ]
-        ]
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient1, otherClient2], payload: payload)
+        // WHEN
         
-        //when
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: response,
+                                             keysToParse: request.keys)
         
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
-        
-        //then
-        XCTAssertEqual(selfClient.missingClients, Set(arrayLiteral: otherClient2))
+        // THEN
+        XCTAssertEqual(selfClient.missingClients, Set([otherClient2]))
         
     }
-    
+
     func testThatItDoesNotRemovesMissingClientsThatWereNotInTheOriginalRequestWhenThePayloadDoesNotContainAnyPrekey() {
         
-        //given
-        let (selfClient, otherClient1) = createClients()
-        let otherClient2 = self.createRemoteClient()
-        
+        // GIVEN
         let payload : [ String : [String : AnyObject]] = [
-            otherClient1.user!.remoteIdentifier!.transportString() : [:]
+            self.otherUser.remoteIdentifier!.transportString() : [:]
         ]
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient1, otherClient2], payload: payload)
+        let otherClient2 = self.createClient(user: self.otherUser)
+        let request = missingClientsRequest(missingClients: [self.otherClient])
         
-        //when
-        let otherClient3 = self.createRemoteClient()
-        selfClient.missesClient(otherClient3)
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        selfClient.missesClient(otherClient2)
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                             keysToParse: request.keys)
         
-        //then
-        XCTAssertEqual(selfClient.missingClients, Set(arrayLiteral: otherClient3))
+        // THEN
+        XCTAssertEqual(selfClient.missingClients, Set(arrayLiteral: otherClient2))
     }
     
-    
+
     func testThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let message = messageThatMissesRecipient(otherClient)
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient])
+        // GIVEN
+        let message = self.message(missingRecipient: self.otherClient)
+        let request = missingClientsRequest(missingClients: [self.otherClient])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: self.response(forMissing: [self.otherClient]),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertEqual(message.missingRecipients.count, 0)
         XCTAssertFalse(message.isExpired)
     }
-    
+
     func testThatItDoesNotExpireMessageWhenEstablishedSessionWithClient() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let message = messageThatMissesRecipient(otherClient)
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient])
+        // GIVEN
+        let message = self.message(missingRecipient: self.otherClient)
+        let request = missingClientsRequest(missingClients: [self.otherClient])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response:  self.response(forMissing: [self.otherClient]),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertFalse(message.isExpired)
     }
-    
+
     func testThatItSetsFailedToEstablishSessionOnAMessagesWhenFailedtoEstablishSessionWithClient() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let message = messageThatMissesRecipient(otherClient)
+        // GIVEN
+        let message = self.message(missingRecipient: otherClient)
         
-        let payload: [String: [String: Any]] = [otherClient.user!.remoteIdentifier!.transportString(): [otherClient.remoteIdentifier!: ["key": "a2V5"]]]
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: payload)
+        let payload: [String: [String: Any]] = [self.otherUser.remoteIdentifier!.transportString(): [self.otherClient.remoteIdentifier!: ["key": "a2V5"]]]
+        let request = missingClientsRequest(missingClients: [otherClient])
         
-        //when
+        // WHEN
         self.performIgnoringZMLogError {
-            let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+            let _ = self.sut.updateUpdatedObject(self.selfClient,
+                                                 requestUserInfo: request.userInfo,
+                                                 response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                                 keysToParse: request.keys)
         }
-        //then
+        // THEN
         XCTAssertFalse(message.isExpired)
         XCTAssertTrue(otherClient.failedToEstablishSession)
     }
     
     func testThatItRemovesMessagesMissingClientWhenFailedToEstablishSessionWithClient() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let message = messageThatMissesRecipient(otherClient)
+        // GIVEN
+        let message = self.message(missingRecipient: otherClient)
         
         let payload: [String: [String: Any]] = [otherClient.user!.remoteIdentifier!.transportString(): [otherClient.remoteIdentifier!: ["key": "a2V5"]]]
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: payload)
+        let request = missingClientsRequest(missingClients: [self.otherClient])
         
-        //when
+        // WHEN
         self.performIgnoringZMLogError {
-            let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+            let _ = self.sut.updateUpdatedObject(self.selfClient,
+                                                 requestUserInfo: request.userInfo,
+                                                 response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                                 keysToParse: request.keys)
         }
         
-        //then
+        // THEN
         XCTAssertEqual(message.missingRecipients.count, 0)
     }
-    
+
     func testThatItRemovesMessagesMissingClientWhenClientHasNoKey() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let message = messageThatMissesRecipient(otherClient)
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: [String: [String: AnyObject]]())
+        // GIVEN
+        let payload = [String: [String: AnyObject]]()
+        let message = self.message(missingRecipient: otherClient)
+        let request = missingClientsRequest(missingClients: [otherClient])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertEqual(message.missingRecipients.count, 0)
     }
     
     func testThatItDoesSetFailedToEstablishSessionOnAMessageWhenClientHasNoKey() {
-        //given
-        let (selfClient, otherClient) = createClients()
-        let message = messageThatMissesRecipient(otherClient)
-        let (request, response) = missingClientsRequestAndResponse(selfClient, missingClients: [otherClient], payload: [String: [String: AnyObject]]())
+        // GIVEN
+        let message = self.message(missingRecipient: otherClient)
+        let payload = [String: [String: AnyObject]]()
+        let request = missingClientsRequest(missingClients: [otherClient])
         
-        //when
-        let _ = self.sut.updateUpdatedObject(selfClient, requestUserInfo: request.userInfo, response: response, keysToParse: request.keys)
+        // WHEN
+        let _ = self.sut.updateUpdatedObject(selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                             keysToParse: request.keys)
         
-        //then
+        // THEN
         XCTAssertFalse(message.isExpired)
         XCTAssertTrue(otherClient.failedToEstablishSession)
     }
     
-    func assertRequestEqualsExpectedRequest(_ request: ZMTransportRequest?) {
-        let client = ZMUser.selfUser(in: self.sut.managedObjectContext).selfClient()
-        let expectedRequest = sut.requestsFactory.fetchMissingClientKeysRequest(client!.missingClients!).transportRequest!
-        
-        AssertOptionalNotNil(request, "Should return request if there is inserted UserClient object") { request in
-            XCTAssertNotNil(request.payload, "Request should contain payload")
-            XCTAssertEqual(request.method, expectedRequest.method)
-            XCTAssertEqual(request.path, expectedRequest.path)
-            XCTAssertTrue(request.payload!.isEqual(expectedRequest.payload))
-            
-            self.mockTransportSession.completePreviouslySuspendendRequest(request)
-        }
-    }
-    
-    func missingClientsRequestAndResponse(_ selfClient: UserClient, missingClients: [UserClient], payload: [String: [String: Any]]? = nil)
-        -> (request: ZMUpstreamRequest, response: ZMTransportResponse)
-    {
-        let lastKey = try! selfClient.keysStore.lastPreKey()
-        
-        // make sure that we are missing those clients
-        for missingClient in missingClients {
-            selfClient.missesClient(missingClient)
-        }
-        
-        // generate payload
-        var autoGeneratedPayload : [String: [String: Any]] = [:]
-        for missingClient in missingClients {
-            autoGeneratedPayload[missingClient.user!.remoteIdentifier!.transportString()] = [
-                missingClient.remoteIdentifier! : [
-                    "id" : 12,
-                    "key" : lastKey
-                ]
-            ]
-        }
-        let payload = payload ?? autoGeneratedPayload
-        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
-        let request = sut.requestsFactory.fetchMissingClientKeysRequest(selfClient.missingClients!)
-        
-        return (request!, response)
-    }
-    
-    func messageThatMissesRecipient(_ missingRecipient: UserClient) -> ZMClientMessage {
-        let message = ZMClientMessage.insertNewObject(in: self.syncMOC)
-        let data = ZMGenericMessage.message(text: self.name!, nonce: UUID.create().transportString()).data()!
-        message.add(data)
-        message.missesRecipient(missingRecipient)
-        XCTAssertEqual(message.missingRecipients.count, 1)
-        return message
-    }
+
     
     func testThatItCreatesMissingClientsRequestAfterRemoteSelfClientIsFetched() {
-                
-        let selfClient = createSelfClient()
         
-        let remoteClientIdentifier = String.createAlphanumerical()
-        
-        // when
+        // GIVEN
+        let identifier = UUID.create().transportString()
         let payload = [
-            "id": remoteClientIdentifier as AnyObject,
-            "type": "permanent" as AnyObject,
-            "time": Date().transportString() as AnyObject
-        ]
+            "id": identifier as NSString,
+            "type": "permanent" as NSString,
+            "time": Date().transportString() as NSString
+        ] as [String: AnyObject]
         _ = UserClient.createOrUpdateSelfUserClient(payload, context: self.syncMOC)!
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         syncMOC.saveOrRollback()
         sut.notifyChangeTrackers(selfClient)
         
-        // when
-        let request = self.sut.nextRequest()
-        
-        // then
-        AssertOptionalNotNil(request, "Should create request to fetch clients' keys") {request in
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
-            XCTAssertEqual(request.path, "/users/prekeys")
-            let payloadDictionary = request.payload!.asDictionary()!
-            let userPayload = payloadDictionary[payloadDictionary.keys.first!] as? NSArray
-            AssertOptionalNotNil(userPayload, "Clients map should contain missid user id") {userPayload in
-                XCTAssertTrue(userPayload.contains(remoteClientIdentifier), "Clients map should contain all missed clients id for each user")
-            }
+        // WHEN
+        guard let request = self.sut.nextRequest() else {
+            return XCTFail()
         }
+        
+        // THEN
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request.path, "/users/prekeys")
+        let payloadDictionary = request.payload!.asDictionary()!
+        guard let userPayload = payloadDictionary[payloadDictionary.keys.first!] as? NSArray else {
+            return XCTFail()
+        }
+        XCTAssertTrue(userPayload.contains(identifier))
     }
     
     func testThatItResetsKeyForMissingClientIfThereIsNoMissingClient(){
-        // given
-        let client = self.createSelfClient()
-        client.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-        XCTAssertTrue(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
+        // GIVEN
+        self.selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+        XCTAssertTrue(self.selfClient.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
         
-        // when
-        let shouldCreateRequest = sut.shouldCreateRequest(toSyncObject: client, forKeys: Set(arrayLiteral: ZMUserClientMissingKey), withSync: sut.modifiedSync)
+        // WHEN
+        let shouldCreateRequest = sut.shouldCreateRequest(toSyncObject: selfClient,
+                                                          forKeys: Set(arrayLiteral: ZMUserClientMissingKey),
+                                                          withSync: sut.modifiedSync)
         
-        // then
+        // THEN
         XCTAssertFalse(shouldCreateRequest)
-        XCTAssertFalse(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
+        XCTAssertFalse(self.selfClient.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
         
     }
-    
+
     func testThatItDoesNotResetKeyForMissingClientIfThereIsAMissingClient(){
-        // given
-        let client = self.createSelfClient()
-        client.missesClient(UserClient.insertNewObject(in: self.syncMOC))
-        client.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-        XCTAssertTrue(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
+        // GIVEN
+        self.selfClient.missesClient(self.otherClient)
+        self.selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+        XCTAssertTrue(self.selfClient.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
         
-        // when
-        let shouldCreateRequest = sut.shouldCreateRequest(toSyncObject: client, forKeys: Set(arrayLiteral: ZMUserClientMissingKey), withSync: sut.modifiedSync)
+        // WHEN
+        let shouldCreateRequest = sut.shouldCreateRequest(toSyncObject: self.selfClient,
+                                                          forKeys: Set(arrayLiteral: ZMUserClientMissingKey),
+                                                          withSync: sut.modifiedSync)
         
-        // then
+        // THEN
         XCTAssertTrue(shouldCreateRequest)
-        XCTAssertTrue(client.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
-        
+        XCTAssertTrue(self.selfClient.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
     }
 }
 
+extension MissingClientsRequestStrategyTests {
+    
+    func checkRequestForClientsPrekeys(_ request: ZMTransportRequest,
+                                       expectedClients: [UserClient],
+                                       file: StaticString = #file,
+                                       line: UInt = #line) {
+        guard let payload = request.payload as? [String: [String]] else {
+            return XCTFail("Request should contain payload", file: file, line: line)
+        }
+        XCTAssertEqual(request.method, .methodPOST, file: file, line: line)
+        XCTAssertEqual(request.path, "/users/prekeys", file: file, line: line)
+        expectedClients.forEach {
+            guard let userKey = $0.user?.remoteIdentifier?.transportString() else {
+                return XCTFail("Invalid user ID", file: file, line: line)
+            }
+            guard let userPayload = payload[userKey] else {
+                return XCTFail("No such user in payload \(userKey)", file: file, line: line)
+            }
+            XCTAssertTrue(userPayload.contains($0.remoteIdentifier!), file: file, line: line)
+        }
+    }
+    
+    /// Returns response for missing clients
+    func response(forMissing clients: [UserClient]) -> ZMTransportResponse {
+        var payload : [String: [String: Any]] = [:]
+        for missingClient in clients {
+            let key = missingClient.user!.remoteIdentifier!.transportString()
+            var prevValue = payload[key] ?? [:]
+            prevValue[missingClient.remoteIdentifier!] = [
+                "id" : 12,
+                "key" : self.validPrekey
+            ]
+            payload[key] = prevValue
+        }
+        return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    /// Returns missing client request
+    func missingClientsRequest(missingClients: [UserClient]) -> ZMUpstreamRequest
+    {
+        // make sure that we are missing those clients
+        for missingClient in missingClients {
+            self.selfClient.missesClient(missingClient)
+        }
+        return sut.requestsFactory.fetchMissingClientKeysRequest(selfClient.missingClients!)
+    }
+    
+    /// Creates a message missing a client
+    func message(missingRecipient: UserClient) -> ZMClientMessage {
+        let message = self.groupConversation.appendMessage(withText: "Test message with missing") as! ZMClientMessage
+        message.missesRecipient(missingRecipient)
+        return message
+    }
+}

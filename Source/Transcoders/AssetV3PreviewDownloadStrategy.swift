@@ -19,6 +19,7 @@
 
 import zimages
 import ZMTransport
+import WireRequestStrategy
 
 
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")

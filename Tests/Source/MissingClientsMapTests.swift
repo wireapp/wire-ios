@@ -20,8 +20,10 @@
 import XCTest
 @testable import WireMessageStrategy
 import ZMTesting
+import ZMCDataModel
 
-class MissingClientsMapTests: MessagingTest {
+
+class MissingClientsMapTests: MessagingTestBase {
     
     func testThatItCreatesMissingMapForClients() {
         

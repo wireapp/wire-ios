@@ -26,7 +26,7 @@ import ZMTesting
 private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
 
-class AssetV3PreviewDownloadRequestStrategyTests: MessagingTest {
+class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
     var authStatus: MockClientRegistrationStatus!
     var sut: AssetV3PreviewDownloadRequestStrategy!

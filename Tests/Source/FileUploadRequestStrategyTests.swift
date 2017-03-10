@@ -20,6 +20,9 @@
 import Foundation
 import WireRequestStrategy
 @testable import WireMessageStrategy
+import XCTest
+import ZMCDataModel
+
 
 
 private class FakeCancelationProvider : NSObject, ZMRequestCancellation {
@@ -42,7 +45,7 @@ private let testDataURL = Bundle(for: FilePreprocessorTests.self).url(forResourc
 private let testData = try! Data(contentsOf: testDataURL)
 
 // MARK: - Tests setup
-class FileUploadRequestStrategyTests: MessagingTest {
+class FileUploadRequestStrategyTests: MessagingTestBase {
 
     fileprivate var sut: FileUploadRequestStrategy!
     fileprivate var cancellationProvider: FakeCancelationProvider!
@@ -50,7 +53,6 @@ class FileUploadRequestStrategyTests: MessagingTest {
     
     override func setUp() {
         super.setUp()
-        createSelfClient()
         self.cancellationProvider = FakeCancelationProvider()
 		self.clientRegistrationStatus = MockClientRegistrationStatus()
         self.sut = FileUploadRequestStrategy(
@@ -61,29 +63,15 @@ class FileUploadRequestStrategyTests: MessagingTest {
     }
     
     /// Creates a message that should generate request
-    func createMessage(_ name: String, uploadState: ZMAssetUploadState = .uploadingPlaceholder, inConversation: ZMConversation? = nil, thumbnail: Data? = nil, url: URL = testDataURL, isEphemeral: Bool = false) -> ZMAssetClientMessage {
-        let conversation = inConversation ?? ZMConversation.insertNewObject(in: self.syncMOC)
-        conversation.remoteIdentifier = UUID.create()
+    func createMessage(_ name: String, uploadState: ZMAssetUploadState = .uploadingPlaceholder, thumbnail: Data? = nil, url: URL = testDataURL, isEphemeral: Bool = false) -> ZMAssetClientMessage {
         if isEphemeral {
-            conversation.messageDestructionTimeout = 10
+            self.groupConversation.messageDestructionTimeout = 10
         }
         // This is a video metadata since it's the only file type which supports thumbnails at the moment.
-        let msg = conversation.appendMessage(with: ZMVideoMetadata(fileURL: url, thumbnail: thumbnail)) as! ZMAssetClientMessage
+        let msg = self.groupConversation.appendMessage(with: ZMVideoMetadata(fileURL: url, thumbnail: thumbnail)) as! ZMAssetClientMessage
         msg.uploadState = uploadState
         self.syncMOC.saveOrRollback()
         return msg
-    }
-    
-    func createOtherClientAndConversation() -> (UserClient, ZMConversation) {
-        let otherUser = ZMUser.insertNewObject(in: syncMOC)
-        otherUser.remoteIdentifier = UUID.create()
-        let otherClient = createClient(for: otherUser, createSessionWithSelfUser: true)
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.conversationType = .group
-        conversation.addParticipant(otherUser)
-        XCTAssertTrue(syncMOC.saveOrRollback())
-        
-        return (otherClient, conversation)
     }
 
     /// Forces the strategy to process the message
@@ -109,9 +97,7 @@ extension FileUploadRequestStrategyTests {
     func testThatItGeneratesARequestForAFileMessageThatIsPreprocessed() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
-
-        let msg = createMessage("foo", inConversation: conversation)
+        let msg = createMessage("foo")
         self.process(sut, message: msg)
         
         // when
@@ -268,7 +254,7 @@ extension FileUploadRequestStrategyTests {
         // given
         let msg1 = createMessage("foo")
         self.process(sut, message: msg1)
-        let msg2 = createMessage("foo", inConversation: msg1.conversation)
+        let msg2 = createMessage("foo")
         self.process(sut, message: msg2)
         
         // when
@@ -303,7 +289,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertEqual(msg1File?.path, "/conversations/\(msg1Conversation.remoteIdentifier!.transportString())/otr/assets")
         
         // Given 
-        let msg2 = createMessage("foo", inConversation: msg1.conversation)
+        let msg2 = createMessage("foo")
         self.process(sut, message: msg2)
         
         // third request: msg2 original
@@ -340,8 +326,7 @@ extension FileUploadRequestStrategyTests {
     func testThatItDoesGenerateTheRequestToUploadTheMediumAfterThePreviewCompletedSuccessfully() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage("foo", inConversation: conversation)
+        let msg = createMessage("foo")
         self.process(sut, message: msg)
         XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingPlaceholder)
         
@@ -565,10 +550,10 @@ extension FileUploadRequestStrategyTests {
         XCTAssertEqual(cancellationProvider.cancelledIdentifiers.count, 0)
         
         // when
-        request.complete(with: ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 400, transportSessionError: nil))
         msg.fileMessageData!.cancelTransfer()
+        request.complete(with: ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 400, transportSessionError: nil))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // then there should not be a running upload request as the upload failed by itself,
         // next request would be the Asset.NotUploaded request
         XCTAssertEqual(cancellationProvider.cancelledIdentifiers.count, 0)
@@ -704,8 +689,7 @@ extension FileUploadRequestStrategyTests {
     func testThatItGeneratesARequestWhenTheFileTransferIsSetTo_NotUploaded_Cancelled_PreviewNotYetUploaded() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, inConversation: conversation)
+        let msg = createMessage(name!)
         process(sut, message: msg)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.uploading)
         
@@ -738,9 +722,8 @@ extension FileUploadRequestStrategyTests {
     func testThatItGeneratesARequestWhenTheFileTransferIsSetTo_NotUploaded_Cancelled_ThumbnailUploading() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
         guard let url = Bundle(for: type(of: self)).url(forResource: "video", withExtension:"mp4") else { return XCTFail() }
-        let msg = createMessage(name!, uploadState: .uploadingThumbnail, inConversation: conversation, thumbnail: mediumJPEGData(), url: url)
+        let msg = createMessage(name!, uploadState: .uploadingThumbnail, thumbnail: mediumJPEGData(), url: url)
         process(sut, message: msg)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.uploading)
         
@@ -753,8 +736,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
-        guard let msgConversation = msg.conversation else { return XCTFail("Conversation was nil") }
-        let expectedPath = "/conversations/\(msgConversation.remoteIdentifier!.transportString())/otr/messages"
+        let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
 
         XCTAssertEqual(request.path, expectedPath)
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
@@ -773,9 +755,8 @@ extension FileUploadRequestStrategyTests {
     func testThatItGeneratesARequestWhenTheFileTransferIsSetTo_NotUploaded_Cancelled_ThumbnailUploaded_Video() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
         guard let url = Bundle(for: type(of: self)).url(forResource: "video", withExtension:"mp4") else { return XCTFail() }
-        let msg = createMessage(name!, uploadState: .uploadingFullAsset, inConversation: conversation, thumbnail: mediumJPEGData(), url: url)
+        let msg = createMessage(name!, uploadState: .uploadingFullAsset, thumbnail: mediumJPEGData(), url: url)
         process(sut, message: msg)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.uploading)
         
@@ -788,8 +769,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
-        guard let msgConversation = msg.conversation else { return XCTFail("message conversation was nil") }
-        let expectedPath = "/conversations/\(msgConversation.remoteIdentifier!.transportString())/otr/messages"
+        let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
 
         XCTAssertEqual(request.path, expectedPath)
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
@@ -808,8 +788,7 @@ extension FileUploadRequestStrategyTests {
     func testThatItGeneratesARequestWhenTheFileTransferIsSetTo_NotUploaded_Cancelled_PreviewUploaded() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, uploadState: .uploadingFullAsset, inConversation: conversation)
+        let msg = createMessage(name!, uploadState: .uploadingFullAsset)
         process(sut, message: msg)
         XCTAssertEqual(msg.transferState, ZMFileTransferState.uploading)
         
@@ -822,7 +801,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         guard let request = sut.nextRequest() else { return XCTFail("Request was nil") }
-        let expectedPath = "/conversations/\(msg.conversation!.remoteIdentifier!.transportString())/otr/messages"
+        let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
         XCTAssertEqual(request.path, expectedPath)
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
 
@@ -840,8 +819,7 @@ extension FileUploadRequestStrategyTests {
     func testThatItGeneratesARequestWhenTheFileTransferIsSetTo_NotUploaded_Cancelled_PreviewAndOriginalUploaded() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, uploadState: .uploadingFullAsset, inConversation: conversation)
+        let msg = createMessage(name!, uploadState: .uploadingFullAsset)
         process(sut, message: msg)
         guard let request = sut.nextRequest() else { return XCTFail("Should return the request to upload Asset.Uploaded") }
         XCTAssertEqual(msg.transferState, ZMFileTransferState.uploading)
@@ -857,7 +835,7 @@ extension FileUploadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         guard let secondRequest = sut.nextRequest() else { return XCTFail("Request was nil") }
-        let expectedPath = "/conversations/\(msg.conversation!.remoteIdentifier!.transportString())/otr/messages"
+        let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
         XCTAssertEqual(secondRequest.path, expectedPath)
         XCTAssertEqual(secondRequest.method, ZMTransportRequestMethod.methodPOST)
         
@@ -875,8 +853,7 @@ extension FileUploadRequestStrategyTests {
     func testThatItCreatesARequestToUploadA_NotUploaded_WhenTheFileDataFailsToUpload() {
         
         // given
-        let (otherClient, conversation) = createOtherClientAndConversation()
-        let msg = createMessage(name!, uploadState: .uploadingFullAsset, inConversation: conversation)
+        let msg = createMessage(name!, uploadState: .uploadingFullAsset)
         
         process(sut, message: msg)
         guard let uploadedRequest = sut.nextRequest() else { return XCTFail("Should return the request to upload Asset.Uploaded") }
@@ -887,8 +864,7 @@ extension FileUploadRequestStrategyTests {
         
         // then
         guard let notUploadedRequest = sut.nextRequest() else { return XCTFail("Request was nil") }
-        guard let msgConversation = msg.conversation else { return XCTFail("Conversation was nil") }
-        let expectedPath = "/conversations/\(msgConversation.remoteIdentifier!.transportString())/otr/messages"
+        let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
 
         XCTAssertEqual(notUploadedRequest.path, expectedPath)
         XCTAssertEqual(notUploadedRequest.method, ZMTransportRequestMethod.methodPOST)
@@ -1102,9 +1078,8 @@ extension FileUploadRequestStrategyTests {
     
     func testThatItDoesNotGeneratePreviewsForImageMessages() {
         // given
-        let (_, conversation) = createOtherClientAndConversation()
         let messageNonce = UUID.create()
-        let message = conversation.appendOTRMessage(withImageData: mediumJPEGData(), nonce: messageNonce)
+        let message = self.groupConversation.appendOTRMessage(withImageData: mediumJPEGData(), nonce: messageNonce)
         
         // when
         sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set(arrayLiteral: message)) }

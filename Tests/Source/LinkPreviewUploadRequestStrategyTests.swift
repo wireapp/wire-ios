@@ -16,8 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
+import WireMessageStrategy
+import ZMCDataModel
+import ZMTransport
 
-class LinkPreviewUploadRequestStrategyTests: MessagingTest {
+class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
 
     private var sut: LinkPreviewUploadRequestStrategy!
     private var authStatus: MockClientRegistrationStatus!
@@ -26,7 +30,6 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTest {
         super.setUp()
         authStatus = MockClientRegistrationStatus()
         sut = LinkPreviewUploadRequestStrategy(managedObjectContext: syncMOC, clientRegistrationDelegate: authStatus)
-        createSelfClient()
     }
 
     func testThatItDoesNotCreateARequestInState_Done() {

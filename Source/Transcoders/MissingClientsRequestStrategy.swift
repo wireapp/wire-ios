@@ -18,11 +18,7 @@
 
 
 import Foundation
-import ZMCSystem
-import ZMTransport
-import ZMUtilities
-import Cryptobox
-import ZMCDataModel
+import WireRequestStrategy
 
 private let zmLog = ZMSLog(tag: "Crypto")
 
