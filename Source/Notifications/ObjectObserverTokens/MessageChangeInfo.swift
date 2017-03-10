@@ -50,7 +50,6 @@ extension ZMAssetClientMessage {
                               #keyPath(ZMAssetClientMessage.hasDownloadedImage),
                               #keyPath(ZMAssetClientMessage.hasDownloadedFile),
                               #keyPath(ZMAssetClientMessage.progress),
-                              #keyPath(ZMAssetClientMessage.transferState),
                               #keyPath(ZMMessage.reactions)]
         return keys.union(additionalKeys)
     }
@@ -80,6 +79,15 @@ extension ZMImageMessage {
     }
 }
 
+extension ZMSystemMessage {
+
+    public class override var observableKeys : Set<String> {
+        let keys = super.observableKeys
+        let additionalKeys = [#keyPath(ZMSystemMessage.childMessages)]
+        return keys.union(additionalKeys)
+    }
+
+}
 
 @objc final public class MessageChangeInfo : ObjectChangeInfo {
     
@@ -121,6 +129,10 @@ extension ZMImageMessage {
         return changedKeysContain(keys: #keyPath(ZMMessage.reactions)) || reactionChangeInfos.count != 0
     }
 
+    public var childMessagesChanged : Bool {
+        return changedKeysContain(keys: #keyPath(ZMSystemMessage.childMessages))
+    }
+
     /// Whether the image data on disk changed
     public var imageChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMImageMessage.mediumData),
@@ -141,6 +153,10 @@ extension ZMImageMessage {
     
     public var linkPreviewChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMClientMessage.linkPreviewState), MessageKey.linkPreview.rawValue)
+    }
+
+    public var transferStateChanged: Bool {
+        return changedKeysContain(keys: #keyPath(ZMAssetClientMessage.transferState))
     }
 
     public var senderChanged : Bool {

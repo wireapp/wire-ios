@@ -152,6 +152,10 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 @property (nonatomic, copy) NSString * _Nullable text;
 @property (nonatomic) BOOL needsUpdatingUsers;
 
+@property (nonatomic) NSTimeInterval duration; // Only filled for .performedCall
+@property (nonatomic) NSSet<id <ZMSystemMessageData>>  * _Nonnull childMessages; // Only filled for .performedCall & .missedCall
+@property (nonatomic) id <ZMSystemMessageData> _Nullable parentMessage; // Only filled for .performedCall & .missedCall
+
 + (ZMSystemMessage * _Nullable)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation * _Nonnull)conversation;
 - (void)updateNeedsUpdatingUsersIfNeeded;
 

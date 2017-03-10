@@ -99,7 +99,7 @@ class DependencyKeyStore {
             return Set([#keyPath(ZMConnection.status)])
         case UserClient.entityName():
             return UserClient.observableKeys
-        case ZMMessage.entityName(), ZMSystemMessage.entityName():
+        case ZMMessage.entityName():
             return ZMMessage.observableKeys
         case ZMAssetClientMessage.entityName():
             return ZMAssetClientMessage.observableKeys
@@ -107,6 +107,8 @@ class DependencyKeyStore {
             return ZMClientMessage.observableKeys
         case ZMTextMessage.entityName(), ZMImageMessage.entityName():
             return Set()
+        case ZMSystemMessage.entityName():
+            return ZMSystemMessage.observableKeys
         case Reaction.entityName():
             return Set([#keyPath(Reaction.users)])
         case ZMGenericMessageData.entityName():
@@ -133,6 +135,8 @@ class DependencyKeyStore {
             return observableKeys.mapToDictionary{ZMMessage.keyPathsForValuesAffectingValue(forKey: $0)}
         case ZMAssetClientMessage.entityName():
             return observableKeys.mapToDictionary{ZMAssetClientMessage.keyPathsForValuesAffectingValue(forKey: $0)}
+        case ZMSystemMessage.entityName():
+            return observableKeys.mapToDictionary{ZMSystemMessage.keyPathsForValuesAffectingValue(forKey: $0)}
         case ZMClientMessage.entityName():
             return observableKeys.mapToDictionary{ZMClientMessage.keyPathsForValuesAffectingValue(forKey: $0)}
         case Reaction.entityName():

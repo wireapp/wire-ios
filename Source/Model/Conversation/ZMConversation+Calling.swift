@@ -16,15 +16,71 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 
 public extension ZMConversation {
-    
-    public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date) {
-        appendSystemMessage(type: .missedCall, sender: user, users: Set<ZMUser>([user]), clients: nil, timestamp: timestamp)
+
+    @discardableResult
+    public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date) -> ZMSystemMessage {
+        let (message, index) = appendSystemMessage(
+            type: .missedCall,
+            sender: user,
+            users: [user],
+            clients: nil,
+            timestamp: timestamp
+        )
+
         if isArchived && !isSilenced {
             isArchived = false
         }
+
+        if let previous = associatedMessage(before: message, at: index) {
+            previous.addChild(message)
+        }
+
+        managedObjectContext?.enqueueDelayedSave()
+        return message
     }
-    
+
+    @discardableResult
+    public func appendPerformedCallMessage(with duration: TimeInterval, caller: ZMUser) -> ZMSystemMessage {
+        let (message, index) = appendSystemMessage(
+            type: .performedCall,
+            sender: caller,
+            users: [caller],
+            clients: nil,
+            timestamp: Date(),
+            duration: duration
+        )
+
+        if isArchived && !isSilenced {
+            isArchived = false
+        }
+
+        if let previous = associatedMessage(before: message, at: index) {
+            previous.addChild(message)
+        }
+
+        managedObjectContext?.enqueueDelayedSave()
+        return message
+    }
+
+    private func associatedMessage(before message: ZMSystemMessage, at index: UInt) -> ZMSystemMessage? {
+        guard index >= 1 else { return nil }
+        guard let previous = messages[Int(index - 1)] as? ZMSystemMessage else { return nil }
+        guard previous.systemMessageType == message.systemMessageType else { return nil }
+        guard previous.users == message.users, previous.sender == message.sender else { return nil }
+        return previous
+    }
+
+}
+
+
+fileprivate extension ZMSystemMessage {
+
+    func addChild(_ message: ZMSystemMessage) {
+        mutableSetValue(forKey: #keyPath(ZMSystemMessage.childMessages)).add(message)
+        message.visibleInConversation = nil
+        message.hiddenInConversation = conversation
+    }
+
 }

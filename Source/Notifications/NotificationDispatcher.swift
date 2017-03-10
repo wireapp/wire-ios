@@ -147,6 +147,7 @@ public class NotificationDispatcher : NSObject {
                                            ZMMessage.classIdentifier,
                                            ZMClientMessage.classIdentifier,
                                            ZMAssetClientMessage.classIdentifier,
+                                           ZMSystemMessage.classIdentifier,
                                            Reaction.classIdentifier,
                                            ZMGenericMessageData.classIdentifier]
         self.affectingKeysStore = DependencyKeyStore(classIdentifiers : classIdentifiers)

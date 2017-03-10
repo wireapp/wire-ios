@@ -78,6 +78,9 @@ NSString * const ZMMessageIsObfuscatedKey = @"isObfuscated";
 NSString * const ZMMessageCachedCategoryKey = @"cachedCategory";
 NSString * const ZMMessageNormalizedTextKey = @"normalizedText";
 NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
+NSString * const ZMMessageDurationKey = @"duration";
+NSString * const ZMMessageChildMessagesKey = @"childMessages";
+NSString * const ZMMessageParentMessageKey = @"parentMessage";
 
 
 @interface ZMMessage ()
@@ -689,7 +692,10 @@ NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
                              ZMMessageDestructionDateKey,
                              ZMMessageIsObfuscatedKey,
                              ZMMessageCachedCategoryKey,
-                             ZMMessageNormalizedTextKey
+                             ZMMessageNormalizedTextKey,
+                             ZMMessageDurationKey,
+                             ZMMessageChildMessagesKey,
+                             ZMMessageParentMessageKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -844,6 +850,9 @@ NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
 @dynamic addedUsers;
 @dynamic removedUsers;
 @dynamic needsUpdatingUsers;
+@dynamic duration;
+@dynamic childMessages;
+@dynamic parentMessage;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
@@ -954,6 +963,7 @@ NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
             case ZMSystemMessageTypeNewClient:
             case ZMSystemMessageTypePotentialGap:
             case ZMSystemMessageTypeIgnoredClient:
+            case ZMSystemMessageTypePerformedCall:
             case ZMSystemMessageTypeUsingNewDevice:
             case ZMSystemMessageTypeDecryptionFailed:
             case ZMSystemMessageTypeReactivatedDevice:
