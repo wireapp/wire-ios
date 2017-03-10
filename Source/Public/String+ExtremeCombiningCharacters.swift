@@ -55,7 +55,7 @@ private let diacriticsPerCharMaxRatio: Float = 0.5
 public extension String {
     
     // Sanitizes the string from excessive use of diacritic combining characters.
-    // @warning the return value would still contain some amount of diacritic combining characters. The algorightm 
+    // @warning the return value would still contain some amount of diacritic combining characters. The algorithm
     // implemented in the way that the text with valid diacritics should not be sanitized.
     public var removingExtremeCombiningCharacters: String {
         
