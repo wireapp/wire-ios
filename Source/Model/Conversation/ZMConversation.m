@@ -1475,12 +1475,16 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     if (otherUsers.count > 0) {
+        NSSet *existingUsers = self.otherActiveParticipants.set;
         [self.mutableOtherActiveParticipants addObjectsFromArray:otherUsers.allObjects];
         if(isAuthoritative) {
             [self.mutableLastServerSyncedActiveParticipants addObjectsFromArray:otherUsers.allObjects];
         }
         
-        [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[ZMConversation clientsOfUsers:otherUsers] causedByAddedUsers:otherUsers];
+        [otherUsers minusSet:existingUsers];
+        if (otherUsers.count > 0) {
+            [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[ZMConversation clientsOfUsers:otherUsers] causedByAddedUsers:otherUsers];
+        }
     }
 }
 
