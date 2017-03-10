@@ -1109,4 +1109,22 @@
     XCTAssertTrue([((ZMSystemMessage *)conversation.messages.lastObject).users isEqualToSet:unverifiedUsers]);
 }
 
+- (void)testThatAddingABlockedUserThatAlreadyIsMemberOfTheConversationDoesNotDegradeTheConversation
+{
+    // This happens when we are blocking a user in a 1on1: We recieve a conversation update from the backend as a response to blocking the user, which then "readds" the user. Since the user is already part of the conversation it should not degrade the conversation.
+    
+    // given
+    ZMConversation *conversation = [self setupVerifiedConversation];
+    ZMUser *participant = [conversation.otherActiveParticipants firstObject];
+    XCTAssertNotNil(participant);
+    XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
+    [participant block];
+    
+    // when
+    [conversation addParticipant:participant];
+    
+    // then
+    XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
+}
+
 @end
