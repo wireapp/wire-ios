@@ -18,8 +18,10 @@
 
 import Foundation
 import ZMTesting
+import WireMessageStrategy
+import ZMCDataModel
 
-class FetchClientRequestStrategyTests : RequestStrategyTestBase {
+class FetchClientRequestStrategyTests : MessagingTestBase {
     
     var sut: FetchingClientRequestStrategy!
     var clientRegistrationStatus: MockClientRegistrationStatus!
@@ -58,7 +60,6 @@ extension FetchClientRequestStrategyTests {
     
     func testThatItCreatesOtherUsersClientsCorrectly() {
         // GIVEN
-        let _ = createClients()
         let (firstIdentifier, secondIdentifier) = (UUID.create().transportString(), UUID.create().transportString())
         let payload = [
             [
@@ -96,7 +97,6 @@ extension FetchClientRequestStrategyTests {
     
     func testThatItAddsOtherUsersNewFetchedClientsToSelfUsersMissingClients() {
         // GIVEN
-        let (selfClient, _) = createClients()
         XCTAssertEqual(selfClient.missingClients?.count, 0)
         let (firstIdentifier, secondIdentifier) = (UUID.create().transportString(), UUID.create().transportString())
         let payload = payloadForOtherClients(firstIdentifier, secondIdentifier)
@@ -119,19 +119,14 @@ extension FetchClientRequestStrategyTests {
     
     func testThatItDeletesLocalClientsNotIncludedInResponseToFetchOtherUsersClients() {
         // GIVEN
-        let (selfClient, localOnlyClient) = createClients()
         XCTAssertEqual(selfClient.missingClients?.count, 0)
         
         let firstIdentifier = UUID.create().transportString()
         let payload = payloadForOtherClients(firstIdentifier)
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
-        let identifier = UUID.create()
-        let user = ZMUser.insertNewObject(in: syncMOC)
-        user.mutableSetValue(forKey: "clients").add(localOnlyClient)
-        user.remoteIdentifier = identifier
-        user.fetchUserClients()
+        self.otherUser.fetchUserClients()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        XCTAssertEqual(user.clients.count, 1)
+        XCTAssertEqual(self.otherUser.clients.count, 1)
         
         // WHEN
         let request = sut.nextRequest()
@@ -139,14 +134,13 @@ extension FetchClientRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         
         // THEN
-        XCTAssertEqual(user.clients.count, 1)
-        XCTAssertEqual(user.clients.first?.remoteIdentifier, firstIdentifier)
+        XCTAssertEqual(self.otherUser.clients.count, 1)
+        XCTAssertEqual(self.otherUser.clients.first?.remoteIdentifier, firstIdentifier)
     }
     
     func testThatItCreateTheCorrectRequest() {
         
         // GIVEN
-        let (selfClient, _) = createClients()
         XCTAssertEqual(selfClient.missingClients?.count, 0)
         let user = selfClient.user!
         user.fetchUserClients()
@@ -172,7 +166,6 @@ extension FetchClientRequestStrategyTests {
     func testThatItDoesNotDeleteAnObjectWhenResponseContainsRemoteID() {
         
         // GIVEN
-        let (_, otherClient) = self.createClients()
         let user = otherClient.user
         let payload =  [["id" : otherClient.remoteIdentifier!]]
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
@@ -191,27 +184,26 @@ extension FetchClientRequestStrategyTests {
     func testThatItAddsNewInsertedClientsToIgnoredClients() {
         
         // GIVEN
-        let (selfClient, otherClient) = self.createClients()
-        let user = otherClient.user
-        let payload =  [["id" : otherClient.remoteIdentifier!]]
+        let client = self.createClient(user: self.otherUser)
+        XCTAssertFalse(client.hasSessionWithSelfClient)
+        let payload =  [["id" : client.remoteIdentifier!]]
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
-        user?.fetchUserClients()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        self.otherUser.fetchUserClients()
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         
         // WHEN
-        let request = sut.nextRequest()
+        let request = self.sut.nextRequest()
         request?.complete(with: response)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         
         // THEN
-        XCTAssertFalse(selfClient.trustedClients.contains(otherClient))
-        XCTAssertTrue(selfClient.ignoredClients.contains(otherClient))
+        XCTAssertFalse(self.selfClient.trustedClients.contains(client))
+        XCTAssertTrue(self.selfClient.ignoredClients.contains(client))
     }
     
     func testThatItDeletesAnObjectWhenResponseDoesNotContainRemoteID() {
         
         // GIVEN
-        let (_, otherClient) = self.createClients()
         let remoteID = "otherRemoteID"
         let payload: [[String:Any]] = [["id": remoteID]]
         XCTAssertNotEqual(otherClient.remoteIdentifier, remoteID)

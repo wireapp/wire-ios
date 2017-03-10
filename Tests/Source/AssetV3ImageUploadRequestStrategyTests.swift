@@ -19,9 +19,12 @@
 
 import Foundation
 @testable import WireMessageStrategy
+import WireRequestStrategy
+import XCTest
+import ZMCDataModel
 
 
-class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
+class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
 
     fileprivate var registrationStatus: MockClientRegistrationStatus!
     fileprivate var mockCancellationProvider: MockTaskCancellationProvider!
@@ -36,7 +39,6 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTest {
         sut = AssetV3ImageUploadRequestStrategy(clientRegistrationStatus: registrationStatus, taskCancellationProvider: mockCancellationProvider, managedObjectContext: syncMOC)
         conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
-        createSelfClient()
     }
 
     // MARK: - Helpers

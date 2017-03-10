@@ -17,27 +17,5 @@
 // 
 
 
-#import "MessagingTest.h"
-
-@class ZMMessageTranscoder;
-@class ZMUser;
-@class ZMUpstreamInsertedObjectSync;
-
-@interface ZMMessageTranscoderTests : MessagingTest {
-    ZMMessageTranscoder *_sut;
-}
-
-@property (nonatomic) ZMMessageTranscoder *sut;
-@property (nonatomic) ZMUser *user1;
-@property (nonatomic) ZMUser *selfUser;
-
-@property (nonatomic) ZMUpstreamInsertedObjectSync *upstreamObjectSync;
-
-@property (nonatomic) id notificationDispatcher;
-@property (nonatomic) id mockExpirationTimer;
-
-- (ZMConversation *)insertGroupConversation;
-- (ZMConversation *)insertGroupConversationInMoc:(NSManagedObjectContext *)moc;
-
-@end
-
+#include "zmc-config/ios-test-target.xcconfig"
+#include "libs.xcconfig"

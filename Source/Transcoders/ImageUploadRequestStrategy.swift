@@ -135,7 +135,7 @@ extension ImageUploadRequestStrategy : ZMUpstreamTranscoder {
     }
     
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
-        guard let message = managedObject as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
+        guard let message = managedObject as? ZMAssetClientMessage, message.conversation?.remoteIdentifier != nil else { return nil }
         
         let format = imageFormatForKeys(keys, message: message)
         
@@ -144,7 +144,7 @@ extension ImageUploadRequestStrategy : ZMUpstreamTranscoder {
             return nil
         }
         
-        guard let request = requestFactory.upstreamRequestForAssetMessage(format, message: message, forConversationWithId: conversation.remoteIdentifier!) else {
+        guard let request = requestFactory.upstreamRequestForAssetMessage(format, message: message) else {
             // We will crash, but we should still delete the image
             message.managedObjectContext?.delete(message)
             managedObjectContext.saveOrRollback()

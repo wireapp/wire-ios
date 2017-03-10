@@ -1,2 +1,2 @@
 #include "WireMessageStrategy.xcconfig"
-#include "wire-ios-xcconfig/ios.xcconfig"
+#include "zmc-config/ios.xcconfig"

@@ -29,16 +29,16 @@ public final class ClientMessageRequestFactory: NSObject {
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"
 
-    public func upstreamRequestForMessage(_ message: ZMClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: conversationId);
+    public func upstreamRequestForMessage(_ message: ZMClientMessage) -> ZMTransportRequest? {
+        return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!);
     }
 
     public func upstreamRequestForMessage(_ message: EncryptedPayloadGenerator, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
         return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: conversationId);
     }
     
-    public func upstreamRequestForAssetMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        return upstreamRequestForEncryptedImageMessage(format, message: message, forConversationWithId: conversationId);
+    public func upstreamRequestForAssetMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage) -> ZMTransportRequest? {
+        return upstreamRequestForEncryptedImageMessage(format, message: message, forConversationWithId: message.conversation!.remoteIdentifier!);
     }
     
     fileprivate func upstreamRequestForEncryptedClientMessage(_ message: EncryptedPayloadGenerator, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {

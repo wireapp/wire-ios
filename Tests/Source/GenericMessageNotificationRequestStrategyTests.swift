@@ -18,28 +18,21 @@
 
 
 @testable import WireMessageStrategy
+import XCTest
+import WireMessageStrategy
+import ZMCDataModel
+import ZMTransport
 
-
-class GenericMessageNotificationRequestStrategyTests: MessagingTest {
+class GenericMessageNotificationRequestStrategyTests: MessagingTestBase {
 
     let mockClientRegistrationStatus = MockClientRegistrationStatus()
-    var conversation: ZMConversation!
     var sut: GenericMessageNotificationRequestStrategy!
 
     override func setUp() {
         super.setUp()
 
         sut = GenericMessageNotificationRequestStrategy(managedObjectContext: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
-        createSelfClient()
 
-        let user = ZMUser.insertNewObject(in: syncMOC)
-        user.remoteIdentifier = UUID.create()
-        _ = createClient(for: user, createSessionWithSelfUser: true)
-
-        conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = .create()
-        conversation.addParticipant(user)
     }
 
     func testThatItDoesNotCreateARequestWhenNoNotificationWasFired() {
@@ -50,7 +43,7 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTest {
     func testThatItCreatesARequestWhenPostingAGenericMessageScheduleNotification() {
         // given
         let genericMessage = ZMGenericMessage.sessionReset(withNonce: UUID.create().transportString())
-        let notification = GenericMessageScheduleNotification(message: genericMessage, conversation: conversation)
+        let notification = GenericMessageScheduleNotification(message: genericMessage, conversation: self.groupConversation)
 
         // when
         notification.post()
@@ -59,7 +52,7 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTest {
         // then
         guard let request = sut.nextRequest() else { return XCTFail("No request created") }
         XCTAssertEqual(request.method, .methodPOST)
-        XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
     }
     
 }

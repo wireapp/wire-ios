@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategy
+import ZMCDataModel
 
 @objc
 public final class GenericMessageNotificationRequestStrategy: NSObject, RequestStrategy {

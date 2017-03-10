@@ -19,21 +19,20 @@
 import Foundation
 import WireRequestStrategy
 @testable import WireMessageStrategy
+import XCTest
+import ZMCDataModel
 
 
-class ImageUploadRequestStrategyTests: MessagingTest {
+
+class ImageUploadRequestStrategyTests: MessagingTestBase {
     
     fileprivate var clientRegistrationStatus : MockClientRegistrationStatus!
     fileprivate var sut : ImageUploadRequestStrategy!
     
     override func setUp() {
         super.setUp()
-        
         self.clientRegistrationStatus = MockClientRegistrationStatus()
-
         self.sut = ImageUploadRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, managedObjectContext: self.syncMOC)
-        
-        createSelfClient()
     }
     
     /// MARK - Helpers

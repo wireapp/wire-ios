@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -23,27 +23,31 @@ import ZMCDataModel
 import ZMUtilities
 @testable import WireMessageStrategy
 
-class ClientMessageRequestFactoryTests: MessagingTest {
+class ClientMessageRequestFactoryTests: MessagingTestBase {
 }
 
 // MARK: - Text messages
 extension ClientMessageRequestFactoryTests {
 
     func testThatItCreatesRequestToPostOTRTextMessage() {
-        //given
-        createSelfClient()
-        let message = createClientTextMessage(true)
-        let conversationId = UUID.create()
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationId
         
-        //when
-        let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: conversationId)
+        // GIVEN
+        let text = "Antani"
+        let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
         
-        //then
-        XCTAssertEqual(request?.method, ZMTransportRequestMethod.methodPOST)
-        XCTAssertEqual(request?.path, "/conversations/\(conversationId.transportString())/otr/messages")
-        XCTAssertEqual(message.encryptedMessagePayloadDataOnly, request?.binaryData)
+        // WHEN
+        guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
+            return XCTFail("No request")
+        }
+        
+        // THEN
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
+        
+        guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
+            return XCTFail("Invalid message")
+        }
+        XCTAssertEqual(receivedMessage.textData?.content, text)
     }
 }
 
@@ -51,34 +55,26 @@ extension ClientMessageRequestFactoryTests {
 extension ClientMessageRequestFactoryTests {
     
     func testThatItCreatesRequestToPostOTRConfirmationMessage() {
-        //given
-        createSelfClient()
-        
-        let user = ZMUser.insertNewObject(in: self.syncMOC)
-        user.remoteIdentifier = UUID.create()
-        
-        self.createClient(for: user, createSessionWithSelfUser: true)
-        
-        let conversationId = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        conversation.remoteIdentifier = conversationId
-        conversation.conversationType = .oneOnOne
-        conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
-        conversation.connection?.to = user
-        
-        let message = createClientTextMessage(true)
-        message.sender = user
-        message.visibleInConversation = conversation
-
+        // GIVEN
+        let text = "Antani"
+        let message = self.oneToOneConversation.appendMessage(withText: text) as! ZMClientMessage
+        message.sender = self.otherUser
         let confirmationMessage = message.confirmReception()!
         
-        //when
-        let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, forConversationWithId: conversationId)
+        print("CLIENT ID", (message.conversation?.otherActiveParticipants.firstObject! as! ZMUser).remoteIdentifier!)
+        print("OTHER USER", self.otherUser.remoteIdentifier!)
+        // WHEN
+        guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, forConversationWithId: self.oneToOneConversation.remoteIdentifier!) else {
+            return XCTFail("No request")
+        }
         
-        //then
-        XCTAssertEqual(request?.method, ZMTransportRequestMethod.methodPOST)
-        XCTAssertEqual(request?.path, "/conversations/\(conversationId.transportString())/otr/messages?report_missing=\(user.remoteIdentifier!.transportString())")
-        XCTAssertNotNil(request?.binaryData)
+        // THEN
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request.path, "/conversations/\(self.oneToOneConversation.remoteIdentifier!.transportString())/otr/messages?report_missing=\(self.otherUser.remoteIdentifier!.transportString())")
+        guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
+            return XCTFail("Invalid message")
+        }
+        XCTAssertTrue(receivedMessage.hasConfirmation())
     }
 }
 
@@ -86,51 +82,45 @@ extension ClientMessageRequestFactoryTests {
 extension ClientMessageRequestFactoryTests {
 
     func testThatItCreatesRequestToPostOTRImageMessage() {
-        createSelfClient()
         for _ in [ZMImageFormat.medium, ZMImageFormat.preview] {
-            //given
+            // GIVEN
             let imageData = self.verySmallJPEGData()
             let format = ZMImageFormat.medium
-            let conversationId = UUID.create()
-            let message = self.createImageMessage(withImageData: imageData, format: format, processed: true, stored: false, encrypted: true, moc: self.syncMOC)
-            message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            message.visibleInConversation?.remoteIdentifier = conversationId
+            let message = self.createImageMessage(imageData: imageData, format: format, processed: true, stored: false, encrypted: true, ephemeral: false, moc: self.syncMOC)
             
-            //when
-            let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message, forConversationWithId: conversationId)
+            // WHEN
+            let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message)
             
-            //then
-            let expectedPath = "/conversations/\(conversationId.transportString())/otr/assets"
+            // THEN
+            let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets"
 
-            assertRequest(request, forImageMessage: message, conversationId: conversationId, encrypted: true, expectedPath: expectedPath, expectedPayload: nil, format: format)
+            assertRequest(request, forImageMessage: message, conversationId: self.groupConversation.remoteIdentifier!, encrypted: true, expectedPath: expectedPath, expectedPayload: nil, format: format)
             XCTAssertEqual(request?.multipartBodyItems()?.count, 2)
         }
     }
     
     func testThatItCreatesRequestToReuploadOTRImageMessage() {
-        createSelfClient()
         
         for _ in [ZMImageFormat.medium, ZMImageFormat.preview] {
 
-            // given
+            // GIVEN
             let imageData = self.verySmallJPEGData()
             let format = ZMImageFormat.medium
-            let conversationId = UUID.create()
-            let message = self.createImageMessage(withImageData: imageData, format: format, processed: false, stored: false, encrypted: true, moc: self.syncMOC)
+            let message = self.createImageMessage(imageData: imageData, format: format, processed: false, stored: false, encrypted: true, ephemeral: false, moc: self.syncMOC)
             message.assetId = UUID.create()
-            message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            message.visibleInConversation?.remoteIdentifier = conversationId
             
-            //when
-            let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message, forConversationWithId: conversationId)
+            // WHEN
+            guard let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message) else {
+                return XCTFail()
+            }
             
-            //then
-            let expectedPath = "/conversations/\(conversationId.transportString())/otr/assets/\(message.assetId!.transportString())"
+            // THEN
+            let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets/\(message.assetId!.transportString())"
 
-            XCTAssertEqual(request?.method, ZMTransportRequestMethod.methodPOST)
-            XCTAssertEqual(request?.path, expectedPath)
-            XCTAssertNotNil(request?.binaryData)
-            XCTAssertEqual(request?.shouldUseOnlyBackgroundSession, true)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.path, expectedPath)
+            XCTAssertNotNil(request.binaryData)
+            XCTAssertEqual(request.shouldUseOnlyBackgroundSession, true)
         }
     }
 }
@@ -140,138 +130,110 @@ extension ClientMessageRequestFactoryTests {
 extension ClientMessageRequestFactoryTests {
     
     func testThatItCreatesRequestToUploadAFileMessage_Placeholder() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, _) = createAssetFileMessage(false, encryptedDataOnDisk: false)
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, _, _) = self.createAssetFileMessage(false, encryptedDataOnDisk: false)
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.placeholder, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.placeholder, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
         // then
         guard let request = uploadRequest else { return XCTFail() }
-        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/messages")
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
         XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
         XCTAssertNotNil(request.binaryData)
     }
     
     func testThatItCreatesRequestToUploadAFileMessage_Placeholder_UploadedDataPresent() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, _) = createAssetFileMessage(true, encryptedDataOnDisk: true)
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, _, _) = self.createAssetFileMessage(true, encryptedDataOnDisk: true)
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.placeholder, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.placeholder, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         guard let request = uploadRequest else { return XCTFail() }
-        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/messages")
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
         XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
         XCTAssertNotNil(request.binaryData)
     }
     
     func testThatItCreatesRequestToUploadAFileMessage_FileData() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, _) = createAssetFileMessage(true)
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, _, _) = self.createAssetFileMessage(true)
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         guard let request = uploadRequest else { return XCTFail() }
-        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets")
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets")
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
     }
     
     func testThatItCreatesRequestToReuploadFileMessageMetaData_WhenAssetIdIsPresent() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, _) = createAssetFileMessage()
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, _, _) = self.createAssetFileMessage()
         message.assetId = UUID.create()
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         guard let request = uploadRequest else { return XCTFail() }
-        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets/\(message.assetId!.transportString())")
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets/\(message.assetId!.transportString())")
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
         XCTAssertNotNil(request.binaryData)
         XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
     }
     
     func testThatTheRequestToReuploadAFileMessageDoesNotContainTheBinaryFileData() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, nonce) = createAssetFileMessage()
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, _, nonce) = self.createAssetFileMessage()
         message.assetId = UUID.create()
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         guard let request = uploadRequest else { return XCTFail() }
         XCTAssertNil(syncMOC.zm_fileAssetCache.accessRequestURL(nonce))
         XCTAssertNotNil(request.binaryData)
-        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets/\(message.assetId!.transportString())")
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets/\(message.assetId!.transportString())")
     }
     
     func testThatItDoesNotCreatesRequestToReuploadFileMessageMetaData_WhenAssetIdIsPresent_Placeholder() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, _) = createAssetFileMessage()
+        // GIVEN
+        let (message, _, _) = self.createAssetFileMessage()
         message.assetId = UUID.create()
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.placeholder, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.placeholder, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         guard let request = uploadRequest else { return XCTFail() }
         XCTAssertFalse(request.path.contains(message.assetId!.transportString()))
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
-        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/messages")
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
     }
     
     func testThatItWritesTheMultiPartRequestDataToDisk() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, data, nonce) = createAssetFileMessage()
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, data, nonce) = self.createAssetFileMessage()
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message:message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message:message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         XCTAssertNotNil(uploadRequest)
         
-        // then
+        // THEN
         guard let url = syncMOC.zm_fileAssetCache.accessRequestURL(nonce) else { return XCTFail() }
         guard let multipartData = try? Data(contentsOf: url) else { return XCTFail() }
         let multiPartItems = (multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier")
@@ -281,19 +243,15 @@ extension ClientMessageRequestFactoryTests {
     }
     
     func testThatItSetsTheDataMD5() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, data, nonce) = createAssetFileMessage(true)
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, data, nonce) = self.createAssetFileMessage(true)
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         XCTAssertNotNil(uploadRequest)
         
-        // then
+        // THEN
         guard let url = syncMOC.zm_fileAssetCache.accessRequestURL(nonce) else { return XCTFail() }
         guard let multipartData = try? Data(contentsOf: url) else { return XCTFail() }
         let multiPartItems = (multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier")
@@ -303,51 +261,45 @@ extension ClientMessageRequestFactoryTests {
     }
     
     func testThatItDoesNotCreateARequestIfTheMessageIsNotAFileAssetMessage_AssetClientMessage_Image() {
-        // given
-        createSelfClient()
+        // GIVEN
         let imageData = verySmallJPEGData()
-        let conversationID = UUID.create()
-        let message = createImageMessage(withImageData: imageData, format: .medium, processed: true, stored: false, encrypted: true, moc: syncMOC)
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        let message = self.createImageMessage(imageData: imageData,
+                                              format: .medium,
+                                              processed: true,
+                                              stored: false,
+                                              encrypted: true,
+                                              ephemeral: false,
+                                              moc: syncMOC)
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         XCTAssertNil(uploadRequest)
     }
     
     func testThatItReturnsNilWhenThereIsNoEncryptedDataToUploadOnDisk() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, _) = createAssetFileMessage(encryptedDataOnDisk: false)
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, _, _) = self.createAssetFileMessage(encryptedDataOnDisk: false)
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         XCTAssertNil(uploadRequest)
     }
     
     func testThatItStoresTheUploadDataInTheCachesDirectoryAndMarksThemAsNotBeingBackedUp() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let (message, _, nonce) = createAssetFileMessage()
-        message.visibleInConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        message.visibleInConversation?.remoteIdentifier = conversationID
+        // GIVEN
+        let (message, _, nonce) = self.createAssetFileMessage()
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         XCTAssertNotNil(uploadRequest)
         guard let url = syncMOC.zm_fileAssetCache.accessRequestURL(nonce)
         else { return XCTFail() }
@@ -360,14 +312,14 @@ extension ClientMessageRequestFactoryTests {
     }
     
     func testThatItCreatesTheMultipartDataWithTheCorrectContentTypes() {
-        // given
+        // GIVEN
         let metaData = "metadata".data(using: String.Encoding.utf8)!
         let fileData = "filedata".data(using: String.Encoding.utf8)!
         
-        // when
+        // WHEN
         let multipartData = ClientMessageRequestFactory().dataForMultipartFileUploadRequest(metaData, fileData: fileData)
         
-        // then
+        // THEN
         guard let parts = (multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem] else { return XCTFail() }
         XCTAssertEqual(parts.count, 2)
         XCTAssertEqual(parts.first?.contentType, "application/x-protobuf")
@@ -384,7 +336,9 @@ extension ClientMessageRequestFactoryTests {
         return documentsURL.appendingPathComponent("file.dat")
     }
     
-    func createAssetFileMessage(_ withUploaded: Bool = true, encryptedDataOnDisk: Bool = true, isEphemeral: Bool = false) -> (ZMAssetClientMessage, Data, UUID) {
+    func createAssetFileMessage(_ withUploaded: Bool = true,
+                                encryptedDataOnDisk: Bool = true,
+                                isEphemeral: Bool = false) -> (ZMAssetClientMessage, Data, UUID) {
         let data = createTestFile(testURL)
         let nonce = UUID.create()
         let metadata = ZMFileMetadata(fileURL: testURL)
@@ -410,6 +364,7 @@ extension ClientMessageRequestFactoryTests {
             self.syncMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: name!, encrypted: true, data: data)
         }
         
+        message.visibleInConversation = self.groupConversation
         return (message, data, nonce)
     }
     
@@ -460,76 +415,106 @@ extension ClientMessageRequestFactoryTests {
 // MARK: Ephemeral Messages 
 extension ClientMessageRequestFactoryTests {
 
-    func setupConversation(id: UUID) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        conversation.remoteIdentifier = id
-        conversation.connection = ZMConnection.insertNewObject(in: syncMOC)
-        conversation.connection?.to = ZMUser.insertNewObject(in: syncMOC)
-        conversation.connection?.to.remoteIdentifier = UUID()
-        conversation.conversationType = .oneOnOne
-        return conversation
-    }
-    
     
     func testThatItCreatesRequestToPostEphemeralTextMessage() {
-        //given
-        createSelfClient()
-        let conversationId = UUID.create()
-        let conversation = setupConversation(id: conversationId)
-        conversation.messageDestructionTimeout = 10
+        // GIVEN
+        let text = "Boo"
+        self.groupConversation.messageDestructionTimeout = 10
+        let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
         
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        // WHEN
+        guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
+            return XCTFail()
+        }
         
-        //when
-        let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: conversationId)
-        
-        //then
-        XCTAssertEqual(request?.method, ZMTransportRequestMethod.methodPOST)
-        XCTAssertEqual(request?.path, "/conversations/\(conversationId.transportString())/otr/messages?report_missing=\(conversation.connectedUser!.remoteIdentifier!.transportString())")
-        XCTAssertEqual(message.encryptedMessagePayloadDataOnly, request?.binaryData)
+        // THEN
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages?report_missing=\(self.otherUser.remoteIdentifier!.transportString())")
+        guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
+            return XCTFail("Invalid message")
+        }
+        XCTAssertEqual(receivedMessage.textData?.content, text)
     }
     
     func testThatItCreatesRequestToUploadAnEphemeralFileMessage_FileData() {
-        // given
-        createSelfClient()
-        let conversationID = UUID.create()
-        let conversation = setupConversation(id: conversationID)
         
-        let (message, _, _) = createAssetFileMessage(true, isEphemeral: true)
-        message.visibleInConversation = conversation
+        // GIVEN
+        let (message, _, _) = self.createAssetFileMessage(true, isEphemeral: true)
         
-        // when
+        // WHEN
         let sut = ClientMessageRequestFactory()
-        let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: conversationID)
+        guard let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.fullAsset, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
+            return XCTFail()
+        }
         
         // then
-        guard let request = uploadRequest else { return XCTFail() }
-        XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/otr/assets?report_missing=\(conversation.connectedUser!.remoteIdentifier!.transportString())")
-        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(uploadRequest.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets?report_missing=\(self.otherUser.remoteIdentifier!.transportString())")
+        XCTAssertEqual(uploadRequest.method, ZMTransportRequestMethod.methodPOST)
     }
     
 
     func testThatItCreatesRequestToPostEphemeralImageMessage() {
-        createSelfClient()
         for _ in [ZMImageFormat.medium, ZMImageFormat.preview] {
-            //given
+
+            // GIVEN
             let imageData = self.verySmallJPEGData()
             let format = ZMImageFormat.medium
-            let conversationId = UUID.create()
-            let conversation = setupConversation(id: conversationId)
-
-            let message = self.createImageMessage(withImageData: imageData, format: format, processed: true, stored: false, encrypted: true, ephemeral: true, moc: self.syncMOC)
-            message.visibleInConversation = conversation
             
-            //when
-            let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message, forConversationWithId: conversationId)
+            let message = self.createImageMessage(imageData: imageData,
+                                                  format: format,
+                                                  processed: true,
+                                                  stored: false,
+                                                  encrypted: true,
+                                                  ephemeral: true,
+                                                  moc: self.syncMOC)
             
-            //then
-            let expectedPath = "/conversations/\(conversationId.transportString())/otr/assets?report_missing=\(conversation.connectedUser!.remoteIdentifier!.transportString())"
+            // WHEN
+            let request = ClientMessageRequestFactory().upstreamRequestForAssetMessage(format, message: message)
             
-            assertRequest(request, forImageMessage: message, conversationId: conversationId, encrypted: true, expectedPath: expectedPath, expectedPayload: nil, format: format)
+            // THEN
+            let expectedPath = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets?report_missing=\(self.otherUser.remoteIdentifier!.transportString())"
+            
+            assertRequest(request, forImageMessage: message, conversationId: self.groupConversation.remoteIdentifier!, encrypted: true, expectedPath: expectedPath, expectedPayload: nil, format: format)
             XCTAssertEqual(request?.multipartBodyItems()?.count, 2)
         }
+    }
+}
+
+extension ClientMessageRequestFactoryTests {
+    
+    func createImageMessage(imageData: Data,
+                            format: ZMImageFormat,
+                            processed: Bool,
+                            stored: Bool,
+                            encrypted: Bool,
+                            ephemeral: Bool,
+                            moc: NSManagedObjectContext) -> ZMAssetClientMessage {
+        let nonce = UUID.create()
+        let imageMessage = ZMAssetClientMessage(originalImageData: imageData, nonce: nonce, managedObjectContext: moc, expiresAfter: ephemeral ? 10 : 0)
+        imageMessage.isEncrypted = encrypted
+        if processed {
+            let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
+            let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
+            var keys: ZMImageAssetEncryptionKeys?
+            if encrypted {
+                keys = ZMImageAssetEncryptionKeys.init(otrKey: Data.zmRandomSHA256Key(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
+            }
+            let message = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: nonce.transportString(), format: format, expiresAfter: ephemeral ? 10 : nil)
+            imageMessage.add(message)
+            
+            let directory = self.uiMOC.zm_imageAssetCache
+            if stored {
+                directory?.storeAssetData(nonce, format: .original, encrypted: false, data: imageData)
+            }
+            if processed {
+                directory?.storeAssetData(nonce, format: format, encrypted: false, data: imageData)
+            }
+            if encrypted {
+                directory?.storeAssetData(nonce, format: format, encrypted: true, data: imageData)
+            }
+        }
+        imageMessage.visibleInConversation = self.groupConversation
+        return imageMessage
     }
 }
 

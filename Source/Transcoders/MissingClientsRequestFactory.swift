@@ -18,6 +18,8 @@
 
 import Foundation
 import ZMCDataModel
+import WireRequestStrategy
+
 
 public final class MissingClientsRequestFactory {
     

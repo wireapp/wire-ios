@@ -20,6 +20,9 @@
 import XCTest
 import ZMCLinkPreview
 import ZMCDataModel
+import WireRequestStrategy
+import WireMessageStrategy
+import zimages
 
 final class MockLinkDetector: LinkPreviewDetectorType {
     
@@ -33,7 +36,7 @@ final class MockLinkDetector: LinkPreviewDetectorType {
     
 }
 
-class LinkPreviewPreprocessorTests: MessagingTest {
+class LinkPreviewPreprocessorTests: MessagingTestBase {
 
     var sut: LinkPreviewPreprocessor!
     var mockDetector: MockLinkDetector!

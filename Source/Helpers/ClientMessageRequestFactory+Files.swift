@@ -83,11 +83,11 @@ extension ClientMessageRequestFactory {
         guard let moc = message.managedObjectContext else { return nil }
         guard message.imageMessageData == nil else { return nil }
         guard let (assetUploadedData, strategy) = message.encryptedMessagePayloadForDataType(.fullAsset) else { return nil }
-
         guard let uploadURL = uploadURL(for: message, inManagedObjectContext: moc, with: assetUploadedData) else {
             zmLog.debug("Failed to write multipart file upload request to file")
             return nil
         }
+
         let originalPath = "/conversations/\(conversationId.transportString())/otr/assets"
         let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
         

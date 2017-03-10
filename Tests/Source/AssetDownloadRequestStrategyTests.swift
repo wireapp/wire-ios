@@ -19,6 +19,9 @@
 
 import Foundation
 @testable import WireMessageStrategy
+import ZMCDataModel
+import ZMTransport
+import XCTest
 
 private let testDataURL = Bundle(for: AssetDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
@@ -32,7 +35,7 @@ public class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
 }
 
 
-class AssetDownloadRequestStrategyTests: MessagingTest {
+class AssetDownloadRequestStrategyTests: MessagingTestBase {
     
     var authStatus: MockClientRegistrationStatus!
     var cancellationProvider: MockTaskCancellationProvider!

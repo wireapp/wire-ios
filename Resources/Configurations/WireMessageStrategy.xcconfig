@@ -1,2 +1,4 @@
-#include "wire-ios-xcconfig/swift.xcconfig"
+#include "zmc-config/swift.xcconfig"
+#include "libs.xcconfig"
+
 PRODUCT_NAME = WireMessageStrategy

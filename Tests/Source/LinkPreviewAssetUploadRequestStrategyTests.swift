@@ -19,9 +19,12 @@
 
 import Foundation
 import ZMCLinkPreview
+import ZMCDataModel
+import WireMessageStrategy
+import XCTest
 
 // MARK: - Tests setup
-class LinkPreviewAssetUploadRequestStrategyTests: MessagingTest {
+class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
     
     fileprivate var sut: LinkPreviewAssetUploadRequestStrategy!
     fileprivate var authStatus: MockClientRegistrationStatus!
