@@ -1475,7 +1475,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     if (otherUsers.count > 0) {
-        NSSet *existingUsers = self.otherActiveParticipants.set;
+        NSSet *existingUsers = [self.otherActiveParticipants.set copy];
         [self.mutableOtherActiveParticipants addObjectsFromArray:otherUsers.allObjects];
         if(isAuthoritative) {
             [self.mutableLastServerSyncedActiveParticipants addObjectsFromArray:otherUsers.allObjects];
