@@ -366,6 +366,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTest {
         // then
         XCTAssert(message.delivered)
         XCTAssertEqual(message.deliveryState, .sent)
+        XCTAssertEqual(message.uploadState, .done)
         XCTAssertNil(sut.nextRequest())
     }
 
