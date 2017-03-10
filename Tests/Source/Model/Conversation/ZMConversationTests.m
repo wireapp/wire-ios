@@ -3792,4 +3792,20 @@
     XCTAssertFalse(conversation.isArchived);
 }
 
+- (void)testThatItUnarchivesWhenAppendingAPerformedCall
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+    conversation.isArchived = YES;
+
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+    XCTAssertTrue(conversation.isArchived);
+
+    // when
+    [conversation appendPerformedCallMessageWith:42 caller:user];
+
+    // then
+    XCTAssertFalse(conversation.isArchived);
+}
+
 @end

@@ -17,9 +17,8 @@
 //
 
 import Foundation
-
-import Foundation
 @testable import ZMCDataModel
+
 
 class ZMConversationPrepareToSendTests : ZMConversationTestsBase {
     

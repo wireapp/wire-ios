@@ -77,6 +77,11 @@ public extension ZMConversationMessage {
         return systemMessageData!.systemMessageType == .missedCall
     }
 
+    public var isPerformedCall: Bool {
+        guard isSystem else { return false }
+        return systemMessageData!.systemMessageType == .performedCall
+    }
+
     public var isDeletion: Bool {
         guard isSystem else { return false }
         return systemMessageData!.systemMessageType == .messageDeletedForEveryone
@@ -85,7 +90,7 @@ public extension ZMConversationMessage {
 }
 
 /// The `ZMConversationMessage` protocol can not be extended in Objective-C,
-/// thus this helper class provides access to comonly used properties.
+/// thus this helper class provides access to commonly used properties.
 public class Message: NSObject {
 
     /// Returns YES, if the message has text to display.
@@ -145,6 +150,11 @@ public class Message: NSObject {
     @objc(isMissedCallMessage:)
     public class func isMissedCall(_ message: ZMConversationMessage) -> Bool {
         return message.isMissedCall
+    }
+
+    @objc(isPerformedCallMessage:)
+    public class func isPerformedCall(_ message: ZMConversationMessage) -> Bool {
+        return message.isPerformedCall
     }
 
     @objc(isDeletedMessage:)

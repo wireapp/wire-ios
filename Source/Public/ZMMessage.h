@@ -70,7 +70,8 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeNewConversation,
     ZMSystemMessageTypeReactivatedDevice,
     ZMSystemMessageTypeUsingNewDevice,
-    ZMSystemMessageTypeMessageDeletedForEveryone
+    ZMSystemMessageTypeMessageDeletedForEveryone,
+    ZMSystemMessageTypePerformedCall
 };
 
 
@@ -98,6 +99,9 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @property (nonatomic) NSSet<ZMUser *> *removedUsers; // Only filled for ZMSystemMessageTypePotentialGap
 @property (nonatomic, readonly, copy) NSString *text;
 @property (nonatomic) BOOL needsUpdatingUsers;
+@property (nonatomic) NSTimeInterval duration;
+@property (nonatomic) NSSet<id <ZMSystemMessageData>>  *childMessages;
+@property (nonatomic) id <ZMSystemMessageData> parentMessage;
 
 @end
 
