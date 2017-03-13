@@ -51,7 +51,7 @@
     NSArray *downsampleOPs = [self downsampleOperationsForImageOwner:imageOwner loadOperation:load];
     [allOperations addObjectsFromArray:downsampleOPs];
     
-    NSOperation *done = [self.delegate preprocessingComleteOperationForImageOwner:imageOwner];
+    NSOperation *done = [self.delegate preprocessingCompleteOperationForImageOwner:imageOwner];
     if (done != nil) {
         for (NSOperation *op in downsampleOPs) {
             [done addDependency:op];
