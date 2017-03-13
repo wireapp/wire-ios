@@ -49,6 +49,8 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     fileprivate var listSnapshots : [String : ConversationListSnapshot] = [:]
     
     var isTornDown : Bool = false
+    var insertedConversations = [ZMConversation]()
+    var deletedConversations = [ZMConversation]()
     
     /// Adds a conversationList to the objects to observe
     @objc public func startObservingList(_ conversationList: ZMConversationList) {
@@ -80,7 +82,14 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         if let convChanges = changes[ZMConversation.classIdentifier] as? [ConversationChangeInfo] {
             convChanges.forEach{conversationDidChange($0)}
         }
-        forwardToSnapshots{$0.recalculateListAndNotify()}
+        let inserted = insertedConversations
+        let deleted = deletedConversations
+        insertedConversations = []
+        deletedConversations = []
+        forwardToSnapshots{
+            $0.conversationsChanges(inserted: inserted, deleted: deleted)
+            $0.recalculateListAndNotify()
+        }
     }
     
     /// Handles updated conversations, updates lists and notifies observers
@@ -93,8 +102,8 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         forwardToSnapshots{$0.processConversationChanges(changes)}
     }
     
-    /// Processes conversationChanges and removes or insert conversations and notifies observers
-    func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation], accumulated : Bool) {
+    /// Processes conversationChanges and stores inserted or deleted conversations temporarily until save / merge completes
+    func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
         if deleted.count == 0 && inserted.count == 0 { return }
         zmLog.debug("\(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
         inserted.forEach{
@@ -103,7 +112,8 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         deleted.forEach{
             zmLog.debug("Deleted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")
         }
-        forwardToSnapshots{$0.conversationsChanges(inserted: inserted, deleted: deleted, accumulated: accumulated)}
+        insertedConversations.append(contentsOf: inserted)
+        deletedConversations.append(contentsOf: deleted)
     }
     
     /// Applys a function on a token and cleares tokens with deallocated lists
@@ -193,25 +203,19 @@ class ConversationListSnapshot: NSObject {
         return false
     }
     
-    /// Handles inserted and removed conversations, updates lists and notifies observers
-    func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation], accumulated : Bool) {
+    /// Handles inserted and removed conversations and updates lists
+    func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
         guard let list = conversationList else { return }
 
-        if accumulated {
-            list.resort()
+        let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0)})
+        let conversationsToRemove = Set(deleted.filter { list.contains($0)})
+        zmLog.debug("List \(list.identifier) is inserting \(conversationsToInsert.count) and deletes \(conversationsToRemove.count) conversations")
+        
+        list.insertConversations(conversationsToInsert)
+        list.removeConversations(conversationsToRemove)
+        
+        if (!conversationsToInsert.isEmpty || !conversationsToRemove.isEmpty) {
             needsToRecalculate = true
-            zmLog.debug("List \(list.identifier) resorted")
-        } else {
-            let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0)})
-            let conversationsToRemove = Set(deleted.filter { list.contains($0)})
-            zmLog.debug("List \(list.identifier) is inserting \(conversationsToInsert.count) and deletes \(conversationsToRemove.count) conversations")
-
-            list.insertConversations(conversationsToInsert)
-            list.removeConversations(conversationsToRemove)
-            
-            if (!conversationsToInsert.isEmpty || !conversationsToRemove.isEmpty) {
-                needsToRecalculate = true
-            }
         }
         zmLog.debug("Snapshot for  list \(list.identifier) processed inserts and deletes, needsToRecalculate: \(needsToRecalculate)")
     }
@@ -255,8 +259,8 @@ class ConversationListSnapshot: NSObject {
             zmLog.debug("No changes for conversationList \(self.conversationList)")
             return
         }
-        NotificationCenter.default.post(name: .ZMConversationListDidChange, object: self.conversationList, userInfo: userInfo)
         zmLog.debug(logMessage(for: conversationChanges, listChanges: listChanges))
+        NotificationCenter.default.post(name: .ZMConversationListDidChange, object: self.conversationList, userInfo: userInfo)
     }
     
     func logMessage(for conversationChanges: [ConversationChangeInfo], listChanges: ConversationListChangeInfo?) -> String {
