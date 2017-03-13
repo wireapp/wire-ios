@@ -676,4 +676,41 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(testObserver.changes.count, 0)
     }
+    
+    func testThatItSendsTheCorrectUpdatesWhenRegisteringAnObserverDuringInsertAndUpdate(){
+        
+        // given
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
+        var conversation : ZMConversation!
+        syncMOC.performGroupedBlockAndWait {
+            conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.conversationType = .group
+            self.syncMOC.saveOrRollback()
+        }
+        
+        // when 
+        // This simulates an objectsDidChange notification without the immediate merge afterwards
+        mergeLastChangesWithoutNotifying()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        //
+        XCTAssertEqual(conversationList.count, 0)
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
+
+        syncMOC.performGroupedBlockAndWait {
+            conversation.userDefinedName = "foo"
+            self.syncMOC.saveOrRollback()
+        }
+        mergeLastChanges()
+        
+        // then
+        XCTAssertEqual(conversationList.count, 1)
+        if let first = testObserver.changes.first {
+            XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(first.deletedIndexes, IndexSet())
+            XCTAssertEqual(first.updatedIndexes, IndexSet())
+            XCTAssertEqual(movedIndexes(first), [])
+        }
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+    }
 }
