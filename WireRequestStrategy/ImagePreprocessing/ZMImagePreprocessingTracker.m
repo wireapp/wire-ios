@@ -187,7 +187,7 @@
 
 #pragma mark - ZMAssetsPreprocessorDelegate
 
-- (NSOperation * __nullable)preprocessingComleteOperationForImageOwner:(id<ZMImageOwner> __nonnull)imageOwner
+- (NSOperation * __nullable)preprocessingCompleteOperationForImageOwner:(id<ZMImageOwner> __nonnull)imageOwner
 {
     // TODO: should this use the imageOwner's dispatchGroup? Currently this only works because both the image owner and this object coincidentally use the same dispatchGroup
     ZMSDispatchGroup *group = self.managedObjectContext.dispatchGroup;
