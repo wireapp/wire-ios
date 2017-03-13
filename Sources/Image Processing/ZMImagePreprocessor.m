@@ -27,28 +27,11 @@
 
 @interface ZMImagePreprocessor ()
 
-@property (nonatomic) NSData *imageData;
-@property (nonatomic) NSOperationQueue *processingQueue;
-
 @end
 
 
 
 @implementation ZMImagePreprocessor
-
-- (instancetype)initWithImageData:(NSData *)imageData processingQueue:(NSOperationQueue *)queue;
-{
-    self = [super init];
-    if (self) {
-        self.imageData = imageData;
-        self.processingQueue = queue;
-    }
-    return self;
-}
-
-- (void)generateRepresentationsWithResultHandler:(__unused id <ZMImagePreprocessorHandler>)handler callbackQueue:(__unused NSOperationQueue *)callbackQueue;
-{
-}
 
 + (NSOperationQueue *)createSuitableImagePreprocessingQueue
 {

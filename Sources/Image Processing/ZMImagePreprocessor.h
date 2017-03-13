@@ -20,39 +20,16 @@
 @import Foundation;
 @import CoreGraphics;
 
-
-@protocol ZMImagePreprocessorHandler;
-
-
 @interface ZMImagePreprocessor : NSObject
-
-- (instancetype)initWithImageData:(NSData *)imageData processingQueue:(NSOperationQueue *)queue;
-
-@property (nonatomic, readonly) NSData *imageData;
-@property (nonatomic, readonly) NSOperationQueue *processingQueue;
-
-- (void)generateRepresentationsWithResultHandler:(id <ZMImagePreprocessorHandler>)handler callbackQueue:(NSOperationQueue *)callbackQueue;
 
 + (NSOperationQueue *)createSuitableImagePreprocessingQueue;
 
 @end
-
-
 
 @interface ZMImagePreprocessor (ImageSize)
 
 + (CGSize)sizeOfPrerotatedImageAtURL:(NSURL *)fileURL;
 + (CGSize)sizeOfPrerotatedImageWithData:(NSData *)data;
 + (CGSize)imageSizeFromProperties:(NSDictionary *)properties;
-
-@end
-
-
-
-@protocol ZMImagePreprocessorHandler <NSObject>
-
-- (void)imagePreprocessor:(ZMImagePreprocessor *)preprocessor didProducePreviewData:(NSData *)imageData;
-- (void)imagePreprocessor:(ZMImagePreprocessor *)preprocessor didProduceMediumData:(NSData *)imageData;
-- (void)imagePreprocessorDidComplete:(ZMImagePreprocessor *)preprocessor;
 
 @end
