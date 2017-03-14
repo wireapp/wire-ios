@@ -85,6 +85,9 @@
 		870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */; };
 		871E12351C4FEED200862958 /* UnownedNSObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */; };
 		872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */; };
+		877F501D1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */; };
+		877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */; };
+		877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */ = {isa = PBXBuildFile; fileRef = 877F50201E729CCF00894C90 /* excessive_diacritics.txt */; };
 		BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */; };
 		BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */; };
 		BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */; };
@@ -268,6 +271,9 @@
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
 		870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+ZMSCrypto.swift"; sourceTree = "<group>"; };
 		871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedNSObjectTests.swift; path = Source/UnownedNSObjectTests.swift; sourceTree = "<group>"; };
+		877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+ExtremeCombiningCharacters.swift"; sourceTree = "<group>"; };
+		877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+ExtremeCombiningCharactersTests.swift"; sourceTree = "<group>"; };
+		877F50201E729CCF00894C90 /* excessive_diacritics.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = excessive_diacritics.txt; sourceTree = "<group>"; };
 		BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparison.swift; sourceTree = "<group>"; };
 		BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparisonTests.swift; sourceTree = "<group>"; };
 		BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-production.xml"; sourceTree = "<group>"; };
@@ -355,6 +361,7 @@
 				BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */,
 				BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */,
 				BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */,
+				877F50201E729CCF00894C90 /* excessive_diacritics.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -550,6 +557,7 @@
 				16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
+				877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -609,6 +617,7 @@
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
 				54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */,
 				BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */,
+				877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -788,6 +797,7 @@
 				BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */,
 				54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */,
 				544B2FFE1C1FF79500384477 /* data_to_hash.enc in Resources */,
+				877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */,
 				BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */,
 				54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */,
 			);
@@ -810,6 +820,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				877F501D1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift in Sources */,
 				3E88BE411B1F478200232589 /* ZMFunctional.m in Sources */,
 				54CA31551B74F7D400B820C0 /* NSManagedObjectContext+ZMUtilities.m in Sources */,
 				F9C9A7BD1CAEAF240039E10C /* ZMPropertyValidator.m in Sources */,
@@ -880,6 +891,7 @@
 				F9D381B01B70B94300E6E4EB /* ZMFunctionalTests.m in Sources */,
 				54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */,
 				54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */,
+				877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */,
 				546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */,
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
 				54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */,
