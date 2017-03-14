@@ -19,6 +19,7 @@
 
 import Foundation
 import WireMessageStrategy
+import WireRequestStrategy
 import ZMTransport.ZMRequestCancellation
 
 
@@ -82,13 +83,13 @@ class StrategyFactory {
         )
     }
 
-    private func createClientMessageTranscoder() -> ZMClientMessageTranscoder {
-        return ZMClientMessageTranscoder(
-            managedObjectContext: syncContext,
+    private func createClientMessageTranscoder() -> ClientMessageTranscoder {
+        return ClientMessageTranscoder(
+            in: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
             clientRegistrationStatus: registrationStatus,
             apnsConfirmationStatus: DeliveryConfirmationDummy()
-        )!
+        )
     }
 
     private func createImageUploadRequestStrategy() -> ImageUploadRequestStrategy {
