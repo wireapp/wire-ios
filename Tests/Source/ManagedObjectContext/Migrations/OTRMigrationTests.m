@@ -781,9 +781,11 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     XCTAssertEqualObjects([userDictionaries subarrayWithRange:NSMakeRange(0, 3)], [self userDictionaryFixture2_25_1]);
     XCTAssertGreaterThan(messages.count, 0lu);
 
-    for (ZMMessage *message in messages) {
-        XCTAssertNil(message.normalizedText);
-    }
+    [syncContext performBlockAndWait:^{
+        for (ZMMessage *message in messages) {
+            XCTAssertNil(message.normalizedText);
+        }
+    }];
 }
 
 - (void)testThatItPerformsMigrationFrom_2_26_0_ToCurrentModelVersion {
@@ -845,9 +847,11 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     XCTAssertEqualObjects([userDictionaries subarrayWithRange:NSMakeRange(0, 3)], [self userDictionaryFixture2_25_1]);
     XCTAssertGreaterThan(messages.count, 0lu);
 
-    for (ZMMessage *message in messages) {
-        XCTAssertNil(message.normalizedText);
-    }
+    [syncContext performBlockAndWait:^{
+        for (ZMMessage *message in messages) {
+            XCTAssertNil(message.normalizedText);
+        }
+    }];
 }
 
 - (void)testThatItPerformsMigrationFrom_2_27_0_ToCurrentModelVersion {
@@ -906,9 +910,11 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     XCTAssertEqualObjects([userDictionaries subarrayWithRange:NSMakeRange(0, 3)], [self userDictionaryFixture2_25_1]);
     XCTAssertGreaterThan(messages.count, 0lu);
 
-    for (ZMMessage *message in messages) {
-        XCTAssertNil(message.normalizedText);
-    }
+    [syncContext performBlockAndWait:^{
+        for (ZMMessage *message in messages) {
+            XCTAssertNil(message.normalizedText);
+        }
+    }];
 }
 
 #pragma mark - Helper

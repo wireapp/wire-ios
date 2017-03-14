@@ -1108,17 +1108,19 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
 - (void)testThatCallingRefreshDataMarksItAsToDownload {
     
-    // GIVEN
-    ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
-    user.remoteIdentifier = [NSUUID UUID];
-    user.needsToBeUpdatedFromBackend = false;
-    XCTAssertFalse(user.needsToBeUpdatedFromBackend);
-    
-    // WHEN
-    [user refreshData];
-    
-    // THEN
-    XCTAssertTrue(user.needsToBeUpdatedFromBackend);
+    [self.syncMOC performBlockAndWait: ^{
+        // GIVEN
+        ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
+        user.remoteIdentifier = [NSUUID UUID];
+        user.needsToBeUpdatedFromBackend = false;
+        XCTAssertFalse(user.needsToBeUpdatedFromBackend);
+        
+        // WHEN
+        [user refreshData];
+        
+        // THEN
+        XCTAssertTrue(user.needsToBeUpdatedFromBackend);
+    }];
 }
 
 @end

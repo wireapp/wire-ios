@@ -172,39 +172,41 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
     
     func testThatItMigratesClientsSessionIdentifiers() {
 
-        // GIVEN
-        let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
-        let selfClient = self.createSelfClient(onMOC: self.syncMOC)
-        let newUser = ZMUser.insertNewObject(in: self.syncMOC)
-        newUser.remoteIdentifier = UUID.create()
-        let newClient = UserClient.insertNewObject(in: self.syncMOC)
-        newClient.user = newUser
-        newClient.remoteIdentifier = "aabb2d32ab"
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            let newUser = ZMUser.insertNewObject(in: self.syncMOC)
+            newUser.remoteIdentifier = UUID.create()
+            let newClient = UserClient.insertNewObject(in: self.syncMOC)
+            newClient.user = newUser
+            newClient.remoteIdentifier = "aabb2d32ab"
 
-        let otrURL = selfClient.keysStore.cryptoboxDirectoryURL
-        XCTAssertTrue(selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey))
-        self.syncMOC.saveOrRollback()
-        
-        let sessionsURL = otrURL.appendingPathComponent("sessions")
-        let oldSession = sessionsURL.appendingPathComponent(newClient.remoteIdentifier!)
-        let newSession = sessionsURL.appendingPathComponent(newClient.sessionIdentifier!.rawValue)
+            let otrURL = selfClient.keysStore.cryptoboxDirectoryURL
+            XCTAssertTrue(selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey))
+            self.syncMOC.saveOrRollback()
+            
+            let sessionsURL = otrURL.appendingPathComponent("sessions")
+            let oldSession = sessionsURL.appendingPathComponent(newClient.remoteIdentifier!)
+            let newSession = sessionsURL.appendingPathComponent(newClient.sessionIdentifier!.rawValue)
 
-        XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
-        let previousData = try! Data(contentsOf: newSession)
-        
-        // move to fake old session
-        try! FileManager.default.moveItem(at: newSession, to: oldSession)
-        XCTAssertFalse(FileManager.default.fileExists(atPath: newSession.path))
-        XCTAssertTrue(FileManager.default.fileExists(atPath: oldSession.path))
-         
-        // WHEN
-        PersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
-        
-        // THEN
-        let readData = try! Data(contentsOf: newSession)
-        XCTAssertEqual(readData, previousData);
-        XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
-        XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
+            XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
+            let previousData = try! Data(contentsOf: newSession)
+            
+            // move to fake old session
+            try! FileManager.default.moveItem(at: newSession, to: oldSession)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: newSession.path))
+            XCTAssertTrue(FileManager.default.fileExists(atPath: oldSession.path))
+             
+            // WHEN
+            PersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
+            
+            // THEN
+            let readData = try! Data(contentsOf: newSession)
+            XCTAssertEqual(readData, previousData);
+            XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
+            XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
+        }
     }
     
     func testThatItMigratesDegradedConversationsWithSecureWithIgnored() {
