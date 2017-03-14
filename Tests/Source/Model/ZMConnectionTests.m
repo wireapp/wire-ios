@@ -999,7 +999,7 @@
      };
 }
 
-- (void)testThatItDoesNotTryToMergeCOnversationsWithTheSameRemoteIdentifier
+- (void)testThatItDoesNotTryToMergeConversationsWithTheSameRemoteIdentifier
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -1032,6 +1032,30 @@
         XCTAssertNotNil(conversation);
         XCTAssertEqual(fetchedConnection.conversation, conversation);
         XCTAssertFalse(conversation.isZombieObject);
+    }];
+}
+
+- (void)testThatItRestoresLinkToTheRightConversationFromPayload
+{
+    [self.syncMOC performBlockAndWait:^{
+       
+        // given
+        NSDictionary *payload = [self validPayloadForConnectionWithStatus:@"accepted"];
+        ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        sender.remoteIdentifier = [payload uuidForKey:@"to"];
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.remoteIdentifier = [NSUUID createUUID];
+        connection.conversation = conversation;
+        connection.to = sender;
+        
+        // when
+        [self performIgnoringZMLogError:^{
+            [connection updateFromTransportData:payload];
+        }];
+        
+        // then
+        XCTAssertEqualObjects(connection.conversation.remoteIdentifier.transportString, payload[@"conversation"]);
     }];
 }
 

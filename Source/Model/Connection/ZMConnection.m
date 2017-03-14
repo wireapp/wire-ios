@@ -225,6 +225,9 @@ struct stringAndStatus {
         if (self.conversation != nil) {
             if (! [self.conversation.remoteIdentifier isEqual:conversationID]) {
                 ZMLogError(@"Conversation UUID in connection doesn't match previous value.");
+                ZMConversation *realConversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:self.managedObjectContext];
+                self.conversation = realConversation;
+                self.conversation.needsToBeUpdatedFromBackend = YES;
             }
         } else {
             self.conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:self.managedObjectContext];
