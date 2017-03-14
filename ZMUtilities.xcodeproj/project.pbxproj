@@ -88,6 +88,7 @@
 		877F501D1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */; };
 		877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */; };
 		877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */ = {isa = PBXBuildFile; fileRef = 877F50201E729CCF00894C90 /* excessive_diacritics.txt */; };
+		87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */; };
 		BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */; };
 		BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */; };
 		BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */; };
@@ -274,6 +275,7 @@
 		877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+ExtremeCombiningCharacters.swift"; sourceTree = "<group>"; };
 		877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+ExtremeCombiningCharactersTests.swift"; sourceTree = "<group>"; };
 		877F50201E729CCF00894C90 /* excessive_diacritics.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = excessive_diacritics.txt; sourceTree = "<group>"; };
+		87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtremeCombiningCharactersValidator.swift; sourceTree = "<group>"; };
 		BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparison.swift; sourceTree = "<group>"; };
 		BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparisonTests.swift; sourceTree = "<group>"; };
 		BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-production.xml"; sourceTree = "<group>"; };
@@ -570,6 +572,7 @@
 				F9C9A7A51CAEACB10039E10C /* ZMPhoneNumberValidator.m */,
 				F9C9A7BC1CAEAF240039E10C /* ZMPropertyValidator.m */,
 				F9C9A7A81CAEACB10039E10C /* ZMStringLengthValidator.m */,
+				87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */,
 			);
 			path = Validation;
 			sourceTree = "<group>";
@@ -833,6 +836,7 @@
 				091799531B7DFA1500E60DD9 /* ZMMobileProvisionParser.m in Sources */,
 				3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */,
 				54CA313B1B74F36B00B820C0 /* Sets.swift in Sources */,
+				87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
 				BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */,
 				BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */,
