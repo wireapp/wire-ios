@@ -74,7 +74,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     // MARK: - Request Generation
 
     func testThatItGeneratesARequestForAWhitelistedMessageWithNoImageInCache() {
-        // given
+        // GIVEN
         let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID).preview
@@ -83,11 +83,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         message.add(genericMessage.data())
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
-        // when
+        // WHEN
         message.requestImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
         XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
@@ -95,7 +95,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     }
     
     func testThatItGeneratesARequestForAWhitelistedEphemeralMessageWithNoImageInCache() {
-        // given
+        // GIVEN
         let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID).preview
@@ -104,11 +104,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         message.add(genericMessage.data())
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
-        // when
+        // WHEN
         message.requestImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
         XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
@@ -121,17 +121,17 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         message.add(genericMessage.data())
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
-        // when
+        // WHEN
         message.requestImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNil(sut.nextRequest())
     }
     
     func testThatItDoesNotGenerateARequestForAMessageWithImageInCache() {
-        // given
+        // GIVEN
         let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID).preview
@@ -141,16 +141,16 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         syncMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
         
-        // when
+        // WHEN
         message.requestImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertNil(sut.nextRequest())
     }
     
     func testThatItDoesNotGenerateARequestForAMessageWithoutArticleLinkPreview() {
-        // given
+        // GIVEN
         let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID, article: false).preview
@@ -160,11 +160,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         syncMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: .secureRandomData(length:256))
         
-        // when
+        // WHEN
         message.requestImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertNil(sut.nextRequest())
     }
     
@@ -182,19 +182,19 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         message.add(genericMessage.data())
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
-        // when
+        // WHEN
         message.requestImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
         let response = ZMTransportResponse(imageData: encrypted, httpStatus: 200, transportSessionError: nil, headers: nil)
         
-        // when
+        // WHEN
         request.complete(with: response)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         let actual = syncMOC.zm_imageAssetCache.assetData(nonce, format: .medium, encrypted: false)
         XCTAssertNotNil(actual)
         XCTAssertEqual(actual, data)
@@ -210,19 +210,19 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         message.add(genericMessage.data())
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
-        // when
+        // WHEN
         message.requestImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         guard let request = sut.nextRequest() else { return XCTFail("No request generated") }
         let response = ZMTransportResponse(imageData: .secureRandomData(length:256), httpStatus: 400, transportSessionError: nil, headers: nil)
         
-        // when
+        // WHEN
         request.complete(with: response)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        // then
+        // THEN
         XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(nonce, format: .medium, encrypted: false))
         XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(nonce, format: .medium, encrypted: true))
     }

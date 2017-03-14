@@ -28,15 +28,15 @@ class MissingClientsMapTests: MessagingTestBase {
     func testThatItCreatesMissingMapForClients() {
         self.syncMOC.performGroupedBlockAndWait {
             
-            // given
+            // GIVEN
             let user1Client1 = self.createClient()
             let user1Client2 = self.createClient(user1Client1.user)
             let user2Client1 = self.createClient()
             
-            // when
+            // WHEN
             let sut = MissingClientsMap([user1Client1, user1Client2, user2Client1], pageSize: 2)
             
-            // then
+            // THEN
             guard let user1Id = user1Client1.user?.remoteIdentifier?.transportString(),
                 let user2Id = user2Client1.user?.remoteIdentifier?.transportString() else { return XCTFail() }
             
@@ -54,14 +54,14 @@ class MissingClientsMapTests: MessagingTestBase {
     func testThatItPaginatesMissedClientsMapBasedOnUserCountPageSize() {
         self.syncMOC.performGroupedBlockAndWait {
             
-            // given
+            // GIVEN
             let user1Client1 = self.createClient()
             let user1Client2 = self.createClient(user1Client1.user)
             
-            // when
+            // WHEN
             let sut = MissingClientsMap([user1Client1, user1Client2], pageSize: 1)
             
-            // then
+            // THEN
             XCTAssertEqual(sut.payload.keys.count, 1)
             self.assertPayloadContainsClient(sut, user1Client1)
             self.assertPayloadContainsClient(sut, user1Client2)
@@ -73,16 +73,16 @@ class MissingClientsMapTests: MessagingTestBase {
         
         syncMOC.performGroupedBlockAndWait {
             
-            // given
+            // GIVEN
             let user1Client1 = self.createClient()
             let user2Client1 = self.createClient()
             let user2Client2 = self.createClient(user2Client1.user)
             let user3Client1 = self.createClient()
             
-            // when
+            // WHEN
             let sut = MissingClientsMap([user1Client1, user2Client1, user2Client2, user3Client1], pageSize: 2)
             
-            // then
+            // THEN
             XCTAssertEqual(sut.payload.keys.count, 2)
             self.assertPayloadContainsClient(sut, user1Client1)
             self.assertPayloadContainsClient(sut, user2Client1)

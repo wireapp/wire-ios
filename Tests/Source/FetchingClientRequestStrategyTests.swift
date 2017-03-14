@@ -112,7 +112,7 @@ extension FetchClientRequestStrategyTests {
         request?.complete(with: response)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         
-        // then
+        // THEN
         XCTAssertEqual(user.clients.count, 2)
         XCTAssertEqual(user.clients, selfClient.missingClients)
     }

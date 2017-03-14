@@ -137,7 +137,7 @@ extension ClientMessageRequestFactoryTests {
         let sut = ClientMessageRequestFactory()
         let uploadRequest = sut.upstreamRequestForEncryptedFileMessage(.placeholder, message: message, forConversationWithId: self.groupConversation.remoteIdentifier!)
         
-        // then
+        // THEN
         guard let request = uploadRequest else { return XCTFail() }
         XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
@@ -447,7 +447,7 @@ extension ClientMessageRequestFactoryTests {
             return XCTFail()
         }
         
-        // then
+        // THEN
         XCTAssertEqual(uploadRequest.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/assets?report_missing=\(self.otherUser.remoteIdentifier!.transportString())")
         XCTAssertEqual(uploadRequest.method, ZMTransportRequestMethod.methodPOST)
     }
