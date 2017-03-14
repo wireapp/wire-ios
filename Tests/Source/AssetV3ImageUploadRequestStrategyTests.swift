@@ -37,34 +37,45 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         registrationStatus = MockClientRegistrationStatus()
         mockCancellationProvider = MockTaskCancellationProvider()
         sut = AssetV3ImageUploadRequestStrategy(clientRegistrationStatus: registrationStatus, taskCancellationProvider: mockCancellationProvider, managedObjectContext: syncMOC)
-        conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = UUID.create()
+        self.syncMOC.performGroupedBlockAndWait {
+            self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            self.conversation.remoteIdentifier = UUID.create()
+        }
     }
 
     // MARK: - Helpers
 
     func createImageFileMessage(ephemeral: Bool = false) -> ZMAssetClientMessage {
-        conversation.messageDestructionTimeout = ephemeral ? 10 : 0
-        let message = conversation.appendMessage(withImageData: imageData, version3: true)
-        syncMOC.saveOrRollback()
-        return message as! ZMAssetClientMessage
+        var message: ZMAssetClientMessage!
+        syncMOC.performGroupedBlockAndWait {
+            self.conversation.messageDestructionTimeout = ephemeral ? 10 : 0
+            message = self.conversation.appendMessage(withImageData: self.imageData, version3: true) as! ZMAssetClientMessage
+            self.syncMOC.saveOrRollback()
+        }
+        return message
     }
 
     func createFileMessageWithPreview(ephemeral: Bool = false) -> ZMAssetClientMessage {
-        conversation.messageDestructionTimeout = ephemeral ? 10 : 0
-        let url = Bundle(for: AssetV3ImageUploadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil), version3: true) as! ZMAssetClientMessage
-        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: imageData)
-        syncMOC.saveOrRollback()
+        var message: ZMAssetClientMessage!
+        syncMOC.performGroupedBlockAndWait {
+            self.conversation.messageDestructionTimeout = ephemeral ? 10 : 0
+            let url = Bundle(for: AssetV3ImageUploadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
+            message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil), version3: true) as! ZMAssetClientMessage
+            self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: self.imageData)
+            self.syncMOC.saveOrRollback()
+        }
         return message
     }
 
     func createPreprocessedV2ImageMessage() -> ZMAssetClientMessage {
-        let message = conversation.appendOTRMessage(withImageData: verySmallJPEGData(), nonce: .create(), version3: false)
-        let properties = ZMIImageProperties(size: message.imageAssetStorage!.originalImageSize(), length: 1000, mimeType: "image/jpg")
-        message.imageAssetStorage?.setImageData(message.imageAssetStorage?.originalImageData(), for: .medium, properties: properties)
-        message.imageAssetStorage?.setImageData(message.imageAssetStorage?.originalImageData(), for: .preview, properties: properties)
-        syncMOC.saveOrRollback()
+        var message: ZMAssetClientMessage!
+        syncMOC.performGroupedBlockAndWait {
+            message = self.conversation.appendOTRMessage(withImageData: self.verySmallJPEGData(), nonce: .create(), version3: false)
+            let properties = ZMIImageProperties(size: message.imageAssetStorage!.originalImageSize(), length: 1000, mimeType: "image/jpg")
+            message.imageAssetStorage?.setImageData(message.imageAssetStorage?.originalImageData(), for: .medium, properties: properties)
+            message.imageAssetStorage?.setImageData(message.imageAssetStorage?.originalImageData(), for: .preview, properties: properties)
+            self.syncMOC.saveOrRollback()
+        }
         return message
     }
 
@@ -107,10 +118,10 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
 
     func testThatItGeneratesARequestIfTheImageIsProcessed() {
         // given
-        let message = createImageFileMessage()
-
+        let message = self.createImageFileMessage()
+        
         // then
-        assertThatItCreatesARequest(for: message)
+        self.assertThatItCreatesARequest(for: message)
     }
 
     func testThatItGeneratesARequestForAFilePreviewImageIfThePreviewIsProcessed() {

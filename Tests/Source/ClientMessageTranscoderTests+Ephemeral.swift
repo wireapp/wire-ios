@@ -105,6 +105,7 @@ extension ClientMessageTranscoderTests {
         self.spinMainQueue(withTimeout: 8)
         self.syncMOC.refreshAllObjects()
         self.recreateSut()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         self.syncMOC.saveOrRollback()
         
         // THEN
@@ -137,9 +138,12 @@ extension ClientMessageTranscoderTests {
         self.stopEphemeralMessageTimers()
         
         // WHEN
-        self.syncMOC.refreshAllObjects()
-        self.recreateSut()
-        self.syncMOC.saveOrRollback()
+        self.syncMOC.performGroupedBlockAndWait {
+            self.syncMOC.refreshAllObjects()
+            self.recreateSut()
+            self.syncMOC.saveOrRollback()
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
         self.uiMOC.refreshAllObjects()

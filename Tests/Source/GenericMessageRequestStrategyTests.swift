@@ -32,85 +32,98 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
         
         sut = GenericMessageRequestStrategy(context: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
         
-        let user = ZMUser.insertNewObject(in: syncMOC)
-        user.remoteIdentifier = UUID.create()
-        
-        conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = UUID.create()
-        conversation.addParticipant(user)
+        syncMOC.performGroupedBlockAndWait {
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
+            user.remoteIdentifier = UUID.create()
+            
+            self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            self.conversation.conversationType = .group
+            self.conversation.remoteIdentifier = UUID.create()
+            self.conversation.addParticipant(user)
+        }
     }
     
     func testThatItCallsEntityCompletionHandlerOnRequestCompletion() {
-        // given
-        let expectation = self.expectation(description: "Should complete")
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
-        let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
-        let message = GenericMessageEntity(conversation: conversation, message: genericMessage) {
-            XCTAssertEqual($0, response)
-            expectation.fulfill()
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let expectation = self.expectation(description: "Should complete")
+            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+            let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
+            let message = GenericMessageEntity(conversation: self.conversation, message: genericMessage) {
+                XCTAssertEqual($0, response)
+                expectation.fulfill()
+            }
+            
+            // when
+            self.sut.request(forEntity: message, didCompleteWithResponse: response)
+            
+            // then
+            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
-        
-        // when 
-        sut.request(forEntity: message, didCompleteWithResponse: response)
-        
-        // then
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
     }
     
     func testThatItCallsEntityCompletionHandlerOnShouldRetry() {
-        // given
-        let expectation = self.expectation(description: "Should complete")
-        let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil)
-        let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
-        let message = GenericMessageEntity(conversation: conversation, message: genericMessage) {
-            XCTAssertEqual($0, response)
-            expectation.fulfill()
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let expectation = self.expectation(description: "Should complete")
+            let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil)
+            let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
+            let message = GenericMessageEntity(conversation: self.conversation, message: genericMessage) {
+                XCTAssertEqual($0, response)
+                expectation.fulfill()
+            }
+            
+            // when
+            _ = self.sut.shouldTryToResend(entity: message, afterFailureWithResponse: response)
+            
+            // then
+            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
-        
-        // when
-        _ = sut.shouldTryToResend(entity: message, afterFailureWithResponse: response)
-        
-        // then
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
     }
 
     
     func testThatItCreatesARequestForAGenericMessage() {
-        
-        // given
-        let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
-        sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
-        
-        // when
-        let request = sut.nextRequest()
-        
-        // then
-        XCTAssertEqual(request!.method, .methodPOST)
-        XCTAssertEqual(request!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
+            self.sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
+            
+            // when
+            let request = self.sut.nextRequest()
+            
+            // then
+            XCTAssertEqual(request!.method, .methodPOST)
+            XCTAssertEqual(request!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
+        }
     }
     
     func testThatItForwardsObjectDidChangeToTheSync(){
-        // given
-        self.selfClient.missesClient(self.otherClient)
-        
-        let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
-        sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
-        
-        // when
-        let request1 = sut.nextRequest()
-        
-        // then
-        XCTAssertNil(request1)
-        
-        // and when
-        selfClient.removeMissingClient(self.otherClient)
-        sut.objectsDidChange(Set([selfClient]))
-        let request2 = sut.nextRequest()
-
-        // then
-        XCTAssertEqual(request2!.method, .methodPOST)
-        XCTAssertEqual(request2!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            self.selfClient.missesClient(self.otherClient)
+            
+            let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
+            self.sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
+            
+            // when
+            let request1 = self.sut.nextRequest()
+            
+            // then
+            XCTAssertNil(request1)
+            
+            // and when
+            self.selfClient.removeMissingClient(self.otherClient)
+            self.sut.objectsDidChange(Set([self.selfClient]))
+            let request2 = self.sut.nextRequest()
+            
+            // then
+            XCTAssertEqual(request2!.method, .methodPOST)
+            XCTAssertEqual(request2!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
+        }
     }
     
 }

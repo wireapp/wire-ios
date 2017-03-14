@@ -26,65 +26,72 @@ import ZMCDataModel
 class MissingClientsMapTests: MessagingTestBase {
     
     func testThatItCreatesMissingMapForClients() {
-        
-        // given
-        let user1Client1 = createClient()
-        let user1Client2 = createClient(user1Client1.user)
-        let user2Client1 = createClient()
-        
-        // when
-        let sut = MissingClientsMap([user1Client1, user1Client2, user2Client1], pageSize: 2)
-        
-        // then
-        guard let user1Id = user1Client1.user?.remoteIdentifier?.transportString(),
-            let user2Id = user2Client1.user?.remoteIdentifier?.transportString() else { return XCTFail() }
-        
-        XCTAssertEqual(sut.payload.keys.count, 2)
-        XCTAssertEqual(sut.payload[user1Id]?.count, 2)
-        XCTAssertEqual(sut.payload[user2Id]?.count, 1)
-        
-        assertPayloadContainsClient(sut, user1Client1)
-        assertPayloadContainsClient(sut, user1Client2)
-        assertPayloadContainsClient(sut, user2Client1)
-        assertExpectedUserInfo(sut, user1Client1, user1Client2, user2Client1)
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let user1Client1 = self.createClient()
+            let user1Client2 = self.createClient(user1Client1.user)
+            let user2Client1 = self.createClient()
+            
+            // when
+            let sut = MissingClientsMap([user1Client1, user1Client2, user2Client1], pageSize: 2)
+            
+            // then
+            guard let user1Id = user1Client1.user?.remoteIdentifier?.transportString(),
+                let user2Id = user2Client1.user?.remoteIdentifier?.transportString() else { return XCTFail() }
+            
+            XCTAssertEqual(sut.payload.keys.count, 2)
+            XCTAssertEqual(sut.payload[user1Id]?.count, 2)
+            XCTAssertEqual(sut.payload[user2Id]?.count, 1)
+            
+            self.assertPayloadContainsClient(sut, user1Client1)
+            self.assertPayloadContainsClient(sut, user1Client2)
+            self.assertPayloadContainsClient(sut, user2Client1)
+            self.assertExpectedUserInfo(sut, user1Client1, user1Client2, user2Client1)
+        }
     }
 
     func testThatItPaginatesMissedClientsMapBasedOnUserCountPageSize() {
-        
-        // given
-        let user1Client1 = createClient()
-        let user1Client2 = createClient(user1Client1.user)
-        
-        // when
-        let sut = MissingClientsMap([user1Client1, user1Client2], pageSize: 1)
-        
-        // then
-        XCTAssertEqual(sut.payload.keys.count, 1)
-        assertPayloadContainsClient(sut, user1Client1)
-        assertPayloadContainsClient(sut, user1Client2)
-        assertExpectedUserInfo(sut, user1Client1, user1Client2)
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let user1Client1 = self.createClient()
+            let user1Client2 = self.createClient(user1Client1.user)
+            
+            // when
+            let sut = MissingClientsMap([user1Client1, user1Client2], pageSize: 1)
+            
+            // then
+            XCTAssertEqual(sut.payload.keys.count, 1)
+            self.assertPayloadContainsClient(sut, user1Client1)
+            self.assertPayloadContainsClient(sut, user1Client2)
+            self.assertExpectedUserInfo(sut, user1Client1, user1Client2)
+        }
     }
     
     func testThatItPaginatesMissedClientsMapBasedOnUserCount_toManyUsers() {
         
-        // given
-        let user1Client1 = createClient()
-        let user2Client1 = createClient()
-        let user2Client2 = createClient(user2Client1.user)
-        let user3Client1 = createClient()
-        
-        // when
-        let sut = MissingClientsMap([user1Client1, user2Client1, user2Client2, user3Client1], pageSize: 2)
-        
-        // then
-        XCTAssertEqual(sut.payload.keys.count, 2)
-        assertPayloadContainsClient(sut, user1Client1)
-        assertPayloadContainsClient(sut, user2Client1)
-        assertPayloadContainsClient(sut, user2Client2)
-
-        guard let user3Id = user3Client1.user?.remoteIdentifier?.transportString() else { return XCTFail() }
-        XCTAssertNil(sut.payload[user3Id])
-        assertExpectedUserInfo(sut, user1Client1, user2Client1, user2Client2)
+        syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let user1Client1 = self.createClient()
+            let user2Client1 = self.createClient()
+            let user2Client2 = self.createClient(user2Client1.user)
+            let user3Client1 = self.createClient()
+            
+            // when
+            let sut = MissingClientsMap([user1Client1, user2Client1, user2Client2, user3Client1], pageSize: 2)
+            
+            // then
+            XCTAssertEqual(sut.payload.keys.count, 2)
+            self.assertPayloadContainsClient(sut, user1Client1)
+            self.assertPayloadContainsClient(sut, user2Client1)
+            self.assertPayloadContainsClient(sut, user2Client2)
+            
+            guard let user3Id = user3Client1.user?.remoteIdentifier?.transportString() else { return XCTFail() }
+            XCTAssertNil(sut.payload[user3Id])
+            self.assertExpectedUserInfo(sut, user1Client1, user2Client1, user2Client2)
+        }
     }
     
     // MARK: - Helper

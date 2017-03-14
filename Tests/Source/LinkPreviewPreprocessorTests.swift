@@ -61,15 +61,19 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
     }
     
     func assertThatItProcessesMessageWithLinkPreviewState(_ state: ZMLinkPreviewState, shouldProcess: Bool = false, line: UInt = #line) {
-        // given
-        let message = createMessage(state)
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let message = self.createMessage(state)
+            
+            // when
+            self.sut.objectsDidChange([message])
+        }
         
-        // when
-        sut.objectsDidChange([message])
-        let callCount: Int = shouldProcess ? 1 : 0
-        
-        // then
-        XCTAssertEqual(mockDetector.downloadLinkPreviewsCallCount, callCount, "Failure processing state \(state.rawValue)", line: line)
+        self.syncMOC.performGroupedBlockAndWait {
+            // then
+            let callCount: Int = shouldProcess ? 1 : 0
+            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, callCount, "Failure processing state \(state.rawValue)", line: line)
+        }
     }
 }
 
@@ -82,70 +86,93 @@ extension LinkPreviewPreprocessorTests {
     }
     
     func testThatItStoresTheOriginalImageDataInTheCacheAndSetsTheStateToDownloadedWhenItReceivesAPreviewWithImage() {
-        // given 
-        let URL = "http://www.example.com"
-        let preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
-        preview.imageData = [.secureRandomData(length: 256)]
-        preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
-        mockDetector.nextResult = [preview]
-        let message = createMessage()
+        var message : ZMClientMessage!
+        var preview: LinkPreview!
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let URL = "http://www.example.com"
+            preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
+            preview.imageData = [.secureRandomData(length: 256)]
+            preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
+            self.mockDetector.nextResult = [preview]
+            message = self.createMessage()
+            
+            // when
+            self.sut.objectsDidChange([message])
+        }
         
-        // when
-        sut.objectsDidChange([message])
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // then
-        XCTAssertEqual(mockDetector.downloadLinkPreviewsCallCount, 1)
-        XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
-        let data = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
-        XCTAssertEqual(data, preview.imageData.first!)
-        guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
-        XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
+        self.syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
+            XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
+            let data = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            XCTAssertEqual(data, preview.imageData.first!)
+            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
+            XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
+        }
     }
     
     func testThatItSetsTheStateToUploadedWhenItReceivesAPreviewWithoutImage() {
-        // given
-        let URL = "http://www.example.com"
-        mockDetector.nextResult = [LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)]
-        let message = createMessage()
+        var message : ZMClientMessage!
+
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let URL = "http://www.example.com"
+            self.mockDetector.nextResult = [LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)]
+            message = self.createMessage()
+            
+            // when
+            self.sut.objectsDidChange([message])
+        }
         
-        // when
-        sut.objectsDidChange([message])
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // then
-        XCTAssertEqual(mockDetector.downloadLinkPreviewsCallCount, 1)
-        XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
-        let data = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
-        XCTAssertNil(data)
-        guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
-        XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
+        self.syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
+            XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
+            let data = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            XCTAssertNil(data)
+            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
+            XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
+        }
     }
     
     func testThatItSetsTheStateToDoneIfNoPreviewsAreReturned() {
-        // given
-        let message = createMessage()
+        var message : ZMClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            message = self.createMessage()
+            
+            // when
+            self.sut.objectsDidChange([message])
+        }
         
-        // when
-        sut.objectsDidChange([message])
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // then
-        XCTAssertEqual(mockDetector.downloadLinkPreviewsCallCount, 1)
-        XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.done)
+        self.syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
+            XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.done)
+        }
     }
     
     func testThatItSetsTheStateToDoneIfTheMessageDoesNotHaceTextMessageData() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let message = conversation.appendKnock() as! ZMClientMessage
+        var message : ZMClientMessage!
+
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            message = conversation.appendKnock() as! ZMClientMessage
+            
+            // when
+            self.sut.objectsDidChange([message])
+        }
         
-        // when
-        sut.objectsDidChange([message])
-        
-        // then
-        XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.done)
+        self.syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.done)
+        }
     }
     
 }
@@ -155,49 +182,60 @@ extension LinkPreviewPreprocessorTests {
 extension LinkPreviewPreprocessorTests {
     
     func testThatItReturnsAnEphemeralMessageAfterPreProcessingAnEphemeral(){
-        // given
-        let URL = "http://www.example.com"
-        let preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
-        preview.imageData = [.secureRandomData(length: 256)]
-        preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
-        mockDetector.nextResult = [preview]
-        let message = createMessage(isEphemeral: true)
-        XCTAssertTrue(message.isEphemeral)
+        var message : ZMClientMessage!
+        var preview : LinkPreview!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let URL = "http://www.example.com"
+            preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
+            preview.imageData = [.secureRandomData(length: 256)]
+            preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
+            self.mockDetector.nextResult = [preview]
+            message = self.createMessage(isEphemeral: true)
+            XCTAssertTrue(message.isEphemeral)
+            
+            // when
+            self.sut.objectsDidChange([message])
+        }
         
-        // when
-        sut.objectsDidChange([message])
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // then
-        XCTAssertEqual(mockDetector.downloadLinkPreviewsCallCount, 1)
-        XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
-        let data = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
-        XCTAssertEqual(data, preview.imageData.first!)
-        guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
-        XCTAssertTrue(genericMessage.hasEphemeral())
-        XCTAssertFalse(genericMessage.ephemeral.text.linkPreview.isEmpty)
+        self.syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
+            XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
+            let data = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            XCTAssertEqual(data, preview.imageData.first!)
+            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
+            XCTAssertTrue(genericMessage.hasEphemeral())
+            XCTAssertFalse(genericMessage.ephemeral.text.linkPreview.isEmpty)
+        }
     }
     
     func testThatItDoesNotUpdateMessageWhenMessageHasBeenObfuscatedAndSetsPreviewStateToDone(){
-        // given
-        let URL = "http://www.example.com"
-        let preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
-        preview.imageData = [.secureRandomData(length: 256)]
-        preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
-        mockDetector.nextResult = [preview]
-        let message = createMessage(isEphemeral: true)
-        XCTAssertTrue(message.isEphemeral)
-        message.obfuscate()
+        var message: ZMClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // given
+            let URL = "http://www.example.com"
+            let preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
+            preview.imageData = [.secureRandomData(length: 256)]
+            preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
+            self.mockDetector.nextResult = [preview]
+            message = self.createMessage(isEphemeral: true)
+            XCTAssertTrue(message.isEphemeral)
+            message.obfuscate()
+            
+            // when
+            self.sut.objectsDidChange([message])
+        }
         
-        // when
-        sut.objectsDidChange([message])
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // then
-        guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
-        XCTAssertFalse(genericMessage.hasEphemeral())
-        XCTAssertEqual(genericMessage.linkPreviews.count, 0)
-        XCTAssertEqual(message.linkPreviewState, .done)
+        self.syncMOC.performGroupedBlockAndWait {
+            // then
+            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
+            XCTAssertFalse(genericMessage.hasEphemeral())
+            XCTAssertEqual(genericMessage.linkPreviews.count, 0)
+            XCTAssertEqual(message.linkPreviewState, .done)
+        }
     }
     
     
