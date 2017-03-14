@@ -150,8 +150,11 @@ extension ClientMessageTranscoder {
     }
     
     fileprivate func deleteOldEphemeralMessages() {
-        ZMMessage.deleteOldEphemeralMessages(self.managedObjectContext)
-        self.managedObjectContext.saveOrRollback()
+        self.managedObjectContext.performGroupedBlock { [weak self] in
+            guard let `self` = self else { return }
+            ZMMessage.deleteOldEphemeralMessages(self.managedObjectContext)
+            self.managedObjectContext.saveOrRollback()
+        }
     }
 
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {

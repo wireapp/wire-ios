@@ -41,22 +41,23 @@ class MessagingTestBase: ZMTBaseTest {
         
         self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
         
-        self.setupUsersAndClients()
-        self.groupConversation = self.createGroupConversation(with: self.otherUser)
-        self.oneToOneConversation = self.setupOneToOneConversation(with: self.otherUser)
-        
-        self.syncMOC.saveOrRollback()
+        self.syncMOC.performGroupedBlockAndWait {
+            self.setupUsersAndClients()
+            self.groupConversation = self.createGroupConversation(with: self.otherUser)
+            self.oneToOneConversation = self.setupOneToOneConversation(with: self.otherUser)
+            self.syncMOC.saveOrRollback()
+        }
     }
     
     override func tearDown() {
 
         _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
-        
-        self.otherUser = nil
-        self.otherClient = nil
-        self.selfClient = nil
-        self.groupConversation = nil
-
+        self.syncMOC.performGroupedBlockAndWait {
+            self.otherUser = nil
+            self.otherClient = nil
+            self.selfClient = nil
+            self.groupConversation = nil
+        }
         self.stopEphemeralMessageTimers()
         self.tearDownManagedObjectContexes()
         self.deleteAllFilesInCache()
@@ -275,12 +276,12 @@ extension MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             self.syncMOC.zm_teardownMessageObfuscationTimer()
         }
-        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 0.5)
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         self.uiMOC.performGroupedBlockAndWait {
             self.uiMOC.zm_teardownMessageDeletionTimer()
         }
-        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 0.5)
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 }
 
