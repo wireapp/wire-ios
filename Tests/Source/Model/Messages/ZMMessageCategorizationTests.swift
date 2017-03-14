@@ -120,21 +120,23 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
     }
 
     func testThatItUpdatesCachedCategoryAfterSettingFullImageData() {
-        // GIVEN
-        let conversation = ZMConversation(remoteID: .create(), createIfNeeded: true, in: syncMOC)!
-        let data = self.data(forResource: "animated", extension: "gif")!
-        conversation.appendMessage(withImageData: data)
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let conversation = ZMConversation(remoteID: .create(), createIfNeeded: true, in: self.syncMOC)!
+            let data = self.data(forResource: "animated", extension: "gif")!
+            conversation.appendMessage(withImageData: data)
 
-        let message = conversation.messages.lastObject as! ZMAssetClientMessage
-        let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
+            let message = conversation.messages.lastObject as! ZMAssetClientMessage
+            let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
 
-        XCTAssertEqual(message.cachedCategory, [MessageCategory.image])
+            XCTAssertEqual(message.cachedCategory, [MessageCategory.image])
 
-        // WHEN
-        message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
+            // WHEN
+            message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
 
-        // THEN
-        XCTAssertEqual(message.cachedCategory, [MessageCategory.image, MessageCategory.GIF])
+            // THEN
+            XCTAssertEqual(message.cachedCategory, [MessageCategory.image, MessageCategory.GIF])
+        }
     }
 
     func testThatItCategorizesAGifImageMessage() {
