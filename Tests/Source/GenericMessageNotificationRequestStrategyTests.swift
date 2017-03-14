@@ -36,20 +36,20 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestWhenNoNotificationWasFired() {
-        // when & then
+        // WHEN & then
         XCTAssertNil(sut.nextRequest())
     }
 
     func testThatItCreatesARequestWhenPostingAGenericMessageScheduleNotification() {
-        // given
+        // GIVEN
         let genericMessage = ZMGenericMessage.sessionReset(withNonce: UUID.create().transportString())
         let notification = GenericMessageScheduleNotification(message: genericMessage, conversation: self.groupConversation)
 
-        // when
+        // WHEN
         notification.post()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
+        // THEN
         guard let request = sut.nextRequest() else { return XCTFail("No request created") }
         XCTAssertEqual(request.method, .methodPOST)
         XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")

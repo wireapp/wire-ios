@@ -39,9 +39,9 @@ class MessagingTestBase: ZMTBaseTest {
         self.deleteAllFilesInCache()
         self.setupManagedObjectContexes()
         
-        self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
-        
         self.syncMOC.performGroupedBlockAndWait {
+            self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
+            
             self.setupUsersAndClients()
             self.groupConversation = self.createGroupConversation(with: self.otherUser)
             self.oneToOneConversation = self.setupOneToOneConversation(with: self.otherUser)

@@ -98,7 +98,7 @@ extension AssetV3FileUploadRequestStrategy: ZMContextChangeTracker {
 
     // we need to cancel the requests manually as the upstream modified object sync
     // will not pick up a change to keys which are already being synchronized (uploadState)
-    // when the user cancels a file upload
+    // WHEN the user cancels a file upload
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
         let assetClientMessages = object.flatMap { object -> ZMAssetClientMessage? in
             guard let message = object as? ZMAssetClientMessage,

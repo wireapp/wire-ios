@@ -65,38 +65,38 @@ class OTREntityTranscoderTests : MessagingTestBase {
     
     func testThatItHandlesDeletionOfSelfClient() {
         
-        // given
+        // GIVEN
         let payload = [
             "label" : "unknown-client"
         ]
         
         let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 403, transportSessionError: nil)
         
-        // when
+        // WHEN
         XCTAssertFalse(sut.shouldTryToResend(entity: mockEntity, afterFailureWithResponse: response))
         
-        // then
+        // THEN
         XCTAssertEqual(mockClientRegistrationStatus.deletionCalls, 1)
     }
     
     func testThatItHandlesDeletionOfClient() {
         
-        // given
+        // GIVEN
         let payload = [
             "deleted" : ["\(self.otherUser.remoteIdentifier!)" : [self.otherClient.remoteIdentifier!] ]
         ]
         let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
         
-        // when
+        // WHEN
         sut.request(forEntity: mockEntity, didCompleteWithResponse: response)
         
-        // then
+        // THEN
         XCTAssertTrue(self.otherClient.isDeleted)
     }
     
     func testThatItHandlesMissingClient_addsClientToListOfMissingClients() {
         
-        // given
+        // GIVEN
         let user = ZMUser.insertNewObject(in: syncMOC)
         user.remoteIdentifier = UUID.create()
         let clientId = "ajsd9898u13a"
@@ -106,17 +106,17 @@ class OTREntityTranscoderTests : MessagingTestBase {
         ]
         let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
         
-        // when
+        // WHEN
         sut.request(forEntity: mockEntity, didCompleteWithResponse: response)
         
-        // then
+        // THEN
         XCTAssertEqual(selfClient.missingClients!.count, 1)
         XCTAssertEqual(selfClient.missingClients!.first!.remoteIdentifier, clientId)
     }
     
     func testThatItHandlesMissingClient_MarkAsNeedsToDownloadNotAlreadyThere() {
         
-        // given
+        // GIVEN
         let user = self.createUser()
         let clientId = "ajsd9898u13a"
         
@@ -125,10 +125,10 @@ class OTREntityTranscoderTests : MessagingTestBase {
         ]
         let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
         
-        // when
+        // WHEN
         sut.request(forEntity: mockEntity, didCompleteWithResponse: response)
         
-        // then
+        // THEN
         XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
     }
     

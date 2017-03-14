@@ -46,7 +46,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
     func testThatItCallsEntityCompletionHandlerOnRequestCompletion() {
         self.syncMOC.performGroupedBlockAndWait {
             
-            // given
+            // GIVEN
             let expectation = self.expectation(description: "Should complete")
             let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
             let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
@@ -55,10 +55,10 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
                 expectation.fulfill()
             }
             
-            // when
+            // WHEN
             self.sut.request(forEntity: message, didCompleteWithResponse: response)
             
-            // then
+            // THEN
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -66,7 +66,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
     func testThatItCallsEntityCompletionHandlerOnShouldRetry() {
         self.syncMOC.performGroupedBlockAndWait {
             
-            // given
+            // GIVEN
             let expectation = self.expectation(description: "Should complete")
             let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil)
             let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
@@ -75,10 +75,10 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
                 expectation.fulfill()
             }
             
-            // when
+            // WHEN
             _ = self.sut.shouldTryToResend(entity: message, afterFailureWithResponse: response)
             
-            // then
+            // THEN
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -87,14 +87,14 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
     func testThatItCreatesARequestForAGenericMessage() {
         self.syncMOC.performGroupedBlockAndWait {
             
-            // given
+            // GIVEN
             let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
             self.sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
             
-            // when
+            // WHEN
             let request = self.sut.nextRequest()
             
-            // then
+            // THEN
             XCTAssertEqual(request!.method, .methodPOST)
             XCTAssertEqual(request!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
         }
@@ -103,16 +103,16 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
     func testThatItForwardsObjectDidChangeToTheSync(){
         self.syncMOC.performGroupedBlockAndWait {
             
-            // given
+            // GIVEN
             self.selfClient.missesClient(self.otherClient)
             
             let genericMessage = ZMGenericMessage(editMessage: "foo", newText: "bar", nonce: UUID.create().transportString())
             self.sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
             
-            // when
+            // WHEN
             let request1 = self.sut.nextRequest()
             
-            // then
+            // THEN
             XCTAssertNil(request1)
             
             // and when
@@ -120,7 +120,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
             self.sut.objectsDidChange(Set([self.selfClient]))
             let request2 = self.sut.nextRequest()
             
-            // then
+            // THEN
             XCTAssertEqual(request2!.method, .methodPOST)
             XCTAssertEqual(request2!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
         }

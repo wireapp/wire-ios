@@ -43,7 +43,7 @@ extension FilePreprocessorTests {
 
     func testThatItEncryptsAFileMessageWithTheSpecifiedVersion() {
 
-        // given
+        // GIVEN
         let name = "report.txt"
         sut = FilePreprocessor(managedObjectContext: syncMOC, filter: NSPredicate(format: "version > 2"))
         let metadata = ZMFileMetadata(fileURL: testDataURL)
@@ -57,17 +57,17 @@ extension FilePreprocessorTests {
         syncMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         syncMOC.zm_fileAssetCache.deleteAssetData(msg.nonce, fileName: name, encrypted: true)
 
-        // when
+        // WHEN
         sut.objectsDidChange([msg])
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
 
-        // then
+        // THEN
         XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "No file present")
     }
 
     func testThatItDoesNotEncryptAFileMessageWithAVersinonOtherThanTheSpecifiedVersion() {
 
-        // given
+        // GIVEN
         let name = "report.txt"
         sut = FilePreprocessor(managedObjectContext: syncMOC, filter: NSPredicate(value: false))
         let metadata = ZMFileMetadata(fileURL: testDataURL)
@@ -82,17 +82,17 @@ extension FilePreprocessorTests {
         syncMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         syncMOC.zm_fileAssetCache.deleteAssetData(msg.nonce, fileName: name, encrypted: true)
 
-        // when
+        // WHEN
         sut.objectsDidChange([msg])
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
 
-        // then
+        // THEN
         XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "File present where it should not be")
     }
     
     func testThatItEncryptsAFileMessageSentByMe() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
@@ -101,17 +101,17 @@ extension FilePreprocessorTests {
         self.syncMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         self.syncMOC.zm_fileAssetCache.deleteAssetData(msg.nonce, fileName: name, encrypted: true)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
 
-        // then
+        // THEN
         XCTAssertNotNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "No file")
     }
 
     func testThatItSetsTheEncryptionKeysOnTheFileMessage() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
@@ -119,11 +119,11 @@ extension FilePreprocessorTests {
         msg.delivered = false
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
 
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         let encryptedData = self.uiMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true)
 
         XCTAssertEqual(msg.genericAssetMessage.asset.uploaded.sha256, encryptedData?.zmSHA256Digest())
@@ -137,25 +137,25 @@ extension FilePreprocessorTests {
 
     func testThatItSetsReadyToUploadOnTheFileMessage() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         XCTAssertFalse(msg.isReadyToUploadFile)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertTrue(msg.isReadyToUploadFile)
         XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingPlaceholder)
     }
     
     func testThatItDoesNotEncryptAFileMessageThatAlreadyHasAnEncryptedVersion() {
         
-        // given
+        // GIVEN
         let encData = "foobar".data(using: String.Encoding.utf8)!
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
@@ -165,100 +165,100 @@ extension FilePreprocessorTests {
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: true, data: encData)
 
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertEqual(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), encData, "File was overwritten")
 
     }
     
     func testThatItDoesNotEncryptAnImageMessage() {
         
-        // given
+        // GIVEN
         let msg = ZMAssetClientMessage(originalImageData: testData, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertFalse(msg.isReadyToUploadFile)
         XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingPlaceholder)
     }
     
     func testThatItDoesNotEncryptAFileMessageSentBySomeoneElse() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
         msg.delivered = true
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "Should not have file")
     }
     
     func testThatItDoesNotEncryptAFileMessageReadyToBeDownloaded() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
         msg.transferState = .uploaded
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "Should not have file")
     }
     
     func testThatItDoesNotEncryptAFileMessageFailedToUpload() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
         msg.transferState = .failedUpload
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "Should not have file")
     }
     
     func testThatItDoesNotEncryptAFileMessageFailedToDownload() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
         msg.transferState = .failedDownload
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "Should not have file")
     }
     
     func testThatItDoesNotEncryptAFileMessageNotFromThisDevice() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
@@ -266,17 +266,17 @@ extension FilePreprocessorTests {
         msg.delivered = true
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "Should not have file")
     }
 
     func testThatItReturnsAFetchRequestMatchingTheRightObjects() {
         
-        // given
+        // GIVEN
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
         msg.transferState = .uploading
@@ -293,10 +293,10 @@ extension FilePreprocessorTests {
         wrongMsg.delivered = true
         self.syncMOC.saveOrRollback()
         
-        // when
+        // WHEN
         let req = sut.fetchRequestForTrackedObjects()!
         
-        // then
+        // THEN
         guard let objects = try! self.syncMOC.fetch(req) as? [ZMAssetClientMessage] else { XCTFail(); return; }
         XCTAssertEqual(objects, [msg])
     }
@@ -308,7 +308,7 @@ extension FilePreprocessorTests {
 
     func testThatItEncryptsAnEphemeralFileMessageSentByMe() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:10.0)
@@ -318,18 +318,18 @@ extension FilePreprocessorTests {
         self.syncMOC.zm_fileAssetCache.deleteAssetData(msg.nonce, fileName: name, encrypted: true)
         XCTAssertTrue(msg.isEphemeral)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertNotNil(self.syncMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true), "No file")
         XCTAssertTrue(msg.isEphemeral)
     }
     
     func testThatItSetsTheEncryptionKeysOnTheEphemeralFileMessage() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:10.0)
@@ -337,11 +337,11 @@ extension FilePreprocessorTests {
         msg.delivered = false
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         let encryptedData = self.uiMOC.zm_fileAssetCache.assetData(msg.nonce, fileName: name, encrypted: true)
         
         XCTAssertEqual(msg.genericAssetMessage.ephemeral.asset.uploaded.sha256, encryptedData?.zmSHA256Digest())
@@ -355,7 +355,7 @@ extension FilePreprocessorTests {
     
     func testThatItSetsReadyToUploadOnTheEphemeralFileMessage() {
         
-        // given
+        // GIVEN
         let name = "report.txt"
         let metadata = ZMFileMetadata(fileURL: testDataURL)
         let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:10.0)
@@ -363,11 +363,11 @@ extension FilePreprocessorTests {
         self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
         XCTAssertFalse(msg.isReadyToUploadFile)
         
-        // when
+        // WHEN
         sut.objectsDidChange(Set(arrayLiteral: msg))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "Timeout")
         
-        // then
+        // THEN
         XCTAssertTrue(msg.isReadyToUploadFile)
         XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingPlaceholder)
         XCTAssertTrue(msg.isEphemeral)
