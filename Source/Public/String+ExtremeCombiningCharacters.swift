@@ -99,3 +99,10 @@ public extension String {
         return String(newUnicodeScalars)
     }
 }
+
+public extension NSString {
+    @objc(stringByRemovingExtremeCombiningCharacters)
+    public var removingExtremeCombiningCharacters: NSString {
+        return (self as String).removingExtremeCombiningCharacters
+    }
+}
