@@ -18,18 +18,21 @@
 
 import Foundation
 
-public enum ExcessiveDiacriticsValidationError: Error {
-    case containsExcessiveDiacritcs
+public enum ExtremeCombiningCharactersValidationError: Error {
+    case containsExtremeCombiningCharacters
 }
 
-public class ExcessiveDiacriticsValidator: NSObject, ZMPropertyValidator {
+public class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyValidator {
     public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws {
         guard let string = ioValue.pointee as? String else {
             fatal("Provided value \(ioValue.pointee) is not a string")
         }
         
-        if string.unicodeScalars.count != string.removingExtremeCombiningCharacters.unicodeScalars.count {
-            throw ExcessiveDiacriticsValidationError.containsExcessiveDiacritcs
+        let stringByRemovingExtremeCombiningCharacters = string.removingExtremeCombiningCharacters
+        
+        if string.unicodeScalars.count != stringByRemovingExtremeCombiningCharacters.unicodeScalars.count {
+            ioValue.pointee = stringByRemovingExtremeCombiningCharacters as AnyObject?
+            throw ExtremeCombiningCharactersValidationError.containsExtremeCombiningCharacters
         }
     }
 }

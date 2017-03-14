@@ -194,4 +194,42 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
             _ = result.removingExtremeCombiningCharacters
         }
     }
+    
+    func testValueValidatorForValidString() {
+        // GIVEN 
+        let initialString = "Hello world"
+        var string: AnyObject? = initialString as AnyObject?
+        
+        // WHEN
+        do {
+            try ExtremeCombiningCharactersValidator.validateValue(&string)
+        }
+        catch _ {
+            XCTFail()
+        }
+        
+        // THEN
+        XCTAssertEqual(string as! String, initialString)
+    }
+    
+    func testValueValidatorForInvalidString() {
+        // GIVEN
+        let initialString = "ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂"
+        var string: AnyObject? = initialString as AnyObject?
+        
+        var thrownError: Error?
+        
+        // WHEN
+        do {
+            try ExtremeCombiningCharactersValidator.validateValue(&string)
+        }
+        catch (let error) {
+            thrownError = error
+        }
+        
+        // THEN
+        XCTAssertEqual(thrownError! as! ExtremeCombiningCharactersValidationError, ExtremeCombiningCharactersValidationError.containsExtremeCombiningCharacters)
+        XCTAssertNotEqual(string as! String, initialString)
+        XCTAssertEqual(string as! String, initialString.removingExtremeCombiningCharacters)
+    }
 }
