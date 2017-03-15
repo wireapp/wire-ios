@@ -103,6 +103,8 @@ public extension String {
 public extension NSString {
     @objc(stringByRemovingExtremeCombiningCharacters)
     public var removingExtremeCombiningCharacters: NSString {
-        return (self as String).removingExtremeCombiningCharacters
+        let selfString = (self as String)
+        let result = selfString.removingExtremeCombiningCharacters
+        return result as NSString
     }
 }

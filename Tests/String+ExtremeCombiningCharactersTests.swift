@@ -151,6 +151,14 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
         XCTAssertEqual(string.removingExtremeCombiningCharacters, "test̻̟̙")
     }
     
+    func testThatItSanitizesExcessiveDiacritics_NSString() {
+        // GIVEN
+        let string: NSString = "ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂"
+        
+        // WHEN & THEN
+        XCTAssertEqual(string.removingExtremeCombiningCharacters, "test̻̟̙" as NSString)
+    }
+    
     func testThatItSanitizesLongStringWithExcessiveDiacritics() {
         // GIVEN
         let string = String_ExtremeCombiningCharactersTests.longDiacriticsTestString
