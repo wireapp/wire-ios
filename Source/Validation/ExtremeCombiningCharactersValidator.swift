@@ -24,7 +24,11 @@ public enum ExtremeCombiningCharactersValidationError: Error {
 
 public class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyValidator {
     public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws {
-        guard let string = ioValue.pointee as? String else {
+        guard let pointee = ioValue.pointee else {
+            return
+        }
+        
+        guard let string = pointee as? String else {
             fatal("Provided value \(ioValue.pointee) is not a string")
         }
         

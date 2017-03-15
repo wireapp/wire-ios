@@ -212,6 +212,19 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
         XCTAssertEqual(string as! String, initialString)
     }
     
+    func testValueValidatorForNilString() {
+        // GIVEN
+        var string: AnyObject? = .none
+        
+        // WHEN & THEN
+        do {
+            try ExtremeCombiningCharactersValidator.validateValue(&string)
+        }
+        catch _ {
+            XCTFail()
+        }
+    }
+    
     func testValueValidatorForInvalidString() {
         // GIVEN
         let initialString = "ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂"
