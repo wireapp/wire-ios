@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+import ZMUtilities
 
 @objc (ZMLocationData)
 final public class LocationData: NSObject {
@@ -31,7 +32,7 @@ final public class LocationData: NSObject {
     init(latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) {
         self.latitude = latitude
         self.longitude = longitude
-        self.name = name
+        self.name = name?.removingExtremeCombiningCharacters
         self.zoomLevel = zoomLevel
         super.init()
     }

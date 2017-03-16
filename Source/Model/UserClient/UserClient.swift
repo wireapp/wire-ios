@@ -240,9 +240,9 @@ public extension UserClient {
             
         let payloadAsDictionary = payloadData as NSDictionary
         
-        let label = payloadAsDictionary.optionalString(forKey: "label")
-        let activationAddress = payloadAsDictionary.optionalString(forKey: "address")
-        let model = payloadAsDictionary.optionalString(forKey: "model")
+        let label = payloadAsDictionary.optionalString(forKey: "label")?.removingExtremeCombiningCharacters
+        let activationAddress = payloadAsDictionary.optionalString(forKey: "address")?.removingExtremeCombiningCharacters
+        let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(forKey: "time")
         

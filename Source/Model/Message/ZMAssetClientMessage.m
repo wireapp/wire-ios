@@ -527,7 +527,7 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (NSString *)filename
 {
-    return self.genericAssetMessage.assetData.original.name;
+    return self.genericAssetMessage.assetData.original.name.stringByRemovingExtremeCombiningCharacters;
 }
 
 - (void)requestFileDownload
