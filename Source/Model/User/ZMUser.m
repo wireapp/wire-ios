@@ -246,7 +246,6 @@ static NSString *const AnnaBotHandle = @"annathebot";
     return personName.initials ?: @"";
 }
 
-
 - (ZMConversation *)oneToOneConversation
 {
     return self.connection.conversation;
@@ -510,12 +509,12 @@ static NSString *const AnnaBotHandle = @"annathebot";
     
     NSString *email = [transportData optionalStringForKey:@"email"];
     if (email != nil || authoritative) {
-        self.emailAddress = email;
+        self.emailAddress = email.stringByRemovingExtremeCombiningCharacters;
     }
     
     NSString *phone = [transportData optionalStringForKey:@"phone"];
     if (phone != nil || authoritative) {
-        self.phoneNumber = phone;
+        self.phoneNumber = phone.stringByRemovingExtremeCombiningCharacters;
     }
     
     NSNumber *accentId = [transportData optionalNumberForKey:@"accent_id"];
@@ -823,7 +822,7 @@ static NSString *const AnnaBotHandle = @"annathebot";
 - (void)setName:(NSString *)aName {
     
     [self willChangeValueForKey:NameKey];
-    [self setPrimitiveValue:[aName copy] forKey:NameKey];
+    [self setPrimitiveValue:[[aName copy] stringByRemovingExtremeCombiningCharacters] forKey:NameKey];
     [self didChangeValueForKey:NameKey];
     
     self.normalizedName = [self.name normalizedString];
@@ -1237,6 +1236,11 @@ static NSString *const AnnaBotHandle = @"annathebot";
 
 + (BOOL)validateName:(NSString **)ioName error:(NSError **)outError
 {
+    [ExtremeCombiningCharactersValidator validateValue:ioName error:outError];
+    if (outError != nil && *outError != nil) {
+        return NO;
+    }
+    
     // The backend limits to 128. We'll fly just a bit below the radar.
     return [ZMStringLengthValidator validateValue:ioName mimimumStringLength:2 maximumSringLength:100 error:outError];
 }

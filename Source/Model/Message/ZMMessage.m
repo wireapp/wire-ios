@@ -908,10 +908,10 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     NSString *messageText = [[updateEvent.payload dictionaryForKey:@"data"] optionalStringForKey:@"message"];
     NSString *name = [[updateEvent.payload dictionaryForKey:@"data"] optionalStringForKey:@"name"];
     if (messageText != nil) {
-        message.text = messageText;
+        message.text = messageText.stringByRemovingExtremeCombiningCharacters;
     }
     else if (name != nil) {
-        message.text = name;
+        message.text = name.stringByRemovingExtremeCombiningCharacters;
     }
 
     message.isEncrypted = NO;

@@ -364,7 +364,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (NSString *)name
 {
-    return self.genericMessage.locationData.name;
+    return self.genericMessage.locationData.name.stringByRemovingExtremeCombiningCharacters;
 }
 
 - (int32_t)zoomLevel
@@ -379,7 +379,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (NSString *)messageText
 {
-    return self.genericMessage.textData.content;
+    return self.genericMessage.textData.content.stringByRemovingExtremeCombiningCharacters;
 }
 
 - (BOOL)isEdited

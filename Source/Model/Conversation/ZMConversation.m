@@ -447,7 +447,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (void)setUserDefinedName:(NSString *)aName {
     
     [self willChangeValueForKey:ZMConversationUserDefinedNameKey];
-    [self setPrimitiveValue:[aName copy] forKey:ZMConversationUserDefinedNameKey];
+    [self setPrimitiveValue:[[aName copy] stringByRemovingExtremeCombiningCharacters] forKey:ZMConversationUserDefinedNameKey];
     [self didChangeValueForKey:ZMConversationUserDefinedNameKey];
     
     self.normalizedUserDefinedName = [self.userDefinedName normalizedString];
@@ -1233,7 +1233,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview
 {
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:text nonce:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:text.stringByRemovingExtremeCombiningCharacters
+                                                                   nonce:nonce.transportString
+                                                            expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
     message.linkPreviewState = fetchPreview ? ZMLinkPreviewStateWaitingToBeProcessed : ZMLinkPreviewStateDone;
     message.isEncrypted = YES;
@@ -1615,6 +1617,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (BOOL)validateUserDefinedName:(NSString **)ioName error:(NSError **)outError
 {
+    [ExtremeCombiningCharactersValidator validateValue:ioName error:outError];
+    if (outError != nil && *outError != nil) {
+        return NO;
+    }
+    
     return [ZMStringLengthValidator validateValue:ioName mimimumStringLength:1 maximumSringLength:64 error:outError];
 }
 
@@ -1625,7 +1632,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (NSString *)connectionMessage;
 {
-    return self.connection.message;
+    return self.connection.message.stringByRemovingExtremeCombiningCharacters;
 }
 
 @end

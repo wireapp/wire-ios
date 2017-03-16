@@ -90,8 +90,8 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
         _uiMOC = uiMOC;
 
         if (self.user == nil) {
-            _name = name;
-            _handle = handle;
+            _name = name.stringByRemovingExtremeCombiningCharacters;
+            _handle = handle.stringByRemovingExtremeCombiningCharacters;
             
             PersonName *personName = [PersonName personWithName:name schemeTagger:nil];
             _initials = personName.initials;

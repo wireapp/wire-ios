@@ -53,8 +53,10 @@ extension Article {
     
     public convenience init(protocolBuffer: ZMLinkPreview) {
         self.init(originalURLString: protocolBuffer.url, permamentURLString: protocolBuffer.permanentURLString, offset: Int(protocolBuffer.urlOffset))
-        title = protocolBuffer.hasArticle() ? protocolBuffer.article.title : protocolBuffer.title
-        summary = protocolBuffer.hasArticle() ? protocolBuffer.article.summary : protocolBuffer.summary
+        let newTitle = protocolBuffer.hasArticle() ? protocolBuffer.article.title : protocolBuffer.title
+        title = newTitle?.removingExtremeCombiningCharacters
+        let newSummary = protocolBuffer.hasArticle() ? protocolBuffer.article.summary : protocolBuffer.summary
+        summary = newSummary?.removingExtremeCombiningCharacters
     }
 
     override public var protocolBuffer: ZMLinkPreview {
@@ -73,9 +75,12 @@ extension TwitterStatus {
     
     public convenience init(protocolBuffer: ZMLinkPreview) {
         self.init(originalURLString: protocolBuffer.url, permamentURLString: protocolBuffer.permanentURLString, offset: Int(protocolBuffer.urlOffset))
-        message = protocolBuffer.hasTweet() ? protocolBuffer.title : protocolBuffer.article.title
-        author = protocolBuffer.hasTweet() ? protocolBuffer.tweet.author : nil
-        username = protocolBuffer.hasTweet() ? protocolBuffer.tweet.username : nil
+        let newMessage = protocolBuffer.hasTweet() ? protocolBuffer.title : protocolBuffer.article.title
+        message = newMessage?.removingExtremeCombiningCharacters
+        let newAuthor = protocolBuffer.hasTweet() ? protocolBuffer.tweet.author : nil
+        author = newAuthor?.removingExtremeCombiningCharacters
+        let newUsername = protocolBuffer.hasTweet() ? protocolBuffer.tweet.username : nil
+        username = newUsername?.removingExtremeCombiningCharacters
     }
     
     override public var protocolBuffer : ZMLinkPreview {

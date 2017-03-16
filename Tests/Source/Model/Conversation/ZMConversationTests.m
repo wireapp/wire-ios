@@ -1484,6 +1484,19 @@
     
 }
 
+- (void)testThatExtremeCombiningCharactersAreRemovedFromTheName
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    [self.uiMOC saveOrRollback];
+    
+    // WHEN
+    conversation.userDefinedName = @"ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂";
+
+    // THEN
+    XCTAssertEqualObjects(conversation.userDefinedName, @"test̻̟̙");
+}
+
 @end
 
 

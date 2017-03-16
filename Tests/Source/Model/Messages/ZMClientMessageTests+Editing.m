@@ -121,6 +121,20 @@
     XCTAssertEqual(newIndex, oldIndex);
 }
 
+- (void)testThatExtremeCombiningCharactersAreRemovedFromTheMessage
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    // WHEN
+    ZMMessage *message = (id)[conversation appendMessageWithText:@"ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂"];
+    
+    
+    // THEN
+    XCTAssertEqualObjects(message.textMessageData.messageText, @"test̻̟̙");
+}
+
 - (void)testThatItResetsTheLinkPreviewState
 {
     // given

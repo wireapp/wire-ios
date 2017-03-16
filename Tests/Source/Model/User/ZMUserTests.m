@@ -1808,6 +1808,19 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     }];
 }
 
+- (void)testThatExtremeCombiningCharactersAreRemovedFromTheName
+{
+    // GIVEN
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    [self.uiMOC saveOrRollback];
+    
+    // WHEN
+    user.name = @"ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂";
+    
+    // THEN
+    XCTAssertEqualObjects(user.name, @"test̻̟̙");
+}
+
 - (void)testThatItLimitsTheAccentColorToAValidRange;
 {
     // given
