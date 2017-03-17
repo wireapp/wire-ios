@@ -18,6 +18,8 @@
 
 import Foundation
 
+fileprivate let zmLog = ZMSLog(tag: "Dependencies")
+
 public protocol DependencyEntity : AnyObject {
     
     var dependentObjectNeedingUpdateBeforeProcessing : AnyObject? { get }
@@ -30,6 +32,7 @@ class DependencyMap<Key : AnyObject,Value : AnyObject> {
     let dependencyToDependents : NSMapTable<AnyObject, AnyObject> = NSMapTable.strongToStrongObjects()
     
     func add(dependency: Value, forEntity entity: Key) {
+        zmLog.debug("Adding depedency: \(type(of: dependency)) for entity: \(entity)")
         if var existingDependents = dependencyToDependents.object(forKey: dependency) as? [Key] {
             existingDependents.append(entity)
             dependencyToDependents.setObject(existingDependents as NSArray, forKey: dependency)
@@ -39,6 +42,7 @@ class DependencyMap<Key : AnyObject,Value : AnyObject> {
     }
     
     func remove(dependency: Value, forEntity entity: Key) {
+        zmLog.debug("Removing depedency: \(type(of: dependency)) for entity: \(entity)")
         if let existingDependents = dependencyToDependents.object(forKey: dependency) as? [Key] {
             dependencyToDependents.setObject(existingDependents.filter({ $0 !== entity }) as NSArray, forKey: dependency)
         }
