@@ -18,6 +18,7 @@
 
 @import ZMUtilities;
 
+#import "ZMUserTests.h"
 #import "ModelObjectsTests.h"
 
 #import "ZMUser+Internal.h"
@@ -49,7 +50,7 @@ static NSString *const SmallProfileRemoteIdentifierDataKey = @"smallProfileRemot
 static NSString *const ImageMediumDataKey = @"imageMediumData";
 static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
-@interface ZMUserTests : ModelObjectsTests
+@interface ZMUserTests()
 
 @property (nonatomic) NSArray *validPhoneNumbers;
 @property (nonatomic) NSArray *shortPhoneNumbers;
@@ -1003,6 +1004,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     NSSet *expected = [NSSet setWithArray:@[@"accentColorValue",
                                             @"emailAddress",
+                                            @"previewProfileAssetIdentifier",
+                                            @"completeProfileAssetIdentifier",
                                             @"imageMediumData",
                                             @"imageSmallProfileData",
                                             @"smallProfileRemoteIdentifier_data",

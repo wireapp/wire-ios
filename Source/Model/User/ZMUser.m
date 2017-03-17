@@ -847,7 +847,7 @@ static NSString *const AnnaBotHandle = @"annathebot";
     self.imageCorrelationIdentifier = nil;
 }
 
-- (void)setOriginalProfileImageData:(NSData *)data;
+- (void)setOriginalProfileImageData:(NSData *)data
 {
     VerifyReturn(data != nil);
     [self willChangeValueForKey:OriginalProfileImageDataKey];
