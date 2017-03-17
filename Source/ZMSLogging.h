@@ -68,12 +68,6 @@ typedef NS_ENUM(int8_t, ZMLogLevel_t) {
         ZMLog(0, __FILE__, __LINE__, level, format, ##__VA_ARGS__); \
     } while (0)
 
-
-
-/// Use this to know if the log is at a certain level. Allows you to avoid preparing a log message with some complex operations if the log is not needed
-#define ZMLogLevelIsActive(tag, level) \
-	(__builtin_expect((level <= ZMLogGetLevelForTag(tag)), 0))
-
 /// Logs an assert
 ZM_EXTERN void ZMDebugAssertMessage(NSString *tag, char const * const assertion, char const * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,5,6)));
 /// Logs a message
