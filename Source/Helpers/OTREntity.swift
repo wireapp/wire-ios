@@ -20,7 +20,7 @@ import Foundation
 import WireRequestStrategy
 import ZMTransport
 
-public protocol OTREntity :  DependencyEntity {
+public protocol OTREntity:  DependencyEntity, Hashable {
     
     var conversation: ZMConversation? { get }
     

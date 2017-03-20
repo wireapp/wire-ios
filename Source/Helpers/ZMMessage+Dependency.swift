@@ -24,9 +24,9 @@ import ZMCDataModel
 extension ZMOTRMessage: OTREntity {
 
     /// Which object this message depends on when sending
-    override public var dependentObjectNeedingUpdateBeforeProcessing: AnyObject? {
-        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity()
-            ?? super.dependentObjectNeedingUpdateBeforeProcessing
+    override public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
+        let dependent: AnyHashable? = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity()
+        return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
     }
 }
 
@@ -40,7 +40,7 @@ private protocol BlockingMessage {
 extension ZMMessage {
     
     /// Which object this message depends on when sending
-    public var dependentObjectNeedingUpdateBeforeProcessing: AnyObject? {
+    public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
         
         // conversation not created yet on the BE?
         guard let conversation = self.conversation else { return nil }

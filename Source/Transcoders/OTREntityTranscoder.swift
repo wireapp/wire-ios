@@ -19,7 +19,7 @@
 import Foundation
 import WireRequestStrategy
 
-open class OTREntityTranscoder<Entity : OTREntity> : NSObject, EntityTranscoder {
+open class OTREntityTranscoder<Entity : OTREntity & Hashable> : NSObject, EntityTranscoder {
     
     let context : NSManagedObjectContext
     let clientRegistrationDelegate : ClientRegistrationDelegate
