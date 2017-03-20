@@ -21,7 +21,7 @@
 
 #import "ZMUpstreamModifiedObjectSync+Testing.h"
 #import "ZMSyncOperationSet.h"
-#import "ZMDependentObjects.h"
+#import <WireRequestStrategy/WireRequestStrategy-Swift.h>
 #import "ZMLocallyModifiedObjectSyncStatus.h"
 #import "ZMLocallyModifiedObjectSet.h"
 #import "ZMUpstreamTranscoder.h"
@@ -35,7 +35,7 @@
 @property (nonatomic, weak) id<ZMUpstreamTranscoder> transcoder;
 @property (nonatomic) NSManagedObjectContext *context;
 @property (nonatomic) NSPredicate *updatePredicate;
-@property (nonatomic) ZMDependentObjects *updatedObjectsWithDependencies;
+@property (nonatomic) DependentObjectsObjc *updatedObjectsWithDependencies;
 @property (nonatomic, readonly) BOOL transcodeSupportsExpiration;
 @property (nonatomic) NSPredicate *filter;
 
@@ -122,7 +122,7 @@ ZM_EMPTY_ASSERTING_INIT();
         
         
         if ([transcoder respondsToSelector:@selector(dependentObjectNeedingUpdateBeforeProcessingObject:)]) {
-            self.updatedObjectsWithDependencies = [[ZMDependentObjects alloc] init];
+            self.updatedObjectsWithDependencies = [[DependentObjectsObjc alloc] init];
         }
     }
     return self;
@@ -177,7 +177,7 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)checkForUpdatedDependency:(ZMManagedObject *)existingDependency;
 {
-    [self.updatedObjectsWithDependencies enumerateManagedObjectsForDependency:existingDependency withBlock:^BOOL(ZMManagedObject *mo) {
+    [self.updatedObjectsWithDependencies enumerateAndRemoveObjectsFor:existingDependency block:^BOOL(ZMManagedObject *mo) {
         id newDependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (newDependency == nil) {
             [self addUpdatedObjectWithoutDependency:mo];
@@ -185,7 +185,7 @@ ZM_EMPTY_ASSERTING_INIT();
         } else if (newDependency == existingDependency) {
             return NO;
         } else {
-            [self.updatedObjectsWithDependencies addManagedObject:mo withDependency:newDependency];
+            [self.updatedObjectsWithDependencies addDependentObject:mo dependency:newDependency];
             return YES;
         }
     }];
@@ -206,7 +206,7 @@ ZM_EMPTY_ASSERTING_INIT();
     if (self.updatedObjectsWithDependencies) {
         id dependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (dependency != nil) {
-            [self.updatedObjectsWithDependencies addManagedObject:mo withDependency:dependency];
+            [self.updatedObjectsWithDependencies addDependentObject:mo dependency:dependency];
             return;
         }
     }

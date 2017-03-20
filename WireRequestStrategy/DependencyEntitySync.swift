@@ -18,45 +18,16 @@
 
 import Foundation
 
-fileprivate let zmLog = ZMSLog(tag: "Dependencies")
-
 public protocol DependencyEntity : AnyObject {
     
-    var dependentObjectNeedingUpdateBeforeProcessing : AnyObject? { get }
+    var dependentObjectNeedingUpdateBeforeProcessing : AnyHashable? { get }
     var isExpired: Bool { get }
     func expire()
 }
 
-class DependencyMap<Key : AnyObject,Value : AnyObject> {
-    
-    let dependencyToDependents : NSMapTable<AnyObject, AnyObject> = NSMapTable.strongToStrongObjects()
-    
-    func add(dependency: Value, forEntity entity: Key) {
-        zmLog.debug("Adding depedency: \(type(of: dependency)) for entity: \(entity)")
-        if var existingDependents = dependencyToDependents.object(forKey: dependency) as? [Key] {
-            existingDependents.append(entity)
-            dependencyToDependents.setObject(existingDependents as NSArray, forKey: dependency)
-        } else {
-            dependencyToDependents.setObject([entity] as NSArray, forKey: dependency)
-        }
-    }
-    
-    func remove(dependency: Value, forEntity entity: Key) {
-        zmLog.debug("Removing depedency: \(type(of: dependency)) for entity: \(entity)")
-        if let existingDependents = dependencyToDependents.object(forKey: dependency) as? [Key] {
-            dependencyToDependents.setObject(existingDependents.filter({ $0 !== entity }) as NSArray, forKey: dependency)
-        }
-    }
-    
-    func entities(withDependency dependency: Value) -> [Key] {
-        return dependencyToDependents.object(forKey: dependency) as? [Key] ?? []
-    }
-    
-}
-
 public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextChangeTracker, ZMRequestGenerator  where Transcoder.Entity : DependencyEntity {
     
-    private var entitiesWithDependencies : DependencyMap<Transcoder.Entity, AnyObject> = DependencyMap()
+    private var entitiesWithDependencies : DependentObjects<Transcoder.Entity, AnyHashable> = DependentObjects()
     private var entitiesWithoutDependencies : [Transcoder.Entity] = []
     private weak var transcoder : Transcoder?
     private var context : NSManagedObjectContext
@@ -66,15 +37,15 @@ public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMC
         self.context = context
     }
     
-    public func expireEntities(withDependency dependency: AnyObject) {
-        for entity in entitiesWithDependencies.entities(withDependency: dependency) {
+    public func expireEntities(withDependency dependency: AnyHashable) {
+        for entity in entitiesWithDependencies.dependents(on: dependency) {
             entity.expire()
         }
     }
     
     public func synchronize(entity: Transcoder.Entity) {
         if let dependency = entity.dependentObjectNeedingUpdateBeforeProcessing {
-            entitiesWithDependencies.add(dependency: dependency, forEntity: entity)
+            entitiesWithDependencies.add(dependency: dependency, for: entity)
         } else {
             entitiesWithoutDependencies.append(entity)
         }
@@ -82,13 +53,13 @@ public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMC
     
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
         for object in objects {
-            for entity in entitiesWithDependencies.entities(withDependency: object) {
+            for entity in entitiesWithDependencies.dependents(on: object) {
                 let newDependency = entity.dependentObjectNeedingUpdateBeforeProcessing
                 
-                if let newDependency = newDependency, newDependency !== object {
-                    entitiesWithDependencies.add(dependency: newDependency, forEntity: entity)
+                if let newDependency = newDependency, newDependency != (object as AnyHashable) {
+                    entitiesWithDependencies.add(dependency: newDependency, for: entity)
                 } else if newDependency == nil {
-                    entitiesWithDependencies.remove(dependency: object, forEntity: entity)
+                    entitiesWithDependencies.remove(dependency: object, for: entity)
                     entitiesWithoutDependencies.append(entity)
                 }
             }
