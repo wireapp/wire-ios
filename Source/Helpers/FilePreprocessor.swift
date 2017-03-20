@@ -73,6 +73,7 @@ It creates an encrypted version from the plain text version
     /// Starts processing the asset client message
     fileprivate func startProcessing(_ message: ZMAssetClientMessage) {
         objectsBeingProcessed.insert(message)
+        self.processingGroup.enter()
         if let encryptionKeys = message.encryptFile() {
             completeProcessing(message, keys: encryptionKeys)
         }
@@ -81,8 +82,8 @@ It creates an encrypted version from the plain text version
     /// Removes the message from the list of messages being processed and update its values
     fileprivate func completeProcessing(_ message: ZMAssetClientMessage, keys: ZMImageAssetEncryptionKeys) {
         objectsBeingProcessed.remove(message)
-
         message.addUploadedGenericMessage(keys)
+        self.processingGroup.leave()
         message.managedObjectContext?.enqueueDelayedSave()
     }
 
