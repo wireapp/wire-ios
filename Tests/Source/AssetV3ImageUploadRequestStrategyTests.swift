@@ -25,13 +25,13 @@ import ZMCDataModel
 
 
 class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
-
+    
     fileprivate var registrationStatus: MockClientRegistrationStatus!
     fileprivate var mockCancellationProvider: MockTaskCancellationProvider!
     fileprivate var sut : AssetV3ImageUploadRequestStrategy!
     fileprivate var conversation: ZMConversation!
     fileprivate var imageData = mediumJPEGData()
-
+    
     override func setUp() {
         super.setUp()
         registrationStatus = MockClientRegistrationStatus()
@@ -42,9 +42,9 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
             self.conversation.remoteIdentifier = UUID.create()
         }
     }
-
+    
     // MARK: - Helpers
-
+    
     func createImageFileMessage(ephemeral: Bool = false) -> ZMAssetClientMessage {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
@@ -54,7 +54,7 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         }
         return message
     }
-
+    
     func createFileMessageWithPreview(ephemeral: Bool = false) -> ZMAssetClientMessage {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
@@ -66,7 +66,7 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         }
         return message
     }
-
+    
     func createPreprocessedV2ImageMessage() -> ZMAssetClientMessage {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
@@ -78,7 +78,7 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         }
         return message
     }
-
+    
     func simulatePreprocessing(of message: ZMAssetClientMessage, preview: Bool = false) {
         let size = CGSize(width: 368, height: 520)
         let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
@@ -89,194 +89,235 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(message.imageMessageData?.originalSize, size)
         }
     }
-
+    
     func prepareUpload(of message: ZMAssetClientMessage) {
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers(sut.contextChangeTrackers, on: syncMOC)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
+    
     // MARK: – Request Generation
-
+    
     func testThatItDoesNotGenerateARequestWhenTheImageIsNotProcessed() {
         XCTAssertNil(sut.nextRequest())
     }
-
+    
     func testThatItDoesNotGenerateARequestIfTheImageIsProcessedButTheMessageIsNotV3() {
-        // GIVEN
-        let message = createPreprocessedV2ImageMessage()
-
-        // THEN
-        prepareUpload(of: message)
-        XCTAssertNil(sut.nextRequest())
-
-        // WHEN
-        message.uploadState = .uploadingFullAsset
-
-        // THEN
-        XCTAssertNil(sut.nextRequest())
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let message = self.createPreprocessedV2ImageMessage()
+            
+            // THEN
+            self.prepareUpload(of: message)
+            XCTAssertNil(self.sut.nextRequest())
+            
+            // WHEN
+            message.uploadState = .uploadingFullAsset
+            
+            // THEN
+            XCTAssertNil(self.sut.nextRequest())
+        }
     }
-
+    
     func testThatItGeneratesARequestIfTheImageIsProcessed() {
-        // GIVEN
-        let message = self.createImageFileMessage()
-        
-        // THEN
-        self.assertThatItCreatesARequest(for: message)
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let message = self.createImageFileMessage()
+            
+            // THEN
+            self.assertThatItCreatesARequest(for: message)
+        }
     }
-
+    
     func testThatItGeneratesARequestForAFilePreviewImageIfThePreviewIsProcessed() {
-        // GIVEN
-        let message = createFileMessageWithPreview()
-        message.uploadState = .uploadingThumbnail
-
-        // THEN
-        assertThatItCreatesARequest(for: message, preview: true)
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let message = self.createFileMessageWithPreview()
+            message.uploadState = .uploadingThumbnail
+            
+            // THEN
+            self.assertThatItCreatesARequest(for: message, preview: true)
+        }
     }
-
+    
     func testThatItDoesNotGeneratesARequestForAFilePreviewImageIfThePreviewIsProcessed_WrongUploadState() {
-        // GIVEN
-        let message = createFileMessageWithPreview()
-
-        // WHEN
-        simulatePreprocessing(of: message, preview: true)
-        prepareUpload(of: message)
-
-        // THEN
-        XCTAssertNil(sut.nextRequest())
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let message = self.createFileMessageWithPreview()
+            
+            // WHEN
+            self.simulatePreprocessing(of: message, preview: true)
+            self.prepareUpload(of: message)
+            
+            // THEN
+            XCTAssertNil(self.sut.nextRequest())
+        }
     }
-
+    
     @discardableResult func assertThatItCreatesARequest(
         for message: ZMAssetClientMessage,
         line: UInt = #line,
         preview: Bool = false
         ) -> ZMTransportRequest? {
-
+        
         // WHEN
         simulatePreprocessing(of: message, preview: preview)
         prepareUpload(of: message)
-
+        
         // THEN
         guard let request = sut.nextRequest() else { XCTFail("No request created", line: line); return nil }
         XCTAssertEqual(request.path, "/assets/v3", line: line)
         XCTAssertEqual(request.method, .methodPOST, line: line)
         return request
     }
-
+    
     func testThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards() {
+        
         // GIVEN
-        let message = createImageFileMessage()
-
+        var message: ZMAssetClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            message = self.createImageFileMessage()
+        }
         // THEN
-        assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message)
+        self.assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message)
     }
-
+    
     func testThatItPreprocessesThePreviewImageForANonImageFileMessageAndDeletesTheOriginalDataAfterwards() {
+
         // GIVEN
-        let message = createFileMessageWithPreview()
-
+        var message: ZMAssetClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            message = self.createFileMessageWithPreview()
+        }
+        
         // THEN
-        assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message, preview: true)
+        self.assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message, preview: true)
     }
-
+    
     func assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for message: ZMAssetClientMessage, preview: Bool = false, line: UInt = #line) {
-        // WHEN 
-        XCTAssert(ZMAssetClientMessage.v3_imageProcessingFilter.evaluate(with: message), "Predicate does not match", line: line)
-        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true), line: line)
-        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false), line: line)
-
-        sut.contextChangeTrackers.forEach {
-            $0.objectsDidChange(Set(arrayLiteral: message))
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssert(ZMAssetClientMessage.v3_imageProcessingFilter.evaluate(with: message), "Predicate does not match", line: line)
+            XCTAssertNil(self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true), line: line)
+            XCTAssertNil(self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false), line: line)
+            
+            self.sut.contextChangeTrackers.forEach {
+                $0.objectsDidChange(Set(arrayLiteral: message))
+            }
         }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), line: line)
-
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    
         // THEN
-        let original = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
-        let mediumEncrypted = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true)
-        let mediumPlain = syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
-
-        XCTAssertNil(original, line: line)
-        XCTAssertNotNil(mediumEncrypted, line: line)
-        XCTAssertNotNil(mediumPlain, line: line)
-        guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData", line: line) }
-
-        if preview {
-            XCTAssertTrue(assetData.hasPreview(), line: line)
-            XCTAssertTrue(assetData.preview.hasRemote(), line: line)
-            XCTAssertTrue(assetData.preview.remote.hasOtrKey(), line: line)
-            XCTAssertTrue(assetData.preview.remote.hasSha256(), line: line)
-        } else {
-            XCTAssertTrue(assetData.hasUploaded(), line: line)
-            XCTAssertTrue(assetData.uploaded.hasOtrKey(), line: line)
-            XCTAssertTrue(assetData.uploaded.hasSha256(), line: line)
+        self.syncMOC.performGroupedBlockAndWait {
+            let original = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            let mediumEncrypted = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true)
+            let mediumPlain = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
+            
+            XCTAssertNil(original, line: line)
+            XCTAssertNotNil(mediumEncrypted, line: line)
+            XCTAssertNotNil(mediumPlain, line: line)
+            guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData", line: line) }
+            
+            if preview {
+                XCTAssertTrue(assetData.hasPreview(), line: line)
+                XCTAssertTrue(assetData.preview.hasRemote(), line: line)
+                XCTAssertTrue(assetData.preview.remote.hasOtrKey(), line: line)
+                XCTAssertTrue(assetData.preview.remote.hasSha256(), line: line)
+            } else {
+                XCTAssertTrue(assetData.hasUploaded(), line: line)
+                XCTAssertTrue(assetData.uploaded.hasOtrKey(), line: line)
+                XCTAssertTrue(assetData.uploaded.hasSha256(), line: line)
+            }
         }
     }
-
+    
     // MARK: – Request Response Parsing
-
+    
     func testThatItUpdatesTheMessageWithTheAssetIdAndTokenFromTheResponse() {
         assertThatItUpdatesTheAssetIdFromTheResponse()
     }
-
+    
     func testThatItUpdatesTheMessageWithTheAssetIdFromTheResponse() {
         assertThatItUpdatesTheAssetIdFromTheResponse(includeToken: false)
     }
-
+    
     func assertThatItUpdatesTheAssetIdFromTheResponse(includeToken: Bool = true, line: UInt = #line) {
         // GIVEN
-        let message = createImageFileMessage()
+        var message: ZMAssetClientMessage!
         let (assetKey, token) = (UUID.create().transportString(), UUID.create().transportString())
-        simulatePreprocessing(of: message)
-        prepareUpload(of: message)
-        guard let request = sut.nextRequest() else { return XCTFail("No request created", line: line) }
-        XCTAssertEqual(request.path, "/assets/v3", line: line)
-
-        // WHEN
-        var payload = ["key": assetKey]
-        if includeToken {
-            payload["token"] = token
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            message = self.createImageFileMessage()
+            self.simulatePreprocessing(of: message)
+            self.prepareUpload(of: message)
+            
         }
-        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
-        request.complete(with: response)
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            guard let request = self.sut.nextRequest() else { return XCTFail("No request created", line: line) }
+            XCTAssertEqual(request.path, "/assets/v3", line: line)
+            var payload = ["key": assetKey]
+            if includeToken {
+                payload["token"] = token
+            }
+            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
+            request.complete(with: response)
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
+        
         // THEN
-        guard let uploaded = message.genericAssetMessage?.assetData?.uploaded else { return XCTFail("No uploaded message", line: line) }
-        assertThatRemoteDataHasAssetId(uploaded, assetId: assetKey, token: includeToken ? token : nil)
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            guard let uploaded = message.genericAssetMessage?.assetData?.uploaded else { return XCTFail("No uploaded message", line: line) }
+            self.assertThatRemoteDataHasAssetId(uploaded, assetId: assetKey, token: includeToken ? token : nil)
+        }
     }
-
+    
     func testThatItUpdatesANonImageMessageWithPreviewTheAssetIdAndTokenFromTheResponse() {
         assertThatItUpdatesThePreviewAssetIdFromTheResponse()
     }
-
+    
     func testThatItUpdatesANonImageMessageWithPreviewTheAssetIdFromTheResponse() {
         assertThatItUpdatesThePreviewAssetIdFromTheResponse(includeToken: false)
     }
-
+    
     func assertThatItUpdatesThePreviewAssetIdFromTheResponse(includeToken: Bool = true, line: UInt = #line) {
         // GIVEN
-        let message = createFileMessageWithPreview()
-        message.uploadState = .uploadingThumbnail
+        var message: ZMAssetClientMessage!
         let (assetKey, token) = (UUID.create().transportString(), UUID.create().transportString())
-        simulatePreprocessing(of: message, preview: true)
-        prepareUpload(of: message)
-        guard let request = sut.nextRequest() else { return XCTFail("No request created", line: line) }
-        XCTAssertEqual(request.path, "/assets/v3", line: line)
-
-        // WHEN
-        var payload = ["key": assetKey]
-        if includeToken {
-            payload["token"] = token
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            message = self.createFileMessageWithPreview()
+            message.uploadState = .uploadingThumbnail
+            self.simulatePreprocessing(of: message, preview: true)
+            self.prepareUpload(of: message)
         }
-        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
-        request.complete(with: response)
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            guard let request = self.sut.nextRequest() else { return XCTFail("No request created", line: line) }
+            XCTAssertEqual(request.path, "/assets/v3", line: line)
+            var payload = ["key": assetKey]
+            if includeToken {
+                payload["token"] = token
+            }
+            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
+            request.complete(with: response)
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
+        
         // THEN
-        guard let remote = message.genericAssetMessage?.assetData?.preview.remote else { return XCTFail("No preview.remote message", line: line) }
-        assertThatRemoteDataHasAssetId(remote, assetId: assetKey, token: includeToken ? token : nil)
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            guard let remote = message.genericAssetMessage?.assetData?.preview.remote else { return XCTFail("No preview.remote message", line: line) }
+            self.assertThatRemoteDataHasAssetId(remote, assetId: assetKey, token: includeToken ? token : nil)
+        }
     }
-
+    
     func assertThatRemoteDataHasAssetId(_ remote: ZMAssetRemoteData, assetId: String, token: String? = nil, line: UInt = #line) {
         XCTAssertTrue(remote.hasOtrKey(), "No OTR key", line: line)
         XCTAssertTrue(remote.hasSha256(), "No sha", line: line)
@@ -287,58 +328,78 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(remote.assetToken, token, "Wrong asset token", line: line)
         }
     }
-
+    
     func testThatItUpdatesTheStateOfANonImageFileMessageWhenItReceivesASuccesfulResponse() {
         // GIVEN
-        let message = createFileMessageWithPreview()
-        message.uploadState = .uploadingThumbnail
-
+        var message: ZMAssetClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            message = self.createFileMessageWithPreview()
+            message.uploadState = .uploadingThumbnail
+        }
         // WHEN
-        let request = assertThatItCreatesARequest(for: message, preview: true)!
-        let payload = ["key": UUID.create().transportString()]
-        request.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil))
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            let request = self.assertThatItCreatesARequest(for: message, preview: true)!
+            let payload = ["key": UUID.create().transportString()]
+            request.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 201, transportSessionError: nil))
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
+        
         // THEN
-        XCTAssertEqual(message.transferState, .uploading)
-        XCTAssertEqual(message.uploadState, .uploadingThumbnail)
-        XCTAssertFalse(message.delivered)
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(message.transferState, .uploading)
+            XCTAssertEqual(message.uploadState, .uploadingThumbnail)
+            XCTAssertFalse(message.delivered)
+        }
     }
-
+    
     func testThatItFailsTheUploadIfItReceivesANonSuccessfullResponseWhenUploadingANonImageFileMessage() {
         // GIVEN
-        let message = createFileMessageWithPreview()
-        message.uploadState = .uploadingThumbnail
-
+        var message: ZMAssetClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            message = self.createFileMessageWithPreview()
+            message.uploadState = .uploadingThumbnail
+        }
         // WHEN
-        let request = assertThatItCreatesARequest(for: message, preview: true)!
-        request.complete(with: ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 400, transportSessionError: NSError.tryAgainLaterError() as Error))
+        self.syncMOC.performGroupedBlockAndWait {
+            let request = self.assertThatItCreatesARequest(for: message, preview: true)!
+            request.complete(with: ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 400, transportSessionError: NSError.tryAgainLaterError() as Error))
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
+        
         // THEN
-        XCTAssertEqual(message.transferState, .failedUpload)
-        XCTAssertEqual(message.uploadState, .uploadingFailed)
-        XCTAssertEqual(message.deliveryState, .failedToSend)
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(message.transferState, .failedUpload)
+            XCTAssertEqual(message.uploadState, .uploadingFailed)
+            XCTAssertEqual(message.deliveryState, .failedToSend)
+        }
     }
-
+    
     // MARK: – Ephemeral
-
+    
     func testThatItGeneratesARequest_Ephemeral() {
-        // GIVEN
-        let message = createImageFileMessage(ephemeral: true)
-
-        // THEN
-        assertThatItCreatesARequest(for: message)
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let message = self.createImageFileMessage(ephemeral: true)
+            
+            // THEN
+            self.assertThatItCreatesARequest(for: message)
+        }
     }
-
+    
     func testThatItPreprocessesV3ImageMessage_Ephemeral() {
+        
         // GIVEN
-        let message = createImageFileMessage(ephemeral: true)
-
+        var message: ZMAssetClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            message = self.createImageFileMessage(ephemeral: true)
+        }
         // THEN
-        assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message)
+        self.assertThatItPreprocessesTheImageAndDeletesTheOriginalDataAfterwards(for: message)
     }
-
+    
 }
 
 
