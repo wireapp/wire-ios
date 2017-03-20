@@ -26,7 +26,7 @@ import Foundation
     public var isFetchingMessages = false
     
     init(setChangeInfo: SetChangeInfo) {
-        super.init(observedObject: setChangeInfo.observedObject, changeSet: setChangeInfo.changeSet)
+        super.init(observedObject: setChangeInfo.observedObject, changeSet: setChangeInfo.changeSet, orderedSetState: setChangeInfo.orderedSetState)
     }
     convenience init(windowWithMissingMessagesChanged window: ZMConversationMessageWindow, isFetching: Bool) {
         self.init(setChangeInfo: SetChangeInfo(observedObject: window))

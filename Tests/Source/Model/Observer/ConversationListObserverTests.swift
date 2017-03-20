@@ -713,4 +713,49 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         }
         ConversationListChangeInfo.remove(observer: token, for:conversationList)
     }
+    
+    
+    func testThatCanGetTheCurrentStateFromTheChangeInfo() {
+        // given
+        let conversation1 = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation1.conversationType = .group
+        conversation1.lastModifiedDate = Date(timeIntervalSince1970: 100)
+        self.uiMOC.saveOrRollback()
+        
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
+        let testObserver = TestObserver()
+        
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
+        XCTAssertEqual(conversationList.count, 1)
+        
+        // when
+        let conversation2 = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation2.conversationType = .group
+        conversation2.lastModifiedDate = Date(timeIntervalSince1970: 50)
+        self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // when
+        guard let changes1 = testObserver.changes.last else { return XCTFail("Did not sent notification")}
+        XCTAssertEqual(changes1.orderedSetState, NSOrderedSet(array: [conversation1, conversation2]))
+        XCTAssertEqual(conversationList.count, 2)
+
+        // when
+        let conversation3 = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation3.conversationType = .group
+        conversation3.lastModifiedDate = Date(timeIntervalSince1970: 30)
+        self.uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // then
+        // The set of the previous notification should not change
+        XCTAssertEqual(changes1.orderedSetState, NSOrderedSet(array: [conversation1, conversation2]))
+        XCTAssertEqual(conversationList.count, 3)
+
+        // The set of the new notification contains the new state
+        guard let changes2 = testObserver.changes.last else { return XCTFail("Did not sent notification")}
+        XCTAssertEqual(changes2.orderedSetState, NSOrderedSet(array: [conversation1, conversation2, conversation3]))
+        
+        ConversationListChangeInfo.remove(observer: token, for:conversationList)
+    }
 }
