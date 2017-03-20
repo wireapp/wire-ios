@@ -27,12 +27,11 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         public var requestGenerators: [ZMRequestGenerator] = []
         public var contextChangeTrackers: [ZMContextChangeTracker] = []
     }
+
+    typealias RequestBlock = () -> ZMTransportRequest?
     
-    
-    class DummyGenerator : NSObject, ZMRequestGenerator {
-        
-        typealias RequestBlock = () -> ZMTransportRequest?
-        
+    class DummyGenerator: NSObject, ZMRequestGenerator {
+
         let requestBlock : RequestBlock
         
         init(requestBlock: @escaping RequestBlock ) {
@@ -42,6 +41,20 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         internal func nextRequest() -> ZMTransportRequest? {
             return requestBlock()
         }
+    }
+
+    class MockRequestStrategy: RequestStrategy {
+
+        let request: ZMTransportRequest
+
+        init(request: ZMTransportRequest) {
+            self.request = request
+        }
+
+        @objc public func nextRequest() -> ZMTransportRequest? {
+            return request
+        }
+
     }
     
     
@@ -82,6 +95,20 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         sut = RequestGeneratorStore(strategies: [mockStrategy])
         
         let request = sut.nextRequest()
+        XCTAssertNotNil(request)
+        XCTAssertEqual(request, sourceRequest)
+    }
+
+    func testThatItReturnARequestWhenARequestGeneratorIsAddedDirectly() {
+        // Given
+        let sourceRequest = ZMTransportRequest(path: "/path", method: .methodGET, payload: nil)
+        let strategy = MockRequestStrategy(request: sourceRequest)
+        sut = RequestGeneratorStore(strategies: [strategy])
+
+        // When
+        let request = sut.nextRequest()
+
+        // Then
         XCTAssertNotNil(request)
         XCTAssertEqual(request, sourceRequest)
     }
