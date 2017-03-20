@@ -410,25 +410,6 @@
     [mockObserverCenter verify];
 }
 
-- (void)testThatScrollingTheWindowUpDoesNotCauseAScrollingNotificationIfTheWindowDidNotChange
-{
-    // given
-    ZMConversation *conversation = [self createConversationWithMessages:10];
-    ZMConversationMessageWindow *window = [conversation conversationWindowWithSize:10];
-    
-    // expect
-    [self expectationForNotification:ZMConversationMessageWindowScrolledNotificationName object:window handler:nil];
-    
-    // when
-    [window moveUpByMessages:10];
-    
-    // then
-    [self spinMainQueueWithTimeout:0.1];
-    XCTAssertFalse([self waitForCustomExpectationsWithTimeout:0.0]);
-}
-
-
-
 @end
 
 

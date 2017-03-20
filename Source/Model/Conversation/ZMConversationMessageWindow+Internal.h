@@ -16,12 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 #import "ZMConversationMessageWindow.h"
-
-extern NSString * const ZMConversationMessageWindowScrolledNotificationName;
-
-
 
 @interface ZMConversationMessageWindow (Internal)
 

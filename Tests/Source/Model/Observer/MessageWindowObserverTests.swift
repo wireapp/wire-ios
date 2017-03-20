@@ -357,7 +357,6 @@ extension MessageWindowObserverTests {
         
         // when
         window.moveUp(byMessages: 10)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue:ZMConversationMessageWindowScrolledNotificationName), object: window)
         
         // then
         if let note = windowObserver.notifications.first {
@@ -553,4 +552,48 @@ extension MessageWindowObserverTests {
     
     }
 
+    func testThatItNotifiesMultipleWindows()
+    {
+        // given
+        let windowObserver1 = TestWindowObserver()
+        let windowObserver2 = TestWindowObserver()
+        
+        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message2 = ZMImageMessage.insertNewObject(in: self.uiMOC)
+        let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
+        self.uiMOC.saveOrRollback()
+        
+        let token1 = MessageWindowChangeInfo.add(observer: windowObserver1, for: window)
+        let token2 = MessageWindowChangeInfo.add(observer: windowObserver2, for: window)
+
+        // when
+        window.conversation.mutableMessages.removeObject(at: 0)
+        window.conversation.mutableMessages.add(message1)
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        if let note = windowObserver1.notifications.first {
+            XCTAssertEqual(note.conversationMessageWindow, window)
+            XCTAssertEqual(note.insertedIndexes, IndexSet())
+            XCTAssertEqual(note.deletedIndexes, IndexSet())
+            XCTAssertEqual(note.updatedIndexes, IndexSet())
+            XCTAssertEqual(note.movedIndexPairs, [ZMMovedIndex(from: 1, to: 0)])
+        }
+        else {
+            XCTFail("New state is nil")
+        }
+        
+        if let note = windowObserver2.notifications.first {
+            XCTAssertEqual(note.conversationMessageWindow, window)
+            XCTAssertEqual(note.insertedIndexes, IndexSet())
+            XCTAssertEqual(note.deletedIndexes, IndexSet())
+            XCTAssertEqual(note.updatedIndexes, IndexSet())
+            XCTAssertEqual(note.movedIndexPairs, [ZMMovedIndex(from: 1, to: 0)])
+        }
+        else {
+            XCTFail("New state is nil")
+        }
+        MessageWindowChangeInfo.remove(observer: token1, for: window)
+        MessageWindowChangeInfo.remove(observer: token2, for: window)
+    }
 }
