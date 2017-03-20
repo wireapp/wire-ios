@@ -32,7 +32,7 @@ public class GenericMessageEntity : OTREntity {
         self.completionHandler = completionHandler
     }
     
-    public var dependentObjectNeedingUpdateBeforeProcessing: AnyObject? {
+    public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
         return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity()
     }
     
@@ -43,6 +43,14 @@ public class GenericMessageEntity : OTREntity {
     public func expire() {
         isExpired = true
     }
+    
+    public var hashValue: Int {
+        return self.message.hashValue
+    }
+}
+
+public func ==(lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
+    return lhs === rhs
 }
 
 extension GenericMessageEntity : EncryptedPayloadGenerator {
@@ -77,6 +85,7 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
     }
     
     public func expireEntities(withDependency dependency: AnyObject) {
+        guard let dependency = dependency as? NSManagedObject else { return }
         sync?.expireEntities(withDependency: dependency)
     }
     
