@@ -64,7 +64,7 @@ extension ClientMessageTranscoder: ZMContextChangeTrackerSource {
     }
 }
 
-extension ClientMessageTranscoder: ZMRequestGenerator {
+extension ClientMessageTranscoder: RequestStrategy {
 
     public func nextRequest() -> ZMTransportRequest? {
         guard let clientRegistrationStatus = self.clientRegistrationStatus,
