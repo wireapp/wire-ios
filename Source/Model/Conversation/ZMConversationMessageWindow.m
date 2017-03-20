@@ -26,20 +26,6 @@
 #import "ZMOTRMessage.h"
 #import <ZMCDataModel/ZMCDataModel-Swift.h>
 
-NSString * const ZMConversationMessageWindowScrolledNotificationName = @"ZMConversationMessageWindowScrolledNotification";
-NSString * const ZMConversationMessageWindowCreatedNotificationName = @"ZMConversationMessageWindowCreatedNotification";
-
-typedef NS_ENUM(int, ZMMessageWindowEvent) {
-    ZMMessageWindowEventAddObserver = 1,
-    ZMMessageWindowEventRemoveObserver = 2,
-    ZMMessageWindowEventConversationDidChange = 3,
-    ZMMessageWindowEventConversationMessagesDidChange = 4,
-};
-
-//static inline void ZMTraceUserInterfaceMessageWindow(ZMConversationMessageWindow *window, ZMMessageWindowEvent e);
-
-
-
 @interface ZMConversationMessageWindow ()
 
 @property (nonatomic, readonly) NSMutableOrderedSet *mutableMessages;
@@ -132,8 +118,6 @@ typedef NS_ENUM(int, ZMMessageWindowEvent) {
     self.size -= MIN(amountOfMessages, MAX(self.size, 1u) - 1u);
     if (oldSize != self.activeSize) {
         [self recalculateMessages];
-        // It seems that moveDownByMessages is never called and it has no effect anyway, so I don't need the next line for now
-        //[[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationMessageWindowScrolledNotificationName object:self];
     }
     
 }

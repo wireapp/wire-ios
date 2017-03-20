@@ -22,11 +22,7 @@ import Foundation
 private var zmLog = ZMSLog(tag: "MessageWindowObserverCenter")
 
 extension Notification.Name {
-    
-    static let ZMConversationMessageWindowScrolled = Notification.Name("ZMConversationMessageWindowScrolledNotification")
-    static let ZMConversationMessageWindowCreated = Notification.Name("ZMConversationMessageWindowCreatedNotification")
     static let MessageWindowDidChange = Notification.Name("MessageWindowDidChangeNotification")
-
 }
 
 
@@ -50,14 +46,17 @@ extension NSManagedObjectContext {
 
 @objc final public class MessageWindowObserverCenter : NSObject, ChangeInfoConsumer {
     
-    var windowSnapshot : MessageWindowSnapshot?
+    var windowSnapshots : [MessageWindowSnapshot] = []
+    
+    private func snapshots(for window: ZMConversationMessageWindow) -> [MessageWindowSnapshot] {
+        return windowSnapshots.filter { (snapshot: MessageWindowSnapshot) -> Bool in
+            snapshot.conversationWindow == window
+        }
+    }
     
     @objc public func windowDidScroll(_ window: ZMConversationMessageWindow) {
-        if let snapshot = windowSnapshot, snapshot.conversationWindow == window {
-            snapshot.windowDidScroll()
-        } else {
-            zmLog.debug("WindowDidScroll - Creating snapshot for window \(window), removing snapshot for old window in conversation: \(windowSnapshot?.conversation)")
-            windowSnapshot = MessageWindowSnapshot(window: window)
+        self.snapshots(for: window).forEach {
+            $0.windowDidScroll()
         }
     }
     
@@ -65,45 +64,37 @@ extension NSManagedObjectContext {
     /// It automatically tears down the old window snapshot, since there should only be one window open at any time
     /// Call this when initializing a new message window
     @objc public func windowWasCreated(_ window: ZMConversationMessageWindow) {
-        if let snapshot = windowSnapshot, snapshot.conversationWindow == window {
-            zmLog.debug("WindowWasCreated - Using existing snapshot for window \(window)")
-            return
-        }
-        zmLog.debug("WindowWasCreated - Creating snapshot for window \(window), removing snapshot for old window \(windowSnapshot?.conversationWindow) in conversation: \(windowSnapshot?.conversation)")
-        windowSnapshot = MessageWindowSnapshot(window: window)
+        zmLog.debug("WindowWasCreated - Creating snapshot for window \(window)")
+        windowSnapshots.append(MessageWindowSnapshot(window: window))
     }
     
     /// Removes the windowSnapshot if there is one
     /// Call this when tearing down or deallocating the messageWindow
     @objc public func removeMessageWindow(_ window: ZMConversationMessageWindow) {
-        if let snapshot = windowSnapshot, snapshot.conversationWindow != window {
-            return
+        windowSnapshots = windowSnapshots.filter {
+            $0.conversationWindow != nil && $0.conversationWindow != window
         }
-        zmLog.debug("Removing snapshot for window \(window)")
-        windowSnapshot = nil
     }
     
     public func objectsDidChange(changes: [ClassIdentifier : [ObjectChangeInfo]]) {
-        guard let snapshot = windowSnapshot else {
-            zmLog.debug("ObjectsDidChange, but no snapshot to update")
-            return
+        windowSnapshots.forEach { (snapshot: MessageWindowSnapshot) in
+            changes.values.forEach{
+                if let convChanges = $0 as? [ConversationChangeInfo] {
+                    zmLog.debug("Conversations did change: \n \(convChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
+                    convChanges.forEach{snapshot.conversationDidChange($0)}
+                }
+                if let userChanges = $0 as? [UserChangeInfo] {
+                    zmLog.debug("Users did change: \n \(userChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
+                    userChanges.forEach{snapshot.userDidChange(changeInfo: $0)}
+                }
+                if let messageChanges = $0 as? [MessageChangeInfo] {
+                    zmLog.debug("Messages did change: \n \(messageChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
+                    messageChanges.forEach{snapshot.messageDidChange($0)}
+                }
+            }
+            
+            snapshot.fireNotifications()
         }
-        changes.values.forEach{
-            if let convChanges = $0 as? [ConversationChangeInfo] {
-                zmLog.debug("Conversations did change: \n \(convChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
-                convChanges.forEach{snapshot.conversationDidChange($0)}
-            }
-            if let userChanges = $0 as? [UserChangeInfo] {
-                zmLog.debug("Users did change: \n \(userChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
-                userChanges.forEach{snapshot.userDidChange(changeInfo: $0)}
-            }
-            if let messageChanges = $0 as? [MessageChangeInfo] {
-                zmLog.debug("Messages did change: \n \(messageChanges.map{$0.customDebugDescription}.joined(separator: "\n"))")
-                messageChanges.forEach{snapshot.messageDidChange($0)}
-            }
-        }
-        
-        snapshot.fireNotifications()
     }
     
     public func applicationDidEnterBackground() {
@@ -111,7 +102,9 @@ extension NSManagedObjectContext {
     }
     
     public func applicationWillEnterForeground() {
-        windowSnapshot?.applicationWillEnterForeground()
+        windowSnapshots.forEach {
+            $0.applicationWillEnterForeground()
+        }
     }
 }
 
