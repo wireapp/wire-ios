@@ -30,7 +30,6 @@ FOUNDATION_EXPORT const unsigned char WireRequestStrategyVersionString[];
 #import <WireRequestStrategy/ZMContextChangeTracker.h>
 #import <WireRequestStrategy/ZMRequestGenerator.h>
 #import <WireRequestStrategy/ZMOutstandingItems.h>
-#import <WireRequestStrategy/ZMDependentObjects.h>
 #import <WireRequestStrategy/ZMDownstreamObjectSync.h>
 #import <WireRequestStrategy/ZMDownstreamObjectSyncWithWhitelist.h>
 #import <WireRequestStrategy/ZMLocallyInsertedObjectSet.h>

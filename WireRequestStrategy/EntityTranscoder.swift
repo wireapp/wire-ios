@@ -19,7 +19,7 @@
 import Foundation
 
 public protocol EntityTranscoder : class {
-    associatedtype Entity
+    associatedtype Entity: Hashable
     
     func request(forEntity entity: Entity) -> ZMTransportRequest?
     

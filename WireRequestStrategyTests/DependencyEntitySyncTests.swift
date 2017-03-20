@@ -22,15 +22,23 @@ import ZMTesting
 @testable import WireRequestStrategy
 
 
-class MockDependencyEntity : DependencyEntity {
+class MockDependencyEntity : DependencyEntity, Hashable {
     public var isExpired: Bool = false
-
+    fileprivate let uuid = UUID()
+    
     public func expire() {
          isExpired = true
     }
     
-    var dependentObjectNeedingUpdateBeforeProcessing: AnyObject?
+    var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable?
     
+    var hashValue: Int {
+        return self.uuid.hashValue
+    }
+}
+
+func ==(lhs: MockDependencyEntity, rhs: MockDependencyEntity) -> Bool {
+    return lhs === rhs
 }
 
 class MockEntityTranscoder : EntityTranscoder {
@@ -120,7 +128,7 @@ class DependencyEntitySyncTests : ZMTBaseTest {
         sut.synchronize(entity: entity)
         
         // when
-        sut.expireEntities(withDependency: dependency)
+        sut.expireEntities(withDependency: dependency as AnyHashable)
         
         // then
         XCTAssertTrue(entity.isExpired)
