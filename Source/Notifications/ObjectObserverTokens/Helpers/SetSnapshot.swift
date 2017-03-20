@@ -33,6 +33,8 @@ public struct SetStateUpdate {
 @objc open class SetChangeInfo : NSObject {
     
     let changeSet : ZMChangedIndexes
+    open let orderedSetState : NSOrderedSet
+    
     open let observedObject : NSObject
     open var insertedIndexes : IndexSet { return changeSet.insertedIndexes }
     open var deletedIndexes : IndexSet { return changeSet.deletedIndexes }
@@ -42,11 +44,12 @@ public struct SetStateUpdate {
     
     convenience init(observedObject: NSObject) {
         let orderSetState = ZMOrderedSetState(orderedSet: NSOrderedSet())
-        self.init(observedObject: observedObject, changeSet: ZMChangedIndexes(start: orderSetState, end: orderSetState, updatedState: orderSetState))
+        self.init(observedObject: observedObject, changeSet: ZMChangedIndexes(start: orderSetState, end: orderSetState, updatedState: orderSetState), orderedSetState: NSOrderedSet())
     }
     
-    public init(observedObject: NSObject, changeSet: ZMChangedIndexes) {
+    public init(observedObject: NSObject, changeSet: ZMChangedIndexes, orderedSetState: NSOrderedSet) {
         self.changeSet = changeSet
+        self.orderedSetState = orderedSetState
         self.observedObject = observedObject
     }
 
@@ -93,8 +96,9 @@ public struct SetSnapshot {
             return nil
         }
         
-        let changeSet = self.calculateChangeSet(newSet.copy() as! NSOrderedSet, updatedObjects: updatedObjects)
-        let changeInfo = SetChangeInfo(observedObject: observedObject, changeSet: changeSet)
+        let newSetCopy = newSet.copy() as! NSOrderedSet
+        let changeSet = self.calculateChangeSet(newSetCopy, updatedObjects: updatedObjects)
+        let changeInfo = SetChangeInfo(observedObject: observedObject, changeSet: changeSet, orderedSetState: newSetCopy)
 
         let insertedObjects = newSet.subtracting(orderedSet: set)
         let removedObjects = set.subtracting(orderedSet: newSet)
