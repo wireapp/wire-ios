@@ -24,6 +24,7 @@ fileprivate let zmLog = ZMSLog(tag: "Dependencies")
 public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     
     public init() {
+        zmLog.debug("Initialized DependentObject for \(Object.self), \(Dependency.self)")
     }
     
     private var dependenciesToDependents: [Dependency: Set<Object>] = [:]
