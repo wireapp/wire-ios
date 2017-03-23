@@ -33,6 +33,7 @@ extension URLSessionConfiguration {
             "timeoutIntervalForResource: \(self.timeoutIntervalForResource)",
             "tlsMaximumSupportedProtocol: \(self.tlsMaximumSupportedProtocol)",
             "tlsMinimumSupportedProtocol: \(self.tlsMinimumSupportedProtocol)",
+            "networkServiceType: \(self.networkServiceType.rawValue)"
         ]
         if #available(iOSApplicationExtension 9.0, *) {
             dump.append("shouldUseExtendedBackgroundIdleMode: \(self.shouldUseExtendedBackgroundIdleMode)")
