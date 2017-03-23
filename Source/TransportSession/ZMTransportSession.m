@@ -517,7 +517,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     }];
 }
 
-- (void)didCompleteRequest:(ZMTransportRequest *)request data:(NSData *)data task:(NSURLSessionTask *)task error:(NSError *)error;
+- (void)didCompleteRequest:(ZMTransportRequest *)request data:(NSData *)data task:(NSURLSessionTask *)task error:(NSError *)error session:(ZMURLSession *)session;
 {
     NOT_USED(error);
     [self decrementNumberOfRequestsInProgressAndNotifyOperationLoop:YES]; // TODO aren't we decrementing too late here?
@@ -532,6 +532,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError];
     ZMLogInfo(@"<---- Response to %@ %@ (status %u): %@", [ZMTransportRequest stringForMethod:request.method], request.path, (unsigned) httpResponse.statusCode, response);
+    ZMLogInfo(@"URL Session is %@", session.description);
     if (response.result == ZMTransportResponseStatusExpired) {
         [request completeWithResponse:response];
         return;
@@ -782,7 +783,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
     BOOL didConsume = [self.accessTokenHandler consumeRequestWithTask:task data:data session:URLSession shouldRetry:self.requestScheduler.canSendRequests];
     if (!didConsume) {
-        [self didCompleteRequest:request data:data task:task error:error];
+        [self didCompleteRequest:request data:data task:task error:error session:URLSession];
     }
     
     [self.requestScheduler processCompletedURLTask:task];

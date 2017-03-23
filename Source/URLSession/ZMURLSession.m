@@ -29,6 +29,7 @@
 #import "ZMTransportRequest+Internal.h"
 #import "ZMTLogging.h"
 #import "ZMTransportResponse.h"
+#import <ZMTransport/ZMTransport-Swift.h>
 
 
 
@@ -173,10 +174,13 @@ ZM_EMPTY_ASSERTING_INIT();
         [receivedData addObject:[NSString stringWithFormat:@"%llu -> %llu bytes",
                                  (unsigned long long) taskIdentifier, (unsigned long long) data.length]];
     }];
-    return [NSString stringWithFormat:@"<%@: %p> running requests: {\n\t%@\n}\ndownloaded data: {\n\t%@\n}",
+    return [NSString stringWithFormat:@"<%@: %p>\nSession '%@' running requests: {\n\t%@\n}\ndownloaded data: {\n\t%@\n}, \nconfiguration: %@",
             self.class, self,
+            self.identifier,
             [runningRequests componentsJoinedByString:@"\n\t"],
-            [receivedData componentsJoinedByString:@"\n\t"]];
+            [receivedData componentsJoinedByString:@"\n\t"],
+            self.configuration.configurationDump
+            ];
 }
 
 - (void)cancelAndRemoveAllTimers;
