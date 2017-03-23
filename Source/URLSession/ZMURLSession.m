@@ -173,10 +173,12 @@ ZM_EMPTY_ASSERTING_INIT();
         [receivedData addObject:[NSString stringWithFormat:@"%llu -> %llu bytes",
                                  (unsigned long long) taskIdentifier, (unsigned long long) data.length]];
     }];
-    return [NSString stringWithFormat:@"<%@: %p> running requests: {\n\t%@\n}\ndownloaded data: {\n\t%@\n}",
+    return [NSString stringWithFormat:@"<%@: %p> running requests: {\n\t%@\n}\ndownloaded data: {\n\t%@\n}, \n\tconfiguration: %@",
             self.class, self,
             [runningRequests componentsJoinedByString:@"\n\t"],
-            [receivedData componentsJoinedByString:@"\n\t"]];
+            [receivedData componentsJoinedByString:@"\n\t"],
+            self.configuration
+            ];
 }
 
 - (void)cancelAndRemoveAllTimers;
