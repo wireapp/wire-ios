@@ -532,7 +532,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError];
     ZMLogInfo(@"<---- Response to %@ %@ (status %u): %@", [ZMTransportRequest stringForMethod:request.method], request.path, (unsigned) httpResponse.statusCode, response);
-    ZMLogInfo(@"<---- Response to %@ %@ (status %u): session is %@", [ZMTransportRequest stringForMethod:request.method], request.path, (unsigned) httpResponse.statusCode, session.description);
+    ZMLogInfo(@"URL Session is %@", session.description);
     if (response.result == ZMTransportResponseStatusExpired) {
         [request completeWithResponse:response];
         return;
