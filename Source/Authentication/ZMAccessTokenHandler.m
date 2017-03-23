@@ -215,6 +215,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 {
     NSUInteger const taskIdentifier = task.taskIdentifier;
     ZMLogInfo(@"<---- Access token task completed: %@ // %@", task, task.error);
+    ZMLogInfo(@"<---- Access token URL session: %@", session.description);
     
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:NO];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:task.response data:data error:transportError];
