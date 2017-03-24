@@ -20,6 +20,8 @@
 import Foundation
 import ZMCDataModel
 
+private let zmLog = ZMSLog(tag: "Dependencies")
+
 // MARK: - Dependent objects
 extension ZMOTRMessage: OTREntity {
 
@@ -46,7 +48,9 @@ extension ZMMessage {
         guard let conversation = self.conversation else { return nil }
         
         if conversation.remoteIdentifier == nil {
+            zmLog.debug("conversation has no remote identifier")
             return conversation
+
         }
         
         // Messages should time out within 1 minute. But image messages never time out. In case there is a bug
