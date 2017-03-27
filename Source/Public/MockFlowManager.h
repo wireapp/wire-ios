@@ -46,7 +46,7 @@
 @property (nonatomic, readonly) NSString *accessToken;
 @property (nonatomic, readonly) NSArray *joinedUsers;
 
-@property (nonatomic) id<AVSFlowManagerDelegate> delegate;
+@property (nonatomic, weak) id<AVSFlowManagerDelegate> delegate;
 
 @end
 
