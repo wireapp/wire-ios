@@ -20,7 +20,7 @@
 @import ZMTransport;
 @import ZMUtilities;
 #import "MockPushEvent.h"
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 @implementation MockPushEvent
 

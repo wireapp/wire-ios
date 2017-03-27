@@ -109,7 +109,7 @@
         return [self errorResponseWithCode:404 reason:@"user not found"];
     } else {
         MockUser *user = users[0];
-        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        id<ZMTransportData> payload = [user transportData];
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     }
 }
@@ -137,7 +137,7 @@
     NSMutableArray *resultArray = [NSMutableArray array];
     for (MockUser *user in users) {
         
-        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        id<ZMTransportData> payload = [user transportData];
         [resultArray addObject:payload];
     }
     return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
@@ -266,6 +266,15 @@
         }
         else if([key isEqualToString:@"accent_id"]) {
             self.selfUser.accentID = (int16_t) [changedFields[key] integerValue];
+        } else if([key isEqualToString:@"assets"]) {
+            for (NSDictionary *data in changedFields[key]) {
+                NSString *assetKey = data[@"key"];
+                if ([data[@"size"] isEqualToString:@"preview"]) {
+                    self.selfUser.previewProfileAssetIdentifier = assetKey;
+                } else if ([data[@"size"] isEqualToString:@"complete"]) {
+                    self.selfUser.completeProfileAssetIdentifier = assetKey;
+                }
+            }
         }
     }
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
@@ -347,7 +356,7 @@
     if(users.count > 0) {
         statusCode = 200;
         MockUser *user = users[0];
-        id <ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        id <ZMTransportData> payload = [user transportData];
         payloadData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
     }
     else {

@@ -67,7 +67,6 @@
 		54AE5A841B78FA43002757E9 /* MockPicture.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A611B78FA43002757E9 /* MockPicture.m */; };
 		54AE5A851B78FA43002757E9 /* MockPushEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A621B78FA43002757E9 /* MockPushEvent.m */; };
 		54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */; };
-		54AE5A871B78FA43002757E9 /* MockUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A651B78FA43002757E9 /* MockUser.m */; };
 		54AE5A881B78FA43002757E9 /* MockAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A671B78FA43002757E9 /* MockAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A891B78FA43002757E9 /* MockConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A681B78FA43002757E9 /* MockConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A8A1B78FA43002757E9 /* MockConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A691B78FA43002757E9 /* MockConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -76,7 +75,6 @@
 		54AE5A8D1B78FA43002757E9 /* MockPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6C1B78FA43002757E9 /* MockPicture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A8E1B78FA43002757E9 /* MockPushEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6D1B78FA43002757E9 /* MockPushEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A8F1B78FA43002757E9 /* MockTransportSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54AE5A901B78FA43002757E9 /* MockUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6F1B78FA43002757E9 /* MockUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A911B78FA43002757E9 /* ZMCMockTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A701B78FA43002757E9 /* ZMCMockTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5AA11B78FA62002757E9 /* MockTransportSessionAddressBookTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */; };
 		54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */; };
@@ -108,6 +106,7 @@
 		CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */; };
 		CE99C4A41D39183F0001D297 /* MockTransportSessionAssetsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */; };
 		CED2BC921CECC63400E285B3 /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CED2BC911CECC63400E285B3 /* Cryptobox.framework */; };
+		F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9BC941E8519FC00D96342 /* MockUser.swift */; };
 		F97E28D11D8FE31700A77567 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F97E28D01D8FE31700A77567 /* Cartfile.resolved */; };
 /* End PBXBuildFile section */
 
@@ -203,7 +202,6 @@
 		54AE5A611B78FA43002757E9 /* MockPicture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPicture.m; sourceTree = "<group>"; };
 		54AE5A621B78FA43002757E9 /* MockPushEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPushEvent.m; sourceTree = "<group>"; };
 		54AE5A641B78FA43002757E9 /* TestTransportSession.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestTransportSession.xcdatamodel; sourceTree = "<group>"; };
-		54AE5A651B78FA43002757E9 /* MockUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockUser.m; sourceTree = "<group>"; };
 		54AE5A671B78FA43002757E9 /* MockAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockAsset.h; sourceTree = "<group>"; };
 		54AE5A681B78FA43002757E9 /* MockConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockConnection.h; sourceTree = "<group>"; };
 		54AE5A691B78FA43002757E9 /* MockConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockConversation.h; sourceTree = "<group>"; };
@@ -212,7 +210,6 @@
 		54AE5A6C1B78FA43002757E9 /* MockPicture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPicture.h; sourceTree = "<group>"; };
 		54AE5A6D1B78FA43002757E9 /* MockPushEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPushEvent.h; sourceTree = "<group>"; };
 		54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTransportSession.h; sourceTree = "<group>"; };
-		54AE5A6F1B78FA43002757E9 /* MockUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockUser.h; sourceTree = "<group>"; };
 		54AE5A701B78FA43002757E9 /* ZMCMockTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMCMockTransport.h; sourceTree = "<group>"; };
 		54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAddressBookTests.m; sourceTree = "<group>"; };
 		54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAPNSTokenTests.m; sourceTree = "<group>"; };
@@ -262,6 +259,7 @@
 		CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+invitations.m"; sourceTree = "<group>"; };
 		CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAssetsTests.m; sourceTree = "<group>"; };
 		CED2BC911CECC63400E285B3 /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cryptobox.framework; path = Carthage/Build/iOS/Cryptobox.framework; sourceTree = "<group>"; };
+		F1E9BC941E8519FC00D96342 /* MockUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUser.swift; sourceTree = "<group>"; };
 		F97E28D01D8FE31700A77567 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -344,7 +342,7 @@
 				54AE5A611B78FA43002757E9 /* MockPicture.m */,
 				54AE5A621B78FA43002757E9 /* MockPushEvent.m */,
 				54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */,
-				54AE5A651B78FA43002757E9 /* MockUser.m */,
+				F1E9BC941E8519FC00D96342 /* MockUser.swift */,
 				547AC6351E377B5A001458FD /* MockUserClient.swift */,
 				54ADA7971E3B996100B90C7D /* MockUserClient+Protos.swift */,
 				09E393F71BB0339200F3EA1B /* MockPreKey.m */,
@@ -367,7 +365,6 @@
 				54AE5A6D1B78FA43002757E9 /* MockPushEvent.h */,
 				54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */,
 				541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */,
-				54AE5A6F1B78FA43002757E9 /* MockUser.h */,
 				09E393F31BB0336A00F3EA1B /* MockPreKey.h */,
 				54AE5A701B78FA43002757E9 /* ZMCMockTransport.h */,
 			);
@@ -540,7 +537,6 @@
 				54AE5A8B1B78FA43002757E9 /* MockEvent.h in Headers */,
 				54AE5A881B78FA43002757E9 /* MockAsset.h in Headers */,
 				54AE5A911B78FA43002757E9 /* ZMCMockTransport.h in Headers */,
-				54AE5A901B78FA43002757E9 /* MockUser.h in Headers */,
 				09BCDB691BC7CFFC0020DCC7 /* MockTransportSession+OTR.h in Headers */,
 				09E393F51BB0336A00F3EA1B /* MockPreKey.h in Headers */,
 				54AE5A7F1B78FA43002757E9 /* MockTransportSession+internal.h in Headers */,
@@ -672,6 +668,7 @@
 				09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */,
 				09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */,
 				54AE5A781B78FA43002757E9 /* MockTransportSession+PushToken.m in Sources */,
+				F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */,
 				547AC6361E377B5A001458FD /* MockUserClient.swift in Sources */,
 				09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */,
 				54AE5A741B78FA43002757E9 /* MockTransportSession+connections.m in Sources */,
@@ -689,7 +686,6 @@
 				5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */,
 				54AE5A831B78FA43002757E9 /* MockEvent.m in Sources */,
 				54AE5A7C1B78FA43002757E9 /* MockTransportSession+users.m in Sources */,
-				54AE5A871B78FA43002757E9 /* MockUser.m in Sources */,
 				54AE5A841B78FA43002757E9 /* MockPicture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -18,7 +18,6 @@
 
 
 #import "MockTransportSession+internal.h"
-#import "MockUser.h"
 @import ZMProtos;
 
 @protocol OtrMessage <NSObject>

@@ -95,8 +95,8 @@
                 commonConnectionsUUIDs = [commonConnectionsUUIDs subarrayWithRange:NSMakeRange(0, 3)];
             }
             
-            payload[ZMSearchUserMutualFriendsKey] = commonConnectionsUUIDs;
-            payload[ZMSearchUserTotalMutualFriendsKey] = @(commonConnections.count);
+            payload[MockUser.mutualFriendsKey] = commonConnectionsUUIDs;
+            payload[MockUser.totalMutualFriendsKey] = @(commonConnections.count);
             return payload;
         }];
         
@@ -126,13 +126,7 @@
             
             MockConnection *connection = [self fetchConnectionFrom:self.selfUser to:user];
             
-            NSMutableDictionary *payload;
-            if(connection != nil) {
-                payload = [(NSMutableDictionary *)user.transportData mutableCopy];
-            }
-            else {
-                payload = [(NSMutableDictionary *)user.transportDataWhenNotConnected mutableCopy];
-            }
+            NSMutableDictionary *payload = [(NSMutableDictionary *)user.transportData mutableCopy];
             
             payload[@"blocked"]= @NO;
             payload[@"connected"]= @(connection != nil);

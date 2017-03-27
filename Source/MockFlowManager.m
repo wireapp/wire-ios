@@ -22,7 +22,7 @@
 
 #import "MockFlowManager.h"
 #import "MockTransportSession+internal.h"
-//#import "AVSFlowManager.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 
 @interface MockFlowManager ()

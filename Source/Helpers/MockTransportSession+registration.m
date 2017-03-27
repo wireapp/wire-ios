@@ -21,6 +21,7 @@
 @import ZMUtilities;
 @import ZMCSystem;
 #import "MockTransportSession+registration.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 @implementation MockTransportSession (Registration)
 

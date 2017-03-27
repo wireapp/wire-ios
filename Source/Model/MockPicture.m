@@ -32,7 +32,7 @@
 @import CoreServices;
 #endif
 
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 @implementation MockPicture
 
