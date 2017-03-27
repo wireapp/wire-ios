@@ -166,7 +166,8 @@ class UserClientTests: ZMBaseManagedObjectTest {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))            })
+                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
+            })
             
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
@@ -182,11 +183,15 @@ class UserClientTests: ZMBaseManagedObjectTest {
             
             XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey:preKey.prekey))
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
+            let clientId = otherClient.sessionIdentifier!
             
             // when
             otherClient.deleteClientAndEndSession()
             
             // then
+            selfClient.keysStore.encryptionContext.perform {
+                XCTAssertFalse($0.hasSession(for: clientId))
+            }
             XCTAssertFalse(otherClient.hasSessionWithSelfClient)
             XCTAssertTrue(otherClient.isZombieObject)
         }
@@ -225,6 +230,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
 
             // when
             otherClient2.deleteClientAndEndSession()
+            self.syncMOC.saveOrRollback()
             
             // then
             XCTAssertTrue(otherClient2.isZombieObject)
