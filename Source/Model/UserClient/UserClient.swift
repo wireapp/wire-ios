@@ -429,11 +429,18 @@ public extension UserClient {
         keysStore.encryptionContext.perform { (sessionsDirectory) in
             
             // Session is already established?
-            guard !sessionsDirectory.hasSession(for: sessionIdentifier) else {
-                zmLog.debug("Session with \(sessionIdentifier) is already established")
-                return
+            if sessionsDirectory.hasSession(for: sessionIdentifier) {
+                zmLog.debug("Session with \(sessionIdentifier) was already established, re-creating")
+                sessionsDirectory.delete(sessionIdentifier)
             }
-            
+        }
+        
+        // Because of caching within the `perform` block, it commits to disk only at the end of a block. 
+        // I don't think the cache is smart enough to perform the sum of operations (delete + recreate)
+        // if at the end of the block the session is still there. Just to be safe, I split the operations
+        // in two separate `perform` blocks.
+        
+        keysStore.encryptionContext.perform { (sessionsDirectory) in
             do {
                 try sessionsDirectory.createClientSession(sessionIdentifier, base64PreKeyString: preKey)
                 client.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
