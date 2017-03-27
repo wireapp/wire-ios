@@ -63,7 +63,7 @@
 - (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method;
 - (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method;
 
-- (void)checkThatTransportData:(id <ZMTransportData>)dict matchesUser:(MockUser *)user failureRecorder:(ZMTFailureRecorder *)fr;
+- (void)checkThatTransportData:(id <ZMTransportData>)dict matchesUser:(MockUser *)user isSelfUser:(BOOL)isSelfUser failureRecorder:(ZMTFailureRecorder *)fr;
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesConnection:(MockConnection *)connection;
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesConversation:(MockConversation *)conversation;
 - (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method handler:(ZMCompletionHandler *)handler;
