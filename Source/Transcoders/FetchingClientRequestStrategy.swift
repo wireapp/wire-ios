@@ -118,11 +118,15 @@ extension FetchingClientRequestStrategy: ZMRemoteIdentifierObjectTranscoder {
             else { return }
         
         // Create clients from the response
+        var newClients = Set<UserClient>()
         guard let arrayPayload = response.payload?.asArray() else { return }
         let clients: [UserClient] = arrayPayload.flatMap {
             guard let dict = $0 as? [String: AnyObject], let identifier = dict["id"] as? String else { return nil }
-            let client = UserClient.fetchUserClient(withRemoteId: identifier, forUser:user, createIfNeeded: true)
-            client?.deviceClass = dict["class"] as? String
+            guard let client = UserClient.fetchUserClient(withRemoteId: identifier, forUser:user, createIfNeeded: true) else { return nil }
+            if client.isInserted {
+                newClients.insert(client)
+            }
+            client.deviceClass = dict["class"] as? String
             return client
         }
         
@@ -133,7 +137,7 @@ extension FetchingClientRequestStrategy: ZMRemoteIdentifierObjectTranscoder {
         }
         
         // Add clients without a session to missed clients
-        let newClients = clients.filter { !$0.hasSessionWithSelfClient }
+        newClients.formUnion(clients.filter { !$0.hasSessionWithSelfClient })
         guard newClients.count > 0 else { return }
         selfClient.missesClients(Set(newClients))
         

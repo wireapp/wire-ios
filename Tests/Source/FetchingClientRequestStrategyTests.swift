@@ -20,6 +20,7 @@ import Foundation
 import ZMTesting
 import WireMessageStrategy
 import ZMCDataModel
+import Cryptobox
 
 class FetchClientRequestStrategyTests : MessagingTestBase {
     
@@ -218,7 +219,33 @@ extension FetchClientRequestStrategyTests {
         }
     }
     
-    func testThatItAddsNewInsertedClientsToIgnoredClients() {
+    func testThatItAddsFetchedClientToIgnoredClientsWhenClientDoesNotExist() {
+        
+        // GIVEN
+        var payload: ZMTransportData!
+        let remoteIdentifier = "aabbccdd0011"
+        self.syncMOC.performGroupedBlockAndWait {
+            self.otherUser.fetchUserClients()
+            payload = [["id" : remoteIdentifier]] as NSArray
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+        
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            let request = self.sut.nextRequest()
+            request?.complete(with: response)
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        // THEN
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertNil(self.selfClient.trustedClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
+            XCTAssertNotNil(self.selfClient.ignoredClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
+        }
+    }
+    
+    func testThatItAddsFetchedClientToIgnoredClientsWhenClientHasNoSession() {
         
         // GIVEN
         var payload: ZMTransportData!
@@ -243,6 +270,36 @@ extension FetchClientRequestStrategyTests {
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssertFalse(self.selfClient.trustedClients.contains(client))
             XCTAssertTrue(self.selfClient.ignoredClients.contains(client))
+        }
+    }
+    
+    func testThatItAddsFetchedClientToIgnoredClientsWhenSessionExistsButClientDoesNotExist() {
+        
+        // GIVEN
+        var payload: ZMTransportData!
+        let remoteIdentifier = "aabbccdd0011"
+        let sessionIdentifier = EncryptionSessionIdentifier(rawValue: "\(self.otherUser.remoteIdentifier!)_\(remoteIdentifier)")
+        self.syncMOC.performGroupedBlockAndWait {
+            self.otherUser.fetchUserClients()
+            payload = [["id" : remoteIdentifier]] as NSArray
+            self.selfClient.keysStore.encryptionContext.perform {
+                try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.selfClient.keysStore.lastPreKey()) // just a bogus key is OK
+            }
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+        
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            let request = self.sut.nextRequest()
+            request?.complete(with: response)
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        // THEN
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertNil(self.selfClient.trustedClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
+            XCTAssertNotNil(self.selfClient.ignoredClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
         }
     }
     
