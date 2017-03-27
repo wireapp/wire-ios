@@ -55,9 +55,7 @@
         return nil;
     }
     
-    id <ZMRemoteIdentifierObjectTranscoder> transcoder = self.transcoder;
-    
-    NSUInteger count = [transcoder maximumRemoteIdentifiersPerRequestForObjectSync:self];
+    NSUInteger count = [self.transcoder maximumRemoteIdentifiersPerRequestForObjectSync:self];
     count = MIN(count, self.remoteIdentifiersThatNeedToBeDownloaded.count);
     
     NSSet *IDs = [[NSOrderedSet orderedSetWithOrderedSet:self.remoteIdentifiersThatNeedToBeDownloaded range:NSMakeRange(0, count) copyItems:NO] set];
@@ -65,8 +63,8 @@
     [self.remoteIdentifiersInProgress unionSet:IDs];
     [self.remoteIdentifiersThatNeedToBeDownloaded minusSet:IDs];
     
-    ZMTransportRequest *request = [transcoder requestForObjectSync:self remoteIdentifiers:IDs];
-    [request setDebugInformationTranscoder:transcoder];
+    ZMTransportRequest *request = [self.transcoder requestForObjectSync:self remoteIdentifiers:IDs];
+    [request setDebugInformationTranscoder:self.transcoder];
 
     Require(request != nil);
     ZM_WEAK(self);
@@ -75,7 +73,7 @@
         switch (response.result) {
             case ZMTransportResponseStatusPermanentError:
             case ZMTransportResponseStatusSuccess: {
-                [transcoder didReceiveResponse:response remoteIdentifierObjectSync:self forRemoteIdentifiers:IDs];
+                [self.transcoder didReceiveResponse:response remoteIdentifierObjectSync:self forRemoteIdentifiers:IDs];
                 [self.remoteIdentifiersInProgress minusSet:IDs];
                 break;
             }
