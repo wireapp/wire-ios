@@ -99,6 +99,22 @@ extension MockUser {
 
 // MARK: - Transport data
 extension MockUser {
+    
+    @objc public var selfUserTransportData: ZMTransportData {
+        return selfUserData as ZMTransportData
+    }
+    
+    var selfUserData: [String : Any?] {
+        var regularData = data
+        if let email = email {
+            regularData["email"] = email
+        }
+        if let phone = phone {
+            regularData["phone"] = phone
+        }
+        return regularData
+    }
+
     @objc public var transportData: ZMTransportData {
         return data as ZMTransportData
     }
