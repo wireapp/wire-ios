@@ -22,7 +22,7 @@
 #import "MockTransportSession+PushToken.h"
 #import "MockTransportSession+internal.h"
 #import "MockTransportSession.h"
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 #import "MockConnection.h"
 #import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 

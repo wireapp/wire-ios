@@ -21,7 +21,7 @@
 @import ZMUtilities;
 #import "MockConnection.h"
 #import "MockConversation.h"
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 
 @implementation MockConnection
 

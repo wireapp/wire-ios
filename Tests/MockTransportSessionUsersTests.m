@@ -47,6 +47,8 @@
         user1.email = @"";
         user1.accentID = 2;
         user1.phone = @"";
+        user1.previewProfileAssetIdentifier = @"123";
+        user1.completeProfileAssetIdentifier = @"4556";
         user1ID = user1.identifier;
         
         connection1 = [session insertConnectionWithSelfUser:selfUser toUser:user1];
@@ -67,6 +69,8 @@
         user3.email = @"";
         user3.accentID = 1;
         user3.phone = @"";
+        user3.previewProfileAssetIdentifier = @"0099";
+        user3.completeProfileAssetIdentifier = @"29993";
         user3ID = user3.identifier;
         
         connection3 = [session insertConnectionWithSelfUser:selfUser toUser:user3];
@@ -93,9 +97,9 @@
     XCTAssertEqual(data.count, 3u);
     
     if (3 <= data.count) {
-        [self checkThatTransportData:data[0] matchesUser:user1 isConnected:YES failureRecorder:NewFailureRecorder()];
-        [self checkThatTransportData:data[1] matchesUser:user2 isConnected:YES failureRecorder:NewFailureRecorder()];
-        [self checkThatTransportData:data[2] matchesUser:user3 isConnected:YES failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[0] matchesUser:user1 failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[1] matchesUser:user2 failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[2] matchesUser:user3 failureRecorder:NewFailureRecorder()];
     }
 }
 
@@ -109,6 +113,8 @@
         selfUser.email = @"foo@example.com";
         selfUser.phone = @"+4555575653498";
         selfUser.accentID = 4;
+        selfUser.previewProfileAssetIdentifier = @"1234-1";
+        selfUser.completeProfileAssetIdentifier = @"0987-1";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -126,7 +132,7 @@
     XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
     NSDictionary *data = (id) response.payload;
     
-    [self checkThatTransportData:data matchesUser:selfUser isConnected:YES failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:data matchesUser:selfUser failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItCreatesHandleForSelfUser
@@ -223,7 +229,7 @@
     XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
     NSDictionary *data = (id) response.payload;
     
-    [self checkThatTransportData:data matchesUser:user1 isConnected:YES failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:data matchesUser:user1 failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testCreatingAndRequestingNonConnectedUser;
@@ -259,7 +265,7 @@
     XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
     NSDictionary *data = (id) response.payload;
     
-    [self checkThatTransportData:data matchesUser:user1 isConnected:NO failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:data matchesUser:user1 failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItUpdatesTheSelfUserOnPUT
@@ -272,9 +278,15 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    NSString *previewId = @"123-45";
+    NSString *completeId = @"09873-1";
     NSDictionary *payload = @{
                               @"name" : @"This is the new name",
-                              @"accent_id" : @"4"
+                              @"accent_id" : @"4",
+                              @"assets" : @[
+                                           @{ @"key" : previewId, @"type" : @"image", @"size" : @"preview" },
+                                           @{ @"key" : completeId, @"type" : @"image", @"size" : @"complete" },
+                                             ]
                               };
     
     // WHEN
@@ -288,6 +300,8 @@
         NOT_USED(session);
         XCTAssertEqualObjects(selfUser.name, payload[@"name"]);
         XCTAssertEqual(selfUser.accentID, [payload[@"accent_id"] integerValue] );
+        XCTAssertEqualObjects(selfUser.previewProfileAssetIdentifier, previewId);
+        XCTAssertEqualObjects(selfUser.completeProfileAssetIdentifier, completeId);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 }
@@ -538,7 +552,7 @@
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
-    [self checkThatTransportData:response.payload matchesUser:user isConnected:NO failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:response.payload matchesUser:user failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItFindsAnExhistingHandle_HEAD
@@ -558,7 +572,7 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.rawResponse.URL.path, path);
-    [self checkThatTransportData:response.payload matchesUser:user isConnected:NO failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:response.payload matchesUser:user failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItDoesNotFindANonExhistingHandle

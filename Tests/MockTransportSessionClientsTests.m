@@ -18,7 +18,7 @@
 
 
 #import "MockTransportSessionTests.h"
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 #import "MockPushEvent.h"
 #import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 

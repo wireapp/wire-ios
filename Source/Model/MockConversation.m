@@ -22,8 +22,8 @@
 @import Cryptobox;
 
 #import "MockConversation.h"
-#import "MockUser.h"
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 #import "MockEvent.h"
 #import "MockEvent.h"
 #import "MockAsset.h"

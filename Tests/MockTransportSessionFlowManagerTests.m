@@ -19,7 +19,7 @@
 
 #import "MockFlowManager.h"
 #import "MockTransportSessionTests.h"
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
 #import "MockPushEvent.h"
 
 @interface MockTransportSessionFlowManagerTests : MockTransportSessionTests

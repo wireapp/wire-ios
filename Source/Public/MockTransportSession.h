@@ -20,7 +20,6 @@
 @import CoreData;
 @import ZMTransport;
 
-#import "MockUser.h"
 #import "MockConnection.h"
 #import "MockConversation.h"
 #import "MockPicture.h"

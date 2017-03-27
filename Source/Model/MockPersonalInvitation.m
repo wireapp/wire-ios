@@ -18,7 +18,8 @@
 
 
 #import "MockPersonalInvitation.h"
-#import "MockUser.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+@import ZMTesting;
 
 @implementation MockPersonalInvitation
 

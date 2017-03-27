@@ -74,8 +74,9 @@
         <relationship name="client" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="prekeys" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="lastPrekeyOfClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="lastPrekey" inverseEntity="UserClient" syncable="YES"/>
     </entity>
-    <entity name="User" representedClassName="MockUser" syncable="YES">
+    <entity name="User" representedClassName=".MockUser" syncable="YES">
         <attribute name="accentID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="completeProfileAssetIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
@@ -84,6 +85,7 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="previewProfileAssetIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="activeCallConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="callParticipants" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="activeConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="activeUsers" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="user" inverseEntity="UserClient" syncable="YES"/>
@@ -120,7 +122,7 @@
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="345"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="375"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
     </elements>
 </model>
