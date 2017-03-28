@@ -398,7 +398,7 @@ ZM_EMPTY_ASSERTING_INIT()
         [self registerForBackgroundNotifications];
         [self registerForRequestToOpenConversationNotification];
         
-        [self.syncManagedObjectContext performBlockAndWait:^{
+        [self.syncManagedObjectContext performGroupedBlockAndWait:^{
             [self enablePushNotifications];
         }];
         [self enableBackgroundFetch];
