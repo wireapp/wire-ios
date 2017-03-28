@@ -52,11 +52,11 @@ extension EncryptionSessionsDirectory {
         let createdNewSession : Bool
         let decryptedEvent : ZMUpdateEvent
         
-        func fail() {
+        func fail(error: CBoxResult? = nil) {
             if senderClient.isInserted {
                 selfUser.selfClient()?.addNewClientToIgnored(senderClient)
             }
-            self.appendFailedToDecryptMessage(after: nil, for: event, sender: senderClient, in: moc)
+            self.appendFailedToDecryptMessage(after: error, for: event, sender: senderClient, in: moc)
         }
         
         do {
@@ -66,8 +66,7 @@ extension EncryptionSessionsDirectory {
             }
             (createdNewSession, decryptedEvent) = result
         } catch let error as CBoxResult {
-            self.appendFailedToDecryptMessage(after: error, for: event, sender: senderClient, in: moc)
-            fail()
+            fail(error: error)
             return nil
         } catch {
             fatalError("Unknown error in decrypting payload, \(error)")
