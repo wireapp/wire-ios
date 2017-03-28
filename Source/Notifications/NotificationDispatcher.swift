@@ -219,6 +219,8 @@ public class NotificationDispatcher : NSObject {
         // Fire notifications only if there won't be a save happening anytime soon
         if !managedObjectContext.zm_hasChanges {
             fireAllNotifications()
+        } else { // make sure we will save eventually, even if we forgot to save somehow
+            managedObjectContext.enqueueDelayedSave()
         }
     }
     
