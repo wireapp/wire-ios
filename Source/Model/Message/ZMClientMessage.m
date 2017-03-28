@@ -304,7 +304,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 + (NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream
 {
-    NSPredicate *encryptedNotSynced = [NSPredicate predicateWithFormat:@"%K == TRUE && %K == FALSE", ZMMessageIsEncryptedKey, DeliveredKey];
+    NSPredicate *encryptedNotSynced = [NSPredicate predicateWithFormat:@"%K == FALSE", DeliveredKey];
     NSPredicate *notExpired = [NSPredicate predicateWithFormat:@"%K == 0", ZMMessageIsExpiredKey];
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[encryptedNotSynced, notExpired]];
 }
