@@ -140,4 +140,25 @@ extension MockUser {
         ]
     }
     
+    public var changePushPayload: [String : Any]? {
+        var payload = [String : Any]()
+        let regularProperties = Set(arrayLiteral: #keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone))
+        let assetIds = Set(arrayLiteral: #keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier))
+        for (changedKey, value) in changedValues() {
+            if regularProperties.contains(changedKey) {
+                payload[changedKey] = value
+            } else if (changedKey == "accentID") {
+                payload["accent_id"] = value
+            } else if (assetIds.contains(changedKey)) {
+                payload["assets"] = assetData ?? []
+            }
+        }
+        if payload.isEmpty {
+            return nil
+        } else {
+            payload["id"] = identifier
+            return payload
+        }
+    }
+    
 }
