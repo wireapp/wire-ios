@@ -149,7 +149,7 @@ extension MockUserClient {
         var generatedPrekeys : [[String: Any]]?
         var generatedLastPrekey : String?
         newClient.encryptionContext.perform { (session) in
-            generatedPrekeys = try? session.generatePrekeys(NSMakeRange(0, 100))
+            generatedPrekeys = try? session.generatePrekeys(NSMakeRange(0, 5))
             generatedLastPrekey = try? session.generateLastPrekey()
         }
         
