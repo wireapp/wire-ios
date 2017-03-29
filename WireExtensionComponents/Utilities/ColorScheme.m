@@ -63,7 +63,7 @@ NSString * const ColorSchemeColorListAvatarInitials = @"list-avatar-initials";
 NSString * const ColorSchemeColorContactSectionBackground = @"contact-section-background";
 
 NSString * const ColorSchemeColorPlaceholderBackground = @"placeholder-background";
-NSString * const ColorSchemeColorBurstBackground = @"burst-background";
+NSString * const ColorSchemeColorPaleSeparator = @"separator-pale";
 
 NSString * const ColorSchemeColorAudioButtonOverlay = @"audio-button-overlay";
 
@@ -202,7 +202,6 @@ static NSString* light(NSString *colorString) {
     UIColor *clear = [UIColor clearColor];
     UIColor *white = [UIColor whiteColor];
     UIColor *white98 = [UIColor colorWithWhite:0.98 alpha:1];
-    UIColor *whiteAlpha8 = [UIColor wr_colorFromString:@"rgb(255, 255, 255, 0.08)"];
     UIColor *whiteAlpha16 = [UIColor wr_colorFromString:@"rgb(255, 255, 255, 0.16)"];
     UIColor *whiteAlpha24 = [UIColor wr_colorFromString:@"rgb(255, 255, 255, 0.24)"];
     UIColor *whiteAlpha40 = [UIColor wr_colorFromString:@"rgb(255, 255, 255, 0.40)"];
@@ -215,7 +214,6 @@ static NSString* light(NSString *colorString) {
     UIColor *blackAlpha80 = [UIColor wr_colorFromString:@"rgb(0, 0, 0, 0.80)"];
     UIColor *backgroundGraphite = [UIColor wr_colorFromString:@"rgb(22, 24, 25)"];
     UIColor *graphite = [UIColor wr_colorFromString:@"rgb(51, 55, 58)"];
-    UIColor *graphiteAlpha4 = [UIColor wr_colorFromString:@"rgb(51, 55, 58, 0.04)"];
     UIColor *graphiteAlpha16 = [UIColor wr_colorFromString:@"rgb(51, 55, 58, 0.16)"];
     UIColor *graphiteAlpha40 = [UIColor wr_colorFromString:@"rgb(51, 55, 58, 0.40)"];
     UIColor *lightGraphite = [UIColor wr_colorFromString:@"rgb(141, 152, 159)"];
@@ -261,7 +259,7 @@ static NSString* light(NSString *colorString) {
                                    ColorSchemeColorLoadingDotInactive: graphiteAlpha16,
                                    ColorSchemeColorGraphite: graphite,
                                    ColorSchemeColorLightGraphite: lightGraphite,
-                                   ColorSchemeColorBurstBackground: [graphiteAlpha4 removeAlphaByBlendingWithColor:white],
+                                   ColorSchemeColorPaleSeparator: lightGraphiteAlpha24,
                                    ColorSchemeColorListAvatarInitials: blackAlpha40
                                    }];
     
@@ -306,7 +304,7 @@ static NSString* light(NSString *colorString) {
                                   ColorSchemeColorLoadingDotInactive: whiteAlpha16,
                                   ColorSchemeColorGraphite: graphite,
                                   ColorSchemeColorLightGraphite: lightGraphite,
-                                  ColorSchemeColorBurstBackground: [whiteAlpha8 removeAlphaByBlendingWithColor:backgroundGraphite],
+                                  ColorSchemeColorPaleSeparator: lightGraphiteAlpha24,
                                   ColorSchemeColorListAvatarInitials: blackAlpha40
                                   }];
 

@@ -802,17 +802,25 @@ MessageToolboxView {
         font: $font-medium-semibold;
     }
 
-    burstTimestampLabel: @{
-        textColor: $color-text-foreground;
-    }
+    burstTimestampView: @{
+        label: @{
+            textColor: $color-text-foreground;
+        }
 
-    burstLabelSeparatorView: @{
-        backgroundColor: $color-separator;
+        leftSeparator: @{
+            backgroundColor: $color-separator-pale;
+        }
+
+        rightSeparator: @{
+            backgroundColor: $color-separator-pale;
+        }
     }
 
     burstNormalFont: $font-small-light;
     burstBoldFont: $font-small-semibold;
 }
+
+
 
 ^IconSystemCell {
     lineView: @{
