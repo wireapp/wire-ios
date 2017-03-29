@@ -640,7 +640,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return user;
 }
 
-- (void)addProfilePictureToUser:(MockUser *)user;
+- (NSDictionary<NSString *, MockPicture *> *)addProfilePictureToUser:(MockUser *)user
 {
     MockPicture *smallProfile = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Picture" inManagedObjectContext:self.managedObjectContext];
     MockPicture *medium = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Picture" inManagedObjectContext:self.managedObjectContext];
@@ -650,14 +650,18 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
     [smallProfile setAsSmallProfileFromImageData:imageData forUser:user];
     [medium setAsMediumWithSmallProfile:smallProfile forUser:user imageData:imageData];
+    
+    return @{ medium.info[@"tag"] : medium, smallProfile.info[@"tag"] : smallProfile };
 }
 
-- (void)addV3ProfilePictureToUser:(MockUser *)user
+- (NSDictionary<NSString *, MockAsset *> *)addV3ProfilePictureToUser:(MockUser *)user
 {
     MockAsset *previewAsset = [self insertAssetWithID:[NSUUID createUUID] assetToken:[NSUUID createUUID] assetData:[ZMTBaseTest verySmallJPEGData] contentType:@"application/octet-stream"];
     MockAsset *completeAsset = [self insertAssetWithID:[NSUUID createUUID] assetToken:[NSUUID createUUID] assetData:[ZMTBaseTest verySmallJPEGData] contentType:@"application/octet-stream"];
     user.previewProfileAssetIdentifier = previewAsset.identifier;
     user.completeProfileAssetIdentifier = completeAsset.identifier;
+    
+    return @{ @"preview" : previewAsset, @"complete" : completeAsset };
 }
 
 - (MockConnection *)insertConnectionWithSelfUser:(MockUser *)selfUser toUser:(MockUser *)toUser

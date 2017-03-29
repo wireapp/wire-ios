@@ -106,8 +106,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockUser *)insertSelfUserWithName:(NSString *)name;
 - (MockUser *)insertUserWithName:(NSString *)name;
 - (MockUser *)insertUserWithName:(NSString *)name includeClient:(BOOL)shouldIncludeClient;
-- (void)addProfilePictureToUser:(MockUser *)user;
-- (void)addV3ProfilePictureToUser:(MockUser *)user;
+- (NSDictionary<NSString *, MockPicture *> *)addProfilePictureToUser:(MockUser *)user;
+- (NSDictionary<NSString *, MockAsset *> *)addV3ProfilePictureToUser:(MockUser *)user;
 - (MockConnection *)insertConnectionWithSelfUser:(MockUser *)selfUser toUser:(MockUser *)toUser;
 
 - (MockConversation *)insertSelfConversationWithSelfUser:(MockUser *)selfUser;
