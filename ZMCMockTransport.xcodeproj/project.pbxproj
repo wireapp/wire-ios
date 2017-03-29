@@ -106,6 +106,7 @@
 		CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */; };
 		CE99C4A41D39183F0001D297 /* MockTransportSessionAssetsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */; };
 		CED2BC921CECC63400E285B3 /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CED2BC911CECC63400E285B3 /* Cryptobox.framework */; };
+		F190E0951E8C0286003E81F8 /* MockUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F190E0931E8C0218003E81F8 /* MockUserTests.swift */; };
 		F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9BC941E8519FC00D96342 /* MockUser.swift */; };
 		F97E28D11D8FE31700A77567 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F97E28D01D8FE31700A77567 /* Cartfile.resolved */; };
 /* End PBXBuildFile section */
@@ -259,6 +260,7 @@
 		CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+invitations.m"; sourceTree = "<group>"; };
 		CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAssetsTests.m; sourceTree = "<group>"; };
 		CED2BC911CECC63400E285B3 /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cryptobox.framework; path = Carthage/Build/iOS/Cryptobox.framework; sourceTree = "<group>"; };
+		F190E0931E8C0218003E81F8 /* MockUserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUserTests.swift; sourceTree = "<group>"; };
 		F1E9BC941E8519FC00D96342 /* MockUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUser.swift; sourceTree = "<group>"; };
 		F97E28D01D8FE31700A77567 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -441,6 +443,7 @@
 				09E393F91BB0485300F3EA1B /* MockTransportSessionClientsTests.m */,
 				CE99C4A31D39183F0001D297 /* MockTransportSessionAssetsTests.m */,
 				54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */,
+				F190E0931E8C0218003E81F8 /* MockUserTests.swift */,
 				54C902431B7532DD007162A8 /* Supporting Files */,
 				541797631CE1F86500C7646D /* ZMCMockTransportTests-ios-Bridging-Header.h */,
 			);
@@ -708,6 +711,7 @@
 				54AE5AA41B78FA62002757E9 /* MockTransportSessionConnectionsTests.m in Sources */,
 				54AE5AA31B78FA62002757E9 /* MockTransportSessionCallingTests.m in Sources */,
 				54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */,
+				F190E0951E8C0286003E81F8 /* MockUserTests.swift in Sources */,
 				CE471AF31C19AC670040802B /* MockTransportSessionInvitationTests.m in Sources */,
 				54AE5AA81B78FA62002757E9 /* MockTransportSessionLoginTests.m in Sources */,
 				54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */,
