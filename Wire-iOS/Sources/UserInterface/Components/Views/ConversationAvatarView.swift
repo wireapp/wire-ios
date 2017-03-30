@@ -152,10 +152,12 @@ final public class ConversationAvatarView: UIView {
             
             if mode == .one {
                 layer.borderWidth = 0
+                backgroundColor = .clear
             }
             else {
                 layer.borderWidth = .hairline
                 layer.borderColor = UIColor(white: 1, alpha: 0.24).cgColor
+                backgroundColor = UIColor(white: 0, alpha: 0.32)
             }
         }
     }
@@ -174,7 +176,7 @@ final public class ConversationAvatarView: UIView {
     }
     
     override public var intrinsicContentSize: CGSize {
-        return CGSize(width: 26, height: 26)
+        return CGSize(width: 32, height: 32)
     }
     
     let clippingView = UIView()
@@ -194,7 +196,7 @@ final public class ConversationAvatarView: UIView {
     init() {
         super.init(frame: .zero)
         updateCornerRadius()
-        backgroundColor = UIColor(white: 0, alpha: 0.16)
+        
         layer.masksToBounds = true
         clippingView.clipsToBounds = true
         self.addSubview(clippingView)
@@ -204,46 +206,55 @@ final public class ConversationAvatarView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    let interAvatarInset: CGFloat = 2
+    var containerSize: CGSize {
+        return self.clippingView.bounds.size
+    }
+    
     override public func layoutSubviews() {
         super.layoutSubviews()
         guard self.bounds != .zero else {
             return
         }
         
-        clippingView.frame = self.mode == .one ? self.bounds : self.bounds.insetBy(dx: 2, dy: 2)
-
-        let size: CGSize
-        let inset: CGFloat = 2
-        let containerSize = self.clippingView.bounds.size
-        
         switch mode {
         case .one:
-            size = CGSize(width: containerSize.width, height: containerSize.height)
+            clippingView.frame = self.bounds.insetBy(dx: 3, dy: 3)
             
+            self.userImages().forEach {
+                $0.frame = clippingView.bounds
+            }
         case .two:
-            size = CGSize(width: (containerSize.width  - inset) / 2.0, height: containerSize.height)
+            clippingView.frame = self.bounds.insetBy(dx: 2, dy: 2)
+
+            layoutMultipleAvatars(with: CGSize(width: (containerSize.width  - interAvatarInset) / 2.0, height: containerSize.height))
             
         case .four:
-            size = CGSize(width: (containerSize.width - inset) / 2.0, height: (containerSize.height - inset) / 2.0)
-        }
-        
-        var xPosition: CGFloat = 0
-        var yPosition: CGFloat = 0
-        
-        self.userImages().forEach {
-            $0.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
-            if xPosition + size.width >= containerSize.width {
-                xPosition = 0
-                yPosition = yPosition + size.height + inset
-            }
-            else {
-                xPosition = xPosition + size.width + inset
-            }
+            clippingView.frame = self.bounds.insetBy(dx: 2, dy: 2)
+            let containerSize = self.clippingView.bounds.size
+
+            layoutMultipleAvatars(with: CGSize(width: (containerSize.width - interAvatarInset) / 2.0, height: (containerSize.height - interAvatarInset) / 2.0))
         }
         
         updateCornerRadius()
     }
 
+    private func layoutMultipleAvatars(with size: CGSize) {
+        var xPosition: CGFloat = 0
+        var yPosition: CGFloat = 0
+
+        self.userImages().forEach {
+            $0.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
+            if xPosition + size.width >= containerSize.width {
+                xPosition = 0
+                yPosition = yPosition + size.height + interAvatarInset
+            }
+            else {
+                xPosition = xPosition + size.width + interAvatarInset
+            }
+        }
+    }
+    
     private func updateCornerRadius() {
         layer.cornerRadius = self.conversation?.conversationType == .group ? 6 : layer.bounds.width / 2.0
         clippingView.layer.cornerRadius = self.conversation?.conversationType == .group ? 4 : clippingView.layer.bounds.width / 2.0

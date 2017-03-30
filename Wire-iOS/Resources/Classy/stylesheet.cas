@@ -509,7 +509,7 @@ NewDevicesDot {
 ConversationListAccessoryView {
     textLabel: @{
         textColor: $color-text-foreground-dark;
-        font: $font-small-semibold;
+        font: $font-medium-semibold;
     }
 }
 
@@ -772,6 +772,23 @@ VideoMessageCell {
 
     @device iphone {
         videoViewHeight: 160
+    }
+}
+
+DotView {
+    backgroundColor: $color-accent-current;
+}
+
+SpaceView {
+    nameLabel: @{
+        font: $font-small-semibold;
+        textColor: $color-text-dimmed-dark;
+    }
+}
+
+SpaceView.selected {
+    nameLabel: @{
+        textColor: $color-text-foreground-dark;
     }
 }
 
