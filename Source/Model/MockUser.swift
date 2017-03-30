@@ -94,8 +94,13 @@ extension MockUser {
         }
         return nil
     }
+
+    @objc public func removeLegacyPictures() {
+        [smallProfileImage, mediumImage].flatMap { $0 }.forEach(managedObjectContext!.delete)
+    }
     
 }
+
 
 // MARK: - Transport data
 extension MockUser {
