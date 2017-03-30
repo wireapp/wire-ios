@@ -73,8 +73,7 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle,
-                                                  @"assets" : [NSNull null]
+                                                  @"handle": user1.handle
                                                   },
                                               
                                               @{
@@ -84,9 +83,7 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"handle": user2.handle,
-                                                  @"assets" : [NSNull null]
-
+                                                  @"handle": user2.handle
                                                   }
                                               ]
                                       };
@@ -146,10 +143,7 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle,
-                                                  @"assets" : [NSNull null]
-
-                                                  
+                                                  @"handle": user1.handle
                                                   },
                                               
                                               @{
@@ -159,10 +153,7 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"handle": user2.handle,
-                                                  @"assets" : [NSNull null]
-
-                                                  
+                                                  @"handle": user2.handle
                                                   },
                                               
                                               
@@ -173,10 +164,7 @@
                                                   @"id": user3.identifier,
                                                   @"level": @1,
                                                   @"name": user3.name,
-                                                  @"handle": user3.handle,
-                                                  @"assets" : [NSNull null]
-
-                                                  
+                                                  @"handle": user3.handle
                                                   }
                                               ]
                                       };
@@ -218,8 +206,7 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle,
-                                                  @"assets" : [NSNull null]
+                                                  @"handle": user1.handle
                                                   }
                                               ]
                                       };
@@ -227,52 +214,5 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.payload, expectedPayload);
 }
-
-
-- (void)testThatItReturnsAllConnectedUsersWhenAskingForCommonContacts
-{
-    // GIVEN
-    __block MockUser *user1;
-    __block MockUser *user2;
-    __block MockUser *user3;
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        MockUser *selfUser = [session insertSelfUserWithName:@"SelfUser"];
-        user1 = [session insertUserWithName:@"User1 AAAA"];
-        user2 = [session insertUserWithName:@"User2 AABB"];
-        user3 = [session insertUserWithName:@"User3 XXXX"];
-        [session insertUserWithName:@"User4 YYYY"];
-        
-        MockConnection *connection1 = [session insertConnectionWithSelfUser:selfUser toUser:user1];
-        connection1.status = @"accepted";
-        connection1.lastUpdate = [NSDate dateWithTimeIntervalSince1970:1399920861.091];
-        
-        MockConnection *connection2 = [session insertConnectionWithSelfUser:selfUser toUser:user2];
-        connection2.status = @"accepted";
-        connection2.lastUpdate = [NSDate dateWithTimeIntervalSince1970:1399920861.091];
-        
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // WHEN
-    NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"common", user3.identifier]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
-    
-    // THEN
-    NSDictionary *expectedPayload = @{
-                                      @"documents": @[
-                                              @{
-                                                  @"id": user1.identifier,
-                                                  },
-                                              
-                                              @{
-                                                  @"id": user2.identifier,
-                                                  }
-                                              ]
-                                      };
-    
-    XCTAssertEqual(response.HTTPStatus, 200);
-    XCTAssertEqualObjects(response.payload, expectedPayload);
-}
-
 
 @end
