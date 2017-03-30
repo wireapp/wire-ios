@@ -45,7 +45,6 @@ class ConversationAvatarViewTests: CoreDataSnapshotTestCase {
         super.setUp()
         sut = ConversationAvatarView()
     }
-    
 
     func testThatItRendersSingleUserImage() {
         otherUser.accentColorValue = .strongLimeGreen
