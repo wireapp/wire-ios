@@ -18,6 +18,7 @@
 
 
 import Foundation
+import Cartography
 
 
 struct CallCellViewModel {
@@ -66,6 +67,10 @@ struct CallCellViewModel {
 
 class MissedCallCell: IconSystemCell {
 
+    override class var userRegularLabel: Bool {
+        return true
+    }
+
     override var verticalInset: CGFloat {
         return 6
     }
@@ -82,8 +87,7 @@ class MissedCallCell: IconSystemCell {
             message: message
         )
         leftIconView.image = model.image()
-        labelView.attributedText = model.attributedTitle()
-        labelView.accessibilityLabel = labelView.attributedText?.string
+        attributedText = model.attributedTitle()
         lineView.isHidden = true
     }
 
@@ -107,6 +111,10 @@ class PerformedCallCell: IconSystemCell {
         return formatter
     }
 
+    override class var userRegularLabel: Bool {
+        return true
+    }
+
     override var verticalInset: CGFloat {
         return 6
     }
@@ -123,8 +131,7 @@ class PerformedCallCell: IconSystemCell {
             message: message
         )
         leftIconView.image = model.image()
-        labelView.attributedText = model.attributedTitle()
-        labelView.accessibilityLabel = labelView.attributedText?.string
+        attributedText = model.attributedTitle()
         lineView.isHidden = true
     }
 
