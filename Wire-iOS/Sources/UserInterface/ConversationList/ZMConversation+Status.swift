@@ -49,6 +49,7 @@ internal struct ConversationStatus {
     let isSilenced: Bool
     let isOngoingCall: Bool
     let isBlocked: Bool
+    let isSelfAnActiveMember: Bool
 }
 
 // Describes the conversation message.
@@ -155,6 +156,24 @@ extension ZMConversation {
     }
 }
 
+
+// "You left"
+final internal class SelfUserLeftMatcher: ConversationStatusMatcher {
+    func isMatching(with status: ConversationStatus) -> Bool {
+        return !status.isSelfAnActiveMember
+    }
+    
+    func description(with status: ConversationStatus, conversation: ZMConversation) -> NSAttributedString? {
+        return "conversation.status.you_left".localized && type(of: self).regularStyle()
+    }
+    
+    func icon(with status: ConversationStatus, conversation: ZMConversation) -> ConversationStatusIcon {
+        return .none
+    }
+    
+    var combinesWith: [ConversationStatusMatcher] = []
+}
+
 // "Blocked"
 final internal class BlockedMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
@@ -198,15 +217,17 @@ final internal class TypingMatcher: ConversationStatusMatcher {
     }
     
     func description(with status: ConversationStatus, conversation: ZMConversation) -> NSAttributedString? {
-        let statusString: String
+        let statusString: NSAttributedString
         if status.isGroup, let typingUsers = conversation.typingUsers() {
             let typingUsersString = typingUsers.flatMap { $0 as? ZMUser }.map { $0.displayName(in: conversation) }.joined(separator: ", ")
-            statusString = String(format: "conversation.status.typing.group".localized, typingUsersString)
+            let resultString = String(format: "conversation.status.typing.group".localized, typingUsersString)
+            let intermediateString = NSAttributedString(string: resultString, attributes: type(of: self).regularStyle())
+            statusString = intermediateString.setAttributes(type(of: self).emphasisStyle(), toSubstring: typingUsersString)
         }
         else {
-            statusString = "conversation.status.typing".localized
+            statusString = "conversation.status.typing".localized && type(of: self).regularStyle()
         }
-        return statusString && type(of: self).regularStyle()
+        return statusString
     }
     
     func icon(with status: ConversationStatus, conversation: ZMConversation) -> ConversationStatusIcon {
@@ -235,6 +256,7 @@ final internal class SilencedMatcher: ConversationStatusMatcher {
 
 // In silenced "N (text|image|link|...) message, ..."
 // In not silenced: "[Sender:] <message text>"
+// Ephemeral: "Ephemeral message"
 final internal class NewMessagesMatcher: ConversationStatusMatcher {
     let matchedTypes: [StatusMessageType] = [.text, .link, .image, .location, .audio, .video, .file, .knock, .missedCall]
     let localizationSilencedRootPath = "conversation.silenced.status.message"
@@ -276,7 +298,13 @@ final internal class NewMessagesMatcher: ConversationStatusMatcher {
                 return "" && type(of: self).regularStyle()
             }
             
-            let messageDescription = String(format: (localizationRootPath + "." + localizationKey).localized, message.textMessageData?.messageText ?? "")
+            let messageDescription: String
+            if message.isEphemeral {
+                messageDescription = (localizationRootPath + ".ephemeral").localized
+            }
+            else {
+                messageDescription = String(format: (localizationRootPath + "." + localizationKey).localized, message.textMessageData?.messageText ?? "")
+            }
             
             if status.isGroup {
                 return ((sender.displayName(in: conversation) + ": ") && type(of: self).emphasisStyle()) +
@@ -299,12 +327,7 @@ final internal class NewMessagesMatcher: ConversationStatusMatcher {
         case .missedCall:
             return .missedCall
         default:
-            if status.unreadMessages.count == 1 {
-                return .none
-            }
-            else {
-                return .unreadMessages(count: status.unreadMessages.count)
-            }
+            return .unreadMessages(count: status.unreadMessages.count)
         }
     }
     
@@ -324,9 +347,9 @@ final internal class FailedSendMatcher: ConversationStatusMatcher {
     var combinesWith: [ConversationStatusMatcher] = []
 }
 
-// "[You|User] [added|removed|left] [_|users|you]"
+// "[You|User] added [_|users|you]"
 final internal class GroupActivityMatcher: ConversationStatusMatcher {
-    let matchedTypes: [StatusMessageType] = [.addParticipants, .removeParticipants]
+    let matchedTypes: [StatusMessageType] = [.addParticipants]
 
     func isMatching(with status: ConversationStatus) -> Bool {
         return matchedTypes.flatMap { status.unreadMessagesByType[$0] }.reduce(0, +) > 0
@@ -345,7 +368,7 @@ final internal class GroupActivityMatcher: ConversationStatusMatcher {
             else {
                 let usersList = systemMessage.addedUsers.map { $0.displayName(in: conversation) }.joined(separator: ", ")
                 let sender = sender.isSelfUser ? "conversation.status.you".localized : sender.displayName(in: conversation)
-                return String(format: "conversation.status.added_useres".localized, sender!, usersList)
+                return String(format: "conversation.status.added_users".localized, sender!, usersList)
             }
         }
         return .none
@@ -369,7 +392,7 @@ final internal class GroupActivityMatcher: ConversationStatusMatcher {
             else {
                 let usersList = systemMessage.removedUsers.map { $0.displayName(in: conversation) }.joined(separator: ", ")
                 let sender = sender.isSelfUser ? "conversation.status.you".localized : sender.displayName(in: conversation)
-                return String(format: "conversation.status.removed_useres".localized, sender!, usersList)
+                return String(format: "conversation.status.removed_users".localized, sender!, usersList)
             }
         }
         return .none
@@ -413,6 +436,7 @@ final internal class UnsernameMatcher: ConversationStatusMatcher {
 /*
  Matchers priorities (highest first):
  
+ (SelfUserLeftMatcher)
  (Blocked)
  (Calling)
  (Typing)
@@ -430,7 +454,7 @@ private var allMatchers: [ConversationStatusMatcher] = {
     let failedSendMatcher = FailedSendMatcher()
     failedSendMatcher.combinesWith = [silencedMatcher, newMessageMatcher, groupActivityMatcher]
     
-    return [BlockedMatcher(), CallingMatcher(), TypingMatcher(), silencedMatcher, newMessageMatcher, failedSendMatcher, groupActivityMatcher, UnsernameMatcher()]
+    return [SelfUserLeftMatcher(), BlockedMatcher(), CallingMatcher(), TypingMatcher(), silencedMatcher, newMessageMatcher, failedSendMatcher, groupActivityMatcher, UnsernameMatcher()]
 }()
 
 extension ConversationStatus {
@@ -552,7 +576,8 @@ extension ZMConversation {
                                   isTyping: self.typingUsers().count > 0,
                                   isSilenced: self.isSilenced,
                                   isOngoingCall: isOngoingCall,
-                                  isBlocked: isBlocked)
+                                  isBlocked: isBlocked,
+                                  isSelfAnActiveMember: self.isSelfAnActiveMember)
     }
 }
 
