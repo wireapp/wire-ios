@@ -79,7 +79,7 @@ static NSString * const CellReuseIdConversation = @"CellId";
 
 - (instancetype)init
 {
-    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+    UICollectionViewFlowLayout *flowLayout = [[BoundsAwareFlowLayout alloc] init];
     flowLayout.minimumLineSpacing = 0;
     flowLayout.minimumInteritemSpacing = 0;
     flowLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
@@ -114,7 +114,8 @@ static NSString * const CellReuseIdConversation = @"CellId";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
+    [self updateVisibleCells];
+    
     [self scrollToCurrentSelectionAnimated:NO];
 
     self.activeMediaPlayerObserver = [KeyValueObserver observeObject:AppDelegate.sharedAppDelegate.mediaPlaybackManager
@@ -138,6 +139,8 @@ static NSString * const CellReuseIdConversation = @"CellId";
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.allowsSelection = YES;
     self.collectionView.allowsMultipleSelection = NO;
+    self.collectionView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0);
+    self.collectionView.delaysContentTouches = NO;
     self.clearsSelectionOnViewWillAppear = NO;
 }
 
@@ -245,13 +248,23 @@ static NSString * const CellReuseIdConversation = @"CellId";
         change.connectionStateChanged ||
         change.isSilencedChanged) {
         
-        for (UICollectionViewCell *cell in self.collectionView.visibleCells) {
-            if ([cell isKindOfClass:[ConversationListCell class]]) {
-                ConversationListCell *convListCell = (ConversationListCell *)cell;
-                
-                if ([convListCell.conversation isEqual:change.conversation]) {
-                    [convListCell updateAppearance];
-                }
+        [self updateCellForConversation:change.conversation];
+    }
+}
+
+- (void)updateVisibleCells
+{
+    [self updateCellForConversation:nil];
+}
+
+- (void)updateCellForConversation:(ZMConversation *)conversation
+{
+    for (UICollectionViewCell *cell in self.collectionView.visibleCells) {
+        if ([cell isKindOfClass:[ConversationListCell class]]) {
+            ConversationListCell *convListCell = (ConversationListCell *)cell;
+            
+            if (conversation == nil || [convListCell.conversation isEqual:conversation]) {
+                [convListCell updateAppearance];
             }
         }
     }
