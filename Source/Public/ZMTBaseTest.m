@@ -122,7 +122,7 @@
 - (void)tearDown
 {
     [self unregisterLogErrorHook];
-    
+    [self verifyMocksNow];
     [super tearDown];
 }
 
