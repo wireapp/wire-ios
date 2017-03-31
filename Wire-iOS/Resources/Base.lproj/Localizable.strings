@@ -73,7 +73,7 @@
 "contacts_ui.title" = "Invite people";
 
 "contacts_ui.no_contact.title" = "No active conversations\n";
-"contacts_ui.no_contact.message" = "Tap contacts to start a conversation";
+"contacts_ui.no_contact.message" = "Tap people to start a conversation";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Join";
@@ -123,7 +123,7 @@
 
 "conversation.status.call" = "Ongoing call";
 "conversation.status.typing" = "Typing a message...";
-"conversation.status.typing.group" = "%@: Typing a message...";
+"conversation.status.typing.group" = "%@: typing a message...";
 "conversation.status.silenced" = "Muted";
 "conversation.status.blocked" = "Blocked";
 
