@@ -19,9 +19,11 @@
 import UIKit
 
 extension ConversationListItemView {
-    internal func configure(with title: String, subtitle: NSAttributedString) {
+    @objc public func configureFont() {
         self.titleField.font = FontSpec(.normal, .light).font!
-
+    }
+    
+    internal func configure(with title: String, subtitle: NSAttributedString) {
         self.titleText = title
         self.subtitleAttributedText = subtitle
     }

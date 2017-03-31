@@ -77,6 +77,8 @@ NSString * const ConversationListItemDidScrollNotification = @"ConversationListI
     self.titleField.numberOfLines = 1;
     self.titleField.lineBreakMode = NSLineBreakByTruncatingTail;
     [self.labelsContainer addSubview:self.titleField];
+    
+    [self configureFont];
 
     self.avatarContainer = [[UIView alloc] initForAutoLayout];
     [self addSubview:self.avatarContainer];
