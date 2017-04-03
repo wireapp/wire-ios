@@ -18,7 +18,7 @@
 
 
 #import <XCTest/XCTest.h>
-@import ZMUtilities;
+@import WireUtilities;
 @import WireTesting;
 
 @interface NSUUIDDataTests : XCTestCase

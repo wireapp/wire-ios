@@ -18,7 +18,7 @@
 
 
 import XCTest
-import ZMUtilities
+import WireUtilities
 import MobileCoreServices;
 
 class String_MIMETypeTests: XCTestCase {
