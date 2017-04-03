@@ -17,7 +17,7 @@
 // 
 
 
-@testable import ZMCLinkPreview
+@testable import WireLinkPreview
 
 class MockPreviewDownloader: PreviewDownloaderType {
     

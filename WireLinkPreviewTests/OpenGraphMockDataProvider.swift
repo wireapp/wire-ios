@@ -18,7 +18,7 @@
 
 
 import Foundation
-@testable import ZMCLinkPreview
+@testable import WireLinkPreview
 
 struct OpenGraphMockData {
     let head: String

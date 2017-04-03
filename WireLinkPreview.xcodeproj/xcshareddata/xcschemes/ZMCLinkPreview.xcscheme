@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BFF057891D25434D004A2C29"
-               BuildableName = "ZMCLinkPreview.framework"
-               BlueprintName = "ZMCLinkPreview"
-               ReferencedContainer = "container:ZMCLinkPreview.xcodeproj">
+               BuildableName = "WireLinkPreview.framework"
+               BlueprintName = "WireLinkPreview"
+               ReferencedContainer = "container:WireLinkPreview.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,9 +34,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BFF057931D25434E004A2C29"
-               BuildableName = "ZMCLinkPreviewTests.xctest"
-               BlueprintName = "ZMCLinkPreviewTests"
-               ReferencedContainer = "container:ZMCLinkPreview.xcodeproj">
+               BuildableName = "WireLinkPreviewTests.xctest"
+               BlueprintName = "WireLinkPreviewTests"
+               ReferencedContainer = "container:WireLinkPreview.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -44,9 +44,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BFF057891D25434D004A2C29"
-            BuildableName = "ZMCLinkPreview.framework"
-            BlueprintName = "ZMCLinkPreview"
-            ReferencedContainer = "container:ZMCLinkPreview.xcodeproj">
+            BuildableName = "WireLinkPreview.framework"
+            BlueprintName = "WireLinkPreview"
+            ReferencedContainer = "container:WireLinkPreview.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BFF057891D25434D004A2C29"
-            BuildableName = "ZMCLinkPreview.framework"
-            BlueprintName = "ZMCLinkPreview"
-            ReferencedContainer = "container:ZMCLinkPreview.xcodeproj">
+            BuildableName = "WireLinkPreview.framework"
+            BlueprintName = "WireLinkPreview"
+            ReferencedContainer = "container:WireLinkPreview.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -84,9 +84,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BFF057891D25434D004A2C29"
-            BuildableName = "ZMCLinkPreview.framework"
-            BlueprintName = "ZMCLinkPreview"
-            ReferencedContainer = "container:ZMCLinkPreview.xcodeproj">
+            BuildableName = "WireLinkPreview.framework"
+            BlueprintName = "WireLinkPreview"
+            ReferencedContainer = "container:WireLinkPreview.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
