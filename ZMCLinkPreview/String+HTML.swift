@@ -94,8 +94,8 @@ extension String {
             else {
                 var amp: NSString?
                 scanner.scanString("&", into:&amp)
-                if let amp = amp as? String {
-                    result.append(amp)
+                if let amp = amp {
+                    result.append(amp as String)
                 }
             }
 
