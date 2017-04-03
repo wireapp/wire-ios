@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,23 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0969600B1B663E7B006DF53B"
-               BuildableName = "zimages.framework"
-               BlueprintName = "zimages-ios"
-               ReferencedContainer = "container:zimages.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "096960151B663E7C006DF53B"
-               BuildableName = "zimages-iosTests.xctest"
-               BlueprintName = "zimages-iosTests"
-               ReferencedContainer = "container:zimages.xcodeproj">
+               BuildableName = "WireImages.framework"
+               BlueprintName = "WireImages-ios"
+               ReferencedContainer = "container:WireImages.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -40,27 +26,26 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "096960151B663E7C006DF53B"
-               BuildableName = "zimages-iosTests.xctest"
-               BlueprintName = "zimages-iosTests"
-               ReferencedContainer = "container:zimages.xcodeproj">
+               BuildableName = "WireImages-iosTests.xctest"
+               BlueprintName = "WireImages-iosTests"
+               ReferencedContainer = "container:WireImages.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0969600B1B663E7B006DF53B"
-            BuildableName = "zimages.framework"
-            BlueprintName = "zimages-ios"
-            ReferencedContainer = "container:zimages.xcodeproj">
+            BlueprintIdentifier = "870253DF1DAB7A9F0095D272"
+            BuildableName = "WireImages-iosTestHost.app"
+            BlueprintName = "WireImages-iosTestHost"
+            ReferencedContainer = "container:WireImages.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -76,15 +61,13 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0969600B1B663E7B006DF53B"
-            BuildableName = "zimages.framework"
-            BlueprintName = "zimages-ios"
-            ReferencedContainer = "container:zimages.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "OS_ACTIVITY_MODE"
+            value = "disable"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -98,9 +81,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0969600B1B663E7B006DF53B"
-            BuildableName = "zimages.framework"
-            BlueprintName = "zimages-ios"
-            ReferencedContainer = "container:zimages.xcodeproj">
+            BuildableName = "WireImages.framework"
+            BlueprintName = "WireImages-ios"
+            ReferencedContainer = "container:WireImages.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

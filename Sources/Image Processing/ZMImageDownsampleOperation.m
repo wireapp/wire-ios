@@ -19,7 +19,7 @@
 
 @import CoreGraphics;
 @import ImageIO;
-@import ZMCSystem;
+@import WireSystem;
 
 #if TARGET_OS_IPHONE
 @import MobileCoreServices;

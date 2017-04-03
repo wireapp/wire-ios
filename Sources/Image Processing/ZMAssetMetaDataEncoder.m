@@ -19,7 +19,7 @@
 
 @import CoreGraphics;
 @import ImageIO;
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMAssetMetaDataEncoder.h"
 #import "NSData+ZMAdditions.h"

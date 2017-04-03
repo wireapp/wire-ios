@@ -23,8 +23,8 @@
 @import MobileCoreServices;
 #endif
 
-@import zimages;
-@import ZMTesting;
+@import WireImages;
+@import WireTesting;
 
 
 

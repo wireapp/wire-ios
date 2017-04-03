@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 #import "NSData+ZMAdditions.h"
 
 

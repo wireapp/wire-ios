@@ -17,4 +17,6 @@
 // 
 
 
-PRODUCT_NAME = zimages
+#include "WireImages.xcconfig"
+#include "zmc-config/ios.xcconfig"
+
