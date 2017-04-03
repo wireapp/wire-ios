@@ -17,4 +17,4 @@
 // 
 
 
-#import <ZMTesting/ZMTesting.h>
+#import <WireTesting/WireTesting.h>

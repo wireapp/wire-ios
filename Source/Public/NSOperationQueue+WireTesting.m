@@ -18,7 +18,7 @@
 
 
 #import "ZMTBaseTest.h"
-#import "NSOperationQueue+ZMTesting.h"
+#import "NSOperationQueue+WireTesting.h"
 
 @implementation NSOperationQueue (ZMTimingTests)
 

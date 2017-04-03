@@ -17,5 +17,14 @@
 // 
 
 
-#include "ZMTesting.xcconfig"
-#include "zmc-config/osx.xcconfig"
+#import <Foundation/Foundation.h>
+
+
+@interface NSOperationQueue (WireTesting)
+
+- (void)waitUntilAllOperationsAreFinishedWithTimeout:(NSTimeInterval)timeout;
+- (void)waitAndSpinMainLoopUntilAllOperationsAreFinishedWithTimeout:(NSTimeInterval)timeout;
+- (void)syncBlockWithReasonableTimeout:(void (^)(void))block;
+- (void)syncWithTimeout:(NSTimeInterval)timeout block:(void (^)(void))block;
+
+@end

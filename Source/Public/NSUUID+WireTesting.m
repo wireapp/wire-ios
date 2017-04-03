@@ -17,11 +17,11 @@
 // 
 
 
-#import "NSUUID+ZMTesting.h"
+#import "NSUUID+WireTesting.h"
 #import <CommonCrypto/CommonCrypto.h>
 #import <libkern/OSAtomic.h>
 
-@implementation NSUUID (ZMTesting)
+@implementation NSUUID (WireTesting)
 
 static uuid_t uuidBase;
 static int32_t uuidCounter;
