@@ -19,7 +19,7 @@
 
 #import "ZMMobileProvisionParser.h"
 
-@import ZMCSystem;
+@import WireSystem;
 
 static NSString * const WireTeamIdentifier = @"EDF3JCE8BC";
 static NSString * const ZetaProjectEnterpriseIdentifier = @"W5KEQBF9B5";

@@ -17,10 +17,9 @@
 // 
 
 
-@import ZMTesting;
-@import ZMUtilities;
+@import WireTesting;
+@import WireUtilities;
 
-#import <ZMTesting/ZMTAsserts.h>
 
 static NSString * const usernameValidCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&'*+-/=?^_`{|}~abcdefghijklmnopqrstuvwxyz0123456789";
 static NSString * const usernameValidCharactersLowercased = @"abcdefghijklmnopqrstuvwxyz!#$%&'*+-/=?^_`{|}~abcdefghijklmnopqrstuvwxyz0123456789";

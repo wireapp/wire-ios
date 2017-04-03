@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "NSData+ZMAdditions.h"
 #import <zlib.h>

@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMCSystem;
-@import ZMTesting;
+@import WireSystem;
+@import WireTesting;
 
 #import <XCTest/XCTest.h>
 #import "ZMTimer.h"

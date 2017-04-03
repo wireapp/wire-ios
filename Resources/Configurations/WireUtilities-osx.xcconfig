@@ -1,3 +1,3 @@
 
-#include "ZMUtilities.xcconfig"
+#include "WireUtilities.xcconfig"
 #include "zmc-config/osx.xcconfig"

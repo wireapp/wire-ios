@@ -18,8 +18,8 @@
 
 
 @import Foundation;
-@import ZMCSystem;
-@import ZMTesting;
+@import WireSystem;
+@import WireTesting;
 
 #import "NSData+ZMAdditions.h"
 #import <XCTest/XCTest.h>

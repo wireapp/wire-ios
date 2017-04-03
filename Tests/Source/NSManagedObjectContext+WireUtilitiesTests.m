@@ -18,18 +18,18 @@
 
 
 #import <XCTest/XCTest.h>
-#import "NSManagedObjectContext+ZMUtilities.h"
+#import "NSManagedObjectContext+WireUtilities.h"
 #import <objc/runtime.h>
-@import ZMCSystem;
-@import ZMTesting;
+@import WireSystem;
+@import WireTesting;
 
-@interface NSManagedObjectContext_ZMUtilitiesTests : ZMTBaseTest
+@interface NSManagedObjectContext_WireUtilitiesTests : ZMTBaseTest
 
 @property (nonatomic) NSManagedObjectContext *MOC;
 
 @end
 
-@implementation NSManagedObjectContext_ZMUtilitiesTests
+@implementation NSManagedObjectContext_WireUtilitiesTests
 
 - (void)setUp;
 {

@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMCSystem;
-#import "NSManagedObjectContext+ZMUtilities.h"
+@import WireSystem;
+#import "NSManagedObjectContext+WireUtilities.h"
 #import <objc/runtime.h>
 
 static char const AssociatedGroupsKey;

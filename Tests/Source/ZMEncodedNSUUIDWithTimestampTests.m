@@ -18,7 +18,7 @@
 
 
 #import <XCTest/XCTest.h>
-@import ZMTesting;
+@import WireTesting;
 
 #import "ZMEncodedNSUUIDWithTimestamp.h"
 #import <CommonCrypto/CommonCrypto.h>

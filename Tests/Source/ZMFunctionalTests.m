@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 #import <XCTest/XCTest.h>
 #import "ZMFunctional.h"
 #import <OCMock/OCMock.h>
