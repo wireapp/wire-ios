@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMBackendEnvironment.h"
 #import "ZMBackendEnvironment+Testing.h"

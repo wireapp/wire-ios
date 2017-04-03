@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMTransportRequestScheduler.h"
 #import "TransportTracing.h"

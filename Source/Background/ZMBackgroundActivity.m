@@ -18,7 +18,7 @@
 
 
 @import UIKit;
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMBackgroundActivity.h"
 

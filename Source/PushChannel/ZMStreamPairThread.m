@@ -18,7 +18,7 @@
 
 
 #import "ZMStreamPairThread.h"
-@import ZMCSystem;
+@import WireSystem;
 
 @import ObjectiveC;
 

@@ -18,10 +18,10 @@
 
 
 @import XCTest;
-@import ZMTesting;
-@import ZMTransport;
-@import ZMCSystem;
-@import ZMUtilities;
+@import WireTesting;
+@import WireTransport;
+@import WireSystem;
+@import WireUtilities;
 
 #if TARGET_OS_IPHONE
 @import MobileCoreServices;

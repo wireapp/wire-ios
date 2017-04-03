@@ -18,7 +18,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import <ZMTransport/ZMTransportData.h>
+#import <WireTransport/ZMTransportData.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

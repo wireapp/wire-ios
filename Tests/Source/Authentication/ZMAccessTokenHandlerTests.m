@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 @import XCTest;
-@import ZMTesting;
+@import WireTesting;
 @import OCMock;
 
 #import "ZMAccessTokenHandler.h"

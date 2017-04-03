@@ -18,7 +18,7 @@
 
 
 @import XCTest;
-@import ZMCSystem;
+@import WireSystem;
 #import "ZMTaskIdentifierMap.h"
 
 

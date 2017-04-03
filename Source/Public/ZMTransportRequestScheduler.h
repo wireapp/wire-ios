@@ -18,9 +18,9 @@
 
 
 #import <Foundation/Foundation.h>
-#import <ZMCSystem/ZMCSystem.h>
-#import <ZMUtilities/ZMUtilities.h>
-#import <ZMTransport/ZMReachability.h>
+#import <WireSystem/WireSystem.h>
+#import <WireUtilities/WireUtilities.h>
+#import <WireTransport/ZMReachability.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

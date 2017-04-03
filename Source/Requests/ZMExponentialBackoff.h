@@ -18,7 +18,7 @@
 
 
 #import <Foundation/Foundation.h>
-@import ZMCSystem;
+@import WireSystem;
 
 
 

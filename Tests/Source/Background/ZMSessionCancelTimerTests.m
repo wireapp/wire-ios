@@ -18,10 +18,10 @@
 
 
 @import XCTest;
-@import ZMTesting;
+@import WireTesting;
 @import OCMock;
 
-#import <ZMTransport/ZMTransport-Swift.h>
+#import <WireTransport/WireTransport-Swift.h>
 #import "ZMSessionCancelTimer.h"
 #import "ZMURLSession.h"
 #import "ZMBackgroundActivity.h"
@@ -123,8 +123,8 @@
     ZMSessionCancelTimer *sut = [[ZMSessionCancelTimer alloc] initWithURLSession:session timeout:1.0];
     
     // expect
-    [[(OCMockObject *)backgroundActivityFactory expect] backgroundActivityWithName:OCMOCK_ANY];
-    [[[[(OCMockObject *)backgroundActivityFactory expect] classMethod] andReturn:backgroundActivityFactory] sharedInstance];
+    (void)[[(OCMockObject *)backgroundActivityFactory expect] backgroundActivityWithName:OCMOCK_ANY];
+    (void)[[[[(OCMockObject *)backgroundActivityFactory expect] classMethod] andReturn:backgroundActivityFactory] sharedInstance];
     
     // when
     [sut start];
@@ -158,8 +158,8 @@
     }] endActivity];
     
     id factory = [OCMockObject mockForClass:BackgroundActivityFactory.class];
-    [[[[factory stub] andReturn:factory] classMethod] sharedInstance];
-    [[[factory stub] andReturn:activity] backgroundActivityWithName:OCMOCK_ANY];
+    (void)[[[[factory stub] andReturn:factory] classMethod] sharedInstance];
+    (void)[[[factory stub] andReturn:activity] backgroundActivityWithName:OCMOCK_ANY];
 
     // when
     [sut start];
@@ -194,8 +194,8 @@
     }] endActivity];
 
     id factory = [OCMockObject mockForClass:BackgroundActivityFactory.class];
-    [[[[factory stub] andReturn:factory] classMethod] sharedInstance];
-    [[[factory stub] andReturn:activity] backgroundActivityWithName:OCMOCK_ANY];
+    (void)[[[[factory stub] andReturn:factory] classMethod] sharedInstance];
+    (void)[[[factory stub] andReturn:activity] backgroundActivityWithName:OCMOCK_ANY];
 
     
     // when

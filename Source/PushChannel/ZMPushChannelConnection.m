@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMPushChannelConnection.h"
 #import "ZMPushChannelConnection+WebSocket.h"

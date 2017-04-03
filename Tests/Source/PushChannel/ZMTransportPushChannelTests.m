@@ -19,7 +19,7 @@
 
 @import XCTest;
 @import OCMock;
-@import ZMTesting;
+@import WireTesting;
 
 #import "ZMTransportPushChannel.h"
 #import "ZMTransportRequestScheduler.h"

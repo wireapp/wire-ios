@@ -19,7 +19,7 @@
 
 
 #import "ZMAccessToken.h"
-@import ZMCSystem;
+@import WireSystem;
 
 
 

@@ -18,8 +18,8 @@
 
 
 @import Security;
-@import ZMCSystem;
-@import ZMUtilities;
+@import WireSystem;
+@import WireUtilities;
 
 #import "ZMTLogging.h"
 #import "ZMPersistentCookieStorage.h"

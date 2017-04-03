@@ -17,7 +17,7 @@
 //
 
 @import XCTest;
-@import ZMTesting;
+@import WireTesting;
 @import OCMock;
 
 #import "ZMBackgroundActivity.h"

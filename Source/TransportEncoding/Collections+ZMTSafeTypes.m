@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMUtilities;
+@import WireUtilities;
 #import "Collections+ZMTSafeTypes.h"
 #import "NSObject+ZMTransportEncoding.h"
 

@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 #import "ZMWebSocket.h"
 #import "ZMNetworkSocket.h"
 #import "ZMDataBuffer.h"

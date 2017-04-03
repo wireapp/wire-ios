@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMURLSessionSwitch.h"
 #import "ZMURLSession.h"

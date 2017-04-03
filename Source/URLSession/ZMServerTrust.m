@@ -18,7 +18,7 @@
 
 
 #import "ZMServerTrust.h"
-@import ZMCSystem;
+@import WireSystem;
 #import <mach-o/dyld.h>
 
 // TODO: test

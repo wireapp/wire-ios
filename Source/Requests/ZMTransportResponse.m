@@ -19,7 +19,7 @@
 
 @import ImageIO;
 @import MobileCoreServices;
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMTransportResponse.h"
 
@@ -29,7 +29,7 @@
 #import "ZMTransportSession.h"
 #import "Collections+ZMTSafeTypes.h"
 #import "ZMTLogging.h"
-#import <ZMTransport/ZMTransport-Swift.h>
+#import <WireTransport/WireTransport-Swift.h>
 
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;

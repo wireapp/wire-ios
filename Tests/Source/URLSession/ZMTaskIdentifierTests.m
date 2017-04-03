@@ -18,7 +18,7 @@
 
 
 
-@import ZMTesting;
+@import WireTesting;
 @import OCMock;
 #import "ZMTaskIdentifier.h"
 
