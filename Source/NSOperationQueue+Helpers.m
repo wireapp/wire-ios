@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 #import "NSOperationQueue+Helpers.h"
 
 @implementation NSOperationQueue (ZMQueueFactory)

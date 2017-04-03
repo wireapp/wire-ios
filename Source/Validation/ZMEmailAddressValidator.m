@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMEmailAddressValidator.h"
 #import "ZMStringLengthValidator.h"

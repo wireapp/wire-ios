@@ -29,7 +29,7 @@ public class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyValidator 
         }
         
         guard let string = pointee as? String else {
-            fatal("Provided value \(ioValue.pointee) is not a string")
+            fatal("Provided value \(String(describing: ioValue.pointee)) is not a string")
         }
         
         let stringByRemovingExtremeCombiningCharacters = string.removingExtremeCombiningCharacters

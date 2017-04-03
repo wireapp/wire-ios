@@ -21,7 +21,7 @@
 
 #import "ZMMobileProvisionParser.h"
 
-@import ZMCSystem;
+@import WireSystem;
 
 id ZMDeploymentEnvironmentInternalMobileProvisionParserOverride;
 

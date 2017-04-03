@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 #import "NSManagedObjectContext+ZMUtilities.h"
 #import <objc/runtime.h>
 

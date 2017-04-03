@@ -47,9 +47,6 @@
 		543B049E1BC6B5FA008C2912 /* NSData+ZMSCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 543B049C1BC6B5FA008C2912 /* NSData+ZMSCrypto.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 543B04A01BC6B693008C2912 /* NSData+ZMSCrypto.m */; };
 		544B2FFE1C1FF79500384477 /* data_to_hash.enc in Resources */ = {isa = PBXBuildFile; fileRef = 544B2FFC1C1FF2DD00384477 /* data_to_hash.enc */; };
-		546E850B1B73DD2400532F17 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 546E850A1B73DD2400532F17 /* ZMCSystem.framework */; };
-		546E850C1B73DF1700532F17 /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 546E850A1B73DD2400532F17 /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		546E850D1B73DF1D00532F17 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 546E850A1B73DD2400532F17 /* ZMCSystem.framework */; };
 		546E8A4C1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A4B1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m */; };
 		546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A4F1B750146009EBA02 /* NSOperationQueue+HelpersTests.m */; };
 		546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A521B7501D0009EBA02 /* NSUUID+DataTests.m */; };
@@ -93,6 +90,11 @@
 		BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */; };
 		BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */; };
 		BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */; };
+		BF98AD651E927F4500026541 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF98AD641E927F4500026541 /* WireSystem.framework */; };
+		BF98AD661E92852E00026541 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF98AD641E927F4500026541 /* WireSystem.framework */; };
+		BF98AD681E92852E00026541 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF98AD671E92852E00026541 /* WireTesting.framework */; };
+		BF98AD691E92858100026541 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF98AD671E92852E00026541 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BF98AD6A1E92858100026541 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF98AD641E927F4500026541 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
 		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
@@ -125,11 +127,9 @@
 		F9D381B41B70B95100E6E4EB /* NSOrderedSet+ZMUTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D3819D1B70B91000E6E4EB /* NSOrderedSet+ZMUTests.m */; };
 		F9D381B61B70B95A00E6E4EB /* ZMUtilities-Tests.pch in Headers */ = {isa = PBXBuildFile; fileRef = F9D381A21B70B91000E6E4EB /* ZMUtilities-Tests.pch */; };
 		F9D381CA1B70D0DE00E6E4EB /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9D381C71B70D0DE00E6E4EB /* OCMock.framework */; };
-		F9D381CC1B70D0DE00E6E4EB /* ZMTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9D381C91B70D0DE00E6E4EB /* ZMTesting.framework */; };
 		F9D381D21B70D17400E6E4EB /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F9D381D11B70D17400E6E4EB /* libz.dylib */; };
 		F9D381DB1B70DF8500E6E4EB /* Hack.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D381DA1B70DF8500E6E4EB /* Hack.swift */; };
 		F9D381E71B70E56D00E6E4EB /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F9D381C71B70D0DE00E6E4EB /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F9D381E91B70E56D00E6E4EB /* ZMTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F9D381C91B70D0DE00E6E4EB /* ZMTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F9FCE0A21C7DBBD00092BA68 /* ZMSwiftExceptionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F9FCE0A01C7DBBD00092BA68 /* ZMSwiftExceptionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F9FCE0A11C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m */; };
 		F9FCE0A51C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */; };
@@ -159,9 +159,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				BF98AD691E92858100026541 /* WireTesting.framework in CopyFiles */,
+				BF98AD6A1E92858100026541 /* WireSystem.framework in CopyFiles */,
 				F9D381E71B70E56D00E6E4EB /* OCMock.framework in CopyFiles */,
-				F9D381E91B70E56D00E6E4EB /* ZMTesting.framework in CopyFiles */,
-				546E850C1B73DF1700532F17 /* ZMCSystem.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +281,8 @@
 		BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-production.xml"; sourceTree = "<group>"; };
 		BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "appstore-sandbox.xml"; path = "../appstore-sandbox.xml"; sourceTree = "<group>"; };
 		BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-sandbox.xml"; sourceTree = "<group>"; };
+		BF98AD641E927F4500026541 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
+		BF98AD671E92852E00026541 /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
 		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
@@ -335,7 +337,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				546E850B1B73DD2400532F17 /* ZMCSystem.framework in Frameworks */,
+				BF98AD651E927F4500026541 /* WireSystem.framework in Frameworks */,
 				F9D381D21B70D17400E6E4EB /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -344,9 +346,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				546E850D1B73DF1D00532F17 /* ZMCSystem.framework in Frameworks */,
+				BF98AD681E92852E00026541 /* WireTesting.framework in Frameworks */,
+				BF98AD661E92852E00026541 /* WireSystem.framework in Frameworks */,
 				F9D381CA1B70D0DE00E6E4EB /* OCMock.framework in Frameworks */,
-				F9D381CC1B70D0DE00E6E4EB /* ZMTesting.framework in Frameworks */,
 				3E88BD441B1F3EA300232589 /* ZMUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -475,6 +477,8 @@
 		3E88BE5E1B1F496600232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF98AD671E92852E00026541 /* WireTesting.framework */,
+				BF98AD641E927F4500026541 /* WireSystem.framework */,
 				546E850A1B73DD2400532F17 /* ZMCSystem.framework */,
 				F9D381D11B70D17400E6E4EB /* libz.dylib */,
 				F9D381C71B70D0DE00E6E4EB /* OCMock.framework */,
@@ -731,7 +735,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0830;
 				TargetAttributes = {
 					09F028CD1B78BE2700BADDB6 = {
 						CreatedOnToolsVersion = 6.4;

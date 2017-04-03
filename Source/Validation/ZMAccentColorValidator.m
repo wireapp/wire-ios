@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMAccentColorValidator.h"
 #import "ZMAccentColor.h"

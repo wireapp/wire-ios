@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMStringLengthValidator.h"
 #import "ZMPropertyValidator.h"

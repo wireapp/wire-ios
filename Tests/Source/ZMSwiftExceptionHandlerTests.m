@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 @import ZMUtilities;
 
 @interface ZMSwiftExceptionHandlerTests : ZMTBaseTest
