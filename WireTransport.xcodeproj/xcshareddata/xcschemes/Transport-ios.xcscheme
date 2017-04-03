@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0820"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BCA61B1F35DF00232589"
-               BuildableName = "ZMTransport.framework"
-               BlueprintName = "ZMTransport-ios"
-               ReferencedContainer = "container:ZMTransport.xcodeproj">
+               BuildableName = "WireTransport.framework"
+               BlueprintName = "WireTransport-ios"
+               ReferencedContainer = "container:WireTransport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BCB11B1F35DF00232589"
-               BuildableName = "ZMTransport-ios-tests.xctest"
-               BlueprintName = "ZMTransport-ios-tests"
-               ReferencedContainer = "container:ZMTransport.xcodeproj">
+               BuildableName = "WireTransport-ios-tests.xctest"
+               BlueprintName = "WireTransport-ios-tests"
+               ReferencedContainer = "container:WireTransport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BCB11B1F35DF00232589"
-               BuildableName = "ZMTransport-ios-tests.xctest"
-               BlueprintName = "ZMTransport-ios-tests"
-               ReferencedContainer = "container:ZMTransport.xcodeproj">
+               BuildableName = "WireTransport-ios-tests.xctest"
+               BlueprintName = "WireTransport-ios-tests"
+               ReferencedContainer = "container:WireTransport.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BCA61B1F35DF00232589"
-            BuildableName = "ZMTransport.framework"
-            BlueprintName = "ZMTransport-ios"
-            ReferencedContainer = "container:ZMTransport.xcodeproj">
+            BuildableName = "WireTransport.framework"
+            BlueprintName = "WireTransport-ios"
+            ReferencedContainer = "container:WireTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -79,9 +79,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BCA61B1F35DF00232589"
-            BuildableName = "ZMTransport.framework"
-            BlueprintName = "ZMTransport-ios"
-            ReferencedContainer = "container:ZMTransport.xcodeproj">
+            BuildableName = "WireTransport.framework"
+            BlueprintName = "WireTransport-ios"
+            ReferencedContainer = "container:WireTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -97,9 +97,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BCA61B1F35DF00232589"
-            BuildableName = "ZMTransport.framework"
-            BlueprintName = "ZMTransport-ios"
-            ReferencedContainer = "container:ZMTransport.xcodeproj">
+            BuildableName = "WireTransport.framework"
+            BlueprintName = "WireTransport-ios"
+            ReferencedContainer = "container:WireTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

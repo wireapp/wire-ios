@@ -18,7 +18,7 @@
 
 
 @import XCTest;
-@import ZMTransport;
+@import WireTransport;
 
 @interface NSData_MultipartTests : XCTestCase
 

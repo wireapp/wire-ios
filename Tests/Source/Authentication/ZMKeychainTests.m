@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 @import XCTest;
 
 #import "ZMKeychain.h"

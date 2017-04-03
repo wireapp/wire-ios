@@ -19,7 +19,7 @@
 
 #import "ZMTransportPushChannel.h"
 
-@import ZMCSystem;
+@import WireSystem;
 #import "ZMTransportRequestScheduler.h"
 #import "ZMTransportSession+internal.h"
 #import "ZMPushChannelConnection.h"

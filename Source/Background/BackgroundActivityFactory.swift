@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireUtilities
+
 
 private var _instance : BackgroundActivityFactory? = BackgroundActivityFactory() // swift automatically dispatch_once make this thread safe
 

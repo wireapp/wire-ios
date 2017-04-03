@@ -18,7 +18,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import <ZMCSystem/ZMCSystem.h>
+#import <WireSystem/WireSystem.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

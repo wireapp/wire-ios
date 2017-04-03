@@ -21,9 +21,9 @@
 #import "Collections+ZMTSafeTypes.h"
 #import "ZMTransportData.h"
 #import "NSString+UUID.h"
-#import <ZMTransport/ZMTransport-Swift.h>
+#import <WireTransport/WireTransport-Swift.h>
 
-@import ZMUtilities;
+@import WireUtilities;
 
 
 @interface NSDictionary (HashExtension)

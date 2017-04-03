@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-@testable import ZMTransport
+@testable import WireTransport
 
 class RequestLoopDetectionTests : XCTestCase {
     

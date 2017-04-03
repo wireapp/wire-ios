@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 @import XCTest;
-@import ZMTesting;
+@import WireTesting;
 
 @interface Collections_ZMTSafeTypesTests : XCTestCase
 

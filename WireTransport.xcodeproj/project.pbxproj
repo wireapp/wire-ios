@@ -11,18 +11,13 @@
 		095840201B9591F1004555F9 /* NSData+Multipart.m in Sources */ = {isa = PBXBuildFile; fileRef = 0958401E1B9591F1004555F9 /* NSData+Multipart.m */; };
 		095840221B959200004555F9 /* NSData+Multipart.h in Headers */ = {isa = PBXBuildFile; fileRef = 095840211B959200004555F9 /* NSData+Multipart.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09A2186B1B790D330076547A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A2186A1B790D330076547A /* main.m */; };
-		09A2186E1B790D330076547A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A2186D1B790D330076547A /* AppDelegate.m */; };
-		09A218711B790D330076547A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A218701B790D330076547A /* ViewController.m */; };
-		09A218741B790D330076547A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09A218721B790D330076547A /* Main.storyboard */; };
-		09A218761B790D330076547A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09A218751B790D330076547A /* Images.xcassets */; };
-		09A218791B790D330076547A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09A218771B790D330076547A /* LaunchScreen.xib */; };
 		09A2188E1B79E56B0076547A /* ZMSessionCancelTimerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E89C41B33015000DD1042 /* ZMSessionCancelTimerTests.m */; };
 		09A218951B79EA5E0076547A /* ZMBackendEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A218931B79EA5E0076547A /* ZMBackendEnvironment.m */; };
 		09A218971B79EA780076547A /* ZMBackendEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A218961B79EA780076547A /* ZMBackendEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09A218A11B79F1050076547A /* ZMBackendEnvironmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A2189E1B79F0FB0076547A /* ZMBackendEnvironmentTests.m */; };
 		09CC4AC11B7CE44900201C63 /* ZMTaskIdentifierMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 09CC4AC01B7CE44900201C63 /* ZMTaskIdentifierMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09F028C61B7252FC00BADDB6 /* Lorem Ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = 09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */; };
-		3E88BCB31B1F35DF00232589 /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* ZMTransport.framework */; };
+		3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		542434AC1BEA5C2500D33ACB /* Hack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542434AB1BEA5C2500D33ACB /* Hack.swift */; };
 		5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */; };
 		5431AC011DB4C8330040343C /* RequestLoopDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431AC001DB4C8330040343C /* RequestLoopDetectionTests.swift */; };
@@ -50,14 +45,8 @@
 		546E8A031B33015000DD1042 /* ZMTransportSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E89D91B33015000DD1042 /* ZMTransportSessionTests.m */; };
 		546E8A051B33015000DD1042 /* ZMURLSessionSwitchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E89DB1B33015000DD1042 /* ZMURLSessionSwitchTests.m */; };
 		546E8A071B33015000DD1042 /* ZMURLSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E89DC1B33015000DD1042 /* ZMURLSessionTests.m */; };
-		5477121F1B751FA300223568 /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5477121A1B751FA300223568 /* ZMCSystem.framework */; };
-		547712231B751FA300223568 /* ZMUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5477121C1B751FA300223568 /* ZMUtilities.framework */; };
 		547712251B751FA700223568 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 547712191B751FA300223568 /* ocmock.framework */; };
-		547712271B751FAB00223568 /* ZMTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5477121B1B751FA300223568 /* ZMTesting.framework */; };
 		547712291B751FD000223568 /* ocmock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 547712191B751FA300223568 /* ocmock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5477122A1B751FD000223568 /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5477121A1B751FA300223568 /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5477122B1B751FD000223568 /* ZMTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5477121B1B751FA300223568 /* ZMTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5477122C1B751FD000223568 /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5477121C1B751FA300223568 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5499FFBE1B31C66D00835C8B /* ZMDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF6E1B31C66C00835C8B /* ZMDataBuffer.h */; };
 		5499FFC01B31C66D00835C8B /* ZMDataBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5499FF6F1B31C66C00835C8B /* ZMDataBuffer.m */; };
 		5499FFC21B31C66D00835C8B /* ZMNetworkSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF701B31C66C00835C8B /* ZMNetworkSocket.h */; };
@@ -126,18 +115,29 @@
 		54CA15D71B32F2C1008D3787 /* ZMURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA154B1B32F2C1008D3787 /* ZMURLSession.m */; };
 		54CA15D91B32F2C1008D3787 /* ZMURLSessionSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA154C1B32F2C1008D3787 /* ZMURLSessionSwitch.m */; };
 		54CA15DC1B32F54B008D3787 /* TransportTracingProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 54CA150C1B32F2C1008D3787 /* TransportTracingProbes.d */; };
-		54CA15DF1B32F791008D3787 /* ZMTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15DE1B32F791008D3787 /* ZMTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54CA15DF1B32F791008D3787 /* WireTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15DE1B32F791008D3787 /* WireTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CAD7091BB5411F006FF8E9 /* ZMTLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CAD7081BB54097006FF8E9 /* ZMTLogging.h */; };
 		54EA3E6D1BEA65B80071592B /* Fakes.m in Sources */ = {isa = PBXBuildFile; fileRef = 54EA3E6C1BEA65B80071592B /* Fakes.m */; };
 		871667FE1BB2CD1E009C6EEA /* ZMKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 871667FC1BB2CD1E009C6EEA /* ZMKeychain.m */; };
 		871668001BB2CD2A009C6EEA /* ZMKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 871667FF1BB2CD2A009C6EEA /* ZMKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF3A7A641D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A631D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift */; };
 		BF3A7A6B1D8C01D30034FF40 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */; };
-		BF3A7A6C1D8C04550034FF40 /* ZMTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* ZMTransport.framework */; };
-		BF3A7A6D1D8C04550034FF40 /* ZMTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* ZMTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
+		BF3A7A6D1D8C04550034FF40 /* WireTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF453F1A1CC6377200403E1C /* ZMRequestCancellation.h in Headers */ = {isa = PBXBuildFile; fileRef = BF453F191CC6377200403E1C /* ZMRequestCancellation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF453F1D1CC63C4800403E1C /* ZMTaskIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BF453F1B1CC63C4800403E1C /* ZMTaskIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF453F1E1CC63C4800403E1C /* ZMTaskIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = BF453F1C1CC63C4800403E1C /* ZMTaskIdentifier.m */; };
+		BF49E9441E929B9B0006C4F0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF49E93B1E929B9B0006C4F0 /* AppDelegate.m */; };
+		BF49E9451E929B9B0006C4F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF49E93D1E929B9B0006C4F0 /* LaunchScreen.xib */; };
+		BF49E9461E929B9B0006C4F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF49E93F1E929B9B0006C4F0 /* Main.storyboard */; };
+		BF49E9471E929B9B0006C4F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF49E9411E929B9B0006C4F0 /* Images.xcassets */; };
+		BF49E9481E929B9B0006C4F0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF49E9431E929B9B0006C4F0 /* ViewController.m */; };
+		BF73CCB01E9290D700FA3003 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */; };
+		BF73CCB11E9290D700FA3003 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF73CCAF1E9290D700FA3003 /* WireSystem.framework */; };
+		BF73CCB21E9290FA00FA3003 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BF73CCB31E9290FA00FA3003 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF73CCAF1E9290D700FA3003 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BF73CCB51E92910D00FA3003 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF73CCB41E92910D00FA3003 /* WireTesting.framework */; };
+		BF73CCB61E92911D00FA3003 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF73CCB41E92910D00FA3003 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
@@ -180,10 +180,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				BF73CCB61E92911D00FA3003 /* WireTesting.framework in CopyFiles */,
+				BF73CCB21E9290FA00FA3003 /* WireUtilities.framework in CopyFiles */,
+				BF73CCB31E9290FA00FA3003 /* WireSystem.framework in CopyFiles */,
 				547712291B751FD000223568 /* ocmock.framework in CopyFiles */,
-				5477122A1B751FD000223568 /* ZMCSystem.framework in CopyFiles */,
-				5477122B1B751FD000223568 /* ZMTesting.framework in CopyFiles */,
-				5477122C1B751FD000223568 /* ZMUtilities.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +193,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BF3A7A6D1D8C04550034FF40 /* ZMTransport.framework in Embed Frameworks */,
+				BF3A7A6D1D8C04550034FF40 /* WireTransport.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -204,30 +204,23 @@
 		0928E2041BA023A30057232E /* NSData_MultipartTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSData_MultipartTests.m; sourceTree = "<group>"; };
 		0958401E1B9591F1004555F9 /* NSData+Multipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Multipart.m"; sourceTree = "<group>"; };
 		095840211B959200004555F9 /* NSData+Multipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Multipart.h"; sourceTree = "<group>"; };
-		09A218661B790D330076547A /* ZMTransport-tests-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ZMTransport-tests-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		09A218661B790D330076547A /* WireTransport-tests-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireTransport-tests-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		09A218691B790D330076547A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		09A2186A1B790D330076547A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		09A2186C1B790D330076547A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		09A2186D1B790D330076547A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		09A2186F1B790D330076547A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		09A218701B790D330076547A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		09A218731B790D330076547A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		09A218751B790D330076547A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		09A218781B790D330076547A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		09A218931B79EA5E0076547A /* ZMBackendEnvironment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMBackendEnvironment.m; sourceTree = "<group>"; };
 		09A218961B79EA780076547A /* ZMBackendEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMBackendEnvironment.h; sourceTree = "<group>"; };
 		09A2189E1B79F0FB0076547A /* ZMBackendEnvironmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMBackendEnvironmentTests.m; sourceTree = "<group>"; };
 		09CC4AC01B7CE44900201C63 /* ZMTaskIdentifierMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTaskIdentifierMap.h; sourceTree = "<group>"; };
 		09F027D71B721EBE00BADDB6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
-		09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ZMTransport-ios.xcconfig"; sourceTree = "<group>"; };
-		09F027D91B721EBE00BADDB6 /* ZMTransport-osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ZMTransport-osx.xcconfig"; sourceTree = "<group>"; };
-		09F027DA1B721EBE00BADDB6 /* ZMTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ZMTransport.xcconfig; sourceTree = "<group>"; };
+		09F027D81B721EBE00BADDB6 /* WireTransport-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WireTransport-ios.xcconfig"; sourceTree = "<group>"; };
+		09F027D91B721EBE00BADDB6 /* WireTransport-osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WireTransport-osx.xcconfig"; sourceTree = "<group>"; };
+		09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireTransport.xcconfig; sourceTree = "<group>"; };
 		09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Lorem Ipsum.txt"; sourceTree = "<group>"; };
-		3E88BCA71B1F35DF00232589 /* ZMTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZMTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3E88BCB21B1F35DF00232589 /* ZMTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ZMTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3E88BD211B1F383000232589 /* ZMTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMTransport-Info.plist"; sourceTree = "<group>"; };
-		3E88BD221B1F383000232589 /* ZMTransport-Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZMTransport-Test-Info.plist"; sourceTree = "<group>"; };
-		542434AA1BEA5C2400D33ACB /* ZMTransport-ios-tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMTransport-ios-tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		3E88BCA71B1F35DF00232589 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E88BD211B1F383000232589 /* WireTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTransport-Info.plist"; sourceTree = "<group>"; };
+		3E88BD221B1F383000232589 /* WireTransport-Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTransport-Test-Info.plist"; sourceTree = "<group>"; };
+		542434AA1BEA5C2400D33ACB /* WireTransport-ios-tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireTransport-ios-tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		542434AB1BEA5C2500D33ACB /* Hack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hack.swift; sourceTree = "<group>"; };
 		5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestLoopDetection.swift; sourceTree = "<group>"; };
 		5431AC001DB4C8330040343C /* RequestLoopDetectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestLoopDetectionTests.swift; sourceTree = "<group>"; };
@@ -273,9 +266,6 @@
 		547712171B751F7900223568 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		547712181B751F7900223568 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		547712191B751FA300223568 /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ocmock.framework; path = Carthage/Build/iOS/ocmock.framework; sourceTree = "<group>"; };
-		5477121A1B751FA300223568 /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
-		5477121B1B751FA300223568 /* ZMTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMTesting.framework; path = Carthage/Build/iOS/ZMTesting.framework; sourceTree = "<group>"; };
-		5477121C1B751FA300223568 /* ZMUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMUtilities.framework; path = Carthage/Build/iOS/ZMUtilities.framework; sourceTree = "<group>"; };
 		5499FF6E1B31C66C00835C8B /* ZMDataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMDataBuffer.h; sourceTree = "<group>"; };
 		5499FF6F1B31C66C00835C8B /* ZMDataBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMDataBuffer.m; sourceTree = "<group>"; };
 		5499FF701B31C66C00835C8B /* ZMNetworkSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMNetworkSocket.h; sourceTree = "<group>"; };
@@ -348,7 +338,7 @@
 		54CA154A1B32F2C1008D3787 /* ZMURLSession+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMURLSession+Internal.h"; sourceTree = "<group>"; };
 		54CA154B1B32F2C1008D3787 /* ZMURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMURLSession.m; sourceTree = "<group>"; };
 		54CA154C1B32F2C1008D3787 /* ZMURLSessionSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMURLSessionSwitch.m; sourceTree = "<group>"; };
-		54CA15DE1B32F791008D3787 /* ZMTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTransport.h; sourceTree = "<group>"; };
+		54CA15DE1B32F791008D3787 /* WireTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireTransport.h; sourceTree = "<group>"; };
 		54CAD7081BB54097006FF8E9 /* ZMTLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMTLogging.h; sourceTree = "<group>"; };
 		54EA3E6B1BEA65B80071592B /* Fakes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fakes.h; sourceTree = "<group>"; };
 		54EA3E6C1BEA65B80071592B /* Fakes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Fakes.m; sourceTree = "<group>"; };
@@ -359,6 +349,16 @@
 		BF453F191CC6377200403E1C /* ZMRequestCancellation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMRequestCancellation.h; sourceTree = "<group>"; };
 		BF453F1B1CC63C4800403E1C /* ZMTaskIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTaskIdentifier.h; sourceTree = "<group>"; };
 		BF453F1C1CC63C4800403E1C /* ZMTaskIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifier.m; sourceTree = "<group>"; };
+		BF49E93A1E929B9B0006C4F0 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		BF49E93B1E929B9B0006C4F0 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		BF49E93E1E929B9B0006C4F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		BF49E9401E929B9B0006C4F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
+		BF49E9411E929B9B0006C4F0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		BF49E9421E929B9B0006C4F0 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		BF49E9431E929B9B0006C4F0 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
+		BF73CCAF1E9290D700FA3003 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
+		BF73CCB41E92910D00FA3003 /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
@@ -376,7 +376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF3A7A6B1D8C01D30034FF40 /* CoreImage.framework in Frameworks */,
-				BF3A7A6C1D8C04550034FF40 /* ZMTransport.framework in Frameworks */,
+				BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,8 +384,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				547712231B751FA300223568 /* ZMUtilities.framework in Frameworks */,
-				5477121F1B751FA300223568 /* ZMCSystem.framework in Frameworks */,
+				BF73CCB01E9290D700FA3003 /* WireUtilities.framework in Frameworks */,
+				BF73CCB11E9290D700FA3003 /* WireSystem.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,28 +393,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				547712271B751FAB00223568 /* ZMTesting.framework in Frameworks */,
+				BF73CCB51E92910D00FA3003 /* WireTesting.framework in Frameworks */,
 				547712251B751FA700223568 /* ocmock.framework in Frameworks */,
-				3E88BCB31B1F35DF00232589 /* ZMTransport.framework in Frameworks */,
+				3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		09A218671B790D330076547A /* ZMTransport-tests-host */ = {
+		09A218671B790D330076547A /* WireTransport-tests-host */ = {
 			isa = PBXGroup;
 			children = (
-				09A2186C1B790D330076547A /* AppDelegate.h */,
-				09A2186D1B790D330076547A /* AppDelegate.m */,
-				09A2186F1B790D330076547A /* ViewController.h */,
-				09A218701B790D330076547A /* ViewController.m */,
-				09A218721B790D330076547A /* Main.storyboard */,
-				09A218751B790D330076547A /* Images.xcassets */,
-				09A218771B790D330076547A /* LaunchScreen.xib */,
+				BF49E93A1E929B9B0006C4F0 /* AppDelegate.h */,
+				BF49E93B1E929B9B0006C4F0 /* AppDelegate.m */,
+				BF49E93C1E929B9B0006C4F0 /* Base.lproj */,
+				BF49E9411E929B9B0006C4F0 /* Images.xcassets */,
+				BF49E9421E929B9B0006C4F0 /* ViewController.h */,
+				BF49E9431E929B9B0006C4F0 /* ViewController.m */,
 				09A218681B790D330076547A /* Supporting Files */,
 			);
-			path = "ZMTransport-tests-host";
+			path = "WireTransport-tests-host";
 			sourceTree = "<group>";
 		};
 		09A218681B790D330076547A /* Supporting Files */ = {
@@ -449,9 +448,9 @@
 			children = (
 				547712091B751F7900223568 /* zmc-config */,
 				09F027D71B721EBE00BADDB6 /* version.xcconfig */,
-				09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */,
-				09F027D91B721EBE00BADDB6 /* ZMTransport-osx.xcconfig */,
-				09F027DA1B721EBE00BADDB6 /* ZMTransport.xcconfig */,
+				09F027D81B721EBE00BADDB6 /* WireTransport-ios.xcconfig */,
+				09F027D91B721EBE00BADDB6 /* WireTransport-osx.xcconfig */,
+				09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -473,7 +472,7 @@
 				5499FF661B31C66C00835C8B /* Source */,
 				546E89BD1B33015000DD1042 /* Tests */,
 				3E88BD0B1B1F370700232589 /* Resources */,
-				09A218671B790D330076547A /* ZMTransport-tests-host */,
+				09A218671B790D330076547A /* WireTransport-tests-host */,
 				3E88BDE01B1F44FB00232589 /* Frameworks */,
 				3E88BCA81B1F35DF00232589 /* Products */,
 			);
@@ -482,9 +481,9 @@
 		3E88BCA81B1F35DF00232589 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3E88BCA71B1F35DF00232589 /* ZMTransport.framework */,
-				3E88BCB21B1F35DF00232589 /* ZMTransport-ios-tests.xctest */,
-				09A218661B790D330076547A /* ZMTransport-tests-host.app */,
+				3E88BCA71B1F35DF00232589 /* WireTransport.framework */,
+				3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */,
+				09A218661B790D330076547A /* WireTransport-tests-host.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -494,8 +493,8 @@
 			children = (
 				09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */,
 				09F027D61B721EBE00BADDB6 /* Configurations */,
-				3E88BD211B1F383000232589 /* ZMTransport-Info.plist */,
-				3E88BD221B1F383000232589 /* ZMTransport-Test-Info.plist */,
+				3E88BD211B1F383000232589 /* WireTransport-Info.plist */,
+				3E88BD221B1F383000232589 /* WireTransport-Test-Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -503,11 +502,11 @@
 		3E88BDE01B1F44FB00232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF73CCB41E92910D00FA3003 /* WireTesting.framework */,
+				BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */,
+				BF73CCAF1E9290D700FA3003 /* WireSystem.framework */,
 				BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */,
 				547712191B751FA300223568 /* ocmock.framework */,
-				5477121A1B751FA300223568 /* ZMCSystem.framework */,
-				5477121B1B751FA300223568 /* ZMTesting.framework */,
-				5477121C1B751FA300223568 /* ZMUtilities.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -534,7 +533,7 @@
 				546E89D71B33015000DD1042 /* TransportSession */,
 				546E89DA1B33015000DD1042 /* URLSession */,
 				542434AB1BEA5C2500D33ACB /* Hack.swift */,
-				542434AA1BEA5C2400D33ACB /* ZMTransport-ios-tests-Bridging-Header.h */,
+				542434AA1BEA5C2400D33ACB /* WireTransport-ios-tests-Bridging-Header.h */,
 				54EA3E6B1BEA65B80071592B /* Fakes.h */,
 				54EA3E6C1BEA65B80071592B /* Fakes.m */,
 			);
@@ -727,7 +726,7 @@
 			isa = PBXGroup;
 			children = (
 				F9C9A7821CAE9BDF0039E10C /* ZMUpdateEvent.h */,
-				54CA15DE1B32F791008D3787 /* ZMTransport.h */,
+				54CA15DE1B32F791008D3787 /* WireTransport.h */,
 				5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */,
 				5451EF9D1B7A1359002F503B /* Collections+ZMTSafeTypes.h */,
 				F91EAAC71D8860380010ACBE /* Collections+ZMSafeTypes.swift */,
@@ -816,6 +815,15 @@
 			path = URLSession;
 			sourceTree = "<group>";
 		};
+		BF49E93C1E929B9B0006C4F0 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				BF49E93D1E929B9B0006C4F0 /* LaunchScreen.xib */,
+				BF49E93F1E929B9B0006C4F0 /* Main.storyboard */,
+			);
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -855,7 +863,7 @@
 				095840221B959200004555F9 /* NSData+Multipart.h in Headers */,
 				54CA15D51B32F2C1008D3787 /* ZMURLSession+Internal.h in Headers */,
 				BF453F1D1CC63C4800403E1C /* ZMTaskIdentifier.h in Headers */,
-				54CA15DF1B32F791008D3787 /* ZMTransport.h in Headers */,
+				54CA15DF1B32F791008D3787 /* WireTransport.h in Headers */,
 				54CA15831B32F2C1008D3787 /* ZMURLSession.h in Headers */,
 				5499FFC61B31C66D00835C8B /* ZMPushChannelConnection+WebSocket.h in Headers */,
 				54CA15631B32F2C1008D3787 /* TransportTracing.h in Headers */,
@@ -876,9 +884,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		09A218651B790D330076547A /* ZMTransport-tests-host */ = {
+		09A218651B790D330076547A /* WireTransport-tests-host */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 09A218861B790D330076547A /* Build configuration list for PBXNativeTarget "ZMTransport-tests-host" */;
+			buildConfigurationList = 09A218861B790D330076547A /* Build configuration list for PBXNativeTarget "WireTransport-tests-host" */;
 			buildPhases = (
 				09A218621B790D330076547A /* Sources */,
 				09A218631B790D330076547A /* Frameworks */,
@@ -891,14 +899,14 @@
 			dependencies = (
 				BF3A7A6F1D8C04550034FF40 /* PBXTargetDependency */,
 			);
-			name = "ZMTransport-tests-host";
+			name = "WireTransport-tests-host";
 			productName = "ZMTransport-tests-host";
-			productReference = 09A218661B790D330076547A /* ZMTransport-tests-host.app */;
+			productReference = 09A218661B790D330076547A /* WireTransport-tests-host.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3E88BCA61B1F35DF00232589 /* ZMTransport-ios */ = {
+		3E88BCA61B1F35DF00232589 /* WireTransport-ios */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3E88BCBD1B1F35DF00232589 /* Build configuration list for PBXNativeTarget "ZMTransport-ios" */;
+			buildConfigurationList = 3E88BCBD1B1F35DF00232589 /* Build configuration list for PBXNativeTarget "WireTransport-ios" */;
 			buildPhases = (
 				3E88BCA21B1F35DF00232589 /* Sources */,
 				3E88BCA31B1F35DF00232589 /* Frameworks */,
@@ -909,14 +917,14 @@
 			);
 			dependencies = (
 			);
-			name = "ZMTransport-ios";
+			name = "WireTransport-ios";
 			productName = Transport;
-			productReference = 3E88BCA71B1F35DF00232589 /* ZMTransport.framework */;
+			productReference = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		3E88BCB11B1F35DF00232589 /* ZMTransport-ios-tests */ = {
+		3E88BCB11B1F35DF00232589 /* WireTransport-ios-tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3E88BCC01B1F35DF00232589 /* Build configuration list for PBXNativeTarget "ZMTransport-ios-tests" */;
+			buildConfigurationList = 3E88BCC01B1F35DF00232589 /* Build configuration list for PBXNativeTarget "WireTransport-ios-tests" */;
 			buildPhases = (
 				3E88BCAE1B1F35DF00232589 /* Sources */,
 				3E88BCAF1B1F35DF00232589 /* Frameworks */,
@@ -929,9 +937,9 @@
 				3E88BCB51B1F35DF00232589 /* PBXTargetDependency */,
 				09A2188D1B790D6E0076547A /* PBXTargetDependency */,
 			);
-			name = "ZMTransport-ios-tests";
+			name = "WireTransport-ios-tests";
 			productName = TransportTests;
-			productReference = 3E88BCB21B1F35DF00232589 /* ZMTransport-ios-tests.xctest */;
+			productReference = 3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -940,7 +948,7 @@
 		3E88BC9E1B1F35DF00232589 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = Wire;
 				TargetAttributes = {
 					09A218651B790D330076547A = {
@@ -960,7 +968,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3E88BCA11B1F35DF00232589 /* Build configuration list for PBXProject "ZMTransport" */;
+			buildConfigurationList = 3E88BCA11B1F35DF00232589 /* Build configuration list for PBXProject "WireTransport" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -973,9 +981,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3E88BCA61B1F35DF00232589 /* ZMTransport-ios */,
-				3E88BCB11B1F35DF00232589 /* ZMTransport-ios-tests */,
-				09A218651B790D330076547A /* ZMTransport-tests-host */,
+				3E88BCA61B1F35DF00232589 /* WireTransport-ios */,
+				3E88BCB11B1F35DF00232589 /* WireTransport-ios-tests */,
+				09A218651B790D330076547A /* WireTransport-tests-host */,
 			);
 		};
 /* End PBXProject section */
@@ -985,9 +993,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09A218741B790D330076547A /* Main.storyboard in Resources */,
-				09A218791B790D330076547A /* LaunchScreen.xib in Resources */,
-				09A218761B790D330076547A /* Images.xcassets in Resources */,
+				BF49E9471E929B9B0006C4F0 /* Images.xcassets in Resources */,
+				BF49E9451E929B9B0006C4F0 /* LaunchScreen.xib in Resources */,
+				BF49E9461E929B9B0006C4F0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1016,9 +1024,9 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
-				"$(BUILT_PRODUCTS_DIR)/ZMTransport.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ZMUtilities.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ZMCSystem.framework",
+				"$(BUILT_PRODUCTS_DIR)/WireTransport.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/WireUtilities.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
 			);
 			name = "Install frameworks";
 			outputPaths = (
@@ -1034,8 +1042,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09A218711B790D330076547A /* ViewController.m in Sources */,
-				09A2186E1B790D330076547A /* AppDelegate.m in Sources */,
+				BF49E9481E929B9B0006C4F0 /* ViewController.m in Sources */,
+				BF49E9441E929B9B0006C4F0 /* AppDelegate.m in Sources */,
 				09A2186B1B790D330076547A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1133,36 +1141,36 @@
 /* Begin PBXTargetDependency section */
 		09A2188D1B790D6E0076547A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 09A218651B790D330076547A /* ZMTransport-tests-host */;
+			target = 09A218651B790D330076547A /* WireTransport-tests-host */;
 			targetProxy = 09A2188C1B790D6E0076547A /* PBXContainerItemProxy */;
 		};
 		3E88BCB51B1F35DF00232589 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3E88BCA61B1F35DF00232589 /* ZMTransport-ios */;
+			target = 3E88BCA61B1F35DF00232589 /* WireTransport-ios */;
 			targetProxy = 3E88BCB41B1F35DF00232589 /* PBXContainerItemProxy */;
 		};
 		BF3A7A6F1D8C04550034FF40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3E88BCA61B1F35DF00232589 /* ZMTransport-ios */;
+			target = 3E88BCA61B1F35DF00232589 /* WireTransport-ios */;
 			targetProxy = BF3A7A6E1D8C04550034FF40 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		09A218721B790D330076547A /* Main.storyboard */ = {
+		BF49E93D1E929B9B0006C4F0 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				09A218731B790D330076547A /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		09A218771B790D330076547A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				09A218781B790D330076547A /* Base */,
+				BF49E93E1E929B9B0006C4F0 /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		BF49E93F1E929B9B0006C4F0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BF49E9401E929B9B0006C4F0 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1208,7 +1216,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = "ZMTransport-tests-host/Info.plist";
+				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1252,7 +1260,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = "ZMTransport-tests-host/Info.plist";
+				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1288,7 +1296,7 @@
 		};
 		3E88BCBE1B1F35DF00232589 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */;
+			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* WireTransport-ios.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1297,9 +1305,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = W5KEQBF9B5;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMTransport-Info.plist";
+				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = WireTransport;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -1307,7 +1316,7 @@
 		};
 		3E88BCBF1B1F35DF00232589 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* ZMTransport-ios.xcconfig */;
+			baseConfigurationReference = 09F027D81B721EBE00BADDB6 /* WireTransport-ios.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1316,9 +1325,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = W5KEQBF9B5;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/ZMTransport-Info.plist";
+				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = WireTransport;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -1335,14 +1345,14 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = "Resources/ZMTransport-Test-Info.plist";
+				INFOPLIST_FILE = "Resources/WireTransport-Test-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/ZMTransport-ios-tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZMTransport-tests-host.app/ZMTransport-tests-host";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireTransport-tests-host.app/WireTransport-tests-host";
 			};
 			name = Debug;
 		};
@@ -1358,20 +1368,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = "Resources/ZMTransport-Test-Info.plist";
+				INFOPLIST_FILE = "Resources/WireTransport-Test-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/ZMTransport-ios-tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZMTransport-tests-host.app/ZMTransport-tests-host";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireTransport-tests-host.app/WireTransport-tests-host";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		09A218861B790D330076547A /* Build configuration list for PBXNativeTarget "ZMTransport-tests-host" */ = {
+		09A218861B790D330076547A /* Build configuration list for PBXNativeTarget "WireTransport-tests-host" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				09A218871B790D330076547A /* Debug */,
@@ -1380,7 +1390,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3E88BCA11B1F35DF00232589 /* Build configuration list for PBXProject "ZMTransport" */ = {
+		3E88BCA11B1F35DF00232589 /* Build configuration list for PBXProject "WireTransport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3E88BCBB1B1F35DF00232589 /* Debug */,
@@ -1389,7 +1399,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3E88BCBD1B1F35DF00232589 /* Build configuration list for PBXNativeTarget "ZMTransport-ios" */ = {
+		3E88BCBD1B1F35DF00232589 /* Build configuration list for PBXNativeTarget "WireTransport-ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3E88BCBE1B1F35DF00232589 /* Debug */,
@@ -1398,7 +1408,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3E88BCC01B1F35DF00232589 /* Build configuration list for PBXNativeTarget "ZMTransport-ios-tests" */ = {
+		3E88BCC01B1F35DF00232589 /* Build configuration list for PBXNativeTarget "WireTransport-ios-tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3E88BCC11B1F35DF00232589 /* Debug */,

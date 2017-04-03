@@ -19,8 +19,8 @@
 
 
 #import "TransportTracingProbes.h"
-#import <ZMTransport/NSString+UUID.h>
-#import <ZMTransport/NSObject+ZMTransportEncoding.h>
+#import <WireTransport/NSString+UUID.h>
+#import <WireTransport/NSObject+ZMTransportEncoding.h>
 
 
 

@@ -18,7 +18,7 @@
 
 
 @import Foundation;
-@import ZMCSystem;
+@import WireSystem;
 
 @class ZMDataBuffer;
 

@@ -18,6 +18,7 @@
 
 
 import Foundation
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "SafeTypes")
 
@@ -102,11 +103,11 @@ public extension NSDictionary {
     }
     
     public func date(forKey key: String) -> Date? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key){NSDate(transport: $0) as? Date}
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { NSDate(transport: $0) as Date? }
     }
     
     public func optionalDate(forKey key: String) -> Date? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key){NSDate(transport: $0) as? Date}
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { NSDate(transport: $0) as Date? }
     }
 }
 

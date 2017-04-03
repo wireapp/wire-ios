@@ -18,8 +18,8 @@
 
 
 @import XCTest;
-@import ZMCSystem;
-@import ZMUtilities;
+@import WireSystem;
+@import WireUtilities;
 
 #import "ZMURLSessionSwitch.h"
 #import "ZMURLSession.h"

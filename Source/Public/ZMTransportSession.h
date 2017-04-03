@@ -18,11 +18,11 @@
 
 
 #import <Foundation/Foundation.h>
-#import <ZMTransport/ZMTransportResponse.h>
-#import <ZMTransport/ZMTransportRequest.h>
-#import <ZMTransport/ZMReachability.h>
-#import <ZMTransport/ZMBackgroundable.h>
-#import <ZMTransport/ZMRequestCancellation.h>
+#import <WireTransport/ZMTransportResponse.h>
+#import <WireTransport/ZMTransportRequest.h>
+#import <WireTransport/ZMReachability.h>
+#import <WireTransport/ZMBackgroundable.h>
+#import <WireTransport/ZMRequestCancellation.h>
 
 
 NS_ASSUME_NONNULL_BEGIN

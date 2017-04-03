@@ -18,7 +18,7 @@
 
 
 @import SystemConfiguration;
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMReachability.h"
 #import <libkern/OSAtomic.h>

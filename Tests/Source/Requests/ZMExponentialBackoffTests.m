@@ -18,9 +18,9 @@
 
 
 @import XCTest;
-@import ZMCSystem;
-@import ZMUtilities;
-@import ZMTesting;
+@import WireSystem;
+@import WireUtilities;
+@import WireTesting;
 
 #import "ZMExponentialBackoff.h"
 

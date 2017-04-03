@@ -18,8 +18,8 @@
 
 
 @import XCTest;
-@import ZMTesting;
-@import ZMCSystem;
+@import WireTesting;
+@import WireSystem;
 
 #import "ZMNetworkSocket.h"
 

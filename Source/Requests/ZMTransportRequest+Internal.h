@@ -17,7 +17,7 @@
 // 
 
 
-#import <ZMTransport/ZMTransportRequest.h>
+#import <WireTransport/ZMTransportRequest.h>
 
 
 @interface ZMTransportRequest (Internal)

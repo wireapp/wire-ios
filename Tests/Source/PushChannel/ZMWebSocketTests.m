@@ -18,7 +18,7 @@
 
 
 @import XCTest;
-@import ZMTesting;
+@import WireTesting;
 @import OCMock;
 
 #import "ZMWebSocket.h"

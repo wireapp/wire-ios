@@ -18,9 +18,9 @@
 
 
 @import XCTest;
-@import ZMCSystem;
+@import WireSystem;
 @import OCMock;
-@import ZMTesting;
+@import WireTesting;
 
 
 #if TARGET_OS_IPHONE
@@ -472,8 +472,6 @@ static __weak FakeReachability *currentReachability;
         @"token_type": @"Dummy",
         @"expires_in": @(7777)
     };
-    
-    [self verifyMockLater:self.URLSession];
     
     [ZMPersistentCookieStorage deleteAllKeychainItems];
 }
@@ -2572,22 +2570,20 @@ static __weak FakeReachability *currentReachability;
     [[[(id)self.URLSessionSwitch stub] andReturn:backgroundSessionMock] backgroundSession];
     [[(id)self.URLSession expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:foregroundRequest];
     [[(id)backgroundSessionMock expect] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:backgroundRequest];
-    
+
+    [self verifyMockLater:backgroundSessionMock];
+
     [(ZMURLSession *)[backgroundSessionMock expect] getTasksWithCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^block)(NSArray <NSURLSessionTask *>*) = obj;
         block(@[expectedTask]);
         return YES;
     }]];
-    
-    [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
-        return [TestResponse testResponse];
-    }];
-    
+
     [backgroundRequest forceToBackgroundSession];
-    
+
     [self.sut sendSchedulerItem:foregroundRequest];
     [self.sut sendSchedulerItem:backgroundRequest];
-    
+
     // when
     [self.sut getBackgroundTasksWithCompletionHandler:^(NSArray<NSURLSessionTask *> *backgroundTasks) {
         XCTAssertEqualObjects(expectedTask, backgroundTasks.firstObject);

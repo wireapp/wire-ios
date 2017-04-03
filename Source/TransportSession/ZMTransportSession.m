@@ -17,13 +17,13 @@
 // 
 
 
-@import ZMCSystem;
-@import ZMUtilities;
+@import WireSystem;
+@import WireUtilities;
 @import UIKit;
 
-#import <ZMTransport/ZMTransport-Swift.h>
+#import <WireTransport/WireTransport-Swift.h>
 
-#import "ZMTransportSession+Internal.h"
+#import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
 #import "ZMAccessToken.h"
 #import "ZMTransportRequest+Internal.h"
