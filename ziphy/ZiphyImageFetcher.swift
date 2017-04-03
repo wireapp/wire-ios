@@ -332,7 +332,7 @@ public typealias SingleZiphCallBack = (_ imageData:Data?, _ ziph:Ziph?,  _ error
                 if array.contains(result!) {
                     result = _whileNotIn(array, generator, iterIndex+1)
                 }
-                LogVerbose("Generated new element \(result) which is not in \(array) at iteration \(iterIndex)")
+                LogVerbose("Generated new element \(String(describing: result)) which is not in \(array) at iteration \(iterIndex)")
                 return result
             }
         }
