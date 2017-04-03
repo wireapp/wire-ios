@@ -17,6 +17,15 @@
 // 
 
 
-#include "zmc-config/swift.xcconfig"
+#import <Foundation/Foundation.h>
 
-PRODUCT_NAME = ZMTesting
+@interface NSUUID (WireTesting)
+
+/// Returns a UUID which will return the same sequence of UUIDs for the same tests when re-run
+- (NSUUID *)createUUID;
++ (NSUUID *)createUUID;
+
+/// Call it in setUp method. This will ensure that the same UUID will be generated for the same test case basing on it's name.
++ (void)reseedUUID:(NSString *)testName;
+
+@end

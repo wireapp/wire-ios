@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMCSystem;
-#import "NSData+ZMTesting.h"
+@import WireSystem;
+#import "NSData+WireTesting.h"
 #import <zlib.h>
 
 

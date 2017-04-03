@@ -17,16 +17,16 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 @import OCMock;
 @import MobileCoreServices;
 
 #import "ZMTBaseTest.h"
 #import "ZMTExpectation.h"
 #import <libkern/OSAtomic.h>
-#import <ZMTesting/ZMTesting-Swift.h>
+#import <WireTesting/WireTesting-Swift.h>
 #import <CommonCrypto/CommonCrypto.h>
-#import "NSUUID+ZMTesting.h"
+#import "NSUUID+WireTesting.h"
 
 @interface ZMTBaseTest()
 
