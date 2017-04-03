@@ -23,7 +23,7 @@ install:
 script:
   - open -b com.apple.iphonesimulator
   - set -o pipefail
-  - xcodebuild build test -scheme ZMCLinkPreview -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | tee >build.log >(xcpretty -s)
+  - xcodebuild build test -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' | tee >build.log >(xcpretty -s)
   - bundle exec danger
 
 after_failure:
