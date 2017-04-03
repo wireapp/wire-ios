@@ -17,4 +17,4 @@
 // 
 
 
-#import <ZMUtilities/NSData+ZMSCrypto.h>
+#import <WireUtilities/NSData+ZMSCrypto.h>
