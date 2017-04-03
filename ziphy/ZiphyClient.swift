@@ -309,7 +309,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
             }
             else {
                 
-                LogError("Response Error: \(maybeResponse)")
+                LogError("Response Error: \(String(describing: maybeResponse))")
                 
                 return Either.Left(NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.badResponse.rawValue,
@@ -340,7 +340,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
             }
             else {
                 
-                LogError("Response Error: \(maybeResponse)")
+                LogError("Response Error: \(String(describing: maybeResponse))")
                 
                 return Either.Left(NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.badResponse.rawValue,

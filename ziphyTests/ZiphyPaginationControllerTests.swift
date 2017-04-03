@@ -65,7 +65,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
             }
             else {
                 
-                XCTFail("\(error?.localizedDescription)")
+                XCTFail(String(describing: error?.localizedDescription))
             }
         }
         
@@ -114,8 +114,8 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
             }
             else if (!success) {
                 expectation.fulfill()
-                
-                let isNoMorePagesError = (error as! NSError).code == ZiphyError.noMorePages.rawValue
+
+                let isNoMorePagesError = (error as NSError?)?.code == ZiphyError.noMorePages.rawValue
                 
                 XCTAssertTrue(isNoMorePagesError, "Failed because of some other error")
             }

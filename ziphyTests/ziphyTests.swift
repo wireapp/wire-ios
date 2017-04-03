@@ -34,16 +34,11 @@ class ziphyTests: ZiphyTestCase {
         self.ziphyClient = ZiphyClient(host:"api.giphy.com", requester:self.defaultRequester)
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
     func testThatSeachReturnsResults() {
         
         //Set up
         
-        
+
         let expectation = self.expectation(description: "did return some results")
         
         _ = self.ziphyClient.search(term:"cat", resultsLimit: 10, offset: 0) { (success, gifs, error) -> () in
@@ -121,8 +116,6 @@ class ziphyTests: ZiphyTestCase {
             XCTAssertNil(image, "Returned image should be nill")
             
             if image == nil && ziph == nil {
-                
-                print(error?.localizedDescription)
                 expectation.fulfill()
             }
         }
@@ -145,7 +138,6 @@ class ziphyTests: ZiphyTestCase {
             XCTAssertNil(image, "Returned image should be nill")
             
             if image == nil && ziph == nil {
-                print(error?.localizedDescription)
                 expectation.fulfill()
             }
         }
@@ -206,10 +198,6 @@ class ziphyTests: ZiphyTestCase {
                     }
                 }
             }
-            else {
-                
-                print(error?.localizedDescription)
-            }
         }
         
         waitForExpectations(timeout: 20) { (error) in
@@ -242,7 +230,6 @@ class ziphyTests: ZiphyTestCase {
                     fetchImage()
                 }
                 else {
-                    print(error?.localizedDescription)
                     expectation2.fulfill()
                 }
             }
@@ -290,12 +277,8 @@ class ziphyTests: ZiphyTestCase {
         }
         
         imageFetcher.nextImage { (imageData, otherZiph, error) -> () in
-            
             if imageData != nil && otherZiph != nil {
                 recurse(10, 1, false)
-            }
-            else {
-                print(error?.localizedDescription)
             }
         }
         
@@ -333,9 +316,6 @@ class ziphyTests: ZiphyTestCase {
             
             if success && error == nil && ziphs.count == 2 {
                 expectation.fulfill()
-            }
-            else {
-                print(error?.localizedDescription)
             }
         }
         
