@@ -18,7 +18,7 @@
 
 import XCTest
 import FBSnapshotTestCase
-@testable import Canvas
+@testable import WireCanvas
 
 class CanvasTests: FBSnapshotTestCase {
     

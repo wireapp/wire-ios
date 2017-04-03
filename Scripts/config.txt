@@ -1,4 +1,4 @@
-framework=Canvas
+framework=WireCanvas
 organization=wireapp
 repository=wire-ios-canvas
 release-name-format={SUPER_HERO} VS. {SUPER_HERO}

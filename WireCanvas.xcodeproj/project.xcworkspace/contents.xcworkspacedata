@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Canvas.xcodeproj">
+      location = "self:/Users/mnx/work/wire-ios-canvas/WireCanvas.xcodeproj">
    </FileRef>
 </Workspace>
