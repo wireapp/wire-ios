@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,23 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-               BuildableName = "ZMCSystem.framework"
-               BlueprintName = "ZMCSystem-ios"
-               ReferencedContainer = "container:ZMCSystem.xcodeproj">
+               BuildableName = "WireSystem.framework"
+               BlueprintName = "WireSystem-ios"
+               ReferencedContainer = "container:WireSystem.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "54A3272B1B99A3190004EB95"
+               BuildableName = "WireSystem-ios Tests.xctest"
+               BlueprintName = "WireSystem-ios Tests"
+               ReferencedContainer = "container:WireSystem.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "54A3272B1B99A3190004EB95"
-               BuildableName = "ZMCSystem-ios Tests.xctest"
-               BlueprintName = "ZMCSystem-ios Tests"
-               ReferencedContainer = "container:ZMCSystem.xcodeproj">
+               BuildableName = "WireSystem-ios Tests.xctest"
+               BlueprintName = "WireSystem-ios Tests"
+               ReferencedContainer = "container:WireSystem.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-            BuildableName = "ZMCSystem.framework"
-            BlueprintName = "ZMCSystem-ios"
-            ReferencedContainer = "container:ZMCSystem.xcodeproj">
+            BuildableName = "WireSystem.framework"
+            BlueprintName = "WireSystem-ios"
+            ReferencedContainer = "container:WireSystem.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -65,9 +79,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-            BuildableName = "ZMCSystem.framework"
-            BlueprintName = "ZMCSystem-ios"
-            ReferencedContainer = "container:ZMCSystem.xcodeproj">
+            BuildableName = "WireSystem.framework"
+            BlueprintName = "WireSystem-ios"
+            ReferencedContainer = "container:WireSystem.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -83,9 +97,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-            BuildableName = "ZMCSystem.framework"
-            BlueprintName = "ZMCSystem-ios"
-            ReferencedContainer = "container:ZMCSystem.xcodeproj">
+            BuildableName = "WireSystem.framework"
+            BlueprintName = "WireSystem-ios"
+            ReferencedContainer = "container:WireSystem.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

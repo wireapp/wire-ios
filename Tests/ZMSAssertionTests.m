@@ -18,7 +18,7 @@
 
 
 #import <XCTest/XCTest.h>
-#import <ZMCSystem/ZMCSystem.h>
+#import <WireSystem/WireSystem.h>
 
 @interface ZMSAssertionTests : XCTestCase
 

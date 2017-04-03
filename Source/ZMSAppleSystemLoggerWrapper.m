@@ -20,7 +20,7 @@
 #import "ZMSAppleSystemLoggerWrapper.h"
 #import "ZMSLogging.h"
 #import <asl.h>
-#import "ZMCSystem/ZMCSystem-swift.h"
+#import "WireSystem/WireSystem-swift.h"
 
 
 @implementation ZMSASLClient

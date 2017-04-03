@@ -17,23 +17,8 @@
 // 
 
 
-#import <Foundation/Foundation.h>
 
-//! Project version number for ZMSystem.
-FOUNDATION_EXPORT double ZMSystemVersionNumber;
+#include "WireSystem.xcconfig"
+#include "zmc-config/ios.xcconfig"
 
-//! Project version string for ZMSystem.
-FOUNDATION_EXPORT const unsigned char ZMSystemVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <ZMSystem/PublicHeader.h>
-
-#import <ZMCSystem/ZMSAppleSystemLoggerWrapper.h>
-#import <ZMCSystem/ZMSAsserts.h>
-#import <ZMCSystem/ZMSActivity.h>
-#import <ZMCSystem/ZMSDefines.h>
-#import <ZMCSystem/ZMSLogging.h>
-#import <ZMCSystem/ZMSGroupQueue.h>
-#import <ZMCSystem/ZMSDispatchGroup.h>
-#import <ZMCSystem/ZMSTimePoint.h>
-#import <ZMCSystem/ZMSTestDetection.h>
-
+APPLICATION_EXTENSION_API_ONLY = YES

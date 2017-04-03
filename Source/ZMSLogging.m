@@ -18,7 +18,7 @@
 
 
 #import "ZMSLogging.h"
-#import "ZMCSystem/ZMCSystem-swift.h"
+#import "WireSystem/WireSystem-swift.h"
 
 void ZMLog(NSString *tag, char const * const filename, int linenumber, ZMLogLevel_t logLevel, NSString *format, ...)
 {

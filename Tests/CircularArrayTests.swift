@@ -17,7 +17,7 @@
 //
 
 import XCTest
-@testable import ZMCSystem
+@testable import WireSystem
 
 class CircularArrayTests : XCTestCase {
     
