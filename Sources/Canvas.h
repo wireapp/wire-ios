@@ -19,10 +19,10 @@
 #import <UIKit/UIKit.h>
 
 //! Project version number for Canvas.
-FOUNDATION_EXPORT double CanvasVersionNumber;
+FOUNDATION_EXPORT double WireCanvasVersionNumber;
 
 //! Project version string for Canvas.
-FOUNDATION_EXPORT const unsigned char CanvasVersionString[];
+FOUNDATION_EXPORT const unsigned char WireCanvasVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Canvas/PublicHeader.h>
 
