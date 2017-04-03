@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TEST_RESOURCES_DIR='ZMCLinkPreviewTests'
+export TEST_RESOURCES_DIR='WireLinkPreviewTests'
 export USER_AGENT='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
 
 echo "Downloading sample pages"

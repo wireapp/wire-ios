@@ -10,11 +10,11 @@ You can find the published source code at [github.com/wireapp/wire](https://gith
 
 For licensing information, see the attached LICENSE file and the list of third-party licenses at [wire.com/legal/licenses/](https://wire.com/legal/licenses/).
 
-#ZMCLinkPreview
+# WireLinkPreview
 
 This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
 
-ZMCLinkPreview is a Swift framework that can be used to fetch and parse Open Graph data that is present on most webpages (see http://ogp.me/ for more information and https://developers.facebook.com/tools/debug/sharing to debug open graph data).
+WireLinkPreview is a Swift framework that can be used to fetch and parse Open Graph data that is present on most webpages (see http://ogp.me/ for more information and https://developers.facebook.com/tools/debug/sharing to debug open graph data).
 
 ### How to build
 

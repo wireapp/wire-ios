@@ -17,7 +17,7 @@
 //
 
 import XCTest
-@testable import ZMCLinkPreview
+@testable import WireLinkPreview
 
 class IntegrationTests: XCTestCase {
 

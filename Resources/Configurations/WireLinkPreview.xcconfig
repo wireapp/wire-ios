@@ -1,2 +1,2 @@
 #include "zmc-config/swift.xcconfig"
-PRODUCT_NAME = ZMCLinkPreview
+PRODUCT_NAME = WireLinkPreview
