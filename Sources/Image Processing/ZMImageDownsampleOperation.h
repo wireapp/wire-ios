@@ -19,8 +19,8 @@
 
 @import Foundation;
 
-#import <zimages/ZMImageOwner.h>
-#import <zimages/ZMIImageProperties.h>
+#import <WireImages/ZMImageOwner.h>
+#import <WireImages/ZMIImageProperties.h>
 
 @class ZMImageLoadOperation;
 

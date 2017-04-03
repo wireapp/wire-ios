@@ -19,7 +19,7 @@
 
 @import Foundation;
 
-#import <zimages/ZMImageOwner.h>
+#import <WireImages/ZMImageOwner.h>
 
 
 @interface ZMAssetMetaDataEncoder : NSObject

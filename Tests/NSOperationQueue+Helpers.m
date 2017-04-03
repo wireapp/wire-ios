@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 #import "NSOperationQueue+Helpers.h"
 
 @implementation NSOperationQueue (Helpers)

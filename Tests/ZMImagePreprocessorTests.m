@@ -17,8 +17,8 @@
 // 
 
 
-@import zimages;
-@import ZMTesting;
+@import WireImages;
+@import WireTesting;
 @import OCMock;
 
 

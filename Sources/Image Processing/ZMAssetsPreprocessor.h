@@ -19,8 +19,8 @@
 
 @import Foundation;
 
-#import <zimages/ZMImageOwner.h>
-#import <zimages/ZMImageDownsampleOperation.h>
+#import <WireImages/ZMImageOwner.h>
+#import <WireImages/ZMImageDownsampleOperation.h>
 
 @protocol ZMAssetsPreprocessorDelegate;
 

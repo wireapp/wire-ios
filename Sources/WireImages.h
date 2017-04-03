@@ -19,19 +19,19 @@
 
 @import Foundation;
 
-//! Project version number for zimages.
-FOUNDATION_EXPORT double zimagesVersionNumber;
+//! Project version number for WireImages.
+FOUNDATION_EXPORT double WireImagesVersionNumber;
 
-//! Project version string for zimages.
-FOUNDATION_EXPORT const unsigned char zimagesVersionString[];
+//! Project version string for WireImages.
+FOUNDATION_EXPORT const unsigned char WireImagesVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <zimages/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <WireImages/PublicHeader.h>
 
 
-#import <zimages/ZMImageOwner.h>
-#import <zimages/ZMImageDownsampleOperation.h>
-#import <zimages/ZMImageLoadOperation.h>
-#import <zimages/ZMAssetMetaDataEncoder.h>
-#import <zimages/ZMAssetsPreprocessor.h>
-#import <zimages/ZMImagePreprocessor.h>
-#import <zimages/ZMIImageProperties.h>
+#import <WireImages/ZMImageOwner.h>
+#import <WireImages/ZMImageDownsampleOperation.h>
+#import <WireImages/ZMImageLoadOperation.h>
+#import <WireImages/ZMAssetMetaDataEncoder.h>
+#import <WireImages/ZMAssetsPreprocessor.h>
+#import <WireImages/ZMImagePreprocessor.h>
+#import <WireImages/ZMIImageProperties.h>

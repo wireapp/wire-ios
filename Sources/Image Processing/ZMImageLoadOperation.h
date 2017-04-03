@@ -20,7 +20,7 @@
 @import Foundation;
 @import CoreGraphics;
 
-#import <zimages/ZMIImageProperties.h>
+#import <WireImages/ZMIImageProperties.h>
 
 @interface ZMImageLoadOperation : NSOperation
 
