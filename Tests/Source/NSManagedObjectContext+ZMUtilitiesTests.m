@@ -20,8 +20,8 @@
 #import <XCTest/XCTest.h>
 #import "NSManagedObjectContext+ZMUtilities.h"
 #import <objc/runtime.h>
-@import ZMCSystem;
-@import ZMTesting;
+@import WireSystem;
+@import WireTesting;
 
 @interface NSManagedObjectContext_ZMUtilitiesTests : ZMTBaseTest
 

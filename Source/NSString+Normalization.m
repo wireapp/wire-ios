@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "NSString+Normalization.h"
 

@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "NSUserDefaults+SharedUserDefaults.h"
 #import <CommonCrypto/CommonCrypto.h>

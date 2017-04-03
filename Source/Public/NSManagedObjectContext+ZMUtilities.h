@@ -19,7 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import <ZMCSystem/ZMCSystem.h>
+#import <WireSystem/WireSystem.h>
 
 
 
