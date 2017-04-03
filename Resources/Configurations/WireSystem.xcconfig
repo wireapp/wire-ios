@@ -1,2 +1,2 @@
 #include "zmc-config/swift.xcconfig"
-PRODUCT_NAME = ZMCSystem
+PRODUCT_NAME = WireSystem

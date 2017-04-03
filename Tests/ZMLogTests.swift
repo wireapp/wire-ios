@@ -18,7 +18,7 @@
 
 
 import XCTest
-@testable import ZMCSystem
+@testable import WireSystem
 
 class ZMLogTests: XCTestCase {
 

@@ -18,7 +18,7 @@
 
 
 #import <XCTest/XCTest.h>
-#import <ZMCSystem/ZMCSystem.h>
+#import <WireSystem/WireSystem.h>
 
 static NSString* ZMLogTag = @"Testing";
 

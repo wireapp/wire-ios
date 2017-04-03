@@ -1,4 +1,4 @@
-framework=ZMCSystem
+framework=WireSystem
 repository=wire-ios-system
 organization=wireapp
 release-name-format={PROPER_NAME} the {ADJECTIVE} {MONSTER} from {GERMAN_TOWN}
