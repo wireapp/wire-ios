@@ -1,2 +1,2 @@
 #include "wire-ios-xcconfig/swift.xcconfig"
-PRODUCT_NAME = Canvas
+PRODUCT_NAME = WireCanvas
