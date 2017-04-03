@@ -1,4 +1,4 @@
-framework=ZMUtilities
+framework=WireUtilities
 repository=wire-ios-utilities
 organization=wireapp
 release-name-format=It smells like a {ADJECTIVE} {NOUN}
