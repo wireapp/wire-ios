@@ -160,7 +160,7 @@ extension ZMConversation {
 // "You left"
 final internal class SelfUserLeftMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
-        return !status.isSelfAnActiveMember
+        return status.isGroup && !status.isSelfAnActiveMember
     }
     
     func description(with status: ConversationStatus, conversation: ZMConversation) -> NSAttributedString? {
