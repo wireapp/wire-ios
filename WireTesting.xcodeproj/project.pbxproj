@@ -34,6 +34,7 @@
 		5454E1441B73A01800F131F8 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
 		5454E1451B73A02200F131F8 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 096AD7ED1B68D8F900E007A8 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5454E14A1B73A09100F131F8 /* ZMTExpectationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */; };
+		5470E07E1E92832B0076F49F /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5442DE6B1E92767E00D2F33D /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54AD999D1B737699009BD606 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7ED1B68D8F900E007A8 /* OCMock.framework */; };
 		54AFD7E11CB6986A0090E33A /* 1900x1500.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DB1CB698690090E33A /* 1900x1500.jpg */; };
 		54AFD7E21CB6986A0090E33A /* animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DC1CB698690090E33A /* animated.gif */; };
@@ -68,6 +69,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				5470E07E1E92832B0076F49F /* WireSystem.framework in CopyFiles */,
 				5454E1451B73A02200F131F8 /* OCMock.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
