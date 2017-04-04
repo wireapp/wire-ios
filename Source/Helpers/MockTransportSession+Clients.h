@@ -17,7 +17,7 @@
 // 
 
 
-#import <ZMCMockTransport/ZMCMockTransport.h>
+#import <WireMockTransport/WireMockTransport.h>
 
 @interface MockTransportSession (Clients)
 

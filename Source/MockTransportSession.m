@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMUtilities;
-@import ZMTesting;
-@import ZMTransport;
+@import WireUtilities;
+@import WireTesting;
+@import WireTransport;
 #import "MockPicture.h"
 #import "MockTransportSession+conversations.h"
 #import "MockTransportSession+internal.h"
@@ -30,7 +30,7 @@
 #import "MockFlowManager.h"
 #import "MockPushEvent.h"
 #import "MockPreKey.h"
-#import "ZMCMockTransport/ZMCMockTransport-Swift.h"
+#import "WireMockTransport/WireMockTransport-Swift.h"
 
 NSString * const ZMPushChannelStateChangeNotificationName = @"ZMPushChannelStateChangeNotification";
 NSString * const ZMPushChannelIsOpenKey = @"pushChannelIsOpen";

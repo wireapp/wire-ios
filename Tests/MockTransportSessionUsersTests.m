@@ -18,7 +18,7 @@
 
 
 #import "MockTransportSessionTests.h"
-@import ZMCMockTransport;
+@import WireMockTransport;
 
 @interface MockTransportSessionUsersTests : MockTransportSessionTests
 

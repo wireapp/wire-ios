@@ -17,12 +17,12 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
+@import WireTransport;
+@import WireUtilities;
 
 #import "MockTransportSession+Clients.h"
 #import "MockTransportSession+internal.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 @implementation MockTransportSession (Clients)

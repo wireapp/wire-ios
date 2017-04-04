@@ -17,17 +17,17 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
-@import Cryptobox;
+@import WireTransport;
+@import WireUtilities;
+@import WireCryptobox;
 
 #import "MockConversation.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockEvent.h"
 #import "MockEvent.h"
 #import "MockAsset.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 static NSString * const JoinedString = @"joined";

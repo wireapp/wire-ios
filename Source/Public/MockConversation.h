@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 @import CoreData;
-@import ZMTransport;
+@import WireTransport;
 
 
 @class MockUser;

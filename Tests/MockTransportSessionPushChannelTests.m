@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 #import "MockTransportSessionTests.h"
 #import "MockPushEvent.h"
 

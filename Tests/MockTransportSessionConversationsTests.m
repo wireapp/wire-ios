@@ -18,11 +18,11 @@
 
 
 #import "MockTransportSessionTests.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 #import "MockPushEvent.h"
-@import ZMProtos;
-@import ZMCDataModel;
+@import WireProtos;
+@import WireDataModel;
 
 @interface MockTransportSessionConversationsTests : MockTransportSessionTests
 

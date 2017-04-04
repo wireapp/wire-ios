@@ -18,7 +18,7 @@
 
 
 @import CoreData;
-@import Cryptobox;
+@import WireCryptobox;
 
 @class MockUserClient;
 

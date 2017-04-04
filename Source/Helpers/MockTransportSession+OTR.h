@@ -18,7 +18,8 @@
 
 
 #import "MockTransportSession+internal.h"
-@import ZMProtos;
+
+@import WireProtos;
 
 @protocol OtrMessage <NSObject>
 

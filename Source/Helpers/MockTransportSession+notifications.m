@@ -18,7 +18,7 @@
 
 #import "MockPushEvent.h"
 #import "MockTransportSession+notifications.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockTransportSession (Notifications)
 
