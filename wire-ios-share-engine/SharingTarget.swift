@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import ZMCDataModel
+import WireDataModel
 
 /// A target of sharing content
 public protocol SharingTarget {

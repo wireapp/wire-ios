@@ -18,9 +18,9 @@
 
 
 import XCTest
-import ZMCDataModel
-import ZMCMockTransport
-import ZMTesting
+import WireDataModel
+import WireMockTransport
+import WireTesting
 @testable import WireShareEngine
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {

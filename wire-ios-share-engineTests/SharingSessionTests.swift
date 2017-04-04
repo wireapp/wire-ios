@@ -17,8 +17,8 @@
 //
 
 import XCTest
-import ZMCDataModel
-import ZMTesting
+import WireDataModel
+import WireTesting
 
 class SharingSessionTests: BaseSharingSessionTests {
     

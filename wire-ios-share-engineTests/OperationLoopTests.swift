@@ -18,8 +18,8 @@
 
 import Foundation
 import XCTest
-import ZMTesting
-import ZMCDataModel
+import WireTesting
+import WireDataModel
 import WireRequestStrategy
 @testable import WireShareEngine
 

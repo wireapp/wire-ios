@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import ZMCDataModel
+import WireDataModel
 
 /// A object that can be sent, in progress, or failed, optionally tracking the sending progress
 public protocol Sendable {
