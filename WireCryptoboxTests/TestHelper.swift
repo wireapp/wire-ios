@@ -18,7 +18,7 @@
 
 
 import Foundation
-import Cryptobox
+import WireCryptobox
 
 /// sample client ID
 let hardcodedClientId = EncryptionSessionIdentifier(rawValue: "1e9b4e187a9eb715")

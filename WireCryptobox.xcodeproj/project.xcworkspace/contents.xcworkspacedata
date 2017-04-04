@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Cryptobox.xcodeproj">
+      location = "self:/Users/mnx/work/wire-ios-cryptobox/WireCryptobox.xcodeproj">
    </FileRef>
 </Workspace>

@@ -1,4 +1,4 @@
-framework=Cryptobox
+framework=WireCryptobox
 organization=wireapp
 repository=wire-ios-cryptobox
 release-name-format=You should never {VERB} in {CITY}

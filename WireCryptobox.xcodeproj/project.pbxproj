@@ -9,11 +9,9 @@
 /* Begin PBXBuildFile section */
 		0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
 		0928E2611BA0785F0057232E /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
-		0928E36D1BA0908F0057232E /* Cryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* Cryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09E393C31BAC2E5600F3EA1B /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* Cryptobox.framework */; };
-		54060B7B1DB7719000AEA9BB /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; };
+		0928E36D1BA0908F0057232E /* WireCryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* WireCryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		09E393C31BAC2E5600F3EA1B /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; };
 		54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54060B7C1DB771B400AEA9BB /* Logs.swift */; };
-		54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5421C5F81D2C152C00048251 /* NSData+CBox.swift */; };
 		5442B4DB1E360195006B5282 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 5442B4DA1E360195006B5282 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5471A6591D24215B0092A9A9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6581D24215B0092A9A9 /* main.m */; };
@@ -22,8 +20,8 @@
 		5471A6621D24215B0092A9A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6601D24215B0092A9A9 /* Main.storyboard */; };
 		5471A6641D24215B0092A9A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6631D24215B0092A9A9 /* Assets.xcassets */; };
 		5471A6671D24215B0092A9A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6651D24215B0092A9A9 /* LaunchScreen.storyboard */; };
-		5471A66E1D24221A0092A9A9 /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* Cryptobox.framework */; };
-		5471A66F1D24221A0092A9A9 /* Cryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* Cryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5471A66E1D24221A0092A9A9 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; };
+		5471A66F1D24221A0092A9A9 /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6731D242D740092A9A9 /* PointerWrapper.swift */; };
 		5471A6781D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */; };
 		54A1573F1D23C00500EB3B4F /* EncryptionContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */; };
@@ -33,6 +31,8 @@
 		54B949941D2541350041CC55 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B949931D2541350041CC55 /* TestHelper.swift */; };
 		54C69DDA1D216A6B0060FBEC /* EncryptionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */; };
 		54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */; };
+		F10C8E241E9296BA00020408 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; };
+		F10C8E251E92977000020408 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
 		F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 /* End PBXBuildFile section */
@@ -61,7 +61,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */,
+				F10C8E251E92977000020408 /* WireSystem.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +71,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5471A66F1D24221A0092A9A9 /* Cryptobox.framework in Embed Frameworks */,
+				5471A66F1D24221A0092A9A9 /* WireCryptobox.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -79,11 +79,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0928E2341BA0777A0057232E /* Cryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Cryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		0928E36C1BA0908F0057232E /* Cryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cryptobox.h; sourceTree = "<group>"; };
+		0928E2341BA0777A0057232E /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0928E36C1BA0908F0057232E /* WireCryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireCryptobox.h; sourceTree = "<group>"; };
 		0928E36E1BA0909D0057232E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Cryptobox-ios.xcconfig"; sourceTree = "<group>"; };
-		0928E3751BA17E300057232E /* Cryptobox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Cryptobox.xcconfig; sourceTree = "<group>"; };
+		0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WireCryptobox-ios.xcconfig"; sourceTree = "<group>"; };
+		0928E3751BA17E300057232E /* WireCryptobox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireCryptobox.xcconfig; sourceTree = "<group>"; };
 		0928E3761BA17E300057232E /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		0928E3771BA17E300057232E /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		0928E3781BA17E300057232E /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
@@ -98,7 +98,6 @@
 		0928E3811BA17E300057232E /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		0928E3821BA17E300057232E /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		0928E3831BA17E300057232E /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
 		5442B4DA1E360195006B5282 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
@@ -122,8 +121,9 @@
 		54B949931D2541350041CC55 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContext.swift; sourceTree = "<group>"; };
 		54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBoxError.swift; sourceTree = "<group>"; };
-		BA7EF9691B7109B600204A8E /* CryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F10C8E231E9296BA00020408 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		F50303291B8CFA2C0053E406 /* libcryptobox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcryptobox.a; sourceTree = "<group>"; };
 		F503032A1B8CFA2C0053E406 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsodium.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -133,7 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54060B7B1DB7719000AEA9BB /* ZMCSystem.framework in Frameworks */,
+				F10C8E241E9296BA00020408 /* WireSystem.framework in Frameworks */,
 				0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */,
 				0928E2611BA0785F0057232E /* libsodium.a in Frameworks */,
 			);
@@ -143,7 +143,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5471A66E1D24221A0092A9A9 /* Cryptobox.framework in Frameworks */,
+				5471A66E1D24221A0092A9A9 /* WireCryptobox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,7 +151,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09E393C31BAC2E5600F3EA1B /* Cryptobox.framework in Frameworks */,
+				09E393C31BAC2E5600F3EA1B /* WireCryptobox.framework in Frameworks */,
 				F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */,
 				F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */,
 			);
@@ -171,8 +171,8 @@
 		0928E35B1BA090620057232E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */,
-				0928E3751BA17E300057232E /* Cryptobox.xcconfig */,
+				0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */,
+				0928E3751BA17E300057232E /* WireCryptobox.xcconfig */,
 				0928E3761BA17E300057232E /* ios-test-host.xcconfig */,
 				0928E3771BA17E300057232E /* ios-test-target.xcconfig */,
 				0928E3781BA17E300057232E /* ios.xcconfig */,
@@ -197,14 +197,6 @@
 				0928E36E1BA0909D0057232E /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		54060B791DB7714A00AEA9BB /* Framework */ = {
-			isa = PBXGroup;
-			children = (
-				54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */,
-			);
-			name = Framework;
 			sourceTree = "<group>";
 		};
 		5471A6561D24215B0092A9A9 /* test-host */ = {
@@ -234,31 +226,31 @@
 		BA7EF9551B7109B600204A8E = {
 			isa = PBXGroup;
 			children = (
-				BA7EF9601B7109B600204A8E /* Cryptobox */,
+				BA7EF9601B7109B600204A8E /* WireCryptobox */,
 				0928E35A1BA090620057232E /* Resources */,
 				BA7EF9781B710B4D00204A8E /* Libraries */,
 				BA7EF96D1B7109B600204A8E /* CryptoboxTests */,
 				5471A6561D24215B0092A9A9 /* test-host */,
 				BA7EF95F1B7109B600204A8E /* Products */,
-				54060B791DB7714A00AEA9BB /* Framework */,
+				F10C8E221E9296BA00020408 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
 		BA7EF95F1B7109B600204A8E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BA7EF9691B7109B600204A8E /* CryptoboxTests.xctest */,
-				0928E2341BA0777A0057232E /* Cryptobox.framework */,
+				BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */,
+				0928E2341BA0777A0057232E /* WireCryptobox.framework */,
 				5471A6551D24215B0092A9A9 /* test-host.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BA7EF9601B7109B600204A8E /* Cryptobox */ = {
+		BA7EF9601B7109B600204A8E /* WireCryptobox */ = {
 			isa = PBXGroup;
 			children = (
 				5442B4DA1E360195006B5282 /* cbox.h */,
-				0928E36C1BA0908F0057232E /* Cryptobox.h */,
+				0928E36C1BA0908F0057232E /* WireCryptobox.h */,
 				54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */,
 				5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */,
 				54B224801DBE89FD00FDB35E /* EncryptionSession+Debugging.swift */,
@@ -268,7 +260,7 @@
 				54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */,
 				0928E36F1BA090A00057232E /* Supporting Files */,
 			);
-			path = Cryptobox;
+			path = WireCryptobox;
 			sourceTree = "<group>";
 		};
 		BA7EF96D1B7109B600204A8E /* CryptoboxTests */ = {
@@ -281,7 +273,8 @@
 				54B949931D2541350041CC55 /* TestHelper.swift */,
 				54A1573D1D23C00500EB3B4F /* CryptoboxTests-Bridging-Header.h */,
 			);
-			path = CryptoboxTests;
+			name = CryptoboxTests;
+			path = WireCryptoboxTests;
 			sourceTree = "<group>";
 		};
 		BA7EF96E1B7109B600204A8E /* Supporting Files */ = {
@@ -298,6 +291,14 @@
 				F50303281B8CFA2C0053E406 /* lib */,
 			);
 			name = Libraries;
+			sourceTree = "<group>";
+		};
+		F10C8E221E9296BA00020408 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F10C8E231E9296BA00020408 /* WireSystem.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		F50303281B8CFA2C0053E406 /* lib */ = {
@@ -318,16 +319,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				5442B4DB1E360195006B5282 /* cbox.h in Headers */,
-				0928E36D1BA0908F0057232E /* Cryptobox.h in Headers */,
+				0928E36D1BA0908F0057232E /* WireCryptobox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0928E2331BA0777A0057232E /* Cryptobox-ios */ = {
+		0928E2331BA0777A0057232E /* WireCryptobox */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "Cryptobox-ios" */;
+			buildConfigurationList = 0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "WireCryptobox" */;
 			buildPhases = (
 				5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */,
 				0928E2621BA078750057232E /* Check for dependencies  */,
@@ -340,9 +341,9 @@
 			);
 			dependencies = (
 			);
-			name = "Cryptobox-ios";
+			name = WireCryptobox;
 			productName = "Cryptobox-ios";
-			productReference = 0928E2341BA0777A0057232E /* Cryptobox.framework */;
+			productReference = 0928E2341BA0777A0057232E /* WireCryptobox.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		5471A6541D24215B0092A9A9 /* test-host */ = {
@@ -365,9 +366,9 @@
 			productReference = 5471A6551D24215B0092A9A9 /* test-host.app */;
 			productType = "com.apple.product-type.application";
 		};
-		BA7EF9681B7109B600204A8E /* CryptoboxTests */ = {
+		BA7EF9681B7109B600204A8E /* WireCryptoboxTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BA7EF9751B7109B600204A8E /* Build configuration list for PBXNativeTarget "CryptoboxTests" */;
+			buildConfigurationList = BA7EF9751B7109B600204A8E /* Build configuration list for PBXNativeTarget "WireCryptoboxTests" */;
 			buildPhases = (
 				BA7EF9651B7109B600204A8E /* Sources */,
 				BA7EF9661B7109B600204A8E /* Frameworks */,
@@ -378,9 +379,9 @@
 			dependencies = (
 				5471A66D1D24216D0092A9A9 /* PBXTargetDependency */,
 			);
-			name = CryptoboxTests;
+			name = WireCryptoboxTests;
 			productName = CryptoboxTests;
-			productReference = BA7EF9691B7109B600204A8E /* CryptoboxTests.xctest */;
+			productReference = BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -390,7 +391,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = Cryptobox;
 				TargetAttributes = {
 					0928E2331BA0777A0057232E = {
@@ -410,7 +411,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BA7EF9591B7109B600204A8E /* Build configuration list for PBXProject "Cryptobox" */;
+			buildConfigurationList = BA7EF9591B7109B600204A8E /* Build configuration list for PBXProject "WireCryptobox" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -423,8 +424,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0928E2331BA0777A0057232E /* Cryptobox-ios */,
-				BA7EF9681B7109B600204A8E /* CryptoboxTests */,
+				0928E2331BA0777A0057232E /* WireCryptobox */,
+				BA7EF9681B7109B600204A8E /* WireCryptoboxTests */,
 				5471A6541D24215B0092A9A9 /* test-host */,
 			);
 		};
@@ -470,7 +471,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash wget || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h Cryptobox/cbox.h";
+			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash curl || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h WireCryptobox/cbox.h";
 		};
 		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -534,7 +535,7 @@
 		};
 		5471A6711D24221A0092A9A9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0928E2331BA0777A0057232E /* Cryptobox-ios */;
+			target = 0928E2331BA0777A0057232E /* WireCryptobox */;
 			targetProxy = 5471A6701D24221A0092A9A9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -561,9 +562,8 @@
 /* Begin XCBuildConfiguration section */
 		0928E2471BA0777A0057232E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */;
+			baseConfigurationReference = 0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -573,10 +573,10 @@
 				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Cryptobox/Info.plist;
+				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
-				PRODUCT_NAME = Cryptobox;
+				PRODUCT_NAME = WireCryptobox;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				VERSION_INFO_PREFIX = "";
@@ -585,9 +585,8 @@
 		};
 		0928E2481BA0777A0057232E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */;
+			baseConfigurationReference = 0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -597,10 +596,10 @@
 				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Cryptobox/Info.plist;
+				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
-				PRODUCT_NAME = Cryptobox;
+				PRODUCT_NAME = WireCryptobox;
 				SWIFT_VERSION = 3.0;
 				VERSION_INFO_PREFIX = "";
 			};
@@ -743,7 +742,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				INFOPLIST_FILE = CryptoboxTests/Info.plist;
+				INFOPLIST_FILE = "$(PRODUCT_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -751,7 +750,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "CryptoboxTests/CryptoboxTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/test-host.app/test-host";
@@ -764,7 +763,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				INFOPLIST_FILE = CryptoboxTests/Info.plist;
+				INFOPLIST_FILE = "$(PRODUCT_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -772,7 +771,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "CryptoboxTests/CryptoboxTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/test-host.app/test-host";
 			};
@@ -781,7 +780,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "Cryptobox-ios" */ = {
+		0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "WireCryptobox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0928E2471BA0777A0057232E /* Debug */,
@@ -799,7 +798,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BA7EF9591B7109B600204A8E /* Build configuration list for PBXProject "Cryptobox" */ = {
+		BA7EF9591B7109B600204A8E /* Build configuration list for PBXProject "WireCryptobox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BA7EF9701B7109B600204A8E /* Debug */,
@@ -808,7 +807,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BA7EF9751B7109B600204A8E /* Build configuration list for PBXNativeTarget "CryptoboxTests" */ = {
+		BA7EF9751B7109B600204A8E /* Build configuration list for PBXNativeTarget "WireCryptoboxTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BA7EF9761B7109B600204A8E /* Debug */,

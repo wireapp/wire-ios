@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-@testable import Cryptobox
+@testable import WireCryptobox
 
 class EncryptionDebugTests : XCTestCase {
     

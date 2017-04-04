@@ -19,13 +19,13 @@
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for Cryptobox.
-FOUNDATION_EXPORT double Cryptobox_VersionNumber;
+//! Project version number for WireCryptobox.
+FOUNDATION_EXPORT double WireCryptobox_VersionNumber;
 
-//! Project version string for Cryptobox.
-FOUNDATION_EXPORT const unsigned char Cryptobox_VersionString[];
+//! Project version string for WireCryptobox.
+FOUNDATION_EXPORT const unsigned char WireCryptobox_VersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Cryptobox/PublicHeader.h>
 
-#import <Cryptobox/cbox.h>
+#import <WireCryptobox/cbox.h>
 

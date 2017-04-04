@@ -18,7 +18,7 @@
 
 
 import XCTest
-import Cryptobox
+import WireCryptobox
 
 class EncryptionContextTests: XCTestCase {
 
