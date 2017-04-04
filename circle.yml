@@ -1,6 +1,6 @@
 machine:
   xcode:
-    version: "8.2"
+    version: "8.3"
   environment:
     # Used for compatibility with scripts made for Jenkins
     WORKSPACE: $(pwd) 
