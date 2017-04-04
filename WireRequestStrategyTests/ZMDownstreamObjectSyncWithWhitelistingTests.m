@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-@import ZMCDataModel;
-@import ZMTransport;
-@import ZMTesting;
+@import WireDataModel;
+@import WireTransport;
+@import WireTesting;
 
 #import "MockEntity.h"
 #import "MockModelObjectContextFactory.h"

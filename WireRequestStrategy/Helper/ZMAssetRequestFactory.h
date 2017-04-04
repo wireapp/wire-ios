@@ -18,8 +18,8 @@
 
 
 @import Foundation;
-@import zimages;
-@import ZMTransport;
+@import WireImages;
+@import WireTransport;
 
 @class ZMConversation;
 

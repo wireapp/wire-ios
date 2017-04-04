@@ -17,11 +17,11 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMLocallyModifiedObjectSet.h"
 #import "ZMLocallyModifiedObjectSyncStatus.h"
-#import <ZMCDataModel/ZMManagedObject+Internal.h>
+#import <WireDataModel/ZMManagedObject+Internal.h>
 
 @interface ZMObjectWithKeys ()
 

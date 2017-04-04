@@ -20,7 +20,7 @@
 
 #import "ZMDownstreamObjectSyncWithWhitelist.h"
 #import "ZMDownstreamObjectSync.h"
-#import <ZMCDataModel/ZMManagedObject.h>
+#import <WireDataModel/ZMManagedObject.h>
 
 @interface ZMDownstreamObjectSyncWithWhitelist () <ZMDownstreamTranscoder>
 

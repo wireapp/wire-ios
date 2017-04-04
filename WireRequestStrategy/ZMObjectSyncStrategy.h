@@ -19,8 +19,8 @@
 
 
 @import Foundation;
-@import ZMCDataModel;
-@import ZMCSystem;
+@import WireDataModel;
+@import WireSystem;
 
 #import "ZMRequestGenerator.h"
 #import "ZMContextChangeTracker.h"

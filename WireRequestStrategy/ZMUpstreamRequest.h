@@ -17,7 +17,7 @@
 //
 
 
-@import ZMTransport;
+@import WireTransport;
 
 
 @interface ZMUpstreamRequest : NSObject

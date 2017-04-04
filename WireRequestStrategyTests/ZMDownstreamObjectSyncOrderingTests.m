@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
-@import ZMCDataModel;
-@import ZMTesting;
+@import WireTransport;
+@import WireDataModel;
+@import WireTesting;
 
 
 @interface ZMDownstreamObjectSyncOrderingTests : ZMTBaseTest

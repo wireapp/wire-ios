@@ -18,8 +18,8 @@
 
 
 @import CoreData;
-@import ZMTransport;
-@import ZMCDataModel;
+@import WireTransport;
+@import WireDataModel;
 
 #import "ZMDownstreamObjectSync.h"
 #import "ZMSyncOperationSet.h"
