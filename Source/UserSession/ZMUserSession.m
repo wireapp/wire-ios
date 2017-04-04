@@ -19,9 +19,9 @@
 
 @import UIKit;
 @import CoreData;
-@import ZMCSystem;
-@import ZMUtilities;
-@import ZMCDataModel;
+@import WireSystem;
+@import WireUtilities;
+@import WireDataModel;
 @import CallKit;
 @import CoreTelephony;
 
@@ -41,14 +41,14 @@
 #import "ZMSyncStateMachine.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "NSURL+LaunchOptions.h"
-#import "ZMessagingLogs.h"
+#import "WireSyncEngineLogs.h"
 #import "ZMAVSBridge.h"
 #import "ZMOnDemandFlowManager.h"
 #import "ZMCookie.h"
 #import "ZMFlowSync.h"
 #import "ZMCallKitDelegate.h"
 #import "ZMOperationLoop+Private.h"
-#import <zmessaging/zmessaging-Swift.h>
+#import <WireSyncEngine/WireSyncEngine-Swift.h>
 
 #import "ZMEnvironmentsSetup.h"
 #import "ZMClientRegistrationStatus.h"

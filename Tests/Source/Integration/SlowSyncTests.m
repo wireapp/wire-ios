@@ -17,10 +17,10 @@
 //
 
 @import Foundation;
-@import ZMTransport;
-@import ZMCMockTransport;
-@import zmessaging;
-@import ZMCDataModel;
+@import WireTransport;
+@import WireMockTransport;
+@import WireSyncEngine;
+@import WireDataModel;
 
 #import "MessagingTest.h"
 #import "ZMUserSession+Internal.h"
