@@ -21,7 +21,7 @@ import Foundation
 @testable import WireMessageStrategy
 import WireRequestStrategy
 import XCTest
-import ZMCDataModel
+import WireDataModel
 
 class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
 

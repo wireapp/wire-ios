@@ -17,9 +17,9 @@
 //
 
 import XCTest
-import ZMTesting
-import Cryptobox
-import ZMCDataModel
+import WireTesting
+import WireCryptobox
+import WireDataModel
 
 extension MessagingTestBase {
     

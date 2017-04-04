@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import ZMTesting
+import WireTesting
 import WireMessageStrategy
-import ZMCDataModel
-import Cryptobox
+import WireDataModel
+import WireCryptobox
 
 class FetchClientRequestStrategyTests : MessagingTestBase {
     

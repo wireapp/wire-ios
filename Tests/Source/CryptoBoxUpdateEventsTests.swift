@@ -18,9 +18,9 @@
 
 import Foundation
 import XCTest
-import ZMCDataModel
-import ZMProtos
-import Cryptobox
+import WireDataModel
+import WireProtos
+import WireCryptobox
 
 class CryptoboxUpdateEventsTests: MessagingTestBase {
     

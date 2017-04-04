@@ -19,7 +19,7 @@
 import Foundation
 import XCTest
 import WireMessageStrategy
-import ZMCDataModel
+import WireDataModel
 
 extension ClientMessageTranscoderTests {
     

@@ -20,7 +20,7 @@ import Foundation
 import WireRequestStrategy
 import XCTest
 import WireMessageStrategy
-import ZMCDataModel
+import WireDataModel
 
 
 extension ZMContextChangeTrackerSource {

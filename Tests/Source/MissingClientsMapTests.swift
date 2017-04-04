@@ -19,8 +19,8 @@
 
 import XCTest
 @testable import WireMessageStrategy
-import ZMTesting
-import ZMCDataModel
+import WireTesting
+import WireDataModel
 
 
 class MissingClientsMapTests: MessagingTestBase {

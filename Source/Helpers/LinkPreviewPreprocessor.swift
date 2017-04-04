@@ -18,10 +18,10 @@
 
 
 import Foundation
-import ZMCLinkPreview
+import WireLinkPreview
 import WireRequestStrategy
-import ZMCDataModel
-import ZMUtilities
+import WireDataModel
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "link previews")
 

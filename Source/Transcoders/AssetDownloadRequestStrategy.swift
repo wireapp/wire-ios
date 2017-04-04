@@ -17,8 +17,8 @@
 // 
 
 
-import zimages
-import ZMTransport
+import WireImages
+import WireTransport
 import WireRequestStrategy
 
 @objc public final class AssetDownloadRequestStrategyNotification: NSObject {
