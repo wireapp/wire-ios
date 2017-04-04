@@ -18,8 +18,8 @@
 
 
 @import Foundation;
-@import ZMCSystem;
-@import ZMTransport;
+@import WireSystem;
+@import WireTransport;
 
 
 @class ZMManagedObject;

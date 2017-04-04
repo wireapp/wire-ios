@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import ZMTesting
+import WireTesting
 import XCTest
 import WireRequestStrategy
 

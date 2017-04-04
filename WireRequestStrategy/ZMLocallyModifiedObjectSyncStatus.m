@@ -17,10 +17,10 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "ZMLocallyModifiedObjectSyncStatus.h"
-#import <ZMCDataModel/ZMManagedObject+Internal.h>
+#import <WireDataModel/ZMManagedObject+Internal.h>
 
 @interface ZMLocallyModifiedObjectSyncStatusToken : NSObject
 

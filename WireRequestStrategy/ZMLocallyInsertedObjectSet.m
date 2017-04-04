@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMUtilities;
-#import <ZMCDataModel/ZMManagedObject.h>
+@import WireUtilities;
+#import <WireDataModel/ZMManagedObject.h>
 #import "ZMLocallyInsertedObjectSet.h"
 
 

@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMUtilities;
-@import ZMCDataModel;
+@import WireUtilities;
+@import WireDataModel;
 
 #import "ZMChangeTrackerBootstrap+Testing.h"
 #import "ZMContextChangeTracker.h"

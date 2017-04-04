@@ -17,7 +17,7 @@
 // 
 
 
-import ZMTransport
+import WireTransport
 
 /// A request strategy decides what is the next request to send
 @objc public protocol RequestStrategy {

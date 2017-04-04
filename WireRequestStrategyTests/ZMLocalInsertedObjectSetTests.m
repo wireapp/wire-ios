@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMCDataModel;
-@import ZMTesting;
+@import WireDataModel;
+@import WireTesting;
 
 #import "ZMLocallyInsertedObjectSet.h"
 #import "MockEntity.h"

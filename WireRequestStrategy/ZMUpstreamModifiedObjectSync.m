@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import ZMTransport;
-@import ZMCDataModel;
+@import WireTransport;
+@import WireDataModel;
 
 #import "ZMUpstreamModifiedObjectSync+Testing.h"
 #import "ZMSyncOperationSet.h"

@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 
 #import <WireRequestStrategy/ZMContextChangeTracker.h>
 #import <WireRequestStrategy/ZMOutstandingItems.h>

@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMCSystem;
-@import ZMCDataModel;
+@import WireSystem;
+@import WireDataModel;
 
 #import <WireRequestStrategy/WireRequestStrategy-Swift.h>
 

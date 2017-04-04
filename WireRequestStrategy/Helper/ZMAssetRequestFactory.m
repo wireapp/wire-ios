@@ -17,9 +17,9 @@
 // 
 
 
-@import zimages;
-@import ZMTransport;
-@import ZMCDataModel;
+@import WireImages;
+@import WireTransport;
+@import WireDataModel;
 
 #import "ZMAssetRequestFactory.h"
 

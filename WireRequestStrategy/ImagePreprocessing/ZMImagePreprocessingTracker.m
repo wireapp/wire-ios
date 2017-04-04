@@ -17,8 +17,8 @@
 // 
 
 
-@import zimages;
-@import ZMCDataModel;
+@import WireImages;
+@import WireDataModel;
 
 #import "ZMImagePreprocessingTracker+Testing.h"
 

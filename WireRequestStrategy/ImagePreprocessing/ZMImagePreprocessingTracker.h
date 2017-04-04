@@ -18,7 +18,7 @@
 
 
 @import Foundation;
-@import zimages;
+@import WireImages;
 
 #import "ZMContextChangeTracker.h"
 #import "ZMOutstandingItems.h"

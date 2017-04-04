@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
-@import ZMTesting;
-@import ZMCDataModel;
+@import WireTransport;
+@import WireTesting;
+@import WireDataModel;
 @import WireRequestStrategy;
 
 #import "ZMSingleRequestSync.h"
