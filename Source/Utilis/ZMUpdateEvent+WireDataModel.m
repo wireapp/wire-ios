@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-@import ZMProtos;
+@import WireProtos;
 
-#import "ZMUpdateEvent+ZMCDataModel.h"
+#import "ZMUpdateEvent+WireDataModel.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "ZMUser+Internal.h"
 #import "ZMGenericMessage+UpdateEvent.h"
 
-@implementation ZMUpdateEvent (ZMCDataModel)
+@implementation ZMUpdateEvent (WireDataModel)
 
 - (BOOL)canUnarchiveConversation:(ZMConversation *)conversation
 {

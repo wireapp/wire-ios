@@ -24,7 +24,7 @@
 #import "ZMOrderedSetState.h"
 #import "ZMMessage+Internal.h"
 #import "ZMOTRMessage.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 @interface ZMConversationMessageWindow ()
 

@@ -18,7 +18,7 @@
 
 #import <XCTest/XCTest.h>
 
-@import ZMTesting;
+@import WireTesting;
 
 
 @interface DatabaseBaseTest : ZMTBaseTest

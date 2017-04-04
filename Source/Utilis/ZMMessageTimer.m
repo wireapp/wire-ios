@@ -17,8 +17,8 @@
 //
 
 
-@import ZMCSystem;
-@import ZMUtilities;
+@import WireSystem;
+@import WireUtilities;
 
 #import "ZMMessageTimer.h"
 #import "ZMMessage+Internal.h"

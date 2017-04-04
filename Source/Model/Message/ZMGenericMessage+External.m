@@ -21,8 +21,8 @@
 #import "ZMGenericMessage+UpdateEvent.h"
 
 
-@import ZMTransport;
-@import ZMUtilities;
+@import WireTransport;
+@import WireUtilities;
 
 
 #pragma mark - ZMEncryptionKeyWithChecksum

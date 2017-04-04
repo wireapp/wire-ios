@@ -19,11 +19,11 @@
 
 #import "ZMGenericMessage+Utils.h"
 #import "ZMGenericMessage+PropertyUtils.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 @import ImageIO;
 @import MobileCoreServices;
-@import zimages;
+@import WireImages;
 
 
 @interface ZMImageAssetEncryptionKeys()

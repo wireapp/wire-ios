@@ -18,8 +18,8 @@
 
 
 import XCTest
-@testable import ZMCDataModel
-import Cryptobox
+@testable import WireDataModel
+import WireCryptobox
 
 
 class UserClientKeysStoreTests: OtrBaseTest {

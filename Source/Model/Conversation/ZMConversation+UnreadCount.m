@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMUtilities;
-@import ZMTransport;
+@import WireUtilities;
+@import WireTransport;
 
 #import "ZMConversation+Internal.h"
 #import "ZMConversation+UnreadCount.h"
@@ -28,7 +28,7 @@
 #import "ZMClientMessage.h"
 #import "NSManagedObjectContext+zmessaging.h"
 
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 NSString *const ZMConversationInternalEstimatedUnreadCountKey = @"internalEstimatedUnreadCount";
 NSString *const ZMConversationLastUnreadKnockDateKey = @"lastUnreadKnockDate";

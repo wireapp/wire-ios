@@ -18,7 +18,7 @@
 
 
 import XCTest
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 private func testData() -> Data {
     return Data.secureRandomData(ofLength: 2000);

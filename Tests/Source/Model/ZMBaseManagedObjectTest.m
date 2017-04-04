@@ -167,7 +167,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];
     
     [self performPretendingUiMocIsSyncMoc:^{
-        [UserClient createOrUpdateSelfUserClient:@{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]} context:moc];
+        NSDictionary *payload = @{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]};
+        NOT_USED([UserClient createOrUpdateSelfUserClient:payload context:moc]);
     }];
     
     [moc saveOrRollback];
@@ -194,7 +195,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [self performPretendingUiMocIsSyncMoc:^{
             NSError *error;
             NSString *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
-            [selfClient establishSessionWithClient:userClient usingPreKey:key];
+            NOT_USED([selfClient establishSessionWithClient:userClient usingPreKey:key]);
         }];
     }
     return userClient;

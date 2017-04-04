@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 #import "ZMGenericMessage+ImageOwner.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 
 @implementation ZMGenericMessage (ImageOwner)

@@ -18,7 +18,7 @@
 
 
 #import "ZMCalculateSetChanges.h"
-#import <ZMCSystem/ZMCSystem.h>
+#import <WireSystem/WireSystem.h>
 
 
 bool ZMCalculateSetChangesWithType(std::vector<intptr_t> const &startState, std::vector<intptr_t> const &endState, std::vector<intptr_t> const &updatedState,

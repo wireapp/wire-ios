@@ -18,7 +18,7 @@
 
 
 import Foundation
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 enum MimeType : String {
     case text = "text/plain"

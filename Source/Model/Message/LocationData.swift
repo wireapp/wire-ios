@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import ZMUtilities
+import WireUtilities
 
 @objc (ZMLocationData)
 final public class LocationData: NSObject {

@@ -17,8 +17,8 @@
 // 
 
 
-#import <ZMTesting/ZMTesting.h>
-@import ZMCDataModel;
+#import <WireTesting/WireTesting.h>
+@import WireDataModel;
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "DatabaseBaseTest.h"
 

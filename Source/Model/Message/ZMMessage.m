@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMUtilities;
-@import ZMProtos;
+@import WireUtilities;
+@import WireProtos;
 @import MobileCoreServices;
 @import ImageIO;
 
@@ -32,10 +32,10 @@
 #import "ZMConversation+Transport.h"
 
 #import "ZMConversation+UnreadCount.h"
-#import "ZMUpdateEvent+ZMCDataModel.h"
+#import "ZMUpdateEvent+WireDataModel.h"
 #import "ZMClientMessage.h"
 
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 
 static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
@@ -1120,7 +1120,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
         NSError *error;
         ZMMessage *message = [uiContext existingObjectWithID:self.objectID error:&error];
         if (error == nil && message != nil) {
-            [uiContext.zm_messageDeletionTimer startDeletionTimerWithMessage:message timeout:remainingTime];
+            NOT_USED([uiContext.zm_messageDeletionTimer startDeletionTimerWithMessage:message timeout:remainingTime]);
         }
     }];
 }

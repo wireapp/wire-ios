@@ -18,9 +18,9 @@
 
 
 import Foundation
-import Cryptobox
+import WireCryptobox
 import CoreLocation
-import ZMUtilities
+import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
 public let ZMUserClientNeedsToUpdateSignalingKeysKey = "needsToUploadSignalingKeys"

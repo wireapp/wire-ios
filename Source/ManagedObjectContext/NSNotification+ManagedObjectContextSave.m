@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
 #import "NSNotification+ManagedObjectContextSave.h"
 

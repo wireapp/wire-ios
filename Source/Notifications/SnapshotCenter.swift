@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import ZMUtilities
+import WireUtilities
 
 struct Snapshot {
     let attributes : [String : NSObject?]

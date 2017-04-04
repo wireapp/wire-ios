@@ -17,11 +17,11 @@
 // 
 
 
-@import zimages;
-@import ZMUtilities;
-@import Cryptobox;
-@import ZMProtos;
-@import ZMTransport;
+@import WireImages;
+@import WireUtilities;
+@import WireCryptobox;
+@import WireProtos;
+@import WireTransport;
 @import Foundation;
 
 #import "ZMUser+Internal.h"
@@ -34,7 +34,7 @@
 #import <CommonCrypto/CommonCryptoError.h>
 #import "NSPredicate+ZMSearch.h"
 #import "ZMAddressBookContact.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 
 NSString *const SessionObjectIDKey = @"ZMSessionManagedObjectID";

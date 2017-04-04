@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import ZMCDataModel;
-@import ZMTesting;
+@import WireDataModel;
+@import WireTesting;
 #import <CoreData/CoreData.h>
 #import "ModelObjectsTests.h"
 

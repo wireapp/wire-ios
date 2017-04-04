@@ -17,7 +17,7 @@
 // 
 
 
-#import <ZMUtilities/ZMAccentColor.h>
+#import <WireUtilities/ZMAccentColor.h>
 
 /// The minimal set of properties and methods that something User-like must include
 @protocol ZMBareUser <NSObject>

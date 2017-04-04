@@ -17,7 +17,7 @@
 // 
 
 
-#import <ZMCDataModel/ZMCDataModel.h>
+#import <WireDataModel/WireDataModel.h>
 
 @interface ZMAssetClientMessage (Testing)
 

@@ -20,8 +20,8 @@
 import Foundation
 
 
-import zimages
-import ZMProtos
+import WireImages
+import WireProtos
 
 
 /// Wrapper of generic message that implements ZMImageOwner

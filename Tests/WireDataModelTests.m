@@ -19,11 +19,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface ZMCDataModelTests : XCTestCase
+@interface WireDataModelTests : XCTestCase
 
 @end
 
-@implementation ZMCDataModelTests
+@implementation WireDataModelTests
 
 - (void)setUp {
     [super setUp];

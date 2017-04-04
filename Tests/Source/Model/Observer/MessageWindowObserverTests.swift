@@ -19,7 +19,7 @@
 
 import Foundation
 import XCTest
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 @objc class TestWindowObserver : NSObject, ZMConversationMessageWindowObserver
 {

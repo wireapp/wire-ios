@@ -17,7 +17,7 @@
 //
 
 import Foundation
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
 

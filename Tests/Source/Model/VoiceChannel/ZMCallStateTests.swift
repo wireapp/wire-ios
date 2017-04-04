@@ -18,7 +18,7 @@
 
 
 import CoreData
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 class ZMConversationCallStateTests: ZMBaseManagedObjectTest {
     

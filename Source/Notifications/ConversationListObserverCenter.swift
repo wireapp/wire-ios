@@ -222,7 +222,7 @@ class ConversationListSnapshot: NSObject {
     
     func recalculateListAndNotify() {
         guard let list = self.conversationList, needsToRecalculate || conversationChanges.count > 0 else {
-            zmLog.debug("List \(self.conversationList?.identifier) has no changes")
+            zmLog.debug("List \(String(describing: self.conversationList?.identifier)) has no changes")
             return
         }
         
@@ -256,7 +256,7 @@ class ConversationListSnapshot: NSObject {
             userInfo["conversationListChangeInfo"] = changes
         }
         guard !userInfo.isEmpty else {
-            zmLog.debug("No changes for conversationList \(self.conversationList)")
+            zmLog.debug("No changes for conversationList \(String(describing: self.conversationList))")
             return
         }
         zmLog.debug(logMessage(for: conversationChanges, listChanges: listChanges))
@@ -264,7 +264,7 @@ class ConversationListSnapshot: NSObject {
     }
     
     func logMessage(for conversationChanges: [ConversationChangeInfo], listChanges: ConversationListChangeInfo?) -> String {
-        var message = "Posting notification for list \(conversationList?.identifier) with conversationChanges: \n"
+        var message = "Posting notification for list \(String(describing: conversationList?.identifier)) with conversationChanges: \n"
         message.append(conversationChanges.map{$0.customDebugDescription}.joined(separator: "\n"))
         
         guard let changeInfo = listChanges else { return message }

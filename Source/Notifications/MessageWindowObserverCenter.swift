@@ -265,7 +265,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
     }
     
     func logMessage(for messageChangeInfos: [MessageChangeInfo], windowChangeInfo: MessageWindowChangeInfo?) -> String {
-        var message = "Posting notification for window \(self.conversationWindow) with messageChangeInfos: \n"
+        var message = "Posting notification for window \(String(describing: self.conversationWindow)) with messageChangeInfos: \n"
         message.append(messageChangeInfos.map{$0.customDebugDescription}.joined(separator: "\n"))
         
         guard let changeInfo = windowChangeInfo else { return message }

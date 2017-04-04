@@ -20,7 +20,7 @@
 #import "ZMConversationTests.h"
 #import "ZMConversation+Transport.h"
 #import "MessagingTest+EventFactory.h"
-@import ZMTransport;
+@import WireTransport;
 
 @interface ZMConversationSecurityTests : ZMConversationTestsBase
 

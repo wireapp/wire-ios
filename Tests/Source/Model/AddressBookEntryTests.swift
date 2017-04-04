@@ -18,7 +18,7 @@
 
 
 import XCTest
-import ZMUtilities
+import WireUtilities
 import Contacts
 
 class AddressBookEntryTests : ZMBaseManagedObjectTest {

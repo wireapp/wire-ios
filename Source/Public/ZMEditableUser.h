@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMCSystem;
+@import WireSystem;
 
-#import <ZMUtilities/ZMAccentColor.h>
+#import <WireUtilities/ZMAccentColor.h>
 #import "ZMUser.h"
 
 @class ZMEmailCredentials;

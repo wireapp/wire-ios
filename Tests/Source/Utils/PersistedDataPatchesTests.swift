@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 // MARK: - Framework comparison
 class FrameworkVersionTests: XCTestCase  {

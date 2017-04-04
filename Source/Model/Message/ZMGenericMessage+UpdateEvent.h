@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMProtos;
-@import ZMTransport;
+@import WireProtos;
+@import WireTransport;
 
 @interface ZMGenericMessage (UpdateEvent)
 

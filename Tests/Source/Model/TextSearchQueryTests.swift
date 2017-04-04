@@ -17,8 +17,8 @@
 //
 
 
-import ZMTesting
-@testable import ZMCDataModel
+import WireTesting
+@testable import WireDataModel
 
 
 fileprivate class MockTextSearchQueryDelegate: TextSearchQueryDelegate {

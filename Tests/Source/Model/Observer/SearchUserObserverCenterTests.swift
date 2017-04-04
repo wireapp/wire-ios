@@ -1,12 +1,12 @@
 //
 //  SearchUserObserverCenterTests.swift
-//  ZMCDataModel
+//  WireDataModel
 //
 //  Created by Sabine Geithner on 27/01/17.
 //  Copyright © 2017 Wire Swiss GmbH. All rights reserved.
 //
 
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
     

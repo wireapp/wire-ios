@@ -17,10 +17,10 @@
 // 
 
 
-@import ZMTesting;
-@import ZMProtos;
-@import ZMUtilities;
-@import ZMCDataModel;
+@import WireTesting;
+@import WireProtos;
+@import WireUtilities;
+@import WireDataModel;
 
 
 @interface ZMGenericMessage_ExternalTests : ZMTBaseTest

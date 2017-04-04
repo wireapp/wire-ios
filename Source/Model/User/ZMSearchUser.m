@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
+@import WireTransport;
+@import WireUtilities;
 
 #import "ZMSearchUser+Internal.h"
 
@@ -28,7 +28,7 @@
 #import "ZMAddressBookContact.h"
 
 #import "ZMNotifications+Internal.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 static NSCache *searchUserToSmallProfileImageCache;
 static NSCache *searchUserToMediumImageCache;

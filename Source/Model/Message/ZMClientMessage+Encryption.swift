@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import Cryptobox
+import WireCryptobox
 
 private var zmLog = ZMSLog(tag: "message encryption")
 
@@ -72,7 +72,7 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
     }
 
     public var debugInfo: String {
-        var info = "\(genericMessage)"
+        var info = "\(String(describing: genericMessage))"
         if let genericMessage = genericMessage, genericMessage.hasExternal() {
             info = "External message: " + info
         }
@@ -90,7 +90,7 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
     }
 
     public var debugInfo: String {
-        return "\(genericAssetMessage)"
+        return "\(String(describing: genericAssetMessage))"
     }
     
 }
@@ -157,7 +157,7 @@ extension ZMGenericMessage {
             guard let message = ZMMessage.fetch(withNonce:nonce, for:conversation, in:conversation.managedObjectContext!) else { return nil }
             guard message.destructionDate != nil else { return nil }
             guard let sender = message.sender else {
-                zmLog.error("sender of deleted ephemeral message \(self.deleted.messageId) is already cleared \n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType.rawValue)")
+                zmLog.error("sender of deleted ephemeral message \(self.deleted.messageId) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
                 return Set(arrayLiteral: selfUser)
             }
             return Set(arrayLiteral: sender, selfUser)
@@ -168,7 +168,7 @@ extension ZMGenericMessage {
         if self.hasConfirmation() || self.hasEphemeral() {
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
                 let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.messageId)" : ""
-                fatal("confirmation need a recipient\n ConvID: \(conversation.remoteIdentifier) ConvType: \(conversation.conversationType.rawValue), connection: \(conversation.connection)\(confirmationInfo)")
+                fatal("confirmation need a recipient\n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue), connection: \(String(describing: conversation.connection))\(confirmationInfo)")
             }
             recipientUsers = recipients
         }

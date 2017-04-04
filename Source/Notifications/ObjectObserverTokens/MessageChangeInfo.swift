@@ -102,7 +102,7 @@ extension ZMSystemMessage {
             var reactionChangeInfos = [ReactionChangeInfo]()
             clientChanges.forEach {
                 let changeInfo = ReactionChangeInfo(object: $0)
-                changeInfo.changeInfos = $1 as! [String : NSObject?]
+                changeInfo.changeInfos = $1 as! [String : NSObject]
                 reactionChangeInfos.append(changeInfo)
             }
             originalChanges[ReactionChangeInfoKey] = reactionChangeInfos as NSObject?

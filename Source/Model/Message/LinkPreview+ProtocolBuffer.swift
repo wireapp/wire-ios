@@ -18,7 +18,7 @@
 
 
 import Foundation
-import ZMCLinkPreview
+import WireLinkPreview
 
 extension LinkPreview {
     

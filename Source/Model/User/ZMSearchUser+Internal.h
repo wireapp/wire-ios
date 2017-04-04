@@ -18,7 +18,7 @@
 
 
 #import "ZMSearchUser.h"
-#import <ZMUtilities/ZMAccentColor.h>
+#import <WireUtilities/ZMAccentColor.h>
 #import "ZMManagedObjectContextProvider.h"
 
 @class ZMUser;

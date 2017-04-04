@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 #import "ZMConversationTests.h"
 #import "ZMConversation+UnreadCount.h"
 

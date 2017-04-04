@@ -22,7 +22,7 @@ import Foundation
 
 extension UserClient {
     public override var description: String {
-        return "Client: \(sessionIdentifier?.rawValue), user name: \(user?.name) email: \(user?.emailAddress) platform: \(deviceClass), label: \(label), model: \(model)"
+        return "Client: \(String(describing: sessionIdentifier?.rawValue)), user name: \(String(describing: user?.name)) email: \(String(describing: user?.emailAddress)) platform: \(String(describing: deviceClass)), label: \(String(describing: label)), model: \(String(describing: model))"
     }
 
     
