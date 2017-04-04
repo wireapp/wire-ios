@@ -1,6 +1,6 @@
 //
 //  ProtosTests.m
-//  ZMProtos
+//  WireProtos
 //
 //  Created by Marco Conti on 17/10/16.
 //  Copyright © 2016 Wire. All rights reserved.

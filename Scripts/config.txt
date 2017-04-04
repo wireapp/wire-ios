@@ -1,4 +1,4 @@
-framework=ZMProtos
+framework=WireProtos
 repository=wire-ios-protos
 organization=wireapp
 release-name-format=Please {VERB} the {ADJECTIVE} {ANIMAL}

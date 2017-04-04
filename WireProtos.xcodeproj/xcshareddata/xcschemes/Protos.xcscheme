@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "090837FD1B872DBF00629095"
-               BuildableName = "ZMProtos.framework"
-               BlueprintName = "ZMProtos-ios"
-               ReferencedContainer = "container:ZMProtos.xcodeproj">
+               BuildableName = "WireProtos.framework"
+               BlueprintName = "WireProtos-ios"
+               ReferencedContainer = "container:WireProtos.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "090838081B872DBF00629095"
-               BuildableName = "ZMProtosTests.xctest"
-               BlueprintName = "ZMProtosTests"
-               ReferencedContainer = "container:ZMProtos.xcodeproj">
+               BuildableName = "WireProtosTests.xctest"
+               BlueprintName = "WireProtosTests"
+               ReferencedContainer = "container:WireProtos.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "090838081B872DBF00629095"
-               BuildableName = "ZMProtosTests.xctest"
-               BlueprintName = "ZMProtosTests"
-               ReferencedContainer = "container:ZMProtos.xcodeproj">
+               BuildableName = "WireProtosTests.xctest"
+               BlueprintName = "WireProtosTests"
+               ReferencedContainer = "container:WireProtos.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "090837FD1B872DBF00629095"
-            BuildableName = "ZMProtos.framework"
-            BlueprintName = "ZMProtos-ios"
-            ReferencedContainer = "container:ZMProtos.xcodeproj">
+            BuildableName = "WireProtos.framework"
+            BlueprintName = "WireProtos-ios"
+            ReferencedContainer = "container:WireProtos.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -79,9 +79,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "090837FD1B872DBF00629095"
-            BuildableName = "ZMProtos.framework"
-            BlueprintName = "ZMProtos-ios"
-            ReferencedContainer = "container:ZMProtos.xcodeproj">
+            BuildableName = "WireProtos.framework"
+            BlueprintName = "WireProtos-ios"
+            ReferencedContainer = "container:WireProtos.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -97,9 +97,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "090837FD1B872DBF00629095"
-            BuildableName = "ZMProtos.framework"
-            BlueprintName = "ZMProtos-ios"
-            ReferencedContainer = "container:ZMProtos.xcodeproj">
+            BuildableName = "WireProtos.framework"
+            BlueprintName = "WireProtos-ios"
+            ReferencedContainer = "container:WireProtos.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
