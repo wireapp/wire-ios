@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import ZMCDataModel
+import WireDataModel
 
 /// A conversation
 public protocol Conversation : SharingTarget {
