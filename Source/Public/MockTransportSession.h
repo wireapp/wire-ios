@@ -18,7 +18,7 @@
 
 
 @import CoreData;
-@import ZMTransport;
+@import WireTransport;
 
 #import "MockConnection.h"
 #import "MockConversation.h"

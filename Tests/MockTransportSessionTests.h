@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
-@import ZMTesting;
+@import WireTransport;
+@import WireUtilities;
+@import WireTesting;
 @import UIKit;
 
 #import "MockTransportSession.h"
@@ -27,7 +27,7 @@
 #import "MockConnection.h"
 #import "MockFlowManager.h"
 //#import "MockUser.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 @interface TestPushChannelEvent : NSObject

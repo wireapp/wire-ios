@@ -17,8 +17,8 @@
 // 
 
 
-import ZMCMockTransport
-import ZMTransport
+import WireMockTransport
+import WireTransport
 import XCTest
 
 class MockTransportSessionCancellationTests : MockTransportSessionTests {
@@ -51,7 +51,7 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
 
         request.add(ZMCompletionHandler(on: self.fakeSyncContext) { response in
             XCTAssertEqual(response.httpStatus, 0)
-            XCTAssertTrue((response.transportSessionError as! NSError).isTryAgainLaterError)
+            XCTAssertTrue((response.transportSessionError as NSError!).isTryAgainLaterError)
             requestCompleted = true
             })
         request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0820"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "54C902321B7532DD007162A8"
-               BuildableName = "ZMCMockTransport.framework"
-               BlueprintName = "ZMCMockTransport-ios"
-               ReferencedContainer = "container:ZMCMockTransport.xcodeproj">
+               BuildableName = "WireMockTransport.framework"
+               BlueprintName = "WireMockTransport-ios"
+               ReferencedContainer = "container:WireMockTransport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "54C9023D1B7532DD007162A8"
-               BuildableName = "ZMMockTransportTests.xctest"
-               BlueprintName = "ZMCMockTransportTests-ios"
-               ReferencedContainer = "container:ZMCMockTransport.xcodeproj">
+               BuildableName = "WireMockTransportTests.xctest"
+               BlueprintName = "WireMockTransportTests-ios"
+               ReferencedContainer = "container:WireMockTransport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -48,9 +48,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "54C9023D1B7532DD007162A8"
-               BuildableName = "ZMMockTransportTests.xctest"
-               BlueprintName = "ZMCMockTransportTests-ios"
-               ReferencedContainer = "container:ZMCMockTransport.xcodeproj">
+               BuildableName = "WireMockTransportTests.xctest"
+               BlueprintName = "WireMockTransportTests-ios"
+               ReferencedContainer = "container:WireMockTransport.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -58,9 +58,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "54C902321B7532DD007162A8"
-            BuildableName = "ZMCMockTransport.framework"
-            BlueprintName = "ZMCMockTransport-ios"
-            ReferencedContainer = "container:ZMCMockTransport.xcodeproj">
+            BuildableName = "WireMockTransport.framework"
+            BlueprintName = "WireMockTransport-ios"
+            ReferencedContainer = "container:WireMockTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -80,9 +80,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "54C902321B7532DD007162A8"
-            BuildableName = "ZMCMockTransport.framework"
-            BlueprintName = "ZMCMockTransport-ios"
-            ReferencedContainer = "container:ZMCMockTransport.xcodeproj">
+            BuildableName = "WireMockTransport.framework"
+            BlueprintName = "WireMockTransport-ios"
+            ReferencedContainer = "container:WireMockTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -98,9 +98,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "54C902321B7532DD007162A8"
-            BuildableName = "ZMCMockTransport.framework"
-            BlueprintName = "ZMCMockTransport-ios"
-            ReferencedContainer = "container:ZMCMockTransport.xcodeproj">
+            BuildableName = "WireMockTransport.framework"
+            BlueprintName = "WireMockTransport-ios"
+            ReferencedContainer = "container:WireMockTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

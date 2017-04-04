@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
-@import ZMTesting;
+@import WireTransport;
+@import WireUtilities;
+@import WireTesting;
 
 #import "MockPicture.h"
 #import "MockAsset.h"
@@ -32,7 +32,7 @@
 @import CoreServices;
 #endif
 
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockPicture
 

@@ -19,7 +19,7 @@
 
 #import "MockTransportSession+invitations.h"
 #import "MockPersonalInvitation.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 @implementation MockTransportSession (invitations)

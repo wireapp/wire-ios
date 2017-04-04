@@ -19,8 +19,8 @@
 
 #import "MockPreKey.h"
 
-@import ZMUtilities;
-@import ZMTransport;
+@import WireUtilities;
+@import WireTransport;
 
 @implementation MockPreKey
 

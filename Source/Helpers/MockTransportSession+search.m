@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import ZMTransport;
-@import ZMTesting;
-@import ZMProtos;
+@import WireTransport;
+@import WireTesting;
+@import WireProtos;
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
 #import "MockAsset.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockTransportSession (Search)
 

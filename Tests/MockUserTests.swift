@@ -17,7 +17,7 @@
 //
 
 import Foundation
-@testable import ZMCMockTransport
+@testable import WireMockTransport
 
 class MockUserTests: MockTransportSessionTests {
     func testImageAccessorsReturnsCorrectImages() {

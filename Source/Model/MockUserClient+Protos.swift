@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import ZMProtos
+import WireProtos
 
 extension MockUserClient {
     

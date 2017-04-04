@@ -26,7 +26,7 @@ DerivedData
 #Pods/
 .DS_Store
 Carthage
-ZMCMockTransport.framework.zip
+WireMockTransport.framework.zip
 
 ## Test Output
 #
