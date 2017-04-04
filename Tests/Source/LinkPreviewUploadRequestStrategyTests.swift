@@ -18,8 +18,8 @@
 
 import XCTest
 import WireMessageStrategy
-import ZMCDataModel
-import ZMTransport
+import WireDataModel
+import WireTransport
 
 class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
 

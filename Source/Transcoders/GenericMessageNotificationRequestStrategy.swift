@@ -17,7 +17,7 @@
 //
 
 import WireRequestStrategy
-import ZMCDataModel
+import WireDataModel
 
 @objc
 public final class GenericMessageNotificationRequestStrategy: NSObject, RequestStrategy {

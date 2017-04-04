@@ -22,7 +22,7 @@ import WireRequestStrategy
 @testable import WireMessageStrategy
 import XCTest
 import WireMessageStrategy
-import ZMCDataModel
+import WireDataModel
 
 
 

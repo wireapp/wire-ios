@@ -18,7 +18,7 @@
 
 
 import XCTest
-import ZMCDataModel
+import WireDataModel
 @testable import WireMessageStrategy
 
 

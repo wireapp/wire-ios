@@ -9,7 +9,7 @@
 import Foundation
 import WireRequestStrategy
 import WireMessageStrategy
-import ZMCDataModel
+import WireDataModel
 
 class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     

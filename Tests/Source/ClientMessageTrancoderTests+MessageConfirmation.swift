@@ -19,7 +19,7 @@
 
 import Foundation
 import XCTest
-import ZMCDataModel
+import WireDataModel
 import WireMessageStrategy
 
 // MARK: - Confirmation message

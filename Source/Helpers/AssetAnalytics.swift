@@ -18,7 +18,7 @@
 
 
 import Foundation
-import ZMCDataModel
+import WireDataModel
 
 @objc public final class FileUploadRequestStrategyNotification: NSObject {
     public static let uploadFinishedNotificationName = "FileUploadRequestStrategyUploadFinishedNotificationName"

@@ -18,11 +18,11 @@
 
 
 import XCTest
-import ZMCLinkPreview
-import ZMCDataModel
+import WireLinkPreview
+import WireDataModel
 import WireRequestStrategy
 import WireMessageStrategy
-import zimages
+import WireImages
 
 final class MockLinkDetector: LinkPreviewDetectorType {
     

@@ -19,8 +19,8 @@
 
 import Foundation
 @testable import WireMessageStrategy
-import ZMCDataModel
-import ZMTransport
+import WireDataModel
+import WireTransport
 import XCTest
 
 private let testDataURL = Bundle(for: AssetDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!

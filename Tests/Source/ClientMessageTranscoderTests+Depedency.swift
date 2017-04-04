@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-import ZMCDataModel
+import WireDataModel
 
 
 // MARK: - Dependency

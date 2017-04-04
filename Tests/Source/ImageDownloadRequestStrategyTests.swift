@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireMessageStrategy
 import XCTest
-import ZMCDataModel
+import WireDataModel
 
 class ImageDownloadRequestStrategyTests: MessagingTestBase {
     

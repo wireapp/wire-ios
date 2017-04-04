@@ -18,9 +18,9 @@
 
 
 import Foundation
-import ZMTransport
-import zimages
-import ZMCDataModel
+import WireTransport
+import WireImages
+import WireDataModel
 
 private let zmLog = ZMSLog(tag: "Network")
 

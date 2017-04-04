@@ -18,7 +18,7 @@
 
 import Foundation
 import WireRequestStrategy
-import ZMTransport
+import WireTransport
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
@@ -29,7 +29,7 @@ public protocol OTREntity:  DependencyEntity, Hashable {
     /// Add clients as missing recipients for this entity. If we want to resend
     /// the entity, we need to make sure those missing recipients are fetched
     /// or sending the entity will fail again.
-    func missesRecipients(_ recipients: Set<ZMCDataModel.UserClient>!)
+    func missesRecipients(_ recipients: Set<WireDataModel.UserClient>!)
 }
 
 /// HTTP status of a request that has

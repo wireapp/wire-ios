@@ -18,8 +18,8 @@
 
 
 import Foundation
-import ZMCLinkPreview
-import ZMCDataModel
+import WireLinkPreview
+import WireDataModel
 import WireMessageStrategy
 import XCTest
 

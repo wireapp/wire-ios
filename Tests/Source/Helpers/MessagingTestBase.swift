@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import ZMCDataModel
-import ZMTesting
-import Cryptobox
+import WireDataModel
+import WireTesting
+import WireCryptobox
 
 class MessagingTestBase: ZMTBaseTest {
     

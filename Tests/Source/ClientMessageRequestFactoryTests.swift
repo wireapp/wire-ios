@@ -18,9 +18,9 @@
 
 
 import XCTest
-import ZMProtos
-import ZMCDataModel
-import ZMUtilities
+import WireProtos
+import WireDataModel
+import WireUtilities
 @testable import WireMessageStrategy
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
@@ -416,7 +416,7 @@ extension ClientMessageRequestFactoryTests {
         XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
         XCTAssertEqual(request.path, expectedPath)
         
-        guard let multipartItems = request.multipartBodyItems() as? [AnyObject] else {
+        guard let multipartItems = request.multipartBodyItems() as [AnyObject]? else {
             return XCTFail("Request should be multipart data request")
         }
         

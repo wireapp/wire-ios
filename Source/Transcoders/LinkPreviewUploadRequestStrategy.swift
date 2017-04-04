@@ -76,7 +76,7 @@ extension LinkPreviewUploadRequestStrategy : ZMUpstreamTranscoder {
         guard keys.contains(ZMClientMessageLinkPreviewStateKey) else { return nil }
         guard let conversationId = message.conversation?.remoteIdentifier else { return nil }
         let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversationId)
-        zmLog.debug("Sending request to send message with text: \(message.textMessageData?.messageText) with linkPreview: \(message.genericMessage)")
+        zmLog.debug("Sending request to send message with text: \(String(describing: message.textMessageData?.messageText)) with linkPreview: \(String(describing: message.genericMessage))")
         return ZMUpstreamRequest(keys: [ZMClientMessageLinkPreviewStateKey], transportRequest: request)
     }
 
