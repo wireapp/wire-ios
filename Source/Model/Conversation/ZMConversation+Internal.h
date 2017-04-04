@@ -25,7 +25,7 @@
 #import "ZMConversationSecurityLevel.h"
 #import "ZMConversation+Timestamps.h"
 
-@import zimages;
+@import WireImages;
 
 @class ZMClientMessage;
 @class ZMAssetClientMessage;

@@ -22,7 +22,7 @@
 #import "ZMConnection+Internal.h"
 #import "ZMNotifications.h"
 #import "ZMConversationListDirectory.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 @import CoreData;
 

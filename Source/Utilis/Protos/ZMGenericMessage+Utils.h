@@ -18,8 +18,8 @@
 
 
 @import UIKit;
-@import zimages;
-@import ZMProtos;
+@import WireImages;
+@import WireProtos;
 
 @class ZMIImageProperties;
 @class ZMConversation;

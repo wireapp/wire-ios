@@ -19,8 +19,8 @@
 
 #import "DatabaseBaseTest.h"
 
-@import ZMTesting;
-@import ZMCDataModel;
+@import WireTesting;
+@import WireDataModel;
 
 
 @interface DatabaseBaseTest ()

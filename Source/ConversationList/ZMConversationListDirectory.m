@@ -20,7 +20,7 @@
 #import "ZMConversationListDirectory.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversationList+Internal.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 static NSString * const ConversationListDirectoryKey = @"ZMConversationListDirectory";
 

@@ -18,7 +18,7 @@
 
 
 import Foundation
-import ZMCSystem
+import WireSystem
 
 protocol ObjectInSnapshot {
     static var observableKeys : Set<String> { get }

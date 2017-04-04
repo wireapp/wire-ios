@@ -18,7 +18,7 @@
 
 
 import Foundation
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 
 
@@ -300,7 +300,7 @@ extension UserObserverTests {
         
         
         // when
-        user.emailAddress = "aaaaaa@example.com"
+        self.setEmailAddress("aaaaa@example.com", on: user)
         self.uiMOC.saveOrRollback()
         
         // then

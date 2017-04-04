@@ -18,7 +18,7 @@
 
 
 #import "ZMTestSession.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 #import "NSManagedObjectContext+zmessaging.h"
 #import "NSManagedObjectContext+tests.h"

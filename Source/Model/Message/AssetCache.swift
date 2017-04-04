@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import ZMCSystem
-import zimages
+import WireSystem
+import WireImages
 import PINCache
 
 private let NSManagedObjectContextImageAssetCacheKey = "zm_imageAssetCache"
@@ -143,7 +143,7 @@ public class ImageAssetCache : NSObject {
     static func cacheKeyForAsset(_ messageID: UUID, format: ZMImageFormat, encrypted: Bool) -> String {
         let tagComponent = StringFromImageFormat(format)
         let encryptedComponent = encrypted ? "_encrypted" : ""
-        return "\(messageID.transportString())_\(tagComponent)\(encryptedComponent)"
+        return "\(messageID.transportString())_\(String(describing: tagComponent))\(encryptedComponent)"
     }
 }
 

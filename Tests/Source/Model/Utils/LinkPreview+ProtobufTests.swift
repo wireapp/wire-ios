@@ -18,8 +18,8 @@
 
 
 import XCTest
-import ZMCDataModel
-import ZMCLinkPreview
+import WireDataModel
+import WireLinkPreview
 
 class LinkPreview_ProtobufTests: XCTestCase {
 

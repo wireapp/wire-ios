@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-@import ZMCDataModel;
+@import WireDataModel;
 
 #import "ZMBaseManagedObjectTest.h"
 #import "ZMConversationList+Internal.h"
@@ -27,7 +27,7 @@
 #import "ZMUser+Internal.h"
 #import "ZMNotifications+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "ZMCDataModelTests-Swift.h"
+#import "WireDataModelTests-Swift.h"
 
 
 typedef void(^ObserverCallback)( NSObject * _Nonnull  note);

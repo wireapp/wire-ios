@@ -18,8 +18,8 @@
 
 
 @import CoreData;
-@import ZMCSystem;
-@import ZMUtilities;
+@import WireSystem;
+@import WireUtilities;
 @import PINCache;
 
 @class NSOperationQueue;

@@ -18,7 +18,7 @@
 
 
 import XCTest
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 // MARK: - Sending
 

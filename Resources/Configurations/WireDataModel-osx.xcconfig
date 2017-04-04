@@ -1,3 +1,3 @@
 
-#include "ZMCDataModel.xcconfig"
+#include "WireDataModel.xcconfig"
 #include "zmc-config/osx.xcconfig"

@@ -17,7 +17,7 @@
 // 
 
 
-#import <ZMUtilities/ZMAccentColor.h>
+#import <WireUtilities/ZMAccentColor.h>
 #import "ZMBareUser.h"
 
 @class ZMUser, ZMAddressBookContact;

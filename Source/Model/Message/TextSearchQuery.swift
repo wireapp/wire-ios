@@ -18,7 +18,7 @@
 
 
 import Foundation
-import ZMUtilities
+import WireUtilities
 
 
 extension ZMMessage {
@@ -43,8 +43,8 @@ extension ZMClientMessage {
             return
         }
 
-        if let normalized = textMessageData?.messageText?.normalizedForSearch() as? String {
-            normalizedText = normalized
+        if let normalized = textMessageData?.messageText?.normalizedForSearch() {
+            normalizedText = normalized as String
         } else {
             normalizedText = ""
         }

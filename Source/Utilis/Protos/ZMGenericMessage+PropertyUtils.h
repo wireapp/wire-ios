@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMProtos;
+@import WireProtos;
 
 
 @interface ZMText (Utils)

@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 
 #import "ZMBaseManagedObjectTest.h"
 #import "ZMConversation+Internal.h"

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-@import ZMUtilities;
+@import WireUtilities;
 @import UIKit;
-@import Cryptobox;
+@import WireCryptobox;
 
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "NSManagedObjectContext+tests.h"
@@ -31,8 +31,8 @@
 #import "ZMConversation+Internal.h"
 #import <objc/runtime.h>
 #import <libkern/OSAtomic.h>
-#import <ZMUtilities/ZMUtilities-Swift.h>
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireUtilities/WireUtilities-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 static NSString * const IsSyncContextKey = @"ZMIsSyncContext";
 static NSString * const IsSearchContextKey = @"ZMIsSearchContext";

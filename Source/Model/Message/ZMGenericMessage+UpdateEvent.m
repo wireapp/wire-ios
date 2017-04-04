@@ -22,7 +22,7 @@
 #import "ZMAssetClientMessage.h"
 #import "ZMGenericMessage+External.h"
 #import "ZMGenericMessage+Utils.h"
-#import "ZMCDataModel/ZMCDataModel-Swift.h"
+#import "WireDataModel/WireDataModel-Swift.h"
 
 @implementation ZMGenericMessage (UpdateEvent)
 

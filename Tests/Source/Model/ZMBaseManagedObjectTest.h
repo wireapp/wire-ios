@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMTesting;
-@import ZMCDataModel;
+@import WireTesting;
+@import WireDataModel;
 
 #import "NSManagedObjectContext+TestHelpers.h"
 #import "ZMUser.h"
@@ -33,8 +33,8 @@
 @class ZMAssetClientMessage;
 @class ZMTestSession;
 
-@import Cryptobox;
-@import zimages;
+@import WireCryptobox;
+@import WireImages;
 @class UserClient;
 
 @class ZMClientMessage;

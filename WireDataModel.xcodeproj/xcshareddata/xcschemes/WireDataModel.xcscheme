@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F9C9A4FB1CAD5DF10039E10C"
-               BuildableName = "ZMCDataModel.framework"
-               BlueprintName = "ZMCDataModel"
-               ReferencedContainer = "container:ZMCDataModel.xcodeproj">
+               BuildableName = "WireDataModel.framework"
+               BlueprintName = "WireDataModel"
+               ReferencedContainer = "container:WireDataModel.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F9C9A5051CAD5DF10039E10C"
-               BuildableName = "ZMCDataModelTests.xctest"
-               BlueprintName = "ZMCDataModelTests"
-               ReferencedContainer = "container:ZMCDataModel.xcodeproj">
+               BuildableName = "WireDataModelTests.xctest"
+               BlueprintName = "WireDataModelTests"
+               ReferencedContainer = "container:WireDataModel.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F9C9A4FB1CAD5DF10039E10C"
-            BuildableName = "ZMCDataModel.framework"
-            BlueprintName = "ZMCDataModel"
-            ReferencedContainer = "container:ZMCDataModel.xcodeproj">
+            BuildableName = "WireDataModel.framework"
+            BlueprintName = "WireDataModel"
+            ReferencedContainer = "container:WireDataModel.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <CommandLineArguments>
@@ -78,9 +78,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F9C9A4FB1CAD5DF10039E10C"
-            BuildableName = "ZMCDataModel.framework"
-            BlueprintName = "ZMCDataModel"
-            ReferencedContainer = "container:ZMCDataModel.xcodeproj">
+            BuildableName = "WireDataModel.framework"
+            BlueprintName = "WireDataModel"
+            ReferencedContainer = "container:WireDataModel.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <CommandLineArguments>
@@ -109,9 +109,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F9C9A4FB1CAD5DF10039E10C"
-            BuildableName = "ZMCDataModel.framework"
-            BlueprintName = "ZMCDataModel"
-            ReferencedContainer = "container:ZMCDataModel.xcodeproj">
+            BuildableName = "WireDataModel.framework"
+            BlueprintName = "WireDataModel"
+            ReferencedContainer = "container:WireDataModel.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

@@ -18,9 +18,9 @@
 
 
 import XCTest
-import ZMCLinkPreview
+import WireLinkPreview
 
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 private class NotificationObserver: NSObject {
     

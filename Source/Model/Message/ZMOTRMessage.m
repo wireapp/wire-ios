@@ -21,11 +21,11 @@
 #import "ZMGenericMessage+UpdateEvent.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversation+Transport.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 #import "ZMGenericMessageData.h"
 
 
-@import ZMTransport;
+@import WireTransport;
 
 
 NSString * const DeliveredKey = @"delivered";
@@ -187,7 +187,7 @@ NSString * const DeliveredKey = @"delivered";
     }
     if (message.hasConfirmation) {
         ZMUser *sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:YES inContext:moc];
-        [ZMMessageConfirmation createOrUpdateMessageConfirmation:message conversation:conversation sender:sender];
+        NOT_USED([ZMMessageConfirmation createOrUpdateMessageConfirmation:message conversation:conversation sender:sender]);
         return nil;
     }
     ZMMessage *clearedMessage;

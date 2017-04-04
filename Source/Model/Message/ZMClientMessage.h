@@ -17,7 +17,7 @@
 // 
 
 
-@import zimages;
+@import WireImages;
 #import "ZMMessage+Internal.h"
 #import "ZMOTRMessage.h"
 

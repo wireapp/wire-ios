@@ -18,7 +18,7 @@
 
 
 import Foundation
-import ZMUtilities
+import WireUtilities
 
 public struct SetStateUpdate {
     

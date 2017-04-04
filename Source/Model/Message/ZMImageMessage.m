@@ -20,15 +20,15 @@
 @import CoreGraphics;
 @import MobileCoreServices;
 @import ImageIO;
-@import ZMUtilities;
-@import ZMTransport;
+@import WireUtilities;
+@import WireTransport;
 
 #import "ZMMessage+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversation+Transport.h"
 #import "ZMClientMessage.h"
-#import "ZMCDataModel/ZMCDataModel-Swift.h"
+#import "WireDataModel/WireDataModel-Swift.h"
 
 #pragma mark - Image message
 

@@ -18,7 +18,7 @@
 
 
 import XCTest
-import ZMProtos
+import WireProtos
 
 class ProtosTests: XCTestCase {
     

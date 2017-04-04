@@ -17,12 +17,12 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 
 #import "ZMConversation+Timestamps.h"
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 @implementation ZMConversation (Timestamps)
 

@@ -19,7 +19,7 @@
 
 import Foundation
 import CoreLocation
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 class ClientMessageTests_Location: BaseZMMessageTests {
  

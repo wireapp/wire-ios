@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMUtilities;
-@import ZMTransport;
+@import WireUtilities;
+@import WireTransport;
 
 #import "ZMManagedObject+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"

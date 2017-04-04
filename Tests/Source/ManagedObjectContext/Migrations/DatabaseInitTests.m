@@ -17,11 +17,11 @@
 // 
 
 
-@import ZMCDataModel;
+@import WireDataModel;
 
 #import <XCTest/XCTest.h>
 #import <CoreData/CoreData.h>
-#import <ZMTesting/ZMTesting.h>
+#import <WireTesting/WireTesting.h>
 #import <OCMock/OCMock.h>
 #import "DatabaseBaseTest.h"
 #import "NSManagedObjectContext+zmessaging.h"

@@ -17,12 +17,12 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 
 @class ZMConversation;
 @class NSManagedObjectContext;
 
-@interface ZMUpdateEvent (ZMCDataModel)
+@interface ZMUpdateEvent (WireDataModel)
 
 - (BOOL)canUnarchiveConversation:(nonnull ZMConversation *)conversation;
 

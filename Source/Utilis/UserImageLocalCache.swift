@@ -19,7 +19,7 @@
 
 import Foundation
 import PINCache
-import ZMTransport
+import WireTransport
 
 private let MEGABYTE = UInt(1 * 1000 * 1000)
 

@@ -162,7 +162,7 @@ public class SharedObjectStore<T>: NSObject {
         do {
             let data = try Data(contentsOf: url)
             let stored = NSKeyedUnarchiver.unarchiveObject(with: data) as? [T]
-            zmLog.debug("Loaded shared objects from \(url): \(stored)")
+            zmLog.debug("Loaded shared objects from \(url): \(String(describing: stored))")
             return stored ?? []
         } catch {
             zmLog.error("Failed to read from url: \(url), error: \(error)")

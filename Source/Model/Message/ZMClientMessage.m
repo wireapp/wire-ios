@@ -17,26 +17,26 @@
 // 
 
 
-@import ZMCSystem;
-@import ZMUtilities;
-@import ZMTransport;
-@import ZMProtos;
+@import WireSystem;
+@import WireUtilities;
+@import WireTransport;
+@import WireProtos;
 @import CoreGraphics;
 @import ImageIO;
 @import MobileCoreServices;
-@import Cryptobox;
+@import WireCryptobox;
 
 #import "ZMClientMessage.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversation+Transport.h"
-#import "ZMUpdateEvent+ZMCDataModel.h"
+#import "ZMUpdateEvent+WireDataModel.h"
 #import "ZMGenericMessage+UpdateEvent.h"
 
 #import "ZMGenericMessageData.h"
 #import "ZMUser+Internal.h"
 #import "ZMOTRMessage.h"
 #import "ZMGenericMessage+External.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 static NSString * const ClientMessageDataSetKey = @"dataSet";
 static NSString * const ClientMessageGenericMessageKey = @"genericMessage";
@@ -232,7 +232,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (void)resend
 {
     if (self.genericMessage.hasEdited) {
-        [ZMMessage edit:self newText:self.textMessageData.messageText];
+        NOT_USED([ZMMessage edit:self newText:self.textMessageData.messageText]);
     } else {
         [super resend];
     }

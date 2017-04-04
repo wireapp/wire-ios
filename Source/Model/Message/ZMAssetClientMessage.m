@@ -17,13 +17,13 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 @import MobileCoreServices;
-@import ZMUtilities;
-@import Cryptobox;
+@import WireUtilities;
+@import WireCryptobox;
 #import "ZMAssetClientMessage.h"
 #import "ZMGenericMessageData.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 
 static NSString * const AssetIdDataKey = @"assetId_data";
 static NSString * const AssetIdKey = @"assetId";

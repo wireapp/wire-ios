@@ -17,13 +17,13 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 
 #import "ZMConversation+Transport.h"
 #import "ZMConversation+Internal.h"
 #import "ZMUser+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "ZMUpdateEvent+ZMCDataModel.h"
+#import "ZMUpdateEvent+WireDataModel.h"
 
 static NSString *const ConversationInfoStatusKey = @"status";
 static NSString *const ConversationInfoNameKey = @"name";

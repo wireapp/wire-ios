@@ -17,7 +17,7 @@
 //
 
 import XCTest
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 class ChangedIndexesTests : ZMBaseManagedObjectTest {
     
@@ -25,11 +25,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
 
     func testThatItCalculatesInsertsAndDeletesBetweenSets(){
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = ZMCDataModel.OrderedSetState(array:["A", "F", "E", "C", "D"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array:["A", "F", "E", "C", "D"])
         
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
         
         // then
         XCTAssertEqual(sut.deletedIndexes, [1])
@@ -40,11 +40,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
     func testThatItCalculatesMovesCorrectly(){
         
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = ZMCDataModel.OrderedSetState(array:["A", "F", "D", "C", "E"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array:["A", "F", "D", "C", "E"])
         
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
         
         // then
         // [A,B,C,D,E] -> [A,F,C,D,E] delete & insert
@@ -74,11 +74,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
     func testThatItCalculatesMovesCorrectly_2(){
         
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = ZMCDataModel.OrderedSetState(array:["A", "D", "E", "F", "C"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array:["A", "D", "E", "F", "C"])
         
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
         
         // then
         // [A,B,C,D,E] -> [A,C,D,F,E] delete & insert
@@ -121,11 +121,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         // If you move an item from 0->1 another item has to move to index 0
         
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C"])
-        let endState = ZMCDataModel.OrderedSetState(array:["C", "B", "A"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C"])
+        let endState = WireDataModel.OrderedSetState(array:["C", "B", "A"])
 
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
         
         // then
         XCTAssertEqual(sut.deletedIndexes, IndexSet())
@@ -159,11 +159,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         // Updated indexes refer to the indexes before the update
         
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C"])
-        let endState = ZMCDataModel.OrderedSetState(array:["C", "D", "B", "A"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C"])
+        let endState = WireDataModel.OrderedSetState(array:["C", "D", "B", "A"])
         
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(["B"]))
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(["B"]))
         
         // then
         XCTAssertEqual(sut.updatedIndexes, IndexSet([1]))
@@ -177,11 +177,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
     func testThatItCalculatesMovesCorrectly_tableView(){
         
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = ZMCDataModel.OrderedSetState(array:["A", "F", "D", "C", "E"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array:["A", "F", "D", "C", "E"])
         
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
         
         // then
         // [A,B,C,D,E] -> [A,F,C,D,E] delete & insert
@@ -210,11 +210,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
     func testThatItCalculatesMovesCorrectly_2_tableView(){
         
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = ZMCDataModel.OrderedSetState(array:["A", "D", "E", "F", "C"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array:["A", "D", "E", "F", "C"])
         
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
         
         // then
         // [A,B,C,D,E] -> [A,C,D,F,E] delete & insert
@@ -256,11 +256,11 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         // If you move an item from 0->1 the item at index 1 moves implicitly to 0, its move do not need to be defined
         
         // given
-        let startState = ZMCDataModel.OrderedSetState(array:["A","B", "C"])
-        let endState = ZMCDataModel.OrderedSetState(array:["C", "B", "A"])
+        let startState = WireDataModel.OrderedSetState(array:["A","B", "C"])
+        let endState = WireDataModel.OrderedSetState(array:["C", "B", "A"])
         
         // when
-        let sut = ZMCDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
+        let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
         
         // then
         XCTAssertEqual(sut.deletedIndexes, IndexSet())

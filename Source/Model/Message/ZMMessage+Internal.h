@@ -17,9 +17,9 @@
 // 
 
 
-@import zimages;
-@import ZMProtos;
-@import ZMTransport;
+@import WireImages;
+@import WireProtos;
+@import WireTransport;
 
 #import "ZMMessage.h"
 #import "ZMManagedObject+Internal.h"

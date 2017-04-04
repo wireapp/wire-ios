@@ -18,8 +18,8 @@
 
 
 @import Foundation;
-@import ZMUtilities;
-@import ZMCSystem;
+@import WireUtilities;
+@import WireSystem;
 
 #import "ZMEditableUser.h"
 #import "NSManagedObjectContext+zmessaging.h"

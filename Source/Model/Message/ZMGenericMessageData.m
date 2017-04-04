@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMProtos;
-@import ZMUtilities;
+@import WireProtos;
+@import WireUtilities;
 
 #import "ZMGenericMessageData.h"
 

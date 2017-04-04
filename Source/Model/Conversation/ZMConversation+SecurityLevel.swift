@@ -18,7 +18,7 @@
 
 
 import Foundation
-import Cryptobox
+import WireCryptobox
 
 
 extension ZMConversation {

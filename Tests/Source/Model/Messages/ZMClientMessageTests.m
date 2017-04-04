@@ -24,12 +24,12 @@
 #import "ZMClientMessage.h"
 #import "ZMAssetClientMessage.h"
 #import "NSString+RandomString.h"
-#import "ZMCDataModelTests-Swift.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import "WireDataModelTests-Swift.h"
+#import <WireDataModel/WireDataModel-Swift.h>
 
 @import CoreGraphics;
-@import ZMCLinkPreview;
-@import ZMCDataModel;
+@import WireLinkPreview;
+@import WireDataModel;
 
 @interface ZMClientMessageTests : BaseZMMessageTests
 

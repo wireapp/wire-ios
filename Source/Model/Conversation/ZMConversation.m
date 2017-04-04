@@ -18,12 +18,12 @@
 
 
 @import Foundation;
-@import zimages;
-@import ZMUtilities;
-@import ZMTransport;
-@import Cryptobox;
+@import WireImages;
+@import WireUtilities;
+@import WireTransport;
+@import WireCryptobox;
 @import MobileCoreServices;
-@import zimages;
+@import WireImages;
 
 #import "ZMManagedObject+Internal.h"
 #import "ZMManagedObjectContextProvider.h"
@@ -42,7 +42,7 @@
 #import "ZMConversationList+Internal.h"
 
 #import "ZMConversationListDirectory.h"
-#import <ZMCDataModel/ZMCDataModel-Swift.h>
+#import <WireDataModel/WireDataModel-Swift.h>
 #import "NSPredicate+ZMSearch.h"
 
 

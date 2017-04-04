@@ -18,7 +18,7 @@
 
 
 @import Foundation;
-@import ZMCDataModel;
+@import WireDataModel;
 
 #import "ZMBaseManagedObjectTest.h"
 

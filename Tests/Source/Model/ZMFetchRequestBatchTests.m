@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMCDataModel;
-@import ZMTesting;
+@import WireDataModel;
+@import WireTesting;
 
 #import "ZMBaseManagedObjectTest.h"
 #import "ZMFetchRequestBatch.h"

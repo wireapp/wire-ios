@@ -18,9 +18,9 @@
 
 
 import XCTest
-import ZMUtilities
-import Cryptobox
-@testable import ZMCDataModel
+import WireUtilities
+import WireCryptobox
+@testable import WireDataModel
 
 class UserClientTests: ZMBaseManagedObjectTest {
         

@@ -19,7 +19,7 @@
 
 #import "ZMConversationTests.h"
 #import "ZMClientMessage.h"
-@import zimages;
+@import WireImages;
 
 @interface ZMConversationMessagesTests : ZMConversationTestsBase
 @end

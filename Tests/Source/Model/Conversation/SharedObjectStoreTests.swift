@@ -17,7 +17,7 @@
 //
 
 
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 
 fileprivate extension Notification {

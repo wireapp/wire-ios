@@ -18,7 +18,7 @@
 
 
 import Foundation
-import Cryptobox
+import WireCryptobox
 
 extension ZMConversation {
     static func appendHideMessageToSelfConversation(_ message: ZMMessage) {

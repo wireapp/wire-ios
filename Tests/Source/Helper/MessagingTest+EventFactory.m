@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMUtilities;
-@import ZMTransport;
-@import ZMTesting;
+@import WireUtilities;
+@import WireTransport;
+@import WireTesting;
 
 #import "MessagingTest+EventFactory.h"
 #import "ZMUser+Internal.h"

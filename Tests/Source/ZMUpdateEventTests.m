@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTesting;
+@import WireTesting;
 #import "ZMBaseManagedObjectTest.h"
-#import "ZMUpdateEvent+ZMCDataModel.h"
+#import "ZMUpdateEvent+WireDataModel.h"
 #import "ZMConversation+Internal.h"
 #import "ZMUser+Internal.h"
 

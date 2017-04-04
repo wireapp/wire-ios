@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import ZMCDataModel
+@testable import WireDataModel
 
 class MockAssetCollectionDelegate : NSObject, AssetCollectionDelegate {
     
