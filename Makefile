@@ -57,7 +57,7 @@ cryptobox-%:
 	mkdir -p build
 	cd build
 	if [ ! -f build/cryptobox-ios-$*.tar.gz ]; then \
-	wget -O build/cryptobox-ios-$*.tar.gz https://github.com/wireapp/cryptobox-ios/releases/download/v$*/cryptobox-ios-$*.tar.gz; \
+	curl -L -o build/cryptobox-ios-$*.tar.gz https://github.com/wireapp/cryptobox-ios/releases/download/v$*/cryptobox-ios-$*.tar.gz; \
 	fi
 	cd build && tar -xzf cryptobox-ios-$*.tar.gz
 

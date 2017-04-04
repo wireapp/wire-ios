@@ -1,6 +1,6 @@
 
 #include "zmc-config/swift.xcconfig"
-PRODUCT_NAME = Cryptobox
+PRODUCT_NAME = WireCryptobox
 
 LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/build/lib
 

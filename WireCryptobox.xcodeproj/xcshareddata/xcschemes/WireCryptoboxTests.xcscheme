@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0820"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -9,15 +9,15 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0928E2331BA0777A0057232E"
-               BuildableName = "Cryptobox.framework"
-               BlueprintName = "Cryptobox-ios"
-               ReferencedContainer = "container:Cryptobox.xcodeproj">
+               BlueprintIdentifier = "BA4B31311B986D4A005A1068"
+               BuildableName = "CryptoboxiOS Tests.xctest"
+               BlueprintName = "CryptoboxiOS Tests"
+               ReferencedContainer = "container:WireCryptobox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,19 +33,19 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BA7EF9681B7109B600204A8E"
-               BuildableName = "CryptoboxTests.xctest"
-               BlueprintName = "CryptoboxTests"
-               ReferencedContainer = "container:Cryptobox.xcodeproj">
+               BuildableName = "WireCryptoboxTests.xctest"
+               BlueprintName = "WireCryptoboxTests"
+               ReferencedContainer = "container:WireCryptobox.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0928E2331BA0777A0057232E"
-            BuildableName = "Cryptobox.framework"
-            BlueprintName = "Cryptobox-ios"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            BlueprintIdentifier = "BA4B31311B986D4A005A1068"
+            BuildableName = "CryptoboxiOS Tests.xctest"
+            BlueprintName = "CryptoboxiOS Tests"
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -64,10 +64,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0928E2331BA0777A0057232E"
-            BuildableName = "Cryptobox.framework"
-            BlueprintName = "Cryptobox-ios"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            BlueprintIdentifier = "BA4B31311B986D4A005A1068"
+            BuildableName = "CryptoboxiOS Tests.xctest"
+            BlueprintName = "CryptoboxiOS Tests"
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -82,10 +82,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0928E2331BA0777A0057232E"
-            BuildableName = "Cryptobox.framework"
-            BlueprintName = "Cryptobox-ios"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            BlueprintIdentifier = "BA4B31311B986D4A005A1068"
+            BuildableName = "CryptoboxiOS Tests.xctest"
+            BlueprintName = "CryptoboxiOS Tests"
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
