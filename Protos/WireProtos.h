@@ -27,6 +27,6 @@ FOUNDATION_EXPORT const unsigned char ProtosVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Protos/PublicHeader.h>
 
-#import <ZMProtos/Messages.pb.h>
-#import <ZMProtos/Otr.pb.h>
+#import <WireProtos/Messages.pb.h>
+#import <WireProtos/Otr.pb.h>
 
