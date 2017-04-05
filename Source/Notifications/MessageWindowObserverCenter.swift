@@ -111,7 +111,7 @@ extension NSManagedObjectContext {
 
 class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserver {
 
-    fileprivate var state : SetSnapshot
+    fileprivate var state : SetSnapshot<ZMMessage>
     
     public weak var conversationWindow : ZMConversationMessageWindow?
     fileprivate var conversation : ZMConversation? {
@@ -124,7 +124,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
     fileprivate var userChanges: [NSManagedObjectID : UserChangeInfo] = [:]
     fileprivate var userIDsInWindow : Set<NSManagedObjectID> {
         if tempUserIDsInWindow == nil {
-            tempUserIDsInWindow = (state.set.array as? [ZMMessage] ?? []).reduce(Set()){$0.union($1.allUserIDs)}
+            tempUserIDsInWindow = state.set.array.reduce(Set()){$0.union($1.allUserIDs)}
         }
         return tempUserIDsInWindow!
     }
@@ -137,7 +137,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
     
     init(window: ZMConversationMessageWindow) {
         self.conversationWindow = window
-        self.state = SetSnapshot(set: window.messages, moveType: .uiCollectionView)
+        self.state = SetSnapshot(set: window.messages.toOrderedSetState(), moveType: .uiCollectionView)
         super.init()
     }
     
@@ -198,10 +198,13 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
         
         // Calculate window changes
         let currentlyUpdatedMessages = updatedMessages
-        let updatedSet = NSOrderedSet(array: currentlyUpdatedMessages.filter({$0.conversation === window.conversation}))
+        let updatedSet = Set(currentlyUpdatedMessages.filter({$0.conversation === window.conversation}))
         
         var changeInfo : MessageWindowChangeInfo?
-        if let newStateUpdate = state.updatedState(updatedSet, observedObject: window, newSet: window.messages) {
+        if let newStateUpdate : SetStateUpdate<ZMMessage> = state.updatedState(updatedSet,
+                                                                               observedObject: window,
+                                                                               newSet: window.messages.toOrderedSetState())
+        {
             state = newStateUpdate.newSnapshot
             changeInfo = MessageWindowChangeInfo(setChangeInfo: newStateUpdate.changeInfo)
             tempUserIDsInWindow = nil

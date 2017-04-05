@@ -19,7 +19,24 @@
 import Foundation
 
 
-public struct OrderedSetState<T: Hashable> {
+extension NSOrderedSet {
+    
+    public func toOrderedSetState<T: Hashable>() -> OrderedSetState<T> {
+        guard let objects = array as? [T] else {
+            fatal("Could not cast contents of NSOrderedSet \(self) to expected type \(T.self)")
+        }
+        return OrderedSetState(array: objects)
+    }
+}
+
+extension Array where Element : Hashable {
+
+    public func toOrderedSetState() -> OrderedSetState<Element> {
+        return OrderedSetState(array: self)
+    }
+}
+
+public struct OrderedSetState<T: Hashable> : Equatable {
 
     public private(set) var array : [T]
     public private(set) var order : [T : Int]
@@ -48,15 +65,27 @@ public struct OrderedSetState<T: Hashable> {
         }
         return oldIndex
     }
+    
+    static public func==<T>(lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
+        return lhs.array as [T] == rhs.array as [T]
+    }
+    
+    public func map<U>(_ transform: (T) throws -> U) rethrows -> [U] {
+        return try array.map(transform)
+    }
 }
 
 public enum SetChangeMoveType {
     case uiTableView, uiCollectionView
 }
 
-public struct MovedIndex {
+public struct MovedIndex : Equatable {
     public let from : Int
     public let to: Int
+    
+    public static func==(lhs: MovedIndex, rhs: MovedIndex) -> Bool {
+        return lhs.from == rhs.from && lhs.to == rhs.to
+    }
 }
 
 
@@ -66,11 +95,23 @@ public struct ChangedIndexes<T : Hashable> {
     public let endState : OrderedSetState<T>
     public let updatedObjects : Set<T>
 
+    /// deletedIndexes refer to the indexes in the startSet
     public let deletedIndexes : IndexSet
+    
+    /// insertedIndexes refer to the indexes after deleting deletedIndexes
     public let insertedIndexes : IndexSet
+    
+    /// updatedIndexes refer to the position of the item after the move 
+    /// Reloads using these indexes must be performed AFTER inserts / deletes and moves have COMPLETED
     public let updatedIndexes : IndexSet
+    
+    /// Depending on the moveType, the `from` index either refers to the position of the item in the original set (uiCollectionView) or to the position in the intermediate set as moves are iteratively applied (uiTableView)
     public let movedIndexes : [MovedIndex]
+    
     public let moveType : SetChangeMoveType
+    
+    public let deletedObjects : Set<T>
+    public let insertedObjects : Set<T>
     
     /// Calculates the inserts, deletes, moves and updates comparing two sets of ordered, distinct objects
     /// @param startState: State before the updates
@@ -78,48 +119,49 @@ public struct ChangedIndexes<T : Hashable> {
     /// @param updatedObjects: Objects that need to be reloaded
     /// @param moveType: depending on viewController, default is uiCollectionView
     public init(start: OrderedSetState<T>, end : OrderedSetState<T>, updated: Set<T>, moveType: SetChangeMoveType = .uiCollectionView) {
-        let (deletedIndexes, insertedIndexes, updatedIndexes, movedIndexes) = type(of: self).calculateChanges(start: start, end: end, updated: updated, moveType: moveType)
-        
         self.startState = start
         self.endState = end
         self.updatedObjects = updated
-        
-        self.deletedIndexes = deletedIndexes
-        self.insertedIndexes = insertedIndexes
-        self.updatedIndexes = updatedIndexes
-        self.movedIndexes = movedIndexes
         self.moveType = moveType
+
+        let result = type(of:self).calculateDeletesInsertsUpdates(start: start, end: end, updated: updated)
+        let movedIndexes = type(of:self).calculateMoves(start: start, end: end, afterDeletesAndInserts: result.intermediateState, moveType: moveType)
+        self.movedIndexes = movedIndexes
+
+        self.updatedIndexes = result.updatedIndexes
+        self.deletedIndexes = IndexSet(result.deletedObjects.values)
+        self.insertedIndexes = IndexSet(result.insertedObjects.values.sorted())
+
+        self.deletedObjects = Set(result.deletedObjects.keys)
+        self.insertedObjects = Set(result.insertedObjects.keys)
     }
     
-    static func calculateChanges(start: OrderedSetState<T>, end: OrderedSetState<T>, updated: Set<T>, moveType: SetChangeMoveType) -> ( deletedIndexes: IndexSet, insertedIndexes: IndexSet, updatedIndexes: IndexSet, movedIndexes: [MovedIndex])
+    static func calculateDeletesInsertsUpdates(start: OrderedSetState<T>, end: OrderedSetState<T>, updated: Set<T>)
+        -> (insertedObjects: [T: Int], deletedObjects: [T:Int], updatedIndexes: IndexSet, intermediateState: [T])
     {
-        var deletedIndexes = IndexSet()
         var updatedIndexes = IndexSet()
-        var insertedObjects = end.order // when iterating through the collection we remove the items we found. This way the only items remaining will be inserted objects
+        var insertedObjects = end.order
+        var deletedObjects = [T : Int]()
         var intermediateState = [T]()
         
         for (idx, item) in start.array.enumerated() {
-            if insertedObjects.removeValue(forKey: item) != nil {
+            if let newIdx = insertedObjects.removeValue(forKey: item) {
                 intermediateState.append(item)
                 if updated.contains(item){
-                    updatedIndexes.insert(idx)
+                    updatedIndexes.insert(newIdx)
                 }
             } else {
-                deletedIndexes.insert(idx)
+                deletedObjects[item] = idx
             }
         }
         
-        // sort inserted indexes in ascending order to avoid out of bounds inserts
+        // When iterating through the collection we removed the items we found in the endState from its copy.
+        // This way the only items remaining will be inserted objects
+        // We need to sort inserted indexes in ascending order to avoid out of bounds inserts
         let ascInsertedIndexes = insertedObjects.values.sorted()
-        
-        // Insert inserted objects and calculate changes
         ascInsertedIndexes.forEach{intermediateState.insert(end.array[$0], at: $0)}
-        let movedIndexes = calculateMoves(start: start, end: end, afterDeletesAndInserts: intermediateState, moveType: moveType)
-        
-        return (deletedIndexes: deletedIndexes,
-                insertedIndexes: IndexSet(ascInsertedIndexes),
-                updatedIndexes: updatedIndexes,
-                movedIndexes: movedIndexes)
+
+        return (insertedObjects, deletedObjects, updatedIndexes, intermediateState)
     }
     
     static func calculateMoves(start: OrderedSetState<T>, end: OrderedSetState<T>, afterDeletesAndInserts: [T], moveType: SetChangeMoveType) -> [MovedIndex]

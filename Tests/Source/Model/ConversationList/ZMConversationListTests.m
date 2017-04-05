@@ -30,48 +30,6 @@
 #import "WireDataModelTests-Swift.h"
 
 
-typedef void(^ObserverCallback)( NSObject * _Nonnull  note);
-
-
-@interface ConversationListChangeObserver : NSObject <ZMConversationListObserver>
-
-@property (nonatomic, readonly, nonnull) NSMutableArray *notifications;
-@property (nonatomic, copy, nullable) ObserverCallback notificationCallback;
-@property (nonatomic, weak) ZMConversationList *conversationList;
-@property (nonatomic) id token;
-
-- (nonnull instancetype)initWithConversationList:(nonnull ZMConversationList *)conversationList;
-
-@end
-
-
-@implementation ConversationListChangeObserver
-
-ZM_EMPTY_ASSERTING_INIT()
-
-- (instancetype)initWithConversationList:(ZMConversationList *)conversationList;
-{
-    self = [super init];
-    if(self) {
-        self.conversationList = conversationList;
-        self.token = [ConversationListChangeInfo addObserver:self forList:conversationList];
-    }
-    return self;
-}
-
-- (void)conversationListDidChange:(ConversationListChangeInfo *)note;
-{
-    [self.notifications addObject:note];
-    if (self.notificationCallback) {
-        self.notificationCallback(note);
-    }
-
-}
-
-
-@end
-
-
 @interface ZMConversationListTests : ZMBaseManagedObjectTest
 @property (nonatomic) NotificationDispatcher *dispatcher;
 @end

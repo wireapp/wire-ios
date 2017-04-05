@@ -156,7 +156,7 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
     }
     
     func testThatItCalculatesUpdatesCorrectly(){
-        // Updated indexes refer to the indexes before the update
+        // Updated indexes refer to the indexes after the update
         
         // given
         let startState = WireDataModel.OrderedSetState(array:["A","B", "C"])
@@ -166,7 +166,7 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(["B"]))
         
         // then
-        XCTAssertEqual(sut.updatedIndexes, IndexSet([1]))
+        XCTAssertEqual(sut.updatedIndexes, IndexSet([2]))
     }
     
     
