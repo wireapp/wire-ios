@@ -3831,3 +3831,34 @@
 }
 
 @end
+
+
+@implementation ZMConversationTests (GroupCallingV3)
+
+- (void)testThatItReturnsActiveCall_isCallDeviceActiveV3
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    XCTAssertNotEqual(conversation.conversationListIndicator, ZMConversationListIndicatorActiveCall);
+
+    // when
+    conversation.isCallDeviceActiveV3 = YES;
+
+    // then
+    XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorActiveCall);
+}
+
+- (void)testThatItReturnsInactiveCall_isIgnoringCallV3
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    XCTAssertNotEqual(conversation.conversationListIndicator, ZMConversationListIndicatorInactiveCall);
+
+    // when
+    conversation.isIgnoringCallV3 = YES;
+    
+    // then
+    XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorInactiveCall);
+}
+
+@end
