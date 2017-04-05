@@ -25,7 +25,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         
         var changes : [ConversationListChangeInfo] = []
         
-        @objc func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+        func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
             changes.append(changeInfo)
         }
     }
@@ -41,9 +41,9 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         super.tearDown()
     }
     
-    fileprivate func movedIndexes(_ changeSet: ConversationListChangeInfo) -> [ZMMovedIndex] {
-        var array : [ZMMovedIndex] = []
-        changeSet.enumerateMovedIndexes {(x: UInt, y: UInt) in array.append(ZMMovedIndex(from: x, to: y)) }
+    fileprivate func movedIndexes(_ changeSet: ConversationListChangeInfo) -> [MovedIndex] {
+        var array : [MovedIndex] = []
+        changeSet.enumerateMovedIndexes {(x: Int, y: Int) in array.append(MovedIndex(from: x, to: y)) }
         return array
     }
     
@@ -260,7 +260,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        XCTAssertEqual(conversationList.toOrderedSet().array.map{($0 as! ZMConversation).objectID},
+        XCTAssertEqual(conversationList.map{ ($0 as! ZMConversation).objectID},
                        [conversation3, conversation2, conversation1].map{$0.objectID})
         
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
@@ -271,7 +271,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         // then
-        XCTAssertEqual(conversationList.toOrderedSet().array.map{($0 as! ZMConversation).objectID},
+        XCTAssertEqual(conversationList.map{ ($0 as! ZMConversation).objectID},
                        [conversation2, conversation3, conversation1].map{$0.objectID})
         XCTAssertEqual(conversationList.count, 3)
         XCTAssertEqual(testObserver.changes.count, 1)
@@ -279,7 +279,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
             XCTAssertEqual(first.insertedIndexes, IndexSet())
             XCTAssertEqual(first.deletedIndexes, IndexSet())
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
-            XCTAssertEqual(movedIndexes(first), [ZMMovedIndex(from: 1, to: 0)])
+            XCTAssertEqual(movedIndexes(first), [MovedIndex(from: 1, to: 0)])
         }
         ConversationListChangeInfo.remove(observer: token, for:conversationList)
         
@@ -737,7 +737,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         
         // when
         guard let changes1 = testObserver.changes.last else { return XCTFail("Did not sent notification")}
-        XCTAssertEqual(changes1.orderedSetState, NSOrderedSet(array: [conversation1, conversation2]))
+        XCTAssertEqual(changes1.orderedSetState, OrderedSetState(array: [conversation1, conversation2]))
         XCTAssertEqual(conversationList.count, 2)
 
         // when
@@ -749,12 +749,12 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         
         // then
         // The set of the previous notification should not change
-        XCTAssertEqual(changes1.orderedSetState, NSOrderedSet(array: [conversation1, conversation2]))
+        XCTAssertEqual(changes1.orderedSetState, OrderedSetState(array: [conversation1, conversation2]))
         XCTAssertEqual(conversationList.count, 3)
 
         // The set of the new notification contains the new state
         guard let changes2 = testObserver.changes.last else { return XCTFail("Did not sent notification")}
-        XCTAssertEqual(changes2.orderedSetState, NSOrderedSet(array: [conversation1, conversation2, conversation3]))
+        XCTAssertEqual(changes2.orderedSetState, OrderedSetState(array: [conversation1, conversation2, conversation3]))
         
         ConversationListChangeInfo.remove(observer: token, for:conversationList)
     }

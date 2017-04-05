@@ -19,20 +19,35 @@
 
 import Foundation
 
-@objc public final class MessageWindowChangeInfo : SetChangeInfo {
+@objc public final class MessageWindowChangeInfo: NSObject, SetChangeInfoOwner {
+    public typealias ChangeInfoContent = ZMMessage
+    public var setChangeInfo: SetChangeInfo<ZMMessage>
     
-    public var conversationMessageWindow : ZMConversationMessageWindow { return self.observedObject as! ZMConversationMessageWindow }
+    public var conversationMessageWindow : ZMConversationMessageWindow { return setChangeInfo.observedObject as! ZMConversationMessageWindow }
     public var isFetchingMessagesChanged = false
     public var isFetchingMessages = false
     
-    init(setChangeInfo: SetChangeInfo) {
-        super.init(observedObject: setChangeInfo.observedObject, changeSet: setChangeInfo.changeSet, orderedSetState: setChangeInfo.orderedSetState)
+    init(setChangeInfo: SetChangeInfo<ZMMessage>) {
+        self.setChangeInfo = setChangeInfo
     }
+    
     convenience init(windowWithMissingMessagesChanged window: ZMConversationMessageWindow, isFetching: Bool) {
         self.init(setChangeInfo: SetChangeInfo(observedObject: window))
         self.isFetchingMessages = isFetching
         self.isFetchingMessagesChanged = true
         
+    }
+    
+    // Once everything is in Swift, we can also remove this and use a protocol extension
+    public var orderedSetState : OrderedSetState<ChangeInfoContent> { return setChangeInfo.orderedSetState }
+    public var insertedIndexes : IndexSet { return setChangeInfo.insertedIndexes }
+    public var deletedIndexes : IndexSet { return setChangeInfo.deletedIndexes }
+    public var deletedObjects: Set<AnyHashable> { return setChangeInfo.deletedObjects }
+    public var updatedIndexes : IndexSet { return setChangeInfo.updatedIndexes }
+    public var movedIndexPairs : [MovedIndex] { return setChangeInfo.movedIndexPairs }
+    public var zm_movedIndexPairs : [ZMMovedIndex] { return setChangeInfo.zm_movedIndexPairs }
+    public func enumerateMovedIndexes(_ block:@escaping (_ from: Int, _ to : Int) -> Void) {
+        setChangeInfo.enumerateMovedIndexes(block)
     }
 }
 

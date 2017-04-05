@@ -21,7 +21,7 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
-@objc class TestWindowObserver : NSObject, ZMConversationMessageWindowObserver
+class TestWindowObserver : NSObject, ZMConversationMessageWindowObserver
 {
     var messageChangeInfos = [MessageChangeInfo]()
     var notifications : [MessageWindowChangeInfo] = []
@@ -36,7 +36,7 @@ import XCTest
         self.init(block: nil)
     }
     
-    @objc func conversationWindowDidChange(_ changeInfo: MessageWindowChangeInfo)
+    func conversationWindowDidChange(_ changeInfo: MessageWindowChangeInfo)
     {
         notifications.append(changeInfo)
         if let block = notificationBlock { block(changeInfo) }
@@ -328,7 +328,7 @@ extension MessageWindowObserverTests {
             XCTAssertEqual(note.insertedIndexes, IndexSet())
             XCTAssertEqual(note.deletedIndexes, IndexSet())
             XCTAssertEqual(note.updatedIndexes, IndexSet())
-            XCTAssertEqual(note.movedIndexPairs, [ZMMovedIndex(from: 1, to: 0)])
+            XCTAssertEqual(note.movedIndexPairs, [MovedIndex(from: 1, to: 0)])
         }
         else {
             XCTFail("New state is nil")
@@ -577,7 +577,7 @@ extension MessageWindowObserverTests {
             XCTAssertEqual(note.insertedIndexes, IndexSet())
             XCTAssertEqual(note.deletedIndexes, IndexSet())
             XCTAssertEqual(note.updatedIndexes, IndexSet())
-            XCTAssertEqual(note.movedIndexPairs, [ZMMovedIndex(from: 1, to: 0)])
+            XCTAssertEqual(note.movedIndexPairs, [MovedIndex(from: 1, to: 0)])
         }
         else {
             XCTFail("New state is nil")
@@ -588,7 +588,7 @@ extension MessageWindowObserverTests {
             XCTAssertEqual(note.insertedIndexes, IndexSet())
             XCTAssertEqual(note.deletedIndexes, IndexSet())
             XCTAssertEqual(note.updatedIndexes, IndexSet())
-            XCTAssertEqual(note.movedIndexPairs, [ZMMovedIndex(from: 1, to: 0)])
+            XCTAssertEqual(note.movedIndexPairs, [MovedIndex(from: 1, to: 0)])
         }
         else {
             XCTFail("New state is nil")

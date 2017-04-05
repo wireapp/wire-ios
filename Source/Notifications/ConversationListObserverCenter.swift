@@ -121,7 +121,6 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         var snapshotsToRemove = [String]()
         listSnapshots.forEach{ (identifier, snapshot) in
             guard snapshot.conversationList != nil else {
-                snapshot.tearDown()
                 snapshotsToRemove.append(identifier)
                 return
             }
@@ -135,8 +134,6 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     func tearDown() {
         if isTornDown { return }
         isTornDown = true
-        
-        listSnapshots.values.forEach{$0.tearDown()}
         listSnapshots = [:]
     }
     
@@ -156,7 +153,7 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
 
 class ConversationListSnapshot: NSObject {
     
-    fileprivate var state : SetSnapshot
+    fileprivate var state : SetSnapshot<ZMConversation>
     weak var conversationList : ZMConversationList?
     fileprivate var tornDown = false
     var conversationChanges = [ConversationChangeInfo]()
@@ -164,7 +161,7 @@ class ConversationListSnapshot: NSObject {
     
     init(conversationList: ZMConversationList) {
         self.conversationList = conversationList
-        self.state = SetSnapshot(set: conversationList.toOrderedSet(), moveType: .uiCollectionView)
+        self.state = SetSnapshot(set: conversationList.toOrderedSetState(), moveType: .uiCollectionView)
         super.init()
     }
     
@@ -233,8 +230,8 @@ class ConversationListSnapshot: NSObject {
             needsToRecalculate = false
         }
         
-        let changedSet = NSOrderedSet(array: conversationChanges.flatMap{$0.conversation})
-        guard let newStateUpdate = self.state.updatedState(changedSet, observedObject: list, newSet: list.toOrderedSet())
+        let changedSet = Set(conversationChanges.flatMap{$0.conversation})
+        guard let newStateUpdate = self.state.updatedState(changedSet, observedObject: list, newSet: list.toOrderedSetState())
         else {
             zmLog.debug("Recalculated list \(list.identifier), but old state is same as new state")
             return
@@ -271,10 +268,5 @@ class ConversationListSnapshot: NSObject {
         message.append("\n ConversationListChangeInfo: \(changeInfo.description)")
         return message
     }
-    
-    func tearDown() {
-        state = SetSnapshot(set: NSOrderedSet(), moveType: .none)
-        conversationList = nil
-        tornDown = true
-    }
+
 }

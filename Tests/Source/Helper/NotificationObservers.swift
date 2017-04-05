@@ -91,3 +91,24 @@ class ConversationObserver: NSObject, ZMConversationObserver {
         notifications.append(changeInfo)
     }
 }
+
+@objc class ConversationListChangeObserver : NSObject, ZMConversationListObserver {
+    
+    public var notifications = [ConversationListChangeInfo]()
+    public var observerCallback : ((ConversationListChangeInfo) -> Void)?
+    unowned var conversationList: ZMConversationList
+    var token : NSObjectProtocol?
+    
+    init(conversationList: ZMConversationList) {
+        self.conversationList = conversationList
+        super.init()
+        self.token = ConversationListChangeInfo.add(observer: self, for: conversationList)
+    }
+    
+    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+        notifications.append(changeInfo)
+        if let callBack = observerCallback {
+            callBack(changeInfo)
+        }
+    }
+}

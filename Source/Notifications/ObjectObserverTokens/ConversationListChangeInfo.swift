@@ -24,20 +24,32 @@ private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
 extension ZMConversationList {
     
-    func toOrderedSet() -> NSOrderedSet {
-        return NSOrderedSet(array: self.map{$0})
+    func toOrderedSetState() -> OrderedSetState<ZMConversation> {
+        return OrderedSetState(array: self.map{$0 as! ZMConversation})
     }
     
 }
 
-@objc public final class ConversationListChangeInfo : SetChangeInfo {
+
+@objc public final class ConversationListChangeInfo : NSObject, SetChangeInfoOwner {
+    public typealias ChangeInfoContent = ZMConversation
+    public var setChangeInfo: SetChangeInfo<ZMConversation>
     
-    public var conversationList : ZMConversationList { return self.observedObject as! ZMConversationList }
+    public var conversationList : ZMConversationList { return setChangeInfo.observedObject as! ZMConversationList }
     
-    init(setChangeInfo: SetChangeInfo) {
-        super.init(observedObject: setChangeInfo.observedObject,
-                   changeSet: setChangeInfo.changeSet,
-                   orderedSetState: setChangeInfo.orderedSetState)
+    init(setChangeInfo: SetChangeInfo<ZMConversation>) {
+        self.setChangeInfo = setChangeInfo
+    }
+    
+    public var orderedSetState : OrderedSetState<ChangeInfoContent> { return setChangeInfo.orderedSetState }
+    public var insertedIndexes : IndexSet { return setChangeInfo.insertedIndexes }
+    public var deletedIndexes : IndexSet { return setChangeInfo.deletedIndexes }
+    public var deletedObjects: Set<AnyHashable> { return setChangeInfo.deletedObjects }
+    public var updatedIndexes : IndexSet { return setChangeInfo.updatedIndexes }
+    public var movedIndexPairs : [MovedIndex] { return setChangeInfo.movedIndexPairs }
+    public var zm_movedIndexPairs : [ZMMovedIndex] { return setChangeInfo.zm_movedIndexPairs}
+    public func enumerateMovedIndexes(_ block:@escaping (_ from: Int, _ to : Int) -> Void) {
+        setChangeInfo.enumerateMovedIndexes(block)
     }
 }
 
@@ -48,8 +60,9 @@ extension ZMConversationList {
     @objc optional func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo)
 }
 
-extension ConversationListChangeInfo {
 
+extension ConversationListChangeInfo {
+    
     /// Adds a ZMConversationListObserver to the specified list
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forList:)
