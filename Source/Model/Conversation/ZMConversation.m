@@ -735,10 +735,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     if (self.connectedUser.isPendingApprovalByOtherUser) {
         return ZMConversationListIndicatorPending;
     }
-    
-    // NOTE only works for v2 calls, but this only relevant for group calls so until v3
-    // also does group calls it can stay like this.
-    if (self.isIgnoringCall && self.callParticipants.count > 0) {
+    else if (self.callDeviceIsActive || self.isCallDeviceActiveV3) {
+        return ZMConversationListIndicatorActiveCall;
+    }
+    BOOL ignoredV2Call = (self.isIgnoringCall && self.callParticipants.count > 0);
+    BOOL ignoredV3Call = self.isIgnoringCallV3;
+    if ( ignoredV2Call || ignoredV3Call) {
         return ZMConversationListIndicatorInactiveCall;        
     }
     

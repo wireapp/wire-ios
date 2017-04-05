@@ -227,6 +227,33 @@ extension ZMConversation {
     }
 }
 
+// MARK : Group Calling V3
+// This needs to be set to display the correct conversationListIndicator
+extension ZMConversation {
+    
+    public var isIgnoringCallV3: Bool {
+        get {
+            return callState.isIgnoringCallV3
+        }
+        set {
+            if callState.isIgnoringCallV3 != newValue {
+                callState.isIgnoringCallV3 = newValue
+            }
+        }
+    }
+    
+    public var isCallDeviceActiveV3: Bool {
+        get {
+            return callState.isCallDeviceActiveV3
+        }
+        set {
+            if callState.isCallDeviceActiveV3 != newValue {
+                callState.isCallDeviceActiveV3 = newValue
+            }
+        }
+    }
+}
+
 /// MARK: VideoCalling
 extension ZMConversation {
     
@@ -416,11 +443,29 @@ open class ZMConversationCallState : NSObject {
         }
     }
     
+    open var isCallDeviceActiveV3: Bool = false {
+        didSet {
+            hasChanges = true
+            if contextType == .main {
+                hasLocalModificationsForCallDeviceActiveV3 = true
+            }
+        }
+    }
+    
     open var isIgnoringCall: Bool = false {
         didSet {
             hasChanges = true
             if self.contextType == .main {
                 hasLocalModificationsForIgnoringCall = true
+            }
+        }
+    }
+    
+    open var isIgnoringCallV3: Bool = false {
+        didSet {
+            hasChanges = true
+            if contextType == .main {
+                hasLocalModificationsForIgnoringCallV3 = true
             }
         }
     }
@@ -495,7 +540,9 @@ open class ZMConversationCallState : NSObject {
     
     fileprivate (set) open var hasChanges: Bool = false
     fileprivate (set) open var hasLocalModificationsForCallDeviceActive: Bool = false
+    fileprivate (set) open var hasLocalModificationsForCallDeviceActiveV3: Bool = false
     fileprivate (set) open var hasLocalModificationsForIgnoringCall: Bool = false
+    fileprivate (set) open var hasLocalModificationsForIgnoringCallV3: Bool = false
     fileprivate (set) open var hasLocalModificationsForActiveParticipants: Bool = false
     fileprivate (set) open var hasLocalModificationsForIsOutgoingCall: Bool = false
     fileprivate (set) open var hasLocalModificationsForTimedOut: Bool = false
@@ -552,6 +599,8 @@ open class ZMConversationCallState : NSObject {
         newState.hasLocalModificationsForIsSendingVideo = hasLocalModificationsForIsSendingVideo
         newState.hasLocalModificationsForActiveVideoCallParticipants = hasLocalModificationsForActiveVideoCallParticipants
         newState.hasLocalModificationsForReasonToLeave = hasLocalModificationsForReasonToLeave
+        newState.hasLocalModificationsForIgnoringCallV3 = hasLocalModificationsForIgnoringCallV3
+        newState.hasLocalModificationsForCallDeviceActiveV3 = hasLocalModificationsForCallDeviceActiveV3
         
         hasLocalModificationsForCallDeviceActive = false
         hasLocalModificationsForIgnoringCall = false
@@ -562,7 +611,9 @@ open class ZMConversationCallState : NSObject {
         hasLocalModificationsForIsSendingVideo = needsToSyncIsSendingVideo
         hasLocalModificationsForActiveVideoCallParticipants = false
         hasLocalModificationsForReasonToLeave = false
-        
+        hasLocalModificationsForIgnoringCallV3 = false
+        hasLocalModificationsForCallDeviceActiveV3 = false
+
         newState.hasChanges = false
         return newState
     }
@@ -598,6 +649,16 @@ open class ZMConversationCallState : NSObject {
                 if other.hasLocalModificationsForReasonToLeave {
                     reasonToLeave = other.reasonToLeave
                 }
+                // Group calling V3 start -->
+                if other.hasLocalModificationsForIgnoringCallV3 {
+                    isIgnoringCallV3 = other.isIgnoringCallV3
+                    other.hasLocalModificationsForIgnoringCallV3 = false
+                }
+                if other.hasLocalModificationsForCallDeviceActiveV3 {
+                    isCallDeviceActiveV3 = other.isCallDeviceActiveV3
+                    other.hasLocalModificationsForCallDeviceActiveV3 = false
+                }
+                // <-- Group calling V3 end
 
             case .main: // Sync -> Main
                 zmLog.debug("merge->main other:\(other)")
@@ -627,6 +688,16 @@ open class ZMConversationCallState : NSObject {
                     reasonToLeave = other.reasonToLeave
                     hasLocalModificationsForReasonToLeave = false
                 }
+                
+                // Group calling V3 start -->
+                if !hasLocalModificationsForIgnoringCallV3 {
+                    isIgnoringCallV3 = other.isIgnoringCallV3
+                }
+                if !hasLocalModificationsForCallDeviceActiveV3 {
+                    isCallDeviceActiveV3 = other.isCallDeviceActiveV3
+                }
+                // <-- Group calling V3 end
+                
                 isFlowActive = other.isFlowActive
                 isOutgoingCall = other.isOutgoingCall
                 

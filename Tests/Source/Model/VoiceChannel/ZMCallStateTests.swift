@@ -863,3 +863,113 @@ extension ZMCallStateTests {
         }
     }
 }
+
+
+// V3 Group calling
+
+extension ZMCallStateTests {
+
+    func testThatItMergesIsIgnoringCallV3_Main_to_Sync(){
+        // given
+        let mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
+        mainSut.isIgnoringCallV3 = true
+        syncSut.isIgnoringCallV3 = false
+        XCTAssertTrue(mainSut.hasLocalModificationsForIgnoringCallV3)
+
+        // when
+        syncSut.mergeChangesFromState(mainSut)
+        
+        // then
+        XCTAssertTrue(mainSut.isIgnoringCallV3)
+        XCTAssertTrue(syncSut.isIgnoringCallV3)
+    }
+    
+    func testThatItMergesIsCallDeviceActiveV3_Main_to_Sync(){
+        // given
+        let mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
+        mainSut.isCallDeviceActiveV3 = true
+        syncSut.isCallDeviceActiveV3 = false
+        XCTAssertTrue(mainSut.hasLocalModificationsForCallDeviceActiveV3)
+
+        // when
+        syncSut.mergeChangesFromState(mainSut)
+        
+        // then
+        XCTAssertTrue(mainSut.isCallDeviceActiveV3)
+        XCTAssertTrue(syncSut.isCallDeviceActiveV3)
+    }
+    
+    func testThatItMergesIsIgnoringCallV3_Sync_to_Main(){
+        // given
+        let mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
+        mainSut.isIgnoringCallV3 = false
+        syncSut.mergeChangesFromState(mainSut) // reset hasLocalModificationsForIgnoringCallV3
+        
+        syncSut.isIgnoringCallV3 = true
+        XCTAssertFalse(mainSut.hasLocalModificationsForIgnoringCallV3)
+        XCTAssertFalse(mainSut.isIgnoringCallV3)
+        XCTAssertTrue(syncSut.isIgnoringCallV3)
+
+        // when
+        mainSut.mergeChangesFromState(syncSut)
+        
+        // then
+        XCTAssertTrue(mainSut.isIgnoringCallV3)
+        XCTAssertTrue(syncSut.isIgnoringCallV3)
+    }
+    
+    func testThatItMergesIsCallDeviceActiveV3_Sync_to_Main(){
+        // given
+        let mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
+        mainSut.isCallDeviceActiveV3 = false
+        syncSut.mergeChangesFromState(mainSut) // reset hasLocalModificationsForIgnoringCallV3
+
+        syncSut.isCallDeviceActiveV3 = true
+        XCTAssertFalse(mainSut.hasLocalModificationsForCallDeviceActiveV3)
+        XCTAssertFalse(mainSut.isCallDeviceActiveV3)
+        XCTAssertTrue(syncSut.isCallDeviceActiveV3)
+        
+        // when
+        mainSut.mergeChangesFromState(syncSut)
+        
+        // then
+        XCTAssertTrue(mainSut.isCallDeviceActiveV3)
+        XCTAssertTrue(syncSut.isCallDeviceActiveV3)
+    }
+    
+    func testThatItDoesNotMergeIsIgnoringCallV3_LocalModifications_Sync_to_Main(){
+        // given
+        let mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
+        syncSut.isIgnoringCallV3 = true
+        mainSut.isIgnoringCallV3 = false
+        XCTAssertTrue(mainSut.hasLocalModificationsForIgnoringCallV3)
+        
+        // when
+        mainSut.mergeChangesFromState(syncSut)
+        
+        // then
+        XCTAssertFalse(mainSut.isIgnoringCallV3)
+        XCTAssertTrue(syncSut.isIgnoringCallV3)
+    }
+    
+    func testThatItDoesNotMergeIsCallDeviceActiveV3_LocalModifications_Sync_to_Main(){
+        // given
+        let mainSut = ZMConversationCallState(contextType: .main)
+        let syncSut = ZMConversationCallState(contextType: .sync)
+        syncSut.isCallDeviceActiveV3 = true
+        mainSut.isCallDeviceActiveV3 = false
+        XCTAssertTrue(mainSut.hasLocalModificationsForCallDeviceActiveV3)
+        
+        // when
+        mainSut.mergeChangesFromState(syncSut)
+        
+        // then
+        XCTAssertFalse(mainSut.isCallDeviceActiveV3)
+        XCTAssertTrue(syncSut.isCallDeviceActiveV3)
+    }
+}
