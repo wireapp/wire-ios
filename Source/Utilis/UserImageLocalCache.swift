@@ -150,13 +150,13 @@ extension NSManagedObjectContext
         case .preview:
             let stored = setImage(inCache: smallUserImageCache, legacyCacheKey: legacyKey, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.displayName)] preview image [\(imageData)] cache keys: V3[\(key)] V2[\(legacyKey)]")
+                log.info("Setting [\(user.displayName)] preview image [\(imageData)] cache keys: V3[\(String(describing: key))] V2[\(String(describing: legacyKey))]")
                 usersWithChangedSmallImage.append(user.objectID)
             }
         case .complete:
             let stored = setImage(inCache: largeUserImageCache, legacyCacheKey: legacyKey, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.displayName)] complete image [\(imageData)] cache keys: V3[\(key)] V2[\(legacyKey)]")
+                log.info("Setting [\(user.displayName)] complete image [\(imageData)] cache keys: V3[\(String(describing: key))] V2[\(String(describing: legacyKey))]")
                 usersWithChangedLargeImage.append(user.objectID)
             }
         }
