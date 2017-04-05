@@ -25,32 +25,52 @@ private let MEGABYTE = UInt(1 * 1000 * 1000)
 
 // MARK: ZMUser
 extension ZMUser {
-    
-    /// The identifier to use for the large profile image
-    fileprivate var largeImageCacheKey : String? {
-        if let mediumImageRemoteId = self.mediumRemoteIdentifier?.transportString(),
-            let userRemoteId = self.remoteIdentifier?.transportString()
-        {
-            return (userRemoteId + "-" + mediumImageRemoteId)
-        }
-        return .none
+    private func cacheIdentifier(suffix: String?) -> String? {
+        guard let userRemoteId = remoteIdentifier?.transportString(), let suffix = suffix else { return nil }
+        return (userRemoteId + "-" + suffix)
     }
     
-    /// The identifier to use for the small profile image
-    fileprivate var smallImageCacheKey : String? {
-        if let smallImageRemoteId = self.smallProfileRemoteIdentifier?.transportString(),
-            let userRemoteId = self.remoteIdentifier?.transportString()
-        {
-            return userRemoteId + "-" + smallImageRemoteId
+    @objc public func legacyImageCacheKey(for size: ProfileImageSize) -> String? {
+        switch size {
+        case .preview:
+            return cacheIdentifier(suffix: smallProfileRemoteIdentifier?.transportString())
+        case .complete:
+            return cacheIdentifier(suffix: mediumRemoteIdentifier?.transportString())
         }
-        return .none
+    }
+    
+    @objc public func imageCacheKey(for size: ProfileImageSize) -> String? {
+        switch size {
+        case .preview:
+            return cacheIdentifier(suffix: previewProfileAssetIdentifier)
+        case .complete:
+            return cacheIdentifier(suffix: completeProfileAssetIdentifier)
+        }
+    }
+    
+    fileprivate func resolvedCacheKey(for size: ProfileImageSize) -> String? {
+        switch size {
+        case .preview:
+            return smallProfileImageCacheKey
+        case .complete:
+            return mediumProfileImageCacheKey
+        }
+    }
+    
+    /// Cache keys for all large user images
+    fileprivate var largeCacheKeys: [String] {
+        return [legacyImageCacheKey(for: .complete), imageCacheKey(for: .complete)].flatMap{ $0 }
+    }
+    
+    /// Cache keys for all small user images
+    fileprivate var smallCacheKeys: [String] {
+        return [legacyImageCacheKey(for: .preview), imageCacheKey(for: .preview)].flatMap{ $0 }
     }
 }
 
 // MARK: NSManagedObjectContext
 
 let NSManagedObjectContextUserImageCacheKey = "zm_userImageCacheKey"
-
 extension NSManagedObjectContext
 {
     public var zm_userImageCache : UserImageLocalCache! {
@@ -66,6 +86,8 @@ extension NSManagedObjectContext
 
 // MARK: Cache
 @objc open class UserImageLocalCache : NSObject {
+    
+    fileprivate let log = ZMSLog(tag: "UserImageCache")
     
     /// Cache for large user profile image
     fileprivate let largeUserImageCache : PINCache
@@ -97,48 +119,63 @@ extension NSManagedObjectContext
         super.init()
     }
     
+    /// Stores image in cache and removes legacy copy if it was there, returns true if the data was stored
+    private func setImage(inCache cache: PINCache, legacyCacheKey: String?, cacheKey: String?, data: Data) -> Bool {
+        let resolvedCacheKey: String?
+        if let cacheKey = cacheKey {
+            resolvedCacheKey = cacheKey
+            if let legacyCacheKey = legacyCacheKey {
+                cache.removeObject(forKey: legacyCacheKey)
+            }
+        } else {
+            resolvedCacheKey = legacyCacheKey
+        }
+        if let resolvedCacheKey = resolvedCacheKey {
+            cache.setObject(data as NSCoding, forKey: resolvedCacheKey)
+            return true
+        }
+        return false
+    }
+    
     /// Removes all images for user
     open func removeAllUserImages(_ user: ZMUser) {
-        if let largeId = user.largeImageCacheKey {
-            self.largeUserImageCache.removeObject(forKey: largeId)
-        }
-        if let smallId = user.smallImageCacheKey {
-            self.smallUserImageCache.removeObject(forKey: smallId)
+        user.largeCacheKeys.forEach(largeUserImageCache.removeObject)
+        user.smallCacheKeys.forEach(smallUserImageCache.removeObject)
+    }
+    
+    open func setUserImage(_ user: ZMUser, imageData: Data, size: ProfileImageSize) {
+        let legacyKey = user.legacyImageCacheKey(for: size)
+        let key = user.imageCacheKey(for: size)
+        switch size {
+        case .preview:
+            let stored = setImage(inCache: smallUserImageCache, legacyCacheKey: legacyKey, cacheKey: key, data: imageData)
+            if stored {
+                log.info("Setting [\(user.displayName)] preview image [\(imageData)] cache keys: V3[\(key)] V2[\(legacyKey)]")
+                usersWithChangedSmallImage.append(user.objectID)
+            }
+        case .complete:
+            let stored = setImage(inCache: largeUserImageCache, legacyCacheKey: legacyKey, cacheKey: key, data: imageData)
+            if stored {
+                log.info("Setting [\(user.displayName)] complete image [\(imageData)] cache keys: V3[\(key)] V2[\(legacyKey)]")
+                usersWithChangedLargeImage.append(user.objectID)
+            }
         }
     }
     
-    /// Large image for user
-    open func largeUserImage(_ user: ZMUser) -> Data? {
-        if let largeId = user.largeImageCacheKey
-        {
-            return self.largeUserImageCache.object(forKey: largeId) as? Data
+    open func userImage(_ user: ZMUser, size: ProfileImageSize) -> Data? {
+        guard let cacheKey = user.resolvedCacheKey(for: size) else { return nil }
+        let data: Data?
+        switch size {
+        case .preview:
+            data = smallUserImageCache.object(forKey: cacheKey) as? Data
+        case .complete:
+            data = largeUserImageCache.object(forKey: cacheKey) as? Data
         }
-        return .none
-    }
-    
-    /// Sets the large user image for a user
-    open func setLargeUserImage(_ user: ZMUser, imageData: Data) {
-        if let largeId = user.largeImageCacheKey {
-            self.largeUserImageCache.setObject(imageData as NSCoding, forKey: largeId)
-            usersWithChangedLargeImage.append(user.objectID)
+        if let data = data {
+            log.info("Getting [\(user.displayName ?? user.remoteIdentifier?.transportString() ?? "")] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")
         }
-    }
-    
-    /// Small image for user
-    open func smallUserImage(_ user: ZMUser) -> Data? {
-        if let smallId = user.smallImageCacheKey
-        {
-            return self.smallUserImageCache.object(forKey: smallId) as? Data
-        }
-        return .none
-    }
-    
-    /// Sets the small user image for a user
-    open func setSmallUserImage(_ user: ZMUser, imageData: Data) {
-        if let smallId = user.smallImageCacheKey {
-            self.smallUserImageCache.setObject(imageData as NSCoding, forKey: smallId)
-            usersWithChangedSmallImage.append(user.objectID)
-        }
+
+        return data
     }
     
     var usersWithChangedSmallImage : [NSManagedObjectID] = []

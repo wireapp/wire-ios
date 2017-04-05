@@ -58,7 +58,8 @@ FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 /// C.f. +searchUserToProfileImageCache
 @property (nonatomic, readonly) BOOL isLocalOrHasCachedProfileImageData;
 
-@property (nonatomic) NSUUID *mediumAssetID;
+@property (nonatomic) NSUUID *mediumLegacyId;
+@property (nonatomic) NSString *completeAssetKey;
 
 @property (nonatomic, readwrite) NSUInteger totalCommonConnections;
 

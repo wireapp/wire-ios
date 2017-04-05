@@ -86,6 +86,7 @@
 		BF8EDC741E53182F00DA6C40 /* store2-25-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BF8EDC731E53182F00DA6C40 /* store2-25-0.wiredatabase */; };
 		BF8F3A831E4B61C70079E9E7 /* TextSearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8F3A821E4B61C70079E9E7 /* TextSearchQuery.swift */; };
 		BF949E5B1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF949E5A1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift */; };
+		BF989D0A1E8A6A120052BF8F /* SearchUserAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF989D091E8A6A120052BF8F /* SearchUserAsset.swift */; };
 		BFABEB8C1E647054003BE9F3 /* GenericMessageScheduleNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFABEB8B1E647054003BE9F3 /* GenericMessageScheduleNotification.swift */; };
 		BFB3BA731E28D38F0032A84F /* SharedObjectStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB3BA721E28D38F0032A84F /* SharedObjectStoreTests.swift */; };
 		BFCD8A2D1DCB4E8A00C6FCCF /* V2Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCD8A2C1DCB4E8A00C6FCCF /* V2Asset.swift */; };
@@ -472,6 +473,7 @@
 		BF8EDC731E53182F00DA6C40 /* store2-25-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store2-25-0.wiredatabase"; path = "Tests/Resources/store2-25-0.wiredatabase"; sourceTree = SOURCE_ROOT; };
 		BF8F3A821E4B61C70079E9E7 /* TextSearchQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextSearchQuery.swift; sourceTree = "<group>"; };
 		BF949E5A1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LinkPreview+ProtobufTests.swift"; sourceTree = "<group>"; };
+		BF989D091E8A6A120052BF8F /* SearchUserAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchUserAsset.swift; sourceTree = "<group>"; };
 		BFABEB8B1E647054003BE9F3 /* GenericMessageScheduleNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageScheduleNotification.swift; sourceTree = "<group>"; };
 		BFB3BA721E28D38F0032A84F /* SharedObjectStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedObjectStoreTests.swift; sourceTree = "<group>"; };
 		BFCD8A2C1DCB4E8A00C6FCCF /* V2Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2Asset.swift; sourceTree = "<group>"; };
@@ -1104,6 +1106,7 @@
 				F929C1731E41D3480018ADA4 /* PersonName.swift */,
 				F9A7060B1CAEE01D00C2F5FE /* ZMSearchUser+Internal.h */,
 				F9A7060C1CAEE01D00C2F5FE /* ZMSearchUser.m */,
+				BF989D091E8A6A120052BF8F /* SearchUserAsset.swift */,
 				F9A7060D1CAEE01D00C2F5FE /* ZMUser+Internal.h */,
 				F9A706101CAEE01D00C2F5FE /* ZMUser.m */,
 				F18998821E7AC6D900E579A2 /* ZMUser.swift */,
@@ -1966,6 +1969,7 @@
 				F9A7065C1CAEE01D00C2F5FE /* ZMConnection.m in Sources */,
 				F929C1751E41EBE20018ADA4 /* PersonName.swift in Sources */,
 				F9A706B61CAEE01D00C2F5FE /* UserClientChangeInfo.swift in Sources */,
+				BF989D0A1E8A6A120052BF8F /* SearchUserAsset.swift in Sources */,
 				F9B71F091CB264DF001DB03F /* ZMConversationList.m in Sources */,
 				F9A706941CAEE01D00C2F5FE /* UserClient+Protobuf.swift in Sources */,
 				BF8F3A831E4B61C70079E9E7 /* TextSearchQuery.swift in Sources */,

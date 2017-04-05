@@ -20,6 +20,18 @@
 import Foundation
 import WireDataModel
 
+extension ZMUser {
+    func setV2PictureIdentifiers() {
+        mediumRemoteIdentifier = UUID.create()
+        smallProfileRemoteIdentifier = UUID.create()
+    }
+    
+    func setV3PictureIdentifiers() {
+        previewProfileAssetIdentifier = UUID.create().transportString()
+        completeProfileAssetIdentifier = UUID.create().transportString()
+    }
+}
+
 class UserImageLocalCacheTests : BaseZMMessageTests {
     
     var testUser : ZMUser!
@@ -29,50 +41,174 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
         super.setUp()
         testUser = ZMUser.insertNewObject(in:self.uiMOC)
         testUser.remoteIdentifier = UUID.create()
-        testUser.mediumRemoteIdentifier = UUID.create()
-        testUser.smallProfileRemoteIdentifier = UUID.create()
         
         sut = UserImageLocalCache()
     }
     
-    func testThatItHasNilDataWhenNotSet() {
-        
-        XCTAssertNil(sut.largeUserImage(testUser))
-        XCTAssertNil(sut.smallUserImage(testUser))
+    func testThatItHasNilData() {
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
+    }
+}
+
+// MARK: - Asset V2 only
+extension UserImageLocalCacheTests {
+    func testThatItHasNilDataWhenNotSetForV2() {
+        testUser.setV2PictureIdentifiers()
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
     }
     
-    func testThatItSetsSmallAndLargeUserImage() {
+    func testThatItSetsSmallAndLargeUserImageForV2() {
         
         // given
-        let largeData = "LARGE".data(using: String.Encoding.utf8)!
-        let smallData = "SMALL".data(using: String.Encoding.utf8)!
+        testUser.setV2PictureIdentifiers()
+        let largeData = "LARGE".data(using: .utf8)!
+        let smallData = "SMALL".data(using: .utf8)!
         
         // when
-        sut.setLargeUserImage(testUser, imageData: largeData)
-        sut.setSmallUserImage(testUser, imageData: smallData)
+        sut.setUserImage(testUser, imageData: largeData, size: .complete)
+        sut.setUserImage(testUser, imageData: smallData, size: .preview)
 
         
         // then
-        XCTAssertEqual(sut.largeUserImage(testUser), largeData)
-        XCTAssertEqual(sut.smallUserImage(testUser), smallData)
+        XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
+        XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
 
     }
     
-    func testThatItPersistsSmallAndLargeUserImage() {
+    func testThatItPersistsSmallAndLargeUserImageForV2() {
         
         // given
-        let largeData = "LARGE".data(using: String.Encoding.utf8)!
-        let smallData = "SMALL".data(using: String.Encoding.utf8)!
+        testUser.setV2PictureIdentifiers()
+        let largeData = "LARGE".data(using: .utf8)!
+        let smallData = "SMALL".data(using: .utf8)!
         
         // when
-        sut.setLargeUserImage(testUser, imageData: largeData)
-        sut.setSmallUserImage(testUser, imageData: smallData)
+        sut.setUserImage(testUser, imageData: largeData, size: .complete)
+        sut.setUserImage(testUser, imageData: smallData, size: .preview)
         sut = UserImageLocalCache()
         
         // then
-        XCTAssertEqual(sut.largeUserImage(testUser), largeData)
-        XCTAssertEqual(sut.smallUserImage(testUser), smallData)
+        XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
+        XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
+    }
+    
+}
+
+// MARK: - Asset V3 only
+extension UserImageLocalCacheTests {
+    func testThatItHasNilDataWhenNotSetForV3() {
+        testUser.setV3PictureIdentifiers()
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
+    }
+    
+    func testThatItSetsSmallAndLargeUserImageForV3() {
+        
+        // given
+        testUser.setV3PictureIdentifiers()
+        let largeData = "LARGE".data(using: .utf8)!
+        let smallData = "SMALL".data(using: .utf8)!
+        
+        // when
+        sut.setUserImage(testUser, imageData: largeData, size: .complete)
+        sut.setUserImage(testUser, imageData: smallData, size: .preview)
+        
+        
+        // then
+        XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
+        XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
         
     }
     
+    func testThatItPersistsSmallAndLargeUserImageForV3() {
+        
+        // given
+        testUser.setV3PictureIdentifiers()
+        let largeData = "LARGE".data(using: .utf8)!
+        let smallData = "SMALL".data(using: .utf8)!
+        
+        // when
+        sut.setUserImage(testUser, imageData: largeData, size: .complete)
+        sut.setUserImage(testUser, imageData: smallData, size: .preview)
+        sut = UserImageLocalCache()
+        
+        // then
+        XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
+        XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
+    }
+
+}
+
+// MARK: - Asset V2 and V2
+extension UserImageLocalCacheTests {
+    func testThatItTReturnsV3AssetsWhenBothArePresent() {
+        // given
+        testUser.setV2PictureIdentifiers()
+        sut.setUserImage(testUser, imageData: "foo".data(using: .utf8)!, size: .complete)
+        sut.setUserImage(testUser, imageData: "bar".data(using: .utf8)!, size: .preview)
+
+        let largeData = "LARGE".data(using: .utf8)!
+        let smallData = "SMALL".data(using: .utf8)!
+        
+        // when
+        testUser.setV3PictureIdentifiers()
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+        sut.setUserImage(testUser, imageData: largeData, size: .complete)
+        sut.setUserImage(testUser, imageData: smallData, size: .preview)
+
+        // then
+        XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
+        XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
+    }
+    
+    func testThatItTRemovesV2AssetWhenSettingV3() {
+        // given
+        testUser.setV2PictureIdentifiers()
+        sut.setUserImage(testUser, imageData: "foo".data(using: .utf8)!, size: .complete)
+        sut.setUserImage(testUser, imageData: "bar".data(using: .utf8)!, size: .preview)
+        
+        let largeData = "LARGE".data(using: .utf8)!
+        let smallData = "SMALL".data(using: .utf8)!
+        
+        // when
+        testUser.setV3PictureIdentifiers()
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+        sut.setUserImage(testUser, imageData: largeData, size: .complete)
+        sut.setUserImage(testUser, imageData: smallData, size: .preview)
+        testUser.previewProfileAssetIdentifier = nil
+        testUser.completeProfileAssetIdentifier = nil
+        
+        // then
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+    }
+
+}
+
+// MARK: - Removal
+extension UserImageLocalCacheTests {
+    func testThatItRemovesAllImagesFromCache() {
+        // given
+        testUser.setV2PictureIdentifiers()
+        sut.setUserImage(testUser, imageData: "foo".data(using: .utf8)!, size: .complete)
+        sut.setUserImage(testUser, imageData: "bar".data(using: .utf8)!, size: .preview)
+        testUser.setV3PictureIdentifiers()
+        sut.setUserImage(testUser, imageData: "baz".data(using: .utf8)!, size: .complete)
+        sut.setUserImage(testUser, imageData: "moo".data(using: .utf8)!, size: .preview)
+
+        // when
+        sut.removeAllUserImages(testUser)
+        
+        // then
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+        testUser.previewProfileAssetIdentifier = nil
+        testUser.completeProfileAssetIdentifier = nil
+        XCTAssertNil(sut.userImage(testUser, size: .complete))
+        XCTAssertNil(sut.userImage(testUser, size: .preview))
+    }
 }

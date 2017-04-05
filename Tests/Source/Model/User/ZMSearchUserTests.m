@@ -668,11 +668,11 @@
     XCTAssertTrue(searchUser.isLocalOrHasCachedProfileImageData);
 }
 
-- (void)testThat_isLocalOrHasCachedProfileImageData_returnsYesForAUserWithCachedSmallData_MediumAssetID
+- (void)testThat_isLocalOrHasCachedProfileImageData_returnsYesForAUserWithCachedSmallData_MediumLegcayId
 {
     // given
     NSData *smallImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
-    NSUUID *mediumAssetID = [NSUUID UUID];
+    NSUUID *mediumLegacyId = [NSUUID UUID];
     
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
                                                            handle:@"foo"
@@ -686,8 +686,32 @@
     [smallImageCache setObject:smallImage forKey:searchUser.remoteIdentifier];
     
     NSCache *mediumAssetCache = [ZMSearchUser searchUserToMediumAssetIDCache];
-    [mediumAssetCache setObject:mediumAssetID forKey:searchUser.remoteIdentifier];
+    [mediumAssetCache setObject:[[SearchUserAssetObjC alloc] initWithLegacyId:mediumLegacyId] forKey:searchUser.remoteIdentifier];
     
+    // then
+    XCTAssertTrue(searchUser.isLocalOrHasCachedProfileImageData);
+}
+
+- (void)testThat_isLocalOrHasCachedProfileImageData_returnsYesForAUserWithCachedSmallData_MediumAssetKey
+{
+    // given
+    NSData *smallImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *assetKey = @"asset-key";
+
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
+
+    NSCache *smallImageCache = [ZMSearchUser searchUserToSmallProfileImageCache];
+    [smallImageCache setObject:smallImage forKey:searchUser.remoteIdentifier];
+
+    NSCache *mediumAssetCache = [ZMSearchUser searchUserToMediumAssetIDCache];
+    [mediumAssetCache setObject:[[SearchUserAssetObjC alloc] initWithAssetKey:assetKey] forKey:searchUser.remoteIdentifier];
+
     // then
     XCTAssertTrue(searchUser.isLocalOrHasCachedProfileImageData);
 }
@@ -718,10 +742,10 @@
 
 @implementation ZMSearchUserTests (MediumImage)
 
-- (void)testThatItReturnsMediumAssetIDFromCacheIfItHasNoMediumAssetID
+- (void)testThatItReturnsMediumLegacyIdFromCacheIfItHasNoMediumAssetID
 {
     // given
-    NSUUID *assetID = [NSUUID UUID];
+    NSUUID *legacyId = [NSUUID UUID];
     
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
                                                            handle:@"foo"
@@ -732,13 +756,36 @@
                                            uiManagedObjectContext:self.uiMOC];
     
     NSCache *cache = [ZMSearchUser searchUserToMediumAssetIDCache];
-    [cache setObject:assetID forKey:searchUser.remoteIdentifier];
+    [cache setObject:[[SearchUserAssetObjC alloc] initWithLegacyId:legacyId] forKey:searchUser.remoteIdentifier];
     
     // when
-    NSUUID *mediumAssetID = searchUser.mediumAssetID;
+    NSUUID *mediumAssetID = searchUser.mediumLegacyId;
     
     // then
-    XCTAssertEqual(mediumAssetID, assetID);
+    XCTAssertEqualObjects(mediumAssetID, legacyId);
+}
+
+- (void)testThatItReturnsCompleteAssetKeyFromCacheIfItHasNoMediumAssetID
+{
+    // given
+    NSString *completeAssetKey = @"asset-key";
+
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"foo"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:[NSUUID createUUID]
+                                                             user:nil
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
+
+    NSCache *cache = [ZMSearchUser searchUserToMediumAssetIDCache];
+    [cache setObject:[[SearchUserAssetObjC alloc] initWithAssetKey:completeAssetKey] forKey:searchUser.remoteIdentifier];
+
+    // when
+    NSString *expectedKey = searchUser.completeAssetKey;
+
+    // then
+    XCTAssertEqualObjects(expectedKey, completeAssetKey);
 }
 
 - (void)testThatItReturnsMediumImageFromCacheIfItHasNoUser
@@ -887,7 +934,8 @@
     XCTAssertNotNil(dataA);
     NSString *dataIdentifierA = [searchUser imageMediumIdentifier];
     XCTAssertNotNil(dataIdentifierA);
-    [idCache setObject:[NSUUID uuidWithTransportString:dataIdentifierA] forKey:searchUser.remoteIdentifier];
+    SearchUserAssetObjC *asset = [[SearchUserAssetObjC alloc] initWithLegacyId:[NSUUID uuidWithTransportString:dataIdentifierA]];
+    [idCache setObject:asset forKey:searchUser.remoteIdentifier];
     
     // when
     [cache removeObjectForKey:searchUser.remoteIdentifier];
@@ -898,8 +946,6 @@
     AssertEqualData(dataA, dataB);
     XCTAssertEqualObjects(dataIdentifierA, dataIdentifierB);
 }
-
-
 
 
 @end
