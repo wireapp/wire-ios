@@ -214,6 +214,16 @@ static NSString *const AnnaBotHandle = @"annathebot";
     [self setImageData:imageSmallProfileData forFormat:ZMImageFormatProfile properties:nil];
 }
 
+- (NSString *)smallProfileImageCacheKey
+{
+    return [self imageCacheKeyFor:ProfileImageSizePreview] ?: [self legacyImageCacheKeyFor:ProfileImageSizePreview];
+}
+
+- (NSString *)mediumProfileImageCacheKey
+{
+    return [self imageCacheKeyFor:ProfileImageSizeComplete] ?: [self legacyImageCacheKeyFor:ProfileImageSizeComplete];
+}
+
 - (NSString *)imageMediumIdentifier;
 {
     NSUUID *uuid = self.localMediumRemoteIdentifier;
@@ -526,6 +536,9 @@ static NSString *const AnnaBotHandle = @"annathebot";
     if ((picture != nil || authoritative) && ![self hasLocalModificationsForKeys:[NSSet setWithArray:@[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey]]]) {
         [self updateImageWithTransportData:picture];
     }
+    
+    NSArray *assets = [transportData optionalArrayForKey:@"assets"];
+    [self updateAssetDataWith:assets hasLegacyImages:(picture.count > 0) authoritative:authoritative];
     
     // We intentionally ignore the preview data.
     //
@@ -997,7 +1010,7 @@ static NSString *const AnnaBotHandle = @"annathebot";
 
 @implementation ZMUser (ImageData)
 
-- (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties * __unused)properties;
+- (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties * __unused)properties
 {
     //NOTE: default case is intentionally missing, to trigger a compile error when new image formats are added (so that we can decide whether we want to handle them or not)
     switch (format) {
@@ -1017,63 +1030,31 @@ static NSString *const AnnaBotHandle = @"annathebot";
     }
 }
 
-- (void)setImageData:(NSData *)imageData forKey:(NSString *)key format:(ZMImageFormat)format
+- (void)setImageData:(NSData *)imageData forKey:(__unused NSString *)key format:(ZMImageFormat)format
 {
-    [self willChangeValueForKey:key];
-    
-    
-    if (self.isSelfUser) {
-        [self setPrimitiveValue:imageData forKey:key];
-        
-        if (self.originalProfileImageData != nil) {
-            [self setLocallyModifiedKeys:[NSSet setWithObject:key]];
+    switch (format) {
+        case ZMImageFormatMedium: {
+            [self setImageData:imageData size:ProfileImageSizeComplete];
+            break;
         }
+        case ZMImageFormatProfile: {
+            [self setImageData:imageData size:ProfileImageSizePreview];
+            break;
+        }
+        default:
+            RequireString(NO, "Unexpected image format '%lu' set in user", (unsigned long)format);
+            break;
     }
-    else {
-        if (nil == imageData) {
-            [self.managedObjectContext.zm_userImageCache removeAllUserImages:self];
-            return;
-        }
-        
-        switch (format) {
-            case ZMImageFormatMedium: {
-                [self.managedObjectContext.zm_userImageCache setLargeUserImage:self imageData:imageData]; // user image cache is thread safe
-                break;
-                
-            }
-            case ZMImageFormatProfile: {
-                [self.managedObjectContext.zm_userImageCache setSmallUserImage:self imageData:imageData]; // user image cache is thread safe
-                break;
-            }
-            default:
-                RequireString(NO, "Unexpected image format '%lu' set in user", (unsigned long)format);
-                break;
-        }
-        
-    }
-
-    [self didChangeValueForKey:key];
-    [self.managedObjectContext saveOrRollback];
 }
-
 
 - (NSData *)imageDataForFormat:(ZMImageFormat)format;
 {
-    
     switch (format) {
         case ZMImageFormatMedium: {
-            if(self.isSelfUser) {
-                return [self primitiveValueForKey:ImageMediumDataKey];
-            } else {
-                return [self.managedObjectContext.zm_userImageCache largeUserImage:self]; // user image cache is thead safe
-            }
+            return [self imageDataforSize:ProfileImageSizeComplete];
         }
         case ZMImageFormatProfile: {
-            if(self.isSelfUser) {
-                return [self primitiveValueForKey:ImageSmallProfileDataKey];
-            } else {
-                return [self.managedObjectContext.zm_userImageCache smallUserImage:self]; // user image cache is thead safe
-            }
+            return [self imageDataforSize:ProfileImageSizePreview];
         }
             
         case ZMImageFormatInvalid:
@@ -1186,12 +1167,12 @@ static NSString *const AnnaBotHandle = @"annathebot";
 
 + (NSPredicate *)predicateForMediumImageNeedingToBeUpdatedFromBackend;
 {
-    return [NSPredicate predicateWithFormat:@"(%K != nil)", MediumRemoteIdentifierDataKey];
+    return [NSPredicate predicateWithFormat:@"(%K != nil) && (%K == nil)", MediumRemoteIdentifierDataKey, ZMUser.completeProfileAssetIdentifierKey];
 }
 
 + (NSPredicate *)predicateForSmallImageNeedingToBeUpdatedFromBackend;
 {
-    return [NSPredicate predicateWithFormat:@"(%K != nil)", SmallProfileRemoteIdentifierDataKey];
+    return [NSPredicate predicateWithFormat:@"(%K != nil) && (%K == nil)", SmallProfileRemoteIdentifierDataKey, ZMUser.previewProfileAssetIdentifierKey];
 }
 
 + (NSPredicate *)predicateForUsersOtherThanSelf

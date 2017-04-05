@@ -61,7 +61,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         
         // when
         user.smallProfileRemoteIdentifier = UUID()
-        uiMOC.zm_userImageCache.setSmallUserImage(user, imageData: verySmallJPEGData())
+        uiMOC.zm_userImageCache.setUserImage(user, imageData: verySmallJPEGData(), size: .preview)
 
         sut.updateAndNotify()
         

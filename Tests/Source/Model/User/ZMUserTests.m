@@ -452,7 +452,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     }];
     
     //when
-    NSData* extractedData = [self.uiMOC.zm_userImageCache largeUserImage:user];
+    NSData* extractedData = [self.uiMOC.zm_userImageCache userImage:user size:ProfileImageSizeComplete];
     
     //then
     XCTAssertEqualObjects(imageData, extractedData);
@@ -473,7 +473,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     }];
     
     //when
-    NSData* extractedData = [self.uiMOC.zm_userImageCache smallUserImage:user];
+    NSData* extractedData = [self.uiMOC.zm_userImageCache userImage:user size:ProfileImageSizePreview];
     
     //then
     XCTAssertEqualObjects(imageData, extractedData);
@@ -487,14 +487,14 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.mediumRemoteIdentifier = [NSUUID createUUID];
     NSData *imageData = [self verySmallJPEGData];
     user.imageMediumData = imageData;
-    XCTAssertEqual(user.imageMediumData, imageData);
+    XCTAssertEqualObjects(user.imageMediumData, imageData);
     
     [self.syncMOC performGroupedBlockAndWait:^{
         [self.syncMOC saveOrRollback];
     }];
     
     //when
-    NSData* extractedData = [self.uiMOC.zm_userImageCache largeUserImage:user];
+    NSData* extractedData = [self.uiMOC.zm_userImageCache userImage:user size:ProfileImageSizeComplete];
     
     //then
     XCTAssertNil(extractedData);

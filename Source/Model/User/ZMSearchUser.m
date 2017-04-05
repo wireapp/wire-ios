@@ -40,7 +40,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 {
     NSData *_imageSmallProfileData;
     NSString *_imageSmallProfileIdentifier;
-    
+
     NSData *_imageMediumData;
 }
 
@@ -250,7 +250,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 
 - (BOOL)hasCachedMediumAssetIDOrData
 {
-    return (self.imageMediumData != nil || self.mediumAssetID != nil);
+    return (self.imageMediumData != nil || self.mediumLegacyId != nil || self.completeAssetKey != nil);
 }
 
 - (BOOL)isLocalOrHasCachedProfileImageData;
@@ -398,7 +398,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return searchUserToMediumImageCache;
 }
 
-+ (NSCache *)searchUserToMediumAssetIDCache;
++ (NSCache <NSUUID *, SearchUserAssetObjC* > *)searchUserToMediumAssetIDCache;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -418,9 +418,19 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return [[ZMSearchUser searchUserToMediumImageCache] objectForKey:self.remoteIdentifier];
 }
 
-- (NSUUID *)cachedMediumAssetID
+- (NSUUID *)cachedMediumLegacyId
 {
-    return [[ZMSearchUser searchUserToMediumAssetIDCache] objectForKey:self.remoteIdentifier];
+    return self.cachedMediumAsset.legacyID;
+}
+
+- (NSString *)cachedCompleteAssetKey
+{
+    return self.cachedMediumAsset.assetKey;
+}
+
+- (SearchUserAssetObjC *)cachedMediumAsset
+{
+    return [ZMSearchUser.searchUserToMediumAssetIDCache objectForKey:self.remoteIdentifier];
 }
 
 - (NSData *)imageSmallProfileData
@@ -455,12 +465,20 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 }
 
 
-- (NSUUID *)mediumAssetID
+- (NSUUID *)mediumLegacyId
 {
-    if (_mediumAssetID == nil) {
-        _mediumAssetID = [self cachedMediumAssetID];
+    if (_mediumLegacyId == nil) {
+        _mediumLegacyId = [self cachedMediumLegacyId];
     }
-    return _mediumAssetID;
+    return _mediumLegacyId;
+}
+
+- (NSString *)completeAssetKey
+{
+    if (_completeAssetKey == nil) {
+        _completeAssetKey = [self cachedCompleteAssetKey];
+    }
+    return _completeAssetKey;
 }
 
 - (NSString *)imageSmallProfileIdentifier
@@ -483,13 +501,24 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     if (self.user != nil) {
         return self.user.imageMediumIdentifier;
     }
-    if (self.mediumAssetID != nil) {
-        return self.mediumAssetID.transportString;
+    if (self.completeAssetKey != nil) {
+        return self.completeAssetKey;
+    }
+    if (self.mediumLegacyId != nil) {
+        return self.mediumLegacyId.transportString;
     }
     if ([self cachedMediumProfileData] != nil) {
         return self.remoteIdentifier.transportString;
     }
     return nil;
+}
+
+- (NSString *)smallProfileImageCacheKey {
+    return self.imageSmallProfileIdentifier;
+}
+
+- (NSString *)mediumProfileImageCacheKey {
+    return self.imageMediumIdentifier;
 }
 
 
