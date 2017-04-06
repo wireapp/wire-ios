@@ -141,19 +141,17 @@ public final class UserProfileImageUpdateStatus: NSObject {
 // MARK: Main state transitions
 extension UserProfileImageUpdateStatus {
     internal func setState(state newState: ProfileUpdateState) {
-        managedObjectContext.performGroupedBlock {
-
-            let currentState = self.state
-            guard currentState.canTransition(to: newState) else {
-                // Trying to transition to invalid state - ignore
-                return
-            }
-            self.state = newState
-            self.didTransition(from: currentState, to: newState)
+        let currentState = self.state
+        guard currentState.canTransition(to: newState) else {
+            log.debug("Invalid transition: [\(currentState)] -> [\(newState)], ignoring")
+            // Trying to transition to invalid state - ignore
+            return
         }
+        self.state = newState
+        self.didTransition(from: currentState, to: newState)
     }
     
-    internal func didTransition(from oldState: ProfileUpdateState, to currentState: ProfileUpdateState) {
+    private func didTransition(from oldState: ProfileUpdateState, to currentState: ProfileUpdateState) {
         log.debug("Transition: [\(oldState)] -> [\(currentState)]")
         changeDelegate?.didTransition(from: oldState, to: currentState)
         switch (oldState, currentState) {
@@ -165,10 +163,11 @@ extension UserProfileImageUpdateStatus {
             updateUserProfile(with:previewAssetId, completeAssetId: completeAssetId)
         case (_, .failed):
             resetImageState()
+            setState(state: .ready)
         }
     }
     
-    fileprivate func updateUserProfile(with previewAssetId: String, completeAssetId: String) {
+    private func updateUserProfile(with previewAssetId: String, completeAssetId: String) {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         selfUser.imageSmallProfileData = resizedImages[.preview]
         selfUser.imageMediumData = resizedImages[.complete]
@@ -178,7 +177,7 @@ extension UserProfileImageUpdateStatus {
         setState(state: .ready)
     }
     
-    fileprivate func startPreprocessing(imageData: Data) {
+    private func startPreprocessing(imageData: Data) {
         ProfileImageSize.allSizes.forEach {
             setState(state: .preprocessing, for: $0)
         }
@@ -201,16 +200,14 @@ extension UserProfileImageUpdateStatus {
     }
     
     internal func setState(state newState: ImageState, for imageSize: ProfileImageSize) {
-        managedObjectContext.performGroupedBlock {
-            let currentState = self.imageState(for: imageSize)
-            guard currentState.canTransition(to: newState) else {
-                // Trying to transition to invalid state - ignore
-                return
-            }
-            
-            self.imageState[imageSize] = newState
-            self.didTransition(from: currentState, to: newState, for: imageSize)
+        let currentState = self.imageState(for: imageSize)
+        guard currentState.canTransition(to: newState) else {
+            // Trying to transition to invalid state - ignore
+            return
         }
+        
+        self.imageState[imageSize] = newState
+        self.didTransition(from: currentState, to: newState, for: imageSize)
     }
     
     internal func resetImageState() {
@@ -218,7 +215,7 @@ extension UserProfileImageUpdateStatus {
         resizedImages.removeAll()
     }
     
-    internal func didTransition(from oldState: ImageState, to currentState: ImageState, for size: ProfileImageSize) {
+    private func didTransition(from oldState: ImageState, to currentState: ImageState, for size: ProfileImageSize) {
         log.debug("Transition [\(size)]: [\(oldState)] -> [\(currentState)]")
         changeDelegate?.didTransition(from: oldState, to: currentState, for: size)
         switch (oldState, currentState) {
@@ -247,14 +244,20 @@ extension UserProfileImageUpdateStatus {
 
 // Called from the UI to update a v3 image
 extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
+    
+    /// Starts the process of updating profile picture. 
+    ///
+    /// - Important: Expected to be run from UI thread
+    ///
+    /// - Parameter imageData: image data of the new profile picture
     public func updateImage(imageData: Data) {
         managedObjectContext.performGroupedBlock {
             guard let uiMOC = self.managedObjectContext.zm_userInterface else { return }
             uiMOC.performGroupedBlock {
                 let editableUser = ZMUser.selfUser(in: uiMOC) as ZMEditableUser
                 editableUser.originalProfileImageData = imageData
-                self.setState(state: .preprocess(image: imageData))
             }
+            self.setState(state: .preprocess(image: imageData))
         }
     }
 }
@@ -275,7 +278,7 @@ extension UserProfileImageUpdateStatus: ZMContextChangeTracker {
         // no-op
     }
 
-    func reuploadExisingImageIfNeeded() {
+    internal func reuploadExisingImageIfNeeded() {
         // If the user updated to a build which added profile picture asset v3 support
         // we want to re-upload existing pictures to `/assets/v3`.
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
@@ -291,7 +294,7 @@ extension UserProfileImageUpdateStatus: ZMContextChangeTracker {
         updatePreprocessedImages(preview: preview, complete: complete)
     }
 
-    func updatePreprocessedImages(preview: Data, complete: Data) {
+    internal func updatePreprocessedImages(preview: Data, complete: Data) {
         setState(state: .upload(image: preview), for: .preview)
         setState(state: .upload(image: complete), for: .complete)
     }
@@ -301,15 +304,19 @@ extension UserProfileImageUpdateStatus: ZMContextChangeTracker {
 extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
     
     public func completedDownsampleOperation(_ operation: ZMImageDownsampleOperationProtocol, imageOwner: ZMImageOwner) {
-        ProfileImageSize.allSizes.forEach {
-            if operation.format == $0.imageFormat {
-                setState(state: .upload(image: operation.downsampleImageData), for: $0)
+        managedObjectContext.performGroupedBlock {
+            ProfileImageSize.allSizes.forEach {
+                if operation.format == $0.imageFormat {
+                    self.setState(state: .upload(image: operation.downsampleImageData), for: $0)
+                }
             }
         }
     }
     
     public func failedPreprocessingImageOwner(_ imageOwner: ZMImageOwner) {
-        setState(state: .failed(.preprocessingFailed))
+        managedObjectContext.performGroupedBlock {
+            self.setState(state: .failed(.preprocessingFailed))
+        }
     }
     
     public func didCompleteProcessingImageOwner(_ imageOwner: ZMImageOwner) {}
@@ -324,6 +331,12 @@ extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
 }
 
 extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
+    
+    /// Checks if there is an image to upload
+    ///
+    /// - Important: should be called from sync thread
+    /// - Parameter size: which image size to check
+    /// - Returns: true if there is an image of this size ready for upload
     internal func hasImageToUpload(for size: ProfileImageSize) -> Bool {
         switch imageState(for: size) {
         case .upload:
@@ -333,6 +346,11 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
         }
     }
     
+    /// Takes an image that is ready for upload and marks it internally
+    /// as currently being uploaded.
+    ///
+    /// - Parameter size: size of the image
+    /// - Returns: Image data if there is image of this size ready for upload
     internal func consumeImage(for size: ProfileImageSize) -> Data? {
         switch imageState(for: size) {
         case .upload(image: let image):
@@ -343,10 +361,20 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
         }
     }
     
+    /// Marks the image as uploaded successfully
+    ///
+    /// - Parameters:
+    ///   - imageSize: size of the image
+    ///   - assetId: resulting asset identifier after uploading it to the store
     internal func uploadingDone(imageSize: ProfileImageSize, assetId: String) {
         setState(state: .uploaded(assetId: assetId), for: imageSize)
     }
     
+    /// Marks the image as failed to upload
+    ///
+    /// - Parameters:
+    ///   - imageSize: size of the image
+    ///   - error: transport error
     internal func uploadingFailed(imageSize: ProfileImageSize, error: Error) {
         setState(state: .failed(.uploadFailed(error)), for: imageSize)
     }
