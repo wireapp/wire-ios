@@ -53,21 +53,22 @@ It creates an encrypted version from the plain text version
     }
     
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        object.flatMap(fileAssetToPreprocess)
-            .filter {!self.objectsBeingProcessed.contains($0)}
-            .forEach { self.startProcessing($0) }
+        processObjects(object)
     }
     
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let predicate = NSPredicate(format: "%K == NO && %K == %d", DeliveredKey, ZMAssetClientMessageTransferStateKey, ZMFileTransferState.uploading.rawValue)
-        let compound = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, filter])
-        return ZMAssetClientMessage.sortedFetchRequest(with: compound)
+        return ZMAssetClientMessage.sortedFetchRequest(with: predicate)
     }
     
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        processObjects(objects)
+    }
+
+    private func processObjects(_ objects: Set<NSManagedObject>) {
         objects.flatMap(fileAssetToPreprocess)
-            .filter {!self.objectsBeingProcessed.contains($0)}
-            .forEach { self.startProcessing($0)}
+               .filter { !self.objectsBeingProcessed.contains($0) }
+               .forEach { self.startProcessing($0) }
     }
     
     /// Starts processing the asset client message
@@ -108,13 +109,20 @@ extension ZMAssetClientMessage {
             && self.imageMessageData == nil
             && !self.delivered
             && self.genericAssetMessage?.assetData?.original.hasImage() == false
+            && self.genericAssetMessage?.assetData?.uploaded.hasOtrKey() == false
             && self.managedObjectContext != nil
             && self.managedObjectContext!.zm_fileAssetCache.assetData(self.nonce, fileName: self.filename!, encrypted: true) == nil
     }
     
     /// Adds Uploaded generic message
     fileprivate func addUploadedGenericMessage(_ keys: ZMImageAssetEncryptionKeys) {
-        let msg = ZMGenericMessage.genericMessage(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!, messageID: self.nonce.transportString(), expiresAfter: NSNumber(value: self.deletionTimeout))
+        let msg = ZMGenericMessage.genericMessage(
+            withUploadedOTRKey: keys.otrKey,
+            sha256: keys.sha256!,
+            messageID: self.nonce.transportString(),
+            expiresAfter: NSNumber(value: self.deletionTimeout)
+        )
+
         self.add(msg)
     }
 }

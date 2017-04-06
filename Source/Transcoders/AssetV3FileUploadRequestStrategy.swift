@@ -42,12 +42,22 @@ extension ZMAssetClientMessage {
     var v3_isReadyToUploadFile: Bool {
         let assetData = genericAssetMessage?.assetData
         return fileMessageData != nil
-            && [.uploading, .failedUpload, .cancelledUpload].contains(transferState)
             && uploadState == .uploadingFullAsset
             && transferState == .uploading
             && assetData?.hasUploaded() == true && assetData?.uploaded.hasAssetId() == false
             && (assetData?.uploaded.otrKey.count ?? 0) > 0
             && assetData?.original.hasImage() == false
+    }
+
+    /// We want to preprocess (encrypt) files when they are version 3, have the correct uploadState
+    /// and have not yet been preprocessed before (don't have an otrKey in their asset data yet).
+    static var v3_needsPreprocessingFilter: NSPredicate {
+        return NSPredicate { (obj, _) in
+            guard let message = obj as? ZMAssetClientMessage else { return false }
+            return message.version == 3
+                && message.uploadState == .uploadingFullAsset
+                && message.genericAssetMessage?.assetData?.uploaded.hasOtrKey() == false
+        }
     }
 
 }
@@ -67,8 +77,8 @@ public final class AssetV3FileUploadRequestStrategy: ZMObjectSyncStrategy, Reque
     public init(clientRegistrationStatus: ClientRegistrationDelegate, taskCancellationProvider: ZMRequestCancellation, managedObjectContext: NSManagedObjectContext) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.taskCancellationProvider = taskCancellationProvider
-        let filter = NSPredicate(format: "version == 3 && uploadState == %d", ZMAssetUploadState.uploadingFullAsset.rawValue)
-        filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, filter: filter)
+
+        filePreprocessor = FilePreprocessor(managedObjectContext: managedObjectContext, filter: ZMAssetClientMessage.v3_needsPreprocessingFilter)
         assetAnalytics = AssetAnalytics(managedObjectContext: managedObjectContext)
 
         super.init(managedObjectContext: managedObjectContext)

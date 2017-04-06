@@ -86,8 +86,72 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
         message.uploadState = .uploadingFullAsset
 
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers(sut.contextChangeTrackers, on: syncMOC)
-
         XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(message.nonce, fileName: message.fileMessageData!.filename, encrypted: true))
+    }
+
+// MARK: Preprocessing
+
+
+    // In very rare cases it happened that file messages (sent using the /assets/v3 endpoint) could not be decrypted on the receiving side,
+    // this only happened for file messages and not images (which are also files and sent using the same endpoint, but by a different RequestStrategy). 
+    // The odd thing to note here is was 100% reproducibly which specific files on specific devices, the sha256 did not match the file data. 
+    // The underlying bug was, that the FilePreprocessor, which encrypts the file, updates the generic message with the otrKey and sha256 had 
+    // a wrong predicate. The predicate did not check if there already were encryption keys in the generic message and would thus preprocess the file again.
+    // This means that in specific cases the file gets preprocessed and the encrypted binary data gets uploaded to /assets/v3/ while in the meantime the
+    // file preprocessor might encrypt the file again and update the generic message data with the new keys, which won't match the uploaded data. 
+    // The message sent to the receiving clients thus could contain encryption keys which would not match the data they would download from /assets/v3.
+    func testThatItDoesPreprocessTheFileOnlyOnce() {
+        var message: ZMAssetClientMessage!
+        var otrKey: Data!
+        var sha256: Data!
+
+        syncMOC.performGroupedBlock {
+            // GIVEN
+            message = self.createFileMessage()
+            message.transferState = .uploading
+            message.uploadState = .uploadingFullAsset
+
+            do {
+                guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No asset data") }
+                XCTAssertFalse(assetData.uploaded.hasOtrKey())
+                XCTAssertFalse(assetData.uploaded.hasSha256())
+            }
+
+            // WHEN
+            ZMChangeTrackerBootstrap.bootStrapChangeTrackers(self.sut.contextChangeTrackers, on: self.syncMOC)
+
+            do {
+                // THEN
+                guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No asset data") }
+                XCTAssertTrue(assetData.uploaded.hasOtrKey())
+                XCTAssertTrue(assetData.uploaded.hasSha256())
+                otrKey = assetData.uploaded.otrKey
+                sha256 = assetData.uploaded.sha256
+            }
+
+            // WHEN
+            // As soon as the upload to `/assets/v3` succeds, we delete the encrypted data.
+            // This previously triggered the preprocessor again.
+            message.managedObjectContext?.zm_fileAssetCache.deleteAssetData(
+                message.nonce,
+                fileName: message.genericAssetMessage!.v3_fileCacheKey,
+                encrypted: true
+            )
+
+            // WHEN
+            ZMChangeTrackerBootstrap.bootStrapChangeTrackers(self.sut.contextChangeTrackers, on: self.syncMOC)
+        }
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        syncMOC.performGroupedBlock {
+            guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No asset data") }
+            XCTAssertEqual(assetData.uploaded.otrKey, otrKey)
+            XCTAssertEqual(assetData.uploaded.sha256, sha256)
+        }
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
 // MARK: – Request Generation
