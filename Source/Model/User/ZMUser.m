@@ -607,11 +607,12 @@ static NSString *const AnnaBotHandle = @"annathebot";
 {
     NSPredicate *basePredicate = [super predicateForObjectsThatNeedToBeUpdatedUpstream];
     NSPredicate *needsToBeUpdated = [NSPredicate predicateWithFormat:@"needsToBeUpdatedFromBackend == 0"];
-    NSPredicate *nilOrNotNilRemoteIdentifiers = [NSPredicate predicateWithFormat:@"(%K == nil && %K == nil) || (%K != nil && %K != nil)",
-                       SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey,
-                       SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey
-                    ];
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, needsToBeUpdated, nilOrNotNilRemoteIdentifiers]];
+    NSPredicate *nilRemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K == nil && %K == nil", SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey];
+    NSPredicate *notNilRemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K != nil && %K != nil", SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey];
+    NSPredicate *assetV3RemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K != nil && %K != nil", ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey];
+
+    NSPredicate *remoteIdentifiers = [NSCompoundPredicate orPredicateWithSubpredicates:@[nilRemoteIdentifiers, notNilRemoteIdentifiers, assetV3RemoteIdentifiers]];
+    return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, needsToBeUpdated, remoteIdentifiers]];
 }
 
 + (NSPredicate *)predicateForConnectedUsersWithSearchString:(NSString *)searchString
