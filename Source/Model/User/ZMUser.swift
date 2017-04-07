@@ -25,9 +25,9 @@ import Foundation
     public var imageFormat: ZMImageFormat {
         switch self {
         case .preview:
-            return .medium
-        case .complete:
             return .profile
+        case .complete:
+            return .medium
         }
     }
 
