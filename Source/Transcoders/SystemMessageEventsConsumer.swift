@@ -32,11 +32,22 @@ public class SystemMessageEventsConsumer: NSObject, ZMEventConsumer {
     
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         let messages = events.flatMap { ZMSystemMessage.createOrUpdate(from: $0, in: self.moc, prefetchResult: nil) }
-        messages.forEach { self.localNotificationDispatcher.process($0) }
-        
+
+        messages.forEach {
+            localNotificationDispatcher.process($0)
+            collapseMissedCallCellIfNeeded($0) // TODO: This should be removed once group calls are on v3 as well
+        }
+
         if liveEvents {
             messages.forEach { $0.conversation?.resortMessages(withUpdatedMessage: $0) }
         }
     }
-}
 
+    private func collapseMissedCallCellIfNeeded(_ message: ZMSystemMessage) {
+        guard message.systemMessageType == .missedCall else { return }
+        guard let idx = message.conversation?.messages.index(of: message) else { return }
+        guard let previous = message.conversation?.associatedMessage(before: message, at: UInt(idx)) else { return }
+        previous.addChild(message)
+    }
+
+}

@@ -146,15 +146,11 @@ class SystemMessageEventsConsumerTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let newDate = self.conversation.lastReadServerTimeStamp!.addingTimeInterval(1200)
-            let payload = [
-                "from": self.user.remoteIdentifier!.transportString(),
-                "conversation": self.conversation.remoteIdentifier!.transportString(),
-                "time": newDate.transportString(),
-                "data": ["reason": "missed"],
-                "type": "conversation.voice-channel-deactivate"
-            ] as [String: Any]
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
+            let event = self.missedEvent(
+                from: self.user,
+                time: self.conversation.lastReadServerTimeStamp!.addingTimeInterval(1200),
+                conversation: self.conversation
+            )
             
             // WHEN
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
@@ -170,5 +166,51 @@ class SystemMessageEventsConsumerTests: MessagingTestBase {
             XCTAssertTrue(self.conversation.hasUnreadMissedCall)
             XCTAssertFalse(self.conversation.keysThatHaveLocalModifications.contains(ZMConversationHasUnreadMissedCallKey))
         }
+    }
+
+    // TODO: This test can be removed once group call are on v3 as well.
+    func testThatItCollapsesMultipleSuccessiveMissedCallSystemMessages() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let beforeCount = self.conversation.messages.count
+
+            let firstEvent = self.missedEvent(
+                from: self.user,
+                time: self.conversation.lastReadServerTimeStamp!.addingTimeInterval(100),
+                conversation: self.conversation
+            )
+
+            let secondEvent = self.missedEvent(
+                from: self.user,
+                time: firstEvent.timeStamp()!.addingTimeInterval(100),
+                conversation: self.conversation
+            )
+
+            // WHEN
+            self.sut.processEvents([firstEvent, secondEvent], liveEvents: false, prefetchResult: nil)
+
+            // THEN
+            XCTAssertEqual(self.conversation.messages.count - beforeCount, 1)
+            guard let message = self.conversation.messages.lastObject as? ZMSystemMessage else { return XCTFail() }
+            XCTAssertEqual(message.systemMessageType, .missedCall)
+
+            guard let childMessage = message.childMessages.first as? ZMSystemMessageData else { return XCTFail() }
+            XCTAssertEqual(childMessage.systemMessageType, .missedCall)
+        }
+    }
+
+
+    // MARK: – Helper
+
+    private func missedEvent(from user: ZMUser, time: Date, conversation: ZMConversation) -> ZMUpdateEvent {
+        let payload = [
+            "from": user.remoteIdentifier!.transportString(),
+            "conversation": conversation.remoteIdentifier!.transportString(),
+            "time": time.transportString(),
+            "data": ["reason": "missed"],
+            "type": "conversation.voice-channel-deactivate"
+        ] as ZMTransportData
+
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
     }
 }
