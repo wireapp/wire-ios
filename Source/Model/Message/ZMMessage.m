@@ -882,7 +882,11 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     if (type == ZMSystemMessageTypeMissedCall)
     {
         NSString *reason = [[updateEvent.payload dictionaryForKey:@"data"] optionalStringForKey:@"reason"];
-        if (![reason isEqualToString:@"missed"]) {
+
+        // When we cancel a call we placed before it connected we already insert the missed call system message
+        // locally and ignore the update event. (This whole logic can be removed once group calls are on v3).
+        BOOL selfReason = [[ZMUser selfUserInContext:moc].remoteIdentifier isEqual:updateEvent.senderUUID];
+        if (![reason isEqualToString:@"missed"] || selfReason) {
             return nil;
         }
     }

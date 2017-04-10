@@ -79,6 +79,41 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
 
+    func testThatItUpdatesAMissedCallSystemMessageIfMulitpleOnesAreInsertedSubsequently() {
+        syncMOC.performGroupedBlock {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let user = self.createUser(onMoc: self.syncMOC)!
+            let timestamp = Date()
+            let first = conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
+
+            // when
+            let messages = (0..<3).map {
+                conversation.appendMissedCallMessage(fromUser: user, at: timestamp.addingTimeInterval(TimeInterval($0)))
+            }
+
+            // then
+            guard let message = conversation.messages.lastObject as? ZMSystemMessage else {
+                return XCTFail("No system message")
+            }
+
+            XCTAssertEqual(message, first)
+            XCTAssertNil(message.hiddenInConversation)
+            XCTAssertEqual(message.visibleInConversation, conversation)
+            XCTAssertEqual(message.childMessages, Set(messages))
+
+            messages.forEach {
+                XCTAssertEqual($0.users, [user])
+                XCTAssertEqual($0.parentMessage as? ZMSystemMessage, message)
+                XCTAssertEqual($0.systemMessageType, .missedCall)
+                XCTAssertNil($0.visibleInConversation)
+                XCTAssertEqual($0.hiddenInConversation, conversation)
+            }
+        }
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+    }
+
     func testThatItDoesNotUpdateAMissedCallSystemMessageIfAnotherOneIsInsertedIntermediateMessage() {
         syncMOC.performGroupedBlock {
             // given

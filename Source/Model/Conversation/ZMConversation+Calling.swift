@@ -64,7 +64,7 @@ public extension ZMConversation {
         return message
     }
 
-    private func associatedMessage(before message: ZMSystemMessage, at index: UInt) -> ZMSystemMessage? {
+    public func associatedMessage(before message: ZMSystemMessage, at index: UInt) -> ZMSystemMessage? {
         guard index >= 1 else { return nil }
         guard let previous = messages[Int(index - 1)] as? ZMSystemMessage else { return nil }
         guard previous.systemMessageType == message.systemMessageType else { return nil }
@@ -75,7 +75,7 @@ public extension ZMConversation {
 }
 
 
-fileprivate extension ZMSystemMessage {
+public extension ZMSystemMessage {
 
     func addChild(_ message: ZMSystemMessage) {
         mutableSetValue(forKey: #keyPath(ZMSystemMessage.childMessages)).add(message)
