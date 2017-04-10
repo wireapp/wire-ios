@@ -1,41 +1,34 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2017 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
+import Foundation
+import WireSystem
 
-#import "DeveloperMenuState.h"
-#import <WireExtensionComponents/WireExtensionComponents-Swift.h>
-
-@implementation DeveloperMenuState
-
-+ (BOOL)developerMenuEnabled {
-#if ENABLE_DEVELOPER_MENU == 1
-    return YES;
-#else
-    return NO;
-#endif
+extension DeveloperMenuState {
+    
+    public static func prepareForDebugging() {
+        guard self.developerMenuEnabled() else { return }
+        self.enableLogsForMessageSendingDebugging()
+    }
+    
+    private static func enableLogsForMessageSendingDebugging() {
+        ["Network", "Dependencies", "State machine"].forEach {
+            ZMSLog.set(level: .debug, tag: $0)
+        }
+    }
 }
-
-+ (BOOL)signOutEnabled {
-#if ENABLE_SIGNOUT == 1
-    return YES;
-#else
-    return NO;
-#endif
-}
-
-@end
