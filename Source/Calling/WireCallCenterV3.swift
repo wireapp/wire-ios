@@ -354,7 +354,7 @@ public typealias WireCallMessageToken = UnsafeMutableRawPointer
     
     fileprivate func handleCallState(callState: CallState, conversationId: UUID, userId: UUID?) {
         callState.logState()
-        
+
         if case .established = callState {
             establishedDate = Date()
             
