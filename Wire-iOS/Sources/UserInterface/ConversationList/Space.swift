@@ -32,6 +32,7 @@ internal class Space: NSObject {
     public static let didChangeNotificationName = Notification.Name(rawValue: "SpaceDidChangeNotificationName")
     public static let didChangeNotificationNameString = didChangeNotificationName.rawValue
     public let name: String
+    public let image: UIImage?
     public let predicate: NSPredicate
     public var selected: Bool = false {
         didSet {
@@ -48,8 +49,9 @@ internal class Space: NSObject {
         ConversationListChangeInfo.remove(observer: self, for: self.conversationList)
     }
     
-    init(name: String, predicate: NSPredicate) {
+    init(name: String, image: UIImage?, predicate: NSPredicate) {
         self.name = name
+        self.image = image
         self.predicate = predicate
         
         super.init()
@@ -97,21 +99,41 @@ internal class Space: NSObject {
         })
     }
 
+    @objc(joinSpaceNamed:)
+    static func joinSpace(named spaceName: String) {
+        if let factory = SettingsPropertyFactory.shared {
+            
+            var workspaceNameProperty = factory.property(.workspaceName)
+            
+            try? workspaceNameProperty << spaceName
+            
+            self.update()
+        }
+    }
+    
     public static func update() {
         if let factory = SettingsPropertyFactory.shared,
             let workspaceName = factory.property(.workspaceName).rawValue() as? String,
             !workspaceName.isEmpty {
             
             let privateSpace: Space = {
+                let selfUser = ZMUser.selfUser()
+                
+                var image: UIImage? = .none
+                
+                if let imageData = selfUser?.imageMediumData {
+                    image = UIImage(from: imageData, withMaxSize: 100)
+                }
+                
                 let predicate = NSPredicate(format: "NOT (displayName CONTAINS[cd] %@)", workspaceName)
-                let privateSpace = Space(name: ZMUser.selfUser().displayName, predicate: predicate)
+                let privateSpace = Space(name: selfUser?.displayName ?? "", image: image, predicate: predicate)
                 privateSpace.selected = true
                 return privateSpace
             }()
             
             let workSpace: Space = {
                 let predicate = NSPredicate(format: "displayName CONTAINS[cd] %@", workspaceName)
-                let workSpace = Space(name: workspaceName, predicate: predicate)
+                let workSpace = Space(name: workspaceName, image: UIImage(named: "wire-logo-shield"), predicate: predicate)
                 workSpace.selected = true
                 return workSpace
             }()
