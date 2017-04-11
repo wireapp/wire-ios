@@ -559,7 +559,7 @@ extension FileUploadRequestStrategyTests {
         request.markStartOfUploadTimestamp()
         let notificationExpectation = self.expectation(description: "Notification fired")
         
-        let _ = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFinishedNotificationName), object: nil, queue: .main) { notification in
+        let token = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFinishedNotificationName), object: nil, queue: .main) { notification in
             XCTAssertNotNil(notification.userInfo![FileUploadRequestStrategyNotification.requestStartTimestampKey])
             notificationExpectation.fulfill()
         }
@@ -571,6 +571,7 @@ extension FileUploadRequestStrategyTests {
         
         // THEN
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        NotificationCenter.default.removeObserver(token)
     }
     
     func testThatItSendsNotificaitonForAFailedFile() {
@@ -582,7 +583,7 @@ extension FileUploadRequestStrategyTests {
         request.markStartOfUploadTimestamp()
         let notificationExpectation = self.expectation(description: "Notification fired")
         
-        let _ = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFailedNotificationName), object: nil, queue: .main) { notification in
+        let token = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFailedNotificationName), object: nil, queue: .main) { notification in
             XCTAssertNotNil(notification.userInfo![FileUploadRequestStrategyNotification.requestStartTimestampKey])
             notificationExpectation.fulfill()
         }
@@ -592,6 +593,7 @@ extension FileUploadRequestStrategyTests {
         
         // THEN
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        NotificationCenter.default.removeObserver(token)
     }
     
     func testThatItDoesNotCancelCurrentlyRunningRequestWhenTheUploadFails_FullAsset() {
