@@ -214,54 +214,6 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
 }
 
 
-// MARK: - Payload generation
-extension ZMAssetClientMessageTests_Encryption {
-    
-    func assertPayloadData(_ payload: Data!, forMessage message: ZMAssetClientMessage, format: ZMImageFormat) {
-        
-        let imageMessageStorage = message.imageAssetStorage!
-        let assetMetadata = ZMOtrAssetMetaBuilder().merge(from: payload).build()! as? ZMOtrAssetMeta
-        
-        AssertOptionalNotNil(assetMetadata) { assetMetadata in
-            XCTAssertEqual(assetMetadata.isInline(), imageMessageStorage.isInline(for:format))
-            XCTAssertEqual(assetMetadata.nativePush(), imageMessageStorage.isUsingNativePush(for: format))
-            
-            XCTAssertEqual(assetMetadata.sender.client, self.selfClient1.clientId.client)
-            
-            self.assertRecipients(assetMetadata.recipients)
-        }
-    }
-    
-    func testThatItCreatesPayloadData_Medium() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            //given
-            let message = self.appendImageMessage(.medium, to: self.syncConversation)
-            
-            //when
-            let payload = message.encryptedMessagePayloadForImageFormat(.medium)?.otrMessageData.data()
-            
-            //then
-            self.assertPayloadData(payload, forMessage: message, format: .medium)
-        }
-    }
-    
-    func testThatItCreatesPayloadData_Preview() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            //given
-            let message = self.appendImageMessage(ZMImageFormat.preview, to: self.syncConversation)
-            
-            //when
-            let payload = message.encryptedMessagePayloadForImageFormat(.preview)?.otrMessageData.data()
-            
-            //then
-            self.assertPayloadData(payload, forMessage: message, format: .preview)
-        }
-    }
-}
-
-
 // MARK: - MissingClientStrategy
 extension ZMAssetClientMessageTests_Encryption {
 
@@ -271,57 +223,6 @@ extension ZMAssetClientMessageTests_Encryption {
         conversation.connection?.to = ZMUser.insertNewObject(in: syncMOC)
         conversation.connection?.to.remoteIdentifier = UUID()
         conversation.conversationType = .oneOnOne
-    }
-    
-    func testThatItReturnsCorrectStrategyForEphemeralMessages_ImageAssets(){
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            //given
-            self.setupConversation(conversation: self.syncConversation)
-            self.syncConversation.messageDestructionTimeout = 10
-            let message = self.appendImageMessage(ZMImageFormat.preview, to: self.syncConversation)
-            XCTAssertTrue(message.isEphemeral)
-            
-            //when
-            let strategy = message.encryptedMessagePayloadForImageFormat(.preview)?.strategy
-            
-            //then
-            let otherUser = self.syncConversation.connectedUser!
-            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: Set(arrayLiteral: otherUser)))
-        }
-    }
-    
-    func testThatItReturnsCorrectStrategyForEphemeralMessages_ImageAssets_GroupConversation(){
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            //given
-            self.syncConversation.messageDestructionTimeout = 10
-            let message = self.appendImageMessage(ZMImageFormat.preview, to: self.syncConversation)
-            XCTAssertTrue(message.isEphemeral)
-            
-            //when
-            let strategy = message.encryptedMessagePayloadForImageFormat(.preview)?.strategy
-            
-            //then
-            let otherUsers = self.syncConversation.otherActiveParticipants.set as! Set<ZMUser>
-            XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: otherUsers))
-        }
-    }
-
-    func testThatItReturnsCorrectStrategyForNormalMessages_ImageAssets(){
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            //given
-            self.setupConversation(conversation: self.syncConversation)
-            let message = self.appendImageMessage(ZMImageFormat.preview, to: self.syncConversation)
-            XCTAssertFalse(message.isEphemeral)
-
-            //when
-            let strategy = message.encryptedMessagePayloadForImageFormat(.preview)?.strategy
-            
-            //then            
-            XCTAssertEqual(strategy, MissingClientsStrategy.doNotIgnoreAnyMissingClient)
-        }
     }
     
     func insertFileMessage() -> ZMAssetClientMessage{
