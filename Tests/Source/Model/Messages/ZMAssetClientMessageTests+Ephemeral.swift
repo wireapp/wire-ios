@@ -54,25 +54,6 @@ class ZMAssetClientMessageTests_Ephemeral : BaseZMAssetClientMessageTests {
 
 // MARK: Sending
 extension ZMAssetClientMessageTests_Ephemeral {
-
-    func testThatWhenCreatingAnImageAssetMessageItUsesTheTimeoutSetInTheFirstCreatedPartForAllParts(){
-        // given
-        let timeout : TimeInterval = 10
-        conversation.messageDestructionTimeout = timeout
-        
-        // when
-        let message = conversation.appendMessage(withImageData: verySmallJPEGData()) as! ZMAssetClientMessage
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // then
-        let previewGenericMessage = message.genericMessage(for: .placeholder)
-        XCTAssertTrue(previewGenericMessage!.hasEphemeral())
-        XCTAssertEqual(previewGenericMessage!.ephemeral.expireAfterMillis, 10*1000)
-        
-        let mediumGenericMessage = message.genericMessage(for: .fullAsset)
-        XCTAssertTrue(mediumGenericMessage!.hasEphemeral())
-        XCTAssertEqual(mediumGenericMessage!.ephemeral.expireAfterMillis, 10*1000)
-    }
     
     func testThatItInsertsAnEphemeralMessageForAssets(){
         // given
@@ -160,7 +141,14 @@ extension ZMAssetClientMessageTests_Ephemeral {
             message.uploadState = .uploadingFullAsset
             
             // when
-            message.update(withPostPayload: [:], updatedKeys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey))
+            let emptyDict = [String: String]()
+            let time = Date().transportString()
+            let payload: [AnyHashable: Any] = ["deleted": emptyDict, "missing": emptyDict, "redundant": emptyDict, "time": time]
+
+            message.update(
+                withPostPayload: payload,
+                updatedKeys: [ZMAssetClientMessageUploadedStateKey]
+            )
             
             // then
             XCTAssertEqual(message.uploadState, ZMAssetUploadState.uploadingFullAsset)
@@ -195,7 +183,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             message.update(withPostPayload: [:], updatedKeys: Set())
             
             // then
-            XCTAssertEqual(message.uploadState, ZMAssetUploadState.uploadingPlaceholder)
+            XCTAssertEqual(message.uploadState, .uploadingFullAsset)
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
         }
     }
@@ -237,8 +225,9 @@ extension ZMAssetClientMessageTests_Ephemeral {
         sender.remoteIdentifier = UUID.create()
         
         let message = conversation.appendMessage(withImageData: verySmallJPEGData()) as! ZMAssetClientMessage
+        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), messageID: message.nonce.transportString(), expiresAfter: NSNumber(value: conversation.messageDestructionTimeout))
+        message.add(uploaded)
         message.sender = sender
-        XCTAssertNotNil(message.imageAssetStorage?.mediumGenericMessage)
         
         // when
         XCTAssertTrue(message.startSelfDestructionIfNeeded())

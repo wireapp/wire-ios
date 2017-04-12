@@ -95,22 +95,6 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 + (instancetype)assetClientMessageWithOriginalImageData:(NSData *)imageData nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout;
 {
     [moc.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:imageData];
-    
-    ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:moc];
-    
-    ZMGenericMessage *mediumData = [ZMGenericMessage genericMessageWithMediumImageProperties:nil processedImageProperties:nil encryptionKeys:nil nonce:nonce.transportString format:ZMImageFormatMedium expiresAfter:@(timeout)];
-    
-    ZMGenericMessage *previewData = [ZMGenericMessage genericMessageWithMediumImageProperties:nil processedImageProperties:nil encryptionKeys:nil nonce:nonce.transportString format:ZMImageFormatPreview expiresAfter:@(timeout)];
-    [message addGenericMessage:mediumData];
-    [message addGenericMessage:previewData];
-    message.preprocessedSize = [ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData];
-    message.uploadState = ZMAssetUploadStateUploadingPlaceholder;
-    return message;
-}
-
-+ (instancetype)v3_assetClientMessageWithOriginalImageData:(NSData *)imageData nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout;
-{
-    [moc.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:imageData];
 
     ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:moc];
     CGSize originalSize = [ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData];
@@ -127,25 +111,11 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     return message;
 }
 
-+ (instancetype)assetClientMessageWithOriginalImageData:(NSData *)imageData nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout version3:(BOOL)version3;
-{
-    if (version3) {
-        return [self v3_assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:moc expiresAfter:timeout];
-    } else {
-        return [self assetClientMessageWithOriginalImageData:imageData nonce:nonce managedObjectContext:moc expiresAfter:timeout];
-    }
-}
-
 + (instancetype)assetClientMessageWithFileMetadata:(ZMFileMetadata *)metadata nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout
-{
-    return [self assetClientMessageWithFileMetadata:metadata nonce:nonce managedObjectContext:moc expiresAfter:timeout version3:NO];
-}
-
-+ (instancetype)assetClientMessageWithFileMetadata:(ZMFileMetadata *)metadata nonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)moc expiresAfter:(NSTimeInterval)timeout version3:(BOOL)version3
 {
     NSError *error;
     NSData *data = [NSData dataWithContentsOfURL:metadata.fileURL options:NSDataReadingMappedIfSafe error:&error];
-    
+
     if (nil != error) {
         ZMLogWarn(@"Failed to read data of file at url %@ : %@", metadata.fileURL, error);
         return nil;
@@ -158,16 +128,14 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
     message.uploadState = ZMAssetUploadStateUploadingPlaceholder;
     [message addGenericMessage:[ZMGenericMessage genericMessageWithFileMetadata:metadata messageID:nonce.transportString expiresAfter:@(timeout)]];
     message.delivered = NO;
+    message.version = 3;
 
-    if (version3) {
-        message.version = 3;
-    }
-    
     if (metadata.thumbnail != nil) {
         [moc.zm_imageAssetCache storeAssetData:nonce format:ZMImageFormatOriginal encrypted:NO data:metadata.thumbnail];
     }
-    
+
     return message;
+
 }
 
 - (id <AssetProxyType>)asset
@@ -509,7 +477,10 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(NSSet *)updatedKeys
 {
-    if ([updatedKeys containsObject:ZMAssetClientMessageUploadedStateKey] && self.uploadState == ZMAssetUploadStateUploadingPlaceholder) {
+    BOOL shouldUpdate = self.uploadState == ZMAssetUploadStateUploadingPlaceholder
+                     || (self.uploadState == ZMAssetUploadStateUploadingFullAsset && self.v3_isImage);
+
+    if ([updatedKeys containsObject:ZMAssetClientMessageUploadedStateKey] && shouldUpdate) {
         
         NSDate *serverTimestamp = [payload dateForKey:@"time"];
         if (serverTimestamp != nil) {
