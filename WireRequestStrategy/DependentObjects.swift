@@ -71,6 +71,9 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     
     private func updateDependencies(dependency: Dependency, removing dependent: Object) {
         guard let currentSet = dependenciesToDependents[dependency] else { return }
+        if currentSet.contains(dependent) {
+            zmLog.debug("Removing dependency of type \(type(of: dependency)) from object \(type(of: dependent))")
+        }
         let newSet = currentSet.subtracting([dependent])
         if newSet.isEmpty {
             dependenciesToDependents.removeValue(forKey: dependency)
@@ -82,6 +85,9 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     private func updateDependents(dependent: Object, removing dependency: Dependency) {
         guard let currentSet = dependentsToDependencies[dependent] else { return }
         let newSet = currentSet.subtracting([dependency])
+        if currentSet.contains(dependency) {
+            zmLog.debug("Removing dependent object \(type(of: dependent)) for dependency of type \(type(of: dependency))")
+        }
         if newSet.isEmpty {
             dependentsToDependencies.removeValue(forKey: dependent)
         } else {
