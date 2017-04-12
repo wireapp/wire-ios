@@ -181,32 +181,3 @@ extension ClientMessageTranscoderTests {
         }
     }
 }
-
-// MARK: - Generic Message
-extension ClientMessageTranscoderTests {
-    
-    func testThatThePreviewGenericMessageDataHasTheOriginalSizeOfTheMediumGenericMessagedata() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            // GIVEN
-            let message = self.groupConversation.appendOTRMessage(withImageData: self.data(forResource: "1900x1500", extension: "jpg"), nonce: UUID.create())
-            
-            // WHEN
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(Set([message]))
-            }
-            
-            // THEN
-            guard let mediumGenericMessage = message.imageAssetStorage?.genericMessage(for: .medium),
-                let previewGenericMessage = message.imageAssetStorage?.genericMessage(for: .preview) else {
-                    return XCTFail()
-            }
-            
-            XCTAssertEqual(mediumGenericMessage.image.height, previewGenericMessage.image.originalHeight)
-            XCTAssertEqual(mediumGenericMessage.image.width, previewGenericMessage.image.originalWidth)
-        }
-    }
-}
-
-
-

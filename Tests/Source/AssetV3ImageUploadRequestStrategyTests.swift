@@ -49,9 +49,11 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             self.conversation.messageDestructionTimeout = ephemeral ? 10 : 0
-            message = self.conversation.appendMessage(withImageData: self.imageData, version3: true) as! ZMAssetClientMessage
+            message = self.conversation.appendMessage(withImageData: self.imageData) as! ZMAssetClientMessage
             self.syncMOC.saveOrRollback()
         }
+
+        XCTAssertEqual(message.version, 3)
         return message
     }
     
@@ -60,22 +62,12 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             self.conversation.messageDestructionTimeout = ephemeral ? 10 : 0
             let url = Bundle(for: AssetV3ImageUploadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-            message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil), version3: true) as! ZMAssetClientMessage
+            message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil)) as! ZMAssetClientMessage
             self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: self.imageData)
             self.syncMOC.saveOrRollback()
         }
-        return message
-    }
-    
-    func createPreprocessedV2ImageMessage() -> ZMAssetClientMessage {
-        var message: ZMAssetClientMessage!
-        syncMOC.performGroupedBlockAndWait {
-            message = self.conversation.appendOTRMessage(withImageData: self.verySmallJPEGData(), nonce: .create(), version3: false)
-            let properties = ZMIImageProperties(size: message.imageAssetStorage!.originalImageSize(), length: 1000, mimeType: "image/jpg")
-            message.imageAssetStorage?.setImageData(message.imageAssetStorage?.originalImageData(), for: .medium, properties: properties)
-            message.imageAssetStorage?.setImageData(message.imageAssetStorage?.originalImageData(), for: .preview, properties: properties)
-            self.syncMOC.saveOrRollback()
-        }
+
+        XCTAssertEqual(message.version, 3)
         return message
     }
     
@@ -98,24 +90,6 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
     
     func testThatItDoesNotGenerateARequestWhenTheImageIsNotProcessed() {
         XCTAssertNil(sut.nextRequest())
-    }
-    
-    func testThatItDoesNotGenerateARequestIfTheImageIsProcessedButTheMessageIsNotV3() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            // GIVEN
-            let message = self.createPreprocessedV2ImageMessage()
-            
-            // THEN
-            self.prepareUpload(of: message)
-            XCTAssertNil(self.sut.nextRequest())
-            
-            // WHEN
-            message.uploadState = .uploadingFullAsset
-            
-            // THEN
-            XCTAssertNil(self.sut.nextRequest())
-        }
     }
     
     func testThatItGeneratesARequestIfTheImageIsProcessed() {

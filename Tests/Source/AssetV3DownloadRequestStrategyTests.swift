@@ -22,7 +22,23 @@ import Foundation
 import XCTest
 import WireDataModel
 
+
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
+
+
+public class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
+
+    var cancelledIdentifiers = [ZMTaskIdentifier]()
+
+    public func cancelTask(with identifier: ZMTaskIdentifier) {
+        cancelledIdentifiers.append(identifier)
+    }
+
+    deinit {
+        cancelledIdentifiers.removeAll()
+    }
+}
+
 
 class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
@@ -57,7 +73,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         sha: Data  = Data.randomEncryptionKey()
         ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
 
-        let message = aConversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL), version3: true) as! ZMAssetClientMessage
+        let message = aConversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
 
         // TODO: We should replace this manual update with inserting a v3 asset as soon as we have sending support

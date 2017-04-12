@@ -54,7 +54,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     
     fileprivate func createMessage(in conversation: ZMConversation) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
         
-        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL), version3: true) as! ZMAssetClientMessage
+        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
         

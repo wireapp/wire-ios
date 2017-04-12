@@ -74,7 +74,7 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
     func createFileMessage(ephemeral: Bool = false) -> ZMAssetClientMessage {
         conversation.messageDestructionTimeout = ephemeral ? 10 : 0
         let metadata = addFile()
-        let message = conversation.appendMessage(with: metadata, version3: true) as! ZMAssetClientMessage
+        let message = conversation.appendMessage(with: metadata) as! ZMAssetClientMessage
         syncMOC.saveOrRollback()
 
         XCTAssert(message.genericAssetMessage?.assetData?.hasUploaded() == false)
