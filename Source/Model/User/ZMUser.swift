@@ -72,6 +72,15 @@ extension ProfileImageSize: CustomDebugStringConvertible {
 }
 
 extension ZMUser {
+    @objc public static let ottoBotHandle = "ottothebot"
+    @objc public static let annaBotHandle = "annathebot"
+    
+    public static var nonBotUsersPredicate: NSPredicate {
+        return NSPredicate(format: "NOT (%K IN %@)", #keyPath(ZMUser.handle), [ottoBotHandle, annaBotHandle])
+    }
+}
+
+extension ZMUser {
     static let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
     static let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
     

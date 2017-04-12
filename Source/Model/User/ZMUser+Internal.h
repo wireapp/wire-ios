@@ -58,6 +58,10 @@ extern NSString * __nonnull const ZMUserActiveConversationsKey;
 /// @param searchString - a predicate to search users
 + (nonnull NSPredicate *)predicateForConnectedUsersWithSearchString:(nonnull NSString *)searchString;
 
+/// @method predicateForConnectedNonBotUsers
+/// Retrieves all users (excluding bots), having ZMConnectionStatusAccepted connection statuses.
++ (nonnull NSPredicate *)predicateForConnectedNonBotUsers;
+
 /// @method predicateForUsersWithSearchString:connectionStatusInArray:
 /// Retrieves users with name or email matching search string, having one of given connection statuses.
 /// @param searchString - a predicate to search users
