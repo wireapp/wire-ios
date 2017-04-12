@@ -64,10 +64,6 @@ class StrategyFactory {
             createLinkPreviewAssetUploadRequestStrategy(),
             createLinkPreviewUploadRequestStrategy(),
 
-            // Assets V2
-            createImageUploadRequestStrategy(),
-            createFileUploadRequestStrategy(),
-
             // Assets V3
             createAssetClientMessageRequestStrategy(),
             createAssetV3ImageUploadRequestStrategy(),
@@ -89,22 +85,6 @@ class StrategyFactory {
             localNotificationDispatcher: PushMessageHandlerDummy(),
             clientRegistrationStatus: registrationStatus,
             apnsConfirmationStatus: DeliveryConfirmationDummy()
-        )
-    }
-
-    private func createImageUploadRequestStrategy() -> ImageUploadRequestStrategy {
-        return ImageUploadRequestStrategy(
-            clientRegistrationStatus: registrationStatus,
-            managedObjectContext: syncContext,
-            maxConcurrentImageOperation: 1
-        )
-    }
-
-    private func createFileUploadRequestStrategy() -> FileUploadRequestStrategy {
-        return FileUploadRequestStrategy(
-            clientRegistrationStatus: registrationStatus,
-            managedObjectContext: syncContext,
-            taskCancellationProvider: cancellationProvider
         )
     }
 
