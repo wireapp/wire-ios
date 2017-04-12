@@ -171,3 +171,40 @@ class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
     }
 
 }
+
+class ShareObjectStoreTests: ZMTBaseTest {
+    var sut: SharedObjectStore<WireDataModel.SharedObjectTestClass>!
+    
+    override func setUp() {
+        super.setUp()
+        sut = createStore()
+    }
+    
+    override func tearDown() {
+        sut.clear()
+        super.tearDown()
+    }
+    
+    func createStore() -> SharedObjectStore<WireDataModel.SharedObjectTestClass> {
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return SharedObjectStore(sharedContainerURL: url, fileName: "store")
+    }
+    
+    func testThatItCanDecodeClassSavedBeforeProjectRename() {
+        // Given
+        
+        // Module prefix before project rename
+        NSKeyedArchiver.setClassName("ZMCDataModel.SharedObjectTestClass", for: WireDataModel.SharedObjectTestClass.self)
+        let item = WireDataModel.SharedObjectTestClass()
+        item.flag = true
+        
+        // When
+        sut.store(item)
+        sut = createStore()
+        
+        // Then
+        let items = sut.load()
+        XCTAssertEqual(items.first?.flag, item.flag)
+    }
+    
+}

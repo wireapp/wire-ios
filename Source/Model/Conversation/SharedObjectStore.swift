@@ -111,9 +111,17 @@ fileprivate extension Notification {
 
 private let zmLog = ZMSLog(tag: "shared object store")
 
+// This class is needed to test unarchiving data saved before project rename
+// It has to be added to WireDataModel module because it won't be resolved otherwise
+class SharedObjectTestClass: NSObject, NSCoding {
+    var flag: Bool
+    override init() { flag = false }
+    public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
+    public required init?(coder aDecoder: NSCoder) { flag = aDecoder.decodeBool(forKey: "flag") }
+}
 
 /// This class is used to persist objects in a shared directory
-public class SharedObjectStore<T>: NSObject {
+public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
 
     private let directory: URL
     private let url: URL
@@ -161,13 +169,24 @@ public class SharedObjectStore<T>: NSObject {
 
         do {
             let data = try Data(contentsOf: url)
-            let stored = NSKeyedUnarchiver.unarchiveObject(with: data) as? [T]
+            let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
+            unarchiver.delegate = self // If we are loading data saved before project rename the class will not be found
+            let stored = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [T]
             zmLog.debug("Loaded shared objects from \(url): \(String(describing: stored))")
             return stored ?? []
         } catch {
             zmLog.error("Failed to read from url: \(url), error: \(error)")
             return []
         }
+    }
+    
+    public func unarchiver(_ unarchiver: NSKeyedUnarchiver, cannotDecodeObjectOfClassName name: String, originalClasses classNames: [String]) -> Swift.AnyClass? {
+        let oldModulePrefix = "ZMCDataModel"
+        if let modulePrefixRange = name.range(of: oldModulePrefix) {
+            let fixedName = name.replacingCharacters(in: modulePrefixRange, with: "WireDataModel")
+            return NSClassFromString(fixedName)
+        }
+        return nil
     }
 
     public func clear() {
