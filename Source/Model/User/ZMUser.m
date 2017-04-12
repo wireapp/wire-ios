@@ -78,9 +78,6 @@ static NSString *const UserClientsKey = @"clients";
 static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 
-static NSString *const OttoBotHandle = @"ottothebot";
-static NSString *const AnnaBotHandle = @"annathebot";
-
 @interface ZMBoxedSelfUser : NSObject
 
 @property (nonatomic, weak) ZMUser *selfUser;
@@ -263,7 +260,7 @@ static NSString *const AnnaBotHandle = @"annathebot";
 
 - (BOOL)isBot
 {
-    return [self.handle isEqualToString:AnnaBotHandle] || [self.handle isEqualToString:OttoBotHandle];
+    return [self.handle isEqualToString:ZMUser.annaBotHandle] || [self.handle isEqualToString:ZMUser.ottoBotHandle];
 }
 
 - (BOOL)canBeConnected;
@@ -615,6 +612,13 @@ static NSString *const AnnaBotHandle = @"annathebot";
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, needsToBeUpdated, remoteIdentifiers]];
 }
 
++ (NSPredicate *)predicateForConnectedNonBotUsers
+{
+    return [self predicateForUsersWithSearchString:@""
+                                     excludingBots:YES
+                           connectionStatusInArray:@[@(ZMConnectionStatusAccepted)]];
+}
+
 + (NSPredicate *)predicateForConnectedUsersWithSearchString:(NSString *)searchString
 {
     return [self predicateForUsersWithSearchString:searchString
@@ -622,6 +626,13 @@ static NSString *const AnnaBotHandle = @"annathebot";
 }
 
 + (NSPredicate *)predicateForUsersWithSearchString:(NSString *)searchString
+                           connectionStatusInArray:(NSArray<NSNumber *> *)connectionStatusArray
+{
+    return [self predicateForUsersWithSearchString:searchString excludingBots:NO connectionStatusInArray:connectionStatusArray];
+}
+
++ (NSPredicate *)predicateForUsersWithSearchString:(NSString *)searchString
+                                     excludingBots:(BOOL)excludeBots
                            connectionStatusInArray:(NSArray<NSNumber *> *)connectionStatusArray
 {
     NSString *normalizedQueryString = [searchString normalizedString];
@@ -642,6 +653,11 @@ static NSString *const AnnaBotHandle = @"annathebot";
     }
     else {
         predicate = statusPredicate;
+    }
+    
+    if (excludeBots) {
+        NSPredicate *notBotsPredicate = [ZMUser nonBotUsersPredicate];
+        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate, notBotsPredicate]];
     }
     
     return predicate;
