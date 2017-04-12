@@ -148,15 +148,18 @@ extension FilePreprocessorTests {
             let name = "report.txt"
             let metadata = ZMFileMetadata(fileURL: testDataURL)
             let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:0.0)
+            msg.uploadState = .uploadingFullAsset
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
-            XCTAssertFalse(msg.isReadyToUploadFile)
+            XCTAssertFalse(msg.v3_isReadyToUploadFile)
+            XCTAssertTrue(ZMAssetClientMessage.v3_needsPreprocessingFilter.evaluate(with: msg))
             
             // WHEN
             self.sut.objectsDidChange(Set(arrayLiteral: msg))
             
             // THEN
-            XCTAssertTrue(msg.isReadyToUploadFile)
-            XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingPlaceholder)
+            XCTAssertTrue(msg.v3_isReadyToUploadFile)
+            XCTAssertFalse(ZMAssetClientMessage.v3_needsPreprocessingFilter.evaluate(with: msg))
+            XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingFullAsset)
         }
     }
     
@@ -193,8 +196,8 @@ extension FilePreprocessorTests {
             self.sut.objectsDidChange(Set(arrayLiteral: msg))
             
             // THEN
-            XCTAssertFalse(msg.isReadyToUploadFile)
-            XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingPlaceholder)
+            XCTAssertFalse(msg.v3_isReadyToUploadFile)
+            XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingFullAsset)
         }
     }
     
@@ -378,13 +381,22 @@ extension FilePreprocessorTests {
             let msg = ZMAssetClientMessage(fileMetadata: metadata, nonce: UUID.create(), managedObjectContext: self.syncMOC, expiresAfter:10.0)
             XCTAssertTrue(msg.isEphemeral)
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg.nonce, fileName: name, encrypted: false, data: testData)
-            XCTAssertFalse(msg.isReadyToUploadFile)
+            do {
+                guard let asset = msg.genericAssetMessage.assetData else { return XCTFail() }
+                XCTAssertFalse(asset.uploaded.hasOtrKey())
+                XCTAssertFalse(asset.uploaded.hasSha256())
+            }
             
             // WHEN
             self.sut.objectsDidChange(Set(arrayLiteral: msg))
             
             // THEN
-            XCTAssertTrue(msg.isReadyToUploadFile)
+            do {
+                guard let asset = msg.genericAssetMessage.assetData else { return XCTFail() }
+                XCTAssert(asset.uploaded.hasOtrKey())
+                XCTAssert(asset.uploaded.hasSha256())
+            }
+            XCTAssertFalse(msg.v3_isReadyToUploadFile)
             XCTAssertEqual(msg.uploadState, ZMAssetUploadState.uploadingPlaceholder)
             XCTAssertTrue(msg.isEphemeral)
         }
