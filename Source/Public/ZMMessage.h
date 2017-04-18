@@ -103,6 +103,9 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @property (nonatomic) NSSet<id <ZMSystemMessageData>>  *childMessages;
 @property (nonatomic) id <ZMSystemMessageData> parentMessage;
 
+/// Equals the serverTimestamp, if no childMessages are present
+@property (nonatomic, readonly) NSDate * lastChildMessageDate;
+
 @end
 
 

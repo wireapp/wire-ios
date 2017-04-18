@@ -1038,6 +1038,17 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     return self.systemMessageType == ZMSystemMessageTypeMissedCall;
 }
 
+- (NSDate *)lastChildMessageDate
+{
+    NSDate *date = self.serverTimestamp;
+    for (ZMSystemMessage *message in self.childMessages) {
+        if ([message.serverTimestamp compare:date] == NSOrderedDescending) {
+            date = message.serverTimestamp;
+        }
+    }
+    return date;
+}
+
 
 @end
 

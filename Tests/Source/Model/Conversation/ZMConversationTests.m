@@ -3830,6 +3830,123 @@
 
 }
 
+- (void)testThatItUpdatesTheLastReadTimestampForMissedCallChildMessages
+{
+    // given
+    NSDate *orginalDate = [NSDate dateWithTimeIntervalSinceNow:-20];
+    NSDate *firstCallDate = [orginalDate dateByAddingTimeInterval:50];
+    NSDate *secondCallDate = [orginalDate dateByAddingTimeInterval:100];
+
+    __block ZMMessage *message;
+    __block ZMConversation *conversation;
+    __block ZMUser *user;
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.lastReadServerTimeStamp = orginalDate;
+        conversation.lastServerTimeStamp = orginalDate;
+        
+        user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        XCTAssertFalse(conversation.hasUnreadMissedCall);
+        
+        // when
+        // (1) append first missed call
+        message = [conversation appendMissedCallMessageFromUser:user at:firstCallDate];
+        [self.syncMOC saveOrRollback];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // (2) set first call as read
+    ZMConversation *uiConv = [self.uiMOC objectWithID:conversation.objectID];
+    ZMMessage *uiMessage = [self.uiMOC objectWithID:message.objectID];
+    [uiConv setVisibleWindowFromMessage:nil toMessage:uiMessage];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqualWithAccuracy([uiConv.lastReadServerTimeStamp timeIntervalSince1970], [firstCallDate timeIntervalSince1970], 0.5);
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // and when
+        // (3) append second missed call (as childMessage)
+        [conversation appendMissedCallMessageFromUser:user at:secondCallDate];
+        [self.syncMOC saveOrRollback];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.uiMOC refreshObject:uiMessage mergeChanges:YES];
+    [self.uiMOC refreshObject:uiConv mergeChanges:YES];
+
+    // (4) set second call as read
+    [uiConv setVisibleWindowFromMessage:nil toMessage:uiMessage];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqualWithAccuracy([uiConv.lastReadServerTimeStamp timeIntervalSince1970], [secondCallDate timeIntervalSince1970], 0.5);
+}
+
+- (void)testThatItDoesNotReturnTheMissedCallMessageAsLastReadMessageWhenUnreadChildren
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        NSDate *orginalDate = [NSDate dateWithTimeIntervalSinceNow:-20];
+        NSDate *firstCallDate = [orginalDate dateByAddingTimeInterval:50];
+        NSDate *secondCallDate = [orginalDate dateByAddingTimeInterval:100];
+        
+        ZMConversation * conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.lastReadServerTimeStamp = orginalDate;
+        conversation.lastServerTimeStamp = orginalDate;
+        
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        XCTAssertFalse(conversation.hasUnreadMissedCall);
+        
+        ZMMessage *textMessage = (id)[conversation appendMessageWithText:@"Foo"];
+        
+        // (1) append first missed call
+        ZMMessage *message1 = [conversation appendMissedCallMessageFromUser:user at:firstCallDate];
+        conversation.lastReadServerTimeStamp = message1.serverTimestamp;
+
+        // (2) append first second call
+        [conversation appendMissedCallMessageFromUser:user at:secondCallDate];
+        
+        // when
+        ZMMessage *lastReadMessage = [conversation lastReadMessage];
+        
+        // then
+        XCTAssertEqualObjects(textMessage, lastReadMessage);
+        XCTAssertNotEqualObjects(message1, lastReadMessage);
+    }];
+}
+
+
+- (void)testThatItDoesNotReturnsTheMissedCallMessageAsLastReadMessageWhenNoUnreadChildren
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        NSDate *orginalDate = [NSDate dateWithTimeIntervalSinceNow:-20];
+        NSDate *firstCallDate = [orginalDate dateByAddingTimeInterval:50];
+        
+        ZMConversation * conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.lastReadServerTimeStamp = orginalDate;
+        conversation.lastServerTimeStamp = orginalDate;
+        
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        XCTAssertFalse(conversation.hasUnreadMissedCall);
+        
+        ZMMessage *textMessage = (id)[conversation appendMessageWithText:@"Foo"];
+        
+        // (1) append first missed call
+        ZMMessage *message1 = [conversation appendMissedCallMessageFromUser:user at:firstCallDate];
+        conversation.lastReadServerTimeStamp = message1.serverTimestamp;
+        
+        // when
+        ZMMessage *lastReadMessage = [conversation lastReadMessage];
+        
+        // then
+        XCTAssertNotEqualObjects(textMessage, lastReadMessage);
+        XCTAssertEqualObjects(message1, lastReadMessage);
+    }];
+}
+
 @end
 
 

@@ -524,6 +524,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (void)updateLastReadServerTimeStampWithMessage:(ZMMessage *)message
 {
     NSDate *timeStamp = message.serverTimestamp;
+    if (message.systemMessageData.childMessages.count > 0) {
+        timeStamp = message.systemMessageData.lastChildMessageDate;
+    }
     BOOL senderIsSelfUser = message.sender.isSelfUser;
 
     if( ! self.managedObjectContext.zm_isUserInterfaceContext ) {
@@ -760,7 +763,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     if ([timeStamp compare:[self.messages.lastObject serverTimestamp]] == NSOrderedDescending) {
-        return self.messages.lastObject;
+        return [self lastReadMessageIfChildMessagesForMessage:self.messages.lastObject lastReadTimeStamp:timeStamp];
     }
     
     BOOL reverseSearch = NO;
@@ -791,6 +794,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
                                         }
                                     }];
     
+    result = [self lastReadMessageIfChildMessagesForMessage:result lastReadTimeStamp:timeStamp];
     
     if (result != nil) {
         // Skip ahead if the message after the last read message should
@@ -811,6 +815,24 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     return result;
 }
+
+- (ZMMessage *)lastReadMessageIfChildMessagesForMessage:(ZMMessage *)message lastReadTimeStamp:(NSDate *)timeStamp
+{
+    if (!message.shouldGenerateUnreadCount) {
+        return message;
+    }
+    
+    NSDate *lastChildMessageDate = [message systemMessageData].lastChildMessageDate;
+    if (lastChildMessageDate != nil && [lastChildMessageDate compare:timeStamp] == NSOrderedDescending) {
+        // If the message has unread childMessages, we should return the previous message as the lastReadMessage
+        NSUInteger idx = [self.messages indexOfObject:message];
+        if (idx > 0) {
+            return self.messages[idx-1];
+        }
+    }
+    return message;
+}
+
 
 + (NSSet *)keyPathsForValuesAffectingLastReadMessage
 {
