@@ -525,7 +525,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     NSDate *timeStamp = message.serverTimestamp;
     if (message.systemMessageData.childMessages.count > 0) {
-        timeStamp = message.systemMessageData.lastChildMessageDate;
+        timeStamp = [(ZMSystemMessage *)message.systemMessageData lastChildMessageDate];
     }
     BOOL senderIsSelfUser = message.sender.isSelfUser;
 
@@ -822,7 +822,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         return message;
     }
     
-    NSDate *lastChildMessageDate = [message systemMessageData].lastChildMessageDate;
+    NSDate *lastChildMessageDate = [(ZMSystemMessage *)message.systemMessageData lastChildMessageDate];
     if (lastChildMessageDate != nil && [lastChildMessageDate compare:timeStamp] == NSOrderedDescending) {
         // If the message has unread childMessages, we should return the previous message as the lastReadMessage
         NSUInteger idx = [self.messages indexOfObject:message];
