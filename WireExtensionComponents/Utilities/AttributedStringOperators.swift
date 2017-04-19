@@ -166,11 +166,7 @@ public extension String {
     }
    
     // Used to generate localized strings with plural rules from the stringdict
-    public func localized(args: CVarArg...) -> String {
-        return self.localized(pov: .none, args: args)
-    }
-    
-    public func localized(pov pointOfView: PointOfView, args: CVarArg...) -> String {
+    public func localized(pov pointOfView: PointOfView = .none, args: CVarArg...) -> String {
         return withVaList(args) {
             return NSString(format: self.localized(pov: pointOfView), arguments: $0) as String
         }
