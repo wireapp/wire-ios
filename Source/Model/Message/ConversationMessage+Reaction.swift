@@ -30,9 +30,9 @@ import Foundation
 
 extension ZMMessage {
     
-    static func appendReaction(_ unicodeValue: String?, toMessage message: ZMConversationMessage) {
-        guard let message = message as? ZMMessage, let context = message.managedObjectContext else { return }
-        guard message.deliveryState == ZMDeliveryState.sent || message.deliveryState == ZMDeliveryState.delivered else { return }
+    static func appendReaction(_ unicodeValue: String?, toMessage message: ZMConversationMessage) -> ZMClientMessage? {
+        guard let message = message as? ZMMessage, let context = message.managedObjectContext else { return nil }
+        guard message.deliveryState == ZMDeliveryState.sent || message.deliveryState == ZMDeliveryState.delivered else { return nil }
         
         let emoji = unicodeValue ?? ""
         
@@ -42,22 +42,24 @@ extension ZMMessage {
             nonce: NSUUID().transportString()
         )
     
-        _ = message.conversation?.append(genericMessage, expires: false, hidden: true)
+        let clientMessage = message.conversation?.append(genericMessage, expires: false, hidden: true)
         message.addReaction(unicodeValue, forUser: .selfUser(in: context))
+        return clientMessage
     }
     
-    public static func addReaction(_ reaction: MessageReaction, toMessage message: ZMConversationMessage) {
+    @discardableResult
+    public static func addReaction(_ reaction: MessageReaction, toMessage message: ZMConversationMessage) -> ZMClientMessage? {
         // confirmation that we understand the emoji
         // the UI should never send an emoji we dont handle
         if Reaction.transportReaction(from: reaction.unicodeValue) == .none{
             fatal("We can't append this reaction \(reaction.unicodeValue), this is a programmer error.")
         }
         
-        appendReaction(reaction.unicodeValue, toMessage: message)
+        return appendReaction(reaction.unicodeValue, toMessage: message)
     }
     
     public static func removeReaction(onMessage message:ZMConversationMessage) {
-        appendReaction(nil, toMessage: message)
+        _ = appendReaction(nil, toMessage: message)
     }
     
     @objc public func addReaction(_ unicodeValue: String?, forUser user:ZMUser) {
