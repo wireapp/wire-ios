@@ -139,7 +139,7 @@ const NSTimeInterval PermantentConversationListObserverObservationFinalTime = 20
             break;
     }
     
-    NSFetchRequest *fetchRequest = [ZMUser fetchRequest];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ZMUser entityName]];
     fetchRequest.predicate = [ZMUser predicateForConnectedNonBotUsers];
     NSUInteger contactsCount = [[ZMUserSession sharedSession].managedObjectContext countForFetchRequest:fetchRequest error:nil];
     
