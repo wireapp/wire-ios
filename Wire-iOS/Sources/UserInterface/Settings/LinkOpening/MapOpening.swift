@@ -54,7 +54,7 @@ extension URL {
 
     public func openAsLocation() -> Bool {
         log.debug("Trying to open \"\(self)\" as location")
-        let saved =  MapsOpeningOption.storedPreference()
+        let saved = MapsOpeningOption.storedPreference()
         log.debug("Saved option to open a location: \(saved.displayString)")
 
         switch saved {
