@@ -150,6 +150,13 @@
 "conversation.status.removed_users" = "%@ removed %@";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Compose Entry Point
+
+"compose.contact.title" = "Contact";
+"compose.message.title" = "Message";
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Conversation
 "conversation.invite_more_people.title" = "Spread the word!";
 "conversation.invite_more_people.description" = "Add people to this conversation";
@@ -895,4 +902,13 @@
 
 "collections.search.field.placeholder" = "Search text messages";
 "collections.search.no_items" = "No results";
+
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Message composing / drafts
+
+"compose.drafts.title" = "Drafts";
+"compose.drafts.compose.title" = "Write a message";
+"compose.drafts.compose.subject.placeholder" = "Write a subject";
 
