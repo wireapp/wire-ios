@@ -538,7 +538,7 @@ ConversationListBottomBarController {
         }
     }
     
-    settingsButton: @{
+    plusButton: @{
         iconColor: $color-text-foreground-dark;
     }
     
