@@ -118,7 +118,7 @@ internal class Space: NSObject {
             let workspaceName = factory.property(.workspaceName).rawValue() as? String,
             !workspaceName.isEmpty {
             
-            if spaces.isEmpty || spaces[1].name != workspaceName {
+            if spaces.isEmpty || (spaces.count > 1 && spaces[1].name != workspaceName) {
 
                 let privateSpace: Space = {
                     let selfUser = ZMUser.selfUser()
