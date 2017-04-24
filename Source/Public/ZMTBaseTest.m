@@ -98,6 +98,7 @@
     self.ignoreLogErrors = NO;
     if (self.logHookToken != nil) {
         [ZMSLog removeLogHookWithToken:_logHookToken];
+        self.logHookToken = nil;
     }
 }
 
@@ -113,8 +114,8 @@
     
     [self registerLogErrorHook];
     
-    self.fakeUIContext = [FakeGroupContext mainContext];
-    self.fakeSyncContext = [FakeGroupContext sycnContext];
+    self.fakeUIContext = [FakeGroupContext main];
+    self.fakeSyncContext = [FakeGroupContext sync];
     
     [NSUUID reseedUUID:self.name];
 }
@@ -123,6 +124,12 @@
 {
     [self unregisterLogErrorHook];
     [self verifyMocksNow];
+    _dispatchGroup = nil;
+    _logHookToken = nil;
+    _fakeUIContext = nil;
+    _fakeSyncContext = nil;
+    _mocksToBeVerified = nil;
+    self.expectations = nil;
     [super tearDown];
 }
 
