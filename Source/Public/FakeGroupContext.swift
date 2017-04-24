@@ -25,8 +25,13 @@ public class FakeGroupContext: NSObject, ZMSGroupQueue {
     public let dispatchGroup: ZMSDispatchGroup!
     fileprivate let queue: DispatchQueue!
     
-    public static let mainContext = FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
-    public static let sycnContext = FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
+    public static var main: FakeGroupContext {
+        return FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
+    }
+    
+    public static var sync: FakeGroupContext {
+         return FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
+    }
     
     public init(queue: DispatchQueue, group: ZMSDispatchGroup) {
         self.queue = queue
