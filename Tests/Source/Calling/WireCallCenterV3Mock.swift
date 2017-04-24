@@ -32,6 +32,12 @@ class MockAVSWrapper : AVSWrapperType {
     var startCallShouldFail : Bool = false
     var mockIsVideoCall : Bool = false
     var hasOngoingCall: Bool = false
+    var mockMembers : [CallMember] = []
+    
+    func members(in conversationId: UUID) -> [CallMember] {
+        return mockMembers
+    }
+
     var receivedCallEvents : [CallEvent] = []
     
     required init(userId: UUID, clientId: String, observer: UnsafeMutableRawPointer?) {
@@ -42,21 +48,23 @@ class MockAVSWrapper : AVSWrapperType {
         return mockCallState
     }
     
-    func startCall(conversationId: UUID, video: Bool) -> Bool {
+
+    func startCall(conversationId: UUID, video: Bool, isGroup: Bool) -> Bool {
         didCallStartCall = true
         return !startCallShouldFail
     }
     
-    func answerCall(conversationId: UUID) -> Bool {
+    
+    func answerCall(conversationId: UUID, isGroup: Bool) -> Bool {
         didCallAnswerCall = true
         return !answerCallShouldFail
     }
     
-    func endCall(conversationId: UUID) {
+    func endCall(conversationId: UUID, isGroup: Bool) {
         didCallEndCall = true
     }
     
-    func rejectCall(conversationId: UUID) {
+    func rejectCall(conversationId: UUID, isGroup: Bool) {
         didCallRejectCall = true
     }
     
@@ -90,6 +98,15 @@ class MockAVSWrapper : AVSWrapperType {
 }
 
 public class WireCallCenterV3Mock : WireCallCenterV3 {
+    
+    
+    var mockMembers : [CallMember] {
+        set {
+            (avsWrapper as! MockAVSWrapper).mockMembers = newValue
+        } get {
+            return (avsWrapper as! MockAVSWrapper).mockMembers
+        }
+    }
     
     public var mockAVSCallState : CallState = .none {
         didSet {
@@ -139,4 +156,9 @@ public class WireCallCenterV3Mock : WireCallCenterV3 {
         WireCallCenterCallStateNotification(callState: callState, conversationId: conversationId, userId: userId).post()
     }
 
+    var mockInitiator : ZMUser?
+    
+    override public func initiatorForCall(conversationId: UUID) -> UUID? {
+        return mockInitiator?.remoteIdentifier ?? super.initiatorForCall(conversationId: conversationId)
+    }
 }
