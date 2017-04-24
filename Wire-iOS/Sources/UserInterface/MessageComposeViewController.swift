@@ -32,10 +32,9 @@ final class MessageComposeViewController: UIViewController {
     weak var delegate: MessageComposeViewControllerDelegate?
 
     private let subjectTextField = UITextField()
-    private let messageTextView = UITextView()
+    fileprivate let messageTextView = UITextView()
     private let color = ColorScheme.default().color(withName:)
     private let sendButtonView = DraftSendInputAccessoryView()
-    private let dismissItem = UIBarButtonItem(icon: .X, target: self, action: #selector(dismissTapped))
 
     private var draft: MessageDraft?
     private let persistence: MessageDraftStorage
@@ -92,8 +91,9 @@ final class MessageComposeViewController: UIViewController {
         subjectTextField.textColor = color(ColorSchemeColorTextForeground)
         subjectTextField.tintColor = .accent()
         subjectTextField.textAlignment = .center
+        subjectTextField.font = FontSpec(.medium, .semibold).font!
         let placeholder = "compose.drafts.compose.subject.placeholder".localized.uppercased()
-        subjectTextField.attributedPlaceholder = placeholder && color(ColorSchemeColorSeparator) && FontSpec(.normal, .none).font!
+        subjectTextField.attributedPlaceholder = placeholder && color(ColorSchemeColorSeparator) && FontSpec(.medium, .none).font!
         subjectTextField.bounds = CGRect(x: 0, y: 0, width: 200, height: 44)
         navigationItem.titleView = subjectTextField
         subjectTextField.alpha = 0
@@ -105,7 +105,8 @@ final class MessageComposeViewController: UIViewController {
     }
 
     private func updateRightNavigationItem() {
-        navigationItem.rightBarButtonItem = traitCollection.horizontalSizeClass == .compact ? dismissItem : nil
+        let showItem = traitCollection.horizontalSizeClass == .compact
+        navigationItem.rightBarButtonItem = showItem ? UIBarButtonItem(icon: .X, target: self, action: #selector(dismissTapped)) : nil
     }
 
     private func setupInputAccessoryView() {
@@ -114,18 +115,27 @@ final class MessageComposeViewController: UIViewController {
         }
 
         sendButtonView.onDelete = { [weak self] in
+            guard let `self` = self else { return }
             let controller = UIAlertController.controllerForDraftDeletion {
-                self?.persistence.enqueue(
+                self.persistence.enqueue(
                     block: {
-                        self?.draft.map($0.delete)
-                        self?.draft = nil
+                        self.draft.map($0.delete)
+                        self.draft = nil
                 }, completion: {
-                    self?.subjectTextField.text = nil
-                    self?.messageTextView.text = nil
+                    self.subjectTextField.text = nil
+                    self.messageTextView.text = nil
+                    self.updateButtonStates()
+                    self.popToListIfNeeded()
                 })
             }
 
-            self?.present(controller, animated: true, completion: nil)
+            self.present(controller, animated: true, completion: nil)
+        }
+    }
+
+    private func popToListIfNeeded() {
+        if splitViewController?.isCollapsed == true && persistence.numberOfStoredDrafts() > 0 {
+           navigationController?.navigationController?.popToRootViewController(animated: true)
         }
     }
 
@@ -141,13 +151,14 @@ final class MessageComposeViewController: UIViewController {
     fileprivate dynamic func updateDraft() {
         if let draft = draft {
             persistence.enqueue(block: {
-                if self.subjectTextField.text?.isEmpty == false || self.messageTextView.text?.isEmpty == false {
+                if self.hasDraftContent {
                     guard draft.subject != self.subjectTextField.text || draft.message != self.messageTextView.text else { return }
                     draft.subject = self.subjectTextField.text
                     draft.message = self.messageTextView.text
                     draft.lastModifiedDate = NSDate()
                 } else {
                     $0.delete(draft)
+                    self.draft = nil
                 }
             }, completion: {
                 self.updateButtonStates()
@@ -158,6 +169,10 @@ final class MessageComposeViewController: UIViewController {
                 completion: { self.updateDraft() }
             )
         }
+    }
+
+    private var hasDraftContent: Bool {
+        return subjectTextField.text?.isEmpty == false || messageTextView.text?.isEmpty == false
     }
 
     private func updateButtonStates() {
@@ -197,7 +212,8 @@ extension MessageComposeViewController: UITextViewDelegate {
 extension MessageComposeViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return false
+        messageTextView.becomeFirstResponder()
+        return true
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
