@@ -32,7 +32,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
  
     /// Adds a Dependency to an
     public func add(dependency: Dependency, for dependent: Object) {
-        zmLog.debug("Adding dependency of type \(type(of: dependency)) to object \(type(of: dependent)), object is: \(dependent)")
+        zmLog.debug("Adding dependency \(toPtr(of: dependency)) to object \(toPtr(dependent)), object is: \(dependent)")
         let toDependents = self.dependenciesToDependents[dependency] ?? Set()
         self.dependenciesToDependents[dependency] = toDependents.union([dependent])
         
@@ -72,7 +72,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     private func updateDependencies(dependency: Dependency, removing dependent: Object) {
         guard let currentSet = dependenciesToDependents[dependency] else { return }
         if currentSet.contains(dependent) {
-            zmLog.debug("Removing dependency of type \(type(of: dependency)) from object \(type(of: dependent))")
+            zmLog.debug("Removing dependency \(toPtr(dependency)) from object \(toPtr(dependent))")
         }
         let newSet = currentSet.subtracting([dependent])
         if newSet.isEmpty {
@@ -86,7 +86,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
         guard let currentSet = dependentsToDependencies[dependent] else { return }
         let newSet = currentSet.subtracting([dependency])
         if currentSet.contains(dependency) {
-            zmLog.debug("Removing dependent object \(type(of: dependent)) for dependency of type \(type(of: dependency))")
+            zmLog.debug("Removing dependent object \(toPtr(dependent))for dependency \(toPtr(dependency))")
         }
         if newSet.isEmpty {
             dependentsToDependencies.removeValue(forKey: dependent)
@@ -123,4 +123,15 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
         self.dependentObjects.enumerateAndRemoveObjects(for: dependency, block: block)
     }
     
+}
+
+/// Returns a string representing the pointer
+private func toPtr(_ instance: Any) -> String {
+    if let object = instance as? NSManagedObject {
+        return "\(type(of: object))" + (NSString(format: " <%p>", object) as String)
+    }
+    if let object = instance as? NSObject {
+        return "\(type(of: object))" + (NSString(format: " <%p>", object) as String)
+    }
+    return "\(type(of: instance))"
 }
