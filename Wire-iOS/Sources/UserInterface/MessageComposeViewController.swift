@@ -69,8 +69,18 @@ final class MessageComposeViewController: UIViewController {
         setupInputAccessoryView()
         setupNavigationItem()
         setupTextView()
+        updateLeftNavigationItem()
         updateRightNavigationItem()
     }
+
+    private lazy var backButton: IconButton = {
+        let button = IconButton.iconButtonDefault()
+        button.setIcon(.backArrow, with: .tiny, for: .normal)
+        button.frame = CGRect(x: 0, y: 0, width: 32, height: 20)
+        button.imageEdgeInsets = UIEdgeInsetsMake(0, -26, 0, 0)
+        button.accessibilityIdentifier = "back"
+        return button
+    }()
 
     private func setupTextView() {
         messageTextView.textColor = color(ColorSchemeColorTextForeground)
@@ -81,32 +91,44 @@ final class MessageComposeViewController: UIViewController {
         messageTextView.textContainer.lineFragmentPadding = 0
         messageTextView.delegate = self
         messageTextView.indicatorStyle = ColorScheme.default().indicatorStyle
+        messageTextView.accessibilityLabel = "messageTextField"
+    }
+
+    private dynamic func backButtonPressed() {
+        navigationController?.navigationController?.popViewController(animated: true)
     }
 
     private func setupNavigationItem() {
-        navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-        navigationItem.leftItemsSupplementBackButton = true
-
+        backButton.addTarget(self, action: #selector(backButtonPressed), for: .touchUpInside)
         subjectTextField.delegate = self
         subjectTextField.textColor = color(ColorSchemeColorTextForeground)
         subjectTextField.tintColor = .accent()
         subjectTextField.textAlignment = .center
         subjectTextField.font = FontSpec(.medium, .semibold).font!
         let placeholder = "compose.drafts.compose.subject.placeholder".localized.uppercased()
-        subjectTextField.attributedPlaceholder = placeholder && color(ColorSchemeColorSeparator) && FontSpec(.medium, .none).font!
+        subjectTextField.attributedPlaceholder = placeholder && color(ColorSchemeColorSeparator) && FontSpec(.medium, .semibold).font!
         subjectTextField.bounds = CGRect(x: 0, y: 0, width: 200, height: 44)
-        navigationItem.titleView = subjectTextField
+        subjectTextField.accessibilityLabel = "subjectTextField"
         subjectTextField.alpha = 0
+        navigationItem.titleView = subjectTextField
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
+        updateLeftNavigationItem()
         updateRightNavigationItem()
     }
 
     private func updateRightNavigationItem() {
         let showItem = traitCollection.horizontalSizeClass == .compact
         navigationItem.rightBarButtonItem = showItem ? UIBarButtonItem(icon: .X, target: self, action: #selector(dismissTapped)) : nil
+        navigationItem.rightBarButtonItem?.accessibilityLabel = "closeButton"
+    }
+
+    private func updateLeftNavigationItem() {
+        let showItem = traitCollection.horizontalSizeClass == .compact
+        navigationItem.leftBarButtonItem = showItem ? UIBarButtonItem(customView: backButton) : nil
+        navigationItem.leftBarButtonItem?.accessibilityLabel = "backButton"
     }
 
     private func setupInputAccessoryView() {
