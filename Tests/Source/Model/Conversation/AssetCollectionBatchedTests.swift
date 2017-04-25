@@ -34,14 +34,13 @@ class AssetColletionBatchedTests : ModelObjectsTests {
     
     override func tearDown() {
         delegate = nil
-        if sut != nil {
-            sut.tearDown()
-            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            sut = nil
-        }
+        sut?.tearDown()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        uiMOC.zm_imageAssetCache.wipeCache()
+        sut = nil
+        conversation = nil
         super.tearDown()
     }
-    
     
     var defaultMatchPair : CategoryMatch {
         return CategoryMatch(including: .image, excluding: .none)

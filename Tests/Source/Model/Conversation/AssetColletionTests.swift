@@ -65,11 +65,11 @@ class AssetColletionTests : ModelObjectsTests {
     
     override func tearDown() {
         delegate = nil
-        if sut != nil {
-            sut.tearDown()
-            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            sut = nil
-        }
+        sut?.tearDown()
+        uiMOC.zm_imageAssetCache.wipeCache()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sut = nil
+        conversation = nil
         super.tearDown()
     }
     

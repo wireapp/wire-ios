@@ -45,6 +45,7 @@
 
 - (void)tearDown {
     [self.dispatcher tearDown];
+    self.dispatcher = nil;
     [super tearDown];
 }
 - (void)testThatItDoesNotReturnTheSelfConversation;

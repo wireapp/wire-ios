@@ -45,6 +45,12 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
         sut = UserImageLocalCache()
     }
     
+    override func tearDown() {
+        testUser = nil
+        sut = nil
+        super.tearDown()
+    }
+    
     func testThatItHasNilData() {
         XCTAssertNil(sut.userImage(testUser, size: .preview))
         XCTAssertNil(sut.userImage(testUser, size: .complete))

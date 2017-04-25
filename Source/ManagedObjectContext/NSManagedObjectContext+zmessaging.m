@@ -186,6 +186,7 @@ static BOOL storeIsReady = NO;
 + (void)resetUserInterfaceContext
 {
     dispatch_sync(UIContextCreationQueue(), ^{
+        SharedUserInterfaceContext.nameGenerator = nil;
         SharedUserInterfaceContext = nil;
     });
 }

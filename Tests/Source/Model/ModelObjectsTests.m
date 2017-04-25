@@ -61,6 +61,13 @@
     WaitForAllGroupsToBeEmpty(0.2);
 }
 
+- (void)tearDown
+{
+    _model = nil;
+    self.selfUser = nil;
+    [super tearDown];
+}
+
 - (void)setupSelfConversation
 {
     NSUUID *selfUserID = [NSUUID createUUID];

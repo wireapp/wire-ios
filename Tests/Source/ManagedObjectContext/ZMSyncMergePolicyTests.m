@@ -71,6 +71,23 @@
 
 }
 
+- (void)tearDown
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self.noteToken];
+    self.noteToken = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self.didChangeNoteToken];
+    self.didChangeNoteToken = nil;
+    self.objectsDidChangeNotifications = nil;
+    
+    self.uiConversation = nil;
+    self.syncConversation = nil;
+    self.mergeNotificationToUIMOC = nil;
+    self.mergeNotificationToSyncMOC = nil;
+    self.lastMessageTime = nil;
+    [super tearDown];
+}
+
+
 - (NSDate *)nextDate
 {
     NSDate *d = self.lastMessageTime;
@@ -114,20 +131,6 @@
 }
 
 
-- (void)tearDown
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self.noteToken];
-    self.noteToken = nil;
-    [[NSNotificationCenter defaultCenter] removeObserver:self.didChangeNoteToken];
-    self.didChangeNoteToken = nil;
-    self.objectsDidChangeNotifications = nil;
-
-    self.uiConversation = nil;
-    self.syncConversation = nil;
-    self.mergeNotificationToUIMOC = nil;
-    self.mergeNotificationToSyncMOC = nil;
-    [super tearDown];
-}
 
 - (void)testThatItMergesConflictingMessagesFromSyncMOCToUiMOC
 {

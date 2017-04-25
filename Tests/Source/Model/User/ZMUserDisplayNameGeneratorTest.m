@@ -230,6 +230,11 @@ static NSString * const UserNames[] = {
 
 @implementation ZMUserDisplayNameGeneratorTest
 
+- (void)tearDown {
+    [[PersonName stringsToPersonNames] removeAllObjects];
+    [super tearDown];
+}
+
 - (NSNotification *)notificationForInsertedObject:(NSSet *)insertedObjects updatedObjects:(NSSet *)updatedObjects deletedObjects:(NSSet *)deletedObjects
 {
     return [NSNotification notificationWithName:@"TestNotification" object:nil userInfo:@{

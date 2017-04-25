@@ -80,6 +80,9 @@
 - (void)tearDown
 {
     [self.testMOC resetContextType];
+    self.testMOC = nil;
+    self.alternativeTestMOC = nil;
+    OriginalPredicate = nil;
     [super tearDown];
 }
 
