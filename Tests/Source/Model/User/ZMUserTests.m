@@ -82,6 +82,14 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     self.uiMOC.zm_userImageCache = userImageCache;
 }
 
+- (void)tearDown
+{
+    self.validPhoneNumbers = nil;
+    self.shortPhoneNumbers = nil;
+    self.longPhoneNumbers = nil;
+    [super tearDown];
+}
+
 - (void)testThatItHasLocallyModifiedDataFields
 {
     XCTAssertTrue([ZMUser isTrackingLocalModifications]);

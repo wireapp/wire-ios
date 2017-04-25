@@ -64,6 +64,7 @@
 
 - (void)tearDown
 {
+    self.receivedWindowChangeNotification = nil;
     [super tearDown];
 }
 

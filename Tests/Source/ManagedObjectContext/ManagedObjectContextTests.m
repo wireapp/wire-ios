@@ -46,6 +46,12 @@
     self.alternativeTestMOC = [MockModelObjectContextFactory alternativeMocForPSC:self.testMOC.persistentStoreCoordinator];
 }
 
+- (void)tearDown {
+    self.testMOC = nil;
+    self.alternativeTestMOC = nil;
+    [super tearDown];
+}
+
 - (void)testThatWeCanCreateTheUserInterfaceContext
 {
     XCTAssertNotNil(self.uiMOC.persistentStoreCoordinator);

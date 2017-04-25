@@ -42,6 +42,7 @@ import Foundation
         NotificationCenter.default.removeObserver(self)
         sut.tearDown()
         sut = nil
+        conversationObserver = nil
         mergeNotifications = []
         super.tearDown()
     }

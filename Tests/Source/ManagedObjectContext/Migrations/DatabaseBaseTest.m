@@ -53,6 +53,11 @@
 - (void)tearDown
 {
     [self cleanUp];
+    self.fm = nil;
+    self.cachesDirectoryStoreURL = nil;
+    self.applicationSupportDirectoryStoreURL = nil;
+    self.sharedContainerStoreURL = nil;
+    self.sharedContainerDirectoryURL = nil;
     [super tearDown];
 }
 
@@ -74,6 +79,7 @@
     }
  
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+    [NSManagedObjectContext resetUserInterfaceContext];
     
     [self performIgnoringZMLogError:^{
         NSError *error = nil;

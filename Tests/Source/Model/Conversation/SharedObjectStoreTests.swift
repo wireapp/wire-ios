@@ -45,6 +45,7 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 
     override func tearDown() {
         sut.clear()
+        sut = nil
         super.tearDown()
     }
 
@@ -137,6 +138,7 @@ class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
 
     override func tearDown() {
         sut.clear()
+        sut = nil
         super.tearDown()
     }
 
@@ -182,6 +184,7 @@ class ShareObjectStoreTests: ZMTBaseTest {
     
     override func tearDown() {
         sut.clear()
+        sut = nil
         super.tearDown()
     }
     

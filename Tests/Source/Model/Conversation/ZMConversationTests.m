@@ -57,6 +57,12 @@
     [self setupSelfConversation]; // when updating lastRead we are posting to the selfConversation
 }
 
+- (void)tearDown
+{
+    self.receivedNotifications = nil;
+    [super tearDown];
+}
+
 - (void)setupSelfConversation
 {
     NSUUID *selfUserID =  [NSUUID UUID];

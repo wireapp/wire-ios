@@ -112,6 +112,8 @@
     self.archivedOneToOneConversation = nil;
     self.archivedGroupConversation = nil;
     self.oneToOneConversation = nil;
+    self.clearedConversation = nil;
+    self.conversations = nil;
     
     [super tearDown];
 }

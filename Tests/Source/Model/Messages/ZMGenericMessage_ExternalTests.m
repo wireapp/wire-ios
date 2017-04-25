@@ -43,6 +43,11 @@
     XCTAssertTrue(self.sut.hasText);
 }
 
+- (void)tearDown {
+    _sut = nil;
+    [super tearDown];
+}
+
 - (void)testThatItEncryptsTheMessageAndReturnsTheCorrectKeyAndDigest
 {
     // given & when

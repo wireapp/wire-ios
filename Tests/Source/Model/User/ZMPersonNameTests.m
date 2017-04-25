@@ -38,7 +38,11 @@
     self.tagger = nil;
 }
 
-
++ (void)tearDown
+{
+    [super tearDown];
+    
+}
 
 - (void)testThatNameIsSeparatedIntoComponents
 {
