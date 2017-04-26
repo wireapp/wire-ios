@@ -17,8 +17,8 @@
 // 
 
 
-#import <WireSyncEngine/WireSyncEngine.h>
-#import <WireDataModel/WireDataModel.h>
+@import WireSyncEngine;
+@import WireDataModel;
 
 #import "ZMUserSession+iOS.h"
 #import "ZMUserSession+RequestProxy.h"

@@ -19,9 +19,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import "WireSyncEngine+iOS.h"
-#import <ziphy/ziphy-Swift.h>
-#import <WireSyncEngine/WireSyncEngine-Swift.h>
+@import ziphy;
+@import WireSyncEngine;
 
 @protocol ProxiedURLRequester <NSObject>
 - (ZMProxyRequest  * _Nonnull)doRequestWithPath:(NSString * __nonnull)path
