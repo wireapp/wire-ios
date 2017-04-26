@@ -54,6 +54,8 @@ final class MessageComposeViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        navigationController?.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        navigationController?.navigationController?.interactivePopGestureRecognizer?.delegate = self
         messageTextView.becomeFirstResponder()
     }
 
@@ -174,9 +176,10 @@ final class MessageComposeViewController: UIViewController {
         if let draft = draft {
             persistence.enqueue(block: {
                 if self.hasDraftContent {
-                    guard draft.subject != self.subjectTextField.text || draft.message != self.messageTextView.text else { return }
-                    draft.subject = self.subjectTextField.text
-                    draft.message = self.messageTextView.text
+                    let (subject, message) = (self.subjectTextField.text?.trimmed, self.messageTextView.text?.trimmed)
+                    guard draft.subject != subject || draft.message != message else { return }
+                    draft.subject = subject
+                    draft.message = message
                     draft.lastModifiedDate = NSDate()
                 } else {
                     $0.delete(draft)
@@ -229,9 +232,26 @@ extension MessageComposeViewController: UITextViewDelegate {
         updateDraftThrottled()
     }
 
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if range.location == 0 && text == " " && textView.text?.isEmpty ?? true {
+            return false
+        }
+
+        return true
+    }
+
 }
 
+
 extension MessageComposeViewController: UITextFieldDelegate {
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if range.location == 0 && string == " " && textField.text?.isEmpty ?? true {
+            return false
+        }
+
+        return true
+    }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         messageTextView.becomeFirstResponder()
@@ -242,4 +262,22 @@ extension MessageComposeViewController: UITextFieldDelegate {
         updateDraft() // No throttling in this case
     }
 
+}
+
+
+fileprivate extension String {
+
+    var trimmed: String {
+        return trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+}
+
+
+extension MessageComposeViewController: UIGestureRecognizerDelegate {
+
+    @nonobjc public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return navigationController?.navigationController?.interactivePopGestureRecognizer == gestureRecognizer
+            && navigationController?.navigationController?.viewControllers.count > 1
+    }
 }
