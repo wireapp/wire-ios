@@ -124,7 +124,6 @@
 {
     [self unregisterLogErrorHook];
     [self verifyMocksNow];
-    _dispatchGroup = nil;
     _logHookToken = nil;
     _fakeUIContext = nil;
     _fakeSyncContext = nil;
