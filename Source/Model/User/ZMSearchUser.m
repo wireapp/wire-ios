@@ -513,11 +513,19 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return nil;
 }
 
-- (NSString *)smallProfileImageCacheKey {
+- (NSString *)smallProfileImageCacheKey
+{
+    if (self.user != nil) {
+        return self.user.smallProfileImageCacheKey;
+    }
     return self.imageSmallProfileIdentifier;
 }
 
-- (NSString *)mediumProfileImageCacheKey {
+- (NSString *)mediumProfileImageCacheKey
+{
+    if (self.user != nil) {
+        return self.user.mediumProfileImageCacheKey;
+    }
     return self.imageMediumIdentifier;
 }
 

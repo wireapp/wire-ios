@@ -579,6 +579,39 @@
     XCTAssertEqualObjects(imageIdentifier, fetchedIdentifier);
 }
 
+- (void)testThatItReturnsSmallProfileImageCacheKeyFromUserIfItHasAUser
+{
+    // given
+    NSData *mockImage = [@"bar" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.imageSmallProfileData = mockImage;
+    user.previewProfileAssetIdentifier = [NSUUID createUUID].UUIDString;
+    
+    [self.uiMOC saveOrRollback];
+    
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithName:@"foo"
+                                                           handle:@"hans"
+                                                      accentColor:ZMAccentColorBrightYellow
+                                                         remoteID:user.remoteIdentifier
+                                                             user:user
+                                         syncManagedObjectContext:self.syncMOC
+                                           uiManagedObjectContext:self.uiMOC];
+    
+    NSCache *cache = [ZMSearchUser searchUserToSmallProfileImageCache];
+    [cache setObject:mockImage forKey:searchUser.remoteIdentifier];
+    
+    // when
+    NSString *smallImageCacheKey = searchUser.smallProfileImageCacheKey;
+    
+    // then
+    NSString *fetchedSmallImageCacheKey = user.smallProfileImageCacheKey;
+    
+    XCTAssertNotEqual(smallImageCacheKey.length, (unsigned long)0);
+    XCTAssertEqualObjects(smallImageCacheKey, fetchedSmallImageCacheKey);
+}
+
 - (void)testThatItStoresTheCachedSmallProfileData;
 {
     // given
