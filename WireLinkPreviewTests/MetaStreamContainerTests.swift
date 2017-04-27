@@ -29,41 +29,64 @@ class MetaStreamContainerTests: XCTestCase {
         sut = MetaStreamContainer()
     }
 
-    func testThatItAppendsBytes() {
-        // given
-        let first = "First".utf8Data
-        let second = "Second".utf8Data
-
-        // when
-        sut.addData(first)
-
-        // then
-        XCTAssertEqual(sut.bytes, first)
-        XCTAssertEqual(sut.stringContent, "First")
-
-        // when
-        sut.addData(second)
-
-        // then
-        let expected = "FirstSecond".utf8Data
-        XCTAssertEqual(sut.bytes, expected)
-        XCTAssertEqual(sut.stringContent, "FirstSecond")
+    func testThatItAppendsBytes_UTF8() {
+        assertThatItAppendsBytes()
     }
 
-    func testThatItSets_rechaedEndOfHead_WhenDataContainsHead_Lowercase() {
+    func testThatItAppendsBytes_Latin_1() {
+        assertThatItAppendsBytes(encoding: .isoLatin1)
+    }
+
+    func testThatItAppendsBytes_ASCII() {
+        assertThatItAppendsBytes(encoding: .ascii)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Lowercase() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head>")
     }
     
-    func testThatItSets_rechaedEndOfHead_WhenDataContainsHead_Capitalized() {
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Capitalized() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</Head>")
     }
     
-    func testThatItSets_rechaedEndOfHead_WhenDataContainsHead_Uppercase() {
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Uppercase() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</HEAD>")
     }
     
-    func testThatItSets_rechaedEndOfHead_WhenDataContainsHead_WithSpaces() {
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_WithSpaces() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head >", shouldUpdate: false)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Lowercase_Latin1() {
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head>", encoding: .isoLatin1)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Capitalized_Latin1() {
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</Head>", encoding: .isoLatin1)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Uppercase_Latin1() {
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</HEAD>", encoding: .isoLatin1)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_WithSpaces_Latin1() {
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head >", shouldUpdate: false, encoding: .isoLatin1)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Lowercase_ASCII() {
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head>", encoding: .ascii)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Capitalized_ASCII() {
+    assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</Head>", encoding: .ascii)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Uppercase_ASCII() {
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</HEAD>", encoding: .ascii)
+    }
+
+    func testThatItSets_reachedEndOfHead_WhenDataContainsHead_WithSpaces_ASCII() {
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head >", shouldUpdate: false, encoding: .ascii)
     }
     
     func testThatItExtractsTheHead_whenAllInOneLine() {
@@ -83,12 +106,48 @@ class MetaStreamContainerTests: XCTestCase {
         let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
         assertThatItExtractsTheCorrectHead(html, expectedHead: head)
     }
+
+    func testThatItExtractsTheHead_whenAllInOneLine_Latin1() {
+        let head = "<head>header</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .isoLatin1)
+    }
+
+    func testThatItExtractsTheHead_whenOneASeparateLine_Latin1() {
+        let head = "<head>\nheader\n</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .isoLatin1)
+    }
+
+    func testThatItExtractsTheHead_whenItHasAttributes_Latin1() {
+        let head = "<head data-network=\"123\">\nheader\n</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .isoLatin1)
+    }
+
+    func testThatItExtractsTheHead_whenAllInOneLine_ASCII() {
+        let head = "<head>header</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
+    }
+
+    func testThatItExtractsTheHead_whenOneASeparateLine_ASCII() {
+        let head = "<head>\nheader\n</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
+    }
+
+    func testThatItExtractsTheHead_whenItHasAttributes_ASCII() {
+        let head = "<head data-network=\"123\">\nheader\n</head>"
+        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
+    }
     
     // MARK: - Helper
     
-    func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, line: UInt = #line) {
+    func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, encoding: String.Encoding = .utf8, line: UInt = #line) {
         // when
-        sut.addData(html.utf8Data)
+        sut.addData(html.data(using: encoding)!)
         
         // then
         XCTAssertTrue(sut.reachedEndOfHead)
@@ -96,11 +155,11 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(head, expectedHead, line: line)
     }
     
-    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(_ head: String, shouldUpdate: Bool = true, line: UInt = #line) {
+    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(_ head: String, shouldUpdate: Bool = true, encoding: String.Encoding = .utf8, line: UInt = #line) {
         // given
-        let first = "First".utf8Data
-        let second = "Head".utf8Data
-        let fourth = "End".utf8Data
+        let first = "First".data(using: encoding)!
+        let second = "Head".data(using: encoding)!
+        let fourth = "End".data(using: encoding)!
         
         // when & then
         sut.addData(first)
@@ -111,7 +170,7 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertFalse(sut.reachedEndOfHead, line: line)
         
         // when & then
-        sut.addData(head.utf8Data)
+        sut.addData(head.data(using: encoding)!)
         XCTAssertEqual(sut.reachedEndOfHead, shouldUpdate, line: line)
         
         // when & then
@@ -119,10 +178,25 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(sut.reachedEndOfHead, shouldUpdate, line: line)
     }
 
-}
+    func assertThatItAppendsBytes(file: StaticString = #file, line: UInt = #line, encoding: String.Encoding = .utf8) {
+        // given
+        let first = "First".data(using: encoding)!
+        let second = "Second".data(using: encoding)!
 
-extension String {
-    var utf8Data: Data {
-        return data(using: String.Encoding.utf8)!
+        // when
+        sut.addData(first)
+
+        // then
+        XCTAssertEqual(sut.bytes, first)
+        XCTAssertEqual(sut.stringContent, "First")
+
+        // when
+        sut.addData(second)
+
+        // then
+        let expected = "FirstSecond".data(using: encoding)!
+        XCTAssertEqual(sut.bytes, expected)
+        XCTAssertEqual(sut.stringContent, "FirstSecond")
     }
+
 }
