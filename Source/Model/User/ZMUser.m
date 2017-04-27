@@ -529,13 +529,14 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
         self.accentColorValue = [ZMUser accentColorFromPayloadValue:accentId];
     }
     
+    BOOL hasLocalModificationsForLegacyImages = [self hasLocalModificationsForKeys:[NSSet setWithArray:@[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey]]];
     NSArray *picture = [transportData optionalArrayForKey:@"picture"];
-    if ((picture != nil || authoritative) && ![self hasLocalModificationsForKeys:[NSSet setWithArray:@[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey]]]) {
+    if ((picture != nil || authoritative) && !hasLocalModificationsForLegacyImages) {
         [self updateImageWithTransportData:picture];
     }
     
     NSArray *assets = [transportData optionalArrayForKey:@"assets"];
-    [self updateAssetDataWith:assets hasLegacyImages:(picture.count > 0) authoritative:authoritative];
+    [self updateAssetDataWith:assets hasLegacyImages:(picture.count > 0 || hasLocalModificationsForLegacyImages) authoritative:authoritative];
     
     // We intentionally ignore the preview data.
     //

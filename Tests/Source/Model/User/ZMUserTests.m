@@ -554,7 +554,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         [user setLocallyModifiedKeys:[NSSet setWithObject:locallyModifiedKey]];
         
         // when
-        [user updateWithTransportData:payload authoritative:NO];
+        [user updateWithTransportData:payload authoritative:YES];
         
         // then
         XCTAssertNotNil(user.imageSmallProfileData);
