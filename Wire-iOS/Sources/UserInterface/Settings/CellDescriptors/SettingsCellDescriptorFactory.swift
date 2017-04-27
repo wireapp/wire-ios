@@ -221,6 +221,8 @@ import Foundation
         developerCellDescriptors.append(enableBatchCollections)
         let sendBrokenMessageButton = SettingsButtonCellDescriptor(title: "Send broken message", isDestructive: true, selectAction: sendBrokenMessage)
         developerCellDescriptors.append(sendBrokenMessageButton)
+        let shareDatabase = SettingsShareDatabaseCellDescriptor()
+        developerCellDescriptors.append(shareDatabase)
         
         return SettingsGroupCellDescriptor(items: [SettingsSectionDescriptor(cellDescriptors:developerCellDescriptors)], title: title, icon: .effectRobot)
     }
@@ -325,4 +327,5 @@ import Foundation
         let colorsSection = SettingsSectionDescriptor(cellDescriptors: cellDescriptors)
         return colorsSection
     }
+    
 }
