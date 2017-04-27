@@ -142,7 +142,7 @@ class PreviewDownloaderTests: XCTestCase {
     
     func testThatItDoesNotCallTheCompletionAndCleansUpIfItReceivesANilError() {
         // given
-        let firstBytes = " <head> ".data(using: String.Encoding.utf8)!
+        let firstBytes = " <head> </head>".data(using: String.Encoding.utf8)!
         let completion: PreviewDownloader.DownloadCompletion = { _ in }
         let taskID = 0
         
@@ -152,7 +152,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.urlSession(mockSession, task: mockDataTask, didCompleteWithError: nil)
         
         // then
-        XCTAssertEqual(mockDataTask.cancelCallCount, 0)
+        XCTAssertEqual(mockDataTask.cancelCallCount, 1)
         XCTAssertNotNil(sut.completionByURL[url])
         XCTAssertNotNil(sut.containerByTaskID[taskID])
     }
@@ -166,7 +166,25 @@ class PreviewDownloaderTests: XCTestCase {
         
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
+        sut.cancel(task: mockDataTask)
         sut.urlSession(mockSession, task: mockDataTask, didCompleteWithError: error)
+    }
+
+    func testThatItCallsTheCompletionHandlerWhenItDidNotReceiveParsableDataNilError() {
+        // given
+        let firstBytes = Data()
+        let completion: PreviewDownloader.DownloadCompletion = { _ in }
+        let taskID = 0
+
+        // when
+        sut.requestOpenGraphData(fromURL: url, completion: completion)
+        sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
+        sut.urlSession(mockSession, task: mockDataTask, didCompleteWithError: nil)
+
+        // then
+        XCTAssertEqual(mockDataTask.cancelCallCount, 0)
+        XCTAssertNil(sut.completionByURL[url])
+        XCTAssertNil(sut.containerByTaskID[taskID])
     }
     
     func testThatItOverridesTheContentTypeOfTheURLSessionUsedForParsing() {
@@ -210,7 +228,7 @@ class PreviewDownloaderTests: XCTestCase {
         let completion: PreviewDownloader.DownloadCompletion = { _ in downloadExpectation.fulfill() }
         let originalRequest = URLRequest(url: URL(string: "www.example.com")!)
         sut.requestOpenGraphData(fromURL: url, completion: completion)
-        sut.processReceivedData("bytes".utf8Data, forTask: mockDataTask, withIdentifier: 0)
+        sut.processReceivedData("bytes".data(using: .utf8)!, forTask: mockDataTask, withIdentifier: 0)
         
         // when
         let response = HTTPURLResponse(

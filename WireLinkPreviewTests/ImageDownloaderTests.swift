@@ -126,7 +126,7 @@ class ImageDownloaderTests: XCTestCase {
         let completionExpectation = expectation(description: "It should call the completion handler")
         let url = URL(string: "www.example.com")!
         
-        let data = "test data".utf8Data
+        let data = "test data".data(using: .utf8)!
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headers)
         
         mockSession.dataTaskGenerator = { url, completion in

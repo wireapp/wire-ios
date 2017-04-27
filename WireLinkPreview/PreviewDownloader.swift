@@ -36,6 +36,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     
     var containerByTaskID = [Int: MetaStreamContainer]()
     var completionByURL = [URL: DownloadCompletion]()
+    var cancelledTaskIDs = Set<Int>()
     var session: URLSessionType! = nil
     let resultsQueue: OperationQueue
     let parsingQueue: OperationQueue
@@ -49,6 +50,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 20
         configuration.httpShouldSetCookies = false
+        configuration.isDiscretionary = false
         session = urlSession ?? Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: parsingQueue)
     }
     
@@ -69,9 +71,20 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     }
     
     func urlSession(_ session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
-        guard let errorCode = error?.code , errorCode != URLError.cancelled.rawValue else { return }
-        guard let url = task.originalRequest?.url, let completion = completionByURL[url] , error != nil else { return }
-        completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
+        guard let url = task.originalRequest?.url, let completion = completionByURL[url] else { return }
+
+        // We do not want to call the completion handler when we cancelled the task,
+        // as we cancel it when we received enough data to generate the link preview and will call the completion handler
+        // once we parsde the data.
+        if !cancelledTaskIDs.contains(task.taskIdentifier) && error != nil {
+            completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
+        }
+
+        // In case the `MetaStreamContainer` fails to produce a string to parse, we need to ensure that we still
+        // call the completion handler.
+        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead && nil == error {
+            return completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
+        }
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
@@ -88,18 +101,26 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
             let url = task.originalRequest?.url,
             let completion = completionByURL[url] else { return }
 
-        task.cancel()
+        cancel(task: task)
         
         parseMetaHeader(container, url: url) { [weak self] result in
             guard let `self` = self else { return }
             self.completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
         }
     }
+
+    func cancel(task: URLSessionDataTaskType) {
+        // When we manually cancel the task, `urlSession(session:task:didCompleteWithError:) will be called,
+        // but we do not want to call the completion handler in that case.
+        cancelledTaskIDs.insert(task.taskIdentifier)
+        task.cancel()
+    }
     
     func completeAndCleanUp(_ completion: DownloadCompletion, result: OpenGraphData?, url: URL, taskIdentifier: Int) {
         completion(result)
         self.containerByTaskID[taskIdentifier] = nil
         self.completionByURL[url] = nil
+        self.cancelledTaskIDs.remove(taskIdentifier)
     }
 
     func parseMetaHeader(_ container: MetaStreamContainer, url: URL, completion: @escaping DownloadCompletion) {
