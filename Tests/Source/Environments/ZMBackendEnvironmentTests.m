@@ -53,7 +53,7 @@
 - (void)setUp {
     [super setUp];
     
-    for (NSNumber *type in @[@(ZMBackendEnvironmentTypeEdge), @(ZMBackendEnvironmentTypeStaging), @(ZMBackendEnvironmentTypeProduction)]) {
+    for (NSNumber *type in @[@(ZMBackendEnvironmentTypeStaging), @(ZMBackendEnvironmentTypeProduction)]) {
         NSString *typeString = [ZMBackendEnvironment environmentTypeAsString:type.integerValue];
         [ZMBackendEnvironment setupEnvironmentOfType:type.integerValue
                                      withBackendHost:[self backendHostForType:typeString]
@@ -82,14 +82,6 @@
     
     NSURL *expectedFrontendURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@", [self frontendHostForType:typeString]]];
     XCTAssertEqualObjects([env frontendURL], expectedFrontendURL, @"It should return expected frontend url");
-}
-
-- (void)testThatItRetunsExpectedURLsForEdge
-{
-    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:@"tests"];
-    [defaults setObject:[ZMBackendEnvironment environmentTypeAsString:ZMBackendEnvironmentTypeEdge] forKey:ZMBackendEnvironmentTypeKey];
-    ZMBackendEnvironment *sut = [[ZMBackendEnvironment alloc] initWithUserDefaults:defaults];
-    [self checkURLsForEnvironment:sut type:ZMBackendEnvironmentTypeEdge];
 }
 
 - (void)testThatItRetunsExpectedURLsForStaging
@@ -124,11 +116,6 @@
 - (void)testThatItReturnsTheStagingEnvironment
 {
     [self checkURLsForEnvironment:[ZMBackendEnvironment environmentWithType:ZMBackendEnvironmentTypeStaging] type:ZMBackendEnvironmentTypeStaging];
-}
-
-- (void)testThatItReturnsTheEdgeEnvironment
-{
-    [self checkURLsForEnvironment:[ZMBackendEnvironment environmentWithType:ZMBackendEnvironmentTypeEdge] type:ZMBackendEnvironmentTypeEdge];
 }
 
 @end

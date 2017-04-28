@@ -30,7 +30,6 @@ NSString * const ZMBackendEnvironmentTypeKey = @"ZMBackendEnvironmentType";
 static NSString *const BackendEnvironmentTypeDefault = @"default";
 static NSString *const BackendEnvironmentTypeProduction = @"production";
 static NSString *const BackendEnvironmentTypeStaging = @"staging";
-static NSString *const BackendEnvironmentTypeEdge = @"edge";
 
 static NSString * const ZMBackendEnvironmentSettingsKeyBackendHost          = @"env_backend_host";
 static NSString * const ZMBackendEnvironmentSettingsKeyBackendWSHost        = @"env_backend_ws_host";
@@ -45,13 +44,8 @@ static NSString * const StagingBackendHost = @"staging-nginz-https.zinfra.io";
 static NSString * const StagingBackendWSHost = @"staging-nginz-ssl.zinfra.io";
 static NSString * const StagingFrontendHost = @"staging-website.zinfra.io";
 
-static NSString * const EdgeBackendHost = @"edge-nginz-https.zinfra.io";
-static NSString * const EdgeBackendWSHost = @"edge-nginz-ssl.zinfra.io";
-static NSString * const EdgeFrontendHost = @"edge-website.zinfra.io";
-
 static NSString * const ZMBlacklistEndPoint_IOS = @"clientblacklist.wire.com/prod/ios";
 static NSString * const ZMBlacklistEndPoint_IOS_Staging = @"clientblacklist.wire.com/staging/ios";
-static NSString * const ZMBlacklistEndPoint_IOS_Edge = @"clientblacklist.wire.com/edge/ios";
 
 
 static dispatch_queue_t environmentIsolationQueue()
@@ -157,12 +151,6 @@ static void setSettingsForEnvironmentType(ZMBackendEnvironmentType key, NSDictio
                              ZMBackendEnvironmentSettingsKeyFrontendHost: [self urlForBackendHostString:StagingFrontendHost],
                              ZMBackendEnvironmentSettingsKeyBlacklistEndpoint: [self urlForBackendHostString:ZMBlacklistEndPoint_IOS_Staging]
                              },
-                     @(ZMBackendEnvironmentTypeEdge) : @{
-                             ZMBackendEnvironmentSettingsKeyBackendHost: [self urlForBackendHostString:EdgeBackendHost],
-                             ZMBackendEnvironmentSettingsKeyBackendWSHost: [self urlForBackendHostString:EdgeBackendWSHost],
-                             ZMBackendEnvironmentSettingsKeyFrontendHost: [self urlForBackendHostString:EdgeFrontendHost],
-                             ZMBackendEnvironmentSettingsKeyBlacklistEndpoint: [self urlForBackendHostString:ZMBlacklistEndPoint_IOS_Edge]
-                             }
                      };
     });
     return settings;
@@ -176,9 +164,6 @@ static void setSettingsForEnvironmentType(ZMBackendEnvironmentType key, NSDictio
             break;
         case ZMBackendEnvironmentTypeStaging:
             return @"Staging";
-            break;
-        case ZMBackendEnvironmentTypeEdge:
-            return @"Edge";
             break;
         default:
             return @"<Unknown>";
@@ -204,9 +189,6 @@ static void setSettingsForEnvironmentType(ZMBackendEnvironmentType key, NSDictio
     }
     if ([key isEqualToString:BackendEnvironmentTypeStaging]) {
         return ZMBackendEnvironmentTypeStaging;
-    }
-    if ([key isEqualToString:BackendEnvironmentTypeEdge]) {
-        return ZMBackendEnvironmentTypeEdge;
     }
     
     ZMLogError(@"Error: %@ is not a valid environment - switching to default (production) environment", key);
