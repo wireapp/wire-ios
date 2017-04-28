@@ -172,8 +172,9 @@
 - (ZMConversation *)primaryVoiceChannelConversation
 {
     NSArray *incomingCallConversations = [[WireCallCenter nonIdleCallConversationsInUserSession:[ZMUserSession sharedSession]] filterWithBlock:^BOOL(ZMConversation *conversation) {
-        return conversation.voiceChannel.state == VoiceChannelV2StateIncomingCall ||
-               conversation.voiceChannel.state == VoiceChannelV2StateIncomingCallDegraded;
+        return !conversation.isSilenced &&
+              (conversation.voiceChannel.state == VoiceChannelV2StateIncomingCall ||
+               conversation.voiceChannel.state == VoiceChannelV2StateIncomingCallDegraded);
     }];
     
     if (incomingCallConversations.count > 0) {
