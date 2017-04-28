@@ -225,9 +225,8 @@ extension ClientMessageTranscoder {
     }
     
     public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
-        guard let message = dependant as? ZMClientMessage,
-            !dependant.isZombieObject else {
-                return false
+        guard let message = dependant as? ZMClientMessage, !dependant.isZombieObject else {
+                return nil
         }
         return message.dependentObjectNeedingUpdateBeforeProcessing
     }

@@ -79,6 +79,13 @@ extension LinkPreviewUploadRequestStrategy : ZMUpstreamTranscoder {
         zmLog.debug("Sending request to send message with text: \(String(describing: message.textMessageData?.messageText)) with linkPreview: \(String(describing: message.genericMessage))")
         return ZMUpstreamRequest(keys: [ZMClientMessageLinkPreviewStateKey], transportRequest: request)
     }
+    
+    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
+        guard let message = dependant as? ZMClientMessage, !dependant.isZombieObject else {
+            return nil
+        }
+        return message.dependentObjectNeedingUpdateBeforeProcessing
+    }
 
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
         return nil
