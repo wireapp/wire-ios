@@ -50,22 +50,22 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
 
     func testThatItDoesCreateARequestInState_Uploaded() {
         // Given
-        let (conversation, message) = insertMessage(with: .uploaded)
+        let message = insertMessage(with: .uploaded)
 
         // When
         process(message)
 
         // Then
-        verifyItCreatesARequest(in: conversation)
+        verifyItCreatesARequest(in: groupConversation)
     }
 
     func testThatItDoesCreateARequestInState_Uploaded_WhenTheFirstRequestFailed() {
         // Given
-        let (conversation, message) = insertMessage(with: .uploaded)
+        let message = insertMessage(with: .uploaded)
 
         // When
         process(message)
-        guard let request = verifyItCreatesARequest(in: conversation) else { return }
+        guard let request = verifyItCreatesARequest(in: groupConversation) else { return }
 
         // When
         let response = ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError())
@@ -75,16 +75,29 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
         XCTAssertEqual(message.linkPreviewState, .uploaded)
 
         // Then
-        verifyItCreatesARequest(in: conversation)
+        verifyItCreatesARequest(in: groupConversation)
+    }
+    
+    func testThatItReturnsSelfClientAsDependentObjectForMessageIfItHasMissingClients() {
+        // Given
+        let message = insertMessage(with: .uploaded)
+        selfClient.missesClient(otherClient)
+        
+        // When
+        process(message)
+        
+        // Then
+        let dependency = sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+        XCTAssertEqual(dependency as? UserClient, selfClient)
     }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
         // Given
-        let (conversation, message) = insertMessage(with: .uploaded)
+        let message = insertMessage(with: .uploaded)
         process(message)
 
         // Then
-        guard let request = verifyItCreatesARequest(in: conversation) else { return }
+        guard let request = verifyItCreatesARequest(in: groupConversation) else { return }
 
         // When
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
@@ -98,22 +111,17 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    func insertMessage(with state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) -> (ZMConversation, ZMClientMessage) {
-        // Given
-        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        conversation.remoteIdentifier = .create()
-
-        // When
-        let message = conversation.appendMessage(withText: "Test message") as! ZMClientMessage
+    func insertMessage(with state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) -> ZMClientMessage {
+        let message = groupConversation.appendMessage(withText: "Test message") as! ZMClientMessage
         message.linkPreviewState = state
         XCTAssert(syncMOC.saveOrRollback(), file: file, line: line)
 
-        return (conversation, message)
+        return message
     }
 
     func verifyThatItDoesNotCreateARequest(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
         // Given
-        let (_, message) = insertMessage(with: state)
+        let message = insertMessage(with: state)
 
         // When
         process(message)

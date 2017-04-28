@@ -263,17 +263,19 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         XCTAssertEqual(selfClient.missingClients!.count, 0)
     }
 
-    func testThatItAddsMissingClientToCurroptedClientsStoreIfTheRequestForTheClientDidNotGiveUsAnyPrekey() {
+    func testThatItAddsMissingClientToCorruptedClientsStoreIfTheRequestForTheClientDidNotGiveUsAnyPrekey() {
         
         // GIVEN
         let payload = [self.otherUser.remoteIdentifier!.transportString() : [self.otherClient.remoteIdentifier!: ""]] as [String: [String : Any]]
         let request = missingClientsRequest(missingClients: [self.otherClient])
         
         // WHEN
-        _ = self.sut.updateUpdatedObject(selfClient,
-                                         requestUserInfo: request.userInfo,
-                                         response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
-                                         keysToParse: request.keys)
+        performIgnoringZMLogError {
+            _ = self.sut.updateUpdatedObject(self.selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
+                                             keysToParse: request.keys)
+        }
         
         // THEN
         XCTAssertEqual(selfClient.missingClients!.count, 0)

@@ -128,6 +128,8 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
         
         if keysToParse.contains(ZMUserClientMissingKey) {
             return processResponseForUpdatingMissingClients(managedObject, requestUserInfo: requestUserInfo, responsePayload: response.payload)
+        } else {
+            fatal("We only expect request about missing clients")
         }
         return false
     }
@@ -169,6 +171,7 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
                 missingClient:missingClient)
         }
         else {
+            zmLog.error("Couldn't parse prekey data for missing client: \(clientId)")
             clearMissingMessagesBecauseClientCanNotBeFeched(missingClient, selfClient: selfClient)
         }
     }
