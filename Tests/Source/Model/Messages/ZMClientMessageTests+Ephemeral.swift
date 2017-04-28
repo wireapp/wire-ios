@@ -253,6 +253,31 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
     
+    func testThatItDeletesTheEphemeralMessageWhenItReceivesADeleteFromSelfUser(){
+        var message : ZMClientMessage!
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let timeout : TimeInterval = 10
+            self.syncConversation.messageDestructionTimeout = timeout
+            message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            message.sender = self.syncUser1
+            message.markAsSent()
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // when
+            let delete = ZMGenericMessage(deleteMessage: message.nonce.transportString(), nonce: UUID.create().transportString())
+            let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.selfUser.remoteIdentifier!, eventSource: .download)
+            _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
+            
+            // then
+            XCTAssertNil(message.sender)
+            XCTAssertNil(message.genericMessage)
+        }
+    }
+    
     func testThatItCreatesPayloadForEphemeralMessage() {
         syncMOC.performGroupedBlockAndWait {
             //given
