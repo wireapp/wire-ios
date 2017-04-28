@@ -24,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, ZMBackendEnvironmentType) {
     ZMBackendEnvironmentTypeProduction,
     ZMBackendEnvironmentTypeStaging,
-    ZMBackendEnvironmentTypeEdge,
 };
 
 extern NSString * const ZMBackendEnvironmentTypeKey;
