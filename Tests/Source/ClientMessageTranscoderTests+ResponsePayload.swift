@@ -69,7 +69,7 @@ extension ClientMessageTranscoderTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
-        XCTAssertEqual(self.clientRegistrationStatus.deletionCalls, 1)
+        XCTAssertEqual(mockApplicationStatus.deletionCalls, 1)
     }
     
     func testThatItDoesNotDeletesTheCurrentClientIfWeGetA403ResponseWithoutTheCorrectLabel() {
@@ -90,7 +90,7 @@ extension ClientMessageTranscoderTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
-        XCTAssertEqual(self.clientRegistrationStatus.deletionCalls, 0)
+        XCTAssertEqual(mockApplicationStatus.deletionCalls, 0)
     }
     
     func testThatItSetsNeedsToBeUpdatedFromBackendOnConversationIfMissingMapIncludesUsersThatAreNoActiveUsers() {

@@ -377,7 +377,6 @@ extension ClientMessageRequestFactoryTests {
 // MARK: Ephemeral Messages
 extension ClientMessageRequestFactoryTests {
     
-    
     func testThatItCreatesRequestToPostEphemeralTextMessage() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN

@@ -19,16 +19,13 @@
 import Foundation
 import WireRequestStrategy
 
-public final class ImageDownloadRequestStrategy : ZMObjectSyncStrategy, RequestStrategy {
+public final class ImageDownloadRequestStrategy : AbstractRequestStrategy {
     
-    fileprivate let clientRegistrationStatus : ClientRegistrationDelegate
     fileprivate var downstreamSync : ZMDownstreamObjectSyncWithWhitelist!
     fileprivate let requestFactory : ClientMessageRequestFactory = ClientMessageRequestFactory()
-    
-    public init(clientRegistrationStatus: ClientRegistrationDelegate, managedObjectContext: NSManagedObjectContext) {
-        self.clientRegistrationStatus = clientRegistrationStatus
-        
-        super.init(managedObjectContext: managedObjectContext)
+
+    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
         let downloadPredicate = NSPredicate { (object, _) -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
@@ -70,8 +67,7 @@ public final class ImageDownloadRequestStrategy : ZMObjectSyncStrategy, RequestS
         }
     }
     
-    public func nextRequest() -> ZMTransportRequest? {
-        guard clientRegistrationStatus.clientIsReadyForRequests else { return nil }
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return downstreamSync.nextRequest()
     }
 

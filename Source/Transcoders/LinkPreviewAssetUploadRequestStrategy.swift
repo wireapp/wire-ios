@@ -41,31 +41,10 @@ import WireRequestStrategy
     
 }
 
-
 private let zmLog = ZMSLog(tag: "link previews")
 
-
-public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy, RequestStrategy, ZMContextChangeTrackerSource {
-
-    fileprivate let requestFactory = AssetRequestFactory()
-    
-    /// Auth status to know whether we can make requests
-    fileprivate let clientRegistrationDelegate: ClientRegistrationDelegate
-    
-    /// Processors
-    fileprivate let linkPreviewPreprocessor : LinkPreviewPreprocessor
-    fileprivate let previewImagePreprocessor : ZMImagePreprocessingTracker
-    
-    /// Upstream sync
-    fileprivate var assetUpstreamSync : ZMUpstreamModifiedObjectSync!
-    
-    public convenience init(clientRegistrationDelegate: ClientRegistrationDelegate, managedObjectContext: NSManagedObjectContext) {
-        if nil == LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() {
-            LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector(resultsQueue: OperationQueue.current!))
-        }
-        
-        let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: LinkPreviewDetectorHelper.test_debug_linkPreviewDetector()!, managedObjectContext: managedObjectContext)
-
+extension ZMImagePreprocessingTracker {
+    static func createPreviewImagePreprocessingTracker(managedObjectContext: NSManagedObjectContext) -> ZMImagePreprocessingTracker! {
         let imageFetchPredicate = NSPredicate(format: "%K == %d",ZMClientMessageLinkPreviewStateKey, ZMLinkPreviewState.downloaded.rawValue)
         let needsProccessing = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage else { return false }
@@ -79,16 +58,35 @@ public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy,
             needsProcessingPredicate:   needsProccessing,
             entityClass:                ZMClientMessage.self
         )
-        self.init(clientRegistrationDelegate:clientRegistrationDelegate, linkPreviewPreprocessor: linkPreviewPreprocessor, previewImagePreprocessor:  previewImagePreprocessor!, managedObjectContext: managedObjectContext)
+        return previewImagePreprocessor
+    }
+}
+
+
+public final class LinkPreviewAssetUploadRequestStrategy : AbstractRequestStrategy, ZMContextChangeTrackerSource {
+    
+    let requestFactory = AssetRequestFactory()
+    
+    /// Processors
+    fileprivate let linkPreviewPreprocessor : LinkPreviewPreprocessor
+    fileprivate let previewImagePreprocessor : ZMImagePreprocessingTracker
+    
+    /// Upstream sync
+    fileprivate var assetUpstreamSync : ZMUpstreamModifiedObjectSync!
+    
+    @available(*, unavailable)
+    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+        fatalError()
     }
     
-    init(clientRegistrationDelegate: ClientRegistrationDelegate, linkPreviewPreprocessor: LinkPreviewPreprocessor, previewImagePreprocessor: ZMImagePreprocessingTracker, managedObjectContext: NSManagedObjectContext)
-    {
-        self.clientRegistrationDelegate = clientRegistrationDelegate
-        self.linkPreviewPreprocessor = linkPreviewPreprocessor
-        self.previewImagePreprocessor = previewImagePreprocessor
+    public init(managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, linkPreviewPreprocessor: LinkPreviewPreprocessor?, previewImagePreprocessor: ZMImagePreprocessingTracker?) {
+        if nil == LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() {
+            LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector(resultsQueue: OperationQueue.current!))
+        }
+        self.linkPreviewPreprocessor = linkPreviewPreprocessor ?? LinkPreviewPreprocessor(linkPreviewDetector: LinkPreviewDetectorHelper.test_debug_linkPreviewDetector()!, managedObjectContext: managedObjectContext)
+        self.previewImagePreprocessor = previewImagePreprocessor ?? ZMImagePreprocessingTracker.createPreviewImagePreprocessingTracker(managedObjectContext: managedObjectContext)
         
-        super.init(managedObjectContext: managedObjectContext)
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
         self.assetUpstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
@@ -97,9 +95,8 @@ public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy,
             filter: filterForAssetUpload,
             keysToSync: [ZMClientMessageLinkPreviewStateKey],
             managedObjectContext: managedObjectContext)
-
     }
-    
+
     var predicateForAssetUpload : NSPredicate {
         return NSPredicate(format: "%K == %d", ZMClientMessageLinkPreviewStateKey, ZMLinkPreviewState.processed.rawValue)
     }
@@ -115,8 +112,7 @@ public final class LinkPreviewAssetUploadRequestStrategy : ZMObjectSyncStrategy,
         return [self.linkPreviewPreprocessor, self.previewImagePreprocessor, self.assetUpstreamSync]
     }
     
-    public func nextRequest() -> ZMTransportRequest? {
-        guard self.clientRegistrationDelegate.clientIsReadyForRequests else { return nil }
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return self.assetUpstreamSync.nextRequest()
     }
 }

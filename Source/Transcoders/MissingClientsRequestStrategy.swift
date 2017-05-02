@@ -44,22 +44,15 @@ public extension UserClient {
 
 // Register new client, update it with new keys, deletes clients.
 @objc
-public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder, RequestStrategy {
+public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUpstreamTranscoder, ZMContextChangeTrackerSource {
     
-    weak var clientRegistrationStatus: ClientRegistrationDelegate?
-    weak var apnsConfirmationStatus: DeliveryConfirmationDelegate?
-
     fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync! = nil
     public var requestsFactory = MissingClientsRequestFactory()
     
-    public init(clientRegistrationStatus:ClientRegistrationDelegate,
-                apnsConfirmationStatus: DeliveryConfirmationDelegate,
-                managedObjectContext: NSManagedObjectContext)
-    {
-        self.apnsConfirmationStatus = apnsConfirmationStatus
-        self.clientRegistrationStatus = clientRegistrationStatus
-        super.init(managedObjectContext: managedObjectContext)
+    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
+        self.configuration =  [.allowsRequestsDuringEventProcessing, .allowsRequestsWhileInBackground]
         self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self, entityName: UserClient.entityName(), update: modifiedPredicate(), filter: nil, keysToSync: [ZMUserClientMissingKey], managedObjectContext: managedObjectContext)
     }
     
@@ -74,10 +67,7 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
         return modifiedPredicate
     }
     
-    public func nextRequest() -> ZMTransportRequest? {
-        guard let clientStatus = clientRegistrationStatus, clientStatus.clientIsReadyForRequests
-        else { return nil }
-        
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return modifiedSync.nextRequest()
     }
     
@@ -117,7 +107,7 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
         else { fatal("no missing clients found") }
         
         let request = requestsFactory.fetchMissingClientKeysRequest(missing)
-        if let confStatus = apnsConfirmationStatus, confStatus.needsToSyncMessages {
+        if let delegate = applicationStatus?.deliveryConfirmation, delegate.needsToSyncMessages {
             request?.transportRequest.forceToVoipSession()
         }
         return request
@@ -303,14 +293,6 @@ public final class MissingClientsRequestStrategy: ZMObjectSyncStrategy, ZMObject
     // Should return the objects that need to be refetched from the BE in case of upload error
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         return nil
-    }
-    
-    public var isSlowSyncDone: Bool {
-        return true
-    }
-    
-    public func setNeedsSlowSync() {
-        //no op
     }
     
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {

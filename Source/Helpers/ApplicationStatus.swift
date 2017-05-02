@@ -16,12 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireRequestStrategy
 
-#import <UIKit/UIKit.h>
-#import "AppDelegate.h"
+@objc(ZMSynchronizationState)
+public enum SynchronizationState : UInt {
+    case unauthenticated
+    case synchronizing
+    case eventProcessing
+}
 
-int main(int argc, char * argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
-    }
+@objc(ZMOperationState)
+public enum OperationState : UInt {
+    case background
+    case foreground
+}
+
+@objc(ZMApplicationStatus)
+public protocol ApplicationStatus : class {
+    var synchronizationState : SynchronizationState { get }
+    var operationState : OperationState { get }
+    
+    var clientRegistrationDelegate : ClientRegistrationDelegate { get }
+    var requestCancellation : ZMRequestCancellation { get }
+    var deliveryConfirmation : DeliveryConfirmationDelegate { get }
 }

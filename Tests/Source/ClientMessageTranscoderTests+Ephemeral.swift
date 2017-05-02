@@ -24,14 +24,13 @@ import WireDataModel
 extension ClientMessageTranscoderTests {
     
     func recreateSut() {
-        self.sut = ClientMessageTranscoder(in: self.syncMOC, localNotificationDispatcher: self.localNotificationDispatcher, clientRegistrationStatus: self.clientRegistrationStatus, apnsConfirmationStatus: self.confirmationStatus)
+        self.sut  = ClientMessageTranscoder(in: self.syncMOC, localNotificationDispatcher: self.localNotificationDispatcher, applicationStatus: mockApplicationStatus)
     }
     
     func testThatItDoesNotObfuscatesEphemeralMessagesOnStart_SenderSelfUser_TimeNotPassed() {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            self.sut.tearDown()
             self.sut = nil
             self.groupConversation.messageDestructionTimeout = 10
             let message = self.groupConversation.appendMessage(withText: "Foo")! as! ZMClientMessage
@@ -62,7 +61,6 @@ extension ClientMessageTranscoderTests {
         }
         
         // WHEN
-        self.sut.tearDown()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         self.recreateSut()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -88,7 +86,6 @@ extension ClientMessageTranscoderTests {
             let event = self.decryptedUpdateEventFromOtherClient(message: generic)
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
             self.syncMOC.saveOrRollback()
-            self.sut.tearDown()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     
@@ -128,7 +125,6 @@ extension ClientMessageTranscoderTests {
             let event = self.decryptedUpdateEventFromOtherClient(message: generic)
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
             self.syncMOC.saveOrRollback()
-            self.sut.tearDown()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         

@@ -54,15 +54,18 @@ fileprivate extension ZMTransportRequest {
 
 class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
-    fileprivate var clientRegistrationStatus: MockClientRegistrationStatus!
+    fileprivate var mockApplicationStatus : MockApplicationStatus!
     fileprivate var sut: AssetClientMessageRequestStrategy!
     fileprivate var imageData = mediumJPEGData()
 
     override func setUp() {
         super.setUp()
-        clientRegistrationStatus = MockClientRegistrationStatus()
+        
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        
         self.syncMOC.performGroupedBlockAndWait {
-            self.sut = AssetClientMessageRequestStrategy(clientRegistrationStatus: self.clientRegistrationStatus, managedObjectContext: self.syncMOC)
+            self.sut = AssetClientMessageRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: self.mockApplicationStatus)
         }
     }
 

@@ -28,15 +28,14 @@ import WireMessageStrategy
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var sut: LinkPreviewAssetDownloadRequestStrategy!
-    var authStatus: MockClientRegistrationStatus!
+    var mockApplicationStatus : MockApplicationStatus!
     
     override func setUp() {
         super.setUp()
-        authStatus = MockClientRegistrationStatus()
-        sut = LinkPreviewAssetDownloadRequestStrategy(
-            authStatus: authStatus,
-            managedObjectContext: syncMOC
-        )
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+
+        sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
         syncMOC.zm_imageAssetCache.wipeCache()
         uiMOC.zm_imageAssetCache.wipeCache()
     }

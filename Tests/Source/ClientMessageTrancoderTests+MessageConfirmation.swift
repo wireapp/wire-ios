@@ -184,7 +184,7 @@ extension ClientMessageTranscoderTests {
             
             // THEN
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            XCTAssertTrue(self.confirmationStatus.messagesToConfirm.contains(confirmMessage.nonce))
+            XCTAssertTrue(self.mockApplicationStatus.mockConfirmationStatus.messagesToConfirm.contains(confirmMessage.nonce))
         }
     }
     
@@ -201,7 +201,7 @@ extension ClientMessageTranscoderTests {
             
             // THEN
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            XCTAssertFalse(self.confirmationStatus.messagesToConfirm.contains(confirmMessage.nonce))
+            XCTAssertFalse(self.mockApplicationStatus.mockConfirmationStatus.messagesToConfirm.contains(confirmMessage.nonce))
         }
     }
     
@@ -218,8 +218,8 @@ extension ClientMessageTranscoderTests {
             
             // THEN
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            XCTAssertFalse(self.confirmationStatus.messagesToConfirm.contains(confirmMessage.nonce))
-            XCTAssertFalse(self.confirmationStatus.messagesConfirmed.contains(confirmMessage.nonce))
+            XCTAssertFalse(self.mockApplicationStatus.mockConfirmationStatus.messagesToConfirm.contains(confirmMessage.nonce))
+            XCTAssertFalse(self.mockApplicationStatus.mockConfirmationStatus.messagesConfirmed.contains(confirmMessage.nonce))
         }
     }
     
@@ -243,7 +243,7 @@ extension ClientMessageTranscoderTests {
         
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(self.confirmationStatus.messagesConfirmed.contains(confirmationNonce))
+            XCTAssertTrue(self.mockApplicationStatus.mockConfirmationStatus.messagesConfirmed.contains(confirmationNonce))
         }
     }
 
