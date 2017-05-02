@@ -29,7 +29,7 @@
 - (void)testThatAfterSimulatePushChannelClosedTheDelegateIsInvoked
 {
     // GIVEN
-    [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
+    [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
     
     // WHEN
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
@@ -44,7 +44,8 @@
 - (void)testThatAfterSimulatePushChannelOpenedTheDelegateIsInvoked
 {
     // GIVEN
-    [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
+    [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
+    [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
     __block NSDictionary *payload;
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
@@ -505,7 +506,8 @@
 - (void)testThatThePushChannelIsOpenAfterALogin
 {
     // GIVEN
-    [self.sut.mockedTransportSession openPushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
+    [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
+    [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
     
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
