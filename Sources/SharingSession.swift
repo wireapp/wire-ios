@@ -99,6 +99,57 @@ class AuthenticationStatus : AuthenticationStatusProvider {
     
 }
 
+class ApplicationStatusDirectory : ApplicationStatus {
+    
+    let transportSession : ZMTransportSession
+    let deliveryConfirmationDummy : DeliveryConfirmationDummy
+    
+    /// The authentication status used to verify a user is authenticated
+    public let authenticationStatus: AuthenticationStatusProvider
+    
+    /// The client registration status used to lookup if a user has registered a self client
+    public let clientRegistrationStatus : ClientRegistrationDelegate
+    
+    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider , clientRegistrationStatus: ClientRegistrationStatus) {
+        self.transportSession = transportSession
+        self.authenticationStatus = authenticationStatus
+        self.clientRegistrationStatus = clientRegistrationStatus
+        self.deliveryConfirmationDummy = DeliveryConfirmationDummy()
+    }
+    
+    public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
+        let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
+        let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
+        
+        self.init(transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus)
+    }
+    
+    public var synchronizationState: SynchronizationState {
+        if clientRegistrationStatus.clientIsReadyForRequests {
+            return .eventProcessing
+        } else {
+            return .unauthenticated
+        }
+    }
+    
+    public var operationState: OperationState {
+        return .foreground
+    }
+    
+    public var clientRegistrationDelegate: ClientRegistrationDelegate {
+        return self.clientRegistrationStatus
+    }
+    
+    public var requestCancellation: ZMRequestCancellation {
+        return transportSession
+    }
+    
+    public var deliveryConfirmation: DeliveryConfirmationDelegate {
+        return deliveryConfirmationDummy
+    }
+    
+}
+
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of 
@@ -122,11 +173,8 @@ public class SharingSession {
 
     private let syncContext: NSManagedObjectContext
 
-    /// The authentication status used to verify a user is authenticated
-    private let authenticationStatus: AuthenticationStatusProvider
-    
-    /// The client registration status used to lookup if a user has registered a self client
-    private let clientRegistrationStatus : ClientRegistrationDelegate
+    /// Directory of all application statuses
+    private let applicationStatusDirectory : ApplicationStatusDirectory
 
     /// The list to which save notifications of the UI moc are appended and persistet
     private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
@@ -144,7 +192,7 @@ public class SharingSession {
     
     /// Whether all prerequsisties for sharing are met
     public var canShare: Bool {
-        return authenticationStatus.state == .authenticated && clientRegistrationStatus.clientIsReadyForRequests
+        return applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory.clientRegistrationStatus.clientIsReadyForRequests
     }
 
     /// List of non-archived conversations in which the user can write
@@ -212,8 +260,7 @@ public class SharingSession {
                   sharedContainerURL: URL,
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
                   analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
-                  authenticationStatus: AuthenticationStatusProvider,
-                  clientRegistrationStatus: ClientRegistrationStatus,
+                  applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
                   strategyFactory: StrategyFactory
         ) throws {
@@ -223,12 +270,11 @@ public class SharingSession {
         self.transportSession = transportSession
         self.saveNotificationPersistence = saveNotificationPersistence
         self.analyticsEventPersistence = analyticsEventPersistence
-        self.authenticationStatus = authenticationStatus
-        self.clientRegistrationStatus = clientRegistrationStatus
+        self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
         
-        guard authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
+        guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
         
         setupCaches(atContainerURL: sharedContainerURL)
         setupObservers()
@@ -236,13 +282,11 @@ public class SharingSession {
     
     public convenience init(userInterfaceContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, transportSession: ZMTransportSession, sharedContainerURL: URL) throws {
         
-        let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
-        let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
+        let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: syncContext, transportSession: transportSession)
         
         let strategyFactory = StrategyFactory(
             syncContext: syncContext,
-            registrationStatus: clientRegistrationStatus,
-            cancellationProvider: transportSession
+            applicationStatus: applicationStatusDirectory
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
@@ -265,8 +309,7 @@ public class SharingSession {
             sharedContainerURL: sharedContainerURL,
             saveNotificationPersistence: saveNotificationPersistence,
             analyticsEventPersistence: analyticsEventPersistence,
-            authenticationStatus: authenticationStatus,
-            clientRegistrationStatus: clientRegistrationStatus,
+            applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
             strategyFactory: strategyFactory
         )

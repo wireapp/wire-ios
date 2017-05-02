@@ -61,11 +61,15 @@ class BaseSharingSessionTests: ZMTBaseTest {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
+        let applicationStatusDirectory = ApplicationStatusDirectory(
+            transportSession: transportSession,
+            authenticationStatus: authenticationStatus,
+            clientRegistrationStatus: registrationStatus
+        )
 
         let strategyFactory = StrategyFactory(
             syncContext: syncContext!,
-            registrationStatus: registrationStatus,
-            cancellationProvider: transportSession
+            applicationStatus: applicationStatusDirectory
         )
 
         sharingSession = try! SharingSession(
@@ -75,8 +79,7 @@ class BaseSharingSessionTests: ZMTBaseTest {
             sharedContainerURL: url,
             saveNotificationPersistence: saveNotificationPersistence,
             analyticsEventPersistence: analyticsEventPersistence,
-            authenticationStatus: authenticationStatus,
-            clientRegistrationStatus: registrationStatus,
+            applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
             strategyFactory: strategyFactory
         )
