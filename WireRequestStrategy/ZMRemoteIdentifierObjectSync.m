@@ -73,8 +73,8 @@
         switch (response.result) {
             case ZMTransportResponseStatusPermanentError:
             case ZMTransportResponseStatusSuccess: {
-                [self.transcoder didReceiveResponse:response remoteIdentifierObjectSync:self forRemoteIdentifiers:IDs];
                 [self.remoteIdentifiersInProgress minusSet:IDs];
+                [self.transcoder didReceiveResponse:response remoteIdentifierObjectSync:self forRemoteIdentifiers:IDs];
                 break;
             }
             case ZMTransportResponseStatusExpired:
