@@ -20,7 +20,6 @@
 @import WireSystem;
 
 #import "ZMTransportRequestScheduler.h"
-#import "TransportTracing.h"
 #import "ZMExponentialBackoff.h"
 #import "ZMTLogging.h"
 
@@ -121,7 +120,6 @@ ZM_EMPTY_ASSERTING_INIT();
         return;
     }
     _schedulerState = schedulerState;
-    ZMTraceTransportRequestScheduler(0, (int) _schedulerState, 0);
     ZMLogDebug(@"Scheduler state -> %d", (int) _schedulerState);
     
     switch (_schedulerState) {
@@ -192,13 +190,11 @@ ZM_EMPTY_ASSERTING_INIT();
 - (void)timerDidFire:(ZMTimer *)timer;
 {
     if (timer == self.retryNormalModeTimer) {
-        ZMTraceTransportRequestScheduler(100, 1, 0);
         if (self.schedulerState == ZMTransportRequestSchedulerStateOffline) {
             self.schedulerState = ZMTransportRequestSchedulerStateNormal;
         }
         self.retryNormalModeTimer = nil;
     } else if (timer == self.retryRateLimitModeTimer) {
-        ZMTraceTransportRequestScheduler(100, 2, 0);
         if (self.schedulerState == ZMTransportRequestSchedulerStateRateLimitedHoldingOff) {
             self.schedulerState = ZMTransportRequestSchedulerStateRateLimitedRetrying;
         }
@@ -224,7 +220,6 @@ ZM_EMPTY_ASSERTING_INIT();
     [self.group enter];
     dispatch_barrier_async(self.countIsolation, ^{
         BOOL const didIncrease = (self->_concurrentRequestCountLimit < concurrentRequestCountLimit);
-        ZMTraceTransportRequestScheduler(1, (int) self->_concurrentRequestCountLimit, (int) concurrentRequestCountLimit);
         self->_concurrentRequestCountLimit = concurrentRequestCountLimit;
         [self.workQueue addOperationWithBlock:^{
             if (didIncrease) {
@@ -245,7 +240,6 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)addItem:(id<ZMTransportRequestSchedulerItem>)item;
 {
-    ZMTraceTransportRequestSchedulerObject(2, item);
     [self.backoffItemQueue addObject:item];
     [self.backoff performBlock:^{
         [self processBackoffItem:item];
@@ -303,7 +297,6 @@ ZM_EMPTY_ASSERTING_INIT();
         return;
     }
     
-    ZMTraceTransportRequestScheduler(10, (int) httpStatusCode, (int) errorCode);
     CheckString((error == nil) || [error.domain isEqualToString:NSURLErrorDomain], "Invalid error domain.");
     
     if ((100 <= httpStatusCode) && (httpStatusCode <= 399)) {
@@ -344,7 +337,6 @@ ZM_EMPTY_ASSERTING_INIT();
     
     NSArray *items = [self.pendingRequestsRequiringAuthentication copy];
     [self.pendingRequestsRequiringAuthentication removeAllObjects];
-    ZMTraceTransportRequestScheduler(11, (int) items.count, 0);
     
     for (id<ZMTransportRequestSchedulerItem> item in items) {
         [aSession sendSchedulerItem:item];

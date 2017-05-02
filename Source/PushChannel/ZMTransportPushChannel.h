@@ -19,6 +19,7 @@
 
 @import Foundation;
 #import "ZMReachability.h"
+#import "ZMPushChannel.h"
 
 @class ZMTransportRequestScheduler;
 @class ZMAccessToken;
@@ -26,21 +27,24 @@
 @protocol ZMSGroupQueue;
 
 
-
 /// This class is responsible for opening and closing the push channel connection to the backend.
-@interface ZMTransportPushChannel : NSObject <ZMReachabilityObserver>
+@interface ZMTransportPushChannel : NSObject <ZMReachabilityObserver, ZMPushChannel>
+
+/// When set not to nil an attempt open the push channel will be made
+@property (nonatomic) ZMAccessToken *accessToken;
+@property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
 - (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL;
 - (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL pushChannelClass:(Class)pushChannelClass NS_DESIGNATED_INITIALIZER;
 
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
-
-- (void)createPushChannelWithAccessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID;
 - (void)closeAndRemoveConsumer;
+- (void)establishConnection;
+
+/// Will open the push channel if all required conditions are met
+- (void)attemptToOpen;
+
+/// Will close the push channel until @c attemptToOpen is called
 - (void)close;
-- (void)scheduleOpenPushChannel;
-
-
-@property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
 @end

@@ -23,7 +23,6 @@
 #import "ZMStreamPairThread.h"
 #import "ZMDataBuffer.h"
 #import "ZMServerTrust.h"
-#import "TransportTracing.h"
 #import <libkern/OSAtomic.h>
 
 NS_ENUM(int, Trace) {
@@ -79,14 +78,12 @@ NS_ENUM(int, Trace) {
         self.delegateGroup = group;
         self.dataBuffer = [[ZMDataBuffer alloc] init];
         self.dataBufferIsolation = dispatch_queue_create("ZMNetworkSocket.outputStream", 0);
-        ZMTraceNetworkSocketEvent(self, nil, TraceNetworkSocketInit, 0);
     }
     return self;
 }
 
 - (void)close;
 {
-    ZMTraceNetworkSocketEvent(self, nil, TraceNetworkSocketClose, 0);
     // The compare & swap ensure that the code only runs if the values of isClosed was 0 and sets it to 1.
     // The check for 0 and setting it to 1 happen as a single atomic operation.
     if (OSAtomicCompareAndSwap32Barrier(1, 0, &_isOpen)) {
@@ -97,9 +94,7 @@ NS_ENUM(int, Trace) {
             self.dataBuffer = nil;
         }];
         [self.delegateGroup asyncOnQueue:self.delegateQueue block:^{
-            ZMTraceNetworkSocketEvent(self, self.inputStream, TraceClosingSocket, 0);
             [self.inputStream close];
-            ZMTraceNetworkSocketEvent(self, self.outputStream, TraceClosingSocket, 1);
             [self.outputStream close];
             [self.delegate networkSocketDidClose:self];
             self.delegate = nil;
@@ -116,7 +111,6 @@ NS_ENUM(int, Trace) {
 {
     RequireString(OSAtomicCompareAndSwap32Barrier(0, 1, &_isOpen),
                   "Trying to open %p multiple times.", (__bridge void *) self);
-    ZMTraceNetworkSocketEvent(self, nil, TraceNetworkSocketOpen, 0);
     
     [self createStreamPair];
     [self configureStreamPairs];
@@ -155,8 +149,6 @@ NS_ENUM(int, Trace) {
         self.inputStream = CFBridgingRelease(readStream);
         self.outputStream = CFBridgingRelease(writeStream);
     }
-    ZMTraceNetworkSocketEvent(self, self.inputStream, TraceCreatedSocket, 0);
-    ZMTraceNetworkSocketEvent(self, self.outputStream, TraceCreatedSocket, 1);
 
     VerifyString(self.inputStream != nil, "Failed to create input stream.");
     VerifyString(self.outputStream != nil, "Failed to create output stream.");
@@ -202,7 +194,6 @@ NS_ENUM(int, Trace) {
 
 - (void)didReadDataFromNetwork:(dispatch_data_t)data;
 {
-    ZMTraceNetworkSocketEvent(self, nil, TraceNetworkSocketReadData, (int) (data == NULL ? 0 : dispatch_data_get_size(data)));
     [self.delegateGroup asyncOnQueue:self.delegateQueue block:^{
         [self.delegate networkSocket:self didReceiveData:data];
     }];
@@ -220,7 +211,6 @@ NS_ENUM(int, Trace) {
                 NOT_USED(region);
                 NOT_USED(offset);
                 size_t const count = (size_t) [self.outputStream write:buffer maxLength:size];
-                ZMTraceNetworkSocketEvent(self, nil, TraceNetworkSocketWroteData, (int) count);
                 numberOfBytesWritten += count;
                 BOOL const stop = (count != size);
                 return ! stop;
@@ -256,7 +246,6 @@ NS_ENUM(int, Trace) {
 
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode;
 {
-    ZMTraceNetworkSocketEvent(self, aStream, TraceSocketEvent, (int) eventCode);
     if ((eventCode & NSStreamEventOpenCompleted) != NSStreamEventNone) {
         if (aStream == self.outputStream) {
             [self.delegateGroup asyncOnQueue:self.delegateQueue block:^{

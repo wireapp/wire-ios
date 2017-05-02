@@ -28,6 +28,7 @@
 @protocol ZMAccessTokenHandlerDelegate <NSObject>
 
 - (void)handlerDidReceiveAccessToken:(ZMAccessTokenHandler *)handler;
+- (void)handlerDidClearAccessToken:(ZMAccessTokenHandler *)handler;
 
 @end
 
@@ -52,7 +53,7 @@
 - (void)checkIfRequest:(ZMTransportRequest *)request needsToFetchAccessTokenInURLRequest:(NSMutableURLRequest *)URLRequest;
 
 /// Returns YES if another request should be generated (e.g. it was a temporary error)
-- (BOOL)processAccessTokenResponse:(ZMTransportResponse *)response taskIdentifier:(NSUInteger)taskIdentifier;
+- (BOOL)processAccessTokenResponse:(ZMTransportResponse *)response;
 
 - (BOOL)consumeRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry;
 ;

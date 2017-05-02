@@ -102,7 +102,6 @@ extern NSString *ZMKeychainErrorDescription(OSStatus s)
             ZMLogError(@"SecItemUpdate() failed: %@", ZMKeychainErrorDescription(s));
         }
         return (errSecSuccess == s);
-        //ZMTraceAuthUpdateCookieData(success ? 0 : 2);
     }
     else {
         NSMutableDictionary *query = [self fetchQueryForAccountName:accountName];
@@ -118,7 +117,6 @@ extern NSString *ZMKeychainErrorDescription(OSStatus s)
             ZMLogError(@"SecItemAdd() failed: %@", ZMKeychainErrorDescription(s));
         }
         return (errSecSuccess == s);
-        //ZMTraceAuthAddCookieData(success ? 0 : 2);
     }
 }
 
@@ -294,7 +292,6 @@ fallbackToDefaultGroup:(BOOL)fallback
     OSStatus const status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &resultRef);
     if (status != noErr || resultRef == NULL) {
         // The entry doesnt exists, nothing to delete here
-        //ZMTraceAuthDeleteCookie(1);
         return;
     }
     
@@ -313,7 +310,6 @@ fallbackToDefaultGroup:(BOOL)fallback
     } else {
         [self deleteKeychainReference:result];
     }
-    //ZMTraceAuthDeleteCookie(0);
 }
 
 

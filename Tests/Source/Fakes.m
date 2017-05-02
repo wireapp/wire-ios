@@ -172,5 +172,10 @@
     }
 }
 
+- (void)handlerDidClearAccessToken:(ZMAccessTokenHandler * __unused)handler
+{
+    // TODO
+}
+
 @end
 

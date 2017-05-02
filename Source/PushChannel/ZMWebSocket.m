@@ -23,7 +23,6 @@
 #import "ZMDataBuffer.h"
 #import "ZMWebSocketHandshake.h"
 #import "ZMWebSocketFrame.h"
-#import "TransportTracing.h"
 
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
@@ -77,7 +76,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
         self.consumerGroup = group;
         if (networkSocket == nil) {
             networkSocket = [[ZMNetworkSocket alloc] initWithURL:url delegate:self delegateQueue:self.consumerQueue group:self.consumerGroup];
-            ZMTraceWebSocketEvent(self, networkSocket, 100, 0);
         }
         self.inputBuffer = [[ZMDataBuffer alloc] init];
         self.networkSocket = networkSocket;
@@ -102,7 +100,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)open;
 {
-    ZMTraceWebSocketEvent(self, 0, 0, 0);
     RequireString(OSAtomicCompareAndSwap32Barrier(0, 1, &_isOpen), "Trying to open %p multiple times.", (__bridge void *) self);
     
     [self.networkSocket open];
@@ -141,7 +138,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 {
     NSError *error;
     ZMWebSocketHandshakeResult handshakeCompleted = [self.handshake parseAndClearBufferIfComplete:YES error:&error];
-    ZMTraceWebSocketEvent(self, 0, 1, (int) handshakeCompleted);
     self.response = self.handshake.response;
     if (handshakeCompleted == ZMWebSocketHandshakeCompleted) {
         for (NSData *data in self.dataPendingTransmission) {
@@ -162,13 +158,11 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 {
     // The compare & swap ensure that the code only runs if the values of isClosed was 0 and sets it to 1.
     // The check for 0 and setting it to 1 happen as a single atomic operation.
-    ZMTraceWebSocketEvent(self, 0, 2, 0);
     if (OSAtomicCompareAndSwap32Barrier(1, 0, &_isOpen)) {
         dispatch_queue_t queue = self.consumerQueue;
         ZMSDispatchGroup *group = self.consumerGroup;
         self.consumerQueue = nil;
         self.consumerGroup = nil;
-        ZMTraceWebSocketEvent(self, 0, 3, 0);
         [self.networkSocket close];
         NSHTTPURLResponse *response = self.response;
         self.response = nil;
@@ -207,7 +201,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)sendFrame:(ZMWebSocketFrame *)frame;
 {
-    ZMTraceWebSocketEvent(self, 0, 4, frame.frameType);
     dispatch_data_t frameData = frame.frameData;
     if (frameData != nil) {
         [self safelyDispatchOnQueue:^{
@@ -215,7 +208,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
                 [self.networkSocket writeDataToNetwork:frameData];
             } else {
                 RequireString(self.dataPendingTransmission != nil, "Was already sent & cleared?");
-                ZMTraceWebSocketEvent(self, 0, 5, 0);
                 [self.dataPendingTransmission addObject:frameData];
             }
         }];
@@ -240,7 +232,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)networkSocketDidOpen:(ZMNetworkSocket *)socket;
 {
-    ZMTraceWebSocketEvent(self, socket, 101, 0);
     VerifyReturn(socket == self.networkSocket);
     dispatch_data_t headerData = self.handshakeRequestData;
     [self.networkSocket writeDataToNetwork:headerData];
@@ -248,7 +239,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)networkSocket:(ZMNetworkSocket *)socket didReceiveData:(dispatch_data_t)data;
 {
-    ZMTraceWebSocketEvent(self, socket, 102, 0);
     VerifyReturn(socket == self.networkSocket);
     [self.inputBuffer addData:data];
     
@@ -282,7 +272,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
     }
 }
 
-- (BOOL)parseFrameFromInputBufferForSocket:(ZMNetworkSocket *)socket
+- (BOOL)parseFrameFromInputBufferForSocket:(ZMNetworkSocket * __unused)socket
 {
     if (self.inputBuffer.isEmpty) {
         return NO;
@@ -291,7 +281,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
     NSError *frameError;
     ZMWebSocketFrame *frame = [[ZMWebSocketFrame alloc] initWithDataBuffer:self.inputBuffer error:&frameError];
     if (frame == nil) {
-        ZMTraceWebSocketEvent(self, socket, 105, 0);
         if (![frameError.domain isEqualToString:ZMWebSocketFrameErrorDomain] ||
             (frameError.code != ZMWebSocketFrameErrorCodeDataTooShort))
         {
@@ -299,7 +288,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
         }
         return NO;
     } else {
-        ZMTraceWebSocketEvent(self, socket, 103, frame.frameType);
         switch (frame.frameType) {
             case ZMWebSocketFrameTypeText: {
                 [self safelyDispatchOnQueue:^{
@@ -336,7 +324,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)networkSocketDidClose:(ZMNetworkSocket *)socket;
 {
-    ZMTraceWebSocketEvent(self, socket, 104, 0);
     VerifyReturn(socket == self.networkSocket);
     [self close];
 }
