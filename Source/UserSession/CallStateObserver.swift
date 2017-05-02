@@ -28,12 +28,12 @@ public final class CallStateObserver : NSObject {
     
     fileprivate weak var userSession: ZMUserSession?
     fileprivate let localNotificationDispatcher : LocalNotificationDispatcher
-    fileprivate let callingSystemMessageGenerator = CallingSystemMessageGenerator()
-    fileprivate let managedObjectContext : NSManagedObjectContext
+    fileprivate let syncManagedObjectContext : NSManagedObjectContext
     fileprivate var callStateToken : WireCallCenterObserverToken? = nil
     fileprivate var missedCalltoken : WireCallCenterObserverToken? = nil
+    fileprivate let systemMessageGenerator = CallSystemMessageGenerator()
     fileprivate var voiceChannelStatetoken : WireCallCenterObserverToken? = nil
-    
+
     deinit {
         if let token = callStateToken {
             WireCallCenterV3.removeObserver(token: token)
@@ -46,7 +46,7 @@ public final class CallStateObserver : NSObject {
     public init(localNotificationDispatcher : LocalNotificationDispatcher, userSession: ZMUserSession) {
         self.userSession = userSession
         self.localNotificationDispatcher = localNotificationDispatcher
-        self.managedObjectContext = userSession.syncManagedObjectContext
+        self.syncManagedObjectContext = userSession.syncManagedObjectContext
         
         super.init()
         
@@ -69,11 +69,11 @@ extension CallStateObserver : WireCallCenterCallStateObserver, WireCallCenterMis
     
     public func callCenterDidChange(callState: CallState, conversationId: UUID, userId: UUID?, timeStamp: Date?) {
         
-        managedObjectContext.performGroupedBlock {
+        syncManagedObjectContext.performGroupedBlock {
             guard
                 let userId = userId,
-                let conversation = ZMConversation(remoteID: conversationId, createIfNeeded: false, in: self.managedObjectContext),
-                let user = ZMUser(remoteID: userId, createIfNeeded: false, in: self.managedObjectContext)
+                let conversation = ZMConversation(remoteID: conversationId, createIfNeeded: false, in: self.syncManagedObjectContext),
+                let user = ZMUser(remoteID: userId, createIfNeeded: false, in: self.syncManagedObjectContext)
             else {
                 return
             }
@@ -84,14 +84,15 @@ extension CallStateObserver : WireCallCenterCallStateObserver, WireCallCenterMis
             
             self.updateConversationListIndicator(convObjectID: conversation.objectID, callState: callState)
             
-            self.callingSystemMessageGenerator.process(callState: callState, in: conversation, sender: user, timeStamp: timeStamp)
-            self.managedObjectContext.enqueueDelayedSave()
+            self.systemMessageGenerator.callCenterDidChange(callState: callState, conversation: conversation, user: user, timeStamp: timeStamp)
+            self.updateLastModifiedDate(callState: callState, in: conversation, timeStamp: timeStamp)
+            self.syncManagedObjectContext.enqueueDelayedSave()
         }
     }
     
     public func updateConversationListIndicator(convObjectID: NSManagedObjectID, callState: CallState){
         // We need to switch to the uiContext here because we are making changes that need to be present on the UI when the change notification fires
-        guard let uiMOC = self.managedObjectContext.zm_userInterface else { return }
+        guard let uiMOC = self.syncManagedObjectContext.zm_userInterface else { return }
         uiMOC.performGroupedBlock {
             guard let uiConv = (try? uiMOC.existingObject(with: convObjectID)) as? ZMConversation else { return }
             
@@ -117,10 +118,10 @@ extension CallStateObserver : WireCallCenterCallStateObserver, WireCallCenterMis
     }
     
     public func callCenterMissedCall(conversationId: UUID, userId: UUID, timestamp: Date, video: Bool) {
-        managedObjectContext.performGroupedBlock {
+        syncManagedObjectContext.performGroupedBlock {
             guard
-                let conversation = ZMConversation(remoteID: conversationId, createIfNeeded: false, in: self.managedObjectContext),
-                let user = ZMUser(remoteID: userId, createIfNeeded: false, in: self.managedObjectContext)
+                let conversation = ZMConversation(remoteID: conversationId, createIfNeeded: false, in: self.syncManagedObjectContext),
+                let user = ZMUser(remoteID: userId, createIfNeeded: false, in: self.syncManagedObjectContext)
                 else {
                     return
             }
@@ -129,8 +130,8 @@ extension CallStateObserver : WireCallCenterCallStateObserver, WireCallCenterMis
                 self.localNotificationDispatcher.processMissedCall(in: conversation, sender: user)
             }
             
-            self.callingSystemMessageGenerator.processMissedCall(in: conversation, from: user, at: timestamp)
-            self.managedObjectContext.enqueueDelayedSave()
+            conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
+            self.syncManagedObjectContext.enqueueDelayedSave()
         }
     }
 
@@ -151,34 +152,11 @@ extension CallStateObserver : VoiceChannelStateObserver {
         // no-op
     }
     
-}
-
-private final class CallingSystemMessageGenerator {
-    
-    var callers : [ZMConversation : ZMUser] = [:]
-    
-    func process(callState: CallState, in conversation: ZMConversation, sender: ZMUser, timeStamp: Date?) {
-        
-        switch callState {
-        case .incoming, .outgoing:
-            callers[conversation] = sender
-            if let timeStamp = timeStamp {
-                conversation.updateLastModifiedDateIfNeeded(timeStamp)
-            }
-        case .terminating(reason: .canceled):
-            let caller = callers[conversation] ?? sender
-            conversation.appendMissedCallMessage(fromUser: caller, at: Date())
-        default:
-            break
+    func updateLastModifiedDate(callState: CallState, in conversation: ZMConversation, timeStamp: Date?) {
+        if case .incoming = callState, let timeStamp = timeStamp {
+            conversation.updateLastModifiedDateIfNeeded(timeStamp)
         }
-        
-        if case .terminating = callState {
-            callers.removeValue(forKey: conversation)
-        }
-    }
-    
-    func processMissedCall(in conversation: ZMConversation, from user: ZMUser, at timestamp: Date) {
-        conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
     }
     
 }
+
