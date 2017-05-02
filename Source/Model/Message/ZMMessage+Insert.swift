@@ -27,10 +27,11 @@ extension ZMMessage {
     /// and fire a notification on conversation security level change so that UI could act accordingly
     fileprivate func expireAndNotifyIfInsertingIntoDegradedConversation() {
         guard let conversation = self.conversation else { return }
-        guard let uiMoc = self.managedObjectContext, uiMoc.zm_isUserInterfaceContext else { return }
-        guard let syncMoc = uiMoc.zm_sync else { return }
+        guard let currentMoc = self.managedObjectContext else { return }
+        guard let syncMoc = currentMoc.zm_sync else { return }
+        guard let uiMoc = currentMoc.zm_userInterface else { return }
         if conversation.securityLevel == .secureWithIgnored && self.deliveryState == .pending {
-            uiMoc.saveOrRollback()
+            currentMoc.saveOrRollback()
             syncMoc.performGroupedBlock {
                 guard let message = (try? syncMoc.existingObject(with: self.objectID)) as? ZMOTRMessage else { return }
                 message.causedSecurityLevelDegradation = true

@@ -340,7 +340,12 @@ static NSString * const AssociatedTaskIdentifierDataKey = @"associatedTaskIdenti
 }
 
 - (void)resend {
-    self.uploadState = ZMAssetUploadStateUploadingPlaceholder;
+    if (self.v3_isImage) {
+        self.uploadState = ZMAssetUploadStateUploadingFullAsset;
+    }
+    else {
+        self.uploadState = ZMAssetUploadStateUploadingPlaceholder;
+    }
     self.transferState = ZMFileTransferStateUploading;
     self.progress = 0;
     [self removeNotUploaded];
