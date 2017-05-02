@@ -62,15 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-
 @protocol ZMObjectStrategy <NSObject, ZMEventConsumer, ZMRequestGeneratorSource, ZMContextChangeTrackerSource>
-
-@property (nonatomic, readonly) BOOL isSlowSyncDone;
-
-- (void)setNeedsSlowSync;
-
 @end
-
 
 
 @interface ZMObjectSyncStrategy : NSObject
