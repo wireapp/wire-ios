@@ -97,7 +97,7 @@ extension OTREntity {
     }
 
     /// Parse the response to an upload, that will inform us of missing, deleted and redundant clients
-    public func parseUploadResponse(_ response: ZMTransportResponse, clientDeletionDelegate: ClientRegistrationDelegate) -> Bool {
+    public func parseUploadResponse(_ response: ZMTransportResponse, clientRegistrationDelegate: ClientRegistrationDelegate) -> Bool {
         
         // In case the self client got deleted remotely we will receive an event through the push channel and log out.
         // If we for some reason miss the push the BE will repond with a 403 and 'unknown-client' label to our
@@ -107,7 +107,7 @@ extension OTREntity {
             let label = payload[ErrorLabel] as? String ,
             label == UnknownClientLabel
         {
-            clientDeletionDelegate.didDetectCurrentClientDeletion()
+            clientRegistrationDelegate.didDetectCurrentClientDeletion()
             return false
         }
         

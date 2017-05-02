@@ -22,38 +22,34 @@ import WireRequestStrategy
 
 /// Creates network requests to send client messages,
 /// and parses received client messages
-public class ClientMessageTranscoder: ZMObjectSyncStrategy {
+public class ClientMessageTranscoder: AbstractRequestStrategy {
     
     fileprivate let requestFactory: ClientMessageRequestFactory
-    fileprivate weak var clientRegistrationStatus: ClientRegistrationDelegate?
-    fileprivate weak var deliveryConfirmation: DeliveryConfirmationDelegate?
     private(set) fileprivate var upstreamObjectSync: ZMUpstreamInsertedObjectSync!
     fileprivate let messageExpirationTimer: MessageExpirationTimer
     fileprivate weak var localNotificationDispatcher: PushMessageHandler!
     
     public init(in moc:NSManagedObjectContext,
          localNotificationDispatcher: PushMessageHandler,
-         clientRegistrationStatus: ClientRegistrationDelegate,
-         apnsConfirmationStatus: DeliveryConfirmationDelegate)
+         applicationStatus: ApplicationStatus)
     {
         self.localNotificationDispatcher = localNotificationDispatcher
         self.requestFactory = ClientMessageRequestFactory()
-        self.clientRegistrationStatus = clientRegistrationStatus
-        self.deliveryConfirmation = apnsConfirmationStatus
         self.messageExpirationTimer = MessageExpirationTimer(moc: moc, entityName: ZMClientMessage.entityName(), localNotificationDispatcher: localNotificationDispatcher)
         
-        super.init(managedObjectContext: moc)
+        super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
+        
+        self.configuration = [.allowsRequestsDuringEventProcessing, .allowsRequestsWhileInBackground]
         self.upstreamObjectSync = ZMUpstreamInsertedObjectSync(transcoder: self, entityName: ZMClientMessage.entityName(), managedObjectContext: moc)
         self.deleteOldEphemeralMessages()
     }
     
-    public override func tearDown() {
-        super.tearDown()
+    deinit {
         self.messageExpirationTimer.tearDown()
     }
     
-    deinit {
-        self.messageExpirationTimer.tearDown()
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
+        return self.upstreamObjectSync.nextRequest()
     }
 }
 
@@ -61,18 +57,6 @@ extension ClientMessageTranscoder: ZMContextChangeTrackerSource {
     
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [self.upstreamObjectSync, self.messageExpirationTimer]
-    }
-}
-
-extension ClientMessageTranscoder: RequestStrategy {
-
-    public func nextRequest() -> ZMTransportRequest? {
-        guard let clientRegistrationStatus = self.clientRegistrationStatus,
-            clientRegistrationStatus.clientIsReadyForRequests
-        else {
-            return nil
-        }
-        return self.upstreamObjectSync.nextRequest()
     }
 }
 
@@ -90,7 +74,7 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
         guard let message = managedObject as? ZMClientMessage,
             !message.isExpired else { return nil }
         let request = self.requestFactory.upstreamRequestForMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!)!
-        if message.genericMessage?.hasConfirmation() == true && self.deliveryConfirmation!.needsToSyncMessages {
+        if message.genericMessage?.hasConfirmation() == true && self.applicationStatus!.deliveryConfirmation.needsToSyncMessages {
             request.forceToVoipSession()
         }
         
@@ -125,11 +109,11 @@ extension ClientMessageTranscoder {
             guard let updateResult = ZMOTRMessage.messageUpdateResult(from: event, in: self.managedObjectContext, prefetchResult: prefetchResult) else {
                  return nil
             }
-            if type(of: self.deliveryConfirmation!).sendDeliveryReceipts {
+            if type(of: self.applicationStatus!.deliveryConfirmation).sendDeliveryReceipts {
                 if updateResult.needsConfirmation {
                     let confirmation = updateResult.message!.confirmReception()!
                     if event.source == .pushNotification {
-                        self.deliveryConfirmation?.needsToConfirmMessage(confirmation.nonce)
+                        self.applicationStatus!.deliveryConfirmation.needsToConfirmMessage(confirmation.nonce)
                     }
                 }
             }
@@ -166,13 +150,13 @@ extension ClientMessageTranscoder {
         }
         
         self.update(message, from: response, keys: upstreamRequest.keys ?? Set())
-        _ = message.parseMissingClientsResponse(response, clientDeletionDelegate: self.clientRegistrationStatus!)
+        _ = message.parseMissingClientsResponse(response, clientRegistrationDelegate: self.applicationStatus!.clientRegistrationDelegate)
         
         if genericMessage.hasReaction() {
             message.managedObjectContext?.delete(message)
         }
         if genericMessage.hasConfirmation() {
-            self.deliveryConfirmation?.didConfirmMessage(message.nonce)
+            self.applicationStatus?.deliveryConfirmation.didConfirmMessage(message.nonce)
             message.managedObjectContext?.delete(message)
         }
     }
@@ -186,7 +170,7 @@ extension ClientMessageTranscoder {
         message.removeExpirationDate()
         message.markAsSent()
         message.update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: keys)
-        _ = message.parseMissingClientsResponse(response, clientDeletionDelegate: self.clientRegistrationStatus!)
+        _ = message.parseMissingClientsResponse(response, clientRegistrationDelegate: self.applicationStatus!.clientRegistrationDelegate)
 
     }
 
@@ -196,7 +180,7 @@ extension ClientMessageTranscoder {
                 return false
         }
         self.update(message, from: response, keys: keysToParse)
-        _ = message.parseMissingClientsResponse(response, clientDeletionDelegate: self.clientRegistrationStatus!)
+        _ = message.parseMissingClientsResponse(response, clientRegistrationDelegate: self.applicationStatus!.clientRegistrationDelegate)
         return false
     }
 
@@ -205,7 +189,7 @@ extension ClientMessageTranscoder {
             !managedObject.isZombieObject else {
                 return false
         }
-        return message.parseMissingClientsResponse(response, clientDeletionDelegate: self.clientRegistrationStatus!)
+        return message.parseMissingClientsResponse(response, clientRegistrationDelegate: self.applicationStatus!.clientRegistrationDelegate)
     }
     
     public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {

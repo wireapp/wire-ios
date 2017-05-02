@@ -25,8 +25,7 @@ import WireDataModel
 
 class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
 
-    fileprivate var registrationStatus: MockClientRegistrationStatus!
-    fileprivate var cancellationProvider: MockTaskCancellationProvider!
+    fileprivate var mockApplicationStatus : MockApplicationStatus!
     fileprivate var sut : AssetV3FileUploadRequestStrategy!
     fileprivate var conversation: ZMConversation!
     fileprivate var data: Data!
@@ -34,10 +33,11 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        self.registrationStatus = MockClientRegistrationStatus()
-        self.cancellationProvider = MockTaskCancellationProvider()
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+
         self.syncMOC.performGroupedBlockAndWait {
-            self.sut = AssetV3FileUploadRequestStrategy(clientRegistrationStatus: self.registrationStatus, taskCancellationProvider: self.cancellationProvider, managedObjectContext: self.syncMOC)
+            self.sut = AssetV3FileUploadRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: self.mockApplicationStatus)
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.remoteIdentifier = UUID.create()
         }

@@ -24,20 +24,14 @@ import WireRequestStrategy
 fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 
 
-@objc public final class AssetV3DownloadRequestStrategy: NSObject, RequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
+@objc public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSync!
-    fileprivate let managedObjectContext: NSManagedObjectContext
-    fileprivate weak var authStatus: ClientRegistrationDelegate?
-    fileprivate weak var taskCancellationProvider: ZMRequestCancellation?
 
     private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
-
-    public init(authStatus: ClientRegistrationDelegate, taskCancellationProvider: ZMRequestCancellation, managedObjectContext: NSManagedObjectContext) {
-        self.managedObjectContext = managedObjectContext
-        self.authStatus = authStatus
-        self.taskCancellationProvider = taskCancellationProvider
-        super.init()
+    
+    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         zmLog.debug("Asset V3 file download logging set up.")
         registerForCancellationNotification()
@@ -71,19 +65,17 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     func cancelOngoingRequestForAssetClientMessage(_ note: Notification) {
         guard let objectID = note.object as? NSManagedObjectID else { return }
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let message = self?.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
+            guard let `self` = self  else { return }
+            
+            guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
             guard message.version == 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
-            self?.taskCancellationProvider?.cancelTask(with: identifier)
+            self.applicationStatus?.requestCancellation.cancelTask(with: identifier)
             message.associatedTaskIdentifier = nil
         }
     }
 
-    public func nextRequest() -> ZMTransportRequest? {
-        guard let registration = self.authStatus, registration.clientIsReadyForRequests else {
-            return .none
-        }
-
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return self.assetDownstreamObjectSync.nextRequest()
     }
 

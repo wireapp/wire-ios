@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-#import <UIKit/UIKit.h>
-#import "AppDelegate.h"
-
-int main(int argc, char * argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
-    }
-}
+typedef NS_OPTIONS(NSUInteger, ZMStrategyConfigurationOption) {
+    ZMStrategyConfigurationOptionDoesNotAllowRequests = 0,
+    ZMStrategyConfigurationOptionAllowsRequestsWhileUnauthenticated = 1 << 0,
+    ZMStrategyConfigurationOptionAllowsRequestsWhileInBackground = 1 << 1,
+    ZMStrategyConfigurationOptionAllowsRequestsDuringSync = 1 << 2,
+    ZMStrategyConfigurationOptionAllowsRequestsDuringEventProcessing = 1 << 3,
+};

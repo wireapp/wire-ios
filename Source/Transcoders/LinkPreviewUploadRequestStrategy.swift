@@ -97,7 +97,7 @@ extension LinkPreviewUploadRequestStrategy : ZMUpstreamTranscoder {
 
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
         guard let message = managedObject as? ZMClientMessage else { return false }
-        return message.parseUploadResponse(response, clientDeletionDelegate: clientRegistrationDelegate)
+        return message.parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate)
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {

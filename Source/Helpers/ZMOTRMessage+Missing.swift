@@ -31,8 +31,8 @@ import WireRequestStrategy
 /// MARK: - Missing and deleted clients
 public extension ZMOTRMessage {
 
-    @objc func parseMissingClientsResponse(_ response: ZMTransportResponse, clientDeletionDelegate: ClientRegistrationDelegate) -> Bool {
-        return self.parseUploadResponse(response, clientDeletionDelegate: clientDeletionDelegate)
+    @objc func parseMissingClientsResponse(_ response: ZMTransportResponse, clientRegistrationDelegate: ClientRegistrationDelegate) -> Bool {
+        return self.parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate)
     }
 
 }

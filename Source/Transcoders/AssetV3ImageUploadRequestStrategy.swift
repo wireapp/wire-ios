@@ -96,17 +96,13 @@ extension ZMAssetClientMessage {
 /// user also downloaded a lot of files.
 /// After the image has been uploaded either the `Asset.Uploaded` generic message (in case of images), or the
 /// `Asset.Preview` generic message will be updated and the state of the message updated accordingly.
-public final class AssetV3ImageUploadRequestStrategy: ZMObjectSyncStrategy, RequestStrategy, ZMContextChangeTrackerSource {
+public final class AssetV3ImageUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate let preprocessor: ZMImagePreprocessingTracker
     fileprivate let requestFactory = AssetRequestFactory()
-    fileprivate weak var clientRegistrationStatus: ClientRegistrationDelegate?
     fileprivate var upstreamSync: ZMUpstreamModifiedObjectSync!
-    fileprivate weak var taskCancellationProvider: ZMRequestCancellation?
 
-    public init(clientRegistrationStatus: ClientRegistrationDelegate, taskCancellationProvider: ZMRequestCancellation, managedObjectContext: NSManagedObjectContext) {
-        self.clientRegistrationStatus = clientRegistrationStatus
-
+    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         preprocessor = ZMImagePreprocessingTracker(
             managedObjectContext: managedObjectContext,
             imageProcessingQueue: OperationQueue(),
@@ -115,7 +111,9 @@ public final class AssetV3ImageUploadRequestStrategy: ZMObjectSyncStrategy, Requ
             entityClass: ZMAssetClientMessage.self
         )
 
-        super.init(managedObjectContext: managedObjectContext)
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+        
+        configuration = [.allowsRequestsDuringEventProcessing]
 
         upstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
@@ -131,8 +129,7 @@ public final class AssetV3ImageUploadRequestStrategy: ZMObjectSyncStrategy, Requ
         return [preprocessor, upstreamSync, self]
     }
 
-    public func nextRequest() -> ZMTransportRequest? {
-        guard let status = clientRegistrationStatus, status.clientIsReadyForRequests else { return nil }
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return upstreamSync.nextRequest()
     }
 }
@@ -165,7 +162,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMContextChangeTracker {
 
     fileprivate func cancelOutstandingUploadRequests(forMessage message: ZMAssetClientMessage) {
         guard let identifier = message.associatedTaskIdentifier else { return }
-        taskCancellationProvider?.cancelTask(with: identifier)
+        applicationStatus?.requestCancellation.cancelTask(with: identifier)
     }
     
 }

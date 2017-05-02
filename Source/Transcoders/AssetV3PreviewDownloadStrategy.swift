@@ -25,16 +25,12 @@ import WireRequestStrategy
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
 
-@objc public final class AssetV3PreviewDownloadRequestStrategy: NSObject, RequestStrategy, ZMContextChangeTrackerSource {
+@objc public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate let managedObjectContext: NSManagedObjectContext
-    fileprivate weak var authStatus: ClientRegistrationDelegate?
-
-    public init(authStatus: ClientRegistrationDelegate, managedObjectContext: NSManagedObjectContext) {
-        self.managedObjectContext = managedObjectContext
-        self.authStatus = authStatus
-        super.init()
+    
+    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let filter = NSPredicate { object, _ in
             guard let message = object as? ZMAssetClientMessage, nil != message.fileMessageData else { return false }
@@ -76,8 +72,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         }
     }
 
-    public func nextRequest() -> ZMTransportRequest? {
-        guard let status = authStatus, status.clientIsReadyForRequests else { return nil }
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return downstreamSync.nextRequest()
     }
 

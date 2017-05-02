@@ -23,25 +23,21 @@ import XCTest
 
 class ClientMessageTranscoderTests: MessagingTestBase {
 
-    var clientRegistrationStatus: MockClientRegistrationStatus!
     var localNotificationDispatcher: MockPushMessageHandler!
-    var confirmationStatus: MockConfirmationStatus!
     var sut: ClientMessageTranscoder!
+    var mockApplicationStatus : MockApplicationStatus!
     
     override func setUp() {
         super.setUp()
         self.localNotificationDispatcher = MockPushMessageHandler()
-        self.clientRegistrationStatus = MockClientRegistrationStatus()
-        self.confirmationStatus = MockConfirmationStatus()
-        self.sut = ClientMessageTranscoder(in: self.syncMOC, localNotificationDispatcher: self.localNotificationDispatcher, clientRegistrationStatus: self.clientRegistrationStatus, apnsConfirmationStatus: self.confirmationStatus)
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        sut = ClientMessageTranscoder(in: syncMOC, localNotificationDispatcher: localNotificationDispatcher, applicationStatus: mockApplicationStatus)
     }
     
     override func tearDown() {
         self.localNotificationDispatcher = nil
-        self.clientRegistrationStatus = nil
-        self.confirmationStatus = nil
-        
-        self.sut.tearDown()
+        self.mockApplicationStatus = nil
         self.sut = nil
         
         super.tearDown()

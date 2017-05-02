@@ -25,18 +25,17 @@ import WireDataModel
 
 
 class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
-    
-    fileprivate var registrationStatus: MockClientRegistrationStatus!
-    fileprivate var mockCancellationProvider: MockTaskCancellationProvider!
+
+    fileprivate var mockApplicationStatus : MockApplicationStatus!
     fileprivate var sut : AssetV3ImageUploadRequestStrategy!
     fileprivate var conversation: ZMConversation!
     fileprivate var imageData = mediumJPEGData()
     
     override func setUp() {
         super.setUp()
-        registrationStatus = MockClientRegistrationStatus()
-        mockCancellationProvider = MockTaskCancellationProvider()
-        sut = AssetV3ImageUploadRequestStrategy(clientRegistrationStatus: registrationStatus, taskCancellationProvider: mockCancellationProvider, managedObjectContext: syncMOC)
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        sut = AssetV3ImageUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
         self.syncMOC.performGroupedBlockAndWait {
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.remoteIdentifier = UUID.create()

@@ -27,8 +27,8 @@ private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests
 
 
 class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
-    
-    var authStatus: MockClientRegistrationStatus!
+
+    var mockApplicationStatus : MockApplicationStatus!
     var sut: AssetV3PreviewDownloadRequestStrategy!
     var conversation: ZMConversation!
     
@@ -36,12 +36,10 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     
     override func setUp() {
         super.setUp()
-        authStatus = MockClientRegistrationStatus()
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .eventProcessing
         self.syncMOC.performGroupedBlockAndWait {
-            self.sut = AssetV3PreviewDownloadRequestStrategy(
-                authStatus: self.authStatus,
-                managedObjectContext: self.syncMOC
-            )
+            self.sut = AssetV3PreviewDownloadRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: self.mockApplicationStatus)
             self.conversation = self.createConversation()
         }
     }
@@ -115,7 +113,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            self.authStatus.mockClientIsReadyForRequests = false
+            self.mockApplicationStatus.mockSynchronizationState = .unauthenticated
             let _ = self.createMessage(in: self.conversation)
             
             // THEN

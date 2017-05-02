@@ -23,7 +23,7 @@ import WireDataModel
 
 
 class FilePreprocessorTests : MessagingTestBase {
-    
+
     var sut: FilePreprocessor!
     
     override func setUp() {
