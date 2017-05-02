@@ -26,16 +26,14 @@ import WireTransport.ZMRequestCancellation
 class StrategyFactory {
 
     let syncContext: NSManagedObjectContext
-    let registrationStatus: ClientRegistrationStatus
-    let cancellationProvider: ZMRequestCancellation
+    let applicationStatus: ApplicationStatus
     private(set) var strategies = [AnyObject]()
 
     private var tornDown = false
 
-    init(syncContext: NSManagedObjectContext, registrationStatus: ClientRegistrationStatus, cancellationProvider: ZMRequestCancellation) {
+    init(syncContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         self.syncContext = syncContext
-        self.registrationStatus = registrationStatus
-        self.cancellationProvider = cancellationProvider
+        self.applicationStatus = applicationStatus
         self.strategies = createStrategies()
     }
 
@@ -72,60 +70,44 @@ class StrategyFactory {
     }
 
     private func createMissingClientsStrategy() -> MissingClientsRequestStrategy {
-        return MissingClientsRequestStrategy(
-            clientRegistrationStatus: registrationStatus,
-            apnsConfirmationStatus: DeliveryConfirmationDummy(),
-            managedObjectContext: syncContext
-        )
+        return MissingClientsRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createClientMessageTranscoder() -> ClientMessageTranscoder {
         return ClientMessageTranscoder(
             in: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
-            clientRegistrationStatus: registrationStatus,
-            apnsConfirmationStatus: DeliveryConfirmationDummy()
+            applicationStatus: applicationStatus
         )
     }
 
     // MARK: – Link Previews
 
     private func createLinkPreviewAssetUploadRequestStrategy() -> LinkPreviewAssetUploadRequestStrategy {
+        
         return LinkPreviewAssetUploadRequestStrategy(
-            clientRegistrationDelegate: registrationStatus,
-            managedObjectContext: syncContext
+            managedObjectContext: syncContext,
+            applicationStatus: applicationStatus,
+            linkPreviewPreprocessor: nil,
+            previewImagePreprocessor: nil
         )
     }
 
     private func createLinkPreviewUploadRequestStrategy() -> LinkPreviewUploadRequestStrategy {
-        return LinkPreviewUploadRequestStrategy(
-            managedObjectContext: syncContext,
-            clientRegistrationDelegate: registrationStatus
-        )
+        return LinkPreviewUploadRequestStrategy(managedObjectContext: syncContext, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
     }
 
     // MARK: - Asset V3
 
     private func createAssetV3FileUploadRequestStrategy() -> AssetV3FileUploadRequestStrategy {
-        return AssetV3FileUploadRequestStrategy(
-            clientRegistrationStatus: registrationStatus,
-            taskCancellationProvider: cancellationProvider,
-            managedObjectContext: syncContext
-        )
+         return AssetV3FileUploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createAssetV3ImageUploadRequestStrategy() -> AssetV3ImageUploadRequestStrategy {
-        return AssetV3ImageUploadRequestStrategy(
-            clientRegistrationStatus: registrationStatus,
-            taskCancellationProvider: cancellationProvider,
-            managedObjectContext: syncContext
-        )
+        return AssetV3ImageUploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
-        return AssetClientMessageRequestStrategy(
-            clientRegistrationStatus: registrationStatus,
-            managedObjectContext: syncContext
-        )
+        return AssetClientMessageRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 }
