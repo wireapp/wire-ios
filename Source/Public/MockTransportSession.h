@@ -43,6 +43,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 /// This will simply return @c self, but typecast to the expected type. For convenience.
 - (ZMTransportSession *)mockedTransportSession;
 
+@property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
+
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURL *websocketURL;
 
@@ -76,8 +78,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 - (void)expireAllBlockedRequests;
 - (void)tearDown;
-- (void)closePushChannelAndRemoveConsumer;
-- (void)restartPushChannel;
 - (void)completeAllBlockedRequests;
 
 - (void)completePreviouslySuspendendRequest:(ZMTransportRequest *)request;

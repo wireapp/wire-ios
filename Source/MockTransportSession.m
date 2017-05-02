@@ -54,7 +54,7 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
 
 static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
-@interface MockTransportSession ()
+@interface MockTransportSession () <ZMPushChannel>
 
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) MockUser *selfUser;
@@ -66,8 +66,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @property (nonatomic, readonly) NSMutableArray *nonCompletedRequests;
 
+@property (atomic) BOOL shouldKeepPushChannelOpen;
 @property (atomic) BOOL shouldSendPushChannelEvents;
-@property (atomic) BOOL clientRequestedPushChannel;
 @property (atomic) BOOL clientCompletedLogin;
 
 @property (nonatomic) NSMutableSet* whitelistedEmails;
@@ -104,7 +104,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                                  updatedObjects:(NSSet *)updated
                                                  deletedObjects:(NSSet *)deleted
                                      shouldSendEventsToSelfUser:(BOOL)shouldSendSelfEvents;
-- (void)openPushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
+- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
 @end
 
@@ -160,6 +160,21 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
 }
 
+- (void)setKeepOpen:(BOOL)keepOpen
+{
+    self.shouldKeepPushChannelOpen = keepOpen;
+}
+
+- (BOOL)keepOpen
+{
+    return self.shouldKeepPushChannelOpen;
+}
+
+- (id<ZMPushChannel>)pushChannel
+{
+    return self;
+}
+
 - (void)registerPushEvent:(MockPushEvent *)mockPushEvent
 {
     [self.generatedPushEvents addObject:mockPushEvent];
@@ -168,16 +183,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 - (void)addPushToken:(NSDictionary *)pushToken;
 {
     [(NSMutableArray *) self.pushTokens addObject:pushToken];
-}
-
-- (void)closePushChannelAndRemoveConsumer
-{
-    self.shouldSendPushChannelEvents = NO;
-}
-
-- (void)restartPushChannel
-{
-    
 }
 
 - (void)expireAllBlockedRequests;
@@ -207,6 +212,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.generatedPushEvents removeAllObjects];
     [self.generatedTransportRequests removeAllObjects];
     self.shouldSendPushChannelEvents = NO;
+    self.shouldKeepPushChannelOpen = NO;
 }
 
 - (ZMTransportSession *)mockedTransportSession;
@@ -764,7 +770,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 - (void)simulatePushChannelOpened;
 {
     [self.pushChannelGroupQueue performGroupedBlock:^{
-        if(self.clientCompletedLogin && self.clientRequestedPushChannel) {
+        if(self.clientCompletedLogin && self.shouldKeepPushChannelOpen) {
             self.shouldSendPushChannelEvents = YES;
             [self.pushChannelConsumer pushChannelDidOpen:(ZMPushChannelConnection * _Nonnull) nil
                                             withResponse:(NSHTTPURLResponse * _Nonnull) nil];
@@ -876,11 +882,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @implementation MockTransportSession (PushEvents)
 
-- (void)openPushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
+- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 {
     LogNetwork(@"---> Request: (fake) /access");
     
-    self.clientRequestedPushChannel = YES;
     self.pushChannelConsumer = consumer;
     self.pushChannelGroupQueue = groupQueue;
 }
