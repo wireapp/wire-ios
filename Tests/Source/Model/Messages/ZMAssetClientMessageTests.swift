@@ -975,6 +975,32 @@ extension ZMAssetClientMessageTests {
         }
     }
     
+    func testThatItPreparesImageMessageForResend() {
+        self.syncMOC.performAndWait {
+            
+            // given
+            let image = self.verySmallJPEGData()
+            let nonce = UUID.create()
+
+            let sut = ZMAssetClientMessage(originalImageData: image, nonce: nonce, managedObjectContext: self.syncMOC, expiresAfter: 1000)
+            
+            self.syncConversation.mutableMessages.add(sut)
+            sut.delivered = true
+            sut.progress = 56
+            sut.transferState = .failedUpload
+            sut.uploadState = .uploadingFailed
+            
+            // when
+            sut.resend()
+            
+            // then
+            XCTAssertEqual(sut.uploadState, ZMAssetUploadState.uploadingFullAsset)
+            XCTAssertFalse(sut.delivered)
+            XCTAssertEqual(sut.transferState, ZMFileTransferState.uploading)
+            XCTAssertEqual(sut.progress, 0)
+        }
+    }
+    
     func testThatItReturnsNilAssetIdOnANewlyCreatedMessage() {
         self.syncMOC.performAndWait {
             
