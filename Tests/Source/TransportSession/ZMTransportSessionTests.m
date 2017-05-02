@@ -204,15 +204,13 @@ static NSString *JSONContentType = @"application/json";
 //
 //////////////////////////////////////////////////
 
-@interface FakePushChannel : NSObject
+@interface FakePushChannel : NSObject <ZMPushChannel>
 
 - (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL;
 
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
-- (void)createPushChannelWithAccessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID;
 - (void)closeAndRemoveConsumer;
-- (void)scheduleOpenPushChannel;
 - (void)reachabilityDidChange:(ZMReachability *)reachability;
 
 
@@ -220,6 +218,7 @@ static NSString *JSONContentType = @"application/json";
 @property (nonatomic) ZMTransportRequestScheduler *scheduler;
 @property (nonatomic, copy) NSString *userAgentString;
 @property (nonatomic) NSURL *URL;
+@property (nonatomic) BOOL keepOpen;
 
 @property (nonatomic) ZMAccessToken *lastAccessToken;
 @property (nonatomic) NSString *lastClientID;
@@ -257,11 +256,24 @@ static FakePushChannel *currentFakePushChannel;
     self.setConsumerCount++;
 }
 
-- (void)createPushChannelWithAccessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID;
+- (void)establishConnection
+{
+    self.createPushChannelCount++;
+}
+
+- (void)setAccessToken:(ZMAccessToken *)accessToken
 {
     self.lastAccessToken = accessToken;
+}
+
+- (void)setClientID:(NSString *)clientID
+{
     self.lastClientID = clientID;
-    self.createPushChannelCount++;
+}
+
+- (NSString *)clientID
+{
+    return self.lastClientID;
 }
 
 - (void)closeAndRemoveConsumer;
@@ -274,7 +286,7 @@ static FakePushChannel *currentFakePushChannel;
     self.closeCount++;
 }
 
-- (void)scheduleOpenPushChannel;
+- (void)attemptToOpen
 {
     self.scheduleOpenPushChannelCount++;
 }
@@ -398,6 +410,7 @@ static __weak FakeReachability *currentReachability;
 @property (nonatomic) NSOperationQueue *queue;
 @property (nonatomic) ZMAccessToken *validAccessToken;
 @property (nonatomic) ZMAccessToken *expiredAccessToken;
+@property (nonatomic) NSString *clientID;
 @property (nonatomic) NSUInteger nextTaskIdentifier;
 @property (nonatomic) FakeTransportRequestScheduler *scheduler;
 @property (nonatomic) ZMURLSessionSwitch *URLSessionSwitch;
@@ -465,7 +478,7 @@ static __weak FakeReachability *currentReachability;
     self.dummyPath = @"/dummy";
     self.validAccessToken = [[ZMAccessToken alloc] initWithToken:@"valid-token" type:@"valid-type" expiresInSeconds:4321];
     self.expiredAccessToken = [[ZMAccessToken alloc] initWithToken:@"expired-token" type:@"expired-type" expiresInSeconds:0];
-    self.sut.clientID = @"9019oj3qauosdasd";
+    self.clientID = @"9019oj3qauosdasd";
     
     self.dummyTokenPayload = @{
         @"access_token": @"DummyToken",
@@ -1718,28 +1731,17 @@ static __weak FakeReachability *currentReachability;
 
     // when
     id consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
-    [self.sut openPushChannelWithConsumer:consumer groupQueue:self.fakeUIContext];
+    [self.sut configurePushChannelWithConsumer:consumer groupQueue:self.fakeUIContext];
     
     // then
     XCTAssertEqual(currentFakePushChannel.setConsumerCount, 1u);
-}
-
-- (void)testThatItForwardsClosePushChannel
-{
-    // given
-    XCTAssertEqual(currentFakePushChannel.closeAndRemoveConsumerCount, 0u);
-    
-    // when
-    [self.sut closePushChannelAndRemoveConsumer];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.closeAndRemoveConsumerCount, 1u);
 }
 
 - (void)testThatItCreatesAPushChannelConnectionWhenWeAreReceivingAnOpenPushChannelItemAndHaveAnAccessToken
 {
     // given
     self.sut.accessToken = self.validAccessToken;
+    self.sut.pushChannel.clientID = self.clientID;
     NSUInteger const originalCount = currentFakePushChannel.createPushChannelCount;
     
     // when
@@ -1748,69 +1750,20 @@ static __weak FakeReachability *currentReachability;
     // then
     XCTAssertEqual(currentFakePushChannel.createPushChannelCount, originalCount + 1u);
     XCTAssertEqualObjects(currentFakePushChannel.lastAccessToken, self.validAccessToken);
-    XCTAssertEqualObjects(currentFakePushChannel.lastClientID, self.sut.clientID);
+    XCTAssertEqualObjects(currentFakePushChannel.lastClientID, self.clientID);
 }
-
-- (void)testThatItDoesNotCreatesAPushChannelConnectionWhenWeAreBackgroundedAndThereIsNoActiveCall
-{
-    // given
-    [[(id)self.URLSessionSwitch stub] switchToBackgroundSession];
-    [[(id)self.URLSessionSwitch stub] switchToForegroundSession];
-    self.sut.accessToken = self.validAccessToken;
-    NSUInteger const originalCount = currentFakePushChannel.createPushChannelCount;
-    
-    // when
-    [self.sut enterBackground];
-    [self.sut sendSchedulerItem:[[ZMOpenPushChannelRequest alloc] init]];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.createPushChannelCount, originalCount + 1u);
-}
-
-- (void)testThatItCreatesAPushChannelConnectionWhenWeAreBackgroundedAndThereIsAnActiveCall
-{
-    // given
-    [[(id)self.URLSessionSwitch stub] switchToBackgroundSession];
-    [[(id)self.URLSessionSwitch stub] switchToForegroundSession];
-    self.sut.accessToken = self.validAccessToken;
-    NSUInteger const originalCount = currentFakePushChannel.createPushChannelCount;
-    
-    // when
-    [self.sut enterBackground];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionShouldKeepWebsocketOpenNotificationName object:nil userInfo:@{ZMTransportSessionShouldKeepWebsocketOpenKey : @YES}];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self.sut sendSchedulerItem:[[ZMOpenPushChannelRequest alloc] init]];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.createPushChannelCount, originalCount+1);
-}
-
-- (void)testThatItDoesNotCreatAPushChannelConnectionWhenWeAreReceivingAnOpenPushChannelItemAndDoNotHaveAnAccessToken
-{
-    // given
-    self.sut.accessToken = nil;
-    NSUInteger const originalCount = currentFakePushChannel.createPushChannelCount;
-    
-    // when
-    [self.sut sendSchedulerItem:[[ZMOpenPushChannelRequest alloc] init]];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.createPushChannelCount, originalCount);
-}
-
 
 - (void)testThatItDoesNotAttemptToOpenThePushChannelWhenLoginFails
 {
     // given
     self.sut.cookieStorage.authenticationCookieData = nil;
     self.sut.accessToken = nil;
+    self.sut.pushChannel.clientID = self.clientID;
     id consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
     [self verifyMockLater:consumer];
     
     // when
-    [self.sut openPushChannelWithConsumer:consumer groupQueue:self.fakeSyncContext];
+    [self.sut configurePushChannelWithConsumer:consumer groupQueue:self.fakeSyncContext];
     
     WaitForAllGroupsToBeEmpty(0.5);
     [self.scheduler.addedItems removeAllObjects];
@@ -2388,94 +2341,6 @@ static __weak FakeReachability *currentReachability;
     countHandler(0);
     WaitForAllGroupsToBeEmpty(0.5);
 }
-
-
-- (void)testThatItClosesThePushChannelWhenTheApplicationSuspends;
-{
-    // given
-    [[(id)self.URLSessionSwitch stub] switchToBackgroundSession];
-    [[(id)self.URLSessionSwitch stub] switchToForegroundSession];
-    NSUInteger const originalCount = currentFakePushChannel.closeCount;
-    
-    // when
-    [self.sut enterBackground];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertGreaterThan(currentFakePushChannel.closeCount, originalCount);
-}
-
-
-- (void)testThatItDoesNotCloseThePushChannelWhenItReceivedAShouldKeepWebsocketOpenNotification_YES
-{
-    // given
-    [[(id)self.URLSessionSwitch stub] switchToBackgroundSession];
-    [[(id)self.URLSessionSwitch stub] switchToForegroundSession];
-    NSUInteger const originalCount = currentFakePushChannel.closeCount;
-    
-    // when
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionShouldKeepWebsocketOpenNotificationName object:nil userInfo:@{ZMTransportSessionShouldKeepWebsocketOpenKey : @YES}];
-    [self.sut enterBackground];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.closeCount, originalCount);
-}
-
-- (void)testThatItClosesThePushChannelWhenItReceivedAShouldKeepWebsocketOpenNotification_NO
-{
-    // given
-    [[(id)self.URLSessionSwitch stub] switchToBackgroundSession];
-    [[(id)self.URLSessionSwitch stub] switchToForegroundSession];
-    NSUInteger const originalCount = currentFakePushChannel.closeCount;
-    
-    // when
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionShouldKeepWebsocketOpenNotificationName object:nil userInfo:@{ZMTransportSessionShouldKeepWebsocketOpenKey : @YES}];
-    [self.sut enterBackground];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionShouldKeepWebsocketOpenNotificationName object:nil userInfo:@{ZMTransportSessionShouldKeepWebsocketOpenKey : @NO}];
-
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertGreaterThan(currentFakePushChannel.closeCount, originalCount);
-}
-
-- (void)testThatItOpensThePushChannelWhenItReceivedAShouldKeepWebsocketOpenNotification_YES
-{
-    // given
-    [[(id)self.URLSessionSwitch stub] switchToBackgroundSession];
-    [[(id)self.URLSessionSwitch stub] switchToForegroundSession];
-    NSUInteger const originalCount = currentFakePushChannel.scheduleOpenPushChannelCount;
-    
-    // when
-    [self.sut enterBackground];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionShouldKeepWebsocketOpenNotificationName object:nil userInfo:@{ZMTransportSessionShouldKeepWebsocketOpenKey : @YES}];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertGreaterThan(currentFakePushChannel.scheduleOpenPushChannelCount, originalCount);
-}
-
-- (void)testThatItOpensThePushChannelWhenTheApplicationWillEnterForeground;
-{
-    // given
-    [[(id)self.URLSessionSwitch stub] switchToBackgroundSession];
-    [[(id)self.URLSessionSwitch stub] switchToForegroundSession];
-    
-    // when
-    [self.sut enterBackground];
-    WaitForAllGroupsToBeEmpty(0.5);
-    NSUInteger const originalCount = currentFakePushChannel.scheduleOpenPushChannelCount;
-    
-    // when
-    [self.sut enterForeground];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertGreaterThan(currentFakePushChannel.scheduleOpenPushChannelCount, originalCount);
-}
-
 
 - (void)testThatItNotifiesTheSchedulerWhenTheApplicationWillEnterForeground;
 {

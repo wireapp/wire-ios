@@ -479,7 +479,7 @@
     [testResponse setResult:ZMTransportResponseStatusSuccess];
     
     // when
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertNil([self.sut valueForKey:@"accessToken"]);
@@ -492,7 +492,7 @@
     [testResponse setResult:ZMTransportResponseStatusSuccess];
     
     // when
-    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertFalse(needsToReRun);
@@ -505,7 +505,7 @@
     [testResponse setResult:ZMTransportResponseStatusTemporaryError];
     
     // when
-    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertTrue(needsToReRun);
@@ -518,7 +518,7 @@
     [testResponse setResult:ZMTransportResponseStatusTryAgainLater];
     
     // when
-    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertTrue(needsToReRun);
@@ -532,7 +532,7 @@
     [testResponse setHTTPStatus:429];
     
     // when
-    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertTrue(needsToReRun);
@@ -546,7 +546,7 @@
     [testResponse setHTTPStatus:420];
     
     // when
-    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertTrue(needsToReRun);
@@ -559,7 +559,7 @@
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
     
     // when
-    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    BOOL needsToReRun = [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertFalse(needsToReRun);
@@ -574,7 +574,7 @@
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
     
     // when
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertNil(self.cookieStorage.authenticationCookieData);
@@ -590,7 +590,7 @@
     [testResponse setHTTPStatus:429];
 
     // when
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
@@ -606,7 +606,7 @@
     [testResponse setHTTPStatus:420];
     
     // when
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
@@ -621,7 +621,7 @@
     [testResponse setResult:ZMTransportResponseStatusTemporaryError];
     
     // when
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
@@ -636,7 +636,7 @@
     [response setResult:ZMTransportResponseStatusSuccess];
     
     // when
-    [self.sut processAccessTokenResponse:(id)response taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)response];
     
     // then
     XCTAssertNil(self.cookieStorage.authenticationCookieData);
@@ -659,7 +659,7 @@
         }
     }];
     
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertEqual(self.failureCount, 1u);
@@ -683,7 +683,7 @@
         }
     }];
     
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertEqual(self.successCount, 0u);
@@ -709,7 +709,7 @@
         }
     }];
     
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertEqual(self.failureCount, 0u);
@@ -737,7 +737,7 @@
         }
     }];
     
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertEqual(self.successCount, 1u);
@@ -758,7 +758,7 @@
                              @"expires_in": @3000};
     
     // when
-    [self.sut processAccessTokenResponse:(id)testResponse taskIdentifier:0];
+    [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
     XCTAssertEqualObjects(self.sut.accessToken.token, @"FakeToken");
@@ -808,15 +808,15 @@
         [self.sut sendAccessTokenRequestWithURLSession:self.urlSession];
     }
     
-    // create a consumable task that resets the accessToken
+    // create a consumable task that will fail to update the accessToken
     {
         id task  = [self mockURLSessionTaskWithStatusCode:500 error:nil hasTransportData:YES];
         [self.sut sendAccessTokenRequestWithURLSession:self.urlSession];
-        [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
-        XCTAssertNil(self.sut.accessToken);
+        [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:NO];
+        XCTAssertNotNil(self.sut.accessToken);
     }
     
-    // even though the accessToken is nil, it should use the last known accesstoken for setting the header
+    // even though the accessToken didn't refresh, it should use the last known accesstoken for setting the header
     {
         // expect
         [[self.urlSession expect] taskWithRequest:[OCMArg checkWithBlock:^BOOL(NSURLRequest *request) {

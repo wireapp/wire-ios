@@ -25,7 +25,6 @@
 #import "ZMTaskIdentifierMap.h"
 #import "ZMServerTrust.h"
 #import "ZMTemporaryFileListForBackgroundRequests.h"
-#import "TransportTracing.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMTLogging.h"
 #import "ZMTransportResponse.h"

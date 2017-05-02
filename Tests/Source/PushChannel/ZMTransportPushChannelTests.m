@@ -45,6 +45,7 @@
 
 - (void)checkConnection;
 - (void)close;
+- (void)sendFakeData;
 
 @end
 
@@ -66,15 +67,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 
 @end
 
-
-
-//
-//
 #pragma mark - Tests
-//
-//
-
-
 
 @implementation ZMTransportPushChannelTests
 
@@ -83,12 +76,14 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     [super setUp];
     self.userAgentString = @"pushChannel/1234";
     self.clientID = @"kasd8923jas0p";
+    self.accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
     self.pushChannelURL = [NSURL URLWithString:@"http://pushchannel.example.com/foo"];
 
     self.scheduler = [OCMockObject mockForClass:ZMTransportRequestScheduler.class];
     [[[self.scheduler stub] andCall:@selector(schedulerPerformGroupedBlock:) onObject:self] performGroupedBlock:OCMOCK_ANY];
     [self verifyMockLater:self.scheduler];
     self.sut = (id) [[ZMTransportPushChannel alloc] initWithScheduler:self.scheduler userAgentString:self.userAgentString URL:self.pushChannelURL pushChannelClass:FakePushChannelConnection.class];
+    self.sut.keepOpen = YES;
 }
 
 - (void)tearDown
@@ -104,9 +99,37 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     block();
 }
 
+- (void)setupConsumerAndScheduler;
+{
+    if (self.consumer == nil) {
+        self.consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
+    }
+    [self.sut setPushChannelConsumer:self.consumer groupQueue:self.fakeUIContext];
+}
+
+- (void)setupConsumerAndStubbedScheduler;
+{
+    [self setupConsumerAndScheduler];
+    [(ZMTransportRequestScheduler *)[self.scheduler stub] addItem:OCMOCK_ANY];
+}
+
+- (void)setupClientIDAndAccessToken
+{
+    [self.sut setClientID:self.clientID];
+    [self.sut setAccessToken:self.accessToken];
+}
+
+- (void)openPushChannel
+{
+    [self setupConsumerAndStubbedScheduler];
+    [self setupClientIDAndAccessToken];
+    [self.sut establishConnection];
+}
+
 - (void)testThatItOpensThePushChannelWhenSettingTheConsumer;
 {
     // given
+    [self setupClientIDAndAccessToken];
     self.consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
     
     // expect
@@ -132,20 +155,18 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 - (void)testThatItCreatesAPushChannel;
 {
     // given
-    ZMAccessToken *accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
-    self.consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
-    [(ZMTransportRequestScheduler *)[self.scheduler stub] addItem:OCMOCK_ANY];
+    [self setupConsumerAndStubbedScheduler];
+    [self setupClientIDAndAccessToken];
     
     // when
-    [self.sut setPushChannelConsumer:self.consumer groupQueue:self.fakeUIContext];
-    [self.sut createPushChannelWithAccessToken:accessToken clientID:self.clientID];
+    [self.sut establishConnection];
     
     // then
     XCTAssertNotNil(currentFakePushChannelConnection);
     XCTAssertEqualObjects(currentFakePushChannelConnection.userAgentString, self.userAgentString);
     NSURL *pushChannelURL = [self.pushChannelURL URLByAppendingPathComponent:@"/await"];
     XCTAssertEqualObjects(currentFakePushChannelConnection.URL, pushChannelURL);
-    XCTAssertEqualObjects(currentFakePushChannelConnection.accessToken, accessToken);
+    XCTAssertEqualObjects(currentFakePushChannelConnection.accessToken, self.accessToken);
     XCTAssertEqualObjects(currentFakePushChannelConnection.clientID, self.clientID);
     XCTAssertEqual(currentFakePushChannelConnection.consumer, self.sut);
     XCTAssertEqual(currentFakePushChannelConnection.queue, self.fakeUIContext);
@@ -154,41 +175,23 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 - (void)testThatItDoesNotOpenThePushChannelWhenItDoesNotHaveAConsumer;
 {
     // given
-    ZMAccessToken *accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
-    self.consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
-    [(ZMTransportRequestScheduler *)[self.scheduler stub] addItem:OCMOCK_ANY];
+    [self setupConsumerAndStubbedScheduler];
+    [self setupClientIDAndAccessToken];
     
     // when
     [self.sut setPushChannelConsumer:nil groupQueue:nil];
-    [self.sut createPushChannelWithAccessToken:accessToken clientID:self.clientID];
+    [self.sut establishConnection];
     
     // then
     XCTAssertNil(currentFakePushChannelConnection);
 }
 
-- (void)setupConsumerAndScheduler;
-{
-    self.accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
-    if (self.consumer == nil) {
-        self.consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
-    }
-    [(ZMTransportRequestScheduler *)[self.scheduler stub] addItem:OCMOCK_ANY];
-    [self.sut setPushChannelConsumer:self.consumer groupQueue:self.fakeUIContext];
-}
-
-- (void)openPushChannel
-{
-    [self setupConsumerAndScheduler];
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
-}
-
 - (void)testThatItClosesThePushChannel
 {
     // given
-    [self setupConsumerAndScheduler];
+    [self openPushChannel];
     
     // when
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
     [self.sut closeAndRemoveConsumer];
     
     // then
@@ -198,26 +201,27 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 - (void)testThatItRemovedTheConsumer
 {
     // given
-    [self setupConsumerAndScheduler];
+    [self openPushChannel];
+    FakePushChannelConnection *pushChannelConnection = currentFakePushChannelConnection;
+    
+    // expect
+    [[self.consumer reject] pushChannel:OCMOCK_ANY didReceiveTransportData:OCMOCK_ANY];
     
     // when
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
-    id const firstPushChannel = currentFakePushChannelConnection;
     [self.sut closeAndRemoveConsumer];
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
-    id const secondPushChannel = currentFakePushChannelConnection;
+    [pushChannelConnection sendFakeData];
     
     // then
-    XCTAssertEqual(firstPushChannel, secondPushChannel);
+    XCTAssertEqual(pushChannelConnection.closeCounter, 1u);
+    
 }
 
 - (void)testThatItClosesThePushChannel_2
 {
     // given
-    [self setupConsumerAndScheduler];
+    [self openPushChannel];
     
     // when
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
     [self.sut close];
     
     // then
@@ -227,13 +231,12 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 - (void)testThatItCanReopenAfterAClose
 {
     // given
-    [self setupConsumerAndScheduler];
+    [self openPushChannel];
+    id const firstPushChannel = currentFakePushChannelConnection;
     
     // when
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
-    id const firstPushChannel = currentFakePushChannelConnection;
     [self.sut close];
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
+    [self.sut establishConnection];
     id const secondPushChannel = currentFakePushChannelConnection;
     
     // then
@@ -244,12 +247,11 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 - (void)testThatItOnlyCreatesASinglePushChannel;
 {
     // given
-    [self setupConsumerAndScheduler];
+    [self openPushChannel];
+    id const firstPushChannel = currentFakePushChannelConnection;
     
     // when
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
-    id const firstPushChannel = currentFakePushChannelConnection;
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
+    [self.sut establishConnection];
     id const secondPushChannel = currentFakePushChannelConnection;
     
     // then
@@ -259,17 +261,15 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 - (void)testThatItCreatesANewPushChannelIfTheExistingPushChannelIsNotOpen;
 {
     // given
-    [self setupConsumerAndScheduler];
-    
-    // when
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
+    [self openPushChannel];
     id const firstPushChannel = currentFakePushChannelConnection;
     currentFakePushChannelConnection.isOpen = NO;
     
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
-    id const secondPushChannel = currentFakePushChannelConnection;
+    // when
+    [self.sut establishConnection];
     
     // then
+    id const secondPushChannel = currentFakePushChannelConnection;
     XCTAssertNotEqual(firstPushChannel, secondPushChannel);
 }
 
@@ -299,36 +299,36 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 
 - (void)testThatItReopensThePushChannelWhenItCloses;
 {
-    // given
-    self.accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
-    self.consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
-    
     // expect
     id openPushChannelItem = [[ZMOpenPushChannelRequest alloc] init];
-    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem]; // 1st open
-    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem]; // 2nd open as a result of close
+    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
+    
+    // given
+    [self setupConsumerAndScheduler];
+    [self setupClientIDAndAccessToken];
+    [self.sut establishConnection];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // expect
+    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
     [[self.scheduler stub] processCompletedURLResponse:OCMOCK_ANY URLError:nil];
 
     // when
-    [self.sut setPushChannelConsumer:self.consumer groupQueue:self.fakeUIContext];
     [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:[OCMockObject niceMockForClass:NSHTTPURLResponse.class]];
-    [self.scheduler verify];
+    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (void)testThatItDoesNotReopensThePushChannelWhenItClosesIfThereIsNoConsumer;
 {
     // given
-    self.accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
-    self.consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
+    [self openPushChannel];
     
     // expect
-    id openPushChannelItem = [[ZMOpenPushChannelRequest alloc] init];
-    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem]; // 1st open
     [(ZMTransportRequestScheduler *)[self.scheduler reject] addItem:OCMOCK_ANY]; // no 2nd open
     [[self.scheduler stub] processCompletedURLResponse:OCMOCK_ANY URLError:nil];
-
+    
     // when
-    [self.sut setPushChannelConsumer:self.consumer groupQueue:self.fakeUIContext];
     [self.sut setPushChannelConsumer:nil groupQueue:nil];
     [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:[OCMockObject niceMockForClass:NSHTTPURLResponse.class]];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -459,16 +459,23 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     id openPushChannelItem = [[ZMOpenPushChannelRequest alloc] init];
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
     
+    // given
+    [self setupConsumerAndScheduler];
+    [self setupClientIDAndAccessToken];
+    [self.sut close];
+    
+    // expect
+    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
+    
     // when
-    [self.sut scheduleOpenPushChannel];
+    [self.sut attemptToOpen];
 }
 
 - (void)testThatItClosesThePushChannelConnectionWhenTheReachabilityChangesFromMobileToWifi
 {
     // given
     id mockReachability = [OCMockObject niceMockForClass:[ZMReachability class]];
-    [self setupConsumerAndScheduler];
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
+    [self openPushChannel];
 
     // we set the connection to mobile
     [[[mockReachability expect] andReturnValue:@(YES)] isMobileConnection];
@@ -487,9 +494,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 {
     // given
     id mockReachability = [OCMockObject niceMockForClass:[ZMReachability class]];
-    [self setupConsumerAndScheduler];
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
-    
+    [self openPushChannel];
     
     // we set the connection to mobile
     [[[mockReachability expect] andReturnValue:@(YES)] isMobileConnection];
@@ -503,14 +508,11 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     XCTAssertEqual(currentFakePushChannelConnection.closeCounter, 0u);
 }
 
-
-
 - (void)testThatItDoesNotCloseThePushChannelConnectionWhenTheReachabilityChangesFromWifiToMobile
 {
     // given
     id mockReachability = [OCMockObject niceMockForClass:[ZMReachability class]];
-    [self setupConsumerAndScheduler];
-    [self.sut createPushChannelWithAccessToken:self.accessToken clientID:self.clientID];
+    [self openPushChannel];
     
     [[[mockReachability expect] andReturnValue:@(NO)] isMobileConnection];
     [self.sut reachabilityDidChange:mockReachability];
@@ -523,10 +525,88 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     XCTAssertEqual(currentFakePushChannelConnection.closeCounter, 0u);
 }
 
+- (void)testThatItOpensThePushChannel_whenKeepOpenIsSetToTrue
+{
+    // given
+    self.sut.keepOpen = NO;
+    [self setupConsumerAndScheduler];
+    [self setupClientIDAndAccessToken];
+    
+    
+    // expect
+    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:OCMOCK_ANY];
+    
+    // when
+    self.sut.keepOpen = YES;
+}
 
+- (void)testThatItOpensThePushChannel_whenAccessTokenIsSet
+{
+    // given
+    [self setupConsumerAndScheduler];
+    [self.sut setClientID:self.clientID];
+    
+    // expect
+    
+    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:OCMOCK_ANY];
+    
+    // when
+    [self.sut setAccessToken:self.accessToken];
+}
+
+- (void)testThatItOpensThePushChannel_whenClientIDIsSet
+{
+    // given
+    [self setupConsumerAndScheduler];
+    [self.sut setAccessToken:self.accessToken];
+    
+    // expect
+    
+    [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:OCMOCK_ANY];
+    
+    // when
+    [self.sut setClientID:self.clientID];
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
+- (void)testThatItClosesThePushChannel_whenKeepOpenIsSetToFalse
+{
+    // given
+    [self openPushChannel];
+    self.sut.keepOpen = YES;
+    
+    // when
+    self.sut.keepOpen = NO;
+    
+    // then
+    XCTAssertEqual(currentFakePushChannelConnection.closeCounter, 1u);
+}
+
+- (void)testThatItClosesThePushChannel_whenAccessTokenIsCleared
+{
+    // given
+    [self openPushChannel];
+    
+    // when
+    self.sut.accessToken = nil;
+    
+    // then
+    XCTAssertEqual(currentFakePushChannelConnection.closeCounter, 1u);
+}
+
+- (void)testThatItClosesThePushChannel_whenClienIDIsCleared
+{
+    // given
+    [self openPushChannel];
+    
+    // when
+    self.sut.clientID = nil;
+    
+    // then
+    XCTAssertEqual(currentFakePushChannelConnection.closeCounter, 1u);
+}
 
 @end
-
 
 
 
@@ -557,6 +637,11 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 {
     self.closeCounter++;
     self.isOpen = NO;
+}
+
+- (void)sendFakeData
+{
+    [self.consumer pushChannel:(ZMPushChannelConnection *)self didReceiveTransportData:@[]];
 }
 
 @end

@@ -222,9 +222,6 @@ static dispatch_queue_t isolationQueue()
     BOOL read = [self findItemWithPassword:&readPassword];
     
     if(!read || (![readPassword isEqualToData:password])) {
-        if(success) {
-            //ZMTraceAuthLockedKeychainDetected();
-        }
         dispatch_async(isolationQueue(), ^{
             [self addNonPersistedPassword:password];
         });

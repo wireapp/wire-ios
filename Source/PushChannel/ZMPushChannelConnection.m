@@ -23,7 +23,6 @@
 #import "ZMPushChannelConnection+WebSocket.h"
 #import "ZMWebSocket.h"
 #import "ZMAccessToken.h"
-#import "TransportTracing.h"
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 
@@ -89,7 +88,6 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
                 headers[@"User-Agent"] = [userAgentString copy];
             }
             webSocket = [[ZMWebSocket alloc] initWithConsumer:self queue:self.webSocketQueue group:self.webSocketGroup url:URL additionalHeaderFields:headers];
-            ZMTracePushChannelEvent(self, webSocket, 100);
         }
         self.webSocket = webSocket;
         self.pingInterval = 40;
@@ -157,7 +155,6 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 {
     [self.pingTimer invalidate];
     NSTimeInterval const interval = self.shiftedPingInterval;
-    ZMTracePushChannelPingStartStop(self, 0, (int) (interval * 1000.));
     NSTimer *timer = [NSTimer timerWithTimeInterval:interval target:self selector:@selector(sendPing:) userInfo:nil repeats:YES];
     timer.tolerance = interval * 0.1;
     self.pingTimer = timer;
@@ -171,7 +168,6 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 - (void)sendPing:(NSTimer *)timer
 {
     NOT_USED(timer);
-    ZMTracePushChannelPingFired(self);
     [self.webSocketGroup asyncOnQueue:self.webSocketQueue block:^{
         if (timer == self.pingTimer) {
             [self.webSocket sendPingFrame];
@@ -181,7 +177,6 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)stopPingTimer;
 {
-    ZMTracePushChannelPingStartStop(self, 1, 0);
     NSTimer *timer = self.pingTimer;
     self.pingTimer = nil;
     [self.webSocketGroup asyncOnQueue:dispatch_get_main_queue() block:^{
@@ -195,11 +190,10 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 @implementation ZMPushChannelConnection (ZMWebSocketConsumer)
 
--(void)webSocketDidCompleteHandshake:(ZMWebSocket *)websocket HTTPResponse:(NSHTTPURLResponse *)response
+-(void)webSocketDidCompleteHandshake:(ZMWebSocket * __unused)websocket HTTPResponse:(NSHTTPURLResponse *)response
 {
     ZMLogDebug(@"-[%@ %@]", self.class, NSStringFromSelector(_cmd));
     
-    ZMTracePushChannelEvent(self, websocket, 0);
     [self.consumerQueue performGroupedBlock:^{
         [self.consumer pushChannelDidOpen:self withResponse:response];
     }];
@@ -207,14 +201,12 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)webSocket:(ZMWebSocket *)webSocket didReceiveFrameWithText:(NSString *)text;
 {
-    ZMTracePushChannelEvent(self, webSocket, 1);
     NSData *data = [text dataUsingEncoding:NSUTF8StringEncoding];
     [self webSocket:webSocket didReceiveFrameWithData:data];
 }
 
 - (void)webSocket:(ZMWebSocket *)webSocket didReceiveFrameWithData:(NSData *)data;
 {
-    ZMTracePushChannelEvent(self, webSocket, 2);
     VerifyReturn(data != nil);
     NOT_USED(webSocket);
     NSError *error;
@@ -228,9 +220,8 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     }
 }
 
-- (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response;
+- (void)webSocketDidClose:(ZMWebSocket * __unused)webSocket HTTPResponse:(NSHTTPURLResponse *)response;
 {
-    ZMTracePushChannelEvent(self, webSocket, 3);
     self.closeResponse = response;
     [self close];
 }
