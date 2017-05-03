@@ -464,15 +464,16 @@ public extension UserClient {
     
     /// Use this method only for the selfClient
     public func decrementNumberOfRemainingKeys() {
-        let oldValue = numberOfKeysRemaining
-        if(numberOfKeysRemaining > 0) {
+        guard isSelfClient() else { fatal("`decrementNumberOfRemainingKeys` should only be called on the self client") }
+        
+        if numberOfKeysRemaining > 0 {
             numberOfKeysRemaining -= 1
         }
-        if(numberOfKeysRemaining < 0) { // this will recover from the fact that the number might already be < 0
-                                        // from a previous run
-            numberOfKeysRemaining = 0;
+        if numberOfKeysRemaining < 0 { // this will recover from the fact that the number might already be < 0
+                                       // from a previous run
+            numberOfKeysRemaining = 0
         }
-        if(oldValue != 0) {
+        if numberOfKeysRemaining == 0 {
             self.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNumberOfKeysRemainingKey))
         }
     }

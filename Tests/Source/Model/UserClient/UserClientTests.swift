@@ -336,6 +336,36 @@ class UserClientTests: ZMBaseManagedObjectTest {
             _ = token // Silence warning
         }
     }
+    
+    func testThatItAsksForMoreWhenRunningOutOfPrekeys() {
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            selfClient.numberOfKeysRemaining = 1
+            
+            // when
+            selfClient.decrementNumberOfRemainingKeys()
+            
+            // then
+            XCTAssertTrue(selfClient.modifiedKeys!.contains(ZMUserClientNumberOfKeysRemainingKey))
+        }
+    }
+    
+    func testThatItDoesntAskForMoreWhenItStillHasPrekeys() {
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            selfClient.numberOfKeysRemaining = 2
+            
+            // when
+            selfClient.decrementNumberOfRemainingKeys()
+            
+            // then
+            XCTAssertNil(selfClient.modifiedKeys)
+        }
+    }
 }
 
 extension UserClientTests {
