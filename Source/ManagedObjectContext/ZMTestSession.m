@@ -198,6 +198,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [self.syncMOC.zm_imageAssetCache wipeCache];
         [self.syncMOC.zm_userImageCache wipeCache];
     }];
+    [PersonName.stringsToPersonNames removeAllObjects];
 }
 
 @end

@@ -34,6 +34,8 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
         if let url = currentTestURL {
             removeTestFile(url)
         }
+        currentTestURL = nil
+        message = nil
         super.tearDown()
     }
     
