@@ -77,6 +77,7 @@
 		BF707C3B1EB8879300108D4E /* MessageCountTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF707C3A1EB8879300108D4E /* MessageCountTrackerTests.swift */; };
 		BF707C3D1EB8928A00108D4E /* Clusterizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF707C3C1EB8928A00108D4E /* Clusterizer.swift */; };
 		BF707C3F1EB892D900108D4E /* Clusterizer+MessageCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF707C3E1EB892D900108D4E /* Clusterizer+MessageCount.swift */; };
+		BF707C511EB9F9CC00108D4E /* ClusterizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF707C501EB9F9CC00108D4E /* ClusterizerTests.swift */; };
 		BF735CFD1E7050D5003BC61F /* ZMConversationTests+CallSystemMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF735CFB1E7050D0003BC61F /* ZMConversationTests+CallSystemMessages.swift */; };
 		BF735CFF1E70626F003BC61F /* store2-27-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BF735CFE1E70626F003BC61F /* store2-27-0.wiredatabase */; };
 		BF76998B1D3500F0009C378B /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7699891D3500D6009C378B /* Ono.framework */; };
@@ -469,6 +470,7 @@
 		BF707C3A1EB8879300108D4E /* MessageCountTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCountTrackerTests.swift; sourceTree = "<group>"; };
 		BF707C3C1EB8928A00108D4E /* Clusterizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Clusterizer.swift; sourceTree = "<group>"; };
 		BF707C3E1EB892D900108D4E /* Clusterizer+MessageCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Clusterizer+MessageCount.swift"; sourceTree = "<group>"; };
+		BF707C501EB9F9CC00108D4E /* ClusterizerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClusterizerTests.swift; sourceTree = "<group>"; };
 		BF735CFB1E7050D0003BC61F /* ZMConversationTests+CallSystemMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+CallSystemMessages.swift"; sourceTree = "<group>"; };
 		BF735CFE1E70626F003BC61F /* store2-27-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store2-27-0.wiredatabase"; path = "Tests/Resources/store2-27-0.wiredatabase"; sourceTree = SOURCE_ROOT; };
 		BF7699891D3500D6009C378B /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
@@ -885,6 +887,7 @@
 			isa = PBXGroup;
 			children = (
 				F963E9721D9BF9E300098AD3 /* ProtosTests.swift */,
+				BF707C501EB9F9CC00108D4E /* ClusterizerTests.swift */,
 				546D3DE81CE5D24C00A6047F /* MimeTypeTests.swift */,
 				54DE05DC1CF8711F00C35253 /* ProtobufUtilitiesTests.swift */,
 				BF949E5A1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift */,
@@ -2202,6 +2205,7 @@
 				BF7AFFCC1D747B5D00B2E089 /* DatabaseBaseTest.m in Sources */,
 				F991CE191CB55E95004D8465 /* ZMSearchUserTests.m in Sources */,
 				F9DBA5251E28EE1500BE23C0 /* ConversationObserverTests.swift in Sources */,
+				BF707C511EB9F9CC00108D4E /* ClusterizerTests.swift in Sources */,
 				F9A7083F1CAEEB7500C2F5FE /* PersistentChangeTrackingTests.m in Sources */,
 				BF735CFD1E7050D5003BC61F /* ZMConversationTests+CallSystemMessages.swift in Sources */,
 				BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */,
