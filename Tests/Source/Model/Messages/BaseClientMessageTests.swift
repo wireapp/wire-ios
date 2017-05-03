@@ -132,6 +132,37 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             self.syncMOC.setPersistentStoreMetadata(nil as String?, key: "PersistedClientId")
         }
         wipeCaches()
+        self.syncSelfUser = nil
+        self.syncUser1 = nil
+        self.syncUser2 = nil
+        self.syncUser3 = nil
+        
+        self.syncSelfClient1 = nil
+        self.syncSelfClient2 = nil
+        self.syncUser1Client1 = nil
+        self.syncUser1Client2 = nil
+        self.syncUser2Client1 = nil
+        self.syncUser2Client2 = nil
+        self.syncUser3Client1 = nil
+        
+        self.syncConversation = nil
+        self.syncExpectedRecipients = nil
+        
+        self.user1 = nil
+        self.user2 = nil
+        self.user3 = nil
+        
+        self.selfClient1 = nil
+        self.selfClient2 = nil
+        self.user1Client1 = nil
+        self.user1Client2 = nil
+        self.user2Client1 = nil
+        self.user2Client2 = nil
+        self.user3Client1 = nil
+        
+        self.conversation = nil
+        
+        self.expectedRecipients = nil
         super.tearDown()
     }
     
