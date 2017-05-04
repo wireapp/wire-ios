@@ -186,7 +186,9 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
     
     // MARK: Change computing
     /// Compute the changes, update window and notify observers
-    fileprivate func computeChanges() {
+    ///
+    /// - Parameter needsReload: set to true when there might be changes that are not reflected in change info
+    fileprivate func computeChanges(needsReload: Bool = false) {
         guard let window = conversationWindow else { return }
         defer {
             updatedMessages = []
@@ -208,6 +210,15 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
             state = newStateUpdate.newSnapshot
             changeInfo = MessageWindowChangeInfo(setChangeInfo: newStateUpdate.changeInfo)
             tempUserIDsInWindow = nil
+        } else if needsReload {
+            // We need to reload, just make empty change info
+            let emptyChangeInfo = SetChangeInfo<ZMMessage>(observedObject: window)
+            changeInfo = MessageWindowChangeInfo(setChangeInfo: emptyChangeInfo)
+        }
+        
+        if needsReload {
+            zmLog.debug("Needs reloading")
+            changeInfo?.needsReload = true
         }
         
         // Notify observers
@@ -219,7 +230,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
     func updateMessageChangeInfos(window: ZMConversationMessageWindow) {
         messageChangeInfos.forEach{
             guard let user = $0.message.sender, let userChange = userChanges.removeValue(forKey:user.objectID) else { return }
-            $0.changeInfos["userChanges"] = userChange
+            $0.changeInfos[MessageChangeInfo.UserChangeInfoKey] = userChange
         }
         
         guard userChanges.count > 0, let messages = window.messages.array as? [ZMMessage] else { return }
@@ -230,7 +241,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
                 guard userIDs.contains(objectID) else { return }
                 
                 let changeInfo = MessageChangeInfo(object: message)
-                changeInfo.changeInfos["userChanges"] = change
+                changeInfo.changeInfos[MessageChangeInfo.UserChangeInfoKey] = change
                 messageChangeInfos.append(changeInfo)
             }
         }
@@ -247,10 +258,10 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
         
         var userInfo = [String : Any]()
         if messageChangeInfos.count > 0 {
-            userInfo["messageChangeInfos"] = messageChangeInfos
+            userInfo[MessageWindowChangeInfo.MessageChangeUserInfoKey] = messageChangeInfos
         }
         if let changeInfo = windowChangeInfo {
-            userInfo["messageWindowChangeInfo"] = changeInfo
+            userInfo[MessageWindowChangeInfo.MessageWindowChangeUserInfoKey] = changeInfo
         }
         guard !userInfo.isEmpty else {
             zmLog.debug("No changes to post for window \(window)")
@@ -264,7 +275,7 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
     
     public func applicationWillEnterForeground() {
         shouldRecalculate = true
-        computeChanges()
+        computeChanges(needsReload: true)
     }
     
     func logMessage(for messageChangeInfos: [MessageChangeInfo], windowChangeInfo: MessageWindowChangeInfo?) -> String {
