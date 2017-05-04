@@ -42,7 +42,9 @@
 
 - (void)testThatItRendersTheCellUnverifiedFullWidthIdentifierLongerThan_16_Characters
 {
-    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"102030405060708090" forUser:self.user createIfNeeded:YES];
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    client.remoteIdentifier = @"102030405060708090";
+    client.user = self.user;
     client.deviceClass = @"tablet";
     [self.sut configureForClient:client];
     ZMVerifyView([self.sut wrapInTableView]);
@@ -50,7 +52,9 @@
 
 - (void)testThatItRendersTheCellUnverifiedTruncatedIdentifier
 {
-    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"807060504030201" forUser:self.user createIfNeeded:YES];
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    client.remoteIdentifier = @"807060504030201";
+    client.user = self.user;
     client.deviceClass = @"desktop";
     [self.sut configureForClient:client];
     ZMVerifyView([self.sut wrapInTableView]);
@@ -58,7 +62,9 @@
 
 - (void)testThatItRendersTheCellUnverifiedTruncatedIdentifierMultipleCharactersMissing
 {
-    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"7060504030201" forUser:self.user createIfNeeded:YES];
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    client.remoteIdentifier = @"7060504030201";
+    client.user = self.user;
     client.deviceClass = @"desktop";
     [self.sut configureForClient:client];
     ZMVerifyView([self.sut wrapInTableView]);
@@ -66,7 +72,9 @@
 
 - (void)testThatItRendersTheCellVerifiedWithLabel
 {
-    UserClient *client = [UserClient fetchUserClientWithRemoteId:@"e7b2u9d4s85h1gv0" forUser:self.user createIfNeeded:YES];
+    UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
+    client.remoteIdentifier = @"e7b2u9d4s85h1gv0";
+    client.user = self.user;
     client.deviceClass = @"phone";
     [self trustClient:client];
     [self.sut configureForClient:client];
