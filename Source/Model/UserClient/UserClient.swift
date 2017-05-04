@@ -137,8 +137,15 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
     
     public static func fetchUserClient(withRemoteId remoteIdentifier: String, forUser user:ZMUser, createIfNeeded: Bool) -> UserClient? {
+        precondition(!createIfNeeded || user.managedObjectContext!.zm_isSyncContext, "clients can only be created on the syncContext")
         
-        guard let client = user.clients.filter({$0.remoteIdentifier == remoteIdentifier}).first
+        let existingClients = user.clients.filter({$0.remoteIdentifier == remoteIdentifier})
+        
+        if existingClients.count > 1 {
+            zmLog.error("Detected duplicate clients: \(existingClients.map({ $0.remoteIdentifier! }))")
+        }
+        
+        guard let client = existingClients.first
         else {
             if (createIfNeeded) {
                 let newClient = UserClient.insertNewObject(in: user.managedObjectContext!)
