@@ -248,6 +248,35 @@ extension MessageWindowObserverTests {
         MessageWindowChangeInfo.remove(observer: token, for: window)
     }
     
+    func testThatItSetsNeedReloadAfterComingToForegroundEvenWithNoChanges() {
+        // given
+        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
+        self.uiMOC.saveOrRollback()
+        let observerCenter = uiMOC.messageWindowObserverCenter
+        let token = MessageWindowChangeInfo.add(observer: windowObserver, for: window)
+        
+        // when
+        observerCenter.applicationDidEnterBackground()
+        observerCenter.applicationWillEnterForeground()
+        
+        // then
+        if let note = windowObserver.notifications.first {
+            XCTAssertEqual(note.conversationMessageWindow, window)
+            XCTAssertEqual(note.insertedIndexes, IndexSet())
+            XCTAssertEqual(note.deletedIndexes, IndexSet())
+            XCTAssertEqual(note.updatedIndexes, IndexSet())
+            XCTAssertEqual(note.movedIndexPairs.count, 0)
+            XCTAssert(note.needsReload)
+        }
+        else {
+            XCTFail("New state is nil")
+        }
+
+        MessageWindowChangeInfo.remove(observer: token, for: window)
+    }
+    
     func testThatItNotifiesIfThereAreConversationWindowChangesWithInsert()
     {
         // given
