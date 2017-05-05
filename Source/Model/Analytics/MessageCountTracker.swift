@@ -29,7 +29,7 @@ public struct MessageCount {
 
 
 fileprivate struct MessageCountEvent {
-    let name = "legacy.message_count"
+    let name = "message_count"
     let attributes: [String: NSObject]
 
     init(messageCount: MessageCount, databaseSize: UInt) {
