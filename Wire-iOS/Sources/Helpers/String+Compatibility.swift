@@ -1,36 +1,36 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2017 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
+
+import Foundation
+
+extension String {
+    func appendingPathComponent(_ pathComponent: String) -> String {
+        return (self as NSString).appendingPathComponent(pathComponent)
+    }
+    
+    func appendingPathExtension(_ pathExtension: String) -> String? {
+        return (self as NSString).appendingPathExtension(pathExtension)
+    }
+}
 
 
-#import <UIKit/UIKit.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface KeyboardAvoidingViewController : UIViewController
-
-@property (nonatomic, readonly) UIViewController *viewController;
-
-@property (nonatomic) CGFloat topInset;
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
-- (instancetype)initWithNibName:(NSString * _Nullable)nibNameOrNil bundle:(NSBundle  * _Nullable)nibBundleOrNil NS_UNAVAILABLE;
-- (instancetype)initWithViewController:(UIViewController *)viewController NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_ASSUME_NONNULL_END
+extension CFString {
+    var string: String {
+        return self as String
+    }
+}
