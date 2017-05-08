@@ -20,7 +20,7 @@
 @import CoreGraphics;
 @import MobileCoreServices;
 @import WireSystem;
-
+@import WireMockTransport;
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
@@ -132,6 +132,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 - (void)tearDown
 {
     self.sut = nil;
+    self.pushChannelReceivedEvents = nil;
+    [(id)self.cookieStorage stopMocking];
+    self.cookieStorage = nil;
     self.pushChannelDidOpenCount = 0;
     self.pushChannelDidCloseCount = 0;
     [super tearDown];

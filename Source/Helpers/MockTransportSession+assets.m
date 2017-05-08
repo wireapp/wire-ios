@@ -293,6 +293,8 @@
         return [self processAssetV3PostWithMultipartData:[request multipartBodyItemsFromRequestOrFile]];
     } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodGET]) {
         return [self processAssetV3GetWithKey:[request RESTComponentAtIndex:2]];
+    } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodDELETE]) {
+        return [self processAssetV3DeleteWithKey:[request RESTComponentAtIndex:2]];
     }
     return nil;
 }
@@ -338,6 +340,5 @@
     }
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
-
 
 @end
