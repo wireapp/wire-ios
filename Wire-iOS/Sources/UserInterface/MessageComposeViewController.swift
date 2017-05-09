@@ -132,8 +132,7 @@ final class MessageComposeViewController: UIViewController {
         draftsBackButton.setTitleColor(color(ColorSchemeColorSeparator), for: .normal)
         draftsBackButton.accessibilityIdentifier = "back"
 
-
-        let count = numberOfOtherDrafts()
+        let count = persistence.numberOfStoredDrafts()
         if count > 0 {
             draftsBackButton.setTitle(String(count), for: .normal)
         }
@@ -144,12 +143,6 @@ final class MessageComposeViewController: UIViewController {
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: draftsBackButton)
         navigationItem.leftBarButtonItem?.accessibilityLabel = "backButton"
-    }
-
-    private func numberOfOtherDrafts() -> Int {
-        let storedDrafts = persistence.numberOfStoredDrafts()
-        guard nil != draft else { return storedDrafts }
-        return storedDrafts - 1
     }
 
     private func setupInputAccessoryView() {
