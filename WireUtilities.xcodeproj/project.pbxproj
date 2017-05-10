@@ -86,6 +86,8 @@
 		877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */; };
 		877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */ = {isa = PBXBuildFile; fileRef = 877F50201E729CCF00894C90 /* excessive_diacritics.txt */; };
 		87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */; };
+		BF3493F41EC362D400B0C314 /* Iterator+Containment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */; };
+		BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */; };
 		BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */; };
 		BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */; };
 		BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */; };
@@ -274,6 +276,8 @@
 		877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+ExtremeCombiningCharactersTests.swift"; sourceTree = "<group>"; };
 		877F50201E729CCF00894C90 /* excessive_diacritics.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = excessive_diacritics.txt; sourceTree = "<group>"; };
 		87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtremeCombiningCharactersValidator.swift; sourceTree = "<group>"; };
+		BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+Containment.swift"; sourceTree = "<group>"; };
+		BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+ContainmentTests.swift"; sourceTree = "<group>"; };
 		BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparison.swift; sourceTree = "<group>"; };
 		BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparisonTests.swift; sourceTree = "<group>"; };
 		BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-production.xml"; sourceTree = "<group>"; };
@@ -559,6 +563,7 @@
 				54CA31201B74F36B00B820C0 /* UnownedObject.swift */,
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
 				16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */,
+				BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
 				877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */,
@@ -622,6 +627,7 @@
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
 				54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */,
 				BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */,
+				BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */,
 				877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */,
 			);
 			name = Source;
@@ -855,6 +861,7 @@
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
 				F9C9A7AA1CAEACB10039E10C /* ZMAccentColorValidator.m in Sources */,
 				54CA31291B74F36B00B820C0 /* Functional.swift in Sources */,
+				BF3493F41EC362D400B0C314 /* Iterator+Containment.swift in Sources */,
 				F9C9A7B11CAEACB10039E10C /* ZMStringLengthValidator.m in Sources */,
 				F9C9A78B1CAE9F9A0039E10C /* NSString+Normalization.m in Sources */,
 				3E88BE1B1B1F478200232589 /* NSOrderedSet+Zeta.m in Sources */,
@@ -878,6 +885,7 @@
 				F9C9A7C81CAEAFE10039E10C /* ZMStringLengthValidatorTests.m in Sources */,
 				F9D381DB1B70DF8500E6E4EB /* Hack.swift in Sources */,
 				54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */,
+				BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */,
 				F9C9A7C71CAEAFE10039E10C /* ZMPhoneNumberValidatorTests.m in Sources */,
 				F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */,
 				F9D381B21B70B94B00E6E4EB /* NSSet+ZMUTests.m in Sources */,
