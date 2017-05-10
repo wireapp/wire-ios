@@ -20,8 +20,4 @@
 @import Security;
 
 
-/// Verifies the trust for the backend server(s)
-__attribute((visibility("hidden"))) extern BOOL verifyServerTrust(SecTrustRef const serverTrust);
-
-/// Verifies the trust for CDN (content delivery network) servers
-__attribute((visibility("hidden"))) extern BOOL verifyCDNServerTrust(SecTrustRef const serverTrust);
+extern BOOL verifyServerTrust(SecTrustRef const serverTrust, NSString *host);
