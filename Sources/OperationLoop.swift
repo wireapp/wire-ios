@@ -74,7 +74,9 @@ final class RequestGeneratorStore {
 
     func tearDown() {
         strategies.forEach {
-            $0.tearDown()
+            if $0.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
+                ($0 as? ZMObjectSyncStrategy)?.tearDown()
+            }
         }
 
         isTornDown = true

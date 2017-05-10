@@ -87,4 +87,11 @@ class BaseSharingSessionTests: ZMTBaseTest {
         moc = sharingSession.userInterfaceContext
     }
 
+    override func tearDown() {
+        sharingSession = nil
+        authenticationStatus = nil
+        moc = nil
+        super.tearDown()
+    }
+
 }
