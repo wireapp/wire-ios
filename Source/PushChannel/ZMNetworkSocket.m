@@ -279,7 +279,7 @@ static BOOL checkTrust(ZMNetworkSocket * const socket, NSStream * const stream)
     }
     socket->_didCheckTrust = YES;
     id peerTrust = [stream propertyForKey:(__bridge id) kCFStreamPropertySSLPeerTrust];
-    socket->_trusted = verifyServerTrust((__bridge SecTrustRef) peerTrust);
+    socket->_trusted = verifyServerTrust((__bridge SecTrustRef)peerTrust, socket.URL.host);
     if (! socket->_trusted) {
         [socket close];
     }

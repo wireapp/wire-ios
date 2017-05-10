@@ -286,8 +286,7 @@ ZM_EMPTY_ASSERTING_INIT();
     Check(URLSession == self.backingSession);
     NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
     if ([protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        BOOL const hostIsCDN = [protectionSpace.host hasSuffix:@"cloudfront.net"];
-        BOOL const didTrust = hostIsCDN ? verifyCDNServerTrust(protectionSpace.serverTrust) : verifyServerTrust(protectionSpace.serverTrust);
+        BOOL const didTrust = verifyServerTrust(protectionSpace.serverTrust, protectionSpace.host);
         if (! didTrust) {
             ZMLogDebug(@"Not trusting the server.");
             completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
