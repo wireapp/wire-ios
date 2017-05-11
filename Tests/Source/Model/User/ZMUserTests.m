@@ -1485,7 +1485,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(connection.message, originalText, @"This will stay whatever the other user set it to.");
 }
 
-- (void)testThatConnectingToAPendingUserSetsTheConnectionStatusToAcceptedAndConversationTypeToOneToOne;
+- (void)testThatConnectingToAPendingUserSetsTheConnectionStatusToAcceptedAndConversationTypeToOneToOneAndUpdatesModificationDate
 {
     // given
     NSUUID *uuid = [NSUUID createUUID];
@@ -1509,7 +1509,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqual(connection.status, ZMConnectionStatusAccepted);
     XCTAssertEqualObjects(connection.message, originalText, @"This will stay whatever the other user set it to.");
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
-    
+    XCTAssertEqualWithAccuracy(conversation.lastModifiedDate.timeIntervalSince1970, [NSDate date].timeIntervalSince1970, 0.1);
 }
 
 - (void)testThatConnectingToAUserSetsTheConnectionStatusAsHavingLocalModifications
