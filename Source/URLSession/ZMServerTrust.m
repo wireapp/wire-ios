@@ -36,19 +36,18 @@ static BOOL verifyServerTrustWithPinnedKeys(SecTrustRef const serverTrust, NSArr
 // Also
 //     CFBridgingRelease(SecCertificateCopyValues(cert1, @[kSecOIDX509V1SubjectName], NULL))
 
-static SecKeyRef publicKeyFromKeyData(NSData *keyData)
+static SecKeyRef publicKeyFromCertificateData(NSData *certificateData)
 {
-    NSDictionary *attributes = @{
-                                 (NSString *)kSecAttrKeyType: (NSString *)kSecAttrKeyTypeRSA,
-                                 (NSString *)kSecAttrKeyClass: (NSString *)kSecAttrKeyClassPublic,
-                                 (NSString *)kSecAttrKeySizeInBits: @(keyData.length * 8)
-                                 };
+    SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (CFDataRef)certificateData);
     
-    CFErrorRef error = nil;
-    SecKeyRef key = SecKeyCreateWithData((__bridge CFDataRef)keyData, (__bridge CFDictionaryRef)attributes, &error);
+    if (certificate == nil) {
+        [NSException raise:NSInvalidArgumentException format:@"Error decoding certificate for pinned key"];
+    }
     
-    if (error != nil) {
-        [NSException raise:NSInvalidArgumentException format:@"Error while creating pinned key: %@", error, nil];
+    SecKeyRef key = SecCertificateCopyPublicKey(certificate);
+    
+    if (key == nil) {
+        [NSException raise:NSInvalidArgumentException format:@"Error extracing pinned key from certificate"];
     }
     
     return key;
@@ -56,16 +55,37 @@ static SecKeyRef publicKeyFromKeyData(NSData *keyData)
 
 static SecKeyRef wirePublicKey()
 {
-    NSString *base64Key = @"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAreYzBWuvnVKYfgNNX3dV \
-                            jUnqIVtl4XqQnCcY6m/sWM15TTK0bo9FKnMxNAPtDzB6ViRvpZsKEefX8pi15Jcs \
-                            4uZiuZ81ISV1bqxtpsjJ56Yjeme99Dca5ck35pThYuK6jZ8vG6pJiY9mRY9nGadi \
-                            d4qWL7uwAeoInx2mOM7HepCCh2NOXd+EjQ4sBsfgb+kWrcVQmBzvLHPUDoykm/m+ \
-                            BvL2eJ1njPNiM/GoeXbmIW1WM3ifucYJoD9g+V5NfHfANrVu2w4YcLDad0C85Nb8 \
-                            U1sgFNkrgOqzhd/1xHok1uOyjoeLTIHHYkryvbBEmdl6v+f2J1EM0+Fj9vseI2TY \
-                            rQIDAQAB";
+    NSString *base64Cert = @" \
+    MIIFDDCCA/SgAwIBAgIQC7HK4y3OxqQjbYqDk1wVrDANBgkqhkiG9w0BAQsFADBN \
+    MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5E \
+    aWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwHhcNMTYxMTAzMDAwMDAwWhcN \
+    MTgwMTA0MTIwMDAwWjBYMQswCQYDVQQGEwJDSDEMMAoGA1UECBMDWnVnMQwwCgYD \
+    VQQHEwNadWcxGDAWBgNVBAoTD1dpcmUgU3dpc3MgR21iSDETMBEGA1UEAwwKKi53 \
+    aXJlLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK3mMwVrr51S \
+    mH4DTV93VY1J6iFbZeF6kJwnGOpv7FjNeU0ytG6PRSpzMTQD7Q8welYkb6WbChHn \
+    1/KYteSXLOLmYrmfNSEldW6sbabIyeemI3pnvfQ3GuXJN+aU4WLiuo2fLxuqSYmP \
+    ZkWPZxmnYneKli+7sAHqCJ8dpjjOx3qQgodjTl3fhI0OLAbH4G/pFq3FUJgc7yxz \
+    1A6MpJv5vgby9nidZ4zzYjPxqHl25iFtVjN4n7nGCaA/YPleTXx3wDa1btsOGHCw \
+    2ndAvOTW/FNbIBTZK4Dqs4Xf9cR6JNbjso6Hi0yBx2JK8r2wRJnZer/n9idRDNPh \
+    Y/b7HiNk2K0CAwEAAaOCAdswggHXMB8GA1UdIwQYMBaAFA+AYRyCMWHVLyjnjUY4 \
+    tCzhxtniMB0GA1UdDgQWBBT/SIDwnMHi0O3A0H/c3Jh8K19NnDAfBgNVHREEGDAW \
+    ggoqLndpcmUuY29tggh3aXJlLmNvbTAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw \
+    FAYIKwYBBQUHAwEGCCsGAQUFBwMCMGsGA1UdHwRkMGIwL6AtoCuGKWh0dHA6Ly9j \
+    cmwzLmRpZ2ljZXJ0LmNvbS9zc2NhLXNoYTItZzUuY3JsMC+gLaArhilodHRwOi8v \
+    Y3JsNC5kaWdpY2VydC5jb20vc3NjYS1zaGEyLWc1LmNybDBMBgNVHSAERTBDMDcG \
+    CWCGSAGG/WwBATAqMCgGCCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5j \
+    b20vQ1BTMAgGBmeBDAECAjB8BggrBgEFBQcBAQRwMG4wJAYIKwYBBQUHMAGGGGh0 \
+    dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBGBggrBgEFBQcwAoY6aHR0cDovL2NhY2Vy \
+    dHMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0U0hBMlNlY3VyZVNlcnZlckNBLmNydDAM \
+    BgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQAYQUuP8OknxlnqihIOPMcy \
+    Rpg25val6hmnrIfm1H66kOFpnjwv/66MhikCbJBAKlbnmuxNd1zK30CT4tbcmy1u \
+    YzGxN8D5Am+pcmHg8vgmnyRt3QftHVVyu9ayoR0dGG2+00iTcY8Un0+c30ktaDE1 \
+    vSKxp0VQvyhW/FHxOzFWpub11MzuJ3wf3MkdpBQL604LKY+viYKt3eXDJUZPhDOK \
+    e9VCYGZLsAEGTRYMq3iIey76hbVojWYD0Hw4xHKMmM+AOiksN6WW22uxXXwRuYM+ \
+    uLl9qx1HBNoeCitFfYMh+pe7UUQFs1DVNaFwAbTlOwrU1Xif8xmbvZoMm4BJUYEj";
     
-    NSData *keyData = [[NSData alloc] initWithBase64EncodedString:base64Key options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    SecKeyRef key = publicKeyFromKeyData(keyData);
+    NSData *certificateData = [[NSData alloc] initWithBase64EncodedString:base64Cert options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    SecKeyRef key = publicKeyFromCertificateData(certificateData);
     
     assert(key != nil);
     
