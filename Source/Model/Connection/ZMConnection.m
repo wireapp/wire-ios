@@ -229,6 +229,8 @@ struct stringAndStatus {
                 self.conversation = realConversation;
                 self.conversation.needsToBeUpdatedFromBackend = YES;
             }
+            // The conversation will not have any modified date until the first message, use connection date in the meantime
+            self.conversation.lastModifiedDate = lastUpdateDate;
         } else {
             self.conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:self.managedObjectContext];
             self.conversation.needsToBeUpdatedFromBackend = YES;

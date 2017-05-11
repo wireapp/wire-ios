@@ -307,6 +307,8 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
                 // Do nothing
                 break;
             case ZMConnectionStatusPending:
+                // We should get the real modified date after syncing with the server, using current date until then.
+                self.connection.conversation.lastModifiedDate = [NSDate date];
             case ZMConnectionStatusIgnored:
             case ZMConnectionStatusBlocked:
                 self.connection.status = ZMConnectionStatusAccepted;
@@ -314,7 +316,6 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
                     self.connection.conversation.conversationType = ZMConversationTypeOneOnOne;
                 }
                 break;
-                
         }
     }
     if (handler) {
