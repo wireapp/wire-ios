@@ -108,6 +108,10 @@
 
 - (void)presentAddEmailPasswordViewController
 {
+    if ([self.navigationController.topViewController isKindOfClass:[AddEmailPasswordViewController class]]) {
+        return;
+    }
+    
     AddEmailPasswordViewController *addEmailPasswordViewController = [[AddEmailPasswordViewController alloc] init];
     addEmailPasswordViewController.analyticsTracker = [AnalyticsTracker analyticsTrackerWithContext:AnalyticsContextPostLogin];
     addEmailPasswordViewController.formStepDelegate = self;
