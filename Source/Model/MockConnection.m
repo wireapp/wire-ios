@@ -47,6 +47,7 @@
 - (void)accept
 {
     self.status = @"accepted";
+    self.lastUpdate = [NSDate date];
     RequireString(self.conversation != nil, "No conversation");
     NSArray *addedUsers = @[self.to];
     [self.conversation addUsersByUser:self.from addedUsers:addedUsers];
