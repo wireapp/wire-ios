@@ -60,6 +60,14 @@ extension GenericMessageEntity : EncryptedPayloadGenerator {
     }
     
     public var debugInfo: String {
+        if message.hasCalling() {
+            return "Calling Message"
+        } else if message.hasClientAction() {
+            switch message.clientAction {
+            case .RESETSESSION: return "Reset Session Message"
+            }
+        }
+
         return "\(self)"
     }
     
@@ -90,7 +98,7 @@ public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageE
     }
     
     public override func request(forEntity entity: GenericMessageEntity) -> ZMTransportRequest? {
-         return requestFactory.upstreamRequestForMessage(entity, forConversationWithId: entity.conversation!.remoteIdentifier!)
+        return requestFactory.upstreamRequestForMessage(entity, forConversationWithId: entity.conversation!.remoteIdentifier!)
     }
     
     public override func shouldTryToResend(entity: GenericMessageEntity, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
