@@ -94,6 +94,7 @@
 		54E03A391E93BFE10089AC69 /* WireTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54E03A271E93BFDC0089AC69 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54E03A3A1E93BFE10089AC69 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54E03A281E93BFDC0089AC69 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54FB03B31E422125000E13DC /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */; };
+		BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */; };
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		BF7D9BE71D8C353A00949267 /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66512D1D8C2ED50074F367 /* Ono.framework */; };
 		BF7D9BEA1D8C353A00949267 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66512F1D8C2ED50074F367 /* OCMock.framework */; };
@@ -249,6 +250,7 @@
 		54E03A271E93BFDC0089AC69 /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = Carthage/Build/iOS/WireTransport.framework; sourceTree = "<group>"; };
 		54E03A281E93BFDC0089AC69 /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
 		54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumberiOS.framework; path = Carthage/Build/iOS/libPhoneNumberiOS.framework; sourceTree = "<group>"; };
+		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
 		BF66512D1D8C2ED50074F367 /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
 		BF66512F1D8C2ED50074F367 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
 		BF6651311D8C2ED50074F367 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 				166901B71D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.h */,
 				166901B81D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m */,
 				166901B91D7081C7000FE4AF /* ZMRequestGenerator.h */,
+				BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */,
 				166901BA1D7081C7000FE4AF /* ZMRequestGenerator.m */,
 				166901BB1D7081C7000FE4AF /* ZMSingleRequestSync.h */,
 				166901BC1D7081C7000FE4AF /* ZMSingleRequestSync.m */,
@@ -650,6 +653,7 @@
 				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
 				166901FD1D7081D1000FE4AF /* ZMImagePreprocessingTracker.m in Sources */,
 				166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */,
+				BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */,
 				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
 				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
