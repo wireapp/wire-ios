@@ -152,30 +152,33 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
-        guard let message = managedObject as? ZMAssetClientMessage else { return nil }
+        guard let message = managedObject as? ZMAssetClientMessage else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
 
         if message.uploadState == .uploadingFullAsset {
             return requestToUploadFullAsset(for: message)
+        } else {
+            fatal("Wrong message upload state: \(message.uploadState.rawValue))")
         }
 
         return nil
     }
 
     private func requestToUploadFullAsset(for message: ZMAssetClientMessage) -> ZMUpstreamRequest? {
-        guard let name = message.fileMessageData?.filename else { return nil }
-        guard let data = managedObjectContext.zm_fileAssetCache.assetData(message.nonce, fileName: name, encrypted: true) else { return nil }
+        guard let name = message.fileMessageData?.filename else { fatal("Message file data does not contain filename") }
+        guard let data = managedObjectContext.zm_fileAssetCache.assetData(message.nonce, fileName: name, encrypted: true) else { fatal("Could not find file in cache")  }
+        
+        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
 
-        let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: .persistent)
-        request?.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
+        request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
             message.associatedTaskIdentifier = identifier
         })
-        request?.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
+        request.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
             message.associatedTaskIdentifier = nil
             if response.result == .expired || response.result == .temporaryError || response.result == .tryAgainLater {
                 self.failMessageUpload(message, keys: [ZMAssetClientMessageUploadedStateKey], request: request)
             }
         })
-        request?.add(ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
+        request.add(ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
             message.progress = progress
             self.managedObjectContext.enqueueDelayedSave()
         })
