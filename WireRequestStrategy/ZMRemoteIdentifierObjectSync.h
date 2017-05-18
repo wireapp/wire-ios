@@ -18,6 +18,8 @@
 
 
 #import <Foundation/Foundation.h>
+#import "ZMRequestGenerator.h"
+
 
 @class ZMRemoteIdentifierObjectSync;
 @class ZMTransportRequest;
@@ -35,7 +37,7 @@
 
 
 
-@interface ZMRemoteIdentifierObjectSync : NSObject
+@interface ZMRemoteIdentifierObjectSync : NSObject <ZMRequestGenerator>
 
 - (instancetype)initWithTranscoder:(id<ZMRemoteIdentifierObjectTranscoder>)transcoder managedObjectContext:(NSManagedObjectContext *)moc;
 
