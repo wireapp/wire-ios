@@ -200,7 +200,14 @@ struct TypeMap {
     { CFSTR("user.update"), ZMUpdateEventUserUpdate },
     { CFSTR("user.contact-join"), ZMUpdateEventUserContactJoin },
     { CFSTR("user.client-add"), ZMUpdateEventUserClientAdd },
-    { CFSTR("user.client-remove"), ZMUpdateEventUserClientRemove }
+    { CFSTR("user.client-remove"), ZMUpdateEventUserClientRemove },
+    { CFSTR("team.create"), ZMUpdateEventTeamCreate },
+    { CFSTR("team.delete"), ZMUpdateEventTeamDelete },
+    { CFSTR("team.update"), ZMUpdateEventTeamUpdate },
+    { CFSTR("team.member-join"), ZMUpdateEventTeamMemberJoin },
+    { CFSTR("team.member-leave"), ZMUpdateEventTeamMemberLeave },
+    { CFSTR("team.conversation-create"), ZMUpdateEventTeamConversationCreate },
+    { CFSTR("team.conversation-delete"), ZMUpdateEventTeamConversationDelete },
 };
 
 + (ZMUpdateEventType)updateEventTypeForEventTypeString:(NSString *)string;
@@ -268,6 +275,13 @@ struct TypeMap {
         case ZMUpdateEventUserContactJoin:
         case ZMUpdateEventUserClientAdd:
         case ZMUpdateEventUserClientRemove:
+        case ZMUpdateEventTeamCreate:
+        case ZMUpdateEventTeamDelete:
+        case ZMUpdateEventTeamUpdate:
+        case ZMUpdateEventTeamMemberJoin:
+        case ZMUpdateEventTeamMemberLeave:
+        case ZMUpdateEventTeamConversationCreate:
+        case ZMUpdateEventTeamConversationDelete:
         case ZMUpdateEvent_LAST:
             return NO;
     }

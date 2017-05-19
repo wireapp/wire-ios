@@ -62,6 +62,13 @@
              @"user.contact-join" : @(ZMUpdateEventUserContactJoin),
              @"user.client-add" : @(ZMUpdateEventUserClientAdd),
              @"user.client-remove" : @(ZMUpdateEventUserClientRemove),
+             @"team.create" : @(ZMUpdateEventTeamCreate),
+             @"team.delete" : @(ZMUpdateEventTeamDelete),
+             @"team.update" : @(ZMUpdateEventTeamUpdate),
+             @"team.member-join" : @(ZMUpdateEventTeamMemberJoin),
+             @"team.member-leave" : @(ZMUpdateEventTeamMemberLeave),
+             @"team.conversation-create" : @(ZMUpdateEventTeamConversationCreate),
+             @"team.conversation-delete" : @(ZMUpdateEventTeamConversationDelete)
              };
 }
 
@@ -678,6 +685,13 @@
             case ZMUpdateEventUserContactJoin:
             case ZMUpdateEventUserClientAdd:
             case ZMUpdateEventUserClientRemove:
+            case ZMUpdateEventTeamCreate:
+            case ZMUpdateEventTeamDelete:
+            case ZMUpdateEventTeamUpdate:
+            case ZMUpdateEventTeamMemberJoin:
+            case ZMUpdateEventTeamMemberLeave:
+            case ZMUpdateEventTeamConversationCreate:
+            case ZMUpdateEventTeamConversationDelete:
             case ZMUpdateEvent_LAST:
                 break;
         }
