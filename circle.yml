@@ -16,6 +16,7 @@ checkout:
 
 dependencies:
   override:
+    - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
     - bundle install:
         pwd:
           $CIRCLE_PROJECT_REPONAME
@@ -38,3 +39,4 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/code_coverage/
     - cp $CIRCLE_PROJECT_REPONAME/tests.xml $CIRCLE_TEST_REPORTS/junit/
     - rsync -auv $CIRCLE_PROJECT_REPONAME/code-coverage/ $CIRCLE_TEST_REPORTS/code-coverage/
+    - bundle exec danger
