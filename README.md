@@ -13,7 +13,7 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/wire-ios-sync-engine) for an overview of the architecture.
 
-This project provides for cross-compilation of [cryptobox](https://github.com/shared-secret/cryptobox) for iOS, currently only in the form of static libraries.
+This project provides for cross-compilation of [cryptobox](https://github.com/wireapp/cryptobox) for iOS, currently only in the form of static libraries.
 
 ## Integrating Objective-C Wrapper
 You can integrate Objective-C Wrapper (Cryptobox.framework) using Carthage.
