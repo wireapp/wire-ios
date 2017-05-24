@@ -326,19 +326,20 @@
     MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
     entity.needsToBeUpdatedFromBackend = YES;
     NSDictionary *payload = @{@"3":@4};
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:404 transportSessionError:nil];
     
     // expect
     [[[(id)self.transcoder expect] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet expect] andReturn:entity] nextObjectToSynchronize];
     [[(id)self.operationSet expect] didStartSynchronizingKeys:nil forObject:entity];
     [[(id)self.operationSet expect] keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:entity result:ZMTransportResponseStatusPermanentError];
-    [(id<ZMDownstreamTranscoder>)[(id)self.transcoder expect] deleteObject:entity downstreamSync:self.sut];
+    [(id<ZMDownstreamTranscoder>)[(id)self.transcoder expect] deleteObject:entity withResponse:response downstreamSync:self.sut];
     [(ZMSyncOperationSet *)[(id)self.operationSet stub] removeObject:entity];
     ZMTransportRequest *request = [self.sut nextRequest];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
-    [request completeWithResponse:[ZMTransportResponse responseWithPayload:payload HTTPStatus:404 transportSessionError:nil]];
+    [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -352,12 +353,14 @@
     MockEntity *entity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
     entity.needsToBeUpdatedFromBackend = YES;
     NSDictionary *payload = @{@"3":@4};
+
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:404 transportSessionError:nil];
     
     [[[(id)self.transcoder stub] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet stub] andReturn:entity] nextObjectToSynchronize];
     [[(id)self.operationSet stub] didStartSynchronizingKeys:nil forObject:entity];
     [[(id)self.operationSet stub] keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:entity result:ZMTransportResponseStatusPermanentError];
-    [(id<ZMDownstreamTranscoder>)[(id)self.transcoder stub] deleteObject:entity downstreamSync:self.sut];
+    [(id<ZMDownstreamTranscoder>)[(id)self.transcoder stub] deleteObject:entity withResponse:response downstreamSync:self.sut];
     ZMTransportRequest *request = [self.sut nextRequest];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -365,7 +368,7 @@
     [(ZMSyncOperationSet *)[(id)self.operationSet expect] removeObject:entity];
     
     // when
-    [request completeWithResponse:[ZMTransportResponse responseWithPayload:payload HTTPStatus:404 transportSessionError:nil]];
+    [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -387,7 +390,7 @@
     [(ZMSyncOperationSet *) [(id)self.operationSet expect] keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:OCMOCK_ANY result:ZMTransportResponseStatusTryAgainLater];
     [(ZMSyncOperationSet *) [(id)self.operationSet reject] removeObject:OCMOCK_ANY];
     [(ZMSyncOperationSet *) [(id)self.operationSet reject] removeUpdatedObject:OCMOCK_ANY syncToken:OCMOCK_ANY synchronizedKeys:OCMOCK_ANY];
-    [[(id)self.transcoder reject] deleteObject:OCMOCK_ANY downstreamSync:OCMOCK_ANY];
+    [[(id)self.transcoder reject] deleteObject:OCMOCK_ANY withResponse:OCMOCK_ANY downstreamSync:OCMOCK_ANY];
     
     // when
     NSError *transportError = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeTryAgainLater userInfo:nil];

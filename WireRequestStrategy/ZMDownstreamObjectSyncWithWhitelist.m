@@ -85,9 +85,9 @@
     return [self.transcoder requestForFetchingObject:object downstreamSync:self];
 }
 
-- (void)deleteObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync> __unused)downstreamSync
+- (void)deleteObject:(ZMManagedObject *)object withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync> __unused)downstreamSync
 {
-    return [self.transcoder deleteObject:object downstreamSync:self];
+    return [self.transcoder deleteObject:object withResponse:response downstreamSync:self];
 }
 
 - (void)updateObject:(ZMManagedObject *)object withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync> __unused)downstreamSync
