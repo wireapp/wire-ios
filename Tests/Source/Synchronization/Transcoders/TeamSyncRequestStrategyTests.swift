@@ -260,7 +260,10 @@ final class TeamSyncRequestStrategyTests: MessagingTest {
                 "members": [
                     [
                         "user": userId.transportString(),
-                        "permissions": NSNumber(value: Permissions.addConversationMember.rawValue)
+                        "permissions": [
+                            "self": NSNumber(value: Permissions.addConversationMember.rawValue),
+                            "copy": NSNumber(value: 0)
+                        ]
                     ]
                 ]
             ]
@@ -322,7 +325,10 @@ final class TeamSyncRequestStrategyTests: MessagingTest {
                 "members": [
                     [
                         "user": userId.transportString(),
-                        "permissions": NSNumber(value: Permissions.addConversationMember.rawValue)
+                        "permissions": [
+                            "self": NSNumber(value: Permissions.addConversationMember.rawValue),
+                            "copy": NSNumber(value: 0)
+                        ]
                     ]
                 ]
             ]
@@ -349,8 +355,20 @@ final class TeamSyncRequestStrategyTests: MessagingTest {
 
             let payload: [String: Any] = [
                 "members": [
-                    ["user": user1Id.transportString(), "permissions": NSNumber(value: Permissions.addConversationMember.rawValue)],
-                    ["user": user2Id.transportString(), "permissions": NSNumber(value: Permissions.deleteConversation.rawValue)]
+                    [
+                        "user": user1Id.transportString(),
+                        "permissions": [
+                            "self": NSNumber(value: Permissions.addConversationMember.rawValue),
+                            "copy": NSNumber(value: 0)
+                            ]
+                    ],
+                    [
+                        "user": user2Id.transportString(),
+                        "permissions": [
+                            "self": NSNumber(value: Permissions.deleteConversation.rawValue),
+                            "copy": NSNumber(value: 0)
+                            ]
+                    ]
                 ]
             ]
 
