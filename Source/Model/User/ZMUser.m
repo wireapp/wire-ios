@@ -77,6 +77,8 @@ static NSString *const ShowingUserRemovedKey = @"showingUserRemoved";
 static NSString *const UserClientsKey = @"clients";
 static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
+static NSString *const MembershipsKey = @"memberships";
+static NSString *const CreatedTeamsKey = @"createdTeams";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -179,6 +181,7 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
 @dynamic clients;
 @dynamic handle;
 @dynamic addressBookEntry;
+@dynamic memberships;
 
 - (UserClient *)selfClient
 {
@@ -255,7 +258,26 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
 
 - (ZMConversation *)oneToOneConversation
 {
-    return self.connection.conversation;
+    // !!!: This is a placeholder as removing this still breaks a lot at the moment.
+
+    // TODO:
+    // There will be users which we are not connected to but which are in a team,
+    // in that case we can create or return the existing conversation.
+    // There can also be users which are in multiple teams with us,
+    // which is why we need to specify in which team the 1:1 (but internally group) conversation should be.
+
+    return [self oneToOneConversationInTeam:nil];
+}
+
+- (ZMConversation *)oneToOneConversationInTeam:(Team *)team
+{
+    if (nil == team) {
+        return self.connection.conversation;
+    } else {
+        return [ZMConversation fetchOrCreateTeamConversationInManagedObjectContext:self.managedObjectContext
+                                                                   withParticipant:self
+                                                                              team:team];
+    }
 }
 
 - (BOOL)isBot
@@ -363,6 +385,7 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
 @dynamic connection;
 @dynamic showingUserAdded;
 @dynamic showingUserRemoved;
+@dynamic createdTeams;
 
 - (NSSet *)keysTrackedForLocalModifications
 {
@@ -400,6 +423,8 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
                                            ReactionsKey,
                                            AddressBookEntryKey,
                                            HandleKey, // this is not set on the user directly
+                                           MembershipsKey,
+                                           CreatedTeamsKey
                                            ]];
         keys = [ignoredKeys copy];
     });

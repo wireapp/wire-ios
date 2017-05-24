@@ -36,7 +36,8 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
     
     let userInfoKeys = [
         UserClientChangeInfoKey.TrustedByClientsChanged,
-        UserClientChangeInfoKey.IgnoredByClientsChanged
+        UserClientChangeInfoKey.IgnoredByClientsChanged,
+        UserClientChangeInfoKey.FingerprintChanged
         ].map { $0.rawValue }
     
     func checkThatItNotifiesTheObserverOfAChange(_ userClient : UserClient, modifier: (UserClient) -> Void, expectedChangedFields: [String], customAffectedKeys: AffectedKeys? = nil) {
@@ -45,6 +46,9 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let token = UserClientChangeInfo.add(observer: clientObserver, for: userClient)
+        defer {
+            UserClientChangeInfo.remove(observer: token, for: userClient)
+        }
         
         // when
         modifier(userClient)
@@ -61,14 +65,8 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(clientObserver.receivedChangeInfo.count, changeCount, "Should not have changed further once")
         
         guard let changes = clientObserver.receivedChangeInfo.first else { return }
-        for key in userInfoKeys {
-            guard !expectedChangedFields.contains(key) else { continue }
-            guard let value = changes.value(forKey: key) as? NSNumber else { return XCTFail("Can't find key or key is not boolean for '\(key)'") }
-            XCTAssertFalse(value.boolValue, "\(key) was supposed to be false")
-        }
-        
-        UserClientChangeInfo.remove(observer: token, for: userClient)
-        
+        changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
+                                             expectedChangedFields: expectedChangedFields)
     }
     
     func testThatItNotifiesTheObserverOfTrustedByClientsChange() {

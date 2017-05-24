@@ -18,6 +18,14 @@
 
 import Foundation
 
+fileprivate extension NSPredicate {
+
+    func predicate(for team: Team?) -> NSCompoundPredicate {
+        return .init(andPredicateWithSubpredicates: [ZMConversation.predicateForConversations(in: team), self])
+    }
+
+}
+
 
 extension ZMConversation {
     
@@ -25,38 +33,59 @@ extension ZMConversation {
         let selfType = ZMConversationType.init(rawValue: 1)!
         return NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue)")
     }
-    
-    class func predicateForPendingConversations() -> NSPredicate {
+
+    @objc(predicateForConversationsInTeam:)
+    class func predicateForConversations(in team: Team?) -> NSPredicate {
+        if let team = team {
+            return .init(format: "%K == %@", #keyPath(ZMConversation.team), team)
+        }
+
+        return .init(format: "%K == NULL", #keyPath(ZMConversation.team))
+    }
+
+    @objc(predicateForPendingConversationsInTeam:)
+    class func predicateForPendingConversations(in team: Team?) -> NSPredicate {
         let basePredicate = predicateForFilteringResults()
         let pendingConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationConnectionKey).status == \(ZMConnectionStatus.pending.rawValue)")
         
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate]).predicate(for: team)
     }
-    
-    class func predicateForClearedConversations() -> NSPredicate {
+
+    @objc(predicateForClearedConversationsInTeam:)
+    class func predicateForClearedConversations(in team: Team?) -> NSPredicate {
         let cleared = NSPredicate(format: "\(ZMConversationClearedTimeStampKey) != NULL AND \(ZMConversationIsArchivedKey) == YES")
         
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [cleared, predicateForValidConversations()])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [cleared, predicateForValidConversations()]).predicate(for: team)
     }
-    
-    class func predicateForConversationsIncludingArchived() -> NSPredicate {
+
+    @objc(predicateForConversationsIncludingArchivedInTeam:)
+    class func predicateForConversationsIncludingArchived(in team: Team?) -> NSPredicate {
         let notClearedTimestamp = NSPredicate(format: "\(ZMConversationClearedTimeStampKey) == NULL OR \(ZMConversationLastServerTimeStampKey) > \(ZMConversationClearedTimeStampKey) OR (\(ZMConversationLastServerTimeStampKey) == \(ZMConversationClearedTimeStampKey) AND \(ZMConversationIsArchivedKey) == NO)")
         
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [notClearedTimestamp, predicateForValidConversations()]).predicate(for: team)
+    }
+
+    class func predicateForConversationsIncludingArchivedInAllTeams() -> NSPredicate {
+        let notClearedTimestamp = NSPredicate(format: "\(ZMConversationClearedTimeStampKey) == NULL OR \(ZMConversationLastServerTimeStampKey) > \(ZMConversationClearedTimeStampKey) OR (\(ZMConversationLastServerTimeStampKey) == \(ZMConversationClearedTimeStampKey) AND \(ZMConversationIsArchivedKey) == NO)")
+
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notClearedTimestamp, predicateForValidConversations()])
     }
-    
-    class func predicateForArchivedConversations() -> NSPredicate {
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(), NSPredicate(format: "\(ZMConversationIsArchivedKey) == YES")])
+
+    @objc(predicateForArchivedConversationsInTeam:)
+    class func predicateForArchivedConversations(in team: Team?) -> NSPredicate {
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(in: team), NSPredicate(format: "\(ZMConversationIsArchivedKey) == YES")])
     }
-    
-    class func predicateForConversationsExcludingArchived() -> NSPredicate {
+
+    @objc(predicateForConversationsExcludingArchivedInTeam:)
+    class func predicateForConversationsExcludingArchived(in team: Team?) -> NSPredicate {
         let notArchivedPredicate = NSPredicate(format: "\(ZMConversationIsArchivedKey) == NO")
         
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(), notArchivedPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(in: team), notArchivedPredicate])
     }
-    
-    class func predicateForSharableConversations() -> NSPredicate {
-        let basePredicate = predicateForConversationsIncludingArchived()
+
+    @objc(predicateForSharableConversationsInTeam:)
+    class func predicateForSharableConversations(in team: Team?) -> NSPredicate {
+        let basePredicate = predicateForConversationsIncludingArchived(in: team)
         let hasOtherActiveParticipants = NSPredicate(format: "\(ZMConversationOtherActiveParticipantsKey).@count > 0")
         let oneOnOneOrGroupConversation = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue) OR \(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let selfIsActiveMember = NSPredicate(format: "isSelfAnActiveMember == YES")

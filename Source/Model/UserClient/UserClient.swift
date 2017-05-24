@@ -222,14 +222,22 @@ public class UserClient: ZMManagedObject, UserClientType {
 
             uiMOC.performGroupedBlock {
                 // Send session reset message so other user can send us messages immediately
-                guard let user = self.user,
-                      let conversation = user.isSelfUser ? ZMConversation.selfConversation(in: uiMOC) : user.oneToOneConversation
-                else { return }
-                
+                guard let user = self.user, let conversation = self.conversation(for: user, in: uiMOC) else { return }
                 let message = ZMGenericMessage.sessionReset(withNonce: UUID().transportString())
                 GenericMessageScheduleNotification(message: message, conversation: conversation).post()
             }
         }
+    }
+
+    private func conversation(for user: ZMUser, in context: NSManagedObjectContext) -> ZMConversation? {
+        if user.isSelfUser {
+            return ZMConversation.selfConversation(in: context)
+        } else if let team = user.teams.first {
+            return user.oneToOneConversation(in: team)
+        } else {
+            return user.oneToOneConversation(in: nil)
+        }
+
     }
 
 }
@@ -559,15 +567,14 @@ extension UserClient {
         self.changeSecurityLevel(.clientDiscovered, clients: notSelfClients, causedBy: causedBy)
     }
     
-    func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation>
-    {
+    func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
         let conversations : Set<ZMConversation> = clients.map{$0.user}.reduce(Set()){
             guard let user = $1 else {return Set()}
             guard user.isSelfUser else {
                 return $0.union(user.activeConversations.array as! [ZMConversation])
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
+            fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchivedInAllTeams()
             let conversations = managedObjectContext!.fetchOrAssert(request: fetchRequest)
             return $0.union(conversations)
         }

@@ -113,6 +113,10 @@ class DependencyKeyStore {
             return Set([#keyPath(Reaction.users)])
         case ZMGenericMessageData.entityName():
             return Set()
+        case Team.entityName():
+            return Team.observableKeys
+        case Member.entityName():
+            return Set()
         default:
             zmLog.warn("There are no observable keys defined for \(classIdentifier)")
             return Set()
@@ -143,6 +147,10 @@ class DependencyKeyStore {
             return observableKeys.mapToDictionary{Reaction.keyPathsForValuesAffectingValue(forKey: $0)}
         case ZMGenericMessageData.entityName():
             return observableKeys.mapToDictionary{ZMGenericMessageData.keyPathsForValuesAffectingValue(forKey: $0)}
+        case Team.entityName():
+            return observableKeys.mapToDictionary{Team.keyPathsForValuesAffectingValue(forKey: $0)}
+        case Member.entityName():
+            return [:]
         default:
             zmLog.warn("There is no path to affecting keys defined for \(classIdentifier)")
             return [:]

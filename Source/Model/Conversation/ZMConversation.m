@@ -96,6 +96,8 @@ static NSString *const LastReadMessageKey = @"lastReadMessage";
 static NSString *const LastServerSyncedActiveParticipantsKey = @"lastServerSyncedActiveParticipants";
 static NSString *const NeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
 static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
+static NSString *const TeamRemoteIdentifierKey = @"teamRemoteIdentifier";
+static NSString *const TeamRemoteIdentifierDataKey = @"teamRemoteIdentifier_data";
 static NSString *const VoiceChannelKey = @"voiceChannel";
 static NSString *const VoiceChannelStateKey = @"voiceChannelState";
 static NSString *const CallDeviceIsActiveKey = @"callDeviceIsActive";
@@ -110,6 +112,8 @@ static NSString *const ClearedEventIDDataKey = @"clearedEventID_data";
 static NSString *const ArchivedEventIDDataKey = @"archivedEventID_data";
 static NSString *const LastReadEventIDDataKey = @"lastReadEventID_data";
 
+static NSString *const TeamKey = @"team";
+static NSString *const TeamManagedKey = @"managed";
 
 NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 3.0;
 
@@ -168,6 +172,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic silencedChangedTimestamp;
 @dynamic messageDestructionTimeout;
 @dynamic callParticipants;
+@dynamic team;
+@dynamic managed;
 
 @synthesize tempMaxLastReadServerTimeStamp;
 @synthesize lastReadTimestampSaveDelay;
@@ -369,6 +375,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ClearedEventIDDataKey,
             ArchivedEventIDDataKey,
             LastReadEventIDDataKey,
+            TeamKey,
+            TeamManagedKey,
+            TeamRemoteIdentifierKey,
+            TeamRemoteIdentifierDataKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -396,10 +406,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [NSSet setWithObjects:ZMConversationConversationTypeKey, @"otherActiveParticipants", @"otherActiveParticipants.name", @"connection.to.name", ZMConversationUserDefinedNameKey, nil];
 }
 
-+ (instancetype)insertGroupConversationIntoUserSession:(id<ZMManagedObjectContextProvider>)session withParticipants:(NSArray *)participants
++ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
+                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
+                                                        inTeam:(nullable Team *)team;
 {
     VerifyReturnNil(session != nil);
-    return [self insertGroupConversationIntoManagedObjectContext:session.managedObjectContext withParticipants:participants];
+    return [self insertGroupConversationIntoManagedObjectContext:session.managedObjectContext withParticipants:participants inTeam:team];
 }
 
 + (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ZMManagedObjectContextProvider>)session;
@@ -438,6 +450,17 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     [self setTransientUUID:remoteIdentifier forKey:RemoteIdentifierKey];
 }
+
+- (NSUUID *)teamRemoteIdentifier;
+{
+    return [self transientUUIDForKey:TeamRemoteIdentifierKey];
+}
+
+- (void)setTeamRemoteIdentifier:(NSUUID *)teamRemoteIdentifier;
+{
+    [self setTransientUUID:teamRemoteIdentifier forKey:TeamRemoteIdentifierKey];
+}
+
 
 + (NSSet *)keyPathsForValuesAffectingRemoteIdentifier
 {
@@ -964,29 +987,29 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [self mutableOrderedSetValueForKey:ZMConversationMessagesKey];
 }
 
-+ (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc team:(Team *)team;
 {
-    return [moc.conversationListDirectory conversationsIncludingArchived];
+    return [moc conversationListDirectoryForTeam:team].conversationsIncludingArchived;
 }
 
-+ (ZMConversationList *)archivedConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)archivedConversationsInContext:(NSManagedObjectContext *)moc team:(Team *)team;
 {
-    return [moc.conversationListDirectory archivedConversations];
+    return [moc conversationListDirectoryForTeam:team].archivedConversations;
 }
 
-+ (ZMConversationList *)clearedConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)clearedConversationsInContext:(NSManagedObjectContext *)moc team:(Team *)team;
 {
-    return [moc.conversationListDirectory clearedConversations];
+    return [moc conversationListDirectoryForTeam:team].clearedConversations;
 }
 
-+ (ZMConversationList *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc team:(Team *)team;
 {
-    return [moc.conversationListDirectory unarchivedConversations];
+    return [moc conversationListDirectoryForTeam:team].unarchivedConversations;
 }
 
-+ (ZMConversationList *)pendingConversationsInContext:(NSManagedObjectContext *)moc;
++ (ZMConversationList *)pendingConversationsInContext:(NSManagedObjectContext *)moc team:(Team *)team;
 {
-    return [moc.conversationListDirectory pendingConnectionConversations];
+    return [moc conversationListDirectoryForTeam:team].pendingConnectionConversations;
 }
 
 - (void)sortMessages
@@ -1085,14 +1108,68 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return nil;
 }
 
-+ (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc withParticipants:(NSArray *)participants;
++ (instancetype)fetchOrCreateTeamConversationInManagedObjectContext:(NSManagedObjectContext *)moc withParticipant:(ZMUser *)participant team:(Team *)team
 {
-    RequireString((participants.count >= 2u), "Not enough users to create group conversations");
+    VerifyReturnNil(team != nil);
+    VerifyReturnNil(!participant.isSelfUser);
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
+    VerifyReturnNil([selfUser canCreateConversationIn:team]);
+
+    ZMConversation *conversation = [self existingTeamConversationInManagedObjectContext:moc withParticipant:participant team:team];
+    if (nil != conversation) {
+        return conversation;
+    }
+
+    conversation = (ZMConversation *)[super insertNewObjectInManagedObjectContext:moc];
+    conversation.lastModifiedDate = [NSDate date];
+    conversation.conversationType = ZMConversationTypeGroup;
+    conversation.creator = selfUser;
+    conversation.team = team;
+
+    [conversation internalAddParticipants:[NSSet setWithObject:participant] isAuthoritative:NO];
+
+    // We need to check if we should add a 'secure' system message in case all participants are trusted
+    [conversation increaseSecurityLevelIfNeededAfterTrustingClients:participant.clients];
+    [conversation appendNewConversationSystemMessageIfNeeded];
+    return conversation;
+}
+
++ (instancetype)existingTeamConversationInManagedObjectContext:(NSManagedObjectContext *)moc withParticipant:(ZMUser *)participant team:(Team *)team
+{
+    // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
+    //  1. It is a conversation inside the team
+    //  2. The only participants are the current user and the selected user
+    //  3. It does not have a custom display name
+
+    NSPredicate *sameTeam = [ZMConversation predicateForConversationsInTeam:team];
+    NSPredicate *groupConversation = [NSPredicate predicateWithFormat:@"%K == %d", ZMConversationConversationTypeKey, ZMConversationTypeGroup];
+    NSPredicate *sameParticipant = [NSPredicate predicateWithFormat:@"ALL %K == %@ AND %K.@count == 1", ZMConversationOtherActiveParticipantsKey, participant, ZMConversationOtherActiveParticipantsKey];
+    NSPredicate *noUserDefinedName = [NSPredicate predicateWithFormat:@"%K == NULL", ZMConversationUserDefinedNameKey];
+    NSCompoundPredicate *compoundPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[sameTeam, groupConversation, sameParticipant, noUserDefinedName]];
+    NSFetchRequest *request = [self sortedFetchRequestWithPredicate:compoundPredicate];
+    return [moc executeFetchRequestOrAssert:request].firstObject;
+}
+
++ (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc withParticipants:(NSArray *)participants
+{
+    return [self insertGroupConversationIntoManagedObjectContext:moc withParticipants:participants inTeam:nil];
+}
+
++ (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc withParticipants:(NSArray *)participants inTeam:(nullable Team *)team;
+{
+    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
+
+    if (nil != team && ![selfUser canCreateConversationIn:team]) {
+        return nil;
+    }
+
+    RequireString((participants.count >= 2u), "Not enough users to create group conversations");
+
     ZMConversation *conversation = (ZMConversation *)[super insertNewObjectInManagedObjectContext:moc];
     conversation.lastModifiedDate = [NSDate date];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.creator = selfUser;
+    conversation.team = team;
 
     for (ZMUser *participant in participants) {
         Require([participant isKindOfClass:[ZMUser class]]);
@@ -1114,12 +1191,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return conversation;
 }
 
-+ (NSPredicate *)predicateForSearchString:(NSString *)searchString
++ (NSPredicate *)predicateForSearchQuery:(NSString *)searchQuery team:(Team *)team
 {
     NSDictionary *formatDict = @{ZMConversationOtherActiveParticipantsKey : @"ANY %K.normalizedName MATCHES %@",
                                    ZMNormalizedUserDefinedNameKey: @"%K MATCHES %@"};
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormatDictionary:formatDict
-                                                         matchingSearchString:searchString];
+                                                         matchingSearchString:searchQuery];
     NSPredicate *activeMemberPredicate = [NSPredicate predicateWithFormat:@"%K == NULL OR %K == YES",
                                           ZMConversationClearedTimeStampKey,
                                           ZMConversationIsSelfAnActiveMemberKey];
@@ -1127,8 +1204,13 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     NSPredicate *basePredicate = [NSPredicate predicateWithFormat:@"(%K == %@)",
                                   ZMConversationConversationTypeKey, @(ZMConversationTypeGroup)];
     
-    NSPredicate *fullPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, searchPredicate,activeMemberPredicate]];
-    return fullPredicate;
+    NSPredicate *teamPredicate = [NSPredicate predicateWithFormat:@"(%K == %@)", TeamKey, team];
+    
+    if (team != nil) {
+        return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, searchPredicate, activeMemberPredicate, teamPredicate]];
+    } else {
+        return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, searchPredicate, activeMemberPredicate]];
+    }
 }
 
 + (NSPredicate *)userDefinedNamePredicateForSearchString:(NSString *)searchString;

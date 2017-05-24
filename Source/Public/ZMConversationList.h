@@ -40,10 +40,10 @@
 /// Call this when the app re-enters the foreground
 + (void)refetchAllListsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
 
-+ (nonnull ZMConversationList *)conversationsIncludingArchivedInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)conversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)archivedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)pendingConnectionConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)clearedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)conversationsIncludingArchivedInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session team:(nullable Team *)team;
++ (nonnull ZMConversationList *)conversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session team:(nullable Team *)team;
++ (nonnull ZMConversationList *)archivedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session team:(nullable Team *)team;
++ (nonnull ZMConversationList *)pendingConnectionConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session team:(nullable Team *)team;
++ (nonnull ZMConversationList *)clearedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session team:(nullable Team *)team;
 
 @end

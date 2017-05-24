@@ -36,7 +36,9 @@ extension ZMConversation : ObjectInSnapshot {
                     #keyPath(ZMConversation.clearedTimeStamp),
                     #keyPath(ZMConversation.otherActiveParticipants),
                     #keyPath(ZMConversation.isSelfAnActiveMember),
-                    #keyPath(ZMConversation.relatedConnectionState)])
+                    #keyPath(ZMConversation.relatedConnectionState),
+                    #keyPath(ZMConversation.team)
+            ])
     }
 
     public var notificationName: Notification.Name {
@@ -96,6 +98,10 @@ extension ZMConversation : ObjectInSnapshot {
         return changedKeysContain(keys: #keyPath(ZMConversation.clearedTimeStamp))
     }
 
+    public var teamChanged: Bool {
+        return changedKeysContain(keys: #keyPath(ZMConversation.team))
+    }
+
     public var securityLevelChanged : Bool {
         return changedKeysContain(keys: SecurityLevelKey)
     }
@@ -124,7 +130,8 @@ extension ZMConversation : ObjectInSnapshot {
         "isSilencedChanged: \(isSilencedChanged)," +
         "conversationListIndicatorChanged \(conversationListIndicatorChanged)," +
         "clearedChanged \(clearedChanged)," +
-        "securityLevelChanged \(securityLevelChanged),"
+        "securityLevelChanged \(securityLevelChanged)," +
+        "teamChanged \(teamChanged)"
     }
     
     public required init(object: NSObject) {

@@ -22,7 +22,7 @@
 #import "ZMConversationList+Internal.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
-static NSString * const ConversationListDirectoryKey = @"ZMConversationListDirectory";
+static NSString * const ConversationListDirectoryKey = @"ZMConversationListDirectoryMap";
 
 static NSString * const AllKey = @"All";
 static NSString * const UnarchivedKey = @"Unarchived";
@@ -39,31 +39,47 @@ static NSString * const PendingKey = @"Pending";
 @property (nonatomic) ZMConversationList* pendingConnectionConversations;
 @property (nonatomic) ZMConversationList* clearedConversations;
 
+@property (nonatomic) Team *team;
+
 @end
 
 
 
 @implementation ZMConversationListDirectory
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc team:(Team *)team
 {
     self = [super init];
     if (self) {
-        NSArray *allConversations = [self fetchAllConversations:moc];
-        
-        self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationsExcludingArchived] moc:moc debugDescription:@"unarchivedConversations"];
-        self.archivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForArchivedConversations] moc:moc debugDescription:@"archivedConversations"];
-        self.conversationsIncludingArchived = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForConversationsIncludingArchived] moc:moc debugDescription:@"conversationsIncludingArchived"];
-        self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForPendingConversations] moc:moc debugDescription:@"pendingConnectionConversations"];
-        self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations filteringPredicate:[ZMConversation predicateForClearedConversations] moc:moc debugDescription:@"clearedConversations"];
-        
+        self.team = team;
+        NSArray *allConversations = [self fetchAllConversations:moc team:team];
+        self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                         filteringPredicate:[ZMConversation predicateForConversationsExcludingArchivedInTeam:team]
+                                                                                        moc:moc
+                                                                           debugDescription:@"unarchivedConversations"];
+        self.archivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                       filteringPredicate:[ZMConversation predicateForArchivedConversationsInTeam:team]
+                                                                                      moc:moc
+                                                                         debugDescription:@"archivedConversations"];
+        self.conversationsIncludingArchived = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                                filteringPredicate:[ZMConversation predicateForConversationsIncludingArchivedInTeam:team]
+                                                                                               moc:moc
+                                                                                  debugDescription:@"conversationsIncludingArchived"];
+        self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                                filteringPredicate:[ZMConversation predicateForPendingConversationsInTeam:team]
+                                                                                               moc:moc
+                                                                                  debugDescription:@"pendingConnectionConversations"];
+        self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                      filteringPredicate:[ZMConversation predicateForClearedConversationsInTeam:team]
+                                                                                     moc:moc
+                                                                        debugDescription:@"clearedConversations"];
     }
     return self;
 }
 
-
-- (NSArray *)fetchAllConversations:(NSManagedObjectContext *)context {
-    NSFetchRequest *allConversationsRequest = [ZMConversation sortedFetchRequest];
+- (NSArray *)fetchAllConversations:(NSManagedObjectContext *)context team:(Team *)team
+{
+    NSFetchRequest *allConversationsRequest = [ZMConversation sortedFetchRequestWithPredicate:[ZMConversation predicateForConversationsInTeam:team]];
     // Since this is extremely likely to trigger the "otherActiveParticipants" and "connection" relationships, we make sure these gets prefetched:
     NSMutableArray *keyPaths = [NSMutableArray arrayWithArray:allConversationsRequest.relationshipKeyPathsForPrefetching];
     [keyPaths addObject:ZMConversationOtherActiveParticipantsKey];
@@ -77,7 +93,7 @@ static NSString * const PendingKey = @"Pending";
 
 - (void)refetchAllListsInManagedObjectContext:(NSManagedObjectContext *)moc
 {
-    NSArray *allConversations = [self fetchAllConversations:moc];
+    NSArray *allConversations = [self fetchAllConversations:moc team:self.team];
     for (ZMConversationList* list in self.allConversationLists){
         [list recreateWithAllConversations:allConversations];
     }
@@ -99,12 +115,13 @@ static NSString * const PendingKey = @"Pending";
 
 @implementation NSManagedObjectContext (ZMConversationListDirectory)
 
-- (ZMConversationListDirectory *)conversationListDirectory;
+- (ZMConversationListDirectory *)conversationListDirectoryForTeam:(Team *)team;
 {
-    ZMConversationListDirectory *directory = self.userInfo[ConversationListDirectoryKey];
+    NSString *key = team ? [ConversationListDirectoryKey stringByAppendingString:team.remoteIdentifier.transportString] : ConversationListDirectoryKey;
+    ZMConversationListDirectory *directory = self.userInfo[key];
     if (directory == nil) {
-        directory = [[ZMConversationListDirectory alloc] initWithManagedObjectContext:self];
-        self.userInfo[ConversationListDirectoryKey] = directory;
+        directory = [[ZMConversationListDirectory alloc] initWithManagedObjectContext:self team:team];
+        self.userInfo[key] = directory;
     }
     return directory;
 }

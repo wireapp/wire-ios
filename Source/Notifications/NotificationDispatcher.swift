@@ -38,6 +38,7 @@ extension Notification.Name {
     static let NewUnreadUnsentMessage = Notification.Name("ZMNewUnreadUnsentMessageNotification")
     static let VoiceChannelStateChange = Notification.Name("ZMVoiceChannelStateChangeNotification")
     static let VoiceChannelParticipantStateChange = Notification.Name("ZMVoiceChannelParticipantStateChangeNotification")
+    static let TeamChange = Notification.Name("TeamChangeNotification")
 
     public static let NonCoreDataChangeInManagedObject = Notification.Name("NonCoreDataChangeInManagedObject")
     
@@ -149,7 +150,9 @@ public class NotificationDispatcher : NSObject {
                                            ZMAssetClientMessage.classIdentifier,
                                            ZMSystemMessage.classIdentifier,
                                            Reaction.classIdentifier,
-                                           ZMGenericMessageData.classIdentifier]
+                                           ZMGenericMessageData.classIdentifier,
+                                           Team.classIdentifier,
+                                           Member.classIdentifier]
         self.affectingKeysStore = DependencyKeyStore(classIdentifiers : classIdentifiers)
         self.snapshotCenter = SnapshotCenter(managedObjectContext: managedObjectContext)
         super.init()

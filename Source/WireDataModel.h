@@ -34,6 +34,7 @@
 
 #import <WireDataModel/ZMUser.h>
 #import <WireDataModel/ZMUser+Internal.h>
+#import <WireDataModel/ZMUser+OneOnOne.h>
 #import <WireDataModel/UserClientTypes.h>
 
 #import <WireDataModel/ZMSearchUser.h>
@@ -82,5 +83,5 @@
 #import <WireDataModel/ZMGenericMessage+Utils.h>
 #import <WireDataModel/ZMGenericMessage+PropertyUtils.h>
 #import <WireDataModel/ZMMessageTimer.h>
-
+#import <WireDataModel/NSPredicate+ZMSearch.h>
 

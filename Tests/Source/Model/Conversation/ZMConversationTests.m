@@ -406,7 +406,7 @@
     invalidConversation.conversationType = ZMConversationTypeInvalid;
     
     // when
-    NSArray *conversationsInContext = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *conversationsInContext = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
     
     // then
     XCTAssertEqualObjects(conversationsInContext, @[oneToOneConversation]);
@@ -2224,9 +2224,9 @@
     ZMConversation *conversation = [self insertConversationWithParticipants:users callParticipants:users callStateNeedsToBeUpdatedFromBackend:NO];
     [conversation appendMessageWithText:@"0"];
     
-    ZMConversationList *activeList = [ZMConversationList conversationsInUserSession:self.mockUserSessionWithUIMOC];
-    ZMConversationList *archivedList = [ZMConversationList archivedConversationsInUserSession:self.mockUserSessionWithUIMOC];
-    ZMConversationList *clearedList = [ZMConversationList clearedConversationsInUserSession:self.mockUserSessionWithUIMOC];
+    ZMConversationList *activeList = [ZMConversationList conversationsInUserSession:self.mockUserSessionWithUIMOC team:nil];
+    ZMConversationList *archivedList = [ZMConversationList archivedConversationsInUserSession:self.mockUserSessionWithUIMOC team:nil];
+    ZMConversationList *clearedList = [ZMConversationList clearedConversationsInUserSession:self.mockUserSessionWithUIMOC team:nil];
     
     // when
     [conversation internalRemoveParticipants:[NSSet setWithObject:selfUser] sender:user0];
@@ -2956,7 +2956,7 @@
     
     // when
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
-    request.predicate = [ZMConversation predicateForSearchString:@"User1"];
+    request.predicate = [ZMConversation predicateForSearchQuery:@"User1" team:nil];
     
     NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
     
@@ -2981,7 +2981,7 @@
     
     // when
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
-    request.predicate = [ZMConversation predicateForSearchString:@"Foo Bar"];
+    request.predicate = [ZMConversation predicateForSearchQuery:@"Foo Bar" team:nil];
     
     NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
     
@@ -3053,7 +3053,7 @@
     
     // when
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
-    request.predicate = [ZMConversation predicateForSearchString:@"Bine"];
+    request.predicate = [ZMConversation predicateForSearchQuery:@"Bine" team:nil];
     
     NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
     
@@ -3105,6 +3105,35 @@
     XCTAssertEqual(result.count, 0u);
 }
 
+- (void)testThatResultsCanBeFilteredByTeam
+{
+    // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    // given
+    ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation1.userDefinedName = @"The Wire Club";
+    conversation1.conversationType = ZMConversationTypeGroup;
+    conversation1.team = team;
+    
+    ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation2.userDefinedName = @"The Wire Club";
+    conversation2.conversationType = ZMConversationTypeGroup;
+    
+    [self.uiMOC saveOrRollback];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
+    request.predicate = [ZMConversation predicateForSearchQuery:@"Club" team:team];
+    
+    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    
+    // then
+    XCTAssertEqual(result.count, 1u);
+    XCTAssertEqualObjects(result.firstObject, conversation1);
+}
+
 @end
 
 
@@ -3151,7 +3180,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
+    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchivedInTeam:nil];
     
     // then
     XCTAssertFalse([sut evaluateWithObject:conversation]);
@@ -3173,7 +3202,7 @@
     XCTAssertNil(conversation.clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
+    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchivedInTeam:nil];
     
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
@@ -3199,7 +3228,7 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
+    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchivedInTeam:nil];
     
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
@@ -3223,7 +3252,7 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
 
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
+    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchivedInTeam:nil];
     
     // then
     XCTAssertFalse([sut evaluateWithObject:conversation]);
@@ -3247,7 +3276,7 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchived];
+    NSPredicate *sut = [ZMConversation predicateForConversationsIncludingArchivedInTeam:nil];
     
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
@@ -3274,7 +3303,7 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForSearchString:@"lala"];
+    NSPredicate *sut = [ZMConversation predicateForSearchQuery:@"lala" team:nil];
     
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
@@ -3302,7 +3331,7 @@
     XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForSearchString:@"lala"];
+    NSPredicate *sut = [ZMConversation predicateForSearchQuery:@"lala" team:nil];
     
     // then
     XCTAssertFalse([sut evaluateWithObject:conversation]);
@@ -3324,7 +3353,7 @@
     XCTAssertNil(conversation.clearedTimeStamp);
     
     // when
-    NSPredicate *sut = [ZMConversation predicateForSearchString:@"lala"];
+    NSPredicate *sut = [ZMConversation predicateForSearchQuery:@"lala" team:nil];
     
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
@@ -3381,7 +3410,7 @@
     archived.remoteIdentifier = [NSUUID createUUID];
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[ZMConversation entityName]];
-    request.predicate = [ZMConversation predicateForSharableConversations];
+    request.predicate = [ZMConversation predicateForSharableConversationsInTeam:nil];
     
     //when
     NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];

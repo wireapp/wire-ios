@@ -63,6 +63,7 @@ extension ObjectChangeInfo {
         case let object as ZMUser:          return UserChangeInfo.changeInfo(for: object, changes: changes)
         case let object as ZMMessage:       return MessageChangeInfo.changeInfo(for: object, changes: changes)
         case let object as UserClient:      return UserClientChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as Team:            return TeamChangeInfo.changeInfo(for: object, changes: changes)
         default:
             return nil
         }
