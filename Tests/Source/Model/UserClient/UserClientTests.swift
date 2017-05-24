@@ -336,6 +336,61 @@ class UserClientTests: ZMBaseManagedObjectTest {
             _ = token // Silence warning
         }
     }
+
+    func testThatItSendsASessionResetMessageForUserInTeamConversation() {
+        var (message, conversation): (ZMGenericMessage?, ZMConversation?)
+
+        let noteExpectation = expectation(description: "GenericMessageScheduleNotification should be fired")
+        let token = NotificationCenterObserverToken(name: GenericMessageScheduleNotification.name) { note in
+            guard let tuple = note.object as? (ZMGenericMessage, ZMConversation) else { return }
+            message = tuple.0
+            conversation = tuple.1
+            noteExpectation.fulfill()
+        }
+
+        var expectedConversation: ZMConversation?
+
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+
+            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient.remoteIdentifier = UUID.create().transportString()
+
+            let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            otherClient.user = otherUser
+
+            let team = Team.insertNewObject(in: self.syncMOC)
+            let selfMember = Member.insertNewObject(in: self.syncMOC)
+            selfMember.permissions = .member
+            selfMember.team = team
+            selfMember.user = selfClient.user
+
+            let otherMember = Member.insertNewObject(in: self.syncMOC)
+            otherMember.team = team
+            otherMember.user = otherUser
+
+            expectedConversation = otherUser.oneToOneConversation(in: team)
+            selfClient.trustClient(otherClient)
+
+            // when
+            otherClient.resetSession()
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // then
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertNotNil(message)
+            XCTAssertNotNil(conversation)
+            XCTAssertEqual(expectedConversation, conversation)
+            XCTAssertEqual(message?.hasClientAction(), true)
+            XCTAssertEqual(message?.clientAction, .RESETSESSION)
+            _ = token // Silence warning
+        }
+    }
     
     func testThatItAsksForMoreWhenRunningOutOfPrekeys() {
         

@@ -40,7 +40,7 @@
                                                                                                                 ]];
     
     // then
-    NSArray *conversations = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    NSArray *conversations = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
     
     XCTAssertEqual(conversations.count, 1u);
     ZMConversation *fetchedConversation = conversations[0];
@@ -63,7 +63,8 @@
     
     // when
     ZMConversation *conversation = [ZMConversation insertGroupConversationIntoUserSession:session
-                                                                         withParticipants:@[user1, user2, user3]];
+                                                                         withParticipants:@[user1, user2, user3]
+                                                                                   inTeam:nil];
     
     // then
     NSFetchRequest *fetchRequest = [ZMConversation sortedFetchRequest];
@@ -123,7 +124,7 @@
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList conversationsInUserSession:session team:nil];
     
     // then
     XCTAssertNotNil(fetchedConversations);
@@ -153,7 +154,7 @@
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList pendingConnectionConversationsInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList pendingConnectionConversationsInUserSession:session team:nil];
     
     // then
     XCTAssertNotNil(fetchedConversations);
@@ -178,7 +179,7 @@
     [[[session stub] andReturn:self.uiMOC] managedObjectContext];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:session team:nil];
     
     // then
     XCTAssertNotNil(fetchedConversations);
@@ -203,7 +204,7 @@
     [[[session stub] andReturn:self.uiMOC] managedObjectContext];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:session team:nil];
     
     // then
     XCTAssertNotNil(fetchedConversations);

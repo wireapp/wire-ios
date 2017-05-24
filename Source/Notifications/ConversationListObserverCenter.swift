@@ -96,7 +96,7 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     public func conversationDidChange(_ changes: ConversationChangeInfo) {
         guard    changes.nameChanged              || changes.connectionStateChanged  || changes.isArchivedChanged
               || changes.isSilencedChanged        || changes.lastModifiedDateChanged || changes.conversationListIndicatorChanged
-              || changes.clearedChanged           || changes.securityLevelChanged
+              || changes.clearedChanged           || changes.securityLevelChanged    || changes.teamChanged
         else { return }
         zmLog.debug("conversationDidChange with changes \(changes.customDebugDescription)")
         forwardToSnapshots{$0.processConversationChanges(changes)}

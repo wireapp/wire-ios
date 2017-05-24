@@ -112,3 +112,16 @@ class ConversationObserver: NSObject, ZMConversationObserver {
         }
     }
 }
+
+class TestTeamObserver : NSObject, TeamObserver {
+
+    var notifications = [TeamChangeInfo]()
+    
+    func clearNotifications(){
+        notifications = []
+    }
+    
+    func teamDidChange(_ changeInfo: TeamChangeInfo) {
+        notifications.append(changeInfo)
+    }
+}

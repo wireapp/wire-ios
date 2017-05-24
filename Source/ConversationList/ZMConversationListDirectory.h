@@ -19,6 +19,8 @@
 
 @import Foundation;
 @import CoreData;
+
+@class Team;
 @class ZMConversationList;
 @class ZMSharableConversations;
 @class NSManagedObjectContext;
@@ -44,6 +46,6 @@
 
 @interface NSManagedObjectContext (ZMConversationListDirectory)
 
-- (nonnull ZMConversationListDirectory *)conversationListDirectory;
+- (nonnull ZMConversationListDirectory *)conversationListDirectoryForTeam:(nullable Team *)team;
 
 @end

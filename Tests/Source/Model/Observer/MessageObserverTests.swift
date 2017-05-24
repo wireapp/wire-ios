@@ -45,9 +45,9 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         ) {
         
         // given
-        var token: NSObjectProtocol!
-        performIgnoringZMLogError {
-            token = MessageChangeInfo.add(observer: self.messageObserver, for: message)
+        var token = MessageChangeInfo.add(observer: self.messageObserver, for: message)
+        defer {
+            MessageChangeInfo.remove(observer: token, for: message)
         }
         
         self.uiMOC.saveOrRollback()
@@ -84,17 +84,9 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         }
 
         guard let changedField = expectedChangedField else { return }
-        guard messageInfoKeys.contains(changedField) else { return XCTFail("Expected change field not in messageInfoKeys") }
         guard let changes = messageObserver.notifications.first else { return }
-
-        for key in messageInfoKeys {
-            guard let value = changes.value(forKey: key) as? NSNumber else { return XCTFail("Can't find key or key is not boolean for '\(key)'") }
-            if key == changedField {
-                XCTAssertTrue(value.boolValue, "\(key) was supposed to be true")
-            } else {
-                XCTAssertFalse(value.boolValue, "\(key) was supposed to be false")
-            }
-        }
+        changes.checkForExpectedChangeFields(userInfoKeys: messageInfoKeys,
+                                             expectedChangedFields: [changedField])
     }
 
     func testThatItNotifiesObserverWhenTheFileTransferStateChanges() {

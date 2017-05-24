@@ -22,8 +22,10 @@
 #import "ZMUser.h"
 #import "ZMEditableUser.h"
 #import "ZMManagedObject+Internal.h"
+#import "ZMUser+OneOnOne.h"
 
 @class ZMConnection;
+@class Team;
 
 extern NSString * __nonnull const SessionObjectIDKey;
 extern NSString * __nonnull const ZMUserActiveConversationsKey;
@@ -37,6 +39,8 @@ extern NSString * __nonnull const ZMUserActiveConversationsKey;
 
 @property (nonnull, nonatomic) NSOrderedSet *showingUserAdded;
 @property (nonnull, nonatomic) NSOrderedSet *showingUserRemoved;
+
+@property (nonnull, nonatomic) NSSet<Team *> *createdTeams;
 
 @property (nonnull, nonatomic, readonly) NSString *normalizedName;
 @property (nonnull, nonatomic, readonly) NSString *normalizedEmailAddress;

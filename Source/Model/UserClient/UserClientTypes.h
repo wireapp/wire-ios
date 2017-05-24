@@ -23,6 +23,7 @@ extern NSString * const ZMUserClientTypePermanent;
 extern NSString * const ZMUserClientTypeTemporary;
 
 @class ZMUser;
+@class Team;
 
 @protocol UserClientType <NSObject>
 @property (nonatomic) NSString *type;

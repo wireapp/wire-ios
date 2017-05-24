@@ -35,6 +35,7 @@ class UserObserverTests : NotificationDispatcherTestBase {
         case ConnectionState = "connectionStateChanged"
         case TrustLevel = "trustLevelChanged"
         case Handle = "handleChanged"
+        case Teams = "teamsChanged"
     }
     
     let userInfoChangeKeys: [UserInfoChangeKey] = [
@@ -44,7 +45,9 @@ class UserObserverTests : NotificationDispatcherTestBase {
         .ImageSmallProfileData,
         .ProfileInfo,
         .ConnectionState,
-        .TrustLevel
+        .TrustLevel,
+        .Teams,
+        .Handle
     ]
     
     var userObserver : UserObserver!
@@ -62,13 +65,16 @@ class UserObserverTests : NotificationDispatcherTestBase {
 
 extension UserObserverTests {
 
-    func checkThatItNotifiesTheObserverOfAChange(_ user : ZMUser, modifier: (ZMUser) -> Void, expectedChangedField: UserInfoChangeKey, customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(_ user : ZMUser, modifier: (ZMUser) -> Void, expectedChangedField: UserInfoChangeKey) {
         
         // given
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         let token = UserChangeInfo.add(observer: userObserver, for: user)
+        defer {
+            UserChangeInfo.remove(observer: token, for: user)
+        }
         
         // when
         modifier(user)
@@ -87,17 +93,9 @@ extension UserObserverTests {
         // then
         XCTAssertEqual(userObserver.notifications.count, changeCount, "Should not have changed further once")
         
-        if let changes = userObserver.notifications.first {
-            for key in userInfoChangeKeys where key != expectedChangedField  {
-                if let value = changes.value(forKey: key.rawValue) as? NSNumber {
-                    XCTAssertFalse(value.boolValue, "\(key.rawValue) was supposed to be false")
-                }
-                else {
-                    XCTFail("Can't find key or key is not boolean for '\(key.rawValue)'")
-                }
-            }
-        }
-        UserChangeInfo.remove(observer: token, for: user)
+        guard let changes = userObserver.notifications.first else { return }
+        changes.checkForExpectedChangeFields(userInfoKeys: userInfoChangeKeys.map{$0.rawValue},
+                                             expectedChangedFields: [expectedChangedField.rawValue])
     }
     
     
@@ -252,8 +250,7 @@ extension UserObserverTests {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier : { $0.connection!.status = ZMConnectionStatus.accepted },
-                                                     expectedChangedField: .ConnectionState,
-                                                     customAffectedKeys: AffectedKeys.all)
+                                                     expectedChangedField: .ConnectionState)
     }
     
     func testThatItNotifiesTheObserverOfACreatedIncomingConnection()
@@ -268,8 +265,7 @@ extension UserObserverTests {
                                                         $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
                                                         $0.connection!.status = ZMConnectionStatus.pending
             },
-                                                     expectedChangedField: .ConnectionState,
-                                                     customAffectedKeys: AffectedKeys.all)
+                                                     expectedChangedField: .ConnectionState)
     }
     
     func testThatItNotifiesTheObserverOfACreatedOutgoingConnection()
@@ -284,8 +280,7 @@ extension UserObserverTests {
                                                         $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
                                                         $0.connection!.status = ZMConnectionStatus.sent
             },
-                                                     expectedChangedField: .ConnectionState,
-                                                     customAffectedKeys: AffectedKeys.all)
+                                                     expectedChangedField: .ConnectionState)
     }
     
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
@@ -513,6 +508,21 @@ extension UserObserverTests {
         XCTAssertEqual(userChangeInfos.map { $0.clientsChanged }, [true, false])
         
         UserChangeInfo.remove(observer: token, for: observedUser)
+    }
+    
+    func testThatItNotifiesAboutAnAddedTeam(){
+        // given
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        self.uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier : {
+                                                        let team = Team.insertNewObject(in: self.uiMOC)
+                                                        let member = Member.insertNewObject(in: self.uiMOC)
+                                                        member.user = $0
+                                                        member.team = team },
+                                                     expectedChangedField: .Teams)
     }
 }
 

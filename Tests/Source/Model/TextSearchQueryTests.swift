@@ -468,7 +468,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         verifyThatItFindsMessage(withText: "search term query test", whenSearchingFor: "search query") { message in
             // When we like the message before searching
             message.markAsSent()
-            ZMMessage.appendReaction("❤️", toMessage: message)
+            _ = ZMMessage.appendReaction("❤️", toMessage: message)
         }
     }
 

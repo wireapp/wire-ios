@@ -21,6 +21,26 @@ import Foundation
 
 
 
+extension ObjectChangeInfo {
+
+    func checkForExpectedChangeFields(userInfoKeys: [String], expectedChangedFields: [String], file: StaticString = #file, line: UInt = #line){
+        guard Set(userInfoKeys).isSuperset(of: expectedChangedFields) else {
+            return XCTFail("Expected change fields \(expectedChangedFields) not in userInfoKeys \(userInfoKeys). Please add them to the list.", file: file, line: line)
+        }
+
+        for key in userInfoKeys {
+            guard let value = value(forKey: key) as? NSNumber else {
+                return XCTFail("Can't find key or key is not boolean for '\(key)'", file: file, line: line)
+            }
+            if expectedChangedFields.contains(key) {
+                XCTAssertTrue(value.boolValue, "\(key) was supposed to be true", file: file, line: line)
+            } else {
+                XCTAssertFalse(value.boolValue, "\(key) was supposed to be false", file: file, line: line)
+            }
+        }
+    }
+}
+
 @objc public class NotificationDispatcherTestBase : ZMBaseManagedObjectTest {
 
     var dispatcher : NotificationDispatcher! {

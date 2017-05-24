@@ -39,7 +39,8 @@ extension ZMUser : ObjectInSnapshot {
                     #keyPath(ZMUser.isPendingApprovalByOtherUser),
                     #keyPath(ZMUser.isPendingApprovalBySelfUser),
                     #keyPath(ZMUser.clients),
-                    #keyPath(ZMUser.handle)])
+                    #keyPath(ZMUser.handle),
+                    #keyPath(ZMUser.teams)])
     }
     
     public var notificationName : Notification.Name {
@@ -119,6 +120,9 @@ extension ZMUser : ObjectInSnapshot {
         return changedKeysContain(keys: #keyPath(ZMUser.handle))
     }
 
+    public var teamsChanged : Bool {
+        return changedKeys.contains(#keyPath(ZMUser.teams))
+    }
 
     open let user: ZMBareUser
     open var userClientChangeInfos : [UserClientChangeInfo] {

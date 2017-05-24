@@ -33,6 +33,7 @@
 @class ZMFileMetadata;
 @class ZMLocationData;
 @class LinkPreview;
+@class Team;
 
 @protocol ZMConversationMessage;
 
@@ -79,6 +80,10 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 @property (nonatomic, readonly) ZMConversationListIndicator conversationListIndicator;
 @property (nonatomic, readonly) BOOL hasDraftMessageText;
 @property (nonatomic, copy, nullable) NSString *draftMessageText;
+@property (nonatomic, nullable) Team *team;
+
+/// Whether the conversation is a managed team conversation
+@property (nonatomic) BOOL managed;
 
 /// This is read only. Use -setVisibleWindowFromMessage:toMessage: to update this.
 /// This will return @c nil if the last read message has not yet been sync'd to this device, or if the conversation has no last read message.
@@ -112,7 +117,12 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 
 - (nonnull id<ZMConversationMessage>)appendKnock;
 
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session withParticipants:(nonnull NSArray<ZMUser *> *)participants;
+/// Insert a new group conversation into the user session
+/// If a team is specified, exsiting conversations will be returned if there are any.
++ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
+                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
+                                                        inTeam:(nullable Team *)team;
+
 /// If that conversation exists, it is returned, @c nil otherwise.
 + (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ZMManagedObjectContextProvider> )session;
 

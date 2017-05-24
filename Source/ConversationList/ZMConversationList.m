@@ -66,7 +66,10 @@
     return nil;
 }
 
-- (instancetype)initWithAllConversations:(NSArray *)conversations filteringPredicate:(NSPredicate *)filteringPredicate moc:(NSManagedObjectContext *)moc debugDescription:(NSString *)debugDescription;
+- (instancetype)initWithAllConversations:(NSArray *)conversations
+                      filteringPredicate:(NSPredicate *)filteringPredicate
+                                     moc:(NSManagedObjectContext *)moc
+                        debugDescription:(NSString *)debugDescription;
 {
     self = [super init];
     if (self) {
@@ -218,37 +221,45 @@
 
 + (void)refetchAllListsInUserSession:(id<ZMManagedObjectContextProvider>)session;
 {
-    [session.managedObjectContext.conversationListDirectory refetchAllListsInManagedObjectContext:session.managedObjectContext];
+    ZMUser *selfUser = [ZMUser selfUserInUserSession:session];
+
+    // Refetch all team lists
+    for (Team *team in selfUser.teams) {
+        [[session.managedObjectContext conversationListDirectoryForTeam:team] refetchAllListsInManagedObjectContext:session.managedObjectContext];
+    }
+
+    // Refetch private list
+    [[session.managedObjectContext conversationListDirectoryForTeam:nil] refetchAllListsInManagedObjectContext:session.managedObjectContext];
 }
 
-+ (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext.conversationListDirectory conversationsIncludingArchived];
+    return [session.managedObjectContext conversationListDirectoryForTeam:team].conversationsIncludingArchived;
 }
 
-+ (ZMConversationList *)conversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
++ (ZMConversationList *)conversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext.conversationListDirectory unarchivedConversations];
+    return [session.managedObjectContext conversationListDirectoryForTeam:team].unarchivedConversations;
 }
 
-+ (ZMConversationList *)archivedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (ZMConversationList *)archivedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext.conversationListDirectory archivedConversations];
+    return [session.managedObjectContext conversationListDirectoryForTeam:team].archivedConversations;
 }
 
-+ (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext.conversationListDirectory pendingConnectionConversations];
+    return [session.managedObjectContext conversationListDirectoryForTeam:team].pendingConnectionConversations;
 }
 
-+ (ZMConversationList *)clearedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (ZMConversationList *)clearedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext.conversationListDirectory clearedConversations];
+    return [session.managedObjectContext conversationListDirectoryForTeam:team].clearedConversations;
 }
 
 @end
