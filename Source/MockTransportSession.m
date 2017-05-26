@@ -28,7 +28,6 @@
 #import "MockEvent.h"
 #import "MockConnection.h"
 #import "MockFlowManager.h"
-#import "MockPushEvent.h"
 #import "MockPreKey.h"
 #import "WireMockTransport/WireMockTransport-Swift.h"
 
@@ -430,6 +429,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/activate", @"processPhoneActivationRequest:"],
              @[@"/onboarding/v3", @"processOnboardingRequest:"],
              @[@"/invitations", @"processInvitationsRequest:"],
+             @[@"/teams", @"processTeamsRequest:"]
              ];
 }
 
@@ -858,7 +858,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.generatedPushEvents removeAllObjects];
 }
 
-- (MockUser *)userWithRemoteIdentifier:(NSString *)remoteIdentifier {
+- (MockUser *)userWithRemoteIdentifier:(NSString *)remoteIdentifier
+{
     NSFetchRequest *userFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
     userFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", remoteIdentifier];
     
@@ -866,7 +867,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return results.firstObject;
 }
 
-- (MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier {
+- (MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier
+{
     NSFetchRequest *userClientFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
     userClientFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND user == %@", remoteIdentifier, user];
     
@@ -874,11 +876,54 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return results.firstObject;
 }
 
+#pragma mark - Teams
+
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name
+{
+    return [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
+}
+
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name users:(NSSet<MockUser*> *)users
+{
+    MockTeam *team = [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
+    for (MockUser *user in users) {
+        [self insertMemberWithUser:user inTeam:team];
+    }
+    return team;
+}
+
+- (void)deleteTeam:(nonnull MockTeam *)team
+{
+    [self.managedObjectContext deleteObject:team];
+}
+
+- (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team
+{
+    return [MockMember insertInContext:self.managedObjectContext forUser: user inTeam: team];
+}
+
+- (void)removeMemberWithUser:(MockUser *)user fromTeam:(MockTeam *)team
+{
+    MockMember *member = [team.members.allObjects firstObjectMatchingWithBlock:^BOOL(MockMember *aMember) {
+        return [aMember.user isEqual:user];
+    }];
+    if (member != nil) {
+        [[team mutableSetValueForKey:@"members"] removeObject:member];
+        [self.managedObjectContext deleteObject: member];
+    }
+}
+
+- (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users {
+    return [MockConversation insertConversationIntoContext:self.managedObjectContext forTeam:team with:users];
+}
+
+- (void)deleteConversation:(nonnull MockConversation *)conversation
+{
+    conversation.team = nil;
+    [self.managedObjectContext deleteObject:conversation];
+}
 
 @end
-
-
-
 
 @implementation MockTransportSession (PushEvents)
 
@@ -902,6 +947,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [pushEvents addObjectsFromArray:[self pushEventsForUpdatedUsers:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedConnections:inserted updated:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForUserClients:inserted deleted:deleted includeEventsForTheUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
+    [pushEvents addObjectsFromArray:[self pushEventsForTeamsWithInserted:inserted updated:updated deleted:deleted shouldSendEventsToSelfUser:shouldSendEventsToSelfUser]];
     [self firePushEvents:pushEvents];
 }
 
@@ -922,7 +968,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"client" : userClient.transportData,
                                       @"type" : @"user.client-add"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:userClient.user isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     
@@ -937,7 +983,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"client" : @{ @"id" : userClient.identifier },
                                       @"type" : @"user.client-remove"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:userClient.user isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     return pushEvents;
@@ -952,8 +998,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     for(NSManagedObject* mo in inserted) {
         if([mo isKindOfClass:MockConversation.class] && includeEventsForUserThatInitiatedChanges) {
             MockConversation *conversation = (MockConversation *)mo;
-            if (conversation.type == ZMTConversationTypeInvalid || conversation.selfIdentifier == nil ||
-                ![conversation.selfIdentifier isEqual:self.selfUser.identifier]) {
+            if (conversation.type == ZMTConversationTypeInvalid ||
+                conversation.selfIdentifier == nil ||
+                ![conversation.selfIdentifier isEqual:self.selfUser.identifier] ||
+                conversation.team != nil) // Team conversations are handled separately
+            {
                 continue; // Conversation that's not visible to the user
             }
             
@@ -964,7 +1013,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"time": NSDate.date.transportString
                                       };
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:conversation.creator isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1037,7 +1086,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                               @"conversation" : conversation.identifier,
                               };
     
-    return [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:conversation.creator isTransient:YES];
+    return [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES];
 }
 
 
@@ -1053,7 +1102,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         if (event.conversation.selfIdentifier == nil) {
             NSDictionary *dict = [event.transportData asDictionary];
             //If user_ids (joined users) contains self user identifier, but self identifier of conversation is nil than it is conversation to wich self user was invited
-            //We need to set it's self identifier to self user, so that transport session can build payload for this conversation with selfInfo
+            //We need to set its self identifier to self user, so that transport session can build payload for this conversation with selfInfo
             if ([event.type isEqualToString:@"conversation.member-join"] &&
                 [[dict valueForKeyPath:@"data.user_ids"] containsObject:self.selfUser.identifier])
             {
@@ -1066,7 +1115,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         
         id e = [MockPushEvent eventWithPayload:event.transportData
                                               uuid:[NSUUID timeBasedUUID]
-                                          fromUser:event.from isTransient:NO];
+                                   isTransient:NO];
         [pushEvents addObject:e];
     }
     return pushEvents;
@@ -1086,7 +1135,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             NSDictionary *userPayload = user.changePushPayload;
             if (userPayload != nil) {
                 [userPayload description];
-                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:NO]];
+                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] isTransient:NO]];
             }
         }
     }
@@ -1110,7 +1159,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                 continue;
             }
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] fromUser:connection.from isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1152,7 +1201,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                   @"from": user.identifier,
                                   @"data": @{@"status": started ? @"started" : @"stopped"},
                                   @"type": @"conversation.typing"};
-        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:YES];
+        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES];
         [self firePushEvents:@[event]];
     }];
 }

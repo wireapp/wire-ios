@@ -42,10 +42,13 @@ import Foundation
     @NSManaged public var connectionsTo: NSOrderedSet
     @NSManaged public var activeCallConversations: NSOrderedSet
     
+    @NSManaged public var createdTeams: Set<MockTeam>?
+
     @NSManaged public var clients: NSMutableSet
     
     @NSManaged public var invitations: NSOrderedSet
     
+    @NSManaged public var memberships: Set<MockMember>?
     
     override public func awakeFromInsert() {
         if accentID == 0 {

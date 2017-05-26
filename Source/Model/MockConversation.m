@@ -22,9 +22,6 @@
 @import WireCryptobox;
 
 #import "MockConversation.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
-#import <WireMockTransport/WireMockTransport-Swift.h>
-#import "MockEvent.h"
 #import "MockEvent.h"
 #import "MockAsset.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
@@ -70,8 +67,9 @@ static NSString * const IdleString = @"idle";
 @dynamic otrArchivedRef;
 @dynamic otrMuted;
 @dynamic otrMutedRef;
+@dynamic team;
 
-+ (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
++ (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
     NSAssert(selfUser.identifier, @"The self user needs to have an identifier for this to work.");
     MockConversation *conversation = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Conversation" inManagedObjectContext:moc];
@@ -87,7 +85,7 @@ static NSString * const IdleString = @"idle";
     return conversation;
 }
 
-+ (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
++ (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
     MockConversation *conversation = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Conversation" inManagedObjectContext:moc];
     conversation.type = type;
@@ -101,21 +99,9 @@ static NSString * const IdleString = @"idle";
     return conversation;
 }
 
-
-+ (instancetype)conversationInMoc:(NSManagedObjectContext *)moc withCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
++ (instancetype)conversationInMoc:(NSManagedObjectContext *)moc withCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
-    NSAssert(creator.identifier, @"The self user needs to have an identifier for this to work.");
-    MockConversation *conversation = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Conversation" inManagedObjectContext:moc];
-    conversation.selfIdentifier = creator.identifier;
-    conversation.type = type;
-    NSMutableOrderedSet *addedUsers = [NSMutableOrderedSet orderedSetWithArray:otherUsers];
-    [addedUsers insertObject:creator atIndex:0];
-    [conversation addUsersByUser:creator addedUsers:addedUsers.array];
-    conversation.identifier = [NSUUID createUUID].transportString;
-    conversation.lastEventTime = [NSDate date];
-    conversation.creator = creator;
-    [conversation.mutableActiveUsers addObject:creator];
-    return conversation;
+    return [self insertConversationIntoContext:moc withSelfUser:creator creator:creator otherUsers:otherUsers type:type];
 }
 
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMTUpdateEventType)type data:(id<ZMTransportData>)data
@@ -216,6 +202,13 @@ static NSString * const IdleString = @"idle";
     data[@"type"] = self.transportConversationType;
     data[@"last_event_time"] = self.lastEventTime ? [self.lastEventTime transportString] : [NSNull null];
     data[@"last_event"] = self.lastEvent ?: [NSNull null];
+    
+    if (self.team != nil) {
+        data[@"team"] = @{
+                          @"teamid" : self.team.identifier,
+                          @"managed" : @NO
+                          };
+    }
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;

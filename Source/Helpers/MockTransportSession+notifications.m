@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "MockPushEvent.h"
 #import "MockTransportSession+notifications.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 

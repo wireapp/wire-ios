@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
+@import WireMockTransport;
 #import "MockTransportSessionTests.h"
-#import "WireMockTransport/WireMockTransport-Swift.h"
 
 @interface MockTransportSessionRequestsTests : MockTransportSessionTests
 
