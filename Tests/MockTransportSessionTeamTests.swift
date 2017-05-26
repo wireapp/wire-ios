@@ -255,11 +255,9 @@ extension MockTransportSessionTeamTests {
     
     func testThatItReturnsErrorForNonExistingTeam() {
         // Given
-        var team: MockTeam!
-        
         sut.performRemoteChanges { session in
             _ = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "name")
+            _ = session.insertTeam(withName: "name")
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
