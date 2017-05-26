@@ -34,9 +34,7 @@ static NSString *const ConversationInfoIDKey = @"id";
 static NSString *const ConversationInfoOthersKey = @"others";
 static NSString *const ConversationInfoMembersKey = @"members";
 static NSString *const ConversationInfoCreatorKey = @"creator";
-static NSString *const ConversationInfoTeamKey = @"team";
-static NSString *const ConversationInfoTeamIdKey = @"teamid";
-static NSString *const ConversationInfoManagedTeamKey = @"managed";
+static NSString *const ConversationInfoTeamIdKey = @"team";
 static NSString *const ConversationInfoLastEventTimeKey = @"last_event_time";
 
 NSString *const ZMConversationInfoOTRMutedValueKey = @"otr_muted";
@@ -103,9 +101,9 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
         ZMLogError(@"Invalid members in conversation JSON: %@", transportData);
     }
 
-    NSDictionary *team = [transportData optionalDictionaryForKey:ConversationInfoTeamKey];
-    if (nil != team) {
-        [self updateTeamWithPayload:team];
+    NSUUID *teamId = [transportData optionalUuidForKey:ConversationInfoTeamIdKey];
+    if (nil != teamId) {
+        [self updateTeamWithIdentifier:teamId];
     }
 }
 
@@ -130,23 +128,17 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     }
 }
 
-- (void)updateTeamWithPayload:(NSDictionary *)payload
+- (void)updateTeamWithIdentifier:(NSUUID *)teamId
 {
-    NSUUID *teamId = [payload optionalUuidForKey:ConversationInfoTeamIdKey];
-    if (nil != teamId) {
-        BOOL created = NO;
-        self.teamRemoteIdentifier = teamId;
-        self.team = [Team fetchOrCreateTeamWithRemoteIdentifier:teamId createIfNeeded:YES inContext:self.managedObjectContext created:&created];
-        // If we are added to a conversation in a team than we should have gotten the
-        // team creation update event and fetched the team before.
-        // If not and we just created the team then we need to refetch it.
-        self.team.needsToBeUpdatedFromBackend = created;
+    VerifyReturn(nil != teamId);
 
-        NSNumber *managed = [payload optionalNumberForKey:ConversationInfoManagedTeamKey];
-        if (nil != managed) {
-            self.managed = managed.boolValue;
-        }
-    }
+    BOOL created = NO;
+    self.teamRemoteIdentifier = teamId;
+    self.team = [Team fetchOrCreateTeamWithRemoteIdentifier:teamId createIfNeeded:YES inContext:self.managedObjectContext created:&created];
+    // If we are added to a conversation in a team than we should have gotten the
+    // team creation update event and fetched the team before.
+    // If not and we just created the team then we need to refetch it.
+    self.team.needsToBeUpdatedFromBackend = created;
 }
 
 - (void)updatePotentialGapSystemMessagesIfNeededWithUsers:(NSSet <ZMUser *>*)users
