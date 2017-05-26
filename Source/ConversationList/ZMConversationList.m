@@ -69,13 +69,13 @@
 - (instancetype)initWithAllConversations:(NSArray *)conversations
                       filteringPredicate:(NSPredicate *)filteringPredicate
                                      moc:(NSManagedObjectContext *)moc
-                        debugDescription:(NSString *)debugDescription;
+                              identifier:(NSString *)identifier;
 {
     self = [super init];
     if (self) {
         self.moc = moc;
-        _identifier = debugDescription;
-        self.customDebugDescription = debugDescription;
+        _identifier = identifier;
+        self.customDebugDescription = identifier;
         self.filteringPredicate = filteringPredicate;
         self.sortDescriptors = [ZMConversation defaultSortDescriptors];
         [self calculateKeysAffectingPredicateAndSort];

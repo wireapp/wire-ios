@@ -28,7 +28,7 @@
 
 @property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
 
-- (instancetype)initWithAllConversations:(NSArray *)conversations filteringPredicate:(NSPredicate *)filteringPredicate moc:(NSManagedObjectContext *)moc debugDescription:(NSString *)debugDescription NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithAllConversations:(NSArray *)conversations filteringPredicate:(NSPredicate *)filteringPredicate moc:(NSManagedObjectContext *)moc identifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithObjects:(const id [])objects count:(NSUInteger)cnt NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_DESIGNATED_INITIALIZER;
