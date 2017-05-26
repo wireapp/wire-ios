@@ -325,7 +325,7 @@
 
 
 
-@implementation MockTransportSessionTests (ListOfRequests)
+@implementation MockTransportSessionRequestsTests (ListOfRequests)
 
 - (void)sendRequestToMockTransportSession:(ZMTransportRequest *)request
 {

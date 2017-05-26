@@ -48,6 +48,7 @@ extension MockMember {
     @objc(insertInContext:forUser:inTeam:)
     public static func insert(in context: NSManagedObjectContext, for user: MockUser, in team: MockTeam) -> MockMember {
         let member: MockMember = insert(in: context)
+        member.permissions = .member
         member.user = user
         member.team = team
         return member

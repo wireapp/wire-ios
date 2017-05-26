@@ -914,7 +914,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 }
 
 - (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users {
-    return [MockConversation insertConversationIntoContext:self.managedObjectContext forTeam:team with:users];
+    MockConversation *conversation = [MockConversation insertConversationIntoContext:self.managedObjectContext forTeam:team with:users];
+    NSAssert(self.selfUser.identifier, @"The self user needs to be set");
+    if ([conversation.activeUsers containsObject:self.selfUser]) {
+        conversation.selfIdentifier = self.selfUser.identifier;
+    }
+    return conversation;
 }
 
 - (void)deleteConversation:(nonnull MockConversation *)conversation
@@ -1001,7 +1006,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             if (conversation.type == ZMTConversationTypeInvalid ||
                 conversation.selfIdentifier == nil ||
                 ![conversation.selfIdentifier isEqual:self.selfUser.identifier] ||
-                conversation.team != nil) // Team conversations are handled separately
+                (conversation.team != nil && [conversation.team containsUser:self.selfUser])) // Team conversations where you are a member are handled separately
             {
                 continue; // Conversation that's not visible to the user
             }

@@ -21,7 +21,7 @@ import CoreData
 
 @objc public final class MockTeam: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversations: Set<MockConversation>?
-    @NSManaged public var members: Set<MockMember>?
+    @NSManaged public var members: Set<MockMember>
     @NSManaged public var creator: MockUser?
     @NSManaged public var name: String?
     @NSManaged public var pictureAssetKey: String?
@@ -41,6 +41,12 @@ import CoreData
 extension MockTeam {
     public static func predicateWithIdentifier(identifier: String) -> NSPredicate {
         return NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
+    }
+    
+    @objc(containsUser:)
+    public func contains(user: MockUser) -> Bool {
+        guard let userMemberships = user.memberships, !userMemberships.isEmpty else { return false }
+        return !userMemberships.union(members).isEmpty
     }
     
     @objc

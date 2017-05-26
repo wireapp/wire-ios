@@ -26,6 +26,18 @@
 
 @implementation MockTransportSessionUsersTests
 
+- (void)testThatACreatedUserHasValidatedEmail
+{
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        // WHEN
+        MockUser *user = [session insertUserWithName:@"Mario"];
+        
+        // THEN
+        XCTAssertTrue(user.isEmailValidated);
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
 - (void)testCreatingAndRequestingSeveralUsers;
 {
     // GIVEN
