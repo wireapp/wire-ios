@@ -185,9 +185,17 @@ public class SharingSession {
 
     let transportSession: ZMTransportSession
     
+    /// All teams the user belongs to
+    public var allTeams: [Team] {
+        return Array(ZMUser.selfUser(in: userInterfaceContext).teams)
+    }
+    
+    /// Currently selected team, nil for personal team
+    public var currentTeam: Team? = nil
+    
     /// The `ZMConversationListDirectory` containing all conversation lists
     private var directory: ZMConversationListDirectory {
-        return userInterfaceContext.conversationListDirectory(for: nil)
+        return userInterfaceContext.conversationListDirectory(for: currentTeam)
     }
     
     /// Whether all prerequsisties for sharing are met
