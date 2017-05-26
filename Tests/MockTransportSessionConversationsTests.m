@@ -18,8 +18,7 @@
 
 
 #import "MockTransportSessionTests.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
-
+@import WireMockTransport;
 @import WireProtos;
 @import WireDataModel;
 

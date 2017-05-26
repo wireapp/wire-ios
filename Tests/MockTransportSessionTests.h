@@ -26,7 +26,6 @@
 #import "MockTransportSession+internal.h"
 #import "MockConnection.h"
 #import "MockFlowManager.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 @interface TestPushChannelEvent : NSObject

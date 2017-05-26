@@ -203,12 +203,7 @@ static NSString * const IdleString = @"idle";
     data[@"last_event_time"] = self.lastEventTime ? [self.lastEventTime transportString] : [NSNull null];
     data[@"last_event"] = self.lastEvent ?: [NSNull null];
     
-    if (self.team != nil) {
-        data[@"team"] = @{
-                          @"teamid" : self.team.identifier,
-                          @"managed" : @NO
-                          };
-    }
+    data[@"team"] = self.team.identifier ?: [NSNull null];
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;

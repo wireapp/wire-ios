@@ -18,6 +18,7 @@
 
 
 #import "MockTransportSessionTests.h"
+@import WireMockTransport;
 
 @interface MockTransportSessionRegistrationTests : MockTransportSessionTests
 
