@@ -20,21 +20,35 @@ import Foundation
 import CoreData
 
 public extension MockTransportSession {
+    private func selfUserPartOfTeam(_ team: MockTeam) -> Bool {
+        return team.contains(user: selfUser)
+    }
+    
+    private func ascendingCreationDate(first: MockTeam, second: MockTeam) -> Bool {
+        return first.createdAt < second.createdAt
+    }
+    
     @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
     public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
         
         let insertedEvents = inserted
             .flatMap { $0 as? MockTeam }
+            .sorted(by: ascendingCreationDate)
+            .filter(selfUserPartOfTeam)
             .map(MockTeamEvent.inserted)
             .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         
         let updatedEvents =  updated
             .flatMap { $0 as? MockTeam }
+            .sorted(by: ascendingCreationDate)
+            .filter(selfUserPartOfTeam)
             .flatMap { self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
         
         let deletedEvents = deleted
             .flatMap { $0 as? MockTeam }
+            .sorted(by: ascendingCreationDate)
+            .filter(selfUserPartOfTeam)
             .map(MockTeamEvent.deleted)
             .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         
