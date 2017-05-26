@@ -18,8 +18,8 @@
 
 
 @import WireTransport;
+@import WireMockTransport;
 #import "MockTransportSessionTests.h"
-#import "MockPushEvent.h"
 
 @interface MockTransportSessionPushChannelTests : MockTransportSessionTests
 @end

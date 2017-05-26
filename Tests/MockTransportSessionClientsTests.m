@@ -19,8 +19,6 @@
 
 #import "MockTransportSessionTests.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
-#import "MockPushEvent.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 @interface MockTransportSessionClientsTests : MockTransportSessionTests

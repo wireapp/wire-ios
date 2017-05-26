@@ -87,3 +87,11 @@ public extension ZMTransportRequest {
         return self.method == method && self.matches(path: path)
     }
 }
+
+func ~=(query: (path: String, method: ZMTransportRequestMethod), request: ZMTransportRequest) -> Bool {
+    return request.matches(path: query.path, method: query.method)
+}
+
+func ~=(path: String, request: ZMTransportRequest) -> Bool {
+    return request.matches(path: path)
+}

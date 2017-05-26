@@ -20,7 +20,6 @@
 #import "MockFlowManager.h"
 #import "MockTransportSessionTests.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
-#import "MockPushEvent.h"
 
 @interface MockTransportSessionFlowManagerTests : MockTransportSessionTests
 

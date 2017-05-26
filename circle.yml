@@ -16,6 +16,7 @@ checkout:
 
 dependencies:
   override:
+    - curl -O https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Dangerfile
     - bundle install:
         pwd:
           $CIRCLE_PROJECT_REPONAME
@@ -33,6 +34,7 @@ test:
     - ./CI/Bots/bot-build.swift --workspace "../${CIRCLE_PROJECT_REPONAME}":
         pwd:
           wire-ios-scripts
+    - bundle exec danger
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - mkdir -p $CIRCLE_TEST_REPORTS/code_coverage/

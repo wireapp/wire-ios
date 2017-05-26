@@ -21,7 +21,7 @@
 @import CoreData;
 @import WireTransport;
 
-
+@class MockTeam;
 @class MockUser;
 @class MockEvent;
 @class MockUserClient;
@@ -66,6 +66,8 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 
 @property (nonatomic, readonly, nonnull) NSOrderedSet *events;
 @property (nonatomic) BOOL isVideoCall;
+
+@property (nonatomic, nullable) MockTeam *team;
 
 - (nonnull id<ZMTransportData>)transportData;
 
