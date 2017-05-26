@@ -100,7 +100,7 @@ extension ImageDownloadRequestStrategy : ZMDownstreamTranscoder {
         updateMediumImage(forMessage: message, imageData: response.rawData!)
     }
     
-    public func delete(_ object: ZMManagedObject!, downstreamSync: ZMObjectSync!) {
+    public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard let message = object as? ZMAssetClientMessage else { return }
         message.managedObjectContext?.delete(message)
     }
