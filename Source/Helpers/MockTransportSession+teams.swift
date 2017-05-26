@@ -21,6 +21,7 @@ import WireDataModel
 
 extension ZMTransportResponse {
     static let teamNotFound = ZMTransportResponse(payload: ["label" : "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)
+    static let notTeamMember = ZMTransportResponse(payload: ["label" : "no-team-member"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)
     static let operationDenied = ZMTransportResponse(payload: ["label" : "operation-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)
 }
 
@@ -126,7 +127,7 @@ extension MockTransportSession {
     private func ensurePermission(_ permissions: Permissions, in team: MockTeam) -> ZMTransportResponse? {
         guard let selfTeams = selfUser.memberships,
             let member = selfTeams.union(team.members).first
-            else { return .teamNotFound }
+            else { return .notTeamMember }
         
         guard member.permissions.contains(permissions) else {
             return .operationDenied

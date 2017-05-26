@@ -26,6 +26,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 #import "MockTransportSessionTests.h"
 #import <libkern/OSAtomic.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @interface TestPushChannelEvent()
 
@@ -481,7 +482,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     [conversation.managedObjectContext performBlockAndWait:^{
         NSDictionary *dict = (id) data;
         XCTAssertTrue([dict isKindOfClass:[NSDictionary class]]);
-        NSArray *keys = @[@"creator", @"id", @"last_event", @"last_event_time", @"members", @"name", @"type"];
+        NSArray *keys = @[@"creator", @"id", @"last_event", @"last_event_time", @"members", @"name", @"type", @"team"];
         AssertDictionaryHasKeys(dict, keys);
         
         XCTAssertEqualObjects(dict[@"creator"], conversation.creator ? conversation.creator.identifier: [NSNull null]);
