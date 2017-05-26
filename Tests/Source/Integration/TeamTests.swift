@@ -278,10 +278,11 @@ extension TeamTests {
         }
         XCTAssertTrue(userChange.teamsChanged)
         
-        XCTAssertEqual(teamObserver.notifications.count, 1)
-        guard let memberChange = teamObserver.notifications.last else {
+        XCTAssertEqual(teamObserver.notifications.count, 2)
+        guard let nameChange = teamObserver.notifications.first, let memberChange = teamObserver.notifications.last else {
             return XCTFail("no notification received")
         }
+        XCTAssertTrue(nameChange.nameChanged)
         XCTAssertTrue(memberChange.membersChanged)
     }
     
