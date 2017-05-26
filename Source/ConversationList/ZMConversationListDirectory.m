@@ -53,18 +53,19 @@ static NSString * const PendingKey = @"Pending";
     if (self) {
         self.team = team;
         NSArray *allConversations = [self fetchAllConversations:moc team:team];
+        NSString *teamSuffix = team ? team.remoteIdentifier.transportString : @"";
         self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                          filteringPredicate:[ZMConversation predicateForConversationsExcludingArchivedInTeam:team]
                                                                                         moc:moc
-                                                                           debugDescription:@"unarchivedConversations"];
+                                                                           identifier:[@"unarchivedConversations" stringByAppendingString:teamSuffix]];
         self.archivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                        filteringPredicate:[ZMConversation predicateForArchivedConversationsInTeam:team]
                                                                                       moc:moc
-                                                                         debugDescription:@"archivedConversations"];
+                                                                         identifier:@"archivedConversations"];
         self.conversationsIncludingArchived = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                                 filteringPredicate:[ZMConversation predicateForConversationsIncludingArchivedInTeam:team]
                                                                                                moc:moc
-                                                                                  debugDescription:@"conversationsIncludingArchived"];
+                                                                                  identifier:[@"conversationsIncludingArchived" stringByAppendingString:teamSuffix]];
 
         // There are no connection requests inside of a team, we need
         // to ensure that we won't show the private ones
@@ -72,11 +73,11 @@ static NSString * const PendingKey = @"Pending";
         self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                                 filteringPredicate:pendingConnectionsPredicate
                                                                                                moc:moc
-                                                                                  debugDescription:@"pendingConnectionConversations"];
+                                                                                  identifier:@"pendingConnectionConversations"];
         self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                       filteringPredicate:[ZMConversation predicateForClearedConversationsInTeam:team]
                                                                                      moc:moc
-                                                                        debugDescription:@"clearedConversations"];
+                                                                        identifier:[@"clearedConversations" stringByAppendingString:teamSuffix]];
     }
     return self;
 }
