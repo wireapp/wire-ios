@@ -187,7 +187,7 @@ public class SharingSession {
     
     /// The `ZMConversationListDirectory` containing all conversation lists
     private var directory: ZMConversationListDirectory {
-        return userInterfaceContext.conversationListDirectory()
+        return userInterfaceContext.conversationListDirectory(for: nil)
     }
     
     /// Whether all prerequsisties for sharing are met
