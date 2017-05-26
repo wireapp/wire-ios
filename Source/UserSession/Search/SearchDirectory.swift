@@ -36,6 +36,9 @@ public class SearchDirectory : NSObject {
         self.searchContext =  NSManagedObjectContext.createSearchWithStore(at: userSession.storeURL)
     }
     
+    /// Tear down the SearchDirectory. 
+    /// 
+    /// NOTE: this must be called before releasing the instance
     public func tearDown() {
         userSession.syncManagedObjectContext.performGroupedBlock {
             SearchDirectory.userIDsMissingProfileImage.removeDirectory(self)
@@ -48,10 +51,13 @@ public class SearchDirectory : NSObject {
         isTornDown = true
     }
     
+    /// Perform a search request.
+    ///
+    /// Returns a SearchTask which should be retained until the results arrive.
     public func perform(_ request: SearchRequest) -> SearchTask {
         let task = SearchTask(request: request, context: searchContext, session: userSession)
         
-        task.onResult { [weak self] (result) in
+        task.onResult { [weak self] (result, _) in
             self?.requestSearchUserProfileImages(result)
         }
         
