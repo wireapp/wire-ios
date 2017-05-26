@@ -42,6 +42,8 @@ static NSString *const UserInfoRemovedValueKey = @"removed";
 
 static NSString *const ConversationInfoArchivedValueKey = @"archived";
 
+static NSString *const ConversationTeamKey = @"team";
+
 @interface ZMConversationTranscoder () <ZMSimpleListRequestPaginatorSync>
 
 @property (nonatomic) ZMUpstreamModifiedObjectSync *modifiedSync;
@@ -684,6 +686,10 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     if(insertedConversation.userDefinedName != nil) {
         payload[@"name"] = insertedConversation.userDefinedName;
     }
+
+    if (insertedConversation.team.remoteIdentifier != nil) {
+        payload[ConversationTeamKey] = insertedConversation.team.remoteIdentifier.transportString;
+    }
     
     request = [ZMTransportRequest requestWithPath:ConversationsPath method:ZMMethodPOST payload:payload];
     return [[ZMUpstreamRequest alloc] initWithTransportRequest:request];
@@ -890,10 +896,11 @@ static NSString *const ConversationInfoArchivedValueKey = @"archived";
     [conversation updateWithTransportData:dictionaryPayload];
 }
 
-- (void)deleteObject:(ZMConversation *)conversation downstreamSync:(id<ZMObjectSync>)downstreamSync;
+- (void)deleteObject:(ZMConversation *)conversation withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync>)downstreamSync;
 {
     NOT_USED(downstreamSync);
     NOT_USED(conversation);
+    NOT_USED(response);
 }
 
 @end
