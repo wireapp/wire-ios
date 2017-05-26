@@ -105,6 +105,25 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         XCTAssertFalse(conversations.setValue.contains(clearedTeamConversation))
     }
 
+    func testThatItDoesNotIncludePendingConnectionRequestsInTeamsConversationLists() {
+        // given
+        let connectionConversation = ZMConversation.insertNewObject(in: uiMOC)
+        connectionConversation.lastServerTimeStamp = Date()
+        connectionConversation.lastReadServerTimeStamp = connectionConversation.lastServerTimeStamp
+        connectionConversation.remoteIdentifier = .create()
+        connectionConversation.conversationType = .connection
+        connectionConversation.connection = .insertNewObject(in: uiMOC)
+        connectionConversation.connection?.status = .pending
+
+        // when
+        let pendingConversations = uiMOC.conversationListDirectory(for: nil).pendingConnectionConversations
+        let teamPendingConversations = uiMOC.conversationListDirectory(for: team).pendingConnectionConversations
+
+        // then
+        XCTAssert(teamPendingConversations.setValue.isEmpty)
+        XCTAssertEqual(pendingConversations.setValue, [connectionConversation])
+    }
+
     // MARK: - Helper
 
     func createGroupConversation(in team: Team?, archived: Bool = false) -> ZMConversation {
