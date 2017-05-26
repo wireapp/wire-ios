@@ -118,7 +118,7 @@ class ZMConversationTests_Teams: BaseTeamTests {
         ]
 
         if let teamId = teamId {
-            payload["team"] = ["teamid": teamId, "managed": false] as [String: Any]
+            payload["team"] = teamId
         } else {
             payload["team"] = NSNull()
         }

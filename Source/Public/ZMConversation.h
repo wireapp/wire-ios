@@ -82,9 +82,6 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 @property (nonatomic, copy, nullable) NSString *draftMessageText;
 @property (nonatomic, nullable) Team *team;
 
-/// Whether the conversation is a managed team conversation
-@property (nonatomic) BOOL managed;
-
 /// This is read only. Use -setVisibleWindowFromMessage:toMessage: to update this.
 /// This will return @c nil if the last read message has not yet been sync'd to this device, or if the conversation has no last read message.
 @property (nonatomic, readonly, nullable) ZMMessage *lastReadMessage;
