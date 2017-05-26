@@ -50,32 +50,10 @@
 
 @implementation ZMConversationTestsBase
 
-- (void)setUp;
-{
-    [super setUp];
-    
-    [self setupSelfConversation]; // when updating lastRead we are posting to the selfConversation
-}
-
 - (void)tearDown
 {
     self.receivedNotifications = nil;
     [super tearDown];
-}
-
-- (void)setupSelfConversation
-{
-    NSUUID *selfUserID =  [NSUUID UUID];
-    [ZMUser selfUserInContext:self.uiMOC].remoteIdentifier = selfUserID;
-    ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    selfConversation.remoteIdentifier = selfUserID;
-    selfConversation.conversationType = ZMConversationTypeSelf;
-    [self.uiMOC saveOrRollback];
-    
-    [self.syncMOC performGroupedBlockAndWait:^{
-        [self.syncMOC refreshObject:[ZMUser selfUserInContext:self.syncMOC] mergeChanges:NO];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (void)didReceiveWindowNotification:(NSNotification *)notification
