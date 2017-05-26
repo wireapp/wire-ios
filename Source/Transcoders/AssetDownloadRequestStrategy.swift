@@ -165,7 +165,7 @@ import WireRequestStrategy
         fatalError("Cannot generate request for \(object)")
     }
     
-    public func delete(_ object: ZMManagedObject!, downstreamSync: ZMObjectSync!) {
+    public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         // no-op
     }
     
