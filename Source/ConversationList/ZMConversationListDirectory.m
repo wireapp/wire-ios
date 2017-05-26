@@ -65,8 +65,12 @@ static NSString * const PendingKey = @"Pending";
                                                                                 filteringPredicate:[ZMConversation predicateForConversationsIncludingArchivedInTeam:team]
                                                                                                moc:moc
                                                                                   debugDescription:@"conversationsIncludingArchived"];
+
+        // There are no connection requests inside of a team, we need
+        // to ensure that we won't show the private ones
+        NSPredicate *pendingConnectionsPredicate = team ? [NSPredicate predicateWithValue:NO] : ZMConversation.predicateForPendingConversations;
         self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
-                                                                                filteringPredicate:[ZMConversation predicateForPendingConversationsInTeam:team]
+                                                                                filteringPredicate:pendingConnectionsPredicate
                                                                                                moc:moc
                                                                                   debugDescription:@"pendingConnectionConversations"];
         self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations

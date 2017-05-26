@@ -43,12 +43,12 @@ extension ZMConversation {
         return .init(format: "%K == NULL", #keyPath(ZMConversation.team))
     }
 
-    @objc(predicateForPendingConversationsInTeam:)
-    class func predicateForPendingConversations(in team: Team?) -> NSPredicate {
+    @objc(predicateForPendingConversations)
+    class func predicateForPendingConversations() -> NSPredicate {
         let basePredicate = predicateForFilteringResults()
         let pendingConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationConnectionKey).status == \(ZMConnectionStatus.pending.rawValue)")
         
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate]).predicate(for: team)
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate])
     }
 
     @objc(predicateForClearedConversationsInTeam:)
