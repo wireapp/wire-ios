@@ -18,6 +18,7 @@
 
 @objc public enum SyncPhase : Int, CustomStringConvertible {
     case fetchingLastUpdateEventID
+    case fetchingTeams
     case fetchingConnections
     case fetchingConversations
     case fetchingUsers
@@ -30,7 +31,12 @@
     
     var isSyncing : Bool {
         switch self {
-        case .fetchingMissedEvents, .fetchingLastUpdateEventID, .fetchingConnections,.fetchingUsers, .fetchingConversations:
+        case .fetchingMissedEvents,
+             .fetchingLastUpdateEventID,
+             .fetchingConnections,
+             .fetchingTeams,
+             .fetchingUsers,
+             .fetchingConversations:
             return true
         case .done:
             return false
@@ -45,6 +51,8 @@
             return "fetchingConnections"
         case .fetchingConversations:
             return "fetchingConversations"
+        case .fetchingTeams:
+            return "fetchingTeams"
         case .fetchingUsers:
             return "fetchingUsers"
         case .fetchingMissedEvents:
@@ -126,7 +134,7 @@ extension SyncStatus {
     
     public func failCurrentSyncPhase() {
         if currentSyncPhase == .fetchingMissedEvents {
-            currentSyncPhase = hasPersistedLastEventID ? .fetchingConnections : .fetchingLastUpdateEventID
+            currentSyncPhase = hasPersistedLastEventID ? .fetchingTeams : .fetchingLastUpdateEventID
             needsToRestartQuickSync = false
         }
     }

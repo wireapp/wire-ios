@@ -37,6 +37,7 @@
 
 
 // PRIVATE
+#import <WireSyncEngine/ZMUserSession+Private.h>
 #import <WireSyncEngine/ZMPushRegistrant.h>
 #import <WireSyncEngine/ZMNotifications+UserSession.h>
 #import <WireSyncEngine/ZMNotifications+UserSessionInternal.h>
@@ -70,3 +71,4 @@
 #import <WireSyncEngine/ZMAVSBridge.h>
 #import <WireSyncEngine/ZMUserSession+OperationLoop.h>
 #import <WireSyncEngine/ZMOperationLoop+Background.h>
+#import <WireSyncEngine/ZMSimpleListRequestPaginator.h>

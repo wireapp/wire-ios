@@ -132,6 +132,8 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 /// The URL of the shared container that has been determinned using the passed in application group identifier
 @property (nonatomic, readonly) NSURL *sharedContainerURL;
 
+@property (nonatomic, readonly) NSURL *storeURL;
+
 @end
 
 
