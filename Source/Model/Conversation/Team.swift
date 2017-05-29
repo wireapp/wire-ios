@@ -102,6 +102,8 @@ extension Team {
             guard let user = member.user else { return false }
             
             return !user.isSelfUser && matchingName.evaluate(with: user)
+        }).sorted(by: { (first, second) -> Bool in
+            return first.user?.normalizedName < second.user?.normalizedName
         })
     }
     
