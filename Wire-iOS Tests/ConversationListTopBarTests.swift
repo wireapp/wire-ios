@@ -214,8 +214,9 @@ class ConversationListTopBarTests: CoreDataSnapshotTestCase {
 
 fileprivate extension UIView {
     func snapshotView() -> UIView {
-        constrain(self) { cell in
-            cell.width == 320
+        constrain(self) { selfView in
+            selfView.width == 320
+            selfView.height == 70
         }
         self.layer.speed = 0
         self.setNeedsLayout()
