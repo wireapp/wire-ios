@@ -47,7 +47,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.create",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": NSNull()
         ]
 
@@ -71,7 +71,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.create",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": NSNull()
         ]
 
@@ -100,7 +100,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.delete",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": NSNull()
         ]
 
@@ -109,6 +109,37 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
 
         // then
         XCTAssertNil(Team.fetch(withRemoteIdentifier: teamId, in: uiMOC))
+    }
+
+    func testThatItDeltesATeamsConversationsWhenReceivingATeamDeleteUpdateEvent() {
+        // given
+        let conversationId = UUID.create()
+        let teamId = UUID.create()
+
+        syncMOC.performGroupedBlock {
+            let team = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = conversationId
+            conversation.team = team
+            XCTAssert(self.syncMOC.saveOrRollback())
+        }
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
+        XCTAssertNotNil(Team.fetch(withRemoteIdentifier: teamId, in: uiMOC))
+
+        let payload: [String: Any] = [
+            "type": "team.delete",
+            "team": teamId.transportString(),
+            "time": Date().transportString(),
+            "data": NSNull()
+        ]
+
+        // when
+        processEvent(fromPayload: payload)
+
+        // then
+        XCTAssertNil(Team.fetch(withRemoteIdentifier: teamId, in: uiMOC))
+        XCTAssertNil(ZMConversation.fetch(withRemoteIdentifier: conversationId, in: uiMOC))
     }
 
     // MARK: - Team Update
@@ -174,7 +205,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.update",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": dataPayload ?? NSNull()
         ]
 
@@ -211,7 +242,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.member-join",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["user" : userId.transportString()]
         ]
 
@@ -245,7 +276,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.member-join",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["user" : userId.transportString()]
         ]
 
@@ -273,7 +304,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.member-join",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["user" : userId.transportString()]
         ]
 
@@ -316,7 +347,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.member-leave",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["user" : userId.transportString()]
         ]
 
@@ -352,7 +383,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.member-leave",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["user" : userId.transportString()]
         ]
         processEvent(fromPayload: payload)
@@ -389,7 +420,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.member-leave",
             "team": team1Id.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["user" : userId.transportString()]
         ]
 
@@ -419,7 +450,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.conversation-create",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["conv": conversationId.transportString()]
         ]
 
@@ -445,7 +476,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.conversation-create",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["conv": conversationId.transportString()]
         ]
 
@@ -480,7 +511,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.conversation-delete",
             "team": teamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["conv": conversationId.transportString()]
         ]
 
@@ -515,7 +546,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "team.conversation-delete",
             "team": otherTeamId.transportString(),
-            "time": "",
+            "time": Date().transportString(),
             "data": ["conv": conversationId.transportString()]
         ]
 
@@ -539,7 +570,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         let conversationId = UUID.create()
         let payload: [String: Any] = [
             "type": "conversation-delete",
-            "time": "",
+            "time": Date().transportString(),
             "data": ["conv": conversationId.transportString()]
         ]
 
