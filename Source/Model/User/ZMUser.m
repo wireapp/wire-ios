@@ -285,6 +285,17 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     return [self.handle isEqualToString:ZMUser.annaBotHandle] || [self.handle isEqualToString:ZMUser.ottoBotHandle];
 }
 
+- (BOOL)isMemberOf:(Team *)team
+{
+    for (Member *membership in self.memberships) {
+        if (membership.team == team) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 - (BOOL)canBeConnected;
 {
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
