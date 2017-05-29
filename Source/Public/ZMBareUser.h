@@ -19,6 +19,8 @@
 
 #import <WireUtilities/ZMAccentColor.h>
 
+@class Team;
+
 /// The minimal set of properties and methods that something User-like must include
 @protocol ZMBareUser <NSObject>
 
@@ -59,6 +61,9 @@
 /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status change
 /// You should stop from observing the searchUser and start observing the user from there on
 - (void)connectWithMessageText:(NSString *)text completionHandler:(dispatch_block_t)handler;
+
+/// Returns YES if the user is a member of the team
+- (BOOL)isMemberOf:(Team *)team;
 
 @property (nonatomic, readonly, copy) NSString *connectionRequestMessage;
 @property (nonatomic, readonly) NSUInteger totalCommonConnections;

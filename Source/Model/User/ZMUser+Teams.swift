@@ -35,11 +35,7 @@ public extension ZMUser {
     public var activeTeams: Set<Team> {
         return Set(teams.filter { $0.isActive })
     }
-
-    public func isMember(of team: Team) -> Bool {
-        return memberships?.any { team.isEqual($0.team) } ?? false
-    }
-
+    
     public func permissions(in team: Team) -> Permissions? {
         return membership(in: team)?.permissions
     }
