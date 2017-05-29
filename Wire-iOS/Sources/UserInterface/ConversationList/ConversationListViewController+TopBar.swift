@@ -22,11 +22,6 @@ import Cartography
 
 extension ConversationListViewController {
     
-    public func updateSpaces() {
-        self.topBar.contentScrollView = self.listContentController.collectionView
-        self.topBar.setShowSpaces(to: Space.spaces.count > 0)
-    }
-    
     public func createTopBar() {
         let profileButton = IconButton()
         
@@ -48,9 +43,8 @@ extension ConversationListViewController {
         }
         
         self.topBar = ConversationListTopBar()
-        
         self.contentContainer.addSubview(self.topBar)
-        self.updateSpaces()
+        self.topBar.contentScrollView = self.listContentController.collectionView
         self.topBar.leftView = profileButton
     }
 }

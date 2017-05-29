@@ -21,8 +21,15 @@ import Cartography
 import WireExtensionComponents
 
 final class ConversationListTopBar: TopBar {
-    private var spacesView: SpaceSelectorView? = .none
-    public weak var contentScrollView: UIScrollView? = .none
+    private var teamsView: TeamSelectorView? = .none
+    public weak var contentScrollView: UIScrollView? = .none {
+        didSet {
+            self.setShowTeams(to: self.showTeams)
+        }
+    }
+    
+    private var selfUserObserverToken: NSObjectProtocol!
+    private var applicationDidBecomeActiveToken: NSObjectProtocol!
     
     public enum ImagesState: Int {
         case collapsed
@@ -31,14 +38,30 @@ final class ConversationListTopBar: TopBar {
 
     private var state: ImagesState = .visible
    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        selfUserObserverToken = UserChangeInfo.add(observer: self, forBareUser: ZMUser.selfUser())
+        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: Notification.Name.UIApplicationDidBecomeActive, object: nil, queue: nil, using: { [weak self] _ in
+            guard let `self` = self else {
+                return
+            }
+            self.updateShowTeamsIfNeeded()
+        })
+        self.setShowTeams(to: ZMUser.selfUser().teams.count > 0)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func update(to newState: ImagesState, animated: Bool = false, force: Bool = false) {
-        if !force && (self.state == newState || Space.spaces.count == 0) {
+        if !force && (self.state == newState || ZMUser.selfUser().teams.isEmpty) {
             return
         }
         
         self.state = newState
         let change = {
-            self.spacesView?.imagesCollapsed = self.state == .collapsed
+            self.teamsView?.imagesCollapsed = self.state == .collapsed
             self.splitSeparator = self.state == .visible
         }
         
@@ -50,16 +73,28 @@ final class ConversationListTopBar: TopBar {
         }
     }
     
-    public var showSpaces: Bool = false
+    fileprivate var showTeams: Bool = false
     
-    public func setShowSpaces(to showSpaces: Bool) {
-        self.showSpaces = showSpaces
+    internal func updateShowTeamsIfNeeded() {
+        if ZMUser.selfUser().teams.count > 0 {
+            if !showTeams {
+                self.setShowTeams(to: true)
+            }
+        }
+        else {
+            if showTeams {
+                self.setShowTeams(to: false)
+            }
+        }
+    }
+    
+    fileprivate func setShowTeams(to showTeams: Bool) {
+        self.showTeams = showTeams
         UIView.performWithoutAnimation {
-            if showSpaces {
-                self.spacesView?.removeFromSuperview()
-                self.spacesView = SpaceSelectorView(spaces: Space.spaces)
-                
-                self.middleView = self.spacesView
+            if showTeams {
+                self.teamsView?.removeFromSuperview()
+                self.teamsView = TeamSelectorView()
+                self.middleView = self.teamsView
                 self.leftSeparatorLineView.alpha = 1
                 self.rightSeparatorLineView.alpha = 1
                 
@@ -96,6 +131,15 @@ final class ConversationListTopBar: TopBar {
     }
 }
 
+extension ConversationListTopBar: ZMUserObserver {
+    public func userDidChange(_ changeInfo: UserChangeInfo) {
+        guard changeInfo.teamsChanged else {
+            return
+        }
+        updateShowTeamsIfNeeded()
+    }
+}
+
 extension ConversationListTopBar {
     @objc(scrollViewDidScroll:)
     public func scrollViewDidScroll(scrollView: UIScrollView!) {
@@ -104,7 +148,7 @@ extension ConversationListTopBar {
         
         self.update(to: state, animated: true)
         
-        if !self.showSpaces {
+        if !self.showTeams {
             self.leftSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
             self.rightSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
         }

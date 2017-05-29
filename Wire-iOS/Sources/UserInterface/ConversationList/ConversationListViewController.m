@@ -90,6 +90,9 @@
 
 @end
 
+@interface ConversationListViewController (TeamsObserver) <TeamObserver>
+@end
+
 @interface ConversationListViewController ()
 
 @property (nonatomic) ZMConversation *selectedConversation;
@@ -100,6 +103,7 @@
 @property (nonatomic) id userObserverToken;
 @property (nonatomic) id allConversationsObserverToken;
 @property (nonatomic) id connectionRequestsObserverToken;
+@property (nonatomic) id teamsObserver;
 
 @property (nonatomic) ConversationListContentController *listContentController;
 @property (nonatomic) InviteBannerViewController *invitationBannerViewController;
@@ -165,33 +169,33 @@
     [ZMUserSession addInitalSyncCompletionObserver:self];
     self.initialSyncCompleted = ZMUserSession.sharedSession.initialSyncOnceCompleted.boolValue;
 
-    [self createTopBar];
     [self createNoConversationLabel];
     [self createListContentController];
     [self createBottomBarController];
-    
+    [self createTopBar];
+
     [self createViewConstraints];
     [self.listContentController.collectionView scrollRectToVisible:CGRectMake(0, 0, self.view.bounds.size.width, 1) animated:NO];
     
     [self updateNoConversationVisibility];
     [self updateArchiveButtonVisibility];
     
-    self.allConversationsObserverToken = [ConversationListChangeInfo addObserver:self forList:[SessionObjectCache sharedCache].allConversations];
-    self.connectionRequestsObserverToken = [ConversationListChangeInfo addObserver:self forList:[SessionObjectCache sharedCache].pendingConnectionRequests];
-
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(updateSpaces)
-                                               name:[Space didChangeNotificationNameString]
-                                             object:nil];
+    [self updateObserverTokensForActiveTeam];
+    self.teamsObserver = [TeamChangeInfo addTeamObserver:self forTeam:nil];
     
     [self showPushPermissionDeniedDialogIfNeeded];
+}
+
+- (void)updateObserverTokensForActiveTeam
+{
+    self.allConversationsObserverToken = [ConversationListChangeInfo addObserver:self forList:[ZMConversationList conversationsIncludingArchivedInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]]];
+    self.connectionRequestsObserverToken = [ConversationListChangeInfo addObserver:self forList:[ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]]];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    [Space update];
     
     [[ZMUserSession sharedSession] enqueueChanges:^{
         [self.selectedConversation savePendingLastRead];
@@ -227,34 +231,43 @@
 
 - (void)createNoConversationLabel;
 {
+    self.noConversationLabel = [[UILabel alloc] initForAutoLayout];
+    self.noConversationLabel.attributedText = [self attributedTextForNoConversationLabel:self.hasArchivedConversations];
+    self.noConversationLabel.numberOfLines = 0;
+    [self.contentContainer addSubview:self.noConversationLabel];
+}
+
+- (NSAttributedString *)attributedTextForNoConversationLabel:(BOOL)hasArchivedConversations
+{
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     paragraphStyle.paragraphSpacing = 10;
     paragraphStyle.alignment = NSTextAlignmentCenter;
-    
+
     NSDictionary *titleAttributes = @{
                                       NSForegroundColorAttributeName : [UIColor whiteColor],
                                       NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_bold"],
                                       NSParagraphStyleAttributeName : paragraphStyle
                                       };
-    
+
     paragraphStyle.paragraphSpacing = 4;
     NSDictionary *textAttributes = @{
                                      NSForegroundColorAttributeName : [UIColor whiteColor],
                                      NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_light"],
                                      NSParagraphStyleAttributeName : paragraphStyle
                                      };
-   
-    NSString *titleString = NSLocalizedString(@"contacts_ui.no_contact.title", nil);
-    NSString *messageString = NSLocalizedString(@"contacts_ui.no_contact.message", nil);
+
+    NSString *titleLocalizationKey = hasArchivedConversations ? @"contacts_ui.no_contact.archived.title": @"contacts_ui.no_contact.title";
+    NSString *titleString = NSLocalizedString(titleLocalizationKey, nil);
+
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[titleString uppercaseString]
                                                                                          attributes:titleAttributes];
-    [attributedString appendString:[messageString uppercaseString]
-                        attributes:textAttributes];
-    
-    self.noConversationLabel = [[UILabel alloc] initForAutoLayout];
-    self.noConversationLabel.attributedText = [[NSAttributedString alloc] initWithAttributedString:attributedString];
-    self.noConversationLabel.numberOfLines = 0;
-    [self.contentContainer addSubview:self.noConversationLabel];
+    if (!hasArchivedConversations) {
+        NSString *messageString = NSLocalizedString(@"contacts_ui.no_contact.message", nil);
+        [attributedString appendString:[messageString uppercaseString]
+                            attributes:textAttributes];
+    }
+
+    return attributedString;
 }
 
 - (void)createBottomBarController
@@ -572,6 +585,7 @@
 - (void)showNoContactLabel;
 {
     if (self.state == ConversationListStateConversationList) {
+        self.noConversationLabel.attributedText = [self attributedTextForNoConversationLabel:self.hasArchivedConversations];
         [UIView animateWithDuration:0.20
                          animations:^{
                              self.noConversationLabel.alpha = 1.0f;
@@ -589,14 +603,26 @@
 
 - (void)updateNoConversationVisibility;
 {
-    NSUInteger conversationsCount = [SessionObjectCache sharedCache].conversationList.count + [SessionObjectCache sharedCache].pendingConnectionRequests.count;
-    BOOL shouldDisplayNoContact = conversationsCount == 0;
-    
-    if (shouldDisplayNoContact) {
+    if (!self.hasConversations) {
         [self showNoContactLabel];
     } else {
         [self hideNoContactLabel];
     }
+}
+
+- (BOOL)hasConversations
+{
+    ZMUserSession *session = ZMUserSession.sharedSession;
+    Team *team = ZMUser.selfUser.activeTeam;
+    NSUInteger conversationsCount = [ZMConversationList conversationsInUserSession:session team:team].count +
+                                    [ZMConversationList pendingConnectionConversationsInUserSession:session team:team].count;
+    return conversationsCount > 0;
+
+}
+
+- (BOOL)hasArchivedConversations
+{
+    return [ZMConversationList archivedConversationsInUserSession:ZMUserSession.sharedSession team:ZMUser.selfUser.activeTeam].count > 0;
 }
 
 @end
@@ -725,7 +751,7 @@
 
 - (void)updateArchiveButtonVisibility
 {
-    BOOL showArchived = [SessionObjectCache.sharedCache archivedConversations].count > 0;
+    BOOL showArchived = self.hasArchivedConversations;
     if (showArchived == self.bottomBarController.showArchived) {
         return;
     }
@@ -750,3 +776,17 @@
 }
 
 @end
+
+@implementation ConversationListViewController (TeamsObserver)
+
+- (void)teamDidChange:(TeamChangeInfo *)changeInfo
+{
+    if (changeInfo.isActiveChanged) {
+        [self updateNoConversationVisibility];
+        [self updateArchiveButtonVisibility];
+        [self updateObserverTokensForActiveTeam];
+    }
+}
+
+@end
+

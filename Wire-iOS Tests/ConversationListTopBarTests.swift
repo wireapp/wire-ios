@@ -21,8 +21,8 @@ import XCTest
 import Cartography
 @testable import Wire
 
-class ConversationListTopBarTests: ZMSnapshotTestCase {
-    let sut = ConversationListTopBar()
+class ConversationListTopBarTests: CoreDataSnapshotTestCase {
+    var sut: ConversationListTopBar!
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.frame = CGRect(x: 0, y: 0, width: 320, height: 480)
@@ -31,60 +31,64 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
         return scrollView
     }()
     
-    func createWorkSpaces(createFamily: Bool = false) {
+    func removeTeams() {
+        self.selfUser.mutableSetValue(forKey: "memberships").removeAllObjects()
+        moc.saveOrRollback()
+    }
+    
+    @discardableResult func createTeams(createFamily: Bool = false) -> [TeamType] {
         let workspaceName = "W"
         
-        var spaces: [Space] = []
+        var teams: [Team] = []
         
-        let privateSpace: Space = {
-            let selfUser = ZMUser.selfUser()
-            
-            var image: UIImage? = .none
-            
-            if let imageData = selfUser?.imageMediumData {
-                image = UIImage(from: imageData, withMaxSize: 100)
-            }
-            
-            let predicate = NSPredicate(format: "NOT (displayName CONTAINS[cd] %@)", workspaceName)
-            let privateSpace = Space(name: selfUser?.displayName ?? "", image: image, predicate: predicate)
-            privateSpace.selected = true
-            return privateSpace
-        }()
-
-        spaces.append(privateSpace)
-        
-        let workSpace: Space = {
-            let predicate = NSPredicate(format: "displayName CONTAINS[cd] %@", workspaceName)
-            let workSpace = Space(name: workspaceName, image: UIImage(named: "wire-logo-shield"), predicate: predicate)
-            workSpace.selected = true
-            return workSpace
+        let workTeam: Team = {
+            let workTeam = Team.insertNewObject(in: moc)
+            workTeam.name = workspaceName
+            workTeam.isActive = false
+            return workTeam
         }()
         
-        spaces.append(workSpace)
+        teams.append(workTeam)
         
         if createFamily {
-            let familySpace: Space = {
-                let predicate = NSPredicate(format: "displayName CONTAINS[cd] %@", workspaceName)
-                let workSpace = Space(name: "Family", image: UIImage(named: "wire-logo-shield"), predicate: predicate)
-                workSpace.selected = true
-                return workSpace
+            let familyTeam: Team = {
+                let familyTeam = Team.insertNewObject(in: moc)
+                familyTeam.name = "Family"
+                familyTeam.isActive = false
+                return familyTeam
             }()
             
-            spaces.append(familySpace)
+            teams.append(familyTeam)
         }
         
-        Space.spaces = spaces
+        self.selfUser.mutableSetValue(forKey: "memberships").addObjects(from: teams.map {
+            
+            let membership = Member.insertNewObject(in: moc)
+            membership.team = $0
+            membership.user = self.selfUser
+            return membership
+        })
+        moc.saveOrRollback()
+        return teams
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        sut = nil
+        MockUser.setMockSelf(nil)
     }
     
     override func setUp() {
         super.setUp()
-        sut.contentScrollView = scrollView
+        MockUser.setMockSelf(self.selfUser)
         self.snapshotBackgroundColor = UIColor(white: 0, alpha: 0.8)
     }
     
     func testThatItRendersDefaultBar() {
         // GIVEN & WHEN
-        sut.setShowSpaces(to: false)
+        removeTeams()
+        self.sut = ConversationListTopBar()
+        sut.contentScrollView = scrollView
         
         // THEN
         self.verify(view: sut.snapshotView())
@@ -92,8 +96,9 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
     
     func testThatItRendersSpacesBar() {
         // GIVEN & WHEN
-        createWorkSpaces()
-        sut.setShowSpaces(to: true)
+        createTeams()
+        self.sut = ConversationListTopBar()
+        sut.contentScrollView = scrollView
         sut.update(to: ConversationListTopBar.ImagesState.visible)
         
         // THEN
@@ -102,8 +107,9 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
     
     func testThatItRendersSpacesBarScrolledAway() {
         // GIVEN & WHEN
-        createWorkSpaces()
-        sut.setShowSpaces(to: true)
+        createTeams()
+        self.sut = ConversationListTopBar()
+        sut.contentScrollView = scrollView
         sut.update(to: ConversationListTopBar.ImagesState.collapsed)
         
         // THEN
@@ -112,8 +118,9 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
     
     func testThatItRendersSpacesBarThreeSpaces() {
         // GIVEN & WHEN
-        createWorkSpaces(createFamily: true)
-        sut.setShowSpaces(to: true)
+        createTeams(createFamily: true)
+        self.sut = ConversationListTopBar()
+        sut.contentScrollView = scrollView
         sut.update(to: ConversationListTopBar.ImagesState.visible)
         
         // THEN
@@ -122,19 +129,21 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
     
     func testThatItRendersSpacesBarThreeSpacesScrolledAway() {
         // GIVEN & WHEN
-        createWorkSpaces(createFamily: true)
-        sut.setShowSpaces(to: true)
+        createTeams(createFamily: true)
+        self.sut = ConversationListTopBar()
+        sut.contentScrollView = scrollView
         sut.update(to: ConversationListTopBar.ImagesState.collapsed)
         
         // THEN
         self.verify(view: sut.snapshotView())
     }
     
-    func testThatItRendersSpacesBarOneSelected() {
+    func testThatItRendersSpacesBarSecondOneSelected() {
         // GIVEN & WHEN
-        createWorkSpaces()
-        Space.spaces.first!.selected = false
-        sut.setShowSpaces(to: true)
+        let teams = createTeams()
+        teams.first!.isActive = true
+        self.sut = ConversationListTopBar()
+        sut.contentScrollView = scrollView
         sut.update(to: ConversationListTopBar.ImagesState.visible)
         
         // THEN
@@ -143,9 +152,10 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
     
     func testThatItRendersSpacesBarOneSelectedScrolledAway() {
         // GIVEN & WHEN
-        createWorkSpaces()
-        Space.spaces.first!.selected = false
-        sut.setShowSpaces(to: true)
+        let teams = createTeams()
+        teams.first!.isActive = true
+        self.sut = ConversationListTopBar()
+        sut.contentScrollView = scrollView
         sut.update(to: ConversationListTopBar.ImagesState.collapsed)
         
         // THEN
@@ -154,31 +164,32 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
     
     func testThatItRendersSpacesBarAfterDefaultBar() {
         // GIVEN & WHEN
-        createWorkSpaces()
-        sut.setShowSpaces(to: false)
+        
+        self.sut = ConversationListTopBar()
         
         // WHEN
         _ = sut.snapshotView()
         
         // AND WHEN
-        sut.setShowSpaces(to: true)
-        sut.update(to: ConversationListTopBar.ImagesState.visible)
-        
+        createTeams()
+        sut.update(to: ConversationListTopBar.ImagesState.visible, force: true)
+        self.sut.updateShowTeamsIfNeeded()
+
         // THEN
         self.verify(view: sut.snapshotView())
     }
     
     func testThatItRendersSpacesBarAfterDefaultBar_ScrolledAway() {
         // GIVEN & WHEN
-        createWorkSpaces()
+        self.sut = ConversationListTopBar()
         scrollView.contentOffset = CGPoint(x: 0, y: 100)
-        sut.setShowSpaces(to: false)
         
         // WHEN
         _ = sut.snapshotView()
         
         // AND WHEN
-        sut.setShowSpaces(to: true)
+        createTeams()
+        self.sut.updateShowTeamsIfNeeded()
         
         // THEN
         self.verify(view: sut.snapshotView())
@@ -186,16 +197,16 @@ class ConversationListTopBarTests: ZMSnapshotTestCase {
     
     func testThatItRendersDefaultBarAfterSpacesBar() {
         // GIVEN & WHEN
-        createWorkSpaces()
-        sut.setShowSpaces(to: true)
-        sut.update(to: ConversationListTopBar.ImagesState.visible)
-        
+        createTeams()
+        self.sut = ConversationListTopBar()
+
         // WHEN
         _ = sut.snapshotView()
         
         // AND WHEN
-        sut.setShowSpaces(to: false)
-        
+        removeTeams()
+        self.sut.updateShowTeamsIfNeeded()
+
         // THEN
         self.verify(view: sut.snapshotView())
     }

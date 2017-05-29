@@ -704,6 +704,13 @@ ParticipantsListCell {
         textColor: $color-text-foreground;
         font: $font-small-light;
     }
+    guestLabel @{
+        backgroundColor: $color-background-light;
+        textLabel @{
+            textColor: $color-text-foreground-light;
+            font: $font-small-light;
+        }
+    }
 }
 
 /* Fullscreen image view */
@@ -748,12 +755,6 @@ ConversationListItemView {
     }
 }
 
-SearchView {
-    lineView: @{
-        backgroundColor: $color-accent-current;
-    }
-}
-
 VideoMessageCell {
     @device ipad {
         videoViewHeight: 240
@@ -768,16 +769,29 @@ DotView {
     backgroundColor: $color-accent-current;
 }
 
-SpaceView {
+^BaseTeamView {
     nameLabel: @{
         font: $font-small-semibold;
-        textColor: $color-text-dimmed-dark;
     }
 }
 
-SpaceView.selected {
-    nameLabel: @{
-        textColor: $color-text-foreground-dark;
+TeamImageView {
+    initialLabel: @{
+        font: $font-small-semibold;
+        textColor: $color-text-foreground-light;
+    }
+    backgroundColor: $color-background-light;
+}
+
+PersonalTeamView {
+    userImageView: @{
+        containerView: @{
+            backgroundColor: $color-background-light;
+        }
+        initials: @{
+            font: $font-small-semibold;
+            textColor: $color-text-foreground-light;
+        }
     }
 }
 
@@ -1381,6 +1395,15 @@ TokenField {
     }
 }
 
+SearchViewController {
+    
+    searchTitleLabel: @{
+        textColor: $color-text-foreground-dark;
+        font: $font-small-semibold;
+    }
+    
+}
+
 SearchViewController PeopleInputController TokenField {
     textColor: white; 
     tokenTitleColor: black;
@@ -1747,7 +1770,7 @@ SearchResultLabel {
     textColor: $color-text-foreground;
 }
 
-RoundedTextBadge {
+TextSearchResultCell RoundedTextBadge {
     textLabel: @{
         textColor: $color-background;
         font: $font-small-semibold;
