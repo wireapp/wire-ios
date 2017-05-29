@@ -29,7 +29,8 @@ import Foundation
     public let teamIdentifier: String
     public let conversationIdentifier: String
     public let kind: Kind
-    
+    public let timestamp = Date()
+
     public static func createIfNeeded(team: MockTeam, changedValues: [String: Any]) -> [MockTeamConversationEvent] {
         let conversationsKey = #keyPath(MockTeam.conversations)
         let oldConversations = team.committedValues(forKeys: [conversationsKey])
@@ -60,7 +61,7 @@ import Foundation
     @objc public var payload: ZMTransportData {
         return [
             "team" : teamIdentifier,
-            "time" : "",
+            "time" : timestamp.transportString(),
             "type" : kind.rawValue,
             "data" : data
             ] as ZMTransportData
