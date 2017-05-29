@@ -71,7 +71,7 @@ extension TeamDownloadRequestStrategy: ZMEventConsumer {
     private func deleteTeam(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId else { return }
         guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-        managedObjectContext.delete(team)
+        deleteTeamAndConversations(team)
     }
 
     private func updateTeam(with event: ZMUpdateEvent) {
@@ -108,7 +108,7 @@ extension TeamDownloadRequestStrategy: ZMEventConsumer {
             managedObjectContext.delete(member)
             if user.isSelfUser {
                 // We delete the local team in case the members user was the self user
-                managedObjectContext.delete(team)
+                deleteTeamAndConversations(team)
             }
         } else {
             log.error("Trying to delete non existent membership of \(user) in \(team)")
@@ -135,5 +135,10 @@ extension TeamDownloadRequestStrategy: ZMEventConsumer {
             log.error("Specified conversation \(conversation) to delete not in specified team \(team)")
         }
     }
-    
+
+    private func deleteTeamAndConversations(_ team: Team) {
+        team.conversations.forEach(managedObjectContext.delete)
+        managedObjectContext.delete(team)
+    }
+
 }

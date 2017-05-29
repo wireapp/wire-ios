@@ -199,7 +199,7 @@ class TeamDownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertNil(Team.fetch(withRemoteIdentifier: teamId, in: self.syncMOC))
-            XCTAssertNil(ZMConversation.fetch(withRemoteIdentifier: conversationId, in: self.syncMOC))
+            XCTAssertNotNil(ZMConversation.fetch(withRemoteIdentifier: conversationId, in: self.syncMOC))
         }
     }
 

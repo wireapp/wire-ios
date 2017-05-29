@@ -76,17 +76,6 @@ extension TeamDownloadRequestStrategy: ZMDownstreamTranscoder {
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync, let team = object as? Team else { return }
-        let label = response.payload?.asDictionary()?["label"] as? String
-        if response.httpStatus == 403 && label == "no-team-member" {
-            // The self user is a guest in this team.
-            // We nil the relation to the conversations to avoid a cascading delete when deleting the team.
-            team.conversations.forEach {
-                $0.team = nil
-            }
-
-            // TODO: We might need to managedObjectContext.processPengingChanges() here to update the inverse relationships
-        }
-
         managedObjectContext.delete(team)
     }
 }
