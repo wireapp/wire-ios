@@ -25,14 +25,23 @@
 #import "ZMUserSession.h"
 #import "ZMUserSession+Authentication.h"
 #import "ZMUserSession+Registration.h"
+#import "ZMUserSession+Internal.h"
+
+#import "ZMClientRegistrationStatus+Internal.h"
 
 #import "ZMCredentials.h"
   
 @interface UserProfileTests : IntegrationTestBase
-
+@property (nonatomic) id clientRegStatusMock;
 @end
 
 @implementation UserProfileTests
+
+- (void)tearDown
+{
+    [super tearDown];
+    [self.clientRegStatusMock stopMocking];
+}
 
 - (void)testThatWeCanChangeUsernameAndAccentColorForSelfUser
 {
@@ -384,6 +393,12 @@
 - (BOOL)loginWithPhoneAndRemoveEmail
 {
     NSString *phone = @"+99123456789";
+    
+    if (nil == self.clientRegStatusMock) {
+        self.clientRegStatusMock = [OCMockObject partialMockForObject:self.userSession.clientRegistrationStatus];
+        [[[self.clientRegStatusMock stub] andReturnValue:@(NO)] isAddingEmailNecessary];
+    }
+    
     self.selfUser.email = nil;
     self.selfUser.phone = phone;
     self.selfUser.password = nil;
@@ -397,12 +412,13 @@
 - (void)testThatItCanSetEmailAndPassword
 {
     // given
+    self.registeredOnThisDevice = YES;
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
     XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
+    self.selfUser.email = nil;
+    self.selfUser.password = nil;
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertEqualObjects(selfUser.emailAddress, nil);
@@ -415,7 +431,6 @@
     id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserver)];
     id userObserverToken = [UserChangeInfo addObserver:userObserver forBareUser:selfUser];
     [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the email was set
-    
     
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil]; // <- STEP 1
@@ -444,8 +459,6 @@
     XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertEqualObjects(selfUser.emailAddress, nil);
@@ -480,8 +493,6 @@
     XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertEqualObjects(selfUser.emailAddress, nil);
@@ -530,8 +541,6 @@
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
-    
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertEqualObjects(selfUser.emailAddress, nil);
     
@@ -549,7 +558,7 @@
     
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
+    WaitForAllGroupsToBeEmpty(2);
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
@@ -566,8 +575,6 @@
     XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertEqualObjects(selfUser.emailAddress, nil);
@@ -586,7 +593,7 @@
     
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
+    WaitForAllGroupsToBeEmpty(2);
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
@@ -603,8 +610,6 @@
     XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertEqualObjects(selfUser.emailAddress, nil);
