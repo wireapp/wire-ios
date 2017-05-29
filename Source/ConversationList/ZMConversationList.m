@@ -24,6 +24,7 @@
 #import "ZMConversationListDirectory.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
+
 @import CoreData;
 
 @interface ZMConversationList ()
@@ -69,13 +70,14 @@
 - (instancetype)initWithAllConversations:(NSArray *)conversations
                       filteringPredicate:(NSPredicate *)filteringPredicate
                                      moc:(NSManagedObjectContext *)moc
-                              identifier:(NSString *)identifier;
+                             description:(NSString *)description
+                                    team:(Team *)team
 {
     self = [super init];
     if (self) {
         self.moc = moc;
-        _identifier = identifier;
-        self.customDebugDescription = identifier;
+        _identifier = [self identifierWithDescription:description team:team];
+        self.customDebugDescription = self.identifier;
         self.filteringPredicate = filteringPredicate;
         self.sortDescriptors = [ZMConversation defaultSortDescriptors];
         [self calculateKeysAffectingPredicateAndSort];
@@ -83,6 +85,14 @@
         [moc.conversationListObserverCenter startObservingList:self];
     }
     return self;
+}
+
+- (NSString *)identifierWithDescription:(NSString *)description team:(Team *)team
+{
+    if (nil != team) {
+        return [description stringByAppendingFormat:@"-%@", team.remoteIdentifier.transportString];
+    }
+    return description;
 }
 
 - (NSManagedObjectContext *)managedObjectContext

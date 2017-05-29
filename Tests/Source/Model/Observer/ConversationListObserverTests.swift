@@ -779,6 +779,41 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
 
     // MARK: - Teams
 
+    func testThatItNotifiesTheObserverIfAConversationGetsArchived() {
+        // given
+        let team = Team.insertNewObject(in: uiMOC)
+        let teamId = UUID.create()
+        team.remoteIdentifier = teamId
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        conversation.team = team
+        conversation.remoteIdentifier = .create()
+        let conversationList = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        XCTAssert(uiMOC.saveOrRollback())
+
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
+        defer { ConversationListChangeInfo.remove(observer: token, for:conversationList) }
+
+        // when
+        conversation.isArchived = true
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        mergeLastChanges()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(testObserver.changes.count, 1)
+        if let first = testObserver.changes.first {
+            XCTAssertEqual(first.insertedIndexes, IndexSet())
+            XCTAssertEqual(first.deletedIndexes, IndexSet())
+            XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(movedIndexes(first), [])
+
+            let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
+            XCTAssertEqual(archivedList.firstObject as? ZMConversation, conversation)
+        }
+    }
+
     func testThatItOnlyNotifiesTheObserverWhenTheTeamMatches() {
         // given
         let team = Team.insertNewObject(in: uiMOC)

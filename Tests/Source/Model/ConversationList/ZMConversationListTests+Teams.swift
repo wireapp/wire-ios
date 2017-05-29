@@ -311,6 +311,32 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssertEqual(clearedList.arrayValue, [conversation1])
     }
 
+    func testThatItDoesNotReturnAConversationAnymoreOnceItGotUnarchived() {
+        // given
+        let conversation = createGroupConversation(in: team)
+        conversation.isArchived = true
+
+        // then
+        do {
+            let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
+            let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+            XCTAssertEqual(archivedList.arrayValue, [conversation])
+            XCTAssertEqual(activeList.count, 0)
+        }
+
+        // when
+        conversation.isArchived = false
+        XCTAssert(uiMOC.saveOrRollback())
+
+        // then
+        do {
+            let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
+            let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+            XCTAssertEqual(activeList.arrayValue, [conversation])
+            XCTAssertEqual(archivedList.count, 0)
+        }
+    }
+
     // MARK: - Helper
 
     private func createTeam() -> Team {

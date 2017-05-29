@@ -20,6 +20,7 @@
 @class ZMUserSession;
 @protocol ZMManagedObjectContextProvider;
 
+
 /// Use @c ZMConversationListChangeNotification to get notified about changes.
 @interface ZMConversationList : NSArray
 
