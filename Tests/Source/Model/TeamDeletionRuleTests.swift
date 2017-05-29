@@ -23,14 +23,14 @@ import WireTesting
 
 class TeamDeletionRuleTests: BaseZMClientMessageTests {
 
-    func testThatItDeletesConversationsWhichArePartOfATeamWhenTeamGetsDeleted() {
+    func testThatItDoesntDeleteConversationsWhichArePartOfATeamWhenTeamGetsDeleted() {
         // given
         let team = Team.insertNewObject(in: uiMOC)
         let (uuid1, uuid2, uuid3) = (UUID.create(), UUID.create(), UUID.create())
         let conversation1 = ZMConversation.insertNewObject(in: uiMOC)
         conversation1.remoteIdentifier = uuid1
         let conversation2 = ZMConversation.insertNewObject(in: uiMOC)
-        conversation1.remoteIdentifier = uuid2
+        conversation2.remoteIdentifier = uuid2
         let conversation3 = ZMConversation.insertNewObject(in: uiMOC)
         conversation3.remoteIdentifier = uuid3
 
@@ -47,8 +47,8 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertNil(ZMConversation.fetch(withRemoteIdentifier: uuid1, in: uiMOC))
-        XCTAssertNil(ZMConversation.fetch(withRemoteIdentifier: uuid2, in: uiMOC))
+        XCTAssertNotNil(ZMConversation.fetch(withRemoteIdentifier: uuid1, in: uiMOC))
+        XCTAssertNotNil(ZMConversation.fetch(withRemoteIdentifier: uuid2, in: uiMOC))
         XCTAssertEqual(ZMConversation.fetch(withRemoteIdentifier: uuid3, in: uiMOC), conversation3)
     }
 
