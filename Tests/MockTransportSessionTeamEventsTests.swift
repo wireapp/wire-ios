@@ -35,6 +35,8 @@ class MockTransportSessionTeamEventsTests : MockTransportSessionTests {
         guard let payload = event.payload as? [String : Any] else { XCTFail("Event should have payload", file: file, line: line); return }
         
         XCTAssertEqual(payload["team"] as? String, teamIdentifier, "Wrong team identifier", file: file, line: line)
+        guard let date = (payload as NSDictionary).optionalDate(forKey: "time") else { XCTFail("Event should have time", file: file, line: line); return }
+        XCTAssertLessThan(date, Date(), "Event date should be in the past", file: file, line: line)
         
         guard let expectedData = data else {
             return

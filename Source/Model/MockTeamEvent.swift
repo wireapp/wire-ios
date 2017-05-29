@@ -29,6 +29,7 @@ import Foundation
     public let data: [String : String?]
     public let teamIdentifier: String
     public let kind: Kind
+    public let timestamp = Date()
     
     public static func inserted(team: MockTeam) -> MockTeamEvent {
         return MockTeamEvent(kind: .create, team: team, data: [:])
@@ -72,7 +73,7 @@ import Foundation
     @objc public var payload: ZMTransportData {
         return [
             "team" : teamIdentifier,
-            "time" : "",
+            "time" : timestamp.transportString(),
             "type" : kind.rawValue,
             "data" : data
             ] as ZMTransportData
