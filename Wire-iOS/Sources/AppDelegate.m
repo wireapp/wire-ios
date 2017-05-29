@@ -42,7 +42,6 @@
 #import "AppDelegate+Logging.h"
 
 #import "ZClientViewController.h"
-#import "SessionObjectCache.h"
 
 #import "Analytics+iOS.h"
 #import "AnalyticsTracker+Registration.h"
@@ -270,13 +269,6 @@ static AppDelegate *sharedAppDelegate = nil;
         else if ([[url scheme] isEqualToString:WireURLSchemeInvite]) {
             [[AnalyticsTracker analyticsTrackerWithContext:nil] tagAcceptedGenericInvite];
         }
-        else if ([[url absoluteString] rangeOfString:WireURLPathTeamJoin].location != NSNotFound) {
-            NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-            if (components.queryItems.count > 0 && [[components.queryItems[0] name] isEqual:@"team_id"]) {
-                NSString *teamId = [components.queryItems[0] value];
-                [Space joinSpaceNamed:teamId];
-            }
-        }
         
         [self.appController performAfterUserSessionIsInitialized:^{
             [[ZMUserSession sharedSession] didLaunchWithURL:url];
@@ -297,11 +289,6 @@ static AppDelegate *sharedAppDelegate = nil;
 - (ZMUserSession *)zetaUserSession
 {
     return self.appController.zetaUserSession;
-}
-
-- (SessionObjectCache *)sessionObjectCache
-{
-    return self.appController.sessionObjectCache;
 }
 
 - (NotificationWindowRootViewController *)notificationWindowController

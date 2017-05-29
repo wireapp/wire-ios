@@ -76,6 +76,7 @@
 #import "ConversationInputBarViewController+Private.h"
 #import "ConversationListContentController.h"
 #import "ConversationListViewModel.h"
+#import "ConversationListViewModel+Private.h"
 #import "NotificationWindowRootViewController.h"
 #import "VoiceChannelController.h"
 #import "SplitViewController.h"
@@ -95,6 +96,11 @@
 #import "CountryCodeTableViewController.h"
 #import "UIViewController+WR_Invite.h"
 #import "UIActivityViewController+Invite.h"
+#import "UsersInContactsSection.h"
+#import "UsersInDirectorySection.h"
+#import "GroupConversationsSection.h"
+#import "TopPeopleLineSection.h"
+#import "CollectionViewSectionAggregator.h"
 
 // Helper objects
 #import "PushTransition.h"
@@ -138,6 +144,7 @@
 #import "UIImagePickerController+GetImage.h"
 #import <Classy/UIColor+CASAdditions.h>
 #import "MessagePresenter.h"
+#import "WireStyleKit+Additions.h"
 
 // Camera
 #import "CameraController.h"

@@ -19,7 +19,6 @@
 
 #import "ConversationListViewModel.h"
 #import "AggregateArray.h"
-#import "SessionObjectCache.h"
 #import "WireSyncEngine+iOS.h"
 @import WireDataModel;
 #import "Wire-Swift.h"
@@ -59,19 +58,12 @@ void debugLogUpdate (ConversationListChangeInfo *note);
 
         [self updateSection:SectionIndexAll];
         
-        SessionObjectCache *cache = [SessionObjectCache sharedCache];
-        self.pendingConversationListObserverToken = [ConversationListChangeInfo addObserver:self forList:cache.pendingConnectionRequests];
-        self.conversationListObserverToken = [ConversationListChangeInfo addObserver:self forList:cache.conversationList];
-        self.clearedConversationListObserverToken = [ConversationListChangeInfo addObserver:self forList:cache.clearedConversations];
+        [self setupObserversForActiveTeam];
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(applicationWillEnterForeground:)
                                                    name:UIApplicationWillEnterForegroundNotification
                                                  object:nil];
-        [self subscribeToSpacesUpdates];
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(subscribeToSpacesUpdates)
-                                                   name:[Space didChangeNotificationNameString]
-                                                 object:nil];
+        [self subscribeToTeamsUpdates];
     }
     return self;
 }
@@ -81,8 +73,20 @@ void debugLogUpdate (ConversationListChangeInfo *note);
     [NSNotificationCenter.defaultCenter removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
+- (void)setupObserversForActiveTeam
+{
+    self.pendingConversationListObserverToken = [ConversationListChangeInfo addObserver:self
+                                                                                forList:[ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession] team:ZMUser.selfUser.activeTeam]];
+    
+    self.conversationListObserverToken = [ConversationListChangeInfo addObserver:self
+                                                                         forList:[ZMConversationList conversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]]];
+    
+    self.clearedConversationListObserverToken = [ConversationListChangeInfo addObserver:self
+                                                                                forList:[ZMConversationList clearedConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]]];
+}
+
 /**
- * This updates a specific section in the model, by copying the contents locally. 
+ * This updates a specific section in the model, by copying the contents locally.
  * Passing in a value of SectionIndexAll updates all sections. The reason why we need to keep
  * local copies of the lists is that we get separate notifications for each list, 
  * which means that an update to one can render the collection view out of sync with the datasource.
@@ -99,8 +103,8 @@ void debugLogUpdate (ConversationListChangeInfo *note);
     }
     
     if (sectionIndex == SectionIndexContactRequests || sectionIndex == SectionIndexAll) {
-        if ([SessionObjectCache sharedCache].pendingConnectionRequests.count > 0) {
-            self.inbox = items ? : @[self.contactRequestsItem];
+        if ([ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession] team:ZMUser.selfUser.activeTeam].count > 0) {
+            self.inbox = items ?: @[self.contactRequestsItem];
         }
         else {
             self.inbox = @[];
@@ -136,7 +140,7 @@ void debugLogUpdate (ConversationListChangeInfo *note);
         ZMConversation *conversation = itemToSelect;
         BOOL containedInOtherLists = NO;
         
-        if ([[SessionObjectCache sharedCache].archivedConversations containsObject:itemToSelect]) {
+        if ([[ZMConversationList archivedConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]] containsObject:itemToSelect]) {
             // Check if it's archived, this would mean that the archive is closed but we want to unarchive
             // and select the item
             containedInOtherLists = YES;
@@ -144,7 +148,7 @@ void debugLogUpdate (ConversationListChangeInfo *note);
                 conversation.isArchived = NO;
             } completionHandler:nil];
         }
-        else if ([[SessionObjectCache sharedCache].clearedConversations containsObject:itemToSelect]) {
+        else if ([[ZMConversationList clearedConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]] containsObject:itemToSelect]) {
             containedInOtherLists = YES;
             [[ZMUserSession sharedSession] enqueueChanges:^{
                 [conversation revealClearedConversation];
@@ -222,12 +226,12 @@ void debugLogUpdate (ConversationListChangeInfo *note);
 {
     debugLogUpdate(change);
     
-    if (change.conversationList == [SessionObjectCache sharedCache].conversationList) {
+    if (change.conversationList == [ZMConversationList conversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]]) {
         // If the section was empty in certain cases collection view breaks down on the big amount of conversations,
         // so we prefer to do the simple reload instead.
 
         [self updateConversationListAnimated];
-    } else if (change.conversationList == [SessionObjectCache sharedCache].pendingConnectionRequests) {
+    } else if (change.conversationList == [ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]]) {
         debugLog(@"RELOAD contact requests");
         [self updateSection:SectionIndexContactRequests];
         [self.delegate listViewModel:self didUpdateSectionForReload:SectionIndexContactRequests];
@@ -236,29 +240,7 @@ void debugLogUpdate (ConversationListChangeInfo *note);
 
 - (NSArray *)newConversationList
 {
-    NSArray *newConversationList = @[];
-    
-    if ([Space spaces].count > 0) {
-        NSMutableArray *predicates = [NSMutableArray array];
-        for (Space *space in [Space spaces]) {
-            if (space.selected) {
-                [predicates addObject:space.predicate];
-            }
-        }
-        if (predicates.count == 0) {
-            newConversationList = @[];
-        }
-        else {
-            NSPredicate *compoundOR = [[NSCompoundPredicate alloc] initWithType:NSOrPredicateType subpredicates:predicates];
-            newConversationList = [[[SessionObjectCache sharedCache].conversationList.asArray copy] filteredArrayUsingPredicate:compoundOR];
-        }
-        
-    }
-    else {
-        newConversationList = [[SessionObjectCache sharedCache].conversationList.asArray copy];
-    }
-    
-    return newConversationList;
+    return [[ZMConversationList conversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]] copy];
 }
 
 - (void)updateConversationListAnimated
@@ -297,14 +279,14 @@ void debugLogUpdate (ConversationListChangeInfo *note);
 
 - (void)reloadConversationListViewModel
 {
-    [self updateSection:SectionIndexConversations];
+    [self updateSection:SectionIndexAll];
+    [self setupObserversForActiveTeam];
     debugLog(@"RELOAD conversation list");
     [self.delegate listViewModelShouldBeReloaded];
 }
 
 - (void)applicationWillEnterForeground:(NSNotification *)note
 {
-    [SessionObjectCache.sharedCache refetchConversationLists];
     [self reloadConversationListViewModel];
 }
 
@@ -432,9 +414,9 @@ void debugLogUpdate (ConversationListChangeInfo *change)
         debugLog(@"update for list %p (update=%p) (conv=%p, archive=%p, pending=%p), (delete=%lu, insert=%lu, move=%lu, upd=%lu)",
                  change.conversationList,
                  change,
-                 [SessionObjectCache sharedCache].conversationList,
-                 [SessionObjectCache sharedCache].archivedConversations,
-                 [SessionObjectCache sharedCache].pendingConnectionRequests,
+                 [ZMConversationList conversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]],
+                 [ZMConversationList archivedConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]],
+                 [ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]],
                  (unsigned long)change.deletedIndexes.count,
                  (unsigned long)change.insertedIndexes.count,
                  (unsigned long)movedCount,

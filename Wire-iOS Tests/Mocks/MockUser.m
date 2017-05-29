@@ -20,6 +20,8 @@
 #import "MockUser.h"
 #import "MockConversation.h"
 
+static id<ZMBareUser> mockSelfUser = nil;
+
 @implementation MockUser
 
 #pragma mark - Mockable
@@ -53,9 +55,14 @@
     return selfUser;
 }
 
++ (void)setMockSelfUser:(id<ZMBareUser>)newMockUser
+{
+    mockSelfUser = newMockUser;
+}
+
 + (ZMUser<ZMEditableUser> *)selfUserInUserSession:(ZMUserSession *)session
 {
-    return (id)self.mockSelfUser;
+    return mockSelfUser ? : (id)self.mockSelfUser;
 }
 
 - (NSArray<MockUserClient *> *)featureWithUserClients:(NSUInteger)numClients
@@ -170,9 +177,15 @@
 {
     return @[];
 }
+
 - (void)refreshData
 {
     // no-op
+}
+
+- (NSSet *)teams
+{
+    return [NSSet set];
 }
     
 - (BOOL)isPendingApproval {
