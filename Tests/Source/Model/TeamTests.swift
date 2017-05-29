@@ -136,6 +136,24 @@ class TeamTests: BaseTeamTests {
         }
     }
     
+    func testThatMembersMatchingQueryReturnsMembersSortedAlphabeticallyByName() {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        
+        // we add actual team members as well
+        let (user1, member1) = createUserAndAddMember(to: team)
+        let (user2, member2) = createUserAndAddMember(to: team)
+        
+        user1.name = "Abacus Allison"
+        user2.name = "Zygfried Watson"
+        
+        // when
+        let result = team.members(matchingQuery: "")
+        
+        // then
+        XCTAssertEqual(result, [member1, member2])
+    }
+    
     func testThatMembersMatchingQueryReturnCorrectMember() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
