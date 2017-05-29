@@ -114,6 +114,7 @@ public class SearchResultsController : NSObject {
         teamMemberSection.delegate = self
         directorySection.delegate = self
         topPeopleSection.delegate = self
+        conversationsSection.delegate = self
         
         updateVisibleSections()
     }
