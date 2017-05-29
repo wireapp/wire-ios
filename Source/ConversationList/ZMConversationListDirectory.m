@@ -53,31 +53,34 @@ static NSString * const PendingKey = @"Pending";
     if (self) {
         self.team = team;
         NSArray *allConversations = [self fetchAllConversations:moc team:team];
-        NSString *teamSuffix = team ? team.remoteIdentifier.transportString : @"";
+
         self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                          filteringPredicate:[ZMConversation predicateForConversationsExcludingArchivedInTeam:team]
                                                                                         moc:moc
-                                                                           identifier:[@"unarchivedConversations" stringByAppendingString:teamSuffix]];
+                                                                                description:@"unarchivedConversations"
+                                                                                       team:team];
         self.archivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                        filteringPredicate:[ZMConversation predicateForArchivedConversationsInTeam:team]
                                                                                       moc:moc
-                                                                         identifier:@"archivedConversations"];
+                                                                              description:@"archivedConversations" team:team];
         self.conversationsIncludingArchived = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                                 filteringPredicate:[ZMConversation predicateForConversationsIncludingArchivedInTeam:team]
                                                                                                moc:moc
-                                                                                  identifier:[@"conversationsIncludingArchived" stringByAppendingString:teamSuffix]];
-
+                                                                                       description:@"conversationsIncludingArchived"
+                                                                                              team:team];
         // There are no connection requests inside of a team, we need
         // to ensure that we won't show the private ones
         NSPredicate *pendingConnectionsPredicate = team ? [NSPredicate predicateWithValue:NO] : ZMConversation.predicateForPendingConversations;
         self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                                 filteringPredicate:pendingConnectionsPredicate
                                                                                                moc:moc
-                                                                                  identifier:@"pendingConnectionConversations"];
+                                                                                  description:@"pendingConnectionConversations"
+                                                                                              team:nil];
         self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                       filteringPredicate:[ZMConversation predicateForClearedConversationsInTeam:team]
                                                                                      moc:moc
-                                                                        identifier:[@"clearedConversations" stringByAppendingString:teamSuffix]];
+                                                                             description:@"clearedConversations"
+                                                                                    team:team];
     }
     return self;
 }
