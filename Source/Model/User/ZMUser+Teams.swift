@@ -59,7 +59,7 @@ public extension ZMUser {
     public func isGuest(in conversation: ZMConversation) -> Bool {
         if isSelfUser {
             // In case the self user is a guest in a team conversation, the backend will
-            // return a 403, ["label": "no-team-member"] when fetching said team.
+            // return a 404 when fetching said team and we will delete the team.
             // We store the teamRemoteIdentifier of the team to check if we don't have a local team,
             // but received a teamId in the conversation payload, which means we are a guest in the conversation.
             return conversation.team == nil && conversation.teamRemoteIdentifier != nil
