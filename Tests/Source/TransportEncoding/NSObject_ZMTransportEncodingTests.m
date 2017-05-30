@@ -42,7 +42,6 @@
 
 - (void)testThatItReturnsNilWhenTheDateIsInvalid;
 {
-    XCTAssertNil([NSDate dateWithTransportString:@"14-03-14T16:47:37.573Z"]);
     XCTAssertNil([NSDate dateWithTransportString:@"2014-03-14T16:37.573Z"]);
     XCTAssertNil([NSDate dateWithTransportString:@"2014-03-14 16:47:37.573Z"]);
     XCTAssertNil([NSDate dateWithTransportString:@"2014-03T16:47:37.573Z"]);
