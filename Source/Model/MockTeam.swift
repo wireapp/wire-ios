@@ -58,14 +58,17 @@ extension MockTeam {
         return team
     }
     
-    var payload: ZMTransportData {
-        let data: [String : String?] = [
+    var payloadValues: [String : String?] {
+        return [
             "id": identifier,
             "name" : name,
             "icon_key" : pictureAssetKey,
             "icon" : pictureAssetId,
             "creator" : creator?.identifier
-            ]
-        return data as NSDictionary
+        ]
+    }
+    
+    var payload: ZMTransportData {
+        return payloadValues as NSDictionary
     }
 }

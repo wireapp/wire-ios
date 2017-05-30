@@ -23,11 +23,11 @@ import WireDataModel
 
 class MockTransportSessionTeamEventsTests : MockTransportSessionTests {
     
-    func check(event: TestPushChannelEvent?, hasType type: ZMTUpdateEventType, team: MockTeam, data: [String : String]? = nil, file: StaticString = #file, line: UInt = #line) {
+    func check(event: TestPushChannelEvent?, hasType type: ZMTUpdateEventType, team: MockTeam, data: [String : String] = [:], file: StaticString = #file, line: UInt = #line) {
         check(event: event, hasType: type, teamIdentifier: team.identifier, data: data, file: file, line: line)
     }
     
-    func check(event: TestPushChannelEvent?, hasType type: ZMTUpdateEventType, teamIdentifier: String, data: [String : String]? = nil, file: StaticString = #file, line: UInt = #line) {
+    func check(event: TestPushChannelEvent?, hasType type: ZMTUpdateEventType, teamIdentifier: String, data: [String : String?] = [:], file: StaticString = #file, line: UInt = #line) {
         guard let event = event else { XCTFail("Should have event", file: file, line: line); return }
         
         XCTAssertEqual(event.type, type, "Wrong type", file: file, line: line)
@@ -38,17 +38,17 @@ class MockTransportSessionTeamEventsTests : MockTransportSessionTests {
         guard let date = (payload as NSDictionary).optionalDate(forKey: "time") else { XCTFail("Event should have time", file: file, line: line); return }
         XCTAssertLessThan(date, Date(), "Event date should be in the past", file: file, line: line)
         
-        guard let expectedData = data else {
+        guard !data.isEmpty else {
             return
         }
-        guard let data = payload["data"] as? [String : String] else { XCTFail("Event payload should have data", file: file, line: line); return }
+        guard let receivedData = payload["data"] as? [String : String?] else { XCTFail("Event payload should have data", file: file, line: line); return }
 
-        for (key, value) in expectedData {
-            guard let dataValue = data[key] else {
+        for (key, value) in data {
+            guard let dataValue = receivedData[key] else {
                 XCTFail("Event payload data does not contain key: \"\(key)\"", file: file, line: line)
                 continue
             }
-            XCTAssertEqual(dataValue, value, "Event payload data for \"\(key)\" does not match, expected \"\(value)\", got \"\(dataValue)\"", file: file, line: line)
+            XCTAssertEqual(dataValue, value, "Event payload data for \"\(key)\" does not match, expected \"\(String(describing: value))\", got \"\(String(describing: dataValue))\"", file: file, line: line)
         }
     }
 }
@@ -61,6 +61,7 @@ extension MockTransportSessionTeamEventsTests {
         let name1 = "foo"
         let name2 = "bar"
         
+        var creator: MockUser!
         var team1: MockTeam!
         var team2: MockTeam!
         
@@ -68,8 +69,13 @@ extension MockTransportSessionTeamEventsTests {
         
         // When
         sut.performRemoteChanges { session in
+            creator = session.insertUser(withName: "Named")
+            
             team1 = session.insertTeam(withName: name1, users: [self.sut.selfUser])
+            team1.creator = creator
+            
             team2 = session.insertTeam(withName: name2, users: [self.sut.selfUser])
+            team2.creator = creator
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -77,8 +83,21 @@ extension MockTransportSessionTeamEventsTests {
         let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
         XCTAssertEqual(events.count, 2)
         
-        check(event: events.first, hasType: .ZMTUpdateEventTeamCreate, team: team1)
-        check(event: events.last, hasType: .ZMTUpdateEventTeamCreate, team: team2)
+        let team1Data = [
+            "id" : team1.identifier,
+            "name" : name1,
+            "creator" : creator.identifier,
+            "icon" : ""
+        ]
+        check(event: events.first, hasType: .ZMTUpdateEventTeamCreate, team: team1, data: team1Data)
+        
+        let team2Data = [
+            "id" : team2.identifier,
+            "name" : name2,
+            "creator" : creator.identifier,
+            "icon" : ""
+        ]
+        check(event: events.last, hasType: .ZMTUpdateEventTeamCreate, team: team2, data: team2Data)
     }
     
     func testThatItCreatesEventsForDeletedTeams() {
