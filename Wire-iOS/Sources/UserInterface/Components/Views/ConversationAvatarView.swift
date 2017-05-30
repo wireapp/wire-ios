@@ -148,7 +148,7 @@ final public class ConversationAvatarView: UIView {
     public var conversation: ZMConversation? = .none {
         didSet {
             guard let conversation = self.conversation else {
-                self.clippingView.subviews.forEach { $0.removeFromSuperview() }
+                self.clippingView.subviews.forEach { $0.isHidden = true }
                 return
             }
             
