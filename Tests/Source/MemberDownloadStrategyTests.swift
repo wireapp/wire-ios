@@ -120,7 +120,7 @@ class MemberDownloadRequestStrategyTests: MessagingTestBase {
                     ],
                     [
                         "user": member2UserId.transportString(),
-                        "permissions": ["self": 1855, "copy": 0]
+                        "permissions": ["self": 5951, "copy": 0]
                     ]
                 ]
             ]
