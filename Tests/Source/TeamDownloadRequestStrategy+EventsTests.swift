@@ -324,6 +324,37 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
         }
     }
 
+    func testThatItFlagsATeamToBeRefetchedWhenItReceivesAMemberJoinForTheSelfUserEvenIfThereWasALocalTeam() {
+        // given
+        let teamId = UUID.create()
+        var userId: UUID!
+
+        syncMOC.performGroupedBlockAndWait {
+            let user = ZMUser.selfUser(in: self.syncMOC)
+            userId = user.remoteIdentifier
+            let team = Team.insertNewObject(in: self.syncMOC)
+            team.remoteIdentifier = teamId
+            XCTAssert(self.syncMOC.saveOrRollback())
+        }
+
+        let payload: [String: Any] = [
+            "type": "team.member-join",
+            "team": teamId.transportString(),
+            "time": Date().transportString(),
+            "data": ["user" : userId.transportString()]
+        ]
+
+        // when
+        processEvent(fromPayload: payload)
+
+        // then
+        syncMOC.performGroupedBlockAndWait {
+            guard let team = Team.fetch(withRemoteIdentifier: teamId, in: self.syncMOC) else { return XCTFail("No team") }
+            XCTAssertTrue(team.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(team.needsToRedownloadMembers)
+        }
+    }
+
     // MARK: - Team Member-Leave
 
     func testThatItDeletesAMemberWhenReceivingATeamMemberLeaveUpdateEventForAnotherUser() {
