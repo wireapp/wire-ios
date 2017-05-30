@@ -40,6 +40,18 @@ public extension ZMUser {
         return membership(in: team)?.permissions
     }
 
+    @objc(canAddUserToConversation:)
+    public func canAddUser(to conversation: ZMConversation) -> Bool {
+        guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
+        return conversation.team.flatMap(permissions)?.contains(.addConversationMember) ?? true
+    }
+
+    @objc(canRemoveUserFromConversation:)
+    public func canRemoveUser(from conversation: ZMConversation) -> Bool {
+        guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
+        return conversation.team.flatMap(permissions)?.contains(.removeConversationMember) ?? true
+    }
+
     public func canCreateConversation(in team: Team) -> Bool {
         return permissions(in: team)?.contains(.createConversation) ?? false
     }

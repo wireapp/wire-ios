@@ -61,12 +61,98 @@ class ZMConversationTests_Teams: BaseTeamTests {
         XCTAssert(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))
     }
 
+    func testThatAUserCanAddUsersToAConversationWithoutTeamAndWithoutTeamRemoteIdentifier() {
+        // when & then
+        XCTAssert(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
+    }
+
+    func testThatAUserCantAddUsersToAConversationWhereHeIsGuest() {
+        // when
+        conversation.teamRemoteIdentifier = team.remoteIdentifier
+
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
+    }
+
+    func testThatAUserCantAddUsersToAConversationWhereHeIsNotAnActiveMember() {
+        // when
+        conversation.isSelfAnActiveMember = false
+
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
+    }
+
+    func testThatAUserCantAddUsersToAConversationWhereHeIsMemberWithUnsufficientPermissions() {
+        // when
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let member = Member.getOrCreateMember(for: selfUser, in: team, context: uiMOC)
+        member.permissions = Permissions(rawValue: 0)
+        conversation.team = team
+
+        // then
+        XCTAssertFalse(selfUser.canAddUser(to: conversation))
+    }
+
+    func testThatAUserCanAddUsersToAConversationWhereHeIsMemberWithSufficientPermissions() {
+        // when
+        conversation.team = team
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let member = Member.getOrCreateMember(for: selfUser, in: team, context: uiMOC)
+        member.permissions = .member
+
+        // then
+        XCTAssert(selfUser.canAddUser(to: conversation))
+    }
+
+    func testThatAUserCanRemoveUsersToAConversationWithoutTeamAndWithoutTeamRemoteIdentifier() {
+        // when & then
+        XCTAssert(ZMUser.selfUser(in: uiMOC).canRemoveUser(from: conversation))
+    }
+
+    func testThatAUserCantRemoveUsersToAConversationWhereHeIsGuest() {
+        // when
+        conversation.teamRemoteIdentifier = team.remoteIdentifier
+
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canRemoveUser(from: conversation))
+    }
+
+    func testThatAUserCantRemoveUsersToAConversationWhereHeIsNotAnActiveMember() {
+        // when
+        conversation.isSelfAnActiveMember = false
+
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canRemoveUser(from: conversation))
+    }
+
+    func testThatAUserCantRemoveUsersToAConversationWhereHeIsMemberWithUnsufficientPermissions() {
+        // when
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let member = Member.getOrCreateMember(for: selfUser, in: team, context: uiMOC)
+        member.permissions = Permissions(rawValue: 0)
+        conversation.team = team
+
+        // then
+        XCTAssertFalse(selfUser.canRemoveUser(from: conversation))
+    }
+
+    func testThatAUserCanRemoveUsersToAConversationWhereHeIsMemberWithSufficientPermissions() {
+        // when
+        conversation.team = team
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let member = Member.getOrCreateMember(for: selfUser, in: team, context: uiMOC)
+        member.permissions = .member
+
+        // then
+        XCTAssert(selfUser.canRemoveUser(from: conversation))
+    }
+
     func testThatItSetsTheConversationTeamRemoteIdentifierWhenUpdatingWithTransportData() {
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = .create()
         let teamId = UUID.create()
-        let payload = payloadForConversationmetaData(conversation, activeUsers: [user], teamId: teamId)
+        let payload = payloadForConversationMetaData(conversation, activeUsers: [user], teamId: teamId)
 
         // when
         performPretendingUiMocIsSyncMoc {
@@ -93,7 +179,7 @@ class ZMConversationTests_Teams: BaseTeamTests {
 
     // MARK: - Helper
 
-    private func payloadForConversationmetaData(_ conversation: ZMConversation, activeUsers: [ZMUser], teamId: UUID?) -> [String: Any] {
+    private func payloadForConversationMetaData(_ conversation: ZMConversation, activeUsers: [ZMUser], teamId: UUID?) -> [String: Any] {
         var payload: [String: Any] = [
             "last_event_time": "2014-04-30T16:30:16.625Z",
             "name": NSNull(),

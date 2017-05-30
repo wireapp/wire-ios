@@ -141,12 +141,12 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         // We should always recreate the snapshots when reenerting the foreground
         // Therefore it would be safe to clear the snapshots here
         listSnapshots = [:]
-        zmLog.debug("ApplicationDidEnterBackground, clearing listSnapshots")
+        zmLog.debug("\(#function), clearing listSnapshots")
     }
     
     public func applicationWillEnterForeground() {
         // list snapshots are automaically recreated when the lists are recreated and `recreateSnapshot(for conversation:)` is called
-        zmLog.debug("ApplicationWillEnterBackground")
+        zmLog.debug(#function)
     }
 }
 
