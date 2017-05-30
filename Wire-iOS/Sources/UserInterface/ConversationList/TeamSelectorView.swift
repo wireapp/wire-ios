@@ -91,6 +91,7 @@ final internal class TeamSelectorView: UIView {
             }
             
             self.lineView = LineView(views: self.teamsViews)
+            self.topOffsetConstraint.constant = imagesCollapsed ? -20 : 0
             self.teamsViews.forEach { $0.collapsed = imagesCollapsed }
         }
     }
