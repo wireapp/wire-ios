@@ -58,7 +58,7 @@ static locale_t posixLocale()
     if (c == 1) {
         interval += 0.001 * milli;
     }
-    if (interval < 1) {
+    if (interval < -100) {
         return nil;
     }
     
