@@ -202,6 +202,16 @@ public class BaseTeamView: UIView, TeamViewType {
     }
 }
 
+extension BaseTeamView: ZMConversationListObserver {
+    public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+        updateAppearance()
+    }
+    
+    public func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo) {
+        updateAppearance()
+    }
+}
+
 public final class PersonalTeamView: BaseTeamView {
     internal let userImageView = UserImageView(size: .normal)
     
@@ -272,16 +282,6 @@ extension PersonalTeamView: ZMUserObserver {
         if changeInfo.nameChanged {
             self.update()
         }
-    }
-}
-
-extension BaseTeamView: ZMConversationListObserver {
-    public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
-        updateAppearance()
-    }
-    
-    public func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo) {
-        updateAppearance()
     }
 }
 
