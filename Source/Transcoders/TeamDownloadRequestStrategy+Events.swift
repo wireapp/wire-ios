@@ -66,6 +66,8 @@ extension TeamDownloadRequestStrategy: ZMEventConsumer {
         guard let identifier = event.teamId else { return }
         guard let team = Team.fetchOrCreate(with: identifier, create: true, in: managedObjectContext, created: nil) else { return }
         team.needsToBeUpdatedFromBackend = true
+        // FIXME: The backend started returning the team data in the response payload which we could parse
+        // to avoid having to refetch the team here (see https://github.com/wireapp/architecture/pull/26/files#diff-64b45f100a728fb2e5e24168a3c50de4R294).
     }
 
     private func deleteTeam(with event: ZMUpdateEvent) {
