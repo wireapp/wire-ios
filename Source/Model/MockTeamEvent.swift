@@ -32,7 +32,7 @@ import Foundation
     public let timestamp = Date()
     
     public static func inserted(team: MockTeam) -> MockTeamEvent {
-        return MockTeamEvent(kind: .create, team: team, data: [:])
+        return MockTeamEvent(kind: .create, team: team, data: team.payloadValues)
     }
     
     public static func updated(team: MockTeam, changedValues: [String: Any]) -> MockTeamEvent? {
