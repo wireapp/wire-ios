@@ -231,7 +231,7 @@ void debugLogUpdate (ConversationListChangeInfo *note);
         // so we prefer to do the simple reload instead.
 
         [self updateConversationListAnimated];
-    } else if (change.conversationList == [ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession] team:[[ZMUser selfUser] activeTeam]]) {
+    } else if (change.conversationList == [ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession] team:nil]) {
         debugLog(@"RELOAD contact requests");
         [self updateSection:SectionIndexContactRequests];
         [self.delegate listViewModel:self didUpdateSectionForReload:SectionIndexContactRequests];
