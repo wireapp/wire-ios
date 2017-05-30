@@ -477,7 +477,7 @@
     
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
+    WaitForAllGroupsToBeEmpty(5);
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
@@ -515,14 +515,14 @@
     
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
+    WaitForAllGroupsToBeEmpty(5);
     
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         // simulate user click on email
         NOT_USED(session);
         self.selfUser.email = email;
     }];
-    WaitForAllGroupsToBeEmpty(0.5);
+    WaitForAllGroupsToBeEmpty(5);
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
@@ -558,7 +558,7 @@
     
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    WaitForAllGroupsToBeEmpty(2);
+    WaitForAllGroupsToBeEmpty(5);
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
@@ -593,7 +593,7 @@
     
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    WaitForAllGroupsToBeEmpty(2);
+    WaitForAllGroupsToBeEmpty(5);
     
     // then
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
