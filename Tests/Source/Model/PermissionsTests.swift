@@ -35,7 +35,8 @@ class PermissionsTests: BaseZMClientMessageTests {
         .getBilling,
         .setBilling,
         .setTeamData,
-        .deleteTeam
+        .deleteTeam,
+        .setMemberPermissions
     ]
 
     func testThatDefaultValueDoesNotHaveAnyPermissions() {
@@ -55,6 +56,7 @@ class PermissionsTests: BaseZMClientMessageTests {
         XCTAssertFalse(sut.contains(.setBilling))
         XCTAssertFalse(sut.contains(.setTeamData))
         XCTAssertFalse(sut.contains(.deleteTeam))
+        XCTAssertFalse(sut.contains(.setMemberPermissions))
     }
 
     func testMemberPermissions() {
@@ -72,7 +74,8 @@ class PermissionsTests: BaseZMClientMessageTests {
             .getTeamConversations,
             .addTeamMember,
             .removeTeamMember,
-            .setTeamData
+            .setTeamData,
+            .setMemberPermissions
         ]
 
         // then
@@ -88,8 +91,8 @@ class PermissionsTests: BaseZMClientMessageTests {
     func testThatItCreatesPermissionsFromPayload() {
         XCTAssertEqual(Permissions(rawValue: 5), [.createConversation, .addTeamMember])
         XCTAssertEqual(Permissions(rawValue: 1587), .member)
-        XCTAssertEqual(Permissions(rawValue: 1855), .admin)
-        XCTAssertEqual(Permissions(rawValue: 4095), .owner)
+        XCTAssertEqual(Permissions(rawValue: 5951), .admin)
+        XCTAssertEqual(Permissions(rawValue: 8191), .owner)
     }
 
     func testThatItCreatesEmptyPermissionsFromEmptyPayload() {
