@@ -1901,7 +1901,7 @@
                                           },
                                   };
         
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
         [self.syncMOC saveOrRollback];
     }];
     

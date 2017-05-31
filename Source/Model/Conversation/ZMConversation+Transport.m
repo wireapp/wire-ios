@@ -61,7 +61,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     [self updateClearedServerTimeStampIfNeeded:event.timeStamp andSync:YES];
 }
 
-- (void)updateWithTransportData:(NSDictionary *)transportData;
+- (void)updateWithTransportData:(NSDictionary *)transportData serverTimeStamp:(NSDate *)serverTimeStamp;
 {
     NSUUID *remoteId = [transportData uuidForKey:ConversationInfoIDKey];
     RequireString(remoteId == nil || [remoteId isEqual:self.remoteIdentifier],
@@ -75,7 +75,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     
     self.conversationType = [self conversationTypeFromTransportData:[transportData numberForKey:ConversationInfoTypeKey]];
     
-    NSDate *lastTimeStamp = [transportData dateForKey:ConversationInfoLastEventTimeKey];
+    NSDate *lastTimeStamp = serverTimeStamp ?: [transportData dateForKey:ConversationInfoLastEventTimeKey];
     [self updateLastModifiedDateIfNeeded:lastTimeStamp];
     [self updateLastServerTimeStampIfNeeded:lastTimeStamp];
     

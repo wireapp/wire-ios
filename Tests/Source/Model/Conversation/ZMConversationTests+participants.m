@@ -91,7 +91,7 @@
                                   };
         
         // when
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
         
         // then
         XCTAssertEqualObjects(conversation.unsyncedActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user4, user5, nil]));
@@ -255,7 +255,7 @@
     NSManagedObjectID *moid = conversation.objectID;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *syncConversation = (id) [self.syncMOC objectWithID:moid];
-        [syncConversation updateWithTransportData:payload];
+        [syncConversation updateWithTransportData:payload serverTimeStamp:nil];
         XCTAssert([self.syncMOC saveOrRollback]);
     }];
     [self.uiMOC refreshObject:conversation mergeChanges:NO];
@@ -340,7 +340,7 @@
     NSManagedObjectID *moid = conversation.objectID;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *syncConversation = (id) [self.syncMOC objectWithID:moid];
-        [syncConversation updateWithTransportData:payload];
+        [syncConversation updateWithTransportData:payload serverTimeStamp:nil];
         XCTAssert([self.syncMOC saveOrRollback]);
     }];
     [self.uiMOC refreshObject:conversation mergeChanges:NO];
@@ -420,7 +420,7 @@
     NSManagedObjectID *moid = conversation.objectID;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *syncConversation = (id) [self.syncMOC objectWithID:moid];
-        [syncConversation updateWithTransportData:payload];
+        [syncConversation updateWithTransportData:payload serverTimeStamp:nil];
         XCTAssert([self.syncMOC saveOrRollback]);
     }];
     [self.uiMOC refreshObject:conversation mergeChanges:NO];
@@ -506,7 +506,7 @@
     NSManagedObjectID *moid = conversation.objectID;
     [self.syncMOC performGroupedBlockAndWait:^{
         ZMConversation *syncConversation = (id) [self.syncMOC objectWithID:moid];
-        [syncConversation updateWithTransportData:payload];
+        [syncConversation updateWithTransportData:payload serverTimeStamp:nil];
         XCTAssert([self.syncMOC saveOrRollback]);
     }];
     [self.uiMOC refreshObject:conversation mergeChanges:NO];
@@ -966,7 +966,7 @@
     
     // when
     [self performPretendingUiMocIsSyncMoc:^{
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
     }];
     
     // then
@@ -1003,7 +1003,7 @@
     
     // when
     [self performPretendingUiMocIsSyncMoc:^{
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
     }];
     
     // then
