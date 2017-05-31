@@ -1203,11 +1203,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     NSPredicate *teamPredicate = [NSPredicate predicateWithFormat:@"(%K == %@)", TeamKey, team];
     
-    if (team != nil) {
-        return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, searchPredicate, activeMemberPredicate, teamPredicate]];
-    } else {
-        return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, searchPredicate, activeMemberPredicate]];
-    }
+    return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, searchPredicate, activeMemberPredicate, teamPredicate]];
 }
 
 + (NSPredicate *)userDefinedNamePredicateForSearchString:(NSString *)searchString;
