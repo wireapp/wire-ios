@@ -3083,12 +3083,38 @@
     XCTAssertEqual(result.count, 0u);
 }
 
+- (void)testThatItDoesNotFindAConversationBelongingToTeamWhenSearchingForPersonalConversations
+{
+    // given
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation1.userDefinedName = @"The Wire Club";
+    conversation1.conversationType = ZMConversationTypeGroup;
+    conversation1.team = team;
+    
+    ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation2.userDefinedName = @"The Wire Club";
+    conversation2.conversationType = ZMConversationTypeGroup;
+    
+    [self.uiMOC saveOrRollback];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
+    request.predicate = [ZMConversation predicateForSearchQuery:@"Club" team:nil];
+    
+    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    
+    // then
+    XCTAssertEqual(result.count, 1u);
+    XCTAssertEqualObjects(result.firstObject, conversation2);
+}
+
+
 - (void)testThatResultsCanBeFilteredByTeam
 {
     // given
     Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.userDefinedName = @"The Wire Club";
     conversation1.conversationType = ZMConversationTypeGroup;
