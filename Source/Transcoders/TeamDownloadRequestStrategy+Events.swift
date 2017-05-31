@@ -40,7 +40,6 @@ fileprivate extension ZMUpdateEvent {
 private let log = ZMSLog(tag: "Teams")
 
 
-
 extension TeamDownloadRequestStrategy: ZMEventConsumer {
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
