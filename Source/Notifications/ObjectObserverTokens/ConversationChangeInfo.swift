@@ -37,7 +37,8 @@ extension ZMConversation : ObjectInSnapshot {
                     #keyPath(ZMConversation.otherActiveParticipants),
                     #keyPath(ZMConversation.isSelfAnActiveMember),
                     #keyPath(ZMConversation.relatedConnectionState),
-                    #keyPath(ZMConversation.team)
+                    #keyPath(ZMConversation.team),
+                    #keyPath(ZMConversation.remoteIdentifier)
             ])
     }
 
@@ -116,6 +117,10 @@ extension ZMConversation : ObjectInSnapshot {
         return changedKeysContain(keys: #keyPath(ZMConversation.otherActiveVideoCallParticipants))
     }
     
+    public var createdRemotelyChanged : Bool {
+        return changedKeysContain(keys: #keyPath(ZMConversation.remoteIdentifier))
+    }
+    
     public var conversation : ZMConversation { return self.object as! ZMConversation }
     
     public override var description : String { return self.debugDescription }
@@ -131,7 +136,8 @@ extension ZMConversation : ObjectInSnapshot {
         "conversationListIndicatorChanged \(conversationListIndicatorChanged)," +
         "clearedChanged \(clearedChanged)," +
         "securityLevelChanged \(securityLevelChanged)," +
-        "teamChanged \(teamChanged)"
+        "teamChanged \(teamChanged)" +
+        "createdRemotelyChanged \(createdRemotelyChanged)"
     }
     
     public required init(object: NSObject) {
