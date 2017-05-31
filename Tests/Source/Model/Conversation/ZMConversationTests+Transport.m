@@ -111,7 +111,7 @@
         NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup isArchived:YES archivedRef:archivedDate isSilenced:YES silencedRef:silencedDate];
         
         // when
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
         
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
@@ -147,7 +147,7 @@
         NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs: @[user3UUID]];
         
         // when
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
         
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
@@ -175,6 +175,29 @@
     }];
 }
 
+- (void)testThatItSetsTheServerTimeStampAsLastModifiedAndLastServerTimeStamp
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *uuid = NSUUID.createUUID;
+        conversation.remoteIdentifier = uuid;
+        
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:1 isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil];
+
+        // when
+        NSDate *serverTimeStamp = [NSDate date];
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimeStamp];
+
+        // then
+        XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
+        XCTAssertNil(conversation.userDefinedName);
+        XCTAssertEqual(conversation.conversationType, ZMConversationTypeSelf);
+        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimeStamp);
+        XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
+    }];
+}
+
 - (void)testThatItUpdatesItselfFromTransportDataForTeamConversation
 {
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -190,7 +213,7 @@
         NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs:nil lastServerTimestamp:nil isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:teamID];
 
         // when
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
 
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
@@ -235,7 +258,7 @@
         NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs:nil lastServerTimestamp:nil isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:team.remoteIdentifier];
 
         // when
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
 
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
@@ -279,7 +302,7 @@
         NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs:nil lastServerTimestamp:nil isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:nil];
 
         // when
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
 
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
@@ -320,7 +343,7 @@
         
         NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation activeUserIDs:@[user1UUID, user2UUID, user3UUID] inactiveUserIDs:@[]];
         // when
-        [conversation updateWithTransportData:payload];
+        [conversation updateWithTransportData:payload serverTimeStamp:nil];
         XCTAssertTrue([self.syncMOC saveOrRollback]);
         
         // then
@@ -340,7 +363,7 @@
     // when
     [self performPretendingUiMocIsSyncMoc:^{
         [self performIgnoringZMLogError:^{
-            [conversation updateWithTransportData:payload];
+            [conversation updateWithTransportData:payload serverTimeStamp:nil];
         }];
     }];
     
@@ -379,7 +402,7 @@
         // when
         [self performPretendingUiMocIsSyncMoc:^{
             [self performIgnoringZMLogError:^{
-                [conversation updateWithTransportData:payload];
+                [conversation updateWithTransportData:payload serverTimeStamp:nil];
             }];
         }];
         
@@ -410,7 +433,7 @@
         // when
         [self performPretendingUiMocIsSyncMoc:^{
             [self performIgnoringZMLogError:^{
-                [conversation updateWithTransportData:payload];
+                [conversation updateWithTransportData:payload serverTimeStamp:nil];
             }];
         }];
         
@@ -439,7 +462,7 @@
         // when
         [self performPretendingUiMocIsSyncMoc:^{
             [self performIgnoringZMLogError:^{
-                [conversation updateWithTransportData:payload];
+                [conversation updateWithTransportData:payload serverTimeStamp:nil];
             }];
         }];
         
@@ -470,7 +493,7 @@
         // when
         [self performPretendingUiMocIsSyncMoc:^{
             [self performIgnoringZMLogError:^{
-                [conversation updateWithTransportData:payload];
+                [conversation updateWithTransportData:payload serverTimeStamp:nil];
             }];
         }];
         

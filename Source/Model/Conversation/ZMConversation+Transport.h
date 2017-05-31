@@ -36,7 +36,7 @@ extern NSString *const ZMConversationInfoOTRArchivedReferenceKey;
 
 - (void)updateLastReadFromPostPayloadEvent:(ZMUpdateEvent *)event;
 - (void)updateClearedFromPostPayloadEvent:(ZMUpdateEvent *)event;
-- (void)updateWithTransportData:(NSDictionary *)transportData;
+- (void)updateWithTransportData:(NSDictionary *)transportData serverTimeStamp:(NSDate *)serverTimeStamp;
 
 - (void)updatePotentialGapSystemMessagesIfNeededWithUsers:(NSSet <ZMUser *>*)users;
 

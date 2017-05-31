@@ -156,7 +156,7 @@ class ZMConversationTests_Teams: BaseTeamTests {
 
         // when
         performPretendingUiMocIsSyncMoc {
-            self.conversation.update(withTransportData: payload)
+            self.conversation.update(withTransportData: payload, serverTimeStamp: nil)
         }
 
         // then
