@@ -20,7 +20,7 @@
 fileprivate extension Team {
 
     static var predicateForObjectsNeedingToDownloadMembers: NSPredicate = {
-        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToRedownloadMembers), #keyPath(Team.remoteIdentifier))
+        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToRedownloadMembers), Team.remoteIdentifierDataKey()!)
     }()
 
     func updateMembers(with response: ZMTransportResponse) {
@@ -35,7 +35,7 @@ fileprivate extension Team {
 
 public final class MemberDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource {
 
-    fileprivate var downstreamSync: ZMDownstreamObjectSync!
+    private (set) var downstreamSync: ZMDownstreamObjectSync!
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
