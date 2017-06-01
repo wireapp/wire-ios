@@ -37,6 +37,21 @@ class MemberDownloadRequestStrategyTests: MessagingTestBase {
         sut = nil
         super.tearDown()
     }
+    
+    func testThatPredicateIsCorrect(){
+        // given
+        let team1 = Team.insertNewObject(in: self.syncMOC)
+        team1.remoteIdentifier = .create()
+        team1.needsToRedownloadMembers = true
+        
+        let team2 = Team.insertNewObject(in: self.syncMOC)
+        team2.remoteIdentifier = .create()
+        team2.needsToRedownloadMembers = false
+        
+        // then
+        XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with:team1))
+        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with:team2))
+    }
 
     func testThatItDoesNotGenerateARequestInitially() {
         XCTAssertNil(sut.nextRequest())
