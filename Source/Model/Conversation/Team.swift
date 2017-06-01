@@ -97,11 +97,12 @@ extension Team {
 extension Team {
     
     public func members(matchingQuery query: String) -> [Member] {
-        guard let matchingName = NSPredicate(formatDictionary: ["normalizedName" : "%K MATCHES %@"], matchingSearch: query) else { return [] }
+        let searchPredicate = ZMUser.predicateForAllUsers(withSearch: query)
+
         return members.filter({ member in
             guard let user = member.user else { return false }
             
-            return !user.isSelfUser && matchingName.evaluate(with: user)
+            return !user.isSelfUser && searchPredicate.evaluate(with: user)
         }).sorted(by: { (first, second) -> Bool in
             return first.user?.normalizedName < second.user?.normalizedName
         })

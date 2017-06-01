@@ -650,57 +650,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, needsToBeUpdated, remoteIdentifiers]];
 }
 
-+ (NSPredicate *)predicateForConnectedNonBotUsers
-{
-    return [self predicateForUsersWithSearchString:@""
-                                     excludingBots:YES
-                           connectionStatusInArray:@[@(ZMConnectionStatusAccepted)]];
-}
-
-+ (NSPredicate *)predicateForConnectedUsersWithSearchString:(NSString *)searchString
-{
-    return [self predicateForUsersWithSearchString:searchString
-                           connectionStatusInArray:@[@(ZMConnectionStatusAccepted)]];
-}
-
-+ (NSPredicate *)predicateForUsersWithSearchString:(NSString *)searchString
-                           connectionStatusInArray:(NSArray<NSNumber *> *)connectionStatusArray
-{
-    return [self predicateForUsersWithSearchString:searchString excludingBots:NO connectionStatusInArray:connectionStatusArray];
-}
-
-+ (NSPredicate *)predicateForUsersWithSearchString:(NSString *)searchString
-                                     excludingBots:(BOOL)excludeBots
-                           connectionStatusInArray:(NSArray<NSNumber *> *)connectionStatusArray
-{
-    NSString *normalizedQueryString = [searchString normalizedString];
-    NSString *normalizedEmailQueryString = [searchString normalizedEmailaddress];
-    
-    NSPredicate *statusPredicate = [NSPredicate predicateWithFormat:@"(%K.status IN (%@))",
-                                    ConnectionKey, connectionStatusArray];
-    
-    NSPredicate *predicate;
-    
-    if(searchString.length > 0) {
-        NSPredicate *namePredicate = [NSPredicate predicateWithFormatDictionary:@{NormalizedNameKey : @"%K MATCHES %@"}
-                                                           matchingSearchString:normalizedQueryString];
-        NSPredicate *emailPredicate = [NSPredicate predicateWithFormat: @"%K == %@",
-                                       NormalizedEmailAddressKey, normalizedEmailQueryString];
-        NSPredicate *searchPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:@[emailPredicate, namePredicate]];
-        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[searchPredicate, statusPredicate]];
-    }
-    else {
-        predicate = statusPredicate;
-    }
-    
-    if (excludeBots) {
-        NSPredicate *notBotsPredicate = [ZMUser nonBotUsersPredicate];
-        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate, notBotsPredicate]];
-    }
-    
-    return predicate;
-}
-
 - (void)updateWithSearchResultName:(NSString *)name handle:(NSString *)handle;
 {
     // We never refetch unconnected users, but when performing a search we

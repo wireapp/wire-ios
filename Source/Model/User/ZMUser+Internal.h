@@ -57,23 +57,6 @@ extern NSString * __nonnull const ZMUserActiveConversationsKey;
 
 + (nonnull NSOrderedSet <ZMUser *> *)usersWithRemoteIDs:(nonnull NSOrderedSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
-/// @method predicateForConnectedUsersWithSearchString:
-/// Retrieves users with name or email matching search string, having ZMConnectionStatusAccepted connection statuses.
-/// @param searchString - a predicate to search users
-+ (nonnull NSPredicate *)predicateForConnectedUsersWithSearchString:(nonnull NSString *)searchString;
-
-/// @method predicateForConnectedNonBotUsers
-/// Retrieves all users (excluding bots), having ZMConnectionStatusAccepted connection statuses.
-+ (nonnull NSPredicate *)predicateForConnectedNonBotUsers;
-
-/// @method predicateForUsersWithSearchString:connectionStatusInArray:
-/// Retrieves users with name or email matching search string, having one of given connection statuses.
-/// @param searchString - a predicate to search users
-/// @param connectionStatusArray - an array of connections status of the users. E.g. for connected users it is @[@(ZMConnectionStatusAccepted)]
-+ (nonnull NSPredicate *)predicateForUsersWithSearchString:(nonnull NSString *)searchString
-                           connectionStatusInArray:(nonnull NSArray<NSNumber *> *)connectionStatusArray;
-
-
 + (ZMAccentColor)accentColorFromPayloadValue:(nullable NSNumber *)payloadValue;
 
 /// @method Updates the user with a name or handle received through a search
