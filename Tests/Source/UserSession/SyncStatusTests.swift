@@ -56,6 +56,15 @@ class SyncStatusTests : MessagingTest {
         super.tearDown()
     }
     
+    func testThatItDoesNotChangePhaseIfCallingPhaseIsNotCurrentPhase(){
+        // given
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingTeams)
+        // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
+    }
+    
     func testThatWhenIntializingWithoutLastEventIDItStartsInStateFetchingLastUpdateEventID(){
         // given
         uiMOC.zm_lastNotificationID = nil
@@ -82,27 +91,31 @@ class SyncStatusTests : MessagingTest {
         // given
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingLastUpdateEventID)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingConnections)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConnections)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingConversations)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConversations)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingUsers)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingUsers)
+        // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingSelfUser)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingSelfUser)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .done)
     }
@@ -114,24 +127,29 @@ class SyncStatusTests : MessagingTest {
         XCTAssertNil(uiMOC.zm_lastNotificationID)
 
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingLastUpdateEventID)
         // then
         XCTAssertNil(uiMOC.zm_lastNotificationID)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNil(uiMOC.zm_lastNotificationID)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConnections)
         // then
         XCTAssertNil(uiMOC.zm_lastNotificationID)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConversations)
         // then
         XCTAssertNil(uiMOC.zm_lastNotificationID)
         XCTAssertEqual(sut.currentSyncPhase, .fetchingUsers)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingUsers)
+        // then
+        XCTAssertNil(uiMOC.zm_lastNotificationID)
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingSelfUser)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingSelfUser)
         // then
         XCTAssertNotNil(uiMOC.zm_lastNotificationID)
 
@@ -145,24 +163,27 @@ class SyncStatusTests : MessagingTest {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingLastUpdateEventID)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingConnections)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConnections)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingConversations)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConversations)
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingUsers)
         // when
-        sut.finishCurrentSyncPhase()
-        
+        sut.finishCurrentSyncPhase(phase: .fetchingUsers)
+        // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingSelfUser)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingSelfUser)
         // then
         XCTAssertNotNil(uiMOC.zm_lastNotificationID)
     }
@@ -173,29 +194,29 @@ class SyncStatusTests : MessagingTest {
         XCTAssertFalse(mockSyncDelegate.didCallFinishSync)
         
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingLastUpdateEventID)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishSync)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishSync)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConnections)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishSync)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConversations)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishSync)
         // when
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingUsers)
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingUsers)
         // then
         XCTAssertFalse(mockSyncDelegate.didCallFinishSync)
         // when
-        sut.finishCurrentSyncPhase()
-        
+        sut.finishCurrentSyncPhase(phase: .fetchingSelfUser)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         
         // then
         XCTAssertTrue(mockSyncDelegate.didCallFinishSync)
@@ -214,13 +235,13 @@ class SyncStatusTests : MessagingTest {
     func testThatItDoesNotNotifyTheStateDelegateWhenAlreadySyncing(){
         // given
         mockSyncDelegate.didCallStartSync = false
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingLastUpdateEventID)
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
         
         XCTAssertFalse(mockSyncDelegate.didCallStartSync)
         
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         
         // then
         XCTAssertFalse(mockSyncDelegate.didCallStartSync)
@@ -231,7 +252,7 @@ class SyncStatusTests : MessagingTest {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
         sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
         mockSyncDelegate.didCallStartSync = false
 
@@ -252,7 +273,7 @@ class SyncStatusTests : MessagingTest {
         XCTAssertFalse(observer.didNotify)
 
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
@@ -271,7 +292,7 @@ extension SyncStatusTests {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
         sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
         
         // when
@@ -307,7 +328,7 @@ extension SyncStatusTests {
         XCTAssertTrue(sut.needsToRestartQuickSync)
         
         // and when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
@@ -330,7 +351,7 @@ extension SyncStatusTests {
         // and when
         sut.pushChannelDidClose()
         sut.pushChannelDidOpen()
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
@@ -340,7 +361,7 @@ extension SyncStatusTests {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
         sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
 
         // when
@@ -355,7 +376,7 @@ extension SyncStatusTests {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
         sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
 
         // when
@@ -382,7 +403,7 @@ extension SyncStatusTests {
         
         // and when
         sut.pushChannelDidClose()
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         
         // then
         XCTAssertEqual(sut.currentSyncPhase, .done)
@@ -395,7 +416,7 @@ extension SyncStatusTests {
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         
         // when
-        sut.failCurrentSyncPhase()
+        sut.failCurrentSyncPhase(phase: .fetchingMissedEvents)
         
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
@@ -411,7 +432,7 @@ extension SyncStatusTests {
         
         // when
         sut.updateLastUpdateEventID(eventID: newID)
-        sut.failCurrentSyncPhase()
+        sut.failCurrentSyncPhase(phase: .fetchingMissedEvents)
         
         // then
         XCTAssertEqual(uiMOC.zm_lastNotificationID, oldID)
@@ -428,28 +449,31 @@ extension SyncStatusTests {
         
         // when
         sut.updateLastUpdateEventID(eventID: newID)
-        sut.failCurrentSyncPhase()
+        sut.failCurrentSyncPhase(phase: .fetchingMissedEvents)
         
         // then
         XCTAssertNotEqual(uiMOC.zm_lastNotificationID, newID)
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
         
         // and when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingTeams)
         // then
         XCTAssertNotEqual(uiMOC.zm_lastNotificationID, newID)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConnections)
         // then
         XCTAssertNotEqual(uiMOC.zm_lastNotificationID, newID)
         // when
-        sut.finishCurrentSyncPhase()
+        sut.finishCurrentSyncPhase(phase: .fetchingConversations)
         // then
         XCTAssertNotEqual(uiMOC.zm_lastNotificationID, newID)
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingUsers)
-        sut.finishCurrentSyncPhase()
-
+        sut.finishCurrentSyncPhase(phase: .fetchingUsers)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingSelfUser)
+        sut.finishCurrentSyncPhase(phase: .fetchingSelfUser)
+        
         // then
         XCTAssertEqual(uiMOC.zm_lastNotificationID, newID)
         XCTAssertNotEqual(uiMOC.zm_lastNotificationID, oldID)
