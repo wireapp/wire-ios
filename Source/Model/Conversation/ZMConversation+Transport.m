@@ -138,7 +138,9 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     // If we are added to a conversation in a team than we should have gotten the
     // team creation update event and fetched the team before.
     // If not and we just created the team then we need to refetch it.
-    self.team.needsToBeUpdatedFromBackend = created;
+    if (!self.team.needsToBeUpdatedFromBackend) {
+        self.team.needsToBeUpdatedFromBackend = created;
+    }
 }
 
 - (void)updatePotentialGapSystemMessagesIfNeededWithUsers:(NSSet <ZMUser *>*)users
