@@ -130,7 +130,9 @@
     NOT_USED(sync);
     SyncStatus *status = self.syncStatus;
     if(response.payload == nil) {
-        [status failCurrentSyncPhaseWithPhase:self.expectedSyncPhase];
+        if (status.isSyncing) {
+            [status failCurrentSyncPhaseWithPhase:self.expectedSyncPhase];
+        }
         return;
     }
     
