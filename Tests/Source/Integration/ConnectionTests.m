@@ -22,9 +22,9 @@
 @import WireDataModel;
 
 #import "IntegrationTestBase.h"
-#import "ZMSearchDirectory.h"
 #import "ZMUserSession.h"
 #import "ZMConnectionTranscoder+Internal.h"
+#import "WireSyncEngine_iOS_Tests-Swift.h"
 
 @interface ConnectionTests : IntegrationTestBase
 
