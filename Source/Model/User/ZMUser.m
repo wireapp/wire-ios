@@ -296,6 +296,11 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     return NO;
 }
 
+- (NSArray<Team *>*)guestInTeams
+{
+    return [Team teamsWithGuestInAnyConversationInContext:self.managedObjectContext guestUser:self];
+}
+
 - (BOOL)canBeConnected;
 {
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
