@@ -22,6 +22,7 @@ import WireUtilities
 struct Snapshot {
     let attributes : [String : NSObject?]
     let toManyRelationships : [String : Int]
+    let toOneRelationships : [String : Bool]
 }
 
 protocol Countable {
@@ -59,12 +60,21 @@ public class SnapshotCenter {
         let relationShips = object.entity.relationshipsByName
         
         let attributesDict = attributes.mapToDictionaryWithOptionalValue{object.primitiveValue(forKey: $0) as? NSObject}
-        let relationshipsDict : [String : Int] = relationShips.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
-            guard relationShipDescription.isToMany else { return nil}
+        let toManyRelationshipsDict : [String : Int] = relationShips.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
+            guard relationShipDescription.isToMany else { return nil }
             return (object.primitiveValue(forKey: key) as? Countable)?.count
         })
-        
-        return Snapshot(attributes : attributesDict, toManyRelationships : relationshipsDict)
+
+        let toOneRelationShipsDict : [String : Bool] = relationShips.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
+            guard !relationShipDescription.isToMany else { return nil }
+            return object.primitiveValue(forKey: key) != nil
+        })
+
+        return Snapshot(
+            attributes: attributesDict,
+            toManyRelationships: toManyRelationshipsDict,
+            toOneRelationships: toOneRelationShipsDict
+        )
     }
     
     /// Before merging the sync into the ui context, we create a snapshot of all changed objects
@@ -88,8 +98,12 @@ public class SnapshotCenter {
                 changedKeys.insert($0)
             }
         }
-        snapshot.toManyRelationships.forEach{
+        snapshot.toManyRelationships.forEach {
             guard let count = (object.value(forKey: $0) as? Countable)?.count, count != $1 else { return }
+            changedKeys.insert($0)
+        }
+        snapshot.toOneRelationships.forEach {
+            guard (object.value(forKey: $0) != nil) != $1 else { return }
             changedKeys.insert($0)
         }
         // Update snapshot

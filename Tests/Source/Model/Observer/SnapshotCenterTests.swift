@@ -142,11 +142,15 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                            "otherActiveParticipants": 0,
                                            "callParticipants": 0]
         
+        let expectedToOneRelationships = ["team": false,
+                                          "connection": false,
+                                          "creator": false]
+        
         expectedAttributes.forEach{
             XCTAssertEqual((snapshot.attributes[$0] ?? nil), $1, "values for \($0) don't match")
         }
         XCTAssertEqual(snapshot.toManyRelationships, expectedToManyRelationships)
-    
+        XCTAssertEqual(snapshot.toOneRelationships, expectedToOneRelationships)
     }
     
     func testThatReturnsChangedKeys() {

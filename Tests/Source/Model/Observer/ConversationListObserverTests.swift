@@ -993,6 +993,53 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         XCTAssertEqual(first.updatedIndexes, IndexSet())
         XCTAssertEqual(movedIndexes(first), [])
     }
+    
+    func testThatItNotifiesObserversWhenAConversationsTeamDeletedSoConversationAppears() {
+        // NB! This test is checking the general behaviour of the conversation list observer, however in real life
+        // the `conversation` object can possibly be faulted. It is not possible to implement the desired behaviour 
+        // currently in the test setup.
+        
+        // given
+        var teamObjectID: NSManagedObjectID!
+        var conversationObjectID: NSManagedObjectID!
+        
+        syncMOC.performGroupedBlockAndWait {
+            let team = Team.insertNewObject(in: self.syncMOC)
+            team.remoteIdentifier = .create()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.team = team
+            self.syncMOC.saveOrRollback()
+            
+            teamObjectID = team.objectID
+            conversationObjectID = conversation.objectID
+        }
+        
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: nil)
+
+        XCTAssert(uiMOC.saveOrRollback())
+        
+        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
+        defer { ConversationListChangeInfo.remove(observer: token, for: conversationList) }
+        
+        // then
+        XCTAssertEqual(conversationList.count, 0)
+        
+        // when
+        let team = uiMOC.object(with: teamObjectID)
+        uiMOC.delete(team)
+
+        XCTAssert(uiMOC.saveOrRollback())
+        
+        // then
+        XCTAssertEqual(conversationList.count, 1)
+        XCTAssertEqual(testObserver.changes.count, 1)
+        guard let first = testObserver.changes.first else { return }
+        XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
+        XCTAssertEqual(first.deletedIndexes, IndexSet())
+        XCTAssertEqual(first.updatedIndexes, IndexSet())
+        XCTAssertEqual(movedIndexes(first), [])
+    }
 
     func testThatTheListIsOrderedAfterChangesInATeam() {
         // given
