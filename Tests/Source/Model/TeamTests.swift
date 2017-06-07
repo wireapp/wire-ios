@@ -62,29 +62,24 @@ class TeamTests: BaseTeamTests {
         }
     }
 
-    func testThatItReturnsGuestsOfATeam() {
-        do {
-            // given
-            let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+    func testThatItReturnsGuestsOfATeam() throws {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
 
-            // we add actual team members as well
-            createUserAndAddMember(to: team)
-            createUserAndAddMember(to: team)
+        // we add actual team members as well
+        createUserAndAddMember(to: team)
+        createUserAndAddMember(to: team)
 
-            // when
-            let guest = ZMUser.insertNewObject(in: uiMOC)
-            let conversation = try team.addConversation(with: [guest])!
+        // when
+        let guest = ZMUser.insertNewObject(in: uiMOC)
+        let conversation = try team.addConversation(with: [guest])!
 
-            // then
-            XCTAssertTrue(guest.isGuest(in: conversation))
-            XCTAssertFalse(guest.isMember(of: team))
-        } catch {
-            XCTFail("Eror: \(error)")
-        }
+        // then
+        XCTAssertTrue(guest.isGuest(in: conversation))
+        XCTAssertFalse(guest.isMember(of: team))
     }
 
-    func testThatItDoesNotReturnGuestsOfOtherTeams() {
-        do {
+    func testThatItDoesNotReturnGuestsOfOtherTeams() throws {
             // given
             let (team1, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
             let (team2, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
@@ -107,9 +102,6 @@ class TeamTests: BaseTeamTests {
             XCTAssertFalse(otherUser.isGuest(in: conversation1))
             XCTAssertFalse(guest.isMember(of: team1))
             XCTAssertFalse(guest.isMember(of: team2))
-        } catch {
-            XCTFail("Eror: \(error)")
-        }
     }
 
     func testThatItUpdatesATeamWithPayload() {
@@ -210,4 +202,60 @@ class TeamTests: BaseTeamTests {
         XCTAssertEqual(result, [membership])
     }
     
+}
+
+// MARK: - Guest in team
+extension TeamTests {
+    func testThatGuestUserPredicateDoesNotMatchWhenItIsTeamMember() {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        let predicate = Team.predicateTeamsWithGuestUserInAnyConversation(guestUser: selfUser)
+        
+        // when
+        let isGuestInTeam = predicate.evaluate(with: team)
+
+        // then
+        XCTAssertFalse(isGuestInTeam)
+    }
+    
+    func testThatGuestUserPredicateMatchesWhenInATeamConversation() throws {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        let (otherTeam, _) = createTeamAndMember(for: selfUser, with: .member)
+        let guest = ZMUser.insert(in: uiMOC, name: "Mrs. Guest")
+        _ = Member.getOrCreateMember(for: guest, in: otherTeam, context: uiMOC)
+        
+        _ = try team.addConversation(with: [guest])!
+        _ = try otherTeam.addConversation(with: [guest])!
+
+        let predicate = Team.predicateTeamsWithGuestUserInAnyConversation(guestUser: guest)
+        
+        // when
+        let isGuestInTeam = predicate.evaluate(with: team)
+        let isGuestInOtherTeam = predicate.evaluate(with: otherTeam)
+
+        // then
+        XCTAssertTrue(isGuestInTeam)
+        XCTAssertFalse(isGuestInOtherTeam)
+    }
+    
+    func testThatItFetchesTeamsWithGuestUser() throws {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        let (otherTeam, _) = createTeamAndMember(for: selfUser, with: .member)
+        let guest = ZMUser.insert(in: uiMOC, name: "Mrs. Guest")
+        _ = Member.getOrCreateMember(for: guest, in: otherTeam, context: uiMOC)
+        
+        _ = try team.addConversation(with: [guest])!
+        _ = try otherTeam.addConversation(with: [guest])!
+        
+        
+        // when
+        let guestTeams = Team.teamsWithGuestInAnyConversation(inContext: uiMOC, guestUser: guest)
+        
+        // then
+        XCTAssertTrue(guestTeams.contains(team))
+        XCTAssertFalse(guestTeams.contains(otherTeam))
+    }
+
 }

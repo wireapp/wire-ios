@@ -81,7 +81,6 @@ public enum TeamError: Error {
     case insufficientPermissions
 }
 
-
 extension Team {
 
     public func addConversation(with participants: Set<ZMUser>) throws -> ZMConversation? {
@@ -106,6 +105,19 @@ extension Team {
         }).sorted(by: { (first, second) -> Bool in
             return first.user?.normalizedName < second.user?.normalizedName
         })
+    }
+    
+    public static func predicateTeamsWithGuestUserInAnyConversation(guestUser: ZMUser) -> NSPredicate {
+        let notInThisTeam = NSPredicate(format: "NOT (SELF IN %@)", guestUser.teams)
+        let participantInAnyConversation = NSPredicate(format: "SUBQUERY(%K, $conversation, %@ IN $conversation.%K).@count > 0", #keyPath(Team.conversations), guestUser, #keyPath(ZMConversation.otherActiveParticipants))
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [notInThisTeam, participantInAnyConversation])
+    }
+    
+    public static func teamsWithGuestInAnyConversation(inContext context: NSManagedObjectContext, guestUser: ZMUser) -> [Team] {
+        let predicate = self.predicateTeamsWithGuestUserInAnyConversation(guestUser: guestUser)
+        let fetchRequest = Team.sortedFetchRequest(with: predicate)
+        guard let teams = context.executeFetchRequestOrAssert(fetchRequest) as? [Team] else { return [] }
+        return teams
     }
     
 }

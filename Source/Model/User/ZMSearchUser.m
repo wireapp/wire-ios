@@ -232,6 +232,11 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return self.user ? [self.user isMemberOf:team] : NO;
 }
 
+- (NSArray<Team *>*)guestInTeams
+{
+    return self.user ? [self.user guestInTeams] : @[];
+}
+
 - (BOOL)isConnected;
 {
     return self.user ? self.user.isConnected : _isConnected;
