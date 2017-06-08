@@ -109,7 +109,7 @@ extension Team {
     
     public static func predicateTeamsWithGuestUserInAnyConversation(guestUser: ZMUser) -> NSPredicate {
         let notInThisTeam = NSPredicate(format: "NOT (SELF IN %@)", guestUser.teams)
-        let participantInAnyConversation = NSPredicate(format: "SUBQUERY(%K, $conversation, %@ IN $conversation.%K).@count > 0", #keyPath(Team.conversations), guestUser, #keyPath(ZMConversation.otherActiveParticipants))
+        let participantInAnyConversation = NSPredicate(format: "SUBQUERY(%K, $conversation, ANY $conversation.%K == %@).@count > 0", #keyPath(Team.conversations), #keyPath(ZMConversation.otherActiveParticipants), guestUser)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notInThisTeam, participantInAnyConversation])
     }
     
