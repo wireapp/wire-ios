@@ -512,6 +512,77 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTestBase {
             XCTAssert(conversation.otherActiveParticipants.contains(user))
         }
     }
+    
+    func testThatItAppendsASystemMessageToAllTeamConversationsSheWasPartOfWhenReceivingAMemberLeaveForThatMember() {
+        let teamId = UUID.create()
+        let teamConversationId = UUID.create(), teamAnotherConversationId = UUID.create(), conversationId = UUID.create()
+        let userId = UUID.create()
+        
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
+            user.remoteIdentifier = userId
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = .create()
+            
+            let team = Team.insertNewObject(in: self.syncMOC)
+            team.remoteIdentifier = teamId
+            
+            let teamConversation1 = ZMConversation.insertNewObject(in: self.syncMOC)
+            teamConversation1.remoteIdentifier = teamConversationId
+            teamConversation1.conversationType = .group
+            teamConversation1.addParticipant(user)
+            teamConversation1.team = team
+            
+            let teamConversation2 = ZMConversation.insertNewObject(in: self.syncMOC)
+            teamConversation2.remoteIdentifier = teamAnotherConversationId
+            teamConversation2.conversationType = .group
+            teamConversation2.addParticipant(user)
+            teamConversation2.team = team
+
+            
+            let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user, otherUser])
+            conversation?.remoteIdentifier = conversationId
+            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            XCTAssertNotNil(member)
+            XCTAssertEqual(user.membership(in: team), member)
+        }
+        
+        // when
+        let timestamp = Date(timeIntervalSinceNow: -30)
+        let payload: [String: Any] = [
+            "type": "team.member-leave",
+            "team": teamId.transportString(),
+            "time": timestamp.transportString(),
+            "data": ["user" : userId.transportString()]
+        ]
+        processEvent(fromPayload: payload)
+        
+        // then
+        syncMOC.performGroupedBlockAndWait {
+            guard let user = ZMUser.fetch(withRemoteIdentifier: userId, in: self.syncMOC) else { return XCTFail("No User") }
+            guard let team = Team.fetch(withRemoteIdentifier: teamId, in: self.syncMOC) else { return XCTFail("No User") }
+            XCTAssertNil(user.membership(in: team))
+            guard let teamConversation = ZMConversation.fetch(withRemoteIdentifier: teamConversationId, in: self.syncMOC) else { return XCTFail("No Team Conversation") }
+            guard let teamAnotherConversation = ZMConversation.fetch(withRemoteIdentifier: teamAnotherConversationId, in: self.syncMOC) else { return XCTFail("No Team Conversation") }
+            guard let conversation = ZMConversation.fetch(withRemoteIdentifier: conversationId, in: self.syncMOC) else { return XCTFail("No Conversation") }
+            
+            self.checkLastMessage(in: teamConversation, isLeaveMessageFor: user, at: timestamp)
+            self.checkLastMessage(in: teamAnotherConversation, isLeaveMessageFor: user, at: timestamp)
+            
+            if let lastMessage = conversation.messages.lastObject as? ZMSystemMessage, lastMessage.systemMessageType == .teamMemberLeave {
+                XCTFail("Should not append leave message to regular conversation")
+            }
+        }
+    }
+    
+    private func checkLastMessage(in conversation: ZMConversation, isLeaveMessageFor user: ZMUser, at timestamp: Date,  file: StaticString = #file, line: UInt = #line) {
+        guard let lastMessage = conversation.messages.lastObject as? ZMSystemMessage else { XCTFail("Last message is not system message", file: file, line: line); return }
+        guard lastMessage.systemMessageType == .teamMemberLeave else { XCTFail("System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)'", file: file, line: line); return }
+        guard let serverTimestamp = lastMessage.serverTimestamp else { XCTFail("System message should have timestamp", file: file, line: line); return }
+        XCTAssertEqualWithAccuracy(serverTimestamp.timeIntervalSince1970, timestamp.timeIntervalSince1970, accuracy: 0.1, file: file, line: line)
+        return
+    }
 
     // MARK: - Team Conversation-Create
 
