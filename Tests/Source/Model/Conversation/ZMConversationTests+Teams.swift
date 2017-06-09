@@ -197,40 +197,61 @@ class Conversationtests_Teams: BaseTeamTests {
         }
     }
 
-    func testThatItCreatesAConversationWithOnlyAGuest() {
-        do {
-            // given
-            let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
-            let guest = ZMUser.insertNewObject(in: uiMOC)
+    func testThatItCreatesAConversationWithOnlyAGuest() throws {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        let guest = ZMUser.insertNewObject(in: uiMOC)
 
-            // when
-            let conversation = try team.addConversation(with: [guest])
-            XCTAssertNotNil(conversation)
-        } catch {
-            XCTFail("Eror: \(error)")
-        }
+        // when
+        let conversation = try team.addConversation(with: [guest])
+        XCTAssertNotNil(conversation)
     }
 
 
-    func testThatItCreatesAConversationWithAnotherMember() {
-        do {
-            // given
-            let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
-            let otherUser = ZMUser.insertNewObject(in: uiMOC)
-            let otherMember = Member.insertNewObject(in: uiMOC)
-            otherMember.team = team
-            otherMember.user = otherUser
+    func testThatItCreatesAConversationWithAnotherMember() throws {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        let otherMember = Member.insertNewObject(in: uiMOC)
+        otherMember.team = team
+        otherMember.user = otherUser
 
-            // when
-            let conversation = try team.addConversation(with: [otherUser])
-            XCTAssertNotNil(conversation)
-            XCTAssertEqual(conversation?.otherActiveParticipants, [otherUser])
-            XCTAssertTrue(otherUser.isMember(of: team))
-            XCTAssertEqual(conversation?.team, team)
-        } catch {
-            XCTFail("Eror: \(error)")
-        }
+        // when
+        let conversation = try team.addConversation(with: [otherUser])
+        XCTAssertNotNil(conversation)
+        XCTAssertEqual(conversation?.otherActiveParticipants, [otherUser])
+        XCTAssertTrue(otherUser.isMember(of: team))
+        XCTAssertEqual(conversation?.team, team)
     }
 
+}
+
+// MARK: - System messages
+extension Conversationtests_Teams {
+    func testThatItCreatesSystemMessageWithTeamMemberLeave() throws {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        let otherMember = Member.insertNewObject(in: uiMOC)
+        otherMember.team = team
+        otherMember.user = otherUser
+        let conversation = try team.addConversation(with: [otherUser])
+        conversation?.lastModifiedDate = Date(timeIntervalSinceNow: -100)
+        let timestamp = Date(timeIntervalSinceNow: -20)
+        
+        // when
+        conversation?.appendTeamMemberRemovedSystemMessage(user: otherUser, at: timestamp)
+        
+        // then
+        guard let message = conversation?.messages.lastObject as? ZMSystemMessage else { XCTFail("Last message should be system message"); return }
+        
+        XCTAssertEqual(message.systemMessageType, .teamMemberLeave)
+        XCTAssertEqual(message.sender, otherUser)
+        XCTAssertEqual(message.users, [otherUser])
+        XCTAssertEqual(message.serverTimestamp, timestamp)
+        XCTAssertFalse(message.shouldGenerateUnreadCount())
+        guard let lastModified = conversation?.lastModifiedDate else { XCTFail("Conversation should have last modified date"); return }
+        XCTAssertNotEqualWithAccuracy(lastModified.timeIntervalSince1970, timestamp.timeIntervalSince1970, 0.1, "Message should not change lastModifiedDate")
+    }
 }
 
