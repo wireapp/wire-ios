@@ -117,6 +117,7 @@ extension TeamDownloadRequestStrategy: ZMEventConsumer {
                 team.conversations.filter {
                     $0.otherActiveParticipants.contains(user)
                 }.forEach {
+                    $0.appendTeamMemberRemovedSystemMessage(user: user, at: event.timeStamp() ?? Date())
                     $0.removeParticipant(user)
                     $0.synchronizeRemovedUser(user)
                 }
