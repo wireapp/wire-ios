@@ -971,6 +971,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
             case ZMSystemMessageTypeConversationIsSecure:
             case ZMSystemMessageTypeMessageDeletedForEveryone:
             case ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged:
+            case ZMSystemMessageTypeTeamMemberLeave:
                 return YES;
             case ZMSystemMessageTypeInvalid:
             case ZMSystemMessageTypeConversationNameChanged:
