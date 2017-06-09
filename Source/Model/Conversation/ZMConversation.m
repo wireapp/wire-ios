@@ -314,12 +314,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMUser *)connectedUser
 {
-    ZMConversationType conversationType = self.internalConversationType;
+    ZMConversationType internalConversationType = self.internalConversationType;
     
-    if (conversationType == ZMConversationTypeOneOnOne || conversationType == ZMConversationTypeConnection) {
+    if (internalConversationType == ZMConversationTypeOneOnOne || internalConversationType == ZMConversationTypeConnection) {
         return self.connection.to;
     }
-    else if (conversationType == ZMConversationTypeGroup && self.otherActiveParticipants.count == 1) {
+    else if (self.conversationType == ZMConversationTypeOneOnOne) {
         return self.otherActiveParticipants.firstObject;
     }
     

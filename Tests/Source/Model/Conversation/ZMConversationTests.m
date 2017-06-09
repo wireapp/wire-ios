@@ -974,6 +974,18 @@
     XCTAssertEqual(conversation.connectedUser, user1);
 }
 
+- (void)testThatGroupConversationWithOnlyTwoParticipantsDoesNotReturnAConnectedUser
+{
+    // given
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    [conversation addParticipant:user1];
+    
+    // then
+    XCTAssertNil(conversation.connectedUser);
+}
+
 @end
 
 
