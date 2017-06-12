@@ -20,28 +20,12 @@
 #import "ZMStreamPairThread.h"
 @import WireSystem;
 
-@import ObjectiveC;
-
-
-
 @interface ZMStreamPairThread ()
 
 @property (nonatomic) NSInputStream *inputStream;
 @property (nonatomic) NSOutputStream *outputStream;
 
 @end
-
-
-static BOOL canSetQualityOfService()
-{
-    static BOOL canSet;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        canSet = (NULL != class_getProperty([ZMStreamPairThread class], "numberOfValidItemsForDrop"));
-    });
-    return canSet;
-}
-
 
 @implementation ZMStreamPairThread
 
@@ -51,13 +35,9 @@ static BOOL canSetQualityOfService()
     VerifyReturnNil(outputStream != nil);
     self = [super init];
     if (self) {
-        self.shouldKeepRunning = YES;
         self.inputStream = inputStream;
         self.outputStream = outputStream;
         self.name = @"ZMStreamPairThread";
-        if (canSetQualityOfService()) {
-            self.qualityOfService = NSQualityOfServiceUtility;
-        }
     }
     return self;
 }
@@ -67,8 +47,10 @@ static BOOL canSetQualityOfService()
     NSRunLoop *loop = [NSRunLoop currentRunLoop];
     [self.inputStream scheduleInRunLoop:loop forMode:NSDefaultRunLoopMode];
     [self.outputStream scheduleInRunLoop:loop forMode:NSDefaultRunLoopMode];
-    while (self.shouldKeepRunning && [loop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]])
+    while (!self.isCancelled && [loop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:1]])
     {}
+    [self.inputStream removeFromRunLoop:loop forMode:NSDefaultRunLoopMode];
+    [self.outputStream removeFromRunLoop:loop forMode:NSDefaultRunLoopMode];
 }
 
 @end

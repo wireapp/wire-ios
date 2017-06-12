@@ -87,7 +87,7 @@ NS_ENUM(int, Trace) {
     // The compare & swap ensure that the code only runs if the values of isClosed was 0 and sets it to 1.
     // The check for 0 and setting it to 1 happen as a single atomic operation.
     if (OSAtomicCompareAndSwap32Barrier(1, 0, &_isOpen)) {
-        self.streamPairThread.shouldKeepRunning = NO;
+        [self.streamPairThread cancel];
         self.inputStream.delegate = nil;
         self.outputStream.delegate = nil;
         [self.delegateGroup asyncOnQueue:self.dataBufferIsolation block:^{
