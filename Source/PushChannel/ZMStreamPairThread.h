@@ -19,12 +19,8 @@
 
 #import <Foundation/Foundation.h>
 
-
-
 @interface ZMStreamPairThread : NSThread
 
 - (instancetype)initWithInputStream:(NSInputStream *)inputStream outputStream:(NSOutputStream *)outputStream;
-
-@property (nonatomic) BOOL shouldKeepRunning;
 
 @end
