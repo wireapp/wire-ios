@@ -1,0 +1,51 @@
+// 
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+// Architectures
+//
+
+ARCHS = arm64 armv7 armv7s i386 x86_64
+VALID_ARCHS = arm64 armv7 armv7s i386 x86_64
+VALID_ARCHS[sdk=iphoneos*] = arm64 armv7 armv7s
+VALID_ARCHS[sdk=macosx*] = i386 x86_64
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
+
+
+// Code Signing
+//
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+
+// Deployment
+//
+SDKROOT[sdk=iphoneos*] = iphoneos
+SDKROOT[sdk=marcosx*] = macosx
+IPHONEOS_DEPLOYMENT_TARGET = 8.0
+TARGETED_DEVICE_FAMILY = 1,2
+MACOSX_DEPLOYMENT_TARGET = 10.10
+
+DYLIB_INSTALL_NAME_BASE = @rpath
+FRAMEWORK_VERSION = A
+
+
+// Linking
+//
+OTHER_LDFLAGS = -ObjC
+FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*] = $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS $(PLATFORM_DIR)/Developer/Library/Frameworks
+FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(inherited) $(PROJECT_DIR)/Carthage/Build/mac $(PLATFORM_DIR)/Developer/Library/Frameworks
+
+
