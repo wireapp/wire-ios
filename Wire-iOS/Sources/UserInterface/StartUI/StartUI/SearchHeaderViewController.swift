@@ -33,6 +33,7 @@ public protocol SearchHeaderViewControllerDelegate : class {
 public class SearchHeaderViewController : UIViewController {
     
     let searchIcon = UIImageView()
+    let clearButton: IconButton
     let titleLabel : UILabel = UILabel()
     let tokenField : TokenField = TokenField()
     let closeButton : IconButton
@@ -54,6 +55,7 @@ public class SearchHeaderViewController : UIViewController {
         self.userSelection = userSelection
         self.colorSchemeVariant = variant
         self.closeButton = variant == .dark ? IconButton.iconButtonDefaultLight() : IconButton.iconButtonDefaultDark()
+        self.clearButton = variant == .dark ? IconButton.iconButtonDefaultLight() : IconButton.iconButtonDefaultDark()
         
         super.init(nibName: nil, bundle: nil)
         
@@ -62,6 +64,12 @@ public class SearchHeaderViewController : UIViewController {
     
     public override func viewDidLoad() {
         searchIcon.image = UIImage(for: .search, iconSize: .tiny, color: UIColor.wr_color(fromColorScheme: ColorSchemeColorTokenFieldTextPlaceHolder, variant: colorSchemeVariant))
+        
+        clearButton.accessibilityLabel = "clear"
+        clearButton.setIcon(.clearInput, with: .tiny, for: .normal)
+        clearButton.addTarget(self, action: #selector(onClearButtonPressed), for: .touchUpInside)
+        clearButton.alpha = 0.4
+        clearButton.isHidden = true
         
         titleLabel.text = title?.uppercased()
         titleLabel.textAlignment = .center
@@ -79,28 +87,37 @@ public class SearchHeaderViewController : UIViewController {
         tokenField.textView.keyboardAppearance = ColorScheme.keyboardAppearance(for: colorSchemeVariant)
         tokenField.textView.returnKeyType = .done
         tokenField.textView.autocorrectionType = .no
-        tokenField.textView.textContainerInset = UIEdgeInsets(top: 6, left: 44, bottom: 6, right: 12)
+        tokenField.textView.textContainerInset = UIEdgeInsets(top: 6, left: 32, bottom: 6, right: 32)
         tokenField.delegate = self
         
         closeButton.accessibilityLabel = "close"
         closeButton.setIcon(.X, with: .tiny, for: .normal)
         closeButton.addTarget(self, action: #selector(onCloseButtonPressed), for: .touchUpInside)
         
-        [titleLabel, tokenField, searchIcon, closeButton].forEach(view.addSubview)
+        [titleLabel, tokenField, searchIcon, closeButton, clearButton].forEach(view.addSubview)
         
         createConstraints()
     }
     
     fileprivate func createConstraints() {
+        constrain(view, tokenField, searchIcon, clearButton) { view, tokenField, searchIcon, clearButton in
+            searchIcon.top == tokenField.top + 8
+            searchIcon.leading == tokenField.leading + 8
+            
+            clearButton.height == 32
+            clearButton.width == 32
+            clearButton.top == tokenField.top
+            clearButton.trailing == tokenField.trailing
+        }
         
-        constrain(view, titleLabel, closeButton, searchIcon, tokenField) { view, titleLabel, closeButton, searchIcon, tokenField in
-            titleLabel.top == view.top + 28
+        constrain(view, titleLabel, closeButton, tokenField) { view, titleLabel, closeButton, tokenField in
+            titleLabel.top == view.top + 34
             titleLabel.leading == tokenField.leading
             titleLabel.trailing == tokenField.trailing
             
-            tokenField.top == titleLabel.bottom + 16
-            tokenField.left == view.left + 8
-            tokenField.right == -8 + view.right
+            tokenField.top == view.top + 64
+            tokenField.leading == view.leading + 8
+            tokenField.trailing == view.trailing - 8
             tokenField.height >= 32
             tokenField.bottom == view.bottom
             
@@ -108,16 +125,18 @@ public class SearchHeaderViewController : UIViewController {
             closeButton.centerY == titleLabel.centerY
             closeButton.width == 44
             closeButton.height == closeButton.width
-            
-            searchIcon.centerY == tokenField.centerY
-            searchIcon.leading == tokenField.leading + 5.5 // the search icon glyph has whitespaces
         }
         
     }
     
-    @objc
-    fileprivate func onCloseButtonPressed() {
+    fileprivate dynamic func onCloseButtonPressed() {
         delegate?.searchHeaderViewControllerDidCancelAction(self)
+    }
+    
+    fileprivate dynamic func onClearButtonPressed() {
+        tokenField.clearFilterText()
+        tokenField.removeAllTokens()
+        resetQuery()
     }
     
     public func resetQuery() {
@@ -145,13 +164,19 @@ extension SearchHeaderViewController : UserSelectionObserver {
 }
 
 extension SearchHeaderViewController : TokenFieldDelegate {
+    
+    func updateClearIndicator(for tokenField: TokenField) {
+        clearButton.isHidden = tokenField.filterText.isEmpty && tokenField.tokens.isEmpty
+    }
 
     public func tokenField(_ tokenField: TokenField, changedTokensTo tokens: [Token]) {
         userSelection.replace(tokens.map { $0.representedObject as! ZMUser })
+        updateClearIndicator(for: tokenField)
     }
     
     public func tokenField(_ tokenField: TokenField, changedFilterTextTo text: String) {
         delegate?.searchHeaderViewController(self, updatedSearchQuery: text)
+        updateClearIndicator(for: tokenField)
     }
     
     public func tokenFieldDidBeginEditing(_ tokenField: TokenField) {
@@ -165,6 +190,4 @@ extension SearchHeaderViewController : TokenFieldDelegate {
     public func tokenFieldDidConfirmSelection(_ controller: TokenField) {
         delegate?.searchHeaderViewControllerDidConfirmAction(self)
     }
-    
-    
 }
