@@ -17,5 +17,12 @@
 // 
 
 
-#include "ios.xcconfig"
+
+#include "architectures.xcconfig"
+#include "tests.xcconfig"
 #include "swift.xcconfig"
+
+
+// Linking
+//
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS

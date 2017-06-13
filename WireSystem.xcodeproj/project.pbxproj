@@ -57,9 +57,8 @@
 		096A3A1E1B67CEF700565001 /* ZMSLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSLog.swift; sourceTree = "<group>"; };
 		09F186211B68FD52007A3DA6 /* WireSystem-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WireSystem-Info.plist"; sourceTree = "<group>"; };
 		3ECC35191AD436750089FD4B /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		540CD8A31B737017006677DE /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
-		540CD8A41B737017006677DE /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
-		540CD8A51B737017006677DE /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		540CD8A31B737017006677DE /* test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "test-host.xcconfig"; sourceTree = "<group>"; };
+		540CD8A41B737017006677DE /* test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
 		540CD8A81B737017006677DE /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		540CD8A91B737017006677DE /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		540CD8AA1B737017006677DE /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
@@ -70,16 +69,16 @@
 		540CD8AF1B737017006677DE /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSAsserts.swift; sourceTree = "<group>"; };
 		5457426B1BA9C50C0009409B /* ZMDefinesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMDefinesTest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		545FB6E21EEEF0F400886B95 /* architectures.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = architectures.xcconfig; sourceTree = "<group>"; };
 		5473E7C71B31A95A00C6A937 /* WireSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WireSystem.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAppleSystemLoggerWrapper.h; sourceTree = "<group>"; };
 		5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMSAppleSystemLoggerWrapper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5473E7D51B31A9C300C6A937 /* WireSystem-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "WireSystem-ios.xcconfig"; sourceTree = "<group>"; };
 		5473E7E41B31AA2600C6A937 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		548662451B344AAB00298EFD /* ZMSAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAsserts.h; sourceTree = "<group>"; };
 		5486624B1B344BA900298EFD /* ZMSActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSActivity.h; sourceTree = "<group>"; };
 		5486624E1B344BB800298EFD /* ZMSActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSActivity.m; sourceTree = "<group>"; };
 		548662511B344CB400298EFD /* ZMSDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSDefines.h; sourceTree = "<group>"; };
-		54A3272C1B99A3190004EB95 /* WireSystem-ios Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireSystem-ios Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		54A3272C1B99A3190004EB95 /* WireSystem Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireSystem Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54A327391B99A3840004EB95 /* ZMLoggingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMLoggingTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		54A3273B1B99C04F0004EB95 /* ZMLogTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ZMLogTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		54C0CC3F1C9C7635000A9286 /* ZMSAsserts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSAsserts.m; sourceTree = "<group>"; };
@@ -124,9 +123,9 @@
 		0927585B1B70E61C00AD5A78 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				540CD8A31B737017006677DE /* ios-test-host.xcconfig */,
-				540CD8A41B737017006677DE /* ios-test-target.xcconfig */,
-				540CD8A51B737017006677DE /* ios.xcconfig */,
+				545FB6E21EEEF0F400886B95 /* architectures.xcconfig */,
+				540CD8A31B737017006677DE /* test-host.xcconfig */,
+				540CD8A41B737017006677DE /* test-target.xcconfig */,
 				540CD8A81B737017006677DE /* project-common.xcconfig */,
 				540CD8A91B737017006677DE /* project-debug.xcconfig */,
 				540CD8AA1B737017006677DE /* project.xcconfig */,
@@ -154,7 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				3ECC35191AD436750089FD4B /* WireSystem.framework */,
-				54A3272C1B99A3190004EB95 /* WireSystem-ios Tests.xctest */,
+				54A3272C1B99A3190004EB95 /* WireSystem Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -203,7 +202,6 @@
 				0927585B1B70E61C00AD5A78 /* zmc-config */,
 				5473E7E41B31AA2600C6A937 /* version.xcconfig */,
 				092758691B70E68F00AD5A78 /* WireSystem.xcconfig */,
-				5473E7D51B31A9C300C6A937 /* WireSystem-ios.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -247,9 +245,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		3ECC350F1AD436750089FD4B /* WireSystem-ios */ = {
+		3ECC350F1AD436750089FD4B /* WireSystem */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3ECC35161AD436750089FD4B /* Build configuration list for PBXNativeTarget "WireSystem-ios" */;
+			buildConfigurationList = 3ECC35161AD436750089FD4B /* Build configuration list for PBXNativeTarget "WireSystem" */;
 			buildPhases = (
 				54CD53321AE6E8E6001CE59A /* Delay */,
 				3ECC35121AD436750089FD4B /* Sources */,
@@ -261,14 +259,14 @@
 			);
 			dependencies = (
 			);
-			name = "WireSystem-ios";
+			name = WireSystem;
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		54A3272B1B99A3190004EB95 /* WireSystem-ios Tests */ = {
+		54A3272B1B99A3190004EB95 /* WireSystem Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 54A327351B99A3190004EB95 /* Build configuration list for PBXNativeTarget "WireSystem-ios Tests" */;
+			buildConfigurationList = 54A327351B99A3190004EB95 /* Build configuration list for PBXNativeTarget "WireSystem Tests" */;
 			buildPhases = (
 				54A327281B99A3190004EB95 /* Sources */,
 				54A327291B99A3190004EB95 /* Frameworks */,
@@ -279,9 +277,9 @@
 			dependencies = (
 				54A327341B99A3190004EB95 /* PBXTargetDependency */,
 			);
-			name = "WireSystem-ios Tests";
+			name = "WireSystem Tests";
 			productName = "ZMCSystem-ios Tests";
-			productReference = 54A3272C1B99A3190004EB95 /* WireSystem-ios Tests.xctest */;
+			productReference = 54A3272C1B99A3190004EB95 /* WireSystem Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -315,8 +313,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3ECC350F1AD436750089FD4B /* WireSystem-ios */,
-				54A3272B1B99A3190004EB95 /* WireSystem-ios Tests */,
+				3ECC350F1AD436750089FD4B /* WireSystem */,
+				54A3272B1B99A3190004EB95 /* WireSystem Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -395,7 +393,7 @@
 /* Begin PBXTargetDependency section */
 		54A327341B99A3190004EB95 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3ECC350F1AD436750089FD4B /* WireSystem-ios */;
+			target = 3ECC350F1AD436750089FD4B /* WireSystem */;
 			targetProxy = 54A327331B99A3190004EB95 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -409,7 +407,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
@@ -426,7 +423,7 @@
 		};
 		3ECC35171AD436750089FD4B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5473E7D51B31A9C300C6A937 /* WireSystem-ios.xcconfig */;
+			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
@@ -438,7 +435,7 @@
 		};
 		3ECC35181AD436750089FD4B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5473E7D51B31A9C300C6A937 /* WireSystem-ios.xcconfig */;
+			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
@@ -450,9 +447,8 @@
 		};
 		54A327361B99A3190004EB95 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 540CD8A41B737017006677DE /* ios-test-target.xcconfig */;
+			baseConfigurationReference = 540CD8A41B737017006677DE /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -467,17 +463,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -486,7 +477,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -500,9 +490,8 @@
 		};
 		54A327371B99A3190004EB95 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 540CD8A41B737017006677DE /* ios-test-target.xcconfig */;
+			baseConfigurationReference = 540CD8A41B737017006677DE /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -517,7 +506,6 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -530,7 +518,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -553,7 +540,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3ECC35161AD436750089FD4B /* Build configuration list for PBXNativeTarget "WireSystem-ios" */ = {
+		3ECC35161AD436750089FD4B /* Build configuration list for PBXNativeTarget "WireSystem" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3ECC35171AD436750089FD4B /* Debug */,
@@ -562,7 +549,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		54A327351B99A3190004EB95 /* Build configuration list for PBXNativeTarget "WireSystem-ios Tests" */ = {
+		54A327351B99A3190004EB95 /* Build configuration list for PBXNativeTarget "WireSystem Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				54A327361B99A3190004EB95 /* Debug */,

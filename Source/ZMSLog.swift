@@ -168,7 +168,7 @@ extension ZMSLog {
 extension ZMSLog {
     
     /// Log only if this log level is enabled for the tag, or no tag is set
-    static func logWithLevel(_ level: ZMLogLevel_t, message:  @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
+    static public func logWithLevel(_ level: ZMLogLevel_t, message:  @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
         let concreteMessage = message()
         logQueue.async {
             if let tag = tag {

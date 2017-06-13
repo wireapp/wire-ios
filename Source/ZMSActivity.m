@@ -23,11 +23,5 @@
 
 void ZMActivityCleanup(os_activity_t * const activity)
 {
-#if ZMWeakActivitySupport
-    if (ZMSupportsActivities()) {
-        os_activity_end(*activity);
-    }
-#else
     os_activity_end(*activity);
-#endif
 }
