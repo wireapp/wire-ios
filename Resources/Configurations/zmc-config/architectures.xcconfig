@@ -19,10 +19,10 @@
 // Architectures
 //
 
-ARCHS = arm64 armv7 armv7s i386 x86_64
-VALID_ARCHS = arm64 armv7 armv7s i386 x86_64
+ARCHS = arm64 armv7 armv7s x86_64
+VALID_ARCHS = arm64 armv7 armv7s x86_64
 VALID_ARCHS[sdk=iphoneos*] = arm64 armv7 armv7s
-VALID_ARCHS[sdk=macosx*] = i386 x86_64
+VALID_ARCHS[sdk=macosx*] = x86_64
 SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 
 
