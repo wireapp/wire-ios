@@ -49,8 +49,6 @@
     [self.outputStream scheduleInRunLoop:loop forMode:NSDefaultRunLoopMode];
     while (!self.isCancelled && [loop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:1]])
     {}
-    [self.inputStream removeFromRunLoop:loop forMode:NSDefaultRunLoopMode];
-    [self.outputStream removeFromRunLoop:loop forMode:NSDefaultRunLoopMode];
 }
 
 @end
