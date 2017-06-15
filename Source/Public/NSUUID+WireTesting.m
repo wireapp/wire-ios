@@ -19,13 +19,21 @@
 
 #import "NSUUID+WireTesting.h"
 #import <CommonCrypto/CommonCrypto.h>
-#import <libkern/OSAtomic.h>
+
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+    #import <libkern/OSAtomic.h>
+#else
+    #import <stdatomic.h>
+#endif
 
 @implementation NSUUID (WireTesting)
 
 static uuid_t uuidBase;
-static int32_t uuidCounter;
-
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+    static int32_t uuidCounter;
+#else
+    static atomic_int uuidCounter;
+#endif
 
 - (NSUUID *)createUUID;
 {
@@ -36,7 +44,11 @@ static int32_t uuidCounter;
 {
     uuid_t bytes;
     uuid_copy(bytes, uuidBase);
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     int32_t c = OSAtomicIncrement32(&uuidCounter);
+#else
+    int32_t c = atomic_fetch_add_explicit(&uuidCounter, 1, memory_order_relaxed);
+#endif
     bytes[14] = (c >> 8) & 0xff;
     bytes[15] = c & 0xff;
     NSUUID *uuid = [[NSUUID alloc] initWithUUIDBytes:bytes];

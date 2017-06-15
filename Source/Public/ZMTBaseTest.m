@@ -19,7 +19,6 @@
 
 @import WireSystem;
 @import OCMock;
-@import MobileCoreServices;
 
 #import "ZMTBaseTest.h"
 #import "ZMTExpectation.h"
