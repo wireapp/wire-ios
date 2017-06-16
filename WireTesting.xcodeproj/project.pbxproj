@@ -116,7 +116,6 @@
 		54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		54AD5CFD1EEFEEC00072FC97 /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
-		54AD5D011EEFEEC00072FC97 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54AFD7DB1CB698690090E33A /* 1900x1500.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1900x1500.jpg; sourceTree = "<group>"; };
@@ -295,7 +294,6 @@
 				54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */,
 				54AD5CFD1EEFEEC00072FC97 /* simulator.xcconfig */,
 				54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */,
-				54AD5D011EEFEEC00072FC97 /* tests.xcconfig */,
 				54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */,
 				54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */,
 			);
