@@ -119,8 +119,8 @@
     labelAttributes[NSForegroundColorAttributeName] = [NSColor darkGrayColor];
     
     CGFloat const columnWidth = 140;
-    NSTextTab *t1 = [[NSTextTab alloc] initWithTextAlignment:NSRightTextAlignment location:columnWidth options:nil];
-    NSTextTab *t2 = [[NSTextTab alloc] initWithTextAlignment:NSLeftTextAlignment location:columnWidth + 4 options:nil];
+    NSTextTab *t1 = [[NSTextTab alloc] initWithTextAlignment:NSRightTextAlignment location:columnWidth options:@{}];
+    NSTextTab *t2 = [[NSTextTab alloc] initWithTextAlignment:NSLeftTextAlignment location:columnWidth + 4 options:@{}];
     paragraphStyle.tabStops = @[t1, t2];
     paragraphStyle.headIndent = columnWidth + 4;
     paragraphStyle.firstLineHeadIndent = 0;
