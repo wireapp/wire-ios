@@ -81,7 +81,7 @@
 		091799571B7DFBD100E60DD9 /* NSUUID+WireTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUUID+WireTesting.m"; sourceTree = "<group>"; };
 		096AD7BB1B68D41D00E007A8 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		096AD7C61B68D41D00E007A8 /* WireTesting-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTesting-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		096AD7DC1B68D6BD00E007A8 /* WireTesting-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTesting-iOS.plist"; sourceTree = "<group>"; };
+		096AD7DC1B68D6BD00E007A8 /* WireTesting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WireTesting.plist; sourceTree = "<group>"; };
 		096AD7E51B68D6BD00E007A8 /* WireTestingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WireTestingTests.m; sourceTree = "<group>"; };
 		096AD7EB1B68D6E700E007A8 /* WireTesting-test-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTesting-test-iOS.plist"; sourceTree = "<group>"; };
 		096AD7ED1B68D8F900E007A8 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
@@ -111,14 +111,10 @@
 		5442DE6B1E92767E00D2F33D /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		5454E1471B73A09100F131F8 /* WireTesting-iosTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireTesting-iosTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTExpectationTests.swift; sourceTree = "<group>"; };
-		54AD5CF81EEFEEC00072FC97 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		54AD5CF91EEFEEC00072FC97 /* architectures.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = architectures.xcconfig; sourceTree = "<group>"; };
 		54AD5CFA1EEFEEC00072FC97 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		54AD5CFD1EEFEEC00072FC97 /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
-		54AD5CFE1EEFEEC00072FC97 /* swift.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
-		54AD5CFF1EEFEEC00072FC97 /* test-host.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host.xcconfig"; sourceTree = "<group>"; };
 		54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
 		54AD5D011EEFEEC00072FC97 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
@@ -197,7 +193,7 @@
 				54AFD7DF1CB698690090E33A /* not_animated.gif */,
 				54AFD7E01CB698690090E33A /* tiny.jpg */,
 				09F1862E1B6903A4007A3DA6 /* Configurations */,
-				096AD7DC1B68D6BD00E007A8 /* WireTesting-iOS.plist */,
+				096AD7DC1B68D6BD00E007A8 /* WireTesting.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -294,14 +290,10 @@
 		54AD5CF71EEFEEC00072FC97 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				54AD5CF81EEFEEC00072FC97 /* .gitignore */,
-				54AD5CF91EEFEEC00072FC97 /* architectures.xcconfig */,
 				54AD5CFA1EEFEEC00072FC97 /* project-common.xcconfig */,
 				54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */,
 				54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */,
 				54AD5CFD1EEFEEC00072FC97 /* simulator.xcconfig */,
-				54AD5CFE1EEFEEC00072FC97 /* swift.xcconfig */,
-				54AD5CFF1EEFEEC00072FC97 /* test-host.xcconfig */,
 				54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */,
 				54AD5D011EEFEEC00072FC97 /* tests.xcconfig */,
 				54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */,
@@ -509,11 +501,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting-iOS.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Debug;
@@ -522,7 +510,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting-iOS.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Release;
