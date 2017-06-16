@@ -42,12 +42,7 @@
 @synthesize name = _name;
 @synthesize accentColorValue = _accentColorValue;
 @synthesize phoneNumber = _phoneNumber;
-@synthesize originalProfileImageData = _originalProfileImageData;
-
-- (void)deleteProfileImage
-{
-    
-}
+@synthesize profileImageData = _profileImageData;
 
 + (instancetype)registrationUserWithEmail:(NSString *)email password:(NSString *)password
 {
@@ -93,12 +88,7 @@
 @synthesize name = _name;
 @synthesize accentColorValue = _accentColorValue;
 @synthesize phoneNumber = _phoneNumber;
-@synthesize originalProfileImageData = _originalProfileImageData;
-
-- (void)deleteProfileImage
-{
-    
-}
+@synthesize profileImageData = _profileImageData;
 
 /// This will assert if the email - password - phone - phoneVerificationCode is not set up properly.
 - (ZMCompleteRegistrationUser *)completeRegistrationUser
@@ -116,7 +106,7 @@
     
     user.name = self.name;
     user.accentColorValue = self.accentColorValue;
-    user.originalProfileImageData = self.originalProfileImageData;
+    user.profileImageData = self.profileImageData;
     user.invitationCode = self.invitationCode;
     return user;
 }

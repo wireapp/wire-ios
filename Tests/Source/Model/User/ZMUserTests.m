@@ -516,7 +516,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = uuid;
     user.smallProfileRemoteIdentifier = [NSUUID createUUID];
     user.mediumRemoteIdentifier = [NSUUID createUUID];
-    user.imageCorrelationIdentifier = [NSUUID createUUID];
     user.imageSmallProfileData = [self dataForResource:@"tiny" extension:@"jpg"];
     user.imageMediumData = [self dataForResource:@"tiny" extension:@"jpg"];
     
@@ -532,38 +531,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertNil(user.imageMediumData);
     XCTAssertNil(user.mediumRemoteIdentifier);
     XCTAssertNil(user.smallProfileRemoteIdentifier);
-}
-
-- (void)testThatItKeepPicturesWhenTheyHaveLocalModifications
-{
-    NSArray *keysProtectingImageFromRemoteUpdates = @[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey];
-    
-    for (NSString *locallyModifiedKey in keysProtectingImageFromRemoteUpdates) {
-        
-        // given
-        ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
-        user.smallProfileRemoteIdentifier = [NSUUID createUUID];
-        user.mediumRemoteIdentifier = [NSUUID createUUID];
-        user.imageCorrelationIdentifier = [NSUUID createUUID];
-        user.imageSmallProfileData = [self dataForResource:@"tiny" extension:@"jpg"];
-        user.imageMediumData = [self dataForResource:@"tiny" extension:@"jpg"];
-        
-        NSMutableDictionary *payload = [self samplePayloadForUserID:user.remoteIdentifier];
-        payload[@"picture"] = @[];
-        
-        [user setLocallyModifiedKeys:[NSSet setWithObject:locallyModifiedKey]];
-        
-        // when
-        [user updateWithTransportData:payload authoritative:YES];
-        
-        // then
-        XCTAssertNotNil(user.imageSmallProfileData);
-        XCTAssertNotNil(user.imageMediumData);
-        XCTAssertNotNil(user.mediumRemoteIdentifier);
-        XCTAssertNotNil(user.smallProfileRemoteIdentifier);
-        
-        [user resetLocallyModifiedKeys:[NSSet setWithObject:locallyModifiedKey]];
-    }
 }
 
 - (void)testThatItHandlesEmptyOptionalData
@@ -1028,61 +995,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertEqualObjects(user.keysTrackedForLocalModifications, expected);
-}
-
-
-- (void)testThatItSetsImageRemoteIdentifiersToNilWhenDeletingTheProfileImage
-{
-    // given
-    ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
-    XCTAssertNotNil(user);
-    
-    user.mediumRemoteIdentifier = [NSUUID createUUID];
-    user.smallProfileRemoteIdentifier = [NSUUID createUUID];
-    
-    [user resetLocallyModifiedKeys:[NSSet setWithArray:@[@"mediumRemoteIdentifier_data", @"smallProfileRemoteIdentifier_data"]]];
-    
-    // when
-    [user deleteProfileImage];
-    
-    // then
-    XCTAssertNil(user.mediumRemoteIdentifier);
-    XCTAssertNil(user.smallProfileRemoteIdentifier);
-    XCTAssertTrue([user.keysThatHaveLocalModifications containsObject:@"mediumRemoteIdentifier_data"]);
-    XCTAssertTrue([user.keysThatHaveLocalModifications containsObject:@"smallProfileRemoteIdentifier_data"]);
-}
-
-- (void)testThatItSetsTheUserCorrelationIdentifierWhenSettingTheOriginalImageData
-{
-    // given
-    ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
-    XCTAssertNotNil(user);
-    XCTAssertNil(user.imageCorrelationIdentifier);
-    
-    NSData *tinyImageData = [self dataForResource:@"tiny" extension:@"jpg"];
-
-    // when
-    user.originalProfileImageData = tinyImageData;
-    
-    // then
-    XCTAssertNotNil(user.imageCorrelationIdentifier);
-}
-
-
-- (void)testThatItDeletesTheUserCorrelationIdentifierWhenDeletingTheOriginalImageData
-{
-    // given
-    ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
-    XCTAssertNotNil(user);
-    
-    user.imageCorrelationIdentifier = NSUUID.createUUID;
-    XCTAssertNotNil(user.imageCorrelationIdentifier);
-
-    // when
-    [user deleteProfileImage];
-    
-    // then
-    XCTAssertNil(user.imageCorrelationIdentifier);
 }
 
 - (void)testThatClientsRequiringUserAttentionContainsUntrustedClientsWithNeedsToNotifyFlagSet

@@ -177,7 +177,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 @dynamic normalizedEmailAddress;
 @dynamic normalizedName;
 @dynamic phoneNumber;
-@dynamic originalProfileImageData;
 @dynamic clients;
 @dynamic handle;
 @dynamic addressBookEntry;
@@ -196,22 +195,22 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 
 - (NSData *)imageMediumData
 {
-    return [self imageDataForFormat:ZMImageFormatMedium];
+    return [self imageDataforSize:ProfileImageSizeComplete];
 }
 
 - (void)setImageMediumData:(NSData *)imageMediumData
 {
-    [self setImageData:imageMediumData forFormat:ZMImageFormatMedium properties:nil];
+    [self setImageData:imageMediumData size:ProfileImageSizeComplete];
 }
 
 - (NSData *)imageSmallProfileData
 {
-    return [self imageDataForFormat:ZMImageFormatProfile];
+    return [self imageDataforSize:ProfileImageSizePreview];
 }
 
 - (void)setImageSmallProfileData:(NSData *)imageSmallProfileData
 {
-    [self setImageData:imageSmallProfileData forFormat:ZMImageFormatProfile properties:nil];
+    [self setImageData:imageSmallProfileData size:ProfileImageSizePreview];
 }
 
 - (NSString *)smallProfileImageCacheKey
@@ -608,7 +607,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     if (transportData.count == 0) {
         self.mediumRemoteIdentifier = nil;
         self.smallProfileRemoteIdentifier = nil;
-        self.imageCorrelationIdentifier = nil;
         self.imageMediumData = nil;
         self.imageSmallProfileData = nil;
         return;
@@ -832,9 +830,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 
 @implementation ZMUser (Editable)
 
-@dynamic originalProfileImageData;
-
-
 - (void)setHandle:(NSString *)aHandle {
     [self willChangeValueForKey:HandleKey];
     [self setPrimitiveValue:[aHandle copy] forKey:HandleKey];
@@ -857,26 +852,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     [self didChangeValueForKey:EmailAddressKey];
     
     self.normalizedEmailAddress = [self.emailAddress normalizedEmailaddress];
-}
-
-- (void)deleteProfileImage
-{
-    self.mediumRemoteIdentifier = nil;
-    self.smallProfileRemoteIdentifier = nil;
-    [self processingDidFinish];
-    [self setLocallyModifiedKeys:[NSSet setWithObjects:MediumRemoteIdentifierDataKey, SmallProfileRemoteIdentifierDataKey, nil]];
-    
-    self.imageCorrelationIdentifier = nil;
-}
-
-- (void)setOriginalProfileImageData:(NSData *)data
-{
-    VerifyReturn(data != nil);
-    [self willChangeValueForKey:OriginalProfileImageDataKey];
-    [self setPrimitiveValue:data forKey:OriginalProfileImageDataKey];
-    [self didChangeValueForKey:OriginalProfileImageDataKey];
-    
-    self.imageCorrelationIdentifier = [NSUUID UUID];
 }
 
 @end
@@ -934,10 +909,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 {
     [self connectWithMessageText:nil completionHandler:nil];
 }
-
-//
-// C.f. <https://github.com/zinfra/brig/blob/develop/doc/connections.md>
-//
 
 - (void)block;
 {
@@ -1019,108 +990,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 
 @implementation ZMUser (ImageData)
 
-- (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties * __unused)properties
-{
-    //NOTE: default case is intentionally missing, to trigger a compile error when new image formats are added (so that we can decide whether we want to handle them or not)
-    switch (format) {
-        case ZMImageFormatMedium:
-            [self setImageData:imageData forKey:ImageMediumDataKey format:format];
-            break;
-            
-        case ZMImageFormatProfile:
-            [self setImageData:imageData forKey:ImageSmallProfileDataKey format:format];
-            break;
-
-        case ZMImageFormatInvalid:
-        case ZMImageFormatOriginal:
-        case ZMImageFormatPreview:
-            RequireString(NO, "Unexpected image format '%lu' set in user", (unsigned long)format);
-            break;
-    }
-}
-
-- (void)setImageData:(NSData *)imageData forKey:(__unused NSString *)key format:(ZMImageFormat)format
-{
-    switch (format) {
-        case ZMImageFormatMedium: {
-            [self setImageData:imageData size:ProfileImageSizeComplete];
-            break;
-        }
-        case ZMImageFormatProfile: {
-            [self setImageData:imageData size:ProfileImageSizePreview];
-            break;
-        }
-        default:
-            RequireString(NO, "Unexpected image format '%lu' set in user", (unsigned long)format);
-            break;
-    }
-}
-
-- (NSData *)imageDataForFormat:(ZMImageFormat)format;
-{
-    switch (format) {
-        case ZMImageFormatMedium: {
-            return [self imageDataforSize:ProfileImageSizeComplete];
-        }
-        case ZMImageFormatProfile: {
-            return [self imageDataforSize:ProfileImageSizePreview];
-        }
-            
-        case ZMImageFormatInvalid:
-        case ZMImageFormatOriginal:
-        case ZMImageFormatPreview:
-            RequireString(NO, "Unexpected image format '%lu' requested from user", (unsigned long)format);
-            break;
-    }
-    
-    return nil;
-}
-
-- (BOOL)isInlineForFormat:(ZMImageFormat)format
-{
-    NOT_USED(format);
-    return NO;
-}
-
-
-- (BOOL)isPublicForFormat:(ZMImageFormat)format
-{
-    NOT_USED(format);
-    return YES;
-}
-
-- (BOOL)isUsingNativePushForFormat:(ZMImageFormat)format
-{
-    NOT_USED(format);
-    return NO;
-}
-
-- (CGSize)originalImageSize
-{
-    return [ZMImagePreprocessor sizeOfPrerotatedImageWithData:self.originalProfileImageData];
-}
-
-
-- (NSOrderedSet *)requiredImageFormats;
-{
-    return [NSOrderedSet orderedSetWithObjects:@(ZMImageFormatMedium), @(ZMImageFormatProfile), nil];
-}
-
-- (NSData *)originalImageData;
-{
-    return self.originalProfileImageData;
-}
-
-- (void)processingDidFinish;
-{
-    if (self.originalProfileImageData != nil) {
-        [self willChangeValueForKey:OriginalProfileImageDataKey];
-        [self setPrimitiveValue:nil forKey:OriginalProfileImageDataKey];
-        [self didChangeValueForKey:OriginalProfileImageDataKey];
-        [self.managedObjectContext enqueueDelayedSave];
-    }
-}
-
 - (NSUUID *)mediumRemoteIdentifier;
 {
     return [self transientUUIDForKey:@"mediumRemoteIdentifier"];
@@ -1140,19 +1009,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 {
     [self setTransientUUID:remoteIdentifier forKey:@"smallProfileRemoteIdentifier"];
 }
-
-
-
-- (NSUUID *)imageCorrelationIdentifier;
-{
-    return [self transientUUIDForKey:@"imageCorrelationIdentifier"];
-}
-
-- (void)setImageCorrelationIdentifier:(NSUUID *)identifier;
-{
-    [self setTransientUUID:identifier forKey:@"imageCorrelationIdentifier"];
-}
-
 
 - (NSUUID *)localMediumRemoteIdentifier;
 {
