@@ -969,28 +969,15 @@
 		};
 		3E88BD2E1B1F3E8400232589 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54B863F01EF40B12008FDDCE /* project-debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
 		3E88BD2F1B1F3E8400232589 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54B863F11EF40B12008FDDCE /* project.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
@@ -998,14 +985,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CURRENT_PROJECT_VERSION = 29;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = WireUtilities;
-				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1013,14 +994,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CURRENT_PROJECT_VERSION = 29;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = WireUtilities;
-				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1028,13 +1003,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B863F31EF40B12008FDDCE /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				GCC_PREFIX_HEADER = "Tests/Source/WireUtilities-Tests.pch";
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
 			};
 			name = Debug;
@@ -1043,13 +1014,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B863F31EF40B12008FDDCE /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				GCC_PREFIX_HEADER = "Tests/Source/WireUtilities-Tests.pch";
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
 			};
 			name = Release;
