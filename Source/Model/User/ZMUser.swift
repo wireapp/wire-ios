@@ -175,9 +175,6 @@ extension ZMUser {
         willChangeValue(forKey: key)
         if isSelfUser {
             setPrimitiveValue(data, forKey: key)
-            if originalProfileImageData != nil {
-                setLocallyModifiedKeys([key])
-            }
         } else {
             guard let imageData = data else {
                 managedObjectContext?.zm_userImageCache?.removeAllUserImages(self)

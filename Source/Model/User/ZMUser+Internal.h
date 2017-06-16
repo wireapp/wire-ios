@@ -47,7 +47,6 @@ extern NSString * __nonnull const ZMUserActiveConversationsKey;
 
 @property (nullable, nonatomic) NSData *imageMediumData;
 @property (nullable, nonatomic) NSData *imageSmallProfileData;
-@property (nullable, nonatomic, readonly) NSData *originalProfileImageData;
 
 - (void)updateWithTransportData:(nonnull NSDictionary *)transportData authoritative:(BOOL)authoritative;
 
@@ -86,13 +85,12 @@ extern NSString * __nonnull const ZMUserActiveConversationsKey;
 
 
 
-@interface ZMUser (ImageData) <ZMImageOwner>
+@interface ZMUser (ImageData)
 
 @property (nullable, nonatomic) NSUUID *mediumRemoteIdentifier; ///< The remote identifier of the medium image for the receiver
 @property (nullable, nonatomic) NSUUID *smallProfileRemoteIdentifier; ///< The remote identifier of the small profile image for the receiver
 @property (nullable, nonatomic) NSUUID *localMediumRemoteIdentifier; ///< The remote identifier of the local "medium" image
 @property (nullable, nonatomic) NSUUID *localSmallProfileRemoteIdentifier; ///< The remote identifier of the local "small profile" image
-@property (nullable, nonatomic) NSUUID *imageCorrelationIdentifier; ///< Correlation id for the profile image
 
 + (nonnull NSPredicate *)predicateForMediumImageNeedingToBeUpdatedFromBackend;
 + (nonnull NSPredicate *)predicateForSmallImageNeedingToBeUpdatedFromBackend;

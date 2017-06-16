@@ -32,12 +32,6 @@
 @property (nonatomic, copy, readonly) NSString *emailAddress;
 @property (nonatomic, copy, readonly) NSString *phoneNumber;
 
-/// Setting this to compressed image data (e.g. JPEG or PNG) will generate user images from it and upload it to the backend.
-/// Setting to @c nil is not supported. Use @c -deleteProfileImage to remove the profile image.
-@property (nonatomic) NSData *originalProfileImageData;
-/// Removes the profile image from the receiver.
-- (void)deleteProfileImage;
-
 @end
 
 
@@ -48,6 +42,7 @@
 @property (nonatomic, readonly, copy) NSString *phoneNumber;
 @property (nonatomic, readonly, copy) NSString *phoneVerificationCode;
 @property (nonatomic, readonly, copy) NSString *invitationCode;
+@property (nonatomic, copy) NSData *profileImageData;
 
 + (instancetype)registrationUserWithEmail:(NSString *)email password:(NSString *)password;
 + (instancetype)registrationUserWithPhoneNumber:(NSString *)phoneNumber phoneVerificationCode:(NSString *)phoneVerificationCode;
@@ -65,6 +60,7 @@
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *phoneVerificationCode;
 @property (nonatomic, copy) NSString *invitationCode;
+@property (nonatomic, copy) NSData *profileImageData;
 
 /// This will assert if the email - password - phone - phoneVerificationCode is not set up properly.
 - (ZMCompleteRegistrationUser *)completeRegistrationUser;
