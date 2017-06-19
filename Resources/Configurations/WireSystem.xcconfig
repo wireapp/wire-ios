@@ -20,5 +20,5 @@
 #include "zmc-config/swift.xcconfig"
 #include "zmc-config/architectures.xcconfig"
 
-APPLICATION_EXTENSION_API_ONLY[sdk=iphoneos*] = YES
+APPLICATION_EXTENSION_API_ONLY = YES
 PRODUCT_NAME = WireSystem
